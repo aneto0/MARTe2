@@ -22,7 +22,7 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERA_H_
-#define 		HIGHRESOLUTIONTIMERA_H_
+#define HIGHRESOLUTIONTIMERA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -52,9 +52,9 @@ inline uint32 Counter32() {
 
 }
 
-inline int64 Counter() {
+inline uint64 Counter() {
 
-    return (int64) __rdtsc();
+    return (uint64) __rdtsc();
 
 }
 

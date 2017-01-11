@@ -28,9 +28,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ConfigurationDatabaseTest.h"
 #include "AnyObject.h"
+#include "ConfigurationDatabaseTest.h"
 #include "IntrospectionTestHelper.h"
+#include "Matrix.h"
+#include "ObjectRegistryDatabase.h"
+#include "StandardParser.h"
+#include "Vector.h"
 
 using namespace MARTe;
 
@@ -291,7 +295,7 @@ bool ConfigurationDatabaseTest::TestDelete() {
 
 bool ConfigurationDatabaseTest::TestRead_Invalid() {
     ConfigurationDatabase cdb;
-    uint32 readValue;
+    uint32 readValue = 0;
     bool ok = !cdb.Read("", readValue);
     ok = !cdb.Read(NULL, readValue);
     ok = cdb.CreateAbsolute("A.B.C");
@@ -329,17 +333,17 @@ bool ConfigurationDatabaseTest::TestRead_Object() {
     uint32 member1 = 1;
     source.Write("member1_from", member1);
     float32 member2_x = 1;
-    source.Write("member2_from",  &member2_x);
+    source.Write("member2_from", &member2_x);
     float64 member3[32];
     for (uint32 i = 0u; i < 32; i++) {
         member3[i] = i;
     }
     source.Write("member3_from", member3);
     const char8* member4[2][2];
-    member4[0][0] =(char8*) "1";
-    member4[0][1] =(char8*) "2";
-    member4[1][0] =(char8*) "3";
-    member4[1][1] =(char8*) "4";
+    member4[0][0] = (char8*) "1";
+    member4[0][1] = (char8*) "2";
+    member4[1][0] = (char8*) "3";
+    member4[1][1] = (char8*) "4";
 
     source.Write("member4_from", member4);
     uint32 member5Ref = 5;
@@ -451,8 +455,8 @@ bool ConfigurationDatabaseTest::TestWrite_Object() {
         sourceTest.member3_from[i] = i;
     }
     sourceTest.member4_from[0][0] = (char8*) "1";
-    sourceTest.member4_from[0][1] = (char8*)"2";
-    sourceTest.member4_from[1][0] = (char8*)"3";
+    sourceTest.member4_from[0][1] = (char8*) "2";
+    sourceTest.member4_from[1][0] = (char8*) "3";
     sourceTest.member4_from[1][1] = (char8*) "4";
 
     uint32 member5Ref = 5;
@@ -543,36 +547,34 @@ bool ConfigurationDatabaseTest::TestGetChildName() {
     ok &= cdb.MoveToRoot();
     i = 0u;
     while (childNames[i] != NULL) {
-        ok &= StringHelper::Compare(childNames[i],cdb.GetChildName(i))==0;
+        ok &= StringHelper::Compare(childNames[i], cdb.GetChildName(i)) == 0;
         i++;
     }
     ok &= cdb.MoveAbsolute(childNames[0]);
     i = 0u;
     while (nephewNames[i] != NULL) {
-        ok &= StringHelper::Compare(nephewNames[i],cdb.GetChildName(i))==0;
+        ok &= StringHelper::Compare(nephewNames[i], cdb.GetChildName(i)) == 0;
         i++;
     }
     ok &= cdb.GetChildName(i) == NULL;
     return ok;
 }
 
-
-bool ConfigurationDatabaseTest::TestGetName(){
+bool ConfigurationDatabaseTest::TestGetName() {
     ConfigurationDatabase cdb;
-    if(cdb.GetName()!=NULL){
+    if (cdb.GetName() != NULL) {
         return false;
     }
 
     cdb.CreateAbsolute("A.B.C");
     cdb.MoveAbsolute("A");
-    bool ret=(StringHelper::Compare(cdb.GetName(), "A")==0);
+    bool ret = (StringHelper::Compare(cdb.GetName(), "A") == 0);
     cdb.MoveAbsolute("A.B");
-    ret&=(StringHelper::Compare(cdb.GetName(), "B")==0);
+    ret &= (StringHelper::Compare(cdb.GetName(), "B") == 0);
     cdb.MoveAbsolute("A.B.C");
-    ret&=(StringHelper::Compare(cdb.GetName(), "C")==0);
+    ret &= (StringHelper::Compare(cdb.GetName(), "C") == 0);
     return ret;
 }
-
 
 bool ConfigurationDatabaseTest::TestGetType_Invalid() {
     ConfigurationDatabase cdb;
@@ -618,4 +620,112 @@ bool ConfigurationDatabaseTest::TestUnlock() {
     cdb.Lock(TTInfiniteWait);
     cdb.Unlock();
     return cdb.Lock(TTInfiniteWait);
+}
+
+bool ConfigurationDatabaseTest::TestInitialise() {
+    const char8 * const config = ""
+            "+Config1 = {"
+            "    Class = ConfigurationDatabase"
+            "    param1 = \"Test\""
+            "    param2 = 5"
+            "}"
+            "+Config2 = {"
+            "    Class = ConfigurationDatabase"
+            "    x = \"Test2\""
+            "    y = {1 2 3 4}"
+            "    z = {{1 2} {2 3} {3 4} {4 5}}"
+            "}";
+
+    ConfigurationDatabase cdb;
+    StreamString configStr = config;
+    configStr.Seek(0);
+    StandardParser parser(configStr, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<ConfigurationDatabase> db1 = ObjectRegistryDatabase::Instance()->Find("Config1");
+    if (ret) {
+        ret = db1.IsValid();
+    }
+    if (ret) {
+        StreamString param1Value;
+        db1->Read("param1", param1Value);
+        ret = (param1Value == "Test");
+    }
+    if (ret) {
+        uint32 param2Value;
+        db1->Read("param2", param2Value);
+        ret = (param2Value == 5);
+    }
+    ReferenceT<ConfigurationDatabase> db2 = ObjectRegistryDatabase::Instance()->Find("Config2");
+    if (ret) {
+        ret = db2.IsValid();
+    }
+    if (ret) {
+        StreamString xValue;
+        db2->Read("x", xValue);
+        ret = (xValue == "Test2");
+    }
+    if (ret) {
+        Vector<uint32> yValue(4);
+        db2->Read("y", yValue);
+        ret = (yValue[0] == 1);
+        ret &= (yValue[1] == 2);
+        ret &= (yValue[2] == 3);
+        ret &= (yValue[3] == 4);
+    }
+    if (ret) {
+        Matrix<uint32> zValue(4, 2);
+        db2->Read("z", zValue);
+        ret = (zValue(0, 0) == 1);
+        ret &= (zValue(0, 1) == 2);
+        ret &= (zValue(1, 0) == 2);
+        ret &= (zValue(1, 1) == 3);
+        ret &= (zValue(2, 0) == 3);
+        ret &= (zValue(2, 1) == 4);
+        ret &= (zValue(3, 0) == 4);
+        ret &= (zValue(3, 1) == 5);
+    }
+    return ret;
+}
+
+bool ConfigurationDatabaseTest::TestCleanUp() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A");
+    ok = cdb.MoveToRoot();
+    ok &= cdb.Write("AAA", 5);
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.CreateAbsolute(".A.B");
+    ok &= cdb.MoveAbsolute("A.B.");
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("D.E.F");
+    ok &= cdb.MoveAbsolute("D.E.F");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= cdb.MoveToRoot();
+    ok &= (cdb.GetNumberOfChildren() > 0u);
+    uint32 val;
+    ok &= cdb.Read("AAA", val);
+    cdb.Purge();
+    ok &= (cdb.GetNumberOfChildren() == 0u);
+    ok &= !cdb.Read("AAA", val);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestGetCurrentNode() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A");
+    ok = cdb.MoveToRoot();
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.CreateAbsolute(".A.B");
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("A.B.D");
+    ok &= cdb.CreateAbsolute("A.B.E");
+    ok &= cdb.CreateAbsolute("A.B.F");
+    ok &= cdb.MoveAbsolute("A.B");
+    ReferenceT<ReferenceContainer> refC = cdb.GetCurrentNode();
+    return (refC->Size() == 4);
 }

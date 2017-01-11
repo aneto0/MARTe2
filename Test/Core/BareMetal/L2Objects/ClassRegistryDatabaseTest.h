@@ -66,12 +66,6 @@ public:
     bool TestDeleteFalse();
 
     /**
-     * @brief Tests the ClassRegistryDatabase::Add function.
-     * @return true if after adding a ClassRegistryItem element to the database, it can be found and the database size is incremented.
-     */
-    bool TestAdd();
-
-    /**
      * @brief Tests the Add function with two classes with the same name.
      * @return true if the last class to be added is saved in the database, false otherwise.
      */
@@ -129,7 +123,7 @@ public:
      * @details Adds an element to the database and verifies if this element can be successfully peeked.
      * @return true if the element is added to the database and if can then be later retrieved.
      */
-    bool TestPeek();
+//    bool TestPeek();
 
     /**
      * @brief Tests if instantiating objects, the number of instances parameter is correct.
@@ -160,6 +154,10 @@ public:
      * @brief Tests that GetClassName() returns "ClassRegistryDatabase"
      */
     bool TestGetClassName();
+
+
+
+    bool TestCleanUp();
 
 };
 

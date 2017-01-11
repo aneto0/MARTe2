@@ -88,16 +88,16 @@ public:
 
     /**
      * @brief Performs a buffered read operation with a specific timeout.
-     * @warning The specified timeout will be used only for this operation.
-     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @param[out] output the buffer in output which will contain the read data.
      * @param[in,out] size the number of bytes to read.
      * @param[in] msecTimeout The timeout used in this operation.
+     * @remark The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @see BufferedStreamI::Read(*).
      */
     virtual bool Read(char8 * const output,
                       uint32 &size,
-                      TimeoutType msecTimeout);
+                      const TimeoutType &msecTimeout);
 
     /**
      * @brief Wraps bufferedStream::Write(*)
@@ -108,16 +108,16 @@ public:
 
     /**
      * @brief Performs a buffered write operation with a specific timeout.
-     * @warning The specified timeout will be used only for this operation.
-     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @param[in] input the buffer in input which contains the data to be written.
      * @param[in,out] size the number of bytes to write.
      * @param[in] msecTimeout The timeout used in this operation.
+     * @remark The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
      * @see BufferedStreamI::Write(*).
      */
     virtual bool Write(const char8 * const input,
                        uint32 &size,
-                       TimeoutType msecTimeout);
+                       const TimeoutType &msecTimeout);
 
     /**
      * @brief Wraps bufferedStream::Size(*)
@@ -215,14 +215,14 @@ protected:
 
 template<class bufferedStream, class basicStream>
 BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator() :
-        bufferedStream(),
-        basicStream() {
+bufferedStream(),
+basicStream() {
 }
 
 template<class bufferedStream, class basicStream>
 BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator(uint32 timeout) :
         bufferedStream(timeout),
-        basicStream() {
+        basicStream(){
 }
 
 template<class bufferedStream, class basicStream>
@@ -238,7 +238,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const ou
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
                                                                 uint32 &size,
-                                                                TimeoutType msecTimeout) {
+                                                                const TimeoutType &msecTimeout) {
     return bufferedStream::Read(output, size, msecTimeout);
 
 }
@@ -252,7 +252,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * c
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
                                                                  uint32 &size,
-                                                                 TimeoutType msecTimeout) {
+                                                                 const TimeoutType &msecTimeout) {
     return bufferedStream::Write(input, size, msecTimeout);
 
 }
@@ -325,14 +325,14 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::OSSetSize(uint64 size
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRead(char8 * const data,
                                                                   uint32 &size) {
-    return basicStream::Read(data, size, GetTimeout());
+    return basicStream::Read(data, size, bufferedStream::GetTimeout());
 }
 
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::OSWrite(const char8 * const data,
                                                                    uint32 &size) {
 
-    return basicStream::Write(data, size, GetTimeout());
+    return basicStream::Write(data, size, bufferedStream::GetTimeout());
 }
 }
 

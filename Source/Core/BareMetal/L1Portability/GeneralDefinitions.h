@@ -42,9 +42,19 @@
 
 namespace MARTe {
 
+/**
+ * @brief Macro for getting the name of the function on error reporting.
+ */
 #ifndef __ERROR_FUNCTION_NAME__
 #define __ERROR_FUNCTION_NAME__ __func__
 #endif
+
+/**
+ * @brief Type for a generic callback function.
+ */
+typedef void (GenericFn)(void*);
+
+
 
     /** List of colors */
     typedef enum {

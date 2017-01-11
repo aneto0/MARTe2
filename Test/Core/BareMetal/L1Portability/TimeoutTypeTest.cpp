@@ -72,18 +72,15 @@ bool TimeoutTypeTest::TestSetTimeoutHighResolutionTimerTicks() {
     timeout.SetTimeoutHighResolutionTimerTicks(ticks);
     expectedTimeout = ticks * HighResolutionTimer::Period()*1000;
     retValue = (expectedTimeout == timeout.GetTimeoutMSec());
-    ticks = -100;
-    timeout.SetTimeoutHighResolutionTimerTicks(ticks);
-    retValue &= (timeout.GetTimeoutMSec() == 0);
     return retValue;
 }
 
 bool TimeoutTypeTest::TestHighResolutionTimerTicks() {
     TimeoutType timeout;
     int32 msecTimeout = 100;
-    int64 expectedTicks;
+    uint64 expectedTicks;
     timeout.SetTimeoutSec(double(msecTimeout)*1e-3);
-    expectedTicks = int64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
+    expectedTicks = uint64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
     return (expectedTicks == timeout.HighResolutionTimerTicks());
 }
 

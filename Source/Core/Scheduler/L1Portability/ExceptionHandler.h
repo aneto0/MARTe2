@@ -83,8 +83,6 @@ public:
      */
     static const uint32 NoReport = 0x10000u;
 
-public:
-
     /**
      * @brief Default constructor.
      */

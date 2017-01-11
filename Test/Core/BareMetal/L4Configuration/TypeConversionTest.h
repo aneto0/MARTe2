@@ -474,9 +474,10 @@ template<typename T1>
 bool TypeConversionTest::TestTypeConvertToCCString(const TypeToTypeTableTest<T1, const char8*>* table) {
 
     uint32 i = 0;
+    char8 *element = (char8*) HeapManager::Malloc(64);
+
     while (table[i].go) {
 
-        char8 *element = (char8*) HeapManager::Malloc(64);
         T1 toConvert = table[i].typeToConvert;
 
         bool ret = TypeConvert(element, toConvert);
@@ -493,6 +494,8 @@ bool TypeConversionTest::TestTypeConvertToCCString(const TypeToTypeTableTest<T1,
 
         i++;
     }
+
+    HeapManager::Free((void*&)element);
     return true;
 
 }

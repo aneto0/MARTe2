@@ -26,20 +26,22 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  AnyType.x\
+OBJSX=  AnyType.x \
+                ClassMethodCaller.x\
+                ClassMethodInterfaceMapper.x\
 		ClassProperties.x \
 		ClassRegistryDatabase.x \
 		ClassRegistryItem.x \
 		Introspection.x\
 		IntrospectionEntry.x \
 		Object.x \
+		ObjectRegistryDatabase.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		ReferenceT.x
+		ReferenceContainerFilterObjectName.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

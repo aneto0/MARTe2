@@ -22,18 +22,27 @@
 #
 #############################################################
 
-OBJSX=
+OBJSX=MainGTest.x
 SPB = BareMetal.x Scheduler.x FileSystem.x
+
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
+INCLUDES += -I../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../Source/Core/BareMetal/L5GAMs
+INCLUDES += -I../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+        $(BUILD_DIR)/MainGTest$(EXEEXT)
 	echo  $(OBJS)
+
 
 include depends.$(TARGET)
 

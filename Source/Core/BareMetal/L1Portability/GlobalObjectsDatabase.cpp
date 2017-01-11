@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GlobalObjectsDatabase.h"
-
+#include "HeapManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +52,6 @@ GlobalObjectsDatabase::GlobalObjectsDatabase() {
         databaseList[i] = NULL_PTR(GlobalObjectI *);
         destructionListOrder[i] = NUMBER_OF_GLOBAL_OBJECTS;
     }
-
 }
 
 /*lint -e{1551} the delete could indeed throw an exception if there is an issue

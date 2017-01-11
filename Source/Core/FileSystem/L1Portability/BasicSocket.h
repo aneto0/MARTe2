@@ -50,7 +50,7 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public StreamI, public HandleI {
+    class DLL_API BasicSocket: public virtual StreamI, public HandleI {
     public:
         /**
          * @brief Default constructor.
@@ -118,14 +118,14 @@ namespace MARTe {
 
         /**
          * @brief Queries the read socked handle.
-         * @detail For the BasicSocket the read handle and the write handle are the same,
+         * @details For the BasicSocket the read handle and the write handle are the same,
          * however the BasicConsol has two different handles: one for read and one for write.
          */
         virtual Handle GetReadHandle() const;
 
         /**
          * @brief Queries the write socked handle.
-         * @detail For the BasicSocket the read handle and the write handle are the same,
+         * @details For the BasicSocket the read handle and the write handle are the same,
          * however the BasicConsol has two different handles: one for read and one for write.
          */
         virtual Handle GetWriteHandle() const;

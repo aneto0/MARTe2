@@ -50,7 +50,9 @@ namespace Threads {
  * @param[in,out] threadInfo the thread information structure.
  */
 static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
+
     if (threadInfo != NULL) {
+
         //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
         ErrorManagement::ErrorType err = threadInfo->ThreadWait();
         //Start the user thread
@@ -142,16 +144,16 @@ void SetPriority(const ThreadIdentifier &threadId,
 
             uint32 priorityClassNumber = 0u;
             switch (priorityClass) {
-                case UnknownPriorityClass:
+            case UnknownPriorityClass:
                 priorityClassNumber = 0u;
                 break;
-                case IdlePriorityClass:
+            case IdlePriorityClass:
                 priorityClassNumber = 1u;
                 break;
-                case NormalPriorityClass:
+            case NormalPriorityClass:
                 priorityClassNumber = 2u;
                 break;
-                case RealTimePriorityClass:
+            case RealTimePriorityClass:
                 priorityClassNumber = 3u;
                 break;
             }
@@ -233,12 +235,16 @@ bool IsAlive(const ThreadIdentifier &threadId) {
  */
 bool Kill(const ThreadIdentifier &threadId) {
     bool ok = false;
+
     if (IsAlive(threadId)) {
         ok = ThreadsDatabase::Lock();
         if (ok) {
             ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(threadId);
             if (threadInfo == NULL) {
                 ok = false;
+            }
+            else {
+                delete threadInfo;
             }
         }
         ThreadsDatabase::UnLock();
@@ -289,15 +295,18 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
             }
         }
+
         else {
             REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_init()");
         }
+
         if (ok) {
             /*lint -e{929} cast from pointer to pointer required in order to cast into the pthread callback required function type.*/
             ok = (pthread_create(&threadId, &stackSizeAttribute, reinterpret_cast<void *(*)(void *)>(&SystemThreadFunction), threadInfo) == 0);
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()");
             }
+
             if (ok) {
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
@@ -311,6 +320,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 }
             }
         }
+
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
             if (!ok) {
@@ -339,8 +349,10 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         }
         if (!ok) {
             threadId = InvalidThreadIdentifier;
+            delete threadInfo;
         }
     }
+
     return threadId;
 }
 

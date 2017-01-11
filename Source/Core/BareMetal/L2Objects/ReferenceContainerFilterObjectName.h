@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ReferenceContainerFilterObjectName
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -44,6 +46,7 @@ namespace MARTe {
  */
 class DLL_API ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
+
     /**
      * @brief Default constructor.
      */
@@ -57,7 +60,7 @@ public:
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      * @param[in] address a string with the name of the object to find or with the full path (from the root) to the object.
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
-     * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
+     * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::PATH.
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
@@ -98,11 +101,13 @@ public:
                       Reference &referenceToTest);
 
     /**
-     * TODO
+     * @brief Sets the address of the object to search.
+     * @param[in] address the address of the object to search.
      */
     void SetAddress(const char8 * const address);
 
 private:
+
     /**
      * Broken-down list of the address to search.
      */
@@ -124,6 +129,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -87,7 +87,7 @@ namespace MARTe {
  *
  * (*) The class supplies a standard implementation for these operations.
  *
- * @warning The generic capabilities for reading, writing, and seeking can not
+ * @remark The generic capabilities for reading, writing, and seeking can not
  * assured to be available on all kind of mapped streams, so an additional set
  * of "CanXXX" methods is provided to verify the capabilities of the stream itself.
  *
@@ -104,7 +104,7 @@ namespace MARTe {
  * write, which increments position and/or size, will not change this value.
  */
 
-class DLL_API BufferedStreamI: public StreamI {
+class DLL_API BufferedStreamI: public virtual StreamI {
 
 public:
 
@@ -140,7 +140,7 @@ public:
      * @param[in] skipCharacters a list of characters to be removed from the
      * \a outputBuffer. As a consequence, if a skipCharacter is also a
      * terminator, when consecutive instances of the same terminator are found
-     * (e.g. ::A:::B:C, where : is the terminator), the terminator is skipped
+     * (e.g. \::A\::B\::C, where : is the terminator), the terminator is skipped
      * until the next token is found (in the previous example, the first token
      * to be found would be A).
      * @return false if no data is stored in the outputBuffer, true otherwise
@@ -158,17 +158,16 @@ public:
      * @brief Reads a token from the stream into another stream.
      * @details Extracts a token from the stream until a terminator or \0 is
      * found.
-     * @param[out] outputBuffer the buffer where to write the retrieved
+     * @param[out] output the buffer where to write the retrieved
      * tokens into.
      * @param[in] terminator a list of terminator characters, i.e. characters
      * that allow to distinguish tokens.
-     * @param[in] outputBufferSize the maximum size of the output buffer.
      * @param[out] saveTerminator if not NULL the found terminator (from the
      * terminator list) is stored in this variable.
      * @param[in] skipCharacters a list of characters to be removed from the
      * \a outputBuffer. As a consequence, if a skipCharacter is also a
      * terminator, when consecutive instances of the same terminator are found
-     * (i.e. without a token in-between) (e.g. ::A:::B:C, where : is the
+     * (i.e. without a token in-between) (e.g. \::A\::B\::C, where : is the
      * terminator), the terminator is skipped until the next token is found
      * (in the previous example, the first token to be found would be A).
      * @return false if no data is stored in the outputBuffer, true otherwise
@@ -281,7 +280,7 @@ public:
 
     /**
      * @brief Copies a character buffer.
-     * @detail Copies a character buffer into this stream (from the
+     * @details Copies a character buffer into this stream (from the
      * current position).
      * @param[in] buffer is the buffer to be copied into the stream.
      * @return true if buffer is successfully copied into the stream.
@@ -292,7 +291,7 @@ public:
 
     /**
      * @brief Copies from a stream.
-     * @detail Copies a stream into this stream (from the current
+     * @details Copies a stream into this stream (from the current
      * position).
      * @param[in,out] stream is the stream to be copied into the stream.
      * @return true if stream is successfully copied into the stream.
@@ -330,6 +329,16 @@ public:
                        const AnyType& par2,
                        const AnyType& par3,
                        const AnyType& par4);
+
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(const char8 * const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5);
 
 protected:
 
@@ -387,6 +396,16 @@ bool BufferedStreamI::Printf(const char8 * const format,
                              const AnyType& par3,
                              const AnyType& par4) {
     AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(const char8 * const format,
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4,
+                             const AnyType& par5) {
+    AnyType pars[6] = { par1, par2, par3, par4, par5, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 

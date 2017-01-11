@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "StructuredDataI.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -72,6 +73,14 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        int32 value;
+        if (data.Read("var", value)) {
+            dummyVariable = value;
+        }
+        return true;
+    }
+
 protected:
     /**
      * Dummy variable
@@ -79,7 +88,6 @@ protected:
     int32 dummyVariable;
 
 };
-
 
 /**
  * @brief An object which inherits from integer object.
@@ -110,10 +118,14 @@ public:
         return dummyVariable > threshold ? threshold : dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyVariable = 2;
+        return true;
+    }
+
 private:
 
 };
-
 
 /**
  * @brief An object which inherits from Object.
@@ -151,6 +163,11 @@ public:
         this->dummyFVariable = dummyVariable;
     }
 
+    virtual bool Initialise(StructuredDataI & data) {
+        dummyFVariable = 2.0;
+        return true;
+    }
+
 private:
     /**
      * Dummy variable
@@ -158,7 +175,6 @@ private:
     float32 dummyFVariable;
 
 };
-
 
 /**
  * @brief A class which contains two different Object types.
@@ -190,7 +206,7 @@ public:
      * @brief Sets the value of the first object.
      * @param[in] inumber is the desired value associated to the first object.
      */
-    void SetInteger(int32 inumber){
+    void SetInteger(int32 inumber) {
         oneInteger.SetVariable(inumber);
     }
 
@@ -198,7 +214,7 @@ public:
      * @brief Sets the value of the second object.
      * @param[in] inumber is the desired value associated to the second object.
      */
-    void SetSpecialInteger(int32 inumber){
+    void SetSpecialInteger(int32 inumber) {
         oneSpecialInteger.SetVariable(inumber);
     }
 
@@ -210,7 +226,6 @@ public:
         return oneInteger.GetVariable();
     }
 
-
     /**
      * @brief Returns the value of the second object.
      * @return the value of the second object.
@@ -220,6 +235,161 @@ public:
     }
 };
 
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonRegisteredIntegerObject: public Object {
+public:
+
+    /**
+     * @brief Default constructor
+     */
+    NonRegisteredIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonRegisteredIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class NonIntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    NonIntrospectableIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~NonIntrospectableIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableIntegerObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableIntegerObject() {
+        member = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableIntegerObject() {
+    }
+
+    /**
+     * Member attribute
+     */
+    int32 member;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith2Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith2Members() {
+        member1 = 0;
+        member2 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith2Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+};
+
+/**
+ * @brief Helper class to support the testing of Object's features for
+ * extracting its own data and metadata as a StructuredDataI object.
+ */
+class IntrospectableObjectWith3Members: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Default constructor
+     */
+    IntrospectableObjectWith3Members() {
+        member1 = 0;
+        member2 = 0;
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~IntrospectableObjectWith3Members() {
+    }
+
+    /**
+     * Member 1 attribute
+     */
+    int32 member1;
+
+    /**
+     * Member 2 attribute
+     */
+    uint64 member2;
+
+    /**
+     * Member 3 atribute
+     */
+    IntrospectableIntegerObject member3;
+
+};
 
 #endif /* OBJECTTESTHELPER_H_ */
 

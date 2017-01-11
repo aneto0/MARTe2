@@ -53,6 +53,8 @@ DLL_API int32 GetDateSeconds(void);
  * @brief Sleeps for the time requested or more.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (at least).
+ * TODO float64 is absolutely excessive!!! Change to float32
+ * TODO this will cause unnecessary burden for small embedded systems
  */
 DLL_API void AtLeast(const float64 sec);
 
@@ -97,9 +99,9 @@ DLL_API void SemiBusy(const float64 totalSleepSec,
 /*---------------------------------------------------------------------------*/
 
 void Sleep::Busy(const float64 sec) {
-    int64 startCounter = HighResolutionTimer::Counter();
-    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
-    int64 sleepUntilCounter = startCounter + endCounter;
+    uint64 startCounter = HighResolutionTimer::Counter();
+    uint64 endCounter = static_cast<uint64>(sec) * HighResolutionTimer::Frequency();
+    uint64 sleepUntilCounter = startCounter + endCounter;
     while (HighResolutionTimer::Counter() < sleepUntilCounter) {
     }
 }

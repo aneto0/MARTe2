@@ -70,6 +70,23 @@ StreamString::StreamString(const char8 * const initialisationString) :
     }
 }
 
+StreamString::StreamString(CCString initialisationString) :
+        BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
+    }
+
+    if (initialisationString.GetList()!= static_cast<const char8 *>(NULL)) {
+        if (!Set(initialisationString.GetList())) {
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
+        }
+    }
+}
+
 /*lint -e{1738} . Justification: StreamI is only an interface there is nothing to be copied. */
 StreamString::StreamString(const StreamString &toCopy) :
         BufferedStreamI() {

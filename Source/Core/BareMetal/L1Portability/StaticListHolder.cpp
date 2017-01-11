@@ -310,4 +310,15 @@ void* StaticListHolder::GetAllocatedMemory() {
     return reinterpret_cast<void *>(allocatedMemory_);
 }
 
+bool StaticListHolder::Set(const uint32 position,
+                           const void * const value) {
+    bool ret = (position < listSize_);
+    if (ret) {
+        uint32 index = (position * listElementSize_);
+        ret = MemoryOperationsHelper::Copy(&allocatedMemory_[index], value, listElementSize_);
+    }
+    return ret;
+
+}
+
 }

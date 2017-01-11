@@ -1,5 +1,5 @@
 /**
- * @file TemplateParameterVerificator.h
+ * @file TemplateParametersVerificator.h
  * @brief Header file for class TemplateParameterVerificator
  * @date 01/09/2015
  * @author Filippo Sartori

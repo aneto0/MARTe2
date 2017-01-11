@@ -36,6 +36,7 @@
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -90,7 +91,6 @@ bool ReferenceTest::TestBuildObjectConstructor() {
 }
 
 bool ReferenceTest::TestBuildFakeObjectConstructor() {
-
 
     //an object with this name is not registered!
     Reference buildObj("FakeObject");
@@ -156,13 +156,49 @@ bool ReferenceTest::TestDestructor() {
     return (buildObj.NumberOfReferences() == 0) && (!buildObj.IsValid());
 }
 
-//TODO
-bool ReferenceTest::TestInitialise() {
-    return true;
+bool ReferenceTest::TestInitialiseNoCreation() {
+    Reference intObjRef = Reference("IntegerObject");
+    ConfigurationDatabase cdb;
+    uint32 value = 1;
+    cdb.Write("var", value);
+    if (!intObjRef.Initialise(cdb, true)) {
+        return false;
+    }
+    ReferenceT<IntegerObject> test = intObjRef;
+    return test->GetVariable() == value;
 }
 
-bool ReferenceTest::TestRemoveReference() {
+bool ReferenceTest::TestInitialiseCreation() {
+    Reference intObjRef;
+    ConfigurationDatabase cdb;
+    uint32 value = 1;
+    cdb.Write("Class", "IntegerObject");
+    cdb.Write("var", value);
+    if (!intObjRef.Initialise(cdb, false)) {
+        return false;
+    }
+    ReferenceT<IntegerObject> test = intObjRef;
+    return test->GetVariable() == value;
+}
 
+bool ReferenceTest::TestInitialiseNoObject() {
+    Reference intObjRef;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("var", value);
+    return !intObjRef.Initialise(cdb, true);
+}
+
+bool ReferenceTest::TestInitialiseNoClassName(){
+    Reference intObjRef;
+    ConfigurationDatabase cdb;
+    int32 value = 1;
+    cdb.Write("var", value);
+    return !intObjRef.Initialise(cdb, false);
+}
+
+
+bool ReferenceTest::TestRemoveReference() {
 
     Reference intObjRef = Reference("IntegerObject");
 
@@ -470,7 +506,6 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 }
 
 bool ReferenceTest::TestRightInherithance() {
-
 
     Reference integer = Reference("IntegerObject");
 

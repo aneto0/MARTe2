@@ -286,7 +286,7 @@ bool BasicFile::Read(char8* const output,
 
     if (IsOpen() && CanRead() /* && size >= 0 */) {
         //Reads the data setting an infinite timeout
-        ok = Read(output, size, TTInfiniteWait);
+        ok = BasicFile::Read(output, size, TTInfiniteWait);
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: Read()");
         }
@@ -388,7 +388,7 @@ bool BasicFile::Write(const char8 * const input,
 
     if (IsOpen() && CanWrite() /* && size >= 0 */) {
         //Writes the data setting an infinite timeout
-        ok = Write(input, size, TTInfiniteWait);
+        ok = BasicFile::Write(input, size, TTInfiniteWait);
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: Write()");
         }

@@ -36,16 +36,50 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
-
-static ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
-
+//static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
+//static ClassRegistryItemT<Object> myItem(testClassProperties);
 ClassProperties testClassPropertiesLongName(
         "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
         "", "V");
 
 //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
-ClassRegistryItem myItemLongName = ClassRegistryItem(testClassPropertiesLongName, NULL);
+//ClassRegistryItemT<Object> myItemLongName(testClassPropertiesLongName);
+
+class DummyClassRegistryDatabase: public ClassRegistryDatabase {
+public:
+
+
+    DummyClassRegistryDatabase() {
+
+    }
+    virtual ~DummyClassRegistryDatabase() {
+        CleanUp();
+    }
+
+};
+
+
+class DummyClassRegistryItem: public ClassRegistryItem {
+public:
+
+
+    DummyClassRegistryItem(ClassProperties &cp):ClassRegistryItem(cp) {
+
+    }
+    virtual ~DummyClassRegistryItem() {
+    }
+
+};
+
+
+class ObjToCleanUp: public Object {
+    ObjToCleanUp() {
+
+    }
+    virtual ~ObjToCleanUp() {
+
+    }
+};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -86,19 +120,6 @@ bool ClassRegistryDatabaseTest::TestInstance() {
     return ok;
 }
 
-bool ClassRegistryDatabaseTest::TestAdd() {
-
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-
-
-    const ClassRegistryItem *ret = db->Find("TestAdd");
-
-    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "TestAdd") == 0);
-    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "V") == 0);
-
-    return retVal;
-}
 
 bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
                                             const MARTe::char8* className,
@@ -118,10 +139,9 @@ bool ClassRegistryDatabaseTest::TestFind() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    bool found = (db->Find("TestAdd") != NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
+    bool found = (db->Find("IntegerObject") != NULL);
+//    //These are deleted by the the ClassRegistryDatabase destructor
     return found;
-
 }
 
 bool ClassRegistryDatabaseTest::TestFindLongName() {
@@ -129,7 +149,6 @@ bool ClassRegistryDatabaseTest::TestFindLongName() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     const char *name =
             "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
-
 
     return (db->Find(name) != NULL);
 
@@ -148,18 +167,18 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    return db->GetSize()>0u;
+    return db->GetSize() > 0u;
 }
 
-bool ClassRegistryDatabaseTest::TestPeek() {
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    const ClassRegistryItem *testItem = db->Find("TestAdd");
-
-    const ClassRegistryItem *peekedItem = db->Peek(testItem->GetClassProperties()->GetUniqueIdentifier());
-    return (peekedItem == testItem);
-
-}
+//bool ClassRegistryDatabaseTest::TestPeek() {
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//
+//    const ClassRegistryItem *testItem = db->Find("TestAdd");
+//
+//    const ClassRegistryItem *peekedItem = db->Peek(testItem->GetClassProperties()->GetUniqueIdentifier());
+//    return (peekedItem == testItem);
+//
+//}
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
@@ -248,4 +267,17 @@ bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
 bool ClassRegistryDatabaseTest::TestGetClassName() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     return (StringHelper::Compare(db->GetClassName(), "ClassRegistryDatabase") == 0);
+}
+
+bool ClassRegistryDatabaseTest::TestCleanUp() {
+    DummyClassRegistryDatabase testDB;
+    ClassProperties cp;
+    ClassRegistryItem* p = new DummyClassRegistryItem(cp);
+    testDB.Add(p);
+    if (testDB.GetSize() != 1) {
+        return false;
+    }
+
+    testDB.CleanUp();
+    return testDB.GetSize() == 0;
 }

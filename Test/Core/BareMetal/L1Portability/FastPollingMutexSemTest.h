@@ -68,11 +68,22 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests the FastPollingMutexSem from external spin-lock
+     * @return true if the semaphore is initialized as expected.
+     */
+    bool TestConstructorFromExternal();
+
+    /**
      * @brief Tests the FastPollingMutexSem::Create function.
      * @param[in] locked is the desired initial state: true = locked, false = unlocked.
      * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
      */
     bool TestCreate(bool locked);
+
+    /**
+     * @see TestCreate with FastPollingMutexSem initalised by external spin-lock.
+     */
+    bool TestCreateExternal(bool locked);
 
     /**
      * @brief Tests the FastPollingMutexSem::FastLock function.
@@ -85,6 +96,14 @@ public:
      */
     bool TestFastLock(int32 nOfThreads,
                       TimeoutType timeout);
+
+
+    /**
+     * @see TestFastLock with FastPollingMutexSem initalised by external spin-lock.
+     */
+    bool TestFastLockExternal(int32 nOfThreads,
+                      TimeoutType timeout);
+
 
     /**
      * @brief Tests the FastPollingMutexSem::FastUnLock function.
@@ -100,6 +119,13 @@ public:
                         TimeoutType timeout);
 
     /**
+     * @see TestFastUnLock with FastPollingMutexSem initalised by external spin-lock.
+     */
+    bool TestFastUnLockExternal(int32 nOfThreads,
+                        TimeoutType timeout);
+
+
+    /**
      * @brief Tests the FastPollingMutexSem::FastTryLock function.
      * @details This test spawns nOfThreads threads which compete for a shared resource variable.
      * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
@@ -109,6 +135,12 @@ public:
      * it is demonstrated that a second consecutive call to FastPollingMutexSem::FastTryLock returns false.
      */
     bool TestFastTryLock(int32 nOfThreads);
+
+    /**
+     * @see TestFastTryLock with FastPollingMutexSem initalised by external spin-lock.
+     */
+    bool TestFastTryLockExternal(int32 nOfThreads);
+
 
     /**
      * @brief Tests the FastPollingMutexSem::Lock function and checks that the error code is correctly set.
@@ -140,6 +172,16 @@ private:
     FastPollingMutexSem testMutex;
 
     /**
+     * External flag
+     */
+    volatile int32 extFlag;
+
+    /**
+     * Semaphore initialised by external spin-lock variable.
+     */
+    FastPollingMutexSem testMutexExt;
+
+    /**
      * timeout to be used for the locking test
      */
     TimeoutType testMutexTimeout;
@@ -163,6 +205,11 @@ private:
      * To be used by the threading callback functions to report an error
      */
     bool failed;
+
+    /**
+     * To use the semaphore holding an external spin-lock
+     */
+    bool external;
 
     /**
      * Helper semaphore to synchronize the launching of concurrent threads

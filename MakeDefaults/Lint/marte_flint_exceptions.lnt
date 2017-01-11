@@ -18,6 +18,21 @@
 -estring(686,"*CPU_ISSET*")
 -estring(1960,"*__pthread_cleanup_class*")
 
+/*
+ * In the macro CLASS_REGISTER_DECLARATION we cannot compare against the actual size of class.
+ * The reason is that if the final class inherits from Object and does not use the registration 
+ * CLASS_REGISTER and CLASS_REGISTER_DECLARATION macros (which is a valid use case), then on the 
+ * operator new and operator delete the size of the final class being created/deleted will be compared
+ * against the size of Object which is obviously wrong.  
+ */
+-estring(1531,"*")
+
+/*
+ * CLASS_REGISTER_DECLARATION an instantiation of the loader (which indeed has no nonstatic members) needs to 
+ * be performed in order to register the class methods. This is a warning with minor impact (see manual). 
+ */
+-estring(1502,"*ClassMethodInterfaceMapperLoader*")
+
 /* 
  * Do not lint operating system files
  * Remember that Flexelint uses the label of "library" header to 
@@ -198,8 +213,14 @@
 -esym(1960, MARTe::ReferenceT<<1>>::Init*)
 -esym(1960, MARTe::ReferenceT<<1>>::RemoveReference*)
 -esym(1960, MARTe::BitBoolean*::operator=*)
--esym(1960, MARTe::TimeStamp::*)
-
+-esym(1960, MARTe::ErrorManagement::ErrorType::ClearError*)
+-esym(1960, MARTe::ErrorManagement::ErrorType::SetError*)
+-esym(1960, MARTe::TimeStamp::SetDay*)
+-esym(1960, MARTe::TimeStamp::SetHour*)
+-esym(1960, MARTe::TimeStamp::SetMinutes*)
+-esym(1960, MARTe::TimeStamp::SetMonth*)
+-esym(1960, MARTe::TimeStamp::SetSeconds*)
+-esym(1960, MARTe::TimeStamp::SetYear*)
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
@@ -227,6 +248,8 @@
   * It is as if it was a member function of the class.
   */
  -esym(459, *BuildFn_*)
+ -esym(459, *RTThreadRoutine*)
+ -esym(459, *ServiceThreadLauncher*)
  
  /*
   * Rule 14-7-1
@@ -274,6 +297,7 @@
   * files can be included in multiple unit files.
   */
 -esym(9107, MARTe::ReferenceT*)
+-esym(9107, MARTe::EmbeddedServiceMethodBinderT*)
 
 /*
  * Rule flexelint 1793
@@ -290,9 +314,10 @@
 
 /*
  * Rule 0-1-8
- * Justification: this function change the internal private attributes.
+ * Justification: these function change the internal private attributes.
  */
--estring(1960,"*MARTe::DoubleInteger<<1>>*") 
+-estring(1960,"*MARTe::DoubleInteger<<1>>*")
+-estring(1960,"*MARTe::LinkedListHolderT<<1>,<2>>*")  
 
 /*
  * Rule 0-1-8

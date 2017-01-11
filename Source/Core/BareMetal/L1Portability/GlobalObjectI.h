@@ -63,9 +63,16 @@ public:
 
     /**
      * @brief Guarantees that the class is instantiated in the StandardHeap.
+     * @param[in] size is the memory size to be allocated.
      * @return a new instance of the class allocated in the StandardHeap.
      */
     static void * operator new(const osulong size);
+
+    /**
+     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
+     * @param[in] p is the pointer to be freed.
+     */
+    static void operator delete(void *p);
 };
 
 }

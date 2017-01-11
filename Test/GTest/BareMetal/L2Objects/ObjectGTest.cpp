@@ -106,3 +106,39 @@ TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
+
+TEST(ObjectGTest,TestExportData) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestExportData());
+}
+
+TEST(ObjectGTest,TestExportMetadata) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestExportMetadata());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_InvalidMethod) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_InvalidMethod());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_StructuredDataI) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_StructuredDataI());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_ReferenceContainer) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_ReferenceContainer());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_StreamI) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_StreamI());
+}
+

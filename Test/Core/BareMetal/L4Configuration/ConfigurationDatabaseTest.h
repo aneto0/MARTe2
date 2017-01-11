@@ -108,7 +108,7 @@ public:
     /**
      * @brief Tests the Read function with a valid name
      */
-    template <typename T>
+    template<typename T>
     bool TestRead_Valid(T value);
 
     /**
@@ -139,7 +139,7 @@ public:
     /**
      * @brief Tests the Write function with a valid name
      */
-    template <typename T>
+    template<typename T>
     bool TestWrite_Valid(T valie);
 
     /**
@@ -165,7 +165,7 @@ public:
     /**
      * @brief Tests the GetType function with a valid name
      */
-    template <typename T>
+    template<typename T>
     bool TestGetType_Valid(T value);
 
     /**
@@ -202,11 +202,26 @@ public:
      * @brief Tests the Unlock function.
      */
     bool TestUnlock();
+
+    /**
+     * @brief Tests the Initialise function
+     */
+    bool TestInitialise();
+
+    /**
+     * @brief Tests the CleanUp function
+     */
+    bool TestCleanUp();
+
+    /**
+     * @brief Tests the GetCurrentNode function
+     */
+    bool TestGetCurrentNode();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-template <typename T>
+template<typename T>
 bool ConfigurationDatabaseTest::TestWrite_Valid(T value) {
     MARTe::ConfigurationDatabase cdb;
     bool ok = cdb.CreateAbsolute("A.B.C");
@@ -217,7 +232,7 @@ bool ConfigurationDatabaseTest::TestWrite_Valid(T value) {
     return ok;
 }
 
-template <typename T>
+template<typename T>
 bool ConfigurationDatabaseTest::TestRead_Valid(T value) {
     MARTe::ConfigurationDatabase cdb;
     bool ok = cdb.CreateAbsolute("A.B.C");
@@ -228,7 +243,7 @@ bool ConfigurationDatabaseTest::TestRead_Valid(T value) {
     return ok;
 }
 
-template <typename T>
+template<typename T>
 bool ConfigurationDatabaseTest::TestGetType_Valid(T value) {
     MARTe::ConfigurationDatabase cdb;
     bool ok = cdb.CreateAbsolute("A.B.C");

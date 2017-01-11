@@ -35,17 +35,23 @@
 #include "GeneralDefinitions.h"
 #include "ExceptionHandler.h"
 #include "ProcessorType.h"
-#include "Threads.h"
+
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+/**
+ * Forward declaration of a thread information database.
+ */
+class ThreadInformation;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-/**
- * Forward declaration of a thread information database.
- */
-class ThreadInformation;
 
 /**
  * Definition of the thread callback function.

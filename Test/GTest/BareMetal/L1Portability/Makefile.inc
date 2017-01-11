@@ -28,12 +28,14 @@ OBJSX=  AtomicGTest.x \
 		EndianityGTest.x \
 		ErrorManagementGTest.x \
 		FastMathGTest.x \
+		FastPollingEventSemGTest.x \
 		FastPollingMutexSemGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
 		HighResolutionTimerGTest.x \
 		LoadableLibraryGTest.x \
+		MemoryAreaGTest.x \
 		MemoryCheckGTest.x\
 		MemoryOperationsHelperGTest.x\
 		ProcessorTypeGTest.x \

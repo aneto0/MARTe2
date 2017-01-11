@@ -15,11 +15,13 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class Introspection (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -41,6 +43,11 @@
 
 namespace MARTe {
 
+Introspection::Introspection() :
+        fields() {
+    classSize = 0u;
+}
+
 Introspection::Introspection(const IntrospectionEntry ** const introspectionListIn,
                              const uint32 classSizeIn) :
         fields(introspectionListIn) {
@@ -55,7 +62,7 @@ uint32 Introspection::GetNumberOfMembers() const {
     return fields.GetSize();
 }
 
-uint32 Introspection::GetClassSize() const{
+uint32 Introspection::GetClassSize() const {
     return classSize;
 }
 

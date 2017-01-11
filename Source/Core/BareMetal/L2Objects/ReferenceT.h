@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ReferenceT
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,19 +31,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
+ * Reference to a constant T::Object.
+ */
+#define ConstReferenceT(x) ReferenceT<const x>
+
+/**
  * @brief Template version of the shared pointer implementation (see Reference).
- * @tparam T the base type of the objects referenced by instances of this class
+ * @param T the base type of the objects referenced by instances of this class
  */
 template<typename T>
-class ReferenceT: public Reference {
+class DLL_API ReferenceT: public Reference {
 public:
 
     /**
@@ -89,7 +96,7 @@ public:
                HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object (see RemoveReference).
      */
     virtual ~ReferenceT();
 
@@ -139,11 +146,11 @@ public:
     /**
      * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
-     * @param[in] createOnly if true the object Initialise method is not called.
+     * @param[in] initOnly if true the object is supposed to be already created.
      * @return true if the object was successfully created and initialized.
      */
-    virtual bool Initialise(const StructuredDataI &data,
-    const bool &createOnly);
+    virtual bool Initialise(StructuredDataI &data,
+                            const bool &initOnly);
 
 private:
 
@@ -162,18 +169,52 @@ private:
      * The pointer to the referenced object.
      */
     T* typeTObjectPointer;
-
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<typename T>
+void ReferenceT<T>::Init() {
+    objectPointer = static_cast<Object *>(NULL);
+    typeTObjectPointer = static_cast<T *>(NULL);
+}
+
 /*lint -e{1566} Init function initializes members */
 template<typename T>
 ReferenceT<T>::ReferenceT(const Reference& sourceReference) :
         Reference(sourceReference) {
     //use operator =
     (*this) = sourceReference;
+}
+
+/*lint -e{1566} Init function initializes members */
+template<typename T>
+ReferenceT<T>::ReferenceT() :
+        Reference() {
+    Init();
+}
+
+/*lint -e{1566} Init function initializes members */
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
+template<typename T>
+ReferenceT<T>::ReferenceT(HeapI* const heap) :
+        Reference() {
+    Init();
+    T *p = new (heap) T;
+    if (p != NULL) {
+        Object *obj;
+        obj = dynamic_cast<Object *>(p);
+        if (obj != NULL) {
+            Reference::operator=(obj);
+            typeTObjectPointer = p;
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
+        }
+    }
 }
 
 template<typename T>
@@ -205,9 +246,6 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         if (typeTObjectPointer == NULL) {
             RemoveReference();
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
-        }
     }
 
     return *this;
@@ -224,53 +262,21 @@ ReferenceT<T>* ReferenceT<T>::operator&() {
 }
 
 template<typename T>
-bool ReferenceT<T>::Initialise(const StructuredDataI &data,
-                               const bool &createOnly) {
-    Reference ref;
+bool ReferenceT<T>::Initialise(StructuredDataI &data,
+                               const bool &initOnly) {
     bool ok = true;
-    if (ref.Initialise(data, createOnly)) {
-        *this = ref;
-        ok = IsValid();
+    if (Reference::Initialise(data, initOnly)) {
+        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
+        if (typeTObjectPointer == NULL) {
+            Reference::RemoveReference();
+            typeTObjectPointer = static_cast<T *>(NULL);
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Failed Reference::Initialise()");
         ok = false;
     }
     return ok;
-}
-
-template<typename T>
-void ReferenceT<T>::Init() {
-    objectPointer = static_cast<Object *>(NULL);
-    typeTObjectPointer = static_cast<T *>(NULL);
-}
-
-/*lint -e{1566} Init function initializes members */
-template<typename T>
-ReferenceT<T>::ReferenceT() :
-        Reference() {
-    Init();
-}
-
-/*lint -e{1566} Init function initializes members */
-/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
- * i.e. downcasting is necessary.*/
-template<typename T>
-ReferenceT<T>::ReferenceT(HeapI* const heap) :
-        Reference() {
-    Init();
-    T *p = new (heap) T;
-    if (p != NULL) {
-        Object *obj;
-        obj = dynamic_cast<Object *>(p);
-        if (obj != NULL) {
-            Reference::operator=(obj);
-            typeTObjectPointer = p;
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
-        }
-    }
 }
 
 /*lint -e{1566} Init function initializes members */
@@ -308,8 +314,6 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
-        }
-        else {
             REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }

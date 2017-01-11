@@ -354,7 +354,8 @@ bool BasicTCPSocket::Read(char8* const output,
         else {
             bool ewouldblock = (sock_errno() == EWOULDBLOCK);
             bool eagain = (sock_errno() == EAGAIN);
-            if ((ewouldblock || eagain) && (IsBlocking())) {
+            bool blocking = IsBlocking();
+            if ((ewouldblock || eagain) && (blocking)) {
                 REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in recv()");
             }
             else {
@@ -383,7 +384,8 @@ bool BasicTCPSocket::Write(const char8* const input,
         else {
             bool ewouldblock = (sock_errno() == EWOULDBLOCK);
             bool eagain = (sock_errno() == EAGAIN);
-            if ((ewouldblock || eagain) && (IsBlocking())) {
+            bool blocking = IsBlocking();
+            if ((ewouldblock || eagain) && (blocking)) {
                 REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in send()");
             }
             else {
@@ -417,7 +419,7 @@ bool BasicTCPSocket::Read(char8* const output,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeout");
             }
             else {
-                if (Read(output, sizeToRead)) {
+                if (BasicTCPSocket::Read(output, sizeToRead)) {
                     size = sizeToRead;
                 }
             }
@@ -429,7 +431,7 @@ bool BasicTCPSocket::Read(char8* const output,
         }
 
         else {
-            if (Read(output, sizeToRead)) {
+            if (BasicTCPSocket::Read(output, sizeToRead)) {
                 size = sizeToRead;
             }
         }
@@ -459,7 +461,7 @@ bool BasicTCPSocket::Write(const char8* const input,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeoutVal");
             }
             else {
-                if (Write(input, sizeToWrite)) {
+                if (BasicTCPSocket::Write(input, sizeToWrite)) {
                     size = sizeToWrite;
                 }
             }
@@ -470,7 +472,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             }
         }
         else {
-            if (Write(input, sizeToWrite)) {
+            if (BasicTCPSocket::Write(input, sizeToWrite)) {
                 size = sizeToWrite;
             }
         }

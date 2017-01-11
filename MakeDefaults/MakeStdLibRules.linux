@@ -48,14 +48,14 @@ $(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	rm -f createLibrary
 	
 
-$(BUILD_DIR)/%.so : $(OBJS)
-	touch dummy.cpp	
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o	
-	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $@
+$(BUILD_DIR)/%.so : $(OBJS) createLibrary
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm dummy.*
+	rm -f createLibrary
+	
 
 %.ifo :  %.h
 	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
@@ -75,7 +75,7 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 	
 

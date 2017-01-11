@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class IntrospectionEntry
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -43,16 +43,28 @@ namespace MARTe {
 /**
  * @brief Describes one member of a class or structure
  */
-class IntrospectionEntry {
+class DLL_API IntrospectionEntry {
 
 public:
+
+    /**
+     * @brief Default constructor
+     * @post
+     *   GetMemberName() == NULL &&
+     *   GetMemberTypeName() == NULL &&
+     *   GetMemberModifiers() == NULL &&
+     *   GetMemberAttributes() == NULL &&
+     *   GetMemberSize() == 0 &&
+     *   GetMemberByteOffset() == 0
+     */
+    IntrospectionEntry();
 
     /**
      * @brief Constructor.
      * @param[in] memberNameIn is the member name.
      * @param[in] typeNameIn is the member type name.
-     * @param[in] modifiersIn specifies the member modifiers (@see GetMemberModifiers).
-     * @param[in] attributesIn specifies the member attributes (@see GetMemberAttributes).
+     * @param[in] modifiersIn specifies the member modifiers (see GetMemberModifiers).
+     * @param[in] attributesIn specifies the member attributes (see GetMemberAttributes).
      * @param[in] sizeIn is the size of the member.
      * @param[in] byteOffsetIn is the relative address of the member with respect to the class beginning pointer.
      * @post
@@ -81,7 +93,6 @@ public:
      * @return the member type name.
      */
     const char8 *GetMemberTypeName() const;
-
 
     /**
      * @brief Retrieves the TypeDescriptor associated to the member type.
@@ -112,7 +123,6 @@ public:
      *   @return the member modifiers.
      */
     const char8 * GetMemberModifiers() const;
-
 
     /**
      * @brief Retrieves the member attributes.

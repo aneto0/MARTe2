@@ -68,11 +68,8 @@ public:
      * @details This constructor binds the object to a memory area in
      * read/write mode. It also assumes that the area of memory is empty
      * and therefore the stream's size is 0.
-     * @param[in] buffer is the char8 pointer of the preallocated read/write memory.
+     * @param[in] bufferIn is the char8 pointer of the preallocated read/write memory.
      * @param[in] bufferSize is the usable size of the buffer.
-     * @warning The buffer pointer is an input parameter to the constructor,
-     * but the pointee will be accessed for reading and writing by the other
-     * methods of the class.
      * @pre
      *   bufferIn != NULL
      *   bufferSize > 0
@@ -82,6 +79,9 @@ public:
      *   CanSeek() &&
      *   Position() == 0 &&
      *   Size() == 0
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed for reading and writing by the other
+     * methods of the class.
      */
     StreamMemoryReference(char8 * const bufferIn,
                           const uint32 bufferSize);
@@ -91,11 +91,8 @@ public:
      * @details This constructor binds the object to a memory area in
      * read only mode. It also assumes that the area of memory is full
      * and therefore the stream's size is bufferSize.
-     * @param[in] buffer is the const char8 pointer to a preallocated read only memory.
+     * @param[in] bufferIn is the const char8 pointer to a preallocated read only memory.
      * @param[in] bufferSize is the usable size of the buffer.
-     * @warning The buffer pointer is an input parameter to the constructor,
-     * but the pointee will be accessed (read only) by the other methods of
-     * the class.
      * @pre
      *   bufferIn != NULL
      *   bufferSize > 0
@@ -105,6 +102,9 @@ public:
      *   CanSeek() &&
      *   Position() == 0 &&
      *   Size() == bufferSize
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed (read only) by the other methods of
+     * the class.
      */
     StreamMemoryReference(const char8 * const bufferIn,
                           const uint32 bufferSize);
@@ -234,7 +234,7 @@ public:
      * write access.
      * @return The pointer to the internal buffer.
      */
-    inline char8 *BufferReference() const;
+    inline char8 *BufferReference();
 
     /**
      * @brief Gets a pointer to the tail of the internal buffer with read only
@@ -278,14 +278,21 @@ const char8 *StreamMemoryReference::Buffer() const {
     return buffer.Buffer();
 }
 
-char8 *StreamMemoryReference::BufferReference() const {
+char8 *StreamMemoryReference::BufferReference() {
     return buffer.BufferReference();
 }
 
 const char8 *StreamMemoryReference::Tail(const uint32 ix) const {
+    const char8* result;
     bool ok = (ix <= (buffer.UsedSize() - 1u));
-
-    return (ok) ? (&(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u])) : static_cast<const char8 *>(NULL);
+    if (ok) {
+        const char8* bufref = buffer.Buffer();
+        result = &(bufref[(buffer.UsedSize() - ix) - 1u]);
+    }
+    else {
+        result = static_cast<const char8 *>(NULL);
+    }
+    return result;
 }
 
 }

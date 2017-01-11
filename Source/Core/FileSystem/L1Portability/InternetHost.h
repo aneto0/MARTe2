@@ -145,7 +145,7 @@ namespace MARTe {
          * @brief Returns access to the low-level handle.
          * @return a pointer to the handle of this structure containing
          * the InternetHostCore information.
-         * @warning The handle type definition is specific to the operating system.
+         * @remark The handle type definition is specific to the operating system.
          */
         InternetHostCore *GetInternetHost();
 

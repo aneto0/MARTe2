@@ -119,6 +119,7 @@ bool HeapManagerTest::TestReallocInvalidPointer() {
     ptr1 = Realloc(invalidptr, size * sizeof(int32));
     retVal = (ptr1 != NULL);
     retVal &= (invalidptr == ptr1);
+    Free(ptr);
     Free(ptr1);
     return retVal;
 }
@@ -343,6 +344,7 @@ bool HeapManagerTest::TestDuplicateNoAllocationMemory() {
     const char8 *s = "hello";
     ptr = Duplicate(s);
     retVal = (StringHelper::Compare(s, (char*) (ptr)) == 0);
+    Free(ptr);
     return retVal;
 }
 

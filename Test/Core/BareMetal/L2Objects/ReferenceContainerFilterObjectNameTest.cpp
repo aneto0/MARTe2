@@ -150,22 +150,6 @@ bool ReferenceContainerFilterObjectNameTest::TestCopyConstructor(int32 occurrenc
     return true;
 }
 
-bool ReferenceContainerFilterObjectNameTest::TestDestructor() {
-
-    ReferenceContainerFilterObjectName filter(1, 0, "Hello");
-// checks if the string is created on heap
-    Reference testRef("Object");
-
-    ReferenceContainer fakeTree;
-    if (!filter.Test(fakeTree, testRef)) {
-        return false;
-    }
-
-    filter.~ReferenceContainerFilterObjectName();
-
-    return !filter.Test(fakeTree, testRef);
-
-}
 
 bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previouslyFound,
                                                       const char8 *toSearch,

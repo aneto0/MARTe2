@@ -49,7 +49,7 @@ TEST(TypeDescriptorGTest,TestConstructorUint) {
 
 TEST(TypeDescriptorGTest,TestConstructorBasicType) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, CCString));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, BT_CCString));
 }
 
 TEST(TypeDescriptorGTest,TestConstructorObject) {

@@ -45,11 +45,6 @@ TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestAdd) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
-}
-
 TEST(ClassRegistryDatabaseGTest,TestFind) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind());
@@ -75,10 +70,10 @@ TEST(ClassRegistryDatabaseGTest,TestGetSize) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestPeek) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
-}
+//TEST(ClassRegistryDatabaseGTest,TestPeek) {
+//    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+//    ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
+//}
 
 TEST(ClassRegistryDatabaseGTest,TestCreateInstances) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
@@ -98,4 +93,10 @@ TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
 TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
+}
+
+
+TEST(ClassRegistryDatabaseGTest,TestCleanUp) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestCleanUp());
 }

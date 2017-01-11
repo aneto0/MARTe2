@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Vector.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -126,7 +125,8 @@ public:
     ~Matrix();
 
     /**
-     * @brief Gets the number of columns.
+     * @brief Gets the number of columns.==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
+     *
      * @return the number of columns.
      */
     inline uint32 GetNumberOfColumns() const;
@@ -142,7 +142,18 @@ public:
      * @param[in] rows The row to retrieve.
      * @return the vector associated to the specified row.
      */
-    Vector<T> operator [](uint32 rows);
+    Vector<T> operator[](uint32 rows);
+
+    /**
+     * @brief Returns a reference to a cell indexed by row and column.
+     * @param[in] row is the index for the row
+     * @param[in] col is the index for the column
+     * @pre
+     *   row >= 0 && row < GetNumberOfRows() &&
+     *   col >= 0 && col < GetNumberOfColumns()
+     * @return a T& which can be used for reading/writing the cell.
+     */
+    T& operator()(const uint32 row, const uint32 col);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
@@ -172,7 +183,8 @@ public:
                  Matrix<T> &result) const;
 
     /**
-     * @brief Retrieves the sub matrix between the row and columns ranges specified.
+     * @brief Retrieves the sub matrix between the row and columns ranges ==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
+     * specified.
      * @param[in] beginRow is the top boundary of the block.
      * @param[in] endRow is the bottom boundary of the block.
      * @param[in] beginColumn is the left boundary of the block.
@@ -352,7 +364,7 @@ inline uint32 Matrix<T>::GetNumberOfRows() const {
 }
 
 template<typename T>
-Vector<T> Matrix<T>::operator [](uint32 element) {
+Vector<T> Matrix<T>::operator[](uint32 element) {
     Vector<T> vec;
 
     if (!staticDeclared) {
@@ -364,6 +376,21 @@ Vector<T> Matrix<T>::operator [](uint32 element) {
         vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
     }
     return vec;
+}
+
+template<typename T>
+T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
+    T* result;
+    if (!staticDeclared) {
+        T** mat = reinterpret_cast<T**>(dataPointer);
+        result = &mat[row][col];
+    }
+    else {
+        T* mat = reinterpret_cast<T*>(dataPointer);
+        T* line = &mat[row*numberOfColumns];
+        result = &line[col];
+    }
+    return (*result);
 }
 
 template<typename T>
@@ -392,7 +419,7 @@ bool Matrix<T>::Product(Matrix<T> &factor,
             temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
         }
         for (uint32 i = 0u; i < numberOfRows; i++) {
-            for (uint32 j = 0u; j < numberOfColumns; j++) {
+            for (uint32 j = 0u; j < factor.numberOfColumns; j++) {
                 result[i][j] = static_cast<T>(0);
                 for (uint32 k = 0u; k < numberOfColumns; k++) {
                     result[i][j] += temp[i][k] * factor[k][j];

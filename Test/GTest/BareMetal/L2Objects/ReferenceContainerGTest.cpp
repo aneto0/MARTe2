@@ -52,9 +52,24 @@ TEST(ReferenceContainerGTest,TestConstructor) {
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
-TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+TEST(ReferenceContainerGTest,TestCopyConstructor) {
     ReferenceContainerTest referenceContainerTest;
-    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
+    ASSERT_TRUE(referenceContainerTest.TestCopyConstructor());
+}
+
+TEST(ReferenceContainerGTest,TestOperatorEqual) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestOperatorEqual());
+}
+
+//TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+//    ReferenceContainerTest referenceContainerTest;
+//    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
+//}
+
+TEST(ReferenceContainerGTest,TestGetClassProperties) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestGetClassProperties());
 }
 
 TEST(ReferenceContainerGTest,TestGetTimeoutInfinite) {
@@ -80,11 +95,11 @@ TEST(ReferenceContainerGTest,TestSetTimeoutFinite) {
 /***********************************
  * TestFindFirstOccurrenceAlways   *
  ***********************************/
-TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
+/*TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
-}
+}*/
 
 TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
@@ -107,6 +122,15 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject)
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
 
+
+/*****************************
+ * TestFind  *
+ *****************************/
+
+TEST(ReferenceContainerGTest,TestFind) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFind());
+}
 /*****************************
  * TestFindFirstOccurrence   *
  *****************************/
@@ -392,10 +416,21 @@ TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
 }
 
+TEST(ReferenceContainerGTest,TestFindWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindWithPath());
+}
+
 
 /***************
  * TestInsert  *
  ***************/
+
+TEST(ReferenceContainerGTest,TestInsertWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertWithPath());
+}
+
 TEST(ReferenceContainerGTest,TestInsertAtEnd) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());
@@ -456,4 +491,37 @@ TEST(ReferenceContainerGTest,TestIsContainer) {
 TEST(ReferenceContainerGTest,TestDelete) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDelete());
+}
+
+TEST(ReferenceContainerGTest,TestDeleteWithPath) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestDeleteWithPath());
+}
+
+/*******************
+ * TestInitialise *
+ *******************/
+
+TEST(ReferenceContainerGTest,TestInitialise) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInitialise());
+}
+
+/*******************
+ * TestPurge *
+ *******************/
+
+TEST(ReferenceContainerGTest,TestPurge) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestPurge());
+}
+
+TEST(ReferenceContainerGTest,TestPurge_Shared) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestPurge_Shared());
+}
+
+TEST(ReferenceContainerGTest,TestExportData) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestExportData());
 }

@@ -35,6 +35,7 @@
 
 #include "DirectoryScanner.h"
 #include "Directory.h"
+#include "GlobalObjectsDatabase.h"
 #include "StringHelper.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
@@ -210,7 +211,12 @@ bool DirectoryScanner::Scan(const char8 * const path,
                     size += entry->GetSize();
                 }
 
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist[n]));
                 n--;
+            }
+            if (namelist != NULL_PTR(struct dirent **)) {
+                /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist));
             }
         }
     }

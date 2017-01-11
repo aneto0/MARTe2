@@ -24,12 +24,19 @@
 
 
 OBJSX=  AnyTypeGTest.x \
+		ClassMethodCallerGTest.x \
+		ClassMethodCallerTGTest.x \
+		ClassMethodInterfaceMapperGTest.x \
+		ClassMethodsRegistryItemGTest.x \
 		ClassPropertiesGTest.x \
 		ClassRegistryDatabaseGTest.x \
 		ClassRegistryItemGTest.x \
 		IntrospectionEntryGTest.x\
 		IntrospectionGTest.x\
+		ObjectBuilderGTest.x \
+		ObjectBuilderTGTest.x \
 		ObjectGTest.x \
+		ObjectRegistryDatabaseGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
 		ReferenceContainerFilterReferencesGTest.x \
 		ReferenceContainerGTest.x \

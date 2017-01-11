@@ -69,7 +69,7 @@ struct ErrorInformation {
     /**
      *  High resolution timer ticks.
      */
-    int64 hrtTime;
+    uint64 hrtTime;
 
     /**
      * The error file name.

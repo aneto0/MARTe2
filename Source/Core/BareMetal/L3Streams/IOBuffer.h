@@ -231,7 +231,7 @@ public:
      * @brief Gets the pointer at the beginning of the buffer in read-write mode.
      * @return the pointer at the beginning of the buffer.
      */
-    inline char8 *BufferReference() const;
+    inline char8 *BufferReference();
 
     /**
      * @brief Gets the allocation granularity
@@ -335,7 +335,7 @@ public:
 
     /*---------------------------------------------------------------------------*/
 
-    /*
+    /**
      * @brief The function called by all Printf operations.
      * @details This function read the format, builds the related format
      * descriptor and then calls the PrintToStream function passing the
@@ -396,6 +396,7 @@ public:
      *                         is terminated if not empty.
      * @param[out] outputBuffer is the output buffer.
      * @param[in] terminator is a list of terminator characters.
+     * @param[out] saveTerminator is the found terminator in return.
      * @param[in] skipCharacters is a list of characters to be skipped.
      * @return false if no data read, true otherwise.
      * @return true if some data was read before any error or file termination.
@@ -544,7 +545,7 @@ const char8 *IOBuffer::Buffer() const {
     return internalBuffer.Buffer();
 }
 
-char8 *IOBuffer::BufferReference() const {
+char8 *IOBuffer::BufferReference() {
     return internalBuffer.BufferReference();
 }
 

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONFIGURATION_DATABASE_H_
-#define CONFIGURATION_DATABASE_H_
+#ifndef STRUCTURED_DATA_I_H_
+#define STRUCTURED_DATA_I_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,14 +31,23 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "AnyType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+class Reference;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class Reference;
+
 /**
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,
@@ -63,13 +72,14 @@ class Reference;
  * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
  * Create operation was performed).
  */
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API StructuredDataI {
 public:
+
     /**
-     * Default destructor. NOOP.
+     * @brief Destructor.
      */
-    virtual ~StructuredDataI() {
-    }
+    virtual ~StructuredDataI();
 
     /**
      * @brief Reads a previously stored AnyType. The node with this name has to be a child of the current node.
@@ -86,7 +96,7 @@ public:
     /**
      * @brief Gets the type of a previously stored AnyType.
      * @param[in] name the name of the leaf used to store the AnyType \a value.
-     * @return the type of the stored AnyType or VoidType if this does not exist.
+     * @return the type of the stored AnyType or VoidType if this \a name does not exist.
      */
     virtual AnyType GetType(const char8 * const name) = 0;
 
@@ -106,7 +116,7 @@ public:
     /**
      * @brief Copies the content of the current node to the provided destination.
      * @details A deep copy of the contents is recursively performed.
-     * @param[in] destination where the database will be copied to.
+     * @param[out] destination where the database will be copied to.
      * @return true if the copy is successful.
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
@@ -205,15 +215,22 @@ public:
     /**
      * @brief Automatic cast to AnyType.
      */
-    inline operator AnyType();
+    operator AnyType();
 
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-StructuredDataI::operator AnyType() {
+namespace MARTe {
+
+inline StructuredDataI::~StructuredDataI() {
+}
+
+inline StructuredDataI::operator AnyType() {
     AnyType anyTypeConversion(StructuredDataInterfaceType, 0u, this);
     return anyTypeConversion;
 }
@@ -221,4 +238,3 @@ StructuredDataI::operator AnyType() {
 }
 
 #endif /* CONFIGURATION_DATABASE_H_ */
-

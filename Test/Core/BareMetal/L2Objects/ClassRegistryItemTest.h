@@ -55,19 +55,31 @@ public:
      * @brief Tests the constructor with the Introspection input.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestIntrospectionCostructor();
+    bool TestIntrospectionConstructor();
 
     /**
      * @brief Tests the full constructor.
      * @return true if all the class attributes are initialised correctly.
      */
-    bool TestFullCostructor();
+    bool TestFullConstructor();
+
+//    /**
+//     * @brief Tests destructor.
+//     * @return true if the class is deleted from the database.
+//     */
+//    bool TestDestructor();
 
     /**
-     * @brief Tests destructor.
-     * @return true if the class is deleted from the database.
+     * @brief Tests ClassRegistryItem::AddMethod.
+     * @return true if the registering of methods succeeds.
      */
-    bool TestDestructor();
+    bool TestAddMethod();
+
+    /**
+     * @brief Tests ClassRegistryItem::FindMethod.
+     * @return true if the registering of methods succeeds and the Find method returns a valid pointer to the caller.
+     */
+    bool TestFindMethod();
 
     /**
      * @brief Tests ClassRegistryItem::IncrementNumberOfInstances.
@@ -122,7 +134,6 @@ public:
      * @return true if the test explained in details section has success, false otherwise.
      */
     bool TestGetObjectBuildFunction();
-
 
     /**
      * @brief Checks if the function returns the pointer to the Introspection set by constructor.

@@ -105,13 +105,57 @@ public:
      * @param[in] size is the size of the buffer to pass to the GetUniqueName function.
      * @return true if the tests explained in the details section succeed, false otherwise.
      */
-    bool TestGetUniqueName(const char8* name,uint32 buffSize);
+    bool TestGetUniqueName(const char8* name,
+                           uint32 buffSize);
 
     /**
      * @brief Checks if the name returned by GetUniqueName is different for two objects with the same name.
      * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
      */
     bool TestGetUniqueName2();
+
+    /**
+     * @brief Tests the Object::ExportData function.
+     * @details Checks that the Object::ExportData method returns the right
+     * tree (StructuredDataI) for common examples of objects (with simple
+     * members, with complex ones, etc).
+     * @return true if the tests explained in the details section succeed, false otherwise.
+     */
+    bool TestExportData();
+
+    /**
+     * @brief Tests the Object::ExportMetaData function.
+     * @details Checks that the Object::ExportMetaData method returns the right
+     * tree (StructuredDataI) for common examples of objects (with simple
+     * members, with complex ones, etc).
+     * @return true if the tests explained in the details section succeed, false otherwise.
+     */
+    bool TestExportMetadata();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with no parameters.
+     */
+    bool TestCallRegisteredMethod();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with no parameters on a non-existent method.
+     */
+    bool TestCallRegisteredMethod_InvalidMethod();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a StructuredDataI.
+     */
+    bool TestCallRegisteredMethod_StructuredDataI();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a ReferenceContainer.
+     */
+    bool TestCallRegisteredMethod_ReferenceContainer();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a StreamI.
+     */
+    bool TestCallRegisteredMethod_StreamI();
 };
 
 /*---------------------------------------------------------------------------*/

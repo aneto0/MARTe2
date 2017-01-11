@@ -112,9 +112,9 @@ BasicConsole::BasicConsole() :
     handle->columnCount = 0u;
     handle->nOfColumns = 0u;
     handle->nOfRows = 0u;
-    memset(&handle->inputConsoleHandle, 0, sizeof(ConsoleHandle));
-    memset(&handle->outputConsoleHandle, 0, sizeof(ConsoleHandle));
-    memset(&handle->initialInfo, 0, sizeof(ConsoleHandle));
+    memset(&handle->inputConsoleHandle, 0, static_cast<size_t>(sizeof(ConsoleHandle)));
+    memset(&handle->outputConsoleHandle, 0, static_cast<size_t>(sizeof(ConsoleHandle)));
+    memset(&handle->initialInfo, 0, static_cast<size_t>(sizeof(ConsoleHandle)));
     lastPagingCounter = 0;
     lineCount = 0u;
 }
@@ -123,8 +123,7 @@ BasicConsole::~BasicConsole() {
     if (handle != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
-        /*lint -e{1506} [MISRA C++ Rule 5-0-4] remove the warning of calling Close() inside destructor.*/
-        Close();
+        BasicConsole::Close();
         delete handle;
     }
 }
@@ -274,7 +273,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
             sizeToWrite = (index - start) + 1u;
 
             if (sizeToWrite > 0u) {
-                ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
+                ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &bufferString[start], static_cast<size_t>(sizeToWrite));
                 if (wbytes == -1) {
                     err = false;
                     REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");
@@ -285,7 +284,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
             sink = false;
         }
         if (currentColumn == handle->nOfColumns) {
-            ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &newLine, static_cast<osulong>(1));
+            ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &newLine, static_cast<size_t>(1));
             if (wbytes == -1) {
                 err = false;
                 REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");
@@ -323,7 +322,7 @@ bool BasicConsole::Read(char8 * const output,
             }
         }
         else {
-            ssize_t readBytes = read(BasicConsoleProperties::STDIN, output, static_cast<osulong>(size));
+            ssize_t readBytes = read(BasicConsoleProperties::STDIN, output, static_cast<size_t>(size));
             if (readBytes == -1) {
                 err = false;
                 REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed read()");
@@ -361,7 +360,7 @@ bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
 bool BasicConsole::Clear() {
     bool err = true;
     for (uint32 i = 0u; i < BasicConsoleProperties::BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
-        ssize_t writtenBytes = write(BasicConsoleProperties::STDOUT, "\n", static_cast<osulong>(1u));
+        ssize_t writtenBytes = write(BasicConsoleProperties::STDOUT, "\n", static_cast<size_t>(1u));
         if (writtenBytes == -1) {
             err = false;
             REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");

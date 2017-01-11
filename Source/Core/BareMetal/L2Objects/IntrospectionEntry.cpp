@@ -15,11 +15,13 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This source file contains the definition of all the methods for
  * the class IntrospectionEntry (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,6 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassProperties.h"
 #include "IntrospectionEntry.h"
 #include "ClassRegistryDatabase.h"
 #include "StringHelper.h"
@@ -42,6 +45,20 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+IntrospectionEntry::IntrospectionEntry() {
+
+    memberName = NULL_PTR(const char8*);
+    typeName = NULL_PTR(const char8*);
+    modifiers = NULL_PTR(const char8*);
+    attributes = NULL_PTR(const char8*);
+    size = 0u;
+    byteOffset = 0u;
+    numberOfDimensions = 1u;
+    dimensionSize[0] = 1u;
+    dimensionSize[1] = 1u;
+    dimensionSize[2] = 1u;
+}
 
 IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
                                        const char8* const typeNameIn,
@@ -75,9 +92,9 @@ IntrospectionEntry::IntrospectionEntry(const char8 * const memberNameIn,
                 i++;
                 while ((modifiers[i] != ']') && (modifiers[i] != '\0')) {
                     dimensionSize[0] *= 10u;
-                    int32 zero= static_cast<int32>('0');
-                    int32 digit=(static_cast<int32>(modifiers[i]) - zero);
-                    if((digit>=0) && ((digit<=9))) {
+                    int32 zero = static_cast<int32>('0');
+                    int32 digit = (static_cast<int32>(modifiers[i]) - zero);
+                    if ((digit >= 0) && ((digit <= 9))) {
                         dimensionSize[0] += static_cast<uint32>(digit);
                     }
                     i++;
@@ -104,7 +121,7 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
 
     bool isConstant = false;
     if (modifiers != NULL) {
-        isConstant= (modifiers[0] == 'C');
+        isConstant = (modifiers[0] == 'C');
     }
 
     // Not a basic type !
@@ -122,7 +139,7 @@ TypeDescriptor IntrospectionEntry::GetMemberTypeDescriptor() const {
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError,
-                    "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
+                         "GetMemberTypeDescriptor: No structured object with the specified type found inside the ClassRegistryDatabase");
         }
     }
     else {
@@ -155,7 +172,7 @@ uint32 IntrospectionEntry::GetMemberByteOffset() const {
 bool IntrospectionEntry::IsConstant(const uint32 ptrLevel) const {
     bool ret = false;
     if (modifiers != NULL) {
-        ret= (modifiers[0] == 'C');
+        ret = (modifiers[0] == 'C');
         if (ptrLevel > 0u) {
             uint32 i = 0u;
             uint32 ptrCnt = 0u;

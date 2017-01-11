@@ -15,7 +15,7 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
+ *
  * @details This header file contains the declaration of the class ClassProperties
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "FractionalInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -58,10 +60,12 @@ public:
      * @param[in] cName the name of the class.
      * @param[in] typeidName the name of the class as returned by typeid.
      * @param[in] cVersion the version of the class.
+     * @param[in] cSize the class size (number of bytes).
      */
     ClassProperties(const char8 * const cName,
                     const char8 * const typeidName,
-                    const char8 * const cVersion);
+                    const char8 * const cVersion,
+                    const uint32 cSize = 0u);
 
     /**
      * @brief Returns the name of the class.
@@ -93,6 +97,12 @@ public:
      */
     void SetUniqueIdentifier(const ClassUID &uid);
 
+    /**
+     * @brief Retrieves the class size.
+     * @return the class size (number of bytes).
+     */
+    uint32 GetSize() const;
+
 private:
     /**
      * The name of the class.
@@ -113,9 +123,15 @@ private:
      * A unique identifier for this class
      */
     uint14 uniqueIdentifier;
+
+    /**
+     * The class size (number of bytes)
+     */
+    uint32 size;
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -86,6 +86,22 @@ public:
     StreamString(const char8 * const initialisationString);
 
     /**
+     * @brief Constructor from a null terminated C-string
+     * @param[in] initialisationString is the char8 pointer of the
+     * null terminated C-string.
+     * @pre
+     *   true
+     * @post
+     *   Buffer() != NULL &&
+     *   CanRead() &&
+     *   CanWrite() &&
+     *   CanSeek() &&
+     *   Position() == 0 &&
+     *   Size() == StringHelper::Length(initialisationString)
+     */
+    StreamString(CCString initialisationString);
+
+    /**
      * @brief Copy Constructor.
      *
      */
@@ -185,7 +201,7 @@ public:
      * @pre
      *   (deltaPos <= MAX_INT32) && (deltaPos >= MIN_INT32)
      */
-    bool RelativeSeek(const int64 deltaPos);
+    virtual bool RelativeSeek(const int64 deltaPos);
 
     /**
      * @brief Gets the current position.
@@ -244,6 +260,13 @@ public:
      * @return true if successful. false otherwise.
      */
     inline bool operator=(const char8 * const s);
+
+    /**
+     * @brief Sets StreamString to be a copy of the input parameter.
+     * @param[in] s The string to copy.
+     * @return true if successful. false otherwise.
+     */
+    inline bool operator=(CCString s);
 
     /**
      * @brief Sets StreamString to be a copy of the input parameter.
@@ -406,9 +429,16 @@ char8 *StreamString::BufferReference() {
 }
 
 const char8 *StreamString::Tail(const uint32 ix) const {
+    const char8* result;
     bool ok = (ix <= (buffer.UsedSize() - 1u));
-
-    return ok ? &(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u]) : static_cast<const char8 *>(NULL);
+    if (ok) {
+        const char8* bufref = buffer.Buffer();
+        result = &(bufref[(buffer.UsedSize() - ix) - 1u]);
+    }
+    else {
+        result = static_cast<const char8 *>(NULL);
+    }
+    return result;
 }
 
 bool StreamString::operator=(const char8 c) {
@@ -417,6 +447,10 @@ bool StreamString::operator=(const char8 c) {
 
 bool StreamString::operator=(const char8 * const s) {
     return Set(s);
+}
+
+bool StreamString::operator=(CCString s) {
+    return Set(s.GetList());
 }
 
 StreamString& StreamString::operator=(const StreamString &s) {
@@ -466,7 +500,7 @@ bool StreamString::operator!=(const char8 * const s) const {
 char8 StreamString::operator[](const uint32 pos) const {
     char8 ret = static_cast<char8>(0);
     if (pos < buffer.UsedSize()) {
-        ret = buffer.BufferReference()[pos];
+        ret = buffer.Buffer()[pos];
     }
     return ret;
 }

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORS_H_
-#define ERRORS_H_
+#ifndef ERRORTYPE_H_
+#define ERRORTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,89 +32,516 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "CompilerTypes.h"
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
+#include "BitBoolean.h"
+#include "BitRange.h"
 
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
 namespace ErrorManagement {
 
-typedef int8 ErrorType;
+/**
+ * Defines the error type.
+ */
+typedef uint32 ErrorIntegerFormat;
 
 /**
- * No error to report
+ * Defines the error type bit size.
  */
-static const ErrorType NoError(0);
+static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
+
 /**
- * Debug information
+ * Bit for Fatal Error unspecified error.
  */
-static const ErrorType Debug(3);
+static const uint32 fatalErrorBit(0u);
+static const uint32 FatalErrorBit(fatalErrorBit);
+
 /**
- * General information
+ * Bit for Recoverable error.
  */
-static const ErrorType Information(2);
+static const uint32 recoverableErrorBit(1u);
+static const uint32 RecoverableErrorBit(recoverableErrorBit);
+
 /**
- * ErrorManagement::Warning
+ * Bit for Initialisation error.
  */
-static const ErrorType Warning(1);
+static const uint32 initialisationErrorBit(2u);
+static const uint32 InitialisationErrorBit(initialisationErrorBit);
+
 /**
- * Fatal Error
+ * Bit for Operating system error.
  */
-static const ErrorType FatalError(-1);
+static const uint32 OSErrorBit(3u);
+
 /**
- * Recoverable error
+ * Parameters error.
  */
-static const ErrorType RecoverableError(-2);
+static const uint32 parametersErrorBit(4u);
+static const uint32 ParametersErrorBit(parametersErrorBit);
+
 /**
- * Initialization error
+ * Illegal operation.
  */
-static const ErrorType InitialisationError(-3);
+static const uint32 illegalOperationBit(5u);
+static const uint32 IllegalOperationBit(illegalOperationBit);
+
 /**
- * Operating system error
+ * Sharing error.
  */
-static const ErrorType OSError(-4);
+static const uint32 errorSharingBit(6u);
+static const uint32 ErrorSharingBit(errorSharingBit);
+
 /**
- * Parameters error
+ * Access denied.
  */
-static const ErrorType ParametersError(-5);
+static const uint32 errorAccessDeniedBit(7u);
+static const uint32 ErrorAccessDeniedBit(errorAccessDeniedBit);
+
 /**
- * Illegal operation
+ * Exception.
  */
-static const ErrorType IllegalOperation(-6);
+static const uint32 exceptionBit(8u);
+static const uint32 ExceptionBit(exceptionBit);
+
 /**
- * Sharing error
+ * Timeout occurred.
  */
-static const ErrorType ErrorSharing(-7);
+static const uint32 timeoutBit(9u);
+static const uint32 TimeoutBit(timeoutBit);
+
 /**
- * Access denied
+ * Error during communication.
  */
-static const ErrorType ErrorAccessDenied(-8);
+static const uint32 communicationErrorBit(10u);
+static const uint32 CommunicationErrorBit(communicationErrorBit);
+
 /**
- * Exception
+ * Syntax error.
  */
-static const ErrorType Exception(-9);
+static const uint32 syntaxErrorBit(11u);
+static const uint32 SyntaxErrorBit(syntaxErrorBit);
+
 /**
- * Timeout occurred
+ * Unsupported feature.
  */
-static const ErrorType Timeout(-10);
+static const uint32 unsupportedFeatureBit(12u);
+static const uint32 UnsupportedFeatureBit(unsupportedFeatureBit);
+
 /**
- * Error during comunication
+ * Internal setup error.
  */
-static const ErrorType CommunicationError(-11);
+static const uint32 internalSetupErrorBit(13u);
+static const uint32 InternalSetupErrorBit(internalSetupErrorBit);
+
 /**
- * Syntax error
+ * Bit for Debug information.
  */
-static const ErrorType SyntaxError(-12);
+static const uint32 debugBit(14u);
+static const uint32 DebugBit(debugBit);
+
 /**
- * Unsupported feature
+ * Bit for General information.
  */
-static const ErrorType UnsupportedFeature(-13);
+static const uint32 informationBit(15u);
+static const uint32 InformationBit(informationBit);
+
+/**
+ * Bit for Warning.
+ */
+static const uint32 warningBit(16u);
+static const uint32 WarningBit(warningBit);
+
+/**
+ * Bit to communicate that a cycling called function has finished and does not need to be called again.
+ */
+static const uint32 completedBit(17u);
+static const uint32 CompletedBit(completedBit);
+
+/**
+ * Bit to communicate that a cycling called function has not finished and needs to be called again.
+ */
+static const uint32 notCompletedBit(18u);
+static const uint32 NotCompletedBit(notCompletedBit);
+
+/**
+ * Last used Bit.
+ */
+static const uint32 lastErrorBit(19u);
+static const uint32 LastErrorBit(lastErrorBit);
+
+/**
+ * No error to report.
+ */
+static const ErrorIntegerFormat NoError = 0u;
+
+/**
+ * To generate the constants representing a specific error type.
+ */
+#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 << errorName ## Bit);
+
+/**
+ * To generate the constants representing a specific error type.
+ */
+#define GENERATE_ERROR_BITRANGE(errorName)    BitBoolean<ErrorIntegerFormat, errorName ## Bit> errorName;
+
+/**
+ * Fatal Error.
+ */
+GENERATE_ERROR_CONSTANTS(FatalError)
+
+/**
+ * Recoverable error.
+ */
+GENERATE_ERROR_CONSTANTS(RecoverableError)
+
+/**
+ * Initialisation error.
+ */
+GENERATE_ERROR_CONSTANTS(InitialisationError)
+
+/**
+ * Operating system error.
+ */
+GENERATE_ERROR_CONSTANTS(OSError)
+
+/**
+ * Parameters error.
+ */
+GENERATE_ERROR_CONSTANTS(ParametersError)
+
+/**
+ * Illegal operation.
+ */
+GENERATE_ERROR_CONSTANTS(IllegalOperation)
+
+/**
+ * Sharing error.
+ */
+GENERATE_ERROR_CONSTANTS(ErrorSharing)
+
+/**
+ * Access denied.
+ */
+GENERATE_ERROR_CONSTANTS(ErrorAccessDenied);
+
+/**
+ * Exception.
+ */
+GENERATE_ERROR_CONSTANTS(Exception)
+
+/**
+ * Timeout occurred.
+ */
+GENERATE_ERROR_CONSTANTS(Timeout)
+
+/**
+ * Error during communication.
+ */
+GENERATE_ERROR_CONSTANTS(CommunicationError)
+
+/**
+ * Syntax error.
+ */
+GENERATE_ERROR_CONSTANTS(SyntaxError)
+
+/**
+ * Unsupported feature.
+ */
+GENERATE_ERROR_CONSTANTS(UnsupportedFeature)
+
+/**
+ * Internal setup error.
+ */
+GENERATE_ERROR_CONSTANTS(InternalSetupError);
+
+/**
+ * Debug information.
+ */
+GENERATE_ERROR_CONSTANTS(Debug)
+
+/**
+ * General information.
+ */
+GENERATE_ERROR_CONSTANTS(Information)
+
+/**
+ * ErrorManagement::Warning.
+ */
+GENERATE_ERROR_CONSTANTS(Warning)
+
+/**
+ * ErrorManagement::Completed.
+ */
+GENERATE_ERROR_CONSTANTS(Completed)
+
+/**
+ * ErrorManagement::NotCompleted.
+ */
+GENERATE_ERROR_CONSTANTS(NotCompleted)
+
+/**
+ * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
+ */
+class DLL_API ErrorType {
+public:
+    /**
+     * @brief Constructor.
+     * @param[in] allOk is false then the error.FatalError is set to false, otherwise all other errors cleared.
+     *   @post ErrorsCleared() == allOk
+     */
+    inline ErrorType(bool allOk = true);
+
+    /**
+     * @brief Constructor from a bit set.
+     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     */
+    inline ErrorType(const ErrorIntegerFormat errorBitSet);
+
+    /**
+     * @brief Checks if any error has been flagged.
+     * @return true is no error is flagged (warnings may have been set).
+     */
+    inline bool ErrorsCleared() const;
+
+    /**
+     * @brief Checks if any error has been flagged.
+     * @return true is no error is flagged (warnings may have been set).
+     */
+    inline operator bool() const;
+
+    /**
+     * @brief Allows using as a mask.
+     * @return the ErrorType in the ErrorIntegerFormat format.
+     */
+    inline operator ErrorIntegerFormat() const;
+
+    /**
+     * @brief Checks if the current error bits match the provided \a errorBitSet.
+     * @param[in] errorBitSet Error bits to verify.
+     * @return true if the current error bits match the provided \a errorBitSet.
+     */
+    inline bool operator ==(const ErrorIntegerFormat errorBitSet) const;
+
+    /**
+     * @brief Checks if the current error bits do not match the provided \a errorBitSet.
+     * @param[in] errorBitSet Error bits to verify.
+     * @return true if the current error bits do not match the provided \a errorBitSet.
+     */
+    inline bool operator !=(const ErrorIntegerFormat errorBitSet) const;
+
+    /**
+     * @brief Constructor from a bit set.
+     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     */
+    inline ErrorIntegerFormat operator =(const ErrorIntegerFormat errorBitSet);
+
+    /**
+     * @brief Constructor from a bit set.
+     * @param[in] error initialises the ErrorType against this bit set.
+     */
+    inline ErrorIntegerFormat operator =(const bool error);
+
+    /**
+     * @brief Sets the error bits against a bit set.
+     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     */
+    inline void SetError(const ErrorIntegerFormat errorBitSet);
+
+    /**
+     * @brief Clears the errors associated to the \a errorBitSet .
+     * @param[in] errorBitSet bit set with the errors that are to be cleared.
+     */
+    inline void ClearError(const ErrorIntegerFormat errorBitSet);
+
+    /**
+     * @brief Checks if the current error bits contains the provided \a errorBitSet.
+     * @param[in] errorBitSet Error bits to verify.
+     * @return true if the current error bits contains the provided \a errorBitSet.
+     *  If one of the bits in the \a errorBitSet is not set the function will return false.
+     */
+    inline bool Contains(const ErrorIntegerFormat errorBitSet) const;
+
+    /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
+    union {
+
+        /**
+         * The whole set of bits should fits within chosen bit representation (ErrorIntegerFormat)
+         */
+        ErrorIntegerFormat format_as_integer;
+
+        /**
+         * Fatal Error
+         */
+        GENERATE_ERROR_BITRANGE(fatalError)
+
+        /**
+         * Recoverable error
+         */
+        GENERATE_ERROR_BITRANGE(recoverableError)
+
+        /**
+         * Initialization error
+         */
+        GENERATE_ERROR_BITRANGE(initialisationError)
+
+        /**
+         * Operating system error
+         */
+        GENERATE_ERROR_BITRANGE(OSError)
+
+        /**
+         * Parameters error
+         */
+        GENERATE_ERROR_BITRANGE(parametersError)
+
+        /**
+         * Illegal operation
+         */
+        GENERATE_ERROR_BITRANGE(illegalOperation)
+
+        /**
+         * Sharing error
+         */
+        GENERATE_ERROR_BITRANGE(errorSharing)
+
+        /**
+         * Access denied
+         */
+        GENERATE_ERROR_BITRANGE(errorAccessDenied)
+
+        /**
+         * Exception
+         */
+        GENERATE_ERROR_BITRANGE(exception)
+
+        /**
+         * Timeout occurred
+         */
+        GENERATE_ERROR_BITRANGE(timeout)
+
+        /**
+         * Error during communication
+         */
+        GENERATE_ERROR_BITRANGE(communicationError)
+
+        /**
+         * Syntax error
+         */
+        GENERATE_ERROR_BITRANGE(syntaxError)
+
+        /**
+         * Unsupported feature
+         */
+        GENERATE_ERROR_BITRANGE(unsupportedFeature)
+
+        /**
+         * Internal setup error
+         */
+        GENERATE_ERROR_BITRANGE(internalSetupError)
+
+        /**
+         * Debug information
+         */
+        GENERATE_ERROR_BITRANGE(debug)
+
+        /**
+         * General information
+         */
+        GENERATE_ERROR_BITRANGE(information)
+
+        /**
+         * Warning.
+         */
+        GENERATE_ERROR_BITRANGE(warning)
+
+        /**
+         * Operation completed.
+         */
+        GENERATE_ERROR_BITRANGE(completed)
+
+        /**
+         * Operation completed.
+         */
+        GENERATE_ERROR_BITRANGE(notCompleted)
+
+        /**
+         * unmapped bits
+         */
+        BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
+
+    };
+
+};
+}
+}
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+namespace ErrorManagement {
+
+inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
+format_as_integer = errorBitSet;
+}
+
+inline ErrorType::ErrorType(bool allOk) {
+format_as_integer = NoError;
+fatalError = !allOk;
+}
+
+inline bool ErrorType::ErrorsCleared() const {
+return (format_as_integer == 0);
+}
+
+inline ErrorType::operator bool() const {
+return (format_as_integer == 0);
+}
+
+inline ErrorType::operator ErrorIntegerFormat() const {
+return format_as_integer;
+}
+
+inline bool ErrorType::operator ==(const ErrorIntegerFormat errorBitSet) const {
+return format_as_integer == errorBitSet;
+}
+
+inline bool ErrorType::operator !=(const ErrorIntegerFormat errorBitSet) const {
+return format_as_integer != errorBitSet;
+}
+
+inline ErrorIntegerFormat ErrorType::operator =(const ErrorIntegerFormat errorBitSet) {
+format_as_integer = errorBitSet;
+return errorBitSet;
+}
+
+inline ErrorIntegerFormat ErrorType::operator =(const bool error) {
+    if(error) {
+        format_as_integer = 1;
+    }
+    else {
+        format_as_integer = 0;
+    }
+    return format_as_integer;
+}
+
+inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
+format_as_integer |= errorBitSet;
+}
+
+inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
+format_as_integer &= ~errorBitSet;
+}
+
+inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
+return ((format_as_integer & errorBitSet) == errorBitSet);
+}
 
 }
+
 }
-#endif /* ERRORS_H_ */
+
+#endif /* ERRORTYPE */

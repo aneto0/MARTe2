@@ -45,14 +45,29 @@ TEST(ClassRegistryItemGTest,TestConstructor) {
     ASSERT_TRUE(myClassRegistryItemTest.TestConstructor());
 }
 
-TEST(ClassRegistryItemGTest,TestIntrospectionCostructor) {
+TEST(ClassRegistryItemGTest,TestIntrospectionConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionCostructor());
+    ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionConstructor());
 }
 
-TEST(ClassRegistryItemGTest,TestDestructor) {
+TEST(ClassRegistryItemGTest,TestFullConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
+    ASSERT_TRUE(myClassRegistryItemTest.TestFullConstructor());
+}
+
+//TEST(ClassRegistryItemGTest,TestDestructor) {
+//    ClassRegistryItemTest myClassRegistryItemTest;
+//    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
+//}
+
+TEST(ClassRegistryItemGTest,TestAddMethod) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestAddMethod());
+}
+
+TEST(ClassRegistryItemGTest,TestFindMethod) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestFindMethod());
 }
 
 TEST(ClassRegistryItemGTest,TestIncrementNumberOfInstances) {
@@ -79,7 +94,6 @@ TEST(ClassRegistryItemGTest,TestGetClassProperties) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties());
 }
-
 
 TEST(ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
     ClassRegistryItemTest myClassRegistryItemTest;

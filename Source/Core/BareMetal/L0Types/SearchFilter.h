@@ -33,6 +33,14 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
+/*                         Forward declarations                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+    class LinkedListable;
+}
+
+/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
@@ -43,7 +51,7 @@ namespace MARTe {
  * @details The classes that realise this interface will implement the checking
  * of the criteria into the Test method, assuming that the parameter will be
  * an object of type LinkedListable.
- * @note In order to search on all items of a list, the user will have to call
+ * @remark In order to search on all items of a list, the user will have to call
  * the Test method for each element of the list and recall which of them have
  * returned true.
  */

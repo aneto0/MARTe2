@@ -90,7 +90,7 @@ bool StreamMemoryReference::Write(const char8* const input,
 }
 
 bool StreamMemoryReference::CanWrite() const {
-    return ((buffer.BufferReference() != NULL) && (buffer.CanWrite()));
+    return ((buffer.Buffer() != NULL) && (buffer.CanWrite()));
 };
 
 bool StreamMemoryReference::CanRead() const {

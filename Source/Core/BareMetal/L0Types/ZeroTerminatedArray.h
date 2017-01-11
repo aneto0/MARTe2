@@ -58,7 +58,7 @@ public:
      * @pre
      *   arrayIn is zero terminated.
      */
-    ZeroTerminatedArray(T *arrayIn);
+    ZeroTerminatedArray(T *arrayIn=NULL_PTR(T *));
 
     /**
      * @brief Returns the element in the specified position.
@@ -78,6 +78,12 @@ public:
      * @return the pointer to the beginning of the array.
      */
     T * GetList();
+
+    /**
+     * @brief Implicit conversion operator to T*
+     */
+    operator T*();
+
 private:
 
     /**
@@ -105,7 +111,6 @@ ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
         array(arrayIn) {
 }
 
-
 template<typename T>
 inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
     return array[index];
@@ -132,6 +137,11 @@ T * ZeroTerminatedArray<T>::GetList() {
 template<typename T>
 bool ZeroTerminatedArray<T>::Zero(const T & data) const {
     return (data == static_cast<T>(0));
+}
+
+template<typename T>
+ZeroTerminatedArray<T>::operator T*(){
+    return GetList();
 }
 
 }

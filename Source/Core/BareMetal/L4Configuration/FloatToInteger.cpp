@@ -109,6 +109,15 @@ bool FloatToInteger(const FloatType floatNumber,
     return ret;
 }
 
+/**
+ * @brief Performs the conversion from a float number to an integer number.
+ * @param[in] source is the float number to be converted.
+ * @param[in] sourceBitSize is the bitsize of source.
+ * @param[out] dest is the converted integer number.
+ * @param[in] destBitSize is the bitsize of dest.
+ * @param[in] isSigned is the flag for signedness of the number.
+ * @return true.
+ */
 /*lint -e{740} -e{826} -e{927}  [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to pointer cast requested from this implementation.*/
 bool FloatToIntegerGeneric(const float32 * const source,
                            const uint32 sourceBitSize,

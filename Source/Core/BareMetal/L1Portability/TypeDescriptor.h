@@ -50,7 +50,7 @@ namespace MARTe {
  *
  * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  *
- * @note The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
+ * @remark The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
  * described, if a basic one, or a structured one):
  * | isStructuredData   | isConstant  | type   | numberOfBits |
  * | :----:             | :----:      | :----: | :----:       |
@@ -61,7 +61,7 @@ namespace MARTe {
  * |  1                 | 1           | 14                    |
  *
  */
-class TypeDescriptor {
+class DLL_API TypeDescriptor {
 public:
 
     /**
@@ -268,12 +268,12 @@ static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 /**
  * Constant char pointer descriptor
  */
-static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*) * 8u);
+static const TypeDescriptor ConstCharString(true, BT_CCString, sizeof(const char8*) * 8u);
 
 /**
  * Char pointer descriptor
  */
-static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
+static const TypeDescriptor CharString(false, BT_CCString, sizeof(char8*) * 8u);
 
 /**
  * ConfigurationDatabase node
