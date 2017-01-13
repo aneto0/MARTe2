@@ -91,7 +91,12 @@ public:
      */
     operator T*() const;
 
-protected:
+
+    /**
+     * move pointer ahead of one element. Checks limits
+     * if !Zero(*array) && (array != NULL)  array++;
+     */
+    inline void Skip();
 
     /**
      * @brief Checks if the input \a data is the array terminal character.
@@ -101,6 +106,8 @@ protected:
      * @return true if \a data is the array terminal, false otherwise.
      */
     bool Zero(const T & data) const;
+
+protected:
 
     /**
      * The array
@@ -173,11 +180,20 @@ bool ZeroTerminatedArray<T>::Zero(const T & data) const {
     return (data == static_cast<T>(0));
 }
 
-
 template<typename T>
 ZeroTerminatedArray<T>::operator T*() const {
     return GetList();
 }
+
+template<typename T>
+void ZeroTerminatedArray<T>::Skip() {
+    if (array != NULL_PTR(T *))  {
+        if (!Zero(*array)){
+            array++;
+        }
+    }
+}
+
 
 }
 

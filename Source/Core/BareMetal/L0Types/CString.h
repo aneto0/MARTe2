@@ -41,6 +41,9 @@
 
 namespace MARTe {
 
+//class DynamicCString;
+//template <uint32 size> class StaticCString;
+//class CCString;
 
 /**
 * TODO
@@ -78,7 +81,7 @@ public:
     /**
      * TODO
      */
-    inline operator char8*() const;
+    inline operator const char8*() const;
 };
 
 
@@ -100,7 +103,7 @@ CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
 
 }
 
-CString::operator char8*() const{
+CString::operator const char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 

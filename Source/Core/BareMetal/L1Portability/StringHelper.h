@@ -35,6 +35,9 @@
 #include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
 #include "CString.h"
+#include "CCString.h"
+#include "StaticCString.h"
+#include "DynamicCString.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -120,6 +123,29 @@ DLL_API CCString  TokenizeByChars(CCString  const string, CCString  const delimi
 DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,CString  const result,uint32 resultStorageSize);
 
 /**
+ * @brief Returns the index position of the first character in string2 found in string1 (e.g. "abcde" "12d" returns 3).
+ * @param[in] string1 is the source string.
+ * @param[in] string2 contains the characters which must be searched in string1.
+ * @return the index at the first occurrence of the first character from string2 found in string1.
+ * If the stcppring1 or string2 is NULL returns -1.
+ * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
+ */
+DLL_API int32 SearchIndex(CCString  const string1,   CCString  const string2);
+
+#if 0
+/**
+ * @brief Copies the source into the destination for a maximum of 'size' chars.
+ * @warning !! The destination string memory allocation MUST be able to hold the size of source
+ * @warning No reallocation will be performed here!!
+ * @param[in,out] destination the destination string.
+ * @param[in] source the string to copy into the destination.
+ * @param[in] size the maximum number of bytes to copy.
+ * @return true if the source is copied to the destination.
+ * @pre size <= length source
+ */
+DLL_API bool CopyN(CString destination, CCString source,  uint32 size);
+#endif
+/**
  * @brief Duplicates a string in the heap memory.
  * @param[in] s The pointer to the string which must be copied.
  * @return The pointer to the new allocated memory which contains a copy of s.
@@ -149,9 +175,8 @@ inline bool Concatenate(StaticCString<sz> destination,CCString  const source){
 inline bool Concatenate(DynamicCString destination,CCString  const source){
     return destination.Append(source);
 }
-#endif
 
-#if 0
+
 /**
  * @brief Concatenates two strings until 'size' chars.
  * @warning !! The destination string memory allocation MUST be able to hold the extra amount of characters
@@ -180,30 +205,6 @@ DLL_API bool ConcatenateN(CString destination,
 DLL_API bool Copy(CString  const destination,
                   CCString  const source);
 
-/**
- * @brief Copies the source into the destination for a maximum of 'size' chars.
- * @warning !! The destination string memory allocation MUST be able to hold the size of source
- * @warning No reallocation will be performed here!!
- * @param[in,out] destination the destination string.
- * @param[in] source the string to copy into the destination.
- * @param[in] size the maximum number of bytes to copy.
- * @return true if the source is copied to the destination.
- * @pre size <= length source
- */
-DLL_API bool CopyN(CString destination,
-                   CCString source,
-                   uint32 size);
-
-/**
- * @brief Returns the index position of the first character in string2 found in string1 (e.g. "abcde" "12d" returns 3).
- * @param[in] string1 is the source string.
- * @param[in] string2 contains the characters which must be searched in string1.
- * @return the index at the first occurrence of the first character from string2 found in string1.
- * If the stcppring1 or string2 is NULL returns -1.
- * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
- */
-DLL_API int32 SearchIndex(CCString  const string1,
-                          CCString  const string2);
 
 /**
  * @brief Returns the length of a string (not including the terminating \0 character).

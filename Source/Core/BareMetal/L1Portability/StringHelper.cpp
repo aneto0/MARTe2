@@ -52,7 +52,7 @@ CString StringDup(CCString const s) {
 
         void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
         duplicate = reinterpret_cast<char8 *>(copy);
-        if (duplicate == NULL) {
+        if (duplicate.GetList() ==  NULL_PTR(CString)) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed");
         }
     }

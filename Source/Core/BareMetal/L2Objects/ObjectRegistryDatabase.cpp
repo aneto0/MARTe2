@@ -138,7 +138,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     return ret;
 }
 
-const char8 * const ObjectRegistryDatabase::GetClassName() const {
+CCString const ObjectRegistryDatabase::GetClassName() const {
     return "ObjectRegistryDatabase";
 }
 

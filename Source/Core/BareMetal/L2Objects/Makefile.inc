@@ -34,6 +34,7 @@ OBJSX=          ClassRegistryDatabase.x \
 		ReferenceContainerNode.x \
                 StructuredDataI.x \
 		Object.x \
+		IntrospectionTools.x \
 		ClassMethodInterfaceMapper.x\
 		ClassMethodCaller.x\
 		ClassRegistryItem.x \

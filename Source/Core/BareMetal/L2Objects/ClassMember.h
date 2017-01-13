@@ -51,19 +51,25 @@ public:
 
     /**
      * @brief templated constructor
+     * offset is the offset of the member with respect to the start of the class memory
      */
     template <class T>
-    ClassMember(T & member,CCString nameIn);
+    ClassMember(T & member,CCString nameIn,uint32 offsetIn);
 
     /**
      * @brief name of the method
      */
-    CCString GetName();
+    CCString GetName() const;
+
+    /**
+     * @brief offset of the variable
+     */
+    uint32 GetOffset() const;
 
     /**
      * @brief returns associated descriptor
      */
-    VariableDescriptor *GetDescriptor();
+    const VariableDescriptor &GetDescriptor() const;
 
 
 private:
@@ -76,6 +82,11 @@ private:
      * @brief The name of the member
      */
     CCString name;
+
+    /**
+     *
+     */
+    uint32 offset;
 };
 
 
@@ -87,20 +98,27 @@ private:
 
 
 template <class T>
-ClassMember::ClassMember(T & member,CCString nameIn): vd(member){
+ClassMember::ClassMember(T & member,CCString nameIn,uint32 offsetIn): vd(member){
     ClassRegistryItem * cri = ClassRegistryItem::Instance<T>();
     if (cri != NULL_PTR(ClassRegistryItem * )){
         cri->AddMember(this);
     }
     name = nameIn;
+    offset = offsetIn;
 }
 
-CCString ClassMember::GetName(){
+CCString ClassMember::GetName() const{
     return name;
 }
 
-VariableDescriptor *ClassMember::GetDescriptor(){
-    return &vd;
+uint32 ClassMember::GetOffset() const{
+    return offset;
+
+}
+
+
+const VariableDescriptor &ClassMember::GetDescriptor() const{
+    return vd;
 }
 
 

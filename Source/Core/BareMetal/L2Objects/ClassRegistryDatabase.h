@@ -83,7 +83,7 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem       *Find(const char8 *className);
+    ClassRegistryItem       *Find(CCString className);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
@@ -91,7 +91,7 @@ public:
      * @param[in] typeidName the typeid().name() of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem       *FindTypeIdName(const char8 * const typeidName);
+    ClassRegistryItem       *FindTypeIdName(CCString const typeidName);
 
     /**
      * @brief Returns the number of classes registered in the database.
@@ -112,7 +112,7 @@ public:
      * @brief Returns "ClassRegistryDatabase"
      * @return "ClassRegistryDatabase".
      */
-    virtual const char8 * const GetClassName() const;
+    virtual CCString const GetClassName() const;
 
     /**
      * @brief Cleanup the database.

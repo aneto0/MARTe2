@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 
+class CCString;
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -59,7 +61,7 @@ public:
      * @brief Gets the name of the class.
      * @return the class name.
      */
-    virtual const char8 * const GetClassName() const = 0;
+    virtual CCString const GetClassName() const = 0;
 
     /**
      * @brief Guarantees that the class is instantiated in the StandardHeap.

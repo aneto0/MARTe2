@@ -40,6 +40,8 @@
 #include "Matrix.h"
 #include "StringHelper.h"
 #include "ZeroTerminatedArray.h"
+#include "DynamicZeroTerminatedArray.h"
+#include "StaticZeroTerminatedArray.h"
 
 
 namespace MARTe {

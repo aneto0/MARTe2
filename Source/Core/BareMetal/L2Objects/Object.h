@@ -36,8 +36,9 @@
 #include "HeapManager.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
-#include "StringHelper.h"
 #include "CLASSREGISTER.h"
+#include "StreamI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
@@ -202,18 +203,17 @@ public:
     CCString GetName() const;
 
     /**
-     * @brief Returns an object name which is guaranteed to be unique.
+     * @brief Write to the stream an name which is guaranteed to be unique.
      * @details The object unique name is composed by the object memory
      *  address and by the object name as returned by GetName().
      *
      * If GetName() returns NULL the unique name will be the object memory address.
      * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
      * memory address are discarded.
-     * @param[in, out] destination the destination where to write the unique object to.
-     * If enough space is available the string will be zero terminated.
-     * @param[in] size the size of the \a destination input string.
+     * @param[in, out] name the stream where to write the unique object to.
+     * @return false in case of errors on the stream
      */
-    void GetUniqueName(CString const name,const uint32 &size) const;
+    bool GetUniqueName(StreamI &nameStream) const;
 
     /**
      * @brief Sets the object name.
@@ -229,7 +229,7 @@ public:
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
+    ErrorManagement::ErrorType CallRegisteredMethod( CCString const &methodName);
 
     /**
      * @brief Calls a registered method without arguments.
@@ -237,7 +237,7 @@ public:
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString const &methodName, ReferenceContainer &parameters);
 
     /**
      * @brief Calls a registered method without arguments.
@@ -245,7 +245,7 @@ public:
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString const &methodName, StructuredDataI &parameters);
 
     /**
      * @brief Calls a registered method without arguments.
@@ -253,7 +253,7 @@ public:
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StreamI &stream);
+    ErrorManagement::ErrorType CallRegisteredMethod(CCString const &methodName, StreamI &stream);
 
 
 private:
@@ -285,50 +285,6 @@ private:
      */
     static void *operator new(osulong size) throw ();
 
-    /**
-     * @brief Extracts the data of an input object and puts it into an object
-     * which implements the StructuredDataI interface.
-     * @details The returned StructuredDataI object is a tree which contains a
-     * single node which represents the *ptr's data. This node is named with
-     * the value of the objName parameter and has a leaf with the className
-     * parameter as a value, plus a leaf for each one of the class's members.
-     * If any of the members is of complex type, then a new node is created
-     * instead of a leaf and a subtree is created. This happens recursively
-     * for all members.
-     * @param[in] ptr The pointer to the object whose data is expected to be
-     * extracted.
-     * @param[in] className The name of the class of the object pointed by ptr.
-     * @param[out] data The holder for the tree that contains the extracted
-     * data of the object.
-     * @param[in] objName The name of the object, i.e. the root's name.
-     */
-    bool ConvertDataToStructuredData(void* const ptr,
-            const char8* const className,
-            StructuredDataI& data,
-            const char8* const objName = NULL);
-
-    /**
-     * @brief Extracts the metadata of an input object and puts it into an
-     * object which implements the StructuredDataI interface.
-     * @details The returned StructuredDataI object is a tree which contains
-     * a single node which represents the *ptr's metadata.  This node is
-     * named with the className parameter and has a sub node for each one of
-     * the class's members. Those sub nodes, which represent each one a member,
-     * have leaves for the metadata of the member, i.e. the type, the
-     * modifiers, the attributes, the size, and the pointer to the member's
-     * position. This happens recursively for all members, as deep as the
-     * recursionlevel parameter allows.
-     * @param[in] ptr The pointer to the object whose metadata is expected to
-     * be extracted.
-     * @param[in] className The name of the class of the object pointed by ptr.
-     * @param[out] data The holder for the tree that contains the extracted
-     * metadata of the object.
-     * @param[in] level The level of recursion, hence the depth of the tree.
-     */
-    bool ConvertMetadataToStructuredData(void * const ptr,
-            const char8 * const className,
-            StructuredDataI &data,
-            const int32 recursionLevel = -1);
 
     /**
      * The number of references to this object.

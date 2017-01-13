@@ -160,7 +160,14 @@ public:
      * @param[in] memberName the name of the member.
      * @return the ClassMember associated to the member with name = memberName.
      */
-    VariableDescriptor *     FindMember(CCString memberName);
+    ClassMember const *     FindMember(CCString memberName);
+
+    /**
+     * @brief Gets the index-th ClassMember .
+     * @param[in] index the ordinal number of the member.
+     * @return the ClassMember description.
+     */
+    ClassMember const *     FindMember(uint32 index);
 
     /**
      * @brief Registers a member that can be later retrieved with FindMethod.
@@ -202,11 +209,6 @@ private:
      * The object factory .
      */
     const ObjectBuilder *     objectBuilder;
-
-    /**
-     * The introspection associated to the class.
-     */
-//    const Introspection *     introspection;
 
     /**
      * The name of the class.

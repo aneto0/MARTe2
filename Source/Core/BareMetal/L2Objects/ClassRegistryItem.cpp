@@ -159,29 +159,42 @@ ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {
     return caller;
 }
 
+
 void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper * const method) {
     if (method != NULL) {
         classMethods.ListAdd(method);
     }
 }
 
-VariableDescriptor *ClassRegistryItem::FindMember(CCString memberName) {
+ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
 
     uint32 i = 0u;
     uint32 end = classMembers.ListSize();
-    VariableDescriptor *member = NULL_PTR(VariableDescriptor *);
-    while ((i < end) && (member == NULL_PTR(VariableDescriptor *))) {
-        ClassMember *cm = classMembers.ListPeek(i);
-        if (cm != NULL) {
+    //VariableDescriptor const *vd = NULL_PTR(VariableDescriptor const *);
+    ClassMember const *member = NULL_PTR(ClassMember const *);
+
+    while ((i < end) && (member == NULL_PTR(ClassMember const *))) {
+        ClassMember const *cm = classMembers.ListPeek(i);
+        if (member != NULL) {
             CCString name = cm->GetName();
             if (StringHelper::Compare(name, memberName) == 0) {
-                member = cm->GetDescriptor();
+                member = cm;
             }
         }
         i++;
     }
     return member;
 }
+
+ClassMember const *ClassRegistryItem::FindMember(uint32 index) {
+
+    ClassMember const *member = NULL_PTR(ClassMember const *);
+    if  (index < classMembers.ListSize()){
+        member = classMembers.ListPeek(index);
+    }
+    return member;
+}
+
 
 void ClassRegistryItem::AddMember(ClassMember * const method) {
     if (method != NULL) {

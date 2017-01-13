@@ -96,6 +96,13 @@ public:
     inline bool Append(const ZeroTerminatedArray<T> &data);
 
     /**
+     * @brief Adds one TArray() of elements to the TArray()
+     * @return false if realloc fails
+     */
+    inline bool Append(const ZeroTerminatedArray<const T> &data);
+
+
+    /**
      * @brief shrinks the TArray() size to the minimum between newSize and the current size
      * @return false if realloc fails
      */
@@ -160,8 +167,7 @@ bool StaticZeroTerminatedArray<T,size>::Append(const T &data) {
 }
 
 template<typename T,uint32 size>
-bool StaticZeroTerminatedArray<T,size>::Append(const ZeroTerminatedArray<T> &data) {
-    bool ret = true;
+bool StaticZeroTerminatedArray<T,size>::Append(const ZeroTerminatedArray<const T> &data) {
     uint32 currentSize = GetSize();
     uint32 maxSize = size - 1;
 
@@ -175,6 +181,16 @@ bool StaticZeroTerminatedArray<T,size>::Append(const ZeroTerminatedArray<T> &dat
 
     return (data.Zero(data[index]));
 }
+
+template<typename T,uint32 size>
+bool StaticZeroTerminatedArray<T,size>::Append(const ZeroTerminatedArray<T> &data) {
+
+    const T* pData = data.List();
+
+    return Append (pData);
+
+}
+
 
 template<typename T,uint32 size>
 bool StaticZeroTerminatedArray<T,size>::Truncate(uint32 newSize) {

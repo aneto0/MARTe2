@@ -86,7 +86,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             CCString p = StringHelper::SearchString(bufferString, pattern);
             if (p != NULL) {
                 p = StringHelper::SearchString(p, ":");
-                p++;
+                p.Skip(); // p++;
                 float64 freqMHz = strtof(p, static_cast<char8 **>(0));
                 if (freqMHz > 0.) {
                     float64 frequencyF = freqMHz *= 1.0e6;

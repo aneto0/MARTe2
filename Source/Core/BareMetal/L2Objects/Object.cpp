@@ -39,6 +39,10 @@
 #include "Atomic.h"
 #include "ClassMethodCaller.h"
 #include "ClassRegistryDatabase.h"
+#include "IntrospectionTools.h"
+#include "CCString.h"
+#include "CString.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -132,191 +136,7 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
     return err;
 }
-bool Object::ConvertDataToStructuredData(void* const ptr,
-                                         const char8* const className,
-                                         StructuredDataI& data,
-                                         const char8* const objName) {
-#if 0
-    bool ret = false;
 
-    const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
-
-    if (sourceItem != NULL) {
-        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
-        if (sourceIntrospection != NULL) {
-            ret = true;
-            if (objName != NULL) {
-                ret = data.CreateRelative(objName);
-            }
-            if ((data.Write("Class", sourceItem->GetClassProperties()->GetName())) && (ret)) {
-                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
-
-                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
-
-                    TypeDescriptor sourceMemberDescriptor = sourceMemberIntrospection.GetMemberTypeDescriptor();
-
-                    TypeDescriptor newSourceDescriptor = sourceMemberDescriptor;
-                    // source is a pointer!
-                    if (sourceMemberIntrospection.GetMemberPointerLevel() > 0u) {
-                        newSourceDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
-                    }
-
-                    char8* sourceMemberDataPointer = &(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
-                    AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
-                    // special case char* string because is a pointer
-                    if (newSourceDescriptor == CharString) {
-                        if (sourceMemberIntrospection.GetNumberOfDimensions() == 0u) {
-                            newSource = AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
-                        }
-                    }
-                    for (uint32 j = 0u; j < 3u; j++) {
-                        newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
-                    }
-                    newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
-
-                    bool isNewSourceStructured = newSourceDescriptor.isStructuredData;
-                    if (isNewSourceStructured) {
-                        if (newSource.GetNumberOfDimensions() > 0u) {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Number of dimensions greater than 0 not supported.");
-                        }
-                        else {
-                            // structured data again! Create a node and go recursively
-                            ret = data.CreateRelative(sourceMemberIntrospection.GetMemberName());
-                            if (ret) {
-                                ret = ConvertDataToStructuredData(newSource.GetDataPointer(), sourceMemberIntrospection.GetMemberTypeName(), data);
-                                if (!data.MoveToAncestor(1u)) {
-                                    ret = false;
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        // in this case only write
-                        ret = data.Write(sourceMemberIntrospection.GetMemberName(), newSource);
-                    }
-                }
-            }
-            if (objName != NULL) {
-                ret = data.MoveToAncestor(1u);
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Introspection not found for the specified class");
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
-    }
-#else
-    bool ret = false;
-#endif
-    return ret;
-}
-
-bool Object::ConvertMetadataToStructuredData(void * const ptr,
-                                             const char8 * const className,
-                                             StructuredDataI &data,
-                                             const int32 recursionLevel) {
-    bool ret = false;
-#if 0
-    const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
-
-    if (sourceItem != NULL) {
-        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
-        if (sourceIntrospection != NULL) {
-            // create the class node
-            if (data.CreateRelative(className)) {
-                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
-                ret = true;
-                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
-                    // create the member node
-                    if (data.CreateRelative(sourceMemberIntrospection.GetMemberName())) {
-                        const char8* memberTypeName = sourceMemberIntrospection.GetMemberTypeName();
-                        // write the type name
-                        if (!data.Write("type", memberTypeName)) {
-                            REPORT_ERROR(ErrorManagement::FatalError,
-                                         "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
-                            ret = false;
-                        }
-                        if (ret) {
-                            const char8* memberModifiers = sourceMemberIntrospection.GetMemberModifiers();
-                            if (!data.Write("modifiers", memberModifiers)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
-                                ret = false;
-                            }
-                        }
-                        if (ret) {
-                            const char8* memberAttributes = sourceMemberIntrospection.GetMemberAttributes();
-                            if (!data.Write("attributes", memberAttributes)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
-                                ret = false;
-                            }
-                        }
-                        if (ret) {
-                            uint32 memberSize = sourceMemberIntrospection.GetMemberSize();
-                            if (!data.Write("size", memberSize)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
-                                ret = false;
-                            }
-                        }
-                        if (ret) {
-                            uint32 memberOffset = sourceMemberIntrospection.GetMemberByteOffset();
-                            /*lint -e{9091} -e{923} the casting from pointer type to integer type is
-                             * required in order to be able to get a numeric address of the pointer.*/
-                            if (!data.Write("pointer", (reinterpret_cast<uintp>(ptr) + memberOffset))) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
-                                ret = false;
-                            }
-                        }
-
-                        if (recursionLevel != 0) {
-                            bool isNewSourceStructured = sourceMemberIntrospection.GetMemberTypeDescriptor().isStructuredData;
-                            if ((isNewSourceStructured) && (ret)) {
-                                int32 newRecursionLevel = recursionLevel;
-                                uint32 nPointers = sourceMemberIntrospection.GetMemberPointerLevel();
-                                char8* sourceMemberDataPointer = &(reinterpret_cast<char8*>(ptr)[sourceMemberIntrospection.GetMemberByteOffset()]);
-                                void* newSource = reinterpret_cast<void *>(sourceMemberDataPointer);
-                                // take the pointer to the real object
-                                for (uint32 j = 0u; j < nPointers; j++) {
-                                    void** temp = reinterpret_cast<void**>(newSource);
-                                    newSource = *temp;
-                                }
-                                if (newRecursionLevel > 0) {
-                                    newRecursionLevel--;
-                                }
-                                ret = ConvertMetadataToStructuredData(newSource, memberTypeName, data, newRecursionLevel);
-                            }
-                        }
-                        // move up to write the next member
-                        if (ret) {
-                            if (!data.MoveToAncestor(1u)) {
-                                ret = false;
-                            }
-                        }
-
-                    }
-                }
-                if (!data.MoveToAncestor(1u)) {
-                    ret = false;
-                }
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Introspection not found for the specified class");
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
-    }
-#endif
-    return ret;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -330,7 +150,7 @@ Object::Object() {
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    objectName = StringHelper::StringDup(copy.objectName);
+    SetName(copy.GetName());
     isDomain = false;
 }
 
@@ -379,75 +199,59 @@ void *Object::operator new(const osulong size) throw () {
 //LCOV_EXCL_STOP
 
 CCString Object::GetName() const {
-    return objectName;
+    return objectName.GetList();
 }
 
-void Object::GetUniqueName(CString  const destination,const uint32 &size) const {
-
-    if (!MemoryOperationsHelper::Set(destination, '\0', size)) {
-        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
+static inline char8 toHex(uint8 value){
+    uint8 hexValue;
+    if (value < 10){
+        hexValue =  48u+value;
+    } else {
+        hexValue =  55u+value;
     }
+
+    return static_cast<char8>(hexValue);
+}
+
+bool Object::GetUniqueName(StreamI &nameStream) const {
+
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);
+    uint32 ptrNum = static_cast<uint32>(ptrHex);
+
     //Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
     uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
-    uint32 shiftBits = 0u;
 
-    //Count the number of leading zeros
-    uint32 nLeadingOfZeros = 0u;
-    uint32 i;
-    for (i = 0u; i < nOfPtrChars; i++) {
-        //First character in destination is the MSB
-        shiftBits = nOfPtrChars * 4u;
-        shiftBits -= 4u * (i + 1u);
-        uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
-        hexValue &= 0xFu;
-        if (hexValue == 0u) {
-            nLeadingOfZeros++;
+    bool ret = true;
+    {
+        // 16 chars for the 64 bit hex + x + terminator;
+        char8 buffer[nOfPtrChars+4];
+        buffer[0] = 'x';
+        char8 *pb = &buffer[1];
+
+        // fill the buffer
+        uint32 i;
+        for (i = nOfPtrChars-1;i >=0;i-- ){
+            uint32 masked = (ptrNum >> (i * 4)) & 0xF;
+            *pb++ = toHex(masked);
         }
-        else {
-            break;
-        }
+        // terminate
+        *pb++ = ':';
+        *pb++ = ':';
+        *pb = 0;
+
+        uint32 size = nOfPtrChars+3;
+        ret = nameStream.Write(buffer,size);
     }
-    if (size != 0u) {
-        destination[0] = 'x';
+
+    if (ret){
+        CCString name = GetName();
+        uint32 size = name.GetSize();
+        ret = nameStream.Write(name.GetList(),size);
     }
-    for (i = 1u; (i < size) && (i < ((nOfPtrChars - nLeadingOfZeros) + 1u)); i++) {
-        //First character in destination is the MSB
-        shiftBits = nOfPtrChars * 4u;
-        shiftBits -= 4u * (i + nLeadingOfZeros); //Notice that i already starts at 1
-        uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
-        hexValue &= 0xFu;
-        if (hexValue < 0xAu) {
-            hexValue += 48u;
-            destination[i] = static_cast<char8>(hexValue);
-        }
-        else {
-            hexValue += 55u;
-            destination[i] = static_cast<char8>(hexValue);
-        }
-    }
-    if (i < size) {
-        destination[i] = ':';
-        i++;
-    }
-    if (i < size) {
-        destination[i] = ':';
-        i++;
-    }
-    //If there is no space to even write \0 don't even try
-    if (i < size) {
-        if (GetName() != NULL) {
-            // TODO check memory allocation
-            if (!StringHelper::ConcatenateN(destination, GetName(), size - i)) {
-                destination[i] = '\0';
-            }
-        }
-        else {
-            destination[i] = '\0';
-        }
-    }
+
+    return ret;
 }
 
 void Object::SetName(CCString const newName) {
@@ -458,40 +262,22 @@ void Object::SetName(CCString const newName) {
             REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
         }
     }
-    objectName = StringHelper::StringDup(newName);
+
+    uint32 size = newName.GetSize()+1;
+    if (size > 0){
+        objectName = reinterpret_cast<char8 *>(HeapManager::Duplicate(newName.GetList(),size));
+    }
+
 }
 
 bool Object::ExportData(StructuredDataI & data) {
-    bool ret = false;
-
-    ClassRegistryItem *cri = GetClassRegistryItem();
-    if (cri != NULL){
-        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), cri->GetClassName(), data, GetName());
-    }
-
-//    const ClassProperties *myProperties = GetClassProperties();
-//    if (myProperties != NULL) {
-//        ret = ConvertDataToStructuredData(reinterpret_cast<void*>(this), myProperties->GetName(), data, GetName());
-//    }
-    return ret;
+    return ConvertObjectToStructuredData(*this,data);
 }
 
 bool Object::ExportMetadata(StructuredDataI & data,const int32 level) {
-    bool ret = false;
 
-    ClassRegistryItem *cri = GetClassRegistryItem();
-    if (cri != NULL){
-        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), cri->GetClassName(), data, level);
-    }
+  return ConvertObjectMetadataToStructuredData(*this,data,level);
 
-
-    //const ClassProperties *myProperties = GetClassProperties();
-//    if (myProperties != NULL) {
-//        const char8* className = myProperties->GetName();
-
-//        ret = ConvertMetadataToStructuredData(reinterpret_cast<void*>(this), className, data, level);
-//    }
-    return ret;
 }
 
 void Object::SetDomain(const bool isDomainFlag) {

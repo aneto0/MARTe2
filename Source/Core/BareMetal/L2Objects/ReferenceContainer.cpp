@@ -40,6 +40,10 @@
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "GlobalObjectsDatabase.h"
+#include "DynamicCString.h"
+#include "StaticCString.h"
+#include "AnyType.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -218,7 +222,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     uint32 i;
                     for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
                         foundReference = currentNode->Get(i);
-                        found = (StringHelper::Compare(foundReference->GetName(), token) == 0);
+                        found = (StringHelper::Compare(foundReference->GetName(), token.GetList()) == 0);
                     }
                     // take the next token
 
@@ -234,13 +238,13 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     else {
                         // insert the reference
                         if (nextToken[0] == '\0') {
-                            ref->SetName(token);
+                            ref->SetName(token.GetList());
                             created = currentNode->Insert(ref);
                         }
                         // create a node
                         else {
                             ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                            container->SetName(token);
+                            container->SetName(token.GetList());
                             ok = currentNode->Insert(container);
                             if (ok) {
                                 currentNode = container.operator->();
@@ -249,7 +253,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     }
                     if (ok) {
                         token.Truncate(0);
-                        ok = token.Append(nextToken);
+                        ok = token.AppendN(CCString (nextToken.GetList()));
                     }
                 }
             }
@@ -441,11 +445,12 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                         char8 errorMsgBuffer[maxSize];
                         StaticCString<64> errorMsg(errorMsgBuffer);
 //                        errorMsg[0] = '\0';
-                        bool ret = errorMsg.Append("Failed to Initialise object with name ");
+                        CCString msg = "Failed to Initialise object with name ";
+                        bool ret = errorMsg.Append(msg);
 //                        bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");
-                        uint32 sizeLeft = 0u;
+//                        uint32 sizeLeft = 0u;
                         if (ret) {
-                            ret = errorMsg.Append(CString(childName.GetList()));
+                            ret = errorMsg.Append(childName);
 //                            sizeLeft = maxSize - StringHelper::Length(&errorMsg[0]);
 //                            ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
                         }
@@ -464,44 +469,57 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 }
 
 bool ReferenceContainer::ExportData(StructuredDataI & data) {
-#if 0
+
     // no need to lock
-    const char8 * objName = GetName();
-    uint32 objNameLength = StringHelper::Length(objName);
-    //To include $ or +
-    objNameLength += 1u;
-    char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
-    objNameToCreate[0] = (IsDomain()) ? ('$') : ('+');
-    bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
+    CCString objName = GetName();
+
+    bool ret = true;
+    {
+        DynamicCString objNameToCreate;
+
+        if (IsDomain()){
+            ret = objNameToCreate.Append('$');
+        } else {
+            ret = objNameToCreate.Append('+');
+        }
+
+        if (ret){
+            ret = objNameToCreate.AppendN(objName);
+        }
+
+        if (ret) {
+            // moves to the node
+            ret = data.CreateRelative(objNameToCreate.GetList());
+        }
+    }
+
 
     if (ret) {
-        ret = data.CreateRelative(objNameToCreate);
+        ClassRegistryItem *cri;
+
+        cri = this->GetClassRegistryItem();
+        ret = (cri != NULL);
+
         if (ret) {
-            ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
-            if (ret) {
-                ClassRegistryItem *cri = this->GetClassRegistryItem();
-//                const ClassProperties *properties = GetClassProperties();
-                ret = (cri != NULL);
+            CCString cn = cri->GetClassName();
+            ret = data.Write("Class", cn);
+
+            uint32 numberOfChildren = Size();
+            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+                Reference child = Get(i);
+                ret = child.IsValid();
                 if (ret) {
-                    ret = data.Write("Class", cri->GetClassName());
-                    uint32 numberOfChildren = Size();
-                    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                        Reference child = Get(i);
-                        ret = child.IsValid();
-                        if (ret) {
-                            ret = child->ExportData(data);
-                        }
-                    }
-                }
-                if (!data.MoveToAncestor(1u)) {
-                    ret = false;
+                    ret = child->ExportData(data);
                 }
             }
         }
     }
-#else
-    bool ret= false;
-#endif
+
+    if (ret){
+        ret = data.MoveToAncestor(1u);
+    }
+
+
     return ret;
 }
 

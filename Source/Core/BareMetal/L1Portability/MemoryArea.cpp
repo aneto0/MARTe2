@@ -80,7 +80,7 @@ void MemoryArea::Free() {
 }
 
 void MemoryArea::SetHeapName(CCString const name) {
-    heapName.Append(name);
+    heapName.AppendN(name);
 }
 
 bool MemoryArea::Add(const uint32 memorySize,

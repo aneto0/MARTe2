@@ -55,7 +55,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                                                        const uint32 &modeToSet,
-                                                                       const char8 * const address) :
+                                                                       CCString const address) :
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
@@ -64,7 +64,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
-void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address) {
+void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
     const char8 *lastOccurrence = address;
     addressToSearch = static_cast<char8 **>(NULL);
 
@@ -74,7 +74,7 @@ void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address)
 
         uint32 startIn = 0u;
 
-        uint32 length = StringHelper::Length(address);
+        uint32 length = address.GetSize();
         if (length > 0u) {
 
             //there is at least one node

@@ -64,7 +64,7 @@ public:
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
-                                       const char8 * const address);
+                                       CCString const address);
 
     /**
      * @brief Deep copy constructor.
@@ -104,7 +104,7 @@ public:
      * @brief Sets the address of the object to search.
      * @param[in] address the address of the object to search.
      */
-    void SetAddress(const char8 * const address);
+    void SetAddress(CCString const address);
 
 private:
 

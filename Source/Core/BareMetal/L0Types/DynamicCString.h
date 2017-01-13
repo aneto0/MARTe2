@@ -34,8 +34,8 @@
 
 #include "CompilerTypes.h"
 #include "DynamicZeroTerminatedArray.h"
-#include "CString.h"
-#include "CCString.h"
+//#include "CString.h"
+//#include "CCString.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -63,22 +63,22 @@ public:
     /**
      * @briefs allocates memory and copies the content
      */
-    inline DynamicCString (CString const &s);
+//    inline DynamicCString (CString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline DynamicCString (CCString const &s);
+//    inline DynamicCString (CCString const &s);
 
     /**
      * @briefs allocates memory and copies the content
      */
-    inline DynamicCString (char8 * const &s);
+    inline DynamicCString (char8 const * const &s);
 
     /**
      * TODO
      */
-    operator char8*() const;
+    inline operator const char8*() const;
 
 };
 
@@ -95,16 +95,14 @@ DynamicCString::DynamicCString (){
 DynamicCString::DynamicCString(DynamicCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
 }
 
-DynamicCString::DynamicCString (CString const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
+//DynamicCString::DynamicCString (CString const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){}
+
+//DynamicCString::DynamicCString (CCString const &s):DynamicZeroTerminatedArray<char8,16>(s){}
+
+DynamicCString::DynamicCString (char8 const * const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
 }
 
-DynamicCString::DynamicCString (CCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
-}
-
-DynamicCString::DynamicCString (char8 * const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
-}
-
-DynamicCString::operator char8*() const{
+DynamicCString::operator const char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 

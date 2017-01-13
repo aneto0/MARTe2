@@ -53,12 +53,12 @@ public:
      * @briefs uses the memory provided by s
      * s is reset to length 0;
     */
-    inline StaticCString (char8 const (&s)[size]);
+    inline StaticCString (char8  (&s)[size]);
 
     /*
      * TODO
      */
-    operator char8*() const;
+    operator const char8*() const;
 
 };
 
@@ -69,13 +69,13 @@ public:
 /*---------------------------------------------------------------------------*/
 
 template <uint32 size>
-StaticCString<size>::StaticCString (char8 const (&s)[size]){
-    ZeroTerminatedArray<char8 >::array = &s[0];
+StaticCString<size>::StaticCString (char8  (&s)[size]):StaticZeroTerminatedArray<char8,size >(s){
+//    ZeroTerminatedArray<char8 >::array = &s[0];
     s[0] = '\0';
 }
 
 template <uint32 size>
-StaticCString<size>::operator char8*() const{
+StaticCString<size>::operator const char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 

@@ -33,6 +33,7 @@
 
 #include "ClassMethodInterfaceMapper.h"
 #include "CString.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -107,13 +107,13 @@ public:
      * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails
      */
-    inline bool Append(const ZeroTerminatedArray< T> &  data);
+    inline bool AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
 
     /**
      * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails
      */
-    inline bool Append(const ZeroTerminatedArray< const T> &  data);
+    inline bool AppendN(const ZeroTerminatedArray< const T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
 
     /**
      * @brief shrinks the TArray() size to the minimum between newSize and the current size
@@ -159,14 +159,14 @@ T *&DynamicZeroTerminatedArray<T,granularity>::TArray(){
 
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
-    uint32 necessarySize = ((1 + granularity)/ granularity)+granularity;
+    uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
     HeapManager::Malloc(necessarySize*sizeof(T),TArray());
     if (TArray() != NULL_PTR(T *)) TArray()[0] = 0;
 }
 
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
-    uint32 necessarySize = ((1 + data.GetSize() + granularity)/ granularity)+granularity;
+    uint32 necessarySize = ((1 + data.GetSize() + granularity)/ granularity)*granularity;
 
     HeapManager::Malloc(necessarySize*sizeof(T),TArray());
     if (TArray() != NULL_PTR(T *)) {
@@ -212,6 +212,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
 
     // assuming memory is allocated in a granular way
     // we can use this indicator to assess whether we need to allocate or we can simply write
+    // freeSpace is normally granularity - actual free space
+    // but in case of zero free space it becomes zero.
     uint32 freeSpace = (size + 1) % granularity ;
 
     // extreme case indicating in the worst case no more memory
@@ -225,16 +227,20 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
 
     if (ret)  {
         operator[](size) = data;
+        operator[](size+1) = 0;
     }
 
     return ret;
 }
 
 template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<T> & data) {
+bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
     bool ret = true;
     uint32 size = GetSize();
     uint32 size2 = data.GetSize();
+    if ((maxAppendSize != 0xFFFFFFFF) &&(size2 > maxAppendSize)) {
+        size2 = maxAppendSize;
+    }
 
     uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
 
@@ -246,16 +252,21 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray
         void *dest      = static_cast<void *>(GetList()+size);
         const void *src = static_cast<void *>(data.GetList());
         MemoryOperationsHelper::Copy(dest,src,size2);
+
+        operator[](size+size2) = 0;
     }
 
     return ret;
 }
 
 template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray<const T> & data) {
+bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<const T> & data,uint32 maxAppendSize) {
     bool ret = true;
     uint32 size = GetSize();
     uint32 size2 = data.GetSize();
+    if ((maxAppendSize != 0xFFFFFFFF) && (size2 > maxAppendSize)) {
+        size2 = maxAppendSize;
+    }
 
     uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
 
@@ -267,6 +278,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const ZeroTerminatedArray
         void *dest = static_cast<void *>(TArray()+size);
         const void *src  = reinterpret_cast<const void *>(data.GetList());
         MemoryOperationsHelper::Copy(dest,src,size2);
+
+        operator[](size+size2) = 0;
     }
 
     return ret;

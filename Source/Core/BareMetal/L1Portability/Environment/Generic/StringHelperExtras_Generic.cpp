@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "../../StringHelper.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -187,13 +188,13 @@ CCString TokenizeByChars(CCString const string,CCString const delimiter,CString 
             inputIndex++;
             c = string[inputIndex];
         }
-        // skip separator - too save time avoid calling CompareN - check other reason to have terminatred previous loop
+        // skip separator - too save time avoid calling CompareN - check other reason to have terminated previous loop
         if ((c!=0) &&  (resultStorageLeft > 0)){
             inputIndex++;
         }
 
         result[outputIndex] = 0;
-        ret = string[inputIndex];
+        ret = (string.GetList() + inputIndex);
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
@@ -221,7 +222,7 @@ CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,Dyna
             inputIndex++;
         }
 
-        ret = string[inputIndex];
+        ret = (string.GetList() +inputIndex);
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
@@ -264,6 +265,39 @@ CCString TokenizeByString(CCString const string,CCString const terminator,CStrin
     }
     return ret;
 
+}
+
+int32 SearchIndex(CCString  const string1, CCString  const string2) {
+
+    int32 ret = -1;
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end1 = false;
+        bool end2 = false;
+        int32 i = 0;
+        while (!end1) {
+            int32 j = 0;
+            end2 = false;
+            while (!end2) {
+
+                if ((string1[i] == string2[j]) || (string1[i] == '\0')) {
+                    end1 = true;
+                    end2 = true;
+                    ret = i;
+                }
+                if (string2[j] == '\0') {
+                    end2 = true;
+
+                }
+                j++;
+            }
+            i++;
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+    return ret;
 }
 
 

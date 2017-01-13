@@ -34,6 +34,7 @@
 #include "ClassRegistryItem.h"
 #include "HeapManager.h"
 #include "Object.h"
+#include "DynamicCString.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 #include "LoadableLibrary.h"
@@ -81,31 +82,32 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     }
 }
 
-ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
+ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (!Lock()) {
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
 
-    const uint32 maxSize = 129u;
-    char8 dllName[maxSize];
-    dllName[0] = '\0';
+
+    DynamicCString dllName;
+
+//    const uint32 maxSize = 129u;
+//    char8 dllName[maxSize];
+//    dllName[0] = '\0';
     bool found = false;
 
     //Check for the string pattern dllName::className
-    const char8 *classOnlyPartName = StringHelper::SearchString(className, "::");
-    if (classOnlyPartName != NULL) {
+    CCString classOnlyPartName = StringHelper::SearchString(className, "::");
+    if (classOnlyPartName != NULL_PTR(char8 *)) {
+
         uint32 size = static_cast<uint32>(StringHelper::SearchIndex(className, "::"));
-        if (size > (maxSize - 1u)) {
-            size = (maxSize - 1u);
-        }
-        if (StringHelper::CopyN(&(dllName[0]), className, size)) {
-            dllName[size] = '\0';
-            className = &classOnlyPartName[2];
-        }
+
+        dllName.AppendN(className,size);
+        className = classOnlyPartName.GetList()+2;
+
     }
 
-    if (className != NULL) {
+    if (className != NULL_PTR(char8 *)) {
 
         uint32 i;
         uint32 databaseSize = classDatabase.ListSize();
@@ -127,28 +129,23 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     //registryItem still not found. Try to look inside the dll (if it exists)
     /*lint -e{593} this pointer is freed by the registry item when it is destructed*/
     if (!found) {
-        if (dllName[0] != '\0') {
+        if (dllName.GetSize() != 0) {
 
-            uint32 fullSize = StringHelper::Length(&(dllName[0])) + 5u;
-            /*lint -e{925} pointer to pointer required due to Malloc implementation*/
-            char8 *fullName = static_cast<char8 *>(HeapManager::Malloc(fullSize));
+            // to allow stripping failed extensions from dll name
+            uint32 baseSize = dllName.GetSize();
 
             LoadableLibrary *loader = new LoadableLibrary();
 
             uint32 i = 0u;
             bool dllOpened = false;
             //Check for all known operating system extensions.
-            while (operatingSystemDLLExtensions[i] != 0) {
-                if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
-                    const char8 *extension = operatingSystemDLLExtensions[i];
-                    if (StringHelper::ConcatenateN(fullName, extension, 4u)) {
-                        dllOpened = loader->Open(fullName);
-                        if (dllOpened) {
-                            break;
-                        }
-                        i++;
-                    }
-                }
+            while ((operatingSystemDLLExtensions[i] != 0) && (!dllOpened)) {
+                CCString extension = operatingSystemDLLExtensions[i];
+
+                dllName.Truncate(baseSize);
+                dllName.AppendN(extension);
+                dllOpened = loader->Open(dllName);
+                i++;
             }
 
             //If the dll was successfully opened than it is likely that more classes were registered
@@ -171,9 +168,6 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
             if (!found) {
                 delete loader;
             }
-            if (!HeapManager::Free(reinterpret_cast<void*&>(fullName))) {
-                //TODO
-            }
         }
     }
 
@@ -181,7 +175,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
-ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName) {
+ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidName) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (!Lock()) {
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
@@ -232,7 +226,7 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
     return item;
 }
 
-const char8 * const ClassRegistryDatabase::GetClassName() const {
+CCString const ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
 
