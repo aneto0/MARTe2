@@ -89,7 +89,7 @@ void ErrorCodeToStream(const ErrorType &errorCode,
     uint32 i = 1u;
     bool firstErrorWritten = false;
     bool ok = true;
-    while (ok && (errorNames[i].name != NULL)) {
+    while (ok && (!errorNames[i].name.IsNullPtr())) {
         if (errorCode.Contains(errorNames[i].errorBitSet)) {
             uint32 size = 1u;
             if (firstErrorWritten) {
@@ -103,7 +103,7 @@ void ErrorCodeToStream(const ErrorType &errorCode,
 //            size = StringHelper::Length(errorNames[i].name) + 1u;
             size = errorNames[i].name.GetSize();
             if (ok) {
-                ok = stream.Write(errorNames[i].name, size);
+                ok = stream.Write(errorNames[i].name.GetList(), size);
             }
         }
         i++;
@@ -128,8 +128,8 @@ void ReportError(const ErrorType &code,
     errorInfo.header.errorType = code;
 
     errorInfo.header.lineNumber = lineNumber;
-    errorInfo.fileName = fileName;
-    errorInfo.functionName = functionName;
+    errorInfo.fileName  = fileName.GetList();
+    errorInfo.functionName = functionName.GetList();
     errorInfo.hrtTime = HighResolutionTimer::Counter();
 #ifndef INTERRUPT_SUPPORTED
 //    errorInfo.threadId = Threads::Id();
@@ -148,8 +148,8 @@ void ReportErrorFullContext(const ErrorType &code,
     errorInfo.className = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
     errorInfo.header.lineNumber = lineNumber;
-    errorInfo.fileName = fileName;
-    errorInfo.functionName = functionName;
+    errorInfo.fileName = fileName.GetList();
+    errorInfo.functionName = functionName.GetList();
     errorInfo.hrtTime = HighResolutionTimer::Counter();
 //    errorInfo.threadId = Threads::Id();
     errorMessageProcessFunction(errorInfo, errorDescription);

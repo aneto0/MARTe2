@@ -48,9 +48,9 @@ namespace StringHelper {
 
 CCString  SearchChar(CCString  const string,  const char8 c) {
 
-    CCString  ret(NULLS);
+    CCString  ret;
 
-    if (string != NULL) {
+    if (!string.IsNullPtr()) {
         bool end = false;
 
         uint32 i = 0u;
@@ -63,7 +63,7 @@ CCString  SearchChar(CCString  const string,  const char8 c) {
             }
             if (string[i] == c) {
                 end = true;
-                ret = &string[i];
+                ret = string.GetList()+i;
             }
             i++;
         }
@@ -76,7 +76,7 @@ CCString  SearchChar(CCString  const string,  const char8 c) {
 
 CCString  SearchString(CCString  const string,CCString  const substring) {
 
-    CCString  ret(NULLS);
+    CCString  ret;
     int32 size1 = static_cast<int32>(string.GetSize());
     int32 size2 = static_cast<int32>(substring.GetSize());
 
@@ -109,16 +109,20 @@ int32 Compare(CCString  const string1,CCString  const string2) {
         bool end = false;
         int32 i = 0;
         while (!end) {
+            char8 c1 = string1[i];
+            char8 c2 = string2[i];
+            int32 i1 = static_cast<int32>(c1);
+            int32 i2 = static_cast<int32>(c2);
 
-            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+            if (i1 > i2) {
                 end = true;
                 ret = 2;
             } else
-            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+            if (i1 < i2) {
                 end = true;
                 ret = 1;
             } else
-            if ((string1[i] == '\0') && (string2[i] == '\0')) {
+            if ((c1 == '\0') && (c2 == '\0')) {
                 end = true;
                 ret = 0;
             }
@@ -138,22 +142,26 @@ int32 CompareN(CCString  const string1, CCString  const string2, const uint32 si
 
     int32 ret = -1;
 
-    if ((string1.GetList() != NULLS) && (string2.GetList() != NULLS)) {
+    if ((!string1.IsNullPtr()) && (!string2.IsNullPtr())) {
         bool end = false;
         ret = 0;
 
         uint32 i = 0u;
         while ((!end) && (i < size)) {
+            char8 c1 = string1[i];
+            char8 c2 = string2[i];
+            int32 i1 = static_cast<int32>(c1);
+            int32 i2 = static_cast<int32>(c2);
 
-            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+            if (i1 > i2) {
                 ret = 2;
                 end = true;
             } else
-            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+            if (i1 < i2) {
                 ret = 1;
                 end = true;
             } else
-            if ((string1[i] == '\0') || (string2[i] == '\0')) {
+            if ((c1 == '\0') || (c2 == '\0')) {
                 end = true;
             }
 
@@ -175,15 +183,15 @@ CCString TokenizeByChars(CCString const string,CCString const delimiter,CString 
     CCString ret(NULLS);
     uint32 resultStorageLeft = resultStorageSize-1;
 
-    if ((string.GetList() != NULLS) && (delimiter.GetList() != NULLS) && (result.GetList() != NULLS)) {
+    if ((!string.IsNullPtr()) && (!delimiter.IsNullPtr()) && (!result.IsNullPtr())) {
         uint32 inputIndex = 0;
         uint32 outputIndex = 0;
 
         // next character to be processed;
         char8 c = string[0];
 
-        while ((c!=0) && (SearchChar(delimiter,c) == NULLS) && (resultStorageLeft > 0)){
-            result[outputIndex] = c;
+        while ((c!=0) && (SearchChar(delimiter,c).IsNullPtr()) && (resultStorageLeft > 0)){
+            (result.GetList())[outputIndex] = c;
             outputIndex++;
             inputIndex++;
             c = string[inputIndex];
@@ -193,7 +201,7 @@ CCString TokenizeByChars(CCString const string,CCString const delimiter,CString 
             inputIndex++;
         }
 
-        result[outputIndex] = 0;
+        (result.GetList())[outputIndex] = 0;
         ret = (string.GetList() + inputIndex);
     }
     else {
@@ -204,15 +212,15 @@ CCString TokenizeByChars(CCString const string,CCString const delimiter,CString 
 
 CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,DynamicCString result){
 
-    CCString ret(NULLS);
+    CCString ret;
 
-    if ((string.GetList() != NULLS) && (delimiter.GetList() != NULLS) ) {
+    if ((!string.IsNullPtr()) && (!delimiter.IsNullPtr()) ) {
         uint32 inputIndex = 0;
 
         // next character to be processed;
         char8 c = string[0];
 
-        while ((c!=0) && (SearchChar(delimiter,c) == NULLS) ){
+        while ((c!=0) && (SearchChar(delimiter,c).IsNullPtr()) ){
             result.Append(c);
             inputIndex++;
             c = string[inputIndex];
@@ -237,7 +245,7 @@ CCString TokenizeByString(CCString const string,CCString const terminator,CStrin
     uint32 resultStorageLeft = resultStorageSize-1;
     uint32 terminatorSize = terminator.GetSize();
 
-    if ((string.GetList() != NULLS) && (terminator.GetList() != NULLS) && (result.GetList() != NULLS)) {
+    if ((!string.IsNullPtr()) && (!terminator.IsNullPtr()) && (!result.IsNullPtr())) {
         uint32 inputIndex = 0;
         uint32 outputIndex = 0;
 
@@ -246,7 +254,7 @@ CCString TokenizeByString(CCString const string,CCString const terminator,CStrin
         char8 c = string[0];
 
         while ((c!=0) && (CompareN(terminator,stringP,terminatorSize) != 0) && (resultStorageLeft > 0)){
-            result[outputIndex] = c;
+            (result.GetList())[outputIndex] = c;
             outputIndex++;
             inputIndex++;
             c = string[inputIndex];
@@ -257,7 +265,7 @@ CCString TokenizeByString(CCString const string,CCString const terminator,CStrin
             inputIndex+= terminatorSize;
         }
 
-        result[outputIndex] = 0;
+        (result.GetList())[outputIndex] = 0;
         ret = CCString (string.GetList()+inputIndex);
     }
     else {
@@ -271,7 +279,7 @@ int32 SearchIndex(CCString  const string1, CCString  const string2) {
 
     int32 ret = -1;
 
-    if ((string1 != NULL) && (string2 != NULL)) {
+    if ((!string1.IsNullPtr()) && (!string2.IsNullPtr())) {
         bool end1 = false;
         bool end2 = false;
         int32 i = 0;

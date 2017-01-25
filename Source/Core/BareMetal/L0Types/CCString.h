@@ -62,10 +62,6 @@ public:
      */
     inline CCString (CCString const &s);
 
-    /**
-     * TODO
-     */
-//    inline CCString (CString const &s);
 
     /**
      * TODO
@@ -76,23 +72,18 @@ public:
     /**
      * TODO
      */
-//    inline CCString (DynamicCString const &s);
-
-    /**
-     *TODO
-     */
-//    template <uint32 size>
-//    inline CCString (StaticCString<size> const &s);
-
-    /**
-     * TODO
-     */
     inline CCString (char8 const * const &s);
 
     /**
      * TODO
      */
-    inline operator const char8*() const;
+//    inline operator const char8*() const;
+
+    /**
+     * TODO
+     */
+    inline char8 operator[](uint32 index) const;
+
 
 };
 
@@ -106,16 +97,20 @@ CCString::CCString (){}
 
 CCString::CCString (CCString const &s):ZeroTerminatedArray<const char8>(s){}
 
-//CCString::CCString (CString const &s):ZeroTerminatedArray<const char8>(s){}
-
 template <uint32 size>
 CCString::CCString (char8 const (&vector) [size]):ZeroTerminatedArray<const char8>(&vector[0]){}
 
 CCString::CCString (char8 const * const &s):ZeroTerminatedArray<const char8>(s){}
 
-CCString::operator const char8*() const{
-    return ZeroTerminatedArray<const char8>::array;
+//CCString::operator const char8*() const{
+//    return ZeroTerminatedArray<const char8>::array;
+//}
+
+char8 
+CCString::operator[](uint32 index) const{
+    return ZeroTerminatedArray<const char8>::operator[](index);
 }
+
 
 }
 #endif /* L0TYPES_CCSTRING_H_ */

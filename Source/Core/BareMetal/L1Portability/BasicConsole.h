@@ -554,7 +554,7 @@ bool BasicConsole::PagedWrite(const char8 * const buffer,
                 lineCount = 0u;
                 CCString message("[PAGING] ENTER TO CONTINUE\r");
                 sizeT = message.GetSize();
-                err = OSWrite(message, sizeT, timeout);
+                err = OSWrite(message.GetList(), sizeT, timeout);
                 if (err) {
                     char8 readBuffer[32];     // TODO why 32
                     sizeT = N_CHARS_NEWLINE;  // TODO why this size

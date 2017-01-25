@@ -370,7 +370,7 @@ bool BasicConsole::Read(char8* const buffer,
 bool BasicConsole::SetTitleBar(CCString title) {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
-    if (!SetConsoleTitle(title)) {
+    if (!SetConsoleTitle(title.GetList())) {
         error = ErrorManagement::OSError;
     }
 
@@ -385,7 +385,7 @@ bool BasicConsole::GetTitleBar(CString const title,
         return false;
     }
 
-    GetConsoleTitle(title, size);
+    GetConsoleTitle(title.GetList(), size);
 
     return (error == ErrorManagement::NoError);
 

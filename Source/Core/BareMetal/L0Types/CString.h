@@ -62,16 +62,6 @@ public:
      */
     inline CString (CString const &s);
 
-    /**
-     *TODO
-     */
-//    inline CString (DynamicCString const &s);
-
-    /**
-     *TODO
-     */
-//    template <uint32 size>
-//    inline CString (StaticCString<size> const &s);
 
     /**
      * TODO
@@ -81,7 +71,14 @@ public:
     /**
      * TODO
      */
-    inline operator const char8*() const;
+//    inline operator const char8*() const;
+
+
+    /**
+     * TODO
+     */
+    inline char8 operator[](uint32 index) const;
+
 };
 
 
@@ -103,8 +100,13 @@ CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
 
 }
 
-CString::operator const char8*() const{
-    return ZeroTerminatedArray<char8>::array;
+//CString::operator const char8*() const{
+//    return ZeroTerminatedArray<char8>::array;
+//}
+
+char8 
+CString::operator[](uint32 index) const{
+    return ZeroTerminatedArray<char8>::operator[](index);
 }
 
 

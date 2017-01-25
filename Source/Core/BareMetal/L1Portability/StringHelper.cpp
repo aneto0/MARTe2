@@ -47,12 +47,12 @@ namespace StringHelper {
 /*lint -e{925} cast pointer to pointer required */
 CString StringDup(CCString const s) {
 
-    CString duplicate = NULL_PTR(CString);
-    if (s != NULL) {
+    CString duplicate;
+    if (!s.IsNullPtr()) {
 
-        void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
+        void *copy = HeapManager::Duplicate(static_cast<const void *>(s.GetList()));
         duplicate = reinterpret_cast<char8 *>(copy);
-        if (duplicate.GetList() ==  NULL_PTR(CString)) {
+        if (duplicate.IsNullPtr()) {
             REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed");
         }
     }

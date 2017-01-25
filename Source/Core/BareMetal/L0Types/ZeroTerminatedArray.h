@@ -86,13 +86,6 @@ public:
     void SetList(T *arrayIn)  ;
 
     /**
-     * @brief Returns the pointer to the beginning of the array.
-     * @return the pointer to the beginning of the array.
-     */
-    operator T*() const;
-
-
-    /**
      * move pointer ahead of one element. Checks limits
      * if !Zero(*array) && (array != NULL)  array++;
      */
@@ -113,6 +106,12 @@ public:
      */
     bool IsNullPtr() const;
 protected:
+
+    /**
+     * @brief Returns the pointer to the beginning of the array.
+     * @return the pointer to the beginning of the array.
+     */
+//    operator T*() const;
 
     /**
      * The array
@@ -190,10 +189,10 @@ bool ZeroTerminatedArray<T>::IsNullPtr() const {
     return (array == NULL_PTR(T *));
 }
 
-template<typename T>
-ZeroTerminatedArray<T>::operator T*() const {
-    return GetList();
-}
+//template<typename T>
+//ZeroTerminatedArray<T>::operator T*() const {
+//    return GetList();
+//}
 
 template<typename T>
 void ZeroTerminatedArray<T>::Skip() {
