@@ -367,7 +367,7 @@ bool BasicConsole::Read(char8* const buffer,
 
 }
 
-bool BasicConsole::SetTitleBar(const char8 *title) {
+bool BasicConsole::SetTitleBar(CCString title) {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     if (!SetConsoleTitle(title)) {
@@ -377,11 +377,11 @@ bool BasicConsole::SetTitleBar(const char8 *title) {
     return (error == ErrorManagement::NoError);
 }
 
-bool BasicConsole::GetTitleBar(char8 *title,
+bool BasicConsole::GetTitleBar(CString const title,
                                const uint32 &size) const {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
-    if (title == NULL) {
+    if (title.IsNullPtr()) {
         return false;
     }
 

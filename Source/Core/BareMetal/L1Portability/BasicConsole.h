@@ -319,7 +319,7 @@ public:
      */
     template <uint32 sizeOfBuffer>
     inline bool GetTitleBar(StaticCString<sizeOfBuffer>title) const{
-        uint32 size = sizeOfBuffer;
+        uint32 size = sizeOfBuffer-1;
         return GetTitleBar(title.GetList(),size);
     }
 

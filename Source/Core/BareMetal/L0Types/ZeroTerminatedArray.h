@@ -107,6 +107,11 @@ public:
      */
     bool Zero(const T & data) const;
 
+    /**
+     * @brief Checks if the ptr is valid
+     * @return true if \a array is NULL.
+     */
+    bool IsNullPtr() const;
 protected:
 
     /**
@@ -178,6 +183,11 @@ void ZeroTerminatedArray<T>::SetList(T *arrayIn) {
 template<typename T>
 bool ZeroTerminatedArray<T>::Zero(const T & data) const {
     return (data == static_cast<T>(0));
+}
+
+template<typename T>
+bool ZeroTerminatedArray<T>::IsNullPtr() const {
+    return (array == NULL_PTR(T *));
 }
 
 template<typename T>
