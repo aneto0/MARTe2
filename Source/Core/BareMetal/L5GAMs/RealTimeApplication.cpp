@@ -55,10 +55,23 @@ uint32 RealTimeApplication::index = 1u;
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() :
-        ReferenceContainer() {
+        ReferenceContainer(),
+        MessageI() {
+    filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter->SetDestination(this);
+    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
+    }
+
 }
 
+/*lint -e{1551} Guarantess that the execution is stopped upon destrucion of the RealTimeApplication*/
 RealTimeApplication::~RealTimeApplication() {
+    ErrorManagement::ErrorType ret = StopCurrentStateExecution();
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the RealTimeApplication. Was it ever started?");
+    }
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
@@ -88,10 +101,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                    "No States block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
         }
-
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -105,10 +116,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                    "No Data block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
         }
-
         if (ret) {
             ret = false;
             for (uint32 i = 0u; (i < numberOfContainers) && (!ret); i++) {
@@ -122,10 +131,8 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                    "No Functions block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
         }
-
         if (ret) {
             numberOfContainers = Size();
             ret = false;
@@ -175,8 +182,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError,
-                                            "No Scheduler block in RealTimeApplication %s", GetName())
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
                 }
             }
         }
@@ -220,7 +226,8 @@ bool RealTimeApplication::ConfigureApplication() {
     return ret;
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn, ConfigurationDatabase &dataDatabaseIn) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
+                                               ConfigurationDatabase &dataDatabaseIn) {
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
     bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
@@ -276,10 +283,12 @@ bool RealTimeApplication::AllocateGAMMemory() {
                 ret = gam.IsValid();
 
                 if (ret) {
-
                     ret = gam->AllocateInputSignalsMemory();
                     if (ret) {
                         ret = gam->AllocateOutputSignalsMemory();
+                    }
+                    if (ret) {
+                        ret = gam->Setup();
                     }
                 }
             }
@@ -348,17 +357,19 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
-
-    bool ret = statesContainer.IsValid();
+ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString nextStateName) {
+    bool ret = nextStateName.Seek(0LLU);
+    if (ret) {
+        ret = statesContainer.IsValid();
+    }
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             ret = state.IsValid();
             if (ret) {
-                if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
-                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+                if (StringHelper::Compare(state->GetName(), nextStateName.Buffer()) == 0) {
+                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
                     break;
                 }
             }
@@ -370,14 +381,14 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
         ret = statefulInData.IsValid();
         if (ret) {
-            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
 
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
     uint32 nextIndex = (index + 1u) % 2u;
@@ -386,14 +397,21 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
 }
 
-void RealTimeApplication::StartExecution() {
+ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution() {
     index = (index + 1u) % 2u;
-
-    scheduler->StartExecution();
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StartNextStateExecution();
+    }
+    return ret;
 }
 
-void RealTimeApplication::StopExecution() {
-    scheduler->StopExecution();
+ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution() {
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StopCurrentStateExecution();
+    }
+    return ret;
 }
 
 bool RealTimeApplication::FindStatefulDataSources() {
@@ -428,5 +446,10 @@ uint32 RealTimeApplication::GetIndex() {
     return index;
 }
 
-CLASS_REGISTER(RealTimeApplication, "1.0");
+CLASS_REGISTER(RealTimeApplication, "1.0")
+
+CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
+CLASS_METHOD_REGISTER(RealTimeApplication, StartNextStateExecution)
+CLASS_METHOD_REGISTER(RealTimeApplication, StopCurrentStateExecution)
+
 }

@@ -71,7 +71,8 @@ private:
 
 /**
  * @brief Template version of ClassRegistryItem.
- * @tparam T
+ * @tparam T The type of the class to register. It is expected that will have
+ * a public attribute named classProperties of type ClassProperties.
  */
 template<typename T>
 class DLL_API ClassRegistryItemT<T, false> : public ClassRegistryItem {

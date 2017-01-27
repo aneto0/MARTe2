@@ -192,6 +192,8 @@ public:
 
 GAMTestGAM1    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     void *GetInputSignalsMemory();
@@ -223,6 +225,10 @@ void *GAMTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
+bool GAMTestGAM1::Setup() {
+    return true;
+}
+
 bool GAMTestGAM1::Execute() {
     return true;
 }
@@ -234,9 +240,12 @@ public:
 
 GAMTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 GAMTestScheduler1::GAMTestScheduler1() :
@@ -244,13 +253,18 @@ GAMTestScheduler1::GAMTestScheduler1() :
 
 }
 
-void GAMTestScheduler1::StartExecution() {
+MARTe::ErrorManagement::ErrorType  GAMTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+MARTe::ErrorManagement::ErrorType  GAMTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void GAMTestScheduler1::CustomPrepareNextState(){
 
 }
 
-void GAMTestScheduler1::StopExecution() {
-
-}
 
 CLASS_REGISTER(GAMTestScheduler1, "1.0")
 
@@ -268,7 +282,7 @@ static bool InitialiseGAMEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -1003,7 +1017,7 @@ bool GAMTest::TestAddSignals() {
         value = "";
     }
     if (ret) {
-        test.CleanUp();
+        test.Purge();
     }
     if (ret) {
         gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMD");

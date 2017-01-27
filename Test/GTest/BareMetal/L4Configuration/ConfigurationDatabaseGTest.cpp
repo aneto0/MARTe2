@@ -332,3 +332,18 @@ TEST(ConfigurationDatabaseGTest,TestUnlock) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestUnlock());
 }
+
+TEST(ConfigurationDatabaseGTest,TestInitialise) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestInitialise());
+}
+
+TEST(ConfigurationDatabaseGTest,TestCleanUp) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCleanUp());
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetCurrentNode) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetCurrentNode());
+}

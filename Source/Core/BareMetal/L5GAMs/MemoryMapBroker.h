@@ -46,8 +46,17 @@ namespace MARTe {
  * that are to be copied by this MemoryMapBroker
  */
 struct MemoryMapBrokerCopyTableEntry {
+    /**
+     * The pointer to the GAM.
+     */
     void *gamPointer;
+    /**
+     * The pointer to the datasource
+     */
     void *dataSourcePointer;
+    /**
+     * The size of the copy
+     */
     uint32 copySize;
 };
 
@@ -76,12 +85,12 @@ public:
 
     /**
      * @brief Initialises the MemoryMapBroker.
-     * @detail For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
+     * @details For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
      * (i.e. IsSupportedBroker(class inhering from MemoryMapBroker) == true), the signal name is searched
      *  in the provided \a dataSourceIn (see Init) and the memory address of the signal retrieved using the
      *  GetSignalMemoryBuffer function. The information of each element to  be copied is stored in a MemoryMapBrokerCopyTableEntry.
      * @param[in] direction the signal direction (InputSignals or OutputSignals).
-     * @param[in] dataSource the DataSourceI to be queried.
+     * @param[in] dataSourceIn the DataSourceI to be queried.
      * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.

@@ -33,16 +33,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItemT.h"
 
-#include "ClassProperties.h"
-#include "ClassRegistryItem.h"
 #include "ClassRegistryItemT.h"
-#include "GeneralDefinitions.h"
-#include "HeapI.h"
-#include "HeapManager.h"
-#include "StringHelper.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -133,31 +125,26 @@
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-        return MARTe::ClassRegistryItemT<className>::Instance();                                                       \
+    	if(className ## _privateItem == NULL) {\
+    	}\
+	return MARTe::ClassRegistryItemT<className>::Instance();            \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        className x;                                                                                                   \
-        MARTe::ClassRegistryItem *ret=NULL_PTR(MARTe::ClassRegistryItem *);                                            \
-        if(MARTe::StringHelper::Compare(typeid(x).name(), typeid(*this).name())==0){                                   \
-            ret= GetClassRegistryItem_Static();                                                                        \
-        }                                                                                                              \
-        return ret;                                                                                                    \
+        return GetClassRegistryItem_Static(); \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
     void * className::operator new(const size_t size, MARTe::HeapI* const heap) {                                      \
         void *obj = NULL_PTR(void *);                                                                                  \
-        if(size == sizeof(className)){                                                                                 \
-            if (heap != NULL) {                                                                                        \
-                obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                  \
-            } else {                                                                                                   \
-                obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                    \
-            }                                                                                                          \
-            GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                               \
+        if (heap != NULL) {                                                                                            \
+            obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \
+        } else {                                                                                                       \
+            obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size));                                        \
         }                                                                                                              \
+        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
         return obj;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \

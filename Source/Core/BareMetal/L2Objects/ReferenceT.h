@@ -96,7 +96,7 @@ public:
                HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object (see RemoveReference).
      */
     virtual ~ReferenceT();
 

@@ -200,7 +200,7 @@ bool ReferenceTTest::TestDestructor() {
 bool ReferenceTTest::TestInitialiseNoCreation() {
     ReferenceT<IntegerObject> test = Reference("IntegerObject");
     ConfigurationDatabase cdb;
-    int32 value = 1;
+    uint32 value = 1;
     cdb.Write("var", value);
     if (!test.Initialise(cdb, true)) {
         return false;
@@ -211,7 +211,7 @@ bool ReferenceTTest::TestInitialiseNoCreation() {
 bool ReferenceTTest::TestInitialiseCreation() {
     ReferenceT<IntegerObject> test;
     ConfigurationDatabase cdb;
-    int32 value = 1;
+    uint32 value = 1;
     cdb.Write("Class", "IntegerObject");
     cdb.Write("var", value);
     if (!test.Initialise(cdb, false)) {

@@ -53,29 +53,170 @@ public:
     virtual ~ClassMethodInterfaceMapperTest();
 
     /**
-     * @brief Tests the default constructor
+     * @brief Tests the constructor with no parameters.
      */
-    bool TestDefaultConstructor();
+    bool TestConstructor_VoidParameters();
 
     /**
-     * @brief Tests the constructor for a method without arguments.
+     * @brief Tests the Constructor with 1 parameter in all the 3 possible combinations
      */
-    bool TestConstructorForMethodWithNoArguments();
+    bool TestConstructor_OneParameter_C();
+    bool TestConstructor_OneParameter_R();
+    bool TestConstructor_OneParameter_W();
 
     /**
-     * @brief Tests the constructor for a method with 1 argument by copy.
+     * @brief Tests the Constructor with 1 parameter that is a pointer (a feature that is not supported).
      */
-    bool TestConstructorForMethodWith1ArgumentByCopy();
+    bool TestConstructor_OneParameter_Pointer();
 
     /**
-     * @brief Tests the constructor for a method with 1 argument by reference.
+     * @brief Tests the Constructor with 2 parameters in all the 9 possible combinations
      */
-    bool TestConstructorForMethodWith1ArgumentByRef();
+    bool TestConstructor_TwoParameters_C_C();
+    bool TestConstructor_TwoParameters_C_R();
+    bool TestConstructor_TwoParameters_C_W();
+    bool TestConstructor_TwoParameters_R_C();
+    bool TestConstructor_TwoParameters_R_R();
+    bool TestConstructor_TwoParameters_R_W();
+    bool TestConstructor_TwoParameters_W_C();
+    bool TestConstructor_TwoParameters_W_R();
+    bool TestConstructor_TwoParameters_W_W();
+    /**
+     * @brief Tests the Constructor with 2 parameters that are pointers (a feature that is not supported).
+     */
+    bool TestConstructor_TwoParameters_Pointers();
 
     /**
-     * @brief Tests the Call method
+     * @brief Tests the Constructor with 3 parameters in all the 27 possible combinations
      */
-    bool TestCall();
+    bool TestConstructor_ThreeParameters_C_C_C();
+    bool TestConstructor_ThreeParameters_C_C_R();
+    bool TestConstructor_ThreeParameters_C_C_W();
+    bool TestConstructor_ThreeParameters_C_R_C();
+    bool TestConstructor_ThreeParameters_C_R_R();
+    bool TestConstructor_ThreeParameters_C_R_W();
+    bool TestConstructor_ThreeParameters_C_W_C();
+    bool TestConstructor_ThreeParameters_C_W_R();
+    bool TestConstructor_ThreeParameters_C_W_W();
+    bool TestConstructor_ThreeParameters_R_C_C();
+    bool TestConstructor_ThreeParameters_R_C_R();
+    bool TestConstructor_ThreeParameters_R_C_W();
+    bool TestConstructor_ThreeParameters_R_R_C();
+    bool TestConstructor_ThreeParameters_R_R_R();
+    bool TestConstructor_ThreeParameters_R_R_W();
+    bool TestConstructor_ThreeParameters_R_W_C();
+    bool TestConstructor_ThreeParameters_R_W_R();
+    bool TestConstructor_ThreeParameters_R_W_W();
+    bool TestConstructor_ThreeParameters_W_C_C();
+    bool TestConstructor_ThreeParameters_W_C_R();
+    bool TestConstructor_ThreeParameters_W_C_W();
+    bool TestConstructor_ThreeParameters_W_R_C();
+    bool TestConstructor_ThreeParameters_W_R_R();
+    bool TestConstructor_ThreeParameters_W_R_W();
+    bool TestConstructor_ThreeParameters_W_W_C();
+    bool TestConstructor_ThreeParameters_W_W_R();
+    bool TestConstructor_ThreeParameters_W_W_W();
+
+    /**
+     * @brief Tests the Constructor with 4 parameters in all the 8 possible combinations
+     */
+    bool TestConstructor_FourParameters_C_C_C_C();
+    bool TestConstructor_FourParameters_C_C_C_R();
+    bool TestConstructor_FourParameters_C_C_C_W();
+    bool TestConstructor_FourParameters_C_C_R_C();
+    bool TestConstructor_FourParameters_C_C_R_R();
+    bool TestConstructor_FourParameters_C_C_R_W();
+    bool TestConstructor_FourParameters_C_C_W_C();
+    bool TestConstructor_FourParameters_C_C_W_R();
+    bool TestConstructor_FourParameters_C_C_W_W();
+    bool TestConstructor_FourParameters_C_R_C_C();
+    bool TestConstructor_FourParameters_C_R_C_R();
+    bool TestConstructor_FourParameters_C_R_C_W();
+    bool TestConstructor_FourParameters_C_R_R_C();
+    bool TestConstructor_FourParameters_C_R_R_R();
+    bool TestConstructor_FourParameters_C_R_R_W();
+    bool TestConstructor_FourParameters_C_R_W_C();
+    bool TestConstructor_FourParameters_C_R_W_R();
+    bool TestConstructor_FourParameters_C_R_W_W();
+    bool TestConstructor_FourParameters_C_W_C_C();
+    bool TestConstructor_FourParameters_C_W_C_R();
+    bool TestConstructor_FourParameters_C_W_C_W();
+    bool TestConstructor_FourParameters_C_W_R_C();
+    bool TestConstructor_FourParameters_C_W_R_R();
+    bool TestConstructor_FourParameters_C_W_R_W();
+    bool TestConstructor_FourParameters_C_W_W_C();
+    bool TestConstructor_FourParameters_C_W_W_R();
+    bool TestConstructor_FourParameters_C_W_W_W();
+    bool TestConstructor_FourParameters_R_C_C_C();
+    bool TestConstructor_FourParameters_R_C_C_R();
+    bool TestConstructor_FourParameters_R_C_C_W();
+    bool TestConstructor_FourParameters_R_C_R_C();
+    bool TestConstructor_FourParameters_R_C_R_R();
+    bool TestConstructor_FourParameters_R_C_R_W();
+    bool TestConstructor_FourParameters_R_C_W_C();
+    bool TestConstructor_FourParameters_R_C_W_R();
+    bool TestConstructor_FourParameters_R_C_W_W();
+    bool TestConstructor_FourParameters_R_R_C_C();
+    bool TestConstructor_FourParameters_R_R_C_R();
+    bool TestConstructor_FourParameters_R_R_C_W();
+    bool TestConstructor_FourParameters_R_R_R_C();
+    bool TestConstructor_FourParameters_R_R_R_R();
+    bool TestConstructor_FourParameters_R_R_R_W();
+    bool TestConstructor_FourParameters_R_R_W_C();
+    bool TestConstructor_FourParameters_R_R_W_R();
+    bool TestConstructor_FourParameters_R_R_W_W();
+    bool TestConstructor_FourParameters_R_W_C_C();
+    bool TestConstructor_FourParameters_R_W_C_R();
+    bool TestConstructor_FourParameters_R_W_C_W();
+    bool TestConstructor_FourParameters_R_W_R_C();
+    bool TestConstructor_FourParameters_R_W_R_R();
+    bool TestConstructor_FourParameters_R_W_R_W();
+    bool TestConstructor_FourParameters_R_W_W_C();
+    bool TestConstructor_FourParameters_R_W_W_R();
+    bool TestConstructor_FourParameters_R_W_W_W();
+    bool TestConstructor_FourParameters_W_C_C_C();
+    bool TestConstructor_FourParameters_W_C_C_R();
+    bool TestConstructor_FourParameters_W_C_C_W();
+    bool TestConstructor_FourParameters_W_C_R_C();
+    bool TestConstructor_FourParameters_W_C_R_R();
+    bool TestConstructor_FourParameters_W_C_R_W();
+    bool TestConstructor_FourParameters_W_C_W_C();
+    bool TestConstructor_FourParameters_W_C_W_R();
+    bool TestConstructor_FourParameters_W_C_W_W();
+    bool TestConstructor_FourParameters_W_R_C_C();
+    bool TestConstructor_FourParameters_W_R_C_R();
+    bool TestConstructor_FourParameters_W_R_C_W();
+    bool TestConstructor_FourParameters_W_R_R_C();
+    bool TestConstructor_FourParameters_W_R_R_R();
+    bool TestConstructor_FourParameters_W_R_R_W();
+    bool TestConstructor_FourParameters_W_R_W_C();
+    bool TestConstructor_FourParameters_W_R_W_R();
+    bool TestConstructor_FourParameters_W_R_W_W();
+    bool TestConstructor_FourParameters_W_W_C_C();
+    bool TestConstructor_FourParameters_W_W_C_R();
+    bool TestConstructor_FourParameters_W_W_C_W();
+    bool TestConstructor_FourParameters_W_W_R_C();
+    bool TestConstructor_FourParameters_W_W_R_R();
+    bool TestConstructor_FourParameters_W_W_R_W();
+    bool TestConstructor_FourParameters_W_W_W_C();
+    bool TestConstructor_FourParameters_W_W_W_R();
+    bool TestConstructor_FourParameters_W_W_W_W();
+
+    /**
+     * @brief Tests the GetMethod function
+     */
+    bool TestGetMethodCaller();
+
+    /**
+     * @brief Tests the GetMethodName function
+     */
+    bool TestGetMethodName();
+
+    /**
+     * @brief Tests the SetMethodName function
+     */
+    bool TestSetMethodName();
+
 };
 
 /*---------------------------------------------------------------------------*/

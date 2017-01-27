@@ -50,7 +50,8 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerI::GAMSchedulerI() :
-        ReferenceContainer() {
+        ReferenceContainer(),
+        clockPeriod(HighResolutionTimer::Period()) {
     states = NULL_PTR(ScheduledState *);
     scheduledStates[0] = NULL_PTR(ScheduledState *);
     scheduledStates[1] = NULL_PTR(ScheduledState *);
@@ -79,6 +80,7 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
             REPORT_ERROR(ErrorManagement::InitialisationError, "Please specify the TimingDataSource address");
         }
     }
+
     return ret;
 }
 
@@ -94,9 +96,6 @@ bool GAMSchedulerI::ConfigureScheduler() {
         isRtAppValid = rtApp.IsValid();
     }
     bool ret = isRtAppValid;
-    if (ret) {
-        realTimeApplication = rtApp;
-    }
 
     ReferenceT<ReferenceContainer> statesContainer;
     if (ret) {
@@ -163,15 +162,15 @@ bool GAMSchedulerI::ConfigureScheduler() {
 
                                 states[i].threads[j].numberOfExecutables = numberOfExecutables;
                                 states[i].threads[j].name = threadElement->GetName();
+                                states[i].threads[j].cpu = threadElement->GetCPU().GetProcessorMask();
+                                states[i].threads[j].stackSize = threadElement->GetStackSize();
                             }
                             uint32 c = 0u;
                             for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
                                 //add input brokers
                                 StreamString gamFullName;
                                 ReferenceT<GAM> gam = gams.Get(k);
-                                if (ret) {
-                                    ret = gam->GetQualifiedName(gamFullName);
-                                }
+                                ret = gam->GetQualifiedName(gamFullName);
                                 if (ret) {
                                     ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
                                 }
@@ -347,11 +346,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
                                      const char8 * const nextStateName) {
 
     // Find the next state and prepare the pointer to
-    ReferenceT<RealTimeApplication> rtApp = realTimeApplication;
     bool ret = (states != NULL_PTR(ScheduledState *));
-    if (ret) {
-        ret = rtApp.IsValid();
-    }
 
     uint32 nextBuffer = 0u;
     if (ret) {
@@ -371,12 +366,15 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
     if (ret) {
         ret = found;
     }
+    if (ret) {
+        CustomPrepareNextState();
+    }
 
     return ret;
 }
 
-uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
-                                         const uint32 numberOfExecutables) const {
+bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
+                                       const uint32 numberOfExecutables) const {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
@@ -386,15 +384,16 @@ uint64 GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables
         // save the time before
         // execute the gam
         ret = executables[i]->Execute();
-        float64 ticksToTime = HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), absTicks);
-        ticksToTime *= 1e6;
+        uint64 tmp = (HighResolutionTimer::Counter() - absTicks);
+        float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
             ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
         }
     }
-    return absTicks;
+
+    return ret;
 }
 
 uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,

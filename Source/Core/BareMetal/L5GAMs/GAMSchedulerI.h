@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ExecutableI.h"
 #include "GAM.h"
 #include "TimingDataSource.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -61,6 +63,16 @@ struct ScheduledThread {
      * Memory address where the total cycle time signal is stored.
      */
     uint32 *cycleTime;
+
+    /**
+     * The cpus where is possible to run the thread
+     */
+    uint32 cpu;
+
+    /**
+     * The thread stack size
+     */
+    uint32 stackSize;
 
     /**
      * This thread name.
@@ -120,6 +132,7 @@ public:
 
     /**
      * @brief Reads the TimingDataSource name.
+     * @param[in] data the StructuredDataI with the TimingDataSource.
      * @return false if the TimingDataSource is not defined.
      */
     virtual bool Initialise(StructuredDataI & data);
@@ -133,15 +146,20 @@ public:
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
-     * @param[in] info contains information about the current and the next state
-     * and the active buffer index.
+     * @param[in] currentStateName is the name of the current state
+     * @param[in] nextStateName is the name of the next state
      * @return true if the next state name is found, false otherwise.
      */
     virtual bool PrepareNextState(const char8 * const currentStateName,
                                   const char8 * const nextStateName);
 
-    uint64 ExecuteSingleCycle(ExecutableI * const * const executables,
-                              const uint32 numberOfExecutables) const;
+    /**
+     * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
+     * @param[in] executables the list of ExecutablesIs to be executed
+     * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
+     */
+    bool ExecuteSingleCycle(ExecutableI * const * const executables,
+                            const uint32 numberOfExecutables) const;
 
     /**
      * @brief Gets the number of ExecutableI components for this \a threadName in this \a stateName.
@@ -154,13 +172,15 @@ public:
 
     /**
      * @brief Starts the execution of the next state threads.
+     * @pre
+     *    PrepareNextState();
      */
-    virtual void StartExecution()=0;
+    virtual ErrorManagement::ErrorType StartNextStateExecution()=0;
 
     /**
      * @brief Stops the execution of the current state threads.
      */
-    virtual void StopExecution()=0;
+    virtual ErrorManagement::ErrorType StopCurrentStateExecution()=0;
 
 protected:
     /**
@@ -170,6 +190,16 @@ protected:
      * @return a pointer to address of the two possible ScheduledStates (the current and the next).
      */
     ScheduledState * const * GetSchedulableStates();
+
+    /**
+     * @brief Custom routine to prepare the specific scheduler for the next state execution.
+     */
+    virtual void CustomPrepareNextState()=0;
+
+    /**
+     * Clock period
+     */
+    const float64 clockPeriod;
 
 private:
 
@@ -241,10 +271,6 @@ private:
                    const uint32 threadIdx,
                    const uint32 executableIdx);
 
-    /**
-     * Reference to the RealTimeApplication to which this scheduler belongs to.
-     */
-    Reference realTimeApplication;
 };
 
 }

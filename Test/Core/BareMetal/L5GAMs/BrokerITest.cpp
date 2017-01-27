@@ -32,6 +32,7 @@
 #include "BrokerITest.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
+#include "ErrorManagement.h"
 #include "GAMSchedulerI.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
@@ -46,9 +47,12 @@ public:
 
 BrokerITestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 BrokerITestScheduler1::BrokerITestScheduler1() :
@@ -56,13 +60,18 @@ BrokerITestScheduler1::BrokerITestScheduler1() :
 
 }
 
-void BrokerITestScheduler1::StartExecution() {
+MARTe::ErrorManagement::ErrorType BrokerITestScheduler1::StartNextStateExecution() {
+    return ErrorManagement::NoError;
+}
+
+MARTe::ErrorManagement::ErrorType BrokerITestScheduler1::StopCurrentStateExecution() {
+    return ErrorManagement::NoError;
+}
+
+void BrokerITestScheduler1::CustomPrepareNextState(){
 
 }
 
-void BrokerITestScheduler1::StopExecution() {
-
-}
 
 CLASS_REGISTER(BrokerITestScheduler1, "1.0")
 
@@ -71,13 +80,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 BrokerITestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 BrokerITestGAM1::BrokerITestGAM1() :
         GAM() {
 
+}
+
+bool BrokerITestGAM1::Setup() {
+    return true;
 }
 
 bool BrokerITestGAM1::Execute() {
@@ -224,7 +237,7 @@ static bool InitialiseBrokerIEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

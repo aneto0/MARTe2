@@ -160,14 +160,29 @@ public:
     bool TestFlattenSignalsDatabases_OnlyFrequencyInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with only sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_OnlySyncSignalInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with an invalid sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
+
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with an invalid trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct();
 
     /**
      * @brief Tests the FlattenSignalsDatabases method with an unregistered type.
@@ -280,6 +295,11 @@ public:
     bool TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource();
 
     /**
+     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
+     */
+    bool TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource();
+
+    /**
      * @brief Tests the VerifyDataSourcesSignals.
      */
     bool TestVerifyDataSourcesSignals1();
@@ -343,11 +363,6 @@ public:
      * @brief Tests the ResolveFunctionSignals.
      */
     bool TestResolveFunctionSignals3();
-
-    /**
-     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
-     */
-    bool TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource();
 
     /**
      * @brief Tests VerifyFunctionSignals method.
@@ -563,6 +578,11 @@ public:
      * @brief Tests the AssignFunctionsMemoryToDataSource method with the same gam as producer and consumer
      */
     bool TestAssignFunctionsMemoryToDataSource_GamIO();
+
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize with a structure aligned with unused memory.
+     */
+    bool TestAssignFunctionsMemoryToDataSource_AlignedStruct();
 
     /**
      * @brief Tests the AssignBrokersToFunctions.

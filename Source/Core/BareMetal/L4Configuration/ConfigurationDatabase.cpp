@@ -47,7 +47,7 @@
 
 namespace MARTe {
 
-ConfigurationDatabase::ConfigurationDatabase() {
+ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
     ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     rootNode = rootContainer;
@@ -57,9 +57,9 @@ ConfigurationDatabase::ConfigurationDatabase() {
 ConfigurationDatabase::~ConfigurationDatabase() {
 }
 
-void ConfigurationDatabase::CleanUp() {
+void ConfigurationDatabase::Purge() {
     currentNode = rootNode;
-    rootNode->CleanUp();
+    rootNode->Purge();
 }
 
 bool ConfigurationDatabase::Write(const char8 * const name,
@@ -72,7 +72,7 @@ bool ConfigurationDatabase::Write(const char8 * const name,
     if ((isRegisteredObject) || (isStructuredDataI)) {
         ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
         if (CreateRelative(name)) {
-            ok = TypeConvert(*this, value);
+            ok = TypeConvert((*this).operator MARTe::AnyType(), value);
         }
         currentNode = storeCurrentNode;
     }
@@ -157,6 +157,14 @@ bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
     return ok;
 }
 
+bool ConfigurationDatabase::Initialise(StructuredDataI &data) {
+    bool ok = Object::Initialise(data);
+    if(ok) {
+        ok = data.Copy(*this);
+    }
+    return ok;
+}
+
 bool ConfigurationDatabase::MoveToRoot() {
     bool ok = rootNode.IsValid();
     if (ok) {
@@ -175,7 +183,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
     if ((isRegisteredObject) || (isStructuredDataI)) {
         ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
         if (MoveRelative(name)) {
-            ok = TypeConvert(value, *this);
+            ok = TypeConvert(value, (*this).operator MARTe::AnyType());
         }
         currentNode = storeCurrentNode;
     }
@@ -373,5 +381,7 @@ bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {
 void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
+
+CLASS_REGISTER(ConfigurationDatabase, "1.0")
 
 }

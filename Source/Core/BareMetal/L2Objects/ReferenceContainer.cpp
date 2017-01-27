@@ -112,59 +112,12 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
-
-}
-
-void ReferenceContainer::CleanUp() {
-
-    uint32 numberOfElements;
-    if (!Lock()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-    }
-    numberOfElements = list.ListSize() + purgeList.ListSize();
-    UnLock();
-
-    //flat recursion due to avoid stack waste!!
-    for (uint32 i = 0u; i < numberOfElements; i++) {
-        if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-        }
-        if (purgeList.ListSize() >= numberOfElements) {
-            UnLock();
-            break;
-        }
-        //extract the element from the list
-        ReferenceContainerNode *node = list.ListExtract(0u);
-        if (node != NULL) {
-            purgeList.ListInsert(node);
-        }
-        UnLock();
-    }
-
-    for (uint32 i = 0u; i < numberOfElements; i++) {
-        if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-        }
-        if (purgeList.ListSize() == 0u) {
-            UnLock();
-            break;
-        }
-
-        ReferenceContainerNode * node = purgeList.ListExtract(0u);
-        UnLock();
-
-        ReferenceT<ReferenceContainer> element;
-        if (node != NULL) {
-            element = node->GetReference();
-        }
-
-        if (element.IsValid()) {
-            element->CleanUp();
-        }
-        //extract and delete the element from the list
-        if (node != NULL) {
-            delete node;
-        }
+    LinkedListable *p = list.List();
+    list.Reset();
+    while (p != NULL) {
+        LinkedListable *q = p;
+        p = p->Next();
+        delete q;
     }
 }
 
@@ -512,6 +465,39 @@ bool ReferenceContainer::Lock() {
 
 void ReferenceContainer::UnLock() {
     mux.FastUnLock();
+}
+
+void ReferenceContainer::Purge() {
+    ReferenceContainer purgeList;
+    Purge(purgeList);
+}
+
+void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
+    uint32 purgeStart = purgeList.Size();
+    uint32 purgeEnd = purgeStart;
+    uint32 numberOfElements = Size();
+
+    bool ok = true;
+    //flat recursion to avoid stack waste
+    for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
+        //extract the element from the list
+        Reference node = Get(0u);
+        if (node.IsValid()) {
+            ok = purgeList.Insert(node);
+            if(ok) {
+                ok = Delete(node);
+            }
+            purgeEnd++;
+        }
+    }
+
+    //Recurse on all the sub nodes
+    for (uint32 i = purgeStart; i < purgeEnd; i++) {
+        Reference nodeObj = purgeList.Get(i);
+        if (nodeObj.IsValid()) {
+            nodeObj->Purge(purgeList);
+        }
+    }
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

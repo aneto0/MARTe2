@@ -163,6 +163,8 @@ public:
 
 RealTimeStateStateLessGAM    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     virtual bool SetContext(ConstReference contextIn);
@@ -177,6 +179,10 @@ private:
 RealTimeStateStateLessGAM::RealTimeStateStateLessGAM() :
         GAM() {
     index = 0;
+}
+
+bool RealTimeStateStateLessGAM::Setup() {
+    return true;
 }
 
 bool RealTimeStateStateLessGAM::Execute() {
@@ -207,6 +213,8 @@ public:
 
 RealTimeStateStateFulGAM    ();
 
+    virtual bool Setup();
+
     virtual bool Execute();
 
     virtual bool SetContext(ConstReference contextIn);
@@ -229,6 +237,10 @@ RealTimeStateStateFulGAM::RealTimeStateStateFulGAM() :
     context = 0u;
     index = 0;
 
+}
+
+bool RealTimeStateStateFulGAM::Setup() {
+    return true;
 }
 
 bool RealTimeStateStateFulGAM::Execute() {
@@ -269,20 +281,28 @@ public:
 
 RealTimeStateTestScheduler    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 
 };
 
 RealTimeStateTestScheduler::RealTimeStateTestScheduler() :
         GAMSchedulerI() {
 }
-void RealTimeStateTestScheduler::StartExecution() {
+MARTe::ErrorManagement::ErrorType RealTimeStateTestScheduler::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
 
+MARTe::ErrorManagement::ErrorType RealTimeStateTestScheduler::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
-void RealTimeStateTestScheduler::StopExecution() {
-}
+
 CLASS_REGISTER(RealTimeStateTestScheduler, "1.0")
 
 /*---------------------------------------------------------------------------*/
@@ -553,14 +573,14 @@ RealTimeStateTest::RealTimeStateTest() {
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
     }
 }
 
 RealTimeStateTest::~RealTimeStateTest() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 }
 
 bool RealTimeStateTest::TestConstructor() {

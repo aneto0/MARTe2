@@ -53,9 +53,12 @@ public:
 
 GAMGroupTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 GAMGroupTestScheduler1::GAMGroupTestScheduler1() :
@@ -63,13 +66,18 @@ GAMGroupTestScheduler1::GAMGroupTestScheduler1() :
 
 }
 
-void GAMGroupTestScheduler1::StartExecution() {
+MARTe::ErrorManagement::ErrorType  GAMGroupTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+MARTe::ErrorManagement::ErrorType  GAMGroupTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void GAMGroupTestScheduler1::CustomPrepareNextState(){
 
 }
 
-void GAMGroupTestScheduler1::StopExecution() {
-
-}
 
 CLASS_REGISTER(GAMGroupTestScheduler1, "1.0")
 
@@ -81,6 +89,8 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 GAMGroupTestGAM1    ();
+
+    virtual bool Setup();
 
     virtual bool Execute();
 
@@ -98,6 +108,10 @@ private:
 GAMGroupTestGAM1::GAMGroupTestGAM1() :
         GAM() {
     failContext = false;
+}
+
+bool GAMGroupTestGAM1::Setup() {
+    return true;
 }
 
 bool GAMGroupTestGAM1::Execute() {
@@ -201,7 +215,7 @@ static bool InitialiseGAMGroupEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

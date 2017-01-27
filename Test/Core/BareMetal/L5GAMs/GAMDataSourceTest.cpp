@@ -50,7 +50,7 @@ static bool InitialiseGAMDataSourceEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -70,9 +70,11 @@ public:
 
 GAMDataSourceTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+    virtual void CustomPrepareNextState();
+
 };
 
 GAMDataSourceTestScheduler1::GAMDataSourceTestScheduler1() :
@@ -80,11 +82,17 @@ GAMDataSourceTestScheduler1::GAMDataSourceTestScheduler1() :
 
 }
 
-void GAMDataSourceTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  GAMDataSourceTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void GAMDataSourceTestScheduler1::StopExecution() {
+MARTe::ErrorManagement::ErrorType  GAMDataSourceTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+
+
+void GAMDataSourceTestScheduler1::CustomPrepareNextState(){
 
 }
 
@@ -95,13 +103,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 GAMDataSourceTestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 GAMDataSourceTestGAM1::GAMDataSourceTestGAM1() :
         GAM() {
 
+}
+
+bool GAMDataSourceTestGAM1::Setup() {
+    return true;
 }
 
 bool GAMDataSourceTestGAM1::Execute() {

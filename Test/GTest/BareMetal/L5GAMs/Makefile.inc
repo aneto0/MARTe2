@@ -36,6 +36,7 @@ OBJSX=  BrokerIGTest.x\
         MemoryMapStatefulInputBrokerGTest.x\
         MemoryMapStatefulOutputBrokerGTest.x\
         MemoryMapSynchronisedInputBrokerGTest.x\
+        MemoryMapSynchronisedOutputBrokerGTest.x\
         RealTimeApplicationGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\
         RealTimeStateGTest.x\
@@ -54,6 +55,7 @@ INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects
 INCLUDES += -I../../../Core/BareMetal/L3Streams
 INCLUDES += -I../../../Core/BareMetal/L4Configuration
+INCLUDES += -I../../../Core/BareMetal/L4Messages
 INCLUDES += -I../../../Core/BareMetal/L5GAMs
 INCLUDES += -I../../../Core/Scheduler/L1Portability
 INCLUDES += -I../../../Core/FileSystem/L1Portability
@@ -62,6 +64,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability

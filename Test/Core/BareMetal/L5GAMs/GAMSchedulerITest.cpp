@@ -44,13 +44,16 @@ public:
 
 DummyScheduler    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
 
     void ExecuteThreadCycle(uint32 threadId);
 
     virtual bool ConfigureScheduler();
+
+    virtual void CustomPrepareNextState();
+
 private:
 
     ScheduledState * const * scheduledStates;
@@ -60,12 +63,13 @@ DummyScheduler::DummyScheduler() :
         GAMSchedulerI() {
     scheduledStates = NULL_PTR(ScheduledState * const *);
 }
-void DummyScheduler::StartExecution() {
+MARTe::ErrorManagement::ErrorType  DummyScheduler::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 bool DummyScheduler::ConfigureScheduler() {
     bool ret = GAMSchedulerI::ConfigureScheduler();
-    if(ret){
+    if (ret) {
         scheduledStates = GetSchedulableStates();
     }
     return ret;
@@ -77,8 +81,14 @@ void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
                        scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
-void DummyScheduler::StopExecution() {
+MARTe::ErrorManagement::ErrorType DummyScheduler::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
+
+void DummyScheduler::CustomPrepareNextState(){
+
+}
+
 
 CLASS_REGISTER(DummyScheduler, "1.0")
 /*---------------------------------------------------------------------------*/
@@ -334,7 +344,7 @@ GAMSchedulerITest::GAMSchedulerITest() {
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         printf("\nFAILED INITIALISATION\n");
@@ -342,10 +352,9 @@ GAMSchedulerITest::GAMSchedulerITest() {
 
 }
 
-
 GAMSchedulerITest::~GAMSchedulerITest() {
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
 }
 
@@ -369,7 +378,6 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
     if (!scheduler.IsValid()) {
         return false;
     }
-
 
     if (!scheduler->ConfigureScheduler()) {
         return false;
@@ -398,10 +406,7 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
     return true;
 }
 
-
-
-
-bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
+bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState() {
 
     static StreamString config = ""
             "$Fibonacci = {"
@@ -505,18 +510,16 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
     }
 
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     if (!ObjectRegistryDatabase::Instance()->Initialise(cdb)) {
         return false;
     }
 
-
     ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
     if (!app.IsValid()) {
         return false;
     }
-
 
     ReferenceT<GAMSchedulerI> scheduler = app->Find("Scheduler");
     if (!scheduler.IsValid()) {
@@ -525,9 +528,6 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState(){
 
     return (!scheduler->ConfigureScheduler());
 }
-
-
-
 
 bool GAMSchedulerITest::TestGetNumberOfExecutables() {
     return TestConfigureScheduler();
@@ -549,12 +549,11 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         return false;
     }
 
-
     if (!scheduler->ConfigureScheduler()) {
         return false;
     }
 
-    if (!scheduler->PrepareNextState("","State1")) {
+    if (!scheduler->PrepareNextState("", "State1")) {
         printf("\nFailed pns\n");
         return false;
     }
@@ -567,7 +566,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
     ReferenceT<GAM1> gamf = app->Find("Functions.GAMF");
     ReferenceT<GAM1> gamg = app->Find("Functions.GAMG");
     ReferenceT<GAM1> gamh = app->Find("Functions.GAMH");
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     scheduler->ExecuteThreadCycle(0);
 
@@ -580,11 +579,11 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         return false;
     }
 
-    if (!scheduler->PrepareNextState("State1","State2")) {
+    if (!scheduler->PrepareNextState("State1", "State2")) {
         printf("\nFailed pns\n");
         return false;
     }
-    app->StartExecution();
+    app->StartNextStateExecution();
 
     scheduler->ExecuteThreadCycle(0);
 
@@ -599,7 +598,6 @@ bool GAMSchedulerITest::TestPrepareNextState() {
     }
     return true;
 }
-
 
 bool GAMSchedulerITest::TestExecuteSingleCycle() {
     return TestPrepareNextState();

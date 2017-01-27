@@ -194,6 +194,11 @@ TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
     ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyOutput());
 }
 
+TEST(DataSourceIGTest,TestGetFunctionSignalTrigger) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalTrigger());
+}
+
 TEST(DataSourceIGTest,TestGetFunctionSignalGAMMemoryOffset) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalGAMMemoryOffset());

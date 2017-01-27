@@ -48,29 +48,31 @@ namespace StringHelper {
  * @brief Duplicates a string in the heap memory.
  * @param[in] s The pointer to the string which must be copied.
  * @return The pointer to the new allocated memory which contains a copy of s.
+ * TODO all const char8 * ---> CCString
+ * TODO all char8 * CString
  */
 DLL_API char8 *StringDup(const char8 * const s);
 
 /**
  * @brief Concatenates two strings. "destination" + "source"
- * @warning !! The destination string memory allocation MUST be able to hold both strings!!
- * @warning No reallocation will be performed here!!
  * @param[in,out] destination the string where the source will be appended.
  * @param[in] source the string to be appended to the destination.
  * @return true if all parameters were ok
+ * @warning !! The destination string memory allocation MUST be able to hold both strings!!
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool Concatenate(char8* const destination,
                          const char8* const source);
 
 /**
  * @brief Concatenates two strings until 'size' chars.
- * @warning !! The destination string memory allocation MUST be able to hold the extra amount of characters
- * @warning No reallocation will be performed here!!
  * @param[in,out] destination the string where the source will be appended.
  * @param[in] source the string to be appended to the destination.
  * @param[in] size is the maximum number of bytes to append.
  * @return true if all parameters were ok
  * @pre size <= length of the string source.
+ * @warning !! The destination string memory allocation MUST be able to hold the extra amount of characters
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool ConcatenateN(char8 *destination,
                           const char8 *source,
@@ -108,24 +110,24 @@ DLL_API int32 CompareN(const char8* const string1,
 
 /**
  * @brief Copies the source into the destination.
- * @warning !! The destination string memory allocation MUST be able to hold the size of source
- * @warning No reallocation will be performed here!!
  * @param[out] destination the destination string.
  * @param[in] source the string to copy into the destination.
  * @return true if the source is copied to the destination.
+ * @warning !! The destination string memory allocation MUST be able to hold the size of source
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool Copy(char8* const destination,
                   const char8* const source);
 
 /**
  * @brief Copies the source into the destination for a maximum of 'size' chars.
- * @warning !! The destination string memory allocation MUST be able to hold the size of source
- * @warning No reallocation will be performed here!!
  * @param[in,out] destination the destination string.
  * @param[in] source the string to copy into the destination.
  * @param[in] size the maximum number of bytes to copy.
  * @return true if the source is copied to the destination.
  * @pre size <= length source
+ * @warning !! The destination string memory allocation MUST be able to hold the size of source
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool CopyN(char8 *destination,
                    const char8 *source,
@@ -263,12 +265,12 @@ DLL_API bool Substr(const uint32 begin,
 
 /**
  * @brief Concatenates two strings giving result in another string.
- * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
- * @warning No reallocation will be performed here!!
  * @param[in] string1 is the string at the beginning.
  * @param[in] string2 is the string to append.
  * @param[out] result is the concatenated string.
  * @return true if strings are not NULL.
+ * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool Concatenate(const char8* const string1,
                          const char8* const string2,
@@ -276,14 +278,14 @@ DLL_API bool Concatenate(const char8* const string1,
 
 /**
  * @brief Appends max 'size' characters of string2 to string1.
- * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
- * @warning No reallocation will be performed here!!
  * @param[in] string1 is the string at the beginning.
  * @param[in] string2 is the string to append.
  * @param[out] result is the concatenated string.
  * @param[in] size is the maximum number of characters to append.
  * @return true if strings are not NULL.
  * @pre size <=  length of the string2
+ * @warning !! The destination string memory allocation MUST be able to hold the size of string1+string2
+ * @warning No reallocation will be performed here!!
  */
 DLL_API bool ConcatenateN(const char8* const string1,
                           const char8* const string2,

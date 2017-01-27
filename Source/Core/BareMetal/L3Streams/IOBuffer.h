@@ -335,7 +335,7 @@ public:
 
     /*---------------------------------------------------------------------------*/
 
-    /*
+    /**
      * @brief The function called by all Printf operations.
      * @details This function read the format, builds the related format
      * descriptor and then calls the PrintToStream function passing the

@@ -39,6 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class Object;
 }
 
@@ -57,13 +58,14 @@ namespace MARTe {
  * + An overloaded new operator for creating a new instance for a specific
  * class using the HeapI object.
  *
- * @warning This class must be considered as a pure abstract class, i.e. an
+ * @remark This class must be considered as a pure abstract class, i.e. an
  * interface, although it does not declare any of its methods as pure virtual.
  * Instead, it implements the Build method forcing it to return a default
  * value (NULL). The reason to this is that derived classes are expected to
  * implement the Build method, while the abstract class can be used as an
  * invalid object builder (useful for setting a default builder).
  */
+/*lint -e{9109} forward declaration of this class is required in other modules*/
 class DLL_API ObjectBuilder {
 public:
 

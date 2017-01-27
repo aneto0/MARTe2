@@ -120,10 +120,9 @@ public:
     bool TestSetErrorProcessFunction();
 
     /**
-     * @brief Tests the ErrorName function.
-     * @return true if for all the ErrorManagement::ErrorType codes is returned the related error name, false otherwise.
+     * @brief Tests the ErrorCodeToStream function.
      */
-    bool TestToName();
+    bool TestErrorCodeToStream();
 
     /**
      * @brief Tests the ReportError function.

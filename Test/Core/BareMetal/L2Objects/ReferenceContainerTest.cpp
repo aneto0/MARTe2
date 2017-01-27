@@ -702,7 +702,7 @@ bool ReferenceContainerTest::TestInitialise() {
     return true;
 }
 
-bool ReferenceContainerTest::TestCleanUp() {
+bool ReferenceContainerTest::TestPurge() {
     ReferenceContainer container;
     ConfigurationDatabase simpleCDB;
     simpleCDB.CreateAbsolute("+A");
@@ -719,16 +719,24 @@ bool ReferenceContainerTest::TestCleanUp() {
 
     container.Initialise(simpleCDB);
 
-    Reference recursiveLeaf = container.Find("A");
+    ReferenceT<ReferenceContainer> recursiveLeaf = container.Find("A");
 
     ReferenceT<ReferenceContainer> toLeaf = container.Find("A.B.C");
+    //  -->A---
+    //  |  |  |
+    //  |  v  |
+    //  |  B  |
+    //  |  |  |
+    //  |  v  |
+    //  ---C<--
+    recursiveLeaf->Insert(toLeaf);
     toLeaf->Insert(recursiveLeaf);
 
-    if (toLeaf.NumberOfReferences() != 2) {
+    if (toLeaf.NumberOfReferences() != 3) {
         return false;
     }
 
-    container.CleanUp();
+    container.Purge();
 
     if (toLeaf.NumberOfReferences() != 1) {
         return false;
@@ -736,15 +744,15 @@ bool ReferenceContainerTest::TestCleanUp() {
     return (container.Size() == 0);
 }
 
-static void CleanRoutine(ReferenceContainerTest &param) {
+static void PurgeRoutine(ReferenceContainerTest &param) {
     while (param.spinLock != 1) {
         Sleep::MSec(10);
     }
-    param.containerU1->CleanUp();
+    param.containerU1->Purge();
     Threads::EndThread();
 }
 
-bool ReferenceContainerTest::TestCleanUp_Shared() {
+bool ReferenceContainerTest::TestPurge_Shared() {
     ReferenceT<ReferenceContainer> container = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
     containerU1 = container;
 
@@ -759,7 +767,7 @@ bool ReferenceContainerTest::TestCleanUp_Shared() {
         container->Insert(nodeU2);
         container = nodeU1;
     }
-    //recursive assignement
+    //recursive assignment
     container->Insert(containerU1);
 
     if (containerU1->NumberOfReferences() != 2) {
@@ -767,7 +775,7 @@ bool ReferenceContainerTest::TestCleanUp_Shared() {
     }
 
     for (uint32 i = 0u; i < 3u; i++) {
-        Threads::BeginThread((ThreadFunctionType) CleanRoutine, this);
+        Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
     }
 
     Atomic::Increment(&spinLock);

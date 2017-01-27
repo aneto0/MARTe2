@@ -52,9 +52,10 @@ namespace MARTe {
  *
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
-class DLL_API ConfigurationDatabase: public StructuredDataI {
+class DLL_API ConfigurationDatabase: public StructuredDataI, public Object {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor.
@@ -69,10 +70,10 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-
-    //TODO test and document
-    void CleanUp();
-
+    /**
+     * @brief Removes all the elements from the database.
+     */
+    void Purge();
 
     /**
      * @see StructuredDataI::Read
@@ -159,6 +160,13 @@ public:
     virtual uint32 GetNumberOfChildren();
 
     /**
+     * @brief Initialises the contents of this ConfigurationDatabase from a StructuredDataI
+     * @details Calls data.Copy(*this)
+     * @return true if data.Copy(*this) is successful.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+    /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
@@ -171,11 +179,13 @@ public:
      */
     void Unlock();
 
-    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
-    operator ReferenceT<ReferenceContainer>(){
+    /**
+     * @brief Gets a reference to the current node as a ReferenceContainer.
+     * @return a reference to the current node as a ReferenceContainer.
+     */
+    ReferenceT<ReferenceContainer> GetCurrentNode() {
         return currentNode;
     }
-
 
 private:
 

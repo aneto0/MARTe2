@@ -1,8 +1,8 @@
 /**
  * @file MessageGTest.cpp
  * @brief Source file for class MessageGTest
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -53,39 +53,34 @@ TEST(MessageGTest,TestInitialise) {
 }
 
 
-TEST(MessageGTest,TestMarkAsReply) {
+TEST(MessageGTest,TestSetAsReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestMarkAsReply());
+    ASSERT_TRUE(target.TestSetAsReply());
 }
 
-TEST(MessageGTest,TestIsReplyMessage) {
+TEST(MessageGTest,TestIsReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestIsReplyMessage());
+    ASSERT_TRUE(target.TestIsReply());
 }
 
-TEST(MessageGTest,TestMarkImmediateReplyExpected) {
+TEST(MessageGTest,TestSetExpectsReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestMarkImmediateReplyExpected());
+    ASSERT_TRUE(target.TestSetExpectsReply());
 }
 
-TEST(MessageGTest,TestMarkLateReplyExpected) {
+TEST(MessageGTest,TestSetExpectsIndirectReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestMarkLateReplyExpected());
+    ASSERT_TRUE(target.TestSetExpectsIndirectReply());
 }
 
-TEST(MessageGTest,TestReplyExpected) {
+TEST(MessageGTest,TestExpectsReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestReplyExpected());
+    ASSERT_TRUE(target.TestExpectsReply());
 }
 
-TEST(MessageGTest,TestImmediateReplyExpected) {
+TEST(MessageGTest,TestExpectsIndirectReply) {
     MessageTest target;
-    ASSERT_TRUE(target.TestImmediateReplyExpected());
-}
-
-TEST(MessageGTest,TestLateReplyExpected) {
-    MessageTest target;
-    ASSERT_TRUE(target.TestLateReplyExpected());
+    ASSERT_TRUE(target.TestExpectsIndirectReply());
 }
 
 TEST(MessageGTest,TestGetDestination) {

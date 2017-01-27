@@ -76,7 +76,7 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 
 $(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
 
 depends.cov: dependsRaw.cov
 	mkdir -p $(BUILD_DIR)

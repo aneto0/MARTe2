@@ -45,7 +45,7 @@ namespace MARTe {
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
  *  @tparam baseType the standard type which is used as a base for the new type
  *  @tparam bitOffset the actual bit offset of the new type
- *  @warning bitOffset must be less than the number of bits of baseType.
+ *  @remark bitOffset must be less than the number of bits of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
 /*lint -etemplate(948, 1790, 1942) No code is truly generated. This strategy is used to guarantee that certain rules

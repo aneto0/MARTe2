@@ -198,6 +198,8 @@ GAM1    ();
 
     virtual ~GAM1();
 
+    virtual bool Setup();
+
     virtual bool Initialise(StructuredDataI & data);
 
     virtual bool Execute();
@@ -206,9 +208,6 @@ GAM1    ();
 
     uint32 numberOfExecutions;
     uint32 context;
-
-protected:
-    virtual void SetUp();
 
 };
 
@@ -241,6 +240,19 @@ struct TestStructC {
 
 struct TestStructD {
     TestStructB c1;
+    float32 c2[3];
+    int32 c3[2][4];
+};
+
+
+
+struct TestStructBB {
+    int8 b1;
+    int64 b2;
+};
+
+struct TestStructCC {
+    TestStructBB c1;
     float32 c2[3];
     int32 c3[2][4];
 };
@@ -342,9 +354,12 @@ public:
 
 DefaultSchedulerForTests    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState();
+
 
 };
 

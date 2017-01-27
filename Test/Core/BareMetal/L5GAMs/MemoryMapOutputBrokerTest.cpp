@@ -49,9 +49,14 @@ public:
 
 MemoryMapOutputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 MemoryMapOutputBrokerTestScheduler1::MemoryMapOutputBrokerTestScheduler1() :
@@ -59,12 +64,12 @@ MemoryMapOutputBrokerTestScheduler1::MemoryMapOutputBrokerTestScheduler1() :
 
 }
 
-void MemoryMapOutputBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  MemoryMapOutputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapOutputBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType  MemoryMapOutputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapOutputBrokerTestScheduler1, "1.0")
@@ -88,6 +93,8 @@ MemoryMapOutputBrokerTestGAM1    ();
 
     void *GetOutputSignalMemory(uint32 signalIdx);
 
+    virtual bool Setup();
+
     virtual bool Execute();
 };
 
@@ -109,6 +116,10 @@ void *MemoryMapOutputBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
 
 void *MemoryMapOutputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapOutputBrokerTestGAM1::Setup() {
+    return true;
 }
 
 /**
@@ -292,7 +303,7 @@ static bool InitialiseMemoryMapOutputBrokerEnviroment(const char8 * const config
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

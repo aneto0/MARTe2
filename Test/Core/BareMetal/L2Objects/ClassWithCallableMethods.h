@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ClassMethodInterfaceMapper.h"
+#include "ErrorType.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
-#include "ClassMethodInterfaceMapper.h"
-#include "ClassMethodsRegistryItem.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -55,7 +55,7 @@ public:
     /**
      * @brief DEfault constructor
      */
-    ClassWithCallableMethods();
+ClassWithCallableMethods    ();
 
     /**
      * @brief Destructor
@@ -70,70 +70,251 @@ public:
     /**
      * @brief Method which simulates an error execution (i.e. returns false)
      */
-    bool FaultyMethod(MARTe::ReferenceContainer& data);
+    MARTe::ErrorManagement::ErrorType FaultyMethod(MARTe::ReferenceContainer& data);
 
     /**
-     * @brief Method overloaded with 3 versions, being this the one without
-     * arguments.
+     * @brief Method with no input parameters.
      */
-    bool OverloadedMethod();
+    MARTe::ErrorManagement::ErrorType MethodWithVoidParameters(void);
 
     /**
-     * @brief Method overloaded with 3 versions, being this the one with 1
-     * argument of type integer passed by reference.
+     * @brief Method which consumes input from an integer by reference.
      */
-    bool OverloadedMethod(int& data);
-
-    /**
-     * @brief Method overloaded with 3 versions, being this the one with 1
-     * argument of type ReferenceContainer passed by reference.
-     */
-    bool OverloadedMethod(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes input from a ReferenceContainer passed
-     * by reference.
-     */
-    bool MethodWithInputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which produces output into a ReferenceContainer passed
-     * by reference.
-     */
-    bool MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes/produces from/into a ReferenceContainer
-     * passed by reference.
-     */
-    bool MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
-
-    /**
-     * @brief Method which consumes input from an integer passed by reference.
-     */
-    bool MethodWithInputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputInteger(const MARTe::int32 &data);
 
     /**
      * @brief Method which produces output into an integer passed by reference.
      */
-    bool MethodWithOutputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithOutputInteger(MARTe::int32& data);
 
     /**
-     * @brief Method which consumes/produces from/into an integer passed by
-     * reference.
+     * @brief Method which produces output into an integer passed by reference.
      */
-    bool MethodWithInputOutputInteger(int& data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputOutputInteger(MARTe::int32& data);
 
     /**
      * @brief Method which consumes input from an integer passed by copy.
      */
-    bool MethodWithInputIntegerByCopy(int data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputIntegerByCopy(MARTe::int32 data);
+
+    /**
+     * @brief Method which has a StructuredDataI has an input.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputStructuredDataI(const MARTe::StructuredDataI &data);
+
+    /**
+     * @brief Method which changes the input StructuredDataI.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputStructuredDataI(MARTe::StructuredDataI &data);
 
     /**
      * @brief Method which consumes input from a ReferenceContainer passed by
      * copy.
      */
-    bool MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
+    MARTe::ErrorManagement::ErrorType MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer data);
+
+    /**
+     * @brief Method which consumes input from a ReferenceContainer and that expects to have a StructuredDataI at its 0 position
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithInputReferenceContainerAndStructuredDataIAt0(MARTe::ReferenceContainer &data);
+
+    /**
+     * @brief Method which adds an StructuredDataI to data at position 0
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputReferenceContainerAndStructuredDataIAt0(MARTe::ReferenceContainer &data);
+
+    /**
+     * @brief Method which consumes input from a ReferenceContainer passed
+     * by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputReferenceContainer(const MARTe::ReferenceContainer& data);
+
+    /**
+     * @brief Method which produces output into a ReferenceContainer passed
+     * by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputReferenceContainer(MARTe::ReferenceContainer& data);
+
+    /**
+     * @brief Method which consumes/produces from/into a ReferenceContainer
+     * passed by reference.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer& data);
+
+    /**
+     * @brief Method which has a StreamI has an input.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithConstInputStreamI(const MARTe::StreamI &data);
+
+    /**
+     * @brief Method which changes the input StreamI.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOutputStreamI(MARTe::StreamI &data);
+
+    /**
+     * @brief Method which changes the input StreamI.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithInputOutputStreamI(MARTe::StreamI &data);
+
+    /**
+     * @brief Methods with four parameters on all possible r/w combinations.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_C_C(const MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_C_R(const MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_C_W(const MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_R_C(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_R_R(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_R_W(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_W_C(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_W_R(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_C_W_W(const MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_C_C(const MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_C_R(const MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_C_W(const MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_R_C(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_R_R(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_R_W(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_W_C(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_W_R(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_R_W_W(const MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_C_C(const MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_C_R(const MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_C_W(const MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_R_C(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_R_R(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_R_W(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_W_C(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_W_R(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_C_W_W_W(const MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_C_C(MARTe::uint32 param1, const MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_C_R(MARTe::uint32 param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_C_W(MARTe::uint32 param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_R_C(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_R_R(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_R_W(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_W_C(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_W_R(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_C_W_W(MARTe::uint32 param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_C_C(MARTe::uint32 param1, MARTe::float32 param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_C_R(MARTe::uint32 param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_C_W(MARTe::uint32 param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_R_C(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_R_R(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_R_W(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_W_C(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_W_R(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_R_W_W(MARTe::uint32 param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_C_C(MARTe::uint32 param1, MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_C_R(MARTe::uint32 param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_C_W(MARTe::uint32 param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_R_C(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_R_R(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_R_W(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_W_C(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_W_R(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_R_W_W_W(MARTe::uint32 param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_C_C(MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_C_R(MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_C_W(MARTe::uint32 &param1, const MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_R_C(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_R_R(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_R_W(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_W_C(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_W_R(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_C_W_W(MARTe::uint32 &param1, const MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_C_C(MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_C_R(MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_C_W(MARTe::uint32 &param1, MARTe::float32 param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_R_C(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_R_R(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_R_W(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_W_C(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_W_R(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_R_W_W(MARTe::uint32 &param1, MARTe::float32 param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_C_C(MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_C_R(MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_C_W(MARTe::uint32 &param1, MARTe::float32 &param2, const MARTe::float64 &param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_R_C(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_R_R(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_R_W(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 param3, MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_W_C(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, const MARTe::StreamString &param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_W_R(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString param4);
+    MARTe::ErrorManagement::ErrorType MethodWithFourParameters_W_W_W_W(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+
+    /**
+     * @brief Method with four parameters which returns an error.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithFourParametersReturnError(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::float64 &param3, MARTe::StreamString &param4);
+
+    /**
+     * @brief Methods with three parameters on all possible r/w combinations.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_C_C(const MARTe::uint32 & param1, const MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_C_R(const MARTe::uint32 & param1, const MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_C_W(const MARTe::uint32 & param1, const MARTe::float32 & param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_R_C(const MARTe::uint32 & param1, MARTe::float32 param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_R_R(const MARTe::uint32 & param1, MARTe::float32 param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_R_W(const MARTe::uint32 & param1, MARTe::float32 param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_W_C(const MARTe::uint32 & param1, MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_W_R(const MARTe::uint32 & param1, MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_C_W_W(const MARTe::uint32 & param1, MARTe::float32 & param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_C_C(MARTe::uint32 param1, const MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_C_R(MARTe::uint32 param1, const MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_C_W(MARTe::uint32 param1, const MARTe::float32 & param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_R_C(MARTe::uint32 param1, MARTe::float32 param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_R_R(MARTe::uint32 param1, MARTe::float32 param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_R_W(MARTe::uint32 param1, MARTe::float32 param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_W_C(MARTe::uint32 param1, MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_W_R(MARTe::uint32 param1, MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_R_W_W(MARTe::uint32 param1, MARTe::float32 & param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_C_C(MARTe::uint32 & param1, const MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_C_R(MARTe::uint32 & param1, const MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_C_W(MARTe::uint32 & param1, const MARTe::float32 & param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_R_C(MARTe::uint32 & param1, MARTe::float32 param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_R_R(MARTe::uint32 & param1, MARTe::float32 param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_R_W(MARTe::uint32 & param1, MARTe::float32 param2, MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_W_C(MARTe::uint32 & param1, MARTe::float32 & param2, const MARTe::StreamString & param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_W_R(MARTe::uint32 & param1, MARTe::float32 & param2, MARTe::StreamString param3);
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParameters_W_W_W(MARTe::uint32 & param1, MARTe::float32 & param2, MARTe::StreamString & param3);
+
+    /**
+     * @brief Method with three parameters which returns an error.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithThreeParametersReturnError(MARTe::uint32 &param1, MARTe::float32 &param2, MARTe::StreamString &param3);
+
+    /**
+     * @brief Methods with two parameters on all possible r/w combinations.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_C_C(const MARTe::uint32 & param1, const MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_C_R(const MARTe::uint32 & param1, MARTe::StreamString param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_C_W(const MARTe::uint32 & param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_R_C(MARTe::uint32 param1, const MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_R_R(MARTe::uint32 param1, MARTe::StreamString param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_R_W(MARTe::uint32 param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_C(MARTe::uint32 & param1, const MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_R(MARTe::uint32 & param1, MARTe::StreamString param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_W_W(MARTe::uint32 & param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1, MARTe::StreamString & param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1, MARTe::StreamString * param2);
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1, MARTe::StreamString * param2);
+
+    /**
+     * @brief Method with two parameters which returns an error.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithTwoParametersReturnError(MARTe::uint32 &param1, MARTe::StreamString &param2);
+
+    /**
+     * @brief Methods with one parameters on all possible r/w combinations.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameter_C(const MARTe::uint32 & param1);
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameter_R( MARTe::uint32 param1);
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameter_W( MARTe::uint32 & param1);
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameter_Pointer( MARTe::uint32 * param1);
+
+    /**
+     * @brief Method with two parameters which returns an error.
+     */
+    MARTe::ErrorManagement::ErrorType MethodWithOneParameterReturnError(MARTe::uint32 &param1);
 
     /**
      * @brief Gets a string with the name and signature of the last executed
@@ -148,8 +329,6 @@ private:
      */
     MARTe::StreamString lastMethodExecuted;
 };
-
-CLASS_METHOD_REGISTER(ClassWithCallableMethods, &ClassWithCallableMethods::MethodWithInputInteger, &ClassWithCallableMethods::MethodWithOutputInteger, &ClassWithCallableMethods::MethodWithInputOutputInteger, &ClassWithCallableMethods::FaultyMethod, &ClassWithCallableMethods::MethodWithInputReferenceContainer, &ClassWithCallableMethods::MethodWithOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputOutputReferenceContainer, &ClassWithCallableMethods::MethodWithInputIntegerByCopy, &ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, (bool (ClassWithCallableMethods::*)())&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(int&))&ClassWithCallableMethods::OverloadedMethod, (bool (ClassWithCallableMethods::*)(MARTe::ReferenceContainer&))&ClassWithCallableMethods::OverloadedMethod)
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -188,9 +188,24 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_On
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlySyncSignalInStruct());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlyTriggerInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlyTriggerInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidSyncSignalInStruct) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidSyncSignalInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_UnregisteredType) {
@@ -304,6 +319,10 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsF
     ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource());
+}
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignals1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyDataSourcesSignals1());
@@ -354,7 +373,6 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyDataSourcesSignalsFa
     ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray());
 }
 
-
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignals1());
@@ -368,11 +386,6 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals2) {
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals3) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveFunctionSignals3());
-}
-
-TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignals) {
@@ -630,6 +643,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDat
     ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource_GamIO());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource_AlignedStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource_AlignedStruct());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctions) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestAssignBrokersToFunctions());
@@ -694,3 +712,4 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureThreads) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureThreads());
 }
+

@@ -68,7 +68,7 @@ bool StreamStringTest::TestDefaultConstructor() {
     return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
 }
 
-bool TestConstructor_CCString(const char8 * initializationString) {
+bool StreamStringTest::TestConstructor_CCString(CCString initializationString) {
     StreamString string(initializationString);
 
     uint32 size = StringHelper::Length(initializationString);

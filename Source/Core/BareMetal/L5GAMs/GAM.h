@@ -144,7 +144,7 @@ public:
      *  @param[in] data the configured database of parameters.
      *  @return true if the \a data can be successfully copied.
      */
-    virtual bool SetConfiguredDatabase(StructuredDataI & data);
+    bool SetConfiguredDatabase(StructuredDataI & data);
 
     /**
      * @brief Returns the number of input signals.
@@ -236,7 +236,7 @@ public:
      * @details The default number of elements of a signal is 1.
      * @param[in] direction the signal direction.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] numberOfDimensions the number of elements.
+     * @param[out] numberOfElements the number of elements.
      * @return true if the signalIdx exists.
      * @pre
      *   The ConfiguredDatabase must be set
@@ -368,7 +368,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetInputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateInputSignalsMemory();
 
@@ -378,7 +378,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetOutputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateOutputSignalsMemory();
 
@@ -427,6 +427,14 @@ public:
      * @return true if the provided context is accepted by the GAM.
      */
     virtual bool SetContext(ConstReference context);
+
+    /**
+     * @brief Function called when all the information about the GAM is known and set.
+     * @details This allows to perform post-Initialise configurations. When this function is called
+     * all the information about the GAM is known (e.g. GetNumberOfInputSignals ...).
+     * @return true if the GAM is successfully configured.
+     */
+    virtual bool Setup()=0;
 
 protected:
 
@@ -526,9 +534,9 @@ protected:
     ReferenceContainer outputBrokers;
 
     /**
-     * The heap that is used to malloc the input and output signals.
+     * The gamHeap that is used to malloc the input and output signals.
      */
-    HeapI *heap;
+    HeapI *gamHeap;
 
 };
 

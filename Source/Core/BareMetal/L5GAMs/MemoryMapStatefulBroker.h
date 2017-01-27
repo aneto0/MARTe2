@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapDataSourceBroker.h
- * @brief Header file for class MemoryMapDataSourceBroker
+ * @file MemoryMapStatefulBroker.h
+ * @brief Header file for class MemoryMapStatefulBroker
  * @date 11/04/2016
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapDataSourceBroker
+ * @details This header file contains the declaration of the class MemoryMapStatefulBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -53,9 +53,21 @@ namespace MARTe {
  * hold the address of variable which has the pointer to the memory (and not the memory address itself).
  */
 struct MemoryMapStatefulBrokerCopyTableEntry {
+    /**
+     * The pointer to the base address of the GAM.
+     */
     void *gamPointer;
+    /**
+     * The array with the two datasource indirections.
+     */
     void **dataSourcePointer[2];
+    /**
+     * The data source offset.
+     */
     uint32 dataSourceOffset;
+    /**
+     * The size of the copy
+     */
     uint32 copySize;
 };
 
@@ -87,13 +99,13 @@ public:
 
     /**
      * @brief Initialises the MemoryMapStatefulBroker.
-     * @detail For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
+     * @details For each signal in the \a functionName, which wishes to use this MemoryMapBroker instance
      * (i.e. IsSupportedBroker(class inhering from MemoryMapBroker) == true), the signal name is searched
      *  in the provided \a dataSourceIn (see Init) and, for each of the two buffers, the memory address of the variable holding
      *  the signal memory pointer address retrieved using the GetSignalMemoryBuffer function.
      *  The information of each element to  be copied is stored in a MemoryMapStatefulBrokerCopyTableEntry.
      * @param[in] direction the signal direction (InputSignals or OutputSignals).
-     * @param[in] dataSource the DataSourceI to be queried.
+     * @param[in] dataSourceIn the DataSourceI to be queried.
      * @param[in] functionName the name of GAM the to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.

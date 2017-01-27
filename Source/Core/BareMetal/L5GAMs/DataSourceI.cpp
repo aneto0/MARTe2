@@ -78,7 +78,7 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
      *Justification: "Signals" is an optional field, so the move command must
      *Justification: not be checked.*/
     signalsDatabase.MoveAbsolute("Signals");
-    ret = data.Write("Signals", signalsDatabase);
+    ret = data.Write("Signals", signalsDatabase.operator MARTe::AnyType());
     return ret;
 }
 
@@ -165,7 +165,9 @@ bool DataSourceI::GetSignalByteSize(const uint32 signalIdx,
                                     uint32 &byteSize) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
-        ret = configuredDatabase.Read("ByteSize", byteSize);
+        if (!configuredDatabase.Read("MemberSize", byteSize)) {
+            ret = configuredDatabase.Read("ByteSize", byteSize);
+        }
     }
     return ret;
 }
@@ -534,8 +536,8 @@ bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection directio
         ret = configuredDatabase.Read("ByteOffset", byteOffsetMat);
     }
     if (ret) {
-        byteOffsetStart = byteOffsetMat(byteOffsetIndex,0u);
-        byteOffsetSize = byteOffsetMat(byteOffsetIndex,1u);
+        byteOffsetStart = byteOffsetMat(byteOffsetIndex, 0u);
+        byteOffsetSize = byteOffsetMat(byteOffsetIndex, 1u);
     }
 
     return ret;
@@ -559,6 +561,17 @@ bool DataSourceI::GetFunctionSignalReadFrequency(const SignalDirection direction
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (!configuredDatabase.Read("Frequency", frequency)) {
         frequency = -1.0F;
+    }
+    return ret;
+}
+
+bool DataSourceI::GetFunctionSignalTrigger(const SignalDirection direction,
+                                           const uint32 functionIdx,
+                                           const uint32 functionSignalIdx,
+                                           uint32 &trigger) {
+    bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
+    if (!configuredDatabase.Read("Trigger", trigger)) {
+        trigger = 0u;
     }
     return ret;
 }

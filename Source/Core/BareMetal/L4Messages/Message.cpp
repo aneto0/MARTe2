@@ -1,8 +1,8 @@
 /**
  * @file Message.cpp
  * @brief Source file for class Message
- * @date Apr 15, 2016
- * @author fsartori
+ * @date 15/04/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -56,39 +56,27 @@ Message::Message() :
 Message::~Message() {
 }
 
-void Message::MarkAsReply(const bool flag) {
+void Message::SetAsReply(const bool flag) {
     flags.isReply = flag;
 }
 
-void Message::MarkImmediateReplyExpected(const bool flag) {
+void Message::SetExpectsReply(const bool flag) {
     flags.expectsReply = flag;
-    flags.expectsImmediateReply = flag;
 }
 
-void Message::MarkLateReplyExpected(const bool flag) {
-    flags.expectsReply = flag;
-    if (flag) {
-        flags.expectsImmediateReply = false;
-    }
+void Message::SetExpectsIndirectReply(const bool flag) {
+    flags.expectsIndirectReply = flag;
 }
 
-bool Message::ReplyExpected() const {
+bool Message::ExpectsReply() const {
     return (flags.expectsReply);
 }
 
-bool Message::ImmediateReplyExpected() const {
-    bool expectsReply = flags.expectsReply;
-    bool expectsImmediateReply = flags.expectsImmediateReply;
-    return (expectsReply && expectsImmediateReply);
+bool Message::ExpectsIndirectReply() const {
+    return flags.expectsIndirectReply;
 }
 
-bool Message::LateReplyExpected() const {
-    bool expectsReply = flags.expectsReply;
-    bool expectsImmediateReply = flags.expectsImmediateReply;
-    return (expectsReply && (!expectsImmediateReply));
-}
-
-bool Message::IsReplyMessage() const {
+bool Message::IsReply() const {
     return flags.isReply;
 }
 
@@ -99,30 +87,29 @@ CCString Message::GetDestination() {
 bool Message::Initialise(StructuredDataI &data) {
     bool ret = (ReferenceContainer::Initialise(data));
     if (ret) {
-
-        // TODO handle errors
         ret = data.Read("Destination", destination);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Destination not set");
+        }
 
         if (ret) {
-            // TODO handle errors
             ret = data.Read("Function", function);
+        }
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Function not set");
         }
         if (ret) {
             uint32 msecWait;
-            if (data.Read("MaxWait", msecWait)) {
+            if (data.Read("ReplyTimeout", msecWait)) {
                 maxWait = msecWait;
             }
             else {
                 maxWait = TTInfiniteWait;
-                // TODO warning about maxWait set to infinite
             }
 
             StreamString messageFlags;
             if (data.Read("Mode", messageFlags)) {
                 flags = MessageFlags(messageFlags.Buffer());
-            }
-            else {
-                // TODO warning about flags set to default
             }
         }
 
@@ -133,17 +120,37 @@ bool Message::Initialise(StructuredDataI &data) {
 
 Message::MessageFlags::MessageFlags() {
     expectsReply = false;
-    expectsImmediateReply = false;
+    expectsIndirectReply = false;
     isReply = false;
 }
 
 Message::MessageFlags::MessageFlags(CCString asString) {
     expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
-    expectsImmediateReply = (StringHelper::Compare(asString.GetList(), "ExpectsImmediateReply") == 0);
-    if (bool(expectsImmediateReply)) {
+    expectsIndirectReply = (StringHelper::Compare(asString.GetList(), "ExpectsIndirectReply") == 0);
+    if (bool(expectsIndirectReply)) {
         expectsReply = true;
     }
     isReply = false;
+}
+
+CCString Message::GetSender() {
+    return sender.Buffer();
+}
+
+void Message::SetSender(CCString senderName) {
+    sender = senderName.GetList();
+}
+
+CCString Message::GetFunction() {
+    return function.Buffer();
+}
+
+void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
+    maxWait = maxWaitIn;
+}
+
+TimeoutType Message::GetReplyTimeout() const {
+    return maxWait;
 }
 
 CLASS_REGISTER(Message, "1.0")

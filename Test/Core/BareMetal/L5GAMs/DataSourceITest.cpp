@@ -47,9 +47,11 @@ public:
 
 DataSourceITestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+    virtual void CustomPrepareNextState();
+
 };
 
 DataSourceITestScheduler1::DataSourceITestScheduler1() :
@@ -57,11 +59,15 @@ DataSourceITestScheduler1::DataSourceITestScheduler1() :
 
 }
 
-void DataSourceITestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void DataSourceITestScheduler1::StopExecution() {
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void DataSourceITestScheduler1::CustomPrepareNextState(){
 
 }
 
@@ -72,13 +78,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 DataSourceITestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 DataSourceITestGAM1::DataSourceITestGAM1() :
         GAM() {
 
+}
+
+bool DataSourceITestGAM1::Setup() {
+    return true;
 }
 
 bool DataSourceITestGAM1::Execute() {
@@ -197,7 +207,7 @@ static bool InitialiseDataSourceIEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -232,6 +242,7 @@ static const char8 * const config1 = ""
         "                   DataSource = Drv1"
         "                   Type = uint32"
         "                   Samples = 3"
+        "                   Trigger = 1"
         "               }"
         "               Signal0 = {"
         "                   DataSource = DDB1"
@@ -251,6 +262,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -287,6 +299,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -308,6 +321,7 @@ static const char8 * const config1 = ""
         "                    NumberOfDimensions = 2"
         "                    NumberOfElements = 6"
         "                    Default = \"{3 6 9 12 15 18}\""
+        "                    Trigger = 1"
         "                }"
         "            }"
         "        }"
@@ -1834,6 +1848,79 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
     }
     if (ret) {
         ret = !dataSource->GetFunctionSignalReadFrequency(OutputSignals, 10000, 0, frequency);
+    }
+    return ret;
+}
+
+
+bool DataSourceITest::TestGetFunctionSignalTrigger() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
+    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
+            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    uint32 triggerInput[][maxNumberOfInputSignals] = { { 0, 1, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    uint32 triggerOutput[][maxNumberOfOutputSignals] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 1, 0, 0 } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    uint32 trigger;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(InputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerInput[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(OutputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerOutput[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 10000, 0, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 10000, 0, trigger);
     }
     return ret;
 }

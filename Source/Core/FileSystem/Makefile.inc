@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX= 
-SPB    = L1Portability.x
+SPB    = L1Portability.x L3Streams.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 
@@ -32,6 +32,7 @@ ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityF$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsF$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
 		    $(BUILD_DIR)/MARTeCoreF$(LIBEXT) \

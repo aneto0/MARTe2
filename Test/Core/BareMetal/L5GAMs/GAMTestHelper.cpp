@@ -36,7 +36,7 @@
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
 #include "GAMSchedulerI.h"
-
+#include "Sleep.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -79,6 +79,29 @@ static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_intros
         &TestStructD_c3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
+
+
+DECLARE_CLASS_MEMBER(TestStructBB, b1, int8, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructBB, b2, int64, "", "");
+
+static const IntrospectionEntry* TestStructBBEntries[] = { &TestStructBB_b1_introspectionEntry, &TestStructBB_b2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructBB, TestStructBBEntries)
+
+
+
+DECLARE_CLASS_MEMBER(TestStructCC, c1, TestStructBB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_introspectionEntry, &TestStructCC_c2_introspectionEntry,
+        &TestStructCC_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -109,30 +132,23 @@ bool GAM1::Execute() {
         ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
         broker->Execute();
     }
-    const char8 *name = GetName();
-    printf("%s:\n", name);
-    uint32 numberOfInputSignals = GetNumberOfInputSignals();
-    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
-    printf("Inputs %d\n", numberOfInputSignals);
-    printf("Outputs %d\n", numberOfOutputSignals);
     uint32 *inputBuffer = (uint32 *) GetInputSignalsMemory();
-
     uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
-    printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
 
     for (b = 0u; b < outputBrokers.Size(); b++) {
         ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
         broker->Execute();
     }
     numberOfExecutions++;
+    Sleep::MSec(100);
 
     return true;
 }
 
-void GAM1::SetUp() {
-
+bool GAM1::Setup() {
+    return true;
 }
 
 CLASS_REGISTER(GAM1, "1.0");
@@ -409,12 +425,18 @@ CLASS_REGISTER(Driver1, "1.0");
 DefaultSchedulerForTests::DefaultSchedulerForTests() :
         GAMSchedulerI() {
 }
-void DefaultSchedulerForTests::StartExecution() {
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void DefaultSchedulerForTests::CustomPrepareNextState(){
 
 }
 
-void DefaultSchedulerForTests::StopExecution() {
-}
 
 CLASS_REGISTER(DefaultSchedulerForTests, "1.0")
 

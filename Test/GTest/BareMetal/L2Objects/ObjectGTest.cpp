@@ -121,3 +121,24 @@ TEST(ObjectGTest,TestCallRegisteredMethod) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestCallRegisteredMethod());
 }
+
+TEST(ObjectGTest,TestCallRegisteredMethod_InvalidMethod) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_InvalidMethod());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_StructuredDataI) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_StructuredDataI());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_ReferenceContainer) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_ReferenceContainer());
+}
+
+TEST(ObjectGTest,TestCallRegisteredMethod_StreamI) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestCallRegisteredMethod_StreamI());
+}
+
