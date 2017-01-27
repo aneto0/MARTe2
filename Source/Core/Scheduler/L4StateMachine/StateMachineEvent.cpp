@@ -89,7 +89,7 @@ bool StateMachineEvent::Initialise(StructuredDataI &data) {
     }
     if (err.ErrorsCleared()) {
         if (msecTimeout == 0u) {
-            timeout = TTInfiniteWait.GetTimeoutMSec();
+            timeout = TTInfiniteWait;
         }
         else {
             timeout = msecTimeout;

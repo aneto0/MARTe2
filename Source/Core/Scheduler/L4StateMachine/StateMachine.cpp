@@ -240,7 +240,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
                 if (enterMessage.IsValid()) {
                     if (enterMessage->GetReplyTimeout() == TTInfiniteWait) {
                         maxTimeoutFound = true;
-                        msecTimeout = TTInfiniteWait.GetTimeoutMSec();
+                        msecTimeout = TTInfiniteWait;
                     }
                     else {
                         if (enterMessage->GetReplyTimeout().GetTimeoutMSec() > msecTimeout) {
