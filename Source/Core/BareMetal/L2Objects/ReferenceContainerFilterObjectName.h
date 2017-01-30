@@ -34,6 +34,7 @@
 
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainer.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -109,9 +110,14 @@ public:
 private:
 
     /**
+     * copy of the whole address to search with \0 instaed of .
+     */
+    DynamicCString addressToSearchWhole;
+
+    /**
      * Broken-down list of the address to search.
      */
-    char8 **addressToSearch;
+    DynamicZeroTerminatedArray<CCString,16> addressToSearchArray;
 
     /**
      * Number of nodes in the address.
@@ -125,6 +131,11 @@ private:
      * the address parameter of the constructor.
      */
     bool TestPath(ReferenceContainer &previouslyFound) const;
+
+    /**
+     * TODO
+     */
+    void GetPath(DynamicCString &path) const;
 
 };
 

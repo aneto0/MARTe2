@@ -181,7 +181,8 @@ void ZeroTerminatedArray<T>::SetList(T *arrayIn) {
 
 template<typename T>
 bool ZeroTerminatedArray<T>::Zero(const T & data) const {
-    return (data == static_cast<T>(0));
+	static const T term(0u);
+    return (data == term);
 }
 
 template<typename T>

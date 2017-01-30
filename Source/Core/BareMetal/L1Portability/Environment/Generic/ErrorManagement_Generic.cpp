@@ -48,9 +48,8 @@ namespace MARTe {
 
 namespace ErrorManagement {
 
-void NullErrorProcessFunction(const ErrorInformation &errorInfo,
-                              const char8 * const errorDescription) {
-}
+void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription){}
+
 
 ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
 

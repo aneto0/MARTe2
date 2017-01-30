@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ZeroTerminatedArray.h"
+#include "CCString.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -40,10 +41,6 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-//class DynamicCString;
-//template <uint32 size> class StaticCString;
-//class CCString;
 
 /**
 * TODO
@@ -62,7 +59,6 @@ public:
      */
     inline CString (CString const &s);
 
-
     /**
      * TODO
      */
@@ -72,6 +68,7 @@ public:
      * TODO
      */
 //    inline operator const char8*() const;
+    inline operator CCString() const;
 
 
     /**
@@ -107,6 +104,10 @@ CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
 char8 
 CString::operator[](uint32 index) const{
     return ZeroTerminatedArray<char8>::operator[](index);
+}
+
+inline CString::operator CCString() const{
+	return CCString(GetList());
 }
 
 

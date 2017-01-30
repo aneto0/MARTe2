@@ -28,7 +28,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=Environment/$(ENVIRONMENT).x
 
-OBJSX=  		FastPollingEventSem.x \
+OBJSX=  FastPollingEventSem.x \
 		FastPollingMutexSem.x \
 		FormatDescriptor.x \
 		GlobalObjectI.x \
@@ -38,7 +38,8 @@ OBJSX=  		FastPollingEventSem.x \
 		ProcessorType.x \
 		StaticListHolder.x \
 		StringHelper.x \
-		TypeDescriptor.x
+		TypeDescriptor.x \
+		DynamicZeroTerminatedArray.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

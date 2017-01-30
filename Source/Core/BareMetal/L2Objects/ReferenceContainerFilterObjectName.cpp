@@ -49,7 +49,6 @@ namespace MARTe {
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
         ReferenceContainerFilter() {
     addressNumberNodes = 0u;
-    addressToSearch = static_cast<char8 **>(NULL);
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
@@ -59,65 +58,56 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
-    addressToSearch = static_cast<char8 **>(NULL);
     SetAddress(address);
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
-    const char8 *lastOccurrence = address;
-    addressToSearch = static_cast<char8 **>(NULL);
 
-    if (address != NULL) {
+	// cleanup
+	addressToSearchArray.Truncate(0);
+
+    if (!address.IsNullPtr()) {
         //Count the number of dots found. The first and last dot are ignored. Two consecutive dots result
         //in addressNumberNodes = 0
 
-        uint32 startIn = 0u;
+    	// copy address
+    	addressToSearchWhole.AppendN(address);
 
-        uint32 length = address.GetSize();
-        if (length > 0u) {
+    	// count dots
+    	char8 *p = addressToSearchWhole.GetList();
+    	addressNumberNodes = 0;
+    	// to skip initial . if present
+    	bool start  = true;
+    	// to deal with consecutive . --> restart
+    	bool justFound = false;
 
-            //there is at least one node
-            addressNumberNodes++;
-            //skip the first '.'
-            if (address[0] == '.') {
-                startIn = 1u;
-            }
-            uint32 lastFoundIndex = startIn - 1u;
-            for (uint32 i = startIn; i < length; i++) {
-                if (address[i] == '.') {
-                    //increment the number of nodes where a '.' is found
-                    addressNumberNodes++;
-                    //No consecutive dots
-                    if ((i - lastFoundIndex) == 1u) {
-                        addressNumberNodes = 0u;
-                        break;
-                    }
-                    // save the last to check consecutive dots
-                    lastFoundIndex = i;
-                }
-            }
-
-            //ignore the last dot if it exists.
-            if (address[length - 1u] == '.') {
-                if (addressNumberNodes > 0u) {
-                    addressNumberNodes--;
-                }
-            }
-        }
-
-        if (addressNumberNodes > 0u) {
-            //create an array of strings for nodes
-            addressToSearch = new char8*[addressNumberNodes];
-            lastOccurrence = &address[startIn];
-
-            for (uint32 i = 0u; i < addressNumberNodes; i++) {
-                uint32 strLength = static_cast<uint32>(StringHelper::SearchIndex(&lastOccurrence[0], "."));
-                addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(strLength + 1u));
-                lastOccurrence = StringHelper::TokenizeByChars(lastOccurrence, ".", addressToSearch[i]);
-
-            }
-        }
+    	while (*p != '\0'){
+    		// everytime a . is found is replaced with /0
+    		if (*p == '.') {
+    			// place a character terminator ...
+    			*p = '\0';
+        		if (!start) {
+        			// consecutive .. --> reset
+        			if (justFound){
+        				addressNumberNodes= 0u;
+        				addressToSearchArray.Truncate(0u);
+        			} else {
+        				addressNumberNodes++;
+        				// next must not be the end
+        				// deals with trailing .
+        				if (p[1]!= '\0'){
+        					addressToSearchArray.Append(CCString(p));
+        				}
+        				justFound = true;
+        			}
+        		}
+    		} else {
+    			justFound = false;
+    		}
+    		p++;
+    		start = false;
+    	}
     }
 
     // If the number of nodes is greater than one, then the number of occurrence must be =1
@@ -131,69 +121,56 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
     }
 }
 
+void ReferenceContainerFilterObjectName::GetPath(DynamicCString &path) const{
+	path.Truncate(0);
+	CCString *pList = addressToSearchArray.GetList();
+	bool start = true;
+	while (pList != NULL_PTR(CCString *)){
+		if (!start){
+			path.Append('.');
+		}
+		path.AppendN(*pList);
+		start = false;
+		pList++;
+	}
+}
+
+
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName& other) :
         ReferenceContainerFilter(other) {
-    addressToSearch = static_cast<char8 **>(NULL);
-    addressNumberNodes = other.addressNumberNodes;
-    if (addressNumberNodes > 0u) {
-        addressToSearch = new char8*[addressNumberNodes];
-        for (uint32 i = 0u; i < addressNumberNodes; i++) {
-            uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1u;
-            addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(length));
-            /*lint -e{534} possible failure is not handled nor propagated.*/
-            MemoryOperationsHelper::Copy(addressToSearch[i], other.addressToSearch[i], length);
-        }
-    }
+
+// must create a dummy path string and the initialize from that
+	DynamicCString dummy;
+	other.GetPath(dummy);
+
+	// set the address via the usual scheme
+	SetAddress(dummy);
+
     Reset();
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator =(const ReferenceContainerFilterObjectName& other) {
-    if (this != &other) {
-        if (addressNumberNodes > 0u) {
+    // wierd check
+	if (this == &other) return *this;
 
-            for (uint32 i = 0u; i < addressNumberNodes; i++) {
-                bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
-                if (!ok) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
-                }
-            }
-        }
+	// must create a dummy path string and the initialize from that
+	DynamicCString dummy;
+	other.GetPath(dummy);
 
-        if (addressToSearch != NULL) {
-            delete[] addressToSearch;
-        }
-        originallySetOccurrence = other.GetOriginalSetOccurrence();
-        SetMode(other.GetMode());
-        addressNumberNodes = other.addressNumberNodes;
-        if (addressNumberNodes > 0u) {
-            addressToSearch = new char8*[addressNumberNodes];
-            for (uint32 i = 0u; i < addressNumberNodes; i++) {
-                uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1u;
-                addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(length));
-                /*lint -e{534} possible failure is not handled nor propagated.*/
-                MemoryOperationsHelper::Copy(addressToSearch[i], other.addressToSearch[i], length);
-            }
-        }
-    }
+	// set the address via the usual scheme
+	SetAddress(dummy);
+
     Reset();
+
     return *this;
 }
 
 /*lint -e{1551} The free could cause a segmentation fault.*/
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
-    if (addressNumberNodes > 0u) {
 
-        for (uint32 i = 0u; i < addressNumberNodes; i++) {
-            bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
-            }
-        }
-        delete[] addressToSearch;
-    }
     addressNumberNodes = 0u;
 }
 
@@ -202,9 +179,11 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
     int32 i;
     for (i = (static_cast<int32>(previouslyFound.Size()) - 1); (found) && (i >= 0); i--) {
         found = false;
-        if (previouslyFound.Get(static_cast<uint32>(i)).IsValid()) {
-            if (previouslyFound.Get(static_cast<uint32>(i))->GetName() != NULL) {
-                found = (StringHelper::Compare(previouslyFound.Get(static_cast<uint32>(i))->GetName(), addressToSearch[i]) == 0);
+        uint32 ui = static_cast<uint32>(i);
+        if (previouslyFound.Get(ui).IsValid()) {
+        	CCString name = previouslyFound.Get(ui)->GetName();
+            if (!name.IsNullPtr()) {
+                found = (StringHelper::Compare(name, addressToSearchArray[i]) == 0);
             }
         }
     }
@@ -222,10 +201,11 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
 
     //Check if this is the last node and if it matches the last part of the addressToSearch
     if (found && referenceToTest.IsValid()) {
-        if (referenceToTest->GetName() != NULL) {
+    	CCString name = referenceToTest->GetName();
+        if ( !name.IsNullPtr()) {
             /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
              * and its size cannot be modified in runtime*/
-            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
+            found = (StringHelper::Compare(name, addressToSearchArray[addressNumberNodes - 1u]) == 0);
         }
         else {
             found = false;

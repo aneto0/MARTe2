@@ -419,7 +419,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     uint32 numberOfChildren = data.GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
         CCString childName = data.GetChildName(i);
-        ok = (childName != NULL);
+        ok = (!childName.IsNullPtr());
         if (ok) {
             // case object
             if ((childName[0] == '+') || (childName[0] == '$')) {

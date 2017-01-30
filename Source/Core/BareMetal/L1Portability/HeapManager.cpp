@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 #include "HeapManager.h"
 #include "FastPollingMutexSem.h"
 #include "GeneralDefinitions.h"
@@ -36,7 +37,7 @@
 #include "StringHelper.h"
 #include "GlobalObjectI.h"
 #include "GlobalObjectsDatabase.h"
-#include "ErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Local Module declaration                        */
 /*---------------------------------------------------------------------------*/

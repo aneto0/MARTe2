@@ -125,9 +125,10 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
     }
 
     if (ok) {
-        if (data.GetName() != NULL) {
+    	CCString name = data.GetName();
+        if (!name.IsNullPtr()) {
             /*lint -e{613} checking of NULL pointer done before entering here. */
-            objectPointer->SetName(&data.GetName()[1]);
+            objectPointer->SetName(name.GetList()+1);
         }
     }
     if (ok) {

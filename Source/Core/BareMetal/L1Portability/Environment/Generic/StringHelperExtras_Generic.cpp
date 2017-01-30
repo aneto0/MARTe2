@@ -40,11 +40,15 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
 #define NULLS NULL_PTR(char8 *)
 
 namespace MARTe{
 
 namespace StringHelper {
+
+#if 0
+
 
 CCString  SearchChar(CCString  const string,  const char8 c) {
 
@@ -309,7 +313,6 @@ int32 SearchIndex(CCString  const string1, CCString  const string2) {
 }
 
 
-#if 0
 
 bool Concatenate(CCString const string1,
                  CCString const string2,

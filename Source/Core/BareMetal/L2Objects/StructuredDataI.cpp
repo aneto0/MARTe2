@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#define DLL_API
+
 #include "AnyType.h"
 #include "StructuredDataI.h"
 

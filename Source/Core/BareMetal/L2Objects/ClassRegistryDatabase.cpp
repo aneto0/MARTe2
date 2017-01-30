@@ -98,7 +98,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 
     //Check for the string pattern dllName::className
     CCString classOnlyPartName = StringHelper::SearchString(className, "::");
-    if (classOnlyPartName != NULL_PTR(char8 *)) {
+    if (!classOnlyPartName.IsNullPtr()) {
 
         uint32 size = static_cast<uint32>(StringHelper::SearchIndex(className, "::"));
 
@@ -107,7 +107,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 
     }
 
-    if (className != NULL_PTR(char8 *)) {
+    if (!className.IsNullPtr()) {
 
         uint32 i;
         uint32 databaseSize = classDatabase.ListSize();
@@ -144,7 +144,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 
                 dllName.Truncate(baseSize);
                 dllName.AppendN(extension);
-                dllOpened = loader->Open(dllName);
+                dllOpened = loader->Open(dllName.GetList());
                 i++;
             }
 
@@ -181,7 +181,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidNa
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
     bool found = false;
-    if (typeidName != NULL) {
+    if (!typeidName.IsNullPtr()) {
         uint32 i;
         uint32 databaseSize = classDatabase.ListSize();
         for (i = 0u; (i < databaseSize) && (!found); i++) {

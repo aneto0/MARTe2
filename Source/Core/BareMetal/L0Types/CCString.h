@@ -40,11 +40,6 @@
 
 namespace MARTe {
 
-//class DynamicCString;
-//template <uint32 size> class StaticCString;
-//class CString;
-
-
 /**
  * TODO
  * @brief Wrapper for constant char buffers
@@ -53,15 +48,14 @@ class CCString: public ZeroTerminatedArray<const char8>{
 
 public:
     /**
-     *TODO
+     * @brief generates a null value for CCString
      */
-    inline CCString ();
+    inline CCString (uint32 zero=0);
 
     /**
      * TODO
      */
     inline CCString (CCString const &s);
-
 
     /**
      * TODO
@@ -77,13 +71,12 @@ public:
     /**
      * TODO
      */
-//    inline operator const char8*() const;
+    inline char8 operator[](uint32 index) const;
 
     /**
      * TODO
      */
-    inline char8 operator[](uint32 index) const;
-
+    inline bool operator==(const CCString &s) const;
 
 };
 
@@ -93,7 +86,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-CCString::CCString (){}
+CCString::CCString (uint32 zero){ }
 
 CCString::CCString (CCString const &s):ZeroTerminatedArray<const char8>(s){}
 
@@ -102,13 +95,13 @@ CCString::CCString (char8 const (&vector) [size]):ZeroTerminatedArray<const char
 
 CCString::CCString (char8 const * const &s):ZeroTerminatedArray<const char8>(s){}
 
-//CCString::operator const char8*() const{
-//    return ZeroTerminatedArray<const char8>::array;
-//}
-
 char8 
 CCString::operator[](uint32 index) const{
     return ZeroTerminatedArray<const char8>::operator[](index);
+}
+
+bool CCString::operator==(const CCString &s) const{
+	return s.array == array;
 }
 
 

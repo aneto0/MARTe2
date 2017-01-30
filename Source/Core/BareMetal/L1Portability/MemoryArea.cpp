@@ -88,7 +88,7 @@ bool MemoryArea::Add(const uint32 memorySize,
     bool ret = false;
 
     if (size == 0u) {
-        memory = HeapManager::Malloc(memorySize, heapName);
+        memory = HeapManager::Malloc(memorySize, heapName.GetList());
         if (memory != NULL) {
             offset = 0u;
             size += memorySize;

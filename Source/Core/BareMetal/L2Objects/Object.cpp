@@ -158,7 +158,7 @@ Object::Object(const Object &copy) {
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
 Object::~Object() {
-    if (objectName != NULL_PTR(char8 *)) {
+    if (!objectName.IsNullPtr()) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
         bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
         if (!ok) {
@@ -221,7 +221,7 @@ bool Object::GetUniqueName(StreamI &nameStream) const {
     uint32 ptrNum = static_cast<uint32>(ptrHex);
 
     //Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
-    uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
+    const uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
 
     bool ret = true;
     {
@@ -255,7 +255,7 @@ bool Object::GetUniqueName(StreamI &nameStream) const {
 }
 
 void Object::SetName(CCString const newName) {
-    if (objectName != NULL_PTR(char8 *)) {
+    if (!objectName.IsNullPtr()) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
         bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
         if (!ok) {
