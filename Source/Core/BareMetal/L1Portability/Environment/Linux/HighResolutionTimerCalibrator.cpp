@@ -55,6 +55,10 @@ namespace MARTe {
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
+#ifdef HRT_FREQUENCY
+    frequency = HRT_FREQUENCY;
+    period = 1.0 / frequency; 
+#else
     const uint64 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
     frequency = 0u;
@@ -101,6 +105,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     else {
         REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
     }
+#endif
 }
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {

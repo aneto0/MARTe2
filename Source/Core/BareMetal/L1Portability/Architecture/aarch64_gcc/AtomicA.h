@@ -119,8 +119,7 @@ inline int32 Exchange(volatile int32 *p,
 }
 
 inline bool TestAndSet(int32 volatile *p) {
-    return __atomic_test_and_set(p, __ATOMIC_SEQ_CST);
-    /*register int32 readValue;
+    register int32 readValue;
     register int32 ret;
 
     bool ok = (*p == 0);
@@ -128,8 +127,8 @@ inline bool TestAndSet(int32 volatile *p) {
     if (ok) {
         do {
             asm volatile(
-                    "ldrex %0, [%1]"
-                    : : "r" (readValue), "r" (p)
+                    "ldxr %w0, [%1]"
+                    : "=&r" (readValue) : "r" (p)
             );
 
             if (readValue != 0) {
@@ -137,39 +136,23 @@ inline bool TestAndSet(int32 volatile *p) {
             }
             asm volatile(
                     "add %0, %0, #1\n"
-                    "strex %2, %0, [%1]\n"
+                    "stxr %w2, %w0, [%1]\n"
                     "mov %0, %2"
-                    : : "r" (readValue), "r" (p), "r" (ret)
+                    : "=&r" (readValue), "=&r"(p), "=&r" (ret)
             );
-
         }
         while (ret != 0);
         ok = (readValue == 0);
     }
-    return ok;*/
+    return ok;
 }
 
 inline bool TestAndSet(int16 volatile *p) {
     return __atomic_test_and_set(p, __ATOMIC_ACQUIRE);
-    /*bool ret = (*p == 0);
-    if (ret) {
-        asm volatile( "cpsid i");
-        *p = 1;
-        asm volatile( "cpsie i");
-    }
-    return ret;*/
-
 }
 
 inline bool TestAndSet(int8 volatile *p) {
     return __atomic_test_and_set(p, __ATOMIC_ACQUIRE);
-    /*bool ret = (*p == 0);
-     if (ret) {
-         asm volatile( "cpsid i");
-         *p = 1;
-         asm volatile( "cpsie i");
-     }
-     return ret;*/
 }
 
 inline void Add(volatile int32 *p,

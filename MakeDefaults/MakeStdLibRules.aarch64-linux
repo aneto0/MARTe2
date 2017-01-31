@@ -77,7 +77,7 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 	
 

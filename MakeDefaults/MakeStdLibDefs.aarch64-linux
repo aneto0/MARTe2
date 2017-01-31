@@ -29,7 +29,7 @@ BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDI
 TARGET_BASE=gcc
 ENVIRONMENT=Linux
 ARCHITECTURE=aarch64_gcc
-EXEEXT=.bin
+EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
 OBJEXT=.o
@@ -39,17 +39,16 @@ GAMEXT=.gam
 GCNOEXT=.gcno
 GCDAEXT=.gcda
 GCOVEXT=.gcov
-HEXEXT=.hex
-LSTEXT=.lst
-SYMEXT=.sym
-ELFEXT=.elf
+DEFEXT=.def
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
 
 SUBPROJ = $(SPB:%.x=%.spb)
-SUBPROJT = $(SPBT:%.x=%.spb)
-SUBPROJGT = $(SPBGT:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
+SUBPROJ2 = $(SPB2:%.x=%.spb)
+SUBPROJC += $(SPB2:%.x=%.spc)
 
 CROSS_COMPILER = aarch64-linux-gnu
 COMPILER = $(CROSS_COMPILER)-g++
@@ -60,11 +59,12 @@ OBJDUMP = $(CROSS_COMPILER)-objdump
 NM = $(COMPILER_BASE)-nm
 MAKE     = make
 
-DEBUG = -g 
-OPTIM = -Os
-
-CFLAGS =  -fno-builtin -ffunction-sections -fdata-sections -g -Wall -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) 
-CPPFLAGS = $(CFLAGS) 
-  
+OPTIM = 
+INCLUDE =
+DEBUG = -g -ggdb
+LFLAGS = -Wl,--no-as-needed  
+CFLAGS = -fPIC -Wall -std=c++98 -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread -DHRT_FREQUENCY=24000000
+CPPFLAGS = -frtti $(CFLAGS)
+LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

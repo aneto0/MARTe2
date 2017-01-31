@@ -290,10 +290,10 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         pthread_attr_t stackSizeAttribute;
         bool ok = (pthread_attr_init(&stackSizeAttribute) == 0);
         if (ok) {
-            ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
+/*            ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
-            }
+            }*/
         }
 
         else {
