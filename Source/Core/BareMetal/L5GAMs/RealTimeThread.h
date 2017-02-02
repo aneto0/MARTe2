@@ -49,6 +49,8 @@ namespace MARTe {
  * +RealTimeThread_name = {\n
  *     Class = RealTimeThread\n
  *     Functions = { GAM1_name, GAMGroup2_name, ... }
+ *     CPUs = 0xf //CPU affinity mask for the thread. Optional parameter.
+ *     StackSize = 32768 //Stack size for the thread. Optional parameter.
  * }\n
  */
 class DLL_API RealTimeThread: public ReferenceContainer {
