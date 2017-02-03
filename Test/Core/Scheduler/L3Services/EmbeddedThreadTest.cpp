@@ -71,6 +71,7 @@ MARTe::ErrorManagement::ErrorType EmbeddedThreadTest::CallbackFunction(const MAR
     }
     if (information.GetStage() == MARTe::ExecutionInfo::TerminationStage) {
         completed = true;
+        return MARTe::ErrorManagement::Warning;
     }
     if (information.GetStage() == MARTe::ExecutionInfo::BadTerminationStage) {
         badTermination = true;

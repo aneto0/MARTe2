@@ -45,8 +45,7 @@
 namespace MARTe {
 
 MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderI &binder) :
-        EmbeddedServiceI(),
-        method(binder) {
+        EmbeddedServiceI(), method(binder) {
     numberOfPoolThreads = 1u;
 }
 
@@ -162,6 +161,45 @@ bool MultiThreadService::Initialise(StructuredDataI &data) {
                 }
                 if (ok) {
                     SetPriorityLevelThreadPool(prioLevel, priorityLevelIdx);
+                }
+            }
+            if (!ok) {
+                err.parametersError = true;
+            }
+        }
+    }
+    if (err.ErrorsCleared()) {
+        AnyType individualThreadStackSizes = data.GetType("StackSizes");
+        if (!individualThreadStackSizes.IsVoid()) {
+            uint32 dims = individualThreadStackSizes.GetNumberOfDimensions();
+            bool ok = (dims == 2u);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "StackSizes must be a matrix.");
+            }
+            uint32 numberOfColumns = 0u;
+            uint32 numberOfRows = 0u;
+            if (ok) {
+                numberOfColumns = individualThreadStackSizes.GetNumberOfElements(0u);
+                numberOfRows = individualThreadStackSizes.GetNumberOfElements(1u);
+                ok = (numberOfColumns == 2u);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "StackSizes must have two columns.");
+                }
+            }
+            Matrix<uint32> stackSizeMat = Matrix<uint32>(numberOfRows, numberOfColumns);
+            if (ok) {
+                ok = data.Read("StackSizes", stackSizeMat);
+            }
+            uint32 r;
+            for (r = 0u; (r < numberOfRows) && (ok); r++) {
+                uint32 stackSizeIdx = stackSizeMat(r, 0u);
+                uint32 stackSizes = static_cast<uint32>(stackSizeMat(r, 1u));
+                ok = (stackSizeIdx < GetNumberOfPoolThreads());
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "stackSizeIdx must be < GetNumberOfPoolThreads()");
+                }
+                if (ok) {
+                    SetStackSizeThreadPool(stackSizes, stackSizeIdx);
                 }
             }
             if (!ok) {
@@ -383,6 +421,26 @@ void MultiThreadService::SetPriorityLevel(const uint8 priorityLevelIn) {
     }
 }
 
+void MultiThreadService::SetStackSize(const uint32 stackSizeIn) {
+    bool allStop = true;
+    uint32 i;
+    for (i = 0u; (i < threadPool.Size()) && (allStop); i++) {
+        allStop = (GetStatus(i) == EmbeddedThreadI::OffState);
+    }
+    if (allStop) {
+        EmbeddedServiceI::SetStackSize(stackSizeIn);
+        for (i = 0u; i < threadPool.Size(); i++) {
+            ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
+            if (thread.IsValid()) {
+                thread->SetStackSize(stackSizeIn);
+            }
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Stack size level cannot be changed if the service is running");
+    }
+}
+
 void MultiThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
     bool allStop = true;
     uint32 i;
@@ -425,6 +483,17 @@ uint8 MultiThreadService::GetPriorityLevelThreadPool(const uint32 threadIdx) {
     return prioLevel;
 }
 
+uint32 MultiThreadService::GetStackSizeThreadPool(const uint32 threadIdx) {
+    uint32 stackSizeAtIdx = 0u;
+    if (threadIdx < threadPool.Size()) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            stackSizeAtIdx = thread->GetStackSize();
+        }
+    }
+    return stackSizeAtIdx;
+}
+
 ProcessorType MultiThreadService::GetCPUMaskThreadPool(const uint32 threadIdx) {
     ProcessorType cpuMaskForIdx = UndefinedCPUs;
     if (threadIdx < threadPool.Size()) {
@@ -436,8 +505,7 @@ ProcessorType MultiThreadService::GetCPUMaskThreadPool(const uint32 threadIdx) {
     return cpuMaskForIdx;
 }
 
-void MultiThreadService::SetPriorityClassThreadPool(const Threads::PriorityClassType priorityClassIn,
-                                                    const uint32 threadIdx) {
+void MultiThreadService::SetPriorityClassThreadPool(const Threads::PriorityClassType priorityClassIn, const uint32 threadIdx) {
 
     if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
@@ -450,8 +518,7 @@ void MultiThreadService::SetPriorityClassThreadPool(const Threads::PriorityClass
     }
 }
 
-void MultiThreadService::SetPriorityLevelThreadPool(const uint8 priorityLevelIn,
-                                                    const uint32 threadIdx) {
+void MultiThreadService::SetPriorityLevelThreadPool(const uint8 priorityLevelIn, const uint32 threadIdx) {
     if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
         if (thread.IsValid()) {
@@ -463,8 +530,19 @@ void MultiThreadService::SetPriorityLevelThreadPool(const uint8 priorityLevelIn,
     }
 }
 
-void MultiThreadService::SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn,
-                                              const uint32 threadIdx) {
+void MultiThreadService::SetStackSizeThreadPool(const uint32 stackSizeIn, const uint32 threadIdx) {
+    if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
+        ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
+        if (thread.IsValid()) {
+            thread->SetStackSize(stackSizeIn);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Stack size cannot be changed if the service is running");
+    }
+}
+
+void MultiThreadService::SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn, const uint32 threadIdx) {
     if (GetStatus(threadIdx) == EmbeddedThreadI::OffState) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(threadIdx);
         if (thread.IsValid()) {

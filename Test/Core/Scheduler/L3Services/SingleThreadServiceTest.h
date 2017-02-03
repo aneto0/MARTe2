@@ -128,6 +128,16 @@ public:
     bool TestSetPriorityLevel();
 
     /**
+     * Tests the GetStackSize method.
+     */
+    bool TestGetStackSize();
+
+    /**
+     * @brief Tests the SetStackSize method.
+     */
+    bool TestSetStackSize();
+
+    /**
      * @brief Tests the TestGetCPUMask method.
      */
     bool TestGetCPUMask();
@@ -146,6 +156,11 @@ public:
      * @brief Verifies that priority level is not changed after the service has started.
      */
     bool TestSetPriorityLevel_Start();
+
+    /**
+     * @brief Verifies that stack size is not changed after the service has started.
+     */
+    bool TestSetStackSize_Start();
 
     /**
      * @brief Verifies that priority class is not changed after the service has started.

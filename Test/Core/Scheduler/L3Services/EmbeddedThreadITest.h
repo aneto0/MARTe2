@@ -68,6 +68,11 @@ public:
     bool TestGetThreadNumber();
 
     /**
+     * @brief Tests the GetTimeout method.
+     */
+    bool TestGetTimeout();
+
+    /**
      * @brief Tests the GetThreadId method.
      */
     bool TestGetThreadId();
@@ -101,6 +106,21 @@ public:
      * @brief Tests the SetPriorityLevel method.
      */
     bool TestSetPriorityLevel();
+
+    /**
+     * @brief Tests the SetTimeout method.
+     */
+    bool TestSetTimeout();
+
+    /**
+     * Tests the GetStackSize method.
+     */
+    bool TestGetStackSize();
+
+    /**
+     * @brief Tests the SetStackSize method.
+     */
+    bool TestSetStackSize();
 
     /**
      * @brief Tests the TestGetCPUMask method.
