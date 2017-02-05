@@ -101,9 +101,15 @@ MemoryMapTriggerOutputBroker    ();
 
     /**
      * TODO
-     * @param[in] preTriggerBuffers
+     * @param[in] preTriggerBuffersIn
      */
     void SetPreTriggerBuffers(const uint32 preTriggerBuffersIn);
+
+    /**
+     * TODO
+     * @param[in] postTriggerBuffersIn
+     */
+    void SetPostTriggerBuffers(const uint32 postTriggerBuffersIn);
 
 private:
     /**
@@ -147,6 +153,14 @@ private:
      * TODO
      */
     uint32 preTriggerBuffers;
+    /**
+     * TODO
+     */
+    uint32 postTriggerBuffers;
+    /**
+     * TODO
+     */
+    uint32 postTriggerBuffersCounter;
     /**
      * TODO
      */

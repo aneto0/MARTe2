@@ -90,7 +90,7 @@ public:
     virtual bool Execute() {
         using namespace MARTe;
 
-        if (cycles > triggerAfterNCycles) {
+        if (cycles >= triggerAfterNCycles) {
             if (cycles < (triggerAfterNCycles + triggerForNCycles)) {
                 *trigger = 1;
             }
@@ -126,9 +126,12 @@ public:
 MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
         numberOfBuffers = 0u;
         preTriggerBuffers = 0u;
+        postTriggerBuffers = 0u;
         offsets = NULL;
         signalMemory = NULL;
         cpuMask = 0xff;
+        semWrite.Create();
+        semRead.Create();
     }
 
     virtual ~MemoryMapTriggerOutputBrokerDataSourceTestHelper() {
@@ -139,11 +142,14 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
         if (offsets != NULL_PTR(uint32 *)) {
             delete[] offsets;
         }
+        semWrite.Close();
+        semRead.Close();
     }
 
     virtual bool Initialise(MARTe::StructuredDataI & data) {
         data.Read("NumberOfBuffers", numberOfBuffers);
         data.Read("PreTriggerBuffers", preTriggerBuffers);
+        data.Read("PostTriggerBuffers", postTriggerBuffers);
         data.Read("CPUMask", cpuMask);
         return true;
 
@@ -217,6 +223,7 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
         if (ret) {
             broker->SetCPUMask(cpuMask);
             broker->SetPreTriggerBuffers(preTriggerBuffers);
+            broker->SetPostTriggerBuffers(postTriggerBuffers);
         }
         if (ret) {
             ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
@@ -228,14 +235,20 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
     }
 
     virtual bool Synchronise() {
+        semRead.Reset();
+        semWrite.Post();
+        semRead.Wait();
         return true;
     }
 
     MARTe::uint32 numberOfBuffers;
     MARTe::uint32 preTriggerBuffers;
+    MARTe::uint32 postTriggerBuffers;
     MARTe::uint32 *offsets;
     MARTe::uint32 cpuMask;
     void *signalMemory;
+    MARTe::EventSem semWrite;
+    MARTe::EventSem semRead;
 };
 CLASS_REGISTER(MemoryMapTriggerOutputBrokerDataSourceTestHelper, "1.0")
 
@@ -322,7 +335,7 @@ static const MARTe::char8 * const config1 = ""
         "        Class = ReferenceContainer"
         "        +GAM1 = {"
         "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 1"
+        "            TriggerAfterNCycles = 2"
         "            TriggerForNCycles = 1"
         "            OutputSignals = {"
         "               Trigger = {"
@@ -355,6 +368,7 @@ static const MARTe::char8 * const config1 = ""
         "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
         "            NumberOfBuffers = 10"
         "            PreTriggerBuffers = 1"
+        "            PostTriggerBuffers = 0"
         "            CPUMask = 15"
         "        }"
         "    }"
@@ -389,5 +403,90 @@ bool MemoryMapTriggerOutputBrokerTest::TestConstructor() {
 bool MemoryMapTriggerOutputBrokerTest::TestInit() {
     using namespace MARTe;
     return TestIntegratedInApplication(config1, true);
+}
+
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_1() {
+    using namespace MARTe;
+    bool ok = TestIntegratedInApplication(config1, false);
+
+    ReferenceT<MemoryMapTriggerOutputBrokerSchedulerTestHelper> scheduler;
+    ReferenceT<MemoryMapTriggerOutputBrokerGAMTestHelper> gam;
+    ReferenceT<MemoryMapTriggerOutputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT<RealTimeApplication> application;
+    ObjectRegistryDatabase *godb = ObjectRegistryDatabase::Instance();
+    if (ok) {
+        application = godb->Find("Test");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        scheduler = application->Find("Scheduler");
+        ok = scheduler.IsValid();
+    }
+    if (ok) {
+        gam = application->Find("Functions.GAM1");
+        ok = gam.IsValid();
+    }
+    if (ok) {
+        dataSource = application->Find("Data.Drv1");
+        ok = dataSource.IsValid();
+    }
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+    uint8 *trigger = NULL;
+    uint32 *signal1 = NULL;
+    uint32 *signal2 = NULL;
+    uint32 *signal3 = NULL;
+    if (ok) {
+        dataSource->GetSignalMemoryBuffer(0, 0, (void *&) trigger);
+        dataSource->GetSignalMemoryBuffer(1, 0, (void *&) signal1);
+        dataSource->GetSignalMemoryBuffer(2, 0, (void *&) signal2);
+        dataSource->GetSignalMemoryBuffer(3, 0, (void *&) signal3);
+    }
+    if (ok) {
+        scheduler->ExecuteThreadCycle(0);
+        ok &= (*trigger == 0);
+        ok &= (*signal1 == 0);
+        ok &= (*signal2 == 0);
+        ok &= (*signal3 == 0);
+
+        scheduler->ExecuteThreadCycle(0);
+        ok &= (*trigger == 0);
+        ok &= (*signal1 == 0);
+        ok &= (*signal2 == 0);
+        ok &= (*signal3 == 0);
+
+        //Wait for the Synchronise to be called on the DataSourceI
+        dataSource->semWrite.Reset();
+        scheduler->ExecuteThreadCycle(0);
+        dataSource->semWrite.Wait();
+        ok &= (*trigger == 0);
+        ok &= (*signal1 == 1);
+        ok &= (*signal2 == 1);
+        ok &= (*signal3 == 1);
+
+        dataSource->semWrite.Reset();
+        //Warn the DataSourceI that we have already checked the data
+        dataSource->semRead.Post();
+        dataSource->semWrite.Wait();
+        ok &= (*trigger == 1);
+        ok &= (*signal1 == 2);
+        ok &= (*signal2 == 2);
+        ok &= (*signal3 == 2);
+        dataSource->semRead.Post();
+
+        //No PostBuffer configured
+        scheduler->ExecuteThreadCycle(0);
+        ok &= (*trigger == 1);
+        ok &= (*signal1 == 2);
+        ok &= (*signal2 == 2);
+        ok &= (*signal3 == 2);
+    }
+    godb->Purge();
+    return ok;
+
 }
 

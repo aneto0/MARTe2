@@ -49,4 +49,9 @@ TEST(MemoryMapTriggerOutputBrokerGTest,TestInit) {
     ASSERT_TRUE(test.TestInit());
 }
 
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1());
+}
+
 	
