@@ -50,48 +50,20 @@ MemoryMapTriggerOutputBroker::MemoryMapTriggerOutputBroker() {
     postTriggerBuffersCounter = 0u;
     postTriggerBuffers = 0u;
     wasTriggered = false;
-    binder = new EmbeddedServiceMethodBinderT<MemoryMapTriggerOutputBroker>(*this,
-                                                                            &MemoryMapTriggerOutputBroker::BufferLoop);
+    binder = new EmbeddedServiceMethodBinderT<MemoryMapTriggerOutputBroker>(*this, &MemoryMapTriggerOutputBroker::BufferLoop);
     service = new (NULL) SingleThreadService(*binder);
-    dataSource = NULL_PTR(DataSourceI *);
     sem.Create();
+    sem.Reset();
+    resetSem.Create();
+    posted = false;
 }
 
 MemoryMapTriggerOutputBroker::~MemoryMapTriggerOutputBroker() {
-    if (!sem.Post()) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "Could not Post the EventSem.");
-    }
-    if (!sem.Close()) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "Could not Close the EventSem.");
-    }
-    if (service != NULL_PTR(SingleThreadService *)) {
-        service->SetTimeout(10);
-        if (service->Stop() != ErrorManagement::NoError) {
-            if (service->Stop() != ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Could not stop the EmbeddedService");
-            }
-        }
-        delete service;
-    }
-    if (binder != NULL_PTR(EmbeddedServiceMethodBinderI *)) {
-        delete binder;
-    }
-    if (buffer != NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *)) {
-        uint32 numberOfCopies = GetNumberOfCopies();
-        uint32 i;
-        for (i = 0u; i < numberOfBuffers; i++) {
-            uint32 c;
-            for (c = 0u; c < numberOfCopies; c++) {
-                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(buffer[i].mem[c]);
-            }
-            delete[] buffer[i].mem;
-        }
-
-        delete[] buffer;
-    }
+    Stop();
 }
 
-bool MemoryMapTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
+bool MemoryMapTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+                                        void * const gamMemoryAddress) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     if (ok) {
         numberOfBuffers = dataSourceIn.GetNumberOfMemoryBuffers();
@@ -137,7 +109,7 @@ bool MemoryMapTriggerOutputBroker::Init(const SignalDirection direction, DataSou
         REPORT_ERROR(ErrorManagement::ParametersError, "The first signal (trigger) shall be of type uint8");
     }
     if (ok) {
-        dataSource = &dataSourceIn;
+        dataSource = Reference(&dataSourceIn);
     }
     if (ok) {
         uint32 numberOfCopies = GetNumberOfCopies();
@@ -222,9 +194,62 @@ bool MemoryMapTriggerOutputBroker::Execute() {
         writeIdx = 0u;
     }
     if (ret) {
-        ret = sem.Post();
+        ret = (resetSem.FastLock() == ErrorManagement::NoError);
     }
+    if (ret) {
+        ret = sem.Post();
+        posted = true;
+        resetSem.FastUnLock();
+    }
+
     return ret;
+}
+
+void MemoryMapTriggerOutputBroker::Stop() {
+    if (!sem.IsClosed()) {
+        if (resetSem.FastLock() == ErrorManagement::NoError) {
+            if (!sem.Post()) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not Post the EventSem.");
+            }
+            posted = true;
+        }
+        resetSem.FastUnLock();
+
+        if (!sem.Close()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not Close the EventSem.");
+        }
+    }
+    if (service != NULL_PTR(SingleThreadService *)) {
+        service->SetTimeout(1000);
+        if (service->Stop() != ErrorManagement::NoError) {
+            REPORT_ERROR(ErrorManagement::Warning, "Going to kill the EmbbeddedService");
+            if (service->Stop() != ErrorManagement::NoError) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
+            }
+        }
+        delete service;
+        service = NULL_PTR(SingleThreadService *);
+    }
+    if (binder != NULL_PTR(EmbeddedServiceMethodBinderI *)) {
+        delete binder;
+        binder = NULL_PTR(EmbeddedServiceMethodBinderI *);
+    }
+    if (buffer != NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *)) {
+        uint32 numberOfCopies = GetNumberOfCopies();
+        uint32 i;
+        for (i = 0u; i < numberOfBuffers; i++) {
+            uint32 c;
+            for (c = 0u; c < numberOfCopies; c++) {
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(buffer[i].mem[c]);
+            }
+            delete[] buffer[i].mem;
+            buffer[i].mem = NULL_PTR(void **);
+        }
+
+        delete[] buffer;
+        buffer = NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *);
+    }
+
 }
 
 ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
@@ -240,19 +265,18 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
         if (synchStopIdx == static_cast<int32>(numberOfBuffers)) {
             synchStopIdx = 0;
         }
+        bool ret = true;
         do {
             if (buffer[readSynchIdx].triggered) {
-                bool ret = true;
                 uint32 c;
                 for (c = 0u; (c < numberOfCopies) && (ret); c++) {
                     //Copy from the buffer to the DataSource memory
                     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-                        ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, buffer[readSynchIdx].mem[c],
-                                                           copyTable[c].copySize);
+                        ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, buffer[readSynchIdx].mem[c], copyTable[c].copySize);
                     }
                 }
                 if (ret) {
-                    if (dataSource != NULL_PTR(DataSourceI *)) {
+                    if (dataSource.IsValid()) {
                         ret = dataSource->Synchronise();
                     }
                 }
@@ -264,10 +288,22 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
             }
             //do-while to ensure that the readSynchIdx == synchStopIdx is also included.
         }
-        while (readSynchIdx != static_cast<uint32>(synchStopIdx));
+        while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret));
 
-        //Wait for new data to be available from the real-time thread.
-        err = sem.ResetWait(TTInfiniteWait);
+        if (ret) {
+            //Wait for new data to be available from the real-time thread.
+            err = sem.Wait(TTInfiniteWait);
+            if (err.ErrorsCleared()) {
+                //Only reset the semaphore if it was not posted in-between the Wait exit and now...
+                if (resetSem.FastLock() == ErrorManagement::NoError) {
+                    if (!posted) {
+                        err = sem.Reset();
+                    }
+                    posted = false;
+                }
+                resetSem.FastUnLock();
+            }
+        }
     }
     return err;
 }

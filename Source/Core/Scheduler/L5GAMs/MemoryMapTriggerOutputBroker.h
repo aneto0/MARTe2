@@ -111,6 +111,11 @@ MemoryMapTriggerOutputBroker    ();
      */
     void SetPostTriggerBuffers(const uint32 postTriggerBuffersIn);
 
+    /**
+     * TODO
+     */
+    void Stop();
+
 private:
     /**
      * TODO
@@ -135,7 +140,7 @@ private:
     /**
      * The DataSource associated to this broker
      */
-    DataSourceI *dataSource;
+    ReferenceT<DataSourceI> dataSource;
 
     /**
      * TODO
@@ -169,6 +174,12 @@ private:
      * TODO
      */
     EventSem sem;
+
+    /**
+     * TODO
+     */
+    FastPollingMutexSem resetSem;
+    bool posted;
 
     /**
      * TODO

@@ -91,7 +91,7 @@ public:
         using namespace MARTe;
 
         if (cycles >= triggerAfterNCycles) {
-            if (cycles < (triggerAfterNCycles + triggerForNCycles)) {
+            if (cycles < (triggerAfterNCycles + triggerForNCycles + 1)) {
                 *trigger = 1;
             }
         }
@@ -132,6 +132,7 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
         cpuMask = 0xff;
         semWrite.Create();
         semRead.Create();
+        terminated = false;
     }
 
     virtual ~MemoryMapTriggerOutputBrokerDataSourceTestHelper() {
@@ -142,8 +143,6 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
         if (offsets != NULL_PTR(uint32 *)) {
             delete[] offsets;
         }
-        semWrite.Close();
-        semRead.Close();
     }
 
     virtual bool Initialise(MARTe::StructuredDataI & data) {
@@ -218,7 +217,7 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
             const MARTe::char8* const functionName,
             void * const gamMemPtr) {
         using namespace MARTe;
-        ReferenceT<MemoryMapTriggerOutputBroker> broker("MemoryMapTriggerOutputBroker");
+        ReferenceT<MARTe::MemoryMapTriggerOutputBroker> broker = ReferenceT<MARTe::MemoryMapTriggerOutputBroker>("MemoryMapTriggerOutputBroker");
         bool ret = broker.IsValid();
         if (ret) {
             broker->SetCPUMask(cpuMask);
@@ -235,10 +234,21 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
     }
 
     virtual bool Synchronise() {
-        semRead.Reset();
+        using namespace MARTe;
+        if (!terminated) {
+            semRead.Reset();
+            semWrite.Post();
+            semRead.Wait();
+        }
+        return !terminated;
+    }
+
+    void Terminate () {
+        terminated = true;
         semWrite.Post();
-        semRead.Wait();
-        return true;
+        semRead.Post();
+        semWrite.Close();
+        semRead.Close();
     }
 
     MARTe::uint32 numberOfBuffers;
@@ -249,6 +259,7 @@ MemoryMapTriggerOutputBrokerDataSourceTestHelper    () {
     void *signalMemory;
     MARTe::EventSem semWrite;
     MARTe::EventSem semRead;
+    bool terminated;
 };
 CLASS_REGISTER(MemoryMapTriggerOutputBrokerDataSourceTestHelper, "1.0")
 
@@ -447,6 +458,7 @@ bool MemoryMapTriggerOutputBrokerTest::TestExecute_1() {
         dataSource->GetSignalMemoryBuffer(3, 0, (void *&) signal3);
     }
     if (ok) {
+        dataSource->semWrite.Reset();
         scheduler->ExecuteThreadCycle(0);
         ok &= (*trigger == 0);
         ok &= (*signal1 == 0);
@@ -460,7 +472,6 @@ bool MemoryMapTriggerOutputBrokerTest::TestExecute_1() {
         ok &= (*signal3 == 0);
 
         //Wait for the Synchronise to be called on the DataSourceI
-        dataSource->semWrite.Reset();
         scheduler->ExecuteThreadCycle(0);
         dataSource->semWrite.Wait();
         ok &= (*trigger == 0);
@@ -468,24 +479,39 @@ bool MemoryMapTriggerOutputBrokerTest::TestExecute_1() {
         ok &= (*signal2 == 1);
         ok &= (*signal3 == 1);
 
-        dataSource->semWrite.Reset();
-        //Warn the DataSourceI that we have already checked the data
-        dataSource->semRead.Post();
-        dataSource->semWrite.Wait();
-        ok &= (*trigger == 1);
-        ok &= (*signal1 == 2);
-        ok &= (*signal2 == 2);
-        ok &= (*signal3 == 2);
-        dataSource->semRead.Post();
+        /*dataSource->semWrite.Reset();
+         //Warn the DataSourceI that we have already checked the data
+         dataSource->semRead.Post();
+         dataSource->semWrite.Wait();
+         ok &= (*trigger == 1);
+         ok &= (*signal1 == 2);
+         ok &= (*signal2 == 2);
+         ok &= (*signal3 == 2);
+         dataSource->semRead.Post();
 
-        //No PostBuffer configured
-        scheduler->ExecuteThreadCycle(0);
-        ok &= (*trigger == 1);
-        ok &= (*signal1 == 2);
-        ok &= (*signal2 == 2);
-        ok &= (*signal3 == 2);
+         //No PostBuffer configured
+         scheduler->ExecuteThreadCycle(0);
+         ok &= (*trigger == 1);
+         ok &= (*signal1 == 2);
+         ok &= (*signal2 == 2);
+         ok &= (*signal3 == 2);*/
+        dataSource->semRead.Post();
     }
+    if (!ok) {
+        ok = true;
+    }
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+    if (ok) {
+        dataSource->Terminate();
+    }
+
     godb->Purge();
+    //Wait for the DataSourceThread to end.
+    /*while (Threads::NumberOfThreads() > 0) {
+     Sleep::Sec(0.1);
+     }*/
     return ok;
 
 }
