@@ -49,9 +49,32 @@ TEST(MemoryMapTriggerOutputBrokerGTest,TestInit) {
     ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1) {
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers) {
     MemoryMapTriggerOutputBrokerTest test;
-    ASSERT_TRUE(test.TestExecute_1());
+    ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers());
 }
 
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers());
+}
 	
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering());
+}

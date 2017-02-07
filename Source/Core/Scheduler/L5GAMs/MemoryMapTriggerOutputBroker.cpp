@@ -189,12 +189,12 @@ bool MemoryMapTriggerOutputBroker::Execute() {
         }
         wasTriggered = false;
     }
+    if (ret) {
+        ret = (resetSem.FastLock() == ErrorManagement::NoError);
+    }
     writeIdx++;
     if (writeIdx == numberOfBuffers) {
         writeIdx = 0u;
-    }
-    if (ret) {
-        ret = (resetSem.FastLock() == ErrorManagement::NoError);
     }
     if (ret) {
         ret = sem.Post();
@@ -252,21 +252,30 @@ void MemoryMapTriggerOutputBroker::Stop() {
 
 }
 
+#include <stdio.h>
 ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     if (info.GetStage() == ExecutionInfo::MainStage) {
-        //Always stay preTriggerBuffers behind from the writeIdx
-        int32 synchStopIdx = writeIdx - preTriggerBuffers;
+        int32 synchStopIdx = 0;
+        if (resetSem.FastLock() == ErrorManagement::NoError) {
+            //Always stay preTriggerBuffers behind from the writeIdx so that we don't lose pre-trigger buffers
+            synchStopIdx = writeIdx - preTriggerBuffers;
+        }
+        resetSem.FastUnLock();
+
         if (synchStopIdx < 0) {
             //Notice that synchStopIdx is < 0
             synchStopIdx = numberOfBuffers + synchStopIdx;
         }
-        synchStopIdx++;
-        if (synchStopIdx == static_cast<int32>(numberOfBuffers)) {
-            synchStopIdx = 0;
+
+        //++ to also test the condition readSynchIdx == static_cast<uint32>(synchStopIdx)
+        uint32 realSynchStopIdx = synchStopIdx++;
+        if (realSynchStopIdx == numberOfBuffers) {
+            realSynchStopIdx = 0;
         }
         bool ret = true;
-        do {
+        while ((readSynchIdx != realSynchStopIdx) && (ret)) {
+            printf("readSynchIdx = %d %d\n", readSynchIdx, realSynchStopIdx);
             if (buffer[readSynchIdx].triggered) {
                 uint32 c;
                 for (c = 0u; (c < numberOfCopies) && (ret); c++) {
@@ -277,6 +286,7 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
                 }
                 if (ret) {
                     if (dataSource.IsValid()) {
+                        printf("buffer[%d].mem[c] = %d %d\n", readSynchIdx, *(uint8*) buffer[readSynchIdx].mem[0], *(uint32*) buffer[readSynchIdx].mem[1]);
                         ret = dataSource->Synchronise();
                     }
                 }
@@ -286,9 +296,7 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
             if (readSynchIdx == numberOfBuffers) {
                 readSynchIdx = 0u;
             }
-            //do-while to ensure that the readSynchIdx == synchStopIdx is also included.
         }
-        while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret));
 
         if (ret) {
             //Wait for new data to be available from the real-time thread.

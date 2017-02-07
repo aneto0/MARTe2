@@ -51,9 +51,35 @@ public:
     bool TestInit();
 
     /**
-     * @brief Tests the Execute method with TODO.
+     * @brief Tests the Execute method with 0 PreTriggerBuffers and 0 PostTriggerBuffers.
      */
-    bool TestExecute_1();
+    bool TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with 0 PreTriggerBuffers and 0 PostTriggerBuffers always triggering.
+     */
+    bool TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering();
+
+    /**
+     * @brief Tests the Execute method with 1 PreTriggerBuffers and 0 PostTriggerBuffers.
+     */
+    bool TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with 1 PreTriggerBuffers and 1 PostTriggerBuffers.
+     */
+    bool TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with 0 PreTriggerBuffers and 1 PostTriggerBuffers.
+     */
+    bool TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with many PreTriggerBuffers and many PostTriggerBuffers always triggering.
+     */
+    bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering();
+
 };
 
 /*---------------------------------------------------------------------------*/
