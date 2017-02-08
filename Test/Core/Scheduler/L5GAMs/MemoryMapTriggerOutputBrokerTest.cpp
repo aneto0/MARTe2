@@ -373,7 +373,7 @@ static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 
                                                              MARTe::uint32 *signalToGenerate, MARTe::uint32 toGenerateNumberOfElements,
                                                              MARTe::uint8* expectedTrigger, MARTe::uint32* expectedSignal,
                                                              MARTe::uint32 expectedNumberOfElements, MARTe::uint32 preTriggerBuffers,
-                                                             MARTe::uint32 postTriggerBuffers, MARTe::uint32 numberOfBuffers) {
+                                                             MARTe::uint32 postTriggerBuffers, MARTe::uint32 numberOfBuffers, MARTe::uint32 sleepMSec = 10) {
     using namespace MARTe;
     ConfigurationDatabase cdb;
     StreamString configStream = config;
@@ -448,7 +448,7 @@ static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 
     uint32 i;
     for (i = 0; (i < gam->numberOfExecutes) && (ok); i++) {
         scheduler->ExecuteThreadCycle(0);
-        Sleep::MSec(10);
+        Sleep::MSec(sleepMSec);
     }
 
     //2 seconds to finish
@@ -539,325 +539,7 @@ static const MARTe::char8 * const config1 = ""
         "    }"
         "}";
 
-//1 PreTrigger and 1 PostTrigger
-static const MARTe::char8 * const config2 = ""
-        "$Test = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAM1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 2"
-        "            TriggerForNCycles = 1"
-        "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal2 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "                   NumberOfElements = 10"
-        "               }"
-        "               Signal3 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        DefaultDataSource = DDB1"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
-        "            NumberOfBuffers = 10"
-        "            PreTriggerBuffers = 1"
-        "            PostTriggerBuffers = 1"
-        "            CPUMask = 15"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAM1}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        Class = MemoryMapTriggerOutputBrokerSchedulerTestHelper"
-        "        TimingDataSource = Timings"
-        "    }"
-        "}";
 
-//1 PostTrigger
-static const MARTe::char8 * const config3 = ""
-        "$Test = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAM1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 2"
-        "            TriggerForNCycles = 1"
-        "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal2 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "                   NumberOfElements = 10"
-        "               }"
-        "               Signal3 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        DefaultDataSource = DDB1"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
-        "            NumberOfBuffers = 10"
-        "            PreTriggerBuffers = 0"
-        "            PostTriggerBuffers = 1"
-        "            CPUMask = 15"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAM1}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        Class = MemoryMapTriggerOutputBrokerSchedulerTestHelper"
-        "        TimingDataSource = Timings"
-        "    }"
-        "}";
-
-//0 PreTrigger 0 PostTrigger
-static const MARTe::char8 * const config4 = ""
-        "$Test = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAM1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 2"
-        "            TriggerForNCycles = 1"
-        "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal2 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "                   NumberOfElements = 10"
-        "               }"
-        "               Signal3 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        DefaultDataSource = DDB1"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
-        "            NumberOfBuffers = 10"
-        "            PreTriggerBuffers = 0"
-        "            PostTriggerBuffers = 0"
-        "            CPUMask = 15"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAM1}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        Class = MemoryMapTriggerOutputBrokerSchedulerTestHelper"
-        "        TimingDataSource = Timings"
-        "    }"
-        "}";
-
-//0 PreTrigger 0 PostTrigger always triggering
-static const MARTe::char8 * const config5 = ""
-        "$Test = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAM1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 0"
-        "            TriggerForNCycles = 20"
-        "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal2 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "                   NumberOfElements = 10"
-        "               }"
-        "               Signal3 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        DefaultDataSource = DDB1"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
-        "            NumberOfBuffers = 10"
-        "            PreTriggerBuffers = 0"
-        "            PostTriggerBuffers = 0"
-        "            CPUMask = 15"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAM1}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        Class = MemoryMapTriggerOutputBrokerSchedulerTestHelper"
-        "        TimingDataSource = Timings"
-        "    }"
-        "}";
-
-//Many PreTrigger and many PostTrigger
-static const MARTe::char8 * const config6 = ""
-        "$Test = {"
-        "    Class = RealTimeApplication"
-        "    +Functions = {"
-        "        Class = ReferenceContainer"
-        "        +GAM1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerGAMTestHelper"
-        "            TriggerAfterNCycles = 0"
-        "            TriggerForNCycles = 20"
-        "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
-        "               Signal1 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "               Signal2 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "                   NumberOfElements = 10"
-        "               }"
-        "               Signal3 = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint32"
-        "               }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Data = {"
-        "        Class = ReferenceContainer"
-        "        DefaultDataSource = DDB1"
-        "        +Timings = {"
-        "            Class = TimingDataSource"
-        "        }"
-        "        +Drv1 = {"
-        "            Class = MemoryMapTriggerOutputBrokerDataSourceTestHelper"
-        "            NumberOfBuffers = 10"
-        "            PreTriggerBuffers = 4"
-        "            PostTriggerBuffers = 4"
-        "            CPUMask = 15"
-        "        }"
-        "    }"
-        "    +States = {"
-        "        Class = ReferenceContainer"
-        "        +State1 = {"
-        "            Class = RealTimeState"
-        "            +Threads = {"
-        "                Class = ReferenceContainer"
-        "                +Thread1 = {"
-        "                    Class = RealTimeThread"
-        "                    Functions = {GAM1}"
-        "                }"
-        "            }"
-        "        }"
-        "    }"
-        "    +Scheduler = {"
-        "        Class = MemoryMapTriggerOutputBrokerSchedulerTestHelper"
-        "        TimingDataSource = Timings"
-        "    }"
-        "}";
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -927,14 +609,68 @@ bool MemoryMapTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_0_PostTri
                                                             expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 10);
 }
 
-bool MemoryMapTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering() {
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers() {
     using namespace MARTe;
-    uint8 triggerToGenerate[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-    uint32 signalToGenerate[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5 };
-    uint8 expectedTrigger[] = { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-    uint32 expectedSignal[] = { 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger[] = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+    uint32 expectedSignal[] = { 0, 0, 0, 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2};
 
     return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 4, 4, 10);
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 4, 2, 10);
 }
 
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 0, 0, 0, 0, 0 };
+    uint8 expectedTrigger[] = { 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
+    uint32 expectedSignal[] = { 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 0, 0 };
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 2, 10);
+}
+
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6 };
+    uint8 expectedTrigger[] =   { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1};
+    uint32 expectedSignal[] =   { 0, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 5, 4, 3, 2, 0, 1, 2, 3};
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 0, 10);
+}
+
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6 };
+    uint8 expectedTrigger[] =   { 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1};
+    uint32 expectedSignal[] =   { 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 2, 1, 0, 1, 3, 4, 5, 6};
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 3, 10);
+}
+
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6 };
+    uint8 expectedTrigger[] =   { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0};
+    uint32 expectedSignal[] =   { 0, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4};
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 3, 10);
+}
+
+bool MemoryMapTriggerOutputBrokerTest::TestExecute_1_Buffer_AlwaysTriggering() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 1 };
+    uint32 signalToGenerate[] = { 8 };
+    uint8 expectedTrigger[] = { 1 };
+    uint32 expectedSignal[] = { 8 };
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
+                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 1);
+}

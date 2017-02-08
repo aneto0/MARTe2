@@ -274,6 +274,11 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
         if (realSynchStopIdx == numberOfBuffers) {
             realSynchStopIdx = 0;
         }
+        //Have to treat the special case when only one buffer is configured
+        if (numberOfBuffers == 1u) {
+            readSynchIdx = 0u;
+            realSynchStopIdx = 1u;
+        }
         bool ret = true;
         while ((readSynchIdx != realSynchStopIdx) && (ret)) {
             printf("readSynchIdx = %d %d\n", readSynchIdx, realSynchStopIdx);
@@ -294,8 +299,10 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
                 buffer[readSynchIdx].triggered = false;
             }
             readSynchIdx++;
-            if (readSynchIdx == numberOfBuffers) {
-                readSynchIdx = 0u;
+            if (numberOfBuffers > 1u) {
+                if (readSynchIdx == numberOfBuffers) {
+                    readSynchIdx = 0u;
+                }
             }
         }
 

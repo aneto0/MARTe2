@@ -76,9 +76,34 @@ public:
     bool TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers();
 
     /**
+     * @brief Tests the Execute method with many PreTriggerBuffers and many PostTriggerBuffers.
+     */
+    bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers();
+
+    /**
      * @brief Tests the Execute method with many PreTriggerBuffers and many PostTriggerBuffers always triggering.
      */
     bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering();
+
+    /**
+     * @brief Tests the Execute method with overwriting PreTriggerBuffers .
+     */
+    bool TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with overwriting PostTriggerBuffers .
+     */
+    bool TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with overwriting PreTriggerBuffers and PostTriggerBuffers .
+     */
+    bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with only one buffer.
+     */
+    bool TestExecute_1_Buffer_AlwaysTriggering();
 
 };
 
