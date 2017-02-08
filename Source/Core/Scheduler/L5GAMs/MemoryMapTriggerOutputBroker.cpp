@@ -123,6 +123,7 @@ bool MemoryMapTriggerOutputBroker::Init(const SignalDirection direction, DataSou
             buffer[i].mem = new void*[numberOfCopies];
             for (c = 0u; c < numberOfCopies; c++) {
                 buffer[i].mem[c] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[c].copySize);
+                MemoryOperationsHelper::Set(buffer[i].mem[c], 0, copyTable[c].copySize);
             }
         }
     }
