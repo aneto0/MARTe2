@@ -32,6 +32,7 @@
 #include "VariableDescriptor.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -57,125 +58,83 @@ static char8 tolower(char8 c){
     return c;
 }
 
+uint32 FromHex(char8 c){
+	uint32 ret = 0u;
+	if ((c >='0') && (c <='9')){
+		ret  = c - '0';
+	} else
+		if ((c >='A') && (c <='F')){
+			ret  = c - 'A' + 10u;
+		}
+	return ret;
+}
+
+static uint32 ReadHex(char8 *&buffer,uint32 nOfChars){
+	uint32 i=0u;
+
+	uint32 ret = 0u;
+	for (i=0u;i<nOfChars;i++){
+		uint32 n = FromHex(*buffer++);
+		ret+= n << (4u*i);
+	}
+	return ret;
+}
+
+
 /**
  * returns tokens A=array P=pointer V=Vector M=Matrix
  * returns size as size of Arrays
  * buffer is input and is modified
  */
-static inline void ExtractModifier(char8 &token, bool &constant, uint32 &size,char8  * &buffer){
+static void BrowseModifierBuffer(char8 &token, bool &constant, uint32 &size,char8  *&buffer){
     token = 0;
     size = 0;
     constant = false;
     if (buffer != NULL){
-        char c = *buffer++;
+        char8 c = *buffer++;
         constant = (c >= 'a');
         c = toupper(c);
         token = c ;
         switch (c){
+        case '\0':{
+        	buffer--;
+//        	index--;
+        	token = '\0';
+        	size = 0;
+        } break;
         case 'A':{
             token = 'A' ;
-            uint8 *pSize = reinterpret_cast<uint8 *>(buffer);
-            size = *pSize;
-            buffer++;
+            size = ReadHex(buffer,2);
+//            uint8 *pSize = reinterpret_cast<uint8 *>(buffer+index);
+//            size = *pSize;
+//            index++;
         } break;
         case 'B':{
             token = 'A' ;
-            uint16 *pSize = reinterpret_cast<uint16 *>(buffer);
-            size = *pSize;
-            buffer+=2;
+//            uint16 *pSize = reinterpret_cast<uint16 *>(buffer+index);
+//            size = *pSize;
+//            index+=2;
+            size = ReadHex(buffer,4);
         } break;
         case 'C':{
             token = 'A' ;
-            uint32 *pSize = reinterpret_cast<uint32 *>(buffer);
-            size = *pSize;
-            buffer+=4;
+//            uint32 *pSize = reinterpret_cast<uint32 *>(buffer+index);
+//            size = *pSize;
+//            index+=4;
+            size = ReadHex(buffer,8);
+
         } break;
         }
     }
-}
-
-static void AddBytesToModifiers(char8 *bytes,uint32 size, uint32 &nOfModifiers,char *&modifiers){
-
-    uint32 len = nOfModifiers;
-    uint32 newLen = nOfModifiers+size+1;
-    char8 *buffer = (char8 *)realloc((void *)modifiers,newLen);
-    if (buffer != NULL_PTR(char *)){
-        nOfModifiers+=size;
-
-        uint32 i;
-        for (i=0;i<size;i++){
-            buffer[len+i] = bytes[i];
-        }
-        buffer[len+size] = 0;
-    }
-    modifiers = buffer;
 
 }
-
-static void AddToModifiers(char8 c, uint32 &nOfModifiers,char *&modifiers){
-    uint32 len = nOfModifiers;
-    uint32 newLen = nOfModifiers+2;
-    char8 *buffer = (char8 *)realloc((void *)modifiers,newLen);
-    if (buffer != NULL_PTR(char *)){
-        nOfModifiers++;
-        buffer[len] = c;
-        buffer[len+1] = 0;
-    }
-    modifiers = buffer;
-
-//    printf("<%s>",buffer);
-
-}
-
-static uint32 GetSizeOfModifier(char8 * modifier){
-//    printf("???\n");
-    uint32 size = 0;
-    if (modifier != NULL){
-        char8 c = toupper(modifier[size]);
-        while (c != 0){
-//            printf("????\n");
-            switch (c){
-                case 'A': {
-                    size+=2;
-                } break;
-                case 'B': {
-                    size+=3;
-                } break;
-                case 'C': {
-                    size+=5;
-                } break;
-                default:{
-                    size++;
-                }
-            }
-//            printf("??\n");
-//            printf("{%i:%c}\n",size,c);
-            c = toupper(modifier[size]);
-        }
-    }
-    // include terminator
-    return size+1;
-}
-
-static char8* CloneModifier(char8 * modifier){
-//    printf("!!\n");
-    uint32 size = GetSizeOfModifier(modifier);
-//    printf("{sizeof=%i}\n",size);
-    void * modifierCopy = NULL_PTR(void *);
-
-    if (modifier != NULL_PTR(char8 *) ){
-        modifierCopy = HeapManager::Malloc(size);
-        MemoryOperationsHelper::Copy(modifierCopy,static_cast<void *>(modifier),size);
-    }
-    return reinterpret_cast<char8*> (modifierCopy);
-}
-
 
 void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const {
-    char8 *buffer = modifiers;
+    char8 *buffer = modifiers.GetList();
     depth++;
     do {
-        ExtractModifier(token, constant, size,buffer);
+    	//printf ("[%i]<%s>\n",depth-1,buffer);
+        BrowseModifierBuffer(token, constant, size,buffer);
         depth--;
     } while ((token != 0) && (depth > 0));
 }
@@ -184,12 +143,32 @@ void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,
 void VariableDescriptor::AddGenericToModifiers(char8 token, uint32 &nOfModifiers,bool &constant){
     if (constant){
         constant = false;
-        AddToModifiers(tolower(token),nOfModifiers,modifiers);
+        modifiers.Append(tolower(token));
+//        AddToModifiers(tolower(token),nOfModifiers,modifiers);
     } else {
-        AddToModifiers(token,nOfModifiers,modifiers);
+        modifiers.Append(token);
+//        AddToModifiers(token,nOfModifiers,modifiers);
     }
-    //printf("<%s>",modifiers);
+}
 
+static char8 ToHex(uint32 nibble){
+	char8 ret = '?';
+	if (nibble <10){
+		ret = '0'+nibble;
+	} else
+		if (nibble <16){
+			ret = 'A'+nibble - 10;
+		}
+	return ret;
+}
+
+static void AppendHex(DynamicCString &s, uint32 n, uint32 size){
+	uint32 i;
+	for (i=0;i<size;i++){
+		uint32 nibble = n & 0x0000000F;
+		n >>=4;
+		s.Append(ToHex(nibble));
+	}
 }
 
 void VariableDescriptor::AddArrayToModifiers(uint32 vectorSize,uint32 &nOfModifiers,bool &constant){
@@ -200,56 +179,74 @@ void VariableDescriptor::AddArrayToModifiers(uint32 vectorSize,uint32 &nOfModifi
     }
     if (vectorSize < 256u) {
         c += 'A';
-        uint8 size = vectorSize;
-        char8 *sizePtr = reinterpret_cast<char8*>(&size);
-        AddToModifiers(c,nOfModifiers,modifiers);
-        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
+//        uint8 size = vectorSize;
+//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
+        modifiers.Append(c);
+        AppendHex(modifiers,vectorSize,2);
+//        modifiers.Append(static_cast<char8>(size));
+//        AddToModifiers(c,nOfModifiers,modifiers);
+//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     } else
     if (vectorSize < 65536u) {
         c += 'B';
-        uint16 size = vectorSize;
-        char8 *sizePtr = reinterpret_cast<char8*>(&size);
-        AddToModifiers(c,nOfModifiers,modifiers);
-        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
+//        uint16 size = vectorSize;
+//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
+//        modifiers.Append(c);
+//        modifiers.Append(sizePtr[0]);
+//        modifiers.Append(sizePtr[1]);
+        modifiers.Append(c);
+        AppendHex(modifiers,vectorSize,4);
+//        AddToModifiers(c,nOfModifiers,modifiers);
+//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     } else
     {
         c += 'C';
-        uint32 size = vectorSize;
-        char8 *sizePtr = reinterpret_cast<char8*>(&size);
-        AddToModifiers(c,nOfModifiers,modifiers);
-        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
+//        uint32 size = vectorSize;
+//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
+        modifiers.Append(c);
+//        modifiers.Append(sizePtr[0]);
+//        modifiers.Append(sizePtr[1]);
+//        modifiers.Append(sizePtr[2]);
+//        modifiers.Append(sizePtr[3]);
+        AppendHex(modifiers,vectorSize,8);
+//        AddToModifiers(c,nOfModifiers,modifiers);
+//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     }
-//    printf("<%s>",modifiers);
-}
-
-
-
-VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
-    typeDescriptor = x.typeDescriptor;
-    modifiers = CloneModifier(x.modifiers);
-//    if (modifiers)printf("{%s:%s}",modifiers,x.modifiers);
-
-}
-
-VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
-    typeDescriptor = x.typeDescriptor;
-    modifiers = CloneModifier(x.modifiers);
-//    if (modifiers)printf("{%s:%s}",modifiers,x.modifiers);
 }
 
 
 VariableDescriptor::VariableDescriptor(){
     typeDescriptor = InvalidType;
-    modifiers = NULL_PTR (char8 *);
+//    modifiers = NULL_PTR (char8 *);
 }
 
 VariableDescriptor::~VariableDescriptor(){
-    void *modifiersP = static_cast<void *>(modifiers);
-    MARTe::HeapManager::Free(modifiersP);
-    modifiers = NULL_PTR(char8 *);
+//    void *modifiersP = static_cast<void *>(modifiers);
+//    MARTe::HeapManager::Free(modifiersP);
+//    modifiers = NULL_PTR(char8 *);
 }
 
+VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
+    typeDescriptor = td;
+//    modifiers = NULL_PTR(char8 *);
+}
 
+VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
+    typeDescriptor = x.typeDescriptor;
+//    modifiers = CloneModifier(x.modifiers);
+    modifiers.AppendN(x.modifiers.GetList());
+}
+
+VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
+    typeDescriptor = x.typeDescriptor;
+//    modifiers = CloneModifier(x.modifiers);
+    modifiers.AppendN(x.modifiers.GetList());
+
+}
+
+const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
+    return typeDescriptor;
+}
 
 
 }

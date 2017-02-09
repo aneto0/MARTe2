@@ -102,7 +102,7 @@ public:
      * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails
      */
-    inline bool AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
+//    inline bool AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
 
     /**
      * @brief Adds one TArray() of elements to the TArray()
@@ -202,6 +202,7 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
     return ret;
 }
 
+/*
 template<typename T,uint32 granularity>
 bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
 	const void *src = static_cast<const void *>(data.GetList());
@@ -214,6 +215,7 @@ bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArra
 
     return ret;
 }
+*/
 
 template<typename T,uint32 granularity>
 bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<const T> & data,uint32 maxAppendSize) {

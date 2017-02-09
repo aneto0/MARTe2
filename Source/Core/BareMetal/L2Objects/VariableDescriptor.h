@@ -46,6 +46,7 @@
 
 namespace MARTe {
 class Object;
+class DynamicCString;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -62,11 +63,6 @@ class VariableDescriptor{
 
 public:
 
-    /**
-     * @brief main constructor by learning
-     */
-    template <class T>
-    inline  VariableDescriptor( T  x);
 
     /**
      * default constructor
@@ -77,6 +73,12 @@ public:
      * destructor
      * */
     ~VariableDescriptor();
+
+    /**
+     * @brief main constructor by learning
+     */
+    template <class T>
+    inline  VariableDescriptor( T  x);
 
     /**
      * @brief copy
@@ -93,7 +95,7 @@ public:
     /**
      * @brief sets the typeDescriptor
      */
-    inline VariableDescriptor(const TypeDescriptor &td);
+    VariableDescriptor(const TypeDescriptor &td);
 
     /**
      * @brief gets the modifier token at given depth
@@ -109,8 +111,7 @@ public:
      * @brief Returns the pointed data TypeDescriptor.
      * @return the data TypeDescriptor.
      */
-    inline const TypeDescriptor &GetTypeDescriptor() const;
-
+    const TypeDescriptor &GetFullTypeDescriptor() const;
 
     /**
      * @brief Gets the number of dimensions associated to this Match.
@@ -118,7 +119,7 @@ public:
      * GetNumberOfDimensions() == 2 => matrix
      * @return the number of dimensions associated to this Match.
      */
-    inline uint8 GetNumberOfDimensions() const;
+//    inline uint8 GetNumberOfDimensions() const;
 
     /**
      * @brief Gets the number of elements in a given \a dimension.
@@ -127,7 +128,7 @@ public:
      * @pre
      *   dimension < 3
      */
-    inline uint32 GetNumberOfElements(const uint32 dimension) const;
+//    inline uint32 GetNumberOfElements(const uint32 dimension) const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.
@@ -150,9 +151,9 @@ public:
     /**
      * TODO remove?
      */
-    char8 *GetRawModifiers(){
-        return modifiers;
-    }
+//    char8 *GetRawModifiers(){
+//        return modifiers;
+//    }
 
 private:
 
@@ -175,7 +176,8 @@ private:
      *  tokens followed by two bytes:   bB  (const array[<65536], array[<65536])
      *  tokens followed by four bytes:  cC  (const array[], array[])
      */
-    char8 *             modifiers;
+//    char8 *             modifiers;
+    DynamicCString      modifiers;
 
     /**
      * The type of the (final after redirections) variable
@@ -529,8 +531,8 @@ private:
 
 
 template <class T>
-inline  VariableDescriptor::VariableDescriptor( T  x){
-    modifiers = NULL_PTR(char8 *);
+inline  VariableDescriptor::VariableDescriptor( T  x):VariableDescriptor(){
+//    modifiers = NULL_PTR(char8 *);
     uint32 size = 0;
     bool constant = false;
     Match(x,size,constant);
@@ -542,10 +544,6 @@ inline  VariableDescriptor::VariableDescriptor( T  x){
 //    dprintf("%s","(:)");
 }
 
-inline VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
-    typeDescriptor = td;
-    modifiers = NULL_PTR(char8 *);
-}
 
 
 //bool VariableDescriptor::IsVoid() const {
@@ -691,7 +689,6 @@ void VariableDescriptor::Match(int32 * i,uint32 &size,bool &constant) {
 
 void VariableDescriptor::Match(uint32 * i,uint32 &size,bool &constant) {
     typeDescriptor = UnsignedInteger32Bit;
-//    dprintf("%s","(u32)");
 }
 
 void VariableDescriptor::Match(int64 * i,uint32 &size,bool &constant) {
@@ -733,9 +730,6 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
     typeDescriptor = TypeDescriptor(false,type,bitSize,0);
 }
 
-const TypeDescriptor &VariableDescriptor::GetTypeDescriptor() const {
-    return typeDescriptor;
-}
 
 
 

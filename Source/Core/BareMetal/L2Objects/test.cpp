@@ -33,6 +33,8 @@
 
 #include "AnyType.h"
 #include "VariableDescriptor.h"
+#include "DynamicCString.h"
+#include "StaticCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,67 +47,73 @@
 namespace MARTe{
 
 void printType(AnyType x){
-//    printf("[\n");
-    VariableDescriptor vd = x.GetVariableDescriptor();
-#if 0
-    char8 *rawmod = vd.GetRawModifiers();
-
-    if (rawmod != NULL)
-    while (*rawmod != 0){
-        printf("%02x ",*rawmod);
-        rawmod++;
-    }
-    printf("(END)\n");
-    return;
-#endif
+    VariableDescriptor vd = x.GetFullVariableDescriptor();
 
     char8 token = 0;
     bool constant = false;
     uint32 size;
     uint32 depth = 0;
     vd.GetModifier(token,constant,size,depth);
+    printf ("Mod={");
+    char buffer[200];
+    buffer[0] = 0;
+    char *pbuf = &buffer[0];
     while (token != 0) {
-//        printf ("(%i)",depth);
         depth++;
-        if (constant) printf ("C ");
+        if (constant) pbuf += sprintf (pbuf,"C ");
         switch (token){
         case 'A':{
-            printf ("[%i]",size);
+        	pbuf += sprintf (pbuf,"[%i]",size);
+        }break;
+        case 'P':{
+        	pbuf += sprintf (pbuf,"* ");
         }break;
         default :{
-            printf ("%c ",token);
+        	pbuf += sprintf (pbuf,"%c ",token);
         }break;
         }
         vd.GetModifier(token,constant,size,depth);
     } ;
+    printf ("%-12s}",buffer);
 
-    TypeDescriptor td = vd.GetTypeDescriptor();
+    TypeDescriptor td = vd.GetFullTypeDescriptor();
     if (td.isConstant){
-        printf ("C-");
+        printf ("const ");
     }
     if (td.isStructuredData){
-        printf ("S(%i) \n",(int)td.structuredDataIdCode);
+        printf ("S(%i) ",(int)td.structuredDataIdCode);
     } else {
         if (td.IsBitType()){
-            printf ("btype = %i-%i-%i \n",(int)td.type,(int)td.numberOfBits,(int)td.bitOffset);
+            printf (" %s%i:%i ",BasicTypeName(td.type),(int)td.numberOfBits,(int)td.bitOffset);
         } else {
             switch(td.arrayType){
-            case 0:{
-                printf ("Btype = %i-%i Z\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize));
+            case ZeroTermArray:{
+                printf (" %s%i Z",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
-            case 1:{
-                printf ("Btype = %i-%i [%i]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            case DynamicZeroTermArray:{
+                printf (" %s%i DZ",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
-            case 2:{
-                printf ("Btype = %i-%i [%i][%i]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.numberOfRows,(int)td.numberOfColumns);
+            case StaticZeroTermArray:{
+                printf (" %s%i SZ",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
-            case 3:{
-                printf ("Btype = %i-%i [%i][...]\n",(int)td.type,BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            case Array1D:{
+                printf (" %s%i [%i]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            }break;
+            case Array2D:{
+                printf (" %s%i [%i][%i]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.numberOfRows,(int)td.numberOfColumns);
+            }break;
+            case ArrayLarge:{
+                printf (" %s%i [%i][...]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            }break;
+            default:
+            case ArrayUnknown:{
+                printf (" %s%i ?",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             }
         }
 
     }
+    printf("\n");
 
 }
 
@@ -124,11 +132,18 @@ struct pippone2{
 
 template <class T>
 void testT(CCString orig){
-    T x;
 
-    AnyType at(x);
+	/*
+	 * used as a pointer to avoid allocating unnecessary stack memory
+	 */
+    T *x;
+    const int pappa = 0;
+    /* assigned to a real pointer to avoid problems */
+    x = reinterpret_cast<T*>(reinterpret_cast<int>(&pappa));
 
-    printf("%s ==> ",orig.GetList());
+    AnyType at(*x);
+
+    printf("%-26s ",orig.GetList());
 
     printType(at);
 
@@ -139,12 +154,18 @@ void testT(CCString orig){
 
 
 void testAT(){
+    TEST(double);
+    TEST(float);
     TEST(uint64);
-    TEST(uint48);
     TEST(uint32);
-    TEST(const uint24);
     TEST(uint16);
     TEST(uint8);
+    TEST(int64);
+    TEST(int32);
+    TEST(int16);
+    TEST(int8);
+    TEST(uint48);
+    TEST(const uint24);
     TEST(uint4);
 
     TEST(uint32*);
@@ -165,6 +186,8 @@ void testAT(){
 
     TEST(CString);
     TEST(CCString);
+    TEST(DynamicCString);
+    TEST(StaticCString<32>);
 
     TEST(ZeroTerminatedArray<float>);
 

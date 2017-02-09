@@ -144,7 +144,7 @@ const BasicArrayType DynamicZeroTermArray = 5u;
 /**
  * @brief The type is a zero term vector of fixed size non-reallocable
  */
-const BasicArrayType StaticZeroTermArray = 5u;
+const BasicArrayType StaticZeroTermArray = 6u;
 
 
 /**
@@ -203,6 +203,14 @@ DLL_API BasicObjectSize BasicObjectSizeFromBits(uint32 bits);
  * @return 0 if bos = SizeUnknown otherwise the size in bits
  */
 DLL_API uint32 BitsFromBasicObjectSize(BasicObjectSize bos);
+
+/**
+ * TODO
+ * @return a string for the basicType
+ */
+class CCString;
+DLL_API CCString BasicTypeName(uint32 bt);
+
 
 }
 

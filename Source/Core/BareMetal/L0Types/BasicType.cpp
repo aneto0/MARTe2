@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicType.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -66,9 +67,37 @@ BasicObjectSize BasicObjectSizeFromBits(uint32 bits){
 uint32 BitsFromBasicObjectSize(BasicObjectSize bos){
     uint32 ret = 0;
     if (bos != SizeUnknown){
-        ret = 4 >> bos;
+        ret = 4 << bos;
     }
     return ret;
+}
+
+CCString basicTypeNames[]{
+		(char8 *)"int",
+		(char8 *)"uint",
+		(char8 *)"float",
+		(char8 *)"char",
+		(char8 *)"void*",
+		(char8 *)"int",
+		(char8 *)"uint",
+		(char8 *)"sstring",
+		(char8 *)"undef1",
+		(char8 *)"undef2",
+		(char8 *)"undef3",
+		(char8 *)"undef4",
+		(char8 *)"Stream",
+		(char8 *)"struct",
+		(char8 *)"void",
+		(char8 *)"invalid"
+};
+
+
+CCString BasicTypeName(uint32 bt){
+	CCString ret = "??";
+	if (bt < 16){
+		ret = basicTypeNames[bt];
+	}
+	return ret;
 }
 
 
