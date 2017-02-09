@@ -49,6 +49,11 @@ TEST(MemoryMapTriggerOutputBrokerGTest,TestInit) {
     ASSERT_TRUE(test.TestInit());
 }
 
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles());
+}
+
 TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers) {
     MemoryMapTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers());

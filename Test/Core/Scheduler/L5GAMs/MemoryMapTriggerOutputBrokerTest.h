@@ -51,6 +51,11 @@ public:
     bool TestInit();
 
     /**
+     * @brief Tests the Execute method with N PreTriggerBuffers and N PostTriggerBuffers for many cycles.
+     */
+    bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles();
+
+    /**
      * @brief Tests the Execute method with 0 PreTriggerBuffers and 0 PostTriggerBuffers.
      */
     bool TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers();

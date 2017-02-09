@@ -40,7 +40,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * TODO
+ * @brief Structure which describes a page of memory.
+ * @details Each page of memory contains a copy of all the signals, at a given time instant, assigned to this Broker.
  */
 struct MemoryMapTriggerOutputBrokerBufferEntry {
     /**
@@ -59,7 +60,19 @@ struct MemoryMapTriggerOutputBrokerBufferEntry {
     void **mem;
 };
 /**
- * @brief TODO
+ * @brief A MemoryMapOutputBroker which stores the signals in the DataSource only if a Trigger has been set.
+ * @details This BrokerI implementation asynchronously stores the GAM data in an internal buffer.
+ * Every time a triggering signal is set to 1, this data is flushed into the DataSourceI memory (retrieved with GetSignalMemoryBuffer)
+ * and the Synchronise method is called on the DataSourceI. The flushing of the data is performed in the context of a different thread.
+ *
+ * If the of pre-trigger buffers is greater than zero, every time a trigger is detected, the pre-trigger number of pages before the
+ * trigger will also be flushed into the DataSourceI. If the number of post-trigger buffers is greater than zero,
+ * every time a trigger is detected, the post-trigger number of pages after the trigger will also be flushed into the DataSourceI.
+ *
+ * The Triggering signal shall be the first signal of the DataSourceI (i.e. the signal with the name GetSignalName(0, name)) and shall have
+ * type uint8. All the signals shall have one and only one sample. The DataSourceI shall GetNumberOfMemoryBuffers() == 1.
+ *
+ * Only one GAM is allowed to interact with this MemoryMapTriggerOutputBroker (an IOGAM can be used to collate all the signals).
  */
 class MemoryMapTriggerOutputBroker: public MemoryMapBroker {
 public:
@@ -70,17 +83,14 @@ public:
 MemoryMapTriggerOutputBroker    ();
 
     /**
-     * TODO
+     * @brief Destructor. Frees all the allocated memory and stops the service responsible
+     * by flushing the data into the DataSourceI.
      */
     virtual ~MemoryMapTriggerOutputBroker();
 
     /**
-     * TODO
-     * @param direction
-     * @param dataSourceIn
-     * @param functionName
-     * @param gamMemoryAddress
-     * @return
+     * @brief Prevents this MemoryMapTriggerOutputBroker from being used as a MemoryMapOutputBroker.
+     * @return false.
      */
     virtual bool Init(const SignalDirection direction,
             DataSourceI &dataSourceIn,
@@ -88,52 +98,87 @@ MemoryMapTriggerOutputBroker    ();
             void * const gamMemoryAddress);
 
     /**
-     * @brief Sequentially copies all the signals from the GAM memory to the buffer memory.
-     * @return true if all copies are successfully performed.
+     * @brief Initialises the broker.
+     * @details Initialises the broker (see MemoryMapOutputBroker::Init) and verifies that all the pre conditions are met.
+     * Finally, it starts the SingleThreadService which will asynchronously flush the data into the DataSourceI.
+     * Note that only one GAM is allowed to interact with this DataSourceI.
+     * @param direction (see MemoryMapOutputBroker::Init). Only OutputSignals are supported.
+     * @param dataSourceIn (see MemoryMapOutputBroker::Init).
+     * @param functionName (see MemoryMapOutputBroker::Init).
+     * @param gamMemoryAddress (see MemoryMapOutputBroker::Init).
+     * @param numberOfBuffersIn the number of pages that will be created to copy the GAM signals. The higher this number, the larger the buffer to
+     * allow the asynchronous flushing into the DataSourceI (particularly useful if this operation is slow).
+     * @param preTriggerBuffersIn number of pre-trigger pages to flush into the DataSourceI.
+     * @param postTriggerBuffersIn number of post-trigger pages to flush into the DataSourceI.
+     * @param cpuMaskIn the CPU mask where the SingleThreadService will execute.
+     * @return true if MemoryMapOutputBroker::Init() returns true and if all the pre-conditions are met.
+     * @pre
+     *   numberOfBuffers > 0 &&
+     *   preTriggerBuffers < numberOfBuffers &&
+     *   preTriggerBuffers < numberOfBuffers &&
+     *   (preTriggerBuffers + postTriggerBuffers) < numberOfBuffers &&
+     *   dataSourceIn.GetNumberOfFunctions() == 1 &&
+     *   dataSourceIn.GetNumberOfMemoryBuffers() &&
+     *   dataSourceIn.GetSignalType(0u) == UnsignedInteger8Bit //The triggering signal shall be the first DataSourceI signal and shall be of type uint8
+     */
+    virtual bool InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+            void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const uint32 preTriggerBuffersIn,
+            const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn);
+
+    /**
+     * @brief Sequentially copies all the signals from the GAM memory to the next free buffer memory.
+     * @details After copying the data, the SingleThreadService is informed that new data is available so that it can be potentially flushed into
+     * the DataSourceI.
+     * @return true if all copies are successfully performed and if the next free buffer is not marked for triggering (which means that an overrun as occurred).
      */
     virtual bool Execute();
 
     /**
-     * TODO
-     * @param[in] cpuMaskIn
+     * @brief Gets the CPU mask where the SingleThreadService is being executed.
+     * @return the CPU mask where the SingleThreadService is being executed.
      */
-    void SetCPUMask(const ProcessorType& cpuMaskIn);
+    ProcessorType GetCPUMask();
 
     /**
-     * TODO
-     * @param[in] preTriggerBuffersIn
+     * @brief Gets the number of buffers (i.e. pages) where the GAM data is stored.
+     * @return the number of buffers (i.e. pages) where the GAM data is stored.
      */
-    void SetPreTriggerBuffers(const uint32 preTriggerBuffersIn);
+    uint32 GetNumberOfBuffers();
 
     /**
-     * TODO
-     * @param[in] postTriggerBuffersIn
+     * @brief Gets the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
+     * @return the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
      */
-    void SetPostTriggerBuffers(const uint32 postTriggerBuffersIn);
+    uint32 GetPreTriggerBuffers();
 
     /**
-     * TODO
+     * @brief Gets the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
+     * @return the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
      */
-    void Stop();
+    uint32 GetPostTriggerBuffers();
 
 private:
+
     /**
-     * TODO
+     * @brief SingleThreadService callback function responsible for flushing the Buffer into the DataSourceI.
+     * @param[in] info (see EmbeddedServiceMethodBinderI). Only info.GetStage() == ExecutionInfo::MainStage is supported in this implementation.
+     * @return ErrorManagement::NoError if the synchronisation semaphore with the Execute method returns no errors. At the end of the application, i.e.
+     *  after the destructor has been called, it returns ErrorManagement::Completed.
      */
     ErrorManagement::ErrorType BufferLoop(const ExecutionInfo & info);
 
     /**
-     * TODO
+     * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.
      */
     SingleThreadService *service;
 
     /**
-     * TODO
+     * The SingleThreadService CPU mask.
      */
     ProcessorType cpuMask;
 
     /**
-     * TODO
+     * The multi-page memory buffer where the GAM signals are stored.
      */
     MemoryMapTriggerOutputBrokerBufferEntry *buffer;
 
@@ -143,46 +188,63 @@ private:
     ReferenceT<DataSourceI> dataSource;
 
     /**
-     * TODO
+     * The number of buffers/pages.
      */
     uint32 numberOfBuffers;
+
     /**
-     * TODO
+     * The current index where the Execute method is writing to.
      */
     uint32 writeIdx;
+
     /**
-     * TODO
+     * The read index where the BufferLoop is reading from.
      */
     uint32 readSynchIdx;
+
     /**
-     * TODO
+     * Number of pre-trigger buffers.
      */
     uint32 preTriggerBuffers;
+
     /**
-     * TODO
+     * Number of post-trigger buffers.
      */
     uint32 postTriggerBuffers;
+
     /**
-     * TODO
+     * This counter decrements every-time a post buffer is written. It will reset to postTriggerBuffers when a trigger occurs so that the post-trigger buffers
+     * always count from the last post trigger
      */
     uint32 postTriggerBuffersCounter;
+
     /**
-     * TODO
+     * If two consecutive triggers are set, only set the pre-trigger if it was not already triggered.
      */
     bool wasTriggered;
+
     /**
-     * TODO
+     * Semaphore that synchronises the Execute and the BufferLoop methods.
      */
     EventSem sem;
 
     /**
-     * TODO
+     * Makes sure that the EventSem is not Reset while being posted and also protects the writeIdx variable.
      */
-    FastPollingMutexSem resetSem;
+    FastPollingMutexSem fastSem;
+
+    /**
+     * Makes sure that the EventSem is not Reset while being posted and also protects the writeIdx variable.
+     */
     bool posted;
 
     /**
-     * TODO
+     * Allows a clean exit of the BufferLoop thread
+     */
+    bool destroying;
+
+    /**
+     * The binder for the SingleThreadService.
      */
     EmbeddedServiceMethodBinderI *binder;
 };
