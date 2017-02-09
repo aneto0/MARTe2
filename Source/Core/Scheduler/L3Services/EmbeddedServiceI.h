@@ -56,7 +56,8 @@ public:
      *   GetPriorityLevel() == 0u &&
      *   GetPriorityClass() == NormalPriorityClass &&
      *   GetTimeout() == TTInfiniteWait &&
-     *   GetCPUMask() == UndefinedCPUs
+     *   GetCPUMask() == UndefinedCPUs &&
+     *   GetStackSize() == THREADS_DEFAULT_STACKSIZE
      */
     EmbeddedServiceI();
 
@@ -114,6 +115,18 @@ public:
     virtual void SetPriorityLevel(uint8 priorityLevelIn);
 
     /**
+     * @brief Gets the thread stack size.
+     * @return the thread stack size.
+     */
+    uint32 GetStackSize() const;
+
+    /**
+     * @brief Sets the thread stack size.
+     * @param[in] stackSizeIn the thread stack size.
+     */
+    virtual void SetStackSize(uint32 stackSizeIn);
+
+    /**
      * @brief Gets the thread CPU mask (i.e. thread affinity).
      * @return the thread CPU mask.
      */
@@ -153,6 +166,11 @@ private:
      * The thread priority level.
      */
     uint8 priorityLevel;
+
+    /**
+     * The thread stack size
+     */
+    uint32 stackSize;
 
     /**
      * The thread CPU mask

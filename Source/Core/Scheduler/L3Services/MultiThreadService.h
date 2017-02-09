@@ -76,6 +76,8 @@ public:
      * which to apply the PriorityClass specified in the second column.
      * A matrix named PrioritiesLevel may be defined. The first column of each row shall contain the thread index to
      * which to apply the PriorityLevel specified in the second column.
+     * A matrix named StackSizes may be defined. The first column of each row shall contain the thread index to
+     * which to apply the StackSize specified in the second column.
      * A matrix named CPUMasks may be defined. The first column of each row shall contain the thread index to
      * which to apply the CPUMask specified in the second column.
      * If the initialise is successful it calls CreateThreads() and applies the individual thread parameters (priority class and level plus affinity).
@@ -155,6 +157,14 @@ public:
     virtual void SetPriorityLevel(uint8 priorityLevelIn);
 
     /**
+     * @brief Sets the thread stack size for all the threads.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetStackSize(uint32 stackSizeIn);
+
+    /**
      * @brief Sets the thread CPU mask (i.e. thread affinity) level for all the threads.
      * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
      * @pre
@@ -182,6 +192,15 @@ public:
     uint8 GetPriorityLevelThreadPool(uint32 threadIdx);
 
     /**
+     * @brief Gets the thread stack size for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread stack size or 0 if the pre conditions are not met.
+     */
+    uint32 GetStackSizeThreadPool(uint32 threadIdx);
+
+    /**
      * @brief Gets the thread priority CPU mask for the thread with index \a threadIdx.
      * @param[in] threadIdx the index of the thread.
      * @pre
@@ -198,8 +217,7 @@ public:
      *   GetStatus(threadIdx) == OffState
      *   threadIdx < GetNumberOfPoolThreads()
      */
-    void SetPriorityClassThreadPool(Threads::PriorityClassType priorityClassIn,
-                                    uint32 threadIdx);
+    void SetPriorityClassThreadPool(Threads::PriorityClassType priorityClassIn, uint32 threadIdx);
 
     /**
      * @brief Sets the thread priority level for the thread with index \a threadIdx.
@@ -209,8 +227,17 @@ public:
      *   GetStatus(threadIdx) == OffState
      *   threadIdx < GetNumberOfPoolThreads()
      */
-    void SetPriorityLevelThreadPool(uint8 priorityLevelIn,
-                                    uint32 threadIdx);
+    void SetPriorityLevelThreadPool(uint8 priorityLevelIn, uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread stack size for the thread with index \a threadIdx.
+     * @param[in] stackSizeIn the thread priority level.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetStackSizeThreadPool(uint32 stackSizeIn, uint32 threadIdx);
 
     /**
      * @brief Sets the thread CPU mask (i.e. thread affinity) level for the thread with index \a threadIdx.
@@ -220,8 +247,7 @@ public:
      *   GetStatus(threadIdx) == OffState
      *   threadIdx < GetNumberOfPoolThreads()
      */
-    void SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn,
-                              uint32 threadIdx);
+    void SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn, uint32 threadIdx);
 
 protected:
     /**

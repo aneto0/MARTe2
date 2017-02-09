@@ -103,9 +103,29 @@ public:
     bool TestInitialise_False_PrioritiesLevel_OutOfRangeIndex();
 
     /**
-     * @brief Tests the Initialise function specifying a PrioritiesLevel with an index that is not a number.
+     * @brief Tests the Initialise function specifying a StackSize that is not a matrix.
+     */
+    bool TestInitialise_False_StackSizes_NotMatrix();
+
+    /**
+     * @brief Tests the Initialise function specifying a StackSize with a matrix that has more than two columns.
+     */
+    bool TestInitialise_False_StackSizes_Columns();
+
+    /**
+     * @brief Tests the Initialise function specifying a StackSize with an out of range index.
+     */
+    bool TestInitialise_False_StackSizes_OutOfRangeIndex();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass with an index that is not a number.
      */
     bool TestInitialise_False_PrioritiesClass_TypeConvert();
+
+    /**
+     * @brief Tests the Initialise function specifying a PrioritiesClass with an invalid priority class.
+     */
+    bool TestInitialise_False_PrioritiesClass_Invalid();
 
     /**
      * @brief Tests the Initialise function specifying a CPUMasks that is not a matrix.
@@ -188,6 +208,11 @@ public:
     bool TestSetPriorityLevel();
 
     /**
+     * @brief Tests the SetStackSize method.
+     */
+    bool TestSetStackSize();
+
+    /**
      * @brief Tests the TestSetCPUMask method.
      */
     bool TestSetCPUMask();
@@ -213,6 +238,11 @@ public:
     bool TestSetPriorityLevel_Start();
 
     /**
+     * @brief Verifies that stack size is not changed after the service has started.
+     */
+    bool TestSetStackSize_Start();
+
+    /**
      * @brief Verifies that priority class is not changed after the service has started.
      */
     bool TestSetCPUMask_Start();
@@ -226,6 +256,11 @@ public:
      * @brief Tests the SetPriorityLevelThreadPool method.
      */
     bool TestSetPriorityLevelThreadPool();
+
+    /**
+     * @brief Tests the SetStackSizeThreadPool method.
+     */
+    bool TestSetStackSizeThreadPool();
 
     /**
      * @brief Tests the SetCPUMaskThreadPool method.
@@ -243,6 +278,11 @@ public:
     bool TestGetPriorityLevelThreadPool();
 
     /**
+     * @brief Tests the GetStackSizeThreadPool method.
+     */
+    bool TestGetStackSizeThreadPool();
+
+    /**
      * @brief Tests the GetCPUMaskThreadPool method.
      */
     bool TestGetCPUMaskThreadPool();
@@ -256,6 +296,11 @@ public:
      * @brief Tests the GetPriorityLevelThreadPool method with an index which is greater than the number of threads in the pool.
      */
     bool TestGetPriorityLevelThreadPool_OutOfIndex();
+
+    /**
+     * @brief Tests the GetStackSizeThreadPool method with an index which is greater than the number of threads in the pool.
+     */
+    bool TestGetStackSizeThreadPool_OutOfIndex();
 
     /**
      * @brief Tests the GetCPUMaskThreadPool method with an index which is greater than the number of threads in the pool.
@@ -276,6 +321,11 @@ public:
      * @brief Verifies that priority class is not changed after the service has started.
      */
     bool TestSetCPUMaskThreadPool_Start();
+
+    /**
+     * @brief Verifies that stack size is not changed after the service has started.
+     */
+    bool TestSetStackSizeThreadPool_Start();
 };
 
 /*---------------------------------------------------------------------------*/

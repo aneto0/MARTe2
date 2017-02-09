@@ -70,6 +70,11 @@ TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_OutOfRangeInde
     ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_OutOfRangeIndex());
 }
 
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_Invalid) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_Invalid());
+}
+
 TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_NotMatrix) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_NotMatrix());
@@ -93,6 +98,21 @@ TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesLevel_NotMatrix) {
 TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesLevel_Columns) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False_PrioritiesLevel_Columns());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_OutOfRangeIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_OutOfRangeIndex());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_NotMatrix) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_NotMatrix());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_Columns) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_Columns());
 }
 
 TEST(MultiThreadServiceGTest,TestInitialise_False_CPUMasks_OutOfRangeIndex) {
@@ -185,6 +205,11 @@ TEST(MultiThreadServiceGTest, TestSetPriorityLevel) {
     ASSERT_TRUE(target.TestSetPriorityLevel());
 }
 
+TEST(MultiThreadServiceGTest, TestSetStackSize) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize());
+}
+
 TEST(MultiThreadServiceGTest, TestSetCPUMask) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask());
@@ -198,6 +223,11 @@ TEST(MultiThreadServiceGTest, TestSetPriorityClass_Start) {
 TEST(MultiThreadServiceGTest, TestSetPriorityLevel_Start) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetStackSize_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize_Start());
 }
 
 TEST(MultiThreadServiceGTest, TestSetCPUMask_Start) {
@@ -215,6 +245,11 @@ TEST(MultiThreadServiceGTest, TestSetPriorityLevelThreadPool_Start) {
     ASSERT_TRUE(target.TestSetPriorityLevelThreadPool_Start());
 }
 
+TEST(MultiThreadServiceGTest, TestSetStackSizeThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSizeThreadPool_Start());
+}
+
 TEST(MultiThreadServiceGTest, TestSetCPUMaskThreadPool_Start) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMaskThreadPool_Start());
@@ -230,6 +265,11 @@ TEST(MultiThreadServiceGTest, TestSetPriorityLevelThreadPool) {
     ASSERT_TRUE(target.TestSetPriorityLevelThreadPool());
 }
 
+TEST(MultiThreadServiceGTest, TestSetStackSizeThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSizeThreadPool());
+}
+
 TEST(MultiThreadServiceGTest, TestSetCPUMaskThreadPool) {
     MultiThreadServiceTest target; 
     ASSERT_TRUE(target.TestSetCPUMaskThreadPool());
@@ -243,6 +283,11 @@ TEST(MultiThreadServiceGTest, TestGetPriorityClassThreadPool) {
 TEST(MultiThreadServiceGTest, TestGetPriorityLevelThreadPool) {
     MultiThreadServiceTest target; 
     ASSERT_TRUE(target.TestGetPriorityLevelThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetStackSizeThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetStackSizeThreadPool());
 }
 
 TEST(MultiThreadServiceGTest, TestGetCPUMaskThreadPool) {
@@ -264,3 +309,9 @@ TEST(MultiThreadServiceGTest, TestGetCPUMaskThreadPool_OutOfIndex) {
     MultiThreadServiceTest target; 
     ASSERT_TRUE(target.TestGetCPUMaskThreadPool_OutOfIndex());
 }
+
+TEST(MultiThreadServiceGTest, TestGetStackSizeThreadPool_OutOfIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetStackSizeThreadPool_OutOfIndex());
+}
+

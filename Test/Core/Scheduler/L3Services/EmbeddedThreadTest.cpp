@@ -57,6 +57,8 @@ EmbeddedThreadTest::~EmbeddedThreadTest() {
 MARTe::ErrorManagement::ErrorType EmbeddedThreadTest::CallbackFunction(const MARTe::ExecutionInfo &information) {
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         startup = true;
+        //Force triggering of start-up error.
+        return MARTe::ErrorManagement::Warning;
     }
     if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
         main = true;
@@ -69,6 +71,7 @@ MARTe::ErrorManagement::ErrorType EmbeddedThreadTest::CallbackFunction(const MAR
     }
     if (information.GetStage() == MARTe::ExecutionInfo::TerminationStage) {
         completed = true;
+        return MARTe::ErrorManagement::Warning;
     }
     if (information.GetStage() == MARTe::ExecutionInfo::BadTerminationStage) {
         badTermination = true;
