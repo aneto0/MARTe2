@@ -102,6 +102,7 @@ MemoryMapStatefulInputBroker.cpp
 MemoryMapStatefulOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
 MemoryMapSynchronisedOutputBroker.cpp
+MemoryMapTriggerOutputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp

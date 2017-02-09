@@ -51,6 +51,46 @@ public:
     bool TestInit();
 
     /**
+     * @brief Tests the InitWithTriggerParameters method.
+     */
+    bool TestInitWithTriggerParameters();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with NumberOfBuffers = 0.
+     */
+    bool TestInitWithTriggerParameters_False_0_NumberOfBuffers();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with PreTriggerBuffers > NumberOfBuffers = 0.
+     */
+    bool TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with PostTriggerBuffers > NumberOfBuffers = 0.
+     */
+    bool TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with (PrePostTriggerBuffers + PostTriggerBuffers) > NumberOfBuffers = 0.
+     */
+    bool TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with more than one GAM writing to the DataSourceI.
+     */
+    bool TestInitWithTriggerParameters_False_MoreThanOneGAM();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method signals that have Samples > 1.
+     */
+    bool TestInitWithTriggerParameters_False_SamplesGreaterThanOne();
+
+    /**
+     * @brief Tests the InitWithTriggerParameters method with a wrong signal type for the trigger.
+     */
+    bool TestInitWithTriggerParameters_False_WrongTriggerSignalType();
+
+    /**
      * @brief Tests the Execute method with N PreTriggerBuffers and N PostTriggerBuffers for many cycles.
      */
     bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles();
@@ -109,6 +149,31 @@ public:
      * @brief Tests the Execute method with only one buffer.
      */
     bool TestExecute_1_Buffer_AlwaysTriggering();
+
+    /**
+     * @brief Tests that a buffer overrun is detected.
+     */
+    bool TestExecute_Buffer_Overrun();
+
+    /**
+     * @brief Tests the GetCPUMask method.
+     */
+    bool TestGetCPUMask();
+
+    /**
+     * @brief Tests the GetNumberOfBuffers method.
+     */
+    bool TestGetNumberOfBuffers();
+
+    /**
+     * @brief Tests the GetPreTriggerBuffers method.
+     */
+    bool TestGetPreTriggerBuffers();
+
+    /**
+     * @brief Tests the GetPostTriggerBuffers method.
+     */
+    bool TestGetPostTriggerBuffers();
 
 };
 

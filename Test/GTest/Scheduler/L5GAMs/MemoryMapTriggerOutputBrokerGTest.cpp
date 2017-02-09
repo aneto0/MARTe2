@@ -49,6 +49,46 @@ TEST(MemoryMapTriggerOutputBrokerGTest,TestInit) {
     ASSERT_TRUE(test.TestInit());
 }
 
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_0_NumberOfBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_0_NumberOfBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_MoreThanOneGAM) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_MoreThanOneGAM());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_SamplesGreaterThanOne) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_SamplesGreaterThanOne());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_WrongTriggerSignalType) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_WrongTriggerSignalType());
+}
+
 TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles) {
     MemoryMapTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles());
@@ -107,4 +147,29 @@ TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTri
 TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_1_Buffer_AlwaysTriggering) {
     MemoryMapTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_Buffer_AlwaysTriggering());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestExecute_Buffer_Overrun) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_Buffer_Overrun());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestGetCPUMask) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestGetCPUMask());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestGetNumberOfBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestGetNumberOfBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestGetPreTriggerBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestGetPreTriggerBuffers());
+}
+
+TEST(MemoryMapTriggerOutputBrokerGTest,TestGetPostTriggerBuffers) {
+    MemoryMapTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestGetPostTriggerBuffers());
 }

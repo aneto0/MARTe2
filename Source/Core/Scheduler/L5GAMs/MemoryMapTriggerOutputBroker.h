@@ -60,17 +60,17 @@ struct MemoryMapTriggerOutputBrokerBufferEntry {
     void **mem;
 };
 /**
- * @brief A MemoryMapOutputBroker which stores the signals in the DataSource only if a Trigger has been set.
- * @details This BrokerI implementation asynchronously stores the GAM data in an internal buffer.
- * Every time a triggering signal is set to 1, this data is flushed into the DataSourceI memory (retrieved with GetSignalMemoryBuffer)
- * and the Synchronise method is called on the DataSourceI. The flushing of the data is performed in the context of a different thread.
+ * @brief A MemoryMapBroker which stores the signals in a DataSourceI memory only if a Trigger has been set.
+ * @details This BrokerI implementation stores the GAM data in an internal memory buffer.
+ * Every time a triggering signal is set to 1, this data is asynchronously flushed into the DataSourceI memory (retrieved with GetSignalMemoryBuffer)
+ * and the Synchronise method is called on the DataSourceI. The flushing of this data is performed in the context of a different thread (SingleThreadService).
  *
- * If the of pre-trigger buffers is greater than zero, every time a trigger is detected, the pre-trigger number of pages before the
- * trigger will also be flushed into the DataSourceI. If the number of post-trigger buffers is greater than zero,
- * every time a trigger is detected, the post-trigger number of pages after the trigger will also be flushed into the DataSourceI.
+ * If the number of pre-trigger buffers is greater than zero, every time a trigger is detected, the pre-trigger number of pages before that were acquired before the
+ * trigger will also be flushed into the DataSourceI. If the number of post-trigger buffers is greater than zero, the post-trigger number of pages
+ * after the trigger will also be flushed into the DataSourceI.
  *
  * The Triggering signal shall be the first signal of the DataSourceI (i.e. the signal with the name GetSignalName(0, name)) and shall have
- * type uint8. All the signals shall have one and only one sample. The DataSourceI shall GetNumberOfMemoryBuffers() == 1.
+ * type uint8. All the signals shall have one and only one sample. The DataSourceI shall return GetNumberOfMemoryBuffers() == 1.
  *
  * Only one GAM is allowed to interact with this MemoryMapTriggerOutputBroker (an IOGAM can be used to collate all the signals).
  */
@@ -89,7 +89,7 @@ MemoryMapTriggerOutputBroker    ();
     virtual ~MemoryMapTriggerOutputBroker();
 
     /**
-     * @brief Prevents this MemoryMapTriggerOutputBroker from being used as a MemoryMapOutputBroker.
+     * @brief Prevents this MemoryMapTriggerOutputBroker from being used as a MemoryMapBroker.
      * @return false.
      */
     virtual bool Init(const SignalDirection direction,
@@ -100,7 +100,7 @@ MemoryMapTriggerOutputBroker    ();
     /**
      * @brief Initialises the broker.
      * @details Initialises the broker (see MemoryMapOutputBroker::Init) and verifies that all the pre conditions are met.
-     * Finally, it starts the SingleThreadService which will asynchronously flush the data into the DataSourceI.
+     * Starts the SingleThreadService which will asynchronously flush the data into the DataSourceI.
      * Note that only one GAM is allowed to interact with this DataSourceI.
      * @param direction (see MemoryMapOutputBroker::Init). Only OutputSignals are supported.
      * @param dataSourceIn (see MemoryMapOutputBroker::Init).
@@ -115,7 +115,7 @@ MemoryMapTriggerOutputBroker    ();
      * @pre
      *   numberOfBuffers > 0 &&
      *   preTriggerBuffers < numberOfBuffers &&
-     *   preTriggerBuffers < numberOfBuffers &&
+     *   postTriggerBuffers < numberOfBuffers &&
      *   (preTriggerBuffers + postTriggerBuffers) < numberOfBuffers &&
      *   dataSourceIn.GetNumberOfFunctions() == 1 &&
      *   dataSourceIn.GetNumberOfMemoryBuffers() &&
@@ -137,25 +137,25 @@ MemoryMapTriggerOutputBroker    ();
      * @brief Gets the CPU mask where the SingleThreadService is being executed.
      * @return the CPU mask where the SingleThreadService is being executed.
      */
-    ProcessorType GetCPUMask();
+    ProcessorType GetCPUMask() const;
 
     /**
      * @brief Gets the number of buffers (i.e. pages) where the GAM data is stored.
      * @return the number of buffers (i.e. pages) where the GAM data is stored.
      */
-    uint32 GetNumberOfBuffers();
+    uint32 GetNumberOfBuffers() const;
 
     /**
      * @brief Gets the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
      * @return the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
      */
-    uint32 GetPreTriggerBuffers();
+    uint32 GetPreTriggerBuffers() const;
 
     /**
      * @brief Gets the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
      * @return the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
      */
-    uint32 GetPostTriggerBuffers();
+    uint32 GetPostTriggerBuffers() const;
 
 private:
 
@@ -170,7 +170,7 @@ private:
     /**
      * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.
      */
-    SingleThreadService *service;
+    SingleThreadService service;
 
     /**
      * The SingleThreadService CPU mask.
@@ -180,12 +180,12 @@ private:
     /**
      * The multi-page memory buffer where the GAM signals are stored.
      */
-    MemoryMapTriggerOutputBrokerBufferEntry *buffer;
+    MemoryMapTriggerOutputBrokerBufferEntry *bufferMemoryMap;
 
     /**
      * The DataSource associated to this broker
      */
-    ReferenceT<DataSourceI> dataSource;
+    ReferenceT<DataSourceI> dataSourceRef;
 
     /**
      * The number of buffers/pages.
@@ -246,7 +246,7 @@ private:
     /**
      * The binder for the SingleThreadService.
      */
-    EmbeddedServiceMethodBinderI *binder;
+    EmbeddedServiceMethodBinderT<MemoryMapTriggerOutputBroker> binder;
 };
 }
 
