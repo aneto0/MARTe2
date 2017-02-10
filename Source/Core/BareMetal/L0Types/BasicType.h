@@ -40,7 +40,9 @@ namespace MARTe {
 /**
  * @brief Definition of BasicType as a 4 bit integer.
  */
-typedef uint4 BasicType;
+// not usable in switch sections
+//typedef uint4 BasicType;
+typedef uint8 BasicType;
 
 /**
  * @brief The type is a signed integer.
@@ -146,6 +148,10 @@ const BasicArrayType DynamicZeroTermArray = 5u;
  */
 const BasicArrayType StaticZeroTermArray = 6u;
 
+/**
+ * @brief The type is a zero term vector of fixed size non-reallocable
+ */
+const BasicArrayType PointerArray = 7u;
 
 /**
  * @brief Definition of BasicArrayType

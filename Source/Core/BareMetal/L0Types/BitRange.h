@@ -93,6 +93,9 @@ public:
 
 private:
 
+    /** attempt at stopping copy operator  misbehaviour */
+    operator BitRange<baseType, numberOfBits, bitOffset>() const { return *this; }
+
     /**
      * The number value.
      */
@@ -138,6 +141,9 @@ void BitRange<baseType, numberOfBits, bitOffset>::operator=(inputType input) {
     // puts the value in the bit range
     value |= temporaryValue;
 }
+
+
+
 
 template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
 BitRange<baseType, numberOfBits, bitOffset>::operator baseType() const {

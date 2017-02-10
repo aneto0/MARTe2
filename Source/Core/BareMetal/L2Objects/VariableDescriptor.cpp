@@ -58,6 +58,7 @@ static char8 tolower(char8 c){
     return c;
 }
 
+#if 0
 uint32 FromHex(char8 c){
 	uint32 ret = 0u;
 	if ((c >='0') && (c <='9')){
@@ -81,14 +82,15 @@ static uint32 ReadHex(char8 *&buffer,uint32 nOfChars){
 }
 
 
+
 /**
  * returns tokens A=array P=pointer V=Vector M=Matrix
  * returns size as size of Arrays
  * buffer is input and is modified
  */
 static void BrowseModifierBuffer(char8 &token, bool &constant, uint32 &size,char8  *&buffer){
-    token = 0;
-    size = 0;
+    token = '\0';
+    size = 0u;
     constant = false;
     if (buffer != NULL){
         char8 c = *buffer++;
@@ -98,148 +100,388 @@ static void BrowseModifierBuffer(char8 &token, bool &constant, uint32 &size,char
         switch (c){
         case '\0':{
         	buffer--;
-//        	index--;
         	token = '\0';
-        	size = 0;
+        	size = 0u;
         } break;
         case 'A':{
             token = 'A' ;
             size = ReadHex(buffer,2);
-//            uint8 *pSize = reinterpret_cast<uint8 *>(buffer+index);
-//            size = *pSize;
-//            index++;
         } break;
         case 'B':{
             token = 'A' ;
-//            uint16 *pSize = reinterpret_cast<uint16 *>(buffer+index);
-//            size = *pSize;
-//            index+=2;
             size = ReadHex(buffer,4);
         } break;
         case 'C':{
             token = 'A' ;
-//            uint32 *pSize = reinterpret_cast<uint32 *>(buffer+index);
-//            size = *pSize;
-//            index+=4;
             size = ReadHex(buffer,8);
 
         } break;
         }
     }
-
 }
 
 void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const {
     char8 *buffer = modifiers.GetList();
     depth++;
     do {
-    	//printf ("[%i]<%s>\n",depth-1,buffer);
         BrowseModifierBuffer(token, constant, size,buffer);
         depth--;
-    } while ((token != 0) && (depth > 0));
+    } while ((token != '\0') && (depth > 0u));
 }
 
 
-void VariableDescriptor::AddGenericToModifiers(char8 token, uint32 &nOfModifiers,bool &constant){
+void VariableDescriptor::AddGenericToModifiers(char8 token,bool &constant){
     if (constant){
         constant = false;
         modifiers.Append(tolower(token));
-//        AddToModifiers(tolower(token),nOfModifiers,modifiers);
     } else {
         modifiers.Append(token);
-//        AddToModifiers(token,nOfModifiers,modifiers);
     }
 }
 
 static char8 ToHex(uint32 nibble){
 	char8 ret = '?';
-	if (nibble <10){
+	if (nibble < 10u){
 		ret = '0'+nibble;
 	} else
-		if (nibble <16){
-			ret = 'A'+nibble - 10;
+		if (nibble < 16u){
+			ret = 'A' + nibble - 10u;
 		}
 	return ret;
 }
 
 static void AppendHex(DynamicCString &s, uint32 n, uint32 size){
 	uint32 i;
-	for (i=0;i<size;i++){
+	for (i=0u;i<size;i++){
 		uint32 nibble = n & 0x0000000F;
 		n >>=4;
 		s.Append(ToHex(nibble));
 	}
 }
 
-void VariableDescriptor::AddArrayToModifiers(uint32 vectorSize,uint32 &nOfModifiers,bool &constant){
-    char c = 0;
+void VariableDescriptor::AddArrayToModifiers(uint32 vectorSize,bool &constant){
+    char8 c = '\0';
     if (constant){
         constant = false;
         c = ('a' - 'A');
     }
     if (vectorSize < 256u) {
         c += 'A';
-//        uint8 size = vectorSize;
-//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
         modifiers.Append(c);
         AppendHex(modifiers,vectorSize,2);
-//        modifiers.Append(static_cast<char8>(size));
-//        AddToModifiers(c,nOfModifiers,modifiers);
-//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     } else
     if (vectorSize < 65536u) {
         c += 'B';
-//        uint16 size = vectorSize;
-//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
-//        modifiers.Append(c);
-//        modifiers.Append(sizePtr[0]);
-//        modifiers.Append(sizePtr[1]);
         modifiers.Append(c);
         AppendHex(modifiers,vectorSize,4);
-//        AddToModifiers(c,nOfModifiers,modifiers);
-//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     } else
     {
         c += 'C';
-//        uint32 size = vectorSize;
-//        char8 *sizePtr = reinterpret_cast<char8*>(&size);
         modifiers.Append(c);
-//        modifiers.Append(sizePtr[0]);
-//        modifiers.Append(sizePtr[1]);
-//        modifiers.Append(sizePtr[2]);
-//        modifiers.Append(sizePtr[3]);
         AppendHex(modifiers,vectorSize,8);
-//        AddToModifiers(c,nOfModifiers,modifiers);
-//        AddBytesToModifiers(sizePtr,sizeof(size),nOfModifiers,modifiers);
     }
 }
+
+void StoreCode(const ModifierCode &code){
+	switch (code.)
+
+}
+
+
+void VariableDescriptor::QueueCode(ModifierCode &code){
+	if (code.HasCode()) {
+		StoreCode(mf);
+		code.Clear();
+	}
+}
+#endif
+
+// syntax Annn where nn is numeric only
+static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
+	char8 buffer[12];
+	char8 *pBuffer = &buffer[11];
+	*pBuffer-- = '\0';
+	while (size > 0){
+		uint32 n = size % 10;
+		size = size / 10;
+		*pBuffer-- = '0'+ n;
+	}
+	pBuffer++;
+	modifiers.AppendN(pBuffer);
+}
+
+void VariableDescriptor::MoveCodeToModifiers(uint32 nextArraySize){
+	switch(typeDescriptor.arrayType){
+	case Array1D:{
+		// convert to 2D if possible
+		volatile uint32 currentSize = typeDescriptor.arraySize;
+		     // fits in a 2D model
+		if ((nextArraySize < 1024)
+		     // it is not a Vector<T> or Matrix or StaticZTA
+		 && (nextArraySize > 0)
+		     // fits in a 2D model
+		 && (currentSize < 1024)
+		     // not a Vector<T>
+		 && (currentSize > 0)){
+			typeDescriptor.arrayType 		= Array2D;
+			typeDescriptor.numberOfRows     = nextArraySize;
+			typeDescriptor.numberOfColumns  = currentSize;
+		} else {
+			if (currentSize > 0){
+				modifiers.Append('A');
+				AddArrayDataToModifiers(modifiers,currentSize);
+			} else {
+				modifiers.Append('V');
+			}
+			bool isConstant = typeDescriptor.isConstant;
+			typeDescriptor.all = 0;
+			typeDescriptor.isConstant = isConstant;
+		}
+	}break;
+	case Array2D:{
+		// keep 2D if possible
+			 // fits in 2D model
+		if ((nextArraySize < 1024)
+		     // not a Matrix<T> or Vector <T> or StaticZTA
+		 && (nextArraySize > 0) &&
+		     // not a Matrix<T>
+		    (typeDescriptor.numberOfColumns > 0)){
+			uint32 saveColumns =  typeDescriptor.numberOfColumns;
+			uint32 saveRows    =  typeDescriptor.numberOfRows;
+			typeDescriptor.numberOfColumns  = saveRows;
+			typeDescriptor.numberOfRows     = nextArraySize;
+			modifiers.Append('A');
+			AddArrayDataToModifiers(modifiers,saveColumns);
+		} else { // 2D array dump to Modifiers
+			if (typeDescriptor.numberOfColumns > 0){
+				modifiers.Append('A');
+				AddArrayDataToModifiers(modifiers,typeDescriptor.numberOfColumns);
+				modifiers.Append('A');
+				AddArrayDataToModifiers(modifiers,typeDescriptor.numberOfRows);
+			} else { // Matrix<T>
+				modifiers.Append('M');
+			}
+
+			bool isConstant = typeDescriptor.isConstant;
+			typeDescriptor.all = 0;
+			typeDescriptor.isConstant = isConstant;
+		}
+	}break;
+	case ZeroTermArray:{
+		if (typeDescriptor.isConstant){
+			modifiers.Append('z');
+		} else {
+			modifiers.Append('Z');
+		}
+		typeDescriptor.all = 0;
+	}break;
+	case DynamicZeroTermArray:{
+		if (typeDescriptor.isConstant){
+			modifiers.Append('d');
+		} else {
+			modifiers.Append('D');
+		}
+		typeDescriptor.all = 0;
+	}break;
+	case StaticZeroTermArray:{
+		if (typeDescriptor.isConstant){
+			modifiers.Append('s');
+		} else {
+			modifiers.Append('S');
+		}
+		AddArrayDataToModifiers(modifiers,typeDescriptor.arraySize);
+		typeDescriptor.all = 0;
+	}break;
+	case PointerArray:{
+		if (typeDescriptor.isConstant){
+			modifiers.Append('p');
+		} else {
+			modifiers.Append('P');
+		}
+	}break;
+	default:{
+
+	}break;
+	}
+
+}
+
+void VariableDescriptor::QueueCode(BasicArrayType bat, uint32 size1,bool constant){
+	switch(bat){
+	case Array1D:{
+		//tries to store the array in the TypeDescriptor  either by creating a Array1D or an Array2D
+		//failing outputs current state to Modifiers
+		MoveCodeToModifiers(size1);
+		if (typeDescriptor.arrayType == ArrayUnknown){
+			if (size1 < 1024*1024){
+				typeDescriptor.arrayType = Array1D;
+				typeDescriptor.arraySize = size1;
+				typeDescriptor.isConstant = constant;
+			} else {
+				if (constant){
+					modifiers.Append('a');
+				} else {
+					modifiers.Append('A');
+				}
+				AddArrayDataToModifiers(modifiers,size1);
+			}
+		}
+	}break;
+	// only Matrix<T> case supported -- assumes size1 = 0
+	case Array2D:{
+		MoveCodeToModifiers(0);
+		typeDescriptor.arrayType = Array2D;
+		typeDescriptor.numberOfColumns = 0;
+		typeDescriptor.numberOfRows = 0;
+		typeDescriptor.isConstant = constant;
+	}break;
+	case ZeroTermArray:{
+		MoveCodeToModifiers(0);
+		typeDescriptor.arrayType = ZeroTermArray;
+		typeDescriptor.isConstant = constant;
+	}break;
+	case DynamicZeroTermArray:{
+		MoveCodeToModifiers(0);
+		typeDescriptor.arrayType = DynamicZeroTermArray;
+		typeDescriptor.isConstant = constant;
+	}break;
+	case StaticZeroTermArray:{
+		MoveCodeToModifiers(0);
+		if (size1 < 1024*1024){
+			typeDescriptor.arrayType = StaticZeroTermArray;
+			typeDescriptor.arraySize = size1;
+			typeDescriptor.isConstant = constant;
+		} else {
+			if (constant){
+				modifiers.Append('s');
+			} else {
+				modifiers.Append('S');
+			}
+			AddArrayDataToModifiers(modifiers,size1);
+		}
+	}break;
+	case PointerArray:{
+		MoveCodeToModifiers(0);
+		if (constant){
+			modifiers.Append('p');
+		} else {
+			modifiers.Append('P');
+		}
+	}break;
+	default:{
+
+	}break;
+	}
+}
+
+void VariableDescriptor::ResolveCode(TypeDescriptor td,bool constant){
+	if (typeDescriptor.arrayType == ArrayUnknown) {
+		typeDescriptor = td;
+	} else
+	if (td.isStructuredData){
+		MoveCodeToModifiers(0);
+		typeDescriptor = td;
+	} else
+	// can only merge scalar to vector definitions
+	if ((td.arrayType != Array1D) || (td.arraySize != 1)){
+		MoveCodeToModifiers(0);
+		typeDescriptor = td;
+	} else {
+		BasicType bt = td.type;
+		switch (bt){
+		// basic types supporting any modifier
+		case SignedInteger:
+		case UnsignedInteger:
+		case Float:
+		case Char:
+		{
+			uint32 tmp = td.objectSize;
+			typeDescriptor.objectSize = tmp;
+	        tmp = td.type;
+			typeDescriptor.type = tmp;
+		} break;
+		case Void:
+		case Pointer:
+		{
+			typeDescriptor.type = td.type;
+		} break;
+		// not supporting modifiers
+		case SignedBitInteger:
+		case UnsignedBitInteger:{
+			MoveCodeToModifiers(0);
+			typeDescriptor= td;
+		}break;
+		/// do not know how to handle yet
+		case SString:
+		case Stream:
+		case StructuredDataInterface:
+		case Invalid:
+		default:{
+			MoveCodeToModifiers(0);
+			typeDescriptor= td;
+			} break;
+		}
+	}
+	typeDescriptor.isConstant = typeDescriptor.isConstant | constant;
+}
+
+static bool isToken(char8 c){
+	return (((c >='A') && (c <='Z')) || ((c >='a') && (c <='z')));
+}
+static bool isConstantToken(char8 c){
+	return ((c >='a') && (c <='z'));
+}
+static bool isNumber(char8 c){
+	return ((c >='0') && (c <='9'));
+}
+static uint32 toNumber(char8 c){
+	return  static_cast<uint32>(c - '0') ;
+}
+static uint32 readNumber(char8 *&buffer){
+	uint32 result = 0;
+	while (isNumber(*buffer)){
+		result = result * 10u;
+		result += toNumber(*buffer);
+		buffer++;
+	}
+	return result;
+}
+
+void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const {
+    char8 *buffer = modifiers.GetList();
+
+    depth++;
+    do {
+    	token = *buffer;
+    	constant = isConstantToken(token);
+    	token = toupper(token);
+    	buffer++;
+    	size = readNumber(buffer);
+
+    	depth--;
+    } while ((token != '\0') && (depth > 0u));
+}
+
 
 
 VariableDescriptor::VariableDescriptor(){
     typeDescriptor = InvalidType;
-//    modifiers = NULL_PTR (char8 *);
 }
 
 VariableDescriptor::~VariableDescriptor(){
-//    void *modifiersP = static_cast<void *>(modifiers);
-//    MARTe::HeapManager::Free(modifiersP);
-//    modifiers = NULL_PTR(char8 *);
 }
 
 VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
     typeDescriptor = td;
-//    modifiers = NULL_PTR(char8 *);
 }
 
 VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-//    modifiers = CloneModifier(x.modifiers);
     modifiers.AppendN(x.modifiers.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-//    modifiers = CloneModifier(x.modifiers);
     modifiers.AppendN(x.modifiers.GetList());
 
 }
