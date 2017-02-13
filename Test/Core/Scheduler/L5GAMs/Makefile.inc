@@ -25,7 +25,7 @@
 #############################################################
 
 
-OBJSX=	GAMSchedulerTest.x MemoryMapTriggerOutputBrokerTest.x
+OBJSX=	GAMSchedulerTest.x MemoryMapAsyncOutputBrokerTest.x MemoryMapAsyncTriggerOutputBrokerTest.x
 			
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

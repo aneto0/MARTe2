@@ -1,7 +1,7 @@
 /**
- * @file MemoryMapTriggerOutputBroker.h
- * @brief Header file for class MemoryMapTriggerOutputBroker
- * @date 24/01/2017
+ * @file MemoryMapAsyncOutputBroker.h
+ * @brief Header file for class MemoryMapAsyncOutputBroker
+ * @date 13/02/2017
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapTriggerOutputBroker
+ * @details This header file contains the declaration of the class MemoryMapAsyncOutputBroker
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPTRIGGEROUTPUTBROKER_H_
-#define MEMORYMAPTRIGGEROUTPUTBROKER_H_
+#ifndef MEMORYMAPASYNCOUTPUTBROKER_H_
+#define MEMORYMAPASYNCOUTPUTBROKER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -43,16 +43,16 @@ namespace MARTe {
  * @brief Structure which describes a page of memory.
  * @details Each page of memory contains a copy of all the signals, at a given time instant, assigned to this Broker.
  */
-struct MemoryMapTriggerOutputBrokerBufferEntry {
+struct MemoryMapAsyncOutputBrokerBufferEntry {
     /**
      * Buffer index
      */
     MARTe::uint32 index;
 
     /**
-     * Triggered to be stored?
+     * Data ready to be consumed?
      */
-    bool triggered;
+    bool toConsume;
 
     /**
      * Signal addresses
@@ -60,36 +60,28 @@ struct MemoryMapTriggerOutputBrokerBufferEntry {
     void **mem;
 };
 /**
- * @brief A MemoryMapBroker which stores the signals in a DataSourceI memory only if a Trigger has been set.
- * @details This BrokerI implementation stores the GAM data in an internal memory buffer.
- * Every time a triggering signal is set to 1, this data is asynchronously flushed into the DataSourceI memory (retrieved with GetSignalMemoryBuffer)
- * and the Synchronise method is called on the DataSourceI. The flushing of this data is performed in the context of a different thread (SingleThreadService).
+ * @brief A MemoryMapBroker which asynchronously stores the signals in a DataSourceI memory.
+ * @details This BrokerI implementation stores the GAM data in an internal memory buffer. The flushing of this data is performed asynchronously
+ * in the context of a different thread (SingleThreadService).
  *
- * If the number of pre-trigger buffers is greater than zero, every time a trigger is detected, the pre-trigger number of pages before that were acquired before the
- * trigger will also be flushed into the DataSourceI. If the number of post-trigger buffers is greater than zero, the post-trigger number of pages
- * after the trigger will also be flushed into the DataSourceI.
- *
- * The Triggering signal shall be the first signal of the DataSourceI (i.e. the signal with the name GetSignalName(0, name)) and shall have
- * type uint8. All the signals shall have one and only one sample. The DataSourceI shall return GetNumberOfMemoryBuffers() == 1.
- *
- * Only one GAM is allowed to interact with this MemoryMapTriggerOutputBroker (an IOGAM can be used to collate all the signals).
+ * Only one GAM is allowed to interact with this MemoryMapAsyncOutputBroker (an IOGAM can be used to collate all the signals).
  */
-class MemoryMapTriggerOutputBroker: public MemoryMapBroker {
+class MemoryMapAsyncOutputBroker: public MemoryMapBroker {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.
      */
-MemoryMapTriggerOutputBroker    ();
+MemoryMapAsyncOutputBroker    ();
 
     /**
      * @brief Destructor. Frees all the allocated memory and stops the service responsible
      * by flushing the data into the DataSourceI.
      */
-    virtual ~MemoryMapTriggerOutputBroker();
+    virtual ~MemoryMapAsyncOutputBroker();
 
     /**
-     * @brief Prevents this MemoryMapTriggerOutputBroker from being used as a MemoryMapBroker.
+     * @brief Prevents this MemoryMapAsyncOutputBroker from being used as a MemoryMapBroker.
      * @return false.
      */
     virtual bool Init(const SignalDirection direction,
@@ -108,22 +100,16 @@ MemoryMapTriggerOutputBroker    ();
      * @param gamMemoryAddress (see MemoryMapOutputBroker::Init).
      * @param numberOfBuffersIn the number of pages that will be created to copy the GAM signals. The higher this number, the larger the buffer to
      * allow the asynchronous flushing into the DataSourceI (particularly useful if this operation is slow).
-     * @param preTriggerBuffersIn number of pre-trigger pages to flush into the DataSourceI.
-     * @param postTriggerBuffersIn number of post-trigger pages to flush into the DataSourceI.
      * @param cpuMaskIn the CPU mask where the SingleThreadService will execute.
+     * @param stackSizeIn the stack size assigned to the SingleThreadService.
      * @return true if MemoryMapOutputBroker::Init() returns true and if all the pre-conditions are met.
      * @pre
      *   numberOfBuffers > 0 &&
-     *   preTriggerBuffers < numberOfBuffers &&
-     *   postTriggerBuffers < numberOfBuffers &&
-     *   (preTriggerBuffers + postTriggerBuffers) < numberOfBuffers &&
      *   dataSourceIn.GetNumberOfFunctions() == 1 &&
      *   dataSourceIn.GetNumberOfMemoryBuffers() &&
-     *   dataSourceIn.GetSignalType(0u) == UnsignedInteger8Bit //The triggering signal shall be the first DataSourceI signal and shall be of type uint8
      */
-    virtual bool InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-            void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const uint32 preTriggerBuffersIn,
-            const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn);
+    virtual bool InitWithBufferParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+            void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn);
 
     /**
      * @brief Sequentially copies all the signals from the GAM memory to the next free buffer memory.
@@ -140,22 +126,16 @@ MemoryMapTriggerOutputBroker    ();
     ProcessorType GetCPUMask() const;
 
     /**
+     * @brief Gets the stack size of the SingleThreadService.
+     * @return the stack size of the SingleThreadService.
+     */
+    uint32 GetStackSize() const;
+
+    /**
      * @brief Gets the number of buffers (i.e. pages) where the GAM data is stored.
      * @return the number of buffers (i.e. pages) where the GAM data is stored.
      */
     uint32 GetNumberOfBuffers() const;
-
-    /**
-     * @brief Gets the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
-     * @return the number of pre-trigger buffers (i.e. pages) that are to be stored after each trigger.
-     */
-    uint32 GetPreTriggerBuffers() const;
-
-    /**
-     * @brief Gets the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
-     * @return the number of post-trigger buffers (i.e. pages) that are to be stored after each trigger.
-     */
-    uint32 GetPostTriggerBuffers() const;
 
 private:
 
@@ -178,9 +158,14 @@ private:
     ProcessorType cpuMask;
 
     /**
+     * The SingleThreadService stack size.
+     */
+    uint32 stackSize;
+
+    /**
      * The multi-page memory buffer where the GAM signals are stored.
      */
-    MemoryMapTriggerOutputBrokerBufferEntry *bufferMemoryMap;
+    MemoryMapAsyncOutputBrokerBufferEntry *bufferMemoryMap;
 
     /**
      * The DataSource associated to this broker
@@ -201,27 +186,6 @@ private:
      * The read index where the BufferLoop is reading from.
      */
     uint32 readSynchIdx;
-
-    /**
-     * Number of pre-trigger buffers.
-     */
-    uint32 preTriggerBuffers;
-
-    /**
-     * Number of post-trigger buffers.
-     */
-    uint32 postTriggerBuffers;
-
-    /**
-     * This counter decrements every-time a post buffer is written. It will reset to postTriggerBuffers when a trigger occurs so that the post-trigger buffers
-     * always count from the last post trigger
-     */
-    uint32 postTriggerBuffersCounter;
-
-    /**
-     * If two consecutive triggers are set, only set the pre-trigger if it was not already triggered.
-     */
-    bool wasTriggered;
 
     /**
      * Semaphore that synchronises the Execute and the BufferLoop methods.
@@ -246,7 +210,7 @@ private:
     /**
      * The binder for the SingleThreadService.
      */
-    EmbeddedServiceMethodBinderT<MemoryMapTriggerOutputBroker> binder;
+    EmbeddedServiceMethodBinderT<MemoryMapAsyncOutputBroker> binder;
 };
 }
 
@@ -254,5 +218,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPTRIGGEROUTPUTBROKER_H_ */
+#endif /* MEMORYMAPASYNCOUTPUTBROKER_H_ */
 

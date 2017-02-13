@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapTriggerOutputBroker.cpp
- * @brief Source file for class MemoryMapTriggerOutputBroker
+ * @file MemoryMapAsyncTriggerOutputBroker.cpp
+ * @brief Source file for class MemoryMapAsyncTriggerOutputBroker
  * @date 24/01/2017
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryMapTriggerOutputBroker (public, protected, and private). Be aware that some
+ * the class MemoryMapAsyncTriggerOutputBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "MemoryMapAsyncTriggerOutputBroker.h"
+
 #include "AdvancedErrorManagement.h"
-#include "MemoryMapTriggerOutputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,9 +40,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapTriggerOutputBroker::MemoryMapTriggerOutputBroker() :
-        MemoryMapBroker(), service(binder), binder(*this, &MemoryMapTriggerOutputBroker::BufferLoop) {
-    bufferMemoryMap = NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *);
+MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
+        MemoryMapBroker(), service(binder), binder(*this, &MemoryMapAsyncTriggerOutputBroker::BufferLoop) {
+    bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *);
     numberOfBuffers = 0u;
     writeIdx = 0u;
     readSynchIdx = 0u;
@@ -62,7 +63,7 @@ MemoryMapTriggerOutputBroker::MemoryMapTriggerOutputBroker() :
 }
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
-MemoryMapTriggerOutputBroker::~MemoryMapTriggerOutputBroker() {
+MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
     if (!sem.IsClosed()) {
         if (fastSem.FastLock() == ErrorManagement::NoError) {
             destroying = true;
@@ -84,7 +85,7 @@ MemoryMapTriggerOutputBroker::~MemoryMapTriggerOutputBroker() {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
         }
     }
-    if (bufferMemoryMap != NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *)) {
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
         uint32 i;
         for (i = 0u; i < numberOfBuffers; i++) {
             uint32 c;
@@ -96,24 +97,25 @@ MemoryMapTriggerOutputBroker::~MemoryMapTriggerOutputBroker() {
         }
 
         delete[] bufferMemoryMap;
-        bufferMemoryMap = NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *);
+        bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *);
     }
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
-bool MemoryMapTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
                                         void * const gamMemoryAddress) {
     return false;
 }
 
-bool MemoryMapTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
                                                              void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const uint32 preTriggerBuffersIn,
-                                                             const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn) {
+                                                             const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     numberOfBuffers = numberOfBuffersIn;
     preTriggerBuffers = preTriggerBuffersIn;
     postTriggerBuffers = postTriggerBuffersIn;
     cpuMask = cpuMaskIn;
+    stackSize = stackSizeIn;
 
     if (ok) {
         ok = (numberOfBuffers > 0u);
@@ -179,7 +181,7 @@ bool MemoryMapTriggerOutputBroker::InitWithTriggerParameters(const SignalDirecti
         dataSourceRef = Reference(&dataSourceIn);
     }
     if (ok) {
-        bufferMemoryMap = new MemoryMapTriggerOutputBrokerBufferEntry[numberOfBuffers];
+        bufferMemoryMap = new MemoryMapAsyncTriggerOutputBrokerBufferEntry[numberOfBuffers];
         uint32 i;
         for (i = 0u; i < numberOfBuffers; i++) {
             bufferMemoryMap[i].index = i;
@@ -193,6 +195,7 @@ bool MemoryMapTriggerOutputBroker::InitWithTriggerParameters(const SignalDirecti
         }
     }
     if (ok) {
+        service.SetStackSize(stackSize);
         service.SetCPUMask(cpuMask);
     }
     if (ok) {
@@ -202,26 +205,30 @@ bool MemoryMapTriggerOutputBroker::InitWithTriggerParameters(const SignalDirecti
     return ok;
 }
 
-ProcessorType MemoryMapTriggerOutputBroker::GetCPUMask() const {
+ProcessorType MemoryMapAsyncTriggerOutputBroker::GetCPUMask() const {
     return cpuMask;
 }
 
-uint32 MemoryMapTriggerOutputBroker::GetPreTriggerBuffers() const {
+uint32 MemoryMapAsyncTriggerOutputBroker::GetStackSize() const {
+    return stackSize;
+}
+
+uint32 MemoryMapAsyncTriggerOutputBroker::GetPreTriggerBuffers() const {
     return preTriggerBuffers;
 }
 
-uint32 MemoryMapTriggerOutputBroker::GetPostTriggerBuffers() const {
+uint32 MemoryMapAsyncTriggerOutputBroker::GetPostTriggerBuffers() const {
     return postTriggerBuffers;
 }
 
-uint32 MemoryMapTriggerOutputBroker::GetNumberOfBuffers() const {
+uint32 MemoryMapAsyncTriggerOutputBroker::GetNumberOfBuffers() const {
     return numberOfBuffers;
 }
 
-bool MemoryMapTriggerOutputBroker::Execute() {
+bool MemoryMapAsyncTriggerOutputBroker::Execute() {
     bool ret = true;
 
-    if (bufferMemoryMap != NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *)) {
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
         if (bufferMemoryMap[writeIdx].triggered) {
             //Buffer overrun...
             const uint32 idx = writeIdx;
@@ -279,7 +286,7 @@ bool MemoryMapTriggerOutputBroker::Execute() {
     return ret;
 }
 
-ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
+ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;
@@ -305,7 +312,7 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
         bool ret = true;
         //Check all the buffers until writeIdx - preTriggerBuffers (inclusive)
         while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret)) {
-            if (bufferMemoryMap != NULL_PTR(MemoryMapTriggerOutputBrokerBufferEntry *)) {
+            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
                 if (bufferMemoryMap[readSynchIdx].triggered) {
                     uint32 c;
                     for (c = 0u; (c < numberOfCopies) && (ret); c++) {
@@ -354,5 +361,5 @@ ErrorManagement::ErrorType MemoryMapTriggerOutputBroker::BufferLoop(const Execut
     return err;
 }
 
-CLASS_REGISTER(MemoryMapTriggerOutputBroker, "1.0")
+CLASS_REGISTER(MemoryMapAsyncTriggerOutputBroker, "1.0")
 }

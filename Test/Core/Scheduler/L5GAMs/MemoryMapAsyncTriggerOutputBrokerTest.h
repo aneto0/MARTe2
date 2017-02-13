@@ -1,6 +1,6 @@
 /**
- * @file MemoryMapTriggerOutputBrokerTest.h
- * @brief Header file for class MemoryMapTriggerOutputBrokerTest
+ * @file MemoryMapAsyncTriggerOutputBrokerTest.h
+ * @brief Header file for class MemoryMapAsyncTriggerOutputBrokerTest
  * @date 24/01/2017
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapTriggerOutputBrokerTest
+ * @details This header file contains the declaration of the class MemoryMapAsyncTriggerOutputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPTRIGGEROUTPUTBROKERTEST_H_
-#define MEMORYMAPTRIGGEROUTPUTBROKERTEST_H_
+#ifndef MEMORYMAPASYNCTRIGGEROUTPUTBROKERTEST_H_
+#define MEMORYMAPASYNCTRIGGEROUTPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -36,9 +36,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Tests the MemoryMapTriggerOutputBroker public methods.
+ * @brief Tests the MemoryMapAsyncTriggerOutputBroker public methods.
  */
-class MemoryMapTriggerOutputBrokerTest {
+class MemoryMapAsyncTriggerOutputBrokerTest {
 public:
     /**
      * @brief Tests the default constructor.
@@ -171,6 +171,11 @@ public:
     bool TestGetPreTriggerBuffers();
 
     /**
+     * @brief Tests the GetStackSize method.
+     */
+    bool TestGetStackSize();
+
+    /**
      * @brief Tests the GetPostTriggerBuffers method.
      */
     bool TestGetPostTriggerBuffers();
@@ -181,5 +186,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPTRIGGEROUTPUTBROKERTEST_H_ */
+#endif /* MEMORYMAPASYNCTRIGGEROUTPUTBROKERTEST_H_ */
 

@@ -25,12 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
+
+#include "../../Core/Scheduler/L5GAMs/MemoryMapAsyncTriggerOutputBrokerTest.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapTriggerOutputBrokerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
