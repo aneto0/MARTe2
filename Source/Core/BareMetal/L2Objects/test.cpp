@@ -60,7 +60,6 @@ void printType(AnyType x){
     char *pbuf = &buffer[0];
     while (token != 0) {
         depth++;
-        if (constant) pbuf += sprintf (pbuf,"C ");
         switch (token){
         case 'A':{
         	pbuf += sprintf (pbuf,"[%i]",size);
@@ -72,38 +71,50 @@ void printType(AnyType x){
         	pbuf += sprintf (pbuf,"%c ",token);
         }break;
         }
+        if (constant) pbuf += sprintf (pbuf,"C ");
         vd.GetModifier(token,constant,size,depth);
     } ;
     printf ("%-12s}",buffer);
 
     TypeDescriptor td = vd.GetFullTypeDescriptor();
+    char *consts= "";
     if (td.isConstant){
-        printf ("const ");
+        //printf ("const ");
+    	consts = "const ";
     }
     if (td.isStructuredData){
         printf ("S(%i) ",(int)td.structuredDataIdCode);
     } else {
         if (td.IsBitType()){
-            printf (" %s%i:%i ",BasicTypeName(td.type),(int)td.numberOfBits,(int)td.bitOffset);
+            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type),(int)td.numberOfBits,(int)td.bitOffset);
         } else {
             switch(td.arrayType){
             case ZeroTermArray:{
-                printf (" %s%i Z",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case DynamicZeroTermArray:{
-                printf (" %s%i DZ",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("ZeroTerminatedArray<%s%i>",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case StaticZeroTermArray:{
-                printf (" %s%i SZ",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("StaticZeroTerminatedArray<%s%i,%i>",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             }break;
             case Array1D:{
-                printf (" %s%i [%i]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            	if (td.arraySize > 1)
+            		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            	else
+               	if (td.arraySize == 0)
+               		printf (" Vector<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+            	else
+               		printf ("%s%s%i",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case Array2D:{
-                printf (" %s%i [%i][%i]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.numberOfRows,(int)td.numberOfColumns);
+                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case ArrayLarge:{
-                printf (" %s%i [%i][...]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+                printf ("%s%i [%i][...]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            }break;
+            case PointerArray:{
+                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             default:
             case ArrayUnknown:{
@@ -169,6 +180,8 @@ void testAT(){
     TEST(uint4);
 
     TEST(uint32*);
+    TEST(uint32 const *);
+    TEST(uint32 *const);
     TEST(uint32 const **);
     TEST(uint32  * const *);
     TEST(uint32  * * );
@@ -188,8 +201,15 @@ void testAT(){
     TEST(CCString);
     TEST(DynamicCString);
     TEST(StaticCString<32>);
-
     TEST(ZeroTerminatedArray<float>);
+    TEST(ZeroTerminatedArray<const int32>);
+    TEST(Matrix<float>);
+    TEST(Matrix<const float>);
+    TEST(const Matrix<uint3>);
+    TEST(Vector<int32>);
+    TEST(Vector<int32 *>);
+    TEST(Vector<int32> * const );
+
 
     TEST(pippone);
     TEST(const pippone2 *);

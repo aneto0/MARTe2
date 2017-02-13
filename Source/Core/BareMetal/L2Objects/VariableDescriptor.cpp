@@ -210,62 +210,32 @@ static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
 	modifiers.AppendN(pBuffer);
 }
 
-void VariableDescriptor::MoveCodeToModifiers(uint32 nextArraySize){
+void VariableDescriptor::MoveCodeToModifiers(){
+	bool isConstant = typeDescriptor.isConstant;
 	switch(typeDescriptor.arrayType){
+	case ArrayUnknown:{
+		if (isConstant) modifiers.Append('C');
+		typeDescriptor.all = 0;
+	} break;
 	case Array1D:{
-		// convert to 2D if possible
 		volatile uint32 currentSize = typeDescriptor.arraySize;
-		     // fits in a 2D model
-		if ((nextArraySize < 1024)
-		     // it is not a Vector<T> or Matrix or StaticZTA
-		 && (nextArraySize > 0)
-		     // fits in a 2D model
-		 && (currentSize < 1024)
-		     // not a Vector<T>
-		 && (currentSize > 0)){
-			typeDescriptor.arrayType 		= Array2D;
-			typeDescriptor.numberOfRows     = nextArraySize;
-			typeDescriptor.numberOfColumns  = currentSize;
-		} else {
-			if (currentSize > 0){
-				modifiers.Append('A');
-				AddArrayDataToModifiers(modifiers,currentSize);
-			} else {
-				modifiers.Append('V');
-			}
-			bool isConstant = typeDescriptor.isConstant;
+
+		if (currentSize == 0){
+			modifiers.Append('V');
+			typeDescriptor.all = 0;
+			typeDescriptor.isConstant = isConstant;
+		} else
+     	if (currentSize > 1){
+			modifiers.Append('A');
+			AddArrayDataToModifiers(modifiers,currentSize);
 			typeDescriptor.all = 0;
 			typeDescriptor.isConstant = isConstant;
 		}
 	}break;
 	case Array2D:{
-		// keep 2D if possible
-			 // fits in 2D model
-		if ((nextArraySize < 1024)
-		     // not a Matrix<T> or Vector <T> or StaticZTA
-		 && (nextArraySize > 0) &&
-		     // not a Matrix<T>
-		    (typeDescriptor.numberOfColumns > 0)){
-			uint32 saveColumns =  typeDescriptor.numberOfColumns;
-			uint32 saveRows    =  typeDescriptor.numberOfRows;
-			typeDescriptor.numberOfColumns  = saveRows;
-			typeDescriptor.numberOfRows     = nextArraySize;
-			modifiers.Append('A');
-			AddArrayDataToModifiers(modifiers,saveColumns);
-		} else { // 2D array dump to Modifiers
-			if (typeDescriptor.numberOfColumns > 0){
-				modifiers.Append('A');
-				AddArrayDataToModifiers(modifiers,typeDescriptor.numberOfColumns);
-				modifiers.Append('A');
-				AddArrayDataToModifiers(modifiers,typeDescriptor.numberOfRows);
-			} else { // Matrix<T>
-				modifiers.Append('M');
-			}
-
-			bool isConstant = typeDescriptor.isConstant;
-			typeDescriptor.all = 0;
-			typeDescriptor.isConstant = isConstant;
-		}
+		modifiers.Append('M');
+		typeDescriptor.all = 0;
+		typeDescriptor.isConstant = isConstant;
 	}break;
 	case ZeroTermArray:{
 		if (typeDescriptor.isConstant){
@@ -298,6 +268,7 @@ void VariableDescriptor::MoveCodeToModifiers(uint32 nextArraySize){
 		} else {
 			modifiers.Append('P');
 		}
+		typeDescriptor.all = 0;
 	}break;
 	default:{
 
@@ -306,67 +277,56 @@ void VariableDescriptor::MoveCodeToModifiers(uint32 nextArraySize){
 
 }
 
-void VariableDescriptor::QueueCode(BasicArrayType bat, uint32 size1,bool constant){
+void VariableDescriptor::AddArrayCode(BasicArrayType bat, uint32 size1){
+	bool constant = false;
 	switch(bat){
 	case Array1D:{
 		//tries to store the array in the TypeDescriptor  either by creating a Array1D or an Array2D
 		//failing outputs current state to Modifiers
-		MoveCodeToModifiers(size1);
+		MoveCodeToModifiers();
 		if (typeDescriptor.arrayType == ArrayUnknown){
-			if (size1 < 1024*1024){
+			if (size1 < 0xFFFFFu){
 				typeDescriptor.arrayType = Array1D;
 				typeDescriptor.arraySize = size1;
-				typeDescriptor.isConstant = constant;
+				typeDescriptor.isConstant = false;
 			} else {
-				if (constant){
-					modifiers.Append('a');
-				} else {
-					modifiers.Append('A');
-				}
+				modifiers.Append('A');
 				AddArrayDataToModifiers(modifiers,size1);
 			}
 		}
 	}break;
 	// only Matrix<T> case supported -- assumes size1 = 0
 	case Array2D:{
-		MoveCodeToModifiers(0);
+		MoveCodeToModifiers();
 		typeDescriptor.arrayType = Array2D;
-		typeDescriptor.numberOfColumns = 0;
-		typeDescriptor.numberOfRows = 0;
-		typeDescriptor.isConstant = constant;
+		typeDescriptor.arraySize = 0;
+		typeDescriptor.isConstant = false;
 	}break;
 	case ZeroTermArray:{
-		MoveCodeToModifiers(0);
+		MoveCodeToModifiers();
 		typeDescriptor.arrayType = ZeroTermArray;
-		typeDescriptor.isConstant = constant;
+		typeDescriptor.isConstant = false;
 	}break;
 	case DynamicZeroTermArray:{
-		MoveCodeToModifiers(0);
+		MoveCodeToModifiers();
 		typeDescriptor.arrayType = DynamicZeroTermArray;
-		typeDescriptor.isConstant = constant;
+		typeDescriptor.isConstant = false;
 	}break;
 	case StaticZeroTermArray:{
-		MoveCodeToModifiers(0);
-		if (size1 < 1024*1024){
+		MoveCodeToModifiers();
+		if (size1 < 0xFFFFFu){
 			typeDescriptor.arrayType = StaticZeroTermArray;
 			typeDescriptor.arraySize = size1;
-			typeDescriptor.isConstant = constant;
+			typeDescriptor.isConstant = false;
 		} else {
-			if (constant){
-				modifiers.Append('s');
-			} else {
-				modifiers.Append('S');
-			}
+			modifiers.Append('S');
 			AddArrayDataToModifiers(modifiers,size1);
 		}
 	}break;
 	case PointerArray:{
-		MoveCodeToModifiers(0);
-		if (constant){
-			modifiers.Append('p');
-		} else {
-			modifiers.Append('P');
-		}
+		MoveCodeToModifiers();
+		typeDescriptor.arrayType = PointerArray;
+		typeDescriptor.isConstant = false;
 	}break;
 	default:{
 
@@ -374,17 +334,22 @@ void VariableDescriptor::QueueCode(BasicArrayType bat, uint32 size1,bool constan
 	}
 }
 
-void VariableDescriptor::ResolveCode(TypeDescriptor td,bool constant){
+void VariableDescriptor::AddConstantCode(){
+	typeDescriptor.isConstant = true;
+}
+
+void VariableDescriptor::FinaliseCode(TypeDescriptor td){
+	bool constant = typeDescriptor.isConstant;
 	if (typeDescriptor.arrayType == ArrayUnknown) {
 		typeDescriptor = td;
 	} else
 	if (td.isStructuredData){
-		MoveCodeToModifiers(0);
+		MoveCodeToModifiers();
 		typeDescriptor = td;
 	} else
 	// can only merge scalar to vector definitions
 	if ((td.arrayType != Array1D) || (td.arraySize != 1)){
-		MoveCodeToModifiers(0);
+		MoveCodeToModifiers();
 		typeDescriptor = td;
 	} else {
 		BasicType bt = td.type;
@@ -397,18 +362,18 @@ void VariableDescriptor::ResolveCode(TypeDescriptor td,bool constant){
 		{
 			uint32 tmp = td.objectSize;
 			typeDescriptor.objectSize = tmp;
-	        tmp = td.type;
+//			typeDescriptor.objectSize = td.objectSize;
+			tmp = td.type;
 			typeDescriptor.type = tmp;
 		} break;
 		case Void:
-		case Pointer:
 		{
 			typeDescriptor.type = td.type;
 		} break;
 		// not supporting modifiers
 		case SignedBitInteger:
 		case UnsignedBitInteger:{
-			MoveCodeToModifiers(0);
+			MoveCodeToModifiers();
 			typeDescriptor= td;
 		}break;
 		/// do not know how to handle yet
@@ -417,7 +382,7 @@ void VariableDescriptor::ResolveCode(TypeDescriptor td,bool constant){
 		case StructuredDataInterface:
 		case Invalid:
 		default:{
-			MoveCodeToModifiers(0);
+			MoveCodeToModifiers();
 			typeDescriptor= td;
 			} break;
 		}

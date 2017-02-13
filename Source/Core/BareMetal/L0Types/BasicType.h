@@ -67,7 +67,7 @@ const BasicType Char = 3u;
 /**
  * @brief The type is a pointer. A void*. No information on the type pointed to
  */
-const BasicType Pointer = 4u;
+//const BasicType Pointer = 4u;  // replaced by the BasicArrayType::BasicArrayType
 
 /**
  * @brief The type is a signed bit range .
@@ -114,22 +114,22 @@ typedef uint8 BasicArrayType;
 
 
 /**
- * @brief The type is a scalar or a vector
+ * @brief The type is invalid or unKnown
  */
 const BasicArrayType ArrayUnknown = 0u;
 
 /**
- * @brief The type is a scalar or a vector
+ * @brief The type is a scalar (1) - vector : Vector<T>(0) or T[N] (N)
  */
 const BasicArrayType Array1D = 1u;
 
 /**
- * @brief The type is a matrix
+ * @brief The type is a matrix - type Matrix<T>
  */
 const BasicArrayType Array2D = 2u;
 
 /**
- * @brief The type is a matrix
+ * @brief The type is a matrix - more than 1 dimensions - the missing one are listed elsewhere
  */
 const BasicArrayType ArrayLarge = 3u;
 
@@ -149,7 +149,7 @@ const BasicArrayType DynamicZeroTermArray = 5u;
 const BasicArrayType StaticZeroTermArray = 6u;
 
 /**
- * @brief The type is a zero term vector of fixed size non-reallocable
+ * @brief The type is a pointer to the specified type
  */
 const BasicArrayType PointerArray = 7u;
 

@@ -96,6 +96,10 @@ private:
     /** attempt at stopping copy operator  misbehaviour */
     operator BitRange<baseType, numberOfBits, bitOffset>() const { return *this; }
 
+//    void operator=(const BitRange<baseType, numberOfBits, bitOffset> &input)= delete;
+
+//    BitRange(const BitRange<baseType, numberOfBits, bitOffset> &br) {}
+
     /**
      * The number value.
      */

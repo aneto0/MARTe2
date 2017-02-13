@@ -77,9 +77,9 @@ namespace MARTe {
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
  * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (1D,[n]) | 20                   |
  *
- * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | columns | rows       |
- * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (2D)     | 10      | 10         |
+// * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | columns | rows       |
+// * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     |
+// * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (2D)     | 10      | 10         |
  *
  * | isStructuredData   | isConstant  | type               | unused        | arrayType      | unused           |
  * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
@@ -89,9 +89,9 @@ namespace MARTe {
  * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
  * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (1D,[N]) | 20                   |
  *
- * | isStructuredData   | isConstant  | type               | unused        | arrayType  | columns | rows       | rows >=1
- * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     | columns >=1
- * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (2D)     | 10      | 10         |
+// * | isStructuredData   | isConstant  | type               | unused        | arrayType  | columns | rows       | rows >=1
+// * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     | columns >=1
+// * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (2D)     | 10      | 10         |
  *
  *
  */
@@ -158,36 +158,36 @@ public:
 
         /*****************************************************
          *
-         *        For arrayType = 1 & 6
+         *        For arrayType = Array1D & StaticZeroTermArray
          *
          *****************************************************/
 
         /**
          * The vector size for 1D array and for ?D+ array the first dimensions size
-         * Up to 1K  0 means- not determined
+         * Up to 1M  0 means Vector<T> 1 means scalar >1 means T[arraySize]
          * Used for char[] to indicate size of memory
          */
         BitRange<uint32, 20u, 12u> arraySize;
 
 
-        /*****************************************************
-         *
-         *        For arrayType = 2
-         *
-         *****************************************************/
-
-        /**
-         * The vector size
-         * Up to 1K  0 means- not determined
-         * Used for char[] to indicate size of memory
-         */
-        BitRange<uint32, 10u, 12u> numberOfRows;
-
-        /**
-         * The vector size
-         * Up to 1K 0 means- not determined
-         */
-        BitRange<uint32, 10u, 22u> numberOfColumns;
+//      /*****************************************************
+//         *
+//         *        For arrayType = 2
+//         *
+//         *****************************************************/
+//
+//        /**
+//         * The vector size
+//         * Up to 1K  0 means- not determined
+//         * Used for char[] to indicate size of memory
+//         */
+//        BitRange<uint32, 10u, 12u> numberOfRows;
+//
+//        /**
+//         * The vector size
+//         * Up to 1K 0 means- not determined
+//         */
+//        BitRange<uint32, 10u, 22u> numberOfColumns;
 
 
 
@@ -275,8 +275,9 @@ public:
                    const BasicType typeIn,
                    const BasicObjectSize objectSizeIn,
                    const BasicArrayType arrayTypeIn,
-                   const uint32 numberOfColumnsIn,
-                   const uint32 numberOfRowsIn
+                   const uint32 arraySizeIn
+//                   ,const uint32 numberOfColumnsIn
+//                   ,const uint32 numberOfRowsIn
                    );
 
     /**
@@ -438,23 +439,22 @@ static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 /**
  * CCString  descriptor
  */
-static const TypeDescriptor ConstCharString(true, Char, Size8bit,ZeroTermArray,  1, 0);
+static const TypeDescriptor ConstCharString(true, Char, Size8bit,ZeroTermArray,  1);
 
 /**
  * CString descriptor
  */
-static const TypeDescriptor CharString(false,  Char, Size8bit,ZeroTermArray,  1, 0);
+static const TypeDescriptor CharString(false,  Char, Size8bit,ZeroTermArray,  1);
 
 /**
  *  Dynamic String descriptor char * = malloc
  */
-static const TypeDescriptor DynamicCharString(false,  Char, Size8bit,DynamicZeroTermArray, 1,  0);
+static const TypeDescriptor DynamicCharString(false,  Char, Size8bit,DynamicZeroTermArray, 1);
 
 /**
  *  Static char String descriptor char[1]
  */
-static const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray, 1,  0);
-
+static const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray, 1);
 
 /**
  * ConfigurationDatabase node
@@ -464,17 +464,18 @@ static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInt
 /**
  * Pointer descriptor
  */
-static const TypeDescriptor PointerType(false, Pointer, sizeof(void*) * 8u);
+static const TypeDescriptor VoidPointer(false, Void, Size8bit,PointerArray,0);
 
 /**
  * @brief Describes one layer of an array. returns as void[size] - size is set to 1 and need to be adjusted - the type is void as the size of the other array layers is unknown
  */
-static const TypeDescriptor ArrayLayerType(false, Void, Array1D,0,1,0);
+static const TypeDescriptor ArrayLayerType(false, Void, Size8bit,Array1D,0);
+
 
 /**
  * @brief A large array- too large to fit within the models 1D[1024x1024] or 2D[1024][1024]
  */
-static const TypeDescriptor LargeArrayType(false, Void, ArrayLarge,0,0,0);
+//static const TypeDescriptor LargeArrayType(false, Void, ArrayLarge,0,0);
 
 
 /*---------------------------------------------------------------------------*/

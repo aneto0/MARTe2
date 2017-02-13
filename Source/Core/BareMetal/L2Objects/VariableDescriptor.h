@@ -55,47 +55,6 @@ class DynamicCString;
 
 namespace MARTe {
 
-#if 0
-/**
- *
- */
-class ModifierCode{
-
-public:
-	///
-	void SetConstant(){
-		constant = true;
-	}
-
-	///
-	void SetArrayCode(char8 codeIn,uint32 sizeIn){
-		code = codeIn;
-		size = size;
-	}
-
-	///
-	void SetCode(char8 codeIn){
-		code = codeIn;
-	}
-
-	///
-	ModifierCode(){
-		Clear();
-	}
-
-	///
-	void Clear(){
-		size = 0;
-		code = '\0';
-		constant = false;
-	}
-	///
-	bool HasCode(){
-		return (code != '\0');
-	}
-};
-#endif
-
 /**
  * @brief full description of the type of a variable including modifiers
  */
@@ -211,13 +170,15 @@ private:
      * Adds a code in the modifiers if one present in code
      * Clears code and
      */
-    //void QueueCode(ModifierCode &code);
+    //void AddArrayCode(ModifierCode &code);
 
-    void QueueCode(BasicArrayType bat, uint32 size1,bool constant);
+    void AddArrayCode(BasicArrayType bat, uint32 size1);
 
-    void ResolveCode(TypeDescriptor td,bool constant);
+    void AddConstantCode();
 
-    void MoveCodeToModifiers(uint32 nextArraySize);
+    void FinaliseCode(TypeDescriptor td);
+
+    void MoveCodeToModifiers();
 
     /**
      *  @brief a zero terminated sequence of tokens.
@@ -244,7 +205,7 @@ private:
      * @post Adds a M to the modifiers
      */
     template<typename T>
-    void Match(Matrix<T> * mat,bool constant);
+    void Match(Matrix<T> * mat);
 
     /**
      * @brief Matches a Vector
@@ -253,7 +214,7 @@ private:
      * @post Adds a V to the modifiers
      */
     template<typename T>
-    void Match(Vector<T> * vec,bool constant);
+    void Match(Vector<T> * vec);
 
     /**
      * @brief Matches a static zero terminated array
@@ -262,7 +223,7 @@ private:
      * @post Adds a V to the modifiers
      */
     template<typename T>
-    void Match(ZeroTerminatedArray<T> * vec,bool constant);
+    void Match(ZeroTerminatedArray<T> * vec);
 
     /**
      * @brief Matches a dynamic zero terminated array
@@ -271,7 +232,7 @@ private:
      * @post Adds a V to the modifiers
      */
     template<typename T >
-    void Match(DynamicZeroTerminatedArray<T,16u> * vec,bool constant);
+    void Match(DynamicZeroTerminatedArray<T,16u> * vec);
 
     /**
      * @brief Matches a zero terminated array statically allocated T[N]
@@ -280,7 +241,7 @@ private:
      * @post Adds a V to the modifiers
      */
     template<typename T,uint32 sz >
-    void Match(StaticZeroTerminatedArray<T,sz> * vec,bool constant);
+    void Match(StaticZeroTerminatedArray<T,sz> * vec);
 
     /**
      * @brief Matches a T* const
@@ -289,7 +250,7 @@ private:
      * @post Adds a C to the modifiers
      */
     template <class T>
-    inline void Match(T * const * x,bool constant);
+    inline void Match(T * const * x);
 
     /**
      * @brief Matches a T[n]
@@ -298,7 +259,7 @@ private:
      * @post Adds a [n] to the modifiers
      */
     template <class T,unsigned int n>
-    inline void Match(T (*x) [n],bool constant);
+    inline void Match(T (*x) [n]);
 
     /**
      * @brief Matches a T*
@@ -307,7 +268,7 @@ private:
      * @post Adds a * to the modifiers
      */
     template <class T>
-    inline void Match(T ** x,bool constant);
+    inline void Match(T ** x);
 
 
     /**
@@ -317,7 +278,7 @@ private:
      * @post Adds a * to the modifiers
      */
     template <class T>
-    inline void Match(T const * * x,bool constant);
+    inline void Match(T const * * x);
 
     /**
      * @brief Matches a T const * const
@@ -326,7 +287,7 @@ private:
      * @post Adds a C to the modifiers
      */
     template <class T>
-    inline void Match(T const * const * x,bool constant);
+    inline void Match(T const * const * x);
 
     /**
      * @brief Matches a T const
@@ -335,7 +296,7 @@ private:
      * @post Adds a C to the modifiers
      */
     template <class T>
-    inline void Match(T const * x,bool constant);
+    inline void Match(T const * x);
 
     /**
      * @brief Matches a T
@@ -344,7 +305,7 @@ private:
      * @post closes the matching chain assigning the typeDescriptor
      */
     template <class T>
-    inline void Match(T * x,bool constant);
+    inline void Match(T * x);
 
  // SPECIFIC MATCHES
 
@@ -355,7 +316,7 @@ private:
      *   GetDataPointer() == &i &&
      *   GetTypeDescriptor() == CString
      */
-    inline void Match(DynamicCString *s,bool constant);
+    inline void Match(DynamicCString *s);
 
     /**
      * @brief Constructor from zeroterm char[]
@@ -365,7 +326,7 @@ private:
      *   GetTypeDescriptor() == CString
      */
     template <uint32 sz>
-    inline void Match(StaticCString<sz> *s,bool constant);
+    inline void Match(StaticCString<sz> *s);
 
     /**
      * @brief Constructor from 8 bit character.
@@ -374,7 +335,7 @@ private:
      *   GetDataPointer() == &i &&
      *   GetTypeDescriptor() == CString
      */
-    inline void Match(CString *s,bool constant);
+    inline void Match(CString *s);
 
     /**
      * @brief Constructor from 8 bit character.
@@ -383,7 +344,7 @@ private:
      *   GetDataPointer() == &i &&
      *   GetTypeDescriptor() == CString &&
      */
-    inline void Match(CCString *s,bool constant);
+    inline void Match(CCString *s);
 
     /**
      * @brief Constructor from 8 bit character.
@@ -395,7 +356,7 @@ private:
      *   GetTypeDescriptor() == Character8Bit &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(char8 *i,bool constant);
+    inline void Match(char8 *i);
 
 
     /**
@@ -408,7 +369,7 @@ private:
      *   GetTypeDescriptor() == SignedInteger8Bit &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(int8 *i,bool constant);
+    inline void Match(int8 *i);
 
     /**
      * @brief Constructor from unsigned 8 bit integer.
@@ -420,7 +381,7 @@ private:
      *   GetTypeDescriptor() == UnsignedInteger8Bit &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(uint8 *i,bool constant);
+    inline void Match(uint8 *i);
 
     /**
      * @brief Constructor from constant signed 8 bit integer.
@@ -434,7 +395,7 @@ private:
      *   GetNumberOfElements(0:2) == 0
      */
 
-    inline void Match(int16 *i,bool constant);
+    inline void Match(int16 *i);
 
     /**
      * @brief Constructor from unsigned 16 bit integer.
@@ -448,7 +409,7 @@ private:
      *   GetNumberOfElements(0:2) == 0
      */
 
-    inline void Match(uint16 *i,bool constant);
+    inline void Match(uint16 *i);
 
     /**
      * @brief Constructor from signed 32 bit integer.
@@ -461,7 +422,7 @@ private:
      *   GetTypeDescriptor().isConstant == false &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(int32 *i,bool constant);
+    inline void Match(int32 *i);
 
     /**
      * @brief Constructor from unsigned 32 bit integer.
@@ -474,7 +435,7 @@ private:
      *   GetTypeDescriptor().isConstant == false &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(uint32 *i,bool constant);
+    inline void Match(uint32 *i);
 
     /**
      * @brief Constructor from signed 64 bit integer.
@@ -487,7 +448,7 @@ private:
      *   GetTypeDescriptor().isConstant == false &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(int64 *i,bool constant);
+    inline void Match(int64 *i);
 
     /**
      * @brief Constructor from unsigned 64 bit integer.
@@ -500,7 +461,7 @@ private:
      *   GetTypeDescriptor().isConstant == false &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(uint64 *i,bool constant);
+    inline void Match(uint64 *i);
 
     /**
      * @brief Constructor from 32 bit float32 number.
@@ -511,7 +472,7 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(float32 *i,bool constant);
+    inline void Match(float32 *i);
 
     /**
      * @brief Constructor from 64 bit float32 number.
@@ -522,7 +483,7 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(float64 *i,bool constant);
+    inline void Match(float64 *i);
 
     /**
      * @brief Constructor from void pointer.
@@ -533,7 +494,7 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline void Match(void * *p,bool constant);
+    inline void Match(void * *p);
 
     /**
      * @brief Constructor from Object (or inherited class).
@@ -544,7 +505,7 @@ private:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    void Match(Object *obj,bool constant);
+    void Match(Object *obj);
 
     /**
      * @brief Constructor by BitBoolean.
@@ -553,7 +514,7 @@ private:
      * @param[in] bitBool is the BitBoolean object input.
      */
     template<typename baseType, uint8 bitOffset>
-    void Match(BitBoolean<baseType, bitOffset> * bitBool,bool constant);
+    void Match(BitBoolean<baseType, bitOffset> * bitBool);
 
     /**
      * @brief Constructor by BitRange.
@@ -563,7 +524,7 @@ private:
      * @param[in] bitRange is the BitRange object input.
      */
     template<typename baseType, uint8 bitSize, uint8 bitOffset>
-    void Match(BitRange<baseType, bitSize, bitOffset> * bitRange,bool constant);
+    void Match(BitRange<baseType, bitSize, bitOffset> * bitRange);
 
     /**
      * @brief Constructor by FractionalInteger.
@@ -572,7 +533,7 @@ private:
      * @param[in] fractionalInt is the FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
-    void Match(FractionalInteger<baseType, bitSize> * fractionalInt,bool constant);
+    void Match(FractionalInteger<baseType, bitSize> * fractionalInt);
 
 };
 
@@ -583,193 +544,196 @@ private:
 
 template <class T>
 inline  VariableDescriptor::VariableDescriptor( T  x):VariableDescriptor(){
-    Match(x,false);
+    Match(x);
 }
 
 
 template<typename T>
-void VariableDescriptor::Match(Vector<T> * vec,bool constant) {
-	QueueCode(Array1D,0,constant);
-	constant = false;
+void VariableDescriptor::Match(Vector<T> * vec) {
+	AddArrayCode(Array1D,0);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template<typename T>
-void VariableDescriptor::Match(Matrix<T> * mat,bool constant) {
-	QueueCode(Array2D,0,constant);
-	constant = false;
+void VariableDescriptor::Match(Matrix<T> * mat) {
+	AddArrayCode(Array2D,0);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template<typename T>
-void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec,bool constant){
-	QueueCode(ZeroTermArray,0,constant);
-	constant = false;
+void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
+	AddArrayCode(ZeroTermArray,0);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template<typename T >
-void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec,bool constant){
-	QueueCode(DynamicZeroTermArray,0,constant);
-	constant = false;
+void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
+	AddArrayCode(DynamicZeroTermArray,0);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template<typename T, uint32 sz >
-void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec,bool constant){
-	QueueCode(StaticZeroTermArray,sz,constant);
-	constant = false;
+void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
+	AddArrayCode(StaticZeroTermArray,sz);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T,unsigned int n>
-inline void VariableDescriptor::Match(T (*x) [n],bool constant){
-	QueueCode(Array1D,n,constant);
-	constant = false;
+inline void VariableDescriptor::Match(T (*x) [n]){
+	AddArrayCode(Array1D,n);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-inline void VariableDescriptor::Match(T ** x,bool constant){
-	QueueCode(PointerArray,0,constant);
-	constant = false;
+inline void VariableDescriptor::Match(T ** x){
+	AddArrayCode(PointerArray,0);
+
     T *pp = NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-inline void VariableDescriptor::Match(T * const * x,bool constant){
-    constant = true;
+inline void VariableDescriptor::Match(T * const * x){
+
+    AddConstantCode();
     T ** pp=NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-inline void VariableDescriptor::Match(T const * * x,bool constant){
-	QueueCode(PointerArray,0,constant);
-	constant = false;
+inline void VariableDescriptor::Match(T const * * x){
+	AddArrayCode(PointerArray,0);
+
     T const * pp=NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-inline void VariableDescriptor::Match(T const * const * x,bool constant){
-    constant = true;
+inline void VariableDescriptor::Match(T const * const * x){
+
+    AddConstantCode();
     T const * * pp=NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-void VariableDescriptor::Match(T const * x,bool constant){
-    constant = true;
+void VariableDescriptor::Match(T const * x){
+
+    AddConstantCode();
     T * pp=NULL;
-    Match(pp,constant);
+    Match(pp);
 }
 
 template <class T>
-void VariableDescriptor::Match(T * x,bool constant){
+void VariableDescriptor::Match(T * x){
     ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
     if (cri != NULL) {
-    	ResolveCode(cri->GetTypeDescriptor(),constant);
+    	FinaliseCode(cri->GetTypeDescriptor());
     }
     else {
-    	ResolveCode(VoidType,constant);
+    	FinaliseCode(VoidType);
     }
 
 }
 
-void VariableDescriptor::Match(DynamicCString *s,bool constant){
-	ResolveCode(DynamicCharString,constant);
+void VariableDescriptor::Match(DynamicCString *s){
+	FinaliseCode(DynamicCharString);
 }
 
-void VariableDescriptor::Match(CString *s,bool constant){
-	ResolveCode(CharString,constant);
+void VariableDescriptor::Match(CString *s){
+	FinaliseCode(CharString);
 }
 
-void VariableDescriptor::Match(CCString *s,bool constant){
-	ResolveCode(ConstCharString,constant);
+void VariableDescriptor::Match(CCString *s){
+	FinaliseCode(ConstCharString);
 }
 
 template <uint32 sz>
-void VariableDescriptor::Match(StaticCString<sz> *s,bool constant){
-	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz,  0);
-	ResolveCode(td,constant);
+void VariableDescriptor::Match(StaticCString<sz> *s){
+	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz);
+	FinaliseCode(td);
 }
 
 
-void VariableDescriptor::Match(char8 * i,bool constant) {
-	ResolveCode(Character8Bit,constant);
+void VariableDescriptor::Match(char8 * i) {
+	FinaliseCode(Character8Bit);
 }
 
-void VariableDescriptor::Match(int8 * i,bool constant) {
-	ResolveCode(SignedInteger8Bit,constant);
+void VariableDescriptor::Match(int8 * i) {
+	FinaliseCode(SignedInteger8Bit);
 }
 
-void VariableDescriptor::Match(uint8 * i,bool constant) {
-	ResolveCode(UnsignedInteger8Bit,constant);
+void VariableDescriptor::Match(uint8 * i) {
+	FinaliseCode(UnsignedInteger8Bit);
 }
 
-void VariableDescriptor::Match(int16 * i,bool constant) {
-	ResolveCode(SignedInteger16Bit,constant);
+void VariableDescriptor::Match(int16 * i) {
+	FinaliseCode(SignedInteger16Bit);
 }
 
-void VariableDescriptor::Match(uint16 * i,bool constant) {
-	ResolveCode(UnsignedInteger16Bit,constant);
+void VariableDescriptor::Match(uint16 * i) {
+	FinaliseCode(UnsignedInteger16Bit);
 }
 
-void VariableDescriptor::Match(int32 * i,bool constant) {
-	ResolveCode(SignedInteger32Bit,constant);
+void VariableDescriptor::Match(int32 * i) {
+	FinaliseCode(SignedInteger32Bit);
 }
 
-void VariableDescriptor::Match(uint32 * i,bool constant) {
-	ResolveCode(UnsignedInteger32Bit,constant);
+void VariableDescriptor::Match(uint32 * i) {
+	FinaliseCode(UnsignedInteger32Bit);
 }
 
-void VariableDescriptor::Match(int64 * i,bool constant) {
-	ResolveCode(SignedInteger64Bit,constant);
+void VariableDescriptor::Match(int64 * i) {
+	FinaliseCode(SignedInteger64Bit);
 }
 
-void VariableDescriptor::Match(uint64 * i,bool constant) {
-	ResolveCode(UnsignedInteger64Bit,constant);
+void VariableDescriptor::Match(uint64 * i) {
+	FinaliseCode(UnsignedInteger64Bit);
 }
 
-void VariableDescriptor::Match(float32 * i,bool constant) {
-	ResolveCode(Float32Bit,constant);
+void VariableDescriptor::Match(float32 * i) {
+	FinaliseCode(Float32Bit);
 }
 
-void VariableDescriptor::Match(float64 * i,bool constant) {
-	ResolveCode(Float64Bit,constant);
+void VariableDescriptor::Match(float64 * i) {
+	FinaliseCode(Float64Bit);
 }
 
-void VariableDescriptor::Match(void * * p,bool constant) {
-    TypeDescriptor td(false,Pointer,1,sizeof(void*),1,0);
-	ResolveCode(td,constant);
+void VariableDescriptor::Match(void * * p) {
+//    TypeDescriptor td(false,Pointer,1,sizeof(void*),1);
+	FinaliseCode(VoidPointer);
 }
 
 template<typename baseType, uint8 bitOffset>
-void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool,bool constant) {
+void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
 	TypeDescriptor td(false,UnsignedInteger,1,bitOffset);
-	ResolveCode(td,constant);
+	FinaliseCode(td);
 }
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
-void VariableDescriptor::Match(BitRange<baseType, bitSize, bitOffset> * bitRange,bool constant) {
+void VariableDescriptor::Match(BitRange<baseType, bitSize, bitOffset> * bitRange) {
     BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td(false,type,bitSize,bitOffset);
-	ResolveCode(td,constant);
+	FinaliseCode(td);
 }
 
 template<typename baseType, uint8 bitSize>
-void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractionalInt,bool constant) {
+void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractionalInt) {
     BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td(false,type,bitSize,0);
-	ResolveCode(td,constant);
+	FinaliseCode(td);
 }
 
 

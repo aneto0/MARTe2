@@ -121,63 +121,30 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
                                    const BasicType typeIn,
                                    const BasicObjectSize objectSizeIn,
                                    const BasicArrayType arrayTypeIn,
-                                   const uint32 numberOfColumnsIn,
-                                   const uint32 numberOfRowsIn
+                                   const uint32 arraySizeIn
+//                                   const uint32 numberOfColumnsIn,
+//                                   const uint32 numberOfRowsIn
                ){
     isConstant       = isConstantIn;
     type             = typeIn;
     isStructuredData = false;
     objectSize       = objectSizeIn;
     arrayType        = arrayTypeIn;
-
+    arraySize        = 0;
 
     switch (arrayTypeIn){
-    case StaticZeroTermArray:{
-        if (numberOfColumnsIn > 0xFFFFFu){
-            arrayType            = ZeroTermArray;
-        } else {
-            arraySize            = numberOfColumnsIn;
-        }
-    } break;
+    case StaticZeroTermArray:
+    case ArrayLarge: // 2D, 3D ... arrays
     case Array1D:{
-        if (numberOfColumnsIn > 0xFFFFFu){
-            arrayType            = ArrayLarge;
-            arraySize            = 0;
+        if (arraySizeIn > 0xFFFFFu){
+            arrayType            = ArrayUnknown;  /// constructs an useless descriptor!
         } else {
-            arraySize            = numberOfColumnsIn;
+            arraySize            = arraySizeIn;
         }
     } break;
     case Array2D:{
-
-
-        if (numberOfRowsIn > 0x3FFu){
-            arrayType            = ArrayLarge;
-
-            if (numberOfRowsIn > 0x7FFFFu){
-                arraySize            = 0;
-            } else {
-                arraySize            = numberOfRowsIn;
-            }
-
-        } else {
-
-
-            if (numberOfColumnsIn > 0x3FFu){
-                arrayType            = ArrayLarge;
-                arraySize            = numberOfRowsIn;
-            } else {
-                numberOfColumns      = numberOfColumnsIn;
-                numberOfRows         = numberOfRowsIn;
-            }
-
-        }
-
-    } break;
-    case ArrayLarge:{
-        if (numberOfRowsIn > 0x7FFFFu){
-            arraySize            = 0;
-        } else {
-            arraySize            = numberOfRowsIn;
+        if (arraySizeIn != 0){
+            arrayType            = ArrayUnknown;  /// constructs an useless descriptor!
         }
     } break;
     default:{
