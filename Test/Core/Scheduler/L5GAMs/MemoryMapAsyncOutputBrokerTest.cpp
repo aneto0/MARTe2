@@ -110,6 +110,8 @@ public:
 CLASS_REGISTER(MemoryMapAsyncOutputBrokerGAMTestHelper, "1.0")
 /**
  * @brief DataSourceI implementation which returns a MemoryMapBrokerTestHelper broker.
+ * @details This DataSource will verify in run-time if the signals being written by the Broker are the ones
+ *  expected any particular test configuration.
  */
 class MemoryMapAsyncOutputBrokerDataSourceTestHelper: public MARTe::DataSourceI {
 public:
@@ -309,6 +311,9 @@ private:
 
 CLASS_REGISTER(MemoryMapAsyncOutputBrokerSchedulerTestHelper, "1.0")
 
+/**
+ * Loads a configuration file and checks that all the components can be successfully created.
+ */
 static bool TestIntegratedInApplication(const MARTe::char8 * const config, bool destroy) {
     using namespace MARTe;
 
@@ -340,6 +345,10 @@ static bool TestIntegratedInApplication(const MARTe::char8 * const config, bool 
     return ok;
 }
 
+/**
+ * Runs a mini MARTe application against the provide config. It patches the input configuration file with signalToGenerate and numberOfBuffer parameters
+ *  and then it verifies that the broker correctly propagates this signal to the DataSource.
+ */
 static bool TestExecute_Buffers(const MARTe::char8 * const config, MARTe::uint32 *signalToGenerate, MARTe::uint32 toGenerateNumberOfElements,
                                 MARTe::uint32 numberOfBuffers, MARTe::uint32 sleepMSec = 10) {
     using namespace MARTe;
@@ -430,6 +439,7 @@ static bool TestExecute_Buffers(const MARTe::char8 * const config, MARTe::uint32
     return ok;
 }
 
+//Base configuration file.
 static const MARTe::char8 * const config1 = ""
         "$Test = {"
         "    Class = RealTimeApplication"
@@ -843,7 +853,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestExecute_N_Buffers() {
 
 bool MemoryMapAsyncOutputBrokerTest::TestExecute_1_Buffer() {
     using namespace MARTe;
-    uint32 signalToGenerate[] = { 1, 2, 3};
+    uint32 signalToGenerate[] = { 1, 2, 3 };
 
     return TestExecute_Buffers(config1, signalToGenerate, sizeof(signalToGenerate) / sizeof(uint32), 1, 100);
 }

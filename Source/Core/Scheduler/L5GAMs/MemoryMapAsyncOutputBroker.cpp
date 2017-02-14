@@ -46,6 +46,7 @@ MemoryMapAsyncOutputBroker::MemoryMapAsyncOutputBroker() :
     writeIdx = 0u;
     readSynchIdx = 0u;
     cpuMask = 0xffu;
+    stackSize = THREADS_DATABASE_GRANULARITY;
     if (!sem.Create()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not Create the EventSem.");
     }

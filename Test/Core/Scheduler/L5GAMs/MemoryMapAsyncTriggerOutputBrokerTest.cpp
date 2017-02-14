@@ -121,6 +121,8 @@ public:
 CLASS_REGISTER(MemoryMapAsyncTriggerOutputBrokerGAMTestHelper, "1.0")
 /**
  * @brief DataSourceI implementation which returns a MemoryMapBrokerTestHelper broker.
+ * @details This DataSource will verify in run-time if the signals being written by the Broker are the ones
+ *  expected any particular test configuration.
  */
 class MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper: public MARTe::DataSourceI {
 public:
@@ -339,6 +341,9 @@ private:
 
 CLASS_REGISTER(MemoryMapAsyncTriggerOutputBrokerSchedulerTestHelper, "1.0")
 
+/**
+ * Loads a configuration file and checks that all the components can be successfully created.
+ */
 static bool TestIntegratedInApplication(const MARTe::char8 * const config, bool destroy) {
     using namespace MARTe;
 
@@ -370,6 +375,10 @@ static bool TestIntegratedInApplication(const MARTe::char8 * const config, bool 
     return ok;
 }
 
+/**
+ * Runs a mini MARTe application against the provide config. It patches the input configuration file with signalToGenerate, trigger and buffering parameters
+ *  and then it verifies that the broker correctly propagates this signal to the DataSource.
+ */
 static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 * const config, MARTe::uint8* triggerToGenerate,
                                                              MARTe::uint32 *signalToGenerate, MARTe::uint32 toGenerateNumberOfElements,
                                                              MARTe::uint8* expectedTrigger, MARTe::uint32* expectedSignal,

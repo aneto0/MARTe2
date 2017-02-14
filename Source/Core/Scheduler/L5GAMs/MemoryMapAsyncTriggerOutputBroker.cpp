@@ -51,6 +51,7 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
     postTriggerBuffersCounter = 0u;
     postTriggerBuffers = 0u;
     wasTriggered = false;
+    stackSize = THREADS_DATABASE_GRANULARITY;
     if (!sem.Create()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not Create the EventSem.");
     }
