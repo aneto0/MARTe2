@@ -50,14 +50,14 @@ static char8 toupper(char8 c){
     }
     return c;
 }
-
+/*
 static char8 tolower(char8 c){
     if ((c >='A') && (c <='Z')) {
         c = c + ('a'-'A');
     }
     return c;
 }
-
+*/
 #if 0
 uint32 FromHex(char8 c){
 	uint32 ret = 0u;
@@ -278,7 +278,6 @@ void VariableDescriptor::MoveCodeToModifiers(){
 }
 
 void VariableDescriptor::AddArrayCode(BasicArrayType bat, uint32 size1){
-	bool constant = false;
 	switch(bat){
 	case Array1D:{
 		//tries to store the array in the TypeDescriptor  either by creating a Array1D or an Array2D
@@ -389,10 +388,11 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 	}
 	typeDescriptor.isConstant = typeDescriptor.isConstant | constant;
 }
-
+/*
 static bool isToken(char8 c){
 	return (((c >='A') && (c <='Z')) || ((c >='a') && (c <='z')));
 }
+*/
 static bool isConstantToken(char8 c){
 	return ((c >='a') && (c <='z'));
 }

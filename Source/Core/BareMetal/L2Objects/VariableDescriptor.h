@@ -543,7 +543,8 @@ private:
 
 
 template <class T>
-inline  VariableDescriptor::VariableDescriptor( T  x):VariableDescriptor(){
+inline  VariableDescriptor::VariableDescriptor( T  x){
+    typeDescriptor = InvalidType;
     Match(x);
 }
 
@@ -665,7 +666,6 @@ void VariableDescriptor::Match(StaticCString<sz> *s){
 	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz);
 	FinaliseCode(td);
 }
-
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);

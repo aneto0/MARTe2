@@ -84,10 +84,10 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             CCString pattern("MHz");
             CCString bufferString(&buffer[0]);
             CCString p = StringHelper::SearchString(bufferString, pattern);
-            if (p != NULL) {
+            if (!p.IsNullPtr()) {
                 p = StringHelper::SearchString(p, ":");
                 p.Skip(); // p++;
-                float64 freqMHz = strtof(p, static_cast<char8 **>(0));
+                float64 freqMHz = strtof(p.GetList(), static_cast<char8 **>(0));
                 if (freqMHz > 0.) {
                     float64 frequencyF = freqMHz *= 1.0e6;
                     period = 1.0 / frequencyF;

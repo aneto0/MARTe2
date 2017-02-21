@@ -72,6 +72,7 @@ uint32 BitsFromBasicObjectSize(BasicObjectSize bos){
     return ret;
 }
 
+#if 0
 CCString basicTypeNames[]{
 		(char8 *)"int",
 		(char8 *)"uint",
@@ -100,6 +101,41 @@ CCString BasicTypeName(uint32 bt){
 	return ret;
 }
 
+#else
+
+#define BTN_CASE(btName) case btName: { ret = #btName ; } break;
+#define BTN_CASE_FULL(btName,alias) case btName: { ret = alias;} break;
+
+
+CCString BasicTypeName(uint32 bt){
+    CCString ret = "??";
+
+    switch(bt){
+
+    BTN_CASE_FULL(SignedInteger,"int")
+    BTN_CASE_FULL(UnsignedInteger,"uint")
+    BTN_CASE_FULL(Float,"float")
+    BTN_CASE_FULL(Char,"char")
+    BTN_CASE_FULL(SignedBitInteger,"int")
+    BTN_CASE_FULL(UnsignedBitInteger,"uint")
+    BTN_CASE(SString)
+    BTN_CASE(Stream)
+    BTN_CASE_FULL(StructuredDataInterface,"{struct}")
+    BTN_CASE_FULL(Void,"void")
+    BTN_CASE(Invalid)
+
+
+    default:{
+
+    }
+
+    };
+
+    return ret;
+}
+
+
+#endif
 
 
 }

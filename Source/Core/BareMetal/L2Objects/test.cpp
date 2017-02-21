@@ -77,7 +77,7 @@ void printType(AnyType x){
     printf ("%-12s}",buffer);
 
     TypeDescriptor td = vd.GetFullTypeDescriptor();
-    char *consts= "";
+    const char8 *consts= "";
     if (td.isConstant){
         //printf ("const ");
     	consts = "const ";
@@ -86,39 +86,39 @@ void printType(AnyType x){
         printf ("S(%i) ",(int)td.structuredDataIdCode);
     } else {
         if (td.IsBitType()){
-            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type),(int)td.numberOfBits,(int)td.bitOffset);
+            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type).GetList(),(int)td.numberOfBits,(int)td.bitOffset);
         } else {
             switch(td.arrayType){
             case ZeroTermArray:{
-                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case DynamicZeroTermArray:{
-                printf ("ZeroTerminatedArray<%s%i>",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("ZeroTerminatedArray<%s%i>",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case StaticZeroTermArray:{
-                printf ("StaticZeroTerminatedArray<%s%i,%i>",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+                printf ("StaticZeroTerminatedArray<%s%i,%i>",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             }break;
             case Array1D:{
             	if (td.arraySize > 1)
-            		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             	else
                	if (td.arraySize == 0)
-               		printf (" Vector<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+               		printf (" Vector<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             	else
-               		printf ("%s%s%i",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+               		printf ("%s%s%i",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case Array2D:{
-                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case ArrayLarge:{
-                printf ("%s%i [%i][...]",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+                printf ("%s%i [%i][...]",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
             }break;
             case PointerArray:{
-                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             default:
             case ArrayUnknown:{
-                printf (" %s%i ?",BasicTypeName(td.type),BitsFromBasicObjectSize((int)td.objectSize));
+                printf (" %s%i ?",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             }
         }
@@ -150,7 +150,7 @@ void testT(CCString orig){
     T *x;
     const int pappa = 0;
     /* assigned to a real pointer to avoid problems */
-    x = reinterpret_cast<T*>(reinterpret_cast<int>(&pappa));
+    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&pappa));
 
     AnyType at(*x);
 
@@ -160,6 +160,8 @@ void testT(CCString orig){
 
 
 }
+
+
 #define TEST(x)  testT<x>(#x)
 
 
