@@ -212,7 +212,7 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
 }
 
 bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
+                                              Reference const &referenceToTest) {
     bool found = (addressNumberNodes > 0u);
 
     if (addressNumberNodes > 1u) {

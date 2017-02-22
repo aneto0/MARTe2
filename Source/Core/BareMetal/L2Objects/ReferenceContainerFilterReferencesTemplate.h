@@ -70,7 +70,7 @@ public:
      * @return true if \a referenceToTest is of type T.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest);
+                      Reference const &referenceToTest);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -90,7 +90,7 @@ ReferenceContainerFilterReferencesTemplate<T>::ReferenceContainerFilterReference
 
 template<typename T>
 bool ReferenceContainerFilterReferencesTemplate<T>::Test(ReferenceContainer &previouslyFound,
-                                                                 Reference &referenceToTest){
+                                                                 Reference const &referenceToTest){
     ReferenceT<T> referenceToSearch = referenceToTest;
     return referenceToSearch.IsValid();
 }

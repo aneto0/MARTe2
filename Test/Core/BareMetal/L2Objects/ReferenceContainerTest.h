@@ -467,6 +467,11 @@ public:
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
 
+    /**
+     * @brief Tests the IsReferenceContainer method.
+     */
+    bool TestIsReferenceContainer();
+
     volatile int32 spinLock;
 
 private:
@@ -523,6 +528,7 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
+
 
 };
 

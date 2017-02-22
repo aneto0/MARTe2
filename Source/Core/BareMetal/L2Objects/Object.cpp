@@ -506,6 +506,10 @@ void Object::Purge(ReferenceContainer &purgeList) {
 
 }
 
+bool Object::IsReferenceContainer() const {
+    return false;
+}
+
 CLASS_REGISTER(Object, "1.0")
 
 }

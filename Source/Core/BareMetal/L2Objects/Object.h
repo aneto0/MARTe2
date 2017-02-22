@@ -283,6 +283,15 @@ public:
      */
     const ClassProperties *GetClassProperties() const;
 
+    /**
+     * @brief Returns true if the Object is a ReferenceContainer.
+     * @details This function was added for optimisation. The alternative of doing
+     * ReferenceT<ReferenceContainer> test = rc; test.IsValid(), was to slow (as it is  
+     * called millions of times).
+     * @return true if the Object is a ReferenceContainer.
+     */
+    virtual bool IsReferenceContainer() const;
+
 private:
 
 
