@@ -2941,8 +2941,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                         uint32 numberOfDataSources = functionsDatabase.GetNumberOfChildren();
                         bool found = false;
                         StreamString dataSourceId;
+                        ConfigurationDatabase functionsDatabaseBeforeMoveToDataSource = functionsDatabase;
                         for (uint32 d = 0u; (d < numberOfDataSources) && (ret) && (!found); d++) {
-                            functionsDatabase = functionsDatabaseBeforeMove;
+                            //functionsDatabase = functionsDatabaseBeforeMoveToDataSource;
                             ret = functionsDatabase.MoveToChild(d);
                             dataSourceId = functionsDatabase.GetName();
                             StreamString thisDataSourceName;
@@ -2954,7 +2955,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                             }
                             //Move to the next DataSource
                             if (!found) {
-                                functionsDatabase = functionsDatabaseBeforeMove;
+                                functionsDatabase = functionsDatabaseBeforeMoveToDataSource;
                             }
                         }
                         if (ret) {

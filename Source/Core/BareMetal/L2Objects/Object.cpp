@@ -328,7 +328,12 @@ Object::Object() {
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    thisObjName = StringHelper::StringDup(copy.thisObjName);
+    if (copy.thisObjName != NULL_PTR(char8 *)) {
+        thisObjName = StringHelper::StringDup(copy.thisObjName);
+    }
+    else {
+        thisObjName = NULL_PTR(char8 *);
+    }
     isDomain = false;
 }
 
