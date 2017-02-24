@@ -258,7 +258,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 index = static_cast<int32>(list.ListSize()) - 1;
             }
 
-            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<int32>(index)));
+            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
 
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
@@ -331,7 +331,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 if (!filter.IsReverse()) {
                     index++;
                     if (currentNode != NULL_PTR(ReferenceContainerNode *)) {
-                        currentNode = static_cast<ReferenceContainerNode *>(currentNode->Next());
+                        currentNode = dynamic_cast<ReferenceContainerNode *>(currentNode->Next());
                     }
                 }
                 else {

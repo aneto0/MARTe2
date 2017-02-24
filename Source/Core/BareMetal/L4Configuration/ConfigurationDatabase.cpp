@@ -58,7 +58,8 @@ ConfigurationDatabase::ConfigurationDatabase() :
 ConfigurationDatabase::~ConfigurationDatabase() {
 }
 
-ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy) {
+ConfigurationDatabase::ConfigurationDatabase(const ConfigurationDatabase &toCopy) :
+        Object(toCopy) {
     mux = toCopy.mux;
     rootNode = toCopy.rootNode;
     currentNode = toCopy.currentNode;
@@ -404,7 +405,7 @@ void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
 
-ReferenceT<ReferenceContainer> ConfigurationDatabase::GetCurrentNode() {
+ReferenceT<ReferenceContainer> ConfigurationDatabase::GetCurrentNode() const {
     return currentNode;
 }
 

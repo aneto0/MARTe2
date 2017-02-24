@@ -653,7 +653,6 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         if (configuredDatabase.MoveAbsolute("Functions")) {
             uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
 
-            ConfigurationDatabase configuredDatabaseBeforeMove = configuredDatabase;
             for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
                 ret = configuredDatabase.MoveToChild(i);
                 StreamString functionName;
