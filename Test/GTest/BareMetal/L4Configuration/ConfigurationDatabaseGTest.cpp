@@ -347,3 +347,18 @@ TEST(ConfigurationDatabaseGTest,TestGetCurrentNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetCurrentNode());
 }
+
+TEST(ConfigurationDatabaseGTest,TestCopyConstructor) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCopyConstructor());
+}
+
+TEST(ConfigurationDatabaseGTest,TestCopyOperatorEqual) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCopyOperatorEqual());
+}
+
+TEST(ConfigurationDatabaseGTest,TestMoveToChild) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveToChild());
+}

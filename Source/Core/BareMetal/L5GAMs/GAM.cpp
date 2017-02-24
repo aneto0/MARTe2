@@ -502,9 +502,10 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction,
     uint32 n;
     uint32 numberOfDataSources = configuredDatabase.GetNumberOfChildren();
     bool found = false;
+    ConfigurationDatabase configuredDatabaseBeforeMove = configuredDatabase;
     for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
         //Move to the next DataSource
-        ret = configuredDatabase.MoveRelative(configuredDatabase.GetChildName(n));
+        ret = configuredDatabase.MoveToChild(n);
         StreamString thisDataSourceName;
         if (ret) {
             ret = configuredDatabase.Read("DataSource", thisDataSourceName);
@@ -526,7 +527,7 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction,
             }
         }
         if (ret) {
-            ret = configuredDatabase.MoveToAncestor(1u);
+            configuredDatabase = configuredDatabaseBeforeMove;
         }
     }
     return ret;
@@ -554,10 +555,11 @@ bool GAM::GetSignalFrequency(const SignalDirection direction,
     uint32 n;
     uint32 numberOfDataSources = configuredDatabase.GetNumberOfChildren();
     bool found = false;
+    ConfigurationDatabase configuredDatabaseBeforeMove = configuredDatabase;
     for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
         //Move to the next DataSource
-        ret = configuredDatabase.MoveRelative(configuredDatabase.GetChildName(n));
         StreamString thisDataSourceName;
+        ret = configuredDatabase.MoveToChild(n);
         if (ret) {
             ret = configuredDatabase.Read("DataSource", thisDataSourceName);
         }
@@ -578,7 +580,7 @@ bool GAM::GetSignalFrequency(const SignalDirection direction,
             }
         }
         if (ret) {
-            ret = configuredDatabase.MoveToAncestor(1u);
+            configuredDatabase = configuredDatabaseBeforeMove;
         }
     }
     return ret;
@@ -594,11 +596,10 @@ bool GAM::MoveToSignalIndex(const SignalDirection direction,
     if (ret) {
         ret = configuredDatabase.MoveRelative(signalDirection);
     }
-    StreamString signalIdxStr;
     if (ret) {
-        signalIdxStr = configuredDatabase.GetChildName(signalIdx);
-        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+        ret = configuredDatabase.MoveToChild(signalIdx);
     }
+
     return ret;
 }
 

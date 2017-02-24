@@ -356,14 +356,9 @@ AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
 }
 
 bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
-    bool ret = configuredDatabase.MoveToRoot();
+    bool ret = configuredDatabase.MoveAbsolute("Signals");
     if (ret) {
-        ret = configuredDatabase.MoveRelative("Signals");
-    }
-    StreamString signalIdxStr;
-    if (ret) {
-        signalIdxStr = configuredDatabase.GetChildName(signalIdx);
-        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
+        ret = configuredDatabase.MoveToChild(signalIdx);
     }
     return ret;
 }
@@ -608,10 +603,8 @@ bool DataSourceI::MoveToFunctionIndex(const uint32 functionIdx) {
     if (ret) {
         ret = configuredDatabase.MoveRelative("Functions");
     }
-    StreamString functionIdxStr;
     if (ret) {
-        functionIdxStr = configuredDatabase.GetChildName(functionIdx);
-        ret = configuredDatabase.MoveRelative(functionIdxStr.Buffer());
+        ret = configuredDatabase.MoveToChild(functionIdx);
     }
     return ret;
 }
@@ -627,10 +620,8 @@ bool DataSourceI::MoveToFunctionSignalIndex(const SignalDirection direction,
     if (ret) {
         ret = configuredDatabase.MoveRelative(signalDirection);
     }
-    StreamString functionSignalIdxStr;
     if (ret) {
-        functionSignalIdxStr = configuredDatabase.GetChildName(functionSignalIdx);
-        ret = configuredDatabase.MoveRelative(functionSignalIdxStr.Buffer());
+        ret = configuredDatabase.MoveToChild(functionSignalIdx);
     }
     return ret;
 }
@@ -661,9 +652,10 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     if (ret) {
         if (configuredDatabase.MoveAbsolute("Functions")) {
             uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+
+            ConfigurationDatabase configuredDatabaseBeforeMove = configuredDatabase;
             for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-                const char8* functionId = configuredDatabase.GetChildName(i);
-                ret = configuredDatabase.MoveRelative(functionId);
+                ret = configuredDatabase.MoveToChild(i);
                 StreamString functionName;
                 if (ret) {
                     ret = configuredDatabase.Read("QualifiedName", functionName);

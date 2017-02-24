@@ -217,6 +217,21 @@ public:
      * @brief Tests the GetCurrentNode function
      */
     bool TestGetCurrentNode();
+
+    /**
+     * @brief Tests the CopyConstructor
+     */
+    bool TestCopyConstructor();
+
+    /**
+     * @brief Tests the Operator =
+     */
+    bool TestCopyOperatorEqual();
+
+    /**
+     * @brief Tests the MoveToChild method
+     */
+    bool TestMoveToChild();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

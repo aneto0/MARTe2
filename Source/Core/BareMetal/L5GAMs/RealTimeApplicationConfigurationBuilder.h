@@ -1223,7 +1223,7 @@ private:
                                              const AnyType & samples,
                                              const AnyType & frequency,
                                              const AnyType & trigger,
-                                             StructuredDataI & data,
+                                             ConfigurationDatabase & data,
                                              uint32 &signalNumber,
                                              bool &syncSet,
                                              bool &triggerSet,
