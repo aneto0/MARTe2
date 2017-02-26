@@ -106,17 +106,19 @@ bool GAM::AddSignals(StructuredDataI &data) {
 }
 
 bool GAM::AllocateInputSignalsMemory() {
-    const char8* dirStr = "Signals.InputSignals";
-    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = (inputSignalsMemory == NULL_PTR(void *));
-    }
+    /*const char8* dirStr = "Signals.InputSignals";
+    bool ret = configuredDatabase.MoveToRoot();*/
+    //configuredDatabase = inputSignalsDatabaseNode;
+    //if (ret) {
+        bool ret = (inputSignalsMemory == NULL_PTR(void *));
+    //}
     if ((ret) && (numberOfInputSignals > 0u)) {
-        ret = configuredDatabase.MoveRelative(dirStr);
+        //ret = configuredDatabase.MoveRelative(dirStr);
+        configuredDatabase = inputSignalsDatabaseNode;
         uint32 totalByteSize = 0u;
-        if (ret) {
+        //if (ret) {
             ret = configuredDatabase.Read("ByteSize", totalByteSize);
-        }
+        //}
         if (ret) {
             inputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (inputSignalsMemory != NULL_PTR(void*)) {
@@ -160,17 +162,20 @@ bool GAM::AllocateInputSignalsMemory() {
 }
 
 bool GAM::AllocateOutputSignalsMemory() {
-    const char8* dirStr = "Signals.OutputSignals";
-    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = (outputSignalsMemory == NULL_PTR(void *));
-    }
+    //const char8* dirStr = "Signals.OutputSignals";
+    //bool ret = configuredDatabase.MoveToRoot();
+
+    //if (ret) {
+    bool ret = (outputSignalsMemory == NULL_PTR(void *));
+    //}
     if ((ret) && (numberOfOutputSignals > 0u)) {
-        ret = configuredDatabase.MoveRelative(dirStr);
+        //ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
-        if (ret) {
+        configuredDatabase = outputSignalsDatabaseNode;
+        //if (ret) {
             ret = configuredDatabase.Read("ByteSize", totalByteSize);
-        }
+        //}
+
         if (ret) {
             outputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (outputSignalsMemory != NULL_PTR(void*)) {
@@ -244,20 +249,24 @@ void *GAM::GetOutputSignalMemory(const uint32 signalIdx) const {
 }
 
 bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
-    bool ret = data.Copy(configuredDatabase);
-    if (ret) {
-        ret = configuredDatabase.MoveToRoot();
-    }
+    //bool ret = data.Copy(configuredDatabase);
+    //if (ret) {
+    //    ret = configuredDatabase.MoveToRoot();
+    //}
+    configuredDatabase = dynamic_cast<ConfigurationDatabase &>(data);
+    configuredDatabase.SetCurrentNodeAsRootNode();
     if (configuredDatabase.MoveAbsolute("Signals.InputSignals")) {
+	inputSignalsDatabaseNode = configuredDatabase;
         //-1 to ignore the ByteSize field
         numberOfInputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
     }
     if (configuredDatabase.MoveAbsolute("Signals.OutputSignals")) {
+	outputSignalsDatabaseNode = configuredDatabase;
         //-1 to ignore the ByteSize field
-        numberOfOutputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
+        numberOfOutputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);        
     }
 
-    return ret;
+    return true;
 }
 
 /*lint -e{715} The symbol 'context' is not referenced because
@@ -588,19 +597,22 @@ bool GAM::GetSignalFrequency(const SignalDirection direction,
 
 bool GAM::MoveToSignalIndex(const SignalDirection direction,
                             const uint32 signalIdx) {
-    bool ret = configuredDatabase.MoveToRoot();
-    const char8 * signalDirection = "Signals.InputSignals";
+                            
+/*bool ret = configuredDatabase.MoveToRoot();
+const char8 * signalDirection = "Signals.InputSignals";*/
+    configuredDatabase = inputSignalsDatabaseNode;
     if (direction == OutputSignals) {
-        signalDirection = "Signals.OutputSignals";
+//  signalDirection = "Signals.OutputSignals";
+        configuredDatabase = outputSignalsDatabaseNode;
     }
-    if (ret) {
+/*    if (ret) {
         ret = configuredDatabase.MoveRelative(signalDirection);
-    }
-    if (ret) {
-        ret = configuredDatabase.MoveToChild(signalIdx);
-    }
+    }*/
+//    if (ret) {
+        /*ret = */return configuredDatabase.MoveToChild(signalIdx);
+  //  }
 
-    return ret;
+//    return ret;
 }
 
 bool GAM::AddInputBrokers(ReferenceContainer brokers) {

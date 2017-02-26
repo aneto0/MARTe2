@@ -657,6 +657,10 @@ private:
      * Number of signals assigned to this function
      */
     uint32 numberOfSignals;
+
+    //TODO
+    ConfigurationDatabase signalsDatabaseNode;
+    ConfigurationDatabase functionsDatabaseNode;
 };
 
 }

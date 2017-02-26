@@ -538,6 +538,10 @@ protected:
      */
     HeapI *gamHeap;
 
+
+    //TODO
+    ConfigurationDatabase inputSignalsDatabaseNode;
+    ConfigurationDatabase outputSignalsDatabaseNode;
 };
 
 /*---------------------------------------------------------------------------*/

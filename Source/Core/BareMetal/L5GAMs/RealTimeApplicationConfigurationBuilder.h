@@ -1004,6 +1004,11 @@ private:
     ConfigurationDatabase globalDatabase;
 
     /**
+     * Allows to speed-up access to the databases
+     */
+    ConfigurationDatabase cachedDatabase;
+
+    /**
      * The default DataSource name to be used if this is not defined in any of the signals.
      */
     StreamString defaultDataSourceName;

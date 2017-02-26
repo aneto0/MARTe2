@@ -409,6 +409,10 @@ ReferenceT<ReferenceContainer> ConfigurationDatabase::GetCurrentNode() const {
     return currentNode;
 }
 
+void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
+    rootNode = currentNode;
+}
+
 CLASS_REGISTER(ConfigurationDatabase, "1.0")
 
 }

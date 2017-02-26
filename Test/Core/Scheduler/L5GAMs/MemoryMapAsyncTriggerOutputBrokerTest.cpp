@@ -70,7 +70,7 @@ public:
         using namespace MARTe;
         bool ok = GAM::Initialise(data);
         AnyType triggerAT = data.GetType("Trigger");
-        AnyType signalAT = data.GetType("Signal");
+        //AnyType signalAT = data.GetType("Signal");
         numberOfExecutes = triggerAT.GetNumberOfElements(0);
         triggerToGenerate = new uint8[numberOfExecutes];
         signalToGenerate = new uint32[numberOfExecutes];
@@ -168,7 +168,7 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
         data.Read("CPUMask", cpuMask);
         data.Read("StackSize", stackSize);
         AnyType triggerAT = data.GetType("ExpectedTrigger");
-        AnyType signalAT = data.GetType("ExpectedSignal");
+        //AnyType signalAT = data.GetType("ExpectedSignal");
         numberOfExecutes = triggerAT.GetNumberOfElements(0);
         expectedTrigger = new uint8[numberOfExecutes];
         expectedSignal = new uint32[numberOfExecutes];

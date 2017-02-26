@@ -67,81 +67,180 @@ RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder
 
 bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
 
+    REPORT_ERROR(ErrorManagement::Information, "Going to InitialiseSignalsDatabase");
     bool ret = InitialiseSignalsDatabase();
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Failed to InitialiseSignalsDatabase");
+    }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to FlattenSignalsDatabases");
         ret = FlattenSignalsDatabases();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to FlattenSignalsDatabases");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveDataSources");
         ret = ResolveDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveDataSources");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyDataSourcesSignals");
         ret = VerifyDataSourcesSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyDataSourcesSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionSignals");
         ret = ResolveFunctionSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyFunctionSignals");
         ret = VerifyFunctionSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyFunctionSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveStates");
         ret = ResolveStates();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveStates");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveConsumersAndProducers");
         ret = ResolveConsumersAndProducers();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveConsumersAndProducers");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyConsumersAndProducers");
         ret = VerifyConsumersAndProducers();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyConsumersAndProducers");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionSignalsMemorySize");
         ret = ResolveFunctionSignalsMemorySize();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionSignalsMemorySize");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionsMemory");
         ret = ResolveFunctionsMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionsMemory");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AssignFunctionsMemoryToDataSource");
         ret = AssignFunctionsMemoryToDataSource();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to AssignFunctionsMemoryToDataSource");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AssignBrokersToFunctions");
         ret = AssignBrokersToFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to AssignBrokersToFunctions");
+        }
     }
     return ret;
 }
 
 bool RealTimeApplicationConfigurationBuilder::ConfigureBeforeInitialisation() {
-
+    REPORT_ERROR(ErrorManagement::Information, "Going to InitialiseSignalsDatabaseFromConfiguration");
     bool ret = InitialiseSignalsDatabaseFromConfiguration();
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Failed to InitialiseSignalsDatabaseFromConfiguration");
+    }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to FlattenSignalsDatabases");
         ret = FlattenSignalsDatabases();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to FlattenSignalsDatabases");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveDataSources");
         ret = ResolveDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveDataSources");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyDataSourcesSignals");
         ret = VerifyDataSourcesSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyDataSourcesSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionSignals");
         ret = ResolveFunctionSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyFunctionSignals");
         ret = VerifyFunctionSignals();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyFunctionSignals");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveStatesFromConfiguration");
         ret = ResolveStatesFromConfiguration();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveStatesFromConfiguration");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveConsumersAndProducers");
         ret = ResolveConsumersAndProducers();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveConsumersAndProducers");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to VerifyConsumersAndProducers");
         ret = VerifyConsumersAndProducers();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to VerifyConsumersAndProducers");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionSignalsMemorySize");
         ret = ResolveFunctionSignalsMemorySize();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionSignalsMemorySize");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to ResolveFunctionsMemory");
         ret = ResolveFunctionsMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to ResolveFunctionsMemory");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AssignFunctionsMemoryToDataSource");
         ret = AssignFunctionsMemoryToDataSource();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::Information, "Failed to AssignFunctionsMemoryToDataSource");
+        }
     }
     return ret;
 
@@ -826,6 +925,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(const SignalDir
                         ret = dataSourcesDatabase.MoveRelative(dataSourceNumber.Buffer());
                     }
                     if (ret) {
+                        cachedDatabase = dataSourcesDatabase;
                         if (!dataSourcesDatabase.MoveRelative("Signals")) {
                             ret = dataSourcesDatabase.CreateRelative("Signals");
                         }
@@ -903,7 +1003,8 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
     bool isDsLocked = false;
     if (ret) {
         //check if the ds is locked
-        ret = dataSourcesDatabase.MoveToAncestor(1u);
+        //ret = dataSourcesDatabase.MoveToAncestor(1u);
+        dataSourcesDatabase = cachedDatabase;
         if (ret) {
             uint32 locked;
             if (dataSourcesDatabase.Read("Locked", locked)) {
@@ -920,12 +1021,14 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
     uint32 numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
     bool signalAlreadyExists = false;
     uint32 n;
-    StreamString foundSignalId;
+    uint32 foundSignalId;
+    //StreamString foundSignalId;
     ConfigurationDatabase dataSourcesDatabaseBeforeMove = dataSourcesDatabase;
     for (n = 0u; (n < numberOfSignals) && (ret) && (!signalAlreadyExists); n++) {
         dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
         ret = dataSourcesDatabase.MoveToChild(n);
-        foundSignalId = dataSourcesDatabase.GetName();
+        foundSignalId = n;
+        //foundSignalId = dataSourcesDatabase.GetName();
         StreamString dataSourceSignalName;
         if (ret) {
             ret = dataSourcesDatabase.Read("QualifiedName", dataSourceSignalName);
@@ -969,11 +1072,13 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
             }
         }
         if ((n > 0u) && (ret)) {
-            ret = dataSourcesDatabase.MoveToAncestor(1u);
+            //ret = dataSourcesDatabase.MoveToAncestor(1u);
+            dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
         }
         if (signalAlreadyExists && ret) {
             if (ret) {
-                ret = dataSourcesDatabase.MoveRelative(foundSignalId.Buffer());
+                //ret = dataSourcesDatabase.MoveRelative(foundSignalId.Buffer());
+                ret = dataSourcesDatabase.MoveToChild(foundSignalId);
             }
         }
     }
@@ -1431,8 +1536,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignals(const Signa
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 * const signalName, const char8 * const aliasName, const char8 * const functionName, const char8 * const dataSourceName,
-                                                                    uint32 &numberOfFunctionSignals, bool &deleted) {
+bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignal(const char8 * const signalName, const char8 * const aliasName, const char8 * const functionName, const char8 * const dataSourceName, uint32 &numberOfFunctionSignals, bool &deleted) {
 
     deleted = false;
     uint32 numberOfSignalsInDataSource = dataSourcesDatabase.GetNumberOfChildren();
@@ -1874,8 +1978,7 @@ bool RealTimeApplicationConfigurationBuilder::AddStateToGAM(const char8 * const 
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDatabase &local, const char8 * const functionName, const char8 * const stateName, const char8 * const threadName,
-                                                                 uint32 &syncSignals) {
+bool RealTimeApplicationConfigurationBuilder::AddStateToFunction(ConfigurationDatabase &local, const char8 * const functionName, const char8 * const stateName, const char8 * const threadName, uint32 &syncSignals) {
     StreamString functionPathStr = functionName;
     StreamString token = "+";
     char8 terminator;
@@ -3386,13 +3489,15 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
 bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functionsDatabaseOut, ConfigurationDatabase &dataSourcesDatabaseOut) {
     bool ret = functionsDatabase.MoveToRoot();
     if (ret) {
-        ret = functionsDatabase.Copy(functionsDatabaseOut);
+        //ret = functionsDatabase.Copy(functionsDatabaseOut);
+        functionsDatabaseOut = functionsDatabase;
     }
     if (ret) {
         ret = dataSourcesDatabase.MoveToRoot();
     }
     if (ret) {
-        ret = dataSourcesDatabase.Copy(dataSourcesDatabaseOut);
+        //ret = dataSourcesDatabase.Copy(dataSourcesDatabaseOut);
+        dataSourcesDatabaseOut = dataSourcesDatabase;
     }
     return ret;
 }
@@ -3502,11 +3607,7 @@ bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamStrin
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase, const char8 * const typeName, const char8 * const signalName,
-                                                                                  const char8 * const alias, const char8 * const dataSourceName, const char8 * const syncSignalName,
-                                                                                  const char8 * const triggerSignalName, const char8 * const fullTypeName, const AnyType & ranges,
-                                                                                  const AnyType & samples, const AnyType & frequency, const AnyType & trigger, ConfigurationDatabase & data,
-                                                                                  uint32 &signalNumber, bool &syncSet, bool &triggerSet, const bool isFunctionDatabase) {
+bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredData(ConfigurationDatabase &signalDatabase, const char8 * const typeName, const char8 * const signalName, const char8 * const alias, const char8 * const dataSourceName, const char8 * const syncSignalName, const char8 * const triggerSignalName, const char8 * const fullTypeName, const AnyType & ranges, const AnyType & samples, const AnyType & frequency, const AnyType & trigger, ConfigurationDatabase & data, uint32 &signalNumber, bool &syncSet, bool &triggerSet, const bool isFunctionDatabase) {
     //Try to find the registered type in the ClassRegistryDatabase
     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(typeName);
     const Introspection *intro = NULL_PTR(Introspection *);
@@ -3824,8 +3925,7 @@ uint32 RealTimeApplicationConfigurationBuilder::GetNumberOfSyncSignals(const cha
     return syncCounter;
 }
 
-bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDatabase &inputDatabase, ConfigurationDatabase &outputDatabase, StreamString & fullPath, uint32 &index,
-                                                                uint32 &timingDataSourceCounter) {
+bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDatabase &inputDatabase, ConfigurationDatabase &outputDatabase, StreamString & fullPath, uint32 &index, uint32 &timingDataSourceCounter) {
     bool ret = true;
 
     StreamString className;

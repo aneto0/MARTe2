@@ -206,6 +206,9 @@ ConfigurationDatabase    ();
      */
     ReferenceT<ReferenceContainer> GetCurrentNode() const;
 
+    //TODO Test and Document
+    void SetCurrentNodeAsRootNode();
+
 private:
 
     /**
