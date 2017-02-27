@@ -106,10 +106,16 @@ public:
     void GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const;
 
     /**
-     * @brief Returns the pointed data TypeDescriptor.
+     * @brief Returns the TypeDescriptor describing the most inner storage
      * @return the data TypeDescriptor.
      */
     const TypeDescriptor &GetFullTypeDescriptor() const;
+
+    /**
+     * @brief Returns the TypeDescriptor describing the overall variable
+     * @return the data TypeDescriptor.
+     */
+    const TypeDescriptor &GetTopTypeDescriptor() const;
 
     /**
      * @brief Gets the number of dimensions associated to this Match.
@@ -178,16 +184,13 @@ private:
 
     void FinaliseCode(TypeDescriptor td);
 
+    /// outputs the modifiers stored in the typeDescriptor into the modifier string
     void MoveCodeToModifiers();
 
     /**
      *  @brief a zero terminated sequence of tokens.
      *  @full each token can be a character or a sequence of characters and bytes
-     *  simple tokens are pPMV (const pointer,pointer, Vector,Matrix)
-     *  tokens followed by one byte:    aA  (const array[<256], array[<256])
-     *  tokens followed by two bytes:   bB  (const array[<65536], array[<65536])
-     *  tokens followed by four bytes:  cC  (const array[], array[])
-     */
+    */
 //    char8 *             modifiers;
     DynamicCString      modifiers;
 
@@ -544,7 +547,7 @@ private:
 
 template <class T>
 inline  VariableDescriptor::VariableDescriptor( T  x){
-    typeDescriptor = InvalidType;
+    typeDescriptor = VoidType;
     Match(x);
 }
 
@@ -591,7 +594,7 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n]){
-	AddArrayCode(Array1D,n);
+	AddArrayCode(SizedCArray,n);
 
     T *pp = NULL;
     Match(pp);
@@ -666,6 +669,7 @@ void VariableDescriptor::Match(StaticCString<sz> *s){
 	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz);
 	FinaliseCode(td);
 }
+
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);

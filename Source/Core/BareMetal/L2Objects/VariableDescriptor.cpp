@@ -210,183 +210,156 @@ static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
 	modifiers.AppendN(pBuffer);
 }
 
-void VariableDescriptor::MoveCodeToModifiers(){
-	bool isConstant = typeDescriptor.isConstant;
-	switch(typeDescriptor.arrayType){
-	case ArrayUnknown:{
-		if (isConstant) modifiers.Append('C');
-		typeDescriptor.all = 0;
-	} break;
-	case Array1D:{
-		volatile uint32 currentSize = typeDescriptor.arraySize;
+struct APLookUp{ CombinedArrayType arrayCode; char8 keyCode;};
 
-		if (currentSize == 0){
-			modifiers.Append('V');
-			typeDescriptor.all = 0;
-			typeDescriptor.isConstant = isConstant;
-		} else
-     	if (currentSize > 1){
-			modifiers.Append('A');
-			AddArrayDataToModifiers(modifiers,currentSize);
-			typeDescriptor.all = 0;
-			typeDescriptor.isConstant = isConstant;
-		}
-	}break;
-	case Array2D:{
-		modifiers.Append('M');
-		typeDescriptor.all = 0;
-		typeDescriptor.isConstant = isConstant;
-	}break;
-	case ZeroTermArray:{
-		if (typeDescriptor.isConstant){
-			modifiers.Append('z');
-		} else {
-			modifiers.Append('Z');
-		}
-		typeDescriptor.all = 0;
-	}break;
-	case DynamicZeroTermArray:{
-		if (typeDescriptor.isConstant){
-			modifiers.Append('d');
-		} else {
-			modifiers.Append('D');
-		}
-		typeDescriptor.all = 0;
-	}break;
-	case StaticZeroTermArray:{
-		if (typeDescriptor.isConstant){
-			modifiers.Append('s');
-		} else {
-			modifiers.Append('S');
-		}
-		AddArrayDataToModifiers(modifiers,typeDescriptor.arraySize);
-		typeDescriptor.all = 0;
-	}break;
-	case PointerArray:{
-		if (typeDescriptor.isConstant){
-			modifiers.Append('p');
-		} else {
-			modifiers.Append('P');
-		}
-		typeDescriptor.all = 0;
-	}break;
-	default:{
+APLookUp APLookupTable1[] = {
+		{SizedCArray_AP,'A'},
+		{StaticZeroTermArray_AP,'S'},
+		{ConstStaticZeroTermArray_AP,'s'},
+		{UnSizedA_AP,'\0'}
 
-	}break;
+};
+
+APLookUp APLookupTable2[] = {
+		{Array1D,'V'},
+		{ConstArray1D,'v'},
+		{Array2D,'M'},
+		{ConstArray2D,'m'},
+		{PointerArray,'P'},
+		{ConstPointerArray,'p'},
+		{ZeroTermArray,'Z'},
+		{ConstZeroTermArray,'z'},
+		{ConstDynamicZeroTermArray,'d'},
+		{DynamicZeroTermArray,'D'},
+		{ArrayUnknown,'\0'}
+};
+
+static char8 lookUpArrayType(CombinedArrayType arrayCode){
+	APLookUp *apl = &APLookupTable1[0];
+	char8 keyCode = '\0';
+	while ((apl->keyCode != '\0') && (keyCode == '\0')){
+		if (apl->arrayCode == arrayCode){
+			keyCode = apl->keyCode;
+		}
+		apl++;
 	}
+	return keyCode;
+}
+
+static char8 lookUpCompositeArrayCode(uint32 arrayCode){
+	APLookUp *apl = &APLookupTable2[0];
+	char8 keyCode = '\0';
+	while ((apl->keyCode != '\0') && (keyCode == '\0')){
+		if (apl->arrayCode == arrayCode){
+			keyCode = apl->keyCode;
+		}
+		apl++;
+	}
+	return keyCode;
+}
+
+
+void VariableDescriptor::MoveCodeToModifiers(){
+//	int i1 = typeDescriptor.arrayProperty;
+//	int i2 = typeDescriptor.combinedArrayType;
+	// do not save scalars
+	if ((typeDescriptor.arrayProperty == SizedCArray_AP) && (typeDescriptor.arraySize == 1)){
+		return;
+	}
+//	printf("MCM %i %i \n",i1,i2);
+
+	char8 keyCode = lookUpArrayType(typeDescriptor.arrayProperty);
+
+	if (keyCode != '\0'){
+		modifiers.Append(keyCode);
+		AddArrayDataToModifiers(modifiers,typeDescriptor.arraySize);
+	} else {
+		keyCode = lookUpCompositeArrayCode(typeDescriptor.combinedArrayType);
+		if (keyCode != '\0'){
+			modifiers.Append(keyCode);
+		}
+	}
+	// renormalise to scalar
+	typeDescriptor.arrayProperty = SizedCArray_AP;
+	typeDescriptor.arraySize = 1;
+
 
 }
 
-void VariableDescriptor::AddArrayCode(BasicArrayType bat, uint32 size1){
-	switch(bat){
-	case Array1D:{
-		//tries to store the array in the TypeDescriptor  either by creating a Array1D or an Array2D
-		//failing outputs current state to Modifiers
+void VariableDescriptor::AddArrayCode(CombinedArrayType cat, uint32 size){
+//printf("AAC %i %i \n",cat,size);
+
+	uint32 max = 1 << typeDescriptor.arraySize.GetNumberOfBits();
+	bool isConst = false;
+	switch(cat){
+	// new layer of vector/matrix
+	// just shift out existing layer without moving const
+	case SizedCArray:{
+		// if this was a Pointer/ZTA to xxx now drop the Pointer/ZTA and replace with the vector
 		MoveCodeToModifiers();
-		if (typeDescriptor.arrayType == ArrayUnknown){
-			if (size1 < 0xFFFFFu){
-				typeDescriptor.arrayType = Array1D;
-				typeDescriptor.arraySize = size1;
-				typeDescriptor.isConstant = false;
-			} else {
-				modifiers.Append('A');
-				AddArrayDataToModifiers(modifiers,size1);
-			}
-		}
+		typeDescriptor.combinedArrayType = cat;
+		if (size >= max) size = 0;
+		typeDescriptor.arraySize = size;
 	}break;
-	// only Matrix<T> case supported -- assumes size1 = 0
-	case Array2D:{
-		MoveCodeToModifiers();
-		typeDescriptor.arrayType = Array2D;
-		typeDescriptor.arraySize = 0;
-		typeDescriptor.isConstant = false;
-	}break;
-	case ZeroTermArray:{
-		MoveCodeToModifiers();
-		typeDescriptor.arrayType = ZeroTermArray;
-		typeDescriptor.isConstant = false;
-	}break;
-	case DynamicZeroTermArray:{
-		MoveCodeToModifiers();
-		typeDescriptor.arrayType = DynamicZeroTermArray;
-		typeDescriptor.isConstant = false;
-	}break;
+	case ConstStaticZeroTermArray:
 	case StaticZeroTermArray:{
+		// drop any existing modifier
 		MoveCodeToModifiers();
-		if (size1 < 0xFFFFFu){
-			typeDescriptor.arrayType = StaticZeroTermArray;
-			typeDescriptor.arraySize = size1;
-			typeDescriptor.isConstant = false;
-		} else {
-			modifiers.Append('S');
-			AddArrayDataToModifiers(modifiers,size1);
+		// if it was a const ? type now it will be a const ZTA<?>
+		if (typeDescriptor.dataIsConstant){
+			cat = ConstStaticZeroTermArray;
+			typeDescriptor.dataIsConstant = false;
 		}
-	}break;
-	case PointerArray:{
-		MoveCodeToModifiers();
-		typeDescriptor.arrayType = PointerArray;
-		typeDescriptor.isConstant = false;
+		typeDescriptor.combinedArrayType = cat;
+		if (size >= max) size = 0;
+		typeDescriptor.arraySize = size;
 	}break;
 	default:{
-
-	}break;
+		MoveCodeToModifiers();
+		if (typeDescriptor.dataIsConstant){
+			cat |= ConstArrayMask;
+			typeDescriptor.dataIsConstant = false;
+		}
+		typeDescriptor.combinedArrayType = cat;
+	}
 	}
 }
 
 void VariableDescriptor::AddConstantCode(){
-	typeDescriptor.isConstant = true;
+	//printf("ACC\n");
+	typeDescriptor.dataIsConstant = true;
 }
 
 void VariableDescriptor::FinaliseCode(TypeDescriptor td){
-	bool constant = typeDescriptor.isConstant;
-	if (typeDescriptor.arrayType == ArrayUnknown) {
-		typeDescriptor = td;
-	} else
+	bool useFullSpace = false;
 	if (td.isStructuredData){
-		MoveCodeToModifiers();
-		typeDescriptor = td;
-	} else
-	// can only merge scalar to vector definitions
-	if ((td.arrayType != Array1D) || (td.arraySize != 1)){
-		MoveCodeToModifiers();
-		typeDescriptor = td;
+		useFullSpace = true;
 	} else {
-		BasicType bt = td.type;
-		switch (bt){
-		// basic types supporting any modifier
-		case SignedInteger:
-		case UnsignedInteger:
-		case Float:
-		case Char:
-		{
-			uint32 tmp = td.objectSize;
-			typeDescriptor.objectSize = tmp;
-//			typeDescriptor.objectSize = td.objectSize;
-			tmp = td.type;
-			typeDescriptor.type = tmp;
-		} break;
-		case Void:
-		{
-			typeDescriptor.type = td.type;
-		} break;
-		// not supporting modifiers
-		case SignedBitInteger:
-		case UnsignedBitInteger:{
-			MoveCodeToModifiers();
-			typeDescriptor= td;
-		}break;
-		/// do not know how to handle yet
-		case SString:
-		case Stream:
-		case StructuredDataInterface:
-		case Invalid:
-		default:{
-			MoveCodeToModifiers();
-			typeDescriptor= td;
-			} break;
+		if (td.objectSize == SizeBits){
+			useFullSpace = true;
+		} else {
+			if (td.arrayProperty == SizedCArray){
+				useFullSpace = (td.arraySize != 1);
+			} else {
+				useFullSpace = true;
+			}
 		}
 	}
-	typeDescriptor.isConstant = typeDescriptor.isConstant | constant;
+	// make space
+	if (useFullSpace) {
+		MoveCodeToModifiers();
+		bool isConst = typeDescriptor.dataIsConstant;
+		typeDescriptor = td;
+		if (isConst) typeDescriptor.dataIsConstant = true;
+	} else { // merge
+		typeDescriptor.isStructuredData  = false;
+		if (td.dataIsConstant)	typeDescriptor.dataIsConstant = true;
+		uint32 temp = td.type;
+		typeDescriptor.type = temp;
+		temp = td.objectSize;
+		typeDescriptor.objectSize = temp;
+
+	}
 }
 /*
 static bool isToken(char8 c){
@@ -430,7 +403,7 @@ void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,
 
 
 VariableDescriptor::VariableDescriptor(){
-    typeDescriptor = InvalidType;
+    typeDescriptor = VoidType;
 }
 
 VariableDescriptor::~VariableDescriptor(){
@@ -453,6 +426,11 @@ VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
 
 const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
     return typeDescriptor;
+}
+
+const TypeDescriptor &VariableDescriptor::GetTopTypeDescriptor() const {
+
+     return VoidType;
 }
 
 

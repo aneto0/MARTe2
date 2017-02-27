@@ -42,69 +42,99 @@ namespace MARTe {
  */
 // not usable in switch sections
 //typedef uint4 BasicType;
+
+// used to encode types in the TypeDescriptor
 typedef uint8 BasicType;
+
+
+/**
+ * @brief The type is one of the known complex types OBject,Stream,StructuredData.
+ */
+const BasicType ComplexType = 0u;
 
 /**
  * @brief The type is a signed integer.
  */
-const BasicType SignedInteger = 0u;
+const BasicType SignedInteger = 1u;
 
 /**
  * @brief The type is an unsigned integer.
  */
-const BasicType UnsignedInteger = 1u;
+const BasicType UnsignedInteger = 2u;
 
 /**
  * @brief The type is a float number.
  */
-const BasicType Float = 2u;
+const BasicType Float = 3u;
 
 /**
  * @brief The type is a char .
  */
-const BasicType Char = 3u;
+const BasicType Char = 4u;
 
 /**
- * @brief The type is a pointer. A void*. No information on the type pointed to
+ * @brief The type is defined elsewhere
  */
-//const BasicType Pointer = 4u;  // replaced by the BasicArrayType::BasicArrayType
-
-/**
- * @brief The type is a signed bit range .
- */
-const BasicType SignedBitInteger = 5u;
-
-/**
- * @brief The type is an unsigned bit range.
- */
-const BasicType UnsignedBitInteger = 6u;
-
-/**
- * @brief The type is a StreamString class.
- */
-const BasicType SString = 7u;
-
-/**
- * @brief The type is a StreamInterface class.
- */
-const BasicType Stream = 8u;
-
-/**
- * @brief  The StructuredDataI type
- */
-const BasicType StructuredDataInterface = 13u;
+const BasicType DelegatedType = 6u;
 
 /**
  * @brief The type is unspecified -dereferencing a void *
  */
-const BasicType Void = 14u;
+const BasicType Void = 7u;
+
+// used to encode types in the TypeDescriptor
+typedef uint8 ComplexSubType;
+
+/**
+ * @brief The type is a StreamString class.
+ */
+const ComplexSubType  SString = 1u;
+
+/**
+ * @brief The type is a StreamInterface class.
+ */
+const ComplexSubType  Stream = 2u;
+
+/**
+ * @brief  The StructuredDataI type
+ */
+const ComplexSubType  StructuredDataInterface = 3u;
+
 
 /**
  * @brief The type is not valid
  */
-const BasicType Invalid = 15u;
+//const BasicType Invalid = 15u;
 
 
+/**
+ * @brief Definition of BasicArrayType
+ */
+//typedef uint8 SizedArrayType;
+
+/**
+ * @brief The type is a []
+ */
+//const SizedArrayType CSArray = 0u;
+
+/**
+ * @brief The type is a []
+ */
+//const SizedArrayType StaticZeroTermSArray  = 1u;
+
+/**
+ * @brief Definition of BasicArrayPropertyType
+ */
+typedef uint8 BasicArrayPropertyType;
+
+/**
+ * @brief The type is a Vector<T>(0)
+ */
+const BasicArrayPropertyType      UnSizedA_AP    = 0u;
+const BasicArrayPropertyType ConstUnSizedA_AP    = 4u;
+const BasicArrayPropertyType      SizedCArray_AP = 2u;
+const BasicArrayPropertyType      StaticZeroTermArray_AP   = 3u;
+const BasicArrayPropertyType ConstStaticZeroTermArray_AP   = 7u;  // ZTA const
 
 
 /**
@@ -112,46 +142,116 @@ const BasicType Invalid = 15u;
  */
 typedef uint8 BasicArrayType;
 
-
 /**
  * @brief The type is invalid or unKnown
  */
-const BasicArrayType ArrayUnknown = 0u;
+const BasicArrayType ArrayUnknown_BT = 0u;
 
 /**
- * @brief The type is a scalar (1) - vector : Vector<T>(0) or T[N] (N)
+ * @brief The type is a Vector<T>(0)
  */
-const BasicArrayType Array1D = 1u;
+const BasicArrayType Array1D_BT = 1u;
 
 /**
- * @brief The type is a matrix - type Matrix<T>
+ * @brief The type is a Matrix<T>
  */
-const BasicArrayType Array2D = 2u;
-
-/**
- * @brief The type is a matrix - more than 1 dimensions - the missing one are listed elsewhere
- */
-const BasicArrayType ArrayLarge = 3u;
-
-/**
- * @brief The type is a ZeroTerminatedArray of unknown size
- */
-const BasicArrayType ZeroTermArray = 4u;
-
-/**
- * @brief The type is a zero term vector of reallocable size
- */
-const BasicArrayType DynamicZeroTermArray = 5u;
-
-/**
- * @brief The type is a zero term vector of fixed size non-reallocable
- */
-const BasicArrayType StaticZeroTermArray = 6u;
+const BasicArrayType Array2D_BT = 2u;
 
 /**
  * @brief The type is a pointer to the specified type
  */
-const BasicArrayType PointerArray = 7u;
+const BasicArrayType PointerArray_BT = 3u;
+
+/**
+ * @brief The type is a ZeroTerminatedArray of unknown size
+ */
+const BasicArrayType ZeroTermArray_BT = 4u;
+
+/**
+ * @brief The type is a zero term vector of reallocable size
+ */
+const BasicArrayType DynamicZeroTermArray_BT = 5u;
+
+/**
+ * Used to specify combinations of ArrayType and ArrayProperty
+ */
+typedef uint8 CombinedArrayType;
+
+/**
+ * @brief The type is a zero term vector of fixed size non-reallocable
+ */
+const CombinedArrayType SizedCArray = SizedCArray_AP ;
+
+/**
+ * @brief The type is a zero term vector of fixed size non-reallocable
+ */
+const CombinedArrayType StaticZeroTermArray = StaticZeroTermArray_AP ;
+
+/**
+ * @brief The type is a zero term vector of fixed size non-reallocable
+ */
+const CombinedArrayType ConstStaticZeroTermArray = ConstStaticZeroTermArray_AP ;
+
+/**
+ * @brief this mask allows testing and setting for const types
+ */
+const CombinedArrayType ConstArrayMask = ConstUnSizedA_AP;
+
+/**
+ * CombinedArrayType of ArrayUnknown
+ */
+const CombinedArrayType ArrayUnknown = (ArrayUnknown_BT << 3);
+
+/**
+ * @brief The type is a Vector<T>(0)
+ */
+const CombinedArrayType Array1D = (Array1D_BT << 3);
+
+/**
+ * @brief The type is a Vector<T>(0)
+ */
+const CombinedArrayType ConstArray1D = Array1D + ConstUnSizedA_AP;
+
+/**
+ * @brief The type is a Matrix<T>
+ */
+const CombinedArrayType Array2D = (Array2D_BT << 3);
+
+/**
+ * @brief The type is a Matrix<T>
+ */
+const CombinedArrayType ConstArray2D = Array2D + ConstUnSizedA_AP ;
+
+/**
+ * @brief The type is a pointer to the specified type
+ */
+const CombinedArrayType PointerArray = (PointerArray_BT << 3);
+
+/**
+ * @brief The type is a pointer to the specified type
+ */
+const CombinedArrayType ConstPointerArray = PointerArray + ConstUnSizedA_AP ;
+
+/**
+ * @brief The type is a ZeroTerminatedArray of unknown size
+ */
+const CombinedArrayType ZeroTermArray = (ZeroTermArray_BT << 3);
+
+/**
+ * @brief The type is a ZeroTerminatedArray of unknown size
+ */
+const CombinedArrayType ConstZeroTermArray = ZeroTermArray + ConstUnSizedA_AP ;
+
+/**
+ * @brief The type is a zero term vector of reallocable size
+ */
+const CombinedArrayType DynamicZeroTermArray = (DynamicZeroTermArray_BT << 3);
+
+/**
+ * @brief The type is a zero term vector of reallocable size
+ */
+const CombinedArrayType ConstDynamicZeroTermArray = DynamicZeroTermArray + ConstUnSizedA_AP;
+
 
 /**
  * @brief Definition of BasicArrayType
@@ -194,9 +294,9 @@ const BasicObjectSize Size128bit = 5u;
 const BasicObjectSize Size256bit = 6u;
 
 /**
- * @brief The type has size 128bit
+ * @brief The type has bit size
  */
-const BasicObjectSize Size512bit = 7u;
+const BasicObjectSize SizeBits = 7u;
 
 /**
  * TODO
@@ -215,7 +315,8 @@ DLL_API uint32 BitsFromBasicObjectSize(BasicObjectSize bos);
  * @return a string for the basicType
  */
 class CCString;
-DLL_API CCString BasicTypeName(uint32 bt);
+DLL_API CCString BasicTypeName(BasicType bt,ComplexSubType cs);
+
 
 
 }

@@ -61,40 +61,31 @@ namespace MARTe {
  * @note The TypeDescriptor is internally represented as a 32-bit bitfield-like union with one of the following structures (depending on the type
  * described, if a basic one, or a structured one):
  *
- * | isStructuredData   | isConstant  | structuredDataIdCode                                                   |
- * | :----:             | :----:      | :----:                                                                 |
- * |  1  (=1)           | 1           | 30                                                                     |
+ * | isStructuredData | dataConst  | structuredDataIdCode                                                   |
+ * | :----:           | :----:     | :----:                                                                 |
+ * |  1  (=1)         | 1          | 30                                                                     |
  *
- * | isStructuredData   | isConstant  | type         | unused  | bitOffset | unused  | numberOfBits            |
- * | :----:             | :----:      | :----:       | :----:  | :----:    | :----:  | :----:                  |
- * |  1  (=0)           | 1           | 4 (Bit-Int)  | 4       | 6         | 2       | 16                      |
+ * | isStructuredData | dataConst  | type    | objectSize | spare | bitOffset | numberOfBits     |
+ * | :----:           |:----:      | :----:  | :----:     | :---- | :----:    | :----:           |
+ * |  1  (=0)         | 1          | 3=u/int | 3=7        | 2     | 6         | 16               |
  *
- * | isStructuredData   | isConstant  | type               | objectSize    | arrayType      | unused           |
- * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (ZeroT,..)   | 20               |
-  *
- * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | arraySize            |
- * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
- * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (1D,[n]) | 20                   |
+ * | isStructuredData | dataConst  | type    | objectSize | ArrayProperty | arraySize  |
+ * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:     |
+ * |  1  (=0)         | 1          | 3=basic | 3          | 3  (sized)    | 21         |
  *
-// * | isStructuredData   | isConstant  | type               | objectSize    | arrayType  | columns | rows       |
-// * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     |
-// * |  1  (=0)           | 1           | 4 (Int,Float,Char) | 3             | 3 (2D)     | 10      | 10         |
+ * | isStructuredData | dataConst  | type    | objectSize | ArrayProperty |  ArrayType    | spare2
+ * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:        | :----:
+ * |  1  (=0)         | 1          | 3=basic | 3          | 3 (unsized)   | 3             | 18
  *
- * | isStructuredData   | isConstant  | type               | unused        | arrayType      | unused           |
- * | :----:             | :----:      | :----:             | :----:        | :----:         | :----:           |
- * |  1  (=0)           | 1           | 4 (others )        | 3             | 3 (ZeroT,..)   | 20               |
- *
- * | isStructuredData   | isConstant  | type               | unused        | arrayType  | arraySize            | arraySize>0
- * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:               |
- * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (1D,[N]) | 20                   |
- *
-// * | isStructuredData   | isConstant  | type               | unused        | arrayType  | columns | rows       | rows >=1
-// * | :----:             | :----:      | :----:             | :----:        | :----:     | :----:  | :----:     | columns >=1
-// * |  1  (=0)           | 1           | 4 (others)         | 3             | 3 (2D)     | 10      | 10         |
+ * | isStructuredData | dataConst  | type    | not used   | ArrayProperty |  ArrayType    | spare2     |
+ * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:        | :----:     |
+ * |  1  (=0)         | 1          | 3=void  | 3          | 3             | 3=Ptr         | 18         |VOID*
+ * |  1  (=0)         | 1          | 3=void  | 3          | 3             | n/a           | 18         |VOID
  *
  *
+ * type = complex....
  */
+
 class DLL_API TypeDescriptor {
 public:
 
@@ -107,109 +98,14 @@ public:
         /**
          * If true then the data is a structure or class and its definition
          * has to be found in the ObjectRegistryDatabase
+         * void const *
          */
         BitBoolean<uint32, 0u> isStructuredData;
 
         /**
          * The data is constant - cannot be written to
          */
-        BitBoolean<uint32, 1u> isConstant;
-
-        /*****************************************************
-         *
-         *        For isStructuredData = false
-         *
-         *****************************************************/
-
-        /**
-         * The actual type of data
-         * See table in BasicType
-         */
-        BitRange<uint32, 4u, 2u> type;
-
-        /*****************************************************
-         *
-         *        For type = int,float,char
-         *
-         *****************************************************/
-
-        /**
-         * The size of the type unknown/8/16/32/64/128/256/512 bits (1/2/4/8/16/32/64 bytes)
-         * Determines the type of integer or float
-         * For char[] this is 1
-         * Values taken from BasicObjectSize
-         */
-        BitRange<uint32, 3u, 6u> objectSize;
-
-        /**
-         * The array type
-         * 0 means unsupported
-         * 1 means 1D
-         * 2 means 2D
-         * 3 means ?D+ too large array. - does not fit within 1D<1M and 2D <(1Kx1K) or too many dimensions
-         * 4 means Zero Term Array
-         * 5 means Dynamic Zero Term Array (reallocable)
-         * 6 means Static Zero Term Array - equivalent to 1D but zero term
-         * 7 means unsupported
-         *  codes as BasicArryType
-         */
-        BitRange<uint32, 3u, 9u> arrayType;
-
-
-        /*****************************************************
-         *
-         *        For arrayType = Array1D & StaticZeroTermArray
-         *
-         *****************************************************/
-
-        /**
-         * The vector size for 1D array and for ?D+ array the first dimensions size
-         * Up to 1M  0 means Vector<T> 1 means scalar >1 means T[arraySize]
-         * Used for char[] to indicate size of memory
-         */
-        BitRange<uint32, 20u, 12u> arraySize;
-
-
-//      /*****************************************************
-//         *
-//         *        For arrayType = 2
-//         *
-//         *****************************************************/
-//
-//        /**
-//         * The vector size
-//         * Up to 1K  0 means- not determined
-//         * Used for char[] to indicate size of memory
-//         */
-//        BitRange<uint32, 10u, 12u> numberOfRows;
-//
-//        /**
-//         * The vector size
-//         * Up to 1K 0 means- not determined
-//         */
-//        BitRange<uint32, 10u, 22u> numberOfColumns;
-
-
-
-        /*****************************************************
-         *
-         *        For type = bit int
-         *
-         *****************************************************/
-
-        /**
-         * The bit offset
-         * 0-63
-         */
-        BitRange<uint32, 6u, 8u> bitOffset;
-
-        /**
-         * The size in bits
-         * Up to 65K
-         */
-        BitRange<uint32, 16u, 16u> numberOfBits;
-
-
+        BitBoolean<uint32, 1u> dataIsConstant;
 
         /*****************************************************
          *
@@ -224,6 +120,107 @@ public:
 
         /*****************************************************
          *
+         *        For isStructuredData = false
+         *
+         *****************************************************/
+
+        /**
+         * The actual type of data
+         * See table in BasicType
+         */
+        BitRange<uint32, 3u, 2u> type;
+
+        /*****************************************************
+         *
+         *        For type = complexType
+         *
+         *****************************************************/
+        /**
+         * The subType related to complexType
+         */
+        BitRange<uint32, 3u, 5u> complexType;
+
+        /**
+         * The type and complexType joined
+         */
+        //BitRange<uint32, 6u, 2u> combinedType;
+
+        /*****************************************************
+         *
+         *        For type = int uint float char (void)
+         *
+         *****************************************************/
+
+        /**
+         * The size of the type unknown/8/16/32/64/128/256/512 bits (1/2/4/8/16/32/64 bytes)
+         * Determines the type of integer or float
+         * For char[] this is 1
+         * Values taken from BasicObjectSize
+         */
+        BitRange<uint32, 3u, 5u> objectSize;
+
+        /*****************************************************
+         *
+         *        For objectSize = 7 SizeBits && int or uint
+         *
+         *****************************************************/
+
+        /**
+         * The bit offset
+         * 0-63
+         */
+        BitRange<uint32, 6u, 10u> bitOffset;
+
+        /**
+         * The size in bits
+         * Up to 65K
+         */
+        BitRange<uint32, 16u, 16u> numberOfBits;
+
+        /*****************************************************
+         *
+         *        For objectSize < 7 SizeBits && i/uint float char
+         *
+         *****************************************************/
+
+        /**
+         * const ptr, sized array etc...
+         */
+        BitRange<uint32,3u, 8u> arrayProperty;
+
+        /*****************************************************
+         *
+         *        For arrayProperty sized
+         *
+         *****************************************************/
+
+        /**
+         * The vector size for 1D array and for ?D+ array the first dimensions size
+         * Up to 2M  0 means larger than 2M 1 means scalar
+         * Used for char[] to indicate size of memory
+         */
+         BitRange<uint32, 21u, 11u> arraySize;
+
+        /*****************************************************
+         *		  type = int,float,char
+         *        For hasSize = false
+         *
+         *****************************************************/
+
+        /**
+         * The array type
+         *  codes as BasicArrayType
+         */
+         BitRange<uint32, 3u, 11u> arrayType;
+
+         /**
+          * arrayProperty & arrayType
+          */
+         BitRange<uint32, 6u, 8u> combinedArrayType;
+
+
+        /*****************************************************
+         *
          *        as a 32 bit code
          *
          *****************************************************/
@@ -235,7 +232,6 @@ public:
     };
 
     TypeDescriptor();
-
     /**
      * @brief Constructor by 32 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
@@ -244,6 +240,12 @@ public:
     TypeDescriptor(const uint32 x);
 
     /**
+     * TODO
+     * Allows setting the complex subtypes
+     */
+    TypeDescriptor(const bool isConstantIn,const ComplexSubType 	subType);
+    /**
+     * TODO correct
      * @brief Basic Byte Types constructor.
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
@@ -274,12 +276,9 @@ public:
     TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
                    const BasicObjectSize objectSizeIn,
-                   const BasicArrayType arrayTypeIn,
+                   const CombinedArrayType arrayTypeIn,
                    const uint32 arraySizeIn
-//                   ,const uint32 numberOfColumnsIn
-//                   ,const uint32 numberOfRowsIn
                    );
-
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
@@ -307,6 +306,11 @@ public:
      */
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
     bool operator!=(const TypeDescriptor &typeDescriptor) const;
+
+    /**
+     * whether it is an basic type or one of the special types
+     */
+    inline bool IsComplexType() const ;
 
     /**
      * whether it is an integer with fractional bit size or offset
@@ -368,114 +372,109 @@ public:
 /**
  * An array
  */
-static const TypeDescriptor Character8Bit(false, Char, 8u);
+extern const TypeDescriptor Character8Bit;
 
 
 /**
  * 32 bit float descriptor.
  */
-static const TypeDescriptor Float32Bit(false, Float, 32u);
+extern const TypeDescriptor Float32Bit;
 
 /**
  * 64 bit float descriptor.
  */
-static const TypeDescriptor Float64Bit(false, Float, 64u);
+extern const TypeDescriptor Float64Bit;
 
 /**
  * 128 bit Float descriptor
  */
-static const TypeDescriptor Float128Bit(false, Float, 128u);
+extern const TypeDescriptor Float128Bit;
 
 /**
- * Void descriptor - unknown -
+ * Void descriptor - unknown/invalid -
  */
-static const TypeDescriptor VoidType(false, Void, 0u);
-
-/**
- * Invalid type descriptor
- */
-static const TypeDescriptor InvalidType(false, Invalid, 0u);
+extern const TypeDescriptor VoidType;
 
 /**
  * 8 bit signed integer descriptor
  */
-static const TypeDescriptor SignedInteger8Bit(false, SignedInteger, 8u);
+extern const TypeDescriptor SignedInteger8Bit;
 
 /**
  * 8 bit unsigned integer descriptor
  */
-static const TypeDescriptor UnsignedInteger8Bit(false, UnsignedInteger, 8u);
+extern const TypeDescriptor UnsignedInteger8Bit;
 
 /**
  * 16 bit signed integer descriptor
  */
-static const TypeDescriptor SignedInteger16Bit(false, SignedInteger, 16u);
+extern const TypeDescriptor SignedInteger16Bit;
 
 /**
  * 16 bit unsigned integer descriptor
  */
-static const TypeDescriptor UnsignedInteger16Bit(false, UnsignedInteger, 16u);
+extern const TypeDescriptor UnsignedInteger16Bit;
 
 /**
  * 32 bit signed integer descriptor
  */
-static const TypeDescriptor SignedInteger32Bit(false, SignedInteger, 32u);
+extern const TypeDescriptor SignedInteger32Bit;
 
 /**
  * 32 bit unsigned integer descriptor
  */
-static const TypeDescriptor UnsignedInteger32Bit(false, UnsignedInteger, 32u);
+extern const TypeDescriptor UnsignedInteger32Bit;
 
 /**
  * 64 bit signed integer descriptor
  */
-static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
+extern const TypeDescriptor SignedInteger64Bit;
 
 /**
  * 64 bit unsigned integer descriptor
  */
-static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
+extern const TypeDescriptor UnsignedInteger64Bit;
 
 /**
  * CCString  descriptor
  */
-static const TypeDescriptor ConstCharString(true, Char, Size8bit,ZeroTermArray,  1);
+extern const TypeDescriptor ConstCharString;
 
 /**
  * CString descriptor
  */
-static const TypeDescriptor CharString(false,  Char, Size8bit,ZeroTermArray,  1);
+extern const TypeDescriptor CharString;
 
 /**
  *  Dynamic String descriptor char * = malloc
  */
-static const TypeDescriptor DynamicCharString(false,  Char, Size8bit,DynamicZeroTermArray, 1);
+extern const TypeDescriptor DynamicCharString;
 
 /**
  *  Static char String descriptor char[1]
  */
-static const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray, 1);
+extern const TypeDescriptor StaticCharString;
 
 /**
  * ConfigurationDatabase node
  */
-static const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInterface, 0u);
+extern const TypeDescriptor StructuredDataInterfaceType;
 
 /**
  * Pointer descriptor
  */
-static const TypeDescriptor VoidPointer(false, Void, Size8bit,PointerArray,0);
+extern const TypeDescriptor VoidPointer;
+
+/**
+ * Pointer descriptor
+ */
+extern const TypeDescriptor ConstVoidPointer;
 
 /**
  * @brief Describes one layer of an array. returns as void[size] - size is set to 1 and need to be adjusted - the type is void as the size of the other array layers is unknown
  */
-static const TypeDescriptor ArrayLayerType(false, Void, Size8bit,Array1D,0);
+extern const TypeDescriptor ArrayLayerType;
 
-
-/**
- * @brief A large array- too large to fit within the models 1D[1024x1024] or 2D[1024][1024]
- */
-//static const TypeDescriptor LargeArrayType(false, Void, ArrayLarge,0,0);
 
 
 /*---------------------------------------------------------------------------*/
@@ -483,7 +482,11 @@ static const TypeDescriptor ArrayLayerType(false, Void, Size8bit,Array1D,0);
 /*---------------------------------------------------------------------------*/
 
 bool TypeDescriptor::IsBitType() const {
-    return ((type ==  SignedBitInteger) || (type ==  UnsignedBitInteger));
+    return (objectSize ==  SizeBits );
+};
+
+bool TypeDescriptor::IsComplexType() const {
+    return (type ==  ComplexType );
 };
 
 }

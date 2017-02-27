@@ -70,95 +70,99 @@ namespace MARTe {
 
 TypeDescriptor::TypeDescriptor() {
     all = 0;
+    combinedArrayType = SizedCArray;
+    arraySize        = 1u;
+    type             = Void;
 }
 
 TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
 
-
+TypeDescriptor::TypeDescriptor(const bool isConstantIn,const ComplexSubType 	subType){
+    dataIsConstant   = isConstantIn;
+    type             = ComplexType;
+    complexType      = subType;
+    combinedArrayType = SizedCArray;
+    arraySize        = 1u;
+}
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                    const BasicType typeIn,
                    const uint32 numberOfBitsIn,
-                   const uint8  bitsOffsetIn){
+                   const uint8  bitsOffsetIn  ){
 
-    isConstant       = isConstantIn;
+    dataIsConstant   = isConstantIn;
     type             = typeIn;
     isStructuredData = false;
 
-    BasicObjectSize bos = BasicObjectSizeFromBits(numberOfBitsIn);
+	BasicObjectSize bos;
+    if (typeIn == Void){
+    	bos = SizeUnknown;
+    } else {
+    	bos = BasicObjectSizeFromBits(numberOfBitsIn);
+    }
+	objectSize  = bos;
+    type        = typeIn;
+    arrayProperty = SizedCArray;
+    arraySize     = 1u;
 
-    bool isBitType        = ((bos == SizeUnknown) || (bitsOffsetIn != 0u));
+
+    bool isBitType        = ((objectSize == SizeBits) || (bitsOffsetIn != 0u));
 
     if (isBitType) {
-        if (typeIn == UnsignedInteger) {
-            type = UnsignedBitInteger;
-        } else
-        if (typeIn == UnsignedInteger) {
-            type = SignedBitInteger;
-        } else {
-            type = Invalid;
+        if ((typeIn != SignedInteger) &&  (typeIn != UnsignedInteger)){
+            type     = Void;
         }
         if (numberOfBitsIn <= 65535u){
             this->numberOfBits = numberOfBitsIn;
         } else {
-            type = Invalid;
+            type    = Void;
         }
         if (numberOfBitsIn <= 63u){
             this->bitOffset = bitsOffsetIn;
         } else {
-            type = Invalid;
+            type 	= Void;
         }
-    } else {
-        objectSize  = bos;
-        arrayType = Array1D;
-        arraySize = 1u;
     }
 }
+
 
 TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
                                    const BasicType typeIn,
                                    const BasicObjectSize objectSizeIn,
-                                   const BasicArrayType arrayTypeIn,
+                                   const CombinedArrayType arrayTypeIn,
                                    const uint32 arraySizeIn
-//                                   const uint32 numberOfColumnsIn,
-//                                   const uint32 numberOfRowsIn
                ){
-    isConstant       = isConstantIn;
+    dataIsConstant       = isConstantIn;
     type             = typeIn;
     isStructuredData = false;
     objectSize       = objectSizeIn;
-    arrayType        = arrayTypeIn;
-    arraySize        = 0;
+    if (objectSizeIn == SizeBits) type = Void;
+
+    combinedArrayType = arrayTypeIn;
 
     switch (arrayTypeIn){
-    case StaticZeroTermArray:
-    case ArrayLarge: // 2D, 3D ... arrays
-    case Array1D:{
-        if (arraySizeIn > 0xFFFFFu){
-            arrayType            = ArrayUnknown;  /// constructs an useless descriptor!
-        } else {
-            arraySize            = arraySizeIn;
-        }
+
+    case SizedCArray:
+    case ConstStaticZeroTermArray:
+    case StaticZeroTermArray:{
+    	uint32 max = 1 << arraySize.GetNumberOfBits();
+
+    	if (arraySizeIn >= (max - 1)){
+    		arraySize = 0;  /// large array
+    	} else {
+    		arraySize = arraySizeIn;
+    	}
     } break;
-    case Array2D:{
-        if (arraySizeIn != 0){
-            arrayType            = ArrayUnknown;  /// constructs an useless descriptor!
-        }
-    } break;
-    default:{
+    default:{};
 
-    }
-
-    } // end switch
-
+    };
 }
-
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,const uint32  &structuredDataIdCodeIn) {
     isStructuredData = true;
-    isConstant       = isConstantIn;
+    dataIsConstant   = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;
 }
 
@@ -212,5 +216,28 @@ const char8 *TypeDescriptor::GetTypeNameFromStaticTable(const uint32 index){
     return basicTypeInfo[index].castName;
 }
 */
+
+const TypeDescriptor Character8Bit(false, Char, 8u);
+const TypeDescriptor Float32Bit(false, Float, 32u);
+const TypeDescriptor Float64Bit(false, Float, 64u);
+const TypeDescriptor Float128Bit(false, Float, 128u);
+const TypeDescriptor VoidType(false, Void, 0u);
+const TypeDescriptor SignedInteger8Bit(false, SignedInteger, 8u);
+const TypeDescriptor UnsignedInteger8Bit(false, UnsignedInteger, 8u);
+const TypeDescriptor SignedInteger16Bit(false, SignedInteger, 16u);
+const TypeDescriptor UnsignedInteger16Bit(false, UnsignedInteger, 16u);
+const TypeDescriptor SignedInteger32Bit(false, SignedInteger, 32u);
+const TypeDescriptor UnsignedInteger32Bit(false, UnsignedInteger, 32u);
+const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
+const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
+const TypeDescriptor ConstCharString(true, Char, Size8bit,ZeroTermArray,  1);
+const TypeDescriptor CharString(false,  Char, Size8bit,ZeroTermArray,  1);
+const TypeDescriptor DynamicCharString(false,  Char, Size8bit,DynamicZeroTermArray, 1);
+const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray, 1);
+const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInterface);
+const TypeDescriptor VoidPointer(false, Void, Size8bit,PointerArray,0);
+const TypeDescriptor ConstVoidPointer(false, Void, Size8bit,ConstPointerArray,0);
+const TypeDescriptor ArrayLayerType(false, DelegatedType, Size8bit,SizedCArray,0);
+
 
 }

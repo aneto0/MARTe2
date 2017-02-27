@@ -28,6 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
+
 #include "BasicType.h"
 #include "CCString.h"
 
@@ -44,12 +46,11 @@ namespace MARTe{
 
 
 
-BasicObjectSize BasicObjectSizeFromBits(uint32 bits){
-    BasicObjectSize  bos = SizeUnknown;
+DLL_API BasicObjectSize BasicObjectSizeFromBits(uint32 bits){
+    BasicObjectSize  bos = SizeBits;
     if (bits > 32){
         if (bits > 128){
             if (bits == 256) bos = Size256bit;
-            if (bits == 512) bos = Size512bit;
         } else {
             if (bits == 128) bos = Size128bit;
             if (bits == 64)  bos = Size64bit;
@@ -60,13 +61,15 @@ BasicObjectSize BasicObjectSizeFromBits(uint32 bits){
         if (bits == 8)       bos = Size8bit;
     }
 
+    if (bits > 32767) bos = SizeUnknown;
+
     return bos;
 }
 
 
 uint32 BitsFromBasicObjectSize(BasicObjectSize bos){
     uint32 ret = 0;
-    if (bos != SizeUnknown){
+    if ((bos != SizeUnknown) || (bos != SizeBits)){
         ret = 4 << bos;
     }
     return ret;
@@ -107,30 +110,36 @@ CCString BasicTypeName(uint32 bt){
 #define BTN_CASE_FULL(btName,alias) case btName: { ret = alias;} break;
 
 
-CCString BasicTypeName(uint32 bt){
-    CCString ret = "??";
+CCString BasicTypeName(BasicType bt,ComplexSubType cs){
+    CCString ret = "ty??pe";
 
-    switch(bt){
+    if (bt ==  ComplexType){
+        switch(cs){
 
-    BTN_CASE_FULL(SignedInteger,"int")
-    BTN_CASE_FULL(UnsignedInteger,"uint")
-    BTN_CASE_FULL(Float,"float")
-    BTN_CASE_FULL(Char,"char")
-    BTN_CASE_FULL(SignedBitInteger,"int")
-    BTN_CASE_FULL(UnsignedBitInteger,"uint")
-    BTN_CASE(SString)
-    BTN_CASE(Stream)
-    BTN_CASE_FULL(StructuredDataInterface,"{struct}")
-    BTN_CASE_FULL(Void,"void")
-    BTN_CASE(Invalid)
+        BTN_CASE_FULL(SString,"String")
+        BTN_CASE_FULL(Stream,"StreamI")
+        BTN_CASE_FULL(StructuredDataInterface,"StructuredDataI")
+        default:{
 
+        }
+        };
 
-    default:{
+    } else {
+        switch(bt){
 
+        BTN_CASE_FULL(SignedInteger,"int")
+        BTN_CASE_FULL(UnsignedInteger,"uint")
+        BTN_CASE_FULL(Float,"float")
+        BTN_CASE_FULL(Char,"char")
+        BTN_CASE_FULL(Void,"void")
+        BTN_CASE_FULL(DelegatedType,"ty??pe")
+
+        default:{
+
+        }
+
+        };
     }
-
-    };
-
     return ret;
 }
 

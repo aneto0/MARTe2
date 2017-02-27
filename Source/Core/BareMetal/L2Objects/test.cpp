@@ -67,6 +67,9 @@ void printType(AnyType x){
         case 'P':{
         	pbuf += sprintf (pbuf,"* ");
         }break;
+        case 'p':{
+        	pbuf += sprintf (pbuf,"const * ");
+        }break;
         default :{
         	pbuf += sprintf (pbuf,"%c ",token);
         }break;
@@ -78,51 +81,80 @@ void printType(AnyType x){
 
     TypeDescriptor td = vd.GetFullTypeDescriptor();
     const char8 *consts= "";
-    if (td.isConstant){
+    if (td.dataIsConstant){
         //printf ("const ");
     	consts = "const ";
     }
     if (td.isStructuredData){
-        printf ("S(%i) ",(int)td.structuredDataIdCode);
+        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
     } else {
+    	if (td.IsComplexType()){
+            printf ("%s%s ",consts,BasicTypeName(td.type,td.complexType));
+    	} else
         if (td.IsBitType()){
-            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type).GetList(),(int)td.numberOfBits,(int)td.bitOffset);
+            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type,0).GetList(),(int)td.numberOfBits,(int)td.bitOffset);
+        } else
+        if (td.arrayProperty == SizedCArray_AP){
+           	if (td.arraySize == 0){
+           		printf ("%s%s%i [>2M]",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+           	} else
+           	if (td.arraySize == 1){
+           		printf ("%s%s%i",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+           	} else
+           	{
+           		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+           	}
+        } else
+        if (td.arrayProperty == StaticZeroTermArray_AP){
+           	if (td.arraySize == 0){
+                printf ("StaticZeroTerminatedArray<%s%s%i,>2M>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+           	} else {
+                printf ("StaticZeroTerminatedArray<%s%s%i,%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+           	}
+
+        } else
+        if (td.arrayProperty == ConstStaticZeroTermArray_AP){
+            printf ("const StaticZeroTerminatedArray<%s%s%i,%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
         } else {
-            switch(td.arrayType){
+        	uint32 temp = td.combinedArrayType;
+//        	printf("%x\n",temp);
+        	switch(temp){
             case ZeroTermArray:{
-                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+            }break;
+            case ConstZeroTermArray:{
+                printf ("const ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case DynamicZeroTermArray:{
-                printf ("ZeroTerminatedArray<%s%i>",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("DynamicZeroTerminatedArray<%s%i>",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
-            case StaticZeroTermArray:{
-                printf ("StaticZeroTerminatedArray<%s%i,%i>",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            case ConstDynamicZeroTermArray:{
+                printf ("const DynamicZeroTerminatedArray<%s%i>",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case Array1D:{
-            	if (td.arraySize > 1)
-            		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
-            	else
-               	if (td.arraySize == 0)
-               		printf (" Vector<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            	else
-               		printf ("%s%s%i",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+             	printf ("Vector<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+            }break;
+            case ConstArray1D:{
+             	printf ("const Vector<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case Array2D:{
-                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
-            case ArrayLarge:{
-                printf ("%s%i [%i][...]",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
+            case ConstArray2D:{
+                printf ("const Matrix<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             case PointerArray:{
-                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+            }break;
+            case ConstPointerArray:{
+                printf ("(%s%s%i)* const",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             default:
             case ArrayUnknown:{
-                printf (" %s%i ?",BasicTypeName(td.type).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
+                printf (" %s%i ?",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
             }break;
             }
         }
-
     }
     printf("\n");
 
@@ -184,10 +216,12 @@ void testAT(){
     TEST(uint32*);
     TEST(uint32 const *);
     TEST(uint32 *const);
+    TEST(uint32  * * );
     TEST(uint32 const **);
     TEST(uint32  * const *);
-    TEST(uint32  * * );
+    TEST(uint32  * * const );
     TEST(uint32***);
+    TEST(uint32** const *);
     TEST(uint32[2]);
     TEST(uint32[21]);
     TEST(uint32[128]);
