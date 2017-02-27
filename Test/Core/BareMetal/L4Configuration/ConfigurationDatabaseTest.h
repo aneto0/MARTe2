@@ -232,6 +232,11 @@ public:
      * @brief Tests the MoveToChild method
      */
     bool TestMoveToChild();
+
+    /**
+     * @brief Tests the SetCurrentNodeAsRootNode method
+     */
+    bool TestSetCurrentNodeAsRootNode();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -760,3 +760,16 @@ bool ConfigurationDatabaseTest::TestMoveToChild() {
     ok &= cdb.MoveRelative("E");
     return ok;
 }
+
+bool ConfigurationDatabaseTest::TestSetCurrentNodeAsRootNode() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A");
+    ok &= cdb.CreateAbsolute("A.B");
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("A.B.D");
+    ok &= cdb.MoveAbsolute("A.B");
+    cdb.SetCurrentNodeAsRootNode();
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.MoveRelative("C");
+    return ok;
+}

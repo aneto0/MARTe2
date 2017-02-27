@@ -658,8 +658,14 @@ private:
      */
     uint32 numberOfSignals;
 
-    //TODO
+    /**
+     * Accelerator reference for the signalsDatabaseNode.
+     */
     ConfigurationDatabase signalsDatabaseNode;
+       
+    /**
+     * Accelerator reference for the functionsDatabaseNode.
+     */
     ConfigurationDatabase functionsDatabaseNode;
 };
 

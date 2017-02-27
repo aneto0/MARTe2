@@ -206,7 +206,9 @@ ConfigurationDatabase    ();
      */
     ReferenceT<ReferenceContainer> GetCurrentNode() const;
 
-    //TODO Test and Document
+    /**
+     * @brief Sets the current node as the root node.
+     */
     void SetCurrentNodeAsRootNode();
 
 private:

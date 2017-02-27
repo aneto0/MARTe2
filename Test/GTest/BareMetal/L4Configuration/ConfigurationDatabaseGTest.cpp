@@ -362,3 +362,8 @@ TEST(ConfigurationDatabaseGTest,TestMoveToChild) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveToChild());
 }
+
+TEST(ConfigurationDatabaseGTest,TestSetCurrentNodeAsRootNode) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestSetCurrentNodeAsRootNode());
+}

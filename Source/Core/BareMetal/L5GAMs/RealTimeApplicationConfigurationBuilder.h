@@ -936,7 +936,7 @@ public:
      * @brief Calls RealTimeThread::ConfigureArchitecture on all the threads.
      * @return true if RealTimeThread::ConfigureArchitecture returns true on all RealTimeThread elements.
      */
-    bool ConfigureThreads();
+    bool ConfigureThreads() const;
 
     /**
      * @brief Compiles all the information required to build a RealTimeApplication after the

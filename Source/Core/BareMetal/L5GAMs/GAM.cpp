@@ -46,8 +46,7 @@
 namespace MARTe {
 
 GAM::GAM() :
-        ReferenceContainer(),
-        ExecutableI() {
+        ReferenceContainer(), ExecutableI() {
     numberOfInputSignals = 0u;
     numberOfOutputSignals = 0u;
     inputSignalsMemory = NULL_PTR(void *);
@@ -106,19 +105,11 @@ bool GAM::AddSignals(StructuredDataI &data) {
 }
 
 bool GAM::AllocateInputSignalsMemory() {
-    /*const char8* dirStr = "Signals.InputSignals";
-    bool ret = configuredDatabase.MoveToRoot();*/
-    //configuredDatabase = inputSignalsDatabaseNode;
-    //if (ret) {
-        bool ret = (inputSignalsMemory == NULL_PTR(void *));
-    //}
+    bool ret = (inputSignalsMemory == NULL_PTR(void *));
     if ((ret) && (numberOfInputSignals > 0u)) {
-        //ret = configuredDatabase.MoveRelative(dirStr);
         configuredDatabase = inputSignalsDatabaseNode;
         uint32 totalByteSize = 0u;
-        //if (ret) {
-            ret = configuredDatabase.Read("ByteSize", totalByteSize);
-        //}
+        ret = configuredDatabase.Read("ByteSize", totalByteSize);
         if (ret) {
             inputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (inputSignalsMemory != NULL_PTR(void*)) {
@@ -162,19 +153,11 @@ bool GAM::AllocateInputSignalsMemory() {
 }
 
 bool GAM::AllocateOutputSignalsMemory() {
-    //const char8* dirStr = "Signals.OutputSignals";
-    //bool ret = configuredDatabase.MoveToRoot();
-
-    //if (ret) {
     bool ret = (outputSignalsMemory == NULL_PTR(void *));
-    //}
     if ((ret) && (numberOfOutputSignals > 0u)) {
-        //ret = configuredDatabase.MoveRelative(dirStr);
         uint32 totalByteSize = 0u;
         configuredDatabase = outputSignalsDatabaseNode;
-        //if (ret) {
-            ret = configuredDatabase.Read("ByteSize", totalByteSize);
-        //}
+        ret = configuredDatabase.Read("ByteSize", totalByteSize);
 
         if (ret) {
             outputSignalsMemory = gamHeap->Malloc(totalByteSize);
@@ -248,22 +231,18 @@ void *GAM::GetOutputSignalMemory(const uint32 signalIdx) const {
     return ret;
 }
 
-bool GAM::SetConfiguredDatabase(StructuredDataI &data) {
-    //bool ret = data.Copy(configuredDatabase);
-    //if (ret) {
-    //    ret = configuredDatabase.MoveToRoot();
-    //}
-    configuredDatabase = dynamic_cast<ConfigurationDatabase &>(data);
+bool GAM::SetConfiguredDatabase(const ConfigurationDatabase & data) {
+    configuredDatabase = data;
     configuredDatabase.SetCurrentNodeAsRootNode();
     if (configuredDatabase.MoveAbsolute("Signals.InputSignals")) {
-	inputSignalsDatabaseNode = configuredDatabase;
+        inputSignalsDatabaseNode = configuredDatabase;
         //-1 to ignore the ByteSize field
         numberOfInputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
     }
     if (configuredDatabase.MoveAbsolute("Signals.OutputSignals")) {
-	outputSignalsDatabaseNode = configuredDatabase;
+        outputSignalsDatabaseNode = configuredDatabase;
         //-1 to ignore the ByteSize field
-        numberOfOutputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);        
+        numberOfOutputSignals = (configuredDatabase.GetNumberOfChildren() - 1u);
     }
 
     return true;
@@ -293,9 +272,7 @@ bool GAM::GetQualifiedName(StreamString &qualifiedName) {
     return ret;
 }
 
-bool GAM::GetSignalName(const SignalDirection direction,
-                        const uint32 signalIdx,
-                        StreamString &signalName) {
+bool GAM::GetSignalName(const SignalDirection direction, const uint32 signalIdx, StreamString &signalName) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", signalName);
@@ -303,9 +280,7 @@ bool GAM::GetSignalName(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalIndex(const SignalDirection direction,
-                         uint32 &signalIdx,
-                         const char8* const signalName) {
+bool GAM::GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, const char8* const signalName) {
     uint32 numberOfSignals = 0u;
     if (direction == InputSignals) {
         numberOfSignals = GetNumberOfInputSignals();
@@ -330,9 +305,7 @@ bool GAM::GetSignalIndex(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalDataSourceName(const SignalDirection direction,
-                                  const uint32 signalIdx,
-                                  StreamString &dataSourceName) {
+bool GAM::GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, StreamString &dataSourceName) {
 
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
@@ -341,8 +314,7 @@ bool GAM::GetSignalDataSourceName(const SignalDirection direction,
     return ret;
 }
 
-TypeDescriptor GAM::GetSignalType(const SignalDirection direction,
-                                  const uint32 signalIdx) {
+TypeDescriptor GAM::GetSignalType(const SignalDirection direction, const uint32 signalIdx) {
     TypeDescriptor signalTypeDescriptor = InvalidType;
     bool ret = MoveToSignalIndex(direction, signalIdx);
     StreamString signalType;
@@ -355,9 +327,7 @@ TypeDescriptor GAM::GetSignalType(const SignalDirection direction,
     return signalTypeDescriptor;
 }
 
-bool GAM::GetSignalNumberOfDimensions(const SignalDirection direction,
-                                      const uint32 signalIdx,
-                                      uint32 &numberOfDimensions) {
+bool GAM::GetSignalNumberOfDimensions(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfDimensions", numberOfDimensions);
@@ -365,9 +335,7 @@ bool GAM::GetSignalNumberOfDimensions(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalNumberOfElements(const SignalDirection direction,
-                                    const uint32 signalIdx,
-                                    uint32 &numberOfElements) {
+bool GAM::GetSignalNumberOfElements(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfElements) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
@@ -375,9 +343,7 @@ bool GAM::GetSignalNumberOfElements(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalDefaultValue(const SignalDirection direction,
-                                const uint32 signalIdx,
-                                const AnyType &defaultValue) {
+bool GAM::GetSignalDefaultValue(const SignalDirection direction, const uint32 signalIdx, const AnyType &defaultValue) {
 
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
@@ -387,9 +353,7 @@ bool GAM::GetSignalDefaultValue(const SignalDirection direction,
 
 }
 
-bool GAM::GetSignalByteSize(const SignalDirection direction,
-                            const uint32 signalIdx,
-                            uint32 &byteSize) {
+bool GAM::GetSignalByteSize(const SignalDirection direction, const uint32 signalIdx, uint32 &byteSize) {
 
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
@@ -400,9 +364,7 @@ bool GAM::GetSignalByteSize(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalNumberOfByteOffsets(const SignalDirection direction,
-                                       const uint32 signalIdx,
-                                       uint32 &numberOfByteOffsets) {
+bool GAM::GetSignalNumberOfByteOffsets(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfByteOffsets) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     AnyType byteOffset;
     numberOfByteOffsets = 0u;
@@ -415,11 +377,7 @@ bool GAM::GetSignalNumberOfByteOffsets(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction,
-                                  const uint32 signalIdx,
-                                  const uint32 byteOffsetIndex,
-                                  uint32 &byteOffsetStart,
-                                  uint32 &byteOffsetSize) {
+bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction, const uint32 signalIdx, const uint32 byteOffsetIndex, uint32 &byteOffsetStart, uint32 &byteOffsetSize) {
 
     uint32 numberOfByteOffsets = 0u;
     bool ret = GetSignalNumberOfByteOffsets(direction, signalIdx, numberOfByteOffsets);
@@ -445,9 +403,7 @@ bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalNumberOfRanges(const SignalDirection direction,
-                                  const uint32 signalIdx,
-                                  uint32 &numberOfRanges) {
+bool GAM::GetSignalNumberOfRanges(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfRanges) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     AnyType ranges;
     numberOfRanges = 0u;
@@ -460,11 +416,7 @@ bool GAM::GetSignalNumberOfRanges(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalRangesInfo(const SignalDirection direction,
-                              const uint32 signalIdx,
-                              const uint32 rangeIndex,
-                              uint32 &rangeStart,
-                              uint32 &rangeEnd) {
+bool GAM::GetSignalRangesInfo(const SignalDirection direction, const uint32 signalIdx, const uint32 rangeIndex, uint32 &rangeStart, uint32 &rangeEnd) {
     uint32 numberOfRanges = 0u;
     bool ret = GetSignalNumberOfRanges(direction, signalIdx, numberOfRanges);
     if (ret) {
@@ -489,9 +441,7 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalNumberOfSamples(const SignalDirection direction,
-                                   const uint32 signalIdx,
-                                   uint32 &numberOfSamples) {
+bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfSamples) {
     StreamString dataSourceName;
 
     bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
@@ -542,9 +492,7 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::GetSignalFrequency(const SignalDirection direction,
-                             const uint32 signalIdx,
-                             float32 &frequency) {
+bool GAM::GetSignalFrequency(const SignalDirection direction, const uint32 signalIdx, float32 &frequency) {
     StreamString dataSourceName;
 
     bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
@@ -595,24 +543,13 @@ bool GAM::GetSignalFrequency(const SignalDirection direction,
     return ret;
 }
 
-bool GAM::MoveToSignalIndex(const SignalDirection direction,
-                            const uint32 signalIdx) {
-                            
-/*bool ret = configuredDatabase.MoveToRoot();
-const char8 * signalDirection = "Signals.InputSignals";*/
+bool GAM::MoveToSignalIndex(const SignalDirection direction, const uint32 signalIdx) {
+
     configuredDatabase = inputSignalsDatabaseNode;
     if (direction == OutputSignals) {
-//  signalDirection = "Signals.OutputSignals";
         configuredDatabase = outputSignalsDatabaseNode;
     }
-/*    if (ret) {
-        ret = configuredDatabase.MoveRelative(signalDirection);
-    }*/
-//    if (ret) {
-        /*ret = */return configuredDatabase.MoveToChild(signalIdx);
-  //  }
-
-//    return ret;
+    return configuredDatabase.MoveToChild(signalIdx);
 }
 
 bool GAM::AddInputBrokers(ReferenceContainer brokers) {

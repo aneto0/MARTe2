@@ -211,7 +211,7 @@ public:
      * @param[out] states container to add all the RealTimeApplication States.
      * @return true if the RealTimeState components exist and can be successfully copied into the \a states container.
      */
-    bool GetStates(ReferenceContainer &states);
+    bool GetStates(ReferenceContainer &states) const;
 
     /**
      * @brief Gets the current execution index. This number swaps between 0 and 1 each time StartExecution is called.

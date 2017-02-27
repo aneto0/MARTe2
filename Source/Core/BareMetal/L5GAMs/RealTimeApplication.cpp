@@ -397,21 +397,23 @@ ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString ne
 
 }
 
-ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution() {
+ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution(){
     index = (index + 1u) % 2u;
     ErrorManagement::ErrorType ret = scheduler.IsValid();
     if (ret.ErrorsCleared()) {
         ret = scheduler->StartNextStateExecution();
     }
     return ret;
+/*lint -e{1762} Member function cannot be made const as it is registered as an RPC in CLASS_METHOD_REGISTER*/
 }
 
-ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution() {
+ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution(){
     ErrorManagement::ErrorType ret = scheduler.IsValid();
     if (ret.ErrorsCleared()) {
         ret = scheduler->StopCurrentStateExecution();
     }
     return ret;
+/*lint -e{1762} Member function cannot be made const as it is registered as an RPC in CLASS_METHOD_REGISTER*/
 }
 
 bool RealTimeApplication::FindStatefulDataSources() {
@@ -425,7 +427,7 @@ bool RealTimeApplication::FindStatefulDataSources() {
     return ret;
 }
 
-bool RealTimeApplication::GetStates(ReferenceContainer &states) {
+bool RealTimeApplication::GetStates(ReferenceContainer &states) const {
     bool ret = statesContainer.IsValid();
 
     if (ret) {

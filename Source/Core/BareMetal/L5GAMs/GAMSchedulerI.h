@@ -241,7 +241,7 @@ private:
                             const char8 * const gamFullName,
                             const uint32 stateIdx,
                             const uint32 threadIdx,
-                            uint32 &executableIdx);
+                            uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add the output brokers of the \a gam to the table of states to be executed.
@@ -255,7 +255,7 @@ private:
                              const char8 * const gamFullName,
                              const uint32 stateIdx,
                              const uint32 threadIdx,
-                             uint32 &executableIdx);
+                             uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add this \a gam to the table of states to be executed.
@@ -269,7 +269,7 @@ private:
                    const char8 * const gamFullName,
                    const uint32 stateIdx,
                    const uint32 threadIdx,
-                   const uint32 executableIdx);
+                   const uint32 executableIdx) const ;
 
 };
 

@@ -85,21 +85,10 @@ bool DataSourceI::AddSignals(StructuredDataI &data) {
 bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
     configuredDatabase = dynamic_cast<ConfigurationDatabase &>(data);
     configuredDatabase.SetCurrentNodeAsRootNode();
-    //bool ret = data.Copy(configuredDatabase);
- //   if (ret) {
- //       ret = configuredDatabase.MoveToRoot();
- //   }
-//    if (ret) {
-//        ret = configuredDatabase.MoveRelative("Functions");
- //   }
-   if (configuredDatabase.MoveAbsolute("Functions")) {
-       functionsDatabaseNode = configuredDatabase;
+    if (configuredDatabase.MoveAbsolute("Functions")) {
+        functionsDatabaseNode = configuredDatabase;
     }
-    //if (ret) {
-//    configuredDatabase.MoveToRoot();
-      bool  ret = configuredDatabase.MoveAbsolute("Signals");
-//        ret = configuredDatabase.MoveRelative("Signals");
-    //}
+    bool ret = configuredDatabase.MoveAbsolute("Signals");
     if (ret) {
         signalsDatabaseNode = configuredDatabase;
         numberOfSignals = configuredDatabase.GetNumberOfChildren();
@@ -348,26 +337,12 @@ AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
 }
 
 bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
-/*    bool ret = configuredDatabase.MoveAbsolute("Signals");
-    if (ret) {
-        ret = configuredDatabase.MoveToChild(signalIdx);
-    }*/
     configuredDatabase = signalsDatabaseNode;
     return configuredDatabase.MoveToChild(signalIdx);
-//    return ret;
 }
 
 uint32 DataSourceI::GetNumberOfFunctions() {
-/*    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("Functions");
-    }
-    uint32 numberOfFunctions = 0u;
-    if (ret) {
-        numberOfFunctions = configuredDatabase.GetNumberOfChildren();
-    }*/
     configuredDatabase = functionsDatabaseNode;
-    //return numberOfFunctions;
     return configuredDatabase.GetNumberOfChildren();
 }
 
@@ -486,7 +461,8 @@ bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(const SignalDirection dir
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const uint32 byteOffsetIndex, uint32 &byteOffsetStart, uint32 &byteOffsetSize) {
+bool DataSourceI::GetFunctionSignalByteOffsetInfo(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const uint32 byteOffsetIndex, uint32 &byteOffsetStart,
+                                                  uint32 &byteOffsetSize) {
     uint32 numberOfByteOffsets = 0u;
     bool ret = GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, functionSignalIdx, numberOfByteOffsets);
     if (ret) {
@@ -557,15 +533,7 @@ bool DataSourceI::IsSupportedBroker(const SignalDirection direction, const uint3
 }
 
 bool DataSourceI::MoveToFunctionIndex(const uint32 functionIdx) {
-/*    bool ret = configuredDatabase.MoveToRoot();
-    if (ret) {
-        ret = configuredDatabase.MoveRelative("Functions");
-    }*/
     configuredDatabase = functionsDatabaseNode;
-    /*if (ret) {
-        ret = configuredDatabase.MoveToChild(functionIdx);
-    }
-    return ret;*/
     return configuredDatabase.MoveToChild(functionIdx);
 }
 
@@ -608,73 +576,68 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     bool ret = found;
 
     if (ret) {
-        //if (configuredDatabase.MoveAbsolute("Functions")) {
-                configuredDatabase = functionsDatabaseNode;
-            uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
+        configuredDatabase = functionsDatabaseNode;
+        uint32 numberOfFunctions = configuredDatabase.GetNumberOfChildren();
 
-            for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
-                configuredDatabase = functionsDatabaseNode;
-                ret = configuredDatabase.MoveToChild(i);
-                StreamString functionName;
-                if (ret) {
-                    ret = configuredDatabase.Read("QualifiedName", functionName);
+        for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
+            configuredDatabase = functionsDatabaseNode;
+            ret = configuredDatabase.MoveToChild(i);
+            StreamString functionName;
+            if (ret) {
+                ret = configuredDatabase.Read("QualifiedName", functionName);
+            }
+            if (ret) {
+                StreamString fullFunctionName = "Functions.";
+                fullFunctionName += functionName;
+
+                ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
+                ret = gam.IsValid();
+                void *gamMemoryAddress = NULL_PTR(void *);
+
+                bool relevant = false;
+                if (direction == InputSignals) {
+                    if (gam->GetNumberOfInputSignals() > 0u) {
+                        gamMemoryAddress = gam->GetInputSignalsMemory();
+                        relevant = true;
+                    }
                 }
-                if (ret) {
-                    StreamString fullFunctionName = "Functions.";
-                    fullFunctionName += functionName;
-
-                    ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
-                    ret = gam.IsValid();
-                    void *gamMemoryAddress = NULL_PTR(void *);
-
-                    bool relevant = false;
-                    if (direction == InputSignals) {
-                        if (gam->GetNumberOfInputSignals() > 0u) {
-                            gamMemoryAddress = gam->GetInputSignalsMemory();
-                            relevant = true;
-                        }
+                else if (direction == OutputSignals) {
+                    if (gam->GetNumberOfOutputSignals() > 0u) {
+                        gamMemoryAddress = gam->GetOutputSignalsMemory();
+                        relevant = true;
                     }
-                    else if (direction == OutputSignals) {
-                        if (gam->GetNumberOfOutputSignals() > 0u) {
-                            gamMemoryAddress = gam->GetOutputSignalsMemory();
-                            relevant = true;
-                        }
-                    }
-                    else {
-                        //There is no direction set
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
-                        ret = false;
-                    }
+                }
+                else {
+                    //There is no direction set
+                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                    ret = false;
+                }
 
-                    if (relevant) {
-                        if (ret) {
-                            ret = (gamMemoryAddress != NULL);
-                        }
-                        if (ret) {
-                            if (configuredDatabase.MoveRelative(dirStr)) {
-                                if (direction == InputSignals) {
-                                    ReferenceContainer inputBrokers;
-                                    ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
-                                    if (ret) {
-                                        ret = gam->AddInputBrokers(inputBrokers);
-                                    }
+                if (relevant) {
+                    if (ret) {
+                        ret = (gamMemoryAddress != NULL);
+                    }
+                    if (ret) {
+                        if (configuredDatabase.MoveRelative(dirStr)) {
+                            if (direction == InputSignals) {
+                                ReferenceContainer inputBrokers;
+                                ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                if (ret) {
+                                    ret = gam->AddInputBrokers(inputBrokers);
                                 }
-                                else {
-                                    ReferenceContainer outputBrokers;
-                                    ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
-                                    if (ret) {
-                                        ret = gam->AddOutputBrokers(outputBrokers);
-                                    }
-                                }
-
                             }
+                            else {
+                                ReferenceContainer outputBrokers;
+                                ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                if (ret) {
+                                    ret = gam->AddOutputBrokers(outputBrokers);
+                                }
+                            }
+
                         }
                     }
                 }
-                /*if (ret) {
-                    ret = configuredDatabase.MoveAbsolute("Functions");
-                }*/
-            //}
+            }
         }
     }
     else {

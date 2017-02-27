@@ -1003,7 +1003,6 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
     bool isDsLocked = false;
     if (ret) {
         //check if the ds is locked
-        //ret = dataSourcesDatabase.MoveToAncestor(1u);
         dataSourcesDatabase = cachedDatabase;
         if (ret) {
             uint32 locked;
@@ -1021,14 +1020,12 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
     uint32 numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
     bool signalAlreadyExists = false;
     uint32 n;
-    uint32 foundSignalId;
-    //StreamString foundSignalId;
+    uint32 foundSignalId = 0u;
     ConfigurationDatabase dataSourcesDatabaseBeforeMove = dataSourcesDatabase;
     for (n = 0u; (n < numberOfSignals) && (ret) && (!signalAlreadyExists); n++) {
         dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
         ret = dataSourcesDatabase.MoveToChild(n);
         foundSignalId = n;
-        //foundSignalId = dataSourcesDatabase.GetName();
         StreamString dataSourceSignalName;
         if (ret) {
             ret = dataSourcesDatabase.Read("QualifiedName", dataSourceSignalName);
@@ -1072,12 +1069,10 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
             }
         }
         if ((n > 0u) && (ret)) {
-            //ret = dataSourcesDatabase.MoveToAncestor(1u);
             dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
         }
         if (signalAlreadyExists && ret) {
             if (ret) {
-                //ret = dataSourcesDatabase.MoveRelative(foundSignalId.Buffer());
                 ret = dataSourcesDatabase.MoveToChild(foundSignalId);
             }
         }
@@ -3489,14 +3484,12 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureFunctions() {
 bool RealTimeApplicationConfigurationBuilder::Copy(ConfigurationDatabase &functionsDatabaseOut, ConfigurationDatabase &dataSourcesDatabaseOut) {
     bool ret = functionsDatabase.MoveToRoot();
     if (ret) {
-        //ret = functionsDatabase.Copy(functionsDatabaseOut);
         functionsDatabaseOut = functionsDatabase;
     }
     if (ret) {
         ret = dataSourcesDatabase.MoveToRoot();
     }
     if (ret) {
-        //ret = dataSourcesDatabase.Copy(dataSourcesDatabaseOut);
         dataSourcesDatabaseOut = dataSourcesDatabase;
     }
     return ret;
@@ -4015,7 +4008,7 @@ bool RealTimeApplicationConfigurationBuilder::SearchDataSources(ConfigurationDat
     return ret;
 }
 
-bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() {
+bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() const {
 
     ReferenceContainer statesContainer;
     bool ret = (realTimeApplication != NULL);
