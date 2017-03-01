@@ -31,6 +31,9 @@
 
 #include <TypeDescriptor.h>
 #include "StringHelper.h"
+#include "Vector.h"
+#include "Matrix.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -134,7 +137,7 @@ TypeDescriptor::TypeDescriptor(    const bool isConstantIn,
                                    const CombinedArrayType arrayTypeIn,
                                    const uint32 arraySizeIn
                ){
-    dataIsConstant       = isConstantIn;
+    dataIsConstant   = isConstantIn;
     type             = typeIn;
     isStructuredData = false;
     objectSize       = objectSizeIn;
@@ -177,6 +180,69 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
 //    return ret;
     return all == typeDescriptor.all;
 }
+
+#include <stdio.h>
+
+uint32 TypeDescriptor::Size(){
+	uint32 size = 0;
+	if (isStructuredData){
+		return 0; // not supported yet
+	} else {
+	    if (IsBitType()){
+			uint32 totalBitSpan = this->numberOfBits + this->bitOffset;
+			uint32 totalByteSpan = ( totalBitSpan +7)/8;
+			uint32 actualSize = 1;
+			while (actualSize < totalByteSpan){
+				actualSize = actualSize * 2;
+			}
+			size = actualSize;
+//printf (" %i %i ", totalBitSpan, size);
+		} else {
+			uint32 multiplier = 1u;
+			uint32 baseSize = 1u;
+			if (arrayProperty == SizedCArray_AP){
+				multiplier = arraySize;
+				switch(type){
+				case  SignedInteger:
+				case  UnsignedInteger:
+				case  Float:
+				case  Char:{
+					size = arraySize * (BitsFromBasicObjectSize(objectSize) / 8);
+				} break;
+				default: {
+					size = 0;
+				}
+				}
+			} else {
+				if (arrayProperty == UnSizedA_AP){
+					switch (arrayType){
+					case PointerArray_BT:
+					case ZeroTermArray_BT:
+ 					case DynamicZeroTermArray_BT:{
+						size = sizeof (void *);
+					} break;
+					case Array1D_BT:{
+						size = sizeof (Vector<char8>);
+					} break;
+					case Array2D_BT:{
+						size = sizeof (Matrix<char8>);
+					} break;
+					default:{
+						size = 0;
+					}
+					}
+				} else {
+					// StaticZeroTerm is a pointer
+					size = sizeof (void *);
+				}
+			}
+
+		}
+	}
+	return size;
+}
+
+
 
 /*
 TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){
@@ -237,7 +303,7 @@ const TypeDescriptor StaticCharString(false,  Char, Size8bit,StaticZeroTermArray
 const TypeDescriptor StructuredDataInterfaceType(false, StructuredDataInterface);
 const TypeDescriptor VoidPointer(false, Void, Size8bit,PointerArray,0);
 const TypeDescriptor ConstVoidPointer(false, Void, Size8bit,ConstPointerArray,0);
-const TypeDescriptor ArrayLayerType(false, DelegatedType, Size8bit,SizedCArray,0);
+const TypeDescriptor DelegatedType(false,Delegated,SizeUnknown,SizedCArray,1);
 
 
 }

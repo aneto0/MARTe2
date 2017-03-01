@@ -96,16 +96,6 @@ public:
     VariableDescriptor(const TypeDescriptor &td);
 
     /**
-     * @brief gets the modifier token at given depth
-     * @in depth the number of dereferencing 0 means none
-     * @out  token is zero if no modifier at this depth
-     *       possible values are  A=array P=pointer V=Vector M=Matrix
-     * @out  constant if the var is constant
-     * @out  only for A(arrays) size will return as size of the array
-     */
-    void GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const;
-
-    /**
      * @brief Returns the TypeDescriptor describing the most inner storage
      * @return the data TypeDescriptor.
      */
@@ -115,83 +105,76 @@ public:
      * @brief Returns the TypeDescriptor describing the overall variable
      * @return the data TypeDescriptor.
      */
-    const TypeDescriptor &GetTopTypeDescriptor() const;
+    bool GetTopTypeDescriptor( TypeDescriptor &td, uint32 depth) const;
 
     /**
-     * @brief Gets the number of dimensions associated to this Match.
-     * @details GetNumberOfDimensions() == 0 => scalar, GetNumberOfDimensions() == 1 => vector
-     * GetNumberOfDimensions() == 2 => matrix
-     * @return the number of dimensions associated to this Match.
+     * @brief removes one layer of modifiers
+     * @return true if possible false if no modifiers present
      */
-//    inline uint8 GetNumberOfDimensions() const;
-
-    /**
-     * @brief Gets the number of elements in a given \a dimension.
-     * @param[in] dimension the dimension to be queried.
-     * @return the number of elements in a given \a dimension.
-     * @pre
-     *   dimension < 3
-     */
-//    inline uint32 GetNumberOfElements(const uint32 dimension) const;
-
-    /**
-     * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.
-     * @return true if GetDataPointer() is pointing at a statically allocated memory block.
-     */
-//    inline bool IsStaticDeclared() const;
+    bool RemoveModifiersLayer();
 
     /**
      * @brief Retrieves the byte size of this type.
      * @return the byte size of this type.
      */
-    inline uint32 GetByteSize() const;
+//    inline uint32 GetByteSize() const;
 
     /**
      * @brief Retrieves the bit size of this type.
      * @return the bit size of this type.
      */
-    inline uint32 GetBitSize() const;
+//    inline uint32 GetBitSize() const;
 
     /**
-     * TODO remove?
+     * @brief returns size of top indirecting layer.
+     * each array layer is multiplied until a redirecting layer or the final layer is encountered
+     * @return the full size of the top layer in bytes
      */
-//    char8 *GetRawModifiers(){
-//        return modifiers;
-//    }
+    uint64 GetSize();
+
+    /**
+     * TODO
+     */
+    CCString GetModifiers(){
+    	return modifiers.GetList();
+    }
 
 private:
 
     /**
-     * Adds the declaration of a pointer/vector/matrix to the modifiers
-     * It will include the constant
+     * TODO
+     *  Internal use
+     *  To encode an array of specific type and with potential know size size1
      */
-    //void AddGenericToModifiers(char8 token,bool &constant);
-
-    /**
-     * Adds the declaration of a vector to the modifiers
-     */
-    //void AddArrayToModifiers(uint32 vectorSize,bool &constant);
-
-    /**
-     * Adds a code in the modifiers if one present in code
-     * Clears code and
-     */
-    //void AddArrayCode(ModifierCode &code);
-
     void AddArrayCode(BasicArrayType bat, uint32 size1);
 
+    /**
+     * TODO
+     *  Internal use
+     *  To encode the fact that what is coming next is a constant
+     */
     void AddConstantCode();
 
+    /**
+     * TODO
+     * Internal use
+     * To encode the actual data type.
+     * It tries to incorporate the const and Array code
+     */
     void FinaliseCode(TypeDescriptor td);
 
-    /// outputs the modifiers stored in the typeDescriptor into the modifier string
+    /**
+     * TODO
+     * Internal use
+     * To write the encoded modifiers to the modifiers stack
+     * outputs the modifiers stored in the typeDescriptor into the modifier string
+     */
     void MoveCodeToModifiers();
 
     /**
      *  @brief a zero terminated sequence of tokens.
      *  @full each token can be a character or a sequence of characters and bytes
     */
-//    char8 *             modifiers;
     DynamicCString      modifiers;
 
     /**
@@ -200,6 +183,7 @@ private:
     TypeDescriptor     typeDescriptor;
 
     // GENERAL MATCHES
+    // called by the main constructor
 
     /**
      * @brief Matches a Matrix.
@@ -263,6 +247,16 @@ private:
      */
     template <class T,unsigned int n>
     inline void Match(T (*x) [n]);
+
+
+    /**
+     * @brief Matches a T[n]
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post Adds a [n] to the modifiers
+     */
+    template <class T,unsigned int n>
+    inline void Match(const T (*x) [n]);
 
     /**
      * @brief Matches a T*
@@ -599,6 +593,15 @@ inline void VariableDescriptor::Match(T (*x) [n]){
     T *pp = NULL;
     Match(pp);
 }
+
+template <class T,unsigned int n>
+inline void VariableDescriptor::Match( const T (*x) [n]){
+	AddArrayCode(SizedCArray,n);
+
+    const T *pp = NULL;
+    Match(pp);
+}
+
 
 template <class T>
 inline void VariableDescriptor::Match(T ** x){

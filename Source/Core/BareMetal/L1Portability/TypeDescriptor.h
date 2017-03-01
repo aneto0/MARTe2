@@ -317,6 +317,11 @@ public:
      */
     inline bool IsBitType() const ;
 
+    /**
+     * size in byte of the object top layer.
+     */
+    uint32 Size();
+
 #if 0
     /**
      * @brief Retrieves the TypeDescriptor associated to the type name provided in input.
@@ -470,10 +475,11 @@ extern const TypeDescriptor VoidPointer;
  */
 extern const TypeDescriptor ConstVoidPointer;
 
+
 /**
- * @brief Describes one layer of an array. returns as void[size] - size is set to 1 and need to be adjusted - the type is void as the size of the other array layers is unknown
+ * Describes any unknown entity where the knowledge is delegate to a further TypeDescriptor
  */
-extern const TypeDescriptor ArrayLayerType;
+extern const TypeDescriptor DelegatedType;
 
 
 
@@ -482,7 +488,7 @@ extern const TypeDescriptor ArrayLayerType;
 /*---------------------------------------------------------------------------*/
 
 bool TypeDescriptor::IsBitType() const {
-    return (objectSize ==  SizeBits );
+    return ((objectSize ==  SizeBits ) && (type != ComplexType) );
 };
 
 bool TypeDescriptor::IsComplexType() const {

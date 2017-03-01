@@ -116,6 +116,13 @@ public:
      */
     inline bool Truncate(uint32 newSize);
 
+    /**
+     * @brief removes characters from the top of the string
+     * moves the string content and then truncates
+     * @return false if not enough characters
+     */
+    inline bool Remove(uint32 characters);
+
 protected:
 
     /**
@@ -197,7 +204,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
     bool ret = DZTAppend1(sizeof(T),granularity,GetSize(),VoidArray(),src);
     if (ret)  {
         operator[](sizeD) = data;
-        operator[](sizeD+1) = 0u;
+    	static const T term(0u);
+        operator[](sizeD+1) = term;
     }
     return ret;
 }
@@ -224,7 +232,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArra
 	uint32 sizeS = data.GetSize();
 	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,maxAppendSize,VoidArray(),src);
     if (ret)  {
-        operator[](sizeS+sizeD) = 0u;
+    	static const T term(0u);
+        operator[](sizeS+sizeD) = term;
     }
 
     return ret;
@@ -244,6 +253,31 @@ bool DynamicZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
         TArray()[newSize] = 0u;
     }
     return ret;
+}
+
+template<typename T,uint32 granularity>
+bool DynamicZeroTerminatedArray<T,granularity>::Remove(uint32 characters){
+	T *start = GetList();
+	T *p = start;
+	static const T term(0u);
+	// go to new start point
+	// avoid stepping through the end
+	while (( *p != term ) && (characters > 0)){
+		p++;
+		characters--;
+	}
+	uint32 newSize = 0;
+	if (characters == 0){
+		while ( *p != term){
+			*start = *p;
+			start++;
+			p++;
+			newSize++;
+		}
+		Truncate(newSize);
+	}
+
+	return (characters == 0);
 }
 
 

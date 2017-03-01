@@ -144,12 +144,10 @@ T *&ZeroTerminatedArray<T>::TArray(){
     return array;
 }
 
-
 template<typename T>
 ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
     array(arrayIn) {
 }
-
 
 template<typename T>
 inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {

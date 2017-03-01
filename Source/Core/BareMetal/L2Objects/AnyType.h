@@ -145,8 +145,8 @@ public:
      * @post
      *   GetDataPointer() == x && variableDescriptor(&T)
      */
-    template <class T>
-    inline AnyType(T * &x);
+    //template <class T>
+    //inline AnyType(T * &x);
 
 
     /**
@@ -155,8 +155,8 @@ public:
      * @post
      *   GetDataPointer() == x  variableDescriptor(&T)
      */
-    template <class T>
-    inline AnyType(T const * &x);
+    //template <class T>
+    //inline AnyType(T const * &x);
 
 
     /** INTERFACES GETTERS*/
@@ -267,9 +267,10 @@ AnyType::AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
 
 template <class T>
 AnyType::AnyType(T const &x): variableDescriptor (reinterpret_cast<T const *>(&x)){
-    dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+    dataPointer = const_cast<void *>(reinterpret_cast<const void *>(const_cast<T *>(&x)));
 }
 
+/*
 template <class T>
 AnyType::AnyType(T * &x): variableDescriptor (reinterpret_cast<T **>(&x)){
     dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
@@ -279,6 +280,7 @@ template <class T>
 AnyType::AnyType(T const * &x): variableDescriptor (reinterpret_cast< T const **>(&x)){
     dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
 }
+*/
 
 void* AnyType::GetDataPointer() const{
     return dataPointer;

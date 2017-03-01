@@ -75,7 +75,7 @@ const BasicType Char = 4u;
 /**
  * @brief The type is defined elsewhere
  */
-const BasicType DelegatedType = 6u;
+const BasicType Delegated = 6u;
 
 /**
  * @brief The type is unspecified -dereferencing a void *

@@ -46,40 +46,8 @@
 
 namespace MARTe{
 
-void printType(AnyType x){
-    VariableDescriptor vd = x.GetFullVariableDescriptor();
 
-    char8 token = 0;
-    bool constant = false;
-    uint32 size;
-    uint32 depth = 0;
-    vd.GetModifier(token,constant,size,depth);
-    printf ("Mod={");
-    char buffer[200];
-    buffer[0] = 0;
-    char *pbuf = &buffer[0];
-    while (token != 0) {
-        depth++;
-        switch (token){
-        case 'A':{
-        	pbuf += sprintf (pbuf,"[%i]",size);
-        }break;
-        case 'P':{
-        	pbuf += sprintf (pbuf,"* ");
-        }break;
-        case 'p':{
-        	pbuf += sprintf (pbuf,"const * ");
-        }break;
-        default :{
-        	pbuf += sprintf (pbuf,"%c ",token);
-        }break;
-        }
-        if (constant) pbuf += sprintf (pbuf,"C ");
-        vd.GetModifier(token,constant,size,depth);
-    } ;
-    printf ("%-12s}",buffer);
-
-    TypeDescriptor td = vd.GetFullTypeDescriptor();
+void printTypeDescriptor(const TypeDescriptor &td){
     const char8 *consts= "";
     if (td.dataIsConstant){
         //printf ("const ");
@@ -156,10 +124,28 @@ void printType(AnyType x){
             }
         }
     }
-    printf("\n");
 
 }
 
+void printType(VariableDescriptor vd){
+    printf("\n");
+    TypeDescriptor td;
+
+	uint32 index=0;
+    while (vd.GetTopTypeDescriptor(td,index++)){
+    	printTypeDescriptor (td);
+    }
+    printf("\n");
+
+    printf ("{%-12s}",vd.GetModifiers());
+    td = vd.GetFullTypeDescriptor();
+    printTypeDescriptor(td);
+    printf(" size = %Li\n",vd.GetSize());
+    while (vd.RemoveModifiersLayer()){
+    	printf ("{%-12s}",vd.GetModifiers());
+        printf(" size = %Li\n",vd.GetSize());
+    }
+}
 
 struct pippone{
 
@@ -188,7 +174,10 @@ void testT(CCString orig){
 
     printf("%-26s ",orig.GetList());
 
-    printType(at);
+    VariableDescriptor vd = at.GetFullVariableDescriptor();
+
+    printType(vd);
+
 
 
 }
@@ -222,6 +211,7 @@ void testAT(){
     TEST(uint32  * * const );
     TEST(uint32***);
     TEST(uint32** const *);
+    TEST(uint32 const * const * const * const * const );
     TEST(uint32[2]);
     TEST(uint32[21]);
     TEST(uint32[128]);
@@ -230,6 +220,7 @@ void testAT(){
     TEST(uint32[132000]);
     TEST(uint32[1320000]);
     TEST(uint32[32][20][17]);
+    TEST(const uint32[32][20][17][23]);
     TEST(uint32 (*  )[32]);
     TEST(uint32 *[32]);
 

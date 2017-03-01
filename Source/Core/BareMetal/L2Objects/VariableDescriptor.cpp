@@ -50,151 +50,7 @@ static char8 toupper(char8 c){
     }
     return c;
 }
-/*
-static char8 tolower(char8 c){
-    if ((c >='A') && (c <='Z')) {
-        c = c + ('a'-'A');
-    }
-    return c;
-}
-*/
-#if 0
-uint32 FromHex(char8 c){
-	uint32 ret = 0u;
-	if ((c >='0') && (c <='9')){
-		ret  = c - '0';
-	} else
-		if ((c >='A') && (c <='F')){
-			ret  = c - 'A' + 10u;
-		}
-	return ret;
-}
 
-static uint32 ReadHex(char8 *&buffer,uint32 nOfChars){
-	uint32 i=0u;
-
-	uint32 ret = 0u;
-	for (i=0u;i<nOfChars;i++){
-		uint32 n = FromHex(*buffer++);
-		ret+= n << (4u*i);
-	}
-	return ret;
-}
-
-
-
-/**
- * returns tokens A=array P=pointer V=Vector M=Matrix
- * returns size as size of Arrays
- * buffer is input and is modified
- */
-static void BrowseModifierBuffer(char8 &token, bool &constant, uint32 &size,char8  *&buffer){
-    token = '\0';
-    size = 0u;
-    constant = false;
-    if (buffer != NULL){
-        char8 c = *buffer++;
-        constant = (c >= 'a');
-        c = toupper(c);
-        token = c ;
-        switch (c){
-        case '\0':{
-        	buffer--;
-        	token = '\0';
-        	size = 0u;
-        } break;
-        case 'A':{
-            token = 'A' ;
-            size = ReadHex(buffer,2);
-        } break;
-        case 'B':{
-            token = 'A' ;
-            size = ReadHex(buffer,4);
-        } break;
-        case 'C':{
-            token = 'A' ;
-            size = ReadHex(buffer,8);
-
-        } break;
-        }
-    }
-}
-
-void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const {
-    char8 *buffer = modifiers.GetList();
-    depth++;
-    do {
-        BrowseModifierBuffer(token, constant, size,buffer);
-        depth--;
-    } while ((token != '\0') && (depth > 0u));
-}
-
-
-void VariableDescriptor::AddGenericToModifiers(char8 token,bool &constant){
-    if (constant){
-        constant = false;
-        modifiers.Append(tolower(token));
-    } else {
-        modifiers.Append(token);
-    }
-}
-
-static char8 ToHex(uint32 nibble){
-	char8 ret = '?';
-	if (nibble < 10u){
-		ret = '0'+nibble;
-	} else
-		if (nibble < 16u){
-			ret = 'A' + nibble - 10u;
-		}
-	return ret;
-}
-
-static void AppendHex(DynamicCString &s, uint32 n, uint32 size){
-	uint32 i;
-	for (i=0u;i<size;i++){
-		uint32 nibble = n & 0x0000000F;
-		n >>=4;
-		s.Append(ToHex(nibble));
-	}
-}
-
-void VariableDescriptor::AddArrayToModifiers(uint32 vectorSize,bool &constant){
-    char8 c = '\0';
-    if (constant){
-        constant = false;
-        c = ('a' - 'A');
-    }
-    if (vectorSize < 256u) {
-        c += 'A';
-        modifiers.Append(c);
-        AppendHex(modifiers,vectorSize,2);
-    } else
-    if (vectorSize < 65536u) {
-        c += 'B';
-        modifiers.Append(c);
-        AppendHex(modifiers,vectorSize,4);
-    } else
-    {
-        c += 'C';
-        modifiers.Append(c);
-        AppendHex(modifiers,vectorSize,8);
-    }
-}
-
-void StoreCode(const ModifierCode &code){
-	switch (code.)
-
-}
-
-
-void VariableDescriptor::QueueCode(ModifierCode &code){
-	if (code.HasCode()) {
-		StoreCode(mf);
-		code.Clear();
-	}
-}
-#endif
 
 // syntax Annn where nn is numeric only
 static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
@@ -210,32 +66,82 @@ static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
 	modifiers.AppendN(pBuffer);
 }
 
-struct APLookUp{ CombinedArrayType arrayCode; char8 keyCode;};
+//
+struct APLookUp{
+	//
+	CombinedArrayType 	arrayCode;
+	//
+	char8 				keyCode;
+	/**
+	 * 0 means unknown size
+	 */
+	uint32 				layerSize;
+	// true for simple arrays[] - they multiply the size of the layer below
+	// false for pointers or objects with pointers inside - data access is indirect
+	bool 				isMultiplyingLayer;
+	//
+	bool 				sizeFollows;
+};
 
 APLookUp APLookupTable1[] = {
-		{SizedCArray_AP,'A'},
-		{StaticZeroTermArray_AP,'S'},
-		{ConstStaticZeroTermArray_AP,'s'},
-		{UnSizedA_AP,'\0'}
-
+		{SizedCArray_AP,'A',0,true,true},
+		{StaticZeroTermArray_AP,'S',sizeof(void *),false,true},
+		{ConstStaticZeroTermArray_AP,'s',sizeof(void *),false,true},
+		{UnSizedA_AP,'\0',0,false,false}
 };
 
 APLookUp APLookupTable2[] = {
-		{Array1D,'V'},
-		{ConstArray1D,'v'},
-		{Array2D,'M'},
-		{ConstArray2D,'m'},
-		{PointerArray,'P'},
-		{ConstPointerArray,'p'},
-		{ZeroTermArray,'Z'},
-		{ConstZeroTermArray,'z'},
-		{ConstDynamicZeroTermArray,'d'},
-		{DynamicZeroTermArray,'D'},
-		{ArrayUnknown,'\0'}
+		{Array1D,'V',sizeof (Vector<char>),false,false},
+		{ConstArray1D,'v',sizeof (Vector<char>),false,false},
+		{Array2D,'M',sizeof (Matrix<char>),false,false},
+		{ConstArray2D,'m',sizeof (Matrix<char>),false,false},
+		{PointerArray,'P',sizeof (void *),false,false},
+		{ConstPointerArray,'p',sizeof (void *),false,false},
+		{ZeroTermArray,'Z',sizeof (void *),false,false},
+		{ConstZeroTermArray,'z',sizeof (void *),false,false},
+		{ConstDynamicZeroTermArray,'d',sizeof (void *),false,false},
+		{DynamicZeroTermArray,'D',sizeof (void *),false,false},
+		{ArrayUnknown,'\0',0,false,false}
 };
 
-static char8 lookUpArrayType(CombinedArrayType arrayCode){
-	APLookUp *apl = &APLookupTable1[0];
+static CombinedArrayType reverseLookUpArrayTypeGen(char8 code, APLookUp *apl){
+	CombinedArrayType cat = ArrayUnknown;
+	while ((apl->keyCode != '\0') && (cat == ArrayUnknown)){
+//		printf("{%c}",apl->keyCode);
+		if (apl->keyCode == code){
+			cat = apl->arrayCode;
+		}
+		apl++;
+	}
+	return cat;
+}
+
+/**
+ * returns false if not found.
+ * looks in both tables
+ */
+static bool reverseLookUpArrayProperties(char8 code, APLookUp *&apl){
+	apl = &APLookupTable1[0];
+
+	while ((apl->keyCode != '\0') && (apl->keyCode != code)){
+		apl++;
+	}
+
+	if (apl->keyCode != code){
+		apl = &APLookupTable2[0];
+
+		while ((apl->keyCode != '\0') && (apl->keyCode != code)){
+			apl++;
+		}
+
+	}
+
+	if (apl->keyCode != code) apl = NULL;
+
+		return (apl != NULL);
+}
+
+static char8 lookUpArrayTypeGen(CombinedArrayType arrayCode, APLookUp *apl){
 	char8 keyCode = '\0';
 	while ((apl->keyCode != '\0') && (keyCode == '\0')){
 		if (apl->arrayCode == arrayCode){
@@ -246,16 +152,12 @@ static char8 lookUpArrayType(CombinedArrayType arrayCode){
 	return keyCode;
 }
 
-static char8 lookUpCompositeArrayCode(uint32 arrayCode){
-	APLookUp *apl = &APLookupTable2[0];
-	char8 keyCode = '\0';
-	while ((apl->keyCode != '\0') && (keyCode == '\0')){
-		if (apl->arrayCode == arrayCode){
-			keyCode = apl->keyCode;
-		}
-		apl++;
-	}
-	return keyCode;
+inline char8 lookUpArrayType(CombinedArrayType arrayCode){
+	return lookUpArrayTypeGen(arrayCode,&APLookupTable1[0]);
+}
+
+static char8 lookUpCompositeArrayCode(CombinedArrayType arrayCode){
+	return lookUpArrayTypeGen(arrayCode,&APLookupTable2[0]);
 }
 
 
@@ -361,20 +263,19 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 
 	}
 }
-/*
-static bool isToken(char8 c){
-	return (((c >='A') && (c <='Z')) || ((c >='a') && (c <='z')));
-}
-*/
+
 static bool isConstantToken(char8 c){
 	return ((c >='a') && (c <='z'));
 }
+
 static bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
 }
+
 static uint32 toNumber(char8 c){
 	return  static_cast<uint32>(c - '0') ;
 }
+
 static uint32 readNumber(char8 *&buffer){
 	uint32 result = 0;
 	while (isNumber(*buffer)){
@@ -384,23 +285,6 @@ static uint32 readNumber(char8 *&buffer){
 	}
 	return result;
 }
-
-void VariableDescriptor::GetModifier(char8 &token, bool &constant, uint32 &size,uint32 depth) const {
-    char8 *buffer = modifiers.GetList();
-
-    depth++;
-    do {
-    	token = *buffer;
-    	constant = isConstantToken(token);
-    	token = toupper(token);
-    	buffer++;
-    	size = readNumber(buffer);
-
-    	depth--;
-    } while ((token != '\0') && (depth > 0u));
-}
-
-
 
 VariableDescriptor::VariableDescriptor(){
     typeDescriptor = VoidType;
@@ -421,17 +305,99 @@ VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
 VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
     modifiers.AppendN(x.modifiers.GetList());
-
 }
 
 const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
     return typeDescriptor;
 }
 
-const TypeDescriptor &VariableDescriptor::GetTopTypeDescriptor() const {
+bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) const {
+    char8 *buffer = modifiers.GetList();
+    char8 token;
+    uint32 size;
+    depth++;
+    do {
+    	token = *buffer;
+    	if (token != '\0'){
+    		buffer++;
+    		size = readNumber(buffer);
+    	}
+    	depth--;
+    } while ((token != '\0') && (depth > 0u));
 
-     return VoidType;
+    td = DelegatedType;
+
+    if (token != '\0'){
+    	//printf("[%c]",token);
+   		CombinedArrayType cat = reverseLookUpArrayTypeGen(token, &APLookupTable1[0]);
+   		if (cat != ArrayUnknown){
+   			td.arraySize = size;
+   			td.arrayProperty = cat;
+		} else {
+			cat = reverseLookUpArrayTypeGen(token, &APLookupTable2[0]);
+   			td.combinedArrayType = cat;
+		}
+    } else {
+    	if (depth == 0){
+    		td = GetFullTypeDescriptor();
+    		token = ' '; // force true
+    	}
+    	//return  GetFullTypeDescriptor();
+    }
+	return (token != '\0');
 }
+
+
+bool VariableDescriptor::RemoveModifiersLayer(){
+	bool ret = false;
+
+    char8 *buffer  = modifiers.GetList();
+    char8 *pStart = buffer;
+    char8 token = *buffer;
+    if (token != '\0'){
+    	buffer++;
+    	readNumber(buffer);
+    }
+    uint32 step = (uint32)(buffer - pStart);
+    if (step > 0) {
+    	ret = modifiers.Remove(step);
+    }
+
+    return ret;
+}
+
+uint64 VariableDescriptor::GetSize(){
+	uint64 size = 1;
+
+    char8 *buffer = modifiers.GetList();
+    uint8 code = *buffer;
+	APLookUp *apl;
+	bool toContinue = true;
+	while ((code != '\0') && (toContinue)){
+		buffer++;
+    	uint32 layerSize = readNumber(buffer);
+    	toContinue = reverseLookUpArrayProperties(*buffer, apl);
+    	if (toContinue){
+    		if (apl->layerSize != 0) size *= apl->layerSize;
+    		else {
+    			if ((apl->sizeFollows) && (layerSize > 0)) {
+    				size *= layerSize;
+    			}
+    		}
+    		toContinue = apl->isMultiplyingLayer;
+    	}
+
+    	code = *buffer;
+    }
+
+	if (toContinue){
+		size *= this->typeDescriptor.Size();
+	}
+
+	return size;
+}
+
+
 
 
 }

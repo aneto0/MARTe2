@@ -69,7 +69,7 @@ DLL_API BasicObjectSize BasicObjectSizeFromBits(uint32 bits){
 
 uint32 BitsFromBasicObjectSize(BasicObjectSize bos){
     uint32 ret = 0;
-    if ((bos != SizeUnknown) || (bos != SizeBits)){
+    if ((bos != SizeUnknown) && (bos != SizeBits)){
         ret = 4 << bos;
     }
     return ret;
@@ -111,7 +111,7 @@ CCString BasicTypeName(uint32 bt){
 
 
 CCString BasicTypeName(BasicType bt,ComplexSubType cs){
-    CCString ret = "ty??pe";
+    CCString ret = "unknownT";
 
     if (bt ==  ComplexType){
         switch(cs){
@@ -132,7 +132,7 @@ CCString BasicTypeName(BasicType bt,ComplexSubType cs){
         BTN_CASE_FULL(Float,"float")
         BTN_CASE_FULL(Char,"char")
         BTN_CASE_FULL(Void,"void")
-        BTN_CASE_FULL(DelegatedType,"ty??pe")
+        BTN_CASE_FULL(Delegated,"Type->")
 
         default:{
 
