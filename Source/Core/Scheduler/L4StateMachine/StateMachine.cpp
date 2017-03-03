@@ -301,6 +301,7 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
     for (i = 0u; (i < messagesToSend.Size()) && (ok); i++) {
         ReferenceT<Message> eventMsg = messagesToSend.Get(i);
         if (eventMsg.IsValid()) {
+            eventMsg->SetAsReply(false);
             REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "In state (%s) triggered message (%s)", currentState->GetName(), eventMsg->GetName())
             err = MessageI::SendMessage(eventMsg, this);
         }
