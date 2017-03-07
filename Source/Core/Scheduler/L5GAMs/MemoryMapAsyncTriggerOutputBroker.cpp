@@ -50,6 +50,7 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
     cpuMask = 0xffu;
     postTriggerBuffersCounter = 0u;
     postTriggerBuffers = 0u;
+    numberOfPreBuffersWritten = 0;
     wasTriggered = false;
     stackSize = THREADS_DATABASE_GRANULARITY;
     if (!sem.Create()) {
@@ -103,14 +104,12 @@ MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
-bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                        void * const gamMemoryAddress) {
+bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
     return false;
 }
 
-bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                                             void * const gamMemoryAddress, const uint32 numberOfBuffersIn, const uint32 preTriggerBuffersIn,
-                                                             const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
+bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress, const uint32 numberOfBuffersIn,
+                                                                  const uint32 preTriggerBuffersIn, const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     numberOfBuffers = numberOfBuffersIn;
     preTriggerBuffers = preTriggerBuffersIn;
@@ -200,7 +199,12 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
         service.SetCPUMask(cpuMask);
     }
     if (ok) {
-        readSynchIdx = (numberOfBuffers - preTriggerBuffers) - 1u;
+        if (preTriggerBuffers == 0u) {
+            readSynchIdx = (numberOfBuffers - 1u);
+        }
+        else {
+            readSynchIdx = (numberOfBuffers - preTriggerBuffers);
+        }
         ok = (service.Start() == ErrorManagement::NoError);
     }
     return ok;
@@ -256,7 +260,10 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
                         //pre < 0 so +...
                         pre = static_cast<int32>(numberOfBuffers) + pre;
                     }
-                    bufferMemoryMap[pre].triggered = true;
+                    //Do not store pre-triggers of empty buffers (i.e. if there was a pre-trigger that leads to buffers @ t < 0).
+                    if (j < numberOfPreBuffersWritten) {
+                        bufferMemoryMap[pre].triggered = true;
+                    }
                 }
             }
             //Reset the post trigger buffers
@@ -270,6 +277,9 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
             }
             wasTriggered = false;
         }
+        if (numberOfPreBuffersWritten < static_cast<int32>(preTriggerBuffers)) {
+            numberOfPreBuffersWritten++;
+        }
         if (ret) {
             //Fast semaphore to increment writeIdx and to atomically Post the semaphore which warns the BufferLoop that there might be new data to be consumed.
             ret = (fastSem.FastLock() == ErrorManagement::NoError);
@@ -279,8 +289,8 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
             writeIdx = 0u;
         }
         if (ret) {
-            ret = sem.Post();
             posted = true;
+            ret = sem.Post();
             fastSem.FastUnLock();
         }
     }
@@ -289,6 +299,7 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
 
 ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
+    bool ret = true;
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;
         if (fastSem.FastLock() == ErrorManagement::NoError) {
@@ -310,7 +321,6 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
             readSynchIdx = 0u;
             synchStopIdx = 1;
         }
-        bool ret = true;
         //Check all the buffers until writeIdx - preTriggerBuffers (inclusive)
         while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret)) {
             if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
@@ -324,7 +334,7 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
                     }
                     if (ret) {
                         if (dataSourceRef.IsValid()) {
-                            //Make sure that teh dataSourceRef consumes this data.
+                            //Make sure that the dataSourceRef consumes this data.
                             ret = dataSourceRef->Synchronise();
                         }
                     }
@@ -338,28 +348,33 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
                 }
             }
         }
+    }
 
-        if (ret) {
-            //Wait for new data to be available from the real-time thread.
-            if (!destroying) {
-                err = sem.Wait(TTInfiniteWait);
-            }
-            if (err.ErrorsCleared()) {
-                //Only reset the semaphore if it was not posted in-between the Wait exit and now...
-                if (fastSem.FastLock() == ErrorManagement::NoError) {
-                    if (!posted) {
-                        err = sem.Reset();
-                    }
-                    if (destroying) {
-                        err = ErrorManagement::Completed;
-                    }
-                    posted = false;
+    if (ret) {
+        //Wait for new data to be available from the real-time thread.
+        if (!destroying) {
+            err = sem.Wait(TTInfiniteWait);
+        }
+        if (err.ErrorsCleared()) {
+            //Only reset the semaphore if it was not posted in-between the Wait exit and now...
+            if (fastSem.FastLock() == ErrorManagement::NoError) {
+                if (!posted) {
+                    err = !sem.Reset();
                 }
-                fastSem.FastUnLock();
+                if (destroying) {
+                    err = ErrorManagement::Completed;
+                }
+                posted = false;
             }
+            fastSem.FastUnLock();
         }
     }
+
     return err;
+}
+
+void MemoryMapAsyncTriggerOutputBroker::ResetPreTriggerBuffers() {
+    numberOfPreBuffersWritten = 0;
 }
 
 CLASS_REGISTER(MemoryMapAsyncTriggerOutputBroker, "1.0")

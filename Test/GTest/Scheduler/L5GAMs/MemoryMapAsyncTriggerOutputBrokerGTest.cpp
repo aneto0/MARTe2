@@ -178,3 +178,13 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetStackSize) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetStackSize());
 }
+
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestResetPreTriggerBuffers) {
+    MemoryMapAsyncTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestResetPreTriggerBuffers());
+}
+
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero) {
+    MemoryMapAsyncTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero());
+}

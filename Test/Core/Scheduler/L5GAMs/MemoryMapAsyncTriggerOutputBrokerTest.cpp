@@ -246,7 +246,8 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
             const MARTe::char8* const functionName,
             void * const gamMemPtr) {
         using namespace MARTe;
-        ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker> broker = ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker>("MemoryMapAsyncTriggerOutputBroker");
+        ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker> brokerNew = ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker>("MemoryMapAsyncTriggerOutputBroker");
+        broker = brokerNew;
         bool ret = broker.IsValid();
         if (ret) {
             ret = broker->InitWithTriggerParameters(OutputSignals, *this, functionName, gamMemPtr, numberOfBuffers, preTriggerBuffers, postTriggerBuffers, cpuMask, stackSize);
@@ -278,6 +279,11 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
         return memoryOK;
     }
 
+    void Reset() {
+        counter = 0;
+        broker->ResetPreTriggerBuffers();
+    }
+
     MARTe::uint32 numberOfBuffers;
     MARTe::uint32 preTriggerBuffers;
     MARTe::uint32 postTriggerBuffers;
@@ -289,6 +295,7 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
     MARTe::uint32 numberOfExecutes;
     MARTe::uint32 totalNumberOfSignalElements;
     MARTe::uint32 counter;
+    MARTe::ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker> broker;
     bool memoryOK;
     void *signalMemory;
 };
@@ -377,11 +384,9 @@ static bool TestIntegratedInApplication(const MARTe::char8 * const config, bool 
  * Runs a mini MARTe application against the provide config. It patches the input configuration file with signalToGenerate, trigger and buffering parameters
  *  and then it verifies that the broker correctly propagates this signal to the DataSource.
  */
-static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 * const config, MARTe::uint8* triggerToGenerate,
-                                                             MARTe::uint32 *signalToGenerate, MARTe::uint32 toGenerateNumberOfElements,
-                                                             MARTe::uint8* expectedTrigger, MARTe::uint32* expectedSignal,
-                                                             MARTe::uint32 expectedNumberOfElements, MARTe::uint32 preTriggerBuffers,
-                                                             MARTe::uint32 postTriggerBuffers, MARTe::uint32 numberOfBuffers, MARTe::uint32 sleepMSec = 10) {
+static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 * const config, MARTe::uint8* triggerToGenerate, MARTe::uint32 *signalToGenerate, MARTe::uint32 toGenerateNumberOfElements, MARTe::uint8* expectedTrigger,
+                                                             MARTe::uint32* expectedSignal, MARTe::uint32 expectedNumberOfElements, MARTe::uint32 preTriggerBuffers, MARTe::uint32 postTriggerBuffers, MARTe::uint32 numberOfBuffers,
+                                                             MARTe::uint32 sleepMSec = 10) {
     using namespace MARTe;
     ConfigurationDatabase cdb;
     StreamString configStream = config;
@@ -1263,8 +1268,8 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_Po
             triggerToGenerate[i] = 0;
         }
     }
-    bool ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, numberOfCycles, expectedTrigger, expectedSignal,
-                                                               numberOfExpectedElements, numberOfPreTriggers, numberOfPostTriggers, numberOfBuffers, 2);
+    bool ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, numberOfCycles, expectedTrigger, expectedSignal, numberOfExpectedElements, numberOfPreTriggers, numberOfPostTriggers,
+                                                               numberOfBuffers, 2);
     delete triggerToGenerate;
     delete signalToGenerate;
     delete expectedTrigger;
@@ -1279,8 +1284,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_0_Po
     uint8 expectedTrigger[] = { 0, 1, 0, 1, 0, 1, 0, 1, 1 };
     uint32 expectedSignal[] = { 1, 2, 4, 5, 8, 9, 8, 7, 6 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 0, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 0, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers() {
@@ -1290,8 +1294,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_1_Po
     uint8 expectedTrigger[] = { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0 };
     uint32 expectedSignal[] = { 1, 2, 3, 4, 5, 6, 8, 9, 8, 7, 6, 5 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 1, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 1, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers() {
@@ -1301,8 +1304,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_1_Po
     uint8 expectedTrigger[] = { 1, 0, 1, 0, 1, 0, 1, 1, 0 };
     uint32 expectedSignal[] = { 2, 3, 5, 6, 9, 8, 7, 6, 5 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 1, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 1, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers() {
@@ -1312,8 +1314,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_0_Po
     uint8 expectedTrigger[] = { 1, 1, 1, 1, 1 };
     uint32 expectedSignal[] = { 2, 5, 9, 7, 6 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering() {
@@ -1323,41 +1324,84 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_0_Po
     uint8 expectedTrigger[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     uint32 expectedSignal[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers() {
     using namespace MARTe;
     uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
-    uint8 expectedTrigger[] = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
-    uint32 expectedSignal[] = { 0, 0, 0, 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 4, 2, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 4, 2, 10);
+}
+
+bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate[] = { 1, 2, 3, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger[] = { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal[] = { 1, 2, 3, 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    bool ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 4, 2, 10);
+    uint8 triggerToGenerate2[] = { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate2[] =  { 2, 3, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger2[] = { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal2[] =  { 2, 3, 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    if (ok) {
+        ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate2, signalToGenerate2, sizeof(triggerToGenerate2) / sizeof(uint8), expectedTrigger2, expectedSignal2, sizeof(expectedTrigger2) / sizeof(uint8), 4, 2, 10);
+    }
+
+    uint8 triggerToGenerate3[] = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate3[] =  { 3, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger3[] = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal3[] =  { 3, 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    if (ok) {
+        ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate3, signalToGenerate3, sizeof(triggerToGenerate3) / sizeof(uint8), expectedTrigger3, expectedSignal3, sizeof(expectedTrigger3) / sizeof(uint8), 4, 2, 10);
+    }
+
+    uint8 triggerToGenerate4[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate4[] =  { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger4[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal4[] =  { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    if (ok) {
+        ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate4, signalToGenerate4, sizeof(triggerToGenerate4) / sizeof(uint8), expectedTrigger4, expectedSignal4, sizeof(expectedTrigger4) / sizeof(uint8), 4, 2, 10);
+    }
+
+    uint8 triggerToGenerate5[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate5[] =  { 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger5[] = { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal5[] =  { 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    if (ok) {
+        ok = TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate5, signalToGenerate5, sizeof(triggerToGenerate5) / sizeof(uint8), expectedTrigger5, expectedSignal5, sizeof(expectedTrigger5) / sizeof(uint8), 4, 2, 10);
+    }
+
+    return ok;
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering() {
     using namespace MARTe;
     uint8 triggerToGenerate[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 };
     uint32 signalToGenerate[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 0, 0, 0, 0, 0 };
-    uint8 expectedTrigger[] = { 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
-    uint32 expectedSignal[] = { 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 0, 0 };
+    uint8 expectedTrigger[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 };
+    uint32 expectedSignal[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 0, 0 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 2, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 2, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers() {
     using namespace MARTe;
     uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1 };
     uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6 };
-    uint8 expectedTrigger[] = { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1 };
-    uint32 expectedSignal[] = { 0, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 5, 4, 3, 2, 0, 1, 2, 3 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 5, 4, 3, 2, 0, 1, 2, 3 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 0, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 0, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers() {
@@ -1367,19 +1411,17 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_0_PreTriggerBuffers_N_Po
     uint8 expectedTrigger[] = { 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 };
     uint32 expectedSignal[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 2, 1, 0, 1, 3, 4, 5, 6 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 3, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 3, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers() {
     using namespace MARTe;
     uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1 };
     uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6 };
-    uint8 expectedTrigger[] = { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 };
-    uint32 expectedSignal[] = { 0, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 };
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 3, 10);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 3, 3, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_Buffer_AlwaysTriggering() {
@@ -1389,8 +1431,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_Buffer_AlwaysTriggerin
     uint8 expectedTrigger[] = { 1 };
     uint32 expectedSignal[] = { 8 };
 
-    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8),
-                                                            expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 1);
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 0, 0, 1);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetCPUMask() {
@@ -1745,6 +1786,151 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetStackSize() {
         ok = (broker->GetStackSize() == 32768);
     }
     delete fakeMem;
+
+    godb->Purge();
+    return ok;
+}
+
+bool MemoryMapAsyncTriggerOutputBrokerTest::TestResetPreTriggerBuffers() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+
+    ConfigurationDatabase cdb;
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    StandardParser parser(configStream, cdb);
+    uint32 toGenerateNumberOfElements = sizeof(triggerToGenerate) / sizeof(uint8);
+    uint32 expectedNumberOfElements = sizeof(expectedTrigger) / sizeof(uint8);
+    uint32 preTriggerBuffers = 4;
+    uint32 postTriggerBuffers = 2u;
+    uint32 numberOfBuffers = 10u;
+    uint32 sleepMSec = 10u;
+
+    bool ok = parser.Parse();
+
+    cdb.MoveAbsolute("$Test.+Functions.+GAM1");
+    cdb.Delete("Trigger");
+    cdb.Delete("Signal");
+    Vector<uint8> triggerV(triggerToGenerate, toGenerateNumberOfElements);
+    Vector<uint32> signalV(signalToGenerate, toGenerateNumberOfElements);
+    cdb.Write("Trigger", triggerV);
+    cdb.Write("Signal", signalV);
+
+    Vector<uint8> expectedTriggerV(expectedTrigger, expectedNumberOfElements);
+    Vector<uint32> expectedSignalV(expectedSignal, expectedNumberOfElements);
+    cdb.MoveAbsolute("$Test.+Data.+Drv1");
+    cdb.Delete("ExpectedTrigger");
+    cdb.Delete("ExpectedSignal");
+    cdb.Write("ExpectedTrigger", expectedTriggerV);
+    cdb.Write("ExpectedSignal", expectedSignalV);
+    cdb.Delete("PreTriggerBuffers");
+    cdb.Delete("PostTriggerBuffers");
+    cdb.Delete("NumberOfBuffers");
+    cdb.Write("PreTriggerBuffers", preTriggerBuffers);
+    cdb.Write("PostTriggerBuffers", postTriggerBuffers);
+    cdb.Write("NumberOfBuffers", numberOfBuffers);
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    if (ok) {
+        god->Purge();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Test");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerSchedulerTestHelper> scheduler;
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerGAMTestHelper> gam;
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper> dataSource;
+    ObjectRegistryDatabase *godb = ObjectRegistryDatabase::Instance();
+    if (ok) {
+        application = godb->Find("Test");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        scheduler = application->Find("Scheduler");
+        ok = scheduler.IsValid();
+    }
+    if (ok) {
+        gam = application->Find("Functions.GAM1");
+        ok = gam.IsValid();
+    }
+    if (ok) {
+        dataSource = application->Find("Data.Drv1");
+        ok = dataSource.IsValid();
+    }
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+
+    uint32 i;
+    for (i = 0; (i < gam->numberOfExecutes) && (ok); i++) {
+        scheduler->ExecuteThreadCycle(0);
+        Sleep::MSec(sleepMSec);
+    }
+
+    //2 seconds to finish
+    uint64 maxTimeInCounts = HighResolutionTimer::Counter() + 2 * HighResolutionTimer::Frequency();
+    //Force flushing of BufferLoop
+    scheduler->ExecuteThreadCycle(0);
+    while (dataSource->counter != dataSource->numberOfExecutes) {
+        Sleep::Sec(0.1);
+        if (HighResolutionTimer::Counter() > maxTimeInCounts) {
+            ok = false;
+            break;
+        }
+    }
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+    if (ok) {
+        ok = dataSource->memoryOK;
+    }
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+    if (ok) {
+        gam->counter = 0;
+    }
+    if (ok) {
+        dataSource->Reset();
+    }
+    for (i = 0; (i < gam->numberOfExecutes) && (ok); i++) {
+        scheduler->ExecuteThreadCycle(0);
+        Sleep::MSec(sleepMSec);
+    }
+
+    //2 seconds to finish
+    maxTimeInCounts = HighResolutionTimer::Counter() + 2 * HighResolutionTimer::Frequency();
+    //Force flushing of BufferLoop
+    scheduler->ExecuteThreadCycle(0);
+    while (dataSource->counter != dataSource->numberOfExecutes) {
+        Sleep::Sec(0.1);
+        if (HighResolutionTimer::Counter() > maxTimeInCounts) {
+            ok = false;
+            break;
+        }
+    }
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+    if (ok) {
+        ok = dataSource->memoryOK;
+    }
 
     godb->Purge();
     return ok;

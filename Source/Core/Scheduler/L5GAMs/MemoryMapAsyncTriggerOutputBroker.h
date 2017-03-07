@@ -165,6 +165,11 @@ MemoryMapAsyncTriggerOutputBroker    ();
      */
     uint32 GetPostTriggerBuffers() const;
 
+    /**
+     * @brief Resets the pre-trigger buffers so that a new acquisition does not store data from a previous acquisition.
+     */
+    void ResetPreTriggerBuffers();
+
 private:
 
     /**
@@ -260,6 +265,11 @@ private:
      * The binder for the SingleThreadService.
      */
     EmbeddedServiceMethodBinderT<MemoryMapAsyncTriggerOutputBroker> binder;
+
+    /**
+     * Do not store pre-trigger of empty buffers that were never acquired
+     */
+    int32 numberOfPreBuffersWritten;
 };
 }
 

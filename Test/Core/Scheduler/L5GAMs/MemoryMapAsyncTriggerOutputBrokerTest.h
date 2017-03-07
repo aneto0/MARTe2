@@ -126,6 +126,11 @@ public:
     bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers();
 
     /**
+     * @brief Tests the Execute method with many PreTriggerBuffers and many PostTriggerBuffers with a pre-trigger that starts before zero.
+     */
+    bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero();
+
+    /**
      * @brief Tests the Execute method with many PreTriggerBuffers and many PostTriggerBuffers always triggering.
      */
     bool TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering();
@@ -179,6 +184,11 @@ public:
      * @brief Tests the GetPostTriggerBuffers method.
      */
     bool TestGetPostTriggerBuffers();
+
+    /**
+     * @brief Tests the MemoryMapAsyncTriggerOutputBroker method.
+     */
+    bool TestResetPreTriggerBuffers();
 
 };
 
