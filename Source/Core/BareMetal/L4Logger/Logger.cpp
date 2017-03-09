@@ -1,6 +1,6 @@
 /**
- * @file LoggerService.cpp
- * @brief Source file for class LoggerService
+ * @file Logger.cpp
+ * @brief Source file for class Logger
  * @date 05/11/2016
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoggerService (public, protected, and private). Be aware that some 
+ * the class Logger (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -32,20 +32,22 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "FastResourceContainer.h"
-#include "LoggerService.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-void LoggerServiceErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
-                                       const char * const errorDescription) {
-    LoggerService *loggerService = LoggerService::Instance();
-    if (loggerService != NULL_PTR(LoggerService *)) {
+
+void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
+                                       const char8 * const errorDescription) {
+    Logger *loggerService = Logger::Instance();
+    if (loggerService != NULL_PTR(Logger *)) {
         LoggerPage *page = loggerService->GetPage();
         if (page != NULL_PTR(LoggerPage *)) {
             page->errorInfo = errorInfo;
-            MemoryOperationsHelper::Copy(page->errorStrBuffer, errorDescription, MAX_ERROR_MESSAGE_SIZE);
+            (void)MemoryOperationsHelper::Copy(&page->errorStrBuffer[0u], errorDescription, MAX_ERROR_MESSAGE_SIZE);
             loggerService->AddLogEntry(page);
         }
     }
@@ -56,63 +58,70 @@ void LoggerServiceErrorProcessFunction(const MARTe::ErrorManagement::ErrorInform
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-LoggerService *LoggerService::Instance() {
-    static LoggerService instance;
+Logger *Logger::Instance(const uint32 numberOfPages) {
+    static Logger instance(numberOfPages);
     return &instance;
 }
 
-LoggerService::LoggerService() :
-        nOfPages(128u),
+Logger::Logger(const uint32 numberOfPages) :
+        nOfPages(numberOfPages),
         logsIndex(nOfPages, true),
         pagesIndex(nOfPages, false) {
+    /*lint -e{1732} -e{1733} new in constructor safe as this class can only be used as a singleton*/
     pages = new LoggerPage[nOfPages];
-    SetErrorProcessFunction(&LoggerServiceErrorProcessFunction);
+    SetErrorProcessFunction(&LoggerErrorProcessFunction);
 }
 
-LoggerService::~LoggerService() {
+Logger::~Logger() {
+    if (pages != NULL_PTR(LoggerPage *)) {
+        delete [] pages;
+    }
 
 }
 
-LoggerPage *LoggerService::GetPage() {
+LoggerPage *Logger::GetPage() {
     LoggerPage *page = NULL_PTR(LoggerPage *);
-    if (pages != NULL) {
+    if (pages != NULL_PTR(LoggerPage *)) {
         uint32 pageNo = pagesIndex.Take();
         if ((pageNo != 0xFFFFFFFFu) && (pageNo < nOfPages)) {
             page = &pages[pageNo];
+            page->index = pageNo;
         }
     }
     return page;
 }
 
-void LoggerService::ReturnPage(LoggerPage *page) {
-    if (pages != NULL) {
-        if (page != NULL) {
-            int32 pageNo = page - pages;
-            if ((pageNo > 0) && (pageNo < static_cast<int32>(nOfPages))) {
-                pagesIndex.Return(pageNo);
-            }
+void Logger::ReturnPage(const LoggerPage * const page) {
+    if (pages != NULL_PTR(LoggerPage *)) {
+        if (page != NULL_PTR(LoggerPage *)) {
+            pagesIndex.Return(page->index);
         }
     }
 }
 
-void LoggerService::AddLogEntry(LoggerPage *page) {
-    if (pages != NULL) {
-        uint pageNo = page - pages;
-        if ((pageNo > 0) && (pageNo < nOfPages)) {
-            logsIndex.Return(pageNo);
-        }
+void Logger::AddLogEntry(const LoggerPage * const page) {
+    if (pages != NULL_PTR(LoggerPage *)) {
+        logsIndex.Return(page->index);
     }
 }
 
-LoggerPage *LoggerService::GetLogEntry() {
+LoggerPage *Logger::GetLogEntry() {
     LoggerPage *page = NULL_PTR(LoggerPage *);
-    if (pages != NULL) {
+    if (pages != NULL_PTR(LoggerPage *)) {
         uint32 pageNo = logsIndex.Take();
         if ((pageNo != 0xFFFFFFFFu) && (pageNo < nOfPages)) {
             page = &pages[pageNo];
         }
     }
     return page;
+}
+
+uint32 Logger::GetNumberOfPages() const {
+    return nOfPages;
+}
+
+uint32 Logger::GetNumberOfLogs() const {
+    return logsIndex.GetSize();
 }
 
 }

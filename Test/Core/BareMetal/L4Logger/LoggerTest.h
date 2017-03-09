@@ -1,6 +1,6 @@
 /**
- * @file LoggerServiceTest.h
- * @brief Header file for class LoggerServiceTest
+ * @file LoggerTest.h
+ * @brief Header file for class LoggerTest
  * @date 07/11/2016
  * @author Andre' Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class LoggerServiceTest
+ * @details This header file contains the declaration of the class LoggerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGGERSERVICETEST_H_
-#define LOGGERSERVICETEST_H_
+#ifndef LOGGERTEST_H_
+#define LOGGERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,9 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * Tests the LoggerService public methods.
+ * Tests the Logger public methods.
  */
-class LoggerServiceTest {
+class LoggerTest {
 public:
 
     /**
@@ -68,9 +68,19 @@ public:
     bool TestAddLogEntry();
 
     /**
-     * @brief Tests the LoggerServiceErrorProcessFunction with no REPORT_ERROR parameters
+     * @brief Tests the GetNumberOfPages method
      */
-    bool TestLoggerServiceErrorProcessFunction();
+    bool TestGetNumberOfPages();
+
+    /**
+     * @brief Tests the GetNumberOfLogs method
+     */
+    bool TestGetNumberOfLogs();
+
+    /**
+     * @brief Tests the LoggerErrorProcessFunction with no REPORT_ERROR parameters
+     */
+    bool TestLoggerErrorProcessFunction();
 
 };
 
@@ -80,5 +90,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGGERSERVICETEST_H_ */
+#endif /* LOGGERTEST_H_ */
 	

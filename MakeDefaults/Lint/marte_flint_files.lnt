@@ -91,6 +91,7 @@ LinkedListHolder.cpp
 LinkedListHolderT.h
 LinkedListable.cpp
 LoadableLibrary.cpp
+Logger.cpp
 Matrix.h
 MemoryArea.cpp
 MemoryCheck.h

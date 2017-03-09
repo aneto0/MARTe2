@@ -1,6 +1,6 @@
 /**
- * @file LoggerServiceGTest.cpp
- * @brief Source file for class LoggerServiceGTest
+ * @file LoggerGTest.cpp
+ * @brief Source file for class LoggerGTest
  * @date 07/11/2016
  * @author Andre Neto
  *
@@ -30,8 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 
+#include "LoggerTest.h"
 #include "gtest/gtest.h"
-#include "LoggerServiceTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,32 +41,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(LoggerServiceGTest,TestConstructor) {
-    LoggerServiceTest target;
+TEST(LoggerGTest,TestConstructor) {
+    LoggerTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
-TEST(LoggerServiceGTest,TestAddLogEntry) {
-    LoggerServiceTest target;
+TEST(LoggerGTest,TestAddLogEntry) {
+    LoggerTest target;
     ASSERT_TRUE(target.TestAddLogEntry());
 }
 
-TEST(LoggerServiceGTest,TestGetLogEntry) {
-    LoggerServiceTest target;
+TEST(LoggerGTest,TestGetLogEntry) {
+    LoggerTest target;
     ASSERT_TRUE(target.TestGetLogEntry());
 }
 
-TEST(LoggerServiceGTest,TestGetPage) {
-    LoggerServiceTest target;
+TEST(LoggerGTest,TestGetPage) {
+    LoggerTest target;
     ASSERT_TRUE(target.TestGetPage());
 }
 
-TEST(LoggerServiceGTest,TestReturnPage) {
-    LoggerServiceTest target;
+TEST(LoggerGTest,TestReturnPage) {
+    LoggerTest target;
     ASSERT_TRUE(target.TestReturnPage());
 }
 
-TEST(LoggerServiceGTest,TestLoggerServiceErrorProcessFunction) {
-    LoggerServiceTest target;
-    ASSERT_TRUE(target.TestLoggerServiceErrorProcessFunction());
+TEST(LoggerGTest,TestGetNumberOfPages) {
+    LoggerTest target;
+    ASSERT_TRUE(target.TestGetNumberOfPages());
+}
+
+TEST(LoggerGTest,TestGetNumberOfLogs) {
+    LoggerTest target;
+    ASSERT_TRUE(target.TestGetNumberOfLogs());
+}
+
+TEST(LoggerGTest,TestLoggerErrorProcessFunction) {
+    LoggerTest target;
+    ASSERT_TRUE(target.TestLoggerErrorProcessFunction());
 }

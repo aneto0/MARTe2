@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=	LoggerService.x
+OBJSX=	Logger.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -38,8 +38,8 @@ INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 
 all: $(OBJS)    \
-	        $(BUILD_DIR)/L4LoggerServiceB$(LIBEXT) \
-	        $(BUILD_DIR)/L4LoggerServiceB.def
+	        $(BUILD_DIR)/L4LoggerB$(LIBEXT) \
+	        $(BUILD_DIR)/L4LoggerB.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)
