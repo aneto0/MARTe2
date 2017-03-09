@@ -2,7 +2,7 @@
  * @file FastResourceContainer.cpp
  * @brief Source file for class FastResourceContainer
  * @date 05/11/2016
- * @author Andre'Neto
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,8 +41,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-MARTe::FastResourceContainer::FastResourceContainer(const uint32 nOfElements,
-                                                    const bool taken) {
+FastResourceContainer::FastResourceContainer(const uint32 nOfElements, const bool taken) {
     treeSize = nOfElements;
     treeHalf = 0u;
     buffers = NULL_PTR(FastResourceContainerData *);
@@ -67,13 +66,29 @@ MARTe::FastResourceContainer::FastResourceContainer(const uint32 nOfElements,
     }
 }
 
-MARTe::FastResourceContainer::~FastResourceContainer() {
+/*lint -e{715} copy not used as this implementation is only to forbid the copy construction of this class*/
+FastResourceContainer::FastResourceContainer(const FastResourceContainer &copy) {
+    //NOOP
+    treeSize = 0u;
+    treeHalf = 0u;
+    buffers = NULL_PTR(FastResourceContainerData *);
+}
+
+/*lint -e{715} -e{1745} -e{1529} copy not used as this implementation is only to forbid the copy construction of this class*/
+FastResourceContainer & FastResourceContainer::operator =(const FastResourceContainer &copy) {
+    //NOOP
+    treeSize = 0u;
+    treeHalf = 0u;
+    return *this;
+}
+
+FastResourceContainer::~FastResourceContainer() {
     if (buffers != NULL_PTR(FastResourceContainerData *)) {
         delete[] buffers;
     }
 }
 
-uint32 MARTe::FastResourceContainer::GetSize() const {
+uint32 FastResourceContainer::GetSize() const {
     uint32 size = 0u;
     if (buffers != NULL_PTR(FastResourceContainerData *)) {
         size = static_cast<uint32>(buffers[0].size);
@@ -81,7 +96,7 @@ uint32 MARTe::FastResourceContainer::GetSize() const {
     return size;
 }
 
-uint32 MARTe::FastResourceContainer::Take() {
+uint32 FastResourceContainer::Take() {
     uint32 pos = 0u;
     bool done = false;
     if (buffers != NULL_PTR(FastResourceContainerData *)) {
@@ -159,7 +174,7 @@ uint32 MARTe::FastResourceContainer::Take() {
     return pos;
 }
 
-void MARTe::FastResourceContainer::Return(uint32 pos) {
+void FastResourceContainer::Return(uint32 pos) {
     if (buffers != NULL_PTR(FastResourceContainerData *)) {
         if (pos < treeSize) {
             buffers[pos].sem = 0;

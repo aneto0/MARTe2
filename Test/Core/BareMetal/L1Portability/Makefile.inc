@@ -32,6 +32,7 @@ OBJSX=  AtomicTest.x \
 		FastMathTest.x \
 		FastPollingMutexSemTest.x \
 		FastPollingEventSemTest.x \
+		FastResourceContainerTest.x \
 		FormatDescriptorTest.x \
 		GlobalObjectsDatabaseTest.x \
 		HeapManagerTest.x \
