@@ -67,7 +67,7 @@ public:
      * @brief Tests the \a message on all the filters that belong to this container.
      * @details As soon as one of the filters declares that the message was consumed (i.e. that MessageFilter::ConsumeMessage
      * returns ErrorManagement::NoError) the message will not be tested on any subsequent filters.
-     * If the filter is not permanent (!MessageFilter::IsPermanentFilter), it will be removed from the container after handling the message.
+     * If the filter is not permanent (not MessageFilter::IsPermanentFilter), it will be removed from the container after handling the message.
      * @param[in,out] message is the message to be tested on the installed filters.
      * @return
      *   ErrorManagement::NoError if at least one filter can consume the message (i.e. that MessageFilter::ConsumeMessage

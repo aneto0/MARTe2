@@ -50,9 +50,9 @@ public:
 
 MemoryMapStatefulInputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState(){
 
@@ -65,12 +65,12 @@ MemoryMapStatefulInputBrokerTestScheduler1::MemoryMapStatefulInputBrokerTestSche
 
 }
 
-void MemoryMapStatefulInputBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  MemoryMapStatefulInputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapStatefulInputBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType  MemoryMapStatefulInputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapStatefulInputBrokerTestScheduler1, "1.0")
@@ -375,7 +375,7 @@ static bool InitialiseMemoryMapStatefulInputBrokerEnviroment(const char8 * const
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -589,7 +589,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
     uint32 numberOfCopies;
@@ -707,7 +707,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
     uint32 numberOfCopies;
@@ -781,7 +781,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
 
     if (ret) {
@@ -919,7 +919,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Ranges_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
     if (ret) {
@@ -1008,7 +1008,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_0() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     if (ret) {
         ret = broker->Execute();
@@ -1118,7 +1118,7 @@ bool MemoryMapStatefulInputBrokerTest::TestExecute_Samples_ChangeState() {
         ret = app.IsValid();
     }
     if (ret) {
-        app->StartExecution();
+        app->StartNextStateExecution();
     }
     //RealTimeApplication::index = 0u;
     if (ret) {

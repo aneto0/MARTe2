@@ -150,6 +150,9 @@ bool MultiClientServiceTest::TestDefaultConstructor_Template() {
     MultiClientService service(binder);
     bool ok = (service.GetMinimumNumberOfPoolThreads() == 1u);
     ok &= (service.GetMaximumNumberOfPoolThreads() == 3u);
+    ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
+    ok &= (service.GetPriorityLevel() == 0u);
+    ok &= (service.GetCPUMask() == UndefinedCPUs);
     return ok;
 }
 
@@ -167,6 +170,25 @@ bool MultiClientServiceTest::TestInitialise() {
     ok &= (multiThreadService.GetMinimumNumberOfPoolThreads() == 5);
     ok &= (multiThreadService.GetMaximumNumberOfPoolThreads() == 15);
     ok &= (multiThreadService.GetTimeout() == 10);
+    ok &= (multiThreadService.GetPriorityClass() == Threads::NormalPriorityClass);
+    ok &= (multiThreadService.GetPriorityLevel() == 0u);
+    ok &= (multiThreadService.GetCPUMask() == UndefinedCPUs);
+
+    ConfigurationDatabase config2;
+    config2.Write("Timeout", 20);
+    config2.Write("MinNumberOfThreads", 15);
+    config2.Write("MaxNumberOfThreads", 25);
+    config2.Write("PriorityLevel", 1);
+    config2.Write("CPUMask", 0x3);
+    config2.Write("PriorityClass", "RealTimePriorityClass");
+    ok &= multiThreadService.Initialise(config2);
+    ok &= (multiThreadService.GetMinimumNumberOfPoolThreads() == 15);
+    ok &= (multiThreadService.GetMaximumNumberOfPoolThreads() == 25);
+    ok &= (multiThreadService.GetTimeout() == 20);
+    ok &= (multiThreadService.GetPriorityClass() == Threads::RealTimePriorityClass);
+    ok &= (multiThreadService.GetPriorityLevel() == 1);
+    ok &= (multiThreadService.GetCPUMask() == 0x3);
+
     return ok;
 }
 
@@ -722,5 +744,122 @@ bool MultiClientServiceTest::TestMoreThanEnoughThreads() {
     err = service.AddThread();
     ok &= service.MoreThanEnoughThreads();
     service.Stop();
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetPriorityClass() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    bool ok = (service.GetPriorityClass() == Threads::NormalPriorityClass);
+    service.SetPriorityClass(Threads::RealTimePriorityClass);
+    ok &= (service.GetPriorityClass() == Threads::RealTimePriorityClass);
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetPriorityLevel() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    bool ok = (service.GetPriorityLevel() == 0);
+    service.SetPriorityLevel(10);
+    ok &= (service.GetPriorityLevel() == 10);
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetCPUMask() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    bool ok = (service.GetCPUMask() == UndefinedCPUs);
+    service.SetCPUMask(0x3);
+    ok &= (service.GetCPUMask() == 0x3);
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetPriorityClass_AfterStart() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetMinimumNumberOfPoolThreads(2);
+
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.numberConnectionsWaiting != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
+    ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
+    service.SetPriorityClass(Threads::RealTimePriorityClass);
+    ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
+
+    service.Stop();
+
+    service.SetPriorityClass(Threads::RealTimePriorityClass);
+    ok &= (service.GetPriorityClass() == Threads::RealTimePriorityClass);
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetPriorityLevel_AfterStart() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetMinimumNumberOfPoolThreads(2);
+
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.numberConnectionsWaiting != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
+    ok &= (service.GetPriorityLevel() == 0u);
+    service.SetPriorityLevel(10u);
+    ok &= (service.GetPriorityLevel() == 0u);
+
+    service.Stop();
+
+    service.SetPriorityLevel(10u);
+    ok &= (service.GetPriorityLevel() == 10u);
+    return ok;
+}
+
+bool MultiClientServiceTest::TestSetCPUMask_AfterStart() {
+    using namespace MARTe;
+    MultiClientServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<MultiClientServiceTestCallbackClass> binder(callbackClass, &MultiClientServiceTestCallbackClass::CallbackFunction);
+    MultiClientService service(binder);
+    service.SetMaximumNumberOfPoolThreads(3);
+    service.SetMinimumNumberOfPoolThreads(2);
+
+    uint32 maxCounter = 10;
+    ErrorManagement::ErrorType err = service.Start();
+    bool ok = (err == ErrorManagement::NoError);
+    //Check that GetMinimumNumberOfPoolThreadswo threads are awaiting connection
+    while ((maxCounter > 0) && (callbackClass.numberConnectionsWaiting != service.GetMinimumNumberOfPoolThreads())) {
+        Sleep::Sec(0.5);
+        maxCounter--;
+    }
+    ok &= (callbackClass.numberConnectionsWaiting == service.GetMinimumNumberOfPoolThreads());
+    ok &= (service.GetCPUMask() == UndefinedCPUs);
+    service.SetCPUMask(0xf);
+    ok &= (service.GetCPUMask() == UndefinedCPUs);
+
+    service.Stop();
+
+    service.SetCPUMask(0xf);
+    ok &= (service.GetCPUMask() == 0xf);
     return ok;
 }

@@ -72,7 +72,7 @@ public:
      * @return true if \a referenceToTest == \a referenceToSearch.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest);
+                      Reference const &referenceToTest);
 
 private:
 

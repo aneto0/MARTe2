@@ -107,14 +107,29 @@ public:
     bool TestPrepareNextState();
 
     /**
+     * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch that is sent with a message
+     */
+    bool TestPrepareNextState_Message();
+
+    /**
      * @brief Tests if the function launches the scheduler execution
      */
-    bool TestStartExecution();
+    bool TestStartNextStateExecution();
+
+    /**
+     * @brief Tests if the function launches the scheduler execution using a message
+     */
+    bool TestStartNextStateExecution_Message();
 
     /**
      * @brief Tests if the function stops the scheduler execution
      */
-    bool TestStopExecution();
+    bool TestStopCurrentStateExecution();
+
+    /**
+     * @brief Tests if the function stops the scheduler execution using a message
+     */
+    bool TestStopCurrentStateExecution_Message();
 
     /**
      * @brief Tests the GetStates method.

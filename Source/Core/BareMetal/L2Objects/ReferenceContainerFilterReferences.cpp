@@ -57,7 +57,7 @@ ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(const int
 
 /*lint -e{715} previously found not referenced because this function is an interface.*/
 bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
+                                              Reference const  &referenceToTest) {
     bool found = (referenceToSearch == referenceToTest);
     if (found) {
         IncrementFound();

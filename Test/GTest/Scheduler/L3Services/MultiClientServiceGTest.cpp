@@ -175,3 +175,34 @@ TEST(MultiClientServiceGTest,TestMoreThanEnoughThreads) {
     MultiClientServiceTest target;
     ASSERT_TRUE(target.TestMoreThanEnoughThreads());
 }
+
+TEST(MultiClientServiceGTest, TestSetPriorityClass) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(MultiClientServiceGTest, TestSetPriorityLevel) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(MultiClientServiceGTest, TestSetCPUMask) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
+}
+
+TEST(MultiClientServiceGTest, TestSetPriorityClass_AfterStart) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass_AfterStart());
+}
+
+TEST(MultiClientServiceGTest, TestSetPriorityLevel_AfterStart) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel_AfterStart());
+}
+
+TEST(MultiClientServiceGTest, TestSetCPUMask_AfterStart) {
+    MultiClientServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask_AfterStart());
+}
+

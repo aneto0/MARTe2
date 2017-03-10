@@ -48,14 +48,14 @@ $(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	rm -f createLibrary
 	
 
-$(BUILD_DIR)/%.so : $(OBJS)
-	touch dummy.cpp	
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o	
-	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $@
+$(BUILD_DIR)/%.so : $(OBJS) createLibrary
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm dummy.*
+	rm -f createLibrary
+	
 
 %.ifo :  %.h
 	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp

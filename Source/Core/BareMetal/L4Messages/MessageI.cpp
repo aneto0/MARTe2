@@ -140,7 +140,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
     return ret;
 }
 
-ErrorManagement::ErrorType MessageI::WaitForReply(ReferenceT<Message> &message,
+ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &message,
                                                   const TimeoutType &maxWait,
                                                   const uint32 pollingTimeUsec) {
     ErrorManagement::ErrorType err(true);

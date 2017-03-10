@@ -340,7 +340,7 @@ public:
 
     /**
      * @brief Constructor from a bit set.
-     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     * @param[in] error initialises the ErrorType against this bit set.
      */
     inline ErrorIntegerFormat operator =(const bool error);
 
@@ -410,7 +410,7 @@ public:
         /**
          * Access denied
          */
-        GENERATE_ERROR_BITRANGE(errorAccessDenied);
+        GENERATE_ERROR_BITRANGE(errorAccessDenied)
 
         /**
          * Exception
@@ -440,7 +440,7 @@ public:
         /**
          * Internal setup error
          */
-        GENERATE_ERROR_BITRANGE(internalSetupError);
+        GENERATE_ERROR_BITRANGE(internalSetupError)
 
         /**
          * Debug information

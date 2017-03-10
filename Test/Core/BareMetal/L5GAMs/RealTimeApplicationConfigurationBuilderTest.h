@@ -160,14 +160,29 @@ public:
     bool TestFlattenSignalsDatabases_OnlyFrequencyInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with only sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_OnlySyncSignalInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with an invalid sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
+
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with an invalid trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct();
 
     /**
      * @brief Tests the FlattenSignalsDatabases method with an unregistered type.

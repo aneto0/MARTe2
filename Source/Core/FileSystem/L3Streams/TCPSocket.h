@@ -43,21 +43,20 @@
 namespace MARTe {
 
 /**
- * */
+ * @brief Buffered implementation of the BasicTCPSocket.
+ */
 class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
 
 public:
     /**
-     * */
-    TCPSocket(){
-
-    }
+     * @brief Default constructor. NOOP.
+     */
+    TCPSocket();
 
     /**
-     * */
-    virtual ~TCPSocket(){
-
-    }
+     * @brief Destructor.
+     */
+    virtual ~TCPSocket();
 };
 
 };

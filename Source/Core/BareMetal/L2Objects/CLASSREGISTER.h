@@ -132,12 +132,7 @@
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        className x;                                                                                                   \
-        MARTe::ClassRegistryItem *ret=NULL_PTR(MARTe::ClassRegistryItem *);                                            \
-        if(MARTe::StringHelper::Compare(typeid(x).name(), typeid(*this).name())==0){                                   \
-            ret= GetClassRegistryItem_Static();                                                                        \
-        }                                                                                                              \
-        return ret;                                                                                                    \
+        return GetClassRegistryItem_Static(); \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \

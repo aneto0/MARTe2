@@ -186,7 +186,7 @@ bool StateMachineTest::TestInitialise() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
     ok &= stateMachine.IsValid();
@@ -213,7 +213,7 @@ bool StateMachineTest::TestInitialise_False_NoStates() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -276,7 +276,7 @@ bool StateMachineTest::TestInitialise_False_NoEvents() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -339,7 +339,7 @@ bool StateMachineTest::TestInitialise_False_NextState() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -408,7 +408,7 @@ bool StateMachineTest::TestInitialise_False_NextStateError() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -486,7 +486,7 @@ bool StateMachineTest::TestEventTriggered() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -610,7 +610,7 @@ bool StateMachineTest::TestGetState() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -751,7 +751,7 @@ bool StateMachineTest::TestGetStateStatus() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiverTimeout> receiver2 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
@@ -906,7 +906,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1042,7 +1042,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage_WaitReply() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1181,7 +1181,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiverError> receiver1 = ReferenceT<StateMachineTestMessageReceiverError>(
             GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1321,7 +1321,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError_Timeout() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiverTimeout> receiver1 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
             GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1500,7 +1500,7 @@ bool StateMachineTest::TestEventTriggered_SendMessage_PingPong() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());

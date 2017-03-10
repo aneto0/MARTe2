@@ -103,6 +103,9 @@ MemoryMapStatefulBroker.cpp
 MemoryMapStatefulInputBroker.cpp
 MemoryMapStatefulOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
+MemoryMapSynchronisedOutputBroker.cpp
+MemoryMapAsyncOutputBroker.cpp
+MemoryMapAsyncTriggerOutputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp

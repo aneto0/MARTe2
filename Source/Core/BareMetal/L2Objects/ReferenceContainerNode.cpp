@@ -50,7 +50,7 @@ ReferenceContainerNode::ReferenceContainerNode() :
 ReferenceContainerNode::~ReferenceContainerNode() {
 }
 
-Reference ReferenceContainerNode::GetReference() const {
+Reference const & ReferenceContainerNode::GetReference() const {
     return reference;
 }
 

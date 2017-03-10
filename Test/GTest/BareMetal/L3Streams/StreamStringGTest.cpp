@@ -52,6 +52,11 @@ TEST(StreamStringGTest,TestCopyConstructor) {
     ASSERT_TRUE(stringtest.TestCopyConstructor("HelloWorld"));
 }
 
+TEST(StreamStringGTest,TestConstructor_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestConstructor_CCString("HelloWorld"));
+}
+
 TEST(StreamStringGTest,TestDestructor) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestDestructor());

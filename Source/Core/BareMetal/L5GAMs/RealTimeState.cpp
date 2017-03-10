@@ -90,6 +90,6 @@ uint32 RealTimeState::GetNumberOfStatefuls() {
     return statefuls.Size();
 }
 
-CLASS_REGISTER(RealTimeState, "1.0");
+CLASS_REGISTER(RealTimeState, "1.0")
 
 }

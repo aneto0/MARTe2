@@ -53,9 +53,9 @@ public:
 
 GAMGroupTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState();
 
@@ -66,12 +66,12 @@ GAMGroupTestScheduler1::GAMGroupTestScheduler1() :
 
 }
 
-void GAMGroupTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  GAMGroupTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void GAMGroupTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType  GAMGroupTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 void GAMGroupTestScheduler1::CustomPrepareNextState(){
@@ -215,7 +215,7 @@ static bool InitialiseGAMGroupEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

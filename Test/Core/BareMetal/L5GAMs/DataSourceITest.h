@@ -204,6 +204,11 @@ public:
     bool TestGetFunctionSignalReadFrequencyOutput();
 
     /**
+     * @brief Tests the GetFunctionSignalTrigger method.
+     */
+    bool TestGetFunctionSignalTrigger();
+
+    /**
      * @brief Tests the GetFunctionSignalGAMMemoryOffset method.
      */
     bool TestGetFunctionSignalGAMMemoryOffset();

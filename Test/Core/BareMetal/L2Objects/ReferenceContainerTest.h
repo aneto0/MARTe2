@@ -400,10 +400,19 @@ public:
      */
     bool TestInitialise();
 
-    bool TestCleanUp();
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge();
 
-    bool TestCleanUp_Shared();
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge_Shared();
 
+    /**
+     * @brief Tests the ExportData function
+     */
     bool TestExportData();
 
     /**
@@ -457,6 +466,11 @@ public:
      * @return the container with the generated tree, i.e. the Root
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
+
+    /**
+     * @brief Tests the IsReferenceContainer method.
+     */
+    bool TestIsReferenceContainer();
 
     volatile int32 spinLock;
 
@@ -514,6 +528,7 @@ private:
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
                                                                  ReferenceContainer &result,
                                                                  const char8 * const str);
+
 
 };
 

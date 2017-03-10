@@ -60,14 +60,14 @@ public:
     ClassMethodCaller();
 
     /**
-     * @brief. Destructor.
+     * @brief Destructor.
      */
     virtual ~ClassMethodCaller();
 
     /**
      * @brief Calls the class method using a Stream as the source of the parameters
      * @param[in] object is the pointer to the object owning the method.
-     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions.
+     * @param[in] stream a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return
      * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object

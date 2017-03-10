@@ -75,7 +75,7 @@ ObjectRegistryDatabaseTest::ObjectRegistryDatabaseTest() {
 }
 
 ObjectRegistryDatabaseTest::~ObjectRegistryDatabaseTest() {
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
 }
 
 bool ObjectRegistryDatabaseTest::TestInstance() {

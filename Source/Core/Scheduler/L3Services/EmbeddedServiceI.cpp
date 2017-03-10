@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "EmbeddedServiceI.h"
+#include "StreamString.h"
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,9 +42,103 @@
 namespace MARTe {
 EmbeddedServiceI::EmbeddedServiceI() :
         Object() {
+    priorityLevel = 0u;
+    priorityClass = Threads::NormalPriorityClass;
+    msecTimeout = TTInfiniteWait;
+    cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
 
 EmbeddedServiceI::~EmbeddedServiceI() {
+}
+
+bool EmbeddedServiceI::Initialise(StructuredDataI &data) {
+    uint32 msecTimeoutRead = 0u;
+    ErrorManagement::ErrorType err = Object::Initialise(data);
+    if (err.ErrorsCleared()) {
+        err.parametersError = !data.Read("Timeout", msecTimeoutRead);
+    }
+    if (err.ErrorsCleared()) {
+        if (msecTimeoutRead == 0u) {
+            SetTimeout(TTInfiniteWait);
+        }
+        else {
+            SetTimeout(msecTimeoutRead);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Timeout has to be specified.");
+    }
+    uint8 priorityLevelRead = 0u;
+    if (data.Read("PriorityLevel", priorityLevelRead)) {
+        SetPriorityLevel(priorityLevelRead);
+    }
+    uint32 cpuMaskRead = 0u;
+    if (data.Read("CPUMask", cpuMaskRead)) {
+        SetCPUMask(cpuMaskRead);
+    }
+    uint32 stackSizeRead = 0u;
+    if (data.Read("StackSize", stackSizeRead)) {
+        SetStackSize(stackSizeRead);
+    }
+    StreamString priorityClassStr;
+    if (data.Read("PriorityClass", priorityClassStr)) {
+        if (priorityClassStr == "IdlePriorityClass") {
+            SetPriorityClass(Threads::IdlePriorityClass);
+        }
+        else if (priorityClassStr == "NormalPriorityClass") {
+            SetPriorityClass(Threads::NormalPriorityClass);
+        }
+        else if (priorityClassStr == "RealTimePriorityClass") {
+            SetPriorityClass(Threads::RealTimePriorityClass);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Unsupported PriorityClass.");
+            err.parametersError = true;
+        }
+    }
+
+    return err;
+}
+
+void EmbeddedServiceI::SetTimeout(const TimeoutType &msecTimeoutIn) {
+    msecTimeout = msecTimeoutIn;
+}
+
+TimeoutType EmbeddedServiceI::GetTimeout() const {
+    return msecTimeout;
+}
+
+Threads::PriorityClassType EmbeddedServiceI::GetPriorityClass() const {
+    return priorityClass;
+}
+
+void EmbeddedServiceI::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    priorityClass = priorityClassIn;
+}
+
+uint8 EmbeddedServiceI::GetPriorityLevel() const {
+    return priorityLevel;
+}
+
+void EmbeddedServiceI::SetPriorityLevel(const uint8 priorityLevelIn) {
+    priorityLevel = priorityLevelIn;
+}
+
+uint32 EmbeddedServiceI::GetStackSize() const {
+    return stackSize;
+}
+
+void EmbeddedServiceI::SetStackSize(const uint32 stackSizeIn) {
+    stackSize = stackSizeIn;
+}
+
+ProcessorType EmbeddedServiceI::GetCPUMask() const {
+    return cpuMask;
+}
+
+void EmbeddedServiceI::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    cpuMask = cpuMaskIn;
 }
 
 }

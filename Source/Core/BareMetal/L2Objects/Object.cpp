@@ -328,7 +328,12 @@ Object::Object() {
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    thisObjName = StringHelper::StringDup(copy.thisObjName);
+    if (copy.thisObjName != NULL_PTR(char8 *)) {
+        thisObjName = StringHelper::StringDup(copy.thisObjName);
+    }
+    else {
+        thisObjName = NULL_PTR(char8 *);
+    }
     isDomain = false;
 }
 
@@ -499,6 +504,15 @@ void Object::SetDomain(const bool isDomainFlag) {
 
 bool Object::IsDomain() const {
     return isDomain;
+}
+
+/*lint -e{715} purgeList is not used in the default implementation of the method*/
+void Object::Purge(ReferenceContainer &purgeList) {
+
+}
+
+bool Object::IsReferenceContainer() const {
+    return false;
 }
 
 CLASS_REGISTER(Object, "1.0")

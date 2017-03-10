@@ -40,7 +40,11 @@
 namespace MARTe {
 EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedThreadI(binder) {
+}
 
+EmbeddedThread::EmbeddedThread(EmbeddedServiceMethodBinderI &binder,
+                               const uint16 threadNumberIn) :
+        EmbeddedThreadI(binder, threadNumberIn) {
 }
 
 EmbeddedThread::~EmbeddedThread() {
@@ -56,10 +60,13 @@ void EmbeddedThread::ThreadLoop() {
         //Reset sets stage = StartupStage;
         threadId = Threads::Id();
         information.Reset();
-        information.SetThreadNumber(threadId);
+        information.SetThreadNumber(threadNumber);
 
         // startup
         err = Execute(information);
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::RecoverableError, "Callback returned error. Entering EmbeddedThread loop nevertheless.");
+        }
 
         // main stage
         if (GetCommands() == KeepRunningCommand) {

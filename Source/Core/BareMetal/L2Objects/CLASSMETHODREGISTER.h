@@ -54,7 +54,6 @@ public:
 
     /**
      * @brief Register a ClassMethodInterfaceMapper in a ClassRegistryItem and sets the name in the ClassMethodInterfaceMapper to methodName.
-     * @param[in] className the name of the class with the method to register.
      * @param[in] methodName the name of the method to register.
      * @param[in] classRegistryItem the ClassRegistryItem associated this \a className.
      * @param[in] mapper the ClassMethodInterfaceMapper where this method is registered.
@@ -79,7 +78,7 @@ public:
  * This macro has to be inserted in the unit file of the class with the method to register.
  * The methodName of the className will be registered in the classRegistryItem associated to this className
  */
-/*lint -save -e9026 -e9024 -e9023 -e9141
+/*lint -save -e9026 -e9024 -e9023 -e9141 -e1503
  * 9026: function-like macro defined.
  * 9024: '#/##' operators used in macro.
  * 9023: (Multiple use of '#/##' operators in definition of macro) an exception to this rule.

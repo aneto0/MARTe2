@@ -25,6 +25,7 @@
 
 -i./Source/Core/FileSystem/L1Portability/
 -i./Source/Core/FileSystem/L1Portability/Environment/Linux
+-i./Source/Core/FileSystem/L3Streams/
 
 /* 
  * Enable all warnings 

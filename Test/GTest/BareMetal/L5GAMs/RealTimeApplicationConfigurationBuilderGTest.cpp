@@ -188,9 +188,24 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_On
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlySyncSignalInStruct());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlyTriggerInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlyTriggerInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidSyncSignalInStruct) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidSyncSignalInStruct());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_UnregisteredType) {

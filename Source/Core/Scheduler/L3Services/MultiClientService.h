@@ -73,8 +73,9 @@ public:
     virtual ~MultiClientService();
 
     /**
-     * @brief Reads the minimum and maximum number of pool threads from the data input.
-     * @param[in] data shall contain a parameter named "MinNumberOfThreads" holding the minimum number of pool threads,
+     * @brief Reads the minimum and maximum number of pool threads from the data input. Calls EmbeddedServiceI::Initialise.
+     * @param[in] data in addition to the parameters defined in EmbeddedServiceI::Initialise it shall contain a parameter
+     * named "MinNumberOfThreads" holding the minimum number of pool threads,
      * another parameter named "MaxNumberOfThreads" containing the maximum number of pool threads
      * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
      * If "Timeout=0" => Timeout = TTInfiniteWait.
@@ -150,6 +151,30 @@ public:
      * @return the number of active threads.
      */
     uint16 GetNumberOfActiveThreads();
+
+    /**
+     * @brief Sets the thread priority class.
+     * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   threadPool.Size() == 0
+     */
+    virtual void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Sets the thread priority level.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   threadPool.Size() == 0
+     */
+    virtual void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity).
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   threadPool.Size() == 0
+     */
+    virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
 
 protected:
     /**

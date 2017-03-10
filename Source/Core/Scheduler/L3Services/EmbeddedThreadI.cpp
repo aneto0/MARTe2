@@ -57,11 +57,30 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
         Object(),
         method(binder) {
     threadId = InvalidThreadIdentifier;
-    threadNumber = 0u;
+    threadNumber = 0xFFFFu;
     commands = StopCommand;
     maxCommandCompletionHRT = 0u;
     timeoutHRT = -1;
+    priorityClass = Threads::NormalPriorityClass;
+    priorityLevel = 0u;
+    cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
+
+EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uint16 threadNumberIn) :
+        Object(),
+        method(binder) {
+    threadId = InvalidThreadIdentifier;
+    threadNumber = threadNumberIn;
+    commands = StopCommand;
+    maxCommandCompletionHRT = 0u;
+    timeoutHRT = -1;
+    priorityClass = Threads::NormalPriorityClass;
+    priorityLevel = 0u;
+    cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
+}
+
 
 EmbeddedThreadI::~EmbeddedThreadI() {
 
@@ -77,6 +96,10 @@ void EmbeddedThreadI::SetCommands(const Commands commandsIn) {
 
 ThreadIdentifier EmbeddedThreadI::GetThreadId() const {
     return threadId;
+}
+
+uint16 EmbeddedThreadI::GetThreadNumber() const {
+    return threadNumber;
 }
 
 void EmbeddedThreadI::ResetThreadId() {
@@ -97,6 +120,8 @@ void EmbeddedThreadI::SetTimeout(const TimeoutType &msecTimeoutIn) {
         }
         else {
             timeoutHRT = 0x7FFFFFFF;
+            uint64 tt64ToSet = static_cast<uint32>(timeoutHRT);
+            msecTimeout.SetTimeoutHighResolutionTimerTicks(tt64ToSet);
         }
     }
 }
@@ -171,7 +196,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
         SetCommands(EmbeddedThreadI::StartCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
         const void * const parameters = static_cast<void *>(this);
-        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters);
+        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters, stackSize, GetName(), ExceptionHandler::NotHandled, cpuMask);
 
         err.fatalError = (GetThreadId() == 0u);
     }
@@ -219,7 +244,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
         // in any case notify the main object of the fact that the thread has been killed
         ExecutionInfo information;
-        information.SetThreadNumber(GetThreadId());
+        information.SetThreadNumber(threadNumber);
         information.SetStage(ExecutionInfo::AsyncTerminationStage);
         ErrorManagement::ErrorType killErr = Execute(information);
         if (!killErr.ErrorsCleared()) {
@@ -233,6 +258,48 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
 
     return err;
 }
+
+
+Threads::PriorityClassType EmbeddedThreadI::GetPriorityClass() const {
+    return priorityClass;
+}
+
+void EmbeddedThreadI::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    if(GetStatus() == OffState) {
+        priorityClass = priorityClassIn;
+    }
+}
+
+uint8 EmbeddedThreadI::GetPriorityLevel() const {
+    return priorityLevel;
+}
+
+void EmbeddedThreadI::SetPriorityLevel(const uint8 priorityLevelIn) {
+    if(GetStatus() == OffState) {
+        priorityLevel = priorityLevelIn;
+    }
+}
+
+uint32 EmbeddedThreadI::GetStackSize() const {
+    return stackSize;
+}
+
+void EmbeddedThreadI::SetStackSize(const uint32 stackSizeIn) {
+    if(GetStatus() == OffState) {
+        stackSize = stackSizeIn;
+    }
+}
+
+ProcessorType EmbeddedThreadI::GetCPUMask() const {
+    return cpuMask;
+}
+
+void EmbeddedThreadI::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    if(GetStatus() == OffState) {
+        cpuMask = cpuMaskIn;
+    }
+}
+
 
 }
 

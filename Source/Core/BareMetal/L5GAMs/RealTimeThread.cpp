@@ -268,6 +268,6 @@ bool RealTimeThread::ToStructuredData(StructuredDataI& data) {
     return ret;
 }
 
-CLASS_REGISTER(RealTimeThread, "1.0");
+CLASS_REGISTER(RealTimeThread, "1.0")
 
 }

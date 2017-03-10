@@ -98,7 +98,7 @@ public:
      * @return true if the name of the object hold by referenceToTest is compatible with the address.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest);
+                      Reference const &referenceToTest);
 
     /**
      * @brief Sets the address of the object to search.

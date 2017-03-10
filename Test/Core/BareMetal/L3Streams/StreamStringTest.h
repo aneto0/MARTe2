@@ -59,7 +59,7 @@ public:
     /**
      * @brief Tests if the buffer is initialized correctly by the const chat string in input.
      */
-    bool TestConstructor_CCString(const char8 * initializationString);
+    bool TestConstructor_CCString(CCString initializationString);
 
     /**
      * @brief Tests if the buffer of the StreamString in input is duplicated correctly into the new instantiated object buffer.

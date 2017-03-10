@@ -38,12 +38,18 @@
 
 namespace MARTe {
 
+/**
+ * @brief Low level unbuffered stream
+ */
 class DLL_API OperatingSystemCallbacksI {
 
     friend class BufferedStreamIOBuffer;
 
 public:
 
+    /**
+     * @brief Destructor
+     */
     virtual ~OperatingSystemCallbacksI() {
     }
 
