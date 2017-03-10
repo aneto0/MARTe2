@@ -75,6 +75,11 @@ TEST(LoggerServiceGTest,TestInitialise_False_StackSize_Zero) {
     ASSERT_TRUE(target.TestInitialise_False_StackSize_Zero());
 }
 
+TEST(LoggerServiceGTest,TestInitialise_False_NumberOfLoggerPages_Zero) {
+    LoggerServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_NumberOfLoggerPages_Zero());
+}
+
 TEST(LoggerServiceGTest,TestGetCPUMask) {
     LoggerServiceTest target;
     ASSERT_TRUE(target.TestGetCPUMask());

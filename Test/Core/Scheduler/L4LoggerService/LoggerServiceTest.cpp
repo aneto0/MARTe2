@@ -126,6 +126,18 @@ bool LoggerServiceTest::TestInitialise_False_StackSize_Zero() {
     return !test.Initialise(cdb);
 }
 
+bool LoggerServiceTest::TestInitialise_False_NumberOfLoggerPages_Zero() {
+    using namespace MARTe;
+    LoggerService test;
+    ConfigurationDatabase cdb;
+    cdb.Write("CPUs", 0x2);
+    cdb.Write("StackSize", 32768);
+    cdb.Write("NumberOfLogPages", 0);
+    ReferenceT<LoggerConsumerITest> consumer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    test.Insert(consumer);
+    return !test.Initialise(cdb);
+}
+
 bool LoggerServiceTest::TestInitialise_False_NoConsumers() {
     using namespace MARTe;
     LoggerService test;

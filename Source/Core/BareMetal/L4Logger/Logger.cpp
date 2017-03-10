@@ -60,7 +60,6 @@ void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &
 namespace MARTe {
 Logger *Logger::Instance(const uint32 numberOfPages) {
     static Logger instance(numberOfPages);
-    SetErrorProcessFunction(&LoggerErrorProcessFunction);
     return &instance;
 }
 
@@ -70,6 +69,7 @@ Logger::Logger(const uint32 numberOfPages) :
         pagesIndex(nOfPages, false) {
     /*lint -e{1732} -e{1733} new in constructor safe as this class can only be used as a singleton*/
     pages = new LoggerPage[nOfPages];
+    SetErrorProcessFunction(&LoggerErrorProcessFunction);
 }
 
 Logger::~Logger() {

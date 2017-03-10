@@ -67,6 +67,11 @@ public:
     bool TestInitialise_False_StackSize_Zero();
 
     /**
+     * @brief Tests the initialise method with a zero number of logger pages.
+     */
+    bool TestInitialise_False_NumberOfLoggerPages_Zero();
+
+    /**
      * @brief Tests the initialise method without adding any consumer.
      */
     bool TestInitialise_False_NoConsumers();
