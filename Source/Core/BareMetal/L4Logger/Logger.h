@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGGERSERVICE_H_
-#define LOGGERSERVICE_H_
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -164,5 +164,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGGERSERVICE_H_ */
+#endif /* LOGGER_H_ */
 
