@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "LoggerService.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,19 +43,26 @@ namespace MARTe {
 
 LoggerService::LoggerService() :
         ReferenceContainer(), EmbeddedServiceMethodBinderI(), logThreadService(*this) {
-    consumers = NULL_PTR(LoggerConsumerI *);
+    consumers = NULL_PTR(LoggerConsumerI **);
     logger = NULL_PTR(Logger *);
+    nOfConsumers = 0u;
 }
 
+/*lint -e{1551} -e{1740} the destructor must guarantee that the SingleThreadService. The logger is a singleton and is freed by the Logger class at the end of program execution*/
 LoggerService::~LoggerService() {
-    if (consumers != NULL_PTR(LoggerConsumerI *)) {
+    if (logThreadService.Stop() != ErrorManagement::NoError) {
+        if (logThreadService.Stop() != ErrorManagement::NoError) {
+            REPORT_ERROR(ErrorManagement::Warning, "Could not Stop the logThreadService");
+        }
+    }
+    if (consumers != NULL_PTR(LoggerConsumerI **)) {
         delete[] consumers;
     }
 }
 
 bool LoggerService::Initialise(StructuredDataI &data) {
     bool ok = ReferenceContainer::Initialise(data);
-    uint32 cpuMask = 0xf;
+    uint32 cpuMask = 0x1u;
     uint32 stackSize = THREADS_DEFAULT_STACKSIZE;
     uint32 numberOfLogPages = DEFAULT_NUMBER_OF_LOG_PAGES;
     if (ok) {
@@ -78,11 +86,75 @@ bool LoggerService::Initialise(StructuredDataI &data) {
         }
     }
     if (ok) {
+        nOfConsumers = Size();
+        ok = (nOfConsumers > 0u);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::Warning, "At least one LoggerConsumerI must be added to the container");
+        }
+    }
+    if (ok) {
+        uint32 i;
+        consumers = new LoggerConsumerI*[nOfConsumers];
+        for (i = 0u; (i < nOfConsumers) && (ok); i++) {
+            ReferenceT<LoggerConsumerI> consumer = Get(i);
+            ok = (consumer.IsValid());
+            if (ok) {
+                /*lint -e{613} consumers is allocated before entering the for loop */
+                consumers[i] = consumer.operator ->();
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Found a child which is not a LoggerConsumerI");
+            }
+        }
+    }
+    if (ok) {
         logger = Logger::Instance(numberOfLogPages);
-        //logThreadService.
+        logThreadService.SetStackSize(stackSize);
+        logThreadService.SetCPUMask(cpuMask);
+        ok = logThreadService.Start();
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Could not start the embedded thread.");
+        }
     }
     return ok;
 }
+
+/*lint -e{715} the consuming algorithm is independent of the thread state*/
+ErrorManagement::ErrorType LoggerService::Execute(const ExecutionInfo & info) {
+    if (logger != NULL_PTR(Logger *)) {
+        uint32 i;
+        if (consumers != NULL_PTR(LoggerConsumerI **)) {
+            LoggerPage *page = logger->GetLogEntry();
+            while (page != NULL_PTR(LoggerPage *)) {
+                for (i = 0u; (i < nOfConsumers); i++) {
+                    consumers[i]->ConsumeLogMessage(page);
+                }
+                logger->ReturnPage(page);
+                page = logger->GetLogEntry();
+            }
+        }
+    }
+    Sleep::Sec(1e-3);
+    return ErrorManagement::NoError;
+}
+
+uint32 LoggerService::GetNumberOfLogPages() const {
+    uint32 n = 0u;
+    if (logger != NULL_PTR(Logger *)) {
+        n = logger->GetNumberOfPages();
+    }
+    return n;
+}
+
+ProcessorType LoggerService::GetCPUMask() const {
+    return logThreadService.GetCPUMask();
+}
+
+uint32 LoggerService::GetStackSize() const {
+    return logThreadService.GetStackSize();
+}
+
+CLASS_REGISTER(LoggerService, "1.0")
 
 }
 

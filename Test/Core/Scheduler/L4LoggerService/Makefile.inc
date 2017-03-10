@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -23,29 +23,35 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX= 
-SPB    = L1Portability.x L3Services.x L4LoggerService.x L4Messages.x L4StateMachine.x L5GAMs.x
 
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+OBJSX=  LoggerServiceTest.x
 
-ROOT_DIR=../../..
+PACKAGE=Core/Scheduler
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L3Services/L3ServicesS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4LoggerService/L4LoggerServiceS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4StateMachine/L4StateMachineS$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsS$(LIBEXT)
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Logger
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
+INCLUDES += -I../../../../Source/Core/Scheduler/L4LoggerService
+INCLUDES += -I../../../../Source/Core/Scheduler/L4Messages
 
+INCLUDES += -I../../../../Test/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Test/Core/BareMetal/L4Messages
 
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreS$(LIBEXT) \
-		$(BUILD_DIR)/MARTeCoreS.def
+all: $(OBJS) \
+                $(BUILD_DIR)/L4LoggerServiceTest$(LIBEXT)
 	echo  $(OBJS)
 
-
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -23,26 +23,32 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = L1Portability.x L3Services.x L4LoggerService.x L4Messages.x L4StateMachine.x L5GAMs.x
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
 
-ROOT_DIR=../../..
+OBJSX=	LoggerService.x
+        
+PACKAGE=Core/Scheduler
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L3Services/L3ServicesTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4LoggerService/L4LoggerServiceTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L4StateMachine/L4StateMachineTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsTest$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreSTest$(LIBEXT)
+INCLUDES += -I.
+INCLUDES += -I../../BareMetal/L0Types
+INCLUDES += -I../../BareMetal/L1Portability
+INCLUDES += -I../../BareMetal/L2Objects
+INCLUDES += -I../../BareMetal/L3Streams
+INCLUDES += -I../../BareMetal/L4Configuration
+INCLUDES += -I../../BareMetal/L4Logger
+INCLUDES += -I../../BareMetal/L4Messages
+INCLUDES += -I../../BareMetal/L5GAMs
+INCLUDES += -I../../Scheduler/L1Portability
+INCLUDES += -I../../Scheduler/L3Services
+INCLUDES += -I../../Scheduler/L4Messages
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L4LoggerServiceS$(LIBEXT) \
+	        $(BUILD_DIR)/L4LoggerServiceS.def
 	echo  $(OBJS)
 
-
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

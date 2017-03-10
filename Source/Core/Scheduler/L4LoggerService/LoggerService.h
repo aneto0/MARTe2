@@ -35,6 +35,7 @@
 #include "Logger.h"
 #include "LoggerConsumerI.h"
 #include "ReferenceContainer.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -66,7 +67,7 @@ public:
     /**
      * @brief Constructor. Register the SingleThreadService callback function.
      */
-    LoggerService();
+LoggerService    ();
 
     /**
      * @brief Destructor. Stops the SingleThreadService callback function.
@@ -89,6 +90,30 @@ public:
      * @return ErrorManagement::NoError.
      */
     virtual ErrorManagement::ErrorType Execute(const ExecutionInfo & info);
+
+    /**
+     * @brief Gets the configured number of log pages.
+     * @return the configured number of log pages.
+     * @pre
+     *   Initialise()
+     */
+    uint32 GetNumberOfLogPages() const;
+
+    /**
+     * @brief Gets the configured CPU mask.
+     * @return the configured CPU mask.
+     * @pre
+     *   Initialise()
+     */
+    ProcessorType GetCPUMask() const;
+
+    /**
+     * @brief Gets the configured stack size.
+     * @return the configured stack size.
+     * @pre
+     *   Initialise()
+     */
+    uint32 GetStackSize() const;
 private:
 
     /**
@@ -104,7 +129,12 @@ private:
     /**
      * Accelerated list of all the consumers.
      */
-    LoggerConsumerI *consumers;
+    LoggerConsumerI **consumers;
+
+    /**
+     * Number of consumers.
+     */
+    uint32 nOfConsumers;
 };
 }
 

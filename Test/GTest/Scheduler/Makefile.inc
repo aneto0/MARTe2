@@ -24,7 +24,7 @@
 
 OBJSX=
 
-SPB = L1Portability.x L3Services.x L4Messages.x L4StateMachine.x L5GAMs.x
+SPB = L1Portability.x L3Services.x L4LoggerService.x L4Messages.x L4StateMachine.x L5GAMs.x
 
 PACKAGE=GTest
 ROOT_DIR=../../..
@@ -35,6 +35,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilitySGTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L3Services/L3ServicesSGTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L4LoggerService/L4LoggerServiceSGTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesSGTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4StateMachine/L4StateMachineSGTest$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsSGTest$(LIBEXT)

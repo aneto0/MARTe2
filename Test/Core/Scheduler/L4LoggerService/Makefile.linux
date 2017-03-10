@@ -23,13 +23,7 @@
 #
 #############################################################
 
-TARGET=cov
+TARGET=linux
 
 include Makefile.inc
 
-LIBRARIES_STATIC= L1Portability/cov/L1PortabilitySGTest$(LIBEXT)
-LIBRARIES_STATIC+=L3Services/cov/L3ServicesSGTest$(LIBEXT)
-LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceSGTest$(LIBEXT)
-LIBRARIES_STATIC+=L4Messages/cov/L4MessagesSGTest$(LIBEXT)
-LIBRARIES_STATIC+=L4StateMachine/cov/L4StateMachineSGTest$(LIBEXT)
-LIBRARIES_STATIC+=L5GAMs/cov/L5GAMsSGTest$(LIBEXT)

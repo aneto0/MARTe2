@@ -1,6 +1,6 @@
 /**
- * @file LoggerConsumerI.h
- * @brief Header file for class LoggerConsumerI
+ * @file LoggerServiceTest.h
+ * @brief Header file for class LoggerServiceTest
  * @date 10/03/2017
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class LoggerConsumerI
+ * @details This header file contains the declaration of the class LoggerServiceTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGGERCONSUMERI_H_
-#define LOGGERCONSUMERI_H_
+#ifndef LOGGERSERVICETEST_H_
+#define LOGGERSERVICETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,36 +31,75 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Logger.h"
+#include "LoggerService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-
 /**
- * @brief Classes that inherit from this interface and are inserted into a LoggerService
- *  will have the function ConsumeLogMessage called every time a log message is received.
+ * @brief Tests the LoggerService public methods.
  */
-class LoggerConsumerI {
+class LoggerServiceTest {
 public:
     /**
-     * @brief Virtual destructor. NOOP.
+     * @brief Tests the default constructor.
      */
-    virtual ~LoggerConsumerI(){}
+    bool TestConstructor();
 
     /**
-     * @brief This function is called every time a log message is received.
-     * @param[in] logPage the logging message to be consumed.
+     * @brief Tests the initialise method.
      */
-    virtual void ConsumeLogMessage(LoggerPage *logPage) = 0;
+    bool TestInitialise();
 
+    /**
+     * @brief Tests the initialise method with the default values.
+     */
+    bool TestInitialise_Defaults();
+
+    /**
+     * @brief Tests the initialise method without specifying the CPUs.
+     */
+    bool TestInitialise_False_NoCPUs();
+
+    /**
+     * @brief Tests the initialise method with a zero StackSize.
+     */
+    bool TestInitialise_False_StackSize_Zero();
+
+    /**
+     * @brief Tests the initialise method without adding any consumer.
+     */
+    bool TestInitialise_False_NoConsumers();
+
+    /**
+     * @brief Tests the initialise method adding a consumer which is not of type LoggerConsumerI.
+     */
+    bool TestInitialise_False_NotLoggerConsumerI();
+
+    /**
+     * @brief Tests the Execute method.
+     */
+    bool TestExecute();
+
+    /**
+     * @brief Tests the GetNumberOfLogPages method.
+     */
+    bool TestGetNumberOfLogPages();
+
+    /**
+     * @brief Tests the GetCPUMask method.
+     */
+    bool TestGetCPUMask();
+
+    /**
+     * @brief Tests the GetStackSize method.
+     */
+    bool TestGetStackSize();
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGGERCONSUMERI_H_ */
+#endif /* LOGGERSERVICETEST_H_ */
 

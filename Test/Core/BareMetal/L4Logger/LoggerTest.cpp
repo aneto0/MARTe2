@@ -79,7 +79,12 @@ bool LoggerTest::TestGetNumberOfPages() {
 bool LoggerTest::TestLoggerErrorProcessFunction() {
     using namespace MARTe;
     Logger *logger = Logger::Instance();
-
+    LoggerPage *entry = logger->GetLogEntry();
+    //Empty all the entries
+    while (entry != NULL){
+        logger->ReturnPage(entry);
+        entry = logger->GetLogEntry();
+    }
     uint32 i;
     for (i = 0; i < 100; i++) {
         REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction %d", i)
@@ -127,13 +132,10 @@ bool LoggerTest::TestGetNumberOfLogs() {
     using namespace MARTe;
     Logger *logger = Logger::Instance();
     uint32 numberOfLogs = logger->GetNumberOfLogs();
-
-    bool ok = (numberOfLogs == 0);
+    uint32 initNumberOfLogs = numberOfLogs;
     REPORT_ERROR(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction");
-    if (ok) {
-        numberOfLogs = logger->GetNumberOfLogs();
-        ok = (numberOfLogs == 1);
-    }
+    numberOfLogs = logger->GetNumberOfLogs();
+    bool ok = (numberOfLogs == (initNumberOfLogs + 1));
     LoggerPage *entry = logger->GetLogEntry();
     if (ok) {
         ok = (entry != NULL);
@@ -149,7 +151,7 @@ bool LoggerTest::TestGetNumberOfLogs() {
     }
     if (ok) {
         numberOfLogs = logger->GetNumberOfLogs();
-        ok = (numberOfLogs == 0);
+        ok = (numberOfLogs == initNumberOfLogs);
     }
     return ok;
 }
