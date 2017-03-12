@@ -127,7 +127,7 @@ void ReportError(const ErrorType &code,
     errorInfo.className = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
     errorInfo.header.lineNumber = lineNumber;
-
+    errorInfo.header.isObject = (objPtr != static_cast<const char8 *>(NULL));
     errorInfo.className = clsName;
     errorInfo.objectName = objName;
     errorInfo.objectPointer = objPtr;

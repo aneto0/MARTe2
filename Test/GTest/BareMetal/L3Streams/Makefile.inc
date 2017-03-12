@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  BitSetToIntegerGTest.x \
+OBJSX=  AdvancedErrorManagementGTest.x \
+        BitSetToIntegerGTest.x \
 		BufferedStreamIGTest.x \
 		BufferedStreamIOBufferGTest.x \
 		CharBufferGTest.x \

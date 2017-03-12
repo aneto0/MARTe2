@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "CompilerTypes.h"
 #include "ErrorManagement.h"
 #include "StreamMemoryReference.h"
 
@@ -48,7 +48,7 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
 /**
  * @brief Report an error based on code, message, and a open list of extra
- * parameters.
+ * parameters. TODO REDO DOCUMENTATION
  */
 //This should not be possible. Minimum parameters are code and message
 #define REPORT_ERROR_STATIC_U(code)                                           \
@@ -58,52 +58,16 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
     buffer[smr.Size()]='\0';                                                               \
     ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-#define REPORT_ERROR_STATIC_1(code, message, par1)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));                       \
+#define REPORT_ERROR_STATIC_PARAMETERS(code, message,...)                                           \
+    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
+    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);                               \
+    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));                        \
     buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_STATIC_2(code, message, par1, par2)  \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_STATIC_3(code, message, par1, par2, par3)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message), par1, par2, par3));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_STATIC_4(code, message, par1, par2, par3, par4)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2, par3, par4));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_STATIC_5(code, message, par1, par2, par3, par4, par5)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2, par3));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_STATIC_MANY_PARAMETERS(code, message,...)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__));                        \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
-
+    MARTe::ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const MARTe::char8* ), NULL_PTR(const MARTe::char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
 #define REPORT_ERROR_STATIC_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5, NAME, ...) NAME
 
-#define REPORT_ERROR_STATIC(...) REPORT_ERROR_STATIC_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_STATIC_MANY_PARAMETERS, REPORT_ERROR_STATIC_MANY_PARAMETERS, REPORT_ERROR_STATIC_MANY_PARAMETERS, REPORT_ERROR_STATIC_MANY_PARAMETERS, REPORT_ERROR_STATIC_MANY_PARAMETERS, REPORT_ERROR_STATIC_0, REPORT_ERROR_STATIC_U)( __VA_ARGS__)
+#define REPORT_ERROR_STATIC(...) REPORT_ERROR_STATIC_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_0, REPORT_ERROR_STATIC_U)( __VA_ARGS__)
 
 /**
  * @brief Report an error based on code, message, and a open list of extra
@@ -119,57 +83,18 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
     ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
 #define REPORT_ERROR_0(code, message)                                           \
-    ErrorManagement::ReportError(code, message, GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
+        MARTe::ErrorManagement::ReportError(code, message, GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-#define REPORT_ERROR_1(code, message, par1)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));                       \
+#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
+    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
+    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);                               \
+    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));                        \
     buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_2(code, message, par1, par2)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_3(code, message, par1, par2, par3)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2, par3));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_4(code, message, par1, par2, par3, par4)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2, par3, par4));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_5(code, message, par1, par2, par3, par4, par5)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1,par2, par3));                       \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
-
-#define REPORT_ERROR_MANY_PARAMETERS(code, message,...)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__));                        \
-    buffer[smr.Size()]='\0';                                                               \
-    ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
-
-//#define REPORT_ERROR_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5,  NAME, ...) NAME
-
-//#define REPORT_ERROR(...) REPORT_ERROR_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_5, REPORT_ERROR_4, REPORT_ERROR_3, REPORT_ERROR_2, REPORT_ERROR_1, REPORT_ERROR_0, REPORT_ERROR_U)( __VA_ARGS__)
+    MARTe::ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
 #define REPORT_ERROR_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5, NAME, ...) NAME
 
-#define REPORT_ERROR(...) REPORT_ERROR_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_MANY_PARAMETERS, REPORT_ERROR_MANY_PARAMETERS, REPORT_ERROR_MANY_PARAMETERS, REPORT_ERROR_MANY_PARAMETERS, REPORT_ERROR_MANY_PARAMETERS, REPORT_ERROR_0, REPORT_ERROR_U)( __VA_ARGS__)
+#define REPORT_ERROR(...) REPORT_ERROR_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_0, REPORT_ERROR_U)( __VA_ARGS__)
 
 }
 /*---------------------------------------------------------------------------*/

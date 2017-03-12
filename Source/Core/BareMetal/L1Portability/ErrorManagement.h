@@ -130,7 +130,7 @@ DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
  * 9026: function-like macro defined.
  */
 #define REPORT_ERROR_STATIC_0(code,message)\
-MARTe::ErrorManagement::ReportError(code, message, NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
+MARTe::ErrorManagement::ReportError(code, message, NULL_PTR(const MARTe::char8* ), NULL_PTR(const MARTe::char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
