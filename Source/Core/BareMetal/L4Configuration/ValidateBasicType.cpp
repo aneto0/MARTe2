@@ -31,13 +31,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "StandardParser.h"
+#include "StringHelper.h"
 #include "ValidateBasicType.h"
 #include "TypeDescriptor.h"
 #include "TypeConversion.h"
-#include "StringHelper.h"
-#include "StandardParser.h"
-#include "ConfigurationDatabase.h"
-#include "ErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -952,7 +953,7 @@ bool ValidateBasicType(const AnyType &value,
                             }
                             else {
                                 recognized=false;
-                                REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
+                                REPORT_ERROR_STATIC(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
                             }
                         }
                     }

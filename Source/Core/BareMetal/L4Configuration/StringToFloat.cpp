@@ -29,8 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
 #include "BitSetToInteger.h"
-#include "ErrorManagement.h"
 #include "FormatDescriptor.h"
 #include "GeneralDefinitions.h"
 #include "IOBuffer.h"
@@ -174,13 +174,13 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                 else {
                     canReturn = true;
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
                 }
             }
             else {
                 canReturn = true;
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
             }
         }
         else {
@@ -190,7 +190,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             else {
                 if (digit != '\0') {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
                 }
                 //return false is nothing is read
                 canReturn = true;
@@ -220,7 +220,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     }
                     else {
                         canReturn = true;
-                        REPORT_ERROR(ErrorManagement::Warning, "StringToFloatPrivate: Too much decimal precision for this float type");
+                        REPORT_ERROR_STATIC(ErrorManagement::Warning, "StringToFloatPrivate: Too much decimal precision for this float type");
                     }
                 }
                 else {
@@ -231,7 +231,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     else {
                         if (digit != '\0') {
                             ret = false;
-                            REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
                         }
                         canReturn = true;
                     }
@@ -247,7 +247,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             else {
                 canReturn = true;
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
             }
         }
 
@@ -276,14 +276,14 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                     exponent += newDigit;
                     if (exponent >= 512) {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
                         canReturn = true;
                     }
                 }
                 else {
                     if (digit != '\0') {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
                     }
                     break;
                 }
@@ -298,7 +298,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                 }
                 else {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
                 }
             }
         }

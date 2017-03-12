@@ -67,7 +67,7 @@ Reference::Reference(const char8* const typeName,
         objectPointer->IncrementReferences();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
     }
 }
 
@@ -126,7 +126,7 @@ bool Reference::Initialise(StructuredDataI &data,
                                 objectPointer->IncrementReferences();
                             }
                             else {
-                                REPORT_ERROR(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
+                                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Reference: Failed CreateByName() in constructor");
                             }
                         }
                         if (!HeapManager::Free(reinterpret_cast<void *&>(className))) {

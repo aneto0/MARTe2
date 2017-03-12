@@ -82,7 +82,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 
     if (!message.IsValid()) {
         ret.parametersError = true;
-        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     // compute actual message parameters
@@ -95,7 +95,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 
             if (!message->ExpectsIndirectReply()) {
                 ret.communicationError = true;
-                REPORT_ERROR(ErrorManagement::CommunicationError, "Message does not expect and indirect reply as it should.");
+                REPORT_ERROR_STATIC_0(ErrorManagement::CommunicationError, "Message does not expect and indirect reply as it should.");
             }
             else {
 
@@ -117,7 +117,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 // no Object ==> no reply possible
                 // therefore refuse sending
                 if (message->ExpectsReply()) {
-                    REPORT_ERROR(ErrorManagement::CommunicationError, "Message expects reply but no sender was set.");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::CommunicationError, "Message expects reply but no sender was set.");
                     ret.parametersError = true;
                 }
             }
@@ -132,7 +132,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
             ret = destinationObject->messageFilters.ReceiveMessage(message);
         }
         else {
-            REPORT_ERROR(ErrorManagement::UnsupportedFeature, "The destination object does not have a MessageI interface.");
+            REPORT_ERROR_STATIC_0(ErrorManagement::UnsupportedFeature, "The destination object does not have a MessageI interface.");
             ret.unsupportedFeature = true;
         }
     }
@@ -147,7 +147,7 @@ ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &mes
 
     if (!message.IsValid()) {
         err.parametersError = true;
-        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     if (err.ErrorsCleared()) {
@@ -191,7 +191,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 
     if (!message.IsValid()) {
         ret.parametersError = true;
-        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     if (ret.ErrorsCleared()) {
@@ -235,7 +235,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
 
     if (!message.IsValid()) {
         ret.parametersError = true;
-        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::ParametersError, "Invalid message.");
     }
 
     ReferenceT<ReplyMessageCatcherMessageFilter> replyMessageCatcher;

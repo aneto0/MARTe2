@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "MultiClientEmbeddedThread.h"
 
 /*---------------------------------------------------------------------------*/
@@ -89,8 +90,7 @@ void MultiClientEmbeddedThread::ThreadLoop() {
                 // Try start new service thread
                 bool threadAddedOk = manager.AddThread();
                 if (!threadAddedOk) {
-                    REPORT_ERROR(ErrorManagement::RecoverableError,
-                                 "Failed to AddThread... Increase the maximum number of threads allowed in the MultiClientService...");
+                    REPORT_ERROR(ErrorManagement::RecoverableError, "Failed to AddThread... Increase the maximum number of threads allowed in the MultiClientService...");
                 }
 
                 information.SetStageSpecific(ExecutionInfo::ServiceRequestStageSpecific);

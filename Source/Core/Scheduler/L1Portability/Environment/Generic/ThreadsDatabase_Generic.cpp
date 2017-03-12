@@ -92,7 +92,7 @@ bool NewEntry(ThreadInformation * const threadInformation) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: cannot find an empty slot");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: cannot find an empty slot");
         }
     }
     return ok;
@@ -115,7 +115,7 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
                     /*lint -e{929} Type handled inside HeapManager::Free through a HeapI interface */
                     bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
                     if (!ok) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Error: database memory cleanup failed");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: database memory cleanup failed");
                     }
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
@@ -169,7 +169,7 @@ ThreadIdentifier GetThreadID(const uint32 &n) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the index in input is greater than the number of database records");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: the index in input is greater than the number of database records");
     }
 
     return tid;
@@ -225,7 +225,7 @@ bool AllocMore() {
                 nOfEntries = 0u;
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: memory allocation for the database failed");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: memory allocation for the database failed");
                 ok = false;
             }
         }
@@ -239,7 +239,7 @@ bool AllocMore() {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: memory reallocation for the database failed");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: memory reallocation for the database failed");
                 ok = false;
             }
         }

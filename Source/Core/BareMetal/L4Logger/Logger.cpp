@@ -31,7 +31,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "FastResourceContainer.h"
 #include "Logger.h"
 
 /*---------------------------------------------------------------------------*/

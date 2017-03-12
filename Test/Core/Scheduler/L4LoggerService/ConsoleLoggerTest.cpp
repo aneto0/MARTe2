@@ -1,7 +1,7 @@
 /**
- * @file File.cpp
- * @brief Source file for class File
- * @date 16/11/2016
+ * @file ConsoleLoggerTest.cpp
+ * @brief Source file for class ConsoleLoggerTest
+ * @date 10/03/2017
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,11 +17,9 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class File (public, protected, and private). Be aware that some 
+ * the class ConsoleLoggerTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -30,30 +28,49 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "File.h"
+#include "ConfigurationDatabase.h"
+#include "ConsoleLogger.h"
+#include "LoggerService.h"
+#include "ConsoleLoggerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-File::File() {
-
-}
-
-File::~File() {
-    if(!Flush()) {
-        REPORT_ERROR_STATIC(ErrorManagement::OSError, "Could not flush the stream");
-    }
-}
-
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+bool ConsoleLoggerTest::TestConstructor() {
+    using namespace MARTe;
+    ConsoleLogger test;
+    return (test.GetName() == NULL);
+}
 
+bool ConsoleLoggerTest::TestInitialise() {
+    using namespace MARTe;
+    ConsoleLogger test;
+    ConfigurationDatabase cdb;
+    cdb.Write("PrintFunctionName", 1);
+    cdb.Write("PrintExpandedTime", 1);
+    return test.Initialise(cdb);
+}
 
-	
+bool ConsoleLoggerTest::TestConsumeLogMessage() {
+    using namespace MARTe;
+    LoggerService test;
+    ReferenceT<ConsoleLogger> consumer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ConfigurationDatabase cdb2;
+    cdb2.Write("Format", "EtOofFRmC");
+    cdb2.Write("PrintKeys", 1);
+    bool ok = consumer->Initialise(cdb2);
+    ConfigurationDatabase cdb;
+    test.Insert(consumer);
+    cdb.Write("CPUs", 0x2);
+    test.Initialise(cdb);
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "TestConsumeLogMessage");
+    Sleep::Sec(0.2);
+
+    return ok;
+}
+

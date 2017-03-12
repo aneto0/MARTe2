@@ -29,9 +29,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "GAMScheduler.h"
+#include "AdvancedErrorManagement.h"
 #include "ExecutionInfo.h"
+#include "GAMScheduler.h"
 #include "MultiThreadService.h"
 #include "RealTimeApplication.h"
 #include "Threads.h"

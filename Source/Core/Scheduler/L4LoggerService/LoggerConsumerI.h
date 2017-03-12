@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Logger.h"
+#include "BufferedStreamI.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,9 +47,14 @@ namespace MARTe {
 class LoggerConsumerI {
 public:
     /**
-     * @brief Virtual destructor. NOOP.
+     * @brief Constructor. NOOP.
      */
-    virtual ~LoggerConsumerI(){}
+    LoggerConsumerI();
+
+    /**
+     * @brief Destructor. NOOP.
+     */
+    virtual ~LoggerConsumerI();
 
     /**
      * @brief This function is called every time a log message is received.
@@ -55,6 +62,110 @@ public:
      */
     virtual void ConsumeLogMessage(LoggerPage *logPage) = 0;
 
+    /**
+     * @brief Helper function which prints the log message into a stream.
+     * @param[in] logPage the logging information.
+     * @param[out] err the stream where to write the information into.
+     */
+    void PrintToStream(LoggerPage *logPage, BufferedStreamI &err) const;
+
+    /**
+     * @brief Reads the Printing preference from a StructuredDataI.
+     * @param[in] data shall contain a string with the name Format and with a value that encodes, with no separator and in the order, the parameters should be output:
+     * - E: error code
+     * - T: time in HRT at which the error occurred
+     * - t: time in the format HH:MM:SS at which the PrintToStream above was called plus the HRT at which the error occurred
+     * - O: the object name
+     * - o: the object pointer
+     * - f: the function name
+     * - F: the file name (includes the line number)
+     * - R: the thread identifier
+     * - m: the error message
+     * - C: the class name.
+     *
+     * An example could be Format="ItOoFm".
+     * @return true if the Format exists and can be successfully parsed.
+     */
+    bool LoadPrintPreferences(StructuredDataI &data);
+
+private:
+
+    /**
+     * True if the keys are to be printed.
+     */
+    bool printKeys;
+
+    /**
+     * The number of format preferences.
+     */
+    //static const uint32 N_FORMAT_PREFS = 12u;
+    /**
+     * Stores the format preferences.
+     */
+    /*lint ++flb*/
+    union {
+        /**
+         * Print the log error information?
+         */
+        BitBoolean<uint16, 0u> info;
+
+        /**
+         * Print the log time with seconds resolution?
+         */
+        BitBoolean<uint16, 1u> timeShort;
+
+        /**
+         * Print the log time with full resolution?
+         */
+        BitBoolean<uint16, 2u> timeFull;
+
+        /**
+         * Print the object name?
+         */
+        BitBoolean<uint16, 3u> objectName;
+
+        /**
+         * Print the object pointer?
+         */
+        BitBoolean<uint16, 4u> objectPointer;
+
+        /**
+         * Print the function name?
+         */
+        BitBoolean<uint16, 5u> functionName;
+
+        /**
+         * Print the filename?
+         */
+        BitBoolean<uint16, 6u> fileName;
+
+        /**
+         * Print the log message?
+         */
+        BitBoolean<uint16, 7u> message;
+
+        /**
+         * Print the thread id?
+         */
+        BitBoolean<uint16, 8u> threadId;
+
+        /**
+         * Print the class name?
+         */
+        BitBoolean<uint16, 9u> className;
+
+        /**
+         * Unmapped area
+         */
+        BitRange<uint16, 6u, 10u> unMapped;
+
+        /**
+         * Output as uint16
+         */
+        uint16 asUint16;
+    } formatPrefs;
+    /*lint --flb*/
+    //uint32 formatPrefs[N_FORMAT_PREFS];
 };
 }
 

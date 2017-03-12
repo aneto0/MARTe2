@@ -609,7 +609,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                 }
                 else {
                     //There is no direction set
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI : %s", GetName())
+                    REPORT_ERROR(ErrorManagement::FatalError, "No direction set when adding brokers to DataSourceI");
                     ret = false;
                 }
 
@@ -641,7 +641,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         }
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI : %s", GetName())
+        REPORT_ERROR(ErrorManagement::FatalError, "No RealTimeApplication found for DataSourceI");
     }
     return ret;
 }

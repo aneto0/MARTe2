@@ -87,7 +87,7 @@ bool LoggerTest::TestLoggerErrorProcessFunction() {
     }
     uint32 i;
     for (i = 0; i < 100; i++) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction %d", i)
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction %d", i);
     }
     bool ok = true;
     for (i = 0; (i < 100) && (ok); i++) {
@@ -108,7 +108,7 @@ bool LoggerTest::TestLoggerErrorProcessFunction() {
         }
     }
     for (i = 0; (i < (DEFAULT_NUMBER_OF_LOG_PAGES * 2)) && (ok); i++) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction %d", i)
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction %d", i);
         LoggerPage *entry = logger->GetLogEntry();
         if (ok) {
             ok = (entry != NULL);
@@ -133,7 +133,7 @@ bool LoggerTest::TestGetNumberOfLogs() {
     Logger *logger = Logger::Instance();
     uint32 numberOfLogs = logger->GetNumberOfLogs();
     uint32 initNumberOfLogs = numberOfLogs;
-    REPORT_ERROR(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction");
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Testing TestLoggerErrorProcessFunction");
     numberOfLogs = logger->GetNumberOfLogs();
     bool ok = (numberOfLogs == (initNumberOfLogs + 1));
     LoggerPage *entry = logger->GetLogEntry();

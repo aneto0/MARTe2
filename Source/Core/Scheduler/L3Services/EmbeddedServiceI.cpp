@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "EmbeddedServiceI.h"
 #include "StreamString.h"
 #include "Threads.h"

@@ -107,7 +107,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
         timingDataSource = rtApp->Find(timingDataSourceAddress.Buffer());
         ret = timingDataSource.IsValid();
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer())
+            REPORT_ERROR(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer());
         }
     }
 

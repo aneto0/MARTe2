@@ -77,15 +77,21 @@ DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
  * it is not possible get the thread id in an interrupt routine.
  * @param[in] code is the error code.
  * @param[in] errorDescription is the error description.
+ * @param[in] clsName is the name of the class (if relevant).
+ * @param[in] objName is the name of the Object (if relevant).
+ * @param[in] objPtr is the address of the Object (if relevant).
  * @param[in] fileName is the file name where the error was triggered.
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
 DLL_API void ReportError(const ErrorType &code,
                          const char8 * const errorDescription,
-                         const char8 * const fileName = static_cast<const char8 *>(NULL),
-const int16 lineNumber = 0,
-const char8 * const functionName = static_cast<const char8 *>(NULL));
+                         const char8 * const clsName,
+                         const char8 * const objName,
+                         const void *objPtr,
+                         const char8 * const fileName,
+                         const int16 lineNumber,
+                         const char8 * const functionName);
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -115,7 +121,7 @@ DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief The function to call in case of errors.
+ * @brief The function to call in case of errors and without allowing to pass parameters.
  * @details Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs.
  * @param[in] code is the ErrorType code error.
  * @param[in] message is the description associated to the error.
@@ -123,8 +129,8 @@ DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 /*lint -save -e9026
  * 9026: function-like macro defined.
  */
-#define REPORT_ERROR(code,message)\
-MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
+#define REPORT_ERROR_STATIC_0(code,message)\
+MARTe::ErrorManagement::ReportError(code, message, NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.

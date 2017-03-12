@@ -75,7 +75,7 @@ LoggerService    ();
     virtual ~LoggerService();
 
     /**
-     * @brief Calls ReferenceContainer::Initialise to register all the ConsumerI and reads the CPUs and StackSize parameters info.
+     * @brief Calls ReferenceContainer::Initialise and reads the CPUs and StackSize parameters info.
      * @param[in] data see ReferenceContainer::Initialise.
      * @return true if CPUs is specified and at least one valid ConsumerI is registered. If one of the child elements does not implement
      *  the LoggerConsumerI interface it will return false.

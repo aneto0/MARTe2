@@ -94,7 +94,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+            REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
         }
     }
     UnLock();
@@ -141,7 +141,7 @@ bool ReferenceContainer::Insert(Reference ref,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     UnLock();
     return ok;
@@ -283,12 +283,12 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -321,11 +321,11 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                             }
                         }
                         else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
                         }
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
@@ -342,7 +342,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
 
     UnLock();
@@ -370,7 +370,7 @@ uint32 ReferenceContainer::Size() {
         size = list.ListSize();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     UnLock();
     return size;
@@ -415,7 +415,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
                         }
                         if (ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, &errorMsg[0]);
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, &errorMsg[0]);
                         }
                     }
                 }

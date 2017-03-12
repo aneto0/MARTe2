@@ -34,7 +34,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -58,7 +57,7 @@ BasicSocket::BasicSocket() :
 BasicSocket::~BasicSocket() {
     if (BasicSocket::IsValid()) {
         if (!BasicSocket::Close()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
         }
     }
 }
@@ -80,7 +79,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
     return (ret >= 0);
 }
@@ -91,7 +90,7 @@ bool BasicSocket::Close() {
         ret = close(connectionSocket);
         connectionSocket = -1;
         if (ret < 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicSocket::Close failed");
             ret = 0;
         }
     }

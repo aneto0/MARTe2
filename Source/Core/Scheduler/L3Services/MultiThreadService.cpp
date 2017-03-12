@@ -316,7 +316,7 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
                 err = thread->Stop();
                 if (!err.ErrorsCleared()) {
                     uint32 threadNumber = i;
-                    REPORT_ERROR_PARAMETERS(err, "Could not Stop EmbeddedThreadI(%d)", threadNumber)
+                    REPORT_ERROR(err, "Could not Stop EmbeddedThreadI(%d)", threadNumber);
                 }
             }
         }
@@ -329,10 +329,10 @@ ErrorManagement::ErrorType MultiThreadService::Stop() {
                 uint32 threadNumber = i;
                 err = thread->Stop();
                 if (!err.ErrorsCleared()) {
-                    REPORT_ERROR_PARAMETERS(err, "Could not Kill EmbeddedThreadI(%d)", threadNumber)
+                    REPORT_ERROR(err, "Could not Kill EmbeddedThreadI(%d)", threadNumber);
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(err, "Killed EmbeddedThreadI(%d)", threadNumber)
+                    REPORT_ERROR(err, "Killed EmbeddedThreadI(%d)", threadNumber);
                 }
             }
         }

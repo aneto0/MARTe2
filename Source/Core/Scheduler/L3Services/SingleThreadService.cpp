@@ -28,9 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <SingleThreadService.h>
+#include "AdvancedErrorManagement.h"
 #include "ExecutionInfo.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

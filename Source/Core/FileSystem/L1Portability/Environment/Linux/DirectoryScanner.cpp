@@ -152,7 +152,7 @@ bool DirectoryScanner::Scan(const char8 * const path,
         int32 n = scandir(basePath, &namelist, &fileFilter, &alphasort);
 
         if (n < 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed scandir()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed scandir()");
             ret = false;
         }
         else {

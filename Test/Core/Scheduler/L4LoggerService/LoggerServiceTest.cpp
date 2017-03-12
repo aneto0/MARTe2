@@ -190,7 +190,7 @@ bool LoggerServiceTest::TestExecute() {
         entry = logger->GetLogEntry();
     }
     if (ok) {
-        REPORT_ERROR(ErrorManagement::Debug, "LoggerConsumerITest test");
+        REPORT_ERROR_STATIC(ErrorManagement::Debug, "LoggerConsumerITest test");
     }
     if (ok) {
         uint32 maxWait = 2000;

@@ -1,7 +1,7 @@
 /**
- * @file File.cpp
- * @brief Source file for class File
- * @date 16/11/2016
+ * @file ConsoleLoggerGTest.cpp
+ * @brief Source file for class ConsoleLoggerGTest
+ * @date 10/03/2017
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,11 +17,9 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class File (public, protected, and private). Be aware that some 
+ * the class ConsoleLoggerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-
-#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -30,30 +28,29 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "File.h"
+
+#include "gtest/gtest.h"
+#include "ConsoleLoggerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-File::File() {
-
-}
-
-File::~File() {
-    if(!Flush()) {
-        REPORT_ERROR_STATIC(ErrorManagement::OSError, "Could not flush the stream");
-    }
-}
-
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+TEST(ConsoleLoggerGTest,TestConstructor) {
+    ConsoleLoggerTest target;
+    ASSERT_TRUE(target.TestConstructor());
+}
 
+TEST(ConsoleLoggerGTest,TestInitialise) {
+    ConsoleLoggerTest target;
+    ASSERT_TRUE(target.TestInitialise());
+}
 
+TEST(ConsoleLoggerGTest,TestConsumeLogMessage) {
+    ConsoleLoggerTest target;
+    ASSERT_TRUE(target.TestConsumeLogMessage());
+}
 
-	

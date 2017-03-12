@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "EmbeddedThreadI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,7 @@ static void ServiceThreadLauncher(const void * const parameters) {
         thread->ThreadLoop();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid EmbeddedThreadI * in ServiceThreadLauncher!");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Invalid EmbeddedThreadI * in ServiceThreadLauncher!");
     }
 
 }

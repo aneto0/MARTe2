@@ -237,7 +237,7 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
         if (bufferMemoryMap[writeIdx].triggered) {
             //Buffer overrun...
             const uint32 idx = writeIdx;
-            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx)
+            REPORT_ERROR(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx);
             ret = false;
         }
         uint32 n;
