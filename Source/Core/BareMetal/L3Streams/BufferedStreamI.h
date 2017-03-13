@@ -328,6 +328,16 @@ public:
      */
     inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8);
 
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9);
+
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9, const AnyType& par10);
+
 protected:
 
     /**
@@ -394,6 +404,16 @@ bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, co
 
 bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8) {
     AnyType pars[9] = { par1, par2, par3, par4, par5, par6, par7, par8, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9) {
+    AnyType pars[10] = { par1, par2, par3, par4, par5, par6, par7, par8, par9, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9, const AnyType& par10) {
+    AnyType pars[11] = { par1, par2, par3, par4, par5, par6, par7, par8, par9, par10, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
