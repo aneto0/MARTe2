@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  ConsoleLoggerGTest.x LoggerServiceGTest.x
+OBJSX=  ConsoleLoggerGTest.x LoggerConsumerIGTest.x LoggerServiceGTest.x
 
 PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..

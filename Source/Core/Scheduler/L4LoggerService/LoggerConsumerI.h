@@ -41,7 +41,7 @@
 namespace MARTe {
 
 /**
- * @brief Classes that inherit from this interface and are inserted into a LoggerService
+ * @brief Classes that inherit fromthis interface (and are inserted into a LoggerService instance)
  *  will have the function ConsumeLogMessage called every time a log message is received.
  */
 class LoggerConsumerI {
@@ -62,6 +62,7 @@ public:
      */
     virtual void ConsumeLogMessage(LoggerPage *logPage) = 0;
 
+protected:
     /**
      * @brief Helper function which prints the log message into a stream.
      * @param[in] logPage the logging information.
@@ -71,7 +72,7 @@ public:
 
     /**
      * @brief Reads the Printing preference from a StructuredDataI.
-     * @param[in] data shall contain a string with the name Format and with a value that encodes, with no separator and in the order, the parameters should be output:
+     * @param[in] data shall contain a string with the name Format and with a value that encodes, with no separator and in any order, the logging error descriptions that should be output:
      * - E: error code
      * - T: time in HRT at which the error occurred
      * - t: time in the format HH:MM:SS at which the PrintToStream above was called plus the HRT at which the error occurred
@@ -84,9 +85,27 @@ public:
      * - C: the class name.
      *
      * An example could be Format="ItOoFm".
+     *
+     * data may contain a parameter named "PrintKeys" with value 0 or 1. If 1 the a key identifying the logging error descriptions will prefix each description with the format |KEY=, where KEY is:
+     * - |E= : error code
+     * - |TM= : time in HRT at which the error occurred or time in the format HH:MM:SS at which the PrintToStream above was called plus the HRT at which the error occurred
+     * - |o= : the object name
+     * - |O= : the object pointer
+     * - |T= : the thread identifier
+     * - |f= : the function name
+     * - |F= : the file name
+     * - |D= : the message
+     * - |C= : the class name
+     *
      * @return true if the Format exists and can be successfully parsed.
      */
     bool LoadPrintPreferences(StructuredDataI &data);
+
+    /**
+     * @brief Checks if if the error description keys are to be printed.
+     * @return true if the error description keys are to be printed.
+     */
+    bool IsPrintKeys() const;
 
 private:
 
@@ -95,10 +114,6 @@ private:
      */
     bool printKeys;
 
-    /**
-     * The number of format preferences.
-     */
-    //static const uint32 N_FORMAT_PREFS = 12u;
     /**
      * Stores the format preferences.
      */
@@ -165,7 +180,6 @@ private:
         uint16 asUint16;
     } formatPrefs;
     /*lint --flb*/
-    //uint32 formatPrefs[N_FORMAT_PREFS];
 };
 }
 

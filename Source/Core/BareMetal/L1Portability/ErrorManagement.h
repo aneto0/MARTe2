@@ -88,7 +88,7 @@ DLL_API void ReportError(const ErrorType &code,
                          const char8 * const errorDescription,
                          const char8 * const clsName,
                          const char8 * const objName,
-                         const void *objPtr,
+                         const void * const objPtr,
                          const char8 * const fileName,
                          const int16 lineNumber,
                          const char8 * const functionName);

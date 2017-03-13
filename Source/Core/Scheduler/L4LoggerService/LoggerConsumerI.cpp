@@ -30,24 +30,12 @@
 /*---------------------------------------------------------------------------*/
 #include "LoggerConsumerI.h"
 #include "Object.h"
-#include "Sleep.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-static const uint32 LOGP_INFO = 1u;
-static const uint32 LOGP_TIME = 2u;
-static const uint32 LOGP_FULL_TIME = 3u;
-static const uint32 LOGP_OBJ_NAME = 4u;
-static const uint32 LOGP_OBJ_PTR = 5u;
-static const uint32 LOGP_FUN = 6u;
-static const uint32 LOGP_FILE = 7u;
-static const uint32 LOGP_MSG = 8u;
-static const uint32 LOGP_THREAD_ID = 9u;
-static const uint32 LOGP_CLASS = 10u;
-}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,11 +51,11 @@ LoggerConsumerI::~LoggerConsumerI() {
 
 }
 
-void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) const {
+void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI &err) const {
     StreamString errorCodeStr;
     ErrorManagement::ErrorInformation errorInfo = logPage->errorInfo;
     const char8 *key = "";
-    if (formatPrefs.info) {
+    if (formatPrefs.info.operator bool()) {
         if (printKeys) {
             key = "|E=";
         }
@@ -77,7 +65,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
         (void) err.Printf("%s%s", key, errorCodeStr.Buffer());
     }
-    if (formatPrefs.timeShort) {
+    if (formatPrefs.timeShort.operator bool()) {
         if (printKeys) {
             key = "|TM=";
         }
@@ -86,7 +74,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         }
         (void) err.Printf("%s%d", key, errorInfo.hrtTime);
     }
-    if (formatPrefs.timeFull) {
+    if (formatPrefs.timeFull.operator bool()) {
         if (printKeys) {
             key = "|TM=";
         }
@@ -94,11 +82,11 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
             key = "|";
         }
         TimeStamp ts;
-        if (ts.ConvertFromEpoch(errorInfo.timeSeconds)) {
+        if (ts.ConvertFromEpoch(static_cast<oslong>(errorInfo.timeSeconds))) {
             (void) err.Printf("%s%d:%d:%d (%d)", key, ts.GetHour(), ts.GetMinutes(), ts.GetSeconds(), errorInfo.hrtTime);
         }
     }
-    if (formatPrefs.objectName) {
+    if (formatPrefs.objectName.operator bool()) {
         if (printKeys) {
             key = "|o=";
         }
@@ -112,7 +100,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
             (void) err.Printf("%s", key);
         }
     }
-    if (formatPrefs.objectPointer) {
+    if (formatPrefs.objectPointer.operator bool()) {
         if (printKeys) {
             key = "|O=";
         }
@@ -126,7 +114,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
             (void) err.Printf("%s", key);
         }
     }
-    if (formatPrefs.threadId) {
+    if (formatPrefs.threadId.operator bool()) {
         if (printKeys) {
             key = "|T=";
         }
@@ -136,7 +124,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         //TODO
         (void) err.Printf("%s", key);
     }
-    if (formatPrefs.functionName) {
+    if (formatPrefs.functionName.operator bool()) {
         if (printKeys) {
             key = "|f=";
         }
@@ -145,7 +133,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         }
         (void) err.Printf("%s%s", key, errorInfo.functionName);
     }
-    if (formatPrefs.fileName) {
+    if (formatPrefs.fileName.operator bool()) {
         if (printKeys) {
             key = "|F=";
         }
@@ -154,7 +142,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         }
         (void) err.Printf("%s%s:%d", key, errorInfo.fileName, errorInfo.header.lineNumber);
     }
-    if (formatPrefs.message) {
+    if (formatPrefs.message.operator bool()) {
         if (printKeys) {
             key = "|D=";
         }
@@ -163,7 +151,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage *logPage, BufferedStreamI &err) c
         }
         (void) err.Printf("%s%s", key, logPage->errorStrBuffer);
     }
-    if (formatPrefs.className) {
+    if (formatPrefs.className.operator bool()) {
         if (printKeys) {
             key = "|C=";
         }
@@ -178,10 +166,11 @@ bool LoggerConsumerI::LoadPrintPreferences(StructuredDataI &data) {
     StreamString format;
     bool ok = data.Read("Format", format);
     formatPrefs.asUint16 = 0u;
-    uint32 formatSize = 0u;
+    uint64 formatSize = 0u;
     if (ok) {
         formatSize = format.Size();
-        ok = (formatSize < formatPrefs.unMapped.BitOffset());
+        /*lint -e{1705} in order to access directly the static member the formatPrefs.unMapped.BitOffset() would have to be changed to BitRange<uint16, 6u, 10u>::BitOffset, but this would imply maintaining the offset here and in the header file...*/
+        ok = (formatSize < (static_cast<uint64>(formatPrefs.unMapped.BitOffset()) + 1u));
         if (!ok) {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Format size is too large");
         }
@@ -232,6 +221,12 @@ bool LoggerConsumerI::LoadPrintPreferences(StructuredDataI &data) {
             printKeys = (printKeysInt == 1u);
         }
     }
+
     return ok;
 }
+
+bool LoggerConsumerI::IsPrintKeys() const {
+    return printKeys;
+}
+
 }

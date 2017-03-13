@@ -1,7 +1,7 @@
 /**
- * @file ConsoleLogger.h
- * @brief Header file for class ConsoleLogger
- * @date 10/03/2017
+ * @file LoggerConsumerITest.h
+ * @brief Header file for class LoggerConsumerITest
+ * @date 13/03/2017
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ConsoleLogger
+ * @details This header file contains the declaration of the class LoggerConsumerITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONSOLELOGGER_H_
-#define CONSOLELOGGER_H_
+#ifndef LOGGERCONSUMERITEST_H_
+#define LOGGERCONSUMERITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,62 +31,50 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BasicConsole.h"
 #include "LoggerConsumerI.h"
-#include "Object.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 /**
- * @brief A LoggerConsumerI which outputs the log messages to a console instance.
- * @details The configuration syntax is (names are only given as an example):
- * +ConsoleLogger = {
- *     Class = ConsoleLogger
- *     Format = ItOoFm //Compulsory. As described in LoggerConsumerI::LoadPrintPreferences
- *     PrintKeys = 1 //Optional. As described in LoggerConsumerI::LoadPrintPreferences
- * }
+ * @brief Tests the LoggerConsumerI public methods.
  */
-class ConsoleLogger: public Object, public LoggerConsumerI {
+class LoggerConsumerITest {
 public:
-    CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Tests the LoadPrintPreferences method.
+     */
+    bool TestLoadPrintPreferences();
 
     /**
-     * @brief Constructor. Opens the console.
+     * @brief Tests the LoadPrintPreferences method with only some keys.
      */
-ConsoleLogger    ();
+    bool TestLoadPrintPreferences_SomeKeys();
 
     /**
-     * @brief Destructor. Closes the console.
+     * @brief Tests the LoadPrintPreferences method with a Format that is too large.
      */
-    virtual ~ConsoleLogger();
+    bool TestLoadPrintPreferences_False_TooLarge();
 
     /**
-     * @brief Prints the logPage in the console output.
-     * @param logPage the log message to be printed.
+     * @brief Tests the LoadPrintPreferences method with an invalid key.
      */
-    virtual void ConsumeLogMessage(LoggerPage *logPage);
+    bool TestLoadPrintPreferences_False_InvalidKey();
 
     /**
-     * @brief Calls Object::Initialise and reads the Format parameter (see class description) .
-     * @param[in] data see Object::Initialise.
-     * @return true if Object::Initialise returns true.
+     * @brief Tests the PrintToStream method.
      */
-    virtual bool Initialise(StructuredDataI &data);
-private:
+    bool TestPrintToStream();
 
     /**
-     *  The basic console where the logs are printed to.
+     * @brief Tests the PrintToStream method with keys enabled.
      */
-    BasicConsole console;
-
+    bool TestPrintToStream_WithKeys();
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* CONSOLELOGGERCONSUMER_H_ */
+#endif /* LOGGERCONSUMERITEST_H_ */
 

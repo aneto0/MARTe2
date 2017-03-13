@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+/*lint -estring(459, "*LoggerErrorProcessFunction*") this function is supposed to have access to the Logger singleton and to the error information.*/
 void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                        const char8 * const errorDescription) {
     Logger *loggerService = Logger::Instance();
