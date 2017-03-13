@@ -107,18 +107,8 @@ protected:
      */
     bool IsPrintKeys() const;
 
-private:
-
-    /**
-     * True if the keys are to be printed.
-     */
-    bool printKeys;
-
-    /**
-     * Stores the format preferences.
-     */
     /*lint ++flb*/
-    union {
+    union FormatPreferences {
         /**
          * Print the log error information?
          */
@@ -178,8 +168,27 @@ private:
          * Output as uint16
          */
         uint16 asUint16;
-    } formatPrefs;
+    };
     /*lint --flb*/
+
+    /**
+     * @brief Returns a copy of the format preferences.
+     * @return a copy of the format preferences.
+     */
+    FormatPreferences GetFormatPreferences() const;
+
+private:
+
+    /**
+     * True if the keys are to be printed.
+     */
+    bool printKeys;
+
+    /**
+     * Stores the format preferences.
+     */
+
+    FormatPreferences formatPrefs;
 };
 }
 

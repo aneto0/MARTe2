@@ -5,3 +5,5 @@
 /LoggerService.o
 /ConsoleLogger.gcno
 /ConsoleLogger.o
+/LoggerConsumerI.gcno
+/LoggerConsumerI.o

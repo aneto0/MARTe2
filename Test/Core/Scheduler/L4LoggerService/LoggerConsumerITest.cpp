@@ -48,44 +48,48 @@ public:
         return MARTe::LoggerConsumerI::LoadPrintPreferences(data);
     }
 
+    bool IsPrintKeys() const {
+        return MARTe::LoggerConsumerI::IsPrintKeys();
+    }
+
     bool IsInfo() {
-        return formatPrefs.info;
+        return GetFormatPreferences().info;
     }
 
     bool IsTimeShort() {
-        return formatPrefs.timeShort;
+        return GetFormatPreferences().timeShort;
     }
 
     bool IsTimeFull() {
-        return formatPrefs.timeFull;
+        return GetFormatPreferences().timeFull;
     }
 
     bool IsObjectName() {
-        return formatPrefs.objectName;
+        return GetFormatPreferences().objectName;
     }
 
     bool IsObjectPointer() {
-        return formatPrefs.objectPointer;
+        return GetFormatPreferences().objectPointer;
     }
 
     bool IsFunctionName() {
-        return formatPrefs.functionName;
+        return GetFormatPreferences().functionName;
     }
 
     bool IsFileName() {
-        return formatPrefs.fileName;
+        return GetFormatPreferences().fileName;
     }
 
     bool IsMessage() {
-        return formatPrefs.message;
+        return GetFormatPreferences().message;
     }
 
     bool IsThreadId() {
-        return formatPrefs.threadId;
+        return GetFormatPreferences().threadId;
     }
 
     bool IsClassName() {
-        return formatPrefs.className;
+        return GetFormatPreferences().className;
     }
 };
 
@@ -154,6 +158,9 @@ bool LoggerConsumerITest::TestPrintToStream() {
     cdb.Write("PrintKeys", 0);
     bool ok = test.LoadPrintPreferences(cdb);
     if (ok) {
+        ok = !test.IsPrintKeys();
+    }
+    if (ok) {
         LoggerPage page;
         page.errorInfo.className = "LoggerConsumerITest";
         page.errorInfo.fileName = "LoggerConsumerITest.cpp";
@@ -191,6 +198,9 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
     cdb.Write("PrintKeys", 1);
     bool ok = test.LoadPrintPreferences(cdb);
     if (ok) {
+        ok = test.IsPrintKeys();
+    }
+    if (ok) {
         LoggerPage page;
         page.errorInfo.className = "LoggerConsumerITest";
         page.errorInfo.fileName = "LoggerConsumerITest.cpp";
@@ -209,10 +219,12 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
         //Note that the Thread identified is currently not being handled.
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint = "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
+            expectedPrint =
+                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
         }
         else {
-            expectedPrint = "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
+            expectedPrint =
+                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
         }
         ok = (err == expectedPrint);
     }

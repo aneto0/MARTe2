@@ -4,3 +4,5 @@
 /LoggerServiceTest.gcno
 /ConsoleLoggerTest.gcno
 /ConsoleLoggerTest.o
+/LoggerConsumerITest.gcno
+/LoggerConsumerITest.o

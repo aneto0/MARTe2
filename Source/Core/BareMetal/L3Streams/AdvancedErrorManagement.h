@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ClassProperties.h"
 #include "CompilerTypes.h"
 #include "ErrorManagement.h"
 #include "StreamMemoryReference.h"
@@ -55,7 +56,7 @@ do {                                                                        \
     StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);           \
     (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));     \
     buffer[smr.Size()]='\0';                                                \
-    ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+    MARTe::ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
 } while(false) /*lint -restore */ //Protect scope with the {} and force to end with ;
 /**
  * @brief The REPORT_ERROR_STATIC_MACRO_CHOOSER will call this function for any call to REPORT_ERROR_STATIC that has more than two parameters (the first two being the log code and the message)
@@ -94,7 +95,7 @@ do {                                                                        \
     (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));     \
     buffer[smr.Size()]='\0';                                                \
     if (GetClassProperties() != NULL_PTR(const MARTe::ClassProperties *))   \
-        ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+        MARTe::ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
 } while(false) /*lint -restore */ //Protect scope with the {} and force to end with ;
 /**
  * @brief The REPORT_ERROR_MACRO_CHOOSER will call this function for any call to REPORT_ERROR that has two and only two parameters (the log code and the message)
@@ -103,11 +104,11 @@ do {                                                                        \
 /*lint -save -e717 Let lint know that we know that we are doing while(0)*/  \
 do {                                                                        \
     const MARTe::char8 *pClassName = "Unknown";                             \
-    const ClassProperties *cProperties = GetClassProperties();              \
+    const MARTe::ClassProperties *cProperties = GetClassProperties();       \
     if (cProperties != NULL_PTR(const MARTe::ClassProperties *)) {          \
         pClassName = cProperties->GetName();                                \
     }                                                                       \
-    ErrorManagement::ReportError(code, message, pClassName, GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+    MARTe::ErrorManagement::ReportError(code, message, pClassName, GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
 } while(false) /*lint -restore */ //Protect scope with the {} and force to end with ;
 /**
  * @brief The REPORT_ERROR_MACRO_CHOOSER will call this function for any call to REPORT_ERROR that has more than two parameters (the first two being the log code and the message)
@@ -120,7 +121,7 @@ do {                                                                            
     (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));  \
     buffer[smr.Size()]='\0';                                                           \
     const MARTe::char8 *pClassName = "Unknown";                                        \
-    const ClassProperties *cProperties = GetClassProperties();                         \
+    const MARTe::ClassProperties *cProperties = GetClassProperties();                  \
     if (cProperties != NULL_PTR(const MARTe::ClassProperties *)) {                     \
         pClassName = cProperties->GetName();                                           \
     }                                                                                  \

@@ -229,4 +229,8 @@ bool LoggerConsumerI::IsPrintKeys() const {
     return printKeys;
 }
 
+LoggerConsumerI::FormatPreferences LoggerConsumerI::GetFormatPreferences() const {
+    return formatPrefs;
+}
+
 }
