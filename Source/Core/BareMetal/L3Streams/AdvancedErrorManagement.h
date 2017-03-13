@@ -47,53 +47,75 @@ namespace MARTe {
 static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
 /**
- * @brief Report an error based on code, message, and a open list of extra
- * parameters. TODO REDO DOCUMENTATION
+ * @brief The REPORT_ERROR_STATIC_U is not to be used. It serves as the one parameter choice for the REPORT_ERROR_STATIC_MACRO_CHOOSER macro.
  */
-//This should not be possible. Minimum parameters are code and message
-#define REPORT_ERROR_STATIC_U(code)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));                       \
-    buffer[smr.Size()]='\0';                                                               \
+#define REPORT_ERROR_STATIC_U(code)                                      \
+    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                             \
+    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);        \
+    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));  \
+    buffer[smr.Size()]='\0';                                             \
     ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-#define REPORT_ERROR_STATIC_PARAMETERS(code, message,...)                                           \
-    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));                        \
-    buffer[smr.Size()]='\0';                                                               \
+/**
+ * @brief The REPORT_ERROR_STATIC_MACRO_CHOOSER will call this function for any call to REPORT_ERROR_STATIC that has more than two parameters (the first two being the log code and the message)
+ */
+#define REPORT_ERROR_STATIC_PARAMETERS(code, message,...)                              \
+    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                             \
+    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);        \
+    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));  \
+    buffer[smr.Size()]='\0';                                                           \
     MARTe::ErrorManagement::ReportError(code,&buffer[0], NULL_PTR(const MARTe::char8* ), NULL_PTR(const MARTe::char8* ), NULL_PTR(const void* ), __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
-#define REPORT_ERROR_STATIC_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5, NAME, ...) NAME
-
-#define REPORT_ERROR_STATIC(...) REPORT_ERROR_STATIC_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_0, REPORT_ERROR_STATIC_U)( __VA_ARGS__)
+/**
+ * @brief A macro trick to "overload" a macro based on the number of parameters. Usually a different macro is associated to a different number of parameters, but in this case the REPORT_ERROR_STATIC_PARAMETERS is always called as the code algorithm does not change with the number of parameters.
+ */
+#define REPORT_ERROR_STATIC_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, NAME, ...) NAME
 
 /**
- * @brief Report an error based on code, message, and a open list of extra
- * parameters.
+ * @brief Macro to be called to print logging messages on classes that do not inherit from Object (and that thus do not object name, class name nor object pointer).
+ * @param[in] code the ErrorType code.
+ * @param[in] message the logging message to be printed.
+ * @param[in] ... the parameters to be sent to a Printf (if any).
  */
-//TODO REDO DOCUMENTATION OF THIS FILE! AND TEST!
-//This should not be possible. Minimum parameters are code and message
-#define REPORT_ERROR_U(code)                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1));                       \
-    buffer[smr.Size()]='\0';                                                               \
+#define REPORT_ERROR_STATIC(...) REPORT_ERROR_STATIC_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_0, REPORT_ERROR_STATIC_U)( __VA_ARGS__)
+
+/**
+ * @brief The REPORT_ERROR_REPORT_ERROR_USTATIC_U is not to be used. It serves as the one parameter choice for the REPORT_ERROR_MACRO_CHOOSER macro.
+ */
+#define REPORT_ERROR_U(code)                                            \
+    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                            \
+    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);       \
+    (void) (smr.Printf(reinterpret_cast<const char8 *>(message),par1)); \
+    buffer[smr.Size()]='\0';                                            \
     ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
+/**
+ * @brief The REPORT_ERROR_MACRO_CHOOSER will call this function for any call to REPORT_ERROR that has two and only two parameters (the log code and the message)
+ */
 #define REPORT_ERROR_0(code, message)                                           \
         MARTe::ErrorManagement::ReportError(code, message, GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
-    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);                               \
-    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));                        \
-    buffer[smr.Size()]='\0';                                                               \
+/**
+ * @brief The REPORT_ERROR_MACRO_CHOOSER will call this function for any call to REPORT_ERROR that has more than two parameters (the first two being the log code and the message)
+ */
+#define REPORT_ERROR_PARAMETERS(code, message,...)                                     \
+    MARTe::char8 buffer[MARTe::MAX_ERROR_MESSAGE_SIZE+1u];                             \
+    MARTe::StreamMemoryReference smr(&buffer[0],MARTe::MAX_ERROR_MESSAGE_SIZE);        \
+    (void) (smr.Printf(reinterpret_cast<const MARTe::char8 *>(message),__VA_ARGS__));  \
+    buffer[smr.Size()]='\0';                                                           \
     MARTe::ErrorManagement::ReportError(code,&buffer[0], GetClassProperties()->GetName(), GetName(), this, __FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
+/**
+ * @brief A macro trick to "overload" a macro based on the number of parameters. Usually a different macro is associated to a different number of parameters, but in this case the REPORT_ERROR_MACRO_CHOOSER is always called as the code algorithm does not change with the number of parameters.
+ */
 #define REPORT_ERROR_MACRO_CHOOSER(_U, _0, _1, _2, _3, _4, _5, NAME, ...) NAME
 
+/**
+ * @brief Macro to be called to print logging messages on classes that inherit from Object (this will automatically add the object name, class name and object pointer to the log message).
+ * @param[in] code the ErrorType code.
+ * @param[in] message the logging message to be printed.
+ * @param[in] ... the parameters to be sent to a Printf (if any).
+ */
 #define REPORT_ERROR(...) REPORT_ERROR_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_0, REPORT_ERROR_U)( __VA_ARGS__)
 
 }
@@ -102,4 +124,3 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 /*---------------------------------------------------------------------------*/
 
 #endif /* ADVANCEDERRORMANAGEMENT_H_ */
-
