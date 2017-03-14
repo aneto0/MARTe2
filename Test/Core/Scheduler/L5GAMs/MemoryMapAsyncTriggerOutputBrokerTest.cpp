@@ -1939,10 +1939,10 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestResetPreTriggerBuffers() {
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestFlushAllTriggers() {
     using namespace MARTe;
-    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5 };
-    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
-    uint32 expectedSignal[] = { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2 };
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 0, 1, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1};
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2, 2, 1, 0, 1, 1, 2, 3, 4, 5};
 
     ConfigurationDatabase cdb;
     StreamString configStream = config1;
@@ -1952,7 +1952,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestFlushAllTriggers() {
     uint32 expectedNumberOfElements = sizeof(expectedTrigger) / sizeof(uint8);
     uint32 preTriggerBuffers = 4;
     uint32 postTriggerBuffers = 2u;
-    uint32 numberOfBuffers = 10u;
+    uint32 numberOfBuffers = 100u;
     uint32 sleepMSec = 10u;
 
     bool ok = parser.Parse();
@@ -2031,42 +2031,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestFlushAllTriggers() {
         ok = application->StopCurrentStateExecution();
     }
     if (ok) {
-        ok = dataSource->broker
-    }
-
-    if (ok) {
-        ok = dataSource->memoryOK;
-    }
-    if (ok) {
-        ok = application->PrepareNextState("State1");
-    }
-    if (ok) {
-        ok = application->StartNextStateExecution();
-    }
-    if (ok) {
-        gam->counter = 0;
-    }
-    if (ok) {
-        dataSource->Reset();
-    }
-    for (i = 0; (i < gam->numberOfExecutes) && (ok); i++) {
-        scheduler->ExecuteThreadCycle(0);
-        Sleep::MSec(sleepMSec);
-    }
-
-    //2 seconds to finish
-    maxTimeInCounts = HighResolutionTimer::Counter() + 2 * HighResolutionTimer::Frequency();
-    //Force flushing of BufferLoop
-    scheduler->ExecuteThreadCycle(0);
-    while (dataSource->counter != dataSource->numberOfExecutes) {
-        Sleep::Sec(0.1);
-        if (HighResolutionTimer::Counter() > maxTimeInCounts) {
-            ok = false;
-            break;
-        }
-    }
-    if (ok) {
-        ok = application->StopCurrentStateExecution();
+        ok = dataSource->broker->FlushAllTriggers();
     }
     if (ok) {
         ok = dataSource->memoryOK;

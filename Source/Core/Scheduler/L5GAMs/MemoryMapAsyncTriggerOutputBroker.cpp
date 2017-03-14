@@ -376,8 +376,7 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
 bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
     uint32 i = 0u;
     uint32 idx = writeIdx;
-    bool ret = true;
-    ret = (fastSem.FastLock() == ErrorManagement::NoError);
+    bool ret = (fastSem.FastLock() == ErrorManagement::NoError);
     while ((i < numberOfBuffers) && (ret)) {
         if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
             if (bufferMemoryMap[idx].triggered) {
