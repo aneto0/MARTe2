@@ -271,6 +271,11 @@ private:
     bool destroying;
 
     /**
+     * True if the BufferLoop is executing (needed for the FlushAllTrigger)
+     */
+    bool bufferLoopExecuting;
+
+    /**
      * The binder for the SingleThreadService.
      */
     EmbeddedServiceMethodBinderT<MemoryMapAsyncTriggerOutputBroker> binder;
