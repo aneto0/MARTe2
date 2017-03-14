@@ -146,7 +146,6 @@ bool RealTimeThread::ConfigureArchitecture() {
                     if (!ret) {
                         REPORT_ERROR(ErrorManagement::FatalError, "Insert into state failed", "");
                     }
-                    //ret = ConfigureArchitecturePrivate(functionGeneric);
                 }
                 else {
                     REPORT_ERROR(ErrorManagement::FatalError, "Insert into statefuls failed", "");

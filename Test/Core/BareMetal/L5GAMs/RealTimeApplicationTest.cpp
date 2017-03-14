@@ -35,6 +35,8 @@
 #include "GAMDataSource.h"
 #include "GAMTestHelper.h"
 #include "MessageI.h"
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
@@ -96,6 +98,242 @@ const char8 *RealTimeApplicationTestScheduler::GetStateName() {
 }
 
 CLASS_REGISTER(RealTimeApplicationTestScheduler, "1.0")
+
+/**
+ * A DataSourceI that fails in the SetConfiguredDatabase
+ */
+class DataSourceIRealTimeApplicationTestHelper1: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+DataSourceIRealTimeApplicationTestHelper1    () {
+
+    }
+
+    virtual ~DataSourceIRealTimeApplicationTestHelper1() {
+
+    }
+
+    virtual bool AllocateMemory() {
+        return true;
+    }
+
+    virtual uint32 GetNumberOfMemoryBuffers() {
+        return 1u;
+    }
+
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+            const uint32 bufferIdx,
+            void *&signalAddress) {
+        return true;
+    }
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data,
+            const SignalDirection direction) {
+        if (direction == InputSignals) {
+            return "MemoryMapInputBroker";
+        }
+        return "MemoryMapOutputBroker";
+    }
+
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName) {
+        return true;
+    }
+
+    virtual bool GetInputBrokers(
+            ReferenceContainer &inputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+        bool ret = broker.IsValid();
+        if (ret) {
+            ret = inputBrokers.Insert(broker);
+        }
+        return ret;
+    }
+
+    virtual bool GetOutputBrokers(
+            ReferenceContainer &outputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+        bool ret = broker.IsValid();
+        if (ret) {
+            ret = outputBrokers.Insert(broker);
+        }
+        return ret;
+    }
+
+    virtual bool Synchronise() {
+        return true;
+    }
+
+    virtual bool SetConfiguredDatabase(StructuredDataI & data) {
+        return false;
+    }
+
+};
+CLASS_REGISTER(DataSourceIRealTimeApplicationTestHelper1, "1.0")
+
+/**
+ * A DataSourceI that fails in the AllocateMemory
+ */
+class DataSourceIRealTimeApplicationTestHelper2: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+DataSourceIRealTimeApplicationTestHelper2    () {
+
+    }
+
+    virtual ~DataSourceIRealTimeApplicationTestHelper2() {
+
+    }
+
+    virtual bool AllocateMemory() {
+        return false;
+    }
+
+    virtual uint32 GetNumberOfMemoryBuffers() {
+        return 1u;
+    }
+
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+            const uint32 bufferIdx,
+            void *&signalAddress) {
+        return true;
+    }
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data,
+            const SignalDirection direction) {
+        if (direction == InputSignals) {
+            return "MemoryMapInputBroker";
+        }
+        return "MemoryMapOutputBroker";
+    }
+
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName) {
+        return true;
+    }
+
+    virtual bool GetInputBrokers(
+            ReferenceContainer &inputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
+        bool ret = broker.IsValid();
+        if (ret) {
+            ret = inputBrokers.Insert(broker);
+        }
+        return ret;
+    }
+
+    virtual bool GetOutputBrokers(
+            ReferenceContainer &outputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
+        bool ret = broker.IsValid();
+        if (ret) {
+            ret = outputBrokers.Insert(broker);
+        }
+        return ret;
+    }
+
+    virtual bool Synchronise() {
+        return true;
+    }
+
+};
+CLASS_REGISTER(DataSourceIRealTimeApplicationTestHelper2, "1.0")
+
+/**
+ * A DataSourceI that fails to AddBrokers
+ */
+class DataSourceIRealTimeApplicationTestHelper3: public DataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+DataSourceIRealTimeApplicationTestHelper3    () {
+
+    }
+
+    virtual ~DataSourceIRealTimeApplicationTestHelper3() {
+
+    }
+
+    virtual bool AllocateMemory() {
+        return true;
+    }
+
+    virtual uint32 GetNumberOfMemoryBuffers() {
+        return 1u;
+    }
+
+    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
+            const uint32 bufferIdx,
+            void *&signalAddress) {
+        return true;
+    }
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data,
+            const SignalDirection direction) {
+        if (direction == InputSignals) {
+            return "MemoryMapInputBroker";
+        }
+        return "MemoryMapOutputBroker";
+    }
+
+    virtual bool PrepareNextState(const char8 * const currentStateName,
+            const char8 * const nextStateName) {
+        return true;
+    }
+
+    virtual bool GetInputBrokers(
+            ReferenceContainer &inputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        return false;
+    }
+
+    virtual bool GetOutputBrokers(
+            ReferenceContainer &outputBrokers,
+            const char8* const functionName,
+            void * const gamMemPtr) {
+        return false;
+    }
+
+    virtual bool Synchronise() {
+        return true;
+    }
+
+};
+CLASS_REGISTER(DataSourceIRealTimeApplicationTestHelper3, "1.0")
+
+/**
+ * A GAM that fails in the Setup
+ */
+class GAMRealTimeApplicationTestHelper1: public GAM {
+public:
+    CLASS_REGISTER_DECLARATION()GAMRealTimeApplicationTestHelper1 () {
+
+    }
+    virtual ~GAMRealTimeApplicationTestHelper1() {
+
+    }
+
+    virtual bool Execute() {
+        return false;
+    }
+
+    virtual bool Setup() {
+        return false;
+    }
+};
+CLASS_REGISTER(GAMRealTimeApplicationTestHelper1, "1.0")
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -808,6 +1046,378 @@ bool RealTimeApplicationTest::TestConfigureApplication() {
 
 }
 
+bool RealTimeApplicationTest::TestConfigureApplication_False_ConfigureAfterInitialisation() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication());
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}
+
+bool RealTimeApplicationTest::TestConfigureApplication_False_PostConfigureDataSources() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal2 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = DataSourceIRealTimeApplicationTestHelper1"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication());
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}
+
+bool RealTimeApplicationTest::TestConfigureApplication_False_AllocateGAMMemory() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAMRealTimeApplicationTestHelper1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication());
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}
+
+bool RealTimeApplicationTest::TestConfigureApplication_False_AllocateDataSourceMemory() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = DataSourceIRealTimeApplicationTestHelper2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication());
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}
+
+
+bool RealTimeApplicationTest::TestConfigureApplication_False_ConfigureScheduler() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timingsz"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication());
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}
+
 bool RealTimeApplicationTest::TestConfigureApplicationNoInit() {
     if (!Init()) {
         return false;
@@ -840,8 +1450,542 @@ bool RealTimeApplicationTest::TestConfigureApplicationNoInit() {
 
 }
 
-static uint32 GetDsDefault(ReferenceT<DataSourceI> ddb,
-                           const char8 *signalName) {
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                    Samples = 3"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = DataSourceIRealTimeApplicationTestHelper1"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAMRealTimeApplicationTestHelper1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +DDB2 = {"
+            "            Class = DataSourceIRealTimeApplicationTestHelper2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB2"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB2 = {"
+            "            Class = DataSourceIRealTimeApplicationTestHelper3"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+bool RealTimeApplicationTest::TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler() {
+    StreamString config = ""
+            "$Fibonacci = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                Signal1 = {"
+            "                    DataSource = DDB1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = RealTimeApplicationTestScheduler"
+            "        TimingDataSource = Timingz"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ret = parser.Parse();
+    if (ret) {
+        cdb.MoveToRoot();
+        ObjectRegistryDatabase::Instance()->Purge();
+        ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    if (ret) {
+        cdb.MoveAbsolute("$Fibonacci");
+    }
+    RealTimeApplicationConfigurationBuilder builder(cdb, "DDB1");
+    if (ret) {
+        builder.ConfigureBeforeInitialisation();
+    }
+    ConfigurationDatabase fcdb;
+    ConfigurationDatabase dcdb;
+
+    if (ret) {
+        builder.Copy(fcdb, dcdb);
+        fcdb.MoveToRoot();
+        dcdb.MoveToRoot();
+    }
+    ReferenceT<RealTimeApplication> app = ObjectRegistryDatabase::Instance()->Find("Fibonacci");
+    if (ret) {
+        ret = app.IsValid();
+    }
+    if (ret) {
+        ret = (!app->ConfigureApplication(fcdb, dcdb));
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+
+}
+
+static uint32 GetDsDefault(ReferenceT<DataSourceI> ddb, const char8 *signalName) {
     uint32 signalIndex;
     if (!ddb->GetSignalIndex(signalIndex, signalName)) {
         return false;

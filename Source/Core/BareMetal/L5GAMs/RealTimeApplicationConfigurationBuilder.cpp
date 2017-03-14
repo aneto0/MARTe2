@@ -70,90 +70,90 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
     REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to InitialiseSignalsDatabase");
     bool ret = InitialiseSignalsDatabase();
     if (!ret) {
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to InitialiseSignalsDatabase");
+        REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to InitialiseSignalsDatabase");
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to FlattenSignalsDatabases");
         ret = FlattenSignalsDatabases();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to FlattenSignalsDatabases");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to FlattenSignalsDatabases");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveDataSources");
         ret = ResolveDataSources();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveDataSources");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveDataSources");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyDataSourcesSignals");
         ret = VerifyDataSourcesSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyDataSourcesSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyDataSourcesSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionSignals");
         ret = ResolveFunctionSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyFunctionSignals");
         ret = VerifyFunctionSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyFunctionSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyFunctionSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveStates");
         ret = ResolveStates();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveStates");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveStates");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveConsumersAndProducers");
         ret = ResolveConsumersAndProducers();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveConsumersAndProducers");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveConsumersAndProducers");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyConsumersAndProducers");
         ret = VerifyConsumersAndProducers();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyConsumersAndProducers");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionSignalsMemorySize");
         ret = ResolveFunctionSignalsMemorySize();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionSignalsMemorySize");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionSignalsMemorySize");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionsMemory");
         ret = ResolveFunctionsMemory();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionsMemory");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionsMemory");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to AssignFunctionsMemoryToDataSource");
         ret = AssignFunctionsMemoryToDataSource();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to AssignFunctionsMemoryToDataSource");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignFunctionsMemoryToDataSource");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to AssignBrokersToFunctions");
         ret = AssignBrokersToFunctions();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to AssignBrokersToFunctions");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToFunctions");
         }
     }
     return ret;
@@ -163,83 +163,83 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureBeforeInitialisation() {
     REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to InitialiseSignalsDatabaseFromConfiguration");
     bool ret = InitialiseSignalsDatabaseFromConfiguration();
     if (!ret) {
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to InitialiseSignalsDatabaseFromConfiguration");
+        REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to InitialiseSignalsDatabaseFromConfiguration");
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to FlattenSignalsDatabases");
         ret = FlattenSignalsDatabases();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to FlattenSignalsDatabases");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to FlattenSignalsDatabases");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveDataSources");
         ret = ResolveDataSources();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveDataSources");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveDataSources");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyDataSourcesSignals");
         ret = VerifyDataSourcesSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyDataSourcesSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyDataSourcesSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionSignals");
         ret = ResolveFunctionSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyFunctionSignals");
         ret = VerifyFunctionSignals();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyFunctionSignals");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyFunctionSignals");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveStatesFromConfiguration");
         ret = ResolveStatesFromConfiguration();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveStatesFromConfiguration");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveStatesFromConfiguration");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveConsumersAndProducers");
         ret = ResolveConsumersAndProducers();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveConsumersAndProducers");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveConsumersAndProducers");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to VerifyConsumersAndProducers");
         ret = VerifyConsumersAndProducers();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to VerifyConsumersAndProducers");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionSignalsMemorySize");
         ret = ResolveFunctionSignalsMemorySize();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionSignalsMemorySize");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionSignalsMemorySize");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to ResolveFunctionsMemory");
         ret = ResolveFunctionsMemory();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to ResolveFunctionsMemory");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to ResolveFunctionsMemory");
         }
     }
     if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Going to AssignFunctionsMemoryToDataSource");
         ret = AssignFunctionsMemoryToDataSource();
         if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "Failed to AssignFunctionsMemoryToDataSource");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignFunctionsMemoryToDataSource");
         }
     }
     return ret;
@@ -255,6 +255,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfi
         if (!ret) {
             ret = globalDatabase.MoveAbsolute("$Functions");
         }
+        if (!ret) {
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "No Functions section found");
+        }
     }
     if (ret) {
         //the global database must point to the application to be configured
@@ -264,6 +267,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabaseFromConfi
         ret = globalDatabase.MoveAbsolute("+Data");
         if (!ret) {
             ret = globalDatabase.MoveAbsolute("$Data");
+        }
+        if (!ret) {
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "No Data section found");
         }
         if (ret) {
             ret = dataSourcesDatabase.CreateAbsolute("Data");
@@ -569,7 +575,6 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(Configurati
                 uint32 j = 0u;
                 //...then for each signal...
                 while ((j < numberOfSignals) && (ret)) {
-                    //const char8 *signalName = signalDatabase.GetChildName(j);
                     const char8 *signalName = signalList->Get(j)->GetName();
                     if (StringHelper::Compare(signalName, "Locked") != 0) {
                         ConfigurationDatabase signalDatabaseBeforeFlatten = signalDatabase;
@@ -883,7 +888,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(const SignalDir
         ConfigurationDatabase functionsDatabaseBeforeMove = functionsDatabase;
         for (i = 0u; (i < numberOfFunctions) && (ret); i++) {
             functionsDatabase = functionsDatabaseBeforeMove;
-            //functionsDatabase.SetCurrentNode(functionList->Get(i));
             ret = functionsDatabase.MoveToChild(i);
             StreamString functionName;
             if (ret) {
@@ -977,7 +981,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
 
     bool ret = functionsDatabase.Read("QualifiedName", originalSignalName);
     StreamString signalName;
-//Expand the aliasName in order to write the correct name in the dataSourcesDatabase
+    //Expand the aliasName in order to write the correct name in the dataSourcesDatabase
     StreamString aliasName;
 
     if (ret) {
@@ -987,7 +991,7 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
         if (aliasName.Size() > 0u) {
             signalName = aliasName;
         }
-// if alias unspecified, the name of the dataSource is the GAM signal name
+        // if alias unspecified, the name of the dataSource is the GAM signal name
         else {
             signalName = originalSignalName;
         }
@@ -3023,12 +3027,15 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                     //Move to the function level
                     if (ret) {
                         functionsDatabase = functionsDatabaseAfterMove;
+
+                        if (!functionsDatabase.MoveRelative("Memory")) {
+                            ret = functionsDatabase.CreateRelative("Memory");
+                        }
                     }
-                    if (!functionsDatabase.MoveRelative("Memory")) {
-                        ret = functionsDatabase.CreateRelative("Memory");
-                    }
-                    if (!functionsDatabase.MoveRelative(signalDirection)) {
-                        ret = functionsDatabase.CreateRelative(signalDirection);
+                    if (ret) {
+                        if (!functionsDatabase.MoveRelative(signalDirection)) {
+                            ret = functionsDatabase.CreateRelative(signalDirection);
+                        }
                     }
                     if (ret) {
                         //Check if a DataSource with this name already exists..
@@ -3074,8 +3081,10 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
 
                     ConfigurationDatabase beforeSignals = functionsDatabase;
                     //Store the relevant signals belonging to this DataSource
-                    if (!functionsDatabase.MoveRelative("Signals")) {
-                        ret = functionsDatabase.CreateRelative("Signals");
+                    if (ret) {
+                        if (!functionsDatabase.MoveRelative("Signals")) {
+                            ret = functionsDatabase.CreateRelative("Signals");
+                        }
                     }
                     if (ret) {
                         ret = functionsDatabase.CreateRelative(signalId.Buffer());
@@ -3131,7 +3140,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                         ret = functionsDatabase.MoveRelative(signalDirection);
                     }
                 }
-                ret = functionsDatabase.Write("ByteSize", totalByteSize);
+                if (ret) {
+                    ret = functionsDatabase.Write("ByteSize", totalByteSize);
+                }
             }
         }
     }
@@ -3324,6 +3335,9 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
             /*lint -e{613} NULL pointer checking done before entering here */
             dataSource = realTimeApplication->Find(fullDsPath.Buffer());
             ret = dataSource.IsValid();
+            if (!ret) {
+                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "%s is not a valid DataSourceI", fullDsPath.Buffer());
+            }
         }
 
         //Allow for empty DataSources...
@@ -3337,8 +3351,14 @@ bool RealTimeApplicationConfigurationBuilder::AssignBrokersToFunctions() {
                     ret = dataSourcesDatabase.MoveToChild(j);
                     if (ret) {
                         ret = AssignBrokersToSignals(InputSignals, dataSource);
+                        if (!ret) {
+                            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(InputSignals) to DataSource %s", dataSource->GetName());
+                        }
                         if (ret) {
                             ret = AssignBrokersToSignals(OutputSignals, dataSource);
+                            if (!ret) {
+                                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to AssignBrokersToSignals(OutputSignals) to DataSource %s", dataSource->GetName());
+                            }
                         }
                     }
                 }
@@ -3425,6 +3445,9 @@ bool RealTimeApplicationConfigurationBuilder::PostConfigureDataSources() {
             }
             if (ret) {
                 ret = dataSource->SetConfiguredDatabase(dataSourcesDatabase);
+                if (!ret) {
+                    REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "SetConfiguredDatabase failed for DataSource %s", qualifiedName.Buffer());
+                }
             }
             if (ret) {
                 dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
