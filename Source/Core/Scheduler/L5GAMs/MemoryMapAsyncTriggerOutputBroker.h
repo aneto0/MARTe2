@@ -170,6 +170,15 @@ MemoryMapAsyncTriggerOutputBroker    ();
      */
     void ResetPreTriggerBuffers();
 
+    /**
+     * @brief Flushes all the triggers asynchronously.
+     * @details All the buffers which are marked with a trigger are copied to the DataSourceI and the Synchronise method called.
+     * Note that this happens asynchronously with respect to the buffer consumer thread, so the higher level application using this
+     *  should make sure that no data is written to this thread while this method is being called.
+     * @return true if all the Synchronise calls return true.
+     */
+    bool FlushAllTriggers();
+
 private:
 
     /**
