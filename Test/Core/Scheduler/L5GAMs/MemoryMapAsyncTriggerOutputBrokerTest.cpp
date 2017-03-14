@@ -127,7 +127,7 @@ class MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper: public MARTe::DataS
 public:
     CLASS_REGISTER_DECLARATION()
 
-MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
+    MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper() : MARTe::DataSourceI() {
         numberOfBuffers = 0u;
         preTriggerBuffers = 0u;
         postTriggerBuffers = 0u;
@@ -141,6 +141,7 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
         counter = 0;
         memoryOK = true;
         stackSize = 65536;
+        broker = NULL;
     }
 
     virtual ~MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper() {
@@ -247,13 +248,13 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
             void * const gamMemPtr) {
         using namespace MARTe;
         ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker> brokerNew = ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker>("MemoryMapAsyncTriggerOutputBroker");
-        broker = brokerNew;
-        bool ret = broker.IsValid();
+        bool ret = brokerNew.IsValid();
         if (ret) {
-            ret = broker->InitWithTriggerParameters(OutputSignals, *this, functionName, gamMemPtr, numberOfBuffers, preTriggerBuffers, postTriggerBuffers, cpuMask, stackSize);
+            ret = brokerNew->InitWithTriggerParameters(OutputSignals, *this, functionName, gamMemPtr, numberOfBuffers, preTriggerBuffers, postTriggerBuffers, cpuMask, stackSize);
         }
         if (ret) {
-            ret = outputBrokers.Insert(broker);
+            ret = outputBrokers.Insert(brokerNew);
+            broker = brokerNew.operator ->();
         }
         return ret;
     }
@@ -295,7 +296,7 @@ MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper    () {
     MARTe::uint32 numberOfExecutes;
     MARTe::uint32 totalNumberOfSignalElements;
     MARTe::uint32 counter;
-    MARTe::ReferenceT<MARTe::MemoryMapAsyncTriggerOutputBroker> broker;
+    MARTe::MemoryMapAsyncTriggerOutputBroker *broker;
     bool memoryOK;
     void *signalMemory;
 };
