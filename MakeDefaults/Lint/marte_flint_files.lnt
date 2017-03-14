@@ -188,6 +188,7 @@ TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.cpp
+UDPLogger.cpp
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp

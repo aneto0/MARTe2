@@ -28,5 +28,6 @@ include Makefile.inc
 
 LIBRARIES_STATIC=L1Portability/cov/L1PortabilityF$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsF$(LIBEXT)
+LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceF$(LIBEXT)
 
 LIBRARIES += -lm
