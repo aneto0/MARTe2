@@ -20,24 +20,10 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-OBJSX=
+TARGET=cov
 
-SPB = L1Portability.x L3Streams.x L4LoggerService.x
-
-PACKAGE=GTest
-ROOT_DIR=../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-LIBRARIES_STATIC = $(BUILD_DIR)/L1Portability/L1PortabilityFGTest$(LIBEXT)
-LIBRARIES_STATIC += $(BUILD_DIR)/L3Streams/L3StreamsFGTest$(LIBEXT)
-LIBRARIES_STATIC += $(BUILD_DIR)/L4LoggerService/L4LoggerServiceFGTest$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MARTeFGTest$(LIBEXT) 
-	echo  $(OBJS)
-
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include Makefile.inc

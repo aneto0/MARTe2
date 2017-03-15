@@ -1,7 +1,7 @@
 /**
- * @file UDPSocket.cpp
- * @brief Source file for class UDPSocket
- * @date 14/03/2017
+ * @file UDPLoggerGTest.cpp
+ * @brief Source file for class UDPLoggerGTest
+ * @date 15/03/2017
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,19 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class UDPSocket (public, protected, and private). Be aware that some 
+ * the class UDPLoggerGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "UDPLogger.h"
+#include "UDPLoggerTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,56 +39,33 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-UDPLogger::UDPLogger() :
-        Object(), LoggerConsumerI() {
+TEST(UDPLoggerGTest, TestConstructor) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestConstructor());
 }
 
-/*lint -e{1551} the destructor must guarantee that the socket is closed.*/
-UDPLogger::~UDPLogger() {
-    if (!udpSocket.Close()) {
-        REPORT_ERROR(ErrorManagement::Warning, "Failed to close the UDP socket");
-    }
+TEST(UDPLoggerGTest, TestInitialise) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestInitialise());
 }
 
-void UDPLogger::ConsumeLogMessage(LoggerPage * const logPage) {
-    StreamString logMsg;
-    PrintToStream(logPage, logMsg);
-    uint32 msgSize = static_cast<uint32>(logMsg.Size());
-    (void) udpSocket.Write(logMsg.Buffer(), msgSize);
+TEST(UDPLoggerGTest, TestInitialise_False_Address) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestInitialise_False_Address());
 }
 
-bool UDPLogger::Initialise(StructuredDataI &data) {
-    bool ok = LoggerConsumerI::LoadPrintPreferences(data);
-    StreamString address;
-    if (ok) {
-        ok = data.Read("Address", address);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "The Address parameter is compulsory");
-        }
-    }
-    uint16 port = 0u;
-    if (ok) {
-        ok = data.Read("Port", port);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "The Port parameter is compulsory");
-        }
-    }
-    if (ok) {
-        ok = udpSocket.Open();
-    }
-    if (ok) {
-        ok = udpSocket.Connect(address.Buffer(), port);
-        if (ok) {
-            REPORT_ERROR(ErrorManagement::Information, "Connected to %s:%d", address.Buffer(), port);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to connect to %s:%d", address.Buffer(), port);
-        }
-    }
-    return ok;
+TEST(UDPLoggerGTest, TestInitialise_False_Port) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestInitialise_False_Port());
 }
 
-CLASS_REGISTER(UDPLogger, "1.0")
-
+TEST(UDPLoggerGTest, TestInitialise_False_Address_Port) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestInitialise_False_Address_Port());
 }
+
+TEST(UDPLoggerGTest, TestConsumeLogMessage) {
+    UDPLoggerTest test;
+    ASSERT_TRUE(test.TestConsumeLogMessage());
+}
+	

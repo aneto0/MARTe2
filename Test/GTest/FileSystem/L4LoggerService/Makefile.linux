@@ -20,12 +20,11 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-TARGET=cov
+TARGET=linux
 
 include Makefile.inc
-
-LIBRARIES_STATIC = L1Portability/cov/L1PortabilityFGTest$(LIBEXT)
-LIBRARIES_STATIC += L3Streams/cov/L3StreamsFGTest$(LIBEXT)
-LIBRARIES_STATIC += L4LoggerService/cov/L4LoggerServiceFGTest$(LIBEXT)
+INCLUDES += -I../../../../Lib/gtest-1.7.0/include

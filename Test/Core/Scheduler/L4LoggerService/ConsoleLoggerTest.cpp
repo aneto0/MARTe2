@@ -51,8 +51,7 @@ bool ConsoleLoggerTest::TestInitialise() {
     using namespace MARTe;
     ConsoleLogger test;
     ConfigurationDatabase cdb;
-    cdb.Write("PrintFunctionName", 1);
-    cdb.Write("PrintExpandedTime", 1);
+    cdb.Write("Format", "EtOofFRmC");
     return test.Initialise(cdb);
 }
 

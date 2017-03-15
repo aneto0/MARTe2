@@ -20,24 +20,36 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-OBJSX=
+OBJSX=	UDPLoggerTest.x
 
-SPB = L1Portability.x L3Streams.x L4LoggerService.x
-
-PACKAGE=GTest
-ROOT_DIR=../../..
+PACKAGE=Core/FileSystem
+ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC = $(BUILD_DIR)/L1Portability/L1PortabilityFGTest$(LIBEXT)
-LIBRARIES_STATIC += $(BUILD_DIR)/L3Streams/L3StreamsFGTest$(LIBEXT)
-LIBRARIES_STATIC += $(BUILD_DIR)/L4LoggerService/L4LoggerServiceFGTest$(LIBEXT)
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Logger
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
+INCLUDES += -I../../../../Source/Core/Scheduler/L4LoggerService
+INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../../../Source/Core/FileSystem/L3Streams
+INCLUDES += -I../../../../Source/Core/FileSystem/L4LoggerService
 
-all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MARTeFGTest$(LIBEXT) 
+all: $(OBJS) \
+                $(BUILD_DIR)/L4LoggerServiceTest$(LIBEXT)
 	echo  $(OBJS)
 
+include depends.$(TARGET)
+
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
