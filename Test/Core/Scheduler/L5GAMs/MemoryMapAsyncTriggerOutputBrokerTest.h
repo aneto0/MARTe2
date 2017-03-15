@@ -186,9 +186,14 @@ public:
     bool TestGetPostTriggerBuffers();
 
     /**
-     * @brief Tests the MemoryMapAsyncTriggerOutputBroker method.
+     * @brief Tests the ResetPreTriggerBuffers method.
      */
     bool TestResetPreTriggerBuffers();
+
+    /**
+     * @brief Tests the FlushAllTriggers method.
+     */
+    bool TestFlushAllTriggers();
 
 };
 

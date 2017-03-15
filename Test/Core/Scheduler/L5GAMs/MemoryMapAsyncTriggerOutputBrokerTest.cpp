@@ -1936,3 +1936,107 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestResetPreTriggerBuffers() {
     godb->Purge();
     return ok;
 }
+
+bool MemoryMapAsyncTriggerOutputBrokerTest::TestFlushAllTriggers() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 };
+    uint32 signalToGenerate[] = { 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 0, 1, 1, 2, 3, 4, 5 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1};
+    uint32 expectedSignal[] = { 9, 1, 2, 3, 8, 7, 6, 5, 4, 3, 2, 2, 1, 0, 1, 1, 2, 3, 4, 5};
+
+    ConfigurationDatabase cdb;
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    StandardParser parser(configStream, cdb);
+    uint32 toGenerateNumberOfElements = sizeof(triggerToGenerate) / sizeof(uint8);
+    uint32 expectedNumberOfElements = sizeof(expectedTrigger) / sizeof(uint8);
+    uint32 preTriggerBuffers = 4;
+    uint32 postTriggerBuffers = 2u;
+    uint32 numberOfBuffers = 100u;
+    uint32 sleepMSec = 10u;
+
+    bool ok = parser.Parse();
+
+    cdb.MoveAbsolute("$Test.+Functions.+GAM1");
+    cdb.Delete("Trigger");
+    cdb.Delete("Signal");
+    Vector<uint8> triggerV(triggerToGenerate, toGenerateNumberOfElements);
+    Vector<uint32> signalV(signalToGenerate, toGenerateNumberOfElements);
+    cdb.Write("Trigger", triggerV);
+    cdb.Write("Signal", signalV);
+
+    Vector<uint8> expectedTriggerV(expectedTrigger, expectedNumberOfElements);
+    Vector<uint32> expectedSignalV(expectedSignal, expectedNumberOfElements);
+    cdb.MoveAbsolute("$Test.+Data.+Drv1");
+    cdb.Delete("ExpectedTrigger");
+    cdb.Delete("ExpectedSignal");
+    cdb.Write("ExpectedTrigger", expectedTriggerV);
+    cdb.Write("ExpectedSignal", expectedSignalV);
+    cdb.Delete("PreTriggerBuffers");
+    cdb.Delete("PostTriggerBuffers");
+    cdb.Delete("NumberOfBuffers");
+    cdb.Write("PreTriggerBuffers", preTriggerBuffers);
+    cdb.Write("PostTriggerBuffers", postTriggerBuffers);
+    cdb.Write("NumberOfBuffers", numberOfBuffers);
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    if (ok) {
+        god->Purge();
+        ok = god->Initialise(cdb);
+    }
+    ReferenceT<RealTimeApplication> application;
+    if (ok) {
+        application = god->Find("Test");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        ok = application->ConfigureApplication();
+    }
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerSchedulerTestHelper> scheduler;
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerGAMTestHelper> gam;
+    ReferenceT<MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper> dataSource;
+    ObjectRegistryDatabase *godb = ObjectRegistryDatabase::Instance();
+    if (ok) {
+        application = godb->Find("Test");
+        ok = application.IsValid();
+    }
+    if (ok) {
+        scheduler = application->Find("Scheduler");
+        ok = scheduler.IsValid();
+    }
+    if (ok) {
+        gam = application->Find("Functions.GAM1");
+        ok = gam.IsValid();
+    }
+    if (ok) {
+        dataSource = application->Find("Data.Drv1");
+        ok = dataSource.IsValid();
+    }
+    if (ok) {
+        ok = application->PrepareNextState("State1");
+    }
+    if (ok) {
+        ok = application->StartNextStateExecution();
+    }
+
+    uint32 i;
+    for (i = 0; (i < gam->numberOfExecutes) && (ok); i++) {
+        scheduler->ExecuteThreadCycle(0);
+        Sleep::MSec(sleepMSec);
+    }
+
+    //Do not wait to finish
+    if (ok) {
+        ok = application->StopCurrentStateExecution();
+    }
+    if (ok) {
+        ok = dataSource->broker->FlushAllTriggers();
+    }
+    if (ok) {
+        ok = dataSource->memoryOK;
+    }
+
+    godb->Purge();
+    return ok;
+}

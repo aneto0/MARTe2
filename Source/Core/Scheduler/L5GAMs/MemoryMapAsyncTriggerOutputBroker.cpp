@@ -52,6 +52,7 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
     postTriggerBuffers = 0u;
     numberOfPreBuffersWritten = 0;
     wasTriggered = false;
+    bufferLoopExecuting = false;
     stackSize = THREADS_DATABASE_GRANULARITY;
     if (!sem.Create()) {
         REPORT_ERROR(ErrorManagement::FatalError, "Could not Create the EventSem.");
@@ -303,6 +304,7 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;
         if (fastSem.FastLock() == ErrorManagement::NoError) {
+            bufferLoopExecuting = true;
             //Always stay preTriggerBuffers behind from the writeIdx so that we don't lose the pre-trigger buffers
             synchStopIdx = static_cast<int32>(writeIdx) - static_cast<int32>(preTriggerBuffers);
         }
@@ -349,7 +351,7 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
             }
         }
     }
-
+    bufferLoopExecuting = false;
     if (ret) {
         //Wait for new data to be available from the real-time thread.
         if (!destroying) {
@@ -371,6 +373,51 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const E
     }
 
     return err;
+}
+
+bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
+    uint32 i = 0u;
+    uint32 idx = writeIdx;
+    bool ret = true;
+    bool waitForBufferLoop = bufferLoopExecuting;
+    //Wait for the BufferLoop to end.
+    while ((waitForBufferLoop) && (ret)) {
+        ret = (fastSem.FastLock() == ErrorManagement::NoError);
+        waitForBufferLoop = bufferLoopExecuting;
+        fastSem.FastUnLock();
+        Sleep::Sec(1e-3);
+    }
+    if (ret) {
+        ret = (fastSem.FastLock() == ErrorManagement::NoError);
+    }
+
+    while ((i < numberOfBuffers) && (ret)) {
+        if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
+            if (bufferMemoryMap[idx].triggered) {
+                uint32 c;
+                for (c = 0u; (c < numberOfCopies) && (ret); c++) {
+                    //Copy from the buffer to the DataSource memory
+                    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+                        ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[idx].mem[c], copyTable[c].copySize);
+                    }
+                }
+                if (ret) {
+                    if (dataSourceRef.IsValid()) {
+                        //Make sure that the dataSourceRef consumes this data.
+                        ret = dataSourceRef->Synchronise();
+                    }
+                }
+                bufferMemoryMap[idx].triggered = false;
+            }
+        }
+        idx++;
+        if (idx == numberOfBuffers) {
+            idx = 0u;
+        }
+        i++;
+    }
+    fastSem.FastUnLock();
+    return ret;
 }
 
 void MemoryMapAsyncTriggerOutputBroker::ResetPreTriggerBuffers() {

@@ -184,6 +184,11 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestResetPreTriggerBuffers) {
     ASSERT_TRUE(test.TestResetPreTriggerBuffers());
 }
 
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestFlushAllTriggers) {
+    MemoryMapAsyncTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestFlushAllTriggers());
+}
+
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero());
