@@ -123,6 +123,14 @@ public:
     virtual void SetPriorityLevel(uint8 priorityLevelIn);
 
     /**
+     * @brief Sets the thread stack size.
+     * @param[in] stackSizeIn the thread stack size.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetStackSize(uint32 stackSizeIn);
+
+    /**
      * @brief Sets the thread CPU mask (i.e. thread affinity).
      * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
      * @pre

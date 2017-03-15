@@ -30,6 +30,7 @@ ClassRegistryItem.cpp
 ClassRegistryItemT.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
+ConsoleLogger.cpp
 CString.h
 DataSourceI.cpp
 Directory.cpp
@@ -53,6 +54,7 @@ ExecutionInfo.cpp
 FastMath.h
 FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
+FastResourceContainer.cpp
 FlagsType.h
 FloatToInteger.cpp
 FormatDescriptor.cpp
@@ -90,6 +92,9 @@ LinkedListHolder.cpp
 LinkedListHolderT.h
 LinkedListable.cpp
 LoadableLibrary.cpp
+Logger.cpp
+LoggerConsumerI.cpp
+LoggerService.cpp
 Matrix.h
 MemoryArea.cpp
 MemoryCheck.h
@@ -102,6 +107,8 @@ MemoryMapStatefulInputBroker.cpp
 MemoryMapStatefulOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
 MemoryMapSynchronisedOutputBroker.cpp
+MemoryMapAsyncOutputBroker.cpp
+MemoryMapAsyncTriggerOutputBroker.cpp
 MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp
@@ -181,6 +188,7 @@ TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.cpp
+UDPLogger.cpp
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp

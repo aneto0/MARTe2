@@ -30,6 +30,7 @@ SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX=  		FastPollingEventSem.x \
 		FastPollingMutexSem.x \
+		FastResourceContainer.x \
 		FormatDescriptor.x \
 		GlobalObjectI.x \
 		GlobalObjectsDatabase.x \

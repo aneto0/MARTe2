@@ -30,9 +30,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "Message.h"
+#include "AdvancedErrorManagement.h"
 #include "ClassRegistryItemT.h"
+#include "Message.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -89,14 +89,14 @@ bool Message::Initialise(StructuredDataI &data) {
     if (ret) {
         ret = data.Read("Destination", destination);
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Destination not set");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Destination not set");
         }
 
         if (ret) {
             ret = data.Read("Function", function);
         }
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Function not set");
+            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Function not set");
         }
         if (ret) {
             uint32 msecWait;

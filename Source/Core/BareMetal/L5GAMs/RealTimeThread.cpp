@@ -124,12 +124,12 @@ bool RealTimeThread::ConfigureArchitecture() {
                     numberOfGAMs = GAMs.Size();
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into GAMs failed", "")
+                    REPORT_ERROR(ErrorManagement::FatalError, "Insert into GAMs failed", "");
                 }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
+                REPORT_ERROR(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer());
             }
             if (ret) {
                 ReferenceContainer statefuls;
@@ -144,17 +144,16 @@ bool RealTimeThread::ConfigureArchitecture() {
                     functionGeneric->Find(statefuls, statefulFilter);
                     ret = state->AddStatefuls(statefuls);
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into state failed", "")
+                        REPORT_ERROR(ErrorManagement::FatalError, "Insert into state failed", "");
                     }
-                    //ret = ConfigureArchitecturePrivate(functionGeneric);
                 }
                 else {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Insert into statefuls failed", "")
+                    REPORT_ERROR(ErrorManagement::FatalError, "Insert into statefuls failed", "");
                 }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-                REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer())
+                REPORT_ERROR(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer());
             }
 
         }
@@ -182,14 +181,14 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         ret = (data.Read("Functions", functionVector));
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName())
+        REPORT_ERROR(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName());
     }
     if (ret) {
         if (!data.Read("CPUs", cpuMask)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName())
+            REPORT_ERROR(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName());
         }
         if (!data.Read("StackSize", stackSize)) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName())
+            REPORT_ERROR(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName());
         }
     }
 

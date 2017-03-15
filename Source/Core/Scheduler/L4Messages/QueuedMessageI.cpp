@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "QueuedMessageI.h"
 #include "ErrorType.h"
 /*---------------------------------------------------------------------------*/
@@ -57,7 +57,7 @@ QueuedMessageI::QueuedMessageI() :
         err = MessageI::InstallMessageFilter(queue, -1);
     }
     if (!err.ErrorsCleared()) {
-        REPORT_ERROR(ErrorManagement::InitialisationError, "Failed to install message filter");
+        REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Failed to install message filter");
     }
 
 }

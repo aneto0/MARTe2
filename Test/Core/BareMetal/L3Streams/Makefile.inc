@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=	BitSetToIntegerTest.x \
+OBJSX=	AdvancedErrorManagementTest.x \
+        BitSetToIntegerTest.x \
 		BufferedStreamIOBufferTest.x \
 		BufferedStreamITest.x \
 		CharBufferTest.x \

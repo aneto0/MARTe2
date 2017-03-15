@@ -61,7 +61,8 @@ public:
      *   GetCommands() == StopCommand &&
      *   GetPriorityClass() == Threads::NormalPriorityClass &&
      *   GetPriorityLevel() == 0 &&
-     *   GetCPUMask() == UndefinedCPUs
+     *   GetCPUMask() == UndefinedCPUs &&
+     *   GetStackSize() == THREADS_DEFAULT_STACKSIZE
      */
     EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder);
 
@@ -75,7 +76,8 @@ public:
      *   GetCommands() == StopCommand &&
      *   GetPriorityClass() == Threads::NormalPriorityClass &&
      *   GetPriorityLevel() == 0 &&
-     *   GetCPUMask() == UndefinedCPUs
+     *   GetCPUMask() == UndefinedCPUs &&
+     *   GetStackSize() == THREADS_DEFAULT_STACKSIZE
      */
     EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, uint16 threadNumberIn);
 
@@ -272,6 +274,20 @@ public:
     void SetPriorityLevel(uint8 priorityLevelIn);
 
     /**
+     * @brief Gets the thread stack size.
+     * @return the thread stack size.
+     */
+    uint32 GetStackSize() const;
+
+    /**
+     * @brief Sets the thread stack size.
+     * @param[in] stackSizeIn the stack size.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    void SetStackSize(uint32 stackSizeIn);
+
+    /**
      * @brief Gets the thread CPU mask (i.e. thread affinity).
      * @return the thread CPU mask.
      */
@@ -335,6 +351,11 @@ private:
      * The thread priority level.
      */
     uint8 priorityLevel;
+
+    /**
+     * The thread stack size
+     */
+    uint32 stackSize;
 
     /**
      * The thread CPU mask

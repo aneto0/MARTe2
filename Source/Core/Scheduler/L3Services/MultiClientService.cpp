@@ -28,8 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <MultiClientEmbeddedThread.h>
+#include "AdvancedErrorManagement.h"
+#include "MultiClientEmbeddedThread.h"
 #include "MultiClientService.h"
 #include "ReferenceT.h"
 

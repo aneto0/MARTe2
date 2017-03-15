@@ -28,9 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <SingleThreadService.h>
+#include "AdvancedErrorManagement.h"
 #include "ExecutionInfo.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -95,6 +95,16 @@ void SingleThreadService::SetPriorityLevel(const uint8 priorityLevelIn) {
     }
     else {
         REPORT_ERROR(ErrorManagement::ParametersError, "Priority level cannot be changed if the service is running");
+    }
+}
+
+void SingleThreadService::SetStackSize(const uint32 stackSizeIn) {
+    if (GetStatus() == EmbeddedThreadI::OffState) {
+        EmbeddedServiceI::SetStackSize(stackSizeIn);
+        embeddedThread.SetStackSize(stackSizeIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Stack size cannot be changed if the service is running");
     }
 }
 

@@ -28,9 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "GeneralDefinitions.h"
-#include "ErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -59,7 +59,7 @@ static bool IntegerToFloat(const IntegerType source,
     bool isTestNan = (IsNaN(test));
     bool isTestInf = (IsInf(test));
     if ((isTestNan) || (isTestInf)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "IntegerToFloat: Conversion Failed, the result is NaN or Inf");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "IntegerToFloat: Conversion Failed, the result is NaN or Inf");
         ret = false;
     }
     else {

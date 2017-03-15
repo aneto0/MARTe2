@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "File.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,7 +44,7 @@ File::File() {
 
 File::~File() {
     if(!Flush()) {
-        REPORT_ERROR(ErrorManagement::OSError, "Could not flush the stream");
+        REPORT_ERROR_STATIC(ErrorManagement::OSError, "Could not flush the stream");
     }
 }
 

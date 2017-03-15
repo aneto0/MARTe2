@@ -936,7 +936,7 @@ public:
      * @brief Calls RealTimeThread::ConfigureArchitecture on all the threads.
      * @return true if RealTimeThread::ConfigureArchitecture returns true on all RealTimeThread elements.
      */
-    bool ConfigureThreads();
+    bool ConfigureThreads() const;
 
     /**
      * @brief Compiles all the information required to build a RealTimeApplication after the
@@ -1002,6 +1002,11 @@ private:
      * ConfigurationDatabase that was already pre-initialised.
      */
     ConfigurationDatabase globalDatabase;
+
+    /**
+     * Allows to speed-up access to the databases
+     */
+    ConfigurationDatabase cachedDatabase;
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -1223,7 +1228,7 @@ private:
                                              const AnyType & samples,
                                              const AnyType & frequency,
                                              const AnyType & trigger,
-                                             StructuredDataI & data,
+                                             ConfigurationDatabase & data,
                                              uint32 &signalNumber,
                                              bool &syncSet,
                                              bool &triggerSet,

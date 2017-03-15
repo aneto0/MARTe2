@@ -1056,6 +1056,11 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
     return ok;
 }
 
+bool ReferenceContainerTest::TestIsReferenceContainer() {
+    using namespace MARTe;
+    ReferenceContainer rc;
+    return rc.IsReferenceContainer();
+}
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

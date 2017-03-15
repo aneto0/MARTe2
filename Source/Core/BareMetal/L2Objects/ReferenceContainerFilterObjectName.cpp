@@ -156,7 +156,7 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
                 }
             }
         }
@@ -189,7 +189,7 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
             bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
             }
         }
         delete[] addressToSearch;
@@ -212,7 +212,7 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
 }
 
 bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
+                                              Reference const &referenceToTest) {
     bool found = (addressNumberNodes > 0u);
 
     if (addressNumberNodes > 1u) {

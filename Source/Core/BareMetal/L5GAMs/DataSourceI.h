@@ -657,6 +657,16 @@ private:
      * Number of signals assigned to this function
      */
     uint32 numberOfSignals;
+
+    /**
+     * Accelerator reference for the signalsDatabaseNode.
+     */
+    ConfigurationDatabase signalsDatabaseNode;
+       
+    /**
+     * Accelerator reference for the functionsDatabaseNode.
+     */
+    ConfigurationDatabase functionsDatabaseNode;
 };
 
 }

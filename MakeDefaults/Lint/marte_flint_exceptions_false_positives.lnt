@@ -63,6 +63,16 @@
  --emacro( {*}, CPU_SET )
  --emacro( (*), CPU_ISSET )
  --emacro( {*}, CPU_ISSET )
+ 
+ /*
+  * Ignore errors related to the fact that REPORT_ERROR_0 and REPORT_ERROR_STATIC_0 were seen defined both with and without parameters. The reason 
+  * for this is that the MACRO chooser in AdvancedErrorManagement.h uses the version without parameters to automatically select the correct macro to use. 
+  */
+  -estring(123, "*REPORT_ERROR_0*")
+  -estring(123, "*REPORT_ERROR_STATIC_0*" )
+  -estring(123, "*REPORT_ERROR_PARAMETERS*" )
+  -estring(123, "*REPORT_ERROR_STATIC_PARAMETERS*" )
+  
  /*
   * False positives related to sched.h
   */

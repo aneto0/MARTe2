@@ -225,6 +225,12 @@ ReferenceContainer    ();
      * @param[in] purgeList a container with all the elements to be purged.
      */
     virtual void Purge(ReferenceContainer &purgeList);
+
+    /**
+     * @brief see Object::IsReferenceContainer
+     * @return true.
+     */
+    virtual bool IsReferenceContainer() const;
 private:
 
     /**

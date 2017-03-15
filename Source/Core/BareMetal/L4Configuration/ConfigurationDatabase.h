@@ -63,7 +63,23 @@ public:
      * @post
      *   MoveToRoot() == true
      */
-    ConfigurationDatabase();
+ConfigurationDatabase    ();
+
+    /**
+     * @brief Copy constructor
+     * @details Create a copy of the ConfigurationDatabase which copies a reference to the current and root node, so that
+     *  the copied ConfigurationDatabase can move independently on the database.
+     * @param[in] toCopy the ConfigurationDatabase where to copy from
+     */
+    ConfigurationDatabase(const ConfigurationDatabase &toCopy);
+
+    /**
+     * @brief Operator = (does not perform a deep copy, see Copy)
+     * @details Create a copy of the ConfigurationDatabase which copies a reference to the current and root node, so that
+     *  the copied ConfigurationDatabase can move independently on the database.
+     * @param[in] toCopy the ConfigurationDatabase where to copy from
+     */
+    ConfigurationDatabase & operator = (const ConfigurationDatabase &toCopy);
 
     /**
      * @brief Destructor.
@@ -83,7 +99,7 @@ public:
      * the ConfigurationDatabase.
      */
     virtual bool Read(const char8 * const name,
-                      const AnyType &value);
+            const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
@@ -97,7 +113,7 @@ public:
      * the ConfigurationDatabase.
      */
     virtual bool Write(const char8 * const name,
-                       const AnyType &value);
+            const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
@@ -123,6 +139,11 @@ public:
      * @see StructuredDataI::MoveRelative
      */
     virtual bool MoveRelative(const char8 * const path);
+
+    /**
+     * @see StructuredDataI::MoveToChild
+     */
+    virtual bool MoveToChild(const uint32 childIdx);
 
     /**
      * @see StructuredDataI::CreateAbsolute
@@ -183,9 +204,12 @@ public:
      * @brief Gets a reference to the current node as a ReferenceContainer.
      * @return a reference to the current node as a ReferenceContainer.
      */
-    ReferenceT<ReferenceContainer> GetCurrentNode() {
-        return currentNode;
-    }
+    ReferenceT<ReferenceContainer> GetCurrentNode() const;
+
+    /**
+     * @brief Sets the current node as the root node.
+     */
+    void SetCurrentNodeAsRootNode();
 
 private:
 

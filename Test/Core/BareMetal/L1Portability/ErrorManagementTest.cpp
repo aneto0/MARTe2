@@ -73,7 +73,7 @@ static void ThreadErrorTestFunction(ErrorManagementTest& t) {
     //launches error report functions.
     t.fullContext = false;
 
-    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
+    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription, NULL, NULL, NULL, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
     t.fullContext = true;
     ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
                                             t.expectedErrorFunction);
@@ -86,10 +86,10 @@ static void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     t.fullContext = false;
     t.expectedErrorFunction = __ERROR_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR_STATIC_0(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR_STATIC_0(t.expectedErrorCode, t.expectedErrorDescription);
 
     t.syncFlag = true;
 }
@@ -103,7 +103,7 @@ bool ErrorManagementTest::TestSetErrorProcessFunction() {
 
     ErrorManagement::SetErrorProcessFunction(DummyErrorFunction);
 
-    ErrorManagement::ReportError(ErrorManagement::Information, "", "", 0, "");
+    ErrorManagement::ReportError(ErrorManagement::Information, "", NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), "", 0, "");
 
     return retVal;
 
@@ -151,7 +151,7 @@ bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
     expectedHRTCounter = HighResolutionTimer::Counter();
 
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
-    ErrorManagement::ReportError(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
+    ErrorManagement::ReportError(code, errorDescription, NULL, NULL, NULL, errorFileName, errorLineNumber, errorFunctionName);
 
     return retVal;
 }
@@ -220,7 +220,7 @@ bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
 
 //put always the report error at the next line otherwise the test will fail!
     expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(code, errorDescription);
+    REPORT_ERROR_STATIC_0(code, errorDescription);
 
     return retVal;
 

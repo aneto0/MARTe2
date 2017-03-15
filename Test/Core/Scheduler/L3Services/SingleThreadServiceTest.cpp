@@ -94,6 +94,7 @@ bool SingleThreadServiceTest::TestDefaultConstructor() {
     ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
     ok &= (service.GetPriorityLevel() == 0u);
     ok &= (service.GetCPUMask() == UndefinedCPUs);
+    ok &= (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
     return ok;
 }
 
@@ -107,6 +108,7 @@ bool SingleThreadServiceTest::TestDefaultConstructor_Template() {
     ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
     ok &= (service.GetPriorityLevel() == 0u);
     ok &= (service.GetCPUMask() == UndefinedCPUs);
+    ok &= (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
     return ok;
 }
 
@@ -123,39 +125,46 @@ bool SingleThreadServiceTest::TestInitialise() {
     ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
     ok &= (service.GetPriorityLevel() == 0u);
     ok &= (service.GetCPUMask() == UndefinedCPUs);
+    ok &= (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
 
     ConfigurationDatabase config2;
     config2.Write("Timeout", 0);
     config2.Write("PriorityLevel", 1);
     config2.Write("CPUMask", 0x3);
     config2.Write("PriorityClass", "RealTimePriorityClass");
+    config2.Write("StackSize", 100000);
     ok &= service.Initialise(config2);
     ok &= (service.GetTimeout() == TTInfiniteWait);
     ok &= (service.GetPriorityClass() == Threads::RealTimePriorityClass);
     ok &= (service.GetPriorityLevel() == 1);
     ok &= (service.GetCPUMask() == 0x3);
+    ok &= (service.GetStackSize() == 100000);
 
     ConfigurationDatabase config3;
     config3.Write("Timeout", 0);
     config3.Write("PriorityLevel", 2);
     config3.Write("CPUMask", 0x5);
     config3.Write("PriorityClass", "IdlePriorityClass");
+    config2.Write("StackSize", 100000);
     ok &= service.Initialise(config3);
     ok &= (service.GetTimeout() == TTInfiniteWait);
     ok &= (service.GetPriorityClass() == Threads::IdlePriorityClass);
     ok &= (service.GetPriorityLevel() == 2);
     ok &= (service.GetCPUMask() == 0x5);
+    ok &= (service.GetStackSize() == 100000);
 
     ConfigurationDatabase config4;
     config4.Write("Timeout", 0);
     config4.Write("PriorityLevel", 3);
     config4.Write("CPUMask", 0xf);
     config4.Write("PriorityClass", "NormalPriorityClass");
+    config4.Write("StackSize", 1000000);
     ok &= service.Initialise(config4);
     ok &= (service.GetTimeout() == TTInfiniteWait);
     ok &= (service.GetPriorityClass() == Threads::NormalPriorityClass);
     ok &= (service.GetPriorityLevel() == 3);
     ok &= (service.GetCPUMask() == 0xf);
+    ok &= (service.GetStackSize() == 1000000);
     return ok;
 }
 
@@ -360,6 +369,21 @@ bool SingleThreadServiceTest::TestGetPriorityLevel() {
     return ok;
 }
 
+bool SingleThreadServiceTest::TestSetStackSize() {
+    return TestGetStackSize();
+}
+
+bool SingleThreadServiceTest::TestGetStackSize() {
+    using namespace MARTe;
+    SingleThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
+    SingleThreadService service(binder);
+    bool ok = (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
+    service.SetStackSize(THREADS_DEFAULT_STACKSIZE * 2);
+    ok &= (service.GetStackSize() == (THREADS_DEFAULT_STACKSIZE * 2));
+    return ok;
+}
+
 bool SingleThreadServiceTest::TestSetPriorityLevel() {
     return TestGetPriorityLevel();
 }
@@ -436,6 +460,36 @@ bool SingleThreadServiceTest::TestSetPriorityLevel_Start() {
     }
     service.SetPriorityLevel(10);
     ok &= (service.GetPriorityLevel() == 10);
+    return ok;
+}
+
+bool SingleThreadServiceTest::TestSetStackSize_Start() {
+    using namespace MARTe;
+    SingleThreadServiceTestCallbackClass callbackClass;
+    EmbeddedServiceMethodBinderT<SingleThreadServiceTestCallbackClass> binder(callbackClass, &SingleThreadServiceTestCallbackClass::CallbackFunction);
+    SingleThreadService service(binder);
+
+    bool ok = (service.GetStatus() == EmbeddedThreadI::OffState);
+
+    ErrorManagement::ErrorType err = service.Start();
+    ok = (err == ErrorManagement::NoError);
+    uint32 maxCounter = 10;
+    while ((service.GetStatus() != EmbeddedThreadI::RunningState) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    ok &= (service.GetStatus() == EmbeddedThreadI::RunningState);
+    ok &= (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
+    service.SetStackSize(100000);
+    ok &= (service.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
+    service.Stop();
+    maxCounter = 10;
+    while ((service.GetStatus() != EmbeddedThreadI::OffState) && (maxCounter > 0)) {
+        maxCounter--;
+        Sleep::Sec(1);
+    }
+    service.SetStackSize(100000);
+    ok &= (service.GetStackSize() == 100000);
     return ok;
 }
 

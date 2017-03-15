@@ -167,11 +167,15 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_De
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_Defaults2());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestFlattenSignalsDatabases_False());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidDimensions) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_InvalidNDimensionsInStruct());
 }
-
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestFlattenSignalsDatabases_InvalidNElementsInStruct) {
     RealTimeApplicationConfigurationBuilderTest test;
@@ -226,6 +230,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources2) {
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources3) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSources3());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSource_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSource_False());
 }
 
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourceFalse_TypeMismatch) {
@@ -498,6 +507,26 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_Invalid
     ASSERT_TRUE(test.TestResolveStatesFalse_InvalidApplication());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveStates_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveStates_False());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyConsumersProducers_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyConsumersProducers_False());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestVerifyStates) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyStates());
@@ -663,6 +692,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFa
     ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_UnsupportedBroker());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_InvalidApplication) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_InvalidApplication());
@@ -708,8 +742,32 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisat
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionSignals_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionSignals_False());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyFunctionSignals_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyFunctionSignals_False());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureThreads) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureThreads());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_False_NoFunctions) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_False_NoFunctions());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_False_NoData) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_False_NoData());
+}

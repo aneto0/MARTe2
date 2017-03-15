@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "EmbeddedServiceI.h"
 #include "StreamString.h"
 #include "Threads.h"
@@ -46,6 +47,7 @@ EmbeddedServiceI::EmbeddedServiceI() :
     priorityClass = Threads::NormalPriorityClass;
     msecTimeout = TTInfiniteWait;
     cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
 
 EmbeddedServiceI::~EmbeddedServiceI() {
@@ -76,16 +78,20 @@ bool EmbeddedServiceI::Initialise(StructuredDataI &data) {
     if (data.Read("CPUMask", cpuMaskRead)) {
         SetCPUMask(cpuMaskRead);
     }
+    uint32 stackSizeRead = 0u;
+    if (data.Read("StackSize", stackSizeRead)) {
+        SetStackSize(stackSizeRead);
+    }
     StreamString priorityClassStr;
     if (data.Read("PriorityClass", priorityClassStr)) {
         if (priorityClassStr == "IdlePriorityClass") {
-            SetPriorityClass (Threads::IdlePriorityClass);
+            SetPriorityClass(Threads::IdlePriorityClass);
         }
         else if (priorityClassStr == "NormalPriorityClass") {
-            SetPriorityClass (Threads::NormalPriorityClass);
+            SetPriorityClass(Threads::NormalPriorityClass);
         }
         else if (priorityClassStr == "RealTimePriorityClass") {
-            SetPriorityClass (Threads::RealTimePriorityClass);
+            SetPriorityClass(Threads::RealTimePriorityClass);
         }
         else {
             REPORT_ERROR(ErrorManagement::ParametersError, "Unsupported PriorityClass.");
@@ -118,6 +124,14 @@ uint8 EmbeddedServiceI::GetPriorityLevel() const {
 
 void EmbeddedServiceI::SetPriorityLevel(const uint8 priorityLevelIn) {
     priorityLevel = priorityLevelIn;
+}
+
+uint32 EmbeddedServiceI::GetStackSize() const {
+    return stackSize;
+}
+
+void EmbeddedServiceI::SetStackSize(const uint32 stackSizeIn) {
+    stackSize = stackSizeIn;
 }
 
 ProcessorType EmbeddedServiceI::GetCPUMask() const {

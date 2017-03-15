@@ -339,7 +339,7 @@ bool Free(void *&data) {
     }
     else {
 
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap");
 
     }
 
@@ -363,7 +363,7 @@ void *Malloc(uint32 const size,
             address = heap->Malloc(size);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: no heaps with the specified name found");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: no heaps with the specified name found");
         }
 
     }

@@ -55,13 +55,13 @@ Directory::Directory(const char8 * const path) :
         if (stat(path, &directoryHandle) != 0) {
             //errno = 2 => No such file or directory
             if (errno != 2) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed stat() in initialization");
             }
         }
     }
     else {
         if(!MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)))) {
-            REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
+            REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Failed initialization of directory handle");
         }
         fname=NULL_PTR(char8*);
     }
@@ -102,7 +102,7 @@ bool Directory::SetByName(const char8 * const path) {
     if (ret) {
         fname = StringHelper::StringDup(path);
         if (stat(path, &directoryHandle) != 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed stat() in initialization");
             ret = false;
         }
     }
@@ -137,11 +137,11 @@ TimeStamp Directory::GetLastWriteTime() {
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
         if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
@@ -152,11 +152,11 @@ TimeStamp Directory::GetLastAccessTime() {
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<int32>(directoryHandle.st_atime);
         if (!timeStamp.ConvertFromEpoch(secondsFromEpoch32)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
@@ -171,12 +171,12 @@ bool Directory::Create(const bool isFile) {
             int32 fd = open(fname, static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC));
             if (fd < 0) {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed creat()");
             }
             else {
                 if (close(fd) < 0) {
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed close()");
                 }
             }
         }
@@ -185,7 +185,7 @@ bool Directory::Create(const bool isFile) {
         }
 
         if (stat(fname, &directoryHandle) != 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed stat() in initialization");
         }
     }
     return ret;

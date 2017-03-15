@@ -96,7 +96,7 @@ public:
      *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
-    static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+    static ErrorManagement::ErrorType WaitForReply(const ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief sends a message expecting direct reply and waits for it

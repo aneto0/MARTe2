@@ -525,3 +525,8 @@ TEST(ReferenceContainerGTest,TestExportData) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestExportData());
 }
+
+TEST(ReferenceContainerGTest,TestIsReferenceContainer) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestIsReferenceContainer());
+}

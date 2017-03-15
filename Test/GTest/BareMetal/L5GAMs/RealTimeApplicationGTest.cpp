@@ -74,9 +74,65 @@ TEST(RealTimeApplicationGTest,TestConfigureApplication) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestConfigureApplication());
 }
+
+TEST(RealTimeApplicationGTest,TestConfigureApplication_False_ConfigureAfterInitialisation) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_ConfigureAfterInitialisation());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplication_False_PostConfigureDataSources) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_PostConfigureDataSources());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplication_False_ConfigureScheduler) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_ConfigureScheduler());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplication_False_AllocateGAMMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_AllocateGAMMemory());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplication_False_AllocateDataSourceMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_AllocateDataSourceMemory());
+}
+
 TEST(RealTimeApplicationGTest,TestConfigureApplicationNoInit) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestConfigureApplicationNoInit());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions());
+}
+
+TEST(RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler());
 }
 
 TEST(RealTimeApplicationGTest,TestPrepareNextState) {

@@ -7,7 +7,7 @@
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
- * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ REPORT_ERROR_PARAMETERS_OBJby the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
@@ -70,8 +70,8 @@ bool TimingDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                     if (!GetSignalName(n, signalName)) {
                         signalName = "";
                     }
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
-                                            stateName.Buffer(), signalName.Buffer())
+                    REPORT_ERROR(ErrorManagement::FatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
+                                            stateName.Buffer(), signalName.Buffer());
                 }
 
             }

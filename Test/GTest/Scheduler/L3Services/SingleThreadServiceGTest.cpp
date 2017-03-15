@@ -107,6 +107,11 @@ TEST(SingleThreadServiceGTest, TestGetPriorityLevel) {
     ASSERT_TRUE(target.TestGetPriorityLevel());
 }
 
+TEST(SingleThreadServiceGTest, TestGetStackSize) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetStackSize());
+}
+
 TEST(SingleThreadServiceGTest, TestGetCPUMask) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetCPUMask());
@@ -122,6 +127,11 @@ TEST(SingleThreadServiceGTest, TestSetPriorityLevel) {
     ASSERT_TRUE(target.TestSetPriorityLevel());
 }
 
+TEST(SingleThreadServiceGTest, TestSetStackSize) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize());
+}
+
 TEST(SingleThreadServiceGTest, TestSetCPUMask) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask());
@@ -135,6 +145,11 @@ TEST(SingleThreadServiceGTest, TestSetPriorityClass_Start) {
 TEST(SingleThreadServiceGTest, TestSetPriorityLevel_Start) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel_Start());
+}
+
+TEST(SingleThreadServiceGTest, TestSetStackSize_Start) {
+    SingleThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize_Start());
 }
 
 TEST(SingleThreadServiceGTest, TestSetCPUMask_Start) {

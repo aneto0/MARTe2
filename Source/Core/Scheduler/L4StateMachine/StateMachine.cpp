@@ -99,8 +99,8 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                         ok = nextState.IsValid();
                         if (!ok) {
                             err.parametersError = true;
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
-                                                    nextStateStr.GetList())
+                            REPORT_ERROR(ErrorManagement::ParametersError, "In event (%s) the next state (%s) does not exist", event->GetName(),
+                                                    nextStateStr.GetList());
                         }
                         //Check if the NextStateError exists
                         if (ok) {
@@ -109,8 +109,8 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                             ok = nextStateError.IsValid();
                             if (!ok) {
                                 err.parametersError = true;
-                                REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
-                                                        event->GetName(), nextStateErrorStr.GetList())
+                                REPORT_ERROR(ErrorManagement::ParametersError, "In event (%s) the next state error (%s) does not exist",
+                                                        event->GetName(), nextStateErrorStr.GetList());
                             }
                         }
                     }
@@ -119,7 +119,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
                     ok = found;
                     if (!ok) {
                         err.parametersError = true;
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::ParametersError, "In state (%s) no events were defined", state->GetName())
+                        REPORT_ERROR(ErrorManagement::ParametersError, "In state (%s) no events were defined", state->GetName());
                     }
                 }
             }
@@ -188,7 +188,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
     if (err.ErrorsCleared()) {
         nextStateError = event->GetNextStateError();
         nextState = event->GetNextState();
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer())
+        REPORT_ERROR(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer());
         errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTransitionTimeout());
     }
     //Install the next state event filters...
@@ -199,18 +199,18 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
             err.fatalError = !currentState.IsValid();
         }
         else {
-            REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextState is not defined", currentState->GetName())
+            REPORT_ERROR(err, "In state (%s) the NextState is not defined", currentState->GetName());
         }
     }
     else {
-        REPORT_ERROR_PARAMETERS(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", currentState->GetName(),
-                                nextStateError.Buffer())
+        REPORT_ERROR(err, "In state (%s) could not send all the event messages. Moving to error state (%s)", currentState->GetName(),
+                                nextStateError.Buffer());
         if (nextStateError.Size() > 0u) {
             currentState = Find(nextStateError.Buffer());
             err.fatalError = !currentState.IsValid();
         }
         else {
-            REPORT_ERROR_PARAMETERS(err, "In state (%s) the NextStateError is not defined", currentState->GetName())
+            REPORT_ERROR(err, "In state (%s) the NextStateError is not defined", currentState->GetName());
         }
     }
     if (err.ErrorsCleared()) {
@@ -225,7 +225,7 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         }
     }
     else {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "In state (%s) the next state is not valid", currentState->GetName())
+        REPORT_ERROR(ErrorManagement::FatalError, "In state (%s) the next state is not valid", currentState->GetName());
     }
     //Check if the next state there are messages to be fired at ENTER.
     if (err.ErrorsCleared()) {
@@ -301,7 +301,8 @@ ErrorManagement::ErrorType StateMachine::SendMultipleMessagesAndWaitReply(Refere
     for (i = 0u; (i < messagesToSend.Size()) && (ok); i++) {
         ReferenceT<Message> eventMsg = messagesToSend.Get(i);
         if (eventMsg.IsValid()) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "In state (%s) triggered message (%s)", currentState->GetName(), eventMsg->GetName())
+            eventMsg->SetAsReply(false);
+            REPORT_ERROR(ErrorManagement::Information, "In state (%s) triggered message (%s)", currentState->GetName(), eventMsg->GetName());
             err = MessageI::SendMessage(eventMsg, this);
         }
         ok = err.ErrorsCleared();

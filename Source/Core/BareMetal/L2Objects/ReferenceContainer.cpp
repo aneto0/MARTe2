@@ -94,7 +94,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
+            REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "ReferenceContainer: input greater than the list size.");
         }
     }
     UnLock();
@@ -141,7 +141,7 @@ bool ReferenceContainer::Insert(Reference ref,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     UnLock();
     return ok;
@@ -242,9 +242,10 @@ bool ReferenceContainer::Delete(const char8 * const path) {
 }
 
 bool ReferenceContainer::IsContainer(const Reference &ref) const {
-    ReferenceT<ReferenceContainer> test = ref;
-    return test.IsValid();
+    return ref.IsValid() ? ref->IsReferenceContainer() : false;
 }
+
+
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 void ReferenceContainer::Find(ReferenceContainer &result,
@@ -256,13 +257,14 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             if (filter.IsReverse()) {
                 index = static_cast<int32>(list.ListSize()) - 1;
             }
+
+            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
+
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
             while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
-
-                Reference currentNodeReference = currentNode->GetReference();
+                Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
                 bool found = filter.Test(result, currentNodeReference);
                 if (found) {
@@ -277,15 +279,16 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
                                     if (!filter.IsReverse()) {
                                         index--;
+                                        currentNode = (list.ListPeek(static_cast<uint32>(index)));
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -318,24 +321,28 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                             }
                         }
                         else {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
                         }
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
                     index++;
+                    if (currentNode != NULL_PTR(ReferenceContainerNode *)) {
+                        currentNode = dynamic_cast<ReferenceContainerNode *>(currentNode->Next());
+                    }
                 }
                 else {
                     index--;
+                    currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 }
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
 
     UnLock();
@@ -363,7 +370,7 @@ uint32 ReferenceContainer::Size() {
         size = list.ListSize();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
     UnLock();
     return size;
@@ -408,7 +415,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                             ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
                         }
                         if (ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, &errorMsg[0]);
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, &errorMsg[0]);
                         }
                     }
                 }
@@ -498,6 +505,10 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
             nodeObj->Purge(purgeList);
         }
     }
+}
+
+bool ReferenceContainer::IsReferenceContainer() const {
+    return true;
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

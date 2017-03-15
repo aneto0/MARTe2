@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "EmbeddedThreadI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,7 @@ static void ServiceThreadLauncher(const void * const parameters) {
         thread->ThreadLoop();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Invalid EmbeddedThreadI * in ServiceThreadLauncher!");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Invalid EmbeddedThreadI * in ServiceThreadLauncher!");
     }
 
 }
@@ -64,6 +65,7 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder) :
     priorityClass = Threads::NormalPriorityClass;
     priorityLevel = 0u;
     cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
 
 EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uint16 threadNumberIn) :
@@ -77,6 +79,7 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uin
     priorityClass = Threads::NormalPriorityClass;
     priorityLevel = 0u;
     cpuMask = UndefinedCPUs;
+    stackSize = THREADS_DEFAULT_STACKSIZE;
 }
 
 
@@ -118,6 +121,8 @@ void EmbeddedThreadI::SetTimeout(const TimeoutType &msecTimeoutIn) {
         }
         else {
             timeoutHRT = 0x7FFFFFFF;
+            uint64 tt64ToSet = static_cast<uint32>(timeoutHRT);
+            msecTimeout.SetTimeoutHighResolutionTimerTicks(tt64ToSet);
         }
     }
 }
@@ -192,7 +197,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
         SetCommands(EmbeddedThreadI::StartCommand);
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
         const void * const parameters = static_cast<void *>(this);
-        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters, static_cast<uint32>(THREADS_DEFAULT_STACKSIZE), GetName(), ExceptionHandler::NotHandled, cpuMask);
+        threadId = Threads::BeginThread(&ServiceThreadLauncher, parameters, stackSize, GetName(), ExceptionHandler::NotHandled, cpuMask);
 
         err.fatalError = (GetThreadId() == 0u);
     }
@@ -273,6 +278,16 @@ uint8 EmbeddedThreadI::GetPriorityLevel() const {
 void EmbeddedThreadI::SetPriorityLevel(const uint8 priorityLevelIn) {
     if(GetStatus() == OffState) {
         priorityLevel = priorityLevelIn;
+    }
+}
+
+uint32 EmbeddedThreadI::GetStackSize() const {
+    return stackSize;
+}
+
+void EmbeddedThreadI::SetStackSize(const uint32 stackSizeIn) {
+    if(GetStatus() == OffState) {
+        stackSize = stackSizeIn;
     }
 }
 

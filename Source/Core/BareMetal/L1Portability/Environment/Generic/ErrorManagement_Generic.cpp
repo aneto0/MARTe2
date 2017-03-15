@@ -33,6 +33,7 @@
 #include "ErrorManagement.h"
 #include "HighResolutionTimer.h"
 #include "ErrorInformation.h"
+#include "Sleep.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -114,6 +115,9 @@ void ErrorCodeToStream(const ErrorType &errorCode,
 
 void ReportError(const ErrorType &code,
                  const char8 * const errorDescription,
+                 const char8 * const clsName,
+                 const char8 * const objName,
+                 const void * const objPtr,
                  const char8 * const fileName,
                  const int16 lineNumber,
                  const char8 * const functionName) {
@@ -122,11 +126,15 @@ void ReportError(const ErrorType &code,
     errorInfo.objectPointer = static_cast<void*>(NULL);
     errorInfo.className = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
-
     errorInfo.header.lineNumber = lineNumber;
+    errorInfo.header.isObject = (objPtr != static_cast<const char8 *>(NULL));
+    errorInfo.className = clsName;
+    errorInfo.objectName = objName;
+    errorInfo.objectPointer = objPtr;
     errorInfo.fileName = fileName;
     errorInfo.functionName = functionName;
     errorInfo.hrtTime = HighResolutionTimer::Counter();
+    errorInfo.timeSeconds = Sleep::GetDateSeconds();
 #ifndef INTERRUPT_SUPPORTED
 //    errorInfo.threadId = Threads::Id();
 #endif
@@ -148,6 +156,7 @@ void ReportErrorFullContext(const ErrorType &code,
     errorInfo.functionName = functionName;
     errorInfo.hrtTime = HighResolutionTimer::Counter();
 //    errorInfo.threadId = Threads::Id();
+    errorInfo.timeSeconds = Sleep::GetDateSeconds();
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
 

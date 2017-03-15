@@ -30,14 +30,15 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "TypeConversion.h"
+#include "AdvancedErrorManagement.h"
 #include "AnyType.h"
 #include "BitSetToInteger.h"
-#include "StreamString.h"
 #include "ClassRegistryDatabase.h"
-#include "StructuredDataI.h"
-#include "ValidateBasicType.h"
 #include "Introspection.h"
+#include "StreamString.h"
+#include "StructuredDataI.h"
+#include "TypeConversion.h"
+#include "ValidateBasicType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -83,14 +84,14 @@ static bool MinMaxFloat(const bool isPositive,
     bool ret = false;
     if (isPositive) {
         if (sizeof(FloatType) == 4u) {
-            REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to maximum float");
+            REPORT_ERROR_STATIC(ErrorManagement::Warning, "FloatToFloat: Saturation to maximum float");
             uint32 maxFloat32Mask = 0x7f7fffffu;
             ret = MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
         }
     }
     else {
         if (sizeof(FloatType) == 4u) {
-            REPORT_ERROR(ErrorManagement::Warning, "FloatToFloat: Saturation to minimum float");
+            REPORT_ERROR_STATIC(ErrorManagement::Warning, "FloatToFloat: Saturation to minimum float");
             uint32 minFloat32Mask = 0xff7fffffu;
             ret = MemoryOperationsHelper::Copy(&number, &minFloat32Mask, 4u);
         }
@@ -183,7 +184,7 @@ static bool IntegerToType(const AnyType &destination,
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
                 uint32 arraySize = destination.GetByteSize();
                 if (stringLength >= arraySize) {
-                    REPORT_ERROR(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
+                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
                     if (arraySize > 1u) {
                         uint32 lastCharIndex = arraySize - 1u;
@@ -293,7 +294,7 @@ static bool FloatToType(const AnyType &destination,
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
                 uint32 arraySize = destination.GetByteSize();
                 if (stringLength >= arraySize) {
-                    REPORT_ERROR(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
+                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
                     if (arraySize > 1u) {
                         uint32 lastCharIndex = arraySize - 1u;
@@ -377,7 +378,7 @@ static bool StringToType(const AnyType &destination,
             uint32 arraySize = destination.GetByteSize();
             // case char
             if (tokenLength >= arraySize) {
-                REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
+                REPORT_ERROR_STATIC(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
                 if(arraySize>1u) {
                     uint32 lastCharIndex = arraySize - 1u;
@@ -483,15 +484,15 @@ static bool ObjectToObject(const AnyType &destination,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: The classes does not have the same number of members");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: The classes does not have the same number of members");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: Introspection not found for the specified classes");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: Introspection not found for the specified classes");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"ObjectToObject: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: Class not registered");
     }
     return ret;
 }
@@ -610,15 +611,15 @@ static bool StructuredDataToObject(const AnyType &destination,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
     }
 
     return ret;
@@ -690,11 +691,11 @@ static bool ObjectToStructuredData(const AnyType &destination,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"ObjectToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToStructuredData: Introspection not found for the specified class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"ObjectToStructuredData: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToStructuredData: Class not registered");
     }
 
     return ret;
@@ -744,7 +745,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             ret = StructuredDataToStructuredData(destination, source);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
                          "ScalarBasicTypeConvert: No known conversion StructuredDataI to basic type. Use StructuredDataI::Read(*)");
         }
     }
@@ -756,7 +757,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             ret = ObjectToStructuredData(destination, source);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
                          "ScalarBasicTypeConvert: No known conversion from basic type to StructuredDataI. Use StructuredDataI::Write(*)");
         }
     }
@@ -778,7 +779,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
             else if (sourceDescriptor.type == Pointer) {
-                REPORT_ERROR(ErrorManagement::UnsupportedFeature,
+                REPORT_ERROR_STATIC(ErrorManagement::UnsupportedFeature,
                              "ScalarBasicTypeConvert: Conversion to pointer unsupported. Try to cast the pointer to uintp");
             }
             else {
@@ -804,7 +805,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion between types in input");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion between types in input");
     }
 
     return ret;

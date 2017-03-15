@@ -156,6 +156,11 @@ public:
      * @brief Tests the CallRegisteredMethod function with a StreamI.
      */
     bool TestCallRegisteredMethod_StreamI();
+
+    /**
+     * @brief Tests the IsReferenceContainer method.
+     */
+    bool TestIsReferenceContainer();
 };
 
 /*---------------------------------------------------------------------------*/

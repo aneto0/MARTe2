@@ -69,7 +69,7 @@ ErrorManagement::ErrorType QueuedReplyMessageCatcherFilter::ConsumeMessage(Refer
     ErrorManagement::ErrorType ret(true);
     //check reply flag
     if (!messageToTest->IsReply()) {
-        REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
+        REPORT_ERROR(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName());
         ret.warning = true;
     }
     bool ok = ret.ErrorsCleared();
