@@ -43,8 +43,8 @@
 
 namespace MARTe {
 /**
- * @brief Register as callback for the logging messages and asynchronously offer these messages to all
- *  the registered LoggerConsumerI.
+ * @brief The LoggerService registers itself as a callback for the logging messages and
+ * asynchronously offer these messages to all the registered LoggerConsumerI.
  * @details The configuration syntax is (names are only given as an example):
  * +LoggerService = {
  *     Class = LoggerService

@@ -67,6 +67,8 @@ protected:
      * @brief Helper function which prints the log message into a stream.
      * @param[in] logPage the logging information.
      * @param[out] err the stream where to write the information into.
+     * @pre
+     *   LoadPrintPreferences()
      */
     void PrintToStream(LoggerPage *logPage, BufferedStreamI &err) const;
 
