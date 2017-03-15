@@ -47,7 +47,14 @@ bool LoggerTest::TestConstructor() {
 bool LoggerTest::TestGetLogEntry() {
     using namespace MARTe;
     Logger *logger = Logger::Instance();
-    LoggerPage *page = logger->GetPage();
+    //Returns all the pages that might have been triggered by other tests
+    LoggerPage *page = logger->GetLogEntry();
+    while (page != NULL_PTR(LoggerPage *)) {
+        logger->ReturnPage(page);
+        page = logger->GetLogEntry();
+    }
+
+    page = logger->GetPage();
     bool ok = (page != NULL);
     if (ok) {
         logger->AddLogEntry(page);
@@ -81,7 +88,7 @@ bool LoggerTest::TestLoggerErrorProcessFunction() {
     Logger *logger = Logger::Instance();
     LoggerPage *entry = logger->GetLogEntry();
     //Empty all the entries
-    while (entry != NULL){
+    while (entry != NULL) {
         logger->ReturnPage(entry);
         entry = logger->GetLogEntry();
     }
