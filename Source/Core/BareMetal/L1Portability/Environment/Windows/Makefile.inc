@@ -32,7 +32,7 @@ OBJSX=  BasicConsole.x \
 		ErrorManagement_Gen.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
-		MemoryCheck_Gen.x \
+		MemoryCheck.x \
 		MemoryOperationsHelper_CLIB_Gen.x \
 		Sleep.x \
 		StandardHeap_Gen.x \

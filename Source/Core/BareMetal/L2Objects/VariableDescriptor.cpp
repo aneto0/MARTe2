@@ -133,7 +133,6 @@ static bool reverseLookUpArrayProperties(char8 code, APLookUp *&apl){
 		while ((apl->keyCode != '\0') && (apl->keyCode != code)){
 			apl++;
 		}
-
 	}
 
 	if (apl->keyCode != code) apl = NULL;
@@ -160,15 +159,11 @@ static char8 lookUpCompositeArrayCode(CombinedArrayType arrayCode){
 	return lookUpArrayTypeGen(arrayCode,&APLookupTable2[0]);
 }
 
-
 void VariableDescriptor::MoveCodeToModifiers(){
-//	int i1 = typeDescriptor.arrayProperty;
-//	int i2 = typeDescriptor.combinedArrayType;
 	// do not save scalars
 	if ((typeDescriptor.arrayProperty == SizedCArray_AP) && (typeDescriptor.arraySize == 1)){
 		return;
 	}
-//	printf("MCM %i %i \n",i1,i2);
 
 	char8 keyCode = lookUpArrayType(typeDescriptor.arrayProperty);
 
@@ -184,8 +179,6 @@ void VariableDescriptor::MoveCodeToModifiers(){
 	// renormalise to scalar
 	typeDescriptor.arrayProperty = SizedCArray_AP;
 	typeDescriptor.arraySize = 1;
-
-
 }
 
 void VariableDescriptor::AddArrayCode(CombinedArrayType cat, uint32 size){
@@ -232,8 +225,12 @@ void VariableDescriptor::AddConstantCode(){
 	typeDescriptor.dataIsConstant = true;
 }
 
+#if COMPACT_TYPEDESCRIPTOR
 void VariableDescriptor::FinaliseCode(TypeDescriptor td){
+
 	bool useFullSpace = false;
+
+	// identify wether the final type allows for embedding array modifiers
 	if (td.isStructuredData){
 		useFullSpace = true;
 	} else {
@@ -247,7 +244,6 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 			}
 		}
 	}
-	// make space
 	if (useFullSpace) {
 		MoveCodeToModifiers();
 		bool isConst = typeDescriptor.dataIsConstant;
@@ -263,6 +259,18 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 
 	}
 }
+
+#else
+
+void VariableDescriptor::FinaliseCode(TypeDescriptor td){
+	MoveCodeToModifiers();
+	bool isConst = typeDescriptor.dataIsConstant;
+	typeDescriptor = td;
+	if (isConst) typeDescriptor.dataIsConstant = true;
+}
+
+
+#endif
 
 static bool isConstantToken(char8 c){
 	return ((c >='a') && (c <='z'));
@@ -347,24 +355,48 @@ bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) 
 	return (token != '\0');
 }
 
-
-bool VariableDescriptor::RemoveModifiersLayer(){
+bool VariableDescriptor::GetModifiersLayer(char8 &modifier,uint64 &size,bool remove){
 	bool ret = false;
 
     char8 *buffer  = modifiers.GetList();
     char8 *pStart = buffer;
     char8 token = *buffer;
     if (token != '\0'){
+    	modifier = *buffer;
     	buffer++;
-    	readNumber(buffer);
+    	size = readNumber(buffer);
+    	ret = true;
     }
-    uint32 step = (uint32)(buffer - pStart);
-    if (step > 0) {
+    if (ret && remove){
+    	uint32 step = (uint32)(buffer - pStart);
     	ret = modifiers.Remove(step);
     }
 
     return ret;
 }
+
+bool VariableDescriptor::InsertModifiersLayer(char8 modifier,uint64 size){
+	DynamicCString save;
+
+	bool ret;
+
+	ret = save.AppendN(modifiers.GetList());
+
+	if (ret){
+		ret = modifiers.Truncate(0);
+	}
+
+	if (ret){
+		ret = modifiers.Append(modifier);
+		AddArrayDataToModifiers(modifiers,size);
+	}
+	if (ret){
+		ret = modifiers.AppendN(save.GetList());
+	}
+	return ret;
+}
+
+
 
 uint64 VariableDescriptor::GetSize(){
 	uint64 size = 1;
@@ -376,7 +408,7 @@ uint64 VariableDescriptor::GetSize(){
 	while ((code != '\0') && (toContinue)){
 		buffer++;
     	uint32 layerSize = readNumber(buffer);
-    	toContinue = reverseLookUpArrayProperties(*buffer, apl);
+    	toContinue = reverseLookUpArrayProperties(code, apl);
     	if (toContinue){
     		if (apl->layerSize != 0) size *= apl->layerSize;
     		else {

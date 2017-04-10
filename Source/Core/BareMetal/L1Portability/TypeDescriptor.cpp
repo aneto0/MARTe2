@@ -40,36 +40,10 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-#if 0
-/*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: a structure with no functions is used to describe this type. */
-struct TypeCastInfo {
-    TypeDescriptor typeDes;
-    const char8 *castName;
-};
-
-static const TypeCastInfo basicTypeInfo[] = {
-        { CharString, "string" },
-        { SignedInteger8Bit, "int8" },
-        { SignedInteger16Bit, "int16" },
-        { SignedInteger32Bit,"int32" },
-        { SignedInteger64Bit, "int64" },
-        { UnsignedInteger8Bit, "uint8" },
-        { UnsignedInteger16Bit, "uint16" },
-        { UnsignedInteger32Bit, "uint32" },
-        { UnsignedInteger64Bit, "uint64" },
-        { Float32Bit, "float32" },
-        { Float64Bit, "float64" },
-        { Character8Bit, "char8" },
-        { VoidType, "void"},
-        { InvalidType, static_cast<const char8*>(NULL)}
-};
-#endif
-}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
 TypeDescriptor::TypeDescriptor() {
     all = 0;
@@ -181,7 +155,7 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
     return all == typeDescriptor.all;
 }
 
-#include <stdio.h>
+//#include <stdio.h>
 
 uint32 TypeDescriptor::Size(){
 	uint32 size = 0;
@@ -243,45 +217,6 @@ uint32 TypeDescriptor::Size(){
 }
 
 
-
-/*
-TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){
-    uint32 typeIndex = 0u;
-    while (basicTypeInfo[typeIndex].castName != NULL) {
-        if (StringHelper::Compare(typeName, basicTypeInfo[typeIndex].castName) == 0) {
-            break;
-        }
-        else {
-            typeIndex++;
-        }
-    }
-
-    return basicTypeInfo[typeIndex].typeDes;
-}
-
-
-const char8 *TypeDescriptor::GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor){
-    uint32 typeIndex = 0u;
-    while (basicTypeInfo[typeIndex].typeDes != InvalidType) {
-        if (basicTypeInfo[typeIndex].typeDes == typeDescriptor) {
-            break;
-        }
-        else {
-            typeIndex++;
-        }
-    }
-
-    return basicTypeInfo[typeIndex].castName;
-}
-
-TypeDescriptor TypeDescriptor::GetTypeDescriptorFromStaticTable(const uint32 index){
-    return basicTypeInfo[index].typeDes;
-}
-
-const char8 *TypeDescriptor::GetTypeNameFromStaticTable(const uint32 index){
-    return basicTypeInfo[index].castName;
-}
-*/
 
 const TypeDescriptor Character8Bit(false, Char, 8u);
 const TypeDescriptor Float32Bit(false, Float, 32u);

@@ -108,6 +108,10 @@ public:
      */
     virtual bool Initialise(StructuredDataI &data);
 
+
+
+
+#if 0
     //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
 
     /**
@@ -171,6 +175,7 @@ public:
      * so it will export recursively all the metadata.
      */
     virtual bool ExportMetadata(StructuredDataI & data,const int32 level = -1);
+#endif
 
     /**
      * @brief Sets/unsets this object as a domain.

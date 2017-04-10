@@ -125,8 +125,7 @@ public:
     ~Matrix();
 
     /**
-     * @brief Gets the number of columns.==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
-     *
+     * @brief Gets the number of columns.
      * @return the number of columns.
      */
     inline uint32 GetNumberOfColumns() const;

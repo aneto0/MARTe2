@@ -108,22 +108,23 @@ public:
     bool GetTopTypeDescriptor( TypeDescriptor &td, uint32 depth) const;
 
     /**
-     * @brief removes one layer of modifiers
-     * @return true if possible false if no modifiers present
-     */
-    bool RemoveModifiersLayer();
+     * @brief removes one layer of modifiers from the top
+     * @return true if operation succeeded, false if no modifiers     */
+    bool RemoveModifiersLayer(char8 &modifier,uint64 &size){
+        return GetModifiersLayer(modifier,size,true);
+    }
 
     /**
-     * @brief Retrieves the byte size of this type.
-     * @return the byte size of this type.
-     */
-//    inline uint32 GetByteSize() const;
+     * @brief adds one layer of modifiers to the top
+     * @return true if operation succeeded                       */
+    bool InsertModifiersLayer(char8 modifier,uint64 size);
+
 
     /**
-     * @brief Retrieves the bit size of this type.
-     * @return the bit size of this type.
+     * @brief read and possibly removes one layer of modifiers
+     * @return true if operation succeeded, false if no modifiers
      */
-//    inline uint32 GetBitSize() const;
+    bool GetModifiersLayer(char8 &modifier,uint64 &size,bool remove=false);
 
     /**
      * @brief returns size of top indirecting layer.
@@ -135,9 +136,10 @@ public:
     /**
      * TODO
      */
-    CCString GetModifiers(){
+    CCString GetModifierString(){
     	return modifiers.GetList();
     }
+
 
 private:
 

@@ -56,7 +56,6 @@ public:
      * @post
      *    GetNumberOfElements() == 0u &&
      *    GetDataPointer() == NULL &&
-     *    IsStaticDeclared()
      */
     Vector();
 
@@ -66,7 +65,6 @@ public:
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() != NULL &&
-     *    not IsStaticDeclared()
      */
     Vector(uint32 nOfElements);
 
@@ -78,7 +76,6 @@ public:
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray &&
-     *    not IsStaticDeclared()
      */
     Vector(T *existingArray,
            uint32 nOfElements);
@@ -89,15 +86,14 @@ public:
      * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfElements() == nOfElementsStatic &&
-     *   GetDataPointer() == &source[0] &&
-     *   IsStaticDeclared
+     *   GetDataPointer() == &source[0]
      */
     template<uint32 nOfElementsStatic>
     Vector(T (&source)[nOfElementsStatic]);
 
     /**
      * @brief Destructor.
-     * @details If IsStaticDeclared(), then it frees the memory pointed
+     * @details If canDestroy, then it frees the memory pointed
      * by \a GetDataPointer().
      */
     ~Vector();
@@ -115,11 +111,6 @@ public:
      */
     inline void * GetDataPointer() const;
 
-    /**
-     * @brief Checks if GetDataPointer() is pointing at a statically allocated array memory block [].
-     * @return true if GetDataPointer() is pointing at a statically allocated array memory block [].
-     */
-    inline bool IsStaticDeclared() const;
 
     /**
      * @brief Gets the number of elements in the vector.

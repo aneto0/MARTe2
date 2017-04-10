@@ -46,18 +46,29 @@ namespace MemoryCheck {
  * Set of flags indicating desired access modes to the
  * memory by processes.
  */
-enum MemoryTestAccessMode {
 
-    /** read and execute */
-    Execute = 0x00000001,
+/**
+ * Set of flags indicating desired access modes to the
+ * memory by processes.
+ * read and execute
+ */
+static const uint8 ExecuteAccessMode = 0x01;
 
-    /** read  */
-    Read = 0x00000002,
+/**
+ * Set of flags indicating desired access modes to the
+ * memory by processes.
+ * read only
+ */
+static const uint8 ReadAccessMode = 0x02;
 
-    /** read  */
-    Write = 0x00000004
+/**
+ * Set of flags indicating desired access modes to the
+ * memory by processes.
+ * can write
+ */
+static const uint8 WriteAccessMode = 0x04;
 
-};
+
 
 /**
  * @brief Checks if the process has the access to the specified memory area.
@@ -67,7 +78,7 @@ enum MemoryTestAccessMode {
  * @return true if the process has the access to the memory with the specified permissions, false otherwise.
  */
 DLL_API bool Check(const void * const address,
-                   const MemoryTestAccessMode accessMode,
+                   const uint8 accessMode=ReadAccessMode,
                    const uint32 size = 4u);
 
 }

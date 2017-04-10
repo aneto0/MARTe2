@@ -269,7 +269,7 @@ void Object::SetName(CCString const newName) {
     }
 
 }
-
+#if 0
 bool Object::ExportData(StructuredDataI & data) {
     return ConvertObjectToStructuredData(*this,data);
 }
@@ -279,6 +279,8 @@ bool Object::ExportMetadata(StructuredDataI & data,const int32 level) {
   return ConvertObjectMetadataToStructuredData(*this,data,level);
 
 }
+
+#endif
 
 void Object::SetDomain(const bool isDomainFlag) {
     isDomain = isDomainFlag;

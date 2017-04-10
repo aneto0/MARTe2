@@ -53,34 +53,6 @@ void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const e
 
 ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
 
-/**
- * @brief A structure pairing an error code with its explanation.
- */
-const struct {
-    CCString const name;
-    ErrorIntegerFormat errorBitSet;
-} errorNames[] = {
-        { "NoError", NoError },
-        { "Debug", Debug },
-        { "Information", Information },
-        { "Warning", Warning },
-        { "FatalError", FatalError },
-        { "RecoverableError", RecoverableError },
-        { "InitialisationError", InitialisationError },
-        { "OSError", OSError },
-        { "ParametersError", ParametersError },
-        { "IllegalOperation", IllegalOperation },
-        { "ErrorSharing", ErrorSharing },
-        { "ErrorAccessDenied", ErrorAccessDenied },
-        { "Exception", Exception },
-        { "Timeout", Timeout },
-        { "CommunicationError", CommunicationError },
-        { "SyntaxError", SyntaxError },
-        { "UnsupportedFeature", UnsupportedFeature },
-        { "InternalSetupError", InternalSetupError },
-        { "Completed", Completed },
-        { "NotCompleted", NotCompleted },
-        { static_cast<const char8 *>(NULL), NoError }, };
 
 void ErrorCodeToStream(const ErrorType &errorCode,
                        StreamI &stream) {
@@ -88,8 +60,8 @@ void ErrorCodeToStream(const ErrorType &errorCode,
     uint32 i = 1u;
     bool firstErrorWritten = false;
     bool ok = true;
-    while (ok && (!errorNames[i].name.IsNullPtr())) {
-        if (errorCode.Contains(errorNames[i].errorBitSet)) {
+    while (ok && (!errorTypeLookup[i].name.IsNullPtr())) {
+        if (errorCode.Contains(errorTypeLookup[i].errorBitSet)) {
             uint32 size = 1u;
             if (firstErrorWritten) {
                 ok = stream.Write("+", size);
@@ -99,10 +71,10 @@ void ErrorCodeToStream(const ErrorType &errorCode,
             }
 
             // TODO  why +1
-//            size = StringHelper::Length(errorNames[i].name) + 1u;
-            size = errorNames[i].name.GetSize();
+//            size = StringHelper::Length(errorTypeLookup[i].name) + 1u;
+            size = errorTypeLookup[i].name.GetSize();
             if (ok) {
-                ok = stream.Write(errorNames[i].name.GetList(), size);
+                ok = stream.Write(errorTypeLookup[i].name.GetList(), size);
             }
         }
         i++;

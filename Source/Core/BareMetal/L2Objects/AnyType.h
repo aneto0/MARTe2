@@ -43,6 +43,7 @@
 #include "VariableDescriptor.h"
 #include "ClassRegistryDatabase.h"
 #include "Matrix.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -60,27 +61,22 @@ class Object;
 namespace MARTe {
 
 /**
- * @brief Class which provides a smart mechanism for the generic representation
- * of types.
+ * @brief Class which provides a smart mechanism for the generic handling
+ * of variables. It is a generic reference to a variable typically used to build functions able to handle any type of variables
  * @details Each instance of this class is made by:
- * - a void* pointer to the data;
- * - an uint8 representing the bit-shift from the void* pointer to the actual
- * data (used in bitfields);
- * - a TypeDescriptor which defines the type, constantness, signedness, etc.
- * of the data.
- *
- * AnyType works with basic types as well as classes, as long as they are
- * registered in the ClassRegistryDatabase.
- * @note A constructor for each basic type has been defined and implemented in
- * order to automatically build the relative AnyType object. Some of these
- * constructors are templates.
+ * - a void* pointer to the variable;
+ * - a VariableDescriptor which contains the TypeDescriptor and a vector of modifiers
+ *           - a TypeDescriptor which defines the final type of the data.
+ * AnyType works with variables of any type.
  */
+#if 0
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
 /* (9005,1773) Cast away of const required by this implementation of AnyType
  * and justified because in the TypeDescriptor attribute the flag "isConstant"
  * will be set to true.
  */
+#endif
 class DLL_API AnyType {
 
 public:
@@ -140,24 +136,24 @@ public:
     inline AnyType(T const &x);
 
     /**
-     * @brief Constructor from non-const ptr
-     * @param[in] x is any variable non-const ptr
+     * @brief moves the pointer to referencing the a variable that is referenced to by the current variable (if pointer)
+     * @param[in] index allows addressing arrays
+     * @return true if operation successful
      * @post
-     *   GetDataPointer() == x && variableDescriptor(&T)
+     *   if all ok pointer2Variable and variableDescriptor are updated
+     *   otherwise the object becomes invalid and cannot be used anymore
      */
-    //template <class T>
-    //inline AnyType(T * &x);
-
+    ErrorManagement::ErrorType  Dereference (uint32 index=0);
 
     /**
-     * @brief Constructor from const ptr
-     * @param[in] x is any variable const ptr
+     * @brief moves the pointer to referencing a field of the structure that is currently referred to
+     * @param[in] field is the name of the desired field
+     * @return true if operation successful
      * @post
-     *   GetDataPointer() == x  variableDescriptor(&T)
+     *   if all ok pointer2Variable and variableDescriptor are updated
+     *   otherwise the object becomes invalid and cannot be used anymore
      */
-    //template <class T>
-    //inline AnyType(T const * &x);
-
+    ErrorManagement::ErrorType  Dereference (CCString field);
 
     /** INTERFACES GETTERS*/
 
@@ -165,61 +161,13 @@ public:
      * @brief Returns the pointer to the data.
      * @return the pointer to the data.
      */
-    inline void* GetDataPointer() const;
+    inline const void* GetVariablePointer() const;
 
     /**
      * @brief Returns the full variableDescriptor.
-     * This is the full Varaiable description with all modifiers
+     * This is the full Variable description with all modifiers
      */
     inline const VariableDescriptor &GetFullVariableDescriptor() const;
-
-    /**
-     * @brief Returns the a variableDescriptor that contains sufficent information to use the pointer.
-     * This is the synthetic Variable description with no modifiers
-     */
-     const VariableDescriptor GetSyntheticVariableDescriptor() const;
-
-    /**
-     * @brief Returns the synthetic type descriptor of *x. In case of error he type is void;
-     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
-     * @return a new AnyType
-     */
-    AnyType operator *() const;
-
-    /**
-     * @brief Retrieves the element in the specified position.
-     * @param[in] position is the position of the required element.
-     * @return voidAnyType if this AnyType is scalar or in case of errors, a scalar AnyType if this
-     * AnyType is a vector, a vector AnyType if this AnyType is a scalar.
-     */
-    AnyType operator[](const uint32 position) const;
-
-    /**
-     * @brief Returns the data bit address (i.e  the bit shift respect to the data pointer).
-     * @return the data bit address.
-     */
-    inline uint8 GetBitAddress() const;
-
-    /**
-     * @brief Gets the number of elements for a given number of \a redirections.
-     * @param[in] dimension the dimension to be queried.
-     * @return the number of elements in a given \a redirections.
-     * @pre
-     *   dimension < 3
-     */
-    inline uint32 GetNumberOfElements(const uint32 redirections) const;
-
-    /**
-     * @brief Retrieves the byte size of this type.
-     * @return the byte size of this type.
-     */
-    inline uint32 GetByteSize() const;
-
-    /**
-     * @brief Retrieves the bit size of this type.
-     * @return the bit size of this type.
-     */
-    inline uint32 GetBitSize() const;
 
 private:
 
@@ -230,9 +178,9 @@ private:
     VariableDescriptor variableDescriptor;
 
     /**
-     * Pointer to the data.
+     * Pointer to the variable.
      */
-    void * dataPointer;
+    const void* pointer2Variable;
 
 };
 
@@ -242,48 +190,47 @@ private:
 /*---------------------------------------------------------------------------*/
 
 AnyType::AnyType(){
-    dataPointer = NULL_PTR(void *);
+    pointer2Variable = NULL_PTR(void *);
 }
 
 AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):variableDescriptor(typeDescriptorIn){
-
-    dataPointer = const_cast<void *>(dataPointerIn);
+    pointer2Variable = const_cast<void *>(dataPointerIn);
 }
 
 AnyType::AnyType( AnyType &x):variableDescriptor(x.variableDescriptor) {
-    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
-    this->dataPointer = x.dataPointer;
+    /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
+    this->pointer2Variable = x.pointer2Variable;
 }
 
 AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
-    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
-    this->dataPointer = x.dataPointer;
+    /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
+    this->pointer2Variable = x.pointer2Variable;
 }
 
 template <class T>
 AnyType::AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
-    dataPointer = reinterpret_cast<void *>(const_cast<T *>(&x));
+    pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(&x));
 }
 
 template <class T>
 AnyType::AnyType(T const &x): variableDescriptor (reinterpret_cast<T const *>(&x)){
-    dataPointer = const_cast<void *>(reinterpret_cast<const void *>(const_cast<T *>(&x)));
+    pointer2Variable = const_cast<void *>(reinterpret_cast<const void *>(const_cast<T *>(&x)));
 }
 
 /*
 template <class T>
 AnyType::AnyType(T * &x): variableDescriptor (reinterpret_cast<T **>(&x)){
-    dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+    pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(x));
 }
 
 template <class T>
 AnyType::AnyType(T const * &x): variableDescriptor (reinterpret_cast< T const **>(&x)){
-    dataPointer = reinterpret_cast<void *>(const_cast<T *>(x));
+    pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(x));
 }
 */
 
-void* AnyType::GetDataPointer() const{
-    return dataPointer;
+const void* AnyType::GetVariablePointer() const{
+    return pointer2Variable;
 }
 
 const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{

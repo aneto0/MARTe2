@@ -27,7 +27,8 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicType.x LinkedListable.x \
-        LinkedListHolder.x
+        LinkedListHolder.x \
+        ErrorType.x
         
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

@@ -197,7 +197,7 @@ ReferenceContainer    ();
     /**
      * @see Object::ExportData(*)
      */
-    virtual bool ExportData(StructuredDataI & data);
+//    virtual bool ExportData(StructuredDataI & data);
 
     /**
      * @brief Locks the internal spin-lock mutex.

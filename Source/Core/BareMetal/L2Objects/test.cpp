@@ -35,6 +35,8 @@
 #include "VariableDescriptor.h"
 #include "DynamicCString.h"
 #include "StaticCString.h"
+#include "ErrorType.h"
+#include "MemoryCheck.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -137,14 +139,17 @@ void printType(VariableDescriptor vd){
     }
     printf("\n");
 
-    printf ("{%-12s}",vd.GetModifiers());
+    printf ("{%-12s}",vd.GetModifierString());
     td = vd.GetFullTypeDescriptor();
     printTypeDescriptor(td);
     printf(" size = %Li\n",vd.GetSize());
+
+#if 0
     while (vd.RemoveModifiersLayer()){
     	printf ("{%-12s}",vd.GetModifiers());
         printf(" size = %Li\n",vd.GetSize());
     }
+#endif
 }
 
 struct pippone{
@@ -162,15 +167,26 @@ struct pippone2{
 template <class T>
 void testT(CCString orig){
 
+	printf("------------------\n");
+
 	/*
 	 * used as a pointer to avoid allocating unnecessary stack memory
 	 */
-    T *x;
-    const int pappa = 0;
+    T *x ;
+    void *pappa[4] = {NULL,NULL,NULL,NULL};//{&pappa[0],&pappa[0],&pappa[0],&pappa[0]};
     /* assigned to a real pointer to avoid problems */
     x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&pappa));
 
     AnyType at(*x);
+
+    bool sameAddress = (at.GetVariablePointer() == &pappa);
+    if (sameAddress) {
+    	printf("Address Ok :");
+    }
+    else {
+    	printf("(%08p-%08p) ",at.GetVariablePointer(),&pappa);
+    }
+
 
     printf("%-26s ",orig.GetList());
 
@@ -178,6 +194,18 @@ void testT(CCString orig){
 
     printType(vd);
 
+    ErrorManagement::ErrorType ret;
+    while (ret = at.Dereference()){
+        printType(at.GetFullVariableDescriptor());
+    }
+
+    ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
+    while (!etl->name.IsNullPtr()){
+    	if ((etl->errorBitSet &  ret.format_as_integer)!= 0){
+    		printf("%s\n",etl->name);
+    	}
+    	etl++;
+    }
 
 
 }
@@ -245,9 +273,37 @@ void testAT(){
 
 }
 
+/*
+static bool CheckPointer (void const *p){
+	bool ret = false;
+    MEMORY_BASIC_INFORMATION mbi = {0};
+    if (::VirtualQuery(p, &mbi, sizeof(mbi)))
+    {
+//        DWORD mask = (PAGE_READONLY|PAGE_READWRITE|PAGE_WRITECOPY|PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY);
+    	DWORD mask = (PAGE_READWRITE);
+        ret = ((mbi.Protect & mask)!=0);
+        // check the page is not a guard page
+        ret = ret &&  ((mbi.Protect & (PAGE_GUARD|PAGE_NOACCESS))==0);
 
+    }
+    return ret;
+}
+*/
+
+int pluto;
 
 int main(int argc, char **argv){
+
+	int pippo;
+	float *x;
+
+
+	printf ("%016p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo));
+	printf ("%016p  %i\n", &pluto, MARTe::MemoryCheck::Check(&pluto));
+	printf ("%016p  %i\n", &main, MARTe::MemoryCheck::Check(&main));
+	printf ("%016p  %i\n", &main, MARTe::MemoryCheck::Check(&main,MARTe::MemoryCheck::ExecuteAccessMode));
+	printf ("%016p  %i\n", x, MARTe::MemoryCheck::Check(x));
+
 
 MARTe::testAT();
 

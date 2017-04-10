@@ -467,7 +467,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     }
     return ok;
 }
-
+#if 0
 bool ReferenceContainer::ExportData(StructuredDataI & data) {
 
     // no need to lock
@@ -522,6 +522,7 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
 
     return ret;
 }
+#endif
 
 bool ReferenceContainer::Lock() {
     return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);

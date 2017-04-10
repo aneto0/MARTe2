@@ -34,6 +34,7 @@
 #include "CompilerTypes.h"
 #include "BitBoolean.h"
 #include "BitRange.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,233 +55,79 @@ typedef uint32 ErrorIntegerFormat;
 static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 
 /**
- * Bit for Fatal Error unspecified error.
+ * MACRO to generate different error tables
  */
-static const uint32 fatalErrorBit(0u);
-static const uint32 FatalErrorBit(fatalErrorBit);
+#define ERROR_CONSTANT_MACRO(macrofun) 						      \
+		macrofun(FatalError,			fatalError,				0)\
+		macrofun(RecoverableError,		recoverableError,		1)\
+		macrofun(InitialisationError,	initialisationError,	2)\
+		macrofun(OSError,				OSError,				3)\
+		macrofun(ParametersError,		parametersError,		4)\
+		macrofun(IllegalOperation,		illegalOperation,		5)\
+		macrofun(ErrorSharing,			errorSharing,			6)\
+		macrofun(ErrorAccessDenied,		errorAccessDenied,		7)\
+		macrofun(Exception,				exception,				8)\
+		macrofun(Timeout,				timeout,				9)\
+		macrofun(CommunicationError,	communicationError,	   10)\
+		macrofun(SyntaxError,			syntaxError,		   11)\
+		macrofun(UnsupportedFeature,	unsupportedFeature,	   12)\
+		macrofun(InternalSetupError,	internalSetupError,	   13)\
+		macrofun(Debug,					debug,	               14)\
+		macrofun(Information,			information,		   15)\
+		macrofun(Warning,				warning,			   16)\
+		macrofun(Completed,             completed,			   17)\
+		macrofun(NotCompleted,          notCompleted,          18)\
+		macrofun(InvalidOperation,      invalidOperation,      19)
 
 /**
- * Bit for Recoverable error.
+ * to be kept up to date with the highest value of the error bits
  */
-static const uint32 recoverableErrorBit(1u);
-static const uint32 RecoverableErrorBit(recoverableErrorBit);
+#define lastErrorBit 19
 
 /**
- * Bit for Initialisation error.
- */
-static const uint32 initialisationErrorBit(2u);
-static const uint32 InitialisationErrorBit(initialisationErrorBit);
+ *  macro function to be used with ERROR_CONSTANT_MACRO to generate macro constants
+*/
+#define GENERATE_ERROR_CONSTANTS(errorName,dummy,bit)      \
+	static const ErrorIntegerFormat errorName =(1 << bit);
 
 /**
- * Bit for Operating system error.
+ * the macro to signal no error!
  */
-static const uint32 OSErrorBit(3u);
+static const ErrorIntegerFormat NoError = 0;
 
 /**
- * Parameters error.
+ * generates all macro constants
  */
-static const uint32 parametersErrorBit(4u);
-static const uint32 ParametersErrorBit(parametersErrorBit);
+ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
 
 /**
- * Illegal operation.
+ * To generate one error bit within ErrorType
  */
-static const uint32 illegalOperationBit(5u);
-static const uint32 IllegalOperationBit(illegalOperationBit);
+#define GENERATE_ERROR_BITRANGE(dummy,errorName,bit)    BitBoolean<ErrorIntegerFormat, bit> errorName;
 
 /**
- * Sharing error.
+ * To generate a field in the table of error lookup
+ * depends from the ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
  */
-static const uint32 errorSharingBit(6u);
-static const uint32 ErrorSharingBit(errorSharingBit);
+#define GENERATE_ERROR_LOOKUP(ErrorName,errorName,bit)    \
+        { #ErrorName, ErrorName},
 
 /**
- * Access denied.
+ * Allow converting errors to strings
  */
-static const uint32 errorAccessDeniedBit(7u);
-static const uint32 ErrorAccessDeniedBit(errorAccessDeniedBit);
+struct ErrorTypeLookup{
+	/**
+	 * The name of the error field
+	 */
+    CCString 			name;
 
-/**
- * Exception.
- */
-static const uint32 exceptionBit(8u);
-static const uint32 ExceptionBit(exceptionBit);
+    /**
+     * The corresponding bit
+     */
+    ErrorIntegerFormat 	errorBitSet;
+};
 
-/**
- * Timeout occurred.
- */
-static const uint32 timeoutBit(9u);
-static const uint32 TimeoutBit(timeoutBit);
-
-/**
- * Error during communication.
- */
-static const uint32 communicationErrorBit(10u);
-static const uint32 CommunicationErrorBit(communicationErrorBit);
-
-/**
- * Syntax error.
- */
-static const uint32 syntaxErrorBit(11u);
-static const uint32 SyntaxErrorBit(syntaxErrorBit);
-
-/**
- * Unsupported feature.
- */
-static const uint32 unsupportedFeatureBit(12u);
-static const uint32 UnsupportedFeatureBit(unsupportedFeatureBit);
-
-/**
- * Internal setup error.
- */
-static const uint32 internalSetupErrorBit(13u);
-static const uint32 InternalSetupErrorBit(internalSetupErrorBit);
-
-/**
- * Bit for Debug information.
- */
-static const uint32 debugBit(14u);
-static const uint32 DebugBit(debugBit);
-
-/**
- * Bit for General information.
- */
-static const uint32 informationBit(15u);
-static const uint32 InformationBit(informationBit);
-
-/**
- * Bit for Warning.
- */
-static const uint32 warningBit(16u);
-static const uint32 WarningBit(warningBit);
-
-/**
- * Bit to communicate that a cycling called function has finished and does not need to be called again.
- */
-static const uint32 completedBit(17u);
-static const uint32 CompletedBit(completedBit);
-
-/**
- * Bit to communicate that a cycling called function has not finished and needs to be called again.
- */
-static const uint32 notCompletedBit(18u);
-static const uint32 NotCompletedBit(notCompletedBit);
-
-/**
- * Last used Bit.
- */
-static const uint32 lastErrorBit(19u);
-static const uint32 LastErrorBit(lastErrorBit);
-
-/**
- * No error to report.
- */
-static const ErrorIntegerFormat NoError = 0u;
-
-/**
- * To generate the constants representing a specific error type.
- */
-#define GENERATE_ERROR_CONSTANTS(errorName)   static const ErrorIntegerFormat errorName =(1 << errorName ## Bit);
-
-/**
- * To generate the constants representing a specific error type.
- */
-#define GENERATE_ERROR_BITRANGE(errorName)    BitBoolean<ErrorIntegerFormat, errorName ## Bit> errorName;
-
-/**
- * Fatal Error.
- */
-GENERATE_ERROR_CONSTANTS(FatalError)
-
-/**
- * Recoverable error.
- */
-GENERATE_ERROR_CONSTANTS(RecoverableError)
-
-/**
- * Initialisation error.
- */
-GENERATE_ERROR_CONSTANTS(InitialisationError)
-
-/**
- * Operating system error.
- */
-GENERATE_ERROR_CONSTANTS(OSError)
-
-/**
- * Parameters error.
- */
-GENERATE_ERROR_CONSTANTS(ParametersError)
-
-/**
- * Illegal operation.
- */
-GENERATE_ERROR_CONSTANTS(IllegalOperation)
-
-/**
- * Sharing error.
- */
-GENERATE_ERROR_CONSTANTS(ErrorSharing)
-
-/**
- * Access denied.
- */
-GENERATE_ERROR_CONSTANTS(ErrorAccessDenied);
-
-/**
- * Exception.
- */
-GENERATE_ERROR_CONSTANTS(Exception)
-
-/**
- * Timeout occurred.
- */
-GENERATE_ERROR_CONSTANTS(Timeout)
-
-/**
- * Error during communication.
- */
-GENERATE_ERROR_CONSTANTS(CommunicationError)
-
-/**
- * Syntax error.
- */
-GENERATE_ERROR_CONSTANTS(SyntaxError)
-
-/**
- * Unsupported feature.
- */
-GENERATE_ERROR_CONSTANTS(UnsupportedFeature)
-
-/**
- * Internal setup error.
- */
-GENERATE_ERROR_CONSTANTS(InternalSetupError);
-
-/**
- * Debug information.
- */
-GENERATE_ERROR_CONSTANTS(Debug)
-
-/**
- * General information.
- */
-GENERATE_ERROR_CONSTANTS(Information)
-
-/**
- * ErrorManagement::Warning.
- */
-GENERATE_ERROR_CONSTANTS(Warning)
-
-/**
- * ErrorManagement::Completed.
- */
-GENERATE_ERROR_CONSTANTS(Completed)
-
-/**
- * ErrorManagement::NotCompleted.
- */
-GENERATE_ERROR_CONSTANTS(NotCompleted)
+extern DLL_API ErrorTypeLookup errorTypeLookup[];
 
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
@@ -372,100 +219,8 @@ public:
          */
         ErrorIntegerFormat format_as_integer;
 
-        /**
-         * Fatal Error
-         */
-        GENERATE_ERROR_BITRANGE(fatalError)
-
-        /**
-         * Recoverable error
-         */
-        GENERATE_ERROR_BITRANGE(recoverableError)
-
-        /**
-         * Initialization error
-         */
-        GENERATE_ERROR_BITRANGE(initialisationError)
-
-        /**
-         * Operating system error
-         */
-        GENERATE_ERROR_BITRANGE(OSError)
-
-        /**
-         * Parameters error
-         */
-        GENERATE_ERROR_BITRANGE(parametersError)
-
-        /**
-         * Illegal operation
-         */
-        GENERATE_ERROR_BITRANGE(illegalOperation)
-
-        /**
-         * Sharing error
-         */
-        GENERATE_ERROR_BITRANGE(errorSharing)
-
-        /**
-         * Access denied
-         */
-        GENERATE_ERROR_BITRANGE(errorAccessDenied);
-
-        /**
-         * Exception
-         */
-        GENERATE_ERROR_BITRANGE(exception)
-
-        /**
-         * Timeout occurred
-         */
-        GENERATE_ERROR_BITRANGE(timeout)
-
-        /**
-         * Error during communication
-         */
-        GENERATE_ERROR_BITRANGE(communicationError)
-
-        /**
-         * Syntax error
-         */
-        GENERATE_ERROR_BITRANGE(syntaxError)
-
-        /**
-         * Unsupported feature
-         */
-        GENERATE_ERROR_BITRANGE(unsupportedFeature)
-
-        /**
-         * Internal setup error
-         */
-        GENERATE_ERROR_BITRANGE(internalSetupError);
-
-        /**
-         * Debug information
-         */
-        GENERATE_ERROR_BITRANGE(debug)
-
-        /**
-         * General information
-         */
-        GENERATE_ERROR_BITRANGE(information)
-
-        /**
-         * Warning.
-         */
-        GENERATE_ERROR_BITRANGE(warning)
-
-        /**
-         * Operation completed.
-         */
-        GENERATE_ERROR_BITRANGE(completed)
-
-        /**
-         * Operation completed.
-         */
-        GENERATE_ERROR_BITRANGE(notCompleted)
+        // generates all bits
+        ERROR_CONSTANT_MACRO(GENERATE_ERROR_BITRANGE)
 
         /**
          * unmapped bits
