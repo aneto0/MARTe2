@@ -59,17 +59,17 @@ public:
     /**
      * @brief name of the method
      */
-    CCString GetName() const;
+    inline CCString GetName() const;
 
     /**
      * @brief offset of the variable
      */
-    uint32 GetOffset() const;
+    inline uint32 GetOffset() const;
 
     /**
      * @brief returns associated descriptor
      */
-    const VariableDescriptor &GetDescriptor() const;
+    inline const VariableDescriptor &GetDescriptor() const;
 
 
 private:

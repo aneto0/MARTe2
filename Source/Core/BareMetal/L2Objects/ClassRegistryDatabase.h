@@ -86,6 +86,14 @@ public:
     ClassRegistryItem       *Find(CCString className);
 
     /**
+     * @brief Returns the ClassRegistryItem associated to the class with given  \a targetTd.
+     * @details The returned pointer will be valid as long as it exists in the database.
+     * @param[in] targetTd the typedescriptor of the class to be searched.
+     * @return a pointer to the ClassRegisteredItem or NULL if the \a targetTd could not be found.
+     */
+    ClassRegistryItem       *Find(const TypeDescriptor &targetTd);
+
+    /**
      * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
      * @details The returned pointer will be valid as long as it exists in the database.
      * @param[in] typeidName the typeid().name() of the class to be searched.
@@ -138,6 +146,13 @@ protected:
     ClassRegistryDatabase();
 
 private:
+
+    /**
+     * TODO
+     * Locks database and searches using given filter
+     */
+    ClassRegistryItem *ClassRegistryDatabase::Find(  SearchFilterT<ClassRegistryItem> &  finder);
+
 
     /**
      * The database is implemented as a StaticList.

@@ -398,7 +398,7 @@ bool VariableDescriptor::InsertModifiersLayer(char8 modifier,uint64 size){
 
 
 
-uint64 VariableDescriptor::GetSize(){
+uint64 VariableDescriptor::GetSize() const{
 	uint64 size = 1;
 
     char8 *buffer = modifiers.GetList();

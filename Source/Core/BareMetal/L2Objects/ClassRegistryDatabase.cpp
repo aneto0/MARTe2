@@ -82,12 +82,137 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     }
 }
 
+/**************************************************************/
+
+// TODO
+class ClassRegistryDatabaseFindByTypeDescriptor: public SearchFilterT<ClassRegistryItem>{
+	TypeDescriptor td;
+
+public:
+	ClassRegistryDatabaseFindByTypeDescriptor(const TypeDescriptor &tdIn): td (tdIn){}
+	bool Test(ClassRegistryItem *data){
+	    bool ret = (data != NULL);
+	    if (ret){
+	    	ret = (data->GetTypeDescriptor() == td);
+	    }
+	    return ret;
+	}
+};
+
+// TODO
+class ClassRegistryDatabaseFindByTypeId: public SearchFilterT<ClassRegistryItem>{
+	CCString const typeidName;
+
+public:
+	ClassRegistryDatabaseFindByTypeId(CCString const typeidNameIn): typeidName(typeidNameIn){}
+	bool Test(ClassRegistryItem *data){
+	    bool ret = (data != NULL);
+	    if (ret){
+	    	ret =  (StringHelper::Compare(data->GetTypeidName(), typeidName) == 0) ;
+	    }
+	    return ret;
+	}
+};
+
+// TODO
+class ClassRegistryDatabaseFindByClassName: public SearchFilterT<ClassRegistryItem>{
+	CCString const className;
+
+public:
+	ClassRegistryDatabaseFindByClassName(CCString const classNameIn): className(classNameIn){}
+	bool Test(ClassRegistryItem *data){
+	    bool ret = (data != NULL);
+	    if (ret){
+	    	ret =  (StringHelper::Compare(data->GetClassName(), className) == 0) ;
+	    }
+	    return ret;
+	}
+};
+
+
+/**************************************************************/
+
+ClassRegistryItem *ClassRegistryDatabase::Find( SearchFilterT<ClassRegistryItem> &  finder) {
+	ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
+	if (!Lock()) {
+		REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
+	} else {
+		registryItem = classDatabase.ListSearch(&finder);
+
+		UnLock();
+	}
+	return registryItem;
+}
+
+
+ClassRegistryItem *ClassRegistryDatabase::Find(const TypeDescriptor &targetTd) {
+	return Find(ClassRegistryDatabaseFindByTypeDescriptor( targetTd));
+}
+
+ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidName) {
+	return Find(ClassRegistryDatabaseFindByTypeId( typeidName));
+}
+
+ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
+
+	// search full name
+	ClassRegistryItem *cri = Find(ClassRegistryDatabaseFindByClassName( className));
+	if (cri == NULL){
+
+		// search class within container container::class
+		CCString classOnlyPartName = StringHelper::SearchString(className, "::");
+		if (classOnlyPartName.GetSize() > 0){
+			cri = Find(ClassRegistryDatabaseFindByClassName(classOnlyPartName.GetList()+2));
+
+			// there was a container - search and load a dll with this name
+			if (cri == NULL){
+				// extract the first part up to ::
+				DynamicCString dllName;
+				uint32 dllNameBaseSize = className.GetSize() - classOnlyPartName.GetSize();
+				dllName.AppendN(className.GetList(),dllNameBaseSize);
+
+				// try open a dll with this name
+	            LoadableLibrary *loader = new LoadableLibrary();
+	            bool dllOpened = false;
+	            uint32 osExtIndex = 0;
+	            //Check for all known operating system extensions.
+	            while ((operatingSystemDLLExtensions[osExtIndex] != 0) && (!dllOpened)) {
+	                dllName.Truncate(dllNameBaseSize);
+					dllName.AppendN(operatingSystemDLLExtensions[osExtIndex]);
+					osExtIndex++;
+	                dllOpened = loader->Open(dllName.GetList());
+	            }
+
+	            //If the dll was successfully opened than it is likely that more classes were registered
+	            //in the database. Search again.
+	            if (dllOpened) {
+	    			cri = Find(ClassRegistryDatabaseFindByClassName(classOnlyPartName.GetList()+2));
+
+	    			// if found store the dll object with the database - to be destroyed later
+	    			if (cri != NULL){
+                        cri->SetLoadableLibrary(loader);
+                        loader = NULL;
+	    			}
+	            }
+
+	            // if still pointing to loader object than destroy it
+	            if (loader != NULL){
+	                delete loader;
+	            }
+			}
+		}
+	}
+
+	return cri;
+}
+
+#if 0
+
 ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (!Lock()) {
         REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
     }
-
 
     DynamicCString dllName;
 
@@ -116,6 +241,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
             if (p != NULL) {
                 if (StringHelper::Compare(p->GetClassName(), className) == 0) {
                     registryItem = p;
+
                     found = true;
                     break;
                 }
@@ -201,6 +327,8 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidNa
     UnLock();
     return registryItem;
 }
+
+#endif
 
 uint32 ClassRegistryDatabase::GetSize() {
     uint32 size = 0u;

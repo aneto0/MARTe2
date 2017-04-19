@@ -77,6 +77,7 @@ namespace MARTe {
  * will be set to true.
  */
 #endif
+
 class DLL_API AnyType {
 
 public:

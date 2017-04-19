@@ -51,6 +51,9 @@ namespace MARTe{
 
 namespace MemoryCheck {
 
+// TODO for linux implement : on init - read /proc/$$/maps - parse and create map of valid memory pages.
+// every time a DLL is loaded at runtime - reprocess table
+
 /*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: This implementation does not require
  all the input parameters.*/
 bool Check(const void * const address,

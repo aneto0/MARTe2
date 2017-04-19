@@ -320,7 +320,7 @@ public:
     /**
      * size in byte of the object top layer.
      */
-    uint32 Size();
+    uint32 Size() const;
 
 #if 0
     /**

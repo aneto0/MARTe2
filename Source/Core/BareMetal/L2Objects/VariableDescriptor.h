@@ -131,12 +131,12 @@ public:
      * each array layer is multiplied until a redirecting layer or the final layer is encountered
      * @return the full size of the top layer in bytes
      */
-    uint64 GetSize();
+    uint64 GetSize() const;
 
     /**
      * TODO
      */
-    CCString GetModifierString(){
+    CCString GetModifierString() const{
     	return modifiers.GetList();
     }
 

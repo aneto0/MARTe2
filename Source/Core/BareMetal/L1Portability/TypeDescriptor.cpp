@@ -157,7 +157,7 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
 
 //#include <stdio.h>
 
-uint32 TypeDescriptor::Size(){
+uint32 TypeDescriptor::Size()const{
 	uint32 size = 0;
 	if (isStructuredData){
 		return 0; // not supported yet
