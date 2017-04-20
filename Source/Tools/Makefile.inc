@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,21 +20,24 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
-OBJSX=
-SPB    = Source/Tools.x Source/Core.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
 
+PACKAGE=Tools
+ROOT_DIR=../../
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-MAKEDEFAULTDIR=MakeDefaults
+SPB=Environment/$(ENVIRONMENT).x
 
-ROOT_DIR=.
+OBJSX=  
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ) 
+
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
+
+all: $(OBJS) $(SUBPROJ)   	
 	echo  $(OBJS)
 
-
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

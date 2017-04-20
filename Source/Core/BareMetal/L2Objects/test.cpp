@@ -149,17 +149,6 @@ void printType(const AnyType &at){
 
 }
 
-struct pippone{
-
-    int pillo;
-    int pollo;
-};
-
-struct pippone2{
-
-    int pillo[32];
-    int pollo;
-};
 
 template <class T>
 void testT(CCString orig){
@@ -184,7 +173,6 @@ void testT(CCString orig){
     	printf("(%08p-%08p) ",at.GetVariablePointer(),&pappa);
     }
 
-
     printf("%-26s ",orig.GetList());
 
     printType(at);
@@ -201,19 +189,97 @@ void testT(CCString orig){
     	}
     	etl++;
     }
-
-
 }
 
 
-#define TEST(x)  testT<x>(#x)
+template <class T>
+ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
+
+	ErrorManagement::ErrorType ok;
+
+	printf("------------------\n");
+
+	/*
+	 * used as a pointer to avoid allocating unnecessary stack memory
+	 */
+    T *x ;
+    // build a memory block made with pointers pointing to the next pointer...
+    const uint32 NS = 12;
+    void *memory[NS];
+    int i;
+    for (i=0;i<(NS-1);i++){
+    	memory[i]=&memory[i+1];
+    }
+    memory[NS-1]=NULL;
+
+    /* assigned to a real pointer to avoid problems */
+    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
+
+    AnyType at(*x);
+
+    if (deref.GetSize() > 0){
+    	if (deref == "*"){
+    		ok = at.Dereference(0);
+            printf("*(%-24s) ",orig.GetList());
+    	} else {
+    		ok = at.Dereference(deref);
+            printf("(%-20s).%s ",orig.GetList(),deref.GetList());
+    	}
+    } else {
+        printf("%-26s ",orig.GetList());
+    }
+
+    if (ok){
+        bool sameAddress = (at.GetVariablePointer() == &memory);
+        if (sameAddress) {
+        	printf("[Address same] ");
+        }
+        else {
+        	int64 delta =  reinterpret_cast<const char8 *>(at.GetVariablePointer()) - reinterpret_cast<const char8  *>(&memory[0]);
+        	printf("[Address delta(B)= %Li] ",delta);
+        }
+        printType(at);
+    } else {
+        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
+        while (!etl->name.IsNullPtr()){
+        	if ((etl->errorBitSet &  ok.format_as_integer)!= 0){
+        		printf("%s\n",etl->name);
+        	}
+        	etl++;
+        }
+    }
+
+    return ok;
+}
 
 
+
+
+struct pippone{
+
+    int pillo;
+    int pollo;
+};
+
+struct pippone2{
+
+    int pillo[32];
+    int pollo;
+};
+
+
+
+
+
+
+#define TEST(x)     testDerefT<x>(#x)
+#define TEST2(x,y)  testDerefT<x>(#x,#y)
 
 void testAT(){
     TEST(double);
     TEST(float);
     TEST(uint64);
+    TEST2(uint64,*);
     TEST(uint32);
     TEST(uint16);
     TEST(uint8);
@@ -226,6 +292,8 @@ void testAT(){
     TEST(uint4);
 
     TEST(uint32*);
+    TEST2(uint32*,*);
+
     TEST(uint32 const *);
     TEST(uint32 *const);
     TEST(uint32  * * );
@@ -235,7 +303,9 @@ void testAT(){
     TEST(uint32***);
     TEST(uint32** const *);
     TEST(uint32 const * const * const * const * const );
+    TEST2(uint32 const * const * const * const * const,* );
     TEST(uint32******);
+    TEST2(uint32******,*);
     TEST(uint32[2]);
     TEST(uint32[21]);
     TEST(uint32[128]);
