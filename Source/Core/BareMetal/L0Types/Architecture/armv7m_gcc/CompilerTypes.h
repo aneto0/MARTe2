@@ -65,9 +65,14 @@ typedef uint32      uintp;
 /** A tool to find indexes of structures fields.
  1024 has been used to avoid alignment problems. */
 #define indexof(type,field) ((intptr)&(((type *)1024)->field) - 1024)
+
 /** A tool to find the size of structures fields.
  1024 has been used to avoid alignment problems. */
 #define msizeof(type,field) sizeof(((type *)1024)->field)
+
+/** A tool to find the type of class/structures fields.
+ 1024 has been used to avoid alignment problems. */
+#define memberOf(type,field) ((type *)1024)->field
 
 #define HANDLE void *
 

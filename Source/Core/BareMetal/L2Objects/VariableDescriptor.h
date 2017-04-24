@@ -85,10 +85,14 @@ public:
     VariableDescriptor(VariableDescriptor &x ) ;
 
     /**
-     * @brief copy
-     * Note that const VariableDescription will not work
+     * @brief copy constructor
      */
     VariableDescriptor(const VariableDescriptor &x );
+
+    /**
+     * @brief copy operator
+     */
+    VariableDescriptor &operator=(const VariableDescriptor &x );
 
     /**
      * @brief sets the typeDescriptor

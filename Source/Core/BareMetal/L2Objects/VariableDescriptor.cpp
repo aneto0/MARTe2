@@ -315,6 +315,14 @@ VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
     modifiers.AppendN(x.modifiers.GetList());
 }
 
+VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
+    typeDescriptor = x.typeDescriptor;
+    modifiers.Truncate(0);
+    modifiers.AppendN(x.modifiers.GetList());
+    return *this;
+}
+
+
 const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
     return typeDescriptor;
 }

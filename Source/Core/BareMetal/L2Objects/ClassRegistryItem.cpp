@@ -166,8 +166,26 @@ void ClassRegistryItem::AddMethod(ClassMethodInterfaceMapper * const method) {
     }
 }
 
-ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
 
+class ClassRegistryItemFindMember: public SearchFilterT<ClassMember>{
+	CCString const memberName;
+
+public:
+	ClassRegistryItemFindMember(CCString const memberNameIn): memberName(memberNameIn){}
+	bool Test(ClassMember *data){
+	    bool ret = (data != NULL);
+	    if (ret){
+	    	ret =  (StringHelper::Compare(data->GetName(), memberName) == 0) ;
+	    }
+	    return ret;
+	}
+};
+
+ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
+	ClassRegistryItemFindMember crifm (memberName);
+	return classMembers.ListSearch(&crifm);
+
+/*
     uint32 i = 0u;
     uint32 end = classMembers.ListSize();
     //VariableDescriptor const *vd = NULL_PTR(VariableDescriptor const *);
@@ -184,6 +202,7 @@ ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
         i++;
     }
     return member;
+*/
 }
 
 ClassMember const *ClassRegistryItem::FindMember(uint32 index) {

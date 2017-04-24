@@ -98,13 +98,21 @@ public:
      * @param[in] data is the element to be checked.
      * @return true if \a data is the array terminal, false otherwise.
      */
-    bool Zero(const T & data) const;
+    inline bool Zero(const T & data) const;
 
     /**
      * @brief Checks if the ptr is valid
      * @return true if \a array is NULL.
      */
-    bool IsNullPtr() const;
+    inline bool IsNullPtr() const;
+
+    /**
+     * @brief Checks if the input \a arrayIn has the same content as the array
+     * @details This function allows implementing operator==
+     * @param[in] arrayIn is the array to be compared
+     * @return true if \a arrayIn is the same.
+     */
+    inline bool isSameAs(const T *arrayIn) const;
 protected:
 
     /**
@@ -201,6 +209,26 @@ void ZeroTerminatedArray<T>::Skip() {
         }
     }
 }
+
+template<typename T>
+bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {
+    bool same = true;
+    if (array != NULL_PTR(T*)) {
+        const T * listP = array;
+        const T * list2P = arrayIn;
+        while (!Zero(*listP) && same) {
+            same = (*listP == *list2P);
+            listP++;
+            list2P++;
+        }
+        if (same){
+        	same = Zero(*list2P);
+        }
+    }
+    return same;
+
+}
+
 
 
 }

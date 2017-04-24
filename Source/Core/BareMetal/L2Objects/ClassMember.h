@@ -48,13 +48,12 @@ namespace MARTe {
 class ClassMember: public LinkedListable{
 
 public:
-
     /**
      * @brief templated constructor
      * offset is the offset of the member with respect to the start of the class memory
      */
-    template <class T>
-    ClassMember(T & member,CCString nameIn,uint32 offsetIn);
+    template <class Tmember>
+    ClassMember(Tmember * member,CCString nameIn,uint32 offsetIn);
 
     /**
      * @brief name of the method
@@ -96,9 +95,9 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-template <class T>
-ClassMember::ClassMember(T & member,CCString nameIn,uint32 offsetIn): vd(member){
+#if 0
+template <class T,struct type>
+ClassMember::ClassMember(type & member,CCString nameIn,uint32 offsetIn): vd(member){
     ClassRegistryItem * cri = ClassRegistryItem::Instance<T>();
     if (cri != NULL_PTR(ClassRegistryItem * )){
         cri->AddMember(this);
@@ -106,6 +105,15 @@ ClassMember::ClassMember(T & member,CCString nameIn,uint32 offsetIn): vd(member)
     name = nameIn;
     offset = offsetIn;
 }
+#else
+template <class Tmember>
+ClassMember::ClassMember(Tmember * member,CCString nameIn,uint32 offsetIn): vd(member){
+    name = nameIn;
+    offset = offsetIn;
+}
+
+#endif
+
 
 CCString ClassMember::GetName() const{
     return name;

@@ -101,7 +101,8 @@ CCString::operator[](uint32 index) const{
 }
 
 bool CCString::operator==(const CCString &s) const{
-	return s.array == array;
+	return ZeroTerminatedArray<const char8>::isSameAs(s.GetList());
+//	return s.array == array;
 }
 
 

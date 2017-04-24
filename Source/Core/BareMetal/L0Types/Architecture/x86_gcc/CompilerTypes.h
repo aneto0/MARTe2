@@ -67,6 +67,10 @@ typedef uint32      uintp;
  1024 has been used to avoid alignment problems. */
 #define msizeof(type,field) sizeof(((type *)1024)->field)
 
+/** A tool to find the type of class/structures fields.
+ 1024 has been used to avoid alignment problems. */
+#define memberOf(type,field) ((type *)1024)->field
+
 #define HANDLE void *
 
 #define dll_import

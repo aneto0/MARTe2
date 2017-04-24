@@ -211,7 +211,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
             DynamicCString nextToken;
 
             CCString toTokenize(path);
-            toTokenize = StringHelper::TokenizeByChars(toTokenize, CCString("."), token);
+            toTokenize = StringHelper::Tokenize(toTokenize, CCString("."), CCString("."), token);
 
             while ((token[0] != '\0') && (ok)) {
                 ok = (token.GetSize() > 0u);
@@ -226,7 +226,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     }
                     // take the next token
 
-                    toTokenize = StringHelper::TokenizeByChars(toTokenize, CCString("."), nextToken);
+                    toTokenize = StringHelper::Tokenize(toTokenize, CCString("."), CCString("."), nextToken);
 
                     if (found) {
                         currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());

@@ -37,6 +37,7 @@
 #include "StaticCString.h"
 #include "ErrorType.h"
 #include "MemoryCheck.h"
+#include "ClassMember.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -204,7 +205,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 	 */
     T *x ;
     // build a memory block made with pointers pointing to the next pointer...
-    const uint32 NS = 12;
+    const uint32 NS = 4;
     void *memory[NS];
     int i;
     for (i=0;i<(NS-1);i++){
@@ -218,12 +219,18 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
     AnyType at(*x);
 
     if (deref.GetSize() > 0){
-    	if (deref == "*"){
-    		ok = at.Dereference(0);
-            printf("*(%-24s) ",orig.GetList());
-    	} else {
-    		ok = at.Dereference(deref);
-            printf("(%-20s).%s ",orig.GetList(),deref.GetList());
+        printf("(%-24s)%s",orig.GetList(),deref.GetList());
+
+    	while ((deref.GetSize()>0) && (ok)){
+    		DynamicCString token;
+        	deref = StringHelper::Tokenize(deref, CCString("*."),CCString(". "),token);
+        	if (token.GetSize() > 0){
+            	if (token == CCString("*")){
+            		ok = at.Dereference(0);
+            	} else {
+            		ok = at.Dereference(token);
+            	}
+        	}
     	}
     } else {
         printf("%-26s ",orig.GetList());
@@ -257,14 +264,14 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 
 struct pippone{
 
-    int pillo;
-    int pollo;
+    int32 pillo;
+    int32 pollo;
 };
 
 struct pippone2{
 
-    int pillo[32];
-    int pollo;
+    int32 pillo[32];
+    int32 pollo;
 };
 
 
@@ -293,6 +300,8 @@ void testAT(){
 
     TEST(uint32*);
     TEST2(uint32*,*);
+    TEST2(uint32*,**);
+    TEST2(uint32*,***);
 
     TEST(uint32 const *);
     TEST(uint32 *const);
@@ -304,8 +313,17 @@ void testAT(){
     TEST(uint32** const *);
     TEST(uint32 const * const * const * const * const );
     TEST2(uint32 const * const * const * const * const,* );
+    TEST2(uint32 const * const * const * const * const,** );
+    TEST2(uint32 const * const * const * const * const,*** );
+    TEST2(uint32 const * const * const * const * const,**** );
+    TEST2(uint32 const * const * const * const * const,***** );
     TEST(uint32******);
     TEST2(uint32******,*);
+    TEST2(uint32******,**);
+    TEST2(uint32******,***);
+    TEST2(uint32******,****);
+    TEST2(uint32******,*****);
+    TEST2(uint32******,******);
     TEST(uint32[2]);
     TEST(uint32[21]);
     TEST(uint32[128]);
@@ -328,17 +346,46 @@ void testAT(){
     TEST(Matrix<const float>);
     TEST(const Matrix<uint3>);
     TEST(Vector<int32>);
+    TEST2(Vector<int32>,*);
+    TEST2(Vector<int32>,**);
     TEST(Vector<int32 *>);
     TEST(Vector<int32> * const );
 
-
     TEST(pippone);
+    TEST2(pippone,.pillo);
+    TEST2(pippone,.pollo);
     TEST(const pippone2 *);
 
 }
 
-}
 
+/**************************************/
+
+class ClassMemberRegister{
+
+public:
+
+	template <class  Tmember>
+	ClassMemberRegister(ClassRegistryItem * cri,Tmember &member, CCString methodName, uint64 index, uint32 size){
+	    if (cri != NULL_PTR(ClassRegistryItem * )){
+	        cri->AddMember(new ClassMember(&member, methodName, index));
+	    }
+	}
+
+};
+
+#define CLASS_MEMBER_REGISTER(className, memberName)\
+		ClassMemberRegister  className ## _ ## memberName ## _ ## CMR ( ClassRegistryItem::Instance<className>(),memberOf(className, memberName),#memberName, indexof(className, memberName),msizeof(className, memberName) );
+
+
+CLASS_MEMBER_REGISTER(pippone,pillo)
+CLASS_MEMBER_REGISTER(pippone,pollo)
+
+
+/**************************************/
+
+
+}
 
 int pluto;
 

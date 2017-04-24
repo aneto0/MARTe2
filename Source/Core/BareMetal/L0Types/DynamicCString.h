@@ -69,6 +69,11 @@ public:
      */
     inline operator CCString() const;
 
+    /**
+     * TODO
+     */
+    inline bool operator==(const CCString &s) const;
+
 };
 
 
@@ -89,6 +94,10 @@ DynamicCString::DynamicCString (char8 const * const &s):DynamicZeroTerminatedArr
 
 DynamicCString::operator CCString() const{
     return CCString(GetList());
+}
+
+bool DynamicCString::operator==(const CCString &s) const{
+	return isSameAs(s.GetList());
 }
 
 }

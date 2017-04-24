@@ -83,6 +83,7 @@ DLL_API int32 Compare(CCString  const string1, CCString  const string2);
  */
 DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uint32 size);
 
+#if 0
 /**
  * @brief Get the token using characters as delimiters.
  * @param[in] string is the string to tokenize.
@@ -99,20 +100,22 @@ template <uint32 sz>
 inline bool TokenizeByChars(CCString  const string, CCString  const delimiter,StaticCString<sz> result){
     return TokenizeByChars(string,delimiter,result,sz);
 }
+#endif
 
 /**
  * @brief Get the token using characters as delimiters.
  * @param[in] string is the string to tokenize.
- * @param[in] delimiter contains character delimiters.
- * @param[in] resultStorageSize is the maximum storage size for result
- * @param[out] result is the substring between delimiters.
+ * @param[in] delimiterd contains character delimiters.
+ * @param[in] skip contains characters not to be included in token
+ * @param[out] token is the substring between delimiters (including delimeters if not in skip).
  * @return a pointer to the next position after the delimiter for a successive tokenize operation or
  * the end of the string if terminator is not found. It returns NULL if at least one of the
  * arguments is NULL.
  */
-DLL_API CCString  TokenizeByChars(CCString  const string, CCString  const delimiter,DynamicCString result);
+//DLL_API CCString  Tokenize(CCString  const string, CCString  const delimiter,DynamicCString & result);
+DLL_API CCString  Tokenize(CCString  const string, CCString const delimiters, CCString const skip, DynamicCString &token);
 
-
+#if 0
 /**
  * @brief Get the token using a string as delimiter.
  * @param[in] string is the string to tokenize.
@@ -121,6 +124,10 @@ DLL_API CCString  TokenizeByChars(CCString  const string, CCString  const delimi
  * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
  */
 DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,CString  const result,uint32 resultStorageSize);
+#endif
+
+/** TODO */
+DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,DynamicCString & result);
 
 /**
  * @brief Returns the index position of the first character in string2 found in string1 (e.g. "abcde" "12d" returns 3).

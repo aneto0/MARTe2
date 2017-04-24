@@ -123,6 +123,13 @@ public:
      */
     inline bool Remove(uint32 characters);
 
+    /**
+     * @brief Checks if the input \a arrayIn has the same content as the array
+     * @details This function allows implementing operator==
+     * @param[in] arrayIn is the array to be compared
+     * @return true if \a arrayIn is the same.
+     */
+    inline bool isSameAs(const T *arrayIn) const;
 protected:
 
     /**
@@ -278,6 +285,11 @@ bool DynamicZeroTerminatedArray<T,granularity>::Remove(uint32 characters){
 	}
 
 	return (characters == 0);
+}
+
+template<typename T,uint32 granularity>
+bool DynamicZeroTerminatedArray<T,granularity>::isSameAs(const T *arrayIn) const {
+    return ZeroTerminatedArray<T>::isSameAs(arrayIn);
 }
 
 
