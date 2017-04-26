@@ -52,8 +52,8 @@ public:
      * @brief templated constructor
      * offset is the offset of the member with respect to the start of the class memory
      */
-    template <class Tmember>
-    ClassMember(Tmember * member,CCString nameIn,uint32 offsetIn);
+    template <class T>
+    ClassMember(T member,CCString nameIn,uint32 offsetIn);
 
     /**
      * @brief name of the method
@@ -95,25 +95,13 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#if 0
-template <class T,struct type>
-ClassMember::ClassMember(type & member,CCString nameIn,uint32 offsetIn): vd(member){
-    ClassRegistryItem * cri = ClassRegistryItem::Instance<T>();
-    if (cri != NULL_PTR(ClassRegistryItem * )){
-        cri->AddMember(this);
-    }
+template <class T>
+ClassMember::ClassMember(T member,CCString nameIn,uint32 offsetIn): vd(member){
     name = nameIn;
     offset = offsetIn;
-}
-#else
-template <class Tmember>
-ClassMember::ClassMember(Tmember * member,CCString nameIn,uint32 offsetIn): vd(member){
-    name = nameIn;
-    offset = offsetIn;
-}
+	printf("zzzz %0x\n",vd.GetFullTypeDescriptor().all);
 
-#endif
-
+}
 
 CCString ClassMember::GetName() const{
     return name;
@@ -121,9 +109,7 @@ CCString ClassMember::GetName() const{
 
 uint32 ClassMember::GetOffset() const{
     return offset;
-
 }
-
 
 const VariableDescriptor &ClassMember::GetDescriptor() const{
     return vd;

@@ -373,6 +373,7 @@ public:
 #endif
 };
 
+#if 0
 
 /**
  * An array
@@ -480,7 +481,31 @@ extern const TypeDescriptor ConstVoidPointer;
  * Describes any unknown entity where the knowledge is delegate to a further TypeDescriptor
  */
 extern const TypeDescriptor DelegatedType;
+#else
 
+#define Character8Bit TypeDescriptor (false, Char, 8u)
+#define Float32Bit TypeDescriptor (false, Float, 32u)
+#define Float64Bit TypeDescriptor (false, Float, 64u)
+#define Float128Bit TypeDescriptor (false, Float, 128u)
+#define VoidType TypeDescriptor (false, Void, 0u)
+#define SignedInteger8Bit TypeDescriptor (false, SignedInteger, 8u)
+#define UnsignedInteger8Bit TypeDescriptor (false, UnsignedInteger, 8u)
+#define SignedInteger16Bit TypeDescriptor (false, SignedInteger, 16u)
+#define UnsignedInteger16Bit TypeDescriptor (false, UnsignedInteger, 16u)
+#define SignedInteger32Bit TypeDescriptor (false, SignedInteger, 32u)
+#define UnsignedInteger32Bit TypeDescriptor (false, UnsignedInteger, 32u)
+#define SignedInteger64Bit TypeDescriptor (false, SignedInteger, 64u)
+#define UnsignedInteger64Bit TypeDescriptor (false, UnsignedInteger, 64u)
+#define ConstCharString TypeDescriptor (true, Char, Size8bit,ZeroTermArray,  1)
+#define CharString TypeDescriptor (false,  Char, Size8bit,ZeroTermArray,  1)
+#define DynamicCharString TypeDescriptor (false,  Char, Size8bit,DynamicZeroTermArray, 1)
+#define StaticCharString TypeDescriptor (false,  Char, Size8bit,StaticZeroTermArray, 1)
+#define StructuredDataInterfaceType TypeDescriptor (false, StructuredDataInterface)
+#define VoidPointer TypeDescriptor (false, Void, Size8bit,PointerArray,0)
+#define ConstVoidPointer TypeDescriptor (false, Void, Size8bit,ConstPointerArray,0)
+#define DelegatedType TypeDescriptor (false,Delegated,SizeUnknown,SizedCArray,1)
+
+#endif
 
 
 /*---------------------------------------------------------------------------*/

@@ -217,6 +217,8 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 		pointer2Variable = newPointer2Variable;
 
 		variableDescriptor = cm->GetDescriptor();
+//		printf("xxxx %0x\n",variableDescriptor.GetFullTypeDescriptor().all);
+//		printf("xxxx %0x\n",cm->GetDescriptor().GetFullTypeDescriptor().all);
 	}
 
 	return ret;

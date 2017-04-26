@@ -150,7 +150,7 @@ void printType(const AnyType &at){
 
 }
 
-
+#if 0
 template <class T>
 void testT(CCString orig){
 
@@ -191,7 +191,7 @@ void testT(CCString orig){
     	etl++;
     }
 }
-
+#endif
 
 template <class T>
 ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
@@ -217,13 +217,14 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
     x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
 
     AnyType at(*x);
+//	printf("kkkkk %0x\n",at.GetFullVariableDescriptor().GetFullTypeDescriptor().all);
 
     if (deref.GetSize() > 0){
         printf("(%-24s)%s",orig.GetList(),deref.GetList());
 
     	while ((deref.GetSize()>0) && (ok)){
     		DynamicCString token;
-        	deref = StringHelper::Tokenize(deref, CCString("*."),CCString(". "),token);
+        	deref = StringHelper::Tokenize(deref,token, CCString("*."),CCString(". "),true);
         	if (token.GetSize() > 0){
             	if (token == CCString("*")){
             		ok = at.Dereference(0);
@@ -260,18 +261,20 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 }
 
 
-
+struct pippone2;
 
 struct pippone{
 
     int32 pillo;
-    int32 pollo;
+    double pollo;
+    pippone2 *pp;
 };
 
 struct pippone2{
 
     int32 pillo[32];
-    int32 pollo;
+    pippone pollo;
+
 };
 
 
@@ -354,6 +357,9 @@ void testAT(){
     TEST(pippone);
     TEST2(pippone,.pillo);
     TEST2(pippone,.pollo);
+    TEST2(pippone,.pp);
+    TEST2(pippone,.pp*);
+    TEST2(pippone,.pp*.pollo);
     TEST(const pippone2 *);
 
 }
@@ -380,6 +386,9 @@ public:
 
 CLASS_MEMBER_REGISTER(pippone,pillo)
 CLASS_MEMBER_REGISTER(pippone,pollo)
+CLASS_MEMBER_REGISTER(pippone,pp)
+CLASS_MEMBER_REGISTER(pippone2,pillo)
+CLASS_MEMBER_REGISTER(pippone2,pollo)
 
 
 /**************************************/

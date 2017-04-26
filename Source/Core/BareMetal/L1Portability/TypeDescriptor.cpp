@@ -216,7 +216,7 @@ uint32 TypeDescriptor::Size()const{
 	return size;
 }
 
-
+#if 0
 
 const TypeDescriptor Character8Bit(false, Char, 8u);
 const TypeDescriptor Float32Bit(false, Float, 32u);
@@ -240,5 +240,5 @@ const TypeDescriptor VoidPointer(false, Void, Size8bit,PointerArray,0);
 const TypeDescriptor ConstVoidPointer(false, Void, Size8bit,ConstPointerArray,0);
 const TypeDescriptor DelegatedType(false,Delegated,SizeUnknown,SizedCArray,1);
 
-
+#endif
 }
