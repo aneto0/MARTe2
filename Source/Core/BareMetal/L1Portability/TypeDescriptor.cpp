@@ -33,6 +33,7 @@
 #include "StringHelper.h"
 #include "Vector.h"
 #include "Matrix.h"
+#include "ClassRegistryIndex.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -52,9 +53,6 @@ TypeDescriptor::TypeDescriptor() {
     type             = Void;
 }
 
-TypeDescriptor::TypeDescriptor(const uint32 x) {
-    all = x;
-}
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,const ComplexSubType 	subType){
     dataIsConstant   = isConstantIn;
@@ -144,14 +142,10 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,const uint32  &structured
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-//    bool ret = ((all | (0x0002u)) == (typeDescriptor.all | (0x0002u)));
-//    return ret;
     return all == typeDescriptor.all;
 }
 
 bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
-//    bool ret = ((all | (0x0002u)) != (typeDescriptor.all | (0x0002u)));
-//    return ret;
     return all == typeDescriptor.all;
 }
 
@@ -160,7 +154,9 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
 uint32 TypeDescriptor::Size()const{
 	uint32 size = 0;
 	if (isStructuredData){
-		return 0; // not supported yet
+   		ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(*this);
+        if (cri != NULL) return cri->GetSizeOfClass();
+        else return 0;
 	} else {
 	    if (IsBitType()){
 			uint32 totalBitSpan = this->numberOfBits + this->bitOffset;

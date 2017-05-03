@@ -64,7 +64,7 @@ public:
     /**
      * @brief Default constructor
      */
-    StaticList();
+    StaticList(uint32 startSize=0, uint32 maxSize=0);
 
     /**
      * @see StaticListHolder::GetElementSize()
@@ -153,8 +153,8 @@ private:
 namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity>
-StaticList<elementType, listAllocationGranularity>::StaticList() :
-        slh(sizeof(elementType), listAllocationGranularity) {
+StaticList<elementType, listAllocationGranularity>::StaticList(uint32 startSize=0, uint32 maxSize=0) :
+        slh(sizeof(elementType), listAllocationGranularity,startSize,maxSize) {
 }
 
 template<typename elementType, uint32 listAllocationGranularity>

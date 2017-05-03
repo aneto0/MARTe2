@@ -128,6 +128,9 @@ public:
      * @brief Constructor parameterized by element type size and allocation granularity
      * @param[in] listElementSize The value of the element type size for this instance
      * @param[in] listAllocationGranularity The value of the allocation granularity for this instance
+     * @param[in] listInitialMinimumCapacity The initial value of the list capacity
+     * @param[in] listAbsoluteMaximumCapacity The max value of the list capacity
+     * 			(multiple of listAllocationGranularity rounded down) 0 means unlimited
      * @pre true
      * @post
      *   GetElementSize() == listElementSize &&
@@ -137,7 +140,9 @@ public:
      *   GetCapacity() == 0
      */
     StaticListHolder(const uint32 listElementSize,
-                     const uint32 listAllocationGranularity);
+                     const uint32 listAllocationGranularity,
+                     const uint32 listInitialMinimumCapacity = 0,
+                     const uint32 listAbsoluteMaximumCapacity = 0);
 
     /**
      * @brief Destructor
@@ -270,11 +275,14 @@ private:
 
     /**
      * @brief Increases the capacity of the list
+     * @param[in] minimumSize - the desired minimum size for the list.
+     * The actual size will be a larger value, multiple of listAllocationGranularity.
+     * if minimumSize=0 then the list is simply increased to next granularity step
      * @pre GetCapacity() + GetAllocationGranularity() <= GetMaxCapacity()
      * @post GetCapacity() == GetCapacity()'old + GetAllocationGranularity()
      * @return false if precondition is broken or memory allocation fails
      */
-    bool IncreaseCapacity(void);
+    bool IncreaseCapacity(uint32 minimumSize=0);
 
     /**
      * Stores the ElementSize

@@ -193,8 +193,6 @@ int32 CompareN(CCString  const string1, CCString  const string2, const uint32 si
     return ret;
 }
 
-
-
 CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const delimiters, CCString const skip,bool keepTerm){
 
     CCString ret;
@@ -202,29 +200,6 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
     if ((!string.IsNullPtr()) && (!delimiters.IsNullPtr()) ) {
         uint32 inputIndex = 0;
 
-#if 0
-        bool exitCondition=false;
-
-        // next character to be processed;
-        char8 c = string[0];
-
-        do {
-        	if (c != 0){
-        		bool exitCondition =  SearchChar(delimiters,c).IsNullPtr();
-            	if (!exitCondition || !keepTerm ){
-            		bool isSkip =  SearchChar(skip,c).IsNullPtr();
-            		if (!isSkip){
-            			token.Append(c);
-            		}
-                    inputIndex++;
-                    c = string[inputIndex];
-            	}
-        	} else {
-        		exitCondition = true;
-        	}
-        } while (!exitCondition);
-
-#else
         // next character to be processed;
         char8 c = string[0];
 
@@ -239,7 +214,7 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
         	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
             inputIndex++;
         }
-#endif
+
         ret = (string.GetList() + inputIndex);
     }
     else {
@@ -248,43 +223,7 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
     return ret;
 }
 
-#if 0
-CCString TokenizeByString(CCString const string,CCString const terminator,CString const result,uint32 resultStorageSize) {
 
-    CCString ret;
-    uint32 resultStorageLeft = resultStorageSize-1;
-    uint32 terminatorSize = terminator.GetSize();
-
-    if ((!string.IsNullPtr()) && (!terminator.IsNullPtr()) && (!result.IsNullPtr())) {
-        uint32 inputIndex = 0;
-        uint32 outputIndex = 0;
-
-        // next character to be processed;
-        CCString stringP(string.GetList());
-        char8 c = string[0];
-
-        while ((c!=0) && (CompareN(terminator,stringP,terminatorSize) != 0) && (resultStorageLeft > 0)){
-            (result.GetList())[outputIndex] = c;
-            outputIndex++;
-            inputIndex++;
-            c = string[inputIndex];
-            stringP = CCString (string.GetList()+inputIndex);
-        }
-        // skip separator - too save time avoid calling CompareN - check other reason to have terminatred previous loop
-        if ((c!=0) &&  (resultStorageLeft > 0)){
-            inputIndex+= terminatorSize;
-        }
-
-        (result.GetList())[outputIndex] = 0;
-        ret = CCString (string.GetList()+inputIndex);
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
-    }
-    return ret;
-
-}
-#endif
 CCString TokenizeByString(CCString const string,CCString const terminator,DynamicCString & result) {
 
     CCString ret;

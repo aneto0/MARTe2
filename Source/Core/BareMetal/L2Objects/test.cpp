@@ -38,6 +38,7 @@
 #include "ErrorType.h"
 #include "MemoryCheck.h"
 #include "ClassMember.h"
+#include "TypeDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -57,7 +58,12 @@ void printTypeDescriptor(const TypeDescriptor &td){
     	consts = "const ";
     }
     if (td.isStructuredData){
-        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
+        printf ("%s",consts);
+//        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
+   		ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(td);
+        if (cri != NULL) printf ("%s ",cri->GetClassName());
+        else printf ("unknown_struct_code(%i) ",(int)td.structuredDataIdCode);
+
     } else {
     	if (td.IsComplexType()){
             printf ("%s%s ",consts,BasicTypeName(td.type,td.complexType));
@@ -149,49 +155,6 @@ void printType(const AnyType &at){
     printf(" size = %Li\n",vd.GetSize());
 
 }
-
-#if 0
-template <class T>
-void testT(CCString orig){
-
-	printf("------------------\n");
-
-	/*
-	 * used as a pointer to avoid allocating unnecessary stack memory
-	 */
-    T *x ;
-    void *pappa[4] = /*{NULL,NULL,NULL,NULL};*/{&pappa[1],&pappa[2],&pappa[3],NULL};
-    /* assigned to a real pointer to avoid problems */
-    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&pappa));
-
-    AnyType at(*x);
-
-    bool sameAddress = (at.GetVariablePointer() == &pappa);
-    if (sameAddress) {
-    	printf("Address Ok :");
-    }
-    else {
-    	printf("(%08p-%08p) ",at.GetVariablePointer(),&pappa);
-    }
-
-    printf("%-26s ",orig.GetList());
-
-    printType(at);
-
-    ErrorManagement::ErrorType ret;
-    while (ret = at.Dereference()){
-        printType(at);
-    }
-
-    ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
-    while (!etl->name.IsNullPtr()){
-    	if ((etl->errorBitSet &  ret.format_as_integer)!= 0){
-    		printf("%s\n",etl->name);
-    	}
-    	etl++;
-    }
-}
-#endif
 
 template <class T>
 ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
@@ -360,6 +323,7 @@ void testAT(){
     TEST2(pippone,.pp);
     TEST2(pippone,.pp*);
     TEST2(pippone,.pp*.pollo);
+    TEST2(pippone,.pp*.pollo.pp);
     TEST(const pippone2 *);
 
 }
@@ -403,6 +367,7 @@ int main(int argc, char **argv){
 	int pippo;
 	float *x = (float *)0x123;
 
+    //printf("%0x\n",MARTe::TypeDescriptor(TDRANGE(type,MARTe::SignedInteger)    | TDRANGE(objectSize,MARTe::Size32bit)   | TDRANGE(arrayProperty, MARTe::SizedCArray_AP) | TDRANGE(arraySize, 1)).all);
 
 	printf ("%016p  %i\n", &pluto, MARTe::MemoryCheck::Check(&pluto));
 	printf ("%016p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo));

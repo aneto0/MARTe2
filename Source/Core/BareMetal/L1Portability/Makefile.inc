@@ -38,6 +38,7 @@ OBJSX=  FastPollingEventSem.x \
 		ProcessorType.x \
 		StaticListHolder.x \
 		StringHelper.x \
+		ClassRegistryIndex.x \
 		TypeDescriptor.x \
 		DynamicZeroTerminatedArray.x
 

@@ -89,7 +89,10 @@ class ClassRegistryDatabaseFindByTypeDescriptor: public SearchFilterT<ClassRegis
 	TypeDescriptor td;
 
 public:
-	ClassRegistryDatabaseFindByTypeDescriptor(const TypeDescriptor &tdIn): td (tdIn){}
+	ClassRegistryDatabaseFindByTypeDescriptor(const TypeDescriptor &tdIn): td (tdIn){
+		// omit this in the search
+		td.dataIsConstant = false;
+	}
 	bool Test(ClassRegistryItem *data){
 	    bool ret = (data != NULL);
 	    if (ret){

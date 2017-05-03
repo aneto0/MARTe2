@@ -46,7 +46,9 @@
 namespace MARTe {
 
 StaticListHolder::StaticListHolder(const uint32 listElementSize,
-                                   const uint32 listAllocationGranularity) :
+                                   const uint32 listAllocationGranularity,
+                                   const uint32 listInitialMinimumCapacity,
+                                   const uint32 listAbsoluteMaximumCapacity) :
         //Initializes the element size
         listElementSize_(listElementSize),
 
@@ -55,8 +57,11 @@ StaticListHolder::StaticListHolder(const uint32 listElementSize,
 
         //Calculates and initializes the maximum capacity
         maxListCapacity_(
+        		(listAbsoluteMaximumCapacity == 0) ?
                 ((TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
-                        / listElementSize_),
+                        / listElementSize_         :
+			    listAbsoluteMaximumCapacity
+                        ),
 
         //Initializes the pointer to the first byte of the array of elements
         allocatedMemory_(NULL_PTR(uint8 *)),
@@ -266,22 +271,35 @@ bool StaticListHolder::Extract(const uint32 position,
     return ret;
 }
 
-bool StaticListHolder::IncreaseCapacity(void) {
+bool StaticListHolder::IncreaseCapacity(uint32 minimumSize) {
     bool ret = true;
 
+    uint32 targetSize = 0;
+
+    // minimumSize = 0 --> just increase
+    if (minimumSize > 0){
+    	uint32 granules = minimumSize / listAllocationGranularity_;
+    	targetSize = granules * listAllocationGranularity_;
+    	if (targetSize < minimumSize){
+    		targetSize += listAllocationGranularity_;
+    	}
+    } else {
+    	targetSize = listCapacity_ + listAllocationGranularity_;
+    }
+
     //Checks the precondition
-    if ((listCapacity_ + listAllocationGranularity_) > maxListCapacity_) {
+    if (targetSize > maxListCapacity_) {
         ret = false;
     }
 
     //Allocates or reallocates the memory reserved for the array depending on current allocated memory
     if (ret) {
-        uint32 tempListAllocatedSize = listCapacity_ + listAllocationGranularity_;
+        //uint32 tempListAllocatedSize = listCapacity_ + listAllocationGranularity_;
         if (listCapacity_ == 0U) {
             //The array has not memory reserved, yet, so it allocates memory for it
-            allocatedMemory_ = static_cast<uint8 *>(HeapManager::Malloc(tempListAllocatedSize * listElementSize_));
+            allocatedMemory_ = static_cast<uint8 *>(HeapManager::Malloc(targetSize * listElementSize_));
             if (allocatedMemory_ != NULL_PTR(void *)) {
-                listCapacity_ = tempListAllocatedSize;
+                listCapacity_ = targetSize;
             }
             else {
                 //Implicit rollback of allocatedMemory_
@@ -291,9 +309,9 @@ bool StaticListHolder::IncreaseCapacity(void) {
         else { // { listAllocatedSize_ > 0U }
                //The array has already memory reserved, so it reallocates memory for it
             void *memoryPointer = allocatedMemory_;
-            allocatedMemory_ = static_cast<uint8 *>(HeapManager::Realloc(memoryPointer, tempListAllocatedSize * listElementSize_));
+            allocatedMemory_ = static_cast<uint8 *>(HeapManager::Realloc(memoryPointer, targetSize * listElementSize_));
             if (allocatedMemory_ != NULL_PTR(void *)) {
-                listCapacity_ = tempListAllocatedSize;
+                listCapacity_ = targetSize;
             }
             else {
                 //TODO Is it assured that memoryPointer is still pointing to a valid allocated memory?

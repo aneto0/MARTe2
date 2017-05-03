@@ -97,16 +97,7 @@ DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uin
 
 DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const delimiters, CCString const skip,bool keepTerm=false);
 
-#if 0
-/**
- * @brief Get the token using a string as delimiter.
- * @param[in] string is the string to tokenize.
- * @param[in] terminator is the string delimiter.
- * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
- * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
- */
-DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,CString  const result,uint32 resultStorageSize);
-#endif
+//DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, ZeroTerminatedArray<CCString> const delimiters, ZeroTerminatedArray<CCString> const skip,bool keepTerm=false);
 
 /** TODO */
 DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,DynamicCString & result);

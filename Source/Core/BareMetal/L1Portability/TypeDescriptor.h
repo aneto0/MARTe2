@@ -2,7 +2,7 @@
  * @file TypeDescriptor.h
  * @brief Header file for class TypeDescriptor
  * @date 26/08/2015
- * @author Giuseppe Ferrò
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -45,13 +45,6 @@ namespace MARTe {
 
 
 /**
- * Class UUID for the Class Registry Database.
- * To be eliminated - redundant with TypeDescriptor
- */
-///typedef uint14 ClassUID;
-
-
-/**
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
  * or the remaining bits can be used to identify a specific basic type.
@@ -86,6 +79,79 @@ namespace MARTe {
  * type = complex....
  */
 
+
+/**
+ * Macros to build one field of the TypeDescriptor
+ */
+#define TYPE_DESCRIPTOR_RANGEFUN(name,length,start,numberType)\
+        BitRange<numberType, length, start> name ;
+
+/**
+ * Macros to build one field of the TypeDescriptor
+ */
+#define TYPE_DESCRIPTOR_BOOLFUN(name,start,numberType)\
+        BitBoolean<numberType, start> name ;
+
+
+/**
+ * Macros to create constants to help generate TypeDescriptor constants
+ */
+#define TYPE_DESCRIPTOR_RANGEDEF(name,length,start,numberType)\
+        const numberType TypeDescriptorRange_ ## name ## _Shift = start;
+
+/**
+ * Macros to create constants to help generate TypeDescriptor constants
+ */
+#define TYPE_DESCRIPTOR_BOOLDEF(name,start,numberType)\
+        const numberType TypeDescriptorRange_ ## name ## _Shift = start;
+
+/**
+ * Macros to create range specific TypeDescriptor constants
+ */
+#define TYPE_DESCRIPTOR_RANGE_CONST(rangename,name,value,numberType)\
+        const numberType TD ## name  = value << TypeDescriptorRange_ ## rangename ## _Shift;
+#define TDRANGE(rangename,value)  (value << MARTe::TypeDescriptorRange_ ## rangename ## _Shift)
+
+
+/**
+ * combines macros rangeFun and boolFun with a defined use pattern
+ * Allows creating and managing parallel definitions.
+ */
+#define TYPE_DESCRIPTOR_MACRO(rangeFun,boolFun,numberType)   \
+		boolFun (isStructuredData          , 0,numberType)   \
+	    boolFun (dataIsConstant            , 1,numberType)   \
+	    /*  For isStructuredData = true   */                 \
+	    rangeFun(structuredDataIdCode,30   , 2,numberType)   \
+	    /*  For isStructuredData = false   */                \
+	    rangeFun(type                , 3   , 2,numberType)   \
+	    /*  For type = complexType         */                \
+	    rangeFun(complexType         , 3   , 5,numberType)   \
+	    /*  For type = int uint float char (void)    */      \
+	    rangeFun(objectSize          , 3   , 5,numberType)   \
+	    /* For objectSize = 7 SizeBits && int or uint */     \
+	    rangeFun(bitOffset           , 6   ,10,numberType)   \
+	    rangeFun(numberOfBits        ,16   ,16,numberType)   \
+	    /* For objectSize<7 SizeBits && i/uint float char */ \
+	    rangeFun(arrayProperty       , 3   , 8,numberType)   \
+	    /* For arrayProperty sized */                        \
+	    rangeFun(arraySize           ,21   ,11,numberType)   \
+	    /* type = int,float,char For hasSize = false */      \
+	    rangeFun(arrayType           , 3   ,11,numberType)   \
+	    rangeFun(combinedArrayType   , 6   , 8,numberType)
+
+
+#define TYPE_DESCRIPTOR_TYPE uint32
+
+// defines all TypeDescriptoRange constants needed by TDRANGE macro functions
+TYPE_DESCRIPTOR_MACRO(TYPE_DESCRIPTOR_RANGEDEF, TYPE_DESCRIPTOR_BOOLDEF, TYPE_DESCRIPTOR_TYPE)
+
+// TDStructure
+TYPE_DESCRIPTOR_RANGE_CONST(isStructuredData,Structure,1, TYPE_DESCRIPTOR_TYPE )
+
+// TDConstant
+TYPE_DESCRIPTOR_RANGE_CONST(dataIsConstant,Constant,1, TYPE_DESCRIPTOR_TYPE )
+
+
 class DLL_API TypeDescriptor {
 public:
 
@@ -94,7 +160,9 @@ public:
      */
     /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
     union {
+    	TYPE_DESCRIPTOR_MACRO(TYPE_DESCRIPTOR_RANGEFUN, TYPE_DESCRIPTOR_BOOLFUN, TYPE_DESCRIPTOR_TYPE)
 
+#if 0
         /**
          * If true then the data is a structure or class and its definition
          * has to be found in the ObjectRegistryDatabase
@@ -229,6 +297,8 @@ public:
          * Fills all the memory area.
          */
         BitRange<uint32, 32u, 0u> all;
+#endif
+		TYPE_DESCRIPTOR_TYPE all;
     };
 
     TypeDescriptor();
@@ -237,7 +307,7 @@ public:
      * @param[in] x contains the type informations which must be stored into this memory area.
      * @post x == all
      */
-    TypeDescriptor(const uint32 x);
+    inline TypeDescriptor(const TYPE_DESCRIPTOR_TYPE x);
 
     /**
      * TODO
@@ -322,190 +392,33 @@ public:
      */
     uint32 Size() const;
 
-#if 0
-    /**
-     * @brief Retrieves the TypeDescriptor associated to the type name provided in input.
-     * @param[in] typeName is the type name input.
-     * @return the TypeDescriptor associated to \a typeName. If \a typeName is not matched returns InvalidType.
-     */
-    static TypeDescriptor GetTypeDescriptorFromTypeName(const char8 * const typeName);
-
-    /**
-     * @brief Retrieves the type name associated to the TypeDescriptor provided in input.
-     * @param[in] typeDescriptor is the TypeDescriptor input.
-     * @return the type name associated to \a typeDescriptor. If \a typeDescriptor is not matched returns NULL.
-     */
-    static const char8 *GetTypeNameFromTypeDescriptor(const TypeDescriptor &typeDescriptor);
-
-    /**
-     * @brief Provides direct access to the { name - TypeDescriptor } lookup table,
-     * returning the TypeDescriptor in the specified position.
-     * @details The { name - TypeDescriptor } lookup table is as follows: \n
-     * TypeDescriptor        |TypeName
-     * ----------------------|--------
-     * CharString            | "string"
-     * SignedInteger8Bit     | "int8"
-     * SignedInteger16Bit    | "int16"
-     * SignedInteger32Bit    | "int32"
-     * SignedInteger64Bit    | "int64"
-     * UnsignedInteger8Bit   | "uint8"
-     * UnsignedInteger16Bit  | "uint16"
-     * UnsignedInteger32Bit  | "uint32"
-     * UnsignedInteger64Bit  | "uint64"
-     * Float32Bit            | "float32"
-     * Float64Bit            | "float64"
-     * Character8Bit         | "char8"
-     * VoidType              | "void"
-     * InvalidType           | NULL
-     * @param[in] index is the position inside the lookup table
-     * @return the TypeDescriptor in the \a index position inside the lookup table.
-     */
-    static TypeDescriptor GetTypeDescriptorFromStaticTable(const uint32 index);
-
-    /**
-     * @brief Provides direct access to the type { name - TypeDescriptor } lookup table
-     * (see GetTypeDescriptorFromStaticTable), returning the type name in the specified position.
-     * @param[in] index is the position inside the lookup table
-     * @return the type name in the \a index position inside the lookup table.
-     */
-    static const char8 *GetTypeNameFromStaticTable(const uint32 index);
-
-#endif
 };
 
-#if 0
-
-/**
- * An array
- */
-extern const TypeDescriptor Character8Bit;
 
 
-/**
- * 32 bit float descriptor.
- */
-extern const TypeDescriptor Float32Bit;
+#define  Character8Bit               TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
+#define  Float32Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  Float64Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  VoidType                    TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,SizeUnknown) | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  SignedInteger8Bit           TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  SignedInteger16Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  SignedInteger32Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  SignedInteger64Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  UnsignedInteger8Bit         TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  UnsignedInteger16Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+#define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
 
-/**
- * 64 bit float descriptor.
- */
-extern const TypeDescriptor Float64Bit;
-
-/**
- * 128 bit Float descriptor
- */
-extern const TypeDescriptor Float128Bit;
-
-/**
- * Void descriptor - unknown/invalid -
- */
-extern const TypeDescriptor VoidType;
-
-/**
- * 8 bit signed integer descriptor
- */
-extern const TypeDescriptor SignedInteger8Bit;
-
-/**
- * 8 bit unsigned integer descriptor
- */
-extern const TypeDescriptor UnsignedInteger8Bit;
-
-/**
- * 16 bit signed integer descriptor
- */
-extern const TypeDescriptor SignedInteger16Bit;
-
-/**
- * 16 bit unsigned integer descriptor
- */
-extern const TypeDescriptor UnsignedInteger16Bit;
-
-/**
- * 32 bit signed integer descriptor
- */
-extern const TypeDescriptor SignedInteger32Bit;
-
-/**
- * 32 bit unsigned integer descriptor
- */
-extern const TypeDescriptor UnsignedInteger32Bit;
-
-/**
- * 64 bit signed integer descriptor
- */
-extern const TypeDescriptor SignedInteger64Bit;
-
-/**
- * 64 bit unsigned integer descriptor
- */
-extern const TypeDescriptor UnsignedInteger64Bit;
-
-/**
- * CCString  descriptor
- */
-extern const TypeDescriptor ConstCharString;
-
-/**
- * CString descriptor
- */
-extern const TypeDescriptor CharString;
-
-/**
- *  Dynamic String descriptor char * = malloc
- */
-extern const TypeDescriptor DynamicCharString;
-
-/**
- *  Static char String descriptor char[1]
- */
-extern const TypeDescriptor StaticCharString;
-
-/**
- * ConfigurationDatabase node
- */
-extern const TypeDescriptor StructuredDataInterfaceType;
-
-/**
- * Pointer descriptor
- */
-extern const TypeDescriptor VoidPointer;
-
-/**
- * Pointer descriptor
- */
-extern const TypeDescriptor ConstVoidPointer;
+#define  ConstCharString             TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(arraySize,1) | TDRANGE(dataIsConstant,1) )
+#define  CharString                  TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(arraySize,1))
+#define  DynamicCharString           TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) | TDRANGE(arraySize,1))
+#define  StaticCharString            TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  | TDRANGE(arraySize,1))
+#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray) )
+#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
+#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
+#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown)| TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
 
 
-/**
- * Describes any unknown entity where the knowledge is delegate to a further TypeDescriptor
- */
-extern const TypeDescriptor DelegatedType;
-#else
-
-#define Character8Bit TypeDescriptor (false, Char, 8u)
-#define Float32Bit TypeDescriptor (false, Float, 32u)
-#define Float64Bit TypeDescriptor (false, Float, 64u)
-#define Float128Bit TypeDescriptor (false, Float, 128u)
-#define VoidType TypeDescriptor (false, Void, 0u)
-#define SignedInteger8Bit TypeDescriptor (false, SignedInteger, 8u)
-#define UnsignedInteger8Bit TypeDescriptor (false, UnsignedInteger, 8u)
-#define SignedInteger16Bit TypeDescriptor (false, SignedInteger, 16u)
-#define UnsignedInteger16Bit TypeDescriptor (false, UnsignedInteger, 16u)
-#define SignedInteger32Bit TypeDescriptor (false, SignedInteger, 32u)
-#define UnsignedInteger32Bit TypeDescriptor (false, UnsignedInteger, 32u)
-#define SignedInteger64Bit TypeDescriptor (false, SignedInteger, 64u)
-#define UnsignedInteger64Bit TypeDescriptor (false, UnsignedInteger, 64u)
-#define ConstCharString TypeDescriptor (true, Char, Size8bit,ZeroTermArray,  1)
-#define CharString TypeDescriptor (false,  Char, Size8bit,ZeroTermArray,  1)
-#define DynamicCharString TypeDescriptor (false,  Char, Size8bit,DynamicZeroTermArray, 1)
-#define StaticCharString TypeDescriptor (false,  Char, Size8bit,StaticZeroTermArray, 1)
-#define StructuredDataInterfaceType TypeDescriptor (false, StructuredDataInterface)
-#define VoidPointer TypeDescriptor (false, Void, Size8bit,PointerArray,0)
-#define ConstVoidPointer TypeDescriptor (false, Void, Size8bit,ConstPointerArray,0)
-#define DelegatedType TypeDescriptor (false,Delegated,SizeUnknown,SizedCArray,1)
-
-#endif
 
 
 /*---------------------------------------------------------------------------*/
@@ -519,6 +432,10 @@ bool TypeDescriptor::IsBitType() const {
 bool TypeDescriptor::IsComplexType() const {
     return (type ==  ComplexType );
 };
+
+TypeDescriptor::TypeDescriptor(const uint32 x) {
+    all = x;
+}
 
 }
 
