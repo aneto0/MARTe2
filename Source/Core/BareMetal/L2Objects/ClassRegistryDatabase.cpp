@@ -60,112 +60,64 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     return instance;
 }
 
-ClassRegistryDatabase::ClassRegistryDatabase() {
-
+ClassRegistryDatabase::ClassRegistryDatabase():classDatabase(ClassRegistryIndex::Instance()) {
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
 
 }
 
-void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
-    if (p != NULL) {
-
-        if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
-        }
-
-        // add at the end
-        classDatabase.ListAdd(p);
-
-        UnLock();
-    }
-}
-
-/**************************************************************/
-
-// TODO
-class ClassRegistryDatabaseFindByTypeDescriptor: public SearchFilterT<ClassRegistryItem>{
-	TypeDescriptor td;
-
-public:
-	ClassRegistryDatabaseFindByTypeDescriptor(const TypeDescriptor &tdIn): td (tdIn){
-		// omit this in the search
-		td.dataIsConstant = false;
-	}
-	bool Test(ClassRegistryItem *data){
-	    bool ret = (data != NULL);
-	    if (ret){
-	    	ret = (data->GetTypeDescriptor() == td);
-	    }
-	    return ret;
-	}
-};
-
-// TODO
-class ClassRegistryDatabaseFindByTypeId: public SearchFilterT<ClassRegistryItem>{
-	CCString const typeidName;
-
-public:
-	ClassRegistryDatabaseFindByTypeId(CCString const typeidNameIn): typeidName(typeidNameIn){}
-	bool Test(ClassRegistryItem *data){
-	    bool ret = (data != NULL);
-	    if (ret){
-	    	ret =  (StringHelper::Compare(data->GetTypeidName(), typeidName) == 0) ;
-	    }
-	    return ret;
-	}
-};
-
-// TODO
-class ClassRegistryDatabaseFindByClassName: public SearchFilterT<ClassRegistryItem>{
-	CCString const className;
-
-public:
-	ClassRegistryDatabaseFindByClassName(CCString const classNameIn): className(classNameIn){}
-	bool Test(ClassRegistryItem *data){
-	    bool ret = (data != NULL);
-	    if (ret){
-	    	ret =  (StringHelper::Compare(data->GetClassName(), className) == 0) ;
-	    }
-	    return ret;
-	}
-};
-
-
-/**************************************************************/
-
-ClassRegistryItem *ClassRegistryDatabase::Find( SearchFilterT<ClassRegistryItem> &  finder) {
-	ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
-	if (!Lock()) {
-		REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
-	} else {
-		registryItem = classDatabase.ListSearch(&finder);
-
-		UnLock();
-	}
-	return registryItem;
-}
-
-
-ClassRegistryItem *ClassRegistryDatabase::Find(const TypeDescriptor &targetTd) {
-	return Find(ClassRegistryDatabaseFindByTypeDescriptor( targetTd));
-}
-
 ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidName) {
-	return Find(ClassRegistryDatabaseFindByTypeId( typeidName));
+	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
+
+		uint32 numberOfRegisteredClasses = classDatabase->NumberOfRegisteredClasses();
+		uint32 index = 0;
+		while ((index < numberOfRegisteredClasses) && (cri == NULL_PTR(ClassRegistryItem *))){
+			ClassRegistryItem *critest = classDatabase->GetClassRegistryItem(index);
+			if (critest != NULL_PTR(ClassRegistryItem *)){
+				if (StringHelper::Compare(critest->GetTypeidName(),typeidName)==0){
+					cri = critest;
+				}
+			}
+			index++;
+		}
+
+	}
+	return cri;
 }
+
+ClassRegistryItem *ClassRegistryDatabase::FindClassName(CCString const className){
+	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
+
+		uint32 numberOfRegisteredClasses = classDatabase->NumberOfRegisteredClasses();
+		uint32 index = 0;
+		while ((index < numberOfRegisteredClasses) && (cri == NULL_PTR(ClassRegistryItem *))){
+			ClassRegistryItem *critest = classDatabase->GetClassRegistryItem(index);
+			if (critest != NULL_PTR(ClassRegistryItem *)){
+				if (StringHelper::Compare(critest->GetClassName(),className)==0){
+					cri = critest;
+				}
+			}
+			index++;
+		}
+	}
+	return cri;
+
+}
+
 
 ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 
 	// search full name
-	ClassRegistryItem *cri = Find(ClassRegistryDatabaseFindByClassName( className));
+	ClassRegistryItem *cri = FindClassName(className);
 	if (cri == NULL){
 
 		// search class within container container::class
 		CCString classOnlyPartName = StringHelper::SearchString(className, "::");
 		if (classOnlyPartName.GetSize() > 0){
-			cri = Find(ClassRegistryDatabaseFindByClassName(classOnlyPartName.GetList()+2));
+			cri = FindClassName(classOnlyPartName.GetList()+2);
 
 			// there was a container - search and load a dll with this name
 			if (cri == NULL){
@@ -189,7 +141,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 	            //If the dll was successfully opened than it is likely that more classes were registered
 	            //in the database. Search again.
 	            if (dllOpened) {
-	    			cri = Find(ClassRegistryDatabaseFindByClassName(classOnlyPartName.GetList()+2));
+	    			cri = FindClassName(classOnlyPartName.GetList()+2);
 
 	    			// if found store the dll object with the database - to be destroyed later
 	    			if (cri != NULL){
@@ -211,43 +163,34 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 
 
 uint32 ClassRegistryDatabase::GetSize() {
-    uint32 size = 0u;
-    if (Lock()) {
-        size = classDatabase.ListSize();
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
-    }
-    UnLock();
-    return size;
+	uint32 size = 0;
+	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
+		size = classDatabase->NumberOfRegisteredClasses();
+	}
+	return size;
 }
 
 const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
-    ClassRegistryItem *item = NULL_PTR(ClassRegistryItem *);
-    if (Lock()) {
-        item = classDatabase.ListPeek(idx);
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryDatabase: Failed FastLock()");
-    }
-    UnLock();
-    return item;
+	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
+		cri = classDatabase->GetClassRegistryItem(idx);
+	}
+    return cri;
 }
 
-CCString const ClassRegistryDatabase::GetClassName() const {
+ClassRegistryItem *ClassRegistryDatabase::Find(const TypeDescriptor &targetTd) {
+	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	if (targetTd.isStructuredData && (classDatabase != NULL_PTR(ClassRegistryIndex *))){
+		cri = classDatabase->GetClassRegistryItem(targetTd.structuredDataIdCode);
+	}
+    return cri;
+}
+
+
+CCString  ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
 
-void ClassRegistryDatabase::CleanUp() {
-    classDatabase.CleanUp();
-}
 
-bool ClassRegistryDatabase::Lock() {
-    return (mux.FastLock() == ErrorManagement::NoError);
-}
-
-void ClassRegistryDatabase::UnLock() {
-    mux.FastUnLock();
-}
 
 }

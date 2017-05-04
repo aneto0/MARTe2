@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryIndex.h"
+#include "GlobalObjectsDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,6 +42,27 @@
 
 namespace MARTe {
 
+ClassRegistryIndex::ClassRegistryIndex(){
+
+}
+
+ClassRegistryIndex::~ClassRegistryIndex(){
+
+}
+
+ClassRegistryIndex *ClassRegistryIndex::Instance() {
+    static ClassRegistryIndex *instance = NULL_PTR(ClassRegistryIndex *);
+    if (instance == NULL_PTR(ClassRegistryIndex *)) {
+        instance = new ClassRegistryIndex();
+        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 4u);
+    }
+    return instance;
+}
+
+CCString ClassRegistryIndex::GetClassName() const{
+	return "ClassRegistryIndex";
+
+}
 
 
 ClassRegistryBrief * ClassRegistryIndex::operator[] (uint32 classRegistrationNo){
@@ -82,6 +105,20 @@ ClassRegistryItem *  ClassRegistryIndex::GetClassRegistryItem (uint32 classRegis
 
 }
 
+uint32 ClassRegistryIndex::NumberOfRegisteredClasses(){
+	uint32 no = 0;
+	if (index.NumberOfUsedElements() > 0){
+		no += (index.NumberOfUsedElements()-1) << IndexBits;
+		ClassRegistryIndexCell *cric = index[index.NumberOfUsedElements() - 1];
+		if (cric != NULL_PTR(ClassRegistryIndexCell *)){
+			no += (cric->NumberOfUsedElements()-1);
+		} else {
+	        REPORT_ERROR(ErrorManagement::InternalSetupError, "ClassRegistryIndex: database error ");
+		}
+	}
+	return no;
+}
+
 uint32 ClassRegistryIndex::AllocateFreeSlots(){
 	uint32 value = 0;
 	if (index.NumberOfUsedElements() > 0){
@@ -115,12 +152,11 @@ uint32 ClassRegistryIndex::Add(ClassRegistryItem *criIn,uint32 size){
 	if (availableSize > 0){
 		ClassRegistryIndexCell *cric = index[index.NumberOfUsedElements() - 1];
 		if (cric != NULL){
-			ClassRegistryBrief * crb = &((*cric)[cric->NumberOfUsedElements() - 1]);
-			if (crb != NULL){
-				crb->sizeOfClass = size;
-				crb->cri = criIn;
-				no = index.NumberOfUsedElements() << IndexBits + cric->NumberOfUsedElements() - 1;
-			}
+			ClassRegistryBrief crb;
+			crb.sizeOfClass = size;
+			crb.cri = criIn;
+			cric->Add(crb);
+			no = (index.NumberOfUsedElements()-1) << IndexBits + (cric->NumberOfUsedElements() - 1);
 		}
 	}
 	return no;

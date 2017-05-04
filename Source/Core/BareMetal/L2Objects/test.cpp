@@ -37,8 +37,8 @@
 #include "StaticCString.h"
 #include "ErrorType.h"
 #include "MemoryCheck.h"
-#include "ClassMember.h"
 #include "TypeDescriptor.h"
+#include "CLASSMEMBERREGISTER.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -330,7 +330,7 @@ void testAT(){
 
 
 /**************************************/
-
+#if 0
 class ClassMemberRegister{
 
 public:
@@ -346,7 +346,7 @@ public:
 
 #define CLASS_MEMBER_REGISTER(className, memberName)\
 		ClassMemberRegister  className ## _ ## memberName ## _ ## CMR ( ClassRegistryItem::Instance<className>(),memberOf(className, memberName),#memberName, indexof(className, memberName),msizeof(className, memberName) );
-
+#endif
 
 CLASS_MEMBER_REGISTER(pippone,pillo)
 CLASS_MEMBER_REGISTER(pippone,pollo)

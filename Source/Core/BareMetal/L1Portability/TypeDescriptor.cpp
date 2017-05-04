@@ -154,9 +154,15 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
 uint32 TypeDescriptor::Size()const{
 	uint32 size = 0;
 	if (isStructuredData){
-   		ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(*this);
-        if (cri != NULL) return cri->GetSizeOfClass();
-        else return 0;
+		uint32 size = 0;
+		ClassRegistryIndex *cri = ClassRegistryIndex::Instance();
+		if (cri != NULL_PTR(ClassRegistryIndex *)){
+			ClassRegistryBrief *crb = (*cri)[structuredDataIdCode];
+			if (crb != NULL_PTR(ClassRegistryBrief *)){
+				size = crb->sizeOfClass;
+			}
+		}
+        return size;
 	} else {
 	    if (IsBitType()){
 			uint32 totalBitSpan = this->numberOfBits + this->bitOffset;

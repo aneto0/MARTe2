@@ -128,7 +128,7 @@ public:
      * @brief Returns "HeapDatabase".
      * @return "HeapDatabase".
      */
-    virtual CCString const GetClassName() const;
+    virtual CCString GetClassName() const;
 
 };
 
@@ -203,7 +203,7 @@ void HeapDatabase::UnLock() {
     mux.FastUnLock();
 }
 
-CCString const HeapDatabase::GetClassName() const {
+CCString  HeapDatabase::GetClassName() const {
     return "HeapDatabase";
 }
 

@@ -35,7 +35,7 @@
 #include "VariableDescriptor.h"
 #include "ClassRegistryItem.h"
 #include "ClassMethodCaller.h"
-#include "ClassRegistryDatabase.h"
+#include "ClassRegistryIndex.h"
 #include "ErrorManagement.h"
 #include "LoadableLibrary.h"
 #include "ObjectBuilder.h"
@@ -55,7 +55,6 @@ namespace MARTe {
 class Introspection;
 
 ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn):
-        LinkedListable(),
         classMethods() {
 
     numberOfInstances = 0;
@@ -68,11 +67,10 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn)
     classVersion = "";
     static uint32 classId = 0;
     typeDescriptor.isStructuredData = true;
-    typeDescriptor.structuredDataIdCode = classId++;
 
-    ClassRegistryDatabase* crd = ClassRegistryDatabase::Instance();
-    if (crd != NULL_PTR(ClassRegistryDatabase*)) {
-        crd->Add(this);
+    ClassRegistryIndex* cri = ClassRegistryIndex::Instance();
+    if (cri != NULL_PTR(ClassRegistryIndex*)) {
+        typeDescriptor.structuredDataIdCode = cri->Add(this,sizeOfClassIn);
     }
 }
 

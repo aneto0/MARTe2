@@ -37,6 +37,8 @@
 
 #include "GlobalObjectI.h"
 #include "SimpleStaticListT.h"
+#include "CCString.h"
+
 
 
 /*---------------------------------------------------------------------------*/
@@ -128,6 +130,13 @@ public:
     static ClassRegistryIndex *Instance();
 
     /**
+     * @brief Returns "ClassRegistryIndex"
+     * @return "ClassRegistryIndex".
+     */
+    virtual CCString GetClassName() const;
+
+
+    /**
      * @brief Destructor. Removes all the elements hold by the database.
      */
     virtual                  ~ClassRegistryIndex();
@@ -154,15 +163,30 @@ public:
     ClassRegistryItem * GetClassRegistryItem (uint32 classRegistrationNo);
 
     /**
-     * Adds one new ClassRegistryItem to the database.
+     * @brief Adds one new ClassRegistryItem to the database.
+     * @details This method should only be called by the ClassRegistryItem constructor.
+     * After adding the element to the database the ClassRegistryItem unique identifier value is set
+     * to the position at which it was added to the database.
      * Does not move memory, may allocate some.
      * The access is not protected as it is assumed to be called only
      * during initial initialisation of static objects.
+     * @param[in] cri the element to be added.
      * @return the index number of the object. Returns 0xFFFFFFFF in case of error
      */
-    uint32 Add(ClassRegistryItem *cri,uint32 size);
+    uint32 Add(ClassRegistryItem * const cri,uint32 size);
+
+    /**
+     * @return number of classes in database
+     */
+    uint32 NumberOfRegisteredClasses();
 
 private:
+
+    /**
+     * @brief private constructor: use Instance();
+     */
+    ClassRegistryIndex();
+
     /**
      * @brief Returns free slots at the current index. If zero adds a new
      * ClassRegistryIndexCell and returns its size

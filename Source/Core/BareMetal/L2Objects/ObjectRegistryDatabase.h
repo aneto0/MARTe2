@@ -77,7 +77,7 @@ public:
      * @see Object::GetClassName
      * @return "ObjectRegistryDatabase".
      */
-    virtual CCString const GetClassName() const;
+    virtual CCString  GetClassName() const;
 
 private:
     /**

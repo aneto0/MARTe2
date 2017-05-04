@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItem.h"
+#include "ClassRegistryIndex.h"
 #include "GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
 #include "StaticList.h"
@@ -68,14 +69,6 @@ public:
      * @brief Destructor. Removes all the elements hold by the database.
      */
     virtual                  ~ClassRegistryDatabase();
-    /**
-     * @brief Adds an element to the database.
-     * @details This method should only be called by the ClassRegistryItem constructor.
-     * After adding the element to the database the ClassRegistryItem unique identifier value is set
-     * to the position at which it was added to the database.
-     * @param[in] p the element to be added.
-     */
-    void                     Add(ClassRegistryItem * const p);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with name \a className.
@@ -120,24 +113,12 @@ public:
      * @brief Returns "ClassRegistryDatabase"
      * @return "ClassRegistryDatabase".
      */
-    virtual CCString const GetClassName() const;
+    virtual CCString  GetClassName() const;
 
-    /**
-     * @brief Cleanup the database.
-     */
-    void CleanUp();
+
 
 protected:
 
-    /**
-     * @brief Locks the internal spin-lock mutex semaphore.
-     */
-    bool Lock();
-
-    /**
-     * @brief Unlocks the internal spin-lock mutex semaphore.
-     */
-    void UnLock();
 
     /**
      * @brief Private Constructor.
@@ -148,22 +129,20 @@ protected:
 private:
 
     /**
-     * TODO
-     * Locks database and searches using given filter
+     * @brief Returns the ClassRegistryItem associated to the class with classname equal to \a className.
+     * @details The returned pointer will be valid as long as it exists in the database.
+     * @param[in] className the classname() of the class to be searched.
+     * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *ClassRegistryDatabase::Find(  SearchFilterT<ClassRegistryItem> &  finder);
+    ClassRegistryItem *FindClassName(CCString const className);
 
 
     /**
-     * The database is implemented as a StaticList.
-     * The destructor of the list will clean its elements.
+     * The database is implemented as a two level StaticList.
      */
-    LinkedListHolderT<ClassRegistryItem>  classDatabase;
+    ClassRegistryIndex *classDatabase;
 
-    /**
-     * Protects the concurrent access to the database
-     */
-    FastPollingMutexSem                   mux;
+
 
 };
 

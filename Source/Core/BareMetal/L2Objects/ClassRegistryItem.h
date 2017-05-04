@@ -35,13 +35,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CString.h"
-#include "LinkedListable.h"
-#include "LinkedListHolderT.h"
 #include "LoadableLibrary.h"
 #include "TypeDescriptor.h"
+#include "LinkedListHolderT.h"
 
-//#include "Introspection.h"
-//#include "ClassMethodInterfaceMapper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -65,7 +62,7 @@ class ClassMethodInterfaceMapper;
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class DLL_API ClassRegistryItem: public LinkedListable {
+class DLL_API ClassRegistryItem {
 public:
 
     /**
@@ -179,7 +176,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual               ~ClassRegistryItem();
+                            ~ClassRegistryItem();
 
     /**
      * @brief Allows obtaining per-class singleton ClassRegistryItem
