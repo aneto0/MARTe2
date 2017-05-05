@@ -82,8 +82,8 @@ public:
 /*---------------------------------------------------------------------------*/
 
 #define CLASS_MEMBER_REGISTER(className, memberName)\
-		Marte::ClassMemberRegister  className ## _ ## memberName ## _ ## CMR (\
-               Marte::ClassRegistryItem::Instance<className>(),\
+		MARTe::ClassMemberRegister  className ## _ ## memberName ## _ ## CMR (\
+               MARTe::ClassRegistryItem::Instance<className>(),\
                memberOf(className, memberName),\
                #memberName, \
                indexof(className, memberName),\

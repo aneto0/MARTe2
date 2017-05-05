@@ -223,6 +223,60 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
     return ret;
 }
 
+static int32 Match(CCString const string, ZeroTerminatedArray<CCString> const matches){
+	int32 index = 0;
+	bool found = false;
+	while (!matches[index].IsNullPtr()  && ! found){
+		found = (CompareN(matches[index],string,matches[index].GetSize())==0);
+		index++;
+	}
+	if (!found){
+		index = -1;
+	} else {
+		index = index -1;
+	}
+	return index;
+}
+
+
+CCString  Tokenize( CCString  const string,
+					DynamicCString &token,
+					int32          &limit,
+					ZeroTerminatedArray<CCString> const delimiters,
+					CCString const skip){
+    CCString ret;
+
+    limit = -1;
+    const char8 *stringP = string.GetList();
+    if ((stringP != NULL_PTR(char8 *)) && (!delimiters.IsNullPtr()) ) {
+        uint32 inputIndex = 0;
+
+        // next character to be processed;
+        char8 c = *stringP;
+        limit = Match(stringP,delimiters);
+        while ((c!=0) && (limit < 0) ){
+        	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
+        	stringP++;
+            c = *stringP;
+            if (c!= 0) {
+            	limit = Match(stringP,delimiters);
+            }
+        }
+        // consume terminator
+        if (limit >= 0) {
+        	CCString matchS = delimiters[limit];
+        	stringP += matchS.GetSize();
+        }
+
+        ret = stringP;
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+    }
+    return ret;
+
+}
+
 
 CCString TokenizeByString(CCString const string,CCString const terminator,DynamicCString & result) {
 

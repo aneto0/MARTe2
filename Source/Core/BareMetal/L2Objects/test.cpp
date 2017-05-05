@@ -156,6 +156,11 @@ void printType(const AnyType &at){
 
 }
 
+
+static bool isNumber(char8 c){
+	return ((c >='0') && (c <='9'));
+}
+
 template <class T>
 ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 
@@ -184,7 +189,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 
     if (deref.GetSize() > 0){
         printf("(%-24s)%s",orig.GetList(),deref.GetList());
-
+#if 0
     	while ((deref.GetSize()>0) && (ok)){
     		DynamicCString token;
         	deref = StringHelper::Tokenize(deref,token, CCString("*."),CCString(". "),true);
@@ -196,6 +201,79 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
             	}
         	}
     	}
+#else
+    	enum DerefStatus {
+    		Normal,
+    		Member,
+    		Matrix,
+    		MatrixDone
+    	}  status = Normal;
+
+    	while ((deref.GetSize()>0) && (ok)){
+    		DynamicCString token;
+    		int32 term  =-1;
+    		CCString dels[6] = {CCString("."),CCString("*"),CCString("->"),CCString("["),CCString("]"),CCString()};
+    		const ZeroTerminatedArray<CCString> delimiters = dels;
+        	deref = StringHelper::Tokenize(deref,token,term, delimiters,CCString(". "));
+
+        	// process token
+        	if (token.GetSize() > 0){
+            	if (isNumber(token[0])){
+            		if (status == Matrix ){
+                		ok = at.Dereference(atoi(token.GetList()));
+                		if (ok) {
+                			status = MatrixDone;
+                		}
+            		}
+            	} else {
+            		if (status == Member){
+            			ok = at.Dereference(token);
+                		if (ok) {
+                			status = Normal;
+                		}
+            		}
+            	}
+        	}
+        	// process term
+        	if (ok){
+            	switch(term){
+            	case 0:{ // .
+            		if (status == Normal){
+            			status = Member;
+            		} else ok = false;
+            	} break;
+            	case 1:{ // *
+            		if (status == Normal){
+            			ok = at.Dereference(0);
+            		} else ok = false;
+            	} break;
+            	case 2:{ // ->
+            		if (status == Normal){
+            			ok = at.Dereference(0);
+            			if (ok){
+            				status = Member;
+            			}
+            		} else ok = false;
+            	} break;
+            	case 3:{ // [
+            		if (status == Normal){
+            			status = Matrix;
+            		} else ok = false;
+            	} break;
+            	case 4:{ // ]
+            		if (status == MatrixDone){
+            			status = Normal;
+            		} else ok = false;
+            	} break;
+            	default:{
+
+            	}
+            	}
+        	}
+    	}
+
+#endif
+
     } else {
         printf("%-26s ",orig.GetList());
     }
@@ -224,19 +302,18 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 }
 
 
-struct pippone2;
+struct fregna;
 
 struct pippone{
-
-    int32 pillo;
-    double pollo;
-    pippone2 *pp;
+    int32 pilla;
+    double polla;
+    fregna *pp;
 };
 
-struct pippone2{
-
-    int32 pillo[32];
+struct fregna{
+    int32 pillo[4];
     pippone pollo;
+    pippone *ff;
 
 };
 
@@ -313,46 +390,41 @@ void testAT(){
     TEST(const Matrix<uint3>);
     TEST(Vector<int32>);
     TEST2(Vector<int32>,*);
+    TEST2(Vector<int32>,[1]);
+    TEST2(Vector<int32>,[2]);
     TEST2(Vector<int32>,**);
     TEST(Vector<int32 *>);
     TEST(Vector<int32> * const );
 
     TEST(pippone);
-    TEST2(pippone,.pillo);
-    TEST2(pippone,.pollo);
+    TEST2(pippone,.pilla);
+    TEST2(pippone,.polla);
     TEST2(pippone,.pp);
+    TEST(fregna);
+    TEST2(fregna,.pillo);
+    TEST2(fregna,.pollo);
+    TEST2(fregna,.ff);
+
     TEST2(pippone,.pp*);
     TEST2(pippone,.pp*.pollo);
-    TEST2(pippone,.pp*.pollo.pp);
-    TEST(const pippone2 *);
+    TEST2(pippone,.pp->pollo);
+    TEST2(pippone,.pp->pollo.pp);
+    TEST2(pippone,.pp->pollo.pp->pollo);
+    TEST2(pippone,.pp->pollo.pp->pollo.pp);
+    TEST2(pippone,.pp->pollo.pp->pollo.pp->pollo);
+    TEST(const fregna *);
 
 }
 
 
 /**************************************/
-#if 0
-class ClassMemberRegister{
 
-public:
-
-	template <class  Tmember>
-	ClassMemberRegister(ClassRegistryItem * cri,Tmember &member, CCString methodName, uint64 index, uint32 size){
-	    if (cri != NULL_PTR(ClassRegistryItem * )){
-	        cri->AddMember(new ClassMember(&member, methodName, index));
-	    }
-	}
-
-};
-
-#define CLASS_MEMBER_REGISTER(className, memberName)\
-		ClassMemberRegister  className ## _ ## memberName ## _ ## CMR ( ClassRegistryItem::Instance<className>(),memberOf(className, memberName),#memberName, indexof(className, memberName),msizeof(className, memberName) );
-#endif
-
-CLASS_MEMBER_REGISTER(pippone,pillo)
-CLASS_MEMBER_REGISTER(pippone,pollo)
+CLASS_MEMBER_REGISTER(pippone,pilla)
+CLASS_MEMBER_REGISTER(pippone,polla)
 CLASS_MEMBER_REGISTER(pippone,pp)
-CLASS_MEMBER_REGISTER(pippone2,pillo)
-CLASS_MEMBER_REGISTER(pippone2,pollo)
+CLASS_MEMBER_REGISTER(fregna,pillo)
+CLASS_MEMBER_REGISTER(fregna,pollo)
+CLASS_MEMBER_REGISTER(fregna,ff)
 
 
 /**************************************/

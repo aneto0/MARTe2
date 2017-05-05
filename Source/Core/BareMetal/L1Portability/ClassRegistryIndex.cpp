@@ -145,7 +145,7 @@ uint32 ClassRegistryIndex::AllocateFreeSlots(){
 	return value;
 }
 
-
+#include <stdio.h>
 uint32 ClassRegistryIndex::Add(ClassRegistryItem *criIn,uint32 size){
 	uint32 no = 0xFFFFFFFF;
 	uint32 availableSize = AllocateFreeSlots();
@@ -156,7 +156,9 @@ uint32 ClassRegistryIndex::Add(ClassRegistryItem *criIn,uint32 size){
 			crb.sizeOfClass = size;
 			crb.cri = criIn;
 			cric->Add(crb);
-			no = (index.NumberOfUsedElements()-1) << IndexBits + (cric->NumberOfUsedElements() - 1);
+			no = (index.NumberOfUsedElements()-1) << IndexBits;
+			no += (cric->NumberOfUsedElements() - 1);
+
 		}
 	}
 	return no;
