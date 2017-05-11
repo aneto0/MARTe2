@@ -77,12 +77,13 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 		macrofun(Warning,				warning,			   16)\
 		macrofun(Completed,             completed,			   17)\
 		macrofun(NotCompleted,          notCompleted,          18)\
-		macrofun(InvalidOperation,      invalidOperation,      19)
+		macrofun(InvalidOperation,      invalidOperation,      19)\
+		macrofun(OutOfRange,            outOfRange      ,      20)
 
 /**
  * to be kept up to date with the highest value of the error bits
  */
-#define lastErrorBit 19
+#define lastErrorBit 20
 
 /**
  *  macro function to be used with ERROR_CONSTANT_MACRO to generate macro constants

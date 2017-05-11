@@ -323,9 +323,6 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
 }
 
 
-const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
-    return typeDescriptor;
-}
 
 bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) const {
     char8 *buffer = modifiers.GetList();

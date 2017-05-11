@@ -173,7 +173,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 	 */
     T *x ;
     // build a memory block made with pointers pointing to the next pointer...
-    const uint32 NS = 4;
+    const uint32 NS = 128;
     void *memory[NS];
     int i;
     for (i=0;i<(NS-1);i++){
@@ -189,19 +189,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 
     if (deref.GetSize() > 0){
         printf("(%-24s)%s",orig.GetList(),deref.GetList());
-#if 0
-    	while ((deref.GetSize()>0) && (ok)){
-    		DynamicCString token;
-        	deref = StringHelper::Tokenize(deref,token, CCString("*."),CCString(". "),true);
-        	if (token.GetSize() > 0){
-            	if (token == CCString("*")){
-            		ok = at.Dereference(0);
-            	} else {
-            		ok = at.Dereference(token);
-            	}
-        	}
-    	}
-#else
+
     	enum DerefStatus {
     		Normal,
     		Member,
@@ -231,6 +219,8 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
                 		if (ok) {
                 			status = Normal;
                 		}
+            		} else {
+            			ok.syntaxError = true;
             		}
             	}
         	}
@@ -240,12 +230,12 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
             	case 0:{ // .
             		if (status == Normal){
             			status = Member;
-            		} else ok = false;
+            		} else ok.syntaxError = true;
             	} break;
             	case 1:{ // *
             		if (status == Normal){
             			ok = at.Dereference(0);
-            		} else ok = false;
+            		} else ok.syntaxError = true;
             	} break;
             	case 2:{ // ->
             		if (status == Normal){
@@ -253,17 +243,17 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
             			if (ok){
             				status = Member;
             			}
-            		} else ok = false;
+            		} else ok.syntaxError = true;
             	} break;
             	case 3:{ // [
             		if (status == Normal){
             			status = Matrix;
-            		} else ok = false;
+            		} else ok.syntaxError = true;
             	} break;
             	case 4:{ // ]
             		if (status == MatrixDone){
             			status = Normal;
-            		} else ok = false;
+            		} else ok.syntaxError = true;
             	} break;
             	default:{
 
@@ -272,7 +262,6 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
         	}
     	}
 
-#endif
 
     } else {
         printf("%-26s ",orig.GetList());
@@ -300,6 +289,19 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 
     return ok;
 }
+
+
+struct testStruct{
+    char8         fieldA;
+    const uint8   fieldB;
+     int16        fieldC;
+    uint32        fieldD;
+     int64        fieldE;
+    float         fieldF;
+    float*        fieldG;
+    CString       fieldH;
+    testStruct   *fieldI;
+};
 
 
 struct fregna;
@@ -396,6 +398,31 @@ void testAT(){
     TEST(Vector<int32 *>);
     TEST(Vector<int32> * const );
 
+    TEST(testStruct);
+    TEST2(testStruct,.fieldA);
+    TEST2(testStruct,.fieldB);
+    TEST2(testStruct,.fieldC);
+    TEST2(testStruct,.fieldD);
+    TEST2(testStruct,.fieldE);
+    TEST2(testStruct,.fieldF);
+    TEST2(testStruct,.fieldG);
+    TEST2(testStruct,.fieldH);
+    TEST2(testStruct,.fieldI);
+    TEST2(testStruct,.fieldH[0]);
+    TEST2(testStruct,.fieldH[1]);
+    TEST2(testStruct,.fieldH[2]);
+    TEST2(testStruct,.fieldH[22]);
+    TEST2(testStruct,.fieldI*);
+    TEST2(testStruct,.fieldI->fieldA);
+    TEST2(testStruct,.fieldI->fieldB);
+    TEST2(testStruct,.fieldI->fieldC);
+    TEST2(testStruct,.fieldI->fieldD);
+    TEST2(testStruct,.fieldI->fieldE);
+    TEST2(testStruct,.fieldI->fieldF);
+    TEST2(testStruct,.fieldI->fieldG);
+    TEST2(testStruct,.fieldI->fieldH);
+    TEST2(testStruct,.fieldI->fieldI);
+
     TEST(pippone);
     TEST2(pippone,.pilla);
     TEST2(pippone,.polla);
@@ -419,6 +446,16 @@ void testAT(){
 
 /**************************************/
 
+
+CLASS_MEMBER_REGISTER(testStruct,fieldA)
+CLASS_MEMBER_REGISTER(testStruct,fieldB)
+CLASS_MEMBER_REGISTER(testStruct,fieldC)
+CLASS_MEMBER_REGISTER(testStruct,fieldD)
+CLASS_MEMBER_REGISTER(testStruct,fieldE)
+CLASS_MEMBER_REGISTER(testStruct,fieldF)
+CLASS_MEMBER_REGISTER(testStruct,fieldG)
+CLASS_MEMBER_REGISTER(testStruct,fieldH)
+CLASS_MEMBER_REGISTER(testStruct,fieldI)
 CLASS_MEMBER_REGISTER(pippone,pilla)
 CLASS_MEMBER_REGISTER(pippone,polla)
 CLASS_MEMBER_REGISTER(pippone,pp)
@@ -450,6 +487,22 @@ int main(int argc, char **argv){
 
 
 MARTe::testAT();
+
+#include "CompilerTypes.h"
+
+
+
+printf("%i %i %i %i %i %i %i %i %i\n ",
+		indexof(MARTe::testStruct,fieldA),
+		indexof(MARTe::testStruct,fieldB),
+		indexof(MARTe::testStruct,fieldC),
+		indexof(MARTe::testStruct,fieldD),
+		indexof(MARTe::testStruct,fieldE),
+		indexof(MARTe::testStruct,fieldF),
+		indexof(MARTe::testStruct,fieldG),
+		indexof(MARTe::testStruct,fieldH),
+		indexof(MARTe::testStruct,fieldI)
+		);
 
 
 return 0;

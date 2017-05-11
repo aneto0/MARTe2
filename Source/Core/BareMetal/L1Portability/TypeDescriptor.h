@@ -394,9 +394,14 @@ public:
 
 };
 
+#define  ConstCharString_number      (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(dataIsConstant,1) )
+#define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
+#define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
+#define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
 
 
 #define  Character8Bit               TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
+#define  ConstCharacter8Bit          TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) | TDRANGE(dataIsConstant,1))
 #define  Float32Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  Float64Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  VoidType                    TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,SizeUnknown) | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
@@ -409,14 +414,15 @@ public:
 #define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
 
-#define  ConstCharString             TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(arraySize,1) | TDRANGE(dataIsConstant,1) )
-#define  CharString                  TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(arraySize,1))
-#define  DynamicCharString           TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) | TDRANGE(arraySize,1))
-#define  StaticCharString            TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  | TDRANGE(arraySize,1))
+#define  ConstCharString             TypeDescriptor(ConstCharString_number)
+#define  CharString                  TypeDescriptor(CharString_number)
+#define  DynamicCharString           TypeDescriptor(DynamicCharString_number)
+#define  StaticCharString            TypeDescriptor(StaticCharString_number)
 #define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray) )
 #define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
 #define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
 #define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown)| TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
+
 
 
 

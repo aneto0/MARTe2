@@ -103,7 +103,13 @@ public:
      * @brief Returns the TypeDescriptor describing the most inner storage
      * @return the data TypeDescriptor.
      */
-    const TypeDescriptor &GetFullTypeDescriptor() const;
+    inline const TypeDescriptor &GetFullTypeDescriptor() const;
+
+    /**
+     * @brief Returns the TypeDescriptor
+     * @return the data TypeDescriptor.
+     */
+    inline TypeDescriptor &AccessTypeDescriptor() ;
 
     /**
      * @brief Returns the TypeDescriptor describing the overall variable
@@ -749,6 +755,12 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 	FinaliseCode(td);
 }
 
+const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
+    return typeDescriptor;
+}
+TypeDescriptor &VariableDescriptor::AccessTypeDescriptor() {
+	return typeDescriptor;
+}
 
 
 /*---------------------------------------------------------------------------*/

@@ -67,7 +67,7 @@ typedef DWORD32 uintp;
 #endif
 
 /** A tool to find indexes of structures fields. */
-#define indexof(type,field) ((intptr)&(((type *)1024)->field) - 1024)
+#define indexof(type,field) ((MARTe::intptr)&(((type *)1024)->field) - 1024)
 /** A tool to find the size of structures fields. */
 #define msizeof(type,field) sizeof(((type *)1024)->field)
 
