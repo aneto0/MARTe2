@@ -58,7 +58,10 @@ struct RTThreadParam {
      * The cycle time
      */
     uint32* cycleTime;
-
+    /**
+     * HRT value last cycle time
+     */
+    uint64 lastCycleTimeStamp;
 };
 
 /**
@@ -152,11 +155,6 @@ private:
      * The eventSemaphore
      */
     EventSem eventSem;
-
-    /**
-     * HRT value of the last executed cycle
-     */
-    uint64 cycleTimeStamp;
 
     /**
      * Registers the callback function to be called by the MultiThreadService

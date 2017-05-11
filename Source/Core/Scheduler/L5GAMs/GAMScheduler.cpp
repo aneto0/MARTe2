@@ -46,9 +46,7 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
 GAMScheduler::GAMScheduler() :
-        GAMSchedulerI(),
-        binder(*this, &GAMScheduler::Execute) {
-    cycleTimeStamp = 0u;
+        GAMSchedulerI(), binder(*this, &GAMScheduler::Execute) {
     multiThreadService[0] = NULL_PTR(MultiThreadService *);
     multiThreadService[1] = NULL_PTR(MultiThreadService *);
     rtThreadInfo[0] = NULL_PTR(RTThreadParam *);
@@ -188,6 +186,7 @@ void GAMScheduler::CustomPrepareNextState() {
                 rtThreadInfo[nextBuffer][i].executables = nextState->threads[i].executables;
                 rtThreadInfo[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
                 rtThreadInfo[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
+                rtThreadInfo[nextBuffer][i].lastCycleTimeStamp = 0u;
                 multiThreadService[nextBuffer]->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, i);
                 multiThreadService[nextBuffer]->SetCPUMaskThreadPool(nextState->threads[i].cpu, i);
                 multiThreadService[nextBuffer]->SetStackSizeThreadPool(nextState->threads[i].stackSize, i);
@@ -209,13 +208,13 @@ void GAMScheduler::CustomPrepareNextState() {
 
 ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &information) {
     ErrorManagement::ErrorType ret;
+    uint32 threadNumber = information.GetThreadNumber();
+    uint32 idx = RealTimeApplication::GetIndex();
+
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         ret = eventSem.Wait(TTInfiniteWait);
-        cycleTimeStamp = HighResolutionTimer::Counter();
     }
     else if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
-        uint32 threadNumber = information.GetThreadNumber();
-        uint32 idx = RealTimeApplication::GetIndex();
         if (rtThreadInfo[idx] != NULL_PTR(RTThreadParam *)) {
             bool ok = ExecuteSingleCycle(rtThreadInfo[idx][threadNumber].executables, rtThreadInfo[idx][threadNumber].numberOfExecutables);
             if (!ok) {
@@ -229,14 +228,17 @@ ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &informatio
                     }
                 }
             }
-            uint64 tmp = (HighResolutionTimer::Counter() - cycleTimeStamp);
-            float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
-            uint32 absTime = static_cast<uint32>(ticksToTime);  //us
+            uint32 absTime = 0u;
+            if (rtThreadInfo[idx][threadNumber].lastCycleTimeStamp != 0u) {
+                uint64 tmp = (HighResolutionTimer::Counter() - rtThreadInfo[idx][threadNumber].lastCycleTimeStamp);
+                float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
+                absTime = static_cast<uint32>(ticksToTime);  //us
+            }
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
             if (!MemoryOperationsHelper::Copy(rtThreadInfo[idx][threadNumber].cycleTime, &absTime, sizeToCopy)) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Could not copy cycle time information.");
             }
-            cycleTimeStamp = HighResolutionTimer::Counter();
+            rtThreadInfo[idx][threadNumber].lastCycleTimeStamp = HighResolutionTimer::Counter();
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "RTThreadParam is NULL.");
