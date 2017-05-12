@@ -249,7 +249,6 @@ CCString  Tokenize( CCString  const string,
     limit = -1;
     const char8 *stringP = string.GetList();
     if ((stringP != NULL_PTR(char8 *)) && (!delimiters.IsNullPtr()) ) {
-        uint32 inputIndex = 0;
 
         // next character to be processed;
         char8 c = *stringP;

@@ -139,7 +139,7 @@ uint32 SimpleStaticListT<T,allocationSize>::NumberOfUsedElements(){
 
 template <class T,uint32 allocationSize>
 uint32 SimpleStaticListT<T,allocationSize>::NumberOfElements(){
-	return size;
+	return allocationSize;
 }
 
 

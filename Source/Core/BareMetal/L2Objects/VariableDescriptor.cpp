@@ -44,13 +44,14 @@
 
 namespace MARTe{
 
+/*
 static char8 toupper(char8 c){
     if ((c >='a') && (c <='z')) {
         c = c - ('a'-'A');
     }
     return c;
 }
-
+*/
 
 // syntax Annn where nn is numeric only
 static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
@@ -185,7 +186,7 @@ void VariableDescriptor::AddArrayCode(CombinedArrayType cat, uint32 size){
 //printf("AAC %i %i \n",cat,size);
 
 	uint32 max = 1 << typeDescriptor.arraySize.GetNumberOfBits();
-	bool isConst = false;
+//	bool isConst = false;
 	switch(cat){
 	// new layer of vector/matrix
 	// just shift out existing layer without moving const
@@ -272,10 +273,11 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 #endif
 
 
-
+/*
 static bool isConstantToken(char8 c){
 	return ((c >='a') && (c <='z'));
 }
+*/
 
 static bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));

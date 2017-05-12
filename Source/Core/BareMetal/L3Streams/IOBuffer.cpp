@@ -35,7 +35,7 @@
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "StreamI.h"
-#include <Introspection-old.h>
+//#include <Introspection-old.h>
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
 

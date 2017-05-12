@@ -153,7 +153,7 @@ private:
 namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity>
-StaticList<elementType, listAllocationGranularity>::StaticList(uint32 startSize=0, uint32 maxSize=0) :
+StaticList<elementType, listAllocationGranularity>::StaticList(uint32 startSize, uint32 maxSize) :
         slh(sizeof(elementType), listAllocationGranularity,startSize,maxSize) {
 }
 

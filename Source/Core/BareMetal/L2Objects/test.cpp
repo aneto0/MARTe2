@@ -61,12 +61,12 @@ void printTypeDescriptor(const TypeDescriptor &td){
         printf ("%s",consts);
 //        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
    		ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(td);
-        if (cri != NULL) printf ("%s ",cri->GetClassName());
+        if (cri != NULL) printf ("%s ",cri->GetClassName().GetList());
         else printf ("unknown_struct_code(%i) ",(int)td.structuredDataIdCode);
 
     } else {
     	if (td.IsComplexType()){
-            printf ("%s%s ",consts,BasicTypeName(td.type,td.complexType));
+            printf ("%s%s ",consts,BasicTypeName(td.type,td.complexType).GetList());
     	} else
         if (td.IsBitType()){
             printf ("%s%s%i:%i ",consts,BasicTypeName(td.type,0).GetList(),(int)td.numberOfBits,(int)td.bitOffset);
@@ -149,17 +149,18 @@ void printType(const AnyType &at){
 
     const void *address = at.GetVariablePointer();
     CCString mods = vd.GetModifierString();
-    printf ("@%0p{%-12s}",address,mods.GetList());
+    printf ("@%p{%-12s}",address,mods.GetList());
     td = vd.GetFullTypeDescriptor();
     printTypeDescriptor(td);
     printf(" size = %Li\n",vd.GetSize());
 
 }
 
-
+/*
 static bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
 }
+*/
 
 template <class T>
 ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
@@ -175,7 +176,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
     // build a memory block made with pointers pointing to the next pointer...
     const uint32 NS = 128;
     void *memory[NS];
-    int i;
+    uint32 i;
     for (i=0;i<(NS-1);i++){
     	memory[i]=&memory[i+1];
     }
@@ -210,7 +211,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
         ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
         while (!etl->name.IsNullPtr()){
         	if ((etl->errorBitSet &  ok.format_as_integer)!= 0){
-        		printf("%s\n",etl->name);
+        		printf("%s\n",etl->name.GetList());
         	}
         	etl++;
         }
@@ -458,12 +459,12 @@ int main(int argc, char **argv){
 
     //printf("%0x\n",MARTe::TypeDescriptor(TDRANGE(type,MARTe::SignedInteger)    | TDRANGE(objectSize,MARTe::Size32bit)   | TDRANGE(arrayProperty, MARTe::SizedCArray_AP) | TDRANGE(arraySize, 1)).all);
 
-	printf ("%016p  %i\n", &pluto, MARTe::MemoryCheck::Check(&pluto));
-	printf ("%016p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo));
-	printf ("%016p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo,MARTe::MemoryCheck::ExecuteAccessMode));
-	printf ("%016p  %i\n", &main, MARTe::MemoryCheck::Check(&main));
-	printf ("%016p  %i\n", &main, MARTe::MemoryCheck::Check(&main,MARTe::MemoryCheck::ExecuteAccessMode));
-	printf ("%016p  %i\n", x, MARTe::MemoryCheck::Check(x));
+	printf ("%16p  %i\n", &pluto, MARTe::MemoryCheck::Check(&pluto));
+	printf ("%16p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo));
+	printf ("%16p  %i\n", &pippo, MARTe::MemoryCheck::Check(&pippo,MARTe::MemoryCheck::ExecuteAccessMode));
+	printf ("%16p  %i\n", &main, MARTe::MemoryCheck::Check(reinterpret_cast<void *>(&main)));
+	printf ("%16p  %i\n", &main, MARTe::MemoryCheck::Check(reinterpret_cast<void *>(&main),MARTe::MemoryCheck::ExecuteAccessMode));
+	printf ("%16p  %i\n", x, MARTe::MemoryCheck::Check(x));
 
 
 MARTe::testAT();
@@ -473,20 +474,21 @@ MARTe::testAT();
 
 
 printf("%i %i %i %i %i %i %i %i %i\n ",
-		indexof(MARTe::testStruct,fieldA),
-		indexof(MARTe::testStruct,fieldB),
-		indexof(MARTe::testStruct,fieldC),
-		indexof(MARTe::testStruct,fieldD),
-		indexof(MARTe::testStruct,fieldE),
-		indexof(MARTe::testStruct,fieldF),
-		indexof(MARTe::testStruct,fieldG),
-		indexof(MARTe::testStruct,fieldH),
-		indexof(MARTe::testStruct,fieldI)
+		(int)indexof(MARTe::testStruct,fieldA),
+		(int)indexof(MARTe::testStruct,fieldB),
+		(int)indexof(MARTe::testStruct,fieldC),
+		(int)indexof(MARTe::testStruct,fieldD),
+		(int)indexof(MARTe::testStruct,fieldE),
+		(int)indexof(MARTe::testStruct,fieldF),
+		(int)indexof(MARTe::testStruct,fieldG),
+		(int)indexof(MARTe::testStruct,fieldH),
+		(int)indexof(MARTe::testStruct,fieldI)
 		);
 
-printf ("%i %i %i\n", ancestorIndexof(MARTe::testStruct4,MARTe::testStruct3)
-		            ,ancestorIndexof(MARTe::testStruct4,MARTe::testStruct5)
-		            ,ancestorIndexof(MARTe::testStruct4,MARTe::testStruct6));
+printf ("%i %i %i\n",
+        (int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct3),
+	(int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct5),
+	(int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct6));
 
 return 0;
 }

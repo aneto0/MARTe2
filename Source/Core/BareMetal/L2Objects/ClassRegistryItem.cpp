@@ -65,7 +65,7 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn)
     typeidName = typeidNameIn;
     className = typeidName;
     classVersion = "";
-    static uint32 classId = 0;
+//    static uint32 classId = 0;
     typeDescriptor.isStructuredData = true;
 
     ClassRegistryIndex* cri = ClassRegistryIndex::Instance();

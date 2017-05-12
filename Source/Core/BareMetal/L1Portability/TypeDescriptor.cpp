@@ -175,7 +175,7 @@ uint32 TypeDescriptor::Size()const{
 //printf (" %i %i ", totalBitSpan, size);
 		} else {
 			uint32 multiplier = 1u;
-			uint32 baseSize = 1u;
+//			uint32 baseSize = 1u;
 			if (arrayProperty == SizedCArray_AP){
 				multiplier = arraySize;
 				switch(type){

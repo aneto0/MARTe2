@@ -121,7 +121,7 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 					uint64 step = index;
 
 					while (step > 0 ){
-						int i;
+						uint32 i;
 						for (i = 0; ((i<layerSize) && ptr[i] == '\0'); i++ );
 						if (i != layerSize){
 							ptr+= layerSize;
@@ -238,7 +238,7 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	}
 
 	if (ret){
-		bool isConst = td.dataIsConstant;
+		//bool isConst = td.dataIsConstant;
 		const char8 *newPointer2Variable = static_cast<const char8 *>(pointer2Variable);
 		newPointer2Variable += cm->GetOffset();
 		pointer2Variable = newPointer2Variable;

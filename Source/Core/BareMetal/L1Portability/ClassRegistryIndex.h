@@ -146,7 +146,7 @@ public:
      * @return NULL if index is outside range
      *
      */
-    inline ClassRegistryBrief *operator[] (uint32 classRegistrationNo);
+    ClassRegistryBrief *operator[] (uint32 classRegistrationNo);
 
     /**
      * @brief Access to basic information of a class
@@ -204,6 +204,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 
 
 }
