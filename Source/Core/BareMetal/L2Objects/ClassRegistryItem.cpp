@@ -173,34 +173,64 @@ public:
 	bool Test(ClassMember *data){
 	    bool ret = (data != NULL);
 	    if (ret){
-	    	ret =  (StringHelper::Compare(data->GetName(), memberName) == 0) ;
+	    	CCString name = data->GetName();
+	    	ret =  (StringHelper::Compare(name, memberName) == 0) ;
 	    }
 	    return ret;
 	}
 };
 
+class ClassRegistryItemFindInheritedMember: public SearchFilterT<ClassMember>{
+	CCString const memberName;
+	// the search will return the node referring to the inherited class
+	// this will point to the correct node
+	const ClassMember *actualMember;
+
+	ClassRegistryDatabase *crd;
+public:
+
+	ClassRegistryItemFindInheritedMember(CCString const memberNameIn): memberName(memberNameIn){
+		actualMember = NULL_PTR(ClassMember *);
+		// find structure documentation
+		crd = ClassRegistryDatabase::Instance();
+	}
+
+	const ClassMember * GetActualMember(){
+		return actualMember;
+	}
+
+	bool Test(ClassMember *data){
+	    if ((data != NULL) && (crd != NULL) ){
+	    	CCString name = data->GetName();
+	    	if (name.GetSize() == 0){
+	    		TypeDescriptor td = data->GetDescriptor().GetFullTypeDescriptor();
+	    		ClassRegistryItem *cri = crd->Find(td);
+
+	    		if (cri != NULL){
+	    			actualMember = cri->FindMember(memberName);
+//printf ("find %s::%s\n",cri->GetClassName(),memberName );
+	    		}
+	    	}
+	    }
+	    return (actualMember != NULL_PTR(ClassMember *));
+	}
+};
+
+
 ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
 	ClassRegistryItemFindMember crifm (memberName);
-	return classMembers.ListSearch(&crifm);
+	const ClassMember *found = classMembers.ListSearch(&crifm);
+	if (found == NULL_PTR(ClassMember *)){
+		ClassRegistryItemFindInheritedMember crifim(memberName);
+		found = classMembers.ListSearch(&crifim);
+		// take the actual value found by recursion
+		if (found != NULL_PTR(ClassMember *)){
+			found = crifim.GetActualMember();
+		}
+	}
+	return found;
 
-/*
-    uint32 i = 0u;
-    uint32 end = classMembers.ListSize();
-    //VariableDescriptor const *vd = NULL_PTR(VariableDescriptor const *);
-    ClassMember const *member = NULL_PTR(ClassMember const *);
 
-    while ((i < end) && (member == NULL_PTR(ClassMember const *))) {
-        ClassMember const *cm = classMembers.ListPeek(i);
-        if (member != NULL) {
-            CCString name = cm->GetName();
-            if (StringHelper::Compare(name, memberName) == 0) {
-                member = cm;
-            }
-        }
-        i++;
-    }
-    return member;
-*/
 }
 
 ClassMember const *ClassRegistryItem::FindMember(uint32 index) {

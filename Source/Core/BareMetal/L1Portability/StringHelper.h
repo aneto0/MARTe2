@@ -107,7 +107,7 @@ DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, CCStri
  * the end of the string if terminator is not found. It returns NULL if at least one of the
  * arguments is NULL.
  */
-DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &limit, ZeroTerminatedArray<CCString> const delimiters, CCString const skip);
+DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &limit, ZeroTerminatedArray<const CCString> const delimiters, CCString const skip);
 
 /** TODO */
 DLL_API CCString  TokenizeByString(CCString  const string,CCString  const terminator,DynamicCString & result);

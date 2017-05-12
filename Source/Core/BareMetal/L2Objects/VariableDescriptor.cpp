@@ -269,8 +269,9 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 	if (isConst) typeDescriptor.dataIsConstant = true;
 }
 
-
 #endif
+
+
 
 static bool isConstantToken(char8 c){
 	return ((c >='a') && (c <='z'));

@@ -99,8 +99,6 @@ template <class T>
 ClassMember::ClassMember(T member,CCString nameIn,uint32 offsetIn): vd(member){
     name = nameIn;
     offset = offsetIn;
-	printf("zzzz %0x\n",vd.GetFullTypeDescriptor().all);
-
 }
 
 CCString ClassMember::GetName() const{

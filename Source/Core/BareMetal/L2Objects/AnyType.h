@@ -139,22 +139,36 @@ public:
     /**
      * @brief moves the pointer to referencing the a variable that is referenced to by the current variable (if pointer)
      * @param[in] index allows addressing arrays
-     * @return true if operation successful
+     * @return ErrorType::ErrorsCleared()= true if operation successful
      * @post
      *   if all ok pointer2Variable and variableDescriptor are updated
-     *   otherwise the object becomes invalid and cannot be used anymore
+     *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
     ErrorManagement::ErrorType  Dereference (uint32 index=0);
 
     /**
      * @brief moves the pointer to referencing a field of the structure that is currently referred to
      * @param[in] field is the name of the desired field
-     * @return true if operation successful
+     * @return ErrorType::ErrorsCleared()= true if operation successful
      * @post
      *   if all ok pointer2Variable and variableDescriptor are updated
-     *   otherwise the object becomes invalid and cannot be used anymore
+     *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
     ErrorManagement::ErrorType  Dereference (CCString field);
+
+    /**
+     * @brief evaluates a C like dereferencing expression and moves the pointer
+     * @param[in] CExpresssion is the expression: it is a sequence of dereference commands.
+     * commands can be: "*" for pointer dereferencing;
+     * "[NN]" for array dereferencing
+     * ".field" for structure to field dereferencing
+     * "->field" for structure pointer to field dereferencing
+     * @return ErrorType::ErrorsCleared()= true if operation successful
+     * @post
+     *   if all ok pointer2Variable and variableDescriptor are updated
+     *   otherwise the object potentially becomes invalid and cannot be used anymore
+     */
+    ErrorManagement::ErrorType  MultipleDereference (CCString CExpresssion);
 
     /** INTERFACES GETTERS*/
 

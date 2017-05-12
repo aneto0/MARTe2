@@ -89,6 +89,14 @@ public:
                indexof(className, memberName),\
                msizeof(className, memberName) );
 
+#define CLASS_INHERIT_REGISTER(className, className2)\
+		MARTe::ClassMemberRegister  className ## _ ## className2 ## _ ## CMR (\
+               MARTe::ClassRegistryItem::Instance<className>(),\
+               *((className2 *)(1024)),\
+               "", \
+               ancestorIndexof(className, className2),\
+               sizeof(className2) );
+
 
 #endif /* CLASSMEMBERREGISTER_H_ */
 

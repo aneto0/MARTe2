@@ -66,6 +66,7 @@ typedef DWORD64 uintp;
 typedef DWORD32 uintp;
 #endif
 
+#if 0
 /** A tool to find indexes of structures fields. */
 #define indexof(type,field) ((MARTe::intptr)&(((type *)1024)->field) - 1024)
 /** A tool to find the size of structures fields. */
@@ -74,6 +75,7 @@ typedef DWORD32 uintp;
 /** A tool to find the type of class/structures fields.
  1024 has been used to avoid alignment problems. */
 #define memberOf(type,field) ((type *)1024)->field
+#endif
 
 #define dll_import __declspec(dllimport)
 #define dll_export __declspec(dllexport)

@@ -223,7 +223,7 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
     return ret;
 }
 
-static int32 Match(CCString const string, ZeroTerminatedArray<CCString> const matches){
+static int32 Match(CCString const string, ZeroTerminatedArray<const CCString> const matches){
 	int32 index = 0;
 	bool found = false;
 	while (!matches[index].IsNullPtr()  && ! found){
@@ -242,7 +242,7 @@ static int32 Match(CCString const string, ZeroTerminatedArray<CCString> const ma
 CCString  Tokenize( CCString  const string,
 					DynamicCString &token,
 					int32          &limit,
-					ZeroTerminatedArray<CCString> const delimiters,
+					ZeroTerminatedArray<const CCString> const delimiters,
 					CCString const skip){
     CCString ret;
 

@@ -158,6 +158,26 @@ namespace MARTe {
     static const uint32 MAX_FLOAT32 = 0x7F7FFFFFu;
     static const uint32 EPSILON_FLOAT32 = 0x34000000u;
     static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
+
+
+    /** A tool to find indexes of structures fields.
+     1024 has been used to avoid alignment problems. */
+    #define indexof(type,field) ((MARTe::intptr)&(((type *)1024)->field) - 1024)
+
+    /** A tool to find indexes of structures fields.
+     1024 has been used to avoid alignment problems. */
+    #define ancestorIndexof(type,ancestor) ((MARTe::intptr)( (ancestor *)((type *)1024)  ) - 1024)
+
+    /** A tool to find the size of structures fields.
+     1024 has been used to avoid alignment problems. */
+    #define msizeof(type,field) sizeof(((type *)1024)->field)
+
+    /** A tool to find the type of class/structures fields.
+     1024 has been used to avoid alignment problems. */
+    #define memberOf(type,field) ((type *)1024)->field
+
+
+
 }
 
 #endif /* COMPILERTYPES */

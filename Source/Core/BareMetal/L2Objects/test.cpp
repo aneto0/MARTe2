@@ -190,78 +190,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
     if (deref.GetSize() > 0){
         printf("(%-24s)%s",orig.GetList(),deref.GetList());
 
-    	enum DerefStatus {
-    		Normal,
-    		Member,
-    		Matrix,
-    		MatrixDone
-    	}  status = Normal;
-
-    	while ((deref.GetSize()>0) && (ok)){
-    		DynamicCString token;
-    		int32 term  =-1;
-    		CCString dels[6] = {CCString("."),CCString("*"),CCString("->"),CCString("["),CCString("]"),CCString()};
-    		const ZeroTerminatedArray<CCString> delimiters = dels;
-        	deref = StringHelper::Tokenize(deref,token,term, delimiters,CCString(". "));
-
-        	// process token
-        	if (token.GetSize() > 0){
-            	if (isNumber(token[0])){
-            		if (status == Matrix ){
-                		ok = at.Dereference(atoi(token.GetList()));
-                		if (ok) {
-                			status = MatrixDone;
-                		}
-            		}
-            	} else {
-            		if (status == Member){
-            			ok = at.Dereference(token);
-                		if (ok) {
-                			status = Normal;
-                		}
-            		} else {
-            			ok.syntaxError = true;
-            		}
-            	}
-        	}
-        	// process term
-        	if (ok){
-            	switch(term){
-            	case 0:{ // .
-            		if (status == Normal){
-            			status = Member;
-            		} else ok.syntaxError = true;
-            	} break;
-            	case 1:{ // *
-            		if (status == Normal){
-            			ok = at.Dereference(0);
-            		} else ok.syntaxError = true;
-            	} break;
-            	case 2:{ // ->
-            		if (status == Normal){
-            			ok = at.Dereference(0);
-            			if (ok){
-            				status = Member;
-            			}
-            		} else ok.syntaxError = true;
-            	} break;
-            	case 3:{ // [
-            		if (status == Normal){
-            			status = Matrix;
-            		} else ok.syntaxError = true;
-            	} break;
-            	case 4:{ // ]
-            		if (status == MatrixDone){
-            			status = Normal;
-            		} else ok.syntaxError = true;
-            	} break;
-            	default:{
-
-            	}
-            	}
-        	}
-    	}
-
+        ok = at.MultipleDereference(deref);
 
     } else {
         printf("%-26s ",orig.GetList());
@@ -291,6 +220,42 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 }
 
 
+
+
+
+struct testStruct3{
+	float 		fieldA;
+	CCString	fieldB;
+};
+
+struct testStruct6{
+	float 		fieldC;
+	CCString	fieldD;
+};
+
+struct testStruct5: testStruct6{
+	int 		*fieldE;
+	int         fieldF;
+};
+
+struct testStruct4: testStruct3,testStruct5{
+	float 		fieldG[2][3];
+	DynamicCString	fieldH;
+};
+
+
+struct testStruct2{
+    char8         fieldA[3];
+    const uint8   fieldB;
+     int16       *fieldC;
+    uint32        fieldD;
+     int64        fieldE;
+    Vector<float> fieldF;
+    float*        fieldG;
+    CString       fieldH;
+};
+
+
 struct testStruct{
     char8         fieldA;
     const uint8   fieldB;
@@ -301,26 +266,10 @@ struct testStruct{
     float*        fieldG;
     CString       fieldH;
     testStruct   *fieldI;
+    testStruct2   fieldJ;
+    Matrix<testStruct3>   fieldK;
+    testStruct4   fieldL;
 };
-
-
-struct fregna;
-
-struct pippone{
-    int32 pilla;
-    double polla;
-    fregna *pp;
-};
-
-struct fregna{
-    int32 pillo[4];
-    pippone pollo;
-    pippone *ff;
-
-};
-
-
-
 
 
 
@@ -408,6 +357,9 @@ void testAT(){
     TEST2(testStruct,.fieldG);
     TEST2(testStruct,.fieldH);
     TEST2(testStruct,.fieldI);
+    TEST2(testStruct,.fieldJ);
+    TEST2(testStruct,.fieldK);
+    TEST2(testStruct,.fieldL);
     TEST2(testStruct,.fieldH[0]);
     TEST2(testStruct,.fieldH[1]);
     TEST2(testStruct,.fieldH[2]);
@@ -422,24 +374,35 @@ void testAT(){
     TEST2(testStruct,.fieldI->fieldG);
     TEST2(testStruct,.fieldI->fieldH);
     TEST2(testStruct,.fieldI->fieldI);
-
-    TEST(pippone);
-    TEST2(pippone,.pilla);
-    TEST2(pippone,.polla);
-    TEST2(pippone,.pp);
-    TEST(fregna);
-    TEST2(fregna,.pillo);
-    TEST2(fregna,.pollo);
-    TEST2(fregna,.ff);
-
-    TEST2(pippone,.pp*);
-    TEST2(pippone,.pp*.pollo);
-    TEST2(pippone,.pp->pollo);
-    TEST2(pippone,.pp->pollo.pp);
-    TEST2(pippone,.pp->pollo.pp->pollo);
-    TEST2(pippone,.pp->pollo.pp->pollo.pp);
-    TEST2(pippone,.pp->pollo.pp->pollo.pp->pollo);
-    TEST(const fregna *);
+    TEST2(testStruct,.fieldJ.fieldA);
+    TEST2(testStruct,.fieldJ.fieldB);
+    TEST2(testStruct,.fieldJ.fieldC);
+    TEST2(testStruct,.fieldJ.fieldD);
+    TEST2(testStruct,.fieldJ.fieldE);
+    TEST2(testStruct,.fieldJ.fieldF);
+    TEST2(testStruct,.fieldJ.fieldG);
+    TEST2(testStruct,.fieldJ.fieldH);
+    TEST2(testStruct,.fieldK[0]);
+    TEST2(testStruct,.fieldK[0][0]);
+    TEST2(testStruct,.fieldK[0][0].fieldA);
+    TEST2(testStruct,.fieldK[0][0].fieldB);
+    TEST2(testStruct,.fieldI->fieldI->fieldA);
+    TEST2(testStruct,.fieldI->fieldI->fieldB);
+    TEST2(testStruct,.fieldI->fieldI->fieldC);
+    TEST2(testStruct,.fieldI->fieldI->fieldD);
+    TEST2(testStruct,.fieldI->fieldI->fieldE);
+    TEST2(testStruct,.fieldI->fieldI->fieldF);
+    TEST2(testStruct,.fieldI->fieldI->fieldG);
+    TEST2(testStruct,.fieldI->fieldI->fieldH);
+    TEST2(testStruct,.fieldI->fieldI->fieldI);
+    TEST2(testStruct,.fieldL.fieldA);
+    TEST2(testStruct,.fieldL.fieldB);
+    TEST2(testStruct,.fieldL.fieldC);
+    TEST2(testStruct,.fieldL.fieldD);
+    TEST2(testStruct,.fieldL.fieldE);
+    TEST2(testStruct,.fieldL.fieldF);
+    TEST2(testStruct,.fieldL.fieldG);
+    TEST2(testStruct,.fieldL.fieldH);
 
 }
 
@@ -456,13 +419,30 @@ CLASS_MEMBER_REGISTER(testStruct,fieldF)
 CLASS_MEMBER_REGISTER(testStruct,fieldG)
 CLASS_MEMBER_REGISTER(testStruct,fieldH)
 CLASS_MEMBER_REGISTER(testStruct,fieldI)
-CLASS_MEMBER_REGISTER(pippone,pilla)
-CLASS_MEMBER_REGISTER(pippone,polla)
-CLASS_MEMBER_REGISTER(pippone,pp)
-CLASS_MEMBER_REGISTER(fregna,pillo)
-CLASS_MEMBER_REGISTER(fregna,pollo)
-CLASS_MEMBER_REGISTER(fregna,ff)
+CLASS_MEMBER_REGISTER(testStruct,fieldJ)
+CLASS_MEMBER_REGISTER(testStruct,fieldK)
+CLASS_MEMBER_REGISTER(testStruct,fieldL)
+CLASS_MEMBER_REGISTER(testStruct2,fieldA)
+CLASS_MEMBER_REGISTER(testStruct2,fieldB)
+CLASS_MEMBER_REGISTER(testStruct2,fieldC)
+CLASS_MEMBER_REGISTER(testStruct2,fieldD)
+CLASS_MEMBER_REGISTER(testStruct2,fieldE)
+CLASS_MEMBER_REGISTER(testStruct2,fieldF)
+CLASS_MEMBER_REGISTER(testStruct2,fieldG)
+CLASS_MEMBER_REGISTER(testStruct2,fieldH)
 
+CLASS_MEMBER_REGISTER(testStruct3,fieldA)
+CLASS_MEMBER_REGISTER(testStruct3,fieldB)
+CLASS_MEMBER_REGISTER(testStruct6,fieldC)
+CLASS_MEMBER_REGISTER(testStruct6,fieldD)
+CLASS_INHERIT_REGISTER(testStruct5,testStruct6)
+CLASS_MEMBER_REGISTER(testStruct5,fieldE)
+CLASS_MEMBER_REGISTER(testStruct5,fieldF)
+
+CLASS_INHERIT_REGISTER(testStruct4,testStruct3)
+CLASS_INHERIT_REGISTER(testStruct4,testStruct5)
+CLASS_MEMBER_REGISTER(testStruct4,fieldG)
+CLASS_MEMBER_REGISTER(testStruct4,fieldH)
 
 /**************************************/
 
@@ -504,6 +484,9 @@ printf("%i %i %i %i %i %i %i %i %i\n ",
 		indexof(MARTe::testStruct,fieldI)
 		);
 
+printf ("%i %i %i\n", ancestorIndexof(MARTe::testStruct4,MARTe::testStruct3)
+		            ,ancestorIndexof(MARTe::testStruct4,MARTe::testStruct5)
+		            ,ancestorIndexof(MARTe::testStruct4,MARTe::testStruct6));
 
 return 0;
 }

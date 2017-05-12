@@ -192,8 +192,6 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 }
 
 
-
-
 ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 
 	char8 modifier;
@@ -246,12 +244,95 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 		pointer2Variable = newPointer2Variable;
 
 		variableDescriptor = cm->GetDescriptor();
-//		printf("xxxx %0x\n",variableDescriptor.GetFullTypeDescriptor().all);
-//		printf("xxxx %0x\n",cm->GetDescriptor().GetFullTypeDescriptor().all);
+
 	}
 
 	return ret;
 }
+
+static bool isNumber(char8 c){
+	return ((c >='0') && (c <='9'));
+}
+
+ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpresssion){
+	const CCString dels[6] = {CCString("."),CCString("*"),CCString("->"),CCString("["),CCString("]"),CCString()};
+	const ZeroTerminatedArray<const CCString> delimiters = &dels[0];
+	enum DerefStatus {
+		Normal,
+		Member,
+		Matrix,
+		MatrixDone
+	}  status = Normal;
+
+	CCString deref = CExpresssion;
+	ErrorManagement::ErrorType ok;
+
+
+	while ((deref.GetSize()>0) && (ok)){
+		DynamicCString token;
+		int32 term  =-1;
+    	deref = StringHelper::Tokenize(deref,token,term, delimiters,CCString(". "));
+
+    	// process token
+    	if (token.GetSize() > 0){
+        	if (isNumber(token[0])){
+        		if (status == Matrix ){
+            		ok = Dereference(atoi(token.GetList()));
+            		if (ok) {
+            			status = MatrixDone;
+            		}
+        		}
+        	} else {
+        		if (status == Member){
+        			ok = Dereference(token);
+            		if (ok) {
+            			status = Normal;
+            		}
+        		} else {
+        			ok.syntaxError = true;
+        		}
+        	}
+    	}
+    	// process term
+    	if (ok){
+        	switch(term){
+        	case 0:{ // .
+        		if (status == Normal){
+        			status = Member;
+        		} else ok.syntaxError = true;
+        	} break;
+        	case 1:{ // *
+        		if (status == Normal){
+        			ok = Dereference(0);
+        		} else ok.syntaxError = true;
+        	} break;
+        	case 2:{ // ->
+        		if (status == Normal){
+        			ok = Dereference(0);
+        			if (ok){
+        				status = Member;
+        			}
+        		} else ok.syntaxError = true;
+        	} break;
+        	case 3:{ // [
+        		if (status == Normal){
+        			status = Matrix;
+        		} else ok.syntaxError = true;
+        	} break;
+        	case 4:{ // ]
+        		if (status == MatrixDone){
+        			status = Normal;
+        		} else ok.syntaxError = true;
+        	} break;
+        	default:{
+
+        	}
+        	}
+    	}
+	}
+	return ok;
+}
+
 
 
 }
