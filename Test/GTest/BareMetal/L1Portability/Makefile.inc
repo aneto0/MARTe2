@@ -25,6 +25,9 @@
 
 OBJSX=  AtomicGTest.x \
 		BasicConsoleGTest.x \
+		BufferGTest.x \
+		BufferTGTest.x \
+		CircularBufferTGTest.x \
 		EndianityGTest.x \
 		ErrorManagementGTest.x \
 		FastMathGTest.x \

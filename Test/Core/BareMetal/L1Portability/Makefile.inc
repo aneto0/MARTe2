@@ -27,6 +27,7 @@
 OBJSX=  AtomicTest.x \
 		AuxHeap.x\
 		BasicConsoleTest.x \
+		BufferTest.x \
 		EndianityTest.x \
 		ErrorManagementTest.x \
 		FastMathTest.x \

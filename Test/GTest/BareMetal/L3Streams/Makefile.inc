@@ -31,6 +31,8 @@ OBJSX=  AdvancedErrorManagementGTest.x \
 		DoubleBufferedStreamGTest.x \
 		IOBufferGTest.x \
 		SingleBufferedStreamGTest.x \
+		SquareRootTGTest.x \
+		StatisticsHelperTGTest.x \
 		StreamMemoryReferenceGTest.x \
 		StreamStringGTest.x \
 		StreamStringIOBufferGTest.x 
