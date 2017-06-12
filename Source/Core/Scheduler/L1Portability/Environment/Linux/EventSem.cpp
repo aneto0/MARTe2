@@ -256,7 +256,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
                         ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
                         if (!ok) {
                             err = ErrorManagement::Timeout;
-                            REPORT_ERROR_STATIC_0(err, "Information: timeout occurred");
+                    //        REPORT_ERROR_STATIC_0(err, "Information: timeout occurred");
                         }
                     }
                 }

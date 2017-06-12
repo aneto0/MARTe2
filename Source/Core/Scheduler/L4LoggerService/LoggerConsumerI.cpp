@@ -114,6 +114,15 @@ void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI 
             (void) err.Printf("%s", key);
         }
     }
+    if (formatPrefs.className.operator bool()) {
+        if (printKeys) {
+            key = "|C=";
+        }
+        else {
+            key = "|";
+        }
+        (void) err.Printf("%s%s", key, errorInfo.className);
+    }
     if (formatPrefs.threadId.operator bool()) {
         if (printKeys) {
             key = "|T=";
@@ -150,15 +159,6 @@ void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI 
             key = "|";
         }
         (void) err.Printf("%s%s", key, logPage->errorStrBuffer);
-    }
-    if (formatPrefs.className.operator bool()) {
-        if (printKeys) {
-            key = "|C=";
-        }
-        else {
-            key = "|";
-        }
-        (void) err.Printf("%s%s", key, errorInfo.className);
     }
 }
 
