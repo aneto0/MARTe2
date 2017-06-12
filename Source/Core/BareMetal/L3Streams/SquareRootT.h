@@ -2,6 +2,7 @@
  * @file SquareRootT.h
  * @brief Header file for class SquareRootT
  * @date 19/04/2017
+ * @author Bertrand Bauvir
  * @author Andre' Torres
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

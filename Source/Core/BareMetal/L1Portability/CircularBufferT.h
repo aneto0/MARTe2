@@ -2,6 +2,7 @@
  * @file CircularBufferT.h
  * @brief Header file for class CircularBufferT
  * @date 18/04/2017
+ * @author Bertrand Bauvir
  * @author Andre' Torres
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +22,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CircularBufferT_H_
-#define CircularBufferT_H_
+#ifndef CIRCULAR_BUFFERT_H_
+#define CIRCULAR_BUFFERT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "BufferT.h"
+#include "StaticList.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,19 +42,17 @@
 namespace MARTe {
 
 /**
- * @brief The class provides templated memory buffer management to store data
- * in a circular way.
- *
- * @todo Provide locking mechanism through atomic operations.
+ * @brief Circular buffer implementation of the StaticList.
  */
 
 /*lint -e{1712} the implementation does not provide default constructor*/
 /*lint -esym(9107, MARTe::CircularBufferT*) [MISRA C++ Rule 3-1-1] required for template implementation*/
-template <typename Type> class CircularBufferT : public BufferT<Type> {
-  public:
+template<typename Type> class CircularBufferT: public StaticList<Type> {
+public:
 
     /**
-     * @brief Constructor. Allocates memory from the standard heap.
+     * @brief Constructor. Allocates memory from the standard heap in order to create a StaticList with bufferSize elements.
+     * @param[in] bufferSize the number of elements of the circular buffer.
      * @post
      *   index = 0u
      */
@@ -65,24 +64,28 @@ template <typename Type> class CircularBufferT : public BufferT<Type> {
     virtual ~CircularBufferT();
 
     /**
-     * @brief Accessor. Inserts data in buffer.
-     * @return if buffer properly allocated.
+     * @brief Inserts data in the next position of the circular buffer.
+     * @param[in] data the data to be inserted.
+     * @return true if the data can be successfully inserted (see StaticList::Set).
      */
-    virtual bool PushData (Type& data);
+    virtual bool PushData(Type& data);
 
     /**
-     * @brief Accessor. Inserts data in buffer and return removed element.
-     * @return if buffer properly allocated.
+     * @brief Replaces the data in the current buffer position and returns the removed element.
+     * @param[in] dataIn the data to be inserted.
+     * @param[out] dataOut the data that was replaced.
+     * @return true if the data can be successfully inserted (see StaticList::Set).
      */
-    virtual bool PushData (Type& data_in, Type& data_out);
+    virtual bool PushData(Type& dataIn, Type& dataOut);
 
     /**
-     * @brief Accessor. Returns last added element.
-     * @return if success.
+     * @brief Returns the last added element.
+     * @param[out] dataOut the last added element.
+     * @return true if the element can be successfully retrieved.
      */
-    virtual bool GetLast (Type& data_out);
+    virtual bool GetLast(Type& dataOut);
 
-  private:
+private:
 
     uint32 index;
 };
@@ -91,51 +94,52 @@ template <typename Type> class CircularBufferT : public BufferT<Type> {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template <typename Type> CircularBufferT<Type>::CircularBufferT(const uint32 bufferSize) :
-  BufferT<Type> (bufferSize) {
-
+template<typename Type> CircularBufferT<Type>::CircularBufferT(const uint32 bufferSize) :
+        StaticList<Type>() {
     index = 0u;
-
+    uint32 i;
+    for (i = 0u; i < bufferSize; i++) {
+        Type temp;
+        (void) StaticList<Type>::Add(temp);
+    }
 }
 
-template <typename Type> CircularBufferT<Type>::~CircularBufferT() {
-/* Nothing further to do than the default base class destructor */
+template<typename Type> CircularBufferT<Type>::~CircularBufferT() {
+    /* Nothing further to do than the default base class destructor */
 }
 
-template <typename Type> bool CircularBufferT<Type>::PushData(Type& data) {
+template<typename Type> bool CircularBufferT<Type>::PushData(Type& data) {
 
-    bool ok = Buffer::PutData(reinterpret_cast<const char8 *>(&data), index);
+    bool ok = StaticList<Type>::Set(index, data);
 
     if (ok) {
         index++;
     }
 
-    if (index == BufferT<Type>::GetSize()) {
+    if (index == StaticList<Type>::GetSize()) {
         index = 0u;
     }
 
     return ok;
 }
 
-template <typename Type> bool CircularBufferT<Type>::PushData(Type& data_in, Type& data_out) {
-    Type *data_out_p =&data_out;
-    bool ok = BufferT<Type>::GetData(data_out_p, index);
+template<typename Type> bool CircularBufferT<Type>::PushData(Type& dataIn, Type& dataOut) {
+    bool ok = StaticList<Type>::Peek(index, dataOut);
 
     if (ok) {
-        ok = PushData(data_in);
+        ok = PushData(dataIn);
     }
 
     return ok;
 }
 
-template <typename Type> bool CircularBufferT<Type>::GetLast(Type& data_out) {
-    Type *data_out_p =&data_out;
-    bool ok= true;
-    if (index>0u){
-        ok = BufferT<Type>::GetData(data_out_p, index-1);
+template<typename Type> bool CircularBufferT<Type>::GetLast(Type& dataOut) {
+    bool ok = true;
+    if (index > 0u) {
+        ok = StaticList<Type>::Peek(index - 1, dataOut);
     }
-    else{
-        ok = BufferT<Type>::GetData(data_out_p, BufferT<Type>::GetSize()-1);
+    else {
+        ok = StaticList<Type>::Peek(StaticList<Type>::GetSize() - 1, dataOut);
     }
 
     return ok;
@@ -143,6 +147,5 @@ template <typename Type> bool CircularBufferT<Type>::GetLast(Type& data_out) {
 
 } /* namespace MARTe */
 
-#endif /* CircularBufferT_H_ */
+#endif /* CIRCULAR_BUFFERT_H_ */
 
-	

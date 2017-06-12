@@ -56,7 +56,7 @@ public:
     bool TestPushData2(const uint32 bufferSize);
 
     /**
-     * @brief Tests the GetData method.
+     * @brief Tests the GetLast method.
      */
     bool TestGetLast(const uint32 bufferSize);
 
@@ -74,15 +74,14 @@ bool CircularBufferTTest<Type>::TestPushData(const uint32 bufferSize) {
     CircularBufferT<Type> b(bufferSize);
     Type elementIn;
     Type elementOut;
-    Type * test_p = &elementOut;
     bool ok = (true);
     uint32 i = 0u;
     uint32 j = 0u;
     uint32 testSize = sizeof(elementIn);
     while ((ok) && (i < 2 * bufferSize)) {
-        bool ok = b.PushData(*&elementIn);
+        ok = b.PushData(elementIn);
         if (ok) {
-            ok = b.GetData(test_p, i % bufferSize);
+            ok = b.Peek(i % bufferSize, elementOut);
             char * elementOut_p = (char *) &elementOut;
             char * elementIn_p = (char *) &elementIn;
             if (ok) {
@@ -108,7 +107,7 @@ bool CircularBufferTTest<Type>::TestPushData2(const uint32 bufferSize) {
     uint32 j = 0u;
     uint32 testSize = sizeof(elementIn);
     while ((ok) && (i < 2 * bufferSize)) {
-        bool ok = b.PushData(*&elementIn, *&elementOut);
+        ok = b.PushData(elementIn, elementOut);
         char * elementOut_p = (char *) &elementOut;
         char * elementIn_p = (char *) &elementIn;
         if ((ok) && (i >= bufferSize)) {
@@ -133,9 +132,9 @@ bool CircularBufferTTest<Type>::TestGetLast(const uint32 bufferSize) {
     uint32 j = 0u;
     uint32 testSize = sizeof(elementIn);
     while ((ok) && (i < 2 * bufferSize)) {
-        bool ok = b.PushData(*&elementIn);
+        ok = b.PushData(elementIn);
         if (ok) {
-            ok = b.GetLast(*&elementOut);
+            ok = b.GetLast(elementOut);
             char * elementOut_p = (char *) &elementOut;
             char * elementIn_p = (char *) &elementIn;
             if ((ok) && (i >= bufferSize)) {
