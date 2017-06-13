@@ -91,6 +91,7 @@ namespace MARTe {
          * @brief Atomically exchanges the contents of a variable with the specified memory location.
          * @param[out] p the pointer to the 32 bit variable where will be stored the value of v atomically.
          * @param[in] v the value to store in the variable pointed by p.
+         * @return the exchanged value.
          */
         inline int32 Exchange (volatile int32 *p, int32 v);
 

@@ -179,10 +179,10 @@ bool LoggerConsumerITest::TestPrintToStream() {
         //Note that the Thread identified is currently not being handled.
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0x00000000AABBCCDD||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream|LoggerConsumerITest";
+            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0x00000000AABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
         }
         else {
-            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0xAABBCCDD||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream|LoggerConsumerITest";
+            expectedPrint = "|Debug|1000000000|1:2:3 (1000000000)|Obj1|0xAABBCCDD|LoggerConsumerITest||TestPrintToStream|LoggerConsumerITest.cpp:163|LoggerConsumerITest::TestPrintToStream";
         }
         ok = (err == expectedPrint);
     }
@@ -220,11 +220,11 @@ bool LoggerConsumerITest::TestPrintToStream_WithKeys() {
         StreamString expectedPrint;
         if (sizeof(void *) == 8u) {
             expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
+                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0x00000000AABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
         }
         else {
             expectedPrint =
-                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream|C=LoggerConsumerITest";
+                    "|E=Debug|TM=1000000000|TM=1:2:3 (1000000000)|o=Obj1|O=0xAABBCCDD|C=LoggerConsumerITest|T=|f=TestPrintToStream|F=LoggerConsumerITest.cpp:163|D=LoggerConsumerITest::TestPrintToStream";
         }
         ok = (err == expectedPrint);
     }
