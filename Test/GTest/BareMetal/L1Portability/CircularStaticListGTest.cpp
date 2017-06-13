@@ -1,6 +1,6 @@
 /**
- * @file CircularBufferTGTest.cpp
- * @brief Source file for class CircularBufferTGTest
+ * @file CircularStaticListGTest.cpp
+ * @brief Source file for class CircularStaticListGTest
  * @date 18/04/2017
  * @author Andre' Torres
  *
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "CircularBufferTTest.h"
+#include <CircularStaticListTest.h>
 #include "CompilerTypes.h"
 #include "gtest/gtest.h"
 
@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-class TestClassForCircularBufferT{
+class TestClassForCircularStaticList{
 public:
     uint64 a;
 };
@@ -47,92 +47,97 @@ public:
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_BasicType_32) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_BasicType_32) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_BasicType_1) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_BasicType_1) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_BasicType_0) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_BasicType_0) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(0));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_ComplexType_32) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_ComplexType_32) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_ComplexType_1) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_ComplexType_1) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData_ComplexType_0) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData_ComplexType_0) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData(0));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_BasicType_32) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_BasicType_32) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_BasicType_1) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_BasicType_1) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_BasicType_0) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_BasicType_0) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(0));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_ComplexType_32) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_ComplexType_32) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_ComplexType_1) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_ComplexType_1) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTPushData2_ComplexType_0) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListPushData2_ComplexType_0) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestPushData2(0));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_BasicType_32) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_BasicType_32) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_BasicType_1) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_BasicType_1) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_BasicType_0) {
-    CircularBufferTTest<uint64> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_BasicType_0) {
+    CircularStaticListTest<uint64> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(0));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_ComplexType_32) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_ComplexType_32) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(32));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_ComplexType_1) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_ComplexType_1) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(1));
 }
 
-TEST(CircularBufferTGTest,TestCircularBufferTGetLast_ComplexType_0) {
-    CircularBufferTTest<TestClassForCircularBufferT> circularBufferTTest;
+TEST(CircularStaticListGTest,TestCircularStaticListGetLast_ComplexType_0) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
     ASSERT_TRUE(circularBufferTTest.TestGetLast(0));
+}
+
+TEST(CircularStaticListGTest,TestGetIndex) {
+    CircularStaticListTest<TestClassForCircularStaticList> circularBufferTTest;
+    ASSERT_TRUE(circularBufferTTest.TestGetIndex(16));
 }

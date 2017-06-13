@@ -57,8 +57,7 @@ public:
      * @param[in] expectedValue is the expected integer value after conversion.
      * @return true if the conversion result is equal to the expected value.
      */
-    bool TestFloatToInt32(float testFloat,
-                          int32 expectedValue);
+    bool TestFloatToInt32(float testFloat, int32 expectedValue);
 
     /**
      * @brief Tests the fast Sin function
@@ -66,8 +65,7 @@ public:
      * @param[in] expectedValue is the expected result value after the operation.
      * @return true if the result is equal to the expected value.
      */
-    bool TestSin(float angle,
-                 float expectedValue);
+    bool TestSin(float angle, float expectedValue);
 
     /**
      * @brief Tests the fast Cos function
@@ -75,8 +73,7 @@ public:
      * @param[in] expectedValue is the expected result value after the operation.
      * @return true if the result is equal to the expected value.
      */
-    bool TestCos(float angle,
-                 float expectedValue);
+    bool TestCos(float angle, float expectedValue);
 
     /**
      * @brief Tests for each angle that sin^2(a)+cos^2(a)=1.
@@ -90,6 +87,55 @@ public:
      * @return true if all tests return true.
      */
     bool All();
+
+    /**
+     * @brief Tests the SquareRoot function for uint8.
+     */
+    bool TestSquareRootUint8(const uint8 testVal, const uint8 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for uint16.
+     */
+    bool TestSquareRootUint16(const uint16 testVal, const uint16 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for uint32.
+     */
+    bool TestSquareRootUint32(const uint32 testVal, const uint32 expectedRes);
+    /**
+     * @brief Tests the SquareRoot function for uint64.
+     */
+    bool TestSquareRootUint64(const uint64 testVal, const uint64 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for int8.
+     */
+    bool TestSquareRootInt8(const int8 testVal, const int8 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for int16.
+     */
+    bool TestSquareRootInt16(const int16 testVal, const int16 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for int32.
+     */
+    bool TestSquareRootInt32(const int32 testVal, const int32 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for int64.
+     */
+    bool TestSquareRootInt64(const int64 testVal, const int64 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for float32.
+     */
+    bool TestSquareRootFloat32(const float32 testVal, const float32 expectedRes);
+
+    /**
+     * @brief Tests the SquareRoot function for float64.
+     */
+    bool TestSquareRootFloat64(const float64 testVal, const float64 expectedRes);
 
 private:
 

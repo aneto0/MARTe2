@@ -1,6 +1,6 @@
 /**
- * @file CircularBufferTTest.h
- * @brief Header file for class CircularBufferTTest
+ * @file CircularStaticListTest.h
+ * @brief Header file for class CircularStaticListTest
  * @date 18/04/2017
  * @author Andre' Torres
  *
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CIRCULARBUFFERTTEST_H_
-#define CIRCULARBUFFERTTEST_H_
+#ifndef CIRCULARSTATICLISTTEST_H_
+#define CIRCULARSTATICLISTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "CircularBufferT.h"
+#include "CircularStaticList.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ namespace MARTe {
  * @brief Template implementation of CircularBuffer test.
  */
 template<typename Type>
-class CircularBufferTTest {
+class CircularStaticListTest {
 
 public:
 
@@ -60,6 +60,11 @@ public:
      */
     bool TestGetLast(const uint32 bufferSize);
 
+    /**
+     * @brief Tests the GetIndex method.
+     */
+    uint32 TestGetIndex(const uint32 bufferSize);
+
 };
 
 }
@@ -70,8 +75,8 @@ public:
 namespace MARTe {
 
 template<typename Type>
-bool CircularBufferTTest<Type>::TestPushData(const uint32 bufferSize) {
-    CircularBufferT<Type> b(bufferSize);
+bool CircularStaticListTest<Type>::TestPushData(const uint32 bufferSize) {
+    CircularStaticList<Type> b(bufferSize);
     Type elementIn;
     Type elementOut;
     bool ok = (true);
@@ -98,8 +103,8 @@ bool CircularBufferTTest<Type>::TestPushData(const uint32 bufferSize) {
 }
 
 template<typename Type>
-bool CircularBufferTTest<Type>::TestPushData2(const uint32 bufferSize) {
-    CircularBufferT<Type> b(bufferSize);
+bool CircularStaticListTest<Type>::TestPushData2(const uint32 bufferSize) {
+    CircularStaticList<Type> b(bufferSize);
     Type elementIn;
     Type elementOut;
     bool ok = (true);
@@ -123,8 +128,8 @@ bool CircularBufferTTest<Type>::TestPushData2(const uint32 bufferSize) {
 }
 
 template<typename Type>
-bool CircularBufferTTest<Type>::TestGetLast(const uint32 bufferSize) {
-    CircularBufferT<Type> b(bufferSize);
+bool CircularStaticListTest<Type>::TestGetLast(const uint32 bufferSize) {
+    CircularStaticList<Type> b(bufferSize);
     Type elementIn;
     Type elementOut;
     bool ok = (true);
@@ -151,6 +156,22 @@ bool CircularBufferTTest<Type>::TestGetLast(const uint32 bufferSize) {
     return ok;
 }
 
+template<typename Type>
+uint32 CircularStaticListTest<Type>::TestGetIndex(const uint32 bufferSize) {
+    CircularStaticList<Type> b(bufferSize);
+    bool ok = (true);
+    uint32 i = 0u;
+    while ((ok) && (i < 2 * bufferSize)) {
+        Type elementIn;
+        if (ok) {
+            ok = (b.GetIndex() == (i % bufferSize));
+        }
+        ok = b.PushData(elementIn);
+        i++;
+    }
+    return ok;
 }
-#endif /* CIRCULARBUFFERTTEST_H_ */
+
+}
+#endif /* CIRCULARSTATICLISTTEST_H_ */
 

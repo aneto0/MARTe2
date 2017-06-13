@@ -28,6 +28,7 @@ CLASSREGISTER.h
 ClassRegistryDatabase.cpp
 ClassRegistryItem.cpp
 ClassRegistryItemT.h
+CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 ConsoleLogger.cpp
