@@ -10,14 +10,14 @@
 
 
 #include "ErrorType.h"
-#include "StringHelper.h"
+
 
 
 namespace MARTe {
 
 
 
-typedef CCString BalancedTreeNodeKey;
+typedef const void * BalancedTreeNodeKey;
 
 /**
  * BalancedTreeNode-able
@@ -93,16 +93,15 @@ public:
 	inline uint32 Depth() const;
 
 private:
+	/**
+	 * to be subclassed and specialised
+	 */
+	virtual int8 CompareToKey(BalancedTreeNodeKey K)=0;
 
 	/**
 	 * to be subclassed and specialised
 	 */
-	virtual const BalancedTreeNodeKey GetKey()=0;
-
-	/**
-	 * returns 0 1 2 as for the StringHelper::Compare
-	 */
-	inline int8 Compare(const BalancedTreeNodeKey &key) ;
+	virtual int8 CompareToNode(BalancedTreeNode *N)=0;
 
 	/**
 	 * switch the root node with the greater subtree
@@ -169,10 +168,6 @@ BalancedTreeNode::BalancedTreeNode(){
 	Clean();
 }
 
-
-int8 BalancedTreeNode::Compare(const BalancedTreeNodeKey &key){
-	return StringHelper::Compare(GetKey(),key );
-}
 
 /*
  * left to right tree imbalance

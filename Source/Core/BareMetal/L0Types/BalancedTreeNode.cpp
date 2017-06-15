@@ -36,7 +36,8 @@ ErrorManagement::ErrorType BalancedTreeNode::InsertAVL(BalancedTreeNode *&root, 
 	if (ret){
 		node->Clean();
 
-		sign = root->Compare(node->GetKey());
+		sign = root->CompareToNode(node);
+//		sign = root->Compare(node->GetKey());
 
 		// TODO choose better error code
 		ret.fatalError =  (sign == 0) || (sign > 2);
@@ -90,7 +91,8 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 	if (ret){
 
 		if (bias == 0){
-			sign = root->Compare(key);
+			sign = root->CompareToKey(key);
+//			sign = root->Compare(key);
 		} else {
 			sign = bias;
 		}
@@ -185,7 +187,7 @@ BalancedTreeNode *BalancedTreeNode::Seek(const uint32 index) {
  */
 BalancedTreeNode *BalancedTreeNode::Search(const BalancedTreeNodeKey &key,uint32 &index){
 	BalancedTreeNode *ptr = NULL;
-	int8 compare = Compare(key);
+	int8 compare = CompareToKey(key);
 	if (compare == 0) {
 		ptr = this;
 		index = this->SmallerSize();

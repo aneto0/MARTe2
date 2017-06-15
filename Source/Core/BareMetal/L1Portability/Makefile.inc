@@ -28,8 +28,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=Environment/$(ENVIRONMENT).x
 
-OBJSX=          BalancedTreeNode.x \
-                FastPollingEventSem.x \
+OBJSX=          FastPollingEventSem.x \
 		FastPollingMutexSem.x \
 		FormatDescriptor.x \
 		GlobalObjectI.x \

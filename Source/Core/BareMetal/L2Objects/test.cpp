@@ -502,23 +502,59 @@ return 0;
 #include "CCString.h"
 #include "BalancedTreeHolder.h"
 
+namespace MARTe{
 
-struct RefToName{
-	MARTe::CCString operator()( MARTe::Reference & ref){
-		MARTe::CCString ret = "empty";
-		if (ref.IsValid()){
-			ret = ref->GetName();
-		}
-		return ret;
+struct RefNameKey{
+
+	static BalancedTreeNodeKey ToNodeKey( CCString key){
+		return static_cast<BalancedTreeNodeKey>(key.GetList());
+	}
+
+	static int8 CompareToKey(Reference &ref, const BalancedTreeNodeKey &K){
+		const char8* Ks = static_cast<const char8 *> (K);
+		CCString key(Ks);
+		return StringHelper::Compare(ref->GetName(),key );
+	}
+
+	static int8 Compare(Reference &ref, Reference &ref2){
+		return StringHelper::Compare(ref->GetName(),ref2->GetName());
 	}
 };
 
+struct RefNumKey{
 
-void printTree(MARTe::BalancedTreeHolder<MARTe::Reference,RefToName> &tree){
+	static BalancedTreeNodeKey ToNodeKey( uint64 key){
+		return reinterpret_cast<BalancedTreeNodeKey>(key);
+	}
+
+	static int8 CompareToKey(Reference &ref, const BalancedTreeNodeKey &K){
+		uint64 key1 = reinterpret_cast<uint64>(ref.operator->());
+		uint64 key2 = reinterpret_cast<uint64>(K);
+
+		if (key1 > key2) return 1;
+		else
+		if (key1 < key2) return 2;
+		else return 0;
+	}
+
+	static int8 Compare(Reference &ref, Reference &ref2){
+		uint64 key1 = reinterpret_cast<uint64>(ref.operator->());
+		uint64 key2 = reinterpret_cast<uint64>(ref2.operator->());
+
+		if (key1 > key2) return 1;
+		else
+		if (key1 < key2) return 2;
+		else return 0;
+	}
+};
+
+template <class loadClass,class keyClass, typename loadKey>
+void printTree(BalancedTreeHolder<loadClass,keyClass,loadKey> &tree,bool showAll=false){
 	int size = tree.Size();
 printf("Tree Size = %i %i\n",tree.Size(),tree.Depth());
+	if (showAll)
 	for (int i = 0;i< size;i++){
-		MARTe::BalancedTreeNodeT<MARTe::Reference,RefToName> *p = tree.Seek(i);
+		BalancedTreeNodeT<loadClass,keyClass,loadKey> *p = tree.Seek(i);
 
 		printf("%03i ",i);
 		if (p != NULL){
@@ -527,24 +563,21 @@ printf("Tree Size = %i %i\n",tree.Size(),tree.Depth());
 		} else {
 			printf("NULL\n");
 		}
-
-
 	}
-
 }
 
-class DummyObject:public MARTe::Object{
+class DummyObject:public Object{
 public:
 	CLASS_REGISTER_DECLARATION()
-
-
 };
 
 CLASS_REGISTER(DummyObject, "1.0")
 
+}
 
 void testOther(){
-	MARTe::BalancedTreeHolder<MARTe::Reference,RefToName> bth;
+	MARTe::BalancedTreeHolder<MARTe::Reference,MARTe::CCString,MARTe::RefNameKey> bth;
+	MARTe::BalancedTreeHolder<MARTe::Reference,MARTe::uint64,MARTe::RefNumKey> bth2;
 
 	const MARTe::uint32 refsSz = 1000*1000;
 	const MARTe::uint32 maxR   = 256*256;
@@ -567,9 +600,10 @@ void testOther(){
 
 		sprintf(buffer,"%05x%05x",r,i);
 		//printf("%03i>>%s \n",i,buffer);
-		MARTe::ReferenceT<DummyObject> refd(new DummyObject());
+		MARTe::ReferenceT<MARTe::DummyObject> refd(new MARTe::DummyObject());
 		refd->SetName(buffer);
 		bth.Insert(refd);
+		bth2.Insert(refd);
 
 //		printTree(bth);
 		if (bth.Size() < i){
@@ -579,7 +613,8 @@ void testOther(){
 //		printTree(bth);
 	}
 
-	printTree(bth);
+	MARTe::printTree(bth,false);
+	MARTe::printTree(bth2,false);
 
 //	MARTe::IndexedReferenceContainerRoot<24> ircr;
 }
