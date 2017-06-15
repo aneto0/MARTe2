@@ -450,10 +450,13 @@ CLASS_MEMBER_REGISTER(testStruct4,fieldH)
 
 }
 
+void testOther();
 int pluto;
 
 int main(int argc, char **argv){
 
+	testOther();
+return 0;
 	int pippo;
 	float *x = (float *)0x123;
 
@@ -470,7 +473,6 @@ int main(int argc, char **argv){
 MARTe::testAT();
 
 #include "CompilerTypes.h"
-
 
 
 printf("%i %i %i %i %i %i %i %i %i\n ",
@@ -491,5 +493,94 @@ printf ("%i %i %i\n",
 	(int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct6));
 
 return 0;
+}
+
+
+//#include "IndexedReferenceContainer.h"
+#include "Reference.h"
+#include "ReferenceT.h"
+#include "CCString.h"
+#include "BalancedTreeHolder.h"
+
+
+struct RefToName{
+	MARTe::CCString operator()( MARTe::Reference & ref){
+		MARTe::CCString ret = "empty";
+		if (ref.IsValid()){
+			ret = ref->GetName();
+		}
+		return ret;
+	}
+};
+
+
+void printTree(MARTe::BalancedTreeHolder<MARTe::Reference,RefToName> &tree){
+	int size = tree.Size();
+printf("Tree Size = %i %i\n",tree.Size(),tree.Depth());
+	for (int i = 0;i< size;i++){
+		MARTe::BalancedTreeNodeT<MARTe::Reference,RefToName> *p = tree.Seek(i);
+
+		printf("%03i ",i);
+		if (p != NULL){
+			for (int j=0;j<(tree.Depth()-p->Depth());j++) printf(" -> ");
+			printf("%s\n",p->GetData()->GetName());
+		} else {
+			printf("NULL\n");
+		}
+
+
+	}
+
+}
+
+class DummyObject:public MARTe::Object{
+public:
+	CLASS_REGISTER_DECLARATION()
+
+
+};
+
+CLASS_REGISTER(DummyObject, "1.0")
+
+
+void testOther(){
+	MARTe::BalancedTreeHolder<MARTe::Reference,RefToName> bth;
+
+	const MARTe::uint32 refsSz = 1000*1000;
+	const MARTe::uint32 maxR   = 256*256;
+	int i;
+
+//	MARTe::ReferenceT<DummyObject> refs[refsSz];
+
+//	bool indexes[maxR];
+//	for (i = 0;i< maxR; i++) indexes[i] = false;
+
+	for (int i = 0;i< refsSz;i++){
+		char buffer[256];
+		MARTe::uint32 r = rand() & (maxR-1);
+//		if (indexes[r]==true){
+//			r =0;
+//			while ((r<maxR) && (indexes[r]))r++;
+//		}
+
+//		indexes[r] = true;
+
+		sprintf(buffer,"%05x%05x",r,i);
+		//printf("%03i>>%s \n",i,buffer);
+		MARTe::ReferenceT<DummyObject> refd(new DummyObject());
+		refd->SetName(buffer);
+		bth.Insert(refd);
+
+//		printTree(bth);
+		if (bth.Size() < i){
+			break;
+		}
+
+//		printTree(bth);
+	}
+
+	printTree(bth);
+
+//	MARTe::IndexedReferenceContainerRoot<24> ircr;
 }
 
