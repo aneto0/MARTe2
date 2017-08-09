@@ -81,12 +81,10 @@ void AtLeast(const float64 sec) {
 }
 
 void NoMore(const float64 sec) {
+    uint64 start = HighResolutionTimer::Counter();
     uint32 linuxSleepNoMoreMinUsecTime = 5000u;
-    uint64 secCounts = static_cast<uint64>(sec) * HighResolutionTimer::Frequency();
-
     float64 secNoMore = sec;
     secNoMore -= static_cast<float64>(linuxSleepNoMoreMinUsecTime) * 1e-6;
-    uint64 start = HighResolutionTimer::Counter();
     if (secNoMore > 0.) {
         struct timespec timesValues;
         struct timespec remTimesValues;
@@ -103,7 +101,9 @@ void NoMore(const float64 sec) {
             memcpy(&timesValues, &remTimesValues, sizeof(struct timespec));
         }
     }
-    uint64 sleepUntil = secCounts + start;
+    float64 frequencyF = static_cast<float64>(HighResolutionTimer::Frequency());
+    float64 secCountsF = (sec * frequencyF);
+    uint64 sleepUntil = static_cast<uint64>(secCountsF) + start;
     while (HighResolutionTimer::Counter() < sleepUntil) {
     }
 
