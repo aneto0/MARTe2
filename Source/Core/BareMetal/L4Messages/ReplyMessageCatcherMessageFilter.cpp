@@ -88,7 +88,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
         Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
-            err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
+            err.timeout = (deltaT > maxWait.HighResolutionTimerTicks());
         }
     }
 
