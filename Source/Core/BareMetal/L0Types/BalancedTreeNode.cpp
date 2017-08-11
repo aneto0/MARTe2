@@ -76,11 +76,13 @@ ErrorManagement::ErrorType BalancedTreeNode::InsertAVL(BalancedTreeNode *&root, 
 	return ret;
 }
 
+
 /**
 
- * bias = 0 -> extract matching
+ * bias = 2 -> extract matching
  * bias = 1 -> extract the smallest greater
  * bias = -1 -> extract the greatest smaller
+ * bias = 0 -> extract root!
  */
 ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root, BalancedTreeNode *&extracted,const BalancedTreeNodeKey &key,int8 bias){
 	ErrorManagement::ErrorType ret;
@@ -90,11 +92,12 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 	int8 sign = 0;
 	if (ret){
 
-		if (bias == 0){
+		if (bias == 2){
 			sign = root->CompareToKey(key);
 //			sign = root->Compare(key);
 		} else {
 			sign = bias;
+
 		}
 
 		// found
@@ -106,16 +109,16 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 			if (root->smaller == NULL){
 				root = root->greater;
 			} else {
-				extracted = root;
 				ret = ExtractAVL(extracted->greater,root,key,1);
-				root->greater = extracted->greater;
-				root->smaller = extracted->smaller;
-				root->UpdateStatistics();
+				if (ret && (root != NULL)){
+					root->greater = extracted->greater;
+					root->smaller = extracted->smaller;
+				}
 			}
 		} else
 		if (sign > 0){
 			if (root->smaller == NULL){
-				if (bias == 0){
+				if (bias == 2){
 					extracted = NULL;
 					ret.notCompleted = true;
 				} else {
@@ -124,11 +127,10 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 				}
 			} else {
 				ret = ExtractAVL(root->smaller,extracted,key,bias);
-				root->UpdateStatistics();
 			}
 		} else {
 			if (root->greater == NULL){
-				if (bias == 0){
+				if (bias == 2){
 					extracted = NULL;
 					ret.notCompleted = true;
 				} else {
@@ -137,13 +139,13 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 				}
 			} else {
 				ret = ExtractAVL(root->greater,extracted,key,bias);
-				root->UpdateStatistics();
 			}
 		}
 	}
 
 	// AVL rebalance
-	if (ret){
+	if (ret && (root != NULL)){
+		root->UpdateStatistics();
 		int32 di = root->TreeDepthImbalance();
 		if (di > 1){
 			ret = RotateG(root);

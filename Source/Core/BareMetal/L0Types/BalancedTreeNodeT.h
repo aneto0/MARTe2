@@ -10,6 +10,7 @@
 
 
 #include "BalancedTreeNode.h"
+#include "GenericIterator.h"
 
 namespace MARTe{
 
@@ -62,10 +63,65 @@ public:
 	/**
 	 *
 	 */
+	inline IteratorAction Iterate(GenericIterator<loadClass> &iterator,uint32 depth){
+		IteratorAction ia,iat;
+
+		if (smaller != NULL){
+			ia = Smaller()->Iterate(iterator,depth+1);
+			if (ia.deleteNode){
+				BalancedTreeNode *extracted;
+				BalancedTreeNodeKey dummy;
+				if (ExtractAVL(smaller, extracted,dummy,0)){
+					delete extracted;
+				}
+			}
+		}
+		if (!ia.terminateIteration){
+			ia = iterator.Do(GetData(),depth);
+		}
+		if (!ia.terminateIteration){
+			if (greater != NULL){
+				iat = Greater()->Iterate(iterator,depth+1);
+				if (iat.terminateIteration){
+					ia.terminateIteration = true;
+				}
+				if (iat.deleteNode){
+					BalancedTreeNode *extracted;
+					BalancedTreeNodeKey dummy;
+					if (ExtractAVL(greater, extracted,dummy,0)){
+						delete extracted;
+					}
+				}
+			}
+		}
+		UpdateStatistics();
+		return ia;
+	}
+
+
+
+	/**
+	 *
+	 */
 	loadClass & GetData(){
 		return payLoad;
 	}
 private:
+
+	/**
+	 *
+	 */
+	inline BalancedTreeNodeT<loadClass,keyClass,loadKey> *Smaller(){
+		return static_cast<BalancedTreeNodeT<loadClass,keyClass,loadKey> *>(smaller);
+	}
+
+	/**
+	 *
+	 */
+	inline BalancedTreeNodeT<loadClass,keyClass,loadKey> *Greater(){
+		return static_cast<BalancedTreeNodeT<loadClass,keyClass,loadKey> *>(greater);
+	}
+
 
 	/**
 	 * to be subclassed and specialised

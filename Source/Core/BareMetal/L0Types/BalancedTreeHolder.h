@@ -10,6 +10,7 @@
 
 
 #include "BalancedTreeNodeT.h"
+#include "GenericIterator.h"
 
 namespace MARTe{
 
@@ -75,6 +76,33 @@ public:
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 *
+	 */
+	inline ErrorManagement::ErrorType Iterate(GenericIterator<loadClass> &iterator){
+		ErrorManagement::ErrorType ret;
+		IteratorAction ia;
+		ret.illegalOperation = (root == NULL);
+		if (ret){
+			ia = root->Iterate(iterator,0);
+			if (!ia.error){
+				if (ia.deleteNode){
+					BalancedTreeNode *extracted;
+					BalancedTreeNodeKey dummy;
+					BalancedTreeNode *rootG = root;
+					if (BalancedTreeNode::ExtractAVL(rootG, extracted,dummy,0)){
+						root = reinterpret_cast<BalancedTreeNodeT<loadClass,keyClass, loadKey>*>(rootG);
+						delete extracted;
+					}
+				}
+			} else {
+				ret.fatalError = true;
+			}
+		}
+		return ret;
+
 	}
 
     /**
@@ -149,6 +177,7 @@ public:
     };
 
 
+
 private:
 	/**
 	 * the root of the tree
@@ -156,10 +185,6 @@ private:
 	BalancedTreeNodeT<loadClass,keyClass, loadKey> *root;
 
 };
-
-
-
-
 
 
 }

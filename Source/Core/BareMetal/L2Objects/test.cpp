@@ -501,6 +501,7 @@ return 0;
 #include "ReferenceT.h"
 #include "CCString.h"
 #include "BalancedTreeHolder.h"
+#include "math.h"
 
 namespace MARTe{
 
@@ -548,23 +549,71 @@ struct RefNumKey{
 	}
 };
 
-template <class loadClass,class keyClass, typename loadKey>
-void printTree(BalancedTreeHolder<loadClass,keyClass,loadKey> &tree,bool showAll=false){
-	int size = tree.Size();
-printf("Tree Size = %i %i\n",tree.Size(),tree.Depth());
-	if (showAll)
-	for (int i = 0;i< size;i++){
-		BalancedTreeNodeT<loadClass,keyClass,loadKey> *p = tree.Seek(i);
 
-		printf("%03i ",i);
-		if (p != NULL){
-			for (int j=0;j<(tree.Depth()-p->Depth());j++) printf(" -> ");
-			printf("%s\n",p->GetData()->GetName());
-		} else {
-			printf("NULL\n");
-		}
+
+template < class loadClass>
+class MyGenericIterator: public GenericIterator<loadClass>{
+	uint32 counter;
+public:
+	MyGenericIterator(){
+		counter = 0;
 	}
-}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~MyGenericIterator() {
+
+    }
+    /**
+     * @brief The function performing the desired specific action on the input parameter.
+     * @param[in] data is a generic template type.
+     */
+    virtual IteratorAction Do(loadClass &data,uint32 depth){
+		printf("%03i ",counter++);
+		for (int j=0;j<depth;j++) printf(" -> ");
+		printf("%s\n",data->GetName());
+		IteratorAction ia;
+		return ia;
+    }
+
+};
+
+template < class loadClass>
+class MyGenericIterator2: public GenericIterator<loadClass>{
+public:
+	uint32 counter;
+	char key;
+	MyGenericIterator2(char keyIn){
+		counter = 0;
+		key = keyIn;
+	}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~MyGenericIterator2() {
+
+    }
+    /**
+     * @brief The function performing the desired specific action on the input parameter.
+     * @param[in] data is a generic template type.
+     */
+    virtual IteratorAction Do(loadClass &data,uint32 depth){
+		IteratorAction ia;
+    	CCString n = data->GetName();
+    	uint32 size = n.GetSize();
+    	if (size > 0){
+    		if (n[size-1] == key) {
+    			ia.deleteNode = true;
+    			counter++;
+    		}
+    	}
+		return ia;
+    }
+
+};
+
 
 class DummyObject:public Object{
 public:
@@ -580,42 +629,45 @@ void testOther(){
 	MARTe::BalancedTreeHolder<MARTe::Reference,MARTe::uint64,MARTe::RefNumKey> bth2;
 
 	const MARTe::uint32 refsSz = 1000*1000;
-	const MARTe::uint32 maxR   = 256*256;
 	int i;
 
-//	MARTe::ReferenceT<DummyObject> refs[refsSz];
-
-//	bool indexes[maxR];
-//	for (i = 0;i< maxR; i++) indexes[i] = false;
 
 	for (int i = 0;i< refsSz;i++){
 		char buffer[256];
-		MARTe::uint32 r = rand() & (maxR-1);
-//		if (indexes[r]==true){
-//			r =0;
-//			while ((r<maxR) && (indexes[r]))r++;
-//		}
+		MARTe::uint32 r = rand();
+		MARTe::uint32 r2 = rand();
+		MARTe::uint32 r3 = rand();
 
-//		indexes[r] = true;
 
-		sprintf(buffer,"%05x%05x",r,i);
-		//printf("%03i>>%s \n",i,buffer);
+		sprintf(buffer,"%x%x%x",r,r2,r3);
+
 		MARTe::ReferenceT<MARTe::DummyObject> refd(new MARTe::DummyObject());
 		refd->SetName(buffer);
 		bth.Insert(refd);
 		bth2.Insert(refd);
 
-//		printTree(bth);
 		if (bth.Size() < i){
 			break;
 		}
-
-//		printTree(bth);
+//		printf("Tree1 Size = % 7i % 3i %12f  ",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
+//		printf("Tree2 Size = % 7i % 3i %12f\r",bth2.Size(),bth2.Depth(),(float)bth2.Depth()/(log10((float)bth2.Size())/log10(2.0)));
 	}
 
-	MARTe::printTree(bth,false);
-	MARTe::printTree(bth2,false);
+	printf("Tree1 Size = % 7i % 3i %12f  \n",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
 
-//	MARTe::IndexedReferenceContainerRoot<24> ircr;
+	for (int k = 0;k<16;k++)
+	{
+		char c = '0'+k;
+		if (k>= 10) c = 'a'+k-10;
+		MARTe::MyGenericIterator2<MARTe::Reference> mgi(c);
+		bth.Iterate(mgi);
+		printf("Delete %i (%c)nodes \n",mgi.counter,c);
+		printf("Tree1 Size = % 7i % 3i %12f  \n",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
+	}
+
+//	MARTe::MyGenericIterator<MARTe::Reference> mgi;
+//	bth.Iterate(mgi);
+
+
 }
 

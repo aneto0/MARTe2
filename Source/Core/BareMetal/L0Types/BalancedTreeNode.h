@@ -45,11 +45,12 @@ public:
 	/**
 	 * inserts node into natural ordered position
 	 * rebalancing as AVL
-	 * bias = 0 -> extract matching
+	 * bias = 2 -> extract matching
 	 * bias = 1 -> extract the smallest greater
 	 * bias = -1 -> extract the greatest smaller
+	 * bias = 0 -> extract root!
 	 */
-	static ErrorManagement::ErrorType ExtractAVL(BalancedTreeNode *&root, BalancedTreeNode *&extracted,const BalancedTreeNodeKey &key,int8 bias = 0);
+	static ErrorManagement::ErrorType ExtractAVL(BalancedTreeNode *&root, BalancedTreeNode *&extracted,const BalancedTreeNodeKey &key,int8 bias = 2);
 
 	/**
 	 * navigates tree smaller to greater
@@ -137,12 +138,12 @@ private:
 	 */
 	inline uint32 SmallerDepth() const;
 
+protected:
+
 	/**
 	 *
 	 */
 	inline void UpdateStatistics();
-
-
 
     // max of (greater->treeDepth, smaller->treeDepth)
 	uint32 treeDepth;
@@ -208,6 +209,8 @@ void  BalancedTreeNode::Clean(){
 	greater = NULL;
 	smaller = NULL;
 }
+
+
 
 /**
  * size of the "greater" subtree
