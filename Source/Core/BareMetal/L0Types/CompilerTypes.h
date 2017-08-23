@@ -194,6 +194,11 @@ namespace MARTe {
     static const uint32 MAX_FLOAT32 = 0x7F7FFFFFu;
     static const uint32 EPSILON_FLOAT32 = 0x34000000u;
     static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
+
+    /**
+     * float64 limits
+     */
+    static const float64 MAX_FLOAT64 = 0x1.FFFFFFFFFFFFFp1023;
 }
 
 #endif /* COMPILERTYPES */
