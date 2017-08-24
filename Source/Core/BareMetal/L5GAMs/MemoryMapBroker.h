@@ -58,6 +58,10 @@ struct MemoryMapBrokerCopyTableEntry {
      * The size of the copy
      */
     uint32 copySize;
+    /**
+     * The signal type
+     */
+    TypeDescriptor type;
 };
 
 /**

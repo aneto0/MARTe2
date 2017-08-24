@@ -32,6 +32,7 @@ OBJSX=BrokerI.x \
     GAMSchedulerI.x \
     GAMDataSource.x \
     MemoryMapBroker.x \
+    MemoryMapInterpolatedInputBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
     MemoryMapStatefulBroker.x \

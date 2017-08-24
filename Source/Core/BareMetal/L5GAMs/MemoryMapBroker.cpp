@@ -98,12 +98,14 @@ bool MemoryMapBroker::Init(const SignalDirection direction,
             ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
 
             StreamString functionSignalName;
+            TypeDescriptor signalType;
             if (ret) {
                 ret = dataSource->GetFunctionSignalAlias(direction, functionIdx, n, functionSignalName);
             }
             uint32 signalIdx = 0u;
             if (ret) {
                 ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                signalType = dataSource->GetSignalType(signalIdx);
             }
             //Take into account different ranges for the same signal
             uint32 bo;
@@ -111,6 +113,7 @@ bool MemoryMapBroker::Init(const SignalDirection direction,
                 if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
                     copyTable[c].copySize = GetCopyByteSize(c);
                     copyTable[c].gamPointer = GetFunctionPointer(c);
+                    copyTable[c].type = signalType;
                     uint32 dataSourceOffset = GetCopyOffset(c);
                     void *dataSourceSignalAddress;
                     ret = dataSource->GetSignalMemoryBuffer(signalIdx, 0u, dataSourceSignalAddress);
