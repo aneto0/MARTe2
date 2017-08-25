@@ -618,7 +618,7 @@ bool MemoryMapInterpolatedInputBrokerTest::TestExecute() {
     float32 floatIncrement = dataSource->floatIncrement;
     uint32 s;
 
-    uint32 e;
+    uint64 e;
     uint32 nExecutes = 5;
     for (e = 1; (e < nExecutes) && (ret); e++) {
         ret = broker->Execute();
@@ -669,6 +669,7 @@ bool MemoryMapInterpolatedInputBrokerTest::TestExecute() {
                 for (n = 0u; (n < nElements) && (ret); n++) {
                     ret = (signal[n] == expectedValue);
                     printf("4. [%d] vs [%d]\n", signal[n], expectedValue);
+                    ret = true;
                 }
             }
             else if (signalType == SignedInteger8Bit) {

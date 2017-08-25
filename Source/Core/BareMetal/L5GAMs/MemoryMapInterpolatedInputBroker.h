@@ -97,7 +97,7 @@ private:
     /**
      * TODO
      */
-    void UpdateTimes();
+    void UpdateDataSourceTime();
 
     /**
      * The interpolation period in seconds
@@ -105,7 +105,7 @@ private:
     float64 interpolationPeriod;
 
     /**
-     * The current time in seconds
+     * The current interpolated time in seconds
      */
     float64 currentTime;
 
@@ -133,6 +133,11 @@ private:
      * The ending time of the interpolation segment
      */
     float64 t1;
+
+    /**
+     * The current data source time
+     */
+    float64 dataSourceTime;
 
     /**
      * Pointers to the addresses of the y0 values
@@ -172,8 +177,8 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
 
     valueType *mcp = (valueType *) (m[copyIdx]);
     float64 mc = static_cast<float64>(mcp[i]);
-    y += mc * currentTime;
-    printf("%e %e %e\n", y, mc, currentTime);
+    y += mc * (currentTime - t0);
+    printf(">>%e %e %e %e\n", y, mc, currentTime, t0);
 
     valueType *dest = static_cast<valueType *>(copyTable[copyIdx].gamPointer);
     dest[i] = static_cast<valueType>(y);
@@ -194,7 +199,8 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     float64 md = static_cast<float64>(y1p[i] - y0p[i]);
     valueType *mp = (valueType *) (m[copyIdx]);
     mp[i] = static_cast<valueType>(md / dt);
-    printf("%e\n", mp[i]);
+    printf("%e %e %e\n", y1p[i], y0p[i], mp[i]);
+    printf("%lld %lld %lld\n", (uint64) y1p[i], (uint64) y0p[i], (uint64) mp[i]);
 }
 }
 

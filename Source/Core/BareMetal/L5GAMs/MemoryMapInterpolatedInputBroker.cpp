@@ -44,6 +44,7 @@ MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() {
     currentTime = 0.;
     t0 = 0.;
     t1 = 0.;
+    dataSourceTime = 0.;
     timeSignal = NULL_PTR(void *);
     m = NULL_PTR(void **);
     y0 = NULL_PTR(void **);
@@ -108,37 +109,36 @@ void MemoryMapInterpolatedInputBroker::SetTimeSignal(void *timeSignalIn, TypeDes
     interpolationPeriod = interpolationPeriodIn;
 }
 
-void MemoryMapInterpolatedInputBroker::UpdateTimes() {
-    t0 = t1;
+void MemoryMapInterpolatedInputBroker::UpdateDataSourceTime() {
     if (timeSignalType == UnsignedInteger8Bit) {
-        t1 = static_cast<float64>(*(static_cast<uint8 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<uint8 *>(timeSignal)));
     }
     else if (timeSignalType == UnsignedInteger16Bit) {
-        t1 = static_cast<float64>(*(static_cast<uint16 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<uint16 *>(timeSignal)));
     }
     else if (timeSignalType == UnsignedInteger32Bit) {
-        t1 = static_cast<float64>(*(static_cast<uint32 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<uint32 *>(timeSignal)));
     }
     else if (timeSignalType == UnsignedInteger64Bit) {
-        t1 = static_cast<float64>(*(static_cast<uint64 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<uint64 *>(timeSignal)));
     }
     else if (timeSignalType == SignedInteger8Bit) {
-        t1 = static_cast<float64>(*(static_cast<int8 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<int8 *>(timeSignal)));
     }
     else if (timeSignalType == SignedInteger16Bit) {
-        t1 = static_cast<float64>(*(static_cast<int16 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<int16 *>(timeSignal)));
     }
     else if (timeSignalType == SignedInteger32Bit) {
-        t1 = static_cast<float64>(*(static_cast<int32 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<int32 *>(timeSignal)));
     }
     else if (timeSignalType == SignedInteger64Bit) {
-        t1 = static_cast<float64>(*(static_cast<int64 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<int64 *>(timeSignal)));
     }
     else if (timeSignalType == Float32Bit) {
-        t1 = static_cast<float64>(*(static_cast<float32 *>(timeSignal)));
+        dataSourceTime = static_cast<float64>(*(static_cast<float32 *>(timeSignal)));
     }
     else if (timeSignalType == Float64Bit) {
-        t1 = *(static_cast<float64 *>(timeSignal));
+        dataSourceTime = *(static_cast<float64 *>(timeSignal));
     }
     else {
 //TODO log invalid time signal type
@@ -147,6 +147,8 @@ void MemoryMapInterpolatedInputBroker::UpdateTimes() {
 }
 
 void MemoryMapInterpolatedInputBroker::InitSegments() {
+    t0 = t1;
+    t1 = dataSourceTime;
     uint32 i;
     float64 dt;
     if (executionCounter == 0LLU) {
@@ -201,10 +203,16 @@ bool MemoryMapInterpolatedInputBroker::Execute() {
     if (ok) {
         executionCounter++;
         currentTime = static_cast<float64>(executionCounter) * interpolationPeriod;
-        while (currentTime > t1) {
+        printf("currentTime: %e t1: %e\n", currentTime, t1);
+        bool triggerChange = false;
+        while (currentTime > dataSourceTime) {
+            triggerChange = true;
             //TODO need to check for infinite loop and exit with error
             ok = dataSource->Synchronise();
-            UpdateTimes();
+            UpdateDataSourceTime();
+            printf("}}currentTime: %e t1: %e\n", currentTime, t1);
+        }
+        if (triggerChange) {
             InitSegments();
         }
     }
