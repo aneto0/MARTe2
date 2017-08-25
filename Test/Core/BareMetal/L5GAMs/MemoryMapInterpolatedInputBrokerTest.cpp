@@ -145,6 +145,8 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper    ();
 
     virtual bool AllocateMemory();
 
+    virtual bool Initialise(StructuredDataI & data);
+
     virtual uint32 GetNumberOfMemoryBuffers();
 
     virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
@@ -173,12 +175,15 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper    ();
     TypeDescriptor *signalTypes;
     uint32 *nElements;
     uint32 *offsets;
-    uint32 timeSignalIdx;
-    uint32 timeIntIncrement;
-    float32 timeFloatIncrement;
+    uint32 maxSynchronises;
+    uint32 synchCounter;
+    uint64 timeIncrement;
+    uint64 timeSignal;
+    uint64 startTime;
+    uint64 interpolatedTime;
     uint32 intIncrement;
     float32 floatIncrement;
-    float64 interpolationPeriod;
+    uint64 interpolationPeriod;
 };
 
 MemoryMapInterpolatedInputBrokerDataSourceTestHelper::MemoryMapInterpolatedInputBrokerDataSourceTestHelper() :
@@ -187,12 +192,15 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper::MemoryMapInterpolatedInput
     offsets = NULL_PTR(uint32 *);
     signalTypes = NULL_PTR(TypeDescriptor *);
     nElements = NULL_PTR(uint32 *);
-    timeSignalIdx = 0;
-    timeIntIncrement = 1;
-    timeFloatIncrement = 1.0;
-    intIncrement = 1000;
-    floatIncrement = 0.1;
-    interpolationPeriod = 5;
+    interpolatedTime = 0;
+    timeIncrement = 5;
+    intIncrement = 10;
+    floatIncrement = 0.1345;
+    interpolationPeriod = 10;
+    maxSynchronises = 8;
+    startTime = 5;
+    timeSignal = startTime;
+    synchCounter = 0;
 }
 
 MemoryMapInterpolatedInputBrokerDataSourceTestHelper::~MemoryMapInterpolatedInputBrokerDataSourceTestHelper() {
@@ -208,6 +216,26 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper::~MemoryMapInterpolatedInpu
     if (signalTypes != NULL_PTR(TypeDescriptor *)) {
         delete[] signalTypes;
     }
+}
+
+/**
+ * @brief Initialise parameters
+ */
+bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::Initialise(StructuredDataI & data) {
+    bool ok = DataSourceI::Initialise(data);
+    if (ok) {
+        ok = data.Read("IntIncrement", intIncrement);
+    }
+    if (ok) {
+        ok = data.Read("FloatIncrement", floatIncrement);
+    }
+    if (ok) {
+        ok = data.Read("TimeIncrement", timeIncrement);
+    }
+    if (ok) {
+        ok = data.Read("InterpolationPeriod", interpolationPeriod);
+    }
+    return ok;
 }
 
 /**
@@ -277,9 +305,10 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::GetInputBrokers(Refer
         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
     }
     if (ret) {
-        void *timeSignal;
-        GetSignalMemoryBuffer(timeSignalIdx, 0, timeSignal);
-        broker->SetTimeSignal(timeSignal, GetSignalType(timeSignalIdx), interpolationPeriod);
+        broker->SetTimeSignal(&timeSignal, &interpolatedTime, interpolationPeriod);
+    }
+    if (ret) {
+        broker->Reset();
     }
     if (ret) {
         ret = inputBrokers.Insert(broker);
@@ -296,6 +325,10 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::Synchronise() {
     bool ret = true;
     uint32 s;
     uint32 nSignals = GetNumberOfSignals();
+    if (synchCounter < maxSynchronises) {
+        timeSignal += timeIncrement;
+    }
+    synchCounter++;
     for (s = 0u; (s < nSignals) && (ret); s++) {
         char8 *memPtr = reinterpret_cast<char8 *>(signalMemory);
         memPtr += offsets[s];
@@ -303,111 +336,61 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::Synchronise() {
         if (signalTypes[s] == UnsignedInteger8Bit) {
             uint8 *signal = reinterpret_cast<uint8 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == UnsignedInteger16Bit) {
             uint16 *signal = reinterpret_cast<uint16 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == UnsignedInteger32Bit) {
             uint32 *signal = reinterpret_cast<uint32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == UnsignedInteger64Bit) {
             uint64 *signal = reinterpret_cast<uint64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == SignedInteger8Bit) {
             int8 *signal = reinterpret_cast<int8 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == SignedInteger16Bit) {
             int16 *signal = reinterpret_cast<int16 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == SignedInteger32Bit) {
             int32 *signal = reinterpret_cast<int32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == SignedInteger64Bit) {
             int64 *signal = reinterpret_cast<int64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeIntIncrement;
-                }
-                else {
-                    signal[n] += intIncrement;
-                }
+                signal[n] += intIncrement;
             }
         }
         else if (signalTypes[s] == Float32Bit) {
             float32 *signal = reinterpret_cast<float32 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeFloatIncrement;
-                }
-                else {
-                    signal[n] += floatIncrement;
-                }
+                signal[n] += floatIncrement;
             }
         }
         else if (signalTypes[s] == Float64Bit) {
             float64 *signal = reinterpret_cast<float64 *>(memPtr);
             for (n = 0u; (n < nElements[s]) && (ret); n++) {
-                if (s == timeSignalIdx) {
-                    signal[n] += timeFloatIncrement;
-                }
-                else {
-                    signal[n] += floatIncrement;
-                }
+                signal[n] += floatIncrement;
             }
         }
     }
@@ -501,6 +484,10 @@ static const char8 * const config1 = ""
         "        Class = ReferenceContainer"
         "        +Drv1 = {"
         "            Class = MemoryMapInterpolatedInputBrokerDataSourceTestHelper"
+        "            IntIncrement = 10"
+        "            FloatIncrement = 0.4"
+        "            InterpolationPeriod = 2"
+        "            TimeIncrement = 5"
         "            Signals = {"
         "               SignalUInt64 = {"
         "                   DataSource = Drv1"
@@ -566,6 +553,310 @@ static const char8 * const config1 = ""
         "        TimingDataSource = Timings"
         "    }"
         "}";
+
+//As config1 but with under-sampling
+static const char8 * const config2 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = MemoryMapInterpolatedInputBrokerTestGAM1"
+        "            InputSignals = {"
+        "               SignalUInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint64"
+        "               }"
+        "               SignalUInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "               SignalUInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint16"
+        "               }"
+        "               SignalUInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
+        "               }"
+        "               SignalInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int8"
+        "               }"
+        "               SignalInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int16"
+        "               }"
+        "               SignalInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int32"
+        "               }"
+        "               SignalInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int64"
+        "               }"
+        "               SignalFloat32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float32"
+        "               }"
+        "               SignalFloat64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float64"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +Drv1 = {"
+        "            Class = MemoryMapInterpolatedInputBrokerDataSourceTestHelper"
+        "            IntIncrement = 10"
+        "            FloatIncrement = 0.4"
+        "            InterpolationPeriod = 10"
+        "            TimeIncrement = 5"
+        "            Signals = {"
+        "               SignalUInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint64"
+        "               }"
+        "               SignalUInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "               SignalUInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint16"
+        "               }"
+        "               SignalUInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
+        "               }"
+        "               SignalInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int8"
+        "               }"
+        "               SignalInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int16"
+        "               }"
+        "               SignalInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int32"
+        "               }"
+        "               SignalInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int64"
+        "               }"
+        "               SignalFloat32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float32"
+        "               }"
+        "               SignalFloat64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float64"
+        "               }"
+        "            }"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = MemoryMapInterpolatedInputBrokerTestScheduler1"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}";
+
+/**
+ * As config1 but with arrays
+ */
+static const char8 * const config3 = ""
+        "$Application1 = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = MemoryMapInterpolatedInputBrokerTestGAM1"
+        "            InputSignals = {"
+        "               SignalUInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint64"
+        "                   NumberOfElements = 10"
+        "               }"
+        "               SignalUInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 14"
+        "               }"
+        "               SignalUInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint16"
+        "                   NumberOfElements = 2"
+        "               }"
+        "               SignalUInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
+        "                   NumberOfElements = 3"
+        "               }"
+        "               SignalInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int8"
+        "                   NumberOfElements = 8"
+        "               }"
+        "               SignalInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int16"
+        "                   NumberOfElements = 5"
+        "               }"
+        "               SignalInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int32"
+        "                   NumberOfElements = 6"
+        "               }"
+        "               SignalInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int64"
+        "                   NumberOfElements = 3"
+        "               }"
+        "               SignalFloat32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float32"
+        "                   NumberOfElements = 5"
+        "               }"
+        "               SignalFloat64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float64"
+        "                   NumberOfElements = 5"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        +Drv1 = {"
+        "            Class = MemoryMapInterpolatedInputBrokerDataSourceTestHelper"
+        "            IntIncrement = 10"
+        "            FloatIncrement = 0.4"
+        "            InterpolationPeriod = 2"
+        "            TimeIncrement = 5"
+        "            Signals = {"
+        "               SignalUInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint64"
+        "               }"
+        "               SignalUInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "               SignalUInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint16"
+        "               }"
+        "               SignalUInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
+        "               }"
+        "               SignalInt8 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int8"
+        "               }"
+        "               SignalInt16 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int16"
+        "               }"
+        "               SignalInt32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int32"
+        "               }"
+        "               SignalInt64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = int64"
+        "               }"
+        "               SignalFloat32 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float32"
+        "               }"
+        "               SignalFloat64 = {"
+        "                   DataSource = Drv1"
+        "                   Type = float64"
+        "               }"
+        "            }"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = MemoryMapInterpolatedInputBrokerTestScheduler1"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}";
+
+/**
+ * Check the expected value already knowing that the MemoryMapInterpolatedInputBrokerDataSourceTestHelper is generating an increasing monotonic ramp with constant derivative
+ */
+template<typename T>
+static bool CheckExpectedValue(uint64 executeNumber, uint32 valueIncrement, uint64 timeIncrement, uint64 interpolationPeriod, uint32 nElements, void *gamPtr) {
+    T *signal = static_cast<T *>(gamPtr);
+    float64 m = static_cast<float64>(valueIncrement) / static_cast<float64>(timeIncrement);
+
+    T expectedValue = static_cast<T>(m * interpolationPeriod * executeNumber);
+
+    bool ret = true;
+    uint32 n;
+    for (n = 0u; (n < nElements) && (ret); n++) {
+        ret = (signal[n] == expectedValue);
+    }
+
+    return ret;
+}
+
+template<typename T>
+static bool CheckExpectedValueD(uint64 executeNumber, float32 valueIncrement, uint64 timeIncrement, uint64 interpolationPeriod, uint32 nElements,
+                                void *gamPtr) {
+    T *signal = static_cast<T *>(gamPtr);
+    T expectedValue = valueIncrement * executeNumber;
+    float64 dt = static_cast<float64>(interpolationPeriod);
+    dt /= static_cast<float64>(timeIncrement);
+    expectedValue *= dt;
+
+    bool ret = true;
+    uint32 n;
+    for (n = 0u; (n < nElements) && (ret); n++) {
+        float64 f1 = static_cast<float32>(signal[n]);
+        float64 f2 = static_cast<float32>(expectedValue);
+        float64 min = 1e-6;
+        ret = ((f1 - f2) < (min)) && ((f1 - f2) > -(min));
+    }
+
+    return ret;
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -580,9 +871,34 @@ bool MemoryMapInterpolatedInputBrokerTest::TestConstructor() {
     return ret;
 }
 
-#include <stdio.h>
-bool MemoryMapInterpolatedInputBrokerTest::TestExecute() {
-    bool ret = InitialiseMemoryMapInterpolatedInputBrokerEnviroment(config1);
+bool MemoryMapInterpolatedInputBrokerTest::TestExecute_1() {
+    return TestExecuteP(config1);
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestExecute_2() {
+    return TestExecuteP(config2);
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestExecute_3() {
+    return TestExecuteP(config3);
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestExecute_False() {
+    return !TestExecuteP(config2, 6);
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestInit() {
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestReset() {
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestSetTimeSignal() {
+
+}
+
+bool MemoryMapInterpolatedInputBrokerTest::TestExecuteP(StreamString config1, uint32 nExecutes) {
+    bool ret = InitialiseMemoryMapInterpolatedInputBrokerEnviroment(config1.Buffer());
     ReferenceT<MemoryMapInterpolatedInputBrokerDataSourceTestHelper> dataSource;
     ReferenceT<MemoryMapInterpolatedInputBroker> broker;
     ReferenceT<MemoryMapInterpolatedInputBrokerTestGAM1> gamA;
@@ -614,117 +930,49 @@ bool MemoryMapInterpolatedInputBrokerTest::TestExecute() {
 
     //Verify if the GAM has the expected pattern
     uint32 nOfSignals = gamA->GetNumberOfInputSignals();
-    uint32 intIncrement = dataSource->intIncrement;
-    float32 floatIncrement = dataSource->floatIncrement;
     uint32 s;
-
     uint64 e;
-    uint32 nExecutes = 5;
     for (e = 1; (e < nExecutes) && (ret); e++) {
         ret = broker->Execute();
+        if (ret) {
+            ret = (dataSource->interpolatedTime == (e * dataSource->interpolationPeriod + dataSource->startTime));
+        }
         for (s = 0; (s < nOfSignals) && (ret); s++) {
             void *gamPtr = gamA->GetInputSignalMemory(s);
             uint32 nElements;
-            uint32 n;
-            uint32 intMult = intIncrement;
-            float32 floatMult = floatIncrement;
-            if (s == dataSource->timeSignalIdx) {
-                intMult = dataSource->timeIntIncrement;
-                floatMult = dataSource->timeFloatIncrement;
-            }
-
             gamA->GetSignalNumberOfElements(InputSignals, s, nElements);
             TypeDescriptor signalType = gamA->GetSignalType(InputSignals, s);
             if (signalType == UnsignedInteger8Bit) {
-                uint8 *signal = static_cast<uint8 *>(gamPtr);
-                uint8 expectedValue = static_cast<uint8>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("1. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<uint8>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == UnsignedInteger16Bit) {
-                uint16 *signal = static_cast<uint16 *>(gamPtr);
-                uint16 expectedValue = static_cast<uint16>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("2. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<uint16>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == UnsignedInteger32Bit) {
-                uint32 *signal = static_cast<uint32 *>(gamPtr);
-                uint32 expectedValue = static_cast<uint32>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("3. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<uint32>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == UnsignedInteger64Bit) {
-                uint64 *signal = static_cast<uint64 *>(gamPtr);
-                uint64 expectedValue = static_cast<uint64>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("4. [%d] vs [%d]\n", signal[n], expectedValue);
-                    ret = true;
-                }
+                ret = CheckExpectedValue<uint64>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == SignedInteger8Bit) {
-                int8 *signal = static_cast<int8 *>(gamPtr);
-                int8 expectedValue = static_cast<int8>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("5. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<int8>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == SignedInteger16Bit) {
-                int16 *signal = static_cast<int16 *>(gamPtr);
-                int16 expectedValue = static_cast<int16>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("6. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<int16>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == SignedInteger32Bit) {
-                int32 *signal = static_cast<int32 *>(gamPtr);
-                int32 expectedValue = static_cast<int32>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("7. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<int32>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == SignedInteger64Bit) {
-                int64 *signal = static_cast<int64 *>(gamPtr);
-                int64 expectedValue = static_cast<int64>(intMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("8. [%d] vs [%d]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValue<int64>(e, dataSource->intIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements, gamPtr);
             }
             else if (signalType == Float32Bit) {
-                float32 *signal = static_cast<float32 *>(gamPtr);
-                float32 expectedValue = static_cast<float32>(floatMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("9. [%e] vs [%e]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValueD<float32>(e, dataSource->floatIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements,
+                                                   gamPtr);
             }
             else if (signalType == Float64Bit) {
-                float64 *signal = static_cast<float64 *>(gamPtr);
-                float64 expectedValue = static_cast<float64>(floatMult);
-                expectedValue *= (e * dataSource->interpolationPeriod);
-                for (n = 0u; (n < nElements) && (ret); n++) {
-                    ret = (signal[n] == expectedValue);
-                    printf("10. [%e] vs [%e]\n", signal[n], expectedValue);
-                }
+                ret = CheckExpectedValueD<float64>(e, dataSource->floatIncrement, dataSource->timeIncrement, dataSource->interpolationPeriod, nElements,
+                                                   gamPtr);
             }
         }
     }

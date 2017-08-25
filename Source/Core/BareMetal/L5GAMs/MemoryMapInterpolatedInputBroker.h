@@ -39,9 +39,14 @@
 namespace MARTe {
 
 /**
- * @brief Input MemoryMapBroker implementation which allows to generate interpolated samples.
- * @details This class interpolates the signals from the DataSourceI and copies to the GAM memory.
- * TODO add more details
+ * @brief Input MemoryMapBroker implementation which allows to automatically interpolate samples from any DataSourceI.
+ * @details This class interpolates the signals from the DataSourceI and copies the new values to the GAM memory.
+ *
+ * The DataSourceI shall the method SetTimeSignal and provide two nanoseconds time vectors. One where the time to be
+ * interpolated is read from and another where the interpolated time is written into. The time to be interpolated shall be
+ * a function with no zero derivative between any two consecutive points.
+ *
+ * @warning the Reset function shall be called before the first Execute.
  */
 class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
 public:
@@ -57,14 +62,27 @@ MemoryMapInterpolatedInputBroker    ();
     virtual ~MemoryMapInterpolatedInputBroker();
 
     /**
-     * @brief TODO Sequentially copies all the signals from the DataSourceI memory to the GAM
-     *  memory.
-     * @return TODO true if all copies are successfully performed.
+     * @brief Interpolates the data for all the registered signals and copies to the GAM memory.
+     * @details Interpolates between consecutive samples. While the current time (i.e. the time that is being interpolated) is greater than the last time
+     * read from the data source a new interpolation segment is created. To construct the segment the next point from the data source is read and is used to
+     * compute m=(y1-y0)/(t1-t0) where y0 is the current segment y1; t0 is the current segment t1; y1 and t1 are the new data read from the data source.
+     * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is expected to increment the time vector.
+     * @return true if all copies are successfully performed and if the time to be interpolated changes when a new interpolation segment is to be computed.
+     * @pre
+     *   Reset
      */
     virtual bool Execute();
 
     /**
-     * TODO
+     * @brief Sets the nanosecond time signals used by the broker to interpolate samples.
+     * @param[in] dataSourceTimeIn the nanosecond time vector to be interpolated. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
+     * @param[out] interpolatedTimeIn the nanosecond interpolated time vector. It is updated by the broker.
+     * @param[in] interpolationPeriodIn the nanosecond interpolation period.
+     */
+    void SetTimeSignal(const uint64 * const dataSourceTimeIn, uint64 * interpolatedTimeIn, const uint64 interpolationPeriodIn);
+
+    /**
+     * @brief See MemoryMapBroker::Init
      */
     virtual bool Init(const SignalDirection direction,
             DataSourceI &dataSourceIn,
@@ -72,87 +90,68 @@ MemoryMapInterpolatedInputBroker    ();
             void * const gamMemoryAddress);
 
     /**
-     * TODO
+     * @brief Resets the interpolated time to start counting from the first time value.
      */
-    void SetTimeSignal(void *timeSignalIn, TypeDescriptor timeSignalTypeIn, float64 interpolationPeriodIn);
-
-    /**
-     * TODO
-     */
-    void InitSegments();
+    void Reset();
 
 private:
     /**
-     * Interpolate between samples for any signal
+     * @brief Interpolate between samples for any signal type.
+     * @param[in] copyIdx the index of the signal to be updated.
      */
     template<typename valueType>
     void Interpolate(uint32 copyIdx);
 
     /**
-     * Initialise the linear interpolation segment
+     * Generate a new interpolation segment. To be performed every time the interpolated time is greater than the last time read from the data source.
      */
     template<typename valueType>
-    void InitSegment(uint32 copyIdx, float64 dt);
+    void ChangeInterpolationWindow(uint32 copyIdx, float64 dt);
 
     /**
-     * TODO
+     * @brief Calls ChangeInterpolationWindow for all the broker signals.
      */
-    void UpdateDataSourceTime();
+    void ChangeInterpolationWindows();
 
     /**
-     * The interpolation period in seconds
+     * The interpolation period in nanoseconds
      */
-    float64 interpolationPeriod;
-
-    /**
-     * The current interpolated time in seconds
-     */
-    float64 currentTime;
-
-    /**
-     * Execution counter
-     */
-    uint64 executionCounter;
-
-    /**
-     * The current time signal memory address;
-     */
-    void *timeSignal;
-
-    /**
-     * The time signal type
-     */
-    TypeDescriptor timeSignalType;
+    uint64 interpolationPeriod;
 
     /**
      * The beginning time of the interpolation segment
      */
-    float64 t0;
+    uint64 t0;
 
     /**
      * The ending time of the interpolation segment
      */
-    float64 t1;
+    uint64 t1;
 
     /**
-     * The current data source time
+     * The current data source time (not interpolated). It is the basis to compute the time windows.
      */
-    float64 dataSourceTime;
+    const uint64 *dataSourceTime;
 
     /**
-     * Pointers to the addresses of the y0 values
+     * The current interpolated time
+     */
+    uint64 * interpolatedTime;
+
+    /**
+     * Pointers to the addresses of the y0 values of the current interpolation segment
      */
     void **y0;
 
     /**
-     * Pointers to the addresses of the y1 values
+     * Pointers to the addresses of the y1 values of the current interpolation segment
      */
     void **y1;
 
     /**
      * Pointers to the addresses of the m values
      */
-    void **m;
+    float64 *m;
 
     /**
      * Accelerator for number of elements in any given signal
@@ -167,26 +166,26 @@ private:
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-#include <stdio.h>
 template<typename valueType>
 void MemoryMapInterpolatedInputBroker::Interpolate(uint32 copyIdx) {
 uint32 i;
 for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+
     valueType *y0p = (valueType *) (y0[copyIdx]);
     float64 y = static_cast<float64>(y0p[i]);
-
-    valueType *mcp = (valueType *) (m[copyIdx]);
-    float64 mc = static_cast<float64>(mcp[i]);
-    y += mc * (currentTime - t0);
-    printf(">>%e %e %e %e\n", y, mc, currentTime, t0);
-
+    //How long as elapsed in this interpolation window
+    float64 cttns = static_cast<float64>(*interpolatedTime - t0);
+    //y = y0p + m * (t - t0), where y0p and t0p are the initial values for the interpolation period
+    float64 newy = m[copyIdx] * cttns;
+    newy /= 1e9;
+    y += newy;
     valueType *dest = static_cast<valueType *>(copyTable[copyIdx].gamPointer);
     dest[i] = static_cast<valueType>(y);
 }
 }
 
 template<typename valueType>
-void MemoryMapInterpolatedInputBroker::InitSegment(uint32 copyIdx, float64 dt) {
+void MemoryMapInterpolatedInputBroker::ChangeInterpolationWindow(uint32 copyIdx, float64 dt) {
 uint32 i;
 for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     valueType *y0p = (valueType *) (y0[copyIdx]);
@@ -195,12 +194,9 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
 
     y0p[i] = y1p[i];
     y1p[i] = y1pds[i];
-
-    float64 md = static_cast<float64>(y1p[i] - y0p[i]);
-    valueType *mp = (valueType *) (m[copyIdx]);
-    mp[i] = static_cast<valueType>(md / dt);
-    printf("%e %e %e\n", y1p[i], y0p[i], mp[i]);
-    printf("%lld %lld %lld\n", (uint64) y1p[i], (uint64) y0p[i], (uint64) mp[i]);
+    //Compute the derivative m = (y1-y0)/(t1-t0)
+    m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
+    m[copyIdx] /= dt;
 }
 }
 

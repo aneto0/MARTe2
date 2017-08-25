@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,12 +47,32 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the Execute method.
+     * @brief Tests the Execute method with over sampling
      */
-    bool TestExecute();
+    bool TestExecute_1();
+
+    /**
+     * @brief Tests the Execute method with under sampling
+     */
+    bool TestExecute_2();
+
+    /**
+     * @brief Tests the Execute method with arrays
+     */
+    bool TestExecute_3();
+
+    /**
+     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     */
+    bool TestExecute_False();
+
+
+private:
+    /**
+     * @brief Helper to test the Execute method.
+     */
+    bool TestExecuteP(MARTe::StreamString config, MARTe::uint32 nExecutes = 5);
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
