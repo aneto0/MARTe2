@@ -39,10 +39,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() {
+MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() :
+        MemoryMapBroker() {
     t0 = 0LLU;
     t1 = 0LLU;
-    dataSourceTime = 0LLU;
     interpolationPeriod = 0LLU;
     dataSourceTime = NULL_PTR(uint64 *);
     interpolatedTime = NULL_PTR(uint64 *);
@@ -52,20 +52,21 @@ MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() {
     numberOfElements = NULL_PTR(uint32 *);
 }
 
+/*lint -e{1551} memory is freed in the destructor*/
 MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
     if (numberOfElements != NULL_PTR(uint32 *)) {
         delete numberOfElements;
     }
     if (y0 != NULL_PTR(void **)) {
         uint32 i;
-        for (i = 0; i < numberOfCopies; i++) {
+        for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y0[i]);
         }
         delete y0;
     }
     if (y1 != NULL_PTR(void **)) {
         uint32 i;
-        for (i = 0; i < numberOfCopies; i++) {
+        for (i = 0u; i < numberOfCopies; i++) {
             GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(y1[i]);
         }
         delete y1;
@@ -73,10 +74,10 @@ MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
     if (m != NULL_PTR(float64 *)) {
         delete m;
     }
+    /*lint -e{1740} the dataSourceTime and interpolatedTime are freed by the DataSourceI*/
 }
 
-bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                            void * const gamMemoryAddress) {
+bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
 
     if (ok) {
@@ -86,11 +87,13 @@ bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, Dat
         y1 = new void *[numberOfCopies];
     }
     uint32 i;
-    for (i = 0; i < numberOfCopies; i++) {
-        uint32 byteSize = copyTable[i].type.numberOfBits / 8u;
+    /*lint -e{613} copyTable cannot be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false*/
+    for (i = 0u; (i < numberOfCopies) && (ok); i++) {
+        uint32 byteSize = static_cast<uint32>(copyTable[i].type.numberOfBits);
+        byteSize /= 8u;
         numberOfElements[i] = copyTable[i].copySize;
         numberOfElements[i] /= byteSize;
-        m[i] = 0;
+        m[i] = 0.;
         y0[i] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[i].copySize);
         y1[i] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[i].copySize);
     }
@@ -104,82 +107,102 @@ void MemoryMapInterpolatedInputBroker::SetTimeSignal(const uint64 * const dataSo
     interpolationPeriod = interpolationPeriodIn;
 }
 
-void MemoryMapInterpolatedInputBroker::ChangeInterpolationWindows() {
-    t0 = t1;
-    t1 = *dataSourceTime;
-    uint32 i;
-    float64 dt;
-    if (t1 == t0) {
-        //kick-start the first assignment of y0
-        dt = 1.0;
-    }
-    else {
-        dt = static_cast<float64>(t1 - t0);
-        dt /= 1e9;
-    }
-    if (dt > 0.F) {
-        for (i = 0; (i < numberOfCopies); i++) {
+/*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
+void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
+    if (dataSourceTime != NULL_PTR(uint64 *)) {
+        t0 = t1;
+        t1 = *dataSourceTime;
+        uint32 i;
+        uint64 dt;
+        if (t1 == t0) {
+            //kick-start the first assignment of y0
+            dt = 1LLU;
+        }
+        else {
+            dt = (t1 - t0);
+        }
+
+        for (i = 0u; (i < numberOfCopies); i++) {
             if (copyTable[i].type == UnsignedInteger8Bit) {
-                ChangeInterpolationWindow<uint8>(i, dt);
+                ChangeInterpolationSegment<uint8>(i, dt);
             }
             else if (copyTable[i].type == UnsignedInteger16Bit) {
-                ChangeInterpolationWindow<uint16>(i, dt);
+                ChangeInterpolationSegment<uint16>(i, dt);
             }
             else if (copyTable[i].type == UnsignedInteger32Bit) {
-                ChangeInterpolationWindow<uint32>(i, dt);
+                ChangeInterpolationSegment<uint32>(i, dt);
             }
             else if (copyTable[i].type == UnsignedInteger64Bit) {
-                ChangeInterpolationWindow<uint64>(i, dt);
+                ChangeInterpolationSegment<uint64>(i, dt);
             }
             else if (copyTable[i].type == SignedInteger8Bit) {
-                ChangeInterpolationWindow<int8>(i, dt);
+                ChangeInterpolationSegment<int8>(i, dt);
             }
             else if (copyTable[i].type == SignedInteger16Bit) {
-                ChangeInterpolationWindow<int16>(i, dt);
+                ChangeInterpolationSegment<int16>(i, dt);
             }
             else if (copyTable[i].type == SignedInteger32Bit) {
-                ChangeInterpolationWindow<int32>(i, dt);
+                ChangeInterpolationSegment<int32>(i, dt);
             }
             else if (copyTable[i].type == SignedInteger64Bit) {
-                ChangeInterpolationWindow<int64>(i, dt);
+                ChangeInterpolationSegment<int64>(i, dt);
             }
             else if (copyTable[i].type == Float32Bit) {
-                ChangeInterpolationWindow<float32>(i, dt);
+                ChangeInterpolationSegment<float32>(i, dt);
             }
             else if (copyTable[i].type == Float64Bit) {
-                ChangeInterpolationWindow<float64>(i, dt);
+                ChangeInterpolationSegment<float64>(i, dt);
+            }
+            else {
+                //Unreachable?
             }
         }
     }
 }
 
 void MemoryMapInterpolatedInputBroker::Reset() {
-    ChangeInterpolationWindows();
-    *interpolatedTime = *dataSourceTime;
+    bool ok = (interpolatedTime != NULL_PTR(uint64 *));
+    if (ok) {
+        ok = (dataSourceTime != NULL_PTR(uint64 *));
+    }
+    if (ok) {
+        ChangeInterpolationSegments();
+        *interpolatedTime = *dataSourceTime;
+    }
 }
 
+/*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 bool MemoryMapInterpolatedInputBroker::Execute() {
-    bool ok = true;
+    bool ok = (interpolatedTime != NULL_PTR(uint64 *));
+    if (ok) {
+        ok = (dataSourceTime != NULL_PTR(uint64 *));
+    }
     uint32 i;
-    *interpolatedTime += interpolationPeriod;
+    if (ok) {
+        /*lint -e{613} NULL pointer checked above*/
+        *interpolatedTime += interpolationPeriod;
+    }
     bool triggerChange = false;
-    while ((ok) && (*interpolatedTime > *dataSourceTime)) {
-        triggerChange = true;
-        uint64 lastDataSourceTime = *dataSourceTime;
-        ok = dataSource->Synchronise();
-        if (ok) {
-            //Time is not changing!
-            ok = (lastDataSourceTime != *dataSourceTime);
-        }
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "DataSource time is not changing. Current dataSourceTime is %d", *dataSourceTime);
+    if (ok) {
+        /*lint -e{613} NULL pointer checked above*/
+        while ((ok) && (*interpolatedTime > *dataSourceTime)) {
+            triggerChange = true;
+            uint64 lastDataSourceTime = *dataSourceTime;
+            ok = dataSource->Synchronise();
+            if (ok) {
+                //Time is not changing!
+                ok = (lastDataSourceTime != *dataSourceTime);
+            }
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::FatalError, "DataSource time is not changing. Current dataSourceTime is %d", *dataSourceTime);
+            }
         }
     }
     if ((ok) && (triggerChange)) {
-        ChangeInterpolationWindows();
+        ChangeInterpolationSegments();
     }
 
-    for (i = 0; (i < numberOfCopies) && (ok); i++) {
+    for (i = 0u; (i < numberOfCopies) && (ok); i++) {
         if (copyTable[i].type == UnsignedInteger8Bit) {
             Interpolate<uint8>(i);
         }
@@ -210,7 +233,9 @@ bool MemoryMapInterpolatedInputBroker::Execute() {
         else if (copyTable[i].type == Float64Bit) {
             Interpolate<float64>(i);
         }
-
+        else {
+            //Unreachable/unsupported type? Should be stopped by the DataSourceI before...
+        }
     }
 
     return ok;

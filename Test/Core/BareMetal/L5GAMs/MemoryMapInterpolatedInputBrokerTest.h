@@ -66,6 +66,21 @@ public:
      */
     bool TestExecute_False();
 
+    /**
+     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     */
+    bool TestInit();
+
+    /**
+     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     */
+    bool TestReset();
+
+    /**
+     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     */
+    bool TestSetTimeSignal();
+
 
 private:
     /**

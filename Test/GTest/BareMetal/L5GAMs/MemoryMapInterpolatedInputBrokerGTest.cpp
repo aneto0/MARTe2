@@ -65,14 +65,19 @@ TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_False) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_False());
 }
-/*
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_Ranges) {
+
+TEST(MemoryMapInterpolatedInputBrokerGTest,TestInit) {
     MemoryMapInterpolatedInputBrokerTest test;
-    ASSERT_TRUE(test.TestExecute_Ranges());
+    ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_Samples) {
+TEST(MemoryMapInterpolatedInputBrokerGTest,TestReset) {
     MemoryMapInterpolatedInputBrokerTest test;
-    ASSERT_TRUE(test.TestExecute_Samples());
-}*/
+    ASSERT_TRUE(test.TestReset());
+}
+
+TEST(MemoryMapInterpolatedInputBrokerGTest,TestSetTimeSignal) {
+    MemoryMapInterpolatedInputBrokerTest test;
+    ASSERT_TRUE(test.TestSetTimeSignal());
+}
 

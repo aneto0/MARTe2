@@ -102,6 +102,8 @@ MemoryCheck.h
 MemoryCheck_Generic.cpp
 MemoryMapBroker.cpp
 MemoryMapInputBroker.cpp
+MemoryMapInterpolatedInputBroker.cpp
+MemoryMapInterpolatedInputBroker.h
 MemoryMapOutputBroker.cpp
 MemoryMapStatefulBroker.cpp
 MemoryMapStatefulInputBroker.cpp
