@@ -79,7 +79,7 @@ public:
     /**
      * @brief Tests that the Execute method returns false when the DataSource time does not change.
      */
-    bool TestSetTimeSignal();
+    bool TestSetInterpolationSignal();
 
 
 private:

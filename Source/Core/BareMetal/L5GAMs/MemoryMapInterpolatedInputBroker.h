@@ -42,7 +42,7 @@ namespace MARTe {
  * @brief Input MemoryMapBroker implementation which allows to automatically interpolate samples from any DataSourceI.
  * @details This class interpolates the signals from the DataSourceI and copies the new values to the GAM memory.
  *
- * The DataSourceI shall call the method SetTimeSignal and provide two nanoseconds time vectors. One of the vectors is
+ * The DataSourceI shall call the method SetTimeSignal and provide two interpolation vectors. One of the vectors is
  * read from the broker and shall contain the time to be interpolated. The other vector is written by the broker and will
  * contain the interpolated time.
  * The vector with the time to be interpolated shall be a function with no zero derivative between any two consecutive points.
@@ -76,12 +76,12 @@ MemoryMapInterpolatedInputBroker    ();
     virtual bool Execute();
 
     /**
-     * @brief Sets the nanosecond time signals used by the broker to interpolate samples.
-     * @param[in] dataSourceTimeIn the nanosecond time vector to be interpolated. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
-     * @param[out] interpolatedTimeIn the nanosecond interpolated time vector. It is updated by the broker.
-     * @param[in] interpolationPeriodIn the nanosecond interpolation period.
+     * @brief Sets the interpolation signals used by the broker to interpolate samples.
+     * @param[in] dataSourceInterpolationVectorIn the vector to be interpolated. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
+     * @param[out] interpolatedVectorIn the interpolated time vector. It is updated by the broker.
+     * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedVector is incremented every time a new interpolated sample is generated).
      */
-    void SetTimeSignal(const uint64 * const dataSourceTimeIn, uint64 * interpolatedTimeIn, const uint64 interpolationPeriodIn);
+    void SetInterpolationSignal(const uint64 * const dataSourceInterpolationVectorIn, uint64 * interpolatedVectorIn, const uint64 interpolationPeriodIn);
 
     /**
      * @brief See MemoryMapBroker::Init
@@ -107,7 +107,7 @@ private:
     /**
      * @brief Generate a new interpolation segment. To be performed every time the interpolated time is greater than the last time read from the data source.
      * @param[in] copyIdx the index of the signal to be updated.
-     * @param[in] dt the interpolation segment length in nanoseconds.
+     * @param[in] dt the interpolation segment length.
      */
     template<typename valueType>
     void ChangeInterpolationSegment(uint32 copyIdx, uint64 dt);
@@ -118,7 +118,7 @@ private:
     void ChangeInterpolationSegments();
 
     /**
-     * The interpolation period in nanoseconds
+     * The interpolation period
      */
     uint64 interpolationPeriod;
 
@@ -135,12 +135,12 @@ private:
     /**
      * The current data source time (not interpolated). It is the basis to compute the time windows.
      */
-    const uint64 *dataSourceTime;
+    const uint64 *dataSourceInterpolationVector;
 
     /**
      * The current interpolated time
      */
-    uint64 * interpolatedTime;
+    uint64 * interpolatedVector;
 
     /**
      * Pointers to the addresses of the y0 values of the current interpolation segment
@@ -178,7 +178,7 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     valueType *y0p = (valueType *) (y0[copyIdx]);
     float64 y = static_cast<float64>(y0p[i]);
     //How long as elapsed in this interpolation segment
-    float64 cttns = static_cast<float64>(*interpolatedTime - t0);
+    float64 cttns = static_cast<float64>(*interpolatedVector - t0);
     //y = y0p + m * (t - t0), where y0p and t0p are the initial values for the interpolation period
     float64 newy = m[copyIdx] * cttns;
     y += newy;
