@@ -42,12 +42,13 @@ namespace MARTe {
  * @brief Input MemoryMapBroker implementation which allows to automatically interpolate samples from any DataSourceI.
  * @details This class interpolates the signals from the DataSourceI and copies the new values to the GAM memory.
  *
- * The DataSourceI shall call the method SetTimeSignal and provide two interpolation vectors. One of the vectors is
- * read from the broker and shall contain the time to be interpolated. The other vector is written by the broker and will
- * contain the interpolated time.
- * The vector with the time to be interpolated shall be a function with no zero derivative between any two consecutive points.
+ * The DataSourceI shall call the method SetIndependentVariable and provide two x-axis vectors. One of the vectors is
+ * read from the broker and shall contain the x-values that are to be used as the basis for the interpolation.
+ * The other vector is written by the broker and will contain the values of this same vector already interpolated.
+ * The independent variable vector (typically a time vector) shall not have zero derivative between any two consecutive points and will be used as the basis
+ * to compute the interpolation segments for all the other DataSource signals.
  *
- * @warning the Reset function shall be called before the first Execute and the DataSourceI shall have its first data points (t0, y0)
+ * @warning the Reset function shall be called before the first Execute and the DataSourceI shall have its first data points (x0, y0)
  * loaded into its signal memory.
  */
 class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
@@ -65,23 +66,23 @@ MemoryMapInterpolatedInputBroker    ();
 
     /**
      * @brief Interpolates the data for all the registered signals and copies to the GAM memory.
-     * @details Interpolates between consecutive samples. While the current time (i.e. the time that is being interpolated) is greater than the last time
+     * @details Interpolates between consecutive samples. While the independent variable vector value (typically time) is greater than the last value
      * read from the data source a new interpolation segment is created. To construct the segment the next point from the data source is read and is used to
-     * compute m=(y1-y0)/(t1-t0) where y0 is the current segment y1; t0 is the current segment t1; y1 and t1 are the new data read from the data source.
-     * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is expected to increment the time vector.
-     * @return true if all copies are successfully performed and if the time to be interpolated changes when a new interpolation segment is to be computed.
+     * compute m=(y1-y0)/(x1-x0) where y0 is the current segment y1; x0 is the current segment x1; y1 and x1 are the new data read from the data source.
+     * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is expected to provide the next value of the independent variable vector.
+     * @return true if all copies are successfully performed and if the interpolation changes when a new interpolation segment is to be computed.
      * @pre
      *   Reset
      */
     virtual bool Execute();
 
     /**
-     * @brief Sets the interpolation signals used by the broker to interpolate samples.
-     * @param[in] dataSourceInterpolationVectorIn the vector to be interpolated. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
-     * @param[out] interpolatedVectorIn the interpolated time vector. It is updated by the broker.
-     * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedVector is incremented every time a new interpolated sample is generated).
+     * @brief Sets the independent variable to be used by the broker to interpolate samples.
+     * @param[in] dataSourceXAxisIn the independent variable to compute the interpolation segments. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
+     * @param[out] interpolatedXAxisIn the dataSourceXAxisIn interpolated by the broker.
+     * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedXAxis is incremented every time a new interpolated sample is generated).
      */
-    void SetInterpolationSignal(const uint64 * const dataSourceInterpolationVectorIn, uint64 * interpolatedVectorIn, const uint64 interpolationPeriodIn);
+    void SetIndependentVariable(const uint64 * const dataSourceXAxisIn, uint64 * interpolatedXAxisIn, const uint64 interpolationPeriodIn);
 
     /**
      * @brief See MemoryMapBroker::Init
@@ -92,7 +93,7 @@ MemoryMapInterpolatedInputBroker    ();
             void * const gamMemoryAddress);
 
     /**
-     * @brief Resets the interpolated time to start counting from the first time value.
+     * @brief Resets the interpolation vector to start counting from the first time value.
      */
     void Reset();
 
@@ -105,7 +106,7 @@ private:
     void Interpolate(uint32 copyIdx);
 
     /**
-     * @brief Generate a new interpolation segment. To be performed every time the interpolated time is greater than the last time read from the data source.
+     * @brief Generate a new interpolation segment. To be performed every time the interpolated vector is greater than the last time read from the data source.
      * @param[in] copyIdx the index of the signal to be updated.
      * @param[in] dt the interpolation segment length.
      */
@@ -123,24 +124,24 @@ private:
     uint64 interpolationPeriod;
 
     /**
-     * The beginning time of the interpolation segment
+     * The beginning xx point of the interpolation segment
      */
-    uint64 t0;
+    uint64 x0;
 
     /**
-     * The ending time of the interpolation segment
+     * The ending xx point of the interpolation segment
      */
-    uint64 t1;
+    uint64 x1;
 
     /**
-     * The current data source time (not interpolated). It is the basis to compute the time windows.
+     * The current data source interpolation vector (not interpolated). It is the basis to compute the interpolation segments.
      */
-    const uint64 *dataSourceInterpolationVector;
+    const uint64 *dataSourceXAxis;
 
     /**
-     * The current interpolated time
+     * The current interpolated vector
      */
-    uint64 * interpolatedVector;
+    uint64 * interpolatedXAxis;
 
     /**
      * Pointers to the addresses of the y0 values of the current interpolation segment
@@ -178,8 +179,8 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     valueType *y0p = (valueType *) (y0[copyIdx]);
     float64 y = static_cast<float64>(y0p[i]);
     //How long as elapsed in this interpolation segment
-    float64 cttns = static_cast<float64>(*interpolatedVector - t0);
-    //y = y0p + m * (t - t0), where y0p and t0p are the initial values for the interpolation period
+    float64 cttns = static_cast<float64>(*interpolatedXAxis - x0);
+    //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
     float64 newy = m[copyIdx] * cttns;
     y += newy;
     valueType *dest = static_cast<valueType *>(copyTable[copyIdx].gamPointer);
@@ -197,7 +198,7 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
 
     y0p[i] = y1p[i];
     y1p[i] = y1pds[i];
-    //Compute the derivative m = (y1-y0)/(t1-t0)
+    //Compute the derivative m = (y1-y0)/(x1-x0)
     m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
     m[copyIdx] /= dt;
 }

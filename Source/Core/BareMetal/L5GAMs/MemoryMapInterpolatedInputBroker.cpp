@@ -41,11 +41,11 @@
 namespace MARTe {
 MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() :
         MemoryMapBroker() {
-    t0 = 0LLU;
-    t1 = 0LLU;
+    x0 = 0LLU;
+    x1 = 0LLU;
     interpolationPeriod = 0LLU;
-    dataSourceInterpolationVector = NULL_PTR(uint64 *);
-    interpolatedVector = NULL_PTR(uint64 *);
+    dataSourceXAxis = NULL_PTR(uint64 *);
+    interpolatedXAxis = NULL_PTR(uint64 *);
     m = NULL_PTR(float64 *);
     y0 = NULL_PTR(void **);
     y1 = NULL_PTR(void **);
@@ -74,7 +74,7 @@ MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
     if (m != NULL_PTR(float64 *)) {
         delete m;
     }
-    /*lint -e{1740} the dataSourceInterpolationVector and interpolatedVector are freed by the DataSourceI*/
+    /*lint -e{1740} the dataSourceXAxis and interpolatedXAxis are freed by the DataSourceI*/
 }
 
 bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
@@ -101,25 +101,25 @@ bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, Dat
     return ok;
 }
 
-void MemoryMapInterpolatedInputBroker::SetInterpolationSignal(const uint64 * const dataSourceInterpolationVectorIn, uint64 * const interpolatedVectorIn, const uint64 interpolationPeriodIn) {
-    dataSourceInterpolationVector = dataSourceInterpolationVectorIn;
-    interpolatedVector = interpolatedVectorIn;
+void MemoryMapInterpolatedInputBroker::SetIndependentVariable(const uint64 * const dataSourceXAxisIn, uint64 * const interpolatedXAxisIn, const uint64 interpolationPeriodIn) {
+    dataSourceXAxis = dataSourceXAxisIn;
+    interpolatedXAxis = interpolatedXAxisIn;
     interpolationPeriod = interpolationPeriodIn;
 }
 
 /*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
-    if (dataSourceInterpolationVector != NULL_PTR(uint64 *)) {
-        t0 = t1;
-        t1 = *dataSourceInterpolationVector;
+    if (dataSourceXAxis != NULL_PTR(uint64 *)) {
+        x0 = x1;
+        x1 = *dataSourceXAxis;
         uint32 i;
         uint64 dt;
-        if (t1 == t0) {
+        if (x1 == x0) {
             //kick-start the first assignment of y0
             dt = 1LLU;
         }
         else {
-            dt = (t1 - t0);
+            dt = (x1 - x0);
         }
 
         for (i = 0u; (i < numberOfCopies); i++) {
@@ -161,40 +161,40 @@ void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
 }
 
 void MemoryMapInterpolatedInputBroker::Reset() {
-    bool ok = (interpolatedVector != NULL_PTR(uint64 *));
+    bool ok = (interpolatedXAxis != NULL_PTR(uint64 *));
     if (ok) {
-        ok = (dataSourceInterpolationVector != NULL_PTR(uint64 *));
+        ok = (dataSourceXAxis != NULL_PTR(uint64 *));
     }
     if (ok) {
         ChangeInterpolationSegments();
-        *interpolatedVector = *dataSourceInterpolationVector;
+        *interpolatedXAxis = *dataSourceXAxis;
     }
 }
 
 /*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 bool MemoryMapInterpolatedInputBroker::Execute() {
-    bool ok = (interpolatedVector != NULL_PTR(uint64 *));
+    bool ok = (interpolatedXAxis != NULL_PTR(uint64 *));
     if (ok) {
-        ok = (dataSourceInterpolationVector != NULL_PTR(uint64 *));
+        ok = (dataSourceXAxis != NULL_PTR(uint64 *));
     }
     uint32 i;
     if (ok) {
         /*lint -e{613} NULL pointer checked above*/
-        *interpolatedVector += interpolationPeriod;
+        *interpolatedXAxis += interpolationPeriod;
     }
     bool triggerChange = false;
     if (ok) {
         /*lint -e{613} NULL pointer checked above*/
-        while ((ok) && (*interpolatedVector > *dataSourceInterpolationVector)) {
+        while ((ok) && (*interpolatedXAxis > *dataSourceXAxis)) {
             triggerChange = true;
-            uint64 lastDataSourceTime = *dataSourceInterpolationVector;
+            uint64 lastDataSourceTime = *dataSourceXAxis;
             ok = dataSource->Synchronise();
             if (ok) {
                 //Time is not changing!
-                ok = (lastDataSourceTime != *dataSourceInterpolationVector);
+                ok = (lastDataSourceTime != *dataSourceXAxis);
             }
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "DataSource time is not changing. Current dataSourceInterpolationVector is %d", *dataSourceInterpolationVector);
+                REPORT_ERROR(ErrorManagement::FatalError, "DataSource time is not changing. Current dataSourceXAxis is %d", *dataSourceXAxis);
             }
         }
     }

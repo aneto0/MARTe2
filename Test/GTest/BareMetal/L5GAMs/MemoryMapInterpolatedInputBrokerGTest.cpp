@@ -76,8 +76,8 @@ TEST(MemoryMapInterpolatedInputBrokerGTest,TestReset) {
     ASSERT_TRUE(test.TestReset());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestSetInterpolationSignal) {
+TEST(MemoryMapInterpolatedInputBrokerGTest,TestSetIndependentVariable) {
     MemoryMapInterpolatedInputBrokerTest test;
-    ASSERT_TRUE(test.TestSetInterpolationSignal());
+    ASSERT_TRUE(test.TestSetIndependentVariable());
 }
 

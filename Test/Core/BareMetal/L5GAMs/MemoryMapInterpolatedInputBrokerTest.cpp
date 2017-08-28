@@ -310,7 +310,7 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::GetInputBrokers(Refer
         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
     }
     if (ret) {
-        broker->SetInterpolationSignal(&timeSignal, &interpolatedTime, interpolationPeriod);
+        broker->SetIndependentVariable(&timeSignal, &interpolatedTime, interpolationPeriod);
     }
     if (ret) {
         broker->Reset();
@@ -970,7 +970,7 @@ bool MemoryMapInterpolatedInputBrokerTest::TestReset() {
     return TestExecuteP(config1);
 }
 
-bool MemoryMapInterpolatedInputBrokerTest::TestSetInterpolationSignal() {
+bool MemoryMapInterpolatedInputBrokerTest::TestSetIndependentVariable() {
     return TestExecuteP(config1);
 }
 

@@ -67,19 +67,19 @@ public:
     bool TestExecute_False();
 
     /**
-     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     * @brief Tests the Init method.
      */
     bool TestInit();
 
     /**
-     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     * @brief Tests the Reset method.
      */
     bool TestReset();
 
     /**
-     * @brief Tests that the Execute method returns false when the DataSource time does not change.
+     * @brief Tests the SetIndependentVariable method.
      */
-    bool TestSetInterpolationSignal();
+    bool TestSetIndependentVariable();
 
 
 private:
