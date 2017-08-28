@@ -42,9 +42,7 @@ namespace MARTe {
  * @brief Input MemoryMapBroker implementation which allows to automatically interpolate samples from any DataSourceI.
  * @details This class interpolates the signals from the DataSourceI and copies the new values to the GAM memory.
  *
- * The DataSourceI shall call the method SetIndependentVariable and provide two x-axis vectors. One of the vectors is
- * read from the broker and shall contain the x-values that are to be used as the basis for the interpolation.
- * The other vector is written by the broker and will contain the values of this same vector already interpolated.
+ * The DataSourceI shall call the method SetIndependentVariable and provide one x-axis vector, containing the x-values that are to be used as the basis for the interpolation.
  * The independent variable vector (typically a time vector) shall not have zero derivative between any two consecutive points and will be used as the basis
  * to compute the interpolation segments for all the other DataSource signals.
  *
@@ -70,6 +68,8 @@ MemoryMapInterpolatedInputBroker    ();
      * read from the data source a new interpolation segment is created. To construct the segment the next point from the data source is read and is used to
      * compute m=(y1-y0)/(x1-x0) where y0 is the current segment y1; x0 is the current segment x1; y1 and x1 are the new data read from the data source.
      * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is expected to provide the next value of the independent variable vector.
+     *
+     * After a Reset the first Execute will copy the current values from the DataSourceI memory (without attempting to interpolate).
      * @return true if all copies are successfully performed and if the interpolation changes when a new interpolation segment is to be computed.
      * @pre
      *   Reset
@@ -79,10 +79,9 @@ MemoryMapInterpolatedInputBroker    ();
     /**
      * @brief Sets the independent variable to be used by the broker to interpolate samples.
      * @param[in] dataSourceXAxisIn the independent variable to compute the interpolation segments. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
-     * @param[out] interpolatedXAxisIn the dataSourceXAxisIn interpolated by the broker.
      * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedXAxis is incremented every time a new interpolated sample is generated).
      */
-    void SetIndependentVariable(const uint64 * const dataSourceXAxisIn, uint64 * interpolatedXAxisIn, const uint64 interpolationPeriodIn);
+    void SetIndependentVariable(const uint64 * const dataSourceXAxisIn, const uint64 interpolationPeriodIn);
 
     /**
      * @brief See MemoryMapBroker::Init
@@ -141,7 +140,7 @@ private:
     /**
      * The current interpolated vector
      */
-    uint64 * interpolatedXAxis;
+    uint64 interpolatedXAxis;
 
     /**
      * Pointers to the addresses of the y0 values of the current interpolation segment
@@ -162,6 +161,11 @@ private:
      * Accelerator for number of elements in any given signal
      */
     uint32 *numberOfElements;
+
+    /**
+     * Was the broker reset
+     */
+    bool reset;
 };
 
 }
@@ -179,7 +183,7 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     valueType *y0p = (valueType *) (y0[copyIdx]);
     float64 y = static_cast<float64>(y0p[i]);
     //How long as elapsed in this interpolation segment
-    float64 cttns = static_cast<float64>(*interpolatedXAxis - x0);
+    float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
     //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
     float64 newy = m[copyIdx] * cttns;
     y += newy;

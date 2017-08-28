@@ -182,7 +182,6 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper    ();
     uint64 timeIncrement;
     uint64 timeSignal;
     uint64 startTime;
-    uint64 interpolatedTime;
     uint32 intIncrement;
     uint32 initialIntValue;
     float32 floatIncrement;
@@ -196,7 +195,6 @@ MemoryMapInterpolatedInputBrokerDataSourceTestHelper::MemoryMapInterpolatedInput
     offsets = NULL_PTR(uint32 *);
     signalTypes = NULL_PTR(TypeDescriptor *);
     nElements = NULL_PTR(uint32 *);
-    interpolatedTime = 0;
     timeIncrement = 5;
     intIncrement = 10;
     floatIncrement = 0.1345;
@@ -310,7 +308,7 @@ bool MemoryMapInterpolatedInputBrokerDataSourceTestHelper::GetInputBrokers(Refer
         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
     }
     if (ret) {
-        broker->SetIndependentVariable(&timeSignal, &interpolatedTime, interpolationPeriod);
+        broker->SetIndependentVariable(&timeSignal, interpolationPeriod);
     }
     if (ret) {
         broker->Reset();
@@ -1021,11 +1019,9 @@ bool MemoryMapInterpolatedInputBrokerTest::TestExecuteP(StreamString config1, ui
             dataSource->Init();
             broker->Reset();
         }
-        for (e = 1; (e < nExecutes) && (ret); e++) {
+
+        for (e = 0; (e < nExecutes) && (ret); e++) {
             ret = broker->Execute();
-            if (ret) {
-                ret = (dataSource->interpolatedTime == (e * dataSource->interpolationPeriod + dataSource->startTime));
-            }
             for (s = 0; (s < nOfSignals) && (ret); s++) {
                 void *gamPtr = gamA->GetInputSignalMemory(s);
                 uint32 nElements;

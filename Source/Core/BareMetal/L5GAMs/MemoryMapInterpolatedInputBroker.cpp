@@ -44,8 +44,9 @@ MemoryMapInterpolatedInputBroker::MemoryMapInterpolatedInputBroker() :
     x0 = 0LLU;
     x1 = 0LLU;
     interpolationPeriod = 0LLU;
+    interpolatedXAxis = 0LLU;
+    reset = false;
     dataSourceXAxis = NULL_PTR(uint64 *);
-    interpolatedXAxis = NULL_PTR(uint64 *);
     m = NULL_PTR(float64 *);
     y0 = NULL_PTR(void **);
     y1 = NULL_PTR(void **);
@@ -74,10 +75,11 @@ MemoryMapInterpolatedInputBroker::~MemoryMapInterpolatedInputBroker() {
     if (m != NULL_PTR(float64 *)) {
         delete m;
     }
-    /*lint -e{1740} the dataSourceXAxis and interpolatedXAxis are freed by the DataSourceI*/
+    /*lint -e{1740} the dataSourceXAxis is freed by the DataSourceI*/
 }
 
-bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
+bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+                                            void * const gamMemoryAddress) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
 
     if (ok) {
@@ -101,9 +103,8 @@ bool MemoryMapInterpolatedInputBroker::Init(const SignalDirection direction, Dat
     return ok;
 }
 
-void MemoryMapInterpolatedInputBroker::SetIndependentVariable(const uint64 * const dataSourceXAxisIn, uint64 * const interpolatedXAxisIn, const uint64 interpolationPeriodIn) {
+void MemoryMapInterpolatedInputBroker::SetIndependentVariable(const uint64 * const dataSourceXAxisIn, const uint64 interpolationPeriodIn) {
     dataSourceXAxis = dataSourceXAxisIn;
-    interpolatedXAxis = interpolatedXAxisIn;
     interpolationPeriod = interpolationPeriodIn;
 }
 
@@ -161,80 +162,86 @@ void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegments() {
 }
 
 void MemoryMapInterpolatedInputBroker::Reset() {
-    bool ok = (interpolatedXAxis != NULL_PTR(uint64 *));
-    if (ok) {
-        ok = (dataSourceXAxis != NULL_PTR(uint64 *));
-    }
+    bool ok = (dataSourceXAxis != NULL_PTR(uint64 *));
     if (ok) {
         ChangeInterpolationSegments();
-        *interpolatedXAxis = *dataSourceXAxis;
+        interpolatedXAxis = *dataSourceXAxis;
+        reset = true;
     }
 }
 
 /*lint -e{613} copyTable should be NULL as otherwise MemoryMapBroker::Init would have failed => ok = false and this function should not be called*/
 bool MemoryMapInterpolatedInputBroker::Execute() {
-    bool ok = (interpolatedXAxis != NULL_PTR(uint64 *));
-    if (ok) {
-        ok = (dataSourceXAxis != NULL_PTR(uint64 *));
-    }
+    bool ok = (dataSourceXAxis != NULL_PTR(uint64 *));
     uint32 i;
-    if (ok) {
-        /*lint -e{613} NULL pointer checked above*/
-        *interpolatedXAxis += interpolationPeriod;
-    }
-    bool triggerChange = false;
-    if (ok) {
-        /*lint -e{613} NULL pointer checked above*/
-        while ((ok) && (*interpolatedXAxis > *dataSourceXAxis)) {
-            triggerChange = true;
-            uint64 lastDataSourceTime = *dataSourceXAxis;
-            ok = dataSource->Synchronise();
-            if (ok) {
-                //Time is not changing!
-                ok = (lastDataSourceTime != *dataSourceXAxis);
-            }
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "DataSource time is not changing. Current dataSourceXAxis is %d", *dataSourceXAxis);
+    if (reset) {
+        //Just copy the first data point after a reset
+        for (i = 0u; (i < numberOfCopies) && (ok); i++) {
+            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+                ok = MemoryOperationsHelper::Copy(copyTable[i].gamPointer, copyTable[i].dataSourcePointer, copyTable[i].copySize);
             }
         }
+        reset = false;
     }
-    if ((ok) && (triggerChange)) {
-        ChangeInterpolationSegments();
-    }
+    else {
+        /*lint -e{613} NULL pointer checked above*/
+        interpolatedXAxis += interpolationPeriod;
+        //Do interpolation and if needed compute next segment.
+        bool triggerChange = false;
+        if (ok) {
+            /*lint -e{613} NULL pointer checked above*/
+            while ((ok) && (interpolatedXAxis > *dataSourceXAxis)) {
+                triggerChange = true;
+                uint64 lastDataSourceTime = *dataSourceXAxis;
+                ok = dataSource->Synchronise();
+                if (ok) {
+                    //Time is not changing!
+                    ok = (lastDataSourceTime != *dataSourceXAxis);
+                }
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "DataSource x-axis is not changing (Have you called Reset?). Current dataSourceXAxis is %d",
+                                 *dataSourceXAxis);
+                }
+            }
+        }
+        if ((ok) && (triggerChange)) {
+            ChangeInterpolationSegments();
+        }
 
-    for (i = 0u; (i < numberOfCopies) && (ok); i++) {
-        if (copyTable[i].type == UnsignedInteger8Bit) {
-            Interpolate<uint8>(i);
-        }
-        else if (copyTable[i].type == UnsignedInteger16Bit) {
-            Interpolate<uint16>(i);
-        }
-        else if (copyTable[i].type == UnsignedInteger32Bit) {
-            Interpolate<uint32>(i);
-        }
-        else if (copyTable[i].type == UnsignedInteger64Bit) {
-            Interpolate<uint64>(i);
-        }
-        else if (copyTable[i].type == SignedInteger8Bit) {
-            Interpolate<int8>(i);
-        }
-        else if (copyTable[i].type == SignedInteger16Bit) {
-            Interpolate<int16>(i);
-        }
-        else if (copyTable[i].type == SignedInteger32Bit) {
-            Interpolate<int32>(i);
-        }
-        else if (copyTable[i].type == SignedInteger64Bit) {
-            Interpolate<int64>(i);
-        }
-        else if (copyTable[i].type == Float32Bit) {
-            Interpolate<float32>(i);
-        }
-        else if (copyTable[i].type == Float64Bit) {
-            Interpolate<float64>(i);
-        }
-        else {
-            //Unreachable/unsupported type? Should be stopped by the DataSourceI before...
+        for (i = 0u; (i < numberOfCopies) && (ok); i++) {
+            if (copyTable[i].type == UnsignedInteger8Bit) {
+                Interpolate<uint8>(i);
+            }
+            else if (copyTable[i].type == UnsignedInteger16Bit) {
+                Interpolate<uint16>(i);
+            }
+            else if (copyTable[i].type == UnsignedInteger32Bit) {
+                Interpolate<uint32>(i);
+            }
+            else if (copyTable[i].type == UnsignedInteger64Bit) {
+                Interpolate<uint64>(i);
+            }
+            else if (copyTable[i].type == SignedInteger8Bit) {
+                Interpolate<int8>(i);
+            }
+            else if (copyTable[i].type == SignedInteger16Bit) {
+                Interpolate<int16>(i);
+            }
+            else if (copyTable[i].type == SignedInteger32Bit) {
+                Interpolate<int32>(i);
+            }
+            else if (copyTable[i].type == SignedInteger64Bit) {
+                Interpolate<int64>(i);
+            }
+            else if (copyTable[i].type == Float32Bit) {
+                Interpolate<float32>(i);
+            }
+            else if (copyTable[i].type == Float64Bit) {
+                Interpolate<float64>(i);
+            }
+            else {
+                //Unreachable/unsupported type? Should be stopped by the DataSourceI before...
+            }
         }
     }
 
