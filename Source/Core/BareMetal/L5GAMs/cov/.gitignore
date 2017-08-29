@@ -63,3 +63,6 @@
 /MemoryMapSynchronisedOutputBroker.gcda
 /MemoryMapSynchronisedOutputBroker.gcno
 /MemoryMapSynchronisedOutputBroker.o
+/MemoryMapInterpolatedInputBroker.gcda
+/MemoryMapInterpolatedInputBroker.gcno
+/MemoryMapInterpolatedInputBroker.o
