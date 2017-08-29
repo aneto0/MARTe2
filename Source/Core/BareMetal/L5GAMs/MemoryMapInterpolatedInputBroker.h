@@ -40,14 +40,14 @@ namespace MARTe {
 
 /**
  * @brief Input MemoryMapBroker implementation which allows to automatically interpolate samples from any DataSourceI.
- * @details This class interpolates the signals from the DataSourceI and copies the new values to the GAM memory.
+ * @details This class interpolates the signals from the DataSourceI and copies the interpolated values to the GAM memory.
  *
  * The DataSourceI shall call the method SetIndependentVariable and provide one x-axis vector, containing the x-values that are to be used as the basis for the interpolation.
  * The independent variable vector (typically a time vector) shall not have zero derivative between any two consecutive points and will be used as the basis
  * to compute the interpolation segments for all the other DataSource signals.
  *
  * @warning the Reset function shall be called before the first Execute and the DataSourceI shall have its first data points (x0, y0)
- * loaded into its signal memory.
+ * loaded into its memory (i.e. all the pointers returned by DataSourceI::GetSignalMemoryBuffer shall have valid values).
  */
 class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
 public:
@@ -63,14 +63,16 @@ MemoryMapInterpolatedInputBroker    ();
     virtual ~MemoryMapInterpolatedInputBroker();
 
     /**
-     * @brief Interpolates the data for all the registered signals and copies to the GAM memory.
+     * @brief Interpolates the data for all the registered signals and copies them to the GAM memory.
      * @details Interpolates between consecutive samples. While the independent variable vector value (typically time) is greater than the last value
-     * read from the data source a new interpolation segment is created. To construct the segment the next point from the data source is read and is used to
+     * read from the data source a new interpolation segment is created for each signal.
+     * To construct the segment, the next point from the data source is read and is used to
      * compute m=(y1-y0)/(x1-x0) where y0 is the current segment y1; x0 is the current segment x1; y1 and x1 are the new data read from the data source.
-     * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is expected to provide the next value of the independent variable vector.
+     * Every time a new segment is created the DataSourceI::Synchronise function is called and the DataSourceI is
+     * expected to provide the next value of the independent variable vector (that is the next value of x1).
      *
      * After a Reset the first Execute will copy the current values from the DataSourceI memory (without attempting to interpolate).
-     * @return true if all copies are successfully performed and if the interpolation changes when a new interpolation segment is to be computed.
+     * @return true if all copies are successfully performed and if the interpolation x1 value changes when a new interpolation segment is to be computed.
      * @pre
      *   Reset
      */
@@ -107,10 +109,10 @@ private:
     /**
      * @brief Generate a new interpolation segment. To be performed every time the interpolated vector is greater than the last time read from the data source.
      * @param[in] copyIdx the index of the signal to be updated.
-     * @param[in] dt the interpolation segment length.
+     * @param[in] dx the interpolation segment length.
      */
     template<typename valueType>
-    void ChangeInterpolationSegment(uint32 copyIdx, uint64 dt);
+    void ChangeInterpolationSegment(uint32 copyIdx, uint64 dx);
 
     /**
      * @brief Calls ChangeInterpolationSegment for all the broker signals.
@@ -193,7 +195,7 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
 }
 
 template<typename valueType>
-void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx, uint64 dt) {
+void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx, uint64 dx) {
 uint32 i;
 for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     valueType *y0p = (valueType *) (y0[copyIdx]);
@@ -204,7 +206,7 @@ for (i = 0u; i < numberOfElements[copyIdx]; i++) {
     y1p[i] = y1pds[i];
     //Compute the derivative m = (y1-y0)/(x1-x0)
     m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
-    m[copyIdx] /= dt;
+    m[copyIdx] /= dx;
 }
 }
 
