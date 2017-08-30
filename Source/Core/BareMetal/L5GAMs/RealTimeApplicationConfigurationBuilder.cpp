@@ -1125,14 +1125,16 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                     }
                 }
                 else {
-                    ret = (!isDsLocked);
-                    if (ret) {
+                    //This was a misinterpretation of the requirement. A Locked DataSource means that you cannot add a new signal not
+                    //that you cannot complete the properties of an existent signal!
+                    /*ret = (!isDsLocked);*/
+                    /*if (ret) {*/
                         ret = dataSourcesDatabase.Write(properties[p], elementSignalDatabase);
-                    }
-                    else {
+                    /*}*/
+                    /*else {
                         REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Cannot complete the signal %s in GAM %s because the related DataSource is locked", originalSignalName.Buffer(),
                                             functionName.Buffer());
-                    }
+                    }*/
                 }
             }
             p++;
