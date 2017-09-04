@@ -110,6 +110,7 @@ namespace MARTe {
  */
 #define TYPE_DESCRIPTOR_RANGE_CONST(rangename,name,value,numberType)\
         const numberType TD ## name  = value << TypeDescriptorRange_ ## rangename ## _Shift;
+
 #define TDRANGE(rangename,value)  (value << MARTe::TypeDescriptorRange_ ## rangename ## _Shift)
 
 
@@ -145,13 +146,15 @@ namespace MARTe {
 // defines all TypeDescriptoRange constants needed by TDRANGE macro functions
 TYPE_DESCRIPTOR_MACRO(TYPE_DESCRIPTOR_RANGEDEF, TYPE_DESCRIPTOR_BOOLDEF, TYPE_DESCRIPTOR_TYPE)
 
-// TDStructure
+// generates TDStructure macro
 TYPE_DESCRIPTOR_RANGE_CONST(isStructuredData,Structure,1, TYPE_DESCRIPTOR_TYPE )
 
-// TDConstant
+// generates TDConstant macro
 TYPE_DESCRIPTOR_RANGE_CONST(dataIsConstant,Constant,1, TYPE_DESCRIPTOR_TYPE )
 
-
+/**
+ *
+ */
 class DLL_API TypeDescriptor {
 public:
 
@@ -162,142 +165,6 @@ public:
     union {
     	TYPE_DESCRIPTOR_MACRO(TYPE_DESCRIPTOR_RANGEFUN, TYPE_DESCRIPTOR_BOOLFUN, TYPE_DESCRIPTOR_TYPE)
 
-#if 0
-        /**
-         * If true then the data is a structure or class and its definition
-         * has to be found in the ObjectRegistryDatabase
-         * void const *
-         */
-        BitBoolean<uint32, 0u> isStructuredData;
-
-        /**
-         * The data is constant - cannot be written to
-         */
-        BitBoolean<uint32, 1u> dataIsConstant;
-
-        /*****************************************************
-         *
-         *        For isStructuredData = true
-         *
-         *****************************************************/
-
-        /**
-         * A code related univocally to a record in the ObjectRegistryDatabase
-         */
-        BitRange<uint32, 30u, 2u> structuredDataIdCode;
-
-        /*****************************************************
-         *
-         *        For isStructuredData = false
-         *
-         *****************************************************/
-
-        /**
-         * The actual type of data
-         * See table in BasicType
-         */
-        BitRange<uint32, 3u, 2u> type;
-
-        /*****************************************************
-         *
-         *        For type = complexType
-         *
-         *****************************************************/
-        /**
-         * The subType related to complexType
-         */
-        BitRange<uint32, 3u, 5u> complexType;
-
-        /**
-         * The type and complexType joined
-         */
-        //BitRange<uint32, 6u, 2u> combinedType;
-
-        /*****************************************************
-         *
-         *        For type = int uint float char (void)
-         *
-         *****************************************************/
-
-        /**
-         * The size of the type unknown/8/16/32/64/128/256/512 bits (1/2/4/8/16/32/64 bytes)
-         * Determines the type of integer or float
-         * For char[] this is 1
-         * Values taken from BasicObjectSize
-         */
-        BitRange<uint32, 3u, 5u> objectSize;
-
-        /*****************************************************
-         *
-         *        For objectSize = 7 SizeBits && int or uint
-         *
-         *****************************************************/
-
-        /**
-         * The bit offset
-         * 0-63
-         */
-        BitRange<uint32, 6u, 10u> bitOffset;
-
-        /**
-         * The size in bits
-         * Up to 65K
-         */
-        BitRange<uint32, 16u, 16u> numberOfBits;
-
-        /*****************************************************
-         *
-         *        For objectSize < 7 SizeBits && i/uint float char
-         *
-         *****************************************************/
-
-        /**
-         * const ptr, sized array etc...
-         */
-        BitRange<uint32,3u, 8u> arrayProperty;
-
-        /*****************************************************
-         *
-         *        For arrayProperty sized
-         *
-         *****************************************************/
-
-        /**
-         * The vector size for 1D array and for ?D+ array the first dimensions size
-         * Up to 2M  0 means larger than 2M 1 means scalar
-         * Used for char[] to indicate size of memory
-         */
-         BitRange<uint32, 21u, 11u> arraySize;
-
-        /*****************************************************
-         *		  type = int,float,char
-         *        For hasSize = false
-         *
-         *****************************************************/
-
-        /**
-         * The array type
-         *  codes as BasicArrayType
-         */
-         BitRange<uint32, 3u, 11u> arrayType;
-
-         /**
-          * arrayProperty & arrayType
-          */
-         BitRange<uint32, 6u, 8u> combinedArrayType;
-
-
-        /*****************************************************
-         *
-         *        as a 32 bit code
-         *
-         *****************************************************/
-
-        /**
-         * Fills all the memory area.
-         */
-        BitRange<uint32, 32u, 0u> all;
-#endif
 		TYPE_DESCRIPTOR_TYPE all;
     };
 
@@ -313,7 +180,7 @@ public:
      * TODO
      * Allows setting the complex subtypes
      */
-    TypeDescriptor(const bool isConstantIn,const ComplexSubType 	subType);
+    TypeDescriptor(const bool isConstantIn,const ComplexSubType subType);
     /**
      * TODO correct
      * @brief Basic Byte Types constructor.
@@ -394,16 +261,16 @@ public:
 
 };
 
-#define  ConstCharString_number      (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(dataIsConstant,1) )
-#define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
-#define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
-#define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
 
-
+/// the typeDescriptor for a char (not  the 8 bit number )
 #define  Character8Bit               TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
+/// the typeDescriptor for a const char (not  the 8 bit number )
 #define  ConstCharacter8Bit          TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) | TDRANGE(dataIsConstant,1))
+/// the typeDescriptor for a 32 bit float
 #define  Float32Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+/// the typeDescriptor for a 64 bit float
 #define  Float64Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
+/// the typeDescriptor for a void
 #define  VoidType                    TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,SizeUnknown) | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  SignedInteger8Bit           TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  SignedInteger16Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
@@ -413,15 +280,22 @@ public:
 #define  UnsignedInteger16Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
+#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray) )
+#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
+#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
+#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
+/// the typeDescriptor for a Stream
+#define  StreamType                  TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,Stream) )
 
+
+#define  ConstCharString_number      (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(dataIsConstant,1) )
+#define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
+#define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
+#define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
 #define  ConstCharString             TypeDescriptor(ConstCharString_number)
 #define  CharString                  TypeDescriptor(CharString_number)
 #define  DynamicCharString           TypeDescriptor(DynamicCharString_number)
 #define  StaticCharString            TypeDescriptor(StaticCharString_number)
-#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray) )
-#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
-#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
-#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown)| TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
 
 
 

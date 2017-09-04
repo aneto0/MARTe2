@@ -133,8 +133,7 @@ public:
      * @return true if \a size bytes are successfully read from the stream and
      * written into \a output.
      */
-    virtual bool Read(char8 * const output,
-            uint32 & size) = 0;
+    virtual bool Read(char8 * const output,uint32 & size) = 0;
 
     /**
      * @brief Writes data into the stream.
@@ -149,8 +148,7 @@ public:
      * @return true if \a size bytes are successfully read from \a input and
      * written into the stream.
      */
-    virtual bool Write(const char8 * const input,
-            uint32 & size) = 0;
+    virtual bool Write(const char8 * const input, uint32 & size) = 0;
 
     /**
      * @brief Reads data from the stream to a char8* buffer.

@@ -5,8 +5,8 @@
  *      Author: sartofi
  */
 
-#ifndef LIST_H_XX
-#define LIST_H_XX
+#ifndef LIST_H
+#define LIST_H
 
 #include "CompilerTypes.h"
 #include "GenericIterator.h"
@@ -33,23 +33,101 @@ public:
 	/**
 	 *
 	 */
-	List(){
-		// acts as root
-		next = NULL;
-		size = 0;
-	}
-
+	List();
 	/**
 	 *
 	 */
-	virtual ~List(){
-		next = NULL;
-	}
+	virtual ~List();
 
+	/**
+	 * Allows iterating a GenericIterator functor on each element of the list
+	 * Depending on the functor result the iteration may be suspended, an element may be deleted, replaced or inserted.
+	 * Use this method to implement searches, multiple-searches, ordered insertions, sorting (by multiple calls) etc..
+	 */
+	inline ErrorManagement::ErrorType Iterate(GenericIterator<loadClass> &iterator);
+
+	/**
+	 * @brief Inserts a list in the specified position of the list.
+	 * @details If the specified position is greater the the list size, the list input is inserted at the end.
+	 * @param[in] data the reference to the data to be saved.
+	 * @param[in] index is the position in the list where \a p must be inserted.	position 0xFFFFFFFF means to the end */
+	inline ErrorManagement::ErrorType Insert( loadClass &data, uint32 position=0);
+
+	/**
+	 * @brief Browses the tree smallest to greatest. After an insertion the order will change as the insertion will be somewhere in the middle
+	 * @param[in] index the position of the requested element (0 means the first element).
+	 * @return a pointer to the element at index position.
+	 */
+	loadClass *operator[](const uint32 index) const;
+
+	/**
+	 * @brief Returns the number of elements in the list.
+	 * @return the number of the elements in the list.
+	 */
+	inline uint32 Size() const;
+
+private:
 	/**
 	 *
 	 */
-	inline ErrorManagement::ErrorType Iterate(GenericIterator<loadClass> &iterator){
+	uint32 		size;
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+template <class loadClass>
+List<loadClass>::List():ListNode(){
+	size = 0;
+}
+
+/**
+ *
+ */
+template <class loadClass>
+virtual List<loadClass>::~List(){
+}
+
+template <class loadClass>
+inline uint32 List<loadClass>::Size() const{
+	return size;
+};
+
+
+template <class loadClass>
+inline ErrorManagement::ErrorType List<loadClass>::Insert( loadClass &data, uint32 position){
+	ListNodeT<loadClass> *newNode = new ListNodeT<loadClass>(data);
+	/// the handling of new allocation failure is performed by ListGeneric
+	ErrorManagement::ErrorType ret=InsertAfter(newNode,position);
+	if (ret){
+		size++;
+	}
+	return ret;
+}
+
+template <class loadClass>
+loadClass *List<loadClass>::operator[](const uint32 index) const{
+	loadClass *ret = NULL;
+	if (index < size){
+		ListNodeT<loadClass> *ptr = reinterpret_cast<ListNodeT<loadClass> *>(next);
+		while ((index > 0) && (ptr!=NULL)){
+			index--;
+			ptr = ptr->next;
+		}
+		if ((ptr !=NULL) && (index == 0)){
+			ret = &ptr->load;
+		}
+	}
+	return ret;
+}
+
+
+template <class loadClass>
+inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadClass> &iterator){
 		ErrorManagement::ErrorType ret;
 		IteratorAction ia;
 		ListNode *current = this;
@@ -160,60 +238,6 @@ public:
 		}
 		return ret;
 	}
-
-
-
-	/**
-	 * @brief Inserts a list in the specified position of the list.
-	 * @details If the specified position is greater the the list size, the list input is inserted at the end.
-	 * @param[in] data the reference to the data to be saved.
-	 * @param[in] index is the position in the list where \a p must be inserted.	position 0xFFFFFFFF means to the end */
-	inline ErrorManagement::ErrorType Insert( loadClass &data, uint32 position=0){
-		ListNodeT<loadClass> *newNode = new ListNodeT<loadClass>(data);
-		/// the handling of new allocation failure is performed by ListGeneric
-		ErrorManagement::ErrorType ret=InsertAfter(newNode,position);
-		if (ret){
-			size++;
-		}
-		return ret;
-	}
-
-
-	/**
-	 * @brief Browses the tree smallest to greatest. After an insertion the order will change as the insertion will be somewhere in the middle
-	 * @param[in] index the position of the requested element (0 means the first element).
-	 * @return a pointer to the element at index position.
-	 */
-	loadClass *operator[](const uint32 index) const{
-		loadClass *ret = NULL;
-		if (index < size){
-			ListNodeT<loadClass> *ptr = reinterpret_cast<ListNodeT<loadClass> *>(next);
-			while ((index > 0) && (ptr!=NULL)){
-				index--;
-				ptr = ptr->next;
-			}
-			if ((ptr !=NULL) && (index == 0)){
-				ret = &ptr->load;
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * @brief Returns the number of elements in the list.
-	 * @return the number of the elements in the list.
-	 */
-	inline uint32 Size() const{
-		return size;
-	};
-
-	/**
-	 *
-	 */
-	uint32 		size;
-
-
-};
 
 } // Marte
 

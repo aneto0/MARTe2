@@ -252,6 +252,11 @@ const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
     return this->variableDescriptor;
 }
 
+/**
+ * used as terminator
+ */
+static const AnyType voidAnyType;
+
 }
 
 #endif /* ANYTYPE_H_ */

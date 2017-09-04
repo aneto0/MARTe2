@@ -82,6 +82,13 @@ const BasicType Delegated = 6u;
  */
 const BasicType Void = 7u;
 
+
+/*
+ *
+ *   sub-types for the complex type
+ *
+ */
+
 // used to encode types in the TypeDescriptor
 typedef uint8 ComplexSubType;
 

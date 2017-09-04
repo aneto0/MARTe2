@@ -197,6 +197,7 @@ private:
     // GENERAL MATCHES
     // called by the main constructor
 
+
     /**
      * @brief Matches a Matrix.
      * @tparam T the type of the elements in the matrix
@@ -317,6 +318,14 @@ private:
     inline void Match(T * x);
 
  // SPECIFIC MATCHES
+
+
+    /**
+     * @brief Matches a Stream.
+     * @param[in] s the Stream
+     * @post
+     */
+    void Match(StreamI *s);
 
     /**
      * @brief Constructor from zeroterm malloced char *
@@ -665,6 +674,9 @@ void VariableDescriptor::Match(T * x){
     	FinaliseCode(VoidType);
     }
 
+}
+void VariableDescriptor::Match(StreamI *s){
+	FinaliseCode(StreamType);
 }
 
 void VariableDescriptor::Match(DynamicCString *s){

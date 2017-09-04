@@ -120,79 +120,75 @@ public:
      */
     virtual ~BufferedStreamI();
 
+#if 0  // notneeded as AnyType supports StreamI
     /**
      * @brief Casts the stream to AnyType.
      * @return an AnyType representation of the stream.
      */
     inline operator AnyType();
+#endif
 
     /**
      * @brief Reads a token from the stream into a character buffer.
      * @details Extracts a token from the stream until a terminator or \0
      * is found.
-     * @param[out] outputBuffer the buffer where to write the retrieved
-     * tokens into.
-     * @param[in] terminator a list of terminator characters, i.e. characters
-     * that allow to distinguish tokens.
-     * @param[in] outputBufferSize the maximum size of the output buffer.
-     * @param[out] saveTerminator if not NULL the found terminator (from the
-     * terminator list) is stored in this variable.
-     * @param[in] skipCharacters a list of characters to be removed from the
+     * @param[in] delimiter contains character delimiters.
+     * @param[in] skip contains a list of characters to be removed from the
      * \a outputBuffer. As a consequence, if a skipCharacter is also a
      * terminator, when consecutive instances of the same terminator are found
      * (e.g. ::A:::B:C, where : is the terminator), the terminator is skipped
      * until the next token is found (in the previous example, the first token
      * to be found would be A).
+     * @param[out] token is the substring between delimiters (including delimeters if not in skip).
+     * @param[out] saveTerminator if not NULL the found terminator (from the
+     * terminator list) is stored in this variable.
      * @return false if no data is stored in the outputBuffer, true otherwise
      * (meaning that a token was found).
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    virtual bool GetToken(char8 * const outputBuffer,
-                          const char8 * const terminator,
-                          const uint32 outputBufferSize,
-                          char8 &saveTerminator,
-                          const char8 * const skipCharacters);
+    virtual bool GetToken(DynamicCString &     token,
+                          CCString const       delimiters,
+                          char8 &              saveTerminator,
+						  CCString const       skip = NULL_PTR(const char8 *));
+
 
     /**
      * @brief Reads a token from the stream into another stream.
      * @details Extracts a token from the stream until a terminator or \0 is
      * found.
-     * @param[out] outputBuffer the buffer where to write the retrieved
-     * tokens into.
-     * @param[in] terminator a list of terminator characters, i.e. characters
-     * that allow to distinguish tokens.
-     * @param[out] saveTerminator if not NULL the found terminator (from the
-     * terminator list) is stored in this variable.
-     * @param[in] skipCharacters a list of characters to be removed from the
+     * @param[in] delimiter contains character delimiters.
+     * @param[in] skip contains a list of characters to be removed from the
      * \a outputBuffer. As a consequence, if a skipCharacter is also a
      * terminator, when consecutive instances of the same terminator are found
-     * (i.e. without a token in-between) (e.g. ::A:::B:C, where : is the
-     * terminator), the terminator is skipped until the next token is found
-     * (in the previous example, the first token to be found would be A).
+     * (e.g. ::A:::B:C, where : is the terminator), the terminator is skipped
+     * until the next token is found (in the previous example, the first token
+     * to be found would be A).
+     * @param[out] token is the substring between delimiters (including delimeters if not in skip).
+     * @param[out] saveTerminator if not NULL the found terminator (from the
+     * terminator list) is stored in this variable.
      * @return false if no data is stored in the outputBuffer, true otherwise
      * (meaning that a token was found).
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    bool GetToken(BufferedStreamI & output,
-                  const char8 * const terminator,
-                  char8 &saveTerminator,
-                  const char8 * const skipCharacters = NULL_PTR(const char8 *));
+    bool GetToken(       BufferedStreamI&     token,
+                         CCString const       delimiters,
+                         char8 &              saveTerminator,
+      		             CCString const       skip = NULL_PTR(const char8 *));
 
     /**
      * @brief Skips a series of tokens delimited by terminators or \0.
      * @details The functionality skipCharacters=terminator (see GetToken) is
      * automatically set, so that consecutive instances of the same terminator
      * @param[in] count the number of tokens to be skipped.
-     * @param[in] terminator a list of terminator characters.
+     * @param[in] delimiter contains character delimiters.
      * @return false if no data is read, true (meaning that at least a token
      * was found).
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    bool SkipTokens(const uint32 count,
-                    const char8 * const terminator);
+    bool SkipTokens(const uint32 count, CCString const       delimiters);
 
     /**
      * @brief Extracts a line from this stream into another stream.
@@ -203,23 +199,19 @@ public:
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    bool GetLine(BufferedStreamI & output,
-                 bool skipTerminators = true);
+    bool GetLine(BufferedStreamI & output,  bool skipTerminators = true);
 
     /**
      * @brief Extracts a line from this stream into a character buffer.
-     * @param[out] outputBuffer is the character buffer where the line must be
+     * @param[out] line is the character buffer where the line must be
      * written into.
-     * @param[in] outputBufferSize the size of \a outputBuffer.
      * @param[in] skipTerminators if true the "\r" is skipped.
      * @return true if a line is successfully read from this stream and
      * written into \a outputBuffer.
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    bool GetLine(char8 *outputBuffer,
-                 const uint32 outputBufferSize,
-                 bool skipTerminators = true);
+    bool GetLine(DynamicCString &     line, bool skipTerminators = true);
 
     /**
      * @brief Printf implementation.
@@ -275,8 +267,7 @@ public:
      * @pre CanWrite() && GetWriteBuffer() != NULL
      * @post see brief
      */
-    bool PrintFormatted(const char8 * const format,
-                        const AnyType pars[]);
+    bool PrintFormatted(CCString const format,  const AnyType pars[]);
 
     /**
      * @brief Copies a character buffer.
@@ -287,7 +278,7 @@ public:
      * @pre CanWrite() && GetWriteBuffer() != NULL
      * @post see brief
      */
-    bool Copy(const char8 * const buffer);
+    bool Copy(CCString buffer);
 
     /**
      * @brief Copies from a stream.
@@ -303,20 +294,19 @@ public:
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1);
+    inline bool Printf(CCString const format, const AnyType& par1);
 
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
+    inline bool Printf(CCString const format,
                        const AnyType& par1,
                        const AnyType& par2);
 
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
+    inline bool Printf(CCString const format,
                        const AnyType& par1,
                        const AnyType& par2,
                        const AnyType& par3);
@@ -324,7 +314,7 @@ public:
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
+    inline bool Printf(CCString const format,
                        const AnyType& par1,
                        const AnyType& par2,
                        const AnyType& par3,
@@ -333,7 +323,7 @@ public:
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
+    inline bool Printf(CCString const format,
                        const AnyType& par1,
                        const AnyType& par2,
                        const AnyType& par3,
@@ -343,7 +333,7 @@ public:
 protected:
 
     /**
-     * @brief Gets the read buffer.
+     * @brief Gets the read buffer.s
      * @return a pointer to the read buffer.
      */
     virtual IOBuffer *GetReadBuffer() = 0;
@@ -362,27 +352,25 @@ protected:
 
 namespace MARTe {
 
-BufferedStreamI::operator AnyType() {
-    void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, Stream, 0u);
+//BufferedStreamI::operator AnyType() {
+//    void *dataPointer = static_cast<void *>(this);
 
-    return AnyType(dataDescriptor, 0u, dataPointer);
-}
+//    return AnyType(StreamType, dataPointer);
+//}
 
-bool BufferedStreamI::Printf(const char8 * const format,
-                             const AnyType& par1) {
+bool BufferedStreamI::Printf(CCString format, const AnyType& par1) {
     AnyType pars[2] = { par1, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format,
+bool BufferedStreamI::Printf(CCString const format,
                              const AnyType& par1,
                              const AnyType& par2) {
     AnyType pars[3] = { par1, par2, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format,
+bool BufferedStreamI::Printf(CCString const format,
                              const AnyType& par1,
                              const AnyType& par2,
                              const AnyType& par3) {
@@ -390,7 +378,7 @@ bool BufferedStreamI::Printf(const char8 * const format,
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format,
+bool BufferedStreamI::Printf(CCString const format,
                              const AnyType& par1,
                              const AnyType& par2,
                              const AnyType& par3,
@@ -399,7 +387,7 @@ bool BufferedStreamI::Printf(const char8 * const format,
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format,
+bool BufferedStreamI::Printf(CCString const format,
                              const AnyType& par1,
                              const AnyType& par2,
                              const AnyType& par3,
