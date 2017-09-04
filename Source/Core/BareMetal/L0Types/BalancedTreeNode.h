@@ -23,7 +23,7 @@ typedef const void * BalancedTreeNodeKey;
  * BalancedTreeNode-able
  *
  */
-class BalancedTreeNode{
+class  BalancedTreeNode{
 public:
 
 	/**

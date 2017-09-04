@@ -5,6 +5,7 @@
  *      Author: sartofi
  */
 
+#define DLL_API
 
 #include "BalancedTreeNode.h"
 
@@ -26,7 +27,7 @@ BalancedTreeNode::~BalancedTreeNode(){
  * inserts node into natural ordered position
  * rebalancing as AVL
  */
-//#include <stdio.h>
+
 ErrorManagement::ErrorType BalancedTreeNode::InsertAVL(BalancedTreeNode *&root, BalancedTreeNode * const node){
 	ErrorManagement::ErrorType ret;
 

@@ -24,7 +24,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
@@ -50,13 +49,13 @@
 
 namespace MARTe{
 
-
 void printTypeDescriptor(const TypeDescriptor &td){
     const char8 *consts= "";
     if (td.dataIsConstant){
         //printf ("const ");
     	consts = "const ";
     }
+
     if (td.isStructuredData){
         printf ("%s",consts);
 //        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
@@ -501,6 +500,7 @@ return 0;
 #include "ReferenceT.h"
 #include "CCString.h"
 #include "BalancedTreeHolder.h"
+#include "List.h"
 #include "math.h"
 
 namespace MARTe{
@@ -605,7 +605,7 @@ public:
     	uint32 size = n.GetSize();
     	if (size > 0){
     		if (n[size-1] == key) {
-    			ia.deleteNode = true;
+    			ia.SetActionCode(deleteNode);
     			counter++;
     		}
     	}
@@ -627,6 +627,7 @@ CLASS_REGISTER(DummyObject, "1.0")
 void testOther(){
 	MARTe::BalancedTreeHolder<MARTe::Reference,MARTe::CCString,MARTe::RefNameKey> bth;
 	MARTe::BalancedTreeHolder<MARTe::Reference,MARTe::uint64,MARTe::RefNumKey> bth2;
+	MARTe::List<MARTe::Reference> list1;
 
 	const MARTe::uint32 refsSz = 1000*1000;
 	int i;
@@ -645,6 +646,7 @@ void testOther(){
 		refd->SetName(buffer);
 		bth.Insert(refd);
 		bth2.Insert(refd);
+		list1.Insert(refd);
 
 		if (bth.Size() < i){
 			break;
@@ -663,6 +665,26 @@ void testOther(){
 		bth.Iterate(mgi);
 		printf("Delete %i (%c)nodes \n",mgi.counter,c);
 		printf("Tree1 Size = % 7i % 3i %12f  \n",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
+	}
+
+	for (int k = 0;k<16;k++)
+	{
+		char c = '0'+k;
+		if (k>= 10) c = 'a'+k-10;
+		MARTe::MyGenericIterator2<MARTe::Reference> mgi(c);
+		bth2.Iterate(mgi);
+		printf("Delete %i (%c)nodes \n",mgi.counter,c);
+		printf("Tree2 Size = % 7i % 3i %12f  \n",bth2.Size() ,bth2.Depth() ,(float)bth2.Depth() /(log10((float)bth2.Size()) /log10(2.0)));
+	}
+
+	for (int k = 0;k<16;k++)
+	{
+		char c = '0'+k;
+		if (k>= 10) c = 'a'+k-10;
+		MARTe::MyGenericIterator2<MARTe::Reference> mgi(c);
+		list1.Iterate(mgi);
+		printf("Delete %i (%c)nodes \n",mgi.counter,c);
+		printf("List Size = % 7i  \n",list1.Size() );
 	}
 
 //	MARTe::MyGenericIterator<MARTe::Reference> mgi;

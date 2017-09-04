@@ -51,10 +51,11 @@ INCLUDES+=-I../L1Portability -I../L0Types
 
 LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../L0Types/BalancedTreeNode.obj
 
 
 all: $(OBJS) $(SUBPROJ)   \
-                $(BUILD_DIR)/test$(EXEEXT) \
+      $(BUILD_DIR)/test$(EXEEXT) \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
 		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)

@@ -27,6 +27,7 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicType.x \
+        ListNode.x \
         LinkedListable.x \
         LinkedListHolder.x \
         BalancedTreeNode.x \

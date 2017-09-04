@@ -18,7 +18,7 @@ namespace MARTe{
  *
  */
 template <class loadClass,class keyClass, typename loadKey>
-class BalancedTreeNodeT : public BalancedTreeNode{
+class  BalancedTreeNodeT : public BalancedTreeNode{
 public:
 	/**
 	 *
@@ -61,41 +61,78 @@ public:
 	}
 
 	/**
-	 *
+	 *  supports only deleteNode and terminateIteration
 	 */
 	inline IteratorAction Iterate(GenericIterator<loadClass> &iterator,uint32 depth){
-		IteratorAction ia,iat;
+		IteratorAction ret;
 
+		// do first smaller subtree
 		if (smaller != NULL){
+			IteratorAction ia;
 			ia = Smaller()->Iterate(iterator,depth+1);
-			if (ia.deleteNode){
-				BalancedTreeNode *extracted;
-				BalancedTreeNodeKey dummy;
-				if (ExtractAVL(smaller, extracted,dummy,0)){
-					delete extracted;
-				}
-			}
-		}
-		if (!ia.terminateIteration){
-			ia = iterator.Do(GetData(),depth);
-		}
-		if (!ia.terminateIteration){
-			if (greater != NULL){
-				iat = Greater()->Iterate(iterator,depth+1);
-				if (iat.terminateIteration){
-					ia.terminateIteration = true;
-				}
-				if (iat.deleteNode){
+			if (!ia.IsErrorCode()){
+				switch (ia.ActionCode()){
+				case noAction:{
+
+				}break;
+				case deleteNode:{
 					BalancedTreeNode *extracted;
 					BalancedTreeNodeKey dummy;
-					if (ExtractAVL(greater, extracted,dummy,0)){
+					if (ExtractAVL(smaller, extracted,dummy,0)){
 						delete extracted;
+					}
+				} break;
+				default:{
+					// overwrite the whole bitset to clear the not an error code bit
+					ret.format_as_integer = ErrorManagement::InvalidOperation;
+				}
+				}
+
+			} else { // is errorCode
+				ret = ia;
+			}
+
+		}
+		// if no error or termination requests
+		// do central node
+		// but demand to caller implementing any action
+		// this to allow deleting nodes without affecting the structure...
+		if (ret){
+			IteratorAction ia;
+			ret = iterator.Do(GetData(),depth);
+		}
+
+		// if there was no termination request or errors so far
+		if (ret){
+			if (greater != NULL){
+				IteratorAction ia;
+				ia = Greater()->Iterate(iterator,depth+1);
+				if (!ia){
+					ret = ia;
+				} else {
+					if (!ia.IsErrorCode()){
+						switch (ia.ActionCode()){
+						case noAction:{
+
+						}break;
+						case deleteNode:{
+							BalancedTreeNode *extracted;
+							BalancedTreeNodeKey dummy;
+							if (ExtractAVL(greater, extracted,dummy,0)){
+								delete extracted;
+							}
+						} break;
+						default:{
+							// overwrite the whole bitset to clear the not an error code bit
+							ret.format_as_integer = ErrorManagement::InvalidOperation;
+						}
+						}
 					}
 				}
 			}
 		}
 		UpdateStatistics();
-		return ia;
+		return ret;
 	}
 
 

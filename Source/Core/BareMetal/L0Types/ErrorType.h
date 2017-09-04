@@ -56,6 +56,15 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 
 /**
  * MACRO to generate different error tables
+ * when NotAnErrorCode bit is set the whole bitset is not an error but needs to be interpreted differently
+ * the interpretation depends from the context (see genericIterator for instance)
+ * FatalError is used as a generic error
+ * RecoverableError notifies that also a non fatal error has occurred (used to qualify error messages)
+ * Warning notifies that also a warning flag has been set (used to qualify error messages)
+ * Information notifies that also some info flag has been set (used to qualify error messages)
+ * Completed notifies that also a positive outcome has occurred (all was done)
+ * NotCompleted notifies that also not all actions in a list have been done
+ * Any other flag represent a specific fatal error
  */
 #define ERROR_CONSTANT_MACRO(macrofun) 						      \
 		macrofun(FatalError,			fatalError,				0)\
@@ -78,7 +87,9 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 		macrofun(Completed,             completed,			   17)\
 		macrofun(NotCompleted,          notCompleted,          18)\
 		macrofun(InvalidOperation,      invalidOperation,      19)\
-		macrofun(OutOfRange,            outOfRange      ,      20)
+		macrofun(OutOfRange,            outOfRange,            20)\
+		macrofun(NotAnErrorCode,        notAnErrorCode,        31)
+
 
 /**
  * to be kept up to date with the highest value of the error bits
@@ -130,6 +141,7 @@ struct ErrorTypeLookup{
 
 extern DLL_API ErrorTypeLookup errorTypeLookup[];
 
+
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
  */
@@ -137,26 +149,33 @@ class DLL_API ErrorType {
 public:
     /**
      * @brief Constructor.
-     * @param[in] allOk is false then the error.FatalError is set to false, otherwise all other errors cleared.
-     *   @post ErrorsCleared() == allOk
+     * @param[in] allOk is false then the error.FatalError is set , otherwise all other errors cleared.
+     *   @post format_as_integer = 0 or FatalError
      */
     inline ErrorType(bool allOk = true);
 
     /**
      * @brief Constructor from a bit set.
      * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     *    @post format_as_integer = errorBitSet.FatalError
      */
     inline ErrorType(const ErrorIntegerFormat errorBitSet);
 
     /**
      * @brief Checks if any error has been flagged.
-     * @return true is no error is flagged (warnings may have been set).
+     * @return true is no error is flagged or if notAnError is set!
      */
     inline bool ErrorsCleared() const;
 
     /**
+     * @brief Checks if this is an error code.
+     * @return true is this is an error code even if containing no error
+     */
+    inline bool IsErrorCode() const;
+
+    /**
      * @brief Checks if any error has been flagged.
-     * @return true is no error is flagged (warnings may have been set).
+     * @return true is no error is flagged or if notAnError is set.
      */
     inline operator bool() const;
 
@@ -188,7 +207,7 @@ public:
 
     /**
      * @brief Constructor from a bit set.
-     * @param[in] errorBitSet initialises the ErrorType against this bit set.
+     * @param[in] errorBitSet initialises the ErrorType from a simple boolean error by setting FatalError
      */
     inline ErrorIntegerFormat operator =(const bool error);
 
@@ -214,7 +233,6 @@ public:
 
     /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
-
         /**
          * The whole set of bits should fits within chosen bit representation (ErrorIntegerFormat)
          */
@@ -226,7 +244,7 @@ public:
         /**
          * unmapped bits
          */
-        BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
+//        BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
 
     };
 
@@ -241,59 +259,65 @@ namespace MARTe {
 namespace ErrorManagement {
 
 inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
-format_as_integer = errorBitSet;
+     format_as_integer = errorBitSet;
 }
 
 inline ErrorType::ErrorType(bool allOk) {
-format_as_integer = NoError;
-fatalError = !allOk;
+    if (allOk){
+    	format_as_integer = NoError;
+    } else {
+    	format_as_integer = FatalError;
+    }
 }
 
 inline bool ErrorType::ErrorsCleared() const {
-return (format_as_integer == 0);
+    return (format_as_integer == 0)  || (format_as_integer & NotAnErrorCode);
+}
+
+inline bool ErrorType::IsErrorCode() const {
+	return !(format_as_integer & NotAnErrorCode);
 }
 
 inline ErrorType::operator bool() const {
-return (format_as_integer == 0);
+    return ErrorsCleared();
 }
 
 inline ErrorType::operator ErrorIntegerFormat() const {
-return format_as_integer;
+    return format_as_integer;
 }
 
 inline bool ErrorType::operator ==(const ErrorIntegerFormat errorBitSet) const {
-return format_as_integer == errorBitSet;
+    return format_as_integer == errorBitSet;
 }
 
 inline bool ErrorType::operator !=(const ErrorIntegerFormat errorBitSet) const {
-return format_as_integer != errorBitSet;
+    return format_as_integer != errorBitSet;
 }
 
 inline ErrorIntegerFormat ErrorType::operator =(const ErrorIntegerFormat errorBitSet) {
-format_as_integer = errorBitSet;
-return errorBitSet;
+    format_as_integer = errorBitSet;
+    return errorBitSet;
 }
 
 inline ErrorIntegerFormat ErrorType::operator =(const bool error) {
-    if(error) {
-        format_as_integer = 1;
-    }
-    else {
-        format_as_integer = 0;
+    if (error){
+    	format_as_integer = FatalError;
+    } else {
+    	format_as_integer = NoError;
     }
     return format_as_integer;
 }
 
 inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
-format_as_integer |= errorBitSet;
+    format_as_integer |= errorBitSet;
 }
 
 inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
-format_as_integer &= ~errorBitSet;
+    format_as_integer &= ~errorBitSet;
 }
 
 inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
-return ((format_as_integer & errorBitSet) == errorBitSet);
+    return ((format_as_integer & errorBitSet) == errorBitSet);
 }
 
 }

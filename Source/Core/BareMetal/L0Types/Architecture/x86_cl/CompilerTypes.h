@@ -24,7 +24,7 @@
 #ifndef COMPILERTYPESA_H_
 #define COMPILERTYPESA_H_
 
-#include <windows.h>
+#include <Windows.h>
 
 namespace MARTe {
 
