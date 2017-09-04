@@ -78,6 +78,10 @@ public:
      */
     inline bool operator==(const CCString &s) const;
 
+    /**
+     * TODO
+     */
+//    inline void operator++(int);
 };
 
 
@@ -102,8 +106,11 @@ CCString::operator[](uint32 index) const{
 
 bool CCString::operator==(const CCString &s) const{
 	return ZeroTerminatedArray<const char8>::isSameAs(s.GetList());
-//	return s.array == array;
 }
+
+///void CCString::operator++(int) {
+//	ZeroTerminatedArray<const char8>::operator++();
+//}
 
 
 }

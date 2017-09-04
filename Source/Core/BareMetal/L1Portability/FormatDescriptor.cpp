@@ -139,11 +139,11 @@ static inline int8 GetDigit(const char8 c) {
  * Parses a number out of string
  * returns 0 if no number is encountered
  */
-static inline uint32 GetIntegerNumber(const char8 *&string) {
+static inline uint32 GetIntegerNumber(CCString &string) {
 
     uint32 number = 0u;
 
-    if (string != NULL) {
+    if (!string.IsNullPtr()) {
 
         //
         int32 digit = GetDigit(string[0]);
@@ -165,15 +165,14 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
 
 
 /*lint -e{9119} assignment of integer to size field*/
-bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
-
+bool FormatDescriptor::InitialiseFromString(CCString &string) {
     // prepare clean FormatDescriptor
     // copy to this only if parsing successful
     FormatDescriptor temporaryFormat;
 
     bool ret = false;
     // check pointer
-    if (string != NULL) {
+    if (!string.IsNullPtr()) {
 
         // expect at least a character
         if (string[0] != '\0') {

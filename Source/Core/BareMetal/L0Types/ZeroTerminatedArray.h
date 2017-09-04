@@ -92,6 +92,11 @@ public:
     inline void Skip();
 
     /**
+     * move pointer ahead of one element. Does not checks limits
+     */
+    inline void operator++(int);
+
+    /**
      * @brief Checks if the input \a data is the array terminal character.
      * @details This function must be specialized for each new template type. The default
      * terminal is (as the name of the class implies) static_cast<T>(0)
@@ -114,12 +119,6 @@ public:
      */
     inline bool isSameAs(const T *arrayIn) const;
 protected:
-
-    /**
-     * @brief Returns the pointer to the beginning of the array.
-     * @return the pointer to the beginning of the array.
-     */
-//    operator T*() const;
 
     /**
      * The array
@@ -196,10 +195,6 @@ bool ZeroTerminatedArray<T>::IsNullPtr() const {
     return (array == NULL_PTR(T *));
 }
 
-//template<typename T>
-//ZeroTerminatedArray<T>::operator T*() const {
-//    return GetList();
-//}
 
 template<typename T>
 void ZeroTerminatedArray<T>::Skip() {
@@ -209,6 +204,12 @@ void ZeroTerminatedArray<T>::Skip() {
         }
     }
 }
+
+template<typename T>
+void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
+    array++;
+}
+
 
 template<typename T>
 bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {

@@ -31,11 +31,10 @@
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
-#include "StringHelper.h"
+//#include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "StreamI.h"
-//#include <Introspection-old.h>
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
 
@@ -97,22 +96,22 @@ extern bool FloatToStream(IOBuffer &buffer,
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Print a const char8* string on a buffer.
+ * @brief Prints a CCString .
  * @param[out] iobuff is the output stream buffer.
  * @param[in] string is the string to be printed.
  * @param[in] fd specifies the desired format for the string.
  * @return true if the string is printed correctly.
  */
 static bool PrintCCString(IOBuffer & iobuff,
-                          const char8 * const string,
+                          CCString const string,
                           const FormatDescriptor &fd,
                           bool addQuotesOnString = false) {
 
-    bool ret = (string != NULL);
+    bool ret = (!string.IsNullPtr());
 
     if (ret) {
         //get the string size
-        uint32 stringSize = StringHelper::Length(string);
+        uint32 stringSize = string.GetSize();
         uint32 paddingSize = 0u;
         uint32 desSize = fd.size;
         // consider the quotes
@@ -169,7 +168,7 @@ static bool PrintCCString(IOBuffer & iobuff,
             }
 
             //print the string on the buffer completely.
-            if (!iobuff.WriteAll(string, stringSize)) {
+            if (!iobuff.WriteAll(string.GetList(), stringSize)) {
                 ret = false;
             }
 
@@ -314,8 +313,7 @@ static bool PrintStream(IOBuffer & iobuff,
  * @pre
  *   The object represented by \a parIn must be introspectable
  */
-static bool PrintObjectIntrospection(IOBuffer & iobuff,
-                                     const AnyType & parIn) {
+static bool PrintObjectIntrospection(IOBuffer & iobuff, const AnyType & parIn) {
 
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Peek(descriptor.structuredDataIdCode);
@@ -451,8 +449,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
  * @pre
  *   The object represented by parIn must be introspectable.
  */
-static bool PrintObject(IOBuffer & iobuff,
-                        const AnyType & parIn) {
+static bool PrintObject(IOBuffer & iobuff, const AnyType & parIn) {
 
     char8* dataPointer = reinterpret_cast<char8 *>(parIn.GetDataPointer());
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
@@ -549,7 +546,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
     bool ret = true;
     // void anytype
     AnyType par = parIn;
-    void* dataPointer = par.GetDataPointer();
+    void* dataPointer = par.GetVariablePointer();
     if (dataPointer != NULL) {
         //if the element is structured, the print is not supported.
         bool isStructured = (par.GetTypeDescriptor()).isStructuredData;
@@ -1114,8 +1111,7 @@ bool IOBuffer::SkipTokens(uint32 count,
     return ret;
 }
 
-bool IOBuffer::PrintFormatted(const char8 * format,
-                              const AnyType pars[]) {
+bool IOBuffer::PrintFormatted(CCString format,  const AnyType pars[]) {
 
     bool ret = true;
     bool quit = false;
@@ -1324,8 +1320,7 @@ bool IOBuffer::Resync() {
     return false;
 }
 
-bool IOBuffer::Write(const char8 * const buffer,
-                     uint32 &size) {
+bool IOBuffer::Write(const char8 * const buffer,uint32 &size) {
     bool retval = internalBuffer.CanWrite();
     if (retval) {
 

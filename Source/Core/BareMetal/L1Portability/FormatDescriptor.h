@@ -36,6 +36,7 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -233,7 +234,7 @@ public:
      * ? --> Any type is fine - prints information about the type
      * @ --> Any type is fine - prints full content in case of known structures
      */
-    bool InitialiseFromString(const char8 *&string);
+    bool InitialiseFromString(CCString &string);
 
     /**
      * @brief Default constructor.

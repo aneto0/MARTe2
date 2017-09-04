@@ -136,7 +136,7 @@ public:
      *   not CanWrite()
      */
     inline IOBuffer(const uint32 allocationGranularity,
-            const uint32 newUndoLevel);
+                    const uint32 newUndoLevel);
 
     /**
      * @brief Destructor.
@@ -159,7 +159,7 @@ public:
      * @return false if the allocation fails, true otherwise.
      */
     virtual bool SetBufferHeapMemory(const uint32 desiredSize,
-            const uint32 reservedSpaceAtEnd);
+                                     const uint32 reservedSpaceAtEnd);
 
     /**
      * @brief Assigns a preallocated memory with read and write access.
@@ -169,7 +169,8 @@ public:
      * @param[in] bufferSize is the size of the memory.
      * @param[in] reservedSpaceAtEnd is the memory allocated over the usable memory area.
      */
-    virtual void SetBufferReferencedMemory(char8 * const buffer,
+    virtual void SetBufferReferencedMemory(
+    		char8 * const buffer,
             const uint32 bufferSize,
             const uint32 reservedSpaceAtEnd);
 
@@ -181,7 +182,8 @@ public:
      * @param[in] bufferSize is the size of the memory.
      * @param[in] reservedSpaceAtEnd is the memory allocated but not .
      */
-    virtual void SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
+    virtual void SetBufferReadOnlyReferencedMemory(
+    		const char8 * const buffer,
             const uint32 bufferSize,
             const uint32 reservedSpaceAtEnd);
 
@@ -306,32 +308,32 @@ public:
      * positions forward and adjusts fillLeft and amountLeft accordingly.\n
      * If size is greater than amountLeft is clipped.
      * @param[in] buffer contains the data to be written in this buffer.
+     * note buffer is not a string! 0 is treated as any other character
      * @param[in,out] size is the number of bytes to be copied. This value will
      * be clipped to the space left if needed.
      * @return false if errors copying data
      */
-    virtual bool Write(const char8 * const buffer,
-            uint32 &size);
+    virtual bool Write(const char8 * const buffer,uint32 &size);
 
     /**
      * @brief Writes all the size in the argument from an input buffer.
      * @details This function calls Write and NoMoreSpaceToWrite until size
      * is consumed.
      * @param[in] buffer contains data to be written in this buffer.
+     * note buffer is not a string! 0 is treated as any other character
      * @param[in] size is the number of byte to be copied.
      */
-    bool WriteAll(const char8 * buffer,
-            const uint32 &size);
+    bool WriteAll(const char8 * const buffer, const uint32 &size);
 
     /**
      * @brief Reads from this buffer to an output buffer.
      * @param[out] buffer is the output buffer where data must be written.
+     * note buffer is not a string! 0 is treated as any other character
      * @param[in,out] size is the number of bytes to be read. This value will
      * be clipped to the space left if needed.
      * @return false if errors copying data
      */
-    virtual bool Read(char8 * const buffer,
-            uint32 &size);
+    virtual bool Read(char8 * const buffer, uint32 &size);
 
     /*---------------------------------------------------------------------------*/
 
@@ -344,9 +346,9 @@ public:
      * @param[in] pars is a list of AnyType elements to print.
      * @return false in case of errors.
      */
-    bool PrintFormatted(const char8 * format,
-            const AnyType pars[]);
+    bool PrintFormatted(CCString format, const AnyType pars[]);
 
+#if 0
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
      * @details Extracts a token from the buffer into a string data until a
@@ -377,6 +379,7 @@ public:
             uint32 outputBufferSize,
             char8 &saveTerminator,
             const char8 * skipCharacters);
+#endif
 
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
@@ -403,9 +406,9 @@ public:
      * false only on error and no data available.
      */
     bool GetToken(IOBuffer & outputBuffer,
-            const char8 * terminator,
+            CCString  terminator,
             char8 &saveTerminator,
-            const char8 * skipCharacters);
+            CCString skipCharacters);
 
     /**
      * @brief Skips a number of tokens on the buffer.
@@ -413,8 +416,7 @@ public:
      * @param[in] terminator is a list of terminator characters for the tokenize operation.
      * @return false if the number of skipped tokens is minor than the desired.
      */
-    bool SkipTokens(uint32 count,
-            const char8 * terminator);
+    bool SkipTokens(uint32 count, CCString terminator);
 protected:
 
     /**

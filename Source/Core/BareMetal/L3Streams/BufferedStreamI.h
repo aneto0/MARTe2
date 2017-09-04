@@ -126,7 +126,6 @@ public:
      * @return an AnyType representation of the stream.
      */
     inline operator AnyType();
-#endif
 
     /**
      * @brief Reads a token from the stream into a character buffer.
@@ -151,6 +150,7 @@ public:
                           CCString const       delimiters,
                           char8 &              saveTerminator,
 						  CCString const       skip = NULL_PTR(const char8 *));
+#endif
 
 
     /**
@@ -200,7 +200,7 @@ public:
      * @post see brief
      */
     bool GetLine(BufferedStreamI & output,  bool skipTerminators = true);
-
+#if 0
     /**
      * @brief Extracts a line from this stream into a character buffer.
      * @param[out] line is the character buffer where the line must be
@@ -212,6 +212,7 @@ public:
      * @post see brief
      */
     bool GetLine(DynamicCString &     line, bool skipTerminators = true);
+#endif
 
     /**
      * @brief Printf implementation.

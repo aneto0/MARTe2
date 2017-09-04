@@ -50,6 +50,7 @@ BufferedStreamI::BufferedStreamI() :
 BufferedStreamI::~BufferedStreamI() {
 }
 
+#if 0
 bool BufferedStreamI::GetToken(char8 * const outputBuffer,
                                const char8 * const terminator,
                                const uint32 outputBufferSize,
@@ -66,21 +67,22 @@ bool BufferedStreamI::GetToken(char8 * const outputBuffer,
     }
     return retval;
 }
+#endif
 
-bool BufferedStreamI::GetToken(BufferedStreamI & output,
-                               const char8 * const terminator,
+bool BufferedStreamI::GetToken(BufferedStreamI & token,
+							   CCString const   delimiters,
                                char8 &saveTerminator,
-                               const char8 * const skipCharacters) {
+                               CCString  const skip) {
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetReadBuffer();
-    IOBuffer *outputIOBuffer = output.GetWriteBuffer();
+    IOBuffer *outputIOBuffer = token.GetWriteBuffer();
 
     bool ret = false;
 
     if ((inputIOBuffer != NULL) && (outputIOBuffer != NULL)) {
         if(CanRead()) {
-            ret = inputIOBuffer->GetToken(*outputIOBuffer, terminator, saveTerminator, skipCharacters);
+            ret = inputIOBuffer->GetToken(*outputIOBuffer, delimiters, saveTerminator, skip);
         }
     }
 
@@ -88,7 +90,7 @@ bool BufferedStreamI::GetToken(BufferedStreamI & output,
 }
 
 bool BufferedStreamI::SkipTokens(const uint32 count,
-                                 const char8 * const terminator) {
+                                 CCString const terminator) {
 
     bool ret = CanRead();
     if (ret) {
@@ -117,6 +119,7 @@ bool BufferedStreamI::GetLine(BufferedStreamI & output,
     return GetToken(output, "\n", terminator, skipCharacters);
 }
 
+#if 0
 bool BufferedStreamI::GetLine(char8 * const outputBuffer,
                               const uint32 outputBufferSize,
                               const bool skipTerminators) {
@@ -132,9 +135,9 @@ bool BufferedStreamI::GetLine(char8 * const outputBuffer,
     char8 terminator;
     return GetToken(outputBuffer, "\n", outputBufferSize, terminator, skipCharacters);
 }
+#endif
 
-bool BufferedStreamI::PrintFormatted(const char8 * const format,
-                                     const AnyType pars[]) {
+bool BufferedStreamI::PrintFormatted(CCString const format, const AnyType pars[]) {
 
     bool ret = CanWrite();
 // retrieve stream mechanism
@@ -150,14 +153,14 @@ bool BufferedStreamI::PrintFormatted(const char8 * const format,
     return ret;
 }
 
-bool BufferedStreamI::Copy(const char8 * const buffer) {
+bool BufferedStreamI::Copy(CCString const buffer) {
 
     bool ret = false;
-    if (buffer != NULL) {
+    if (!buffer.IsNullPtr()) {
 
-        uint32 len = static_cast<uint32>(StringHelper::Length(buffer));
+        uint32 len = buffer.GetSize();
 
-        ret = Write(buffer, len);
+        ret = Write(buffer.GetList(), len);
     }
 
     return ret;
