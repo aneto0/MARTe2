@@ -274,14 +274,14 @@ public:
      * @param[in] isFullNotation specifies if the header (0x, 0o, 0b) must be added for integer prints.
      */
     inline FormatDescriptor(const DesiredAction &desiredActionToSet,
-                            const uint8 sizeToSet,
-                            const uint8 precisionToSet,
-                            const bool isPadded,
-                            const bool isLeftAligned,
-                            const FloatNotation &floatNotationToSet,
+                            const uint8 		sizeToSet,
+                            const uint8 		precisionToSet,
+                            const bool 			isPadded,
+                            const bool 			isLeftAligned,
+                            const FloatNotation  &floatNotationToSet,
                             const BinaryNotation &binaryNotationToSet,
-                            const bool isBinaryPadded,
-                            const bool isFullNotation);
+                            const bool 			isBinaryPadded,
+                            const bool 			isFullNotation);
 
     /* @union
      * @brief Prova descrizione

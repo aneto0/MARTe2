@@ -144,7 +144,7 @@ public:
      *   if all ok pointer2Variable and variableDescriptor are updated
      *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
-    ErrorManagement::ErrorType  Dereference (uint32 index=0);
+    ErrorManagement::ErrorType  	Dereference (uint32 index=0);
 
     /**
      * @brief moves the pointer to referencing a field of the structure that is currently referred to
@@ -154,7 +154,7 @@ public:
      *   if all ok pointer2Variable and variableDescriptor are updated
      *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
-    ErrorManagement::ErrorType  Dereference (CCString field);
+    ErrorManagement::ErrorType  	Dereference (CCString field);
 
     /**
      * @brief evaluates a C like dereferencing expression and moves the pointer
@@ -168,7 +168,7 @@ public:
      *   if all ok pointer2Variable and variableDescriptor are updated
      *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
-    ErrorManagement::ErrorType  MultipleDereference (CCString CExpresssion);
+    ErrorManagement::ErrorType  	MultipleDereference (CCString CExpresssion);
 
     /** INTERFACES GETTERS*/
 
@@ -176,7 +176,7 @@ public:
      * @brief Returns the pointer to the data.
      * @return the pointer to the data.
      */
-    inline const void* GetVariablePointer() const;
+    inline const void* 				GetVariablePointer() const;
 
     /**
      * @brief Returns the full variableDescriptor.

@@ -335,7 +335,12 @@ public:
      */
     virtual bool Read(char8 * const buffer, uint32 &size);
 
-    /*---------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------
+     *
+     *    Static functions implemented in IOBufferStaticFunctions.cpp
+     *
+     * -------------------------------------------------------------------------
+     */
 
     /*
      * @brief The function called by all Printf operations.
@@ -346,7 +351,7 @@ public:
      * @param[in] pars is a list of AnyType elements to print.
      * @return false in case of errors.
      */
-    bool PrintFormatted(CCString format, const AnyType pars[]);
+    static bool PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars[]);
 
 #if 0
     /**
@@ -374,7 +379,8 @@ public:
      * @returns true if some data was read before any error or file
      * termination, false only on error and no data available.
      */
-    bool GetToken(char8 * outputBuffer,
+    static bool GetToken(IOBuffer &iob,
+    		char8 * outputBuffer,
             const char8 * terminator,
             uint32 outputBufferSize,
             char8 &saveTerminator,
@@ -405,7 +411,9 @@ public:
      * @return true if some data was read before any error or file termination.
      * false only on error and no data available.
      */
-    bool GetToken(IOBuffer & outputBuffer,
+    static bool GetToken(
+    		IOBuffer &inputBuffer,
+    		IOBuffer & outputBuffer,
             CCString  terminator,
             char8 &saveTerminator,
             CCString skipCharacters);
@@ -416,7 +424,7 @@ public:
      * @param[in] terminator is a list of terminator characters for the tokenize operation.
      * @return false if the number of skipped tokens is minor than the desired.
      */
-    bool SkipTokens(uint32 count, CCString terminator);
+    static bool SkipTokens(IOBuffer &iob, uint32 count, CCString terminator);
 protected:
 
     /**

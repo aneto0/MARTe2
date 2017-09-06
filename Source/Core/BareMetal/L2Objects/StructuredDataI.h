@@ -102,36 +102,6 @@ public:
     virtual AnyType GetType(CCString const name) = 0;
 
     /**
-     * @brief Writes an AnyType against the provided \a name and adds it to the current node.
-     * @details If the name already exists the value will be overridden.
-     * @param[in] name the name of the leaf against which the AnyType will be stored.
-     * @param[in] value the AnyType to store.
-     * @return true if the AnyType is successfully stored.
-     * @pre
-     *   name != NULL &&
-     *   StringHelper::Length(name) > 0
-     */
-    virtual bool Write(CCString const name, const AnyType &value) = 0;
-
-    /**
-     * @brief Copies the content of the current node to the provided destination.
-     * @details A deep copy of the contents is recursively performed.
-     * @param[out] destination where the database will be copied to.
-     * @return true if the copy is successful.
-     */
-    virtual bool Copy(StructuredDataI &destination) = 0;
-
-    /**
-     * @brief Adds a node to the current node.
-     * @param[in] node a reference to the node to add.
-     * @return true if the node is successfully added.
-     * @post
-     *   If successful: the current node will be node
-     *   If unsuccessful: the current node will not be changed
-     */
-    virtual bool AddToCurrentNode(Reference node) = 0;
-
-    /**
      * @brief Moves the current node to the root node.
      * @return true if the move is successful and the current node is now the root node.
      */
@@ -163,6 +133,65 @@ public:
     virtual bool MoveRelative(CCString const path) = 0;
 
     /**
+     * @brief Retrieves the name of the current node.
+     * @return the name of the current node.
+     */
+    virtual CCString GetName()=0;
+
+    /**
+     * @brief Retrieves the name of the child in the specified index.
+     * @param[in] index is the index of the current node child.
+     * @return the name of the child in the specified index.
+     */
+    virtual CCString GetChildName(const uint32 index)=0;
+
+    /**
+     * @brief Retrieves the number of children of the current node.
+     * @return the number of children of the current node.
+     */
+    virtual uint32 GetNumberOfChildren()=0;
+
+    /**
+     * @brief Automatic cast to AnyType.
+     */
+    operator AnyType();
+
+
+/**
+ * require write access!
+ */
+
+    /**
+     * @brief Writes an AnyType against the provided \a name and adds it to the current node.
+     * @details If the name already exists the value will be overridden.
+     * @param[in] name the name of the leaf against which the AnyType will be stored.
+     * @param[in] value the AnyType to store.
+     * @return true if the AnyType is successfully stored.
+     * @pre
+     *   name != NULL &&
+     *   StringHelper::Length(name) > 0
+     */
+    virtual bool Write(CCString const name, const AnyType &value) = 0;
+
+    /**
+     * @brief Copies the content of the current node to the provided destination.
+     * @details A deep copy of the contents is recursively performed.
+     * @param[out] destination where the database will be copied to.
+     * @return true if the copy is successful.
+     */
+    virtual bool Copy(StructuredDataI &destination) = 0;
+
+    /**
+     * @brief Adds a node to the current node.
+     * @param[in] node a reference to the node to add.
+     * @return true if the node is successfully added.
+     * @post
+     *   If successful: the current node will be node
+     *   If unsuccessful: the current node will not be changed
+     */
+    virtual bool AddToCurrentNode(Reference node) = 0;
+
+    /**
      * @brief Create a new series of nodes based on the provided absolute path.
      * @param[in] path the path of nodes to be created.
      * @return true if the nodes were successfully created and if the path does not already exist.
@@ -192,30 +221,6 @@ public:
      * @return true if the current node is successfully removed.
      */
     virtual bool Delete(CCString const name) = 0;
-
-    /**
-     * @brief Retrieves the name of the current node.
-     * @return the name of the current node.
-     */
-    virtual CCString GetName()=0;
-
-    /**
-     * @brief Retrieves the name of the child in the specified index.
-     * @param[in] index is the index of the current node child.
-     * @return the name of the child in the specified index.
-     */
-    virtual CCString GetChildName(const uint32 index)=0;
-
-    /**
-     * @brief Retrieves the number of children of the current node.
-     * @return the number of children of the current node.
-     */
-    virtual uint32 GetNumberOfChildren()=0;
-
-    /**
-     * @brief Automatic cast to AnyType.
-     */
-    operator AnyType();
 
 };
 
