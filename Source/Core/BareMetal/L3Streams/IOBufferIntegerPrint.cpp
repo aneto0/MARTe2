@@ -33,7 +33,7 @@
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
-#include "IOBuffer.h"
+#include "IOBufferPrivate.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

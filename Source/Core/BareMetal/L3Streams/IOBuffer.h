@@ -34,8 +34,9 @@
 
 #include "CharBuffer.h"
 #include "HeapManager.h"
-#include "MemoryOperationsHelper.h"
+//#include "MemoryOperationsHelper.h"
 #include "AnyType.h"
+#include "FormatDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -62,46 +63,6 @@ namespace MARTe {
 class DLL_API IOBuffer {
 
 public:
-
-    /**
-     * @brief Synchronizes the stream position with this buffer position.
-     * @details This implementation is basic and only returns false.
-     * In BufferedStreamIOBuffer flushes the write buffer after write
-     * operations or adjusts the stream position (shifted after a refill
-     * because of a previous read operation).
-     * @return false in this implementation.
-     */
-    virtual bool Resync();
-
-    /**
-     * @brief Moves the cursor to an absolute position.
-     * @details Adjusts AmountLeft() == MaxUsableAmount() - position\n
-     *
-     * @param[in] position is the desired position in the filled memory.
-     * @return false if position is greater than the size of the filled memory.
-     */
-    virtual bool Seek(const uint32 position);
-
-    /**
-     * @brief Moves the cursor relatively from the current position.
-     * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
-     * -If the final position is < 0 moves the cursor at the beginning.\n
-     * -If the final position is > UsedSize moves the cursor at the end.\n
-     *
-     * @param[in] delta is the step from the current position.
-     * @return false if the final calculated position falls out of ranges, true otherwise.
-     */
-    virtual bool RelativeSeek(const int32 delta);
-
-    /**
-     * @brief Sets manually the size of the filled memory.
-     * @details If the desired size is greater than maxUsableAmount it clips the desired size to maxUsableAmount.
-     *
-     * @param[in] desiredSize is the desired used size.
-     */
-    virtual void SetUsedSize(const uint32 desiredSize);
-
-    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Default constructor.
@@ -142,6 +103,10 @@ public:
      * @brief Destructor.
      */
     virtual ~IOBuffer();
+
+    /*---------------------------------------------------------------------------*/
+    /*               functions  to setup the memory model                        */
+    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Allocates dynamically a memory portion on the heap.
@@ -187,6 +152,21 @@ public:
             const uint32 bufferSize,
             const uint32 reservedSpaceAtEnd);
 
+    /*---------------------------------------------------------------------------*/
+    /*               const           functions                                   */
+    /*---------------------------------------------------------------------------*/
+
+
+    /**
+     * @brief Sets manually the size of the filled memory.
+     * @details If the desired size is greater than maxUsableAmount it clips the desired size to maxUsableAmount.
+     *
+     * @param[in] desiredSize is the desired used size.
+     */
+    virtual void SetUsedSize(const uint32 desiredSize);
+
+    /*---------------------------------------------------------------------------*/
+    /*               const           functions                                   */
     /*---------------------------------------------------------------------------*/
 
     /**
@@ -251,6 +231,8 @@ public:
     inline bool CanWrite() const;
 
     /*---------------------------------------------------------------------------*/
+    /*          functions than affect the stream                                 */
+    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Puts a character on the buffer.
@@ -301,6 +283,10 @@ public:
      */
     inline void Empty();
 
+    /*---------------------------------------------------------------------------*/
+    /*          virtual functions                                                */
+    /*---------------------------------------------------------------------------*/
+
     /**
      * @brief Writes from an input buffer.
      * @details The function does nothing if CharBuffer::CanWrite returns false,
@@ -335,12 +321,52 @@ public:
      */
     virtual bool Read(char8 * const buffer, uint32 &size);
 
+    /**
+     * @brief Synchronizes the stream position with this buffer position.
+     * @details This implementation is basic and only returns false.
+     * In BufferedStreamIOBuffer flushes the write buffer after write
+     * operations or adjusts the stream position (shifted after a refill
+     * because of a previous read operation).
+     * @return false in this implementation.
+     */
+    virtual bool Resync();
+
+    /**
+     * @brief Moves the cursor to an absolute position.
+     * @details Adjusts AmountLeft() == MaxUsableAmount() - position\n
+     *
+     * @param[in] position is the desired position in the filled memory.
+     * @return false if position is greater than the size of the filled memory.
+     */
+    virtual bool Seek(const uint32 position);
+
+    /**
+     * @brief Moves the cursor relatively from the current position.
+     * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
+     * -If the final position is < 0 moves the cursor at the beginning.\n
+     * -If the final position is > UsedSize moves the cursor at the end.\n
+     *
+     * @param[in] delta is the step from the current position.
+     * @return false if the final calculated position falls out of ranges, true otherwise.
+     */
+    virtual bool RelativeSeek(const int32 delta);
+
     /*---------------------------------------------------------------------------
      *
      *    Static functions implemented in IOBufferStaticFunctions.cpp
      *
-     * -------------------------------------------------------------------------
+     * -------------------------------------------------------------------------*/
+
+    /*
+     * @brief The function called by all Printf operations.
+     * @details This function read the format, builds the related format
+     * descriptor and then calls the PrintToStream function passing the
+     * next AnyType element in the list.
+     * @param[in] format is a printf-like string format.
+     * @param[in] pars is a list of AnyType elements to print.
+     * @return false in case of errors.
      */
+    static bool PrintAnyType(IOBuffer &iob, FormatDescriptor format, const AnyType type);
 
     /*
      * @brief The function called by all Printf operations.
@@ -425,7 +451,13 @@ public:
      * @return false if the number of skipped tokens is minor than the desired.
      */
     static bool SkipTokens(IOBuffer &iob, uint32 count, CCString terminator);
+
+
+
 protected:
+    /*---------------------------------------------------------------------------*/
+    /*          protected virtual functions                                      */
+    /*---------------------------------------------------------------------------*/
 
     /**
      * @see NoMoreSpaceToWrite(const uint32)

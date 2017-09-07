@@ -31,7 +31,7 @@
 
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
-#include "IOBuffer.h"
+#include "IOBufferPrivate.h"
 #include "BitSetToInteger.h"
 
 /*---------------------------------------------------------------------------*/

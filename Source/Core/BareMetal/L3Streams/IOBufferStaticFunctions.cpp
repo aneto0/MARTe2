@@ -29,7 +29,7 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "IOBuffer.h"
+#include "IOBufferPrivate.h"
 #include "AdvancedErrorManagement.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
@@ -38,270 +38,21 @@
 
 namespace MARTe {
 
-/*lint -e526 . Justification: The following functions are not defined here. */
 
-// These functions are implemented in IOBufferIntegerPrint.cpp
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint8 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int8 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint16 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int16 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint32 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int32 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint64 number,
-                            const FormatDescriptor &format);
-
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int64 number,
-                            const FormatDescriptor &format);
-
-extern bool BitSetToStream(IOBuffer &ioBuffer,
-                           uint32 * const numberAddress,
-                           const uint8 numberBitShift,
-                           const uint8 numberBitSize,
-                           const bool numberIsSigned,
-                           const FormatDescriptor &format);
-
-// These functions are implemented in IOBufferFloatPrint.cpp
-extern bool FloatToStream(IOBuffer &buffer,
-                          float32 number,
-                          const FormatDescriptor &format);
-
-extern bool FloatToStream(IOBuffer &buffer,
-                          float64 number,
-                          const FormatDescriptor &format);
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Prints a CCString .
- * @param[out] iobuff is the output stream buffer.
- * @param[in] string is the string to be printed.
- * @param[in] fd specifies the desired format for the string.
- * @return true if the string is printed correctly.
- */
-static bool PrintCCString(IOBuffer & iobuff,
-                          CCString const string,
-                          const FormatDescriptor &fd,
-                          bool addQuotesOnString = false) {
 
-    bool ret = (!string.IsNullPtr());
 
-    if (ret) {
-        //get the string size
-        uint32 stringSize = string.GetSize();
-        uint32 paddingSize = 0u;
-        uint32 desSize = fd.size;
-        // consider the quotes
-        uint32 gap = (addQuotesOnString) ? (2u) : (0u);
+/*---------------------------------------------------------------------------*/
+/*                           Static implementations                          */
+/*---------------------------------------------------------------------------*/
 
-        //is the desired size is 0 print completely the string without padd.
-        if (desSize > 0u) {
-            //clip the string size if the desired size is minor.
-            if (stringSize > desSize) {
-                stringSize = desSize;
-            }
 
-            //if padded and desired size is greater than the string size
-            //the difference is the padding size.
-            bool isPadded = fd.padded;
-            if (isPadded) {
-                if (stringSize < desSize) {
-                    paddingSize = (desSize - stringSize);
-                }
-            }
-        }
-        else {
-            stringSize += gap;
-            desSize = stringSize;
-        }
 
-        // check if there is enough space
-        ret = (desSize >= gap);
-        if (ret) {
 
-            // remove the quotes from the padding if necessary
-            bool isPaddingSize = (paddingSize > gap);
-
-            // otherwise remove it from the string size
-            if (!isPaddingSize) {
-                stringSize -= (gap - paddingSize);
-            }
-
-            bool isLeftAligned = fd.leftAligned;
-
-            //if right aligned put the padding at the beginning
-            if ((!isLeftAligned) && (isPaddingSize)) {
-                for (uint32 i = 0u; i < paddingSize; i++) {
-                    if (!iobuff.PutC(' ')) {
-                        ret = false;
-                    }
-                }
-            }
-
-            if (addQuotesOnString) {
-                if (!iobuff.PutC('\"')) {
-                    ret = false;
-                }
-            }
-
-            //print the string on the buffer completely.
-            if (!iobuff.WriteAll(string.GetList(), stringSize)) {
-                ret = false;
-            }
-
-            if (addQuotesOnString) {
-                if (!iobuff.PutC('\"')) {
-                    ret = false;
-                }
-            }
-
-            //if left aligned put the padding at the end
-            if ((isLeftAligned) && (isPaddingSize)) {
-                for (uint32 i = 0u; i < paddingSize; i++) {
-                    if (!iobuff.PutC(' ')) {
-                        ret = false;
-                    }
-                }
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
-        }
-    }
-
-    return ret;
-}
-
-/**
- * @brief Prints the bytes contained on a stream to a buffer.
- * @param[out] iobuff is the output stream buffer.
- * @param[in] stream is the stream in input which contains data to be copied.
- * @param[in] fd specifies the desired printing format.
- * @return false in case of errors in read and write operations.
- */
-static bool PrintStream(IOBuffer & iobuff,
-                        StreamI &stream,
-                        const FormatDescriptor &fd,
-                        bool addQuotesOnString = false) {
-
-    bool ret = true;
-    //print NULL pointer if the input stream is null.
-
-    //the input stream must be seekable, otherwise the cursor is always at the end.
-    if (stream.CanSeek()) {
-
-        //calculates the size from the cursor to the end of the filled memory in the input stream
-        uint64 streamSize = stream.Size();
-        uint64 streamPosition = stream.Position();
-        uint32 streamSizeL = static_cast<uint32>(streamSize - streamPosition);
-        uint32 paddingSize = 0u;
-
-        // consider the quotes
-        uint32 gap = (addQuotesOnString) ? (2u) : (0u);
-
-        uint32 desSize = fd.size;
-
-        if (desSize != 0u) {
-            //if the desired size is minor, clip the stream size.
-            if (streamSizeL > desSize) {
-                streamSizeL = desSize;
-            }
-
-            bool isPadded = fd.padded;
-            if (isPadded) {
-                //if the desired size is greater and padded is true
-                //calculates the padding size as the difference.
-                if (streamSizeL < desSize) {
-                    paddingSize = desSize - streamSizeL;
-                }
-            }
-        }
-        else {
-            streamSizeL += gap;
-            desSize = streamSizeL;
-        }
-        //limit within 32 bit and further limit to 10000 chars
-        if (streamSizeL > 10000u) {
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Size too big");
-            ret = PrintCCString(iobuff, "!! too big > 10000 characters!!", fd);
-        }
-        else {
-
-            ret = (desSize >= gap);
-            if (ret) {
-
-                bool isPadding = (paddingSize > gap);
-                if (!isPadding) {
-                    streamSizeL -= (gap - paddingSize);
-                }
-
-                //if right aligned put the padding at the beginning
-                if ((!fd.leftAligned) && (isPadding)) {
-                    for (uint32 i = 0u; i < paddingSize; i++) {
-                        if (!iobuff.PutC(' ')) {
-                            ret = false;
-                        }
-                    }
-                }
-
-                //write the stream input on the stream buffer output
-                char8 c;
-                while (streamSizeL > 0u) {
-                    uint32 size = 1u;
-                    if (!stream.Read(&c, size)) {
-                        ret = false;
-                    }
-                    if (!iobuff.PutC(c)) {
-                        ret = false;
-                    }
-                    streamSizeL--;
-                }
-
-                if (ret) {
-
-                    //if left aligned put the padding at the end.
-                    if (fd.leftAligned && (isPadding)) {
-                        for (uint32 i = 0u; i < paddingSize; i++) {
-                            if (!iobuff.PutC(' ')) {
-                                ret = false;
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
-            }
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: The stream is not seekable");
-        ret = PrintCCString(iobuff, "!!stream !seek!!", fd);
-    }
-
-    return ret;
-}
 
 /**
  * @brief Prints the introspection related to the object in input.
