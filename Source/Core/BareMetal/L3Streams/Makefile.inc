@@ -33,6 +33,9 @@ OBJSX=	BufferedStreamI.x \
 		IOBufferIntegerPrint.x \
 		IOBufferStringPrint.x \
 		IOBufferStreamPrint.x \
+		IOBufferStructuredPrint.x \
+		IOBufferAnyTypeInfo.x \
+		IOBufferAnyTypePrint.x \
 		IOBufferStaticFunctions.x \
 		SingleBufferedStream.x \
 		StreamMemoryReference.x \

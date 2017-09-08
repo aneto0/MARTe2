@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "IOBuffer.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -84,6 +85,14 @@ bool BitSetToStream(IOBuffer &ioBuffer,
                            const bool numberIsSigned,
                            const FormatDescriptor &format);
 
+
+// to be revised  TODO
+bool PointerToStream(IOBuffer &ioBuffer, const void *address);
+
+// to be revised  TODO
+bool IntToStream(IOBuffer &ioBuffer, int i);
+
+
 // These functions are implemented in IOBufferFloatPrint.cpp
 bool FloatToStream(IOBuffer &buffer,
                           float32 number,
@@ -116,6 +125,17 @@ bool PrintStream(IOBuffer & iobuff,
                         StreamI &stream,
                         const FormatDescriptor &fd,
                         bool addQuotesOnString = false);
+
+/**
+ * @brief Prints a StructuredDataInterface.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] structuredData is the input.
+ * @return false in case of error in the StructuredDataI functions, true otherwise.
+ */
+
+bool PrintStructuredDataInterface(IOBuffer &iobuff,
+                                         StructuredDataI * const structuredData,
+                                         uint32 nodeLevel = 0u);
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

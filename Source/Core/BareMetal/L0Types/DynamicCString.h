@@ -74,8 +74,13 @@ public:
      */
     inline bool operator==(const CCString &s) const;
 
-};
 
+    /**
+     * TODO
+     */
+    inline bool AppendNum(uint32 num,bool fill0=false);
+
+};
 
 
 /*---------------------------------------------------------------------------*/
@@ -99,6 +104,29 @@ DynamicCString::operator CCString() const{
 bool DynamicCString::operator==(const CCString &s) const{
 	return isSameAs(s.GetList());
 }
+
+bool DynamicCString::AppendNum(uint32 num,bool fill0){
+	if (num > 10000u){
+		uint32 numH = num/10000u;
+		num = num - numH * 10000u;
+		AppendNum(numH,fill0);
+		fill0=true;
+	}
+	if (num > 100u){
+		uint32 numH = num/100u;
+		num = num - numH * 100u;
+		AppendNum(numH,fill0);
+		fill0=true;
+	}
+	uint32 numH = num/10u;
+	num = num - numH * 10u;
+	if ((num >= 10) || (fill0)){
+		Append ((char8)(numH) + '0');
+	}
+	Append ((char8)(num) + '0');
+
+}
+
 
 }
 #endif /* L0TYPES_DYNAMICCSTRING_H_ */

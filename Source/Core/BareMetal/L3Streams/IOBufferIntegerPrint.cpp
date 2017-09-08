@@ -417,7 +417,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
             // fill up with zeros
             for (i = (5 - numberFillLength); i <= index; i++) {
                 if (!s.PutC('0')) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Number2StreamDecimalNotationPrivate: Failed IOBuffer::PutC()");
                     break;
                 }
             }
@@ -425,7 +425,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
         // then complete by outputting all digits
         for (i = index + 1; i <= 4; i++) {
             if (!s.PutC(buffer[i])) {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "Number2StreamDecimalNotationPrivate: Failed IOBuffer::PutC()");
                 break;
             }
         }
@@ -1440,6 +1440,25 @@ bool BitSetToStream(IOBuffer &ioBuffer,
                     const FormatDescriptor &format) {
     return BitSetToStreamPrivate(ioBuffer, numberAddress, numberBitShift, numberBitSize, numberIsSigned, format);
 
+}
+
+
+
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts a pointer to an hex sequence of characters
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] addrss is the integer to print.
+ * @return true if the format is correct, false otherwise.
+ */
+bool PointerToStream(IOBuffer &ioBuffer, const void *address){
+	uintp n = static_cast<uintp>(address);
+    return IntegerToStreamExadecimalNotation(ioBuffer, n);
+}
+
+bool IntToStream(IOBuffer &ioBuffer, int i){
+	return IntegerToStreamDecimalNotation(ioBuffer,i);
 }
 
 }

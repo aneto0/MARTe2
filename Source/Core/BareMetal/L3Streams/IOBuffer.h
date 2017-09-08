@@ -248,6 +248,21 @@ public:
      */
     inline bool PutC(const char8 c);
 
+
+    /**
+     * @brief Puts a zero term string of characters on the buffer.
+     * @details This function is called by formatted print-like functions for buffered streams. The
+     * implementation of NoMoreSpaceToWrite depends on children classes and it could be
+     * for example a flush (BufferedStreamIOBuffer) or a new allocation (StreamStringIOBuffer).\n
+     *
+     * The value of UndoLevel() could be used to trigger the call to NoMoreSpaceToWrite when
+     * the cursor is at a specific position.
+     *
+     * @param[in] s is the string to copy on this buffer.
+     * @return false if there is no space to write or the buffer is not writable, true otherwise.
+     */
+    inline bool bool PutS(CCString s);
+
     /**
      * @brief If possible remove the last character from the buffer.
      * @details Increments amountLeft and decrements the cursor.
@@ -357,16 +372,20 @@ public:
      *
      * -------------------------------------------------------------------------*/
 
-    /*
-     * @brief The function called by all Printf operations.
-     * @details This function read the format, builds the related format
-     * descriptor and then calls the PrintToStream function passing the
-     * next AnyType element in the list.
-     * @param[in] format is a printf-like string format.
-     * @param[in] pars is a list of AnyType elements to print.
-     * @return false in case of errors.
+    /**
+     * @brief Prints a generic scalar AnyType object on a buffer.
+     * @param[out] iobuff is the stream buffer output.
+     * @param[in] parIn is the generic object to be printed.
+     * @param[in] fd specifies the desired printing format.
      */
-    static bool PrintAnyType(IOBuffer &iob, FormatDescriptor format, const AnyType type);
+    static bool PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn);
+
+    /**
+     * @brief Prints the information on the type of the variable referred by parIn.
+     * @param[out] iobuff is the stream buffer output.
+     * @param[in] parIn is the generic object to be printed.
+     */
+    static bool PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn);
 
     /*
      * @brief The function called by all Printf operations.
@@ -640,6 +659,53 @@ bool IOBuffer::PutC(const char8 c) {
         amountLeft--;
         if (fillLeft > amountLeft) {
             fillLeft = amountLeft;
+        }
+    }
+
+    return retval;
+}
+
+bool IOBuffer::PutS(CCString s) {
+	const char8 *str = s.GetList();
+    bool retval = (str != NULL);
+
+    while (retval && (str[0] != 0)){
+    	retval = (positionPtr != NULL);
+
+        if (retval) {
+            // check if buffer needs updating and or saving
+            if (amountLeft <= undoLevel) {
+            	retval = NoMoreSpaceToWrite();
+
+                // check if we can continue or must abort
+                if (amountLeft == 0u) {
+                    retval = false;
+                }
+            }
+
+            // check later so that to give a chance to allocate memory
+            // if that is the policy of this buffering scheme
+            if (!internalBuffer.CanWrite()) {
+                retval = false;
+            }
+        }
+
+        if (retval) {
+        	while ((str[0] != 0)  && (amountLeft > undoLevel)){
+                /*lint -e{613} . Justification: The NULL pointer conditions are handled before*/
+                *positionPtr = *str;
+
+                /*lint -e{613} . Justification: The NULL pointer condition is handled*/
+                str++;
+
+                /*lint -e{613} . Justification: The NULL pointer condition is handled*/
+                positionPtr++;
+                amountLeft--;
+
+                if (fillLeft > amountLeft) {
+                    fillLeft = amountLeft;
+                }
+        	}
         }
     }
 
