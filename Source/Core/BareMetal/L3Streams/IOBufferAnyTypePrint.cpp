@@ -50,7 +50,7 @@ bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType
 
     if (ret){
         if (fd.desiredAction == PrintInfo) {
-        	ret = PrintAnyTypeInfo(iobuff, parIn);
+        	ret = PrintAnyTypeInfo(iobuff,fd, parIn);
 
         } else {
         	dataPointer = parIn.GetVariablePointer();

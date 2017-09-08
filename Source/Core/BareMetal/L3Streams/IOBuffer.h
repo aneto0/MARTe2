@@ -261,7 +261,7 @@ public:
      * @param[in] s is the string to copy on this buffer.
      * @return false if there is no space to write or the buffer is not writable, true otherwise.
      */
-    inline bool bool PutS(CCString s);
+    inline bool PutS(CCString s);
 
     /**
      * @brief If possible remove the last character from the buffer.

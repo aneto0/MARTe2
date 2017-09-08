@@ -21,6 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#define DLL_API
+
 #include "IOBuffer.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
@@ -179,7 +181,7 @@ static void PrintTypeDescriptor(DynamicCString &line,const TypeDescriptor &td){
 }
 
 
-bool IOBuffer::PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
+DLL_API bool IOBuffer::PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
 	DynamicCString line;
 
     const VariableDescriptor &vd = parIn.GetFullVariableDescriptor();

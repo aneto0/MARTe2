@@ -106,6 +106,7 @@ bool DynamicCString::operator==(const CCString &s) const{
 }
 
 bool DynamicCString::AppendNum(uint32 num,bool fill0){
+	bool ret;
 	if (num > 10000u){
 		uint32 numH = num/10000u;
 		num = num - numH * 10000u;
@@ -121,10 +122,11 @@ bool DynamicCString::AppendNum(uint32 num,bool fill0){
 	uint32 numH = num/10u;
 	num = num - numH * 10u;
 	if ((num >= 10) || (fill0)){
-		Append ((char8)(numH) + '0');
+		ret = Append ((char8)(numH) + '0');
 	}
-	Append ((char8)(num) + '0');
+	ret = ret && Append ((char8)(num) + '0');
 
+	return ret;
 }
 
 

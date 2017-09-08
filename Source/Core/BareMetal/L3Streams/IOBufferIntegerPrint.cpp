@@ -1453,7 +1453,7 @@ bool BitSetToStream(IOBuffer &ioBuffer,
  * @return true if the format is correct, false otherwise.
  */
 bool PointerToStream(IOBuffer &ioBuffer, const void *address){
-	uintp n = static_cast<uintp>(address);
+	uintp n = reinterpret_cast<uintp>(address);
     return IntegerToStreamExadecimalNotation(ioBuffer, n);
 }
 
