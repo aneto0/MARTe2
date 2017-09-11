@@ -44,14 +44,6 @@
 
 namespace MARTe{
 
-/*
-static char8 toupper(char8 c){
-    if ((c >='a') && (c <='z')) {
-        c = c - ('a'-'A');
-    }
-    return c;
-}
-*/
 
 // syntax Annn where nn is numeric only
 static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
@@ -67,7 +59,9 @@ static void AddArrayDataToModifiers(DynamicCString &modifiers, uint32 size){
 	modifiers.AppendN(pBuffer);
 }
 
-//
+/**
+ *
+ */
 struct APLookUp{
 	//
 	CombinedArrayType 	arrayCode;
@@ -82,33 +76,60 @@ struct APLookUp{
 	bool 				isMultiplyingLayer;
 	//
 	bool 				sizeFollows;
+	//
+	CCString			cExpansionPre;
+	//
+	CCString			cExpansionPost;
+	//
+	CCString			cExpansionEnd;
 };
 
-APLookUp APLookupTable1[] = {
-		{SizedCArray_AP,'A',0,true,true},
-		{StaticZeroTermArray_AP,'S',sizeof(void *),false,true},
-		{ConstStaticZeroTermArray_AP,'s',sizeof(void *),false,true},
-		{UnSizedA_AP,'\0',0,false,false}
+const CCString nullString;
+
+const APLookUp APLookupTable1[] = {
+		{SizedCArray_AP,				'A',	0,						true,true,		"",	"[", "]"},
+		{StaticZeroTermArray_AP,		'S',	sizeof(void *),			false,true,     "StaticZeroTerminatedArray<",",",">"},
+		{ConstStaticZeroTermArray_AP,	's',	sizeof(void *),			false,true,		"const StaticZeroTerminatedArray<",",",">"},
+		{UnSizedA_AP,					'\0',	0,						false,false,    "",nullString,""}
 };
 
-APLookUp APLookupTable2[] = {
-		{Array1D,'V',sizeof (Vector<char>),false,false},
-		{ConstArray1D,'v',sizeof (Vector<char>),false,false},
-		{Array2D,'M',sizeof (Matrix<char>),false,false},
-		{ConstArray2D,'m',sizeof (Matrix<char>),false,false},
-		{PointerArray,'P',sizeof (void *),false,false},
-		{ConstPointerArray,'p',sizeof (void *),false,false},
-		{ZeroTermArray,'Z',sizeof (void *),false,false},
-		{ConstZeroTermArray,'z',sizeof (void *),false,false},
-		{ConstDynamicZeroTermArray,'d',sizeof (void *),false,false},
-		{DynamicZeroTermArray,'D',sizeof (void *),false,false},
-		{ArrayUnknown,'\0',0,false,false}
+const APLookUp APLookupTable2[] = {
+		{Array1D,						'V',	sizeof (Vector<char>)	,false,false,	"Vector<",	nullString, ">"},
+		{ConstArray1D,					'v',	sizeof (Vector<char>)	,false,false,	"const Vector<",	nullString, ">"},
+		{Array2D,						'M',	sizeof (Matrix<char>)	,false,false,	"Matrix<",	nullString, ">"},
+		{ConstArray2D,					'm',	sizeof (Matrix<char>)	,false,false,	"const Matrix<",	nullString, ">"},
+		{PointerArray,					'P',	sizeof (void *)			,false,false,	"",	nullString, " *"},
+		{ConstPointerArray,				'p',	sizeof (void *)			,false,false,	"",	nullString, " * const"},
+		{ZeroTermArray,					'Z',	sizeof (void *)			,false,false,	"ZeroTerminatedArray<",	nullString, ">"},
+		{ConstZeroTermArray,			'z',	sizeof (void *)			,false,false,	"const ZeroTerminatedArray<",	nullString, ">"},
+		{ConstDynamicZeroTermArray,		'd',	sizeof (void *)			,false,false,	"DynamicZeroTerminatedArray<",	nullString, ">"},
+		{DynamicZeroTermArray,			'D',	sizeof (void *)			,false,false,	"const DynamicZeroTerminatedArray<",	nullString, ">"},
+		{ArrayUnknown,					'\0',	0						,false,false,    "",nullString,""}
 };
 
-static CombinedArrayType reverseLookUpArrayTypeGen(char8 code, APLookUp *apl){
+static const APLookUp *reverseLookUpCode(char8 code){
+	const APLookUp *apl = APLookupTable1;
+	const APLookUp *ret = NULL;
+	while ((apl->keyCode != '\0') && (ret==NULL)) {
+		if (apl->keyCode == code){
+			ret = apl;
+		}
+		apl++;
+	}
+	apl = APLookupTable2;
+	while ((apl->keyCode != '\0') && (ret==NULL)) {
+		if (apl->keyCode == code){
+			ret = apl;
+		}
+		apl++;
+	}
+
+	return ret;
+}
+
+static CombinedArrayType reverseLookUpArrayTypeGen(char8 code, const APLookUp *apl){
 	CombinedArrayType cat = ArrayUnknown;
 	while ((apl->keyCode != '\0') && (cat == ArrayUnknown)){
-//		printf("{%c}",apl->keyCode);
 		if (apl->keyCode == code){
 			cat = apl->arrayCode;
 		}
@@ -121,7 +142,7 @@ static CombinedArrayType reverseLookUpArrayTypeGen(char8 code, APLookUp *apl){
  * returns false if not found.
  * looks in both tables
  */
-static bool reverseLookUpArrayProperties(char8 code, APLookUp *&apl){
+static bool reverseLookUpArrayProperties(char8 code, const APLookUp *&apl){
 	apl = &APLookupTable1[0];
 
 	while ((apl->keyCode != '\0') && (apl->keyCode != code)){
@@ -141,7 +162,7 @@ static bool reverseLookUpArrayProperties(char8 code, APLookUp *&apl){
 		return (apl != NULL);
 }
 
-static char8 lookUpArrayTypeGen(CombinedArrayType arrayCode, APLookUp *apl){
+static char8 lookUpArrayTypeGen(CombinedArrayType arrayCode, const APLookUp *apl){
 	char8 keyCode = '\0';
 	while ((apl->keyCode != '\0') && (keyCode == '\0')){
 		if (apl->arrayCode == arrayCode){
@@ -273,11 +294,6 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 #endif
 
 
-/*
-static bool isConstantToken(char8 c){
-	return ((c >='a') && (c <='z'));
-}
-*/
 
 static bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
@@ -324,8 +340,6 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     modifiers.AppendN(x.modifiers.GetList());
     return *this;
 }
-
-
 
 bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) const {
     char8 *buffer = modifiers.GetList();
@@ -411,7 +425,7 @@ uint64 VariableDescriptor::GetSize() const{
 
     char8 *buffer = modifiers.GetList();
     uint8 code = *buffer;
-	APLookUp *apl;
+	const APLookUp *apl;
 	bool toContinue = true;
 	while ((code != '\0') && (toContinue)){
 		buffer++;
@@ -435,6 +449,68 @@ uint64 VariableDescriptor::GetSize() const{
 	}
 
 	return size;
+}
+
+bool VariableDescriptor::BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo)const{
+	bool ret = true;
+    char8 *buffer  = modifiers.GetList();
+    char8 token ;
+
+    layerNo++;
+	while((*buffer!=0) && (layerNo > 0)){
+	    char8 token = *buffer;
+	    if (token != '\0'){
+	    	modifier = *buffer;
+	    	buffer++;
+	    	size = readNumber(buffer);
+	    }
+	    layerNo--;
+	}
+    return (layerNo == 0);
+}
+
+bool VariableDescriptor::ToString(DynamicCString &string)const{
+	bool ret=true;
+	int32 maxLayer =0;
+	char8 modifier;
+	uint64 size;
+	// first loop add all prefix modifiers that encapsulate: Vector<  Matrix<
+	while ( BrowseModifiersLayer(modifier,size,maxLayer) && ret){
+		const APLookUp *apl = reverseLookUpCode(modifier);
+		if (apl != NULL){
+//			printf("<%c-%i>",modifier,maxLayer);
+			string.AppendN(apl->cExpansionPre);
+		} else {
+			ret = false;
+		}
+		maxLayer++;
+	}
+	maxLayer--;
+
+	if (ret) {
+		ret = typeDescriptor.ToString(string);
+	}
+
+	// second loop close encapsulating modifiers and add postfix ones> * [N]
+	while ((maxLayer >= 0) && ret){
+		ret = BrowseModifiersLayer(modifier,size,maxLayer);
+//		printf("@<%c-%i>",modifier,maxLayer);
+		if (ret){
+			const APLookUp *apl = reverseLookUpCode(modifier);
+			if (apl != NULL){
+				if (apl->cExpansionPost.GetList() != NULL ){
+					string.AppendN(apl->cExpansionPost);
+					string.AppendNum(size);
+				}
+				string.AppendN(apl->cExpansionEnd);
+			} else {
+				ret = false;
+			}
+		}
+		maxLayer--;
+	}
+	return ret;
+
 }
 
 

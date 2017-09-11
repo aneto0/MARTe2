@@ -36,6 +36,8 @@
 #include "BasicType.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
+#include "DynamicCString.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -259,6 +261,23 @@ public:
      */
     uint32 Size() const;
 
+    /**
+     * @brief gets name of class from structuredDataIdCode
+     * only valid if the type is a structure
+     * if not found returns an empty string
+     */
+    CCString GetNameOfClassFromStructureId() const;
+
+    /**
+     * @brief gets name of class from structuredDataIdCode
+     */
+    static bool SetNameOfClassFromIdFunction(CCString (*fun)(TypeDescriptor));
+
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     *
+     */
+    bool ToString(DynamicCString &string) const;
 };
 
 

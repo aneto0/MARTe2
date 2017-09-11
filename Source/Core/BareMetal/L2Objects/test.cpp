@@ -153,6 +153,9 @@ void printType(const AnyType &at){
     printTypeDescriptor(td);
     printf(" size = %Li\n",vd.GetSize());
 
+    MARTe::DynamicCString line;
+    bool ret = vd.ToString(line);
+    printf("%s\n",line.GetList());
 }
 
 /*
@@ -336,6 +339,7 @@ void testAT(){
     TEST(StaticCString<32>);
     TEST(ZeroTerminatedArray<float>);
     TEST(ZeroTerminatedArray<const int32>);
+    TEST(ZeroTerminatedArray<int6>);
     TEST(Matrix<float>);
     TEST(Matrix<const float>);
     TEST(const Matrix<uint3>);
@@ -454,8 +458,8 @@ int pluto;
 
 int main(int argc, char **argv){
 
-	testOther();
-return 0;
+//	testOther();
+//return 0;
 	int pippo;
 	float *x = (float *)0x123;
 

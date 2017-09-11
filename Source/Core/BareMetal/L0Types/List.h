@@ -89,7 +89,7 @@ List<loadClass>::List():ListNode(){
  *
  */
 template <class loadClass>
-virtual List<loadClass>::~List(){
+List<loadClass>::~List(){
 }
 
 template <class loadClass>

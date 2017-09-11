@@ -20,7 +20,7 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
-
+#define DLL_API
 #include "Anytype.h"
 #include "IOBufferPrivate.h"
 
@@ -36,7 +36,7 @@ namespace MARTe{
  * @param[in] pars is a list of AnyType elements to print.
  * @return false in case of errors.
  */
-bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
+DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
 
     bool ret = true;
     // void anytype
@@ -69,20 +69,20 @@ bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType
                     if (cri != NULL) {
                         ret = iobuff.PutC('(*(');
                         ret |= iobuff.PutS(cri->GetClassName());
-                        ret |= iobuff.PutC(' *)0x');
+                        ret |= iobuff.PutS(" *)0x");
                         ret |= PointerToStream(iobuff,dataPointer );
-                        ret |= iobuff.PutC(' )');
+                        ret |= iobuff.PutS(" )");
                     } else {
-                        ret = iobuff.PutC('(*("unknown_struct_code(');
+                        ret = iobuff.PutS("(*(unknown_struct_code(");
                         ret |= IntToStream(iobuff,(int)td.structuredDataIdCode);
-                        ret |= iobuff.PutC(') *)0x');
+                        ret |= iobuff.PutS(") *)0x");
                         ret |= PointerToStream(iobuff,dataPointer );
-                        ret |= iobuff.PutC(' )');
+                        ret |= iobuff.PutS(" )");
                     }
             	} // not a structured data
                 else {
 
-                    if (((par.GetTypeDescriptor()).type) == UnsignedInteger) {
+                    if (td.type == UnsignedInteger) {
                         if (fd.desiredAction != PrintAnything) {
                             if (fd.desiredAction != PrintInteger) {
                                 REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: an unsigned integer will be printed");

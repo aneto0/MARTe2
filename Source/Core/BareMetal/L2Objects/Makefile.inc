@@ -55,10 +55,10 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
+      $(BUILD_DIR)/test$(EXEEXT) \
 		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)
 
-#      $(BUILD_DIR)/test$(EXEEXT) \
 
 include depends.$(TARGET)
 

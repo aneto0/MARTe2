@@ -40,6 +40,7 @@
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "DynamicCString.h"
+#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -42,6 +42,7 @@
 #include "SearchFilterT.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "ClassMember.h"
+#include "Atomic.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

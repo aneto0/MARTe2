@@ -120,10 +120,10 @@ bool DynamicCString::AppendNum(uint32 num,bool fill0){
 		fill0=true;
 	}
 	uint32 numH = num/10u;
-	num = num - numH * 10u;
 	if ((num >= 10) || (fill0)){
 		ret = Append ((char8)(numH) + '0');
 	}
+	num = num - numH * 10u;
 	ret = ret && Append ((char8)(num) + '0');
 
 	return ret;

@@ -40,6 +40,8 @@
 #include "LoadableLibrary.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
+#include "GlobalObjectsDatabase.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -191,6 +193,28 @@ CCString  ClassRegistryDatabase::GetClassName() const {
     return "ClassRegistryDatabase";
 }
 
+/**
+ *
+ * To allow access to the database from level1
+ *
+ */
+CCString GetNameOfClassFromId(TypeDescriptor td){
+	CCString ret = "";
+	ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(td);
+    if (cri != NULL) {
+    	ret = cri->GetClassName();
+    }
+    return ret;
+}
 
+// register GetNameOfClassFromId function into TypeDescriptor
+// thus allowing class name resolution from level 1
+class CRDTD_Register{
+public:
+	CRDTD_Register(){
+		TypeDescriptor::SetNameOfClassFromIdFunction(GetNameOfClassFromId);
+	}
+
+} CRDTD_RegisterInstance;
 
 }

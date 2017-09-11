@@ -131,10 +131,16 @@ public:
 
 
     /**
-     * @brief read and possibly removes one layer of modifiers
+     * @brief read and possibly removes top layer of modifiers
      * @return true if operation succeeded, false if no modifiers
      */
     bool GetModifiersLayer(char8 &modifier,uint64 &size,bool remove=false);
+
+    /**
+     * @brief reads one layer of modifiers
+     * @return true if operation succeeded, false if no modifiers
+     */
+    bool BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo) const;
 
     /**
      * @brief returns size of top indirecting layer.
@@ -150,6 +156,11 @@ public:
     	return modifiers.GetList();
     }
 
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     *
+     */
+    bool ToString(DynamicCString &string) const;
 
 private:
 
@@ -325,7 +336,7 @@ private:
      * @param[in] s the Stream
      * @post
      */
-    void Match(StreamI *s);
+    inline void Match(StreamI *s);
 
     /**
      * @brief Constructor from zeroterm malloced char *
