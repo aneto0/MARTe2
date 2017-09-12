@@ -153,7 +153,8 @@ public:
      *   col >= 0 && col < GetNumberOfColumns()
      * @return a T& which can be used for reading/writing the cell.
      */
-    T& operator()(const uint32 row, const uint32 col);
+    T& operator()(const uint32 row,
+                  const uint32 col);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
@@ -181,6 +182,34 @@ public:
      */
     bool Product(Matrix<T> &factor,
                  Matrix<T> &result) const;
+
+    /**
+     * @brief Performs the matrix sum.
+     * @param[in] addend is the matrix to be summed with.
+     * @param[out] result is the matrix sum result.
+     * @return true if the matrix dimensions are consistent
+     * @pre
+     *   GetNumberOfColumns() == addend.GetNumberOfRows() &&
+     *   GetNumberOfRows() == addend.GetNumberOfRows() &&
+     *   GetNumberOfColumns() == result.GetNumberOfRows() &&
+     *   GetNumberOfRows() == result.GetNumberOfRows() &&
+     * @post
+     *   result holds the matrix sum between *this and addend.
+     */
+    bool Sum(Matrix<T> &addend,
+             Matrix<T> &result) const;
+
+    /**
+     * @brief Performs the matrix copy.
+     * @param[in] matrixToCopy is the matrix to be copied.
+     * @return true if the matrix dimensions are consistent
+     * @pre
+     *   GetNumberOfColumns() == matrixToCopy.GetNumberOfRows() &&
+     *   GetNumberOfRows() == matrixToCopy.GetNumberOfRows() &&
+     * @post
+     *   *this[i][j] = matrixToCopy[i][j]
+     */
+    bool Copy(Matrix<T> &matrixToCopy);
 
     /**
      * @brief Retrieves the sub matrix between the row and columns ranges ==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
@@ -379,7 +408,8 @@ Vector<T> Matrix<T>::operator[](uint32 element) {
 }
 
 template<typename T>
-T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
+T& Matrix<T>::operator()(const uint32 row,
+                         const uint32 col) {
     T* result;
     if (!staticDeclared) {
         T** mat = reinterpret_cast<T**>(dataPointer);
@@ -387,7 +417,7 @@ T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
     }
     else {
         T* mat = reinterpret_cast<T*>(dataPointer);
-        T* line = &mat[row*numberOfColumns];
+        T* line = &mat[row * numberOfColumns];
         result = &line[col];
     }
     return (*result);
@@ -424,6 +454,51 @@ bool Matrix<T>::Product(Matrix<T> &factor,
                 for (uint32 k = 0u; k < numberOfColumns; k++) {
                     result[i][j] += temp[i][k] * factor[k][j];
                 }
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::Sum(Matrix<T> & addend,
+                    Matrix<T> &result) const {
+    bool cond1 = (addend.numberOfRows == numberOfRows) && (result.numberOfRows == numberOfRows);
+    bool cond2 = (addend.numberOfColumns == numberOfColumns) && (result.numberOfColumns == numberOfColumns);
+    bool ret = (cond1 && cond2);
+    if (ret) {
+        Matrix<T> temp;
+        if (staticDeclared) {
+            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                result[i][j] = temp[i][j] + addend[i][j];
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::Copy(Matrix<T> &matrixToCopy){
+    bool cond1 = (matrixToCopy.numberOfRows == numberOfRows);
+    bool cond2 = (matrixToCopy.numberOfColumns == numberOfColumns);
+    bool ret = cond1 && cond2;
+    if(ret){
+        Matrix<T> temp;
+        if (staticDeclared) {
+            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                temp[i][j] = matrixToCopy[i][j];
             }
         }
     }
