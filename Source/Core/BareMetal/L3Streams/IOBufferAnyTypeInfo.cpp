@@ -24,6 +24,7 @@
 #define DLL_API
 
 #include "IOBuffer.h"
+#include "IOBufferPrivate.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "DynamicCString.h"
@@ -38,29 +39,9 @@ DLL_API bool IOBuffer::PrintAnyTypeInfo(IOBuffer &iobuff, FormatDescriptor fd, c
     bool ret = vd.ToString(line);
 
     if (ret){
-        uint32 len = line.GetSize();
-
-    	if (fd.size > len){
-
-    	    // wants padding
-    	    if (fd.padded){
-    	    	// needs padding
-            	if (fd.leftAligned){
-            		ret = iobuff.WriteAll(line.GetList(),len);
-            		/// write N padding
-
-    	    	} else {
-            		/// write N padding
-    	    		ret = iobuff.WriteAll(line.GetList(),len);
-    	    	}
-    	    }
-
-    	} else {  //fd.size <= len  // truncate
-    		ret = iobuff.WriteAll(line.GetList(),fd.size-1);
-    		ret = ret && iobuff.PutC('?');
-    	}
-	}
-
+    	CCString lineC = line.GetList();
+    	ret = PrintCCStringFit(iobuff,lineC,fd);
+    }
 	return ret;
 
 }

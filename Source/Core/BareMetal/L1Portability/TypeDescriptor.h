@@ -311,6 +311,7 @@ public:
 #define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
 #define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
 #define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
+
 #define  ConstCharString             TypeDescriptor(ConstCharString_number)
 #define  CharString                  TypeDescriptor(CharString_number)
 #define  DynamicCharString           TypeDescriptor(DynamicCharString_number)

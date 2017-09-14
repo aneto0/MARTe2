@@ -51,6 +51,8 @@ namespace MARTe{
 
         //is the desired size is 0 print completely the string without padd.
         if (desSize > 0u) {
+        	// TODO check missing addition of gap to stringsize
+
             //clip the string size if the desired size is minor.
             if (stringSize > desSize) {
                 stringSize = desSize;
@@ -120,11 +122,55 @@ namespace MARTe{
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
+//            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Not Enough space for double quotes");
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: PrintCCString: string exceeds format ");
         }
     }
 
     return ret;
 }
+
+ /**
+  * @brief Prints a CCString. If it does not fit in format print initial part then ?: xxxxxx?
+  * @param[out] iobuff is the output stream buffer.
+  * @param[in] string is the string to be printed.
+  * @param[in] fd specifies the desired format for the string.
+  * @return true if the string is printed correctly.
+  */
+ bool PrintCCStringFit(    IOBuffer & iobuff,
+                           CCString const string,
+                           const FormatDescriptor &fd){
+
+	 uint32 len = string.GetSize();
+	 bool ret = true;
+
+	 // fits
+	 if ((fd.size > len) || (fd.size == 0)){
+
+         // wants padding and have a size to pad to
+		 if ((fd.padded) && (fd.size != 0) && (!fd.leftAligned)){
+			 for (int i = len; i < fd.size; i++){
+				 ret = ret && iobuff.PutC(' ');
+			 }
+		 }
+
+		 ret = ret && iobuff.WriteAll(string.GetList(),len);
+
+         // wants padding and have a size to pad to
+		 if ((fd.padded) && (fd.size != 0) && (fd.leftAligned)){
+			 for (int i = len; i < fd.size; i++){
+				 ret = ret && iobuff.PutC(' ');
+			 }
+		 }
+ 	 } else
+ 	 {  //fd.size <= len  // truncate
+ 		ret = ret && iobuff.WriteAll(string.GetList(),fd.size-1);
+ 		ret = ret && iobuff.PutC('?');
+ 	 }
+
+	 return ret;
+
+ }
+
 
 }// MARTe

@@ -68,7 +68,7 @@ static inline void BSToBS(T * const & destination,
                           const uint8 & destinationBitShift,
                           const uint8 destinationBitSize,
                           const bool destinationIsSigned,
-                          T * const & source,
+                          T const * const & source,
                           const uint8 sourceBitShift,
                           const uint8 sourceBitSize,
                           const bool sourceIsSigned);
@@ -94,12 +94,12 @@ static inline void BSToBS(T * const & destination,
  *
  * @return True if the bit copy from source to destination is done. False if the bit copy from source to destination can not be done.
  */
-template<typename T>
+template<typename T,typename T2>
 static inline bool BitSetToBitSet(T *& destination,
                                   uint8 & destinationBitShift,
                                   const uint8 destinationBitSize,
                                   const bool destinationIsSigned,
-                                  T *& source,
+                                  T2 *& source,
                                   uint8 & sourceBitShift,
                                   const uint8 sourceBitSize,
                                   const bool sourceIsSigned);
@@ -171,7 +171,7 @@ static inline void BSToBS(T * const & destination,
                           const uint8 & destinationBitShift,
                           const uint8 destinationBitSize,
                           const bool destinationIsSigned,
-                          T * const & source,
+                          T const * const & source,
                           const uint8 sourceBitShift,
                           const uint8 sourceBitSize,
                           const bool sourceIsSigned) {
@@ -294,12 +294,12 @@ static inline void BSToBS(T * const & destination,
 
 }
 
-template<typename T>
+template<typename T,typename T2>
 static inline bool BitSetToBitSet(T *& destination,
                                   uint8 & destinationBitShift,
                                   const uint8 destinationBitSize,
                                   const bool destinationIsSigned,
-                                  T *& source,
+                                  T2 *& source,
                                   uint8 & sourceBitShift,
                                   const uint8 sourceBitSize,
                                   const bool sourceIsSigned) {
@@ -346,8 +346,8 @@ static inline bool BitSetToBitSet(T *& destination,
     // and is big than granularity
     if ((sourceBitEnd <= 8u) && (destinationBitEnd <= 8u) && (granularity == 8u)) {
         // if 8 is fine then operate with 8 bit integers
-        uint8 *destination8 = reinterpret_cast<uint8 *>(destination);
-        uint8 *source8 = reinterpret_cast<uint8 *>(source);
+        uint8 *destination8 = reinterpret_cast< uint8 *>(destination);
+        const uint8 *source8 = reinterpret_cast<const uint8 *>(source);
 
         BSToBS(destination8, destinationBitShift, destinationBitSize, destinationIsSigned, source8, sourceBitShift, sourceBitSize, sourceIsSigned);
 
@@ -355,7 +355,7 @@ static inline bool BitSetToBitSet(T *& destination,
     else if ((sourceBitEnd <= 16u) && (destinationBitEnd <= 16u) && (granularity <= 16u)) {
         // if 16 is fine then operate with 16 bit integers
         uint16 *destination16 = reinterpret_cast<uint16 *>(destination);
-        uint16 *source16 = reinterpret_cast<uint16 *>(source);
+        const uint16 *source16 = reinterpret_cast<const uint16 *>(source);
 
         BSToBS(destination16, destinationBitShift, destinationBitSize, destinationIsSigned, source16, sourceBitShift, sourceBitSize, sourceIsSigned);
 
@@ -363,7 +363,7 @@ static inline bool BitSetToBitSet(T *& destination,
     else if ((sourceBitEnd <= 32u) && (destinationBitEnd <= 32u) && (granularity <= 32u)) {
         // if 32 is fine then operate with 32 bit integers
         uint32 *destination32 = reinterpret_cast<uint32 *>(destination);
-        uint32 *source32 = reinterpret_cast<uint32 *>(source);
+        const uint32 *source32 = reinterpret_cast<const uint32 *>(source);
 
         BSToBS(destination32, destinationBitShift, destinationBitSize, destinationIsSigned, source32, sourceBitShift, sourceBitSize, sourceIsSigned);
 
@@ -371,7 +371,7 @@ static inline bool BitSetToBitSet(T *& destination,
     else if ((sourceBitEnd <= 64u) && (destinationBitEnd <= 64u) && (granularity <= 64u)) {
         // if 64 is fine then operate with 64 bit integers
         uint64 *destination64 = reinterpret_cast<uint64 *>(destination);
-        uint64 *source64 = reinterpret_cast<uint64 *>(source);
+        const uint64 *source64 = reinterpret_cast<const uint64 *>(source);
 
         BSToBS(destination64, destinationBitShift, destinationBitSize, destinationIsSigned, source64, sourceBitShift, sourceBitSize, sourceIsSigned);
 
@@ -380,7 +380,7 @@ static inline bool BitSetToBitSet(T *& destination,
     else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
         // if 128 is fine then operate with float64(uint64)
         DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
-        DoubleInteger<uint64> *source128 = reinterpret_cast<DoubleInteger<uint64> *>(source);
+        const DoubleInteger<uint64> *source128 = reinterpret_cast<const DoubleInteger<uint64> *>(source);
 
         BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
     }
@@ -397,7 +397,7 @@ static inline bool BitSetToBitSet(T *& destination,
 
 template<typename T, typename T2>
 static inline bool BitSetToInteger(T2 & dest,
-                                   T *& source,
+                                   const T *& source,
                                    uint8 & sourceBitShift,
                                    const uint8 sourceBitSize,
                                    const bool sourceIsSigned) {
@@ -417,10 +417,10 @@ static inline bool IntegerToBitSet(T *& destination,
                                    uint8 & destinationBitShift,
                                    const uint8 destinationBitSize,
                                    const bool destinationIsSigned,
-                                   T2 & src) {
+                                   const T2 & src) {
 
     // converts T2 into source,sourceBitShift,sourceBitSize,sourceIsSigned
-    T *source = reinterpret_cast<T*>(&src);
+    const T *source = reinterpret_cast<const T*>(&src);
     uint8 sourceBitShift = 0u;
     uint8 sourceBitSize = static_cast<uint8>(sizeof(T2) * 8u);
     // detect if T2 has sign by seeing if we can initialise a number negative

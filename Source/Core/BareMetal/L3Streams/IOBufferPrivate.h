@@ -79,7 +79,7 @@ bool IntegerToStream(IOBuffer &ioBuffer,
                             const FormatDescriptor &format);
 
 bool BitSetToStream(IOBuffer &ioBuffer,
-                           uint32 * const numberAddress,
+                           uint32 const * numberAddress,
                            const uint8 numberBitShift,
                            const uint8 numberBitSize,
                            const bool numberIsSigned,
@@ -109,10 +109,23 @@ bool FloatToStream(IOBuffer &buffer,
  * @param[in] fd specifies the desired format for the string.
  * @return true if the string is printed correctly.
  */
-bool PrintCCString(IOBuffer & iobuff,
+bool PrintCCString(       IOBuffer & iobuff,
                           CCString const string,
                           const FormatDescriptor &fd,
                           bool addQuotesOnString = false);
+
+/**
+ * @brief Prints a CCString. If it does not fit in format print initial part then ?: xxxxxx?
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] string is the string to be printed.
+ * @param[in] fd specifies the desired format for the string.
+ * @return true if the string is printed correctly.
+ */
+bool PrintCCStringFit(    IOBuffer & iobuff,
+                          CCString const string,
+                          const FormatDescriptor &fd);
+
+
 
 /**
  * @brief Prints the bytes contained on a stream to a buffer.

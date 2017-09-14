@@ -185,7 +185,7 @@ const BasicArrayType DynamicZeroTermArray_BT = 5u;
 typedef uint8 CombinedArrayType;
 
 /**
- * @brief The type is a zero term vector of fixed size non-reallocable
+ * @brief
  */
 const CombinedArrayType SizedCArray = SizedCArray_AP ;
 

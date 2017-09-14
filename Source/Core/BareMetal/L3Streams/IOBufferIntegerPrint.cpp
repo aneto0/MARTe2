@@ -514,7 +514,7 @@ static bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
  * @return true if the format is correct, false otherwise.
  */
 static bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
-                                  uint32 *numberAddress,
+                                  uint32 const *numberAddress,
                                   uint8 numberBitShift,
                                   const uint8 numberBitSize,
                                   const bool numberIsSigned,
@@ -1433,7 +1433,7 @@ bool IntegerToStream(IOBuffer &ioBuffer,
  * @return true if the format is correct, false otherwise.
  */
 bool BitSetToStream(IOBuffer &ioBuffer,
-                    uint32 * const numberAddress,
+                    uint32 const * numberAddress,
                     const uint8 numberBitShift,
                     const uint8 numberBitSize,
                     const bool numberIsSigned,
