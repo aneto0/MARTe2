@@ -1,1 +1,2 @@
-/\.o:/s/^/..\..\/Build\msc\Tools\Tools\// 
+/\.o:/s/^/..\\..\\\\Build\\msc\\Tools\\Tools\\/ 
+s/\.o/\.obj/ 

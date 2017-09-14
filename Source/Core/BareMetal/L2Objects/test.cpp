@@ -136,8 +136,9 @@ void printTypeDescriptor(const TypeDescriptor &td){
 }
 
 void printType(const AnyType &at){
-    printf("\n");
+//    printf("\n");
     const VariableDescriptor &vd = at.GetFullVariableDescriptor();
+#if 0
     TypeDescriptor td;
 
 	uint32 index=0;
@@ -152,7 +153,7 @@ void printType(const AnyType &at){
     td = vd.GetFullTypeDescriptor();
     printTypeDescriptor(td);
     printf(" size = %Li\n",vd.GetSize());
-
+#endif
     MARTe::DynamicCString line;
     bool ret = vd.ToString(line);
     printf("%s\n",line.GetList());
@@ -457,6 +458,7 @@ void testOther();
 int pluto;
 
 int main(int argc, char **argv){
+
 
 //	testOther();
 //return 0;

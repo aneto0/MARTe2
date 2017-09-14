@@ -38,27 +38,39 @@ namespace MARTe{
  */
 DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const AnyType & parIn){
 
+
+
     bool ret = true;
     // void anytype
     AnyType par = parIn;
 
-    const VariableDescriptor &vd = parIn.GetFullVariableDescriptor();
-
-    TypeDescriptor td;
-    const void* dataPointer = NULL;
-    ret = vd.GetTopTypeDescriptor(td,0);
 
     if (ret){
         if (fd.desiredAction == PrintInfo) {
-        	ret = PrintAnyTypeInfo(iobuff,fd, parIn);
+        	ret = PrintAnyTypeInfo(iobuff, fd, parIn);
+        } else
+        if (fd.desiredAction == PrintStruct) {
+        	ret = false; // not supported yet
+        } else
+        {
 
-        } else {
-        	dataPointer = parIn.GetVariablePointer();
-        	ret = (dataPointer != NULL);
+            const VariableDescriptor &vd = parIn.GetFullVariableDescriptor();
+            const void* dataPointer = NULL;
+            TypeDescriptor td;
+            ret = vd.GetTopTypeDescriptor(td,0);
+
+            if (ret){
+            	dataPointer = parIn.GetVariablePointer();
+            	ret = (dataPointer != NULL);
+            }
 
             if (ret) {
                 //if the element is structured, the print is not supported.
             	if (td.isStructuredData){
+
+
+
+
                     if (fd.desiredAction != PrintAnything) {
                         if (fd.desiredAction != PrintStruct) {
                             REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a struct will be printed");

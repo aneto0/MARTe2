@@ -451,39 +451,86 @@ uint64 VariableDescriptor::GetSize() const{
 	return size;
 }
 
+static bool ReadLayer(char8 &modifier,uint64 &size,char8 *&buffer){
+	bool ret = false;
+	char8 token = *buffer;
+    if (token != '\0'){
+    	modifier = *buffer;
+    	buffer++;
+    	size = readNumber(buffer);
+    	ret = true;
+    }
+    return ret;
+}
+
 bool VariableDescriptor::BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo)const{
 	bool ret = true;
     char8 *buffer  = modifiers.GetList();
     char8 token ;
 
     layerNo++;
-	while((*buffer!=0) && (layerNo > 0)){
-	    char8 token = *buffer;
-	    if (token != '\0'){
-	    	modifier = *buffer;
-	    	buffer++;
-	    	size = readNumber(buffer);
-	    }
-	    layerNo--;
+	while(ret && (layerNo > 0)){
+		ret = ReadLayer(modifier,size,buffer);
+		layerNo--;
 	}
-    return (layerNo == 0);
+    return ret;
 }
 
+
+static bool BrowseModifiersLayerR( char8 &modifier,uint64 &size,char *buffer,int32 targetLayer,int32 &reverseDepth) {
+	bool ret = true;
+	bool isArray = false;
+	ret = ReadLayer(modifier,size,buffer);
+	if (((modifier == 'A') || (modifier == 'a')) && (ret)){
+		isArray = true;
+		// remember the target at the beginning of a sequence of A/a
+		if (reverseDepth < 0){
+			reverseDepth = targetLayer;
+		}
+	} else {
+		// end of sequence of array and not yet found target
+		if (targetLayer >= 0){
+			reverseDepth = -1;
+		}
+	}
+
+	if ((isArray) || (targetLayer > 0)){
+		char8 modifier2;
+		uint64 size2;
+		targetLayer--;
+		bool ret2 = BrowseModifiersLayerR( modifier2,size2,buffer,targetLayer,reverseDepth);
+
+		// skip results until reverse layers consumed
+		if (reverseDepth >= 0){
+			reverseDepth--;
+		} else {
+			modifier 	= modifier2;
+			size 		= size2;
+			ret 		= ret2;
+			reverseDepth = -1;
+		}
+	}
+
+	return ret;
+}
+
+// TODO fix ==> uint32 (* )[32] written as  uint32[32] *
 bool VariableDescriptor::ToString(DynamicCString &string)const{
 	bool ret=true;
 	int32 maxLayer =0;
 	char8 modifier;
 	uint64 size;
+	int32 rd = -1;
 	// first loop add all prefix modifiers that encapsulate: Vector<  Matrix<
-	while ( BrowseModifiersLayer(modifier,size,maxLayer) && ret){
+	while ( BrowseModifiersLayerR(modifier,size,modifiers.GetList(),maxLayer,rd) && ret){
 		const APLookUp *apl = reverseLookUpCode(modifier);
 		if (apl != NULL){
-//			printf("<%c-%i>",modifier,maxLayer);
 			string.AppendN(apl->cExpansionPre);
 		} else {
 			ret = false;
 		}
 		maxLayer++;
+		rd = -1;
 	}
 	maxLayer--;
 
@@ -492,9 +539,10 @@ bool VariableDescriptor::ToString(DynamicCString &string)const{
 	}
 
 	// second loop close encapsulating modifiers and add postfix ones> * [N]
-	while ((maxLayer >= 0) && ret){
-		ret = BrowseModifiersLayer(modifier,size,maxLayer);
-//		printf("@<%c-%i>",modifier,maxLayer);
+	while ((maxLayer>=0)  && ret){
+		rd = -1;
+		ret = BrowseModifiersLayerR(modifier,size,modifiers.GetList(),maxLayer,rd);
+
 		if (ret){
 			const APLookUp *apl = reverseLookUpCode(modifier);
 			if (apl != NULL){
@@ -509,6 +557,7 @@ bool VariableDescriptor::ToString(DynamicCString &string)const{
 		}
 		maxLayer--;
 	}
+
 	return ret;
 
 }

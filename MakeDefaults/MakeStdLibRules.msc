@@ -118,7 +118,8 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -Fe$@
 
 depends.msc : dependsRaw.msc
-	@echo /\.o:/s/^^/$(subst \\,\/,$(BUILD_DIR))\// > CreateMSCDepends.sed
+	@echo /\.o:/s/^^/$(subst \,\\,$(BUILD_DIR))\\/ > CreateMSCDepends.sed
+	@echo s/\.o/\.obj/ >> CreateMSCDepends.sed
 	sed -f CreateMSCDepends.sed dependsRaw.msc > depends.msc
 
 dependsRaw.msc: 

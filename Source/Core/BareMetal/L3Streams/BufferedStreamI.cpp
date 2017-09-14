@@ -82,7 +82,7 @@ bool BufferedStreamI::GetToken(BufferedStreamI & token,
 
     if ((inputIOBuffer != NULL) && (outputIOBuffer != NULL)) {
         if(CanRead()) {
-            ret = inputIOBuffer->GetToken(*outputIOBuffer, delimiters, saveTerminator, skip);
+            ret = IOBuffer::GetToken(*inputIOBuffer,*outputIOBuffer, delimiters, saveTerminator, skip);
         }
     }
 
@@ -97,7 +97,7 @@ bool BufferedStreamI::SkipTokens(const uint32 count,
 // retrieve stream mechanism
         IOBuffer *inputBuffer = GetReadBuffer();
         if (inputBuffer != NULL) {
-            ret = inputBuffer->SkipTokens(count, terminator);
+            ret = IOBuffer::SkipTokens(*inputBuffer,count, terminator);
         }
     }
 
@@ -146,7 +146,7 @@ bool BufferedStreamI::PrintFormatted(CCString const format, const AnyType pars[]
         IOBuffer *outputBuffer = GetWriteBuffer();
         if (outputBuffer != NULL) {
 
-            ret = outputBuffer->PrintFormatted(format, pars);
+            ret = IOBuffer::PrintFormatted(*outputBuffer,format, pars);
 
         }
     }

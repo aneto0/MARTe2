@@ -78,7 +78,7 @@ public:
     /**
      * TODO
      */
-    inline bool AppendNum(uint32 num,bool fill0=false);
+    inline bool AppendNum(uint64 num,int32 fill0=0);
 
 };
 
@@ -105,27 +105,37 @@ bool DynamicCString::operator==(const CCString &s) const{
 	return isSameAs(s.GetList());
 }
 
-bool DynamicCString::AppendNum(uint32 num,bool fill0){
+bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 	bool ret;
+	if (num > 100000000u){
+		uint64 numH = num/100000000u;
+		num = num - numH * 100000000u;
+		ret = AppendNum(numH,fill0-8);
+		ret = ret && AppendNum(num,8);
+	} else
 	if (num > 10000u){
 		uint32 numH = num/10000u;
 		num = num - numH * 10000u;
-		AppendNum(numH,fill0);
-		fill0=true;
-	}
+		ret = AppendNum(numH,fill0-4);
+		ret = ret && AppendNum(num,4);
+	} else
 	if (num > 100u){
 		uint32 numH = num/100u;
 		num = num - numH * 100u;
-		AppendNum(numH,fill0);
-		fill0=true;
+		ret = AppendNum(numH,fill0-2);
+		ret = ret && AppendNum(num,2);
+	} else {
+		while (fill0>2){
+			Append('0');
+			fill0--;
+		}
+		uint32 numH = num/10u;
+		if ((num >= 10) || (fill0>=2)){
+			ret = Append ((char8)(numH) + '0');
+		}
+		num = num - numH * 10u;
+		ret = ret && Append ((char8)(num) + '0');
 	}
-	uint32 numH = num/10u;
-	if ((num >= 10) || (fill0)){
-		ret = Append ((char8)(numH) + '0');
-	}
-	num = num - numH * 10u;
-	ret = ret && Append ((char8)(num) + '0');
-
 	return ret;
 }
 
