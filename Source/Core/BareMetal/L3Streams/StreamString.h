@@ -83,23 +83,7 @@ public:
      *   Position() == 0 &&
      *   Size() == StringHelper::Length(initialisationString)
      */
-    StreamString(const char8 * const initialisationString);
-
-    /**
-     * @brief Constructor from a null terminated C-string
-     * @param[in] initialisationString is the char8 pointer of the
-     * null terminated C-string.
-     * @pre
-     *   true
-     * @post
-     *   Buffer() != NULL &&
-     *   CanRead() &&
-     *   CanWrite() &&
-     *   CanSeek() &&
-     *   Position() == 0 &&
-     *   Size() == StringHelper::Length(initialisationString)
-     */
-    StreamString(CCString initialisationString);
+    StreamString(CCString const initialisationString);
 
     /**
      * @brief Copy Constructor.
@@ -127,8 +111,7 @@ public:
      * updated with the bytes actually read.
      * @return false if errors on copying data
      */
-    virtual bool Read(char8* output,
-                      uint32 & size);
+    virtual bool Read(char8* const output, uint32 & size);
 
     /**
      * @brief Write from a buffer to the string.
@@ -137,26 +120,21 @@ public:
      * updated with the bytes actually written.
      * @return false if errors on copying data
      */
-    virtual bool Write(const char8 * const input,
-                       uint32 & size);
+    virtual bool Write(const char8 * const input, uint32 & size);
 
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Read(*)
      * with infinite timeout.
      * @see StreamI::Read(*).
      */
-    virtual bool Read(char8 * const output,
-                      uint32 & size,
-                      const TimeoutType &timeout);
+    virtual bool Read(char8 * const output, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Write(*)
      * with infinite timeout.
      * @see StreamI::Write(*)
      */
-    virtual bool Write(const char8 * const input,
-                       uint32 & size,
-                       const TimeoutType &timeout);
+    virtual bool Write(const char8 * const input, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @brief Queries if the stream is writable.
@@ -226,7 +204,7 @@ public:
      * @warning This pointer may not be conserved as it might be invalid after
      * any write operation, because a realloc is used.
      */
-    inline const char8 *Buffer();
+    inline CCString Buffer();
 
     /**
      * @brief Gets a pointer to the beginning of the internal buffer with read
@@ -234,7 +212,7 @@ public:
      * @details The final \0 is added before the return.
      * @return The pointer to the internal buffer.
      */
-    inline char8 *BufferReference();
+    inline CString BufferReference();
 
     /**
      * @brief Gets a pointer to the tail of the internal buffer with read only
@@ -243,7 +221,7 @@ public:
      * @return pointer to the tail of the internal buffer.
      * @pre ix >= 0 && ix < Size().
      */
-    inline const char8 *Tail(const uint32 ix) const;
+    inline CCString Tail(const uint32 ix) const;
 
     /*-----------------------------------------------------------------------*/
 
@@ -253,13 +231,6 @@ public:
      * @return true if successful. false otherwise.
      */
     inline bool operator=(const char8 c);
-
-    /**
-     * @brief Sets StreamString to be a copy of the input parameter.
-     * @param[in] s The string to copy.
-     * @return true if successful. false otherwise.
-     */
-    inline bool operator=(const char8 * const s);
 
     /**
      * @brief Sets StreamString to be a copy of the input parameter.
@@ -287,7 +258,7 @@ public:
      * @param[in] s The string to concatenate.
      * @return true if successful. false otherwise.
      */
-    inline bool operator+=(const char8 * const s);
+    inline bool operator+=(CCString const  s);
 
     /**
      * @brief Concatenate the StreamString to the string contained in the buffer.
@@ -308,7 +279,7 @@ public:
      * @param[in] s The buffer to be compared with.
      * @return true if the two buffers are the same. false otherwise.
      */
-    inline bool operator==(const char8 * const s) const;
+    inline bool operator==(CCString const  s) const;
 
     /**
      * @brief Compare the buffer content with the input content.SOURCE_
@@ -322,7 +293,7 @@ public:
      * @param[in] s The StreamString to be compared with.
      * @return trye if the two buffer are different, false otherwise.
      */
-    inline bool operator!=(const char8 * const s) const;
+    inline bool operator!=(CCString const  s) const;
 
     /**
      * @brief Allows access to character within the buffer.
@@ -380,14 +351,14 @@ private:
      * @param[in] s The pointer to the string to be copied or appended.
      * @return true if successful. false otherwise.
      */
-    bool Append(const char8 * const s);
+    bool Append(CCString const  s);
 
     /**
      * @brief Sets a C-string to the buffer.
      * @param[in] s The pointer to the string to be copied or appended.
      * @return true if successful. false otherwise.
      */
-    bool Set(const char8 * const s);
+    bool Set(CCString const  s);
 
     /**
      * @brief Appends a StreamString at the end of the buffer.
@@ -418,17 +389,17 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-const char8 *StreamString::Buffer() {
+CCString StreamString::Buffer() {
     buffer.Terminate();
     return buffer.Buffer();
 }
 
-char8 *StreamString::BufferReference() {
+CString StreamString::BufferReference() {
     buffer.Terminate();
     return buffer.BufferReference();
 }
 
-const char8 *StreamString::Tail(const uint32 ix) const {
+CCString StreamString::Tail(const uint32 ix) const {
     const char8* result;
     bool ok = (ix <= (buffer.UsedSize() - 1u));
     if (ok) {
@@ -441,16 +412,8 @@ const char8 *StreamString::Tail(const uint32 ix) const {
     return result;
 }
 
-bool StreamString::operator=(const char8 c) {
-    return Set(c);
-}
-
-bool StreamString::operator=(const char8 * const s) {
-    return Set(s);
-}
-
 bool StreamString::operator=(CCString s) {
-    return Set(s.GetList());
+    return Set(s);
 }
 
 StreamString& StreamString::operator=(const StreamString &s) {
@@ -466,7 +429,7 @@ bool StreamString::operator+=(const char8 c) {
     return Append(c);
 }
 
-bool StreamString::operator+=(const char8 * const s) {
+bool StreamString::operator+=(CCString const  s) {
     return Append(s);
 }
 
@@ -481,19 +444,18 @@ bool StreamString::operator==(const StreamString &s) const {
     return ok1 && ok2;
 }
 
-bool StreamString::operator==(const char8 * const s) const {
-    bool ok1 = (s != NULL);
-    bool ok2 = (StringHelper::Length(s) == buffer.UsedSize());
+bool StreamString::operator==(CCString const  s) const {
+    bool ok1 = !(s.IsNullPtr());
+    bool ok2 = (s.GetSize() == buffer.UsedSize());
     bool ok3 = (StringHelper::CompareN(buffer.Buffer(), s, buffer.UsedSize()) == 0);
     return (ok1) && (ok2) && (ok3);
-
 }
 
 bool StreamString::operator!=(const StreamString &s) const {
     return !((*this) == s);
 }
 
-bool StreamString::operator!=(const char8 * const s) const {
+bool StreamString::operator!=(CCString const  s) const {
     return !((*this) == s);
 }
 

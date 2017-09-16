@@ -170,6 +170,12 @@ public:
      */
     ErrorManagement::ErrorType  	MultipleDereference (CCString CExpresssion);
 
+    /**
+     * @brief pointer2Variable = NULL
+     * @return  (pointer2Variable == NULL)
+     */
+    inline bool IsVoid() const;
+
     /** INTERFACES GETTERS*/
 
     /**
@@ -207,6 +213,11 @@ private:
 AnyType::AnyType(){
     pointer2Variable = NULL_PTR(void *);
 }
+
+bool AnyType::IsVoid() const{
+	return (pointer2Variable == NULL_PTR(void *));
+}
+
 
 AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):variableDescriptor(typeDescriptorIn){
     pointer2Variable = const_cast<void *>(dataPointerIn);

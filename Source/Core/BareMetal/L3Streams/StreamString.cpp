@@ -53,8 +53,7 @@ StreamString::StreamString() :
     }
 }
 
-StreamString::StreamString(const char8 * const initialisationString) :
-        BufferedStreamI() {
+StreamString::StreamString(CCString const initialisationString) :   BufferedStreamI() {
     //Initialise and terminate an empty string
     bool ret;
     ret = buffer.SetBufferAllocationSize(0u);
@@ -63,29 +62,13 @@ StreamString::StreamString(const char8 * const initialisationString) :
         REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 
-    if (initialisationString != static_cast<const char8 *>(NULL)) {
+    if (!(initialisationString.IsNullPtr())) {
         if (!Set(initialisationString)) {
             REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
         }
     }
 }
 
-StreamString::StreamString(CCString initialisationString) :
-        BufferedStreamI() {
-    //Initialise and terminate an empty string
-    bool ret;
-    ret = buffer.SetBufferAllocationSize(0u);
-
-    if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
-    }
-
-    if (initialisationString.GetList()!= static_cast<const char8 *>(NULL)) {
-        if (!Set(initialisationString.GetList())) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
-        }
-    }
-}
 
 /*lint -e{1738} . Justification: StreamI is only an interface there is nothing to be copied. */
 StreamString::StreamString(const StreamString &toCopy) :
@@ -106,10 +89,7 @@ StreamString::StreamString(const StreamString &toCopy) :
 }
 
 StreamString::operator AnyType() {
-    void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, SString, static_cast<uint16>(sizeof(StreamString) * 8u));
-
-    return AnyType(dataDescriptor, static_cast<uint8>(0u), dataPointer);
+    return AnyType( StreamStringType, static_cast<void *>(this));
 }
 
 StreamString::~StreamString() {
@@ -125,13 +105,11 @@ IOBuffer *StreamString::GetWriteBuffer() {
     return &buffer;
 }
 
-bool StreamString::Read(char8* const output,
-                        uint32 & size) {
+bool StreamString::Read(char8* const output, uint32 & size) {
     return this->buffer.Read(&output[0], size);
 }
 
-bool StreamString::Write(const char8* const input,
-                         uint32 & size) {
+bool StreamString::Write(const char8* const input, uint32 & size) {
     return this->buffer.Write(&input[0], size);
 
 }
@@ -146,9 +124,7 @@ bool StreamString::Read(char8 * const output,
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
-bool StreamString::Write(const char8 * const input,
-                         uint32 & size,
-                         const TimeoutType &timeout) {
+bool StreamString::Write(const char8 * const input,uint32 & size,const TimeoutType &timeout) {
     return Write(input, size);
 }
 
@@ -222,26 +198,26 @@ bool StreamString::Set(const char8 c) {
     return ret;
 }
 
-bool StreamString::Append(const char8 * const s) {
+bool StreamString::Append(CCString const s ) {
     bool ret = false;
-    if (s != NULL) {
-        uint32 size = StringHelper::Length(s);
+    if (!(s.IsNullPtr())) {
+        uint32 size = s.GetSize();
         if (!buffer.Seek(buffer.UsedSize())) {
             REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         else {
-            ret = buffer.Write(s, size);
+            ret = buffer.Write(s.GetList(), size);
         }
     }
     return ret;
 }
 
-bool StreamString::Set(const char8 * const s) {
+bool StreamString::Set(CCString const s) {
     bool ret = false;
-    if (s != NULL) {
-        uint32 size = StringHelper::Length(s);
+    if (!(s.IsNullPtr())) {
+        uint32 size = s.GetSize();
         buffer.Empty();
-        ret = buffer.Write(s, size);
+        ret = buffer.Write(s.GetList(), size);
     }
     return ret;
 }

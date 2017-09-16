@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "ClassRegistryItemT.h"
+//#include "ClassRegistryItemT.h"
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -43,8 +43,7 @@
 
 namespace MARTe {
 
-static bool SerializeStaticMatrix(const AnyType &typeIn,
-                                  AnyType &typeOut) {
+static bool SerializeStaticMatrix(const AnyType &typeIn,   AnyType &typeOut) {
     uint32 numberOfColumns = typeIn.GetNumberOfElements(0u);
     uint32 numberOfRows = typeIn.GetNumberOfElements(1u);
     TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();

@@ -50,7 +50,7 @@ namespace MARTe {
 /*                           Static implementations                          */
 /*---------------------------------------------------------------------------*/
 
-
+// TODO recycle code
 #if 0
 
 
@@ -438,7 +438,7 @@ bool IOBuffer::GetToken(
             CCString skipCharacters){
 
 
-    if (skipCharacters == NULL) {
+    if (skipCharacters.IsNullPtr()) {
         skipCharacters = terminator;
     }
 
@@ -462,8 +462,8 @@ bool IOBuffer::GetToken(
         }
         else {
 
-            bool isTerminator = (StringHelper::SearchChar(terminator, c) != NULL);
-            bool isSkip = (StringHelper::SearchChar(skipCharacters, c) != NULL);
+            bool isTerminator = !(StringHelper::SearchChar(terminator, c).IsNullPtr());
+            bool isSkip = !(StringHelper::SearchChar(skipCharacters, c).IsNullPtr());
             if ((isTerminator) || (c == '\0')) {
                 // quit only if some data was read, otw just skip separator block
                 if ((tokenSize != 0u) || (!isSkip)) {
@@ -501,7 +501,7 @@ bool IOBuffer::SkipTokens(IOBuffer &iob, uint32 count, CCString terminator){
         }
         else {
             //
-            if ((StringHelper::SearchChar(terminator, c) != NULL) || (c == '\0')) {
+            if (!(StringHelper::SearchChar(terminator, c).IsNullPtr()) || (c == '\0')) {
                 // quit only if some data was read, otherwise just skip separator block
                 if (tokenSize != 0u) {
                     tokenSize = 0u;
@@ -524,7 +524,7 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
     // indicates active parameter
     int32 parsIndex = 0;
     // checks silly parameter
-    if (format != NULL) {
+    if (!(format.IsNullPtr())) {
 
         // loops through parameters
         while (!quit) {
@@ -534,7 +534,8 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                     ret = false;
                     quit = true;
                 }
-                format = &format[1];
+//                format = &format[1];
+                format++;
             }
             if (ret) {
 
@@ -545,7 +546,8 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                 else {
 
                     // consume %
-                    format = &format[1];
+//                    format = &format[1];
+                    format++;
 
                     // if not end then %
                     // keep on parsing format to build a FormatDescriptor
@@ -559,7 +561,8 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                         // if void simply skip and continue
                         if (!pars[parsIndex].IsVoid()) {
                             // use it to process parameters
-                            if (!PrintToStream(iob, pars[parsIndex], fd)) {
+                        	if (!PrintAnyType(iob, fd, pars[parsIndex])){
+//                            if (!PrintToStream(iob, pars[parsIndex], fd)) {
                                 ret = false;
                                 quit = true;
                             }

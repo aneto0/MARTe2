@@ -126,7 +126,7 @@ bool PrintCCStringFit(    IOBuffer & iobuff,
                           const FormatDescriptor &fd);
 
 
-
+#if 0
 /**
  * @brief Prints the bytes contained on a stream to a buffer.
  * @param[out] iobuff is the output stream buffer.
@@ -149,7 +149,7 @@ bool PrintStream(IOBuffer & iobuff,
 bool PrintStructuredDataInterface(IOBuffer &iobuff,
                                          StructuredDataI * const structuredData,
                                          uint32 nodeLevel = 0u);
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

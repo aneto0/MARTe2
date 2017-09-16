@@ -302,6 +302,7 @@ public:
 #define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray) )
 #define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
 #define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
+#define  StreamStringType            TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,SString) | TDRANGE(arraySize,1))
 #define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
 /// the typeDescriptor for a Stream
 #define  StreamType                  TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,Stream) )
