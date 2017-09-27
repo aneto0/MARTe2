@@ -145,9 +145,20 @@ public:
     /**
      * @brief returns size of top indirecting layer.
      * each array layer is multiplied until a redirecting layer or the final layer is encountered
+     * Note that size calculation stops at every indirection layer: pointers, Zero Term Array, Vectors and Matrices
+     * In summary it returns the space necessary to store all the memory up until it encounters any form of indirection
      * @return the full size of the top layer in bytes
      */
     uint64 GetSize() const;
+
+    /**
+     * @brief returns size of all the memory addressed by this variable.
+     * each array layer size is multiplied or summed until a pointer or the final layer is encountered
+     * Calculation stops at a pointer as the size of the vector addressed by the pointer is not known
+     * It accounts for both fixed size layers and variable size ones
+     * @return the full size of the memory necessary to store this var
+     */
+    uint64 GetDeepSize(void *address) const;
 
     /**
      * TODO
@@ -163,6 +174,15 @@ public:
     bool ToString(DynamicCString &string) const;
 
 private:
+
+    /**
+     * TODO
+     * Returns false when the end of the layers is reached
+     * Arrays are used to multiply the size of what comes next
+     * operates recursively
+     * uses the provided later string, not the class one
+     */
+    bool LayerSize(CCString modifierString,uint64 &size);
 
     /**
      * TODO
