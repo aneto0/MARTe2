@@ -303,11 +303,11 @@ static uint32 toNumber(char8 c){
 	return  static_cast<uint32>(c - '0') ;
 }
 
-static uint32 readNumber(char8 *&buffer){
+static uint32 readNumber(CCString &buffer){
 	uint32 result = 0;
-	while (isNumber(*buffer)){
+	while (isNumber(buffer[0])){
 		result = result * 10u;
-		result += toNumber(*buffer);
+		result += toNumber(buffer[0]);
 		buffer++;
 	}
 	return result;
@@ -342,7 +342,7 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
 }
 
 bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) const {
-    char8 *buffer = modifiers.GetList();
+    CCString buffer = modifiers.GetList();
     char8 token;
     uint32 size;
     depth++;
@@ -380,17 +380,16 @@ bool VariableDescriptor::GetTopTypeDescriptor(TypeDescriptor &td, uint32 depth) 
 bool VariableDescriptor::GetModifiersLayer(char8 &modifier,uint64 &size,bool remove){
 	bool ret = false;
 
-    char8 *buffer  = modifiers.GetList();
-    char8 *pStart = buffer;
-    char8 token = *buffer;
+    CCString buffer  = modifiers.GetList();
+    char8 token = *buffer[0];
     if (token != '\0'){
-    	modifier = *buffer;
+    	modifier = buffer[0];
     	buffer++;
     	size = readNumber(buffer);
     	ret = true;
     }
     if (ret && remove){
-    	uint32 step = (uint32)(buffer - pStart);
+    	uint32 step = (uint32)(buffer.GetList() - modifiers.GetList());
     	ret = modifiers.Remove(step);
     }
 
@@ -418,11 +417,60 @@ bool VariableDescriptor::InsertModifiersLayer(char8 modifier,uint64 size){
 	return ret;
 }
 
-
+/**
+ * extracts information about a layer
+ * updates the layer string pointer
+ */
+static inline bool GetLayerInfo(CCString &modifierString,char8 &c,uint32 &n ){
+	bool ret = true;
+	c = modifierString[0];
+	if (c == '/0'){
+		ret = false;
+	} else {
+		modifierString++;
+		n = readNumber(modifierString);
+	}
+	return ret;
+}
+/**
+ * Returns false when the end of the layers is reached
+ * Arrays are used to multiply the size of what comes next
+ */
+ bool VariableDescriptor::LayerSize(CCString modifierString,uint64 &size){
+	char8 c;
+	uint32 n;
+	size = 1;
+	bool ret = true;
+	if (GetLayerInfo(modifierString,c,n)){
+		ret = true;
+		if (c=='A') {
+			ret = LayerSize(modifierString, size);
+			size = size * n;
+		} else {
+			if ((c=='v') || (c=='V')){
+				size = sizeof(Vector<int>);
+			} else
+			if ((c=='m') || (c=='M')){
+				size = sizeof(Matrix<int>);
+			} else {
+				// pPzZdDsS
+				size = sizeof(void *);
+			}
+		}
+	} else {
+		ret = false;
+		size = typeDescriptor.Size();
+	}
+	return ret;
+}
 
 uint64 VariableDescriptor::GetSize() const{
-	uint64 size = 1;
 
+	uint64 size = 1;
+	LayerSize(modifiers,size);
+
+	return size;
+/*
     char8 *buffer = modifiers.GetList();
     uint8 code = *buffer;
 	const APLookUp *apl;
@@ -449,7 +497,107 @@ uint64 VariableDescriptor::GetSize() const{
 	}
 
 	return size;
+	*/
 }
+
+
+/**
+ * true if the object has a size that depends on the content. (strings)
+ */
+bool isVariableSize(CCString modifierString){
+	const CCString variableSizeModifiers = "VvMmZzDdSs";
+	bool isVariable = false;
+
+	if (!modifierString.IsNullPtr()){
+		char8 c = modifierString[0];
+		while (!isVariable && (c != '\0')){
+			isVariable =  (variableSizeModifiers.Find(c) != 0xFFFFFFFFu);
+			modifierString++;
+		}
+	}
+	return isVariable;
+}
+
+static uint64 GetDeepSizeR(CCString modifierString, const uint8 *pointer,uint64 tdSize) {
+	const APLookUp *apl;
+	// size for data
+	uint64 size = 0;
+	// size for data overhead // 0 terminator, pointers etc
+	uint64 storageSize = 0;
+	uint64 nOfElements = 0;
+	uint64 nextLayerSize = 0; // size of next layer /stops at pointers
+
+
+	char8 code  = '/0';
+	uint32 number;
+	GetLayerInfo(modifierString,code,number);
+	LayerSize(modifierString,nextLayerSize);
+
+	if (code == '/0') {
+		size = tdSize;
+	} else
+	if ((code == 'P') || (code == 'p')){
+//		size = sizeof(void *);
+		// allows browsing past pointers assuming one element only
+		storageSize = sizeof(void *);
+		nOfElements = 1;
+		uint8 **pp = static_cast<uint8 **>(pointer);
+		pointer = *pp;
+	} else
+	if ((code == 'V') || (code == 'v')){
+		storageSize = sizeof (Vector<char8>);
+		const Vector<char8> *pv = static_cast<const Vector<char8> *>(pointer);
+		// TOD better check validity
+		pointer = static_cast<uint8 *>(pv->GetDataPointer());
+		nOfElements = pv->GetNumberOfElements();
+	} else
+	if ((code == 'M') || (code == 'm')){
+		storageSize = sizeof (Matrix<char8>);
+		const Matrix<char8> *pm = static_cast<const Matrix<char8> *>(pointer);
+		// TOD better check validity
+		pointer = static_cast<uint8 *>(pm->GetDataPointer());
+		nOfElements = pm->GetNumberOfColumns()*pm->GetNumberOfRows();
+	} else
+	if ((code == 'D') || (code == 'd') ||
+	    (code == 'S') || (code == 's') ||
+	    (code == 'Z') || (code == 'z')){
+		storageSize = sizeof (ZeroTerminatedArray<char8>);
+		nOfElements = ZeroTerminatedArrayGetSize(pointer,nextLayerSize);
+	} else
+	if (code == 'A') {
+		nOfElements = 1;
+		while (code == 'A') {
+			modifierString++;
+	    	uint32 arrayLayerSize = readNumber(modifierString);
+	    	nOfElements = nOfElements * arrayLayerSize;
+	    }
+	}
+
+	if (nOfElements > 0){
+		if (isVariableSize(modifierString)){
+			size = 0;
+			uint8 *ptr = pointer;
+			for (uint64 i = 0;i<nOfElements;i++){
+				size +=  GetDeepSizeR(modifierString, ptr,tdSize) ;
+				ptr+= nextLayerSize;
+			}
+		} else {
+			size = nOfElements * GetDeepSizeR(modifierString, pointer,tdSize) ;
+		}
+	}
+
+
+	return size;
+
+
+}
+uint64 VariableDescriptor::GetDeepSize(void *pointer) const{
+
+	return GetDeepSizeR(modifiers.GetList(),pointer,this->typeDescriptor.Size());
+}
+
+
+
 
 static bool ReadLayer(char8 &modifier,uint64 &size,char8 *&buffer){
 	bool ret = false;

@@ -31,6 +31,7 @@ OBJSX=  BasicType.x \
         LinkedListable.x \
         LinkedListHolder.x \
         BalancedTreeNode.x \
+        ZeroTermArray.x \
         ErrorType.x
         
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

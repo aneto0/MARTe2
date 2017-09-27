@@ -40,6 +40,13 @@
 
 namespace MARTe {
 
+/**
+ * @brief calculate the number of elements of any ZeroTermArray whose elements have size elSize
+ * @param[in] pointer is the pointer to the data array
+ * @param[in] elSize is the size of each element in the array
+ * @return the number of elements until one with all zeroes is found
+ */
+uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize);
 
 /**
  * @brief Describes a zero-terminated array.
@@ -74,6 +81,12 @@ public:
     uint32 GetSize() const;
 
     /**
+     * @brief Finds the first location in the array that contains T
+     * @return the position in the array where T is found, 0xFFFFFFFF if not found.
+     */
+    uint32 Find(const T & data) const;
+
+    /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
@@ -93,6 +106,7 @@ public:
 
     /**
      * move pointer ahead of one element. Does not checks limits
+     * note that the parameter int is only to specify postpending
      */
     inline void operator++(int);
 
@@ -118,6 +132,9 @@ public:
      * @return true if \a arrayIn is the same.
      */
     inline bool isSameAs(const T *arrayIn) const;
+
+
+
 protected:
 
     /**
@@ -172,6 +189,22 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
         }
     }
     return size;
+}
+
+
+template<typename T>
+uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
+    uint32 pos = 0xFFFFFFFFu;
+    if (array != NULL_PTR(T*)) {
+        uint32 index = 0;
+        while (!Zero(array[index]) && (pos == 0xFFFFFFFFu)) {
+        	if (data == array[index]){
+        		pos = index;
+        	}
+            index++;
+        }
+    }
+    return pos;
 }
 
 template<typename T>
