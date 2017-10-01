@@ -49,121 +49,23 @@
 
 namespace MARTe{
 
-void printTypeDescriptor(const TypeDescriptor &td){
-    const char8 *consts= "";
-    if (td.dataIsConstant){
-        //printf ("const ");
-    	consts = "const ";
-    }
-
-    if (td.isStructuredData){
-        printf ("%s",consts);
-//        printf ("%sS(%i) ",consts,(int)td.structuredDataIdCode);
-   		ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(td);
-        if (cri != NULL) printf ("%s ",cri->GetClassName().GetList());
-        else printf ("unknown_struct_code(%i) ",(int)td.structuredDataIdCode);
-
-    } else {
-    	if (td.IsComplexType()){
-            printf ("%s%s ",consts,BasicTypeName(td.type,td.complexType).GetList());
-    	} else
-        if (td.IsBitType()){
-            printf ("%s%s%i:%i ",consts,BasicTypeName(td.type,0).GetList(),(int)td.numberOfBits,(int)td.bitOffset);
-        } else
-        if (td.arrayProperty == SizedCArray_AP){
-           	if (td.arraySize == 0){
-           		printf ("%s%s%i [>2M]",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-           	} else
-           	if (td.arraySize == 1){
-           		printf ("%s%s%i",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-           	} else
-           	{
-           		printf ("%s%s%i [%i]",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
-           	}
-        } else
-        if (td.arrayProperty == StaticZeroTermArray_AP){
-           	if (td.arraySize == 0){
-                printf ("StaticZeroTerminatedArray<%s%s%i,>2M>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-           	} else {
-                printf ("StaticZeroTerminatedArray<%s%s%i,%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
-           	}
-
-        } else
-        if (td.arrayProperty == ConstStaticZeroTermArray_AP){
-            printf ("const StaticZeroTerminatedArray<%s%s%i,%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize),(int)td.arraySize);
-        } else {
-        	uint32 temp = td.combinedArrayType;
-//        	printf("%x\n",temp);
-        	switch(temp){
-            case ZeroTermArray:{
-                printf ("ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case ConstZeroTermArray:{
-                printf ("const ZeroTerminatedArray<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case DynamicZeroTermArray:{
-                printf ("DynamicZeroTerminatedArray<%s%i>",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case ConstDynamicZeroTermArray:{
-                printf ("const DynamicZeroTerminatedArray<%s%i>",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case Array1D:{
-             	printf ("Vector<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case ConstArray1D:{
-             	printf ("const Vector<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case Array2D:{
-                printf ("Matrix<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case ConstArray2D:{
-                printf ("const Matrix<%s%s%i>",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case PointerArray:{
-                printf ("(%s%s%i)* ",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            case ConstPointerArray:{
-                printf ("(%s%s%i)* const",consts,BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            default:
-            case ArrayUnknown:{
-                printf (" %s%i ?",BasicTypeName(td.type,0).GetList(),BitsFromBasicObjectSize((int)td.objectSize));
-            }break;
-            }
-        }
-    }
-
-}
 
 void printType(const AnyType &at){
-//    printf("\n");
     const VariableDescriptor &vd = at.GetFullVariableDescriptor();
-#if 0
-    TypeDescriptor td;
 
-	uint32 index=0;
-    while (vd.GetTopTypeDescriptor(td,index++)){
-    	printTypeDescriptor (td);
-    }
-    printf("\n");
-
-    const void *address = at.GetVariablePointer();
-    CCString mods = vd.GetModifierString();
-    printf ("@%p{%-12s}",address,mods.GetList());
-    td = vd.GetFullTypeDescriptor();
-    printTypeDescriptor(td);
-    printf(" size = %Li\n",vd.GetSize());
-#endif
     MARTe::DynamicCString line;
     bool ret = vd.ToString(line);
-    printf("%s\n",line.GetList());
+    printf("%s",line.GetList());
+
+    uint64 dataSize;
+    uint64 storageSize;
+    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+
+    int sz = dataSize;
+    int stsz = storageSize;
+    printf(" sz = %i stsz = %i\n",sz,stsz);
 }
 
-/*
-static bool isNumber(char8 c){
-	return ((c >='0') && (c <='9'));
-}
-*/
 
 template <class T>
 ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
@@ -209,6 +111,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
         	int64 delta =  reinterpret_cast<const char8 *>(at.GetVariablePointer()) - reinterpret_cast<const char8  *>(&memory[0]);
         	printf("[Address delta(B)= %Li] ",delta);
         }
+    	printf("\n");
         printType(at);
     } else {
         ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];

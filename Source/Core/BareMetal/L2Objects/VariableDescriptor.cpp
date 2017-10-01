@@ -425,8 +425,9 @@ bool VariableDescriptor::InsertModifiersLayer(char8 modifier,uint64 size){
 static inline bool GetLayerInfo(CCString &modifierString,char8 &modifier,uint64 &size ){
 	bool ret = true;
 	modifier = modifierString[0];
-	if (modifier == '/0'){
+	if (modifier == '\0'){
 		ret = false;
+		size = 0;
 	} else {
 		modifierString++;
 		size = readNumber(modifierString);
@@ -811,7 +812,10 @@ static bool BrowseModifiersLayerR( char8 &modifier,uint64 &size,CCString modifie
 	bool ret = true;
 	bool isArray = false;
 	ret = GetLayerInfo(modifiers,modifier,size);
-	if (((modifier == 'A') || (modifier == 'a')) && (ret)){
+
+//printf("{%c|%i}%i",modifier,size,targetLayer);
+
+	if (((modifier == 'A') || (modifier == 'a')) && ret){
 		isArray = true;
 		// remember the target at the beginning of a sequence of A/a
 		if (reverseDepth < 0){
@@ -824,21 +828,26 @@ static bool BrowseModifiersLayerR( char8 &modifier,uint64 &size,CCString modifie
 		}
 	}
 
-	if ((isArray) || (targetLayer > 0)){
-		char8 modifier2;
-		uint64 size2;
-		targetLayer--;
-		bool ret2 = BrowseModifiersLayerR( modifier2,size2,modifiers,targetLayer,reverseDepth);
+		if ((isArray) || (targetLayer > 0)){
+			char8 modifier2;
+			uint64 size2;
+			targetLayer--;
+//printf("@");
+			bool ret2 = BrowseModifiersLayerR( modifier2,size2,modifiers,targetLayer,reverseDepth);
+//if (ret2)printf("!");
 
-		// skip results until reverse layers consumed
-		if (reverseDepth >= 0){
-			reverseDepth--;
-		} else {
-			modifier 	= modifier2;
-			size 		= size2;
-			ret 		= ret2;
-			reverseDepth = -1;
-		}
+			// skip results until reverse layers consumed
+			if (reverseDepth >= 0){
+//printf(">");
+				reverseDepth--;
+			} else {
+//printf("<");
+				modifier 	= modifier2;
+				size 		= size2;
+				ret 		= ret2;
+				reverseDepth = -1;
+//printf("(%c|%i)%i",modifier,size,targetLayer);
+			}
 	}
 
 	return ret;
@@ -853,6 +862,7 @@ bool VariableDescriptor::ToString(DynamicCString &string)const{
 	int32 rd = -1;
 	// first loop add all prefix modifiers that encapsulate: Vector<  Matrix<
 	while ( BrowseModifiersLayerR(modifier,size,modifiers.GetList(),maxLayer,rd) && ret){
+//printf("[%c-%x|%i]",modifier,modifier,size);
 		const APLookUp *apl = reverseLookUpCode(modifier);
 		if (apl != NULL){
 			string.AppendN(apl->cExpansionPre);
