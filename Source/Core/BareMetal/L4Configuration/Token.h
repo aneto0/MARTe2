@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "CCString.h"
 #include "StreamString.h"
 #include "TokenInfo.h"
 /*---------------------------------------------------------------------------*/
@@ -69,8 +70,8 @@ public:
      *   GetLineNumber() == lineNumber;
      */
     Token(const uint32 id,
-          const char8 * const description,
-          const char8 * const data,
+          CCString const description,
+		  CCString const data,
           const uint32 lineNumber);
 
     /**
@@ -82,7 +83,7 @@ public:
      *   GetLineNumber() == lineNumber;
      */
     Token(TokenInfo tokenInfo,
-          const char8 * const data,
+          CCString const data,
           const uint32 lineNumber);
 
     /**
@@ -106,13 +107,13 @@ public:
      * @brief Retrieves the token description.
      * @return the token description.
      */
-    const char8 * GetDescription();
+    CCString GetDescription();
 
     /**
      * @brief Retrieves the token data.
      * @return the token data.
      */
-    const char8 * GetData();
+    CCString GetData();
 
     /**
      * @brief Retrieves the token line number.

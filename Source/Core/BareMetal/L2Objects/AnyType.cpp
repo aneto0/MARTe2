@@ -49,9 +49,17 @@ namespace MARTe {
 
 ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 
+	const uint8* pointer = reinterpret_cast<const uint8*> (pointer2Variable);
+	ErrorManagement::ErrorType ret = variableDescriptor.Redirect(pointer,index) ;
+	pointer2Variable = reinterpret_cast<const void *> (pointer);
+
+	return ret;
+
+#if 0
 	char8 modifier;
 	uint64 max;
-	uint64 layerSize =  variableDescriptor.GetSize();
+	uint64 layerSize;
+	variableDescriptor.GetSize(pointer2Variable,layerSize,NULL,0);
 	ErrorManagement::ErrorType ret;
 
 	ret.exception = !MemoryCheck::Check(pointer2Variable);
@@ -189,6 +197,7 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 
 	}
 	return ret;
+#endif
 }
 
 

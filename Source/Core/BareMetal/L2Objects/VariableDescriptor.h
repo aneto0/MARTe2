@@ -129,7 +129,6 @@ public:
      * @return true if operation succeeded                       */
     bool InsertModifiersLayer(char8 modifier,uint64 size);
 
-
     /**
      * @brief read and possibly removes top layer of modifiers
      * @return true if operation succeeded, false if no modifiers
@@ -143,30 +142,45 @@ public:
     bool BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo) const;
 
     /**
-     * @brief returns size of top indirecting layer.
-     * each array layer is multiplied until a redirecting layer or the final layer is encountered
-     * Note that size calculation stops at every indirection layer: pointers, Zero Term Array, Vectors and Matrices
-     * In summary it returns the space necessary to store all the memory up until it encounters any form of indirection
-     * @return the full size of the top layer in bytes
+     * @brief returns size of all the memory addressed by this variable.
+     * @param[in] pointer, the pointer to the variable
+     * @param[in] maxDepth  determine the number of indirected memory to include.
+     * limit 0 means just the top layer
+     * Note that pointers to type only address one element
+     * Vector, Matrix, ZeroTermArray are all supported
+     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
+     * @param[out] storageSize is the memory used in intermediate redirection layers
+     * @return true if all ok
      */
-    uint64 GetSize() const;
+    ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize=NULL,uint8 maxDepth=10) const;
 
     /**
-     * @brief returns size of all the memory addressed by this variable.
-     * each array layer size is multiplied or summed until a pointer or the final layer is encountered
-     * Calculation stops at a pointer as the size of the vector addressed by the pointer is not known
-     * It accounts for both fixed size layers and variable size ones
-     * @return the full size of the memory necessary to store this var
+     * @brief removes one indirection layer and update variable pointer
+     * @param[in out] pointer, the pointer to the variable
+     * @param[in] index the offset
+     * @return true if all ok or the error
      */
-    uint64 GetDeepSize(void *address) const;
+    ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index) ;
 
+    /**
+     * @brief removes one indirection layer and update variable pointer
+     * @param[in out] pointer, the pointer to the variable
+     * @param[in] index the offset
+     * @return true if all ok or the error
+     */
+    ErrorManagement::ErrorType Copy(const uint8 *sourcePtr,VariableDescriptor &destination,
+    		const uint8 *destPtr,uint64 destSize) const ;
+
+
+
+#if 0
     /**
      * TODO
      */
     CCString GetModifierString() const{
     	return modifiers.GetList();
     }
-
+#endif
     /**
      * @brief Converts type descriptor to C/c++ equivalent
      *
@@ -176,14 +190,48 @@ public:
 private:
 
     /**
-     * TODO
-     * Returns false when the end of the layers is reached
-     * Arrays are used to multiply the size of what comes next
-     * operates recursively
-     * uses the provided later string, not the class one
+     * @brief calculate size of a full layer - n of array alements * elementsize
+     * @param[in] modifierString, the string of variable modifiers
+     * @param[out] size is the full size of the memory necessary to store this layer
+     * @param[out] lastCode is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
+     * @return the pointer to the modifierString at the end of the scan
      */
-    bool LayerSize(CCString modifierString,uint64 &size);
+    CCString LayerSize(CCString modifierString,uint64 &size,char8 *lastCode=NULL) const;
 
+    /**
+     * @brief returns size of all the memory addressed by this variable.
+     * @param[in] pointer, the pointer to the variable
+     * @param[in] modifierString, the string of variable modifiers
+     * @param[in] maxDepth  determine the number of indirected memory to include.
+     * -1 means no limit 0 means just the top layer
+     * Note that pointers to type only address one element
+     * Vector, Matrix, ZeroTermArray are all supported
+     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
+     * @param[out] storageSize is the memory used in intermediate redirection layers
+     * @return true if all ok
+     */
+    ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,uint64 &dataSize, uint64 &storageSize,uint8 maxDepth) const;
+
+    /**
+     * @brief removes one indirection layer without redirection. Does not reallocate the modifierString
+     * @param[in out] modifierString, the variable descriptor modifier string
+     * @param[out]   nOfElements elements in the next layer (beyond indirection or not)
+     * @param[out]   size the size of the next elements (beyond indirection or not)
+     * @return true if all ok or the error
+     */
+    void ExamineLayer(CCString &modifierString,uint64 &nOfElements,uint64 &size) const;
+
+    /**
+     * @brief removes one indirection layer and update variable pointer. Does not reallocate the modifierString
+     * @param[in out] modifierString, the variable descriptor modifier string
+     * @param[in out] pointer, the pointer to the variable updated
+     * @param[out]   nOfElements elements in the next layer (beyond indirection or not)
+     * @param[out]   storageSize size to store the pointers (etc) 0 if no indirection
+     * @param[out]   size the size of the next elements (beyond indirection or not)
+     * @return true if all ok or the error
+     */
+    ErrorManagement::ErrorType ExamineAndRedirect(CCString &modifierString,const uint8 *&pointer,uint64 &nOfElements,
+    			uint64 &storageSize,uint64 &size) const;
     /**
      * TODO
      *  Internal use

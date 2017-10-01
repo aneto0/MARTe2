@@ -80,8 +80,7 @@ public:
      * In this case the class must be introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Read(const char8 * const name,
-                      const AnyType &value);
+    virtual bool Read(const char8 * const name,const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
@@ -94,8 +93,7 @@ public:
      * if it is introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Write(const char8 * const name,
-                       const AnyType &value);
+    virtual bool Write(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy

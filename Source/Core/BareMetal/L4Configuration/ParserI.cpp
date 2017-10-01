@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-static void PrintErrorOnStream(const char8 * const format,
+static void PrintErrorOnStream(CCString const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
     if (err != NULL) {
@@ -52,9 +52,9 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
-static const char8* GetCurrentTokenData(Token * const token) {
+static CCString GetCurrentTokenData(Token * const token) {
 
-    return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
+    return (token != NULL)?(token->GetData()):(emptyString);
 }
 
 static uint32 GetCurrentTokenId(const Token * const token) {
@@ -104,7 +104,7 @@ uint32 ParserI::GetNextTokenType() {
     currentToken = tokenProducer.GetToken();
 
     uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL); //StringHelper::Length(terminals)+2u;
-    const char8* toCompare = static_cast<const char8 *>(NULL);
+    CCString toCompare;
 
     // if it is a terminal use the data
     if (currentToken->GetId() == TERMINAL_TOKEN) {
@@ -128,7 +128,7 @@ uint32 ParserI::PeekNextTokenType(const uint32 position) {
 
     Token* tok = tokenProducer.PeekToken(position);
     uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL);
-    const char8* toCompare = static_cast<const char8 *>(NULL);
+    CCString toCompare = static_cast<const char8 *>(NULL);
 
     if (tok->GetId() == TERMINAL_TOKEN) {
         toCompare = tok->GetData();
@@ -178,11 +178,11 @@ void ParserI::AddLeaf() {
         numberOfColumns = firstNumberOfColumns;
     }
 
-    ;
+
     uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
     /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
     AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);
-    bool ret = (element.GetDataPointer() != NULL);
+    bool ret = !(element.GetVariablePointer() == NULL);
     if (ret) {
         ret = database->Write(nodeName.Buffer(), element);
         if (!ret) {

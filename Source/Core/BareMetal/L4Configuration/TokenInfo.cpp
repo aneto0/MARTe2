@@ -45,8 +45,7 @@ TokenInfo::TokenInfo() {
     description = "";
 }
 
-void TokenInfo::Set(const uint32 tokenIdIn,
-                    const char8 * const descriptionIn) {
+void TokenInfo::Set(const uint32 tokenIdIn, CCString const descriptionIn) {
     tokenId = tokenIdIn;
     description = descriptionIn;
 }
@@ -55,7 +54,7 @@ uint32 TokenInfo::GetTokenId() const {
     return tokenId;
 }
 
-const char8* TokenInfo::GetDescription(){
+CCString TokenInfo::GetDescription(){
     return description.Buffer();
 }
 

@@ -108,7 +108,7 @@ void StandardParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
-const char8 *StandardParser::GetSymbolName(const uint32 symbol)const  {
+CCString StandardParser::GetSymbolName(const uint32 symbol) const  {
     const char8 *symbolName = static_cast<const char8 *>(NULL);
 
     if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {

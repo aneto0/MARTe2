@@ -225,7 +225,7 @@ protected:
      * @brief Retrieves the name associated to the token.
      * @param[in] symbol is the expected token identifier.
      */
-    virtual const char8 *GetSymbolName(const uint32 symbol) const =0;
+    virtual CCString GetSymbolName(const uint32 symbol) const =0;
 
     /**
      * @brief Retrieves the identifier of the next token produced by the

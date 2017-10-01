@@ -84,8 +84,7 @@ public:
      * @return false if in the memory there are already element with a different type or if
      * the conversion fails. True otherwise.
      */
-    bool Add(const char8 * const type,
-             const char8 * const data);
+    bool Add (const char8 * const type,  const char8 * const data);
 
     /**
      * @brief Destructor.

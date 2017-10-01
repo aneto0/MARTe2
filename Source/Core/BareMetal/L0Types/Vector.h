@@ -106,6 +106,13 @@ public:
     T &operator [](uint32 idx);
 
     /**
+     * @brief Returns the value at position \a idx.
+     * @param[in] idx The index of the element to retrieve.
+     * @return the value at position \a idx.
+     */
+    T operator [](uint32 idx) const;
+
+    /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
@@ -195,6 +202,12 @@ Vector<T>::~Vector() {
 
 template<typename T>
 T &Vector<T>::operator [](uint32 idx) {
+    T* array = reinterpret_cast<T*>(dataPointer);
+    return array[idx];
+}
+
+template<typename T>
+T Vector<T>::operator [](uint32 idx) const {
     T* array = reinterpret_cast<T*>(dataPointer);
     return array[idx];
 }

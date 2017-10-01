@@ -55,8 +55,7 @@ public:
      * @post
      *   GetNumberOfRows() == 0u &&
      *   GetNumberOfColumns() == 0u &&
-     *   GetDataPointer() == NULL &&
-     *   IsStaticDeclared()
+     *   GetDataPointer() == NULL
      */
     Matrix();
 
@@ -67,26 +66,11 @@ public:
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
-     *   GetDataPointer() != NULL &&
-     *   not IsStaticDeclared()
+     *   GetDataPointer() != NULL
      */
     Matrix(uint32 nOfRows,
            uint32 nOfColumns);
 
-    /**
-     * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
-     * @param[in] existingArray The pointer to the existing array
-     * @param[in] nOfRows The number of rows
-     * @param[in] nOfColumns The number of columns
-     * @post
-     *   GetNumberOfRows() == nOfRows &&
-     *   GetNumberOfColumns() == nOfColumns &&
-     *   GetDataPointer() == existingArray &&
-     *   not IsStaticDeclared()
-     */
-    Matrix(T **existingArray,
-           uint32 nOfRows,
-           uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -96,8 +80,7 @@ public:
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
-     *   GetDataPointer() == existingArray &&
-     *   IsStaticDeclared()
+     *   GetDataPointer() == existingArray
      */
     Matrix(T *existingArray,
            uint32 nOfRows,
@@ -111,15 +94,14 @@ public:
      * @post
      *   GetNumberOfRows() == nOfRowsStatic &&
      *   GetNumberOfColumns() == nOfColumnsStatic &&
-     *   GetDataPointer() == &source[0] &&
-     *   IsStaticDeclared()
+     *   GetDataPointer() == &source[0]
      */
     template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
     /**
      * @brief Destructor.
-     * @details If IsStaticDeclared(), then it frees the memory pointed
+     * @details If canDestroy, then it frees the memory pointed
      * by \a GetDataPointer().
      */
     ~Matrix();
@@ -135,6 +117,13 @@ public:
      * @return the number of rows.
      */
     inline uint32 GetNumberOfRows() const;
+
+    /**
+     * @brief Returns the vector associated to the specified row.
+     * @param[in] rows The row to retrieve.
+     * @return the vector associated to the specified row.
+     */
+    const Vector<T> operator[](uint32 rows) const;
 
     /**
      * @brief Returns the vector associated to the specified row.
@@ -159,12 +148,6 @@ public:
      * @return the data pointer associated to the raw matrix data.
      */
     inline void *GetDataPointer() const;
-
-    /**
-     * @brief Checks if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
-     * @return true if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
-     */
-    inline bool IsStaticDeclared() const;
 
     /**
      * @brief Performs the matrix product.
@@ -265,11 +248,6 @@ private:
     uint32 numberOfColumns;
 
     /**
-     * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
-     */
-    bool staticDeclared;
-
-    /**
      * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
      */
     bool canDestroy;
@@ -288,33 +266,17 @@ Matrix<T>::Matrix() {
     dataPointer = static_cast<void *>(NULL);
     numberOfRows = 0u;
     numberOfColumns = 0u;
-    staticDeclared = true;
     canDestroy = false;
 }
 
 template<typename T>
 Matrix<T>::Matrix(uint32 nOfRows,
                   uint32 nOfColumns) {
-    T** rows = new T*[nOfRows];
-    dataPointer = reinterpret_cast<void *>(rows);
+    T* elements = new T[nOfRows*nOfColumns];
+    dataPointer = reinterpret_cast<void *>(elements);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
-    staticDeclared = false;
-    for (uint32 i = 0u; i < nOfRows; i++) {
-        rows[i] = new T[nOfColumns];
-    }
     canDestroy = true;
-}
-
-template<typename T>
-Matrix<T>::Matrix(T **existingArray,
-                  uint32 nOfRows,
-                  uint32 nOfColumns) {
-    dataPointer = reinterpret_cast<void *>(existingArray);
-    numberOfColumns = nOfColumns;
-    numberOfRows = nOfRows;
-    staticDeclared = false;
-    canDestroy = false;
 }
 
 template<typename T>
@@ -324,7 +286,6 @@ Matrix<T>::Matrix(T *existingArray,
     dataPointer = reinterpret_cast<void *>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
-    staticDeclared = true;
     canDestroy = false;
 }
 
@@ -334,17 +295,13 @@ Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     dataPointer = reinterpret_cast<void*>(&(source[0][0]));
     numberOfColumns = nOfColumnsStatic;
     numberOfRows = nOfRowsStatic;
-    staticDeclared = true;
     canDestroy = false;
 }
 
 template<typename T>
 Matrix<T>::~Matrix() {
     if (canDestroy) {
-        T** pointerToDestroy = reinterpret_cast<T**>(dataPointer);
-        for (uint32 i = 0u; i < numberOfRows; i++) {
-            delete[] pointerToDestroy[i];
-        }
+        T* pointerToDestroy = reinterpret_cast<T*>(dataPointer);
         delete[] pointerToDestroy;
     }
     dataPointer = NULL;
@@ -366,40 +323,31 @@ template<typename T>
 Vector<T> Matrix<T>::operator[](uint32 element) {
     Vector<T> vec;
 
-    if (!staticDeclared) {
-        T** rows = reinterpret_cast<T**>(dataPointer);
-        vec = Vector<T>(rows[element], numberOfColumns);
-    }
-    else {
-        T* beginMemory = reinterpret_cast<T*>(dataPointer);
-        vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
-    }
+    T* beginMemory = reinterpret_cast<T*>(dataPointer);
+    vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
+
+    return vec;
+}
+
+template<typename T>
+const Vector<T> Matrix<T>::operator[](uint32 element) const {
+    Vector<T> vec;
+
+    T* beginMemory = reinterpret_cast<T*>(dataPointer);
+    vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
+
     return vec;
 }
 
 template<typename T>
 T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
-    T* result;
-    if (!staticDeclared) {
-        T** mat = reinterpret_cast<T**>(dataPointer);
-        result = &mat[row][col];
-    }
-    else {
-        T* mat = reinterpret_cast<T*>(dataPointer);
-        T* line = &mat[row*numberOfColumns];
-        result = &line[col];
-    }
-    return (*result);
+    T* mat = reinterpret_cast<T*>(dataPointer);
+    return mat[row*numberOfColumns+col];
 }
 
 template<typename T>
 inline void* Matrix<T>::GetDataPointer() const {
     return dataPointer;
-}
-
-template<typename T>
-inline bool Matrix<T>::IsStaticDeclared() const {
-    return staticDeclared;
 }
 
 template<typename T>
@@ -410,13 +358,9 @@ bool Matrix<T>::Product(Matrix<T> &factor,
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
     bool ret = ((cond1) && (cond2) && (cond3));
     if (ret) {
-        Matrix<T> temp;
-        if (staticDeclared) {
-            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        Matrix<T> &temp = *this
+//        temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < factor.numberOfColumns; j++) {
                 result[i][j] = static_cast<T>(0);
@@ -450,13 +394,8 @@ bool Matrix<T>::SubMatrix(const uint32 beginRow,
         ret = ((cond5) && (cond6));
 
         if (ret) {
-            Matrix<T> temp;
-            if (staticDeclared) {
-                temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
-            }
-            else {
-                temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
-            }
+            Matrix<T> &temp = *this;
+//            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
             for (uint32 i = 0u; i < outputNRows; i++) {
                 for (uint32 j = 0u; j < outputNCols; j++) {
                     uint32 rowIndex = (beginRow + i);
@@ -479,13 +418,8 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
     bool ret = ((cond1) && (cond2));
 
     if (ret) {
-        Matrix<T> temp;
-        if (staticDeclared) {
-            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        Matrix<T> &temp = *this;
+//            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
                 transpose[j][i] = temp[i][j];
@@ -496,18 +430,20 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
     return ret;
 }
 
+bool Matrix<float32>::Determinant(float32 &det) const ;
+bool Matrix<float64>::Determinant(float64 &det) const ;
+bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const ;
+bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const ;
+
+
+#if 0
+
 template<> inline
 bool Matrix<float32>::Determinant(float32 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
-        Matrix<float32> temp;
-        if (staticDeclared) {
-            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        const Matrix<float32> &temp = *this;
         if (numberOfRows == 1u) {
             det = temp[0][0];
         }
@@ -543,13 +479,7 @@ bool Matrix<float64>::Determinant(float64 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
-        Matrix<float64> temp;
-        if (staticDeclared) {
-            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        const Matrix<float64> &temp = *this;
         if (numberOfRows == 1u) {
             det = temp[0][0];
         }
@@ -591,13 +521,7 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
 
     if (ret) {
-        Matrix<float32> temp;
-        if (staticDeclared) {
-            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        const Matrix<float32> &temp = *this;
         Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
@@ -638,13 +562,7 @@ bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
 
     if (ret) {
-        Matrix<float64> temp;
-        if (staticDeclared) {
-            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
-        }
-        else {
-            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
-        }
+        const Matrix<float64> &temp = *this;
         Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
@@ -671,6 +589,7 @@ bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     }
     return ret;
 }
+#endif
 
 }
 

@@ -41,9 +41,11 @@ uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize){
 
 		if (!end){
 			pointer+= elSize;
+			size++;
 		}
 	}
-}
+	return size;
+};
 
 
 } //MARTe

@@ -48,8 +48,8 @@ Token::Token() {
 }
 
 Token::Token(const uint32 id,
-             const char8 * const description,
-             const char8 * const data,
+             CCString const description,
+			 CCString const data,
              const uint32 lineNumber) {
     tokenId = id;
     tokenDescription = description;
@@ -58,7 +58,7 @@ Token::Token(const uint32 id,
 }
 
 Token::Token(TokenInfo tokenInfo,
-             const char8 * const data,
+			 CCString const data,
              const uint32 lineNumber) {
     tokenId = tokenInfo.GetTokenId();
     tokenDescription = tokenInfo.GetDescription();
@@ -83,11 +83,11 @@ Token &Token::operator=(const Token &td) {
     return *this;
 }
 
-const char8 * Token::GetDescription() {
+CCString Token::GetDescription() {
     return tokenDescription.Buffer();
 }
 
-const char8 * Token::GetData() {
+CCString Token::GetData() {
     return tokenData.Buffer();
 }
 

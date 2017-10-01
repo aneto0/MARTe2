@@ -62,8 +62,7 @@ public:
      *   GetTokenId() == tokenIdIn &&
      *   GetDescription() == descriptionIn
      */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
+    void Set(const uint32 tokenIdIn, CCString const descriptionIn);
 
     /**
      * @brief Retrieves the token identifier.
@@ -75,7 +74,7 @@ public:
      * @brief Retrieves the token description.
      * @return the token description.
      */
-    const char8* GetDescription();
+    CCString GetDescription();
 
     /**
      * @brief Destructor.

@@ -62,8 +62,7 @@ void ConfigurationDatabase::CleanUp() {
     rootNode->CleanUp();
 }
 
-bool ConfigurationDatabase::Write(const char8 * const name,
-                                  const AnyType &value) {
+bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value) {
 
     bool ok = false;
     // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
