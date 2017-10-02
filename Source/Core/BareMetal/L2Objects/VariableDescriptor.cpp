@@ -480,7 +480,9 @@ bool isVariableSize(CCString modifierString){
 		char8 c = modifierString[0];
 		while (!isVariable && (c != '\0')){
 			isVariable =  (variableSizeModifiers.Find(c) != 0xFFFFFFFFu);
+//printf("%s\n",modifierString);
 			modifierString++;
+			c = modifierString[0];
 		}
 	}
 	return isVariable;
@@ -493,7 +495,7 @@ bool isVariableSize(CCString modifierString){
 		uint64 &nOfElements,
 		uint64 &size
 		) const {
-	char8 code  = '/0';
+	char8 code  = '\0';
 	uint64 number;
 
 	// this consumes  modifierString
@@ -502,7 +504,7 @@ bool isVariableSize(CCString modifierString){
 	// as I potentially need to compute the size of a sublayer for each element of the array
 	GetLayerInfo(modifierString,code,number);
 
-	if (code == '/0') {
+	if (code == '\0') {
 		size = typeDescriptor.Size();
 		nOfElements = 0;
 	} else
@@ -540,7 +542,7 @@ ErrorManagement::ErrorType VariableDescriptor::ExamineAndRedirect(
 		) const {
 	ErrorManagement::ErrorType ret;
 
-	char8 code  = '/0';
+	char8 code  = '\0';
 	uint64 number;
 
 	// this consumes  modifierString
@@ -549,7 +551,7 @@ ErrorManagement::ErrorType VariableDescriptor::ExamineAndRedirect(
 	// as I potentially need to compute the size of a sublayer for each element of the array
 	GetLayerInfo(modifierString,code,number);
 
-	if (code == '/0') {
+	if (code == '\0') {
 		switch (typeDescriptor.all){
 		case StaticCharString_number:
 		case DynamicCharString_number:
@@ -559,8 +561,10 @@ ErrorManagement::ErrorType VariableDescriptor::ExamineAndRedirect(
 			ret.exception = !MemoryCheck::Check(string.GetList());
 			if (ret){
 				pointer = reinterpret_cast<const uint8 *>(string.GetList());
-				size = 1;
-				nOfElements = string.GetSize() + 1;
+//				size = 1;
+//				nOfElements = string.GetSize() + 1;
+				size = string.GetSize() + 1;
+				nOfElements = 0;  // need to terminate here
 			}
 			storageSize = sizeof(CCString);
 		} break;//case
@@ -642,6 +646,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 	uint64 nOfElements = 0;
 	uint64 size = 0;
 	uint64 storageSz = 0;
+printf ("{mod=%s}",modifierString);
 
 	if (maxDepth > 0){
 		// will modify pointer
@@ -661,13 +666,16 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 		// size is the elementSize in all other cases
 		ExamineLayer(modifierString,nOfElements,size);
 	}
-
+//printf ("{ne=%Li sz=%Li ssz=%Li mod=%s}",nOfElements,size,storageSz,modifierString);
 	if (ret){
 		if (nOfElements > 0){
+//printf("->");
+
 			if (isVariableSize(modifierString)){
 				dataSize = 0;
 				const uint8 *ptr = pointer;
 				for (uint64 i = 0;i<nOfElements;i++){
+//printf("(%Li)",i);
 					uint64 dataSize2;
 					uint64 storageSize2;
 					GetDeepSize(modifierString, ptr,dataSize2,storageSize2,maxDepth) ;
@@ -675,15 +683,22 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 					storageSz += storageSize2;
 					ptr += size;
 				}
+				storageSz += size; // the terminator
+
 			} else {
 				uint64 dataSize2;
 				uint64 storageSize2;
 				GetDeepSize(modifierString, pointer,dataSize2,storageSize2,maxDepth) ;
 				dataSize = nOfElements * dataSize2;
 				storageSz = storageSz + (nOfElements * storageSize2);
+				storageSz += size; // the terminator
 			}
+			storageSize = storageSz;
+		} else {
+			dataSize = size;
+			storageSize = storageSz;
 		}
-		storageSize = storageSz;
+
 
 	}
 	return ret;
