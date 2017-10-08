@@ -54,157 +54,12 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 	pointer2Variable = reinterpret_cast<const void *> (pointer);
 
 	return ret;
-
-#if 0
-	char8 modifier;
-	uint64 max;
-	uint64 layerSize;
-	variableDescriptor.GetSize(pointer2Variable,layerSize,NULL,0);
-	ErrorManagement::ErrorType ret;
-
-	ret.exception = !MemoryCheck::Check(pointer2Variable);
-
-	if (ret){
-		// no modifiers
-		// check for potential compact types (only strings supported)
-		if (!variableDescriptor.RemoveModifiersLayer(modifier,max)){
-			switch (variableDescriptor.GetFullTypeDescriptor().all){
-			case StaticCharString_number:
-			case DynamicCharString_number:
-			case ConstCharString_number:
-			case CharString_number: {
-				const CCString string = * (reinterpret_cast<CCString const *>(pointer2Variable));
-				uint32 size = string.GetSize();
-
-				if (index < size){
-					pointer2Variable = string.GetList() + index;
-
-					TypeDescriptor &td = variableDescriptor.AccessTypeDescriptor();
-
-					td.arrayProperty = SizedCArray_AP;
-					td.arraySize     = 1;
-
-				} else {
-					ret.outOfRange = true;
-				}
-			}break;
-
-			default : {
-				ret.invalidOperation = true;
-			}
-
-			}
-		} else {
-			if (ret){
-				switch(modifier){
-				case 'P':
-				case 'p':{
-					char8 const  *ptr = * (reinterpret_cast<char8 const * const *>(pointer2Variable));
-
-					uint64 step = layerSize * index;
-
-					pointer2Variable = (ptr + step);
-				}break;
-				case 'A':
-				case 'a':{
-					char8 const *ptr = (reinterpret_cast<char8 const *>(pointer2Variable));
-
-					if (index >= max){
-						index = max -1;
-					}
-					uint64 step = layerSize * index;
-
-					ptr = ptr + step;
-
-					pointer2Variable = static_cast<const void *>(ptr);
-
-				}break;
-				case 'D':
-				case 'd':
-				case 'S':
-				case 's':
-				case 'Z':
-				case 'z':{
-					char8 const  *ptr = * (reinterpret_cast<char8 const * const *>(pointer2Variable));
-					uint64 step = index;
-
-					while (step > 0 ){
-						uint32 i;
-						for (i = 0; ((i<layerSize) && ptr[i] == '\0'); i++ );
-						if (i != layerSize){
-							ptr+= layerSize;
-						} else {
-							step = 0;
-						}
-					}
-
-					pointer2Variable = ptr ;
-
-				}break;
-				case 'M':
-				case 'm':{
-					Matrix<const char8> const * matrix = (reinterpret_cast< Matrix<const char8> const *>(pointer2Variable));
-					max = matrix->GetNumberOfRows();
-					if (index >= max){
-						index = max -1;
-					}
-
-					char8 const * ptr = static_cast< char8 const *> (matrix->GetDataPointer());
-
-					if (matrix->IsStaticDeclared()){
-						uint64 step = layerSize * index;
-						ptr += step;
-
-					} else {
-						if (!MemoryCheck::Check(pointer2Variable)){
-							char8 const * const * pptr = reinterpret_cast< char8 const * const *> (ptr);
-							ptr = pptr[index];
-						} else {
-							ret.exception = true;
-						}
-					}
-
-					pointer2Variable = ptr;
-					// need to add to the variableDescriptor the fact that we have now a Array layer left
-					variableDescriptor.InsertModifiersLayer('a',matrix->GetNumberOfColumns());
-
-
-				}break;
-				case 'V':
-				case 'v':{
-					Vector<const char8> const *vector = (reinterpret_cast<Vector<const char8> const *>(pointer2Variable));
-					char8 const * ptr = static_cast<char8 const *>(vector->GetDataPointer());
-					max = vector->GetNumberOfElements();
-
-					if (index >= max){
-						index = max -1;
-					}
-					uint64 step = layerSize * index;
-
-					ptr = ptr + step;
-
-					pointer2Variable = ptr;
-
-				}break;
-				default:{
-					ret.internalSetupError = true;
-				}
-
-				}
-			}
-
-		}
-
-	}
-	return ret;
-#endif
 }
 
 
 ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 
-	char8 modifier;
-	uint64 max;
+
 	ErrorManagement::ErrorType ret;
 
 	// check field
@@ -213,7 +68,7 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	}
 
 	// there must be no modifiers
-	if (variableDescriptor.GetModifiersLayer(modifier,max)){
+	if (variableDescriptor.HasModifiers()){
 		ret.invalidOperation = true;
 	}
 

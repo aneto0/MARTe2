@@ -105,6 +105,7 @@ public:
      */
     inline const TypeDescriptor &GetFullTypeDescriptor() const;
 
+#if 0
     /**
      * @brief Returns the TypeDescriptor
      * @return the data TypeDescriptor.
@@ -116,24 +117,35 @@ public:
      * @return the data TypeDescriptor.
      */
     bool GetTopTypeDescriptor( TypeDescriptor &td, uint32 depth) const;
-
     /**
      * @brief removes one layer of modifiers from the top
-     * @return true if operation succeeded, false if no modifiers     */
+     * @return true if operation succeeded, false if no modifiers
+     * */
     bool RemoveModifiersLayer(char8 &modifier,uint64 &size){
         return GetModifiersLayer(modifier,size,true);
     }
-
-    /**
-     * @brief adds one layer of modifiers to the top
-     * @return true if operation succeeded                       */
-    bool InsertModifiersLayer(char8 modifier,uint64 size);
-
     /**
      * @brief read and possibly removes top layer of modifiers
      * @return true if operation succeeded, false if no modifiers
      */
     bool GetModifiersLayer(char8 &modifier,uint64 &size,bool remove=false);
+#endif
+
+    /**
+     * @brief checks if it has modifiers
+     * @return true if there are modifiers
+     * */
+    inline bool HasModifiers() const;
+
+#if 0
+    /**
+     * @brief adds one layer of modifiers to the top
+     * @return true if operation succeeded                       */
+    bool InsertModifiersLayer(char8 modifier,uint64 size);
+#endif
+    void AddModifiersLayer(char8 modifier, uint64 size);
+    void AddModifiersLayerConst(char8 modifier, uint64 size);
+
 
     /**
      * @brief reads one layer of modifiers
@@ -156,21 +168,34 @@ public:
 
     /**
      * @brief removes one indirection layer and update variable pointer
-     * @param[in out] pointer, the pointer to the variable
+     * @param[in,out] pointer, the pointer to the variable
      * @param[in] index the offset
      * @return true if all ok or the error
      */
     ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index) ;
 
     /**
-     * @brief removes one indirection layer and update variable pointer
-     * @param[in out] pointer, the pointer to the variable
-     * @param[in] index the offset
+     * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
+     * @param[in] sourcePtr, the pointer to the variable to be copied
+     * @param[in,out] destFreePtr, pointer to the memory area to copy the variable to. Returns the pointer to the unused area
+     * @param[in,out] destFreeSize, length of the memory area to copy to. Returns the unused area size
+     * @param[out] destVd, the variable descriptor of the used area, must be empty to start!. Note that all varieties of ZeroTermarrays become ZeroTermArray<const T>
+     * @param[in] maxDepth, the max number of pointer redirection to include in the copy
+     * @param[in] modifierString, at start points at full modifiers.After each recursion it is progressively consumed.
+     * @param[in] dereferenceCompound. modifiers as Z,S etc are in fact a combination of PZ, PS etc... as the individual is not supported
+     * dereferenceCompound = true implies that the Z is interpreted as Z while if it is false as P
+     * @param[in] destPtr, pointer to the area reserved for next layer. use if provided or take from destFreePtr
      * @return true if all ok or the error
      */
-    ErrorManagement::ErrorType Copy(const uint8 *sourcePtr,VariableDescriptor &destination,
-    		const uint8 *destPtr,uint64 destSize) const ;
-
+    ErrorManagement::ErrorType Copy(
+    		const uint8 *sourcePtr,
+    		uint8 *&destFreePtr,
+			uint64 &destFreeSize,
+			VariableDescriptor &destVd,
+			uint8 maxDepth=100,
+			CCString modifierString = modifiers,
+			bool dereferenceCompound = false,
+			uint8 *destPtr=NULL) const;
 
 
 #if 0
@@ -192,25 +217,39 @@ private:
     /**
      * @brief calculate size of a full layer - n of array alements * elementsize
      * @param[in] modifierString, the string of variable modifiers
-     * @param[out] size is the full size of the memory necessary to store this layer
-     * @param[out] lastCode is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
-     * @return the pointer to the modifierString at the end of the scan
+     * @return the full size of the memory necessary to store this layer
      */
-    CCString LayerSize(CCString modifierString,uint64 &size,char8 *lastCode=NULL) const;
+    uint64 FullLayerSize(CCString modifierString,const uint8 *pointer) const;
+
+    /**
+     * @brief calculate size of a full layer - n of array alements * elementsize
+     * @param[in,out] modifierString, the string of variable modifiers
+     * @param[out] numberOfElements is the number of elements in this layer
+     * @param[out] elementSize is the size of each element
+     * @param[out] arrayStringSize number of characters in modifierString consumed in arrays 'a' layers
+     * @param[out] numberOfTermElements number of elements of size elementSize used as terminator in a ZTA
+     * @param[out] modifier is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
+     */
+    ErrorManagement::ErrorType FullLayerInfo(CCString &modifierString,const uint8 *pointer,
+    		uint64 &numberOfElements,uint32 &elementSize,
+			uint32 &arrayStringSize,uint32 &numberOfTermElements,
+			char8 &modifier) const;
 
     /**
      * @brief returns size of all the memory addressed by this variable.
-     * @param[in] pointer, the pointer to the variable
      * @param[in] modifierString, the string of variable modifiers
+     * @param[in] pointer, the pointer to the variable
+     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
+     * @param[out] storageSize is the memory used in intermediate redirection layers
      * @param[in] maxDepth  determine the number of indirected memory to include.
      * -1 means no limit 0 means just the top layer
      * Note that pointers to type only address one element
      * Vector, Matrix, ZeroTermArray are all supported
-     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
-     * @param[out] storageSize is the memory used in intermediate redirection layers
+     * @param[in] layerMultiplier >1 it is an array[layerMultiplier] of the type described by modifierString
      * @return true if all ok
      */
-    ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,uint64 &dataSize, uint64 &storageSize,uint8 maxDepth) const;
+    ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,
+    		uint64 &dataSize, uint64 &storageSize,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
 
     /**
      * @brief removes one indirection layer without redirection. Does not reallocate the modifierString
@@ -219,7 +258,7 @@ private:
      * @param[out]   size the size of the next elements (beyond indirection or not)
      * @return true if all ok or the error
      */
-    void ExamineLayer(CCString &modifierString,uint64 &nOfElements,uint64 &size) const;
+    void ExamineLayer(CCString &modifierString,uint64 &nOfElements,uint64 &size,const uint8 *pointer) const;
 
     /**
      * @brief removes one indirection layer and update variable pointer. Does not reallocate the modifierString
@@ -232,19 +271,20 @@ private:
      */
     ErrorManagement::ErrorType ExamineAndRedirect(CCString &modifierString,const uint8 *&pointer,uint64 &nOfElements,
     			uint64 &storageSize,uint64 &size) const;
+#if 0
     /**
      * TODO
      *  Internal use
      *  To encode an array of specific type and with potential know size size1
      */
     void AddArrayCode(BasicArrayType bat, uint32 size1);
-
+#endif
     /**
      * TODO
      *  Internal use
      *  To encode the fact that what is coming next is a constant
      */
-    void AddConstantCode();
+    inline void AddConstantCode();
 
     /**
      * TODO
@@ -253,7 +293,7 @@ private:
      * It tries to incorporate the const and Array code
      */
     void FinaliseCode(TypeDescriptor td);
-
+#if 0
     /**
      * TODO
      * Internal use
@@ -261,7 +301,7 @@ private:
      * outputs the modifiers stored in the typeDescriptor into the modifier string
      */
     void MoveCodeToModifiers();
-
+#endif
     /**
      *  @brief a zero terminated sequence of tokens.
      *  @full each token can be a character or a sequence of characters and bytes
@@ -648,7 +688,8 @@ inline  VariableDescriptor::VariableDescriptor( T  x){
 
 template<typename T>
 void VariableDescriptor::Match(Vector<T> * vec) {
-	AddArrayCode(Array1D,0);
+//	AddArrayCode(Array1D,0);
+	AddModifiersLayerConst('V', 0);
 
     T *pp = NULL;
     Match(pp);
@@ -656,7 +697,8 @@ void VariableDescriptor::Match(Vector<T> * vec) {
 
 template<typename T>
 void VariableDescriptor::Match(Matrix<T> * mat) {
-	AddArrayCode(Array2D,0);
+//	AddArrayCode(Array2D,0);
+	AddModifiersLayerConst('M', 0);
 
     T *pp = NULL;
     Match(pp);
@@ -664,7 +706,9 @@ void VariableDescriptor::Match(Matrix<T> * mat) {
 
 template<typename T>
 void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
-	AddArrayCode(ZeroTermArray,0);
+//	AddArrayCode(ZeroTermArray,0);
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('Z', 0);
 
     T *pp = NULL;
     Match(pp);
@@ -672,7 +716,9 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
 
 template<typename T >
 void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
-	AddArrayCode(DynamicZeroTermArray,0);
+//	AddArrayCode(DynamicZeroTermArray,0);
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('D', 0);
 
     T *pp = NULL;
     Match(pp);
@@ -680,7 +726,9 @@ void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
 
 template<typename T, uint32 sz >
 void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
-	AddArrayCode(StaticZeroTermArray,sz);
+//	AddArrayCode(StaticZeroTermArray,sz);
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('S', sz);
 
     T *pp = NULL;
     Match(pp);
@@ -688,7 +736,8 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n]){
-	AddArrayCode(SizedCArray,n);
+//	AddArrayCode(SizedCArray,n);
+	AddModifiersLayerConst('A', n);
 
     T *pp = NULL;
     Match(pp);
@@ -696,7 +745,8 @@ inline void VariableDescriptor::Match(T (*x) [n]){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match( const T (*x) [n]){
-	AddArrayCode(SizedCArray,n);
+//	AddArrayCode(SizedCArray,n);
+	AddModifiersLayerConst('A', n);
 
     const T *pp = NULL;
     Match(pp);
@@ -705,7 +755,8 @@ inline void VariableDescriptor::Match( const T (*x) [n]){
 
 template <class T>
 inline void VariableDescriptor::Match(T ** x){
-	AddArrayCode(PointerArray,0);
+	AddModifiersLayerConst('P', 0);
+//	AddArrayCode(PointerArray,0);
 
     T *pp = NULL;
     Match(pp);
@@ -721,7 +772,8 @@ inline void VariableDescriptor::Match(T * const * x){
 
 template <class T>
 inline void VariableDescriptor::Match(T const * * x){
-	AddArrayCode(PointerArray,0);
+//	AddArrayCode(PointerArray,0);
+	AddModifiersLayerConst('P', 0);
 
     T const * pp=NULL;
     Match(pp);
@@ -849,8 +901,16 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
     return typeDescriptor;
 }
-TypeDescriptor &VariableDescriptor::AccessTypeDescriptor() {
-	return typeDescriptor;
+//TypeDescriptor &VariableDescriptor::AccessTypeDescriptor() {
+//	return typeDescriptor;
+//}
+
+void VariableDescriptor::AddConstantCode(){
+	typeDescriptor.dataIsConstant = true;
+}
+
+bool VariableDescriptor::HasModifiers() const{
+	return (modifiers.GetSize() > 0);
 }
 
 

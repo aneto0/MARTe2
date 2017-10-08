@@ -82,6 +82,20 @@ public:
      *   GetNumberOfColumns() == nOfColumns &&
      *   GetDataPointer() == existingArray
      */
+    void Set(T *existingArray,
+           uint32 nOfRows,
+           uint32 nOfColumns);
+
+    /**
+     * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
+     * @param[in] existingArray The pointer to the existing array
+     * @param[in] nOfRows The number of rows
+     * @param[in] nOfColumns The number of columns
+     * @post
+     *   GetNumberOfRows() == nOfRows &&
+     *   GetNumberOfColumns() == nOfColumns &&
+     *   GetDataPointer() == existingArray
+     */
     Matrix(T *existingArray,
            uint32 nOfRows,
            uint32 nOfColumns);
@@ -277,6 +291,16 @@ Matrix<T>::Matrix(uint32 nOfRows,
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     canDestroy = true;
+}
+
+template<typename T>
+void Matrix<T>::Set(T *existingArray,
+                  uint32 nOfRows,
+                  uint32 nOfColumns) {
+    dataPointer = reinterpret_cast<void *>(existingArray);
+    numberOfColumns = nOfColumns;
+    numberOfRows = nOfRows;
+    canDestroy = false;
 }
 
 template<typename T>

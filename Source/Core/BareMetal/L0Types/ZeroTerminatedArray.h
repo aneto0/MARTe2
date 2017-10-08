@@ -87,6 +87,14 @@ public:
     uint32 Find(const T & data) const;
 
     /**
+     * @brief Checks if data is in this array
+     * @return true if found
+     */
+    inline bool In(const T& data) const{
+    	return (Find(data)!= 0xFFFFFFFF);
+    }
+
+    /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
@@ -263,6 +271,10 @@ bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {
 
 }
 
+template<typename T>
+bool ZeroTerminatedArray<T>::In(const T& data) const{
+	return (Find(data)!= 0xFFFFFFFF);
+}
 
 
 }
