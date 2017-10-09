@@ -170,9 +170,10 @@ public:
      * @brief removes one indirection layer and update variable pointer
      * @param[in,out] pointer, the pointer to the variable
      * @param[in] index the offset
+     * @param[in] modifierString, used internally to perform recursion
      * @return true if all ok or the error
      */
-    ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index) ;
+    ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=NULL) ;
 
     /**
      * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
@@ -250,7 +251,7 @@ private:
      */
     ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,
     		uint64 &dataSize, uint64 &storageSize,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
-
+#if 0
     /**
      * @brief removes one indirection layer without redirection. Does not reallocate the modifierString
      * @param[in out] modifierString, the variable descriptor modifier string
@@ -271,6 +272,8 @@ private:
      */
     ErrorManagement::ErrorType ExamineAndRedirect(CCString &modifierString,const uint8 *&pointer,uint64 &nOfElements,
     			uint64 &storageSize,uint64 &size) const;
+#endif
+
 #if 0
     /**
      * TODO
@@ -445,7 +448,7 @@ private:
      * @post
      */
     inline void Match(StreamI *s);
-
+#if 0
     /**
      * @brief Constructor from zeroterm malloced char *
      * @param[in] s is the string
@@ -482,7 +485,7 @@ private:
      *   GetTypeDescriptor() == CString &&
      */
     inline void Match(CCString *s);
-
+#endif
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
@@ -809,7 +812,7 @@ void VariableDescriptor::Match(T * x){
 void VariableDescriptor::Match(StreamI *s){
 	FinaliseCode(StreamType);
 }
-
+#if 0
 void VariableDescriptor::Match(DynamicCString *s){
 	FinaliseCode(DynamicCharString);
 }
@@ -827,7 +830,7 @@ void VariableDescriptor::Match(StaticCString<sz> *s){
 	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz);
 	FinaliseCode(td);
 }
-
+#endif
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);

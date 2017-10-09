@@ -46,6 +46,9 @@
 
 namespace MARTe{
 
+// just a reasonable number.
+const uint32 MaxZTALayerSize = 1024;
+
 void VariableDescriptor::AddModifiersLayer(char8 modifier, uint64 size){
 	if (modifier != '\0'){
 		modifiers.Append(modifier);
@@ -239,7 +242,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 			ass += arrayStringSize;
 			numberOfTermElements = numberOfElements;
 			layerSize = numberOfElements*elementSize;
-			ret.unsupportedFeature = (layerSize > 1024);
+			ret.unsupportedFeature = (layerSize > MaxZTALayerSize);
 		}
 		if (ret){
 			uint32 ztaSize = ZeroTerminatedArrayGetSize(pointer, (uint32)layerSize);
@@ -420,7 +423,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 					dataSize = numberOfElementsIncludingTerm * dataSize2;
 				}
 			}
-		} else {  // '\0'
+		} else {  // '\0' or maxdepth reached
 			storageSize = 0;
 			dataSize = numberOfElementsIncludingTerm * elementSize;
 		}
@@ -649,7 +652,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 }
 #endif
 
-
+#if 0
 /**
  * @brief removes one indirection layer and update variable pointer
  * @param[in out] pointer, the pointer to the variable
@@ -680,6 +683,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	}
 	return ret;
 }
+#endif
 
 
 ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize,uint8  maxDepth) const{
@@ -691,6 +695,133 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
 	if (storageSize != NULL){
 		*storageSize = storageSz;
 	}
+
+	return ret;
+}
+
+
+
+/**
+ * @brief removes one indirection layer and update variable pointer
+ * @param[in out] pointer, the pointer to the variable
+ * @param[in] index the offset
+ * @return true if all ok or the error
+ */
+ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,uint32 index,CCString modifierString){
+	ErrorManagement::ErrorType ret;
+
+	char8 modifier;
+	uint64 size;
+	if (modifierString.IsNullPtr()){
+		modifierString = modifiers;
+	}
+ 	GetLayerInfo(modifierString,modifier,size);
+
+
+ 	switch (modifier){
+ 	case 'p':
+ 	case 'P':{
+		const uint8 **pp = (const uint8 **)(pointer);
+		const uint8 *p = pp[index];
+		ret.exception = !MemoryCheck::Check(p);
+
+		if (ret){
+			pointer = p;
+ 			char8 nextModifier = modifierString[0];
+ 			switch (nextModifier){
+ 			case 'A':
+		 	case 's':
+ 			case 'S':
+	 		case 'd':
+ 			case 'D':
+ 			case 'z':
+	 		case 'Z':{
+	        	ret = Redirect(pointer,index,modifierString);
+ 			}break;
+	 		default:{
+				if (index == 0){
+					pointer = p;
+				} else {
+					ret.outOfRange = true;
+				}
+ 			}
+ 			}// end switch
+		} // ret is not false
+ 	}break; // end Pp case
+ 	case 'A':{
+ 		// need fulllayerSize of the remaining full layer
+ 		// note that next layer cannot be ZzDdSs but only A or a terminator like PpVvMm and 0
+		if (index < size){
+			uint64 layerSize = FullLayerSize(modifierString,pointer);
+			uint64 step = layerSize * size;
+			pointer = pointer + step;
+			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+		} else {
+			ret.outOfRange = true;
+		}
+ 	}break;
+ 	case 's':
+ 	case 'S':
+ 	case 'd':
+ 	case 'D':
+ 	case 'z':
+ 	case 'Z':{
+ 		// this is not the full ZeroTermArray but just the zero term memory referenced to.
+ 		// it was preceded by a P that has been skipped.
+		uint64 layerSize = FullLayerSize(modifierString,pointer);
+		ret.unsupportedFeature = (layerSize > MaxZTALayerSize);
+		if (ret){
+			uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
+			ret.outOfRange = (index > maxIndex);
+		}
+		if (ret){
+			uint64 step = layerSize * size;
+			pointer = pointer + step;
+			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+		}
+ 	}break;
+ 	case 'v':
+ 	case 'V':{
+		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
+		const uint8 *p = pv[0].GetDataPointer();
+		uint32 numberOfArrayElements = pv[0].GetNumberOfElements();
+		ret.exception = !MemoryCheck::Check(p);
+		ret.outOfRange = (index >  numberOfArrayElements);
+
+		if (ret){
+			uint64 layerSize = FullLayerSize(modifierString,pointer);
+			uint64 step = layerSize * size;
+			pointer = p + step;
+			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+		}
+ 	}break;
+ 	case 'm':
+ 	case 'M':{
+		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
+		const uint8 *p = pm[0].GetDataPointer();
+		ret.exception = !MemoryCheck::Check(p);
+		ret.outOfRange = (index > pm[0].GetNumberOfRows());
+		if (ret){
+			uint64 layerSize = FullLayerSize(modifierString,pointer);
+			uint64 step = layerSize * size * pm[0].GetNumberOfColumns();
+			pointer = p + step;
+
+			DynamicCString modifiersTemp;
+			modifiersTemp.AppendN(modifierString);
+			modifiers.Truncate(0);
+			modifiers.Append('A');
+			modifiers.AppendNum(pm[0].GetNumberOfColumns());
+			modifiers.AppendN(modifiersTemp);
+		}
+
+ 	}break;
+
+
+ 	default:{
+ 		ret.internalSetupError = true;
+ 	}
+ 	}
+
 
 	return ret;
 }
