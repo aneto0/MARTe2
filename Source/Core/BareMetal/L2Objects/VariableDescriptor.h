@@ -183,9 +183,9 @@ public:
      * @param[out] destVd, the variable descriptor of the used area, must be empty to start!. Note that all varieties of ZeroTermarrays become ZeroTermArray<const T>
      * @param[in] maxDepth, the max number of pointer redirection to include in the copy
      * @param[in] modifierString, at start points at full modifiers.After each recursion it is progressively consumed.
-     * @param[in] dereferenceCompound. modifiers as Z,S etc are in fact a combination of PZ, PS etc... as the individual is not supported
-     * dereferenceCompound = true implies that the Z is interpreted as Z while if it is false as P
-     * @param[in] destPtr, pointer to the area reserved for next layer. use if provided or take from destFreePtr
+//     * @param[in] dereferenceCompound. modifiers as Z,S etc are in fact a combination of PZ, PS etc... as the individual is not supported
+//     * dereferenceCompound = true implies that the Z is interpreted as Z while if it is false as P
+//     * @param[in] destPtr, pointer to the area reserved for next layer. use if provided or take from destFreePtr
      * @return true if all ok or the error
      */
     ErrorManagement::ErrorType Copy(
@@ -194,9 +194,7 @@ public:
 			uint64 &destFreeSize,
 			VariableDescriptor &destVd,
 			uint8 maxDepth=100,
-			CCString modifierString = modifiers,
-			bool dereferenceCompound = false,
-			uint8 *destPtr=NULL) const;
+			CCString modifierString = modifiers) const;
 
 
 #if 0

@@ -35,6 +35,7 @@
 #include "DynamicCString.h"
 #include "MemoryCheck.h"
 #include "APLookup.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -209,9 +210,12 @@ bool VariableDescriptor::GetModifiersLayer(char8 &modifier,uint64 &size,bool rem
 #endif
 
 ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
-		CCString &modifierString,const uint8 *pointer,
-		uint64 &numberOfElements,uint32 &elementSize,
-		uint32 &arrayStringSize,uint32 &numberOfTermElements,
+		CCString &modifierString,
+		const uint8 *pointer,
+		uint64 &numberOfElements,
+		uint32 &elementSize,
+		uint32 &arrayStringSize,
+		uint32 &numberOfTermElements,
 		char8 &modifier) const{
 
 	ErrorManagement::ErrorType ret;
@@ -838,122 +842,157 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
  * @return true if all ok or the error
  */
 ErrorManagement::ErrorType VariableDescriptor::Copy(
-		const uint8 *sourcePtr,uint8 *&destFreePtr,uint64 &destFreeSize,
-		VariableDescriptor &destVd,uint8 maxDepth,CCString modifierString,
-		bool dereferenceCompound,uint8 *destPtr) const {
+		const uint8 *sourcePtr,
+		uint8 *&destFreePtr,
+		uint64 &destFreeSize,
+		VariableDescriptor &destVd,
+		uint8 maxDepth,
+		CCString modifierString) const {
+
 	ErrorManagement::ErrorType ret;
-// examine layer ending at a pointer or at final
 
 
-	char8 modifier  = '\0';
-	uint64 number;
-	// number of elements in this layer
-    uint64 numberOfElements =1;
-    uint32 elementSize = 0;
+    if (modifierString.IsNullPtr()){
+    	modifierString = modifiers;
+    }
     CCString modifierStringSave = modifierString;
-    // returns number of characters used to encode array layers
-    uint32 appendSize = FullLayerInfo(modifierString,numberOfElements,elementSize,modifier);
-    destVd.modifiers.AppendN(modifierStringSave,appendSize);
 
+
+	// number of elements in this layer
+	uint64 numberOfElements = 1;
+	// size of each element
+    uint32 elementSize = 0;
+    uint32 numberOfTermElements = 0;
+	char8 modifier  = '\0';
+	uint32 arrayStringSize=0;
+	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,arrayStringSize,numberOfTermElements,modifier);
     bool nextIsVariableLayer = isVariableSize(modifierString);
 
-	// proceed recursively
-	uint64 toCopy = 0;
-	uint64 toReserve = 0;
-
-	switch(modifier){
-	case 'P':{
-		if (maxDepth > 0){
-			maxDepth--;
-
-			if (nextIsVariableLayer){
-				// reserve pointer space
-
-
-				//loop through pointers
-				// copy
-				// update pointer space
-
-
-			} else {
-				//skip this layer
-
-
-			}
-
-
-			// skip this layer. just move pointer
-			// cannot do this conversion using c++ style casts
-			const uint8 **pp = (const uint8 **)(sourcePtr);
-			ret.exception = !MemoryCheck::Check(pp);
-			if (ret){
-				sourcePtr = *pp;
-			}
-		} else {
-			// copy the pointer and end here
-			toCopy = sizeof(void *) * numberOfElements;
-		}
-
-	}break;
-	case 'm':
-	case 'M':{
-		modifier = 'm';
-		if (!destVd.InsertModifiersLayer(modifier,0)){
-			ret.fatalError = true;
-		}
-
-		// reserve space for matrices
-
-		//loop through pointers
-		// copy
-		// update pointer space
-
-
-
-
-
-
-		// does not consume modifierString
-		nextLayerSize = FullLayerSize(modifierString);
-//			storageSize = sizeof (Matrix<char8>);
-		const Matrix<char8> *psm = reinterpret_cast<const Matrix<char8> *>(sourcePtr);
-
-		ret.exception = !MemoryCheck::Check(pm);
-		if (ret){
-			sourcePtr = static_cast<uint8 *>(psm->GetDataPointer());
-			nOfElements = psm->GetNumberOfColumns()*psm->GetNumberOfRows();
-
-			Matrix<char> *pdm = reinterpret_cast<const Matrix<char8> *>(destPtr);
-			pdm->Set()
-
-		}
-		destPtr +
-
-
-	}break;
-	case 'v':
-	case 'V':{
-		modifier = 'v';
-	}break;
-	case 's':
-	case 'd':
-	case 'z':
-	case 'S':
-	case 'D':
-	case 'Z':{
-		modifier = 'z';
-		size = 0;
-	}break;
+    uint64 totalLayerSize = elementSize * (numberOfElements + numberOfTermElements);
+    if (ret){
+	    ret.outOfMemory = (totalLayerSize > destFreeSize);
 	}
 
+    if (ret){
+    	// copy all multiplying modifiers A,Z,D,S,z,d,s
+	    destVd.modifiers.AppendN(modifierStringSave,arrayStringSize);
 
-		// copy toCopy  bytes
+		if (((maxDepth == 0) || (modifier == '\0')) && !((modifier == 'P')&&(nextIsVariableLayer))){
+			// TODO  just copy all as is
+			MemoryOperationsHelper::Copy(destFreePtr,sourcePtr,totalLayerSize);
 
+		} else {
+			maxDepth--;
 
+			switch(modifier){
+			case 'P':{
+				// cannot do this conversion using c++ style casts
+				const uint8 **spp = (const uint8 **)(sourcePtr);
+				if (nextIsVariableLayer){
+				    destVd.modifiers.Append(modifier);
+    				// reserve pointer space
+					uint8 **dpp = (uint8 **)(destFreePtr);
+					destFreePtr  += totalLayerSize;
+					destFreeSize -= totalLayerSize;
 
+					uint32 index;
+					for (index = 0; (index < numberOfElements) && ret; index++){
+						const uint8 *p = spp[index];
+						dpp[index] = destFreePtr;
+						ret.exception = !MemoryCheck::Check(p);
+						if (ret){
+							if (index == 0){
+								VariableDescriptor &dvd = destVd;
+								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+							} else {
+								VariableDescriptor dvd;
+								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+							}
+						}
+					}
+				} else { // next not variable
 
+					uint32 index;
+					for (index = 0; (index < numberOfElements) && ret; index++){
+						const uint8 *p = spp[index];
+						ret.exception = !MemoryCheck::Check(p);
+						if (ret){
+							if (index == 0){
+								VariableDescriptor &dvd = destVd;
+								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+							} else {
+								VariableDescriptor dvd;
+								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+							}
+						}
+					}
+				} // end if variable layer
 
+				//TODO  zero the terminator layer
 
+			}break;
+
+			case 'm':
+			case 'M':{
+				const Matrix<uint8> *psm = reinterpret_cast<const Matrix<char8> *>(sourcePtr);
+			    destVd.modifiers.Append(modifier);
+    				// reserve pointer space
+				Matrix<uint8> *dpm = reinterpret_cast<const Matrix<char8> *>(destFreePtr);
+				destFreePtr  += totalLayerSize;
+				destFreeSize -= totalLayerSize;
+
+				uint32 index;
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = psm[index].GetDataPointer();
+					dpm[index].Set(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
+					ret.exception = !MemoryCheck::Check(p);
+					if (ret){
+						if (index == 0){
+							VariableDescriptor &dvd = destVd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+						} else {
+							VariableDescriptor dvd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+						}
+					}
+				}
+
+				//TODO  zero the terminator layer
+
+			}break;
+			case 'm':
+			case 'M':{
+				const Matrix<uint8> *psm = reinterpret_cast<const Matrix<char8> *>(sourcePtr);
+			    destVd.modifiers.Append(modifier);
+    				// reserve pointer space
+				Matrix<uint8> *dpm = reinterpret_cast<const Matrix<char8> *>(destFreePtr);
+				destFreePtr  += totalLayerSize;
+				destFreeSize -= totalLayerSize;
+
+				uint32 index;
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = psm[index].GetDataPointer();
+					dpm[index].Set(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
+					ret.exception = !MemoryCheck::Check(p);
+					if (ret){
+						if (index == 0){
+							VariableDescriptor &dvd = destVd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+						} else {
+							VariableDescriptor dvd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+						}
+					}
+				}
+
+				//TODO  zero the terminator layer
+
+			}break;
+			default:{
+			}
+		    } // end switch
+		}
+	}// if ret
 
 
 
