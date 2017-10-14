@@ -105,44 +105,15 @@ public:
      */
     inline const TypeDescriptor &GetFullTypeDescriptor() const;
 
-#if 0
-    /**
-     * @brief Returns the TypeDescriptor
-     * @return the data TypeDescriptor.
-     */
-    inline TypeDescriptor &AccessTypeDescriptor() ;
-
-    /**
-     * @brief Returns the TypeDescriptor describing the overall variable
-     * @return the data TypeDescriptor.
-     */
-    bool GetTopTypeDescriptor( TypeDescriptor &td, uint32 depth) const;
-    /**
-     * @brief removes one layer of modifiers from the top
-     * @return true if operation succeeded, false if no modifiers
-     * */
-    bool RemoveModifiersLayer(char8 &modifier,uint64 &size){
-        return GetModifiersLayer(modifier,size,true);
-    }
-    /**
-     * @brief read and possibly removes top layer of modifiers
-     * @return true if operation succeeded, false if no modifiers
-     */
-    bool GetModifiersLayer(char8 &modifier,uint64 &size,bool remove=false);
-#endif
-
     /**
      * @brief checks if it has modifiers
      * @return true if there are modifiers
      * */
     inline bool HasModifiers() const;
 
-#if 0
     /**
      * @brief adds one layer of modifiers to the top
      * @return true if operation succeeded                       */
-    bool InsertModifiersLayer(char8 modifier,uint64 size);
-#endif
     void AddModifiersLayer(char8 modifier, uint64 size);
     void AddModifiersLayerConst(char8 modifier, uint64 size);
 
@@ -183,9 +154,6 @@ public:
      * @param[out] destVd, the variable descriptor of the used area, must be empty to start!. Note that all varieties of ZeroTermarrays become ZeroTermArray<const T>
      * @param[in] maxDepth, the max number of pointer redirection to include in the copy
      * @param[in] modifierString, at start points at full modifiers.After each recursion it is progressively consumed.
-//     * @param[in] dereferenceCompound. modifiers as Z,S etc are in fact a combination of PZ, PS etc... as the individual is not supported
-//     * dereferenceCompound = true implies that the Z is interpreted as Z while if it is false as P
-//     * @param[in] destPtr, pointer to the area reserved for next layer. use if provided or take from destFreePtr
      * @return true if all ok or the error
      */
     ErrorManagement::ErrorType Copy(
@@ -196,22 +164,27 @@ public:
 			uint8 maxDepth=100,
 			CCString modifierString = modifiers) const;
 
-
-#if 0
-    /**
-     * TODO
-     */
-    CCString GetModifierString() const{
-    	return modifiers.GetList();
-    }
-#endif
     /**
      * @brief Converts type descriptor to C/c++ equivalent
      *
      */
-    bool ToString(DynamicCString &string) const;
+    ErrorManagement::ErrorType  ToString(DynamicCString &string) const{
+    	int8 priority=0;
+        return ToStringPrivate(string,emptyString,true,priority) ;
+    }
+
+    /**
+     * @brief Converts C/c++ string to type descriptor
+     *
+     */
+    ErrorManagement::ErrorType  FromString(DynamicCString &string);
 
 private:
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     *
+     */
+    ErrorManagement::ErrorType  ToStringPrivate(DynamicCString &string,CCString modifierString,bool start,int8 &priority) const;
 
     /**
      * @brief calculate size of a full layer - n of array alements * elementsize
@@ -249,37 +222,7 @@ private:
      */
     ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,
     		uint64 &dataSize, uint64 &storageSize,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
-#if 0
-    /**
-     * @brief removes one indirection layer without redirection. Does not reallocate the modifierString
-     * @param[in out] modifierString, the variable descriptor modifier string
-     * @param[out]   nOfElements elements in the next layer (beyond indirection or not)
-     * @param[out]   size the size of the next elements (beyond indirection or not)
-     * @return true if all ok or the error
-     */
-    void ExamineLayer(CCString &modifierString,uint64 &nOfElements,uint64 &size,const uint8 *pointer) const;
 
-    /**
-     * @brief removes one indirection layer and update variable pointer. Does not reallocate the modifierString
-     * @param[in out] modifierString, the variable descriptor modifier string
-     * @param[in out] pointer, the pointer to the variable updated
-     * @param[out]   nOfElements elements in the next layer (beyond indirection or not)
-     * @param[out]   storageSize size to store the pointers (etc) 0 if no indirection
-     * @param[out]   size the size of the next elements (beyond indirection or not)
-     * @return true if all ok or the error
-     */
-    ErrorManagement::ErrorType ExamineAndRedirect(CCString &modifierString,const uint8 *&pointer,uint64 &nOfElements,
-    			uint64 &storageSize,uint64 &size) const;
-#endif
-
-#if 0
-    /**
-     * TODO
-     *  Internal use
-     *  To encode an array of specific type and with potential know size size1
-     */
-    void AddArrayCode(BasicArrayType bat, uint32 size1);
-#endif
     /**
      * TODO
      *  Internal use
@@ -294,15 +237,7 @@ private:
      * It tries to incorporate the const and Array code
      */
     void FinaliseCode(TypeDescriptor td);
-#if 0
-    /**
-     * TODO
-     * Internal use
-     * To write the encoded modifiers to the modifiers stack
-     * outputs the modifiers stored in the typeDescriptor into the modifier string
-     */
-    void MoveCodeToModifiers();
-#endif
+
     /**
      *  @brief a zero terminated sequence of tokens.
      *  @full each token can be a character or a sequence of characters and bytes
@@ -446,44 +381,7 @@ private:
      * @post
      */
     inline void Match(StreamI *s);
-#if 0
-    /**
-     * @brief Constructor from zeroterm malloced char *
-     * @param[in] s is the string
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
-     */
-    inline void Match(DynamicCString *s);
 
-    /**
-     * @brief Constructor from zeroterm char[]
-     * @param[in] s is the string
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
-     */
-    template <uint32 sz>
-    inline void Match(StaticCString<sz> *s);
-
-    /**
-     * @brief Constructor from 8 bit character.
-     * @param[in] i is the 8 bit character input.
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
-     */
-    inline void Match(CString *s);
-
-    /**
-     * @brief Constructor from 8 bit character.
-     * @param[in] i is the 8 bit character input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString &&
-     */
-    inline void Match(CCString *s);
-#endif
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
@@ -495,7 +393,6 @@ private:
      *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(char8 *i);
-
 
     /**
      * @brief Constructor from signed 8 bit integer.
