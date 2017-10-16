@@ -155,17 +155,14 @@ static uint32 readNumber(CCString &buffer){
  * extracts information about a layer
  * updates the layer string pointer
  */
-static inline bool GetLayerInfo(CCString &modifierString,char8 &modifier,uint64 &size ){
-	bool ret = true;
+static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint64 &size ){
 	modifier = modifierString[0];
 	if (modifier == '\0'){
-		ret = false;
 		size = 0;
 	} else {
 		modifierString++;
 		size = readNumber(modifierString);
 	}
-	return ret;
 }
 
 
@@ -186,7 +183,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
  	arrayStringSize = 0;
  	numberOfTermElements = 0;
 
- 	char8 * savePtr = modifierString.GetList();
+ 	const char8 * savePtr = modifierString.GetList();
 
  	const CCString variableLayers = "zZdDsS";
 
@@ -344,7 +341,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 					dataSize = 0;
 					uint64 index;
 					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = pv[index].GetDataPointer();
+						const uint8 *p = static_cast<const uint8 *>(pv[index].GetDataPointer());
 						uint32 numberOfArrayElements = pv[index].GetNumberOfElements();
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
@@ -369,7 +366,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 					dataSize = 0;
 					uint64 index;
 					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = pm[index].GetDataPointer();
+						const uint8 *p = static_cast<const uint8 *>(pm[index].GetDataPointer());
 						uint32 numberOfArrayElements = pm[index].GetNumberOfRows() * pm[index].GetNumberOfColumns();
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
@@ -453,7 +450,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	}
  	GetLayerInfo(modifierString,modifier,size);
 
-
  	switch (modifier){
  	case 'p':
  	case 'P':{
@@ -477,12 +473,13 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	        	ret = Redirect(pointer,index,modifierString);
  			}break;
 	 		default:{
-				if (index == 0){
-					pointer = p;
-				} else {
+				if (index != 0){
 					ret.outOfRange = true;
 			        REPORT_ERROR(ErrorManagement::OutOfRange, "index!=0 for pointer to var");
+				}
 
+				if (ret){
+					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 				}
  			}
  			}// end switch
@@ -499,7 +496,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 		} else {
 			ret.outOfRange = true;
 	        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= size");
-
 		}
  	}break;
  	case 's':
@@ -532,7 +528,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
  	case 'v':
  	case 'V':{
 		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
-		const uint8 *p = pv[0].GetDataPointer();
+		const uint8 *p = static_cast<const uint8 *>(pv[0].GetDataPointer());
 		uint32 numberOfArrayElements = pv[0].GetNumberOfElements();
 		if (!MemoryCheck::Check(p)){
 			ret.exception = true;
@@ -553,7 +549,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
  	case 'm':
  	case 'M':{
 		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
-		const uint8 *p = pm[0].GetDataPointer();
+		const uint8 *p = static_cast<const uint8 *>(pm[0].GetDataPointer());
 		if (!MemoryCheck::Check(p)){
 			ret.exception = true;
 	        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -576,7 +572,10 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 		}
 
  	}break;
-
+ 	case '\0':{
+ 		ret.illegalOperation = true;
+        REPORT_ERROR(ErrorManagement::IllegalOperation, "cannot redirect a basic type");
+ 	} break;
  	default:{
  		ret.internalSetupError = true;
         REPORT_ERROR(ErrorManagement::InternalSetupError, "unmapped modifier");
@@ -717,16 +716,16 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 
 			case 'm':
 			case 'M':{
-				const Matrix<uint8> *psm = reinterpret_cast<const Matrix<char8> *>(sourcePtr);
+				const Matrix<uint8> *psm = reinterpret_cast<const Matrix<uint8> *>(sourcePtr);
 			    destVd.modifiers.Append(modifier);
     				// reserve pointer space
-				Matrix<uint8> *dpm = reinterpret_cast<const Matrix<char8> *>(destFreePtr);
+				Matrix<uint8> *dpm = reinterpret_cast< Matrix<uint8> *>(destFreePtr);
 				destFreePtr  += totalLayerSize;
 				destFreeSize -= totalLayerSize;
 
 				uint32 index;
 				for (index = 0; (index < numberOfElements) && ret; index++){
-					const uint8 *p = psm[index].GetDataPointer();
+					const uint8 *p = static_cast<const uint8 *>(psm[index].GetDataPointer());
 					dpm[index].Set(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
@@ -746,19 +745,19 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				ret.fatalError=MemoryOperationsHelper::Set(&dpm[numberOfElements],0,numberOfTermElements*elementSize);
 
 			}break;
-			case 'm':
-			case 'M':{
-				const Matrix<uint8> *psm = reinterpret_cast<const Matrix<char8> *>(sourcePtr);
+			case 'v':
+			case 'V':{
+				const Vector<uint8> *psm = reinterpret_cast<const Vector<uint8> *>(sourcePtr);
 			    destVd.modifiers.Append(modifier);
     				// reserve pointer space
-				Matrix<uint8> *dpm = reinterpret_cast<const Matrix<char8> *>(destFreePtr);
+			    Vector<uint8> *dpv = reinterpret_cast<Vector<uint8> *>(destFreePtr);
 				destFreePtr  += totalLayerSize;
 				destFreeSize -= totalLayerSize;
 
 				uint32 index;
 				for (index = 0; (index < numberOfElements) && ret; index++){
-					const uint8 *p = psm[index].GetDataPointer();
-					dpm[index].Set(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
+					const uint8 *p = static_cast<const uint8 *>(psm[index].GetDataPointer());
+					dpv[index].Set(destFreePtr,psm[index].GetNumberOfElements()) ;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
 				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -775,7 +774,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				}
 
 				//  zero the terminator layer
-				ret.fatalError=MemoryOperationsHelper::Set(&dpm[numberOfElements],0,numberOfTermElements*elementSize);
+				ret.fatalError=MemoryOperationsHelper::Set(&dpv[numberOfElements],0,numberOfTermElements*elementSize);
 
 			}break;
 			default:{
@@ -787,16 +786,39 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 	return ret;
 }
 
+ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
+	ErrorManagement::ErrorType  ret;
+	if (rawFormat){
+		bool retbool = string.AppendN(modifiers);
+		string.Append(' ');
+		retbool = retbool && typeDescriptor.ToString(string);
+		ret.fatalError = !retbool;
+	} else {
+		int8 priority=0;
+	    ret = ToStringPrivate(string,emptyString,true,priority) ;
+	}
+    return ret;
+}
+
 
 ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &string,CCString modifierString,bool start,int8 &priority)const{
 	ErrorManagement::ErrorType ret;
 
-	if (modifierString == emptyString){
+	if (modifierString.IsNullPtr()){
 		modifierString = modifiers;
 	}
 	char8 modifier;
-	uint64 &size;
+	uint64 size;
 	GetLayerInfo(modifierString,modifier,size );
+
+	if ((modifier == 'P') || (modifier == 'p')){
+		// skip P/p layer if followed by one of ZDSzds
+		const CCString zeroTerMods="zZsSdD";
+		char8 nextModifier = modifierString[0];
+		if ( zeroTerMods.In(nextModifier)){
+			GetLayerInfo(modifierString,modifier,size );
+		}
+	}
 
 	// go ahead and process in reverse pointers and arrays
 	if ((modifier=='A') || (modifier=='P')|| (modifier=='p')){
@@ -812,14 +834,14 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 					priority = 0;
 					string.Append('(');
 				}
-				string.Append('*');
+				string.AppendN(" *");
 			} else
 			if (modifier == 'p'){
 				if (priority == 1){
 					priority = 0;
 					string.Append('(');
 				}
-				string.AppendN("const *");
+				string.AppendN(" * const");
 			}
 
 			// if this was the start of the sequence now do the forward section to add the vectors[]
@@ -841,7 +863,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 					}break;
 					case 'p':
 					case 'P':{
-						priority == 0;
+						priority = 0;
 					}break;
 					case '\0':
 					case 'm':
@@ -872,6 +894,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 			typeDescriptor.ToString(string);
 		} else {
 			CCString templateName;
+			bool hasSize=false;
 			switch(modifier){
 			case 'M':{
 				templateName = "Matrix<";
@@ -881,6 +904,29 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 			} break;
 			case 'v':{
 				templateName = "const Vector<";
+			} break;
+			case 'm':{
+				templateName = "const Matrix<";
+			} break;
+			case 'Z':{
+				templateName = "ZeroTerminatedArray<";
+			} break;
+			case 'z':{
+				templateName = "const ZeroTerminatedArray<";
+			} break;
+			case 'D':{
+				templateName = "DynamicZeroTerminatedArray<";
+			} break;
+			case 'd':{
+				templateName = "const DynamicZeroTerminatedArray<";
+			} break;
+			case 'S':{
+				templateName = "StaticZeroTerminatedArray<";
+				hasSize = true;
+			} break;
+			case 's':{
+				templateName = "const StaticZeroTerminatedArray<";
+				hasSize = true;
 			} break;
 			default:{
 				ret.unsupportedFeature=true;
@@ -892,6 +938,10 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 				// insert the type of what follows
 				int8 localPriority=0;
 				ret = ToStringPrivate(string,modifierString,true,localPriority);
+				if (hasSize){
+					string.Append(',');
+					string.AppendNum(size);
+				}
 				// close the template
 				string.Append('>');
 			}
@@ -900,8 +950,6 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 
 	return ret;
 }
-
-
 
 #if 0
 

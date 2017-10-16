@@ -90,10 +90,7 @@ public:
      * @brief Checks if data is in this array
      * @return true if found
      */
-    inline bool In(const T& data) const{
-    	return (Find(data)!= 0xFFFFFFFF);
-    }
-
+    inline bool In(const T& data) const;
     /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
@@ -254,8 +251,9 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
 
 template<typename T>
 bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {
+
     bool same = true;
-    if (array != NULL_PTR(T*)) {
+    if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
         const T * list2P = arrayIn;
         while (!Zero(*listP) && same) {

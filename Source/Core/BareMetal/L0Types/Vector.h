@@ -77,8 +77,18 @@ public:
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray &&
      */
-    Vector(T *existingArray,
-           uint32 nOfElements);
+    Vector(T *existingArray,uint32 nOfElements);
+
+    /**
+     * @brief Initialises an empty vector and associates it to an existent
+     * array with a given size.
+     * @param[in] existingArray The pointer to the existing array
+     * @param[in] nOfElements The number of elements of the vector
+     * @post
+     *    GetNumberOfElements() == nOfElements &&
+     *    GetDataPointer() == existingArray
+     */
+    void Set(T *existingArray,uint32 nOfElements);
 
     /**
      * @brief Constructs a new matrix from a statically declared table [].
@@ -178,8 +188,14 @@ Vector<T>::Vector(uint32 nOfElements) {
 }
 
 template<typename T>
-Vector<T>::Vector(T *existingArray,
-                  uint32 nOfElements) {
+Vector<T>::Vector(T *existingArray,uint32 nOfElements) {
+    dataPointer = existingArray;
+    numberOfElements = nOfElements;
+    canDestroy = false;
+}
+
+template<typename T>
+void Vector<T>::Set(T *existingArray,uint32 nOfElements) {
     dataPointer = existingArray;
     numberOfElements = nOfElements;
     canDestroy = false;

@@ -52,10 +52,14 @@ namespace MARTe{
 
 void printType(const AnyType &at){
     const VariableDescriptor &vd = at.GetFullVariableDescriptor();
+//printf("!4");
 
     MARTe::DynamicCString line;
     bool ret = vd.ToString(line);
     printf("%s",line.GetList());
+    line.Truncate(0);
+    ret = vd.ToString(line,true);
+    printf("  {%s}",line.GetList());
 
     uint64 dataSize;
     uint64 storageSize;
@@ -91,7 +95,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
     x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
 
     AnyType at(*x);
-//	printf("kkkkk %0x\n",at.GetFullVariableDescriptor().GetFullTypeDescriptor().all);
+//printf("!1");
 
     if (deref.GetSize() > 0){
         printf("(%-24s)%s",orig.GetList(),deref.GetList());
@@ -102,6 +106,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
         printf("%-26s ",orig.GetList());
     }
 
+//printf("!2");
     if (ok){
         bool sameAddress = (at.GetVariablePointer() == &memory);
         if (sameAddress) {
@@ -112,6 +117,7 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
         	printf("[Address delta(B)= %Li] ",delta);
         }
     	printf("\n");
+//printf("!3");
         printType(at);
     } else {
         ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
@@ -254,6 +260,8 @@ void testAT(){
     TEST2(Vector<int32>,**);
     TEST(Vector<int32 *>);
     TEST(Vector<int32> * const );
+    TEST(ZeroTerminatedArray<const Matrix<char8>>);
+    TEST(ZeroTerminatedArray<ZeroTerminatedArray<uint8 (*)[32]>[4]>);
 
     TEST(testStruct);
     TEST2(testStruct,.fieldA);

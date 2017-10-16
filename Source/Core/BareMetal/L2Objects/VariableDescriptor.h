@@ -144,7 +144,7 @@ public:
      * @param[in] modifierString, used internally to perform recursion
      * @return true if all ok or the error
      */
-    ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=NULL) ;
+    ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=emptyString) ;
 
     /**
      * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
@@ -162,16 +162,13 @@ public:
 			uint64 &destFreeSize,
 			VariableDescriptor &destVd,
 			uint8 maxDepth=100,
-			CCString modifierString = modifiers) const;
+			CCString modifierString = emptyString) const;
 
     /**
      * @brief Converts type descriptor to C/c++ equivalent
      *
      */
-    ErrorManagement::ErrorType  ToString(DynamicCString &string) const{
-    	int8 priority=0;
-        return ToStringPrivate(string,emptyString,true,priority) ;
-    }
+    ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
 
     /**
      * @brief Converts C/c++ string to type descriptor
@@ -570,12 +567,47 @@ private:
     template<typename baseType, uint8 bitSize>
     void Match(FractionalInteger<baseType, bitSize> * fractionalInt);
 
+    /**
+     * @brief Constructor from zeroterm malloced char *
+     * @param[in] s is the string
+     * * @post TODO
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString
+     */
+    inline void Match(DynamicCString *s);
+
+    /**
+     * @brief Constructor from zeroterm char[]
+     * @param[in] s is the string
+     * * @post TODO
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString
+     */
+    template <uint32 sz>
+    inline void Match(StaticCString<sz> *s);
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * * @post TODO
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString
+     */
+    inline void Match(CString *s);
+
+    /**
+     * @brief Constructor from 8 bit character.
+     * @param[in] i is the 8 bit character input.
+     * @post
+     *   GetDataPointer() == &i &&
+     *   GetTypeDescriptor() == CString &&
+     */
+    inline void Match(CCString *s);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 template <class T>
 inline  VariableDescriptor::VariableDescriptor( T  x){
@@ -586,7 +618,6 @@ inline  VariableDescriptor::VariableDescriptor( T  x){
 
 template<typename T>
 void VariableDescriptor::Match(Vector<T> * vec) {
-//	AddArrayCode(Array1D,0);
 	AddModifiersLayerConst('V', 0);
 
     T *pp = NULL;
@@ -595,7 +626,6 @@ void VariableDescriptor::Match(Vector<T> * vec) {
 
 template<typename T>
 void VariableDescriptor::Match(Matrix<T> * mat) {
-//	AddArrayCode(Array2D,0);
 	AddModifiersLayerConst('M', 0);
 
     T *pp = NULL;
@@ -604,7 +634,6 @@ void VariableDescriptor::Match(Matrix<T> * mat) {
 
 template<typename T>
 void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
-//	AddArrayCode(ZeroTermArray,0);
 	AddModifiersLayerConst('P', 0);
 	AddModifiersLayerConst('Z', 0);
 
@@ -614,7 +643,6 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
 
 template<typename T >
 void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
-//	AddArrayCode(DynamicZeroTermArray,0);
 	AddModifiersLayerConst('P', 0);
 	AddModifiersLayerConst('D', 0);
 
@@ -624,7 +652,6 @@ void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
 
 template<typename T, uint32 sz >
 void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
-//	AddArrayCode(StaticZeroTermArray,sz);
 	AddModifiersLayerConst('P', 0);
 	AddModifiersLayerConst('S', sz);
 
@@ -632,9 +659,35 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
     Match(pp);
 }
 
+void VariableDescriptor::Match(DynamicCString *s){
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('D', 0);
+	FinaliseCode(Character8Bit);
+}
+
+void VariableDescriptor::Match(CString *s){
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('Z', 0);
+	FinaliseCode(Character8Bit);
+}
+
+void VariableDescriptor::Match(CCString *s){
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('D', 0);
+    AddConstantCode();
+	FinaliseCode(Character8Bit);
+}
+
+template <uint32 sz>
+void VariableDescriptor::Match(StaticCString<sz> *s){
+	AddModifiersLayerConst('P', 0);
+	AddModifiersLayerConst('S', sz);
+	FinaliseCode(Character8Bit);
+}
+
+
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n]){
-//	AddArrayCode(SizedCArray,n);
 	AddModifiersLayerConst('A', n);
 
     T *pp = NULL;
@@ -643,7 +696,6 @@ inline void VariableDescriptor::Match(T (*x) [n]){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match( const T (*x) [n]){
-//	AddArrayCode(SizedCArray,n);
 	AddModifiersLayerConst('A', n);
 
     const T *pp = NULL;
@@ -654,7 +706,6 @@ inline void VariableDescriptor::Match( const T (*x) [n]){
 template <class T>
 inline void VariableDescriptor::Match(T ** x){
 	AddModifiersLayerConst('P', 0);
-//	AddArrayCode(PointerArray,0);
 
     T *pp = NULL;
     Match(pp);
@@ -670,7 +721,6 @@ inline void VariableDescriptor::Match(T * const * x){
 
 template <class T>
 inline void VariableDescriptor::Match(T const * * x){
-//	AddArrayCode(PointerArray,0);
 	AddModifiersLayerConst('P', 0);
 
     T const * pp=NULL;
@@ -707,25 +757,7 @@ void VariableDescriptor::Match(T * x){
 void VariableDescriptor::Match(StreamI *s){
 	FinaliseCode(StreamType);
 }
-#if 0
-void VariableDescriptor::Match(DynamicCString *s){
-	FinaliseCode(DynamicCharString);
-}
 
-void VariableDescriptor::Match(CString *s){
-	FinaliseCode(CharString);
-}
-
-void VariableDescriptor::Match(CCString *s){
-	FinaliseCode(ConstCharString);
-}
-
-template <uint32 sz>
-void VariableDescriptor::Match(StaticCString<sz> *s){
-	TypeDescriptor td(false,Char, Size8bit,StaticZeroTermArray, sz);
-	FinaliseCode(td);
-}
-#endif
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);
@@ -772,9 +804,9 @@ void VariableDescriptor::Match(float64 * i) {
 }
 
 void VariableDescriptor::Match(void * * p) {
-//    TypeDescriptor td(false,Pointer,1,sizeof(void*),1);
 	FinaliseCode(VoidPointer);
 }
+
 
 template<typename baseType, uint8 bitOffset>
 void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
