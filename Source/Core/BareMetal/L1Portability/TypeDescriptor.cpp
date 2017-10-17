@@ -242,13 +242,28 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 	return ret;
 }
 
-#define TYPENAME_CORE()             \
-       	string.AppendN(constString);\
-       	string.AppendN(typeName);   \
-       	string.AppendNum(bits);
+//#define TYPENAME_CORE()             \
+//       	string.AppendN(constString);\
+//       	string.AppendN(typeName);   \
+//       	string.AppendNum(bits);
+
+#define TYPENAME_CORE()             			\
+   	string.AppendN(constString);				\
+	if ((type == Float) && (bits == 32)){		\
+		string.AppendN("float");				\
+	} else 										\
+	if ((type == Float) && (bits == 64)){		\
+		string.AppendN("double");				\
+	} else {									\
+       	string.AppendN(typeName);   			\
+       	string.AppendNum(bits);					\
+	}
+
+
+
 
 #define TEMPLATED_TYPENAME_CORE(className)       \
-       	string.AppendN(#className "<");        \
+       	string.AppendN(#className "<");          \
        	string.AppendN(constString);			 \
        	string.AppendN(typeName);   			 \
        	string.AppendNum(bits);                  \

@@ -41,8 +41,7 @@ OBJSX=          ClassRegistryDatabase.x \
 		ObjectRegistryDatabase.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		test.x
+		ReferenceContainerFilterObjectName.x 
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
@@ -55,7 +54,8 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
-      $(BUILD_DIR)/test$(EXEEXT) \
+                $(BUILD_DIR)/test$(EXEEXT) \
+                $(BUILD_DIR)/test2$(EXEEXT) \
 		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)
 

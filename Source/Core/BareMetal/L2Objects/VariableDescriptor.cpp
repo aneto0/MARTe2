@@ -56,13 +56,14 @@ const uint64 MaxCopySize = 1024*1024*128;
 // max size of an intermediate layer
 const uint64 MaxLayerSize = 1024*1024;
 
-
+#if 0
 void VariableDescriptor::AddModifiersLayer(char8 modifier, uint64 size){
 	if (modifier != '\0'){
 		modifiers.Append(modifier);
 		if (size > 0) modifiers.AppendNum(size);
 	}
 }
+#endif
 
 void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 	if (modifier != '\0'){
@@ -950,118 +951,6 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 
 	return ret;
 }
-
-#if 0
-
-bool VariableDescriptor::BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo)const{
-	bool ret = true;
-    char8 token ;
-
-    CCString modifiersCopy = modifiers;
-    layerNo++;
-	while(ret && (layerNo > 0)){
-		ret = GetLayerInfo(modifiersCopy,modifier,size);
-		layerNo--;
-	}
-    return ret;
-}
-
-
-static bool BrowseModifiersLayerR( char8 &modifier,uint64 &size,CCString modifiers,int32 targetLayer,int32 &reverseDepth) {
-	bool ret = true;
-	bool isArray = false;
-	ret = GetLayerInfo(modifiers,modifier,size);
-
-//printf("{%c|%i}%i",modifier,size,targetLayer);
-
-	if (((modifier == 'A') || (modifier == 'a')) && ret){
-		isArray = true;
-		// remember the target at the beginning of a sequence of A/a
-		if (reverseDepth < 0){
-			reverseDepth = targetLayer;
-		}
-	} else {
-		// end of sequence of array and not yet found target
-		if (targetLayer >= 0){
-			reverseDepth = -1;
-		}
-	}
-
-		if ((isArray) || (targetLayer > 0)){
-			char8 modifier2;
-			uint64 size2;
-			targetLayer--;
-//printf("@");
-			bool ret2 = BrowseModifiersLayerR( modifier2,size2,modifiers,targetLayer,reverseDepth);
-//if (ret2)printf("!");
-
-			// skip results until reverse layers consumed
-			if (reverseDepth >= 0){
-//printf(">");
-				reverseDepth--;
-			} else {
-//printf("<");
-				modifier 	= modifier2;
-				size 		= size2;
-				ret 		= ret2;
-				reverseDepth = -1;
-//printf("(%c|%i)%i",modifier,size,targetLayer);
-			}
-	}
-
-	return ret;
-}
-
-// TODO fix ==> uint32 (* )[32] written as  uint32[32] *
-bool VariableDescriptor::ToString(DynamicCString &string)const{
-	bool ret=true;
-	int32 maxLayer =0;
-	char8 modifier;
-	uint64 size;
-	int32 rd = -1;
-	// first loop add all prefix modifiers that encapsulate: Vector<  Matrix<
-	while ( BrowseModifiersLayerR(modifier,size,modifiers.GetList(),maxLayer,rd) && ret){
-//printf("[%c-%x|%i]",modifier,modifier,size);
-		const APLookUp *apl = reverseLookUpCode(modifier);
-		if (apl != NULL){
-			string.AppendN(apl->cExpansionPre);
-		} else {
-			ret = false;
-		}
-		maxLayer++;
-		rd = -1;
-	}
-	maxLayer--;
-
-	if (ret) {
-		ret = typeDescriptor.ToString(string);
-	}
-
-	// second loop close encapsulating modifiers and add postfix ones> * [N]
-	while ((maxLayer>=0)  && ret){
-		rd = -1;
-		ret = BrowseModifiersLayerR(modifier,size,modifiers.GetList(),maxLayer,rd);
-
-		if (ret){
-			const APLookUp *apl = reverseLookUpCode(modifier);
-			if (apl != NULL){
-				if (apl->cExpansionPost.GetList() != NULL ){
-					string.AppendN(apl->cExpansionPost);
-					string.AppendNum(size);
-				}
-				string.AppendN(apl->cExpansionEnd);
-			} else {
-				ret = false;
-			}
-		}
-		maxLayer--;
-	}
-
-	return ret;
-
-}
-
-#endif
 
 
 }

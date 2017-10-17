@@ -112,19 +112,6 @@ public:
     inline bool HasModifiers() const;
 
     /**
-     * @brief adds one layer of modifiers to the top
-     * @return true if operation succeeded                       */
-    void AddModifiersLayer(char8 modifier, uint64 size);
-    void AddModifiersLayerConst(char8 modifier, uint64 size);
-
-
-    /**
-     * @brief reads one layer of modifiers
-     * @return true if operation succeeded, false if no modifiers
-     */
-    bool BrowseModifiersLayer(char8 &modifier,uint64 &size,uint32 layerNo) const;
-
-    /**
      * @brief returns size of all the memory addressed by this variable.
      * @param[in] pointer, the pointer to the variable
      * @param[in] maxDepth  determine the number of indirected memory to include.
@@ -177,6 +164,12 @@ public:
     ErrorManagement::ErrorType  FromString(DynamicCString &string);
 
 private:
+
+    /**
+     * @brief adds one layer of modifiers to the top
+     * @return true if operation succeeded                       */
+    void AddModifiersLayerConst(char8 modifier, uint64 size);
+
     /**
      * @brief Converts type descriptor to C/c++ equivalent
      *
@@ -673,7 +666,7 @@ void VariableDescriptor::Match(CString *s){
 
 void VariableDescriptor::Match(CCString *s){
 	AddModifiersLayerConst('P', 0);
-	AddModifiersLayerConst('D', 0);
+	AddModifiersLayerConst('Z', 0);
     AddConstantCode();
 	FinaliseCode(Character8Bit);
 }
