@@ -443,19 +443,20 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
  */
 ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,uint32 index,CCString modifierString){
 	ErrorManagement::ErrorType ret;
-
 	char8 modifier;
 	uint64 size;
 	if (modifierString.IsNullPtr()){
 		modifierString = modifiers;
 	}
+//printf ("{%p,%i,%s}",pointer,index,modifierString.GetList());
  	GetLayerInfo(modifierString,modifier,size);
 
  	switch (modifier){
  	case 'p':
  	case 'P':{
 		const uint8 **pp = (const uint8 **)(pointer);
-		const uint8 *p = pp[index];
+		const uint8 *p = *pp;
+//printf ("{%p->%p}",pointer,p);
 		if (!MemoryCheck::Check(p)){
 			ret.exception = true;
 	        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -516,6 +517,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 		if (ret){
 			uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
 			if (index >= maxIndex){
+//printf("{%p-%i-%i-%i}",pointer,index,maxIndex,layerSize);
 				ret.outOfRange = true;
 		        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= maxIndex");
 			}
@@ -818,6 +820,45 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 		char8 nextModifier = modifierString[0];
 		if ( zeroTerMods.In(nextModifier)){
 			GetLayerInfo(modifierString,modifier,size );
+//printf("{%c}",modifierString[0]);
+			if (modifierString[0] == '\0'){
+				if ((modifier == 'Z')||(modifier == 'z')){
+					if (typeDescriptor == Character8Bit){
+						if (modifier == 'z'){
+							string.AppendN("const ");
+						}
+						string.AppendN("CString");
+						return ret;
+					} else
+					if (typeDescriptor == ConstCharacter8Bit){
+						if (modifier == 'z'){
+							string.AppendN("const ");
+						}
+						string.AppendN("CCString");
+						return ret;
+					}
+				}
+				if ((modifier == 'D')||(modifier == 'd')){
+					if (typeDescriptor == Character8Bit){
+						if (modifier == 'd'){
+							string.AppendN("const ");
+						}
+						string.AppendN("DynamicCString");
+						return ret;
+					}
+				}
+				if ((modifier == 'S')||(modifier == 's')){
+					if (typeDescriptor == Character8Bit){
+						if (modifier == 'd'){
+							string.AppendN("const ");
+						}
+						string.AppendN("StaticCString<");
+						string.AppendNum(size);
+						string.Append('>');
+						return ret;
+					}
+				}
+			}
 		}
 	}
 

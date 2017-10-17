@@ -149,7 +149,8 @@ ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
 	subTemplate(int32 *,int32PVar,className)\
     subTemplate(CCString,CCStringVar,className)\
 	subTemplate(CString,CStringVar,className)\
-	subTemplate(DynamicCString,DCStringVar,className)
+	subTemplate(DynamicCString,DCStringVar,className)\
+    subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,className)
 
 class Test1Class{
 public:
@@ -159,6 +160,15 @@ public:
 
 Test1ClassTemplate(memberDeclSubTemplate,Test1Class)
 
+const char8* data[] = {
+		"pippo",
+		"pluto",
+		"paperino",
+		"minni",
+		"paperon",
+		"nonnapapera"
+};
+char8 dataBuffer[]="mizzega";
 
 void PrepareTestObject(){
 	test1Class.int8Var = 8;
@@ -170,9 +180,31 @@ void PrepareTestObject(){
 	test1Class.floatVar = 0.1;
 	test1Class.doubleVar = 1.1e9;
 	test1Class.int32PVar = &test1Class.int32Var;
-	test1Class.CCStringVar = "pippo0";
-	test1Class.CStringVar  = "pippo1";
-	test1Class.DCStringVar = "pippo2";
+	test1Class.CCStringVar = data[0];
+	test1Class.CStringVar  = dataBuffer;
+	test1Class.DCStringVar = data[0];
+/*
+	printf("{%p,%p,%p}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
+	printf("{%p,%p,%p}\n",&test1Class.CCStringVar,&test1Class.CStringVar,&test1Class.DCStringVar);
+	printf("{%i,%i,%i}\n",MemoryCheck::Check(test1Class.CCStringVar.GetList()),
+						  MemoryCheck::Check(test1Class.CStringVar.GetList()),
+						  MemoryCheck::Check(test1Class.DCStringVar.GetList()));
+	printf("{%i,%i,%i}\n",MemoryCheck::Check(&test1Class.CCStringVar),
+						  MemoryCheck::Check(&test1Class.CStringVar),
+						  MemoryCheck::Check(&test1Class.DCStringVar));
+	printf("%s\n",test1Class.CCStringVar.GetList());
+*/
+	CCString pippo[] = {
+			CCString("uno"),
+			CCString("duo"),
+			CCString("tre"),
+			CCString("quattro"),
+			CCString("cinque"),
+			emptyString
+	};
+
+	test1Class.CStringZTAVar = ZeroTerminatedArray<CCString>(pippo);
+
 }
 
 ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
@@ -192,15 +224,18 @@ ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
 void Check(AnyType at,CCString expression,CCString returnType ){
 	ErrorManagement::ErrorType err;
 
-	printf ("% 20s ->",expression.GetList());
+	printf ("% 16s ->",expression.GetList());
 
 	err = at.MultipleDereference(expression);
     DynamicCString string;
     DynamicCString string2;
+    uint64 dataSize;
+    uint64 storageSize;
 	if (err){
 	    const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
 	    err = vd.ToString(string);
 	    vd.ToString(string2,true);
+	    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
 	}
 
 	if (err){
@@ -208,7 +243,7 @@ void Check(AnyType at,CCString expression,CCString returnType ){
 	}
 
 	if (err){
-	    printf("OK  %s= %s\n",string.GetList(),returnType.GetList());
+	    printf("OK  -->%s (%lli %lli)\n",string.GetList(),dataSize,storageSize);
 	} else {
 	    printf("NO ");
 	    PrintError(err);
@@ -230,8 +265,12 @@ void Test(){
     Check(at,".int32PVar","int32 *");
     Check(at,".int32PVar*","int32");
     Check(at,".CCStringVar","CCString");
+    Check(at,".CCStringVar[0]","const char8");
     Check(at,".CStringVar","CString");
+    Check(at,".CStringVar[2]","char8");
     Check(at,".DCStringVar","DynamicCString");
+    Check(at,".DCStringVar[3]","char8");
+    Check(at,".CStringZTAVar","DynamicCString<CString>");
 
 }
 }

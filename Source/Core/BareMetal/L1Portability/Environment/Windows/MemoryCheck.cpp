@@ -28,6 +28,7 @@
 #ifndef LINT
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #else
 #include "lint-linux.h"
@@ -67,16 +68,20 @@ bool Check(const void * const address,
     if (ret){
 		ret = ((mbi.Protect & (PAGE_GUARD|PAGE_NOACCESS))==0);
     }
-    if ((ret) && (accessMode & ExecuteAccessMode)){
-		ret = ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE))!=0);
+    if (ret){
+    	if (accessMode & ExecuteAccessMode){
+    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE))!=0);
+    	}
+    	if (accessMode & ReadAccessMode){
+    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE))!=0);
+    	}
+        if (accessMode & WriteAccessMode){
+        	ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE))!=0);
+        }
     }
-    if ((ret) && (accessMode & ReadAccessMode)){
-		ret = ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE))!=0);
-    }
-    if ((ret) && (accessMode & ReadAccessMode)){
-		ret = ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE))!=0);
-    }
-
+//if (!ret){
+//	printf("{prot=%x,%i,%i}\n",mbi.Protect,ret,accessMode);
+//}
     return ret;
 }
 
