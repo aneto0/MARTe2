@@ -25,6 +25,35 @@
 
 namespace MARTe{
 
+bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize){
+    bool isZero = false;
+	if (pointer[0] == 0){
+		uint32 ix = 1;
+		while ((ix < elSize) && (pointer[ix] == 0)){
+			ix++;
+		}
+		isZero = (ix == elSize);
+	}
+	return isZero;
+}
+
+bool ZeroTerminatedArrayIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize){
+	bool isSame = true;
+	while((elSize > 3)&& isSame){
+		isSame = (*((uint32 *)pointer) == *((uint32 *)data));
+		elSize-=4;
+		pointer+=4;
+		data+=4;
+	}
+	while((elSize > 0)&& isSame){
+		isSame = (*pointer == *data);
+		elSize--;
+		pointer++;
+		data++;
+	}
+	return isSame;
+}
+
 
 // calculates size of a generic ZeroTermArray
 uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize){
@@ -46,6 +75,22 @@ uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize){
 	}
 	return size;
 };
+
+uint32 ZeroTerminatedArrayFind(const uint8 *pointer,const uint8 *data, uint32 elSize){
+    uint32 pos = 0xFFFFFFFFu;
+    if (pointer != NULL_PTR(const uint8 *)) {
+        uint32 index = 0;
+        while (!ZeroTerminatedArrayIsZero(pointer,elSize) && (pos == 0xFFFFFFFFu)) {
+        	if (ZeroTerminatedArrayIsSame(data,pointer,elSize)){
+        		pos = index;
+        	}
+            index++;
+            pointer+=elSize;
+        }
+    }
+    return pos;
+
+}
 
 
 } //MARTe

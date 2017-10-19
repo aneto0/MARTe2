@@ -172,14 +172,14 @@ bool StaticZeroTerminatedArray<T,size>::Append(const ZeroTerminatedArray<const T
     uint32 maxSize = size - 1;
 
     uint32 index = 0;
-    while (!data.Zero(data[index]) && (currentSize < maxSize)){
+    while (!data.IsZero(data[index]) && (currentSize < maxSize)){
         ZeroTerminatedArray<T>::array[currentSize] = data[index];
         currentSize++;
         index++;
     }
     ZeroTerminatedArray<T>::array[currentSize] = 0;
 
-    return (data.Zero(data[index]));
+    return (data.IsZero(data[index]));
 }
 
 template<typename T,uint32 size>

@@ -49,116 +49,42 @@
 
 namespace MARTe{
 
-
-void printType(const AnyType &at){
-    const VariableDescriptor &vd = at.GetFullVariableDescriptor();
-
-    MARTe::DynamicCString line;
-    bool ret = vd.ToString(line);
-    printf("%s",line.GetList());
-    line.Truncate(0);
-    ret = vd.ToString(line,true);
-    printf("  {%s}",line.GetList());
-
-    uint64 dataSize;
-    uint64 storageSize;
-    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-
-    int sz = dataSize;
-    int stsz = storageSize;
-    printf(" sz = %i stsz = %i\n",sz,stsz);
-}
-
-
-template <class T>
-ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
-
-	ErrorManagement::ErrorType ok;
-
-	printf("------------------\n");
-
-	/*
-	 * used as a pointer to avoid allocating unnecessary stack memory
-	 */
-    T *x ;
-    // build a memory block made with pointers pointing to the next pointer...
-    const uint32 NS = 128;
-    void *memory[NS];
-    uint32 i;
-    for (i=0;i<(NS-1);i++){
-    	memory[i]=&memory[i+1];
-    }
-    memory[NS-1]=NULL;
-
-    /* assigned to a real pointer to avoid problems */
-    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
-
-    AnyType at(*x);
-//printf("!1");
-
-    if (deref.GetSize() > 0){
-        printf("(%-24s)%s",orig.GetList(),deref.GetList());
-
-        ok = at.MultipleDereference(deref);
-
-    } else {
-        printf("%-26s ",orig.GetList());
-    }
-
-//printf("!2");
-    if (ok){
-        bool sameAddress = (at.GetVariablePointer() == &memory);
-        if (sameAddress) {
-        	printf("[Address same] ");
-        }
-        else {
-        	int64 delta =  reinterpret_cast<const char8 *>(at.GetVariablePointer()) - reinterpret_cast<const char8  *>(&memory[0]);
-        	printf("[Address delta(B)= %Li] ",delta);
-        }
-    	printf("\n");
-//printf("!3");
-        printType(at);
-    } else {
-        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
-        while (!etl->name.IsNullPtr()){
-        	if ((etl->errorBitSet &  ok.format_as_integer)!= 0){
-        		printf("%s\n",etl->name.GetList());
-        	}
-        	etl++;
-        }
-    }
-
-    return ok;
-}
-
-#define varDeclSubTemplate(type,typeName,className)\
+#define varDeclSubTemplate(type,typeName,arrayDims, className)\
 	type  typeName;
 
-#define memberDeclSubTemplate(type,typeName,className)\
+#define arrayDeclSubTemplate(type,typeName,arrayDims, className)\
+	type  typeName arrayDims;
+
+
+#define memberDeclSubTemplate(type,typeName,arrayDims,className)\
 	CLASS_MEMBER_REGISTER(className,typeName)
 
-#define Test1ClassTemplate(subTemplate,className)\
-	subTemplate(int8,int8Var,className)\
-	subTemplate(int16,int16Var,className)\
-	subTemplate(int32,int32Var,className)\
-	subTemplate(int64,int64Var,className)\
-	subTemplate(uint32,uint32Var,className)\
-	subTemplate(char8,char8Var,className)\
-	subTemplate(float,floatVar,className)\
-	subTemplate(double,doubleVar,className)\
-	subTemplate(int32 *,int32PVar,className)\
-    subTemplate(CCString,CCStringVar,className)\
-	subTemplate(CString,CStringVar,className)\
-	subTemplate(DynamicCString,DCStringVar,className)\
-    subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,className)
+#define Test1ClassTemplate(subTemplate,subTemplateArr, className)\
+	subTemplate(int8,int8Var,[],className)\
+	subTemplate(int16,int16Var,[],className)\
+	subTemplate(int32,int32Var,[],className)\
+	subTemplate(int64,int64Var,[],className)\
+	subTemplate(uint32,uint32Var,[],className)\
+	subTemplate(char8,char8Var,[],className)\
+	subTemplate(float,floatVar,[],className)\
+	subTemplate(double,doubleVar,[],className)\
+	subTemplateArr(int16,int16Arr,[12],className)\
+	subTemplateArr(int64,int64Arr,[12][25],className)\
+	subTemplate(int32 *,int32PVar,[],className)\
+    subTemplate(CCString,CCStringVar,[],className)\
+	subTemplate(CString,CStringVar,[],className)\
+	subTemplate(DynamicCString,DCStringVar,[],className)\
+    subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,[],className)\
+    subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
+	subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
 
 class Test1Class{
 public:
 
-	Test1ClassTemplate(varDeclSubTemplate,Test1Class)
+	Test1ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
 } test1Class;
 
-Test1ClassTemplate(memberDeclSubTemplate,Test1Class)
+Test1ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test1Class)
 
 const char8* data[] = {
 		"pippo",
@@ -194,7 +120,7 @@ void PrepareTestObject(){
 						  MemoryCheck::Check(&test1Class.DCStringVar));
 	printf("%s\n",test1Class.CCStringVar.GetList());
 */
-	CCString pippo[] = {
+	static CCString pippo[] = {
 			CCString("uno"),
 			CCString("duo"),
 			CCString("tre"),
@@ -202,9 +128,25 @@ void PrepareTestObject(){
 			CCString("cinque"),
 			emptyString
 	};
-
 	test1Class.CStringZTAVar = ZeroTerminatedArray<CCString>(pippo);
 
+	static CCString a1[]= { CCString("ampio"),CCString("lume") };
+	static CCString a2[]= { CCString("grande"),CCString("spazio"),CCString("aperto")  };
+	static CCString a3[]= { CCString("agii")};
+	static CCString a4[]= { CCString("roma"),CCString("firenze"),CCString("napoli"),CCString("milano")};
+	static Vector<CCString> v1(a1);
+	static Vector<CCString> v2(a2);
+	static Vector<CCString> v3(a3);
+	static Vector<CCString> v4(a4);
+	static Vector<CCString> vv0[4] = {a1,a2,a3,a4};
+	static Vector<CCString> vv1[4] = {a1,a2,a3,a4};
+	static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
+	static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
+	static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{0,0,0,0}};
+
+
+//    ZeroTerminatedArray<Vector<CCString>[4]> CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
+    test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
 }
 
 ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
@@ -224,7 +166,7 @@ ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
 void Check(AnyType at,CCString expression,CCString returnType ){
 	ErrorManagement::ErrorType err;
 
-	printf ("% 16s ->",expression.GetList());
+	printf ("% 24s ->",expression.GetList());
 
 	err = at.MultipleDereference(expression);
     DynamicCString string;
@@ -236,6 +178,7 @@ void Check(AnyType at,CCString expression,CCString returnType ){
 	    err = vd.ToString(string);
 	    vd.ToString(string2,true);
 	    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+//	    printf("{%s}",string.GetList());
 	}
 
 	if (err){
@@ -262,6 +205,8 @@ void Test(){
     Check(at,".int64Var","int64");
     Check(at,".floatVar","float");
     Check(at,".doubleVar","double");
+    Check(at,".int16Arr","int16[12]");
+    Check(at,".int64Arr","int64[12][25]");
     Check(at,".int32PVar","int32 *");
     Check(at,".int32PVar*","int32");
     Check(at,".CCStringVar","CCString");
@@ -270,8 +215,15 @@ void Test(){
     Check(at,".CStringVar[2]","char8");
     Check(at,".DCStringVar","DynamicCString");
     Check(at,".DCStringVar[3]","char8");
-    Check(at,".CStringZTAVar","DynamicCString<CString>");
-
+    Check(at,".CStringZTAVar","ZeroTerminatedArray<CCString>");
+    Check(at,".CStringZTAVar[2]","CCString");
+    Check(at,".CStringZTAVar[2][2]","const char8");
+    Check(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>");
+    Check(at,".CStringVAZTAVar[1]","Vector<CCString>[4]");
+    Check(at,".CStringVAZTAVar[1][2]","Vector<CCString>");
+    Check(at,".CStringVAZTAVar[1][2][0]","CCString");
+    Check(at,".CStringVAZTAVar[1][2][0][4]","const char8");
+    Check(at,".MFloat10","Matrix<float(*)[10]>");
 }
 }
 

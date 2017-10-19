@@ -49,6 +49,32 @@ namespace MARTe {
 uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize);
 
 /**
+ * @brief checks if an element at a given position is all zeroes
+ * @param[in] pointer is the pointer to the data array
+ * @param[in] elSize is the size of each element in the array
+ * @return true if all elements are zero
+ */
+bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize);
+
+/**
+ * @brief searches for an element
+ * @param[in] pointer is the pointer to the data array
+ * @param[in] data is the pointer to the searched element
+ * @param[in] elSize is the size of each element in the array
+ * @return the location of the element or 0xFFFFFFFF if not found
+ */
+uint32 ZeroTerminatedArrayFind(const uint8 *pointer,const uint8 *data, uint32 elSize);
+
+/**
+ * @brief compares elements
+ * @param[in] pointer is the pointer to the data array
+ * @param[in] data is the pointer to the searched element
+ * @param[in] elSize is the size of each element in the array
+ * @return true if have same memory
+ */
+bool ZeroTerminatedArrayIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize);
+
+/**
  * @brief Describes a zero-terminated array.
  *
  * @warning This class is only a wrapper of a pointer. The implementation assumes that the pointer
@@ -122,7 +148,7 @@ public:
      * @param[in] data is the element to be checked.
      * @return true if \a data is the array terminal, false otherwise.
      */
-    inline bool Zero(const T & data) const;
+    inline bool IsZero(const T & data) const;
 
     /**
      * @brief Checks if the ptr is valid
@@ -185,6 +211,8 @@ inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
 
 template<typename T>
 uint32 ZeroTerminatedArray<T>::GetSize() const {
+	return ZeroTerminatedArrayGetSize((const uint8 *)array,sizeof(T));
+/*
     uint32 size = 0u;
     if (array != NULL_PTR(T*)) {
         const T * listP = array;
@@ -194,11 +222,14 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
         }
     }
     return size;
+    */
 }
 
 
 template<typename T>
 uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
+	return ZeroTerminatedArrayFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
+/*
     uint32 pos = 0xFFFFFFFFu;
     if (array != NULL_PTR(T*)) {
         uint32 index = 0;
@@ -210,6 +241,7 @@ uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
         }
     }
     return pos;
+    */
 }
 
 template<typename T>
@@ -223,9 +255,8 @@ void ZeroTerminatedArray<T>::SetList(T *arrayIn) {
 }
 
 template<typename T>
-bool ZeroTerminatedArray<T>::Zero(const T & data) const {
-	static const T term(0u);
-    return (data == term);
+bool ZeroTerminatedArray<T>::IsZero(const T & data) const {
+	return ZeroTerminatedArrayIsZero((const uint8 *)&data,sizeof(T));
 }
 
 template<typename T>
@@ -237,7 +268,7 @@ bool ZeroTerminatedArray<T>::IsNullPtr() const {
 template<typename T>
 void ZeroTerminatedArray<T>::Skip() {
     if (array != NULL_PTR(T *))  {
-        if (!Zero(*array)){
+        if (!IsZero(*array)){
             array++;
         }
     }
@@ -256,13 +287,13 @@ bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {
     if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
         const T * list2P = arrayIn;
-        while (!Zero(*listP) && same) {
+        while (!IsZero(*listP) && same) {
             same = (*listP == *list2P);
             listP++;
             list2P++;
         }
         if (same){
-        	same = Zero(*list2P);
+        	same = ZeroTerminatedArrayIsZero((const uint8 *)list2P,sizeof(T));
         }
     }
     return same;
