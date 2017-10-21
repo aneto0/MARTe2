@@ -74,6 +74,12 @@ public:
      */
     inline bool operator==(const CCString &s) const;
 
+    /**
+     * @Brief copies one string to another.
+     * Necessary to avoid default copy operator use!
+     * TODO
+     */
+    inline void  operator=(const DynamicCString &s) ;
 
     /**
      * TODO
@@ -104,6 +110,13 @@ DynamicCString::operator CCString() const{
 bool DynamicCString::operator==(const CCString &s) const{
 	return isSameAs(s.GetList());
 }
+
+void DynamicCString::operator=(const DynamicCString &s) {
+	Truncate(0U);
+	AppendN(s);
+
+}
+
 
 bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 	bool ret;

@@ -301,21 +301,28 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
         REPORT_ERROR(ErrorManagement::InternalSetupError, "Incorrect sequence VZ or MZ encountered ");
 	}
 
+//printf("[%c,%i]",modifier,numberOfTermElements);
+
 	if (ret){
 		// if we can delve deep and there is deep....
 		if ((maxDepth > 0) && (modifier != '\0')){
 			maxDepth--;
 
-			if (isVariableSize(modifierString)){
-
-				switch(modifier){
-				case 'p':
-				case 'P':{
-					// cannot do this conversion using c++ style casts
-					const uint8 **pp = (const uint8 **)(pointer);
+			switch(modifier){
+			case 'p':
+			case 'P':{
+				// cannot do this conversion using c++ style casts
+				const uint8 **pp = (const uint8 **)(pointer);
+				if (isVariableSize(modifierString)){
 					storageSize = numberOfElementsIncludingTerm * elementSize;
 					dataSize = 0;
 					uint64 index;
+#if 0
+					if (!MemoryCheck::Check(pp)){
+						ret.parametersError = true;
+				        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
+					}
+#endif
 					for (index = 0; (index < numberOfElements) && ret; index++){
 						const uint8 *p = pp[index];
 						if (!MemoryCheck::Check(p)){
@@ -334,16 +341,38 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							}
 						}
 					}
-				} break;
-				case 'V':
-				case 'v':{
-					const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
-					storageSize = numberOfElementsIncludingTerm * elementSize;
-					dataSize = 0;
-					uint64 index;
-					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = static_cast<const uint8 *>(pv[index].GetDataPointer());
-						uint32 numberOfArrayElements = pv[index].GetNumberOfElements();
+				} else {  // not variable size
+					uint64 dataSize2;
+					uint64 storageSize2;
+					if (!MemoryCheck::Check(pp[0])){
+						ret.exception = true;
+						REPORT_ERROR(ErrorManagement::Exception, "bad dereferenced pointer");
+					}
+					ret = GetDeepSize(modifierString, pp[0],dataSize2,storageSize2,maxDepth);
+					if (ret){
+						storageSize = storageSize2 + numberOfElementsIncludingTerm * elementSize;
+						dataSize = numberOfElementsIncludingTerm * dataSize2;
+					}
+				}
+			} break;
+			case 'V':
+			case 'v':{
+				const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
+				storageSize = numberOfElementsIncludingTerm * elementSize;
+				dataSize = 0;
+				uint64 index;
+#if 0
+
+				if (!MemoryCheck::Check(pv)){
+					ret.parametersError = true;
+			        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
+				}
+#endif
+
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = static_cast<const uint8 *>(pv[index].GetDataPointer());
+					uint32 numberOfArrayElements = pv[index].GetNumberOfElements();
+					if (numberOfArrayElements != 0){
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
 					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -359,16 +388,26 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							}
 						}
 					}
-				} break;
-				case 'M':
-				case 'm':{
-					const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
-					storageSize = numberOfElementsIncludingTerm * elementSize;
-					dataSize = 0;
-					uint64 index;
-					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = static_cast<const uint8 *>(pm[index].GetDataPointer());
-						uint32 numberOfArrayElements = pm[index].GetNumberOfRows() * pm[index].GetNumberOfColumns();
+				}
+			} break;
+			case 'M':
+			case 'm':{
+//printf("{M}");
+				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
+				storageSize = numberOfElementsIncludingTerm * elementSize;
+				dataSize = 0;
+				uint64 index;
+#if 0
+
+				if (!MemoryCheck::Check(pm)){
+					ret.parametersError = true;
+			        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
+				}
+#endif
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = static_cast<const uint8 *>(pm[index].GetDataPointer());
+					uint32 numberOfArrayElements = pm[index].GetNumberOfRows() * pm[index].GetNumberOfColumns();
+					if (numberOfArrayElements > 0){
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
 					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -384,32 +423,17 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							}
 						}
 					}
-				} break;
-				default:{
-					// Aa, Zz, Ss, Dd are not terminators of a layer .
-					// they shall not be encountered here
-					ret.fatalError = true;
-			        REPORT_ERROR(ErrorManagement::FatalError, "AZSD at a layer termination");
 				}
-				}
-
-			} else { // fixed size
-				uint64 dataSize2;
-				uint64 storageSize2;
-				const uint8 **pp = (const uint8 **)(pointer);
-				ret.exception = !MemoryCheck::Check(pp[0]);
-				if (!MemoryCheck::Check(pp[0])){
-					ret.exception = true;
-			        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-				}
-
-				ret = GetDeepSize(modifierString, pp[0],dataSize2,storageSize2,maxDepth);
-
-				if (ret){
-					storageSize = storageSize2 + numberOfElementsIncludingTerm * elementSize;
-					dataSize = numberOfElementsIncludingTerm * dataSize2;
-				}
+			} break;
+			default:{
+				// Aa, Zz, Ss, Dd are not terminators of a layer .
+				// they shall not be encountered here
+				ret.fatalError = true;
+		        REPORT_ERROR(ErrorManagement::FatalError, "AZSD at a layer termination");
 			}
+			}
+
+
 		} else {  // '\0' or maxdepth reached
 			storageSize = 0;
 			dataSize = numberOfElementsIncludingTerm * elementSize;
@@ -448,143 +472,148 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	if (modifierString.IsNullPtr()){
 		modifierString = modifiers;
 	}
-//printf ("{%p,%i,%s}",pointer,index,modifierString.GetList());
- 	GetLayerInfo(modifierString,modifier,size);
+	if (pointer == NULL_PTR(const uint8 *)){
+		ret.parametersError = true;
+	}
 
- 	switch (modifier){
- 	case 'p':
- 	case 'P':{
-		const uint8 **pp = (const uint8 **)(pointer);
-		const uint8 *p = *pp;
-//printf ("{%p->%p}",pointer,p);
-		if (!MemoryCheck::Check(p)){
-			ret.exception = true;
-	        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-		}
-		if (ret){
-			pointer = p;
- 			char8 nextModifier = modifierString[0];
- 			switch (nextModifier){
- 			case 'A':
-		 	case 's':
- 			case 'S':
-	 		case 'd':
- 			case 'D':
- 			case 'z':
-	 		case 'Z':{
-	        	ret = Redirect(pointer,index,modifierString);
- 			}break;
-	 		default:{
-				if (index != 0){
-					ret.outOfRange = true;
-			        REPORT_ERROR(ErrorManagement::OutOfRange, "index!=0 for pointer to var");
-				}
+	if (ret){
+		GetLayerInfo(modifierString,modifier,size);
 
-				if (ret){
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
-				}
- 			}
- 			}// end switch
-		} // ret is not false
- 	}break; // end Pp case
- 	case 'A':{
- 		// need fulllayerSize of the remaining full layer
- 		// note that next layer cannot be ZzDdSs but only A or a terminator like PpVvMm and 0
-		if (index < size){
-			uint64 layerSize = FullLayerSize(modifierString,pointer);
-			uint64 step = layerSize * size;
-			pointer = pointer + step;
-			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
-		} else {
-			ret.outOfRange = true;
-	        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= size");
-		}
- 	}break;
- 	case 's':
- 	case 'S':
- 	case 'd':
- 	case 'D':
- 	case 'z':
- 	case 'Z':{
- 		// this is not the full ZeroTermArray but just the zero term memory referenced to.
- 		// it was preceded by a P that has been skipped.
-		uint64 layerSize = FullLayerSize(modifierString,pointer);
-		if (layerSize > MaxZTALayerSize){
-			ret.unsupportedFeature = true;
-	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "ZTA element too large");
-		}
-
-		if (ret){
-			uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
-			if (index >= maxIndex){
-//printf("{%p-%i-%i-%i}",pointer,index,maxIndex,layerSize);
-				ret.outOfRange = true;
-		        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= maxIndex");
+	 	switch (modifier){
+	 	case 'p':
+	 	case 'P':{
+			const uint8 **pp = (const uint8 **)(pointer);
+			const uint8 *p = *pp;
+	//printf ("{%p->%p}",pointer,p);
+			if (!MemoryCheck::Check(p)){
+				ret.exception = true;
+		        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
 			}
-		}
-		if (ret){
-			uint64 step = layerSize * size;
-			pointer = pointer + step;
-			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
-		}
- 	}break;
- 	case 'v':
- 	case 'V':{
-		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
-		const uint8 *p = static_cast<const uint8 *>(pv[0].GetDataPointer());
-		uint32 numberOfArrayElements = pv[0].GetNumberOfElements();
-		if (!MemoryCheck::Check(p)){
-			ret.exception = true;
-	        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-		}
-		if (index >=  numberOfArrayElements){
-			ret.outOfRange = true;
-	        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= numberOfArrayElements");
-		}
+			if (ret){
+				pointer = p;
+	 			char8 nextModifier = modifierString[0];
+	 			switch (nextModifier){
+	 			case 'A':
+			 	case 's':
+	 			case 'S':
+		 		case 'd':
+	 			case 'D':
+	 			case 'z':
+		 		case 'Z':{
+		        	ret = Redirect(pointer,index,modifierString);
+	 			}break;
+		 		default:{
+					if (index != 0){
+						ret.outOfRange = true;
+				        REPORT_ERROR(ErrorManagement::OutOfRange, "index!=0 for pointer to var");
+					}
 
-		if (ret){
+					if (ret){
+						modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					}
+	 			}
+	 			}// end switch
+			} // ret is not false
+	 	}break; // end Pp case
+	 	case 'A':{
+	 		// need fulllayerSize of the remaining full layer
+	 		// note that next layer cannot be ZzDdSs but only A or a terminator like PpVvMm and 0
+			if (index < size){
+				uint64 layerSize = FullLayerSize(modifierString,pointer);
+				uint64 step = layerSize * size;
+				pointer = pointer + step;
+				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+			} else {
+				ret.outOfRange = true;
+		        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= size");
+			}
+	 	}break;
+	 	case 's':
+	 	case 'S':
+	 	case 'd':
+	 	case 'D':
+	 	case 'z':
+	 	case 'Z':{
+	 		// this is not the full ZeroTermArray but just the zero term memory referenced to.
+	 		// it was preceded by a P that has been skipped.
 			uint64 layerSize = FullLayerSize(modifierString,pointer);
-			uint64 step = layerSize * size;
-			pointer = p + step;
-			modifiers.Remove(modifierString.GetList()-modifiers.GetList());
-		}
- 	}break;
- 	case 'm':
- 	case 'M':{
-		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
-		const uint8 *p = static_cast<const uint8 *>(pm[0].GetDataPointer());
-		if (!MemoryCheck::Check(p)){
-			ret.exception = true;
-	        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-		}
-		if (index >=  pm[0].GetNumberOfRows()){
-			ret.outOfRange = true;
-	        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= pm[0].GetNumberOfRows()");
-		}
-		if (ret){
-			uint64 layerSize = FullLayerSize(modifierString,pointer);
-			uint64 step = layerSize * size * pm[0].GetNumberOfColumns();
-			pointer = p + step;
+			if (layerSize > MaxZTALayerSize){
+				ret.unsupportedFeature = true;
+		        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "ZTA element too large");
+			}
 
-			DynamicCString modifiersTemp;
-			modifiersTemp.AppendN(modifierString);
-			modifiers.Truncate(0);
-			modifiers.Append('A');
-			modifiers.AppendNum(pm[0].GetNumberOfColumns());
-			modifiers.AppendN(modifiersTemp);
-		}
+			if (ret){
+				uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
+				if (index >= maxIndex){
+	//printf("{%p-%i-%i-%i}",pointer,index,maxIndex,layerSize);
+					ret.outOfRange = true;
+			        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= maxIndex");
+				}
+			}
+			if (ret){
+				uint64 step = layerSize * size;
+				pointer = pointer + step;
+				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+			}
+	 	}break;
+	 	case 'v':
+	 	case 'V':{
+			const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
+			const uint8 *p = static_cast<const uint8 *>(pv[0].GetDataPointer());
+			uint32 numberOfArrayElements = pv[0].GetNumberOfElements();
+			if (!MemoryCheck::Check(p)){
+				ret.exception = true;
+		        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+			}
+			if (index >=  numberOfArrayElements){
+				ret.outOfRange = true;
+		        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= numberOfArrayElements");
+			}
 
- 	}break;
- 	case '\0':{
- 		ret.illegalOperation = true;
-        REPORT_ERROR(ErrorManagement::IllegalOperation, "cannot redirect a basic type");
- 	} break;
- 	default:{
- 		ret.internalSetupError = true;
-        REPORT_ERROR(ErrorManagement::InternalSetupError, "unmapped modifier");
- 	}
- 	}
+			if (ret){
+				uint64 layerSize = FullLayerSize(modifierString,pointer);
+				uint64 step = layerSize * size;
+				pointer = p + step;
+				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+			}
+	 	}break;
+	 	case 'm':
+	 	case 'M':{
+			const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
+			const uint8 *p = static_cast<const uint8 *>(pm[0].GetDataPointer());
+			if (!MemoryCheck::Check(p)){
+				ret.exception = true;
+		        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+			}
+			if (index >=  pm[0].GetNumberOfRows()){
+				ret.outOfRange = true;
+		        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= pm[0].GetNumberOfRows()");
+			}
+			if (ret){
+				uint64 layerSize = FullLayerSize(modifierString,pointer);
+				uint64 step = layerSize * size * pm[0].GetNumberOfColumns();
+				pointer = p + step;
 
+				DynamicCString modifiersTemp;
+				modifiersTemp.AppendN(modifierString);
+				modifiers.Truncate(0);
+				modifiers.Append('A');
+				modifiers.AppendNum(pm[0].GetNumberOfColumns());
+				modifiers.AppendN(modifiersTemp);
+			}
+
+	 	}break;
+	 	case '\0':{
+	 		ret.illegalOperation = true;
+	        REPORT_ERROR(ErrorManagement::IllegalOperation, "cannot redirect a basic type");
+	 	} break;
+	 	default:{
+	 		ret.internalSetupError = true;
+	        REPORT_ERROR(ErrorManagement::InternalSetupError, "unmapped modifier");
+	 	}
+	 	}
+
+	}
 
 	return ret;
 }

@@ -91,18 +91,17 @@ public:
      */
     inline T * GetList() const ;
 
+    /**
+     * @brief copies the content.
+     */
+    template<uint32 granularity2>
+    inline void operator= (const DynamicZeroTerminatedArray<const T,granularity2> &data);
 
     /**
      * @brief Adds one element to the TArray()
      * @return false if realloc fails
      */
     inline bool Append(const T &data);
-
-    /**
-     * @brief Adds one TArray() of elements to the TArray()
-     * @return false if realloc fails
-     */
-//    inline bool AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
 
     /**
      * @brief Adds one TArray() of elements to the TArray()
@@ -180,6 +179,15 @@ DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const Zero
 	const void *src = static_cast<const void *>(data.GetList());
 	DZTInitCopy(data.GetSize(),sizeof(T),granularity,VoidArray(),src);
 }
+
+template<typename T,uint32 granularity>
+template<uint32 granularity2>
+inline void DynamicZeroTerminatedArray<T,granularity>::operator= (const DynamicZeroTerminatedArray<const T,granularity2> &data){
+	Truncate(0);
+	const void *src = static_cast<const void *>(data.GetList());
+	DZTInitCopy(data.GetSize(),sizeof(T),granularity,VoidArray(),src);
+}
+
 
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::~DynamicZeroTerminatedArray(){

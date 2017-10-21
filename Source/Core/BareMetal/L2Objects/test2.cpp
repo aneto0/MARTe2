@@ -109,6 +109,7 @@ void PrepareTestObject(){
 	test1Class.CCStringVar = data[0];
 	test1Class.CStringVar  = dataBuffer;
 	test1Class.DCStringVar = data[0];
+//	printf("{%s,%s,%s}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
 /*
 	printf("{%p,%p,%p}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
 	printf("{%p,%p,%p}\n",&test1Class.CCStringVar,&test1Class.CStringVar,&test1Class.DCStringVar);
@@ -143,10 +144,11 @@ void PrepareTestObject(){
 	static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
 	static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
 	static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{0,0,0,0}};
-
-
-//    ZeroTerminatedArray<Vector<CCString>[4]> CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
+
+    static float (*arrayP10[10][10])[10];
+    for (int i=0;i<10;i++) for (int j=0;j<10;j++) arrayP10[i][j] = NULL;
+    test1Class.MFloat10 = arrayP10;
 }
 
 ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
@@ -166,7 +168,7 @@ ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
 void Check(AnyType at,CCString expression,CCString returnType ){
 	ErrorManagement::ErrorType err;
 
-	printf ("% 24s ->",expression.GetList());
+	printf ("% 28s ->",expression.GetList());
 
 	err = at.MultipleDereference(expression);
     DynamicCString string;
@@ -177,8 +179,12 @@ void Check(AnyType at,CCString expression,CCString returnType ){
 	    const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
 	    err = vd.ToString(string);
 	    vd.ToString(string2,true);
-	    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-//	    printf("{%s}",string.GetList());
+		if (err){
+		    err = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+//			if (!err.ErrorsCleared()){
+//				printf ("[%p]",at.GetVariablePointer());
+//			}
+		}
 	}
 
 	if (err){
@@ -223,7 +229,7 @@ void Test(){
     Check(at,".CStringVAZTAVar[1][2]","Vector<CCString>");
     Check(at,".CStringVAZTAVar[1][2][0]","CCString");
     Check(at,".CStringVAZTAVar[1][2][0][4]","const char8");
-    Check(at,".MFloat10","Matrix<float(*)[10]>");
+    Check(at,".MFloat10","Matrix<float( *)[10]>");
 }
 }
 
