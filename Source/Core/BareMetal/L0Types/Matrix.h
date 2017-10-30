@@ -46,7 +46,7 @@ namespace MARTe {
  * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
-class Matrix {
+class Matrix: public Pointer {
 
 public:
 
@@ -157,11 +157,13 @@ public:
      */
     T& operator()(const uint32 row, const uint32 col);
 
+#if 0
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
     inline void *GetDataPointer() const;
+#endif
 
     /**
      * @brief Performs the matrix product.
@@ -245,11 +247,12 @@ public:
     bool Inverse(Matrix<T> &inverse) const;
 
 private:
-
     /**
-     * The data pointer to the raw data.
+     * @brief Frees memory if necessary
+     * @post
+     *   GetDataPointer() == NULL
      */
-    void *dataPointer;
+    void FreeMemory();
 
     /**
      * The number of rows.
@@ -276,8 +279,7 @@ private:
 namespace MARTe {
 
 template<typename T>
-Matrix<T>::Matrix() {
-    dataPointer = static_cast<void *>(NULL);
+Matrix<T>::Matrix(): Pointer() {
     numberOfRows = 0u;
     numberOfColumns = 0u;
     canDestroy = false;
@@ -285,11 +287,9 @@ Matrix<T>::Matrix() {
 
 template<typename T>
 Matrix<T>::Matrix(uint32 nOfRows,
-                  uint32 nOfColumns) {
-    T* elements = new T[nOfRows*nOfColumns];
-    dataPointer = reinterpret_cast<void *>(elements);
+                  uint32 nOfColumns): Pointer(new T[nOfRows*nOfColumns]) {
     numberOfColumns = nOfColumns;
-    numberOfRows = nOfRows;
+    numberOfRows    = nOfRows;
     canDestroy = true;
 }
 
@@ -297,7 +297,8 @@ template<typename T>
 void Matrix<T>::Set(T *existingArray,
                   uint32 nOfRows,
                   uint32 nOfColumns) {
-    dataPointer = reinterpret_cast<void *>(existingArray);
+	FreeMemory();
+	Pointer::Set(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     canDestroy = false;
@@ -306,8 +307,7 @@ void Matrix<T>::Set(T *existingArray,
 template<typename T>
 Matrix<T>::Matrix(T *existingArray,
                   uint32 nOfRows,
-                  uint32 nOfColumns) {
-    dataPointer = reinterpret_cast<void *>(existingArray);
+                  uint32 nOfColumns):Pointer(existingArray) {
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     canDestroy = false;
@@ -315,22 +315,27 @@ Matrix<T>::Matrix(T *existingArray,
 
 template<typename T>
 template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
-Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    dataPointer = reinterpret_cast<void*>(&(source[0][0]));
+Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]):Pointer(&(source[0][0])) {
     numberOfColumns = nOfColumnsStatic;
-    numberOfRows = nOfRowsStatic;
+    numberOfRows 	= nOfRowsStatic;
+    canDestroy 		= false;
+}
+
+template<typename T>
+void Matrix<T>::FreeMemory() {
+    if (canDestroy) {
+        T* pointerToDestroy = reinterpret_cast<T*>(dataPointer);
+        delete[] pointerToDestroy;
+    }
+    Pointer::Set(NULL);
+    numberOfColumns = 0u;
+    numberOfRows = 0u;
     canDestroy = false;
 }
 
 template<typename T>
 Matrix<T>::~Matrix() {
-    if (canDestroy) {
-        T* pointerToDestroy = reinterpret_cast<T*>(dataPointer);
-        delete[] pointerToDestroy;
-    }
-    dataPointer = NULL;
-    numberOfColumns = 0u;
-    numberOfRows = 0u;
+	FreeMemory();
 }
 
 template<typename T>
@@ -368,11 +373,12 @@ T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
     T* mat = reinterpret_cast<T*>(dataPointer);
     return mat[row*numberOfColumns+col];
 }
-
+/*
 template<typename T>
 inline void* Matrix<T>::GetDataPointer() const {
     return dataPointer;
 }
+*/
 
 template<typename T>
 bool Matrix<T>::Product(Matrix<T> &factor,
@@ -382,7 +388,7 @@ bool Matrix<T>::Product(Matrix<T> &factor,
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
     bool ret = ((cond1) && (cond2) && (cond3));
     if (ret) {
-        Matrix<T> &temp = *this
+        Matrix<T> &temp = *this;
 //        temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
 
         for (uint32 i = 0u; i < numberOfRows; i++) {

@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HeapManager.h"
+#include "Pointer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,7 +47,7 @@ namespace MARTe {
  * @tparam T the scalar type for the cells of the matrix
  */
 template<typename T>
-class Vector {
+class Vector: public Pointer {
 
 public:
 
@@ -122,12 +122,13 @@ public:
      */
     T operator [](uint32 idx) const;
 
+#if 0
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
     inline void * GetDataPointer() const;
-
+#endif
 
     /**
      * @brief Gets the number of elements in the vector.
@@ -149,11 +150,12 @@ public:
                  T &result) const;
 
 private:
-
     /**
-     * The data pointer to the raw data.
+     * @brief Frees memory if necessary
+     * @post
+     *   GetDataPointer() == NULL
      */
-    void *dataPointer;
+    void FreeMemory();
 
     /**
      * The number of elements.
@@ -164,6 +166,7 @@ private:
      * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
      */
     bool canDestroy;
+
 };
 }
 
@@ -174,46 +177,51 @@ private:
 namespace MARTe {
 
 template<typename T>
-Vector<T>::Vector() {
+Vector<T>::Vector(): Pointer() {
     numberOfElements = 0u;
-    dataPointer = NULL_PTR(T *);
     canDestroy = false;
 }
 
 template<typename T>
-Vector<T>::Vector(uint32 nOfElements) {
-    dataPointer = new T[nOfElements];
+Vector<T>::Vector(uint32 nOfElements):Pointer(new T[nOfElements]) {
     numberOfElements = nOfElements;
     canDestroy = true;
 }
 
 template<typename T>
-Vector<T>::Vector(T *existingArray,uint32 nOfElements) {
-    dataPointer = existingArray;
+Vector<T>::Vector(T *existingArray,uint32 nOfElements):Pointer(existingArray) {
     numberOfElements = nOfElements;
     canDestroy = false;
 }
 
 template<typename T>
 void Vector<T>::Set(T *existingArray,uint32 nOfElements) {
-    dataPointer = existingArray;
-    numberOfElements = nOfElements;
+	FreeMemory();
+	Pointer::Set(existingArray);
     canDestroy = false;
+    numberOfElements = nOfElements;
 }
 
 template<typename T>
 template<uint32 nOfElementsStatic>
-Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
-    dataPointer = reinterpret_cast<T *>(&source[0]);
+Vector<T>::Vector(T (&source)[nOfElementsStatic]):Pointer(&source[0]) {
     numberOfElements = nOfElementsStatic;
     canDestroy = false;
 }
 
 template<typename T>
-Vector<T>::~Vector() {
+void Vector<T>::FreeMemory(){
     if (canDestroy) {
         delete[] reinterpret_cast<T*>(dataPointer);
     }
+    Pointer::Set(NULL);
+    dataPointer = NULL;
+    canDestroy = false;
+}
+
+template<typename T>
+Vector<T>::~Vector() {
+	FreeMemory();
 }
 
 template<typename T>
@@ -228,10 +236,12 @@ T Vector<T>::operator [](uint32 idx) const {
     return array[idx];
 }
 
+/*
 template<typename T>
 inline void* Vector<T>::GetDataPointer() const {
     return dataPointer;
 }
+*/
 
 template<typename T>
 inline uint32 Vector<T>::GetNumberOfElements() const {

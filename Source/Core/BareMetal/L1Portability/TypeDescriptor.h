@@ -299,25 +299,39 @@ public:
 #define  UnsignedInteger16Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
 #define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
-#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray) )
-#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
-#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
-#define  StreamStringType            TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,SString) | TDRANGE(arraySize,1))
-#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
+
 /// the typeDescriptor for a Stream
 #define  StreamType                  TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,Stream) )
+#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
+#define  StreamStringType            TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,SString) | TDRANGE(arraySize,1))
 
+#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray) )
+#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
 
+/*******************************************************/
+/* Types only used as a summary of a more complex type */
+/*******************************************************/
+#define  GenericPointer_number       TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,PointerArray)
+#define  GenericPointer              TypeDescriptor(GenericPointer_number )
 #define  ConstCharString_number      (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(dataIsConstant,1) )
+#define  ConstCharString             TypeDescriptor(ConstCharString_number)
+#define  GenericArray_number         TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,0)
+#define  GenericArray                TypeDescriptor(InvalidType_number)
+#define  InvalidType_number          TDRANGE(type,ComplexType)      | TDRANGE(complexType,Invalid)
+#define  InvalidType                 TypeDescriptor(InvalidType_number)
+
+
+#if 0
+#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
+
 #define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
 #define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
 #define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
 
-#define  ConstCharString             TypeDescriptor(ConstCharString_number)
 #define  CharString                  TypeDescriptor(CharString_number)
 #define  DynamicCharString           TypeDescriptor(DynamicCharString_number)
 #define  StaticCharString            TypeDescriptor(StaticCharString_number)
-
+#endif
 
 
 

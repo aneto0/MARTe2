@@ -59,6 +59,8 @@ namespace MARTe{
 #define memberDeclSubTemplate(type,typeName,arrayDims,className)\
 	CLASS_MEMBER_REGISTER(className,typeName)
 
+typedef int64 (*myPArrType[12])[25] ;
+
 #define Test1ClassTemplate(subTemplate,subTemplateArr, className)\
 	subTemplate(int8,int8Var,[],className)\
 	subTemplate(int16,int16Var,[],className)\
@@ -70,10 +72,13 @@ namespace MARTe{
 	subTemplate(double,doubleVar,[],className)\
 	subTemplateArr(int16,int16Arr,[12],className)\
 	subTemplateArr(int64,int64Arr,[12][25],className)\
+	subTemplate(myPArrType,int64PArr,[],className)\
 	subTemplate(int32 *,int32PVar,[],className)\
     subTemplate(CCString,CCStringVar,[],className)\
 	subTemplate(CString,CStringVar,[],className)\
 	subTemplate(DynamicCString,DCStringVar,[],className)\
+	subTemplate(Vector<char8>,VCharVar,[],className)\
+	subTemplate(Matrix<float>,MFloatVar,[],className)\
     subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,[],className)\
     subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
 	subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
@@ -109,6 +114,10 @@ void PrepareTestObject(){
 	test1Class.CCStringVar = data[0];
 	test1Class.CStringVar  = dataBuffer;
 	test1Class.DCStringVar = data[0];
+
+	static int64 arr1[25];
+	test1Class.int64PArr[0]= &arr1;
+	test1Class.int64PArr[4]= &arr1;
 //	printf("{%s,%s,%s}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
 /*
 	printf("{%p,%p,%p}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
@@ -148,6 +157,8 @@ void PrepareTestObject(){
 
     static float (*arrayP10[10][10])[10];
     for (int i=0;i<10;i++) for (int j=0;j<10;j++) arrayP10[i][j] = NULL;
+    static float arrayF[10];
+    arrayP10[1][1] = &arrayF;
     test1Class.MFloat10 = arrayP10;
 }
 
@@ -165,7 +176,7 @@ ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
     return e;
 }
 
-void Check(AnyType at,CCString expression,CCString returnType ){
+void Check(AnyType at,CCString expression,CCString returnType,uint64 expectedDataSize,uint64 expectedStorageSize ){
 	ErrorManagement::ErrorType err;
 
 	printf ("% 28s ->",expression.GetList());
@@ -188,7 +199,17 @@ void Check(AnyType at,CCString expression,CCString returnType ){
 	}
 
 	if (err){
-	    err.fatalError = !string.isSameAs(returnType.GetList());
+		if (!string.isSameAs(returnType.GetList())){
+			err.comparisonFailure = true;
+			printf("NO (%s)%s != %s ",string2.GetList(),string.GetList(),returnType.GetList());
+		}
+		if ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize)){
+			err.comparisonFailure = true;
+			printf("NO (%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,expectedDataSize,expectedStorageSize);
+		}
+	}
+	if (err){
+	    err.comparisonFailure = ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize));
 	}
 
 	if (err){
@@ -196,7 +217,7 @@ void Check(AnyType at,CCString expression,CCString returnType ){
 	} else {
 	    printf("NO ");
 	    PrintError(err);
-	    printf("(%s)%s= %s\n",string2.GetList(),string.GetList(),returnType.GetList());
+	    printf("\n");
 	}
 }
 
@@ -204,32 +225,35 @@ void Test(){
 
 	AnyType at(test1Class);
 
-    Check(at,".int8Var","int8");
-    Check(at,".int16Var","int16");
-    Check(at,".int32Var","int32");
-    Check(at,".uint32Var","uint32");
-    Check(at,".int64Var","int64");
-    Check(at,".floatVar","float");
-    Check(at,".doubleVar","double");
-    Check(at,".int16Arr","int16[12]");
-    Check(at,".int64Arr","int64[12][25]");
-    Check(at,".int32PVar","int32 *");
-    Check(at,".int32PVar*","int32");
-    Check(at,".CCStringVar","CCString");
-    Check(at,".CCStringVar[0]","const char8");
-    Check(at,".CStringVar","CString");
-    Check(at,".CStringVar[2]","char8");
-    Check(at,".DCStringVar","DynamicCString");
-    Check(at,".DCStringVar[3]","char8");
-    Check(at,".CStringZTAVar","ZeroTerminatedArray<CCString>");
-    Check(at,".CStringZTAVar[2]","CCString");
-    Check(at,".CStringZTAVar[2][2]","const char8");
-    Check(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>");
-    Check(at,".CStringVAZTAVar[1]","Vector<CCString>[4]");
-    Check(at,".CStringVAZTAVar[1][2]","Vector<CCString>");
-    Check(at,".CStringVAZTAVar[1][2][0]","CCString");
-    Check(at,".CStringVAZTAVar[1][2][0][4]","const char8");
-    Check(at,".MFloat10","Matrix<float( *)[10]>");
+    Check(at,".int8Var","int8",1,0);
+    Check(at,".int16Var","int16",2,0);
+    Check(at,".int32Var","int32",4,0);
+    Check(at,".uint32Var","uint32",4,0);
+    Check(at,".int64Var","int64",8,0);
+    Check(at,".floatVar","float",4,0);
+    Check(at,".doubleVar","double",8,0);
+    Check(at,".int16Arr","int16[12]",24,0);
+    Check(at,".int64Arr","int64[12][25]",2400,0);
+    Check(at,".int64PArr","int64( *[12])[25]",496,96);
+    Check(at,".int32PVar","int32 *",12,8);
+    Check(at,".int32PVar*","int32",4,0);
+    Check(at,".CCStringVar","CCString",14,8);
+    Check(at,".CCStringVar[0]","const char8",1,0);
+    Check(at,".CStringVar","CString",16,8);
+    Check(at,".CStringVar[2]","char8",1,0);
+    Check(at,".DCStringVar","DynamicCString",14,8);
+    Check(at,".DCStringVar[3]","char8",1,0);
+    Check(at,".VCharVar","Vector<char8>",16,16);
+    Check(at,".MFloatVar","Matrix<float>",24,24);
+    Check(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56);
+    Check(at,".CStringZTAVar[2]","CCString",12,8);
+    Check(at,".CStringZTAVar[2][2]","const char8",1,0);
+    Check(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712);
+    Check(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
+    Check(at,".CStringVAZTAVar[1][2]","Vector<CCString>",43,32);
+    Check(at,".CStringVAZTAVar[1][2][0]","CCString",14,8);
+    Check(at,".CStringVAZTAVar[1][2][0][4]","const char8",1,0);
+    Check(at,".MFloat10","Matrix<float( *)[10]>",864,824);
 }
 }
 

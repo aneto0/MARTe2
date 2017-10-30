@@ -163,6 +163,11 @@ public:
      */
     ErrorManagement::ErrorType  FromString(DynamicCString &string);
 
+    /**
+     * @brief provides a typeDescriptor for the overall variable.
+     *
+     */
+    TypeDescriptor GetSummaryTypeDescriptor() const;
 private:
 
     /**

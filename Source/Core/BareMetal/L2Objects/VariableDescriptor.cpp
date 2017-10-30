@@ -276,6 +276,53 @@ bool isVariableSize(CCString modifierString){
 	return isVariable;
 }
 
+TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
+    CCString modifiersCopy = modifiers;
+    char8 firstModifier  = '\0';
+    char8 nextModifier  = '\0';
+    uint64 size = 0;
+    GetLayerInfo(modifiersCopy,firstModifier,size );
+    nextModifier= modifiersCopy[0];
+
+    TypeDescriptor td;
+
+    if (firstModifier == '\0'){
+    	td = typeDescriptor;
+    } else {
+    	switch (firstModifier){
+    	case 'P':
+    	case 'p':{
+    		td = GenericPointer;
+    		CCString ZTAModifiers = "ZzDdSs";
+    		if (ZTAModifiers.In(nextModifier)){
+    		    GetLayerInfo(modifiersCopy,firstModifier,size );
+    		    nextModifier= modifiersCopy[0];
+
+    		    if ((nextModifier == 0) && ((typeDescriptor == Character8Bit) || (typeDescriptor == ConstCharacter8Bit))){
+    		    	td = ConstCharString;
+    		    }
+
+    		}
+    	}break;
+    	case 'V':
+    	case 'v':
+    	case 'M':
+    	case 'm':{
+    		td = GenericPointer;
+    	}break;
+    	case 'A':{
+    		td = GenericArray;
+    	}break;
+
+    	default:{
+    		td = InvalidType;
+            REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
+    	}
+    	}
+    }
+
+	return td;
+}
 
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
 		                               uint64 &dataSize, uint64 &storageSize,uint8 maxDepth,uint32 layerMultiplier) const {
@@ -313,7 +360,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 			case 'P':{
 				// cannot do this conversion using c++ style casts
 				const uint8 **pp = (const uint8 **)(pointer);
-				if (isVariableSize(modifierString)){
+				if (true /*isVariableSize(modifierString)*/){
 					storageSize = numberOfElementsIncludingTerm * elementSize;
 					dataSize = 0;
 					uint64 index;
@@ -325,19 +372,21 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 #endif
 					for (index = 0; (index < numberOfElements) && ret; index++){
 						const uint8 *p = pp[index];
-						if (!MemoryCheck::Check(p)){
-							ret.exception = true;
-					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-						}
-
-						if (ret){
-							uint64 dataSize2;
-							uint64 storageSize2;
-							ret = GetDeepSize(modifierString, p,dataSize2,storageSize2,maxDepth);
+						if (p != NULL){
+							if (!MemoryCheck::Check(p)){
+								ret.exception = true;
+						        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+							}
 
 							if (ret){
-								storageSize = storageSize + storageSize2;
-								dataSize = dataSize + dataSize2 ;
+								uint64 dataSize2;
+								uint64 storageSize2;
+								ret = GetDeepSize(modifierString, p,dataSize2,storageSize2,maxDepth);
+
+								if (ret){
+									storageSize = storageSize + storageSize2;
+									dataSize = dataSize + dataSize2 ;
+								}
 							}
 						}
 					}

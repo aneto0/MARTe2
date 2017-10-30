@@ -89,6 +89,7 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 		macrofun(InvalidOperation,      invalidOperation,      19)\
 		macrofun(OutOfRange,            outOfRange,            20)\
 		macrofun(OutOfMemory,           outOfMemory,           21)\
+		macrofun(ComparisonFailure,     comparisonFailure,	   22)\
 		macrofun(NotAnErrorCode,        notAnErrorCode,        31)
 
 

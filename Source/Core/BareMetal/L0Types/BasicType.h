@@ -107,27 +107,12 @@ const ComplexSubType  Stream = 2u;
  */
 const ComplexSubType  StructuredDataInterface = 3u;
 
-
 /**
  * @brief The type is not valid
  */
-//const BasicType Invalid = 15u;
+const ComplexSubType  Invalid = 7u;
 
 
-/**
- * @brief Definition of BasicArrayType
- */
-//typedef uint8 SizedArrayType;
-
-/**
- * @brief The type is a []
- */
-//const SizedArrayType CSArray = 0u;
-
-/**
- * @brief The type is a []
- */
-//const SizedArrayType StaticZeroTermSArray  = 1u;
 
 /**
  * @brief Definition of BasicArrayPropertyType
@@ -135,13 +120,30 @@ const ComplexSubType  StructuredDataInterface = 3u;
 typedef uint8 BasicArrayPropertyType;
 
 /**
- * @brief The type is a Vector<T>(0)
+ * @brief The type is determined by CombinedArrayType and has no size field
  */
-const BasicArrayPropertyType      UnSizedA_AP    = 0u;
-const BasicArrayPropertyType ConstUnSizedA_AP    = 4u;
-const BasicArrayPropertyType      SizedCArray_AP = 2u;
-const BasicArrayPropertyType      StaticZeroTermArray_AP   = 3u;
-const BasicArrayPropertyType ConstStaticZeroTermArray_AP   = 7u;  // ZTA const
+const BasicArrayPropertyType UnSizedA_AP                 = 0u;
+
+/**
+ * @brief The type is a T[size]
+ */
+const BasicArrayPropertyType SizedCArray_AP              = 2u;
+
+/**
+ * @brief The type is a ZTA<T,size>
+ */
+const BasicArrayPropertyType StaticZeroTermArray_AP      = 3u;
+
+/**
+ * @brief used to mark that the array is constant
+ * */
+const BasicArrayPropertyType Const_AP                    = 4u;
+
+/**
+ * @brief  zero term array
+ * */
+const BasicArrayPropertyType ConstStaticZeroTermArray_AP = (StaticZeroTermArray_AP + Const_AP);  // ZTA const
+
 
 
 /**
@@ -155,12 +157,12 @@ typedef uint8 BasicArrayType;
 const BasicArrayType ArrayUnknown_BT = 0u;
 
 /**
- * @brief The type is a Vector<T>(0)
+ * @brief The type is one dimensional
  */
 const BasicArrayType Array1D_BT = 1u;
 
 /**
- * @brief The type is a Matrix<T>
+ * @brief The type is bi dimensional
  */
 const BasicArrayType Array2D_BT = 2u;
 
@@ -179,33 +181,35 @@ const BasicArrayType ZeroTermArray_BT = 4u;
  */
 const BasicArrayType DynamicZeroTermArray_BT = 5u;
 
+
+
 /**
  * Used to specify combinations of ArrayType and ArrayProperty
  */
 typedef uint8 CombinedArrayType;
 
 /**
- * @brief
+ * @brief a T[]
  */
-const CombinedArrayType SizedCArray = SizedCArray_AP ;
+const CombinedArrayType SizedCArray 				= SizedCArray_AP ;
 
 /**
  * @brief The type is a zero term vector of fixed size non-reallocable
  */
-const CombinedArrayType StaticZeroTermArray = StaticZeroTermArray_AP ;
+const CombinedArrayType StaticZeroTermArray 		= StaticZeroTermArray_AP ;
 
 /**
  * @brief The type is a zero term vector of fixed size non-reallocable
  */
-const CombinedArrayType ConstStaticZeroTermArray = ConstStaticZeroTermArray_AP ;
+const CombinedArrayType ConstStaticZeroTermArray 	= ConstStaticZeroTermArray_AP ;
 
 /**
  * @brief this mask allows testing and setting for const types
  */
-const CombinedArrayType ConstArrayMask = ConstUnSizedA_AP;
+const CombinedArrayType ConstArrayMask 				= Const_AP;
 
 /**
- * CombinedArrayType of ArrayUnknown
+ * @brief combination of UnSizedA_AP and ArrayUnknown_BT
  */
 const CombinedArrayType ArrayUnknown = (ArrayUnknown_BT << 3);
 
@@ -215,9 +219,9 @@ const CombinedArrayType ArrayUnknown = (ArrayUnknown_BT << 3);
 const CombinedArrayType Array1D = (Array1D_BT << 3);
 
 /**
- * @brief The type is a Vector<T>(0)
+ * @brief The type is a const Vector<T>(0)
  */
-const CombinedArrayType ConstArray1D = Array1D + ConstUnSizedA_AP;
+const CombinedArrayType ConstArray1D = Array1D + Const_AP;
 
 /**
  * @brief The type is a Matrix<T>
@@ -225,29 +229,29 @@ const CombinedArrayType ConstArray1D = Array1D + ConstUnSizedA_AP;
 const CombinedArrayType Array2D = (Array2D_BT << 3);
 
 /**
- * @brief The type is a Matrix<T>
+ * @brief The type is a const Matrix<T>
  */
-const CombinedArrayType ConstArray2D = Array2D + ConstUnSizedA_AP ;
+const CombinedArrayType ConstArray2D = Array2D + Const_AP ;
 
 /**
- * @brief The type is a pointer to the specified type
+ * @brief The type is a T*
  */
 const CombinedArrayType PointerArray = (PointerArray_BT << 3);
 
 /**
- * @brief The type is a pointer to the specified type
+ * @brief The type is a const T*
  */
-const CombinedArrayType ConstPointerArray = PointerArray + ConstUnSizedA_AP ;
+const CombinedArrayType ConstPointerArray = PointerArray + Const_AP ;
 
 /**
- * @brief The type is a ZeroTerminatedArray of unknown size
+ * @brief The type is a ZeroTerminatedArray
  */
 const CombinedArrayType ZeroTermArray = (ZeroTermArray_BT << 3);
 
 /**
- * @brief The type is a ZeroTerminatedArray of unknown size
+ * @brief The type is a const ZeroTerminatedArray
  */
-const CombinedArrayType ConstZeroTermArray = ZeroTermArray + ConstUnSizedA_AP ;
+const CombinedArrayType ConstZeroTermArray = ZeroTermArray + Const_AP ;
 
 /**
  * @brief The type is a zero term vector of reallocable size
@@ -255,9 +259,11 @@ const CombinedArrayType ConstZeroTermArray = ZeroTermArray + ConstUnSizedA_AP ;
 const CombinedArrayType DynamicZeroTermArray = (DynamicZeroTermArray_BT << 3);
 
 /**
- * @brief The type is a zero term vector of reallocable size
+ * @brief The type is a const zero term vector of reallocable size
  */
-const CombinedArrayType ConstDynamicZeroTermArray = DynamicZeroTermArray + ConstUnSizedA_AP;
+const CombinedArrayType ConstDynamicZeroTermArray = DynamicZeroTermArray + Const_AP;
+
+
 
 
 /**

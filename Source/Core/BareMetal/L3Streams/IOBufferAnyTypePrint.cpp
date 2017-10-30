@@ -57,7 +57,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
         const void* dataPointer = NULL;
         TypeDescriptor td;
     	// extract typedescriptor
-        ret = vd.GetTopTypeDescriptor(td,0);
+        td = vd.GetSummaryTypeDescriptor();
 
         if (ret){
         	dataPointer = parIn.GetVariablePointer();
