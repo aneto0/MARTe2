@@ -111,14 +111,15 @@ inline ErrorManagement::ErrorType List<loadClass>::Insert( loadClass &data, uint
 
 template <class loadClass>
 loadClass *List<loadClass>::operator[](const uint32 index) const{
+        uint32 ix = index;
 	loadClass *ret = NULL;
-	if (index < size){
+	if (ix < size){
 		ListNodeT<loadClass> *ptr = reinterpret_cast<ListNodeT<loadClass> *>(next);
-		while ((index > 0) && (ptr!=NULL)){
-			index--;
+		while ((ix > 0) && (ptr!=NULL)){
+			ix--;
 			ptr = ptr->next;
 		}
-		if ((ptr !=NULL) && (index == 0)){
+		if ((ptr !=NULL) && (ix == 0)){
 			ret = &ptr->load;
 		}
 	}
@@ -140,7 +141,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 			if (ret){
 				// whether to switch to next for next cycle
 				// after a delete there is no need anymore
-				bool getNext=true;
+				//bool getNext=true;
 				ListNodeT<loadClass> *target = reinterpret_cast<ListNodeT<loadClass>*>(current->next);
 
 				ia = iterator.Do(target->load);

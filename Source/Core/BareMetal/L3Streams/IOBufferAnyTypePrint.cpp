@@ -21,7 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 #define DLL_API
-#include "Anytype.h"
+#include "AnyType.h"
 #include "IOBufferPrivate.h"
 
 namespace MARTe{
