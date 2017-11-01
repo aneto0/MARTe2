@@ -459,10 +459,16 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
 
     return ret;
 }
-
+template<>
 bool Matrix<float32>::Determinant(float32 &det) const ;
+
+template<>
 bool Matrix<float64>::Determinant(float64 &det) const ;
+
+template<>
 bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const ;
+
+template<>
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const ;
 
 

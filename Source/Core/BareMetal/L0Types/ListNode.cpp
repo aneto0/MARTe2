@@ -46,7 +46,7 @@ namespace MARTe {
 
 ListNode::~ListNode()
 {
-	next = NULL;
+	next = NULL_PTR(ListNode *);
 }
 
 /**

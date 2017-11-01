@@ -206,8 +206,8 @@ uint32 BalancedTreeNode::Depth() const{
 void  BalancedTreeNode::Clean(){
 	treeSize = 1;
 	treeDepth = 1;
-	greater = NULL;
-	smaller = NULL;
+	greater = NULL_PTR(BalancedTreeNode *);
+	smaller = NULL_PTR(BalancedTreeNode *);
 }
 
 
@@ -217,7 +217,7 @@ void  BalancedTreeNode::Clean(){
  */
 uint32 BalancedTreeNode::GreaterSize() const{
 	uint32 size = 0;
-	if (greater != NULL){
+	if (greater != NULL_PTR(BalancedTreeNode *)){
 		size = greater->treeSize;
 	}
 	return size;
@@ -228,7 +228,7 @@ uint32 BalancedTreeNode::GreaterSize() const{
  */
 uint32 BalancedTreeNode::SmallerSize() const{
 	uint32 size = 0;
-	if (smaller != NULL){
+	if (smaller != NULL_PTR(BalancedTreeNode *)){
 		size = smaller->treeSize;
 	}
 	return size;
@@ -254,6 +254,15 @@ uint32 BalancedTreeNode::SmallerDepth() const{
 		depth = smaller->treeDepth;
 	}
 	return depth;
+}
+
+template <typename T>
+T max(T par1,T par2){
+    T ret = par1;
+    if (par2 > par1){
+        ret = par2;
+    }
+    return ret;
 }
 
 /**

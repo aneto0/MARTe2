@@ -174,10 +174,10 @@ uint32 TypeDescriptor::Size()const{
 			size = actualSize;
 //printf (" %i %i ", totalBitSpan, size);
 		} else {
-			uint32 multiplier = 1u;
+//			uint32 multiplier = 1u;
 //			uint32 baseSize = 1u;
 			if (arrayProperty == SizedCArray_AP){
-				multiplier = arraySize;
+//				multiplier = arraySize;
 				switch(type){
 				case  SignedInteger:
 				case  UnsignedInteger:
@@ -242,10 +242,6 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 	return ret;
 }
 
-//#define TYPENAME_CORE()             \
-//       	string.AppendN(constString);\
-//       	string.AppendN(typeName);   \
-//       	string.AppendNum(bits);
 
 #define TYPENAME_CORE()             			\
    	string.AppendN(constString);				\

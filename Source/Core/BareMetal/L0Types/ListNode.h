@@ -85,7 +85,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-inline ListNode::ListNode():next(NULL){
+inline ListNode::ListNode():next(NULL_PTR(ListNode *)){
 }
 
 

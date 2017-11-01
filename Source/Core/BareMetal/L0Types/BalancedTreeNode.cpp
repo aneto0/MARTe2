@@ -120,7 +120,7 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 		if (sign > 0){
 			if (root->smaller == NULL){
 				if (bias == 2){
-					extracted = NULL;
+					extracted = NULL_PTR(BalancedTreeNode *);
 					ret.notCompleted = true;
 				} else {
 					extracted = root;
@@ -130,9 +130,9 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
 				ret = ExtractAVL(root->smaller,extracted,key,bias);
 			}
 		} else {
-			if (root->greater == NULL){
+			if (root->greater == NULL_PTR(BalancedTreeNode *)){
 				if (bias == 2){
-					extracted = NULL;
+					extracted = NULL_PTR(BalancedTreeNode *);
 					ret.notCompleted = true;
 				} else {
 					extracted = root;
@@ -165,7 +165,7 @@ ErrorManagement::ErrorType BalancedTreeNode::ExtractAVL(BalancedTreeNode *&root,
  * returns ptr to node
  */
 BalancedTreeNode *BalancedTreeNode::Seek(const uint32 index) {
-	BalancedTreeNode *ret = NULL;
+	BalancedTreeNode *ret = NULL_PTR(BalancedTreeNode *);
 	if (index < treeSize){
 		uint32 smallerSize = SmallerSize();
 		if (index < smallerSize){
@@ -189,7 +189,7 @@ BalancedTreeNode *BalancedTreeNode::Seek(const uint32 index) {
  * @return pointer to the element.
  */
 BalancedTreeNode *BalancedTreeNode::Search(const BalancedTreeNodeKey &key,uint32 &index){
-	BalancedTreeNode *ptr = NULL;
+	BalancedTreeNode *ptr = NULL_PTR(BalancedTreeNode *);
 	int8 compare = CompareToKey(key);
 	if (compare == 0) {
 		ptr = this;
@@ -219,17 +219,17 @@ BalancedTreeNode *BalancedTreeNode::RelativeSeek(const BalancedTreeNodeKey &key,
 		if (localIndex >= 0){
 			node = node->Seek(localIndex);
 		} else {
-			node = NULL;
+			node = NULL_PTR(BalancedTreeNode *);
 		}
 
 		// out of local subtree range
-		if (node == NULL){
+		if (node == NULL_PTR(BalancedTreeNode *)){
 			int32 sIndex = index;
 			sIndex += offset;
 			if (sIndex >= 0){
 				node = Seek(sIndex);
 			} else {
-				node = NULL;
+				node = NULL_PTR(BalancedTreeNode *);
 			}
 		}
 	}
@@ -245,7 +245,7 @@ BalancedTreeNode *BalancedTreeNode::RelativeSeek(const BalancedTreeNodeKey &key,
  */
 ErrorManagement::ErrorType BalancedTreeNode::RotateG(BalancedTreeNode *&father){
 	ErrorManagement::ErrorType ret;
-	BalancedTreeNode *greater = NULL;
+	BalancedTreeNode *greater = NULL_PTR(BalancedTreeNode *);
 	ret.parametersError = (father == NULL);
 	if (ret){
 		greater = father->greater;
@@ -288,7 +288,7 @@ ErrorManagement::ErrorType BalancedTreeNode::RotateG(BalancedTreeNode *&father){
  */
 ErrorManagement::ErrorType BalancedTreeNode::RotateS(BalancedTreeNode *&father){
 	ErrorManagement::ErrorType ret;
-	BalancedTreeNode *smaller = NULL;
+	BalancedTreeNode *smaller = NULL_PTR(BalancedTreeNode *);
 	ret.parametersError = (father == NULL);
 	if (ret){
 		smaller = father->smaller;
