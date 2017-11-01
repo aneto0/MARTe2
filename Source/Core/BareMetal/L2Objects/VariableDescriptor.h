@@ -99,12 +99,15 @@ public:
      */
     VariableDescriptor(const TypeDescriptor &td);
 
+#if 0
+    // TODO remove!!!
     /**
      * @brief Returns the TypeDescriptor describing the most inner storage
      * @return the data TypeDescriptor.
+     * TODO remove!!!
      */
-    inline const TypeDescriptor &GetFullTypeDescriptor() const;
-
+//    inline const TypeDescriptor &GetFullTypeDescriptor() const;
+#endif
     /**
      * @brief checks if it has modifiers
      * @return true if there are modifiers
@@ -826,9 +829,12 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 	FinaliseCode(td);
 }
 
+#if 0
 const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
     return typeDescriptor;
 }
+#endif
+
 //TypeDescriptor &VariableDescriptor::AccessTypeDescriptor() {
 //	return typeDescriptor;
 //}

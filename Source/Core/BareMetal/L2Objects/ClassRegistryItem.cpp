@@ -204,7 +204,7 @@ public:
 	    if ((data != NULL) && (crd != NULL) ){
 	    	CCString name = data->GetName();
 	    	if (name.GetSize() == 0){
-	    		TypeDescriptor td = data->GetDescriptor().GetFullTypeDescriptor();
+	    		TypeDescriptor td = data->GetDescriptor().GetSummaryTypeDescriptor();
 	    		ClassRegistryItem *cri = crd->Find(td);
 
 	    		if (cri != NULL){

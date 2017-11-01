@@ -78,7 +78,7 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	}
 
 	// check if type is a structure
-	const TypeDescriptor &td = variableDescriptor.GetFullTypeDescriptor();
+	TypeDescriptor td = variableDescriptor.GetSummaryTypeDescriptor();
 	if (ret){
 		ret.invalidOperation = !td.isStructuredData;
 	}

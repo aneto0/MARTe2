@@ -61,7 +61,7 @@ namespace MARTe{
 
 typedef int64 (*myPArrType[12])[25] ;
 
-#define Test1ClassTemplate(subTemplate,subTemplateArr, className)\
+#define Test2ClassTemplate(subTemplate,subTemplateArr, className)\
 	subTemplate(int8,int8Var,[],className)\
 	subTemplate(int16,int16Var,[],className)\
 	subTemplate(int32,int32Var,[],className)\
@@ -69,7 +69,21 @@ typedef int64 (*myPArrType[12])[25] ;
 	subTemplate(uint32,uint32Var,[],className)\
 	subTemplate(char8,char8Var,[],className)\
 	subTemplate(float,floatVar,[],className)\
-	subTemplate(double,doubleVar,[],className)\
+	subTemplate(double,doubleVar,[],className)
+
+/// declare Test2Class
+class Test2Class{
+public:
+
+	Test2ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
+} ;
+
+/// register Test2Class
+Test2ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test2Class)
+
+
+#define Test1ClassTemplate(subTemplate,subTemplateArr, className)\
+	subTemplate(Test2Class,test2,[],className)\
 	subTemplateArr(int16,int16Arr,[12],className)\
 	subTemplateArr(int64,int64Arr,[12][25],className)\
 	subTemplate(myPArrType,int64PArr,[],className)\
@@ -83,13 +97,14 @@ typedef int64 (*myPArrType[12])[25] ;
     subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
 	subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
 
-class Test1Class{
+class Test1Class: public Test2Class{
 public:
 
 	Test1ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
 } test1Class;
 
 Test1ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test1Class)
+CLASS_INHERIT_REGISTER(Test1Class,Test2Class)
 
 const char8* data[] = {
 		"pippo",
@@ -102,15 +117,23 @@ const char8* data[] = {
 char8 dataBuffer[]="mizzega";
 
 void PrepareTestObject(){
-	test1Class.int8Var = 8;
-	test1Class.int16Var = 16;
-	test1Class.int32Var = 32;
-	test1Class.int64Var = 64;
-	test1Class.uint32Var = 32;
+	test1Class.int8Var = 18;
+	test1Class.int16Var = 116;
+	test1Class.int32Var = 132;
+	test1Class.int64Var = 164;
+	test1Class.uint32Var = 132;
 	test1Class.char8Var = 'c';
-	test1Class.floatVar = 0.1;
-	test1Class.doubleVar = 1.1e9;
-	test1Class.int32PVar = &test1Class.int32Var;
+	test1Class.floatVar = 10.1;
+	test1Class.doubleVar = 11.1e9;
+	test1Class.test2.int8Var = 8;
+	test1Class.test2.int16Var = 16;
+	test1Class.test2.int32Var = 32;
+	test1Class.test2.int64Var = 64;
+	test1Class.test2.uint32Var = 32;
+	test1Class.test2.char8Var = 'c';
+	test1Class.test2.floatVar = 0.1;
+	test1Class.test2.doubleVar = 1.1e9;
+	test1Class.int32PVar = &test1Class.test2.int32Var;
 	test1Class.CCStringVar = data[0];
 	test1Class.CStringVar  = dataBuffer;
 	test1Class.DCStringVar = data[0];
@@ -225,16 +248,23 @@ void Test(){
 
 	AnyType at(test1Class);
 
-    Check(at,".int8Var","int8",1,0);
-    Check(at,".int16Var","int16",2,0);
-    Check(at,".int32Var","int32",4,0);
-    Check(at,".uint32Var","uint32",4,0);
-    Check(at,".int64Var","int64",8,0);
-    Check(at,".floatVar","float",4,0);
-    Check(at,".doubleVar","double",8,0);
-    Check(at,".int16Arr","int16[12]",24,0);
-    Check(at,".int64Arr","int64[12][25]",2400,0);
-    Check(at,".int64PArr","int64( *[12])[25]",496,96);
+    Check(at,".int8Var","int8",sizeof(int8),0);
+    Check(at,".int16Var","int16",sizeof(int16),0);
+    Check(at,".int32Var","int32",sizeof(int32),0);
+    Check(at,".uint32Var","uint32",sizeof(uint32),0);
+    Check(at,".int64Var","int64",sizeof(int64),0);
+    Check(at,".floatVar","float",sizeof(float),0);
+    Check(at,".doubleVar","double",sizeof(double),0);
+    Check(at,".test2.int8Var","int8",sizeof(int8),0);
+    Check(at,".test2.int16Var","int16",sizeof(int16),0);
+    Check(at,".test2.int32Var","int32",sizeof(int32),0);
+    Check(at,".test2.uint32Var","uint32",sizeof(uint32),0);
+    Check(at,".test2.int64Var","int64",sizeof(int64),0);
+    Check(at,".test2.floatVar","float",sizeof(float),0);
+    Check(at,".test2.doubleVar","double",sizeof(double),0);
+    Check(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
+    Check(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
+    Check(at,".int64PArr","int64( *[12])[25]",496,sizeof(test1Class.int64PArr));
     Check(at,".int32PVar","int32 *",12,8);
     Check(at,".int32PVar*","int32",4,0);
     Check(at,".CCStringVar","CCString",14,8);
