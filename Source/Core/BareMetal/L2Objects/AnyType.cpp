@@ -118,6 +118,21 @@ static bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
 }
 
+static uint32 toNumber(char8 c){
+    return  static_cast<uint32>(c - '0') ;
+}
+
+static uint32 readNumber(CCString &buffer){
+    uint32 result = 0;
+    while (isNumber(buffer[0])){
+        result = result * 10u;
+        result += toNumber(buffer[0]);
+        buffer++;
+    }
+    return result;
+}
+
+
 ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpresssion){
 	const CCString dels[6] = {CCString("."),CCString("*"),CCString("->"),CCString("["),CCString("]"),CCString()};
 	const ZeroTerminatedArray<const CCString> delimiters = &dels[0];
@@ -141,7 +156,9 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpresssion)
     	if (token.GetSize() > 0){
         	if (isNumber(token[0])){
         		if (status == Matrix ){
-            		ok = Dereference(atoi(token.GetList()));
+                        CCString tok = token;
+                        uint32 number = readNumber(tok);
+            		ok = Dereference(number);
             		if (ok) {
             			status = MatrixDone;
             		}

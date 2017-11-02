@@ -50,32 +50,32 @@
 namespace MARTe{
 
 #define varDeclSubTemplate(type,typeName,arrayDims, className)\
-	type  typeName;
+        type  typeName;
 
 #define arrayDeclSubTemplate(type,typeName,arrayDims, className)\
-	type  typeName arrayDims;
+        type  typeName arrayDims;
 
 
 #define memberDeclSubTemplate(type,typeName,arrayDims,className)\
-	CLASS_MEMBER_REGISTER(className,typeName)
+        CLASS_MEMBER_REGISTER(className,typeName)
 
 typedef int64 (*myPArrType[12])[25] ;
 
 #define Test2ClassTemplate(subTemplate,subTemplateArr, className)\
-	subTemplate(int8,int8Var,[],className)\
-	subTemplate(int16,int16Var,[],className)\
-	subTemplate(int32,int32Var,[],className)\
-	subTemplate(int64,int64Var,[],className)\
-	subTemplate(uint32,uint32Var,[],className)\
-	subTemplate(char8,char8Var,[],className)\
-	subTemplate(float,floatVar,[],className)\
-	subTemplate(double,doubleVar,[],className)
+        subTemplate(int8,int8Var,[],className)\
+        subTemplate(int16,int16Var,[],className)\
+        subTemplate(int32,int32Var,[],className)\
+        subTemplate(int64,int64Var,[],className)\
+        subTemplate(uint32,uint32Var,[],className)\
+        subTemplate(char8,char8Var,[],className)\
+        subTemplate(float,floatVar,[],className)\
+        subTemplate(double,doubleVar,[],className)
 
 /// declare Test2Class
 class Test2Class{
 public:
 
-	Test2ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
+    Test2ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
 } ;
 
 /// register Test2Class
@@ -83,66 +83,66 @@ Test2ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test2Class)
 
 
 #define Test1ClassTemplate(subTemplate,subTemplateArr, className)\
-	subTemplate(Test2Class,test2,[],className)\
-	subTemplateArr(int16,int16Arr,[12],className)\
-	subTemplateArr(int64,int64Arr,[12][25],className)\
-	subTemplate(myPArrType,int64PArr,[],className)\
-	subTemplate(int32 *,int32PVar,[],className)\
-    subTemplate(CCString,CCStringVar,[],className)\
-	subTemplate(CString,CStringVar,[],className)\
-	subTemplate(DynamicCString,DCStringVar,[],className)\
-	subTemplate(Vector<char8>,VCharVar,[],className)\
-	subTemplate(Matrix<float>,MFloatVar,[],className)\
-    subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,[],className)\
-    subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
-	subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
+        subTemplate(Test2Class,test2,[],className)\
+        subTemplateArr(int16,int16Arr,[12],className)\
+        subTemplateArr(int64,int64Arr,[12][25],className)\
+        subTemplate(myPArrType,int64PArr,[],className)\
+        subTemplate(int32 *,int32PVar,[],className)\
+        subTemplate(CCString,CCStringVar,[],className)\
+        subTemplate(CString,CStringVar,[],className)\
+        subTemplate(DynamicCString,DCStringVar,[],className)\
+        subTemplate(Vector<char8>,VCharVar,[],className)\
+        subTemplate(Matrix<float>,MFloatVar,[],className)\
+        subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,[],className)\
+        subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
+        subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
 
 class Test1Class: public Test2Class{
 public:
 
-	Test1ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
+    Test1ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test1Class)
 } test1Class;
 
 Test1ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test1Class)
 CLASS_INHERIT_REGISTER(Test1Class,Test2Class)
 
 const char8* data[] = {
-		"pippo",
-		"pluto",
-		"paperino",
-		"minni",
-		"paperon",
-		"nonnapapera"
+        "pippo",
+        "pluto",
+        "paperino",
+        "minni",
+        "paperon",
+        "nonnapapera"
 };
 char8 dataBuffer[]="mizzega";
 
 void PrepareTestObject(){
-	test1Class.int8Var = 18;
-	test1Class.int16Var = 116;
-	test1Class.int32Var = 132;
-	test1Class.int64Var = 164;
-	test1Class.uint32Var = 132;
-	test1Class.char8Var = 'c';
-	test1Class.floatVar = 10.1;
-	test1Class.doubleVar = 11.1e9;
-	test1Class.test2.int8Var = 8;
-	test1Class.test2.int16Var = 16;
-	test1Class.test2.int32Var = 32;
-	test1Class.test2.int64Var = 64;
-	test1Class.test2.uint32Var = 32;
-	test1Class.test2.char8Var = 'c';
-	test1Class.test2.floatVar = 0.1;
-	test1Class.test2.doubleVar = 1.1e9;
-	test1Class.int32PVar = &test1Class.test2.int32Var;
-	test1Class.CCStringVar = data[0];
-	test1Class.CStringVar  = dataBuffer;
-	test1Class.DCStringVar = data[0];
+    test1Class.int8Var = 18;
+    test1Class.int16Var = 116;
+    test1Class.int32Var = 132;
+    test1Class.int64Var = 164;
+    test1Class.uint32Var = 132;
+    test1Class.char8Var = 'c';
+    test1Class.floatVar = 10.1;
+    test1Class.doubleVar = 11.1e9;
+    test1Class.test2.int8Var = 8;
+    test1Class.test2.int16Var = 16;
+    test1Class.test2.int32Var = 32;
+    test1Class.test2.int64Var = 64;
+    test1Class.test2.uint32Var = 32;
+    test1Class.test2.char8Var = 'c';
+    test1Class.test2.floatVar = 0.1;
+    test1Class.test2.doubleVar = 1.1e9;
+    test1Class.int32PVar = &test1Class.test2.int32Var;
+    test1Class.CCStringVar = data[0];
+    test1Class.CStringVar  = dataBuffer;
+    test1Class.DCStringVar = data[0];
 
-	static int64 arr1[25];
-	test1Class.int64PArr[0]= &arr1;
-	test1Class.int64PArr[4]= &arr1;
-//	printf("{%s,%s,%s}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
-/*
+    static int64 arr1[25];
+    test1Class.int64PArr[0]= &arr1;
+    test1Class.int64PArr[4]= &arr1;
+    //	printf("{%s,%s,%s}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
+    /*
 	printf("{%p,%p,%p}\n",test1Class.CCStringVar.GetList(),test1Class.CStringVar.GetList(),test1Class.DCStringVar.GetList());
 	printf("{%p,%p,%p}\n",&test1Class.CCStringVar,&test1Class.CStringVar,&test1Class.DCStringVar);
 	printf("{%i,%i,%i}\n",MemoryCheck::Check(test1Class.CCStringVar.GetList()),
@@ -152,30 +152,30 @@ void PrepareTestObject(){
 						  MemoryCheck::Check(&test1Class.CStringVar),
 						  MemoryCheck::Check(&test1Class.DCStringVar));
 	printf("%s\n",test1Class.CCStringVar.GetList());
-*/
-	static CCString pippo[] = {
-			CCString("uno"),
-			CCString("duo"),
-			CCString("tre"),
-			CCString("quattro"),
-			CCString("cinque"),
-			emptyString
-	};
-	test1Class.CStringZTAVar = ZeroTerminatedArray<CCString>(pippo);
+     */
+    static CCString pippo[] = {
+            CCString("uno"),
+            CCString("duo"),
+            CCString("tre"),
+            CCString("quattro"),
+            CCString("cinque"),
+            emptyString
+    };
+    test1Class.CStringZTAVar = ZeroTerminatedArray<CCString>(pippo);
 
-	static CCString a1[]= { CCString("ampio"),CCString("lume") };
-	static CCString a2[]= { CCString("grande"),CCString("spazio"),CCString("aperto")  };
-	static CCString a3[]= { CCString("agii")};
-	static CCString a4[]= { CCString("roma"),CCString("firenze"),CCString("napoli"),CCString("milano")};
-	static Vector<CCString> v1(a1);
-	static Vector<CCString> v2(a2);
-	static Vector<CCString> v3(a3);
-	static Vector<CCString> v4(a4);
-	static Vector<CCString> vv0[4] = {a1,a2,a3,a4};
-	static Vector<CCString> vv1[4] = {a1,a2,a3,a4};
-	static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
-	static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
-	static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{0,0,0,0}};
+    static CCString a1[]= { CCString("ampio"),CCString("lume") };
+    static CCString a2[]= { CCString("grande"),CCString("spazio"),CCString("aperto")  };
+    static CCString a3[]= { CCString("agii")};
+    static CCString a4[]= { CCString("roma"),CCString("firenze"),CCString("napoli"),CCString("milano")};
+    static Vector<CCString> v1(a1);
+    static Vector<CCString> v2(a2);
+    static Vector<CCString> v3(a3);
+    static Vector<CCString> v4(a4);
+    static Vector<CCString> vv0[4] = {a1,a2,a3,a4};
+    static Vector<CCString> vv1[4] = {a1,a2,a3,a4};
+    static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
+    static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
+    static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{0,0,0,0}};
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
 
     static float (*arrayP10[10][10])[10];
@@ -186,67 +186,68 @@ void PrepareTestObject(){
 }
 
 ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
-	if (!e){
-	    ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
-	    while (!etl->name.IsNullPtr()){
-	    	if ((etl->errorBitSet &  e.format_as_integer)!= 0){
-	    		printf("(err=%s)",etl->name.GetList());
-	    	}
-	    	etl++;
-	    }
-	}
+    if (!e){
+        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
+        while (!etl->name.IsNullPtr()){
+            if ((etl->errorBitSet &  e.format_as_integer)!= 0){
+                printf("(err=%s)",etl->name.GetList());
+            }
+            etl++;
+        }
+    }
 
     return e;
 }
 
 void Check(AnyType at,CCString expression,CCString returnType,uint64 expectedDataSize,uint64 expectedStorageSize ){
-	ErrorManagement::ErrorType err;
+    ErrorManagement::ErrorType err;
 
-	printf ("% 28s ->",expression.GetList());
+    for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+    printf ("%s ->",expression.GetList());
 
-	err = at.MultipleDereference(expression);
+    err = at.MultipleDereference(expression);
     DynamicCString string;
     DynamicCString string2;
     uint64 dataSize;
     uint64 storageSize;
-	if (err){
-	    const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
-	    err = vd.ToString(string);
-	    vd.ToString(string2,true);
-		if (err){
-		    err = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-//			if (!err.ErrorsCleared()){
-//				printf ("[%p]",at.GetVariablePointer());
-//			}
-		}
-	}
+    if (err){
+        const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
+        err = vd.ToString(string);
+        vd.ToString(string2,true);
+        if (err){
+            err = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+            //			if (!err.ErrorsCleared()){
+            //				printf ("[%p]",at.GetVariablePointer());
+            //			}
+        }
+    }
 
-	if (err){
-		if (!string.isSameAs(returnType.GetList())){
-			err.comparisonFailure = true;
-			printf("NO (%s)%s != %s ",string2.GetList(),string.GetList(),returnType.GetList());
-		}
-		if ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize)){
-			err.comparisonFailure = true;
-			printf("NO (%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,expectedDataSize,expectedStorageSize);
-		}
-	}
-	if (err){
-	    err.comparisonFailure = ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize));
-	}
+    if (err){
+        if (!string.isSameAs(returnType.GetList())){
+            err.comparisonFailure = true;
+            printf("NO (%s)%s != %s ",string2.GetList(),string.GetList(),returnType.GetList());
+        }
+        if ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize)){
+            err.comparisonFailure = true;
+            printf("NO (%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,expectedDataSize,expectedStorageSize);
+        }
+    }
+    if (err){
+        err.comparisonFailure = ((dataSize != expectedDataSize) || (storageSize != expectedStorageSize));
+    }
 
-	if (err){
-	    printf("OK  -->%s (%lli %lli)\n",string.GetList(),dataSize,storageSize);
-	} else {
-	    printf("NO ");
-	    PrintError(err);
-	    printf("\n");
-	}
+    if (err){
+        printf("OK  -->%s (%lli %lli)\n",string.GetList(),dataSize,storageSize);
+    } else {
+        printf("NO ");
+        PrintError(err);
+        printf("\n");
+    }
 }
 
 void Test(){
 
-	AnyType at(test1Class);
+    AnyType at(test1Class);
 
     Check(at,".int8Var","int8",sizeof(int8),0);
     Check(at,".int16Var","int16",sizeof(int16),0);
@@ -289,7 +290,7 @@ void Test(){
 
 
 int main(int argc, char **argv){
-	MARTe::PrepareTestObject();
-	MARTe::Test();
-	return 0;
+    MARTe::PrepareTestObject();
+    MARTe::Test();
+    return 0;
 }

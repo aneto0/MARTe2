@@ -149,7 +149,7 @@ namespace MARTe{
 
          // wants padding and have a size to pad to
 		 if ((fd.padded) && (fd.size != 0) && (!fd.leftAligned)){
-			 for (int i = len; i < fd.size; i++){
+			 for (uint32 i = len; i < fd.size; i++){
 				 ret = ret && iobuff.PutC(' ');
 			 }
 		 }
@@ -158,7 +158,7 @@ namespace MARTe{
 
          // wants padding and have a size to pad to
 		 if ((fd.padded) && (fd.size != 0) && (fd.leftAligned)){
-			 for (int i = len; i < fd.size; i++){
+			 for (uint32 i = len; i < fd.size; i++){
 				 ret = ret && iobuff.PutC(' ');
 			 }
 		 }
