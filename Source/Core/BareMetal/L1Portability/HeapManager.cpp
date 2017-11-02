@@ -140,7 +140,8 @@ HeapDatabase *HeapDatabase::Instance() {
     static HeapDatabase *instance = NULL_PTR(HeapDatabase *);
     if (instance == NULL_PTR(HeapDatabase *)) {
         instance = new HeapDatabase();
-        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 1u);
+        uint32 order = NUMBER_OF_GLOBAL_OBJECTS - 1u;
+        GlobalObjectsDatabase::Instance()->Add(instance, order);
     }
     return instance;
 }

@@ -246,8 +246,7 @@ static bool SerializeVector(const AnyType &typeIn,
  * @post
  *   type.GetDataPointer() != NULL
  */
-static bool SerializeScalar(const AnyType &typeIn,
-                            AnyType &typeOut) {
+static bool SerializeScalar(const AnyType &typeIn, AnyType &typeOut) {
 
     bool ret = true;
 

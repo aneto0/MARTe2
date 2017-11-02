@@ -256,6 +256,11 @@ uint32 BalancedTreeNode::SmallerDepth() const{
 	return depth;
 }
 
+template <class T> const T& maxN (const T& a, const T& b) {
+  return (a<b)?b:a;     // or: return comp(a,b)?b:a; for version (2)
+}
+
+/*
 template <typename T>
 T max(T par1,T par2){
     T ret = par1;
@@ -264,13 +269,13 @@ T max(T par1,T par2){
     }
     return ret;
 }
-
+*/
 /**
  *
  */
 void BalancedTreeNode::UpdateStatistics(){
 	treeSize  = 1 + SmallerSize()+GreaterSize();
-	treeDepth = 1 + max(SmallerDepth(),GreaterDepth());
+	treeDepth = 1 + maxN(SmallerDepth(),GreaterDepth());
 }
 
 

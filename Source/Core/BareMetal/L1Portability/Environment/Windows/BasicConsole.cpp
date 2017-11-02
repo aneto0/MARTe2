@@ -112,10 +112,10 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
 
     CONSOLE_SCREEN_BUFFER_INFO info;
 
+
     //get the console informations
     if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == 0) {
         ret=false;
-
     }
 
     if (ret) {
@@ -138,7 +138,6 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
         if (!SetConsoleScreenBufferSize(handle->outputConsoleHandle, stage1BufferSize)) {
             // CStaticAssertPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
             ret = false;
-
         }
 
     }
