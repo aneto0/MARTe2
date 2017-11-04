@@ -141,7 +141,7 @@ HeapDatabase *HeapDatabase::Instance() {
     if (instance == NULL_PTR(HeapDatabase *)) {
         instance = new HeapDatabase();
         uint32 order = NUMBER_OF_GLOBAL_OBJECTS - 1u;
-        GlobalObjectsDatabase::Instance()->Add(instance, order);
+        GlobalObjectsDatabase::Instance().Add(instance, order);
     }
     return instance;
 }
@@ -271,7 +271,7 @@ HeapI *FindHeap(const void * const address) {
     if ((foundHeap == NULL_PTR(HeapI *))) {
 
         /* try default heap */
-        foundHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+        foundHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
 
         /* check ownership of default heap */
         if (!foundHeap->Owns(address)) {
@@ -355,7 +355,7 @@ void *Malloc(uint32 const size,
 
     /* Standard behavior */
     if (heapName == NULL) {
-        address = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(size);
+        address = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(size);
     }
     else {
 
@@ -384,7 +384,7 @@ void *Realloc(void *&data,
     }
     //if the heap is not found (the data is null) allocates it on the standard heap (C malloc).
     else {
-        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data, newSize);
+        newAddress = GlobalObjectsDatabase::Instance().GetStandardHeap().Realloc(data, newSize);
     }
 
     return newAddress;
@@ -414,7 +414,7 @@ void *Duplicate(const void * const data,
     // if the address is not found considers the memory as a static
     else {
         //REPORT_ERROR(ErrorManagement::Warning, "ErrorManagement::Warning: the input address does not belong to any heap. It will be considered as a static memory address");
-        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Duplicate(data, size);
+        newAddress = GlobalObjectsDatabase::Instance().GetStandardHeap().Duplicate(data, size);
     }
     return newAddress;
 

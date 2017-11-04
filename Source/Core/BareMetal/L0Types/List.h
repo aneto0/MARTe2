@@ -31,11 +31,12 @@ class  List: protected ListNode{
 public:
 
 	/**
-	 *
+	 * TODO
 	 */
 	List();
+
 	/**
-	 *
+	 * TODO
 	 */
 	virtual ~List();
 
@@ -68,7 +69,7 @@ public:
 
 private:
 	/**
-	 *
+	 * TODO
 	 */
 	uint32 		size;
 };
@@ -242,10 +243,6 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 
 } // Marte
 
-
-//#if (ancestorIndexof(List<LoadClass>,ListNode)!=0)
-//		#error
-//#endif
 
 
 #endif /* LIST_H_ */

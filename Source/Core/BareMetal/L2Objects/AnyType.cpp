@@ -67,11 +67,6 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 		ret.invalidOperation = true;
 	}
 
-	// there must be no modifiers
-	if (variableDescriptor.HasModifiers()){
-		ret.invalidOperation = true;
-	}
-
 	// check pointer to object
 	if (ret){
 		ret.exception = !MemoryCheck::Check(pointer2Variable);

@@ -109,7 +109,7 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
             bool ok;
             ok = data.Read("Class", className);
             if (ok) {
-                Object *objPtr = CreateByName(className.GetList(), GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                Object *objPtr = CreateByName(className.GetList(), &GlobalObjectsDatabase::Instance().GetStandardHeap());
                 ok = (objPtr != NULL_PTR(Object*));
                 if (ok) {
                     objectPointer = objPtr;

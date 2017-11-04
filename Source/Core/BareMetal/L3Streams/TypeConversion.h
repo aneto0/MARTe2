@@ -33,7 +33,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyType.h"
-
+#include "Vector.h"
+#include "Matrix.h"
+#include "StreamI.h"
+#include "StreamString.h"
+#include "StringHelper.h"
+#include "FormatDescriptor.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

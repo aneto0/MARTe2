@@ -26,13 +26,14 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=          ClassRegistryDatabase.x \
+OBJSX=  MemoryFileSystem.x \
+		ClassRegistryDatabase.x \
 		VariableDescriptor.x\
-                AnyType.x \
+        AnyType.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
-                StructuredDataI.x \
+        StructuredDataI.x \
 		Object.x \
 		IntrospectionTools.x \
 		ClassMethodInterfaceMapper.x\

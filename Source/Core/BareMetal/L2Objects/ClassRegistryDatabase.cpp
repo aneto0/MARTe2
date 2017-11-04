@@ -57,7 +57,7 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     static ClassRegistryDatabase *instance = NULL_PTR(ClassRegistryDatabase *);
     if (instance == NULL_PTR(ClassRegistryDatabase *)) {
         instance = new ClassRegistryDatabase();
-        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
+        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
     }
     return instance;
 }

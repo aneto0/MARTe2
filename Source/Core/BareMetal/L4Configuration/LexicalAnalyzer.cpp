@@ -78,10 +78,10 @@ static void ReadCommentOneLine(StreamI &stream) {
  */
 static void ReadCommentMultipleLines(StreamI &stream,
                                      uint32 &lineNumber,
-                                     const char8 * const multipleLineEnd) {
+                                     const CCString multipleLineEnd) {
 
     char8 c = ' ';
-    uint32 size = StringHelper::Length(multipleLineEnd);
+    uint32 size = multipleLineEnd.GetSize();
     char8 buffer[16];
 
     // read the next characters to match the end of comment
@@ -130,14 +130,16 @@ static void ReadCommentMultipleLines(StreamI &stream,
  * @param[in] isNewToken specifies if the separators at the beginning must be skipped or not.
  * @return false if EOF, true otherwise.
  */
-static bool SkipComment(StreamI &stream,
-                        char8 * const buffer,
+bool LexicalAnalyzer::SkipComment(StreamI &stream,
+                        StaticCString<16> &buffer,
                         uint32 &bufferSize,
                         uint32 &lineNumber,
-                        const char8 * const separators,
-                        const char8 * const oneLineBegin,
-                        const char8 * const multipleLineBegin,
-                        const char8 * const multipleLineEnd,
+/*
+                        CCString const separators,
+						CCString const oneLineBegin,
+						CCString const multipleLineBegin,
+						CCString const multipleLineEnd,
+*/
                         char8 &separator,
                         const bool isNewToken) {
 
@@ -154,7 +156,8 @@ static bool SkipComment(StreamI &stream,
     while (skip) {
         if (GetC(stream, c)) {
             //stop loop, not a separator
-            if (StringHelper::SearchChar(separators, c) == NULL) {
+        	if (!separators.In(c)){
+//            if (StringHelper::SearchChar(separators, c) == NULL) {
                 skip = false;
             }
             else {
@@ -186,8 +189,8 @@ static bool SkipComment(StreamI &stream,
         uint32 i = 0u;
         // check if it is a one line comment
         while (isComment) {
-            if (oneLineBegin[i] != '\0') {
-                isComment = (c == oneLineBegin[i]);
+            if (oneLineCommentBegin[i] != '\0') {
+                isComment = (c == oneLineCommentBegin[i]);
                 buffer[i] = c;
                 if (isComment) {
                     if (!GetC(stream, c)) {
@@ -219,7 +222,7 @@ static bool SkipComment(StreamI &stream,
             i = 0u;
             // check if it is a multiple line comment
             while (isComment) {
-                if (multipleLineBegin[i] != '\0') {
+                if (multipleLineCommentBegin[i] != '\0') {
                     if (i < bufferSize1) {
                         c = buffer[i];
                     }
@@ -231,7 +234,7 @@ static bool SkipComment(StreamI &stream,
                         }
                     }
                     if (isComment) {
-                        isComment = (c == multipleLineBegin[i]);
+                        isComment = (c == multipleLineCommentBegin[i]);
                         buffer[i] = c;
                         i++;
                     }
@@ -244,7 +247,7 @@ static bool SkipComment(StreamI &stream,
 
             if (isComment) {
                 // comment on multiple line
-                ReadCommentMultipleLines(stream, lineNumber, multipleLineEnd);
+                ReadCommentMultipleLines(stream, lineNumber, multipleLineCommentEnd);
                 buffer[0] = '\0';
             }
             else {
@@ -328,19 +331,21 @@ Token *LexicalAnalyzer::PeekToken(const uint32 position) {
 }
 
 LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
-                                 const char8 * const terminalsIn,
-                                 const char8 * const separatorsIn,
-                                 const char8 * const oneLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentBeginIn,
-                                 const char8 * const multipleLineCommentEndIn) {
+                                 CCString const terminalsIn,
+								 CCString const separatorsIn,
+								 CCString const oneLineCommentBeginIn,
+								 CCString const multipleLineCommentBeginIn,
+								 CCString const multipleLineCommentEndIn):
+	terminals(terminalsIn),
+    separators(separatorsIn),
+    oneLineCommentBegin(oneLineCommentBeginIn),
+    multipleLineCommentBegin(multipleLineCommentBeginIn),
+    multipleLineCommentEnd(multipleLineCommentEndIn),
+	inputStream(stream)
+	{
     token = static_cast<Token *>(NULL);
-    inputStream = &stream;
+//    inputStream = &stream;
     lineNumber = 1u;
-    terminals = terminalsIn;
-    separators = separatorsIn;
-    oneLineCommentBegin=oneLineCommentBeginIn;
-    multipleLineCommentBegin=multipleLineCommentBeginIn;
-    multipleLineCommentEnd= multipleLineCommentEndIn;
     tokenInfo[0].Set(EOF_TOKEN, "EOF");
     tokenInfo[1].Set(STRING_TOKEN, "STRING");
     tokenInfo[2].Set(NUMBER_TOKEN, "NUMBER");
@@ -364,15 +369,14 @@ LexicalAnalyzer::~LexicalAnalyzer() {
     if (token != NULL) {
         delete token;
     }
-    inputStream = static_cast<StreamI*>(NULL);
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
-                               const bool isString) {
+void LexicalAnalyzer::AddToken(CString tokenBuffer,const bool isString) {
 
 
-    if (StringHelper::Length(tokenBuffer) > 0u) {
+//    if (StringHelper::Length(tokenBuffer) > 0u) {
+	if (tokenBuffer.GetSize() > 0){
 
         // a string for sure!
         uint32 firstDigit = 0u;
@@ -387,7 +391,8 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
         // a string for sure!
         if ((isString) || (isString2)) {
             uint32 begin = 0u;
-            uint32 end = StringHelper::Length(tokenBuffer) - 1u;
+//            uint32 end = StringHelper::Length(tokenBuffer) - 1u;
+            uint32 end = tokenBuffer.GetSize() - 1u;
             if (tokenBuffer[begin] == '"') {
                 begin++;
             }
@@ -447,8 +452,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
     bool isEOF = false;
 
 
-    StreamString separatorsUsed = separators.Buffer();
-    StreamString terminalsUsed = terminals.Buffer();
+    CCString separatorsUsed = separators;
+    CCString terminalsUsed = terminals;
 
     while (tokenQueue.GetSize() < (level + 1u)) {
         char8 c = '\0';
@@ -456,11 +461,12 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         char8 separator = '\0';
 
         char8 buffer[16] = { '\0' };
+        StaticCString<16> sbuffer(buffer);
         uint32 bufferSize = 0u;
         // skips one or consecutive comments and controls EOF
         while ((ok) && (c == '\0')) {
-            ok = SkipComment(*inputStream, &buffer[0], bufferSize, lineNumber, separators.Buffer(), oneLineCommentBegin.Buffer(),
-                             multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, true);
+            ok = SkipComment(inputStream, sbuffer, bufferSize, lineNumber,/* separators, oneLineCommentBegin,
+                             multipleLineCommentBegin, multipleLineCommentEnd,*/ separator, true);
             c = buffer[0];
             // need to do this for one line comments at the end of the tokens
             if (separator == '\n') {
@@ -481,7 +487,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         bool isString1 = false;
         // take the tokenString
         while (ok) {
-            if ((StringHelper::SearchChar(separatorsUsed.Buffer(), c) != NULL) && (!escape)) {
+//            if ((StringHelper::SearchChar(separatorsUsed.Buffer(), c) != NULL) && (!escape)) {
+        	if ((separatorsUsed.In(c)) && (!escape)) {
                 // this means that a string is found! Read everything until another " is found
                 if (isString1) {
                     tokenString += c;
@@ -495,7 +502,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 }
                 separator = c;
             }
-            else if ((StringHelper::SearchChar(terminalsUsed.Buffer(), c) != NULL) && (!escape)) {
+//            else if ((StringHelper::SearchChar(terminalsUsed.Buffer(), c) != NULL) && (!escape)) {
+            else if ((terminalsUsed.In(c)) && (!escape)) {
                 terminal = c;
                 if(bufferSize>0u) {
                     AddToken(tokenString.BufferReference(), isString1);
@@ -518,8 +526,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     // found a string! read everything until another "
                     if (c == '"') {
                         if (tokenString.Size() == 0u) {
-                            separatorsUsed = "\"";
-                            terminalsUsed = "\"";
+                            separatorsUsed = CCString("\"");
+                            terminalsUsed = CCString("\"");
                             isString1 = true;
                         }
                     }
@@ -543,11 +551,11 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 }
                 else {
                     if (isString1) {
-                        ok = GetC(*inputStream, c);
+                        ok = GetC(inputStream, c);
                     }
                     else {
-                        ok = SkipComment(*inputStream, &buffer[0], bufferSize, lineNumber, separators.Buffer(), oneLineCommentBegin.Buffer(),
-                        multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, false);
+                        ok = SkipComment(inputStream, sbuffer, bufferSize, lineNumber, /*separators, oneLineCommentBegin,
+                        multipleLineCommentBegin, multipleLineCommentEnd, */separator, false);
                         if (ok) {
                             // not a comment with a terminal as the next char!
                             bufferIndex=1u;

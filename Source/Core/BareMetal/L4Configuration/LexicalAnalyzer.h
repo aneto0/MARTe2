@@ -92,11 +92,11 @@ public:
      * that it is used for marking the end of a multiple line comment.
      */
     LexicalAnalyzer(StreamI &stream,
-            const char8 * const terminalsIn,
-            const char8 * const separatorsIn,
-            const char8 * const oneLineCommentBeginIn,
-            const char8 * const multipleLineCommentBeginIn,
-            const char8 * const multipleLineCommentEndIn);
+    		CCString const terminalsIn,
+			CCString const separatorsIn,
+			CCString const oneLineCommentBeginIn,
+			CCString const multipleLineCommentBeginIn,
+			CCString const multipleLineCommentEndIn);
 
     /**
      * @brief Destructor.
@@ -132,16 +132,40 @@ private:
 
     /**
      * @brief Adds a token to the internal queue.
-     * @param[in] tokenBuffer contains the token data.
+     * @param[in,out] tokenBuffer contains the token data. It will be modified to remove the "" in the case of a string
      * @param[in] isString specifies if the token represents a string.
      */
-    void AddToken(char8 * const tokenBuffer, const bool isString);
+    void AddToken(CString tokenBuffer, const bool isString);
 
     /**
      * @brief Adds a terminal to the internal queue.
      * @param[in] terminal is the terminal character.
      */
     void AddTerminal(const char8 terminal);
+
+    /**
+     * @brief Skips the comments in the stream.
+     * @param[in] stream is the stream of characters to be read.
+     * @param[out] buffer contains the data read from the stream.
+     * @param[out] bufferSize the actual size of the data in buffer
+     * @param[out] lineNumber is the token line number.
+     * @param[in] separators is the separator characters list.
+     * @param[in] oneLineBegin C-string containing the pattern that
+     * it is used for marking the beginning of a single line comment.
+     * @param[in] multipleLineBegin C-string containing the pattern that
+     * it is used for marking the beginning of a multiple line comment.
+     * @param[in] multipleLineEnd C-string containing the pattern that
+     * it is used for marking the end of a multiple line comment.
+     * @param[out] separator returns the separator char found at the end of the comment.
+     * @param[in] isNewToken specifies if the separators at the beginning must be skipped or not.
+     * @return false if EOF, true otherwise.
+     */
+    bool SkipComment(StreamI &stream,
+                            StaticCString<16> &buffer,
+                            uint32 &bufferSize,
+                            uint32 &lineNumber,
+                            char8 &separator,
+                            const bool isNewToken) ;
 
     /**
      * Internal token queue
@@ -151,27 +175,27 @@ private:
     /**
      * Separator characters
      */
-    StreamString separators;
+    CCString const separators;
 
     /**
      * Terminal characters
      */
-    StreamString terminals;
+    CCString const terminals;
 
     /**
      * The begin of single line comment pattern.
      */
-    StreamString oneLineCommentBegin;
+    CCString const oneLineCommentBegin;
 
     /**
      * The begin of multiple line comment pattern.
      */
-    StreamString multipleLineCommentBegin;
+    CCString const multipleLineCommentBegin;
 
     /**
      * The end of multiple line comment pattern.
      */
-    StreamString multipleLineCommentEnd;
+    CCString const multipleLineCommentEnd;
 
     /**
      * Default token types
@@ -186,7 +210,7 @@ private:
     /**
      * Pointer to the stream to be tokenized
      */
-    StreamI *inputStream;
+    StreamI &inputStream;
 
     /**
      * Line number counter

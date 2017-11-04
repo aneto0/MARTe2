@@ -70,11 +70,10 @@ public:
 //    inline operator const char8*() const;
     inline operator CCString() const;
 
-
     /**
      * TODO
      */
-    inline char8 operator[](uint32 index) const;
+    inline char8 & operator[](uint32 index) const;
 
 };
 
@@ -101,7 +100,7 @@ CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
 //    return ZeroTerminatedArray<char8>::array;
 //}
 
-char8 
+char8 &
 CString::operator[](uint32 index) const{
     return ZeroTerminatedArray<char8>::operator[](index);
 }

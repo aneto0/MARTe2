@@ -61,7 +61,7 @@ namespace MARTe {
          * @brief Singleton access to the GlobalObjectsDatabase.
          * @return a pointer to the GlobalObjectsDatabase.
          */
-        static GlobalObjectsDatabase *Instance();
+        static GlobalObjectsDatabase &Instance();
 
         /**
          * @brief Adds a new global object to the database.
@@ -95,7 +95,7 @@ namespace MARTe {
          * @brief Returns a pointer to the StandardHeap.
          * @return a pointer to the StandardHeap.
          */
-        HeapI *GetStandardHeap();
+        HeapI &GetStandardHeap();
 
     private:
 

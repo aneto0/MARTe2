@@ -43,13 +43,13 @@
 namespace MARTe {
 
 bool GlobalObjectsDatabaseTest::TestInstance() {
-    return (GlobalObjectsDatabase::Instance() != NULL_PTR(GlobalObjectsDatabase *));
+    return (&GlobalObjectsDatabase::Instance() != NULL_PTR(GlobalObjectsDatabase *));
 }
 
 bool GlobalObjectsDatabaseTest::TestPeek() {
     bool result = false;
     uint32 i;
-    GlobalObjectsDatabase *database = GlobalObjectsDatabase::Instance();
+    GlobalObjectsDatabase *database = &GlobalObjectsDatabase::Instance();
     for (i = 0; i < NUMBER_OF_GLOBAL_OBJECTS; i++) {
         const GlobalObjectI *globalObjectI = database->Peek(i);
         if (globalObjectI != NULL_PTR(GlobalObjectI *)) {
@@ -64,7 +64,7 @@ bool GlobalObjectsDatabaseTest::TestPeek() {
 }
 
 bool GlobalObjectsDatabaseTest::TestGetStandardHeap() {
-    HeapI *heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    HeapI *heap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
     StandardHeap *stdHeap = dynamic_cast<StandardHeap *>(heap);
     return (stdHeap != NULL_PTR(StandardHeap *));
 }

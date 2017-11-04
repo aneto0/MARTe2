@@ -39,7 +39,7 @@ OBJSX=	BufferedStreamI.x \
 		IOBufferStaticFunctions.x \
 		SingleBufferedStream.x \
 		StreamMemoryReference.x \
-		StreamString.x \
+		StreamString.x\
 		StreamStringIOBuffer.x
         
 PACKAGE=Core/BareMetal

@@ -243,7 +243,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                         }
                         // create a node
                         else {
-                            ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                            ReferenceT<ReferenceContainer> container(&GlobalObjectsDatabase::Instance().GetStandardHeap());
                             container->SetName(token.GetList());
                             ok = currentNode->Insert(container);
                             if (ok) {

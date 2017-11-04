@@ -37,6 +37,7 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
+#include "GlobalObjectsDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +50,7 @@ namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
-    ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance().GetStandardHeap());
     rootNode = rootContainer;
     currentNode = rootNode;
 }
@@ -85,7 +86,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
         }
         if (ok) {
 
-            ReferenceT < AnyObject > objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            ReferenceT < AnyObject > objToWrite(GlobalObjectsDatabase::Instance().GetStandardHeap());
             ok = objToWrite.IsValid();
             if (ok) {
                 ok = objToWrite->Serialise(value);

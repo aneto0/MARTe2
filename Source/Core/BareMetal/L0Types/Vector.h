@@ -91,6 +91,15 @@ public:
     void Set(T *existingArray,uint32 nOfElements);
 
     /**
+     * @brief Frees any existing memory and allocate enough to store nOfElements
+     * @param[in] nOfElements The number of elements of the vector
+     * @post
+     *    GetNumberOfElements() == nOfElements &&
+     *    GetDataPointer() == new allocated array
+     */
+    void SetSize(uint32 nOfElements);
+
+    /**
      * @brief Constructs a new matrix from a statically declared table [].
      * @tparam nOfElementsStatic Define nOfElementsStatic
      * @param[in] source The address of the statically declared table.
@@ -121,14 +130,6 @@ public:
      * @return the value at position \a idx.
      */
     T operator [](uint32 idx) const;
-
-#if 0
-    /**
-     * @brief Gets the data pointer associated to the raw matrix data.
-     * @return the data pointer associated to the raw matrix data.
-     */
-    inline void * GetDataPointer() const;
-#endif
 
     /**
      * @brief Gets the number of elements in the vector.
@@ -203,6 +204,14 @@ void Vector<T>::Set(T *existingArray,uint32 nOfElements) {
 }
 
 template<typename T>
+void Vector<T>::SetSize(uint32 nOfElements) {
+	FreeMemory();
+	Pointer::Set(new T[nOfElements]);
+    canDestroy = true;
+    numberOfElements = nOfElements;
+}
+
+template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]):Pointer(&source[0]) {
     numberOfElements = nOfElementsStatic;
@@ -235,13 +244,6 @@ T Vector<T>::operator [](uint32 idx) const {
     T* array = reinterpret_cast<T*>(dataPointer);
     return array[idx];
 }
-
-/*
-template<typename T>
-inline void* Vector<T>::GetDataPointer() const {
-    return dataPointer;
-}
-*/
 
 template<typename T>
 inline uint32 Vector<T>::GetNumberOfElements() const {

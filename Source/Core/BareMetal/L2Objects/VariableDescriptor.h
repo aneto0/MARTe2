@@ -98,22 +98,13 @@ public:
      * @brief sets the typeDescriptor
      */
     VariableDescriptor(const TypeDescriptor &td);
-
 #if 0
-    // TODO remove!!!
-    /**
-     * @brief Returns the TypeDescriptor describing the most inner storage
-     * @return the data TypeDescriptor.
-     * TODO remove!!!
-     */
-//    inline const TypeDescriptor &GetFullTypeDescriptor() const;
-#endif
     /**
      * @brief checks if it has modifiers
      * @return true if there are modifiers
      * */
     inline bool HasModifiers() const;
-
+#endif
     /**
      * @brief returns size of all the memory addressed by this variable.
      * @param[in] pointer, the pointer to the variable
@@ -156,22 +147,51 @@ public:
 
     /**
      * @brief Converts type descriptor to C/c++ equivalent
-     *
+     * @return true if all ok
      */
     ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
 
     /**
      * @brief Converts C/c++ string to type descriptor
-     *
+     * @return true if all ok
      */
     ErrorManagement::ErrorType  FromString(DynamicCString &string);
 
     /**
      * @brief provides a typeDescriptor for the overall variable.
-     *
+     * @details only simple variables are detailed here.
+     * Including all variants of CStrings that are detailed as CCString.
+     * T*,Vector<>,Array<> are all seen as GenericPointers
+     * @return the summary type descriptor
      */
     TypeDescriptor GetSummaryTypeDescriptor() const;
+
+    /**
+     * @brief obtains information about multidimensional arrays
+     * @details only in
+     * @param[out] dimensions is a Vector that will be cleaned and reallocated to contain the list of dimensions.
+     * Each dimension can be positive, negative or 0.
+     * Positive refers to array dimensions Ann
+     * Negative refers to pointer to arrays dimensions PAnn
+     * Zero refers to Vector<n> dimensions
+     * @return the type descriptor of the array element. It uses GetSummaryTypeDescriptor()
+     */
+    TypeDescriptor GetArrayInformation(Vector<int32> &dimensions);
 private:
+    /**
+     *  @brief a zero terminated sequence of tokens.
+     *  @full each token can be a character or a sequence of characters and bytes
+    */
+    DynamicCString      modifiers;
+
+    /**
+     * @brief The type of the (final after redirections) variable
+    */
+    TypeDescriptor     typeDescriptor;
+
+/*
+ *  PRIVATE METHODS
+ */
 
     /**
      * @brief adds one layer of modifiers to the top
@@ -222,34 +242,17 @@ private:
     		uint64 &dataSize, uint64 &storageSize,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
 
     /**
-     * TODO
-     *  Internal use
-     *  To encode the fact that what is coming next is a constant
+     *  @brief To encode the fact that what is coming next is a constant
      */
     inline void AddConstantCode();
 
     /**
-     * TODO
-     * Internal use
-     * To encode the actual data type.
-     * It tries to incorporate the const and Array code
+     * @brief to encode the actual data type. It will incorporate the const and Array code
      */
     void FinaliseCode(TypeDescriptor td);
 
-    /**
-     *  @brief a zero terminated sequence of tokens.
-     *  @full each token can be a character or a sequence of characters and bytes
-    */
-    DynamicCString      modifiers;
-
-    /**
-     * The type of the (final after redirections) variable
-    */
-    TypeDescriptor     typeDescriptor;
-
     // GENERAL MATCHES
     // called by the main constructor
-
 
     /**
      * @brief Matches a Matrix.
@@ -372,60 +375,33 @@ private:
 
  // SPECIFIC MATCHES
 
-
     /**
      * @brief Matches a Stream.
      * @param[in] s the Stream
-     * @post
      */
     inline void Match(StreamI *s);
 
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
-     * @post TODO
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == Character8Bit &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(char8 *i);
 
     /**
      * @brief Constructor from signed 8 bit integer.
      * @param[in] i is the signed 8 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == SignedInteger8Bit &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(int8 *i);
 
     /**
      * @brief Constructor from unsigned 8 bit integer.
      * @param[in] i is the unsigned 8 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == UnsignedInteger8Bit &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(uint8 *i);
 
     /**
      * @brief Constructor from constant signed 8 bit integer.
      * @param[in] i is the constant signed 8 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == SignedInteger8Bit &&
-     *   GetTypeDescriptor().isConstant == true &&
-     *   GetNumberOfElements(0:2) == 0
      */
 
     inline void Match(int16 *i);
@@ -433,13 +409,6 @@ private:
     /**
      * @brief Constructor from unsigned 16 bit integer.
      * @param[in] i is the unsigned 16 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == UnsignedInteger16Bit &&
-     *   GetTypeDescriptor().isConstant == false &&
-     *   GetNumberOfElements(0:2) == 0
      */
 
     inline void Match(uint16 *i);
@@ -447,96 +416,48 @@ private:
     /**
      * @brief Constructor from signed 32 bit integer.
      * @param[in] i is the signed 32 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == SignedInteger32Bit &&
-     *   GetTypeDescriptor().isConstant == false &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(int32 *i);
 
     /**
      * @brief Constructor from unsigned 32 bit integer.
      * @param[in] i is the unsigned 32 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == UnsignedInteger32Bit &&
-     *   GetTypeDescriptor().isConstant == false &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(uint32 *i);
 
     /**
      * @brief Constructor from signed 64 bit integer.
      * @param[in] i is the signed 64 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == SignedInteger64Bit &&
-     *   GetTypeDescriptor().isConstant == false &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(int64 *i);
 
     /**
      * @brief Constructor from unsigned 64 bit integer.
      * @param[in] i is the unsigned 64 bit integer input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetTypeDescriptor() == UnsignedInteger64Bit &&
-     *   GetTypeDescriptor().isConstant == false &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(uint64 *i);
 
     /**
      * @brief Constructor from 32 bit float32 number.
      * @param[in] i is the 32 bit float32 number input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(float32 *i);
 
     /**
      * @brief Constructor from 64 bit float32 number.
      * @param[in] i the 64 bit float32 number input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(float64 *i);
 
     /**
      * @brief Constructor from void pointer.
      * @param[in] p is the void pointer input.
-     * @post
-     *   GetDataPointer() == p &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetNumberOfElements(0:2) == 0
      */
     inline void Match(void * *p);
 
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
-     * @post
-     *   GetDataPointer() == &obj &&
-     *   IsStaticDeclared == true &&
-     *   GetNumberOfDimensions() == 0 &&
-     *   GetNumberOfElements(0:2) == 0
      */
     void Match(Object *obj);
 
@@ -571,18 +492,12 @@ private:
     /**
      * @brief Constructor from zeroterm malloced char *
      * @param[in] s is the string
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
      */
     inline void Match(DynamicCString *s);
 
     /**
      * @brief Constructor from zeroterm char[]
      * @param[in] s is the string
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
      */
     template <uint32 sz>
     inline void Match(StaticCString<sz> *s);
@@ -590,18 +505,12 @@ private:
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
-     * * @post TODO
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString
      */
     inline void Match(CString *s);
 
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
-     * @post
-     *   GetDataPointer() == &i &&
-     *   GetTypeDescriptor() == CString &&
      */
     inline void Match(CCString *s);
 };
@@ -615,7 +524,6 @@ inline  VariableDescriptor::VariableDescriptor( T  x){
     typeDescriptor = VoidType;
     Match(x);
 }
-
 
 template<typename T>
 void VariableDescriptor::Match(Vector<T> * vec) {
@@ -686,7 +594,6 @@ void VariableDescriptor::Match(StaticCString<sz> *s){
 	FinaliseCode(Character8Bit);
 }
 
-
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n]){
 	AddModifiersLayerConst('A', n);
@@ -755,10 +662,10 @@ void VariableDescriptor::Match(T * x){
     }
 
 }
+
 void VariableDescriptor::Match(StreamI *s){
 	FinaliseCode(StreamType);
 }
-
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);
@@ -808,7 +715,6 @@ void VariableDescriptor::Match(void * * p) {
 	FinaliseCode(VoidPointer);
 }
 
-
 template<typename baseType, uint8 bitOffset>
 void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
 	TypeDescriptor td(false,UnsignedInteger,1,bitOffset);
@@ -829,23 +735,14 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 	FinaliseCode(td);
 }
 
-#if 0
-const TypeDescriptor &VariableDescriptor::GetFullTypeDescriptor() const {
-    return typeDescriptor;
-}
-#endif
-
-//TypeDescriptor &VariableDescriptor::AccessTypeDescriptor() {
-//	return typeDescriptor;
-//}
-
 void VariableDescriptor::AddConstantCode(){
 	typeDescriptor.dataIsConstant = true;
 }
-
+/*
 bool VariableDescriptor::HasModifiers() const{
 	return (modifiers.GetSize() > 0);
 }
+*/
 
 
 /*---------------------------------------------------------------------------*/

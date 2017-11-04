@@ -37,13 +37,8 @@
 #include "ClassRegistryDatabase.h"
 #include "StructuredDataI.h"
 #include "ValidateBasicType.h"
-#include "Vector.h"
-#include "Matrix.h"
-#include "StreamI.h"
-#include "StreamString.h"
-#include "StringHelper.h"
-#include "FormatDescriptor.h"
-#include "MemoryOperationsHelper.h"
+#include <Introspection-old.h>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -1118,14 +1113,13 @@ bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {
 
     bool ok = true;
-    VariableDescriptor &destinationVD = destination.GetFullVariableDescriptor();
-    if (static_cast<bool>(destinationVD.GetSummaryTypeDescriptor().dataIsConstant)) {
+    if (static_cast<bool>(destination.GetTypeDescriptor().isConstant)) {
         ok = false;
     }
     if (ok) {
 
         //Source and destination dimensions must be the same
-        ok = (destinationVD.GetNumberOfDimensions() == source.GetNumberOfDimensions());
+        ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
         //The number of elements in all dimensions must be the same
         for (uint32 i = 0u; ok && (i < 3u); i++) {
             ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));

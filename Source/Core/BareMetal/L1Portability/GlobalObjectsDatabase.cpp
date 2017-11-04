@@ -41,9 +41,9 @@
 
 namespace MARTe {
 
-GlobalObjectsDatabase *GlobalObjectsDatabase::Instance() {
+GlobalObjectsDatabase &GlobalObjectsDatabase::Instance() {
     static GlobalObjectsDatabase instance;
-    return &instance;
+    return instance;
 }
 
 GlobalObjectsDatabase::GlobalObjectsDatabase() {
@@ -98,8 +98,8 @@ const GlobalObjectI *GlobalObjectsDatabase::Peek(const uint32 idx) const {
 /*lint -e{1536} There is only and only one StandardHeap implementation. The GlobalObjectsDatabase
  * singleton provides the only access point to this heap.
  */
-HeapI *GlobalObjectsDatabase::GetStandardHeap() {
-    return &standardHeap;
+HeapI &GlobalObjectsDatabase::GetStandardHeap() {
+    return standardHeap;
 }
 
 }

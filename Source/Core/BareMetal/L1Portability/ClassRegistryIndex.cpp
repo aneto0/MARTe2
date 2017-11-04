@@ -55,7 +55,7 @@ ClassRegistryIndex *ClassRegistryIndex::Instance() {
     if (instance == NULL_PTR(ClassRegistryIndex *)) {
         instance = new ClassRegistryIndex();
         uint32 order = NUMBER_OF_GLOBAL_OBJECTS - 4u;
-        GlobalObjectsDatabase::Instance()->Add(instance, order);
+        GlobalObjectsDatabase::Instance().Add(instance, order);
     }
     return instance;
 }

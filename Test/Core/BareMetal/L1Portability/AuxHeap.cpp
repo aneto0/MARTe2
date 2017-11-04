@@ -71,7 +71,7 @@ void *AuxHeap::Malloc(const uint32 size) {
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
-        pointer = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(static_cast<osulong>(size));
+        pointer = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(static_cast<osulong>(size));
     }
 
     if (pointer != NULL) {
@@ -103,7 +103,7 @@ void *AuxHeap::Malloc(const uint32 size) {
 /*lint -e{586} use of free function (deprecated) */
 void AuxHeap::Free(void *&data) {
     if (data != NULL) {
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(data);
+        GlobalObjectsDatabase::Instance().GetStandardHeap().Free(data);
     }
 //    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
@@ -122,7 +122,7 @@ void *AuxHeap::Realloc(void *&data,
             AuxHeap::Free(data);
         }
         else {
-            data = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data, static_cast<osulong>(newSize));
+            data = GlobalObjectsDatabase::Instance().GetStandardHeap().Realloc(data, static_cast<osulong>(newSize));
             if (data != NULL) {
                 /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
                  * in order to be able to update the range of addresses provided by this heap

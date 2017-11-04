@@ -47,13 +47,13 @@ GlobalObjectI::~GlobalObjectI() {
 
 
 void * GlobalObjectI::operator new(const osulong size) {
-    void *obj = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(static_cast<uint32>(size));
+    void *obj = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(static_cast<uint32>(size));
     return obj;
 }
 
 
 void GlobalObjectI::operator delete(void * p) {
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(p);
+    GlobalObjectsDatabase::Instance().GetStandardHeap().Free(p);
 }
 
 }

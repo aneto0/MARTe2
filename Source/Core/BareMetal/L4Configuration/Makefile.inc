@@ -25,22 +25,23 @@
 #############################################################
 
 OBJSX=\
-		ParserI.x \
-		StandardParser.x \
-		AnyTypeCreator.x \
-	    TokenInfo.x \
-		Token.x \
-		XMLParser.x \
-		JsonParser.x \
 		LexicalAnalyzer.x \
-		AnyObject.x \
-		ConfigurationDatabase.x\
+		TokenInfo.x \
+		Token.x \
 		FloatToInteger.x \
 		IntegerToFloat.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \
-		ValidateBasicType.x
+		ValidateBasicType.x\
+		AnyObject.x \
+		AnyTypeCreator.x \
+		StandardParser.x \
+		XMLParser.x \
+		JsonParser.x \
+		ParserI.x \
+		ConfigurationDatabase.x
+
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -56,14 +56,6 @@ const uint64 MaxCopySize = 1024*1024*128;
 // max size of an intermediate layer
 const uint64 MaxLayerSize = 1024*1024;
 
-#if 0
-void VariableDescriptor::AddModifiersLayer(char8 modifier, uint64 size){
-	if (modifier != '\0'){
-		modifiers.Append(modifier);
-		if (size > 0) modifiers.AppendNum(size);
-	}
-}
-#endif
 
 void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 	if (modifier != '\0'){
@@ -103,8 +95,6 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 	typeDescriptor = td;
 	if (isConst) typeDescriptor.dataIsConstant = true;
 }
-
-
 
 VariableDescriptor::VariableDescriptor(){
     typeDescriptor = VoidType;
@@ -166,7 +156,6 @@ static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint64 
 	}
 }
 
-
 ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 		CCString &modifierString,
 		const uint8 *pointer,
@@ -197,7 +186,6 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 			ret.internalSetupError = true;
 	        REPORT_ERROR(ErrorManagement::InternalSetupError, "pointer=NULL and a ZTA is found. sequence of two ZTA var layers not possible");
 		}
-
 
 		uint64 layerSize  = 0;
 		if (ret){
@@ -258,23 +246,6 @@ uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *po
  	 return (numberOfElements + numberOfTermElements)* elementSize ;
 }
 
-/**
- * true if the object has a size that depends on the content. (strings)
- */
-bool isVariableSize(CCString modifierString){
-	const CCString variableSizeModifiers = "VvMmZzDdSs";
-	bool isVariable = false;
-
-	if (!modifierString.IsNullPtr()){
-		char8 c = modifierString[0];
-		while (!isVariable && (c != '\0')){
-			isVariable =  (variableSizeModifiers.In(c));
-			modifierString++;
-			c = modifierString[0];
-		}
-	}
-	return isVariable;
-}
 
 TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     CCString modifiersCopy = modifiers;
@@ -301,7 +272,6 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     		    if ((nextModifier == 0) && ((typeDescriptor == Character8Bit) || (typeDescriptor == ConstCharacter8Bit))){
     		    	td = ConstCharString;
     		    }
-
     		}
     	}break;
     	case 'V':
@@ -323,6 +293,35 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
 
 	return td;
 }
+
+TypeDescriptor VariableDescriptor::GetArrayInformation(Vector<int32> &dimensions){
+    TypeDescriptor td;
+#if 0
+    // calculate number of dimensions
+    uint32 index = 0;
+    char8 c;
+    while ((c = modifiers[index++])!= 0){
+    	switch(c){
+    	case 'A':
+    	case 'z':
+    	case 'Z':
+    	case 'd':
+    	case 'D':
+    	case 's':
+    	case 'S':
+    	case 'v':
+    	case 'V':{
+
+    	}break
+    	}
+    }
+
+
+
+#endif
+	return td;
+}
+
 
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
 		                               uint64 &dataSize, uint64 &storageSize,uint8 maxDepth,uint32 layerMultiplier) const {
@@ -348,7 +347,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
         REPORT_ERROR(ErrorManagement::InternalSetupError, "Incorrect sequence VZ or MZ encountered ");
 	}
 
-//printf("[%c,%i]",modifier,numberOfTermElements);
 
 	if (ret){
 		// if we can delve deep and there is deep....
@@ -360,16 +358,10 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 			case 'P':{
 				// cannot do this conversion using c++ style casts
 				const uint8 **pp = (const uint8 **)(pointer);
-				if (true /*isVariableSize(modifierString)*/){
+				//if (true /*isVariableSize(modifierString)*/){
 					storageSize = numberOfElementsIncludingTerm * elementSize;
 					dataSize = 0;
 					uint64 index;
-#if 0
-					if (!MemoryCheck::Check(pp)){
-						ret.parametersError = true;
-				        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
-					}
-#endif
 					for (index = 0; (index < numberOfElements) && ret; index++){
 						const uint8 *p = pp[index];
 						if (p != NULL){
@@ -390,19 +382,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							}
 						}
 					}
-				} else {  // not variable size
-					uint64 dataSize2;
-					uint64 storageSize2;
-					if (!MemoryCheck::Check(pp[0])){
-						ret.exception = true;
-						REPORT_ERROR(ErrorManagement::Exception, "bad dereferenced pointer");
-					}
-					ret = GetDeepSize(modifierString, pp[0],dataSize2,storageSize2,maxDepth);
-					if (ret){
-						storageSize = storageSize2 + numberOfElementsIncludingTerm * elementSize;
-						dataSize = numberOfElementsIncludingTerm * dataSize2;
-					}
-				}
+				//}
 			} break;
 			case 'V':
 			case 'v':{
@@ -410,13 +390,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 				storageSize = numberOfElementsIncludingTerm * elementSize;
 				dataSize = 0;
 				uint64 index;
-#if 0
-
-				if (!MemoryCheck::Check(pv)){
-					ret.parametersError = true;
-			        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
-				}
-#endif
 
 				for (index = 0; (index < numberOfElements) && ret; index++){
 					const uint8 *p = static_cast<const uint8 *>(pv[index].GetDataPointer());
@@ -446,13 +419,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 				storageSize = numberOfElementsIncludingTerm * elementSize;
 				dataSize = 0;
 				uint64 index;
-#if 0
-
-				if (!MemoryCheck::Check(pm)){
-					ret.parametersError = true;
-			        REPORT_ERROR(ErrorManagement::Exception, "bad input pointer");
-				}
-#endif
 				for (index = 0; (index < numberOfElements) && ret; index++){
 					const uint8 *p = static_cast<const uint8 *>(pm[index].GetDataPointer());
 					uint32 numberOfArrayElements = pm[index].GetNumberOfRows() * pm[index].GetNumberOfColumns();
@@ -491,8 +457,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 	return ret;
 }
 
-
-
 ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize,uint8  maxDepth) const{
 
 	uint64 storageSz;
@@ -505,8 +469,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
 
 	return ret;
 }
-
-
 
 /**
  * @brief removes one indirection layer and update variable pointer
@@ -533,7 +495,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	 	case 'P':{
 			const uint8 **pp = (const uint8 **)(pointer);
 			const uint8 *p = *pp;
-	//printf ("{%p->%p}",pointer,p);
 			if (!MemoryCheck::Check(p)){
 				ret.exception = true;
 		        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -594,7 +555,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 			if (ret){
 				uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
 				if (index >= maxIndex){
-	//printf("{%p-%i-%i-%i}",pointer,index,maxIndex,layerSize);
 					ret.outOfRange = true;
 			        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= maxIndex");
 				}
@@ -693,7 +653,6 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
     }
     CCString modifierStringSave = modifierString;
 
-
 	// number of elements in this layer
 	uint64 numberOfElements = 1;
 	// size of each element
@@ -704,7 +663,6 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 	uint64 totalLayerSize=0;
 
 	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,arrayStringSize,numberOfTermElements,modifier);
-    bool nextIsVariableLayer = isVariableSize(modifierString);
 
     if (ret){
     	totalLayerSize = elementSize * (numberOfElements + numberOfTermElements);
@@ -719,7 +677,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
     }
 
     if (ret){
-    	if ( (modifier != '\0') && !((modifier == 'P') && nextIsVariableLayer)){
+    	if ( (modifier != '\0') && !/*(*/(modifier == 'P') /*&& nextIsVariableLayer)*/){
     		if (totalLayerSize > MaxLayerSize){
     			ret.unsupportedFeature = true;
     	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "totalLayerSize > MaxLayerSize");
@@ -731,7 +689,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
     	// copy all multiplying modifiers A,Z,D,S,z,d,s
 	    destVd.modifiers.AppendN(modifierStringSave,arrayStringSize);
 
-		if (((maxDepth == 0) || (modifier == '\0')) && !((modifier == 'P') && (nextIsVariableLayer))){
+		if (((maxDepth == 0) || (modifier == '\0')) /* && !((modifier == 'P') && (nextIsVariableLayer))*/ ){
 
 			// just copy all as is
 			MemoryOperationsHelper::Copy(destFreePtr,sourcePtr,totalLayerSize);
@@ -744,55 +702,32 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				// cannot do this conversion using c++ style casts
 				const uint8 **spp = (const uint8 **)(sourcePtr);
 				uint8 **dpp = (uint8 **)(destFreePtr);
-				if (nextIsVariableLayer){
-				    destVd.modifiers.Append(modifier);
-    				// reserve pointer space
-					destFreePtr  += totalLayerSize;
-					destFreeSize -= totalLayerSize;
 
-					uint32 index;
-					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = spp[index];
-						dpp[index] = destFreePtr;
-						if (!MemoryCheck::Check(p)){
-							ret.exception = true;
-					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-						}
-						if (ret){
-							if (index == 0){
-								VariableDescriptor &dvd = destVd;
-								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
-							} else {
-								VariableDescriptor dvd;
-								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
-							}
+			    destVd.modifiers.Append(modifier);
+				// reserve pointer space
+				destFreePtr  += totalLayerSize;
+				destFreeSize -= totalLayerSize;
+
+				uint32 index;
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = spp[index];
+					dpp[index] = destFreePtr;
+					if (!MemoryCheck::Check(p)){
+						ret.exception = true;
+				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+					}
+					if (ret){
+						if (index == 0){
+							VariableDescriptor &dvd = destVd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
+						} else {
+							VariableDescriptor dvd;
+							ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
 						}
 					}
+				}
 
-					ret.fatalError=MemoryOperationsHelper::Set(&dpp[numberOfElements],0,numberOfTermElements*elementSize);
-
-				} else { // next not variable
-
-					uint32 index;
-					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = spp[index];
-						if (!MemoryCheck::Check(p)){
-							ret.exception = true;
-					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-						}
-						if (ret){
-							if (index == 0){
-								VariableDescriptor &dvd = destVd;
-								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
-							} else {
-								VariableDescriptor dvd;
-								ret = Copy(p,destFreePtr,destFreeSize,dvd,maxDepth,modifierString);
-							}
-						}
-					}
-				} // end if variable layer
-
-
+				ret.fatalError=MemoryOperationsHelper::Set(&dpp[numberOfElements],0,numberOfTermElements*elementSize);
 			}break;
 
 			case 'm':

@@ -50,28 +50,19 @@ class  ListNodeT:public ListNode{
 public:
 
 	/**
-	 *
+	 * TODO
 	 */
 	ListNodeT(const loadClass & loadIn): ListNode(),load(loadIn){
 
 	}
 
 	/**
-	 *
+	 * TODO
 	 */
 	virtual ~ListNodeT(){
 
 	}
 
-#if 0
-	/**
-	 *
-	 */
-	inline ListNodeT<loadClass> &Next(){
-		ListNodeT<loadClass> *lnt = reinterpret_cast<ListNodeT<loadClass> *>(next);
-		return *lnt;
-	}
-#endif
 public:
 
 	/**
