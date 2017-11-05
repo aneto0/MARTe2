@@ -146,7 +146,7 @@ static uint32 readNumber(CCString &buffer){
  * extracts information about a layer
  * updates the layer string pointer
  */
-static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint64 &size ){
+static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size ){
 	modifier = modifierString[0];
 	if (modifier == '\0'){
 		size = 0;
@@ -167,7 +167,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 
 	ErrorManagement::ErrorType ret;
     char8 c = '\0';
- 	uint64 n = 0;
+ 	uint32 n = 0;
  	numberOfElements = 1;
  	// to allow recovering size of array section
  	arrayStringSize = 0;
@@ -251,7 +251,7 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     CCString modifiersCopy = modifiers;
     char8 firstModifier  = '\0';
     char8 nextModifier  = '\0';
-    uint64 size = 0;
+    uint32 size = 0;
     GetLayerInfo(modifiersCopy,firstModifier,size );
     nextModifier= modifiersCopy[0];
 
@@ -294,31 +294,60 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
 	return td;
 }
 
-TypeDescriptor VariableDescriptor::GetArrayInformation(Vector<int32> &dimensions){
-    TypeDescriptor td;
-#if 0
-    // calculate number of dimensions
-    uint32 index = 0;
-    char8 c;
-    while ((c = modifiers[index++])!= 0){
-    	switch(c){
-    	case 'A':
-    	case 'z':
-    	case 'Z':
-    	case 'd':
-    	case 'D':
-    	case 's':
-    	case 'S':
-    	case 'v':
-    	case 'V':{
+TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions){
+	const CCString validModifiers = "APp";
+	const CCString pointerModifiers = "Pp";
 
-    	}break
+	dimensions.Truncate(0);
+
+    DimensionInfo di;
+
+    CCString modifierString = modifiers;
+    CCString oldModifierString = modifiers;
+    CCString oldoldModifierString = modifiers;
+    char8 previousModifier = '\0';
+
+    GetLayerInfo(modifierString,di.type,di.numberOfElements);
+
+    while ((di.type != '\0') && validModifiers.In(di.type)){
+    	if (di.type == 'A'){
+    		if (pointerModifiers.In(previousModifier)){
+    			di.type = previousModifier;
+    		}
+    		dimensions.Append(di);
     	}
+		previousModifier = di.type;
+
+    	// pointers. Double PP sequence not valid here
+		if (pointerModifiers.In(previousModifier) &&
+		    pointerModifiers.In(di.type)){
+			di.type = 'X'; // force exit on invalid
+		}  else {
+			// save pointers to allow two levels of undo
+	    	oldoldModifierString = oldModifierString;
+	    	oldModifierString = modifierString;
+	        GetLayerInfo(modifierString,di.type,di.numberOfElements);
+		}
     }
 
+	TypeDescriptor td = typeDescriptor;
 
+    if (di.type != '\0'){
+        // exit because of a PP,PZ,PD.or....
+    	if (pointerModifiers.In(previousModifier)){
+        	modifierString = oldoldModifierString;
+        // exit because of a V,M..
+    	} else {
+        	modifierString = oldModifierString;
+    	}
 
-#endif
+        VariableDescriptor dummy;
+        dummy.modifiers = modifierString.GetList();
+        dummy.typeDescriptor = typeDescriptor;
+
+        td = dummy.GetSummaryTypeDescriptor();
+    }
+
 	return td;
 }
 
@@ -479,7 +508,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
 ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,uint32 index,CCString modifierString){
 	ErrorManagement::ErrorType ret;
 	char8 modifier;
-	uint64 size;
+	uint32 size;
 	if (modifierString.IsNullPtr()){
 		modifierString = modifiers;
 	}
@@ -824,7 +853,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 		modifierString = modifiers;
 	}
 	char8 modifier;
-	uint64 size;
+	uint32 size;
 	GetLayerInfo(modifierString,modifier,size );
 
 	if ((modifier == 'P') || (modifier == 'p')){

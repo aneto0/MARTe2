@@ -132,14 +132,19 @@ public:
 protected:
 
     /**
-     * to access pointer as void
+     * @brief to access pointer as void
      */
     void  *&VoidArray();
 
     /**
-     * to access pointer as void
+     * @brief to access pointer as void
      */
     T *&TArray();
+
+    /**
+     * @brief to write a terminator
+     */
+    inline void Terminate(uint32 position);
 
 };
 
@@ -152,6 +157,12 @@ bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 sizeO
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<typename T,uint32 granularity>
+void DynamicZeroTerminatedArray<T,granularity>::Terminate(uint32 position){
+	T *p =  TArray();
+	ZeroTerminatedArrayZero(reinterpret_cast<uint8 *>(p+position),sizeof(T));
+}
 
 template<typename T,uint32 granularity>
 void  *&DynamicZeroTerminatedArray<T,granularity>::VoidArray(){
@@ -168,8 +179,9 @@ DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTer
     const uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
     VoidArray() = HeapManager::Malloc(necessarySize*sizeof(T));
     if (TArray() != NULL_PTR(T *)) {
-    	static const T term(0u);
-    	TArray()[0] = term;
+//    	static const T term(0u);
+//    	TArray()[0] = term;
+    	Terminate(0);
     }
 }
 
@@ -219,8 +231,9 @@ bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
     bool ret = DZTAppend1(sizeof(T),granularity,GetSize(),VoidArray(),src);
     if (ret)  {
         operator[](sizeD) = data;
-    	static const T term(0u);
-        operator[](sizeD+1) = term;
+    	Terminate(sizeD+1);
+//        static const T term(0u);
+//        operator[](sizeD+1) = term;
     }
     return ret;
 }
@@ -247,8 +260,9 @@ bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArra
 	uint32 sizeS = data.GetSize();
 	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,maxAppendSize,VoidArray(),src);
     if (ret)  {
-    	static const T term(0u);
-        operator[](sizeS+sizeD) = term;
+    	//static const T term(0u);
+        //operator[](sizeS+sizeD) = term;
+    	Terminate(sizeS+sizeD);
     }
 
     return ret;
@@ -265,7 +279,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
         ret = (TArray() != NULL_PTR(T *));
     }
     if (ret){
-        TArray()[newSize] = 0u;
+//        TArray()[newSize] = 0u;
+    	Terminate(newSize);
     }
     return ret;
 }
@@ -274,16 +289,16 @@ template<typename T,uint32 granularity>
 bool DynamicZeroTerminatedArray<T,granularity>::Remove(uint32 characters){
 	T *start = GetList();
 	T *p = start;
-	static const T term(0u);
+//	static const T term(0u);
 	// go to new start point
 	// avoid stepping through the end
-	while (( *p != term ) && (characters > 0)){
+	while (!IsZero(*p)  && (characters > 0)){
 		p++;
 		characters--;
 	}
 	uint32 newSize = 0;
 	if (characters == 0){
-		while ( *p != term){
+		while ( !IsZero(*p)){
 			*start = *p;
 			start++;
 			p++;

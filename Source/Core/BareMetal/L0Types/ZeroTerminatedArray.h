@@ -56,6 +56,14 @@ uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize);
  */
 bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize);
 
+
+/**
+ * @brief Sets an element at a given location to zero
+ * @param[in] pointer is the pointer to the data array
+ * @param[in] elSize is the size of each element in the array
+ */
+void ZeroTerminatedArrayZero(uint8 *pointer, uint32 elSize);
+
 /**
  * @brief searches for an element
  * @param[in] pointer is the pointer to the data array

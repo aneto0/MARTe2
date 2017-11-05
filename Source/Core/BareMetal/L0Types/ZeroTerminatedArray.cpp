@@ -37,6 +37,13 @@ bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize){
 	return isZero;
 }
 
+void ZeroTerminatedArrayZero(uint8 *pointer, uint32 elSize){
+	while(elSize > 0){
+		*pointer++ = 0;
+	}
+}
+
+
 bool ZeroTerminatedArrayIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize){
 	bool isSame = true;
 	while((elSize > 3)&& isSame){

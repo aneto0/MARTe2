@@ -1118,29 +1118,48 @@ bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {
 
     bool ok = true;
-    VariableDescriptor &destinationVD = destination.GetFullVariableDescriptor();
-    if (static_cast<bool>(destinationVD.GetSummaryTypeDescriptor().dataIsConstant)) {
+    VariableDescriptor &vdDestination = destination.GetFullVariableDescriptor();
+    VariableDescriptor &vdSource 	  = source.GetFullVariableDescriptor();
+	DynamicZeroTerminatedArray<DimensionInfo,4> destinationDims;
+	DynamicZeroTerminatedArray<DimensionInfo,4> sourceDims;
+    TypeDescriptor tdDestination;
+    TypeDescriptor tdSource;
+    uint32 nDims = 0;
+
+    if (static_cast<bool>(vdDestination.GetSummaryTypeDescriptor().dataIsConstant)) {
         ok = false;
     }
+
     if (ok) {
+        tdDestination = vdDestination.GetDimensionsInformation(destinationDims);
+        tdSource      = vdSource.GetDimensionsInformation(sourceDims);
 
+        nDims = destinationDims.GetSize();
         //Source and destination dimensions must be the same
-        ok = (destinationVD.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-        //The number of elements in all dimensions must be the same
-        for (uint32 i = 0u; ok && (i < 3u); i++) {
-            ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
-        }
+        ok = (nDims == sourceDims.GetSize());
+    }
 
-        if (ok) {
-            if (source.GetNumberOfDimensions() == 0u) {
-                ok = ScalarBasicTypeConvert(destination, source);
-            }
-            if (source.GetNumberOfDimensions() == 1u) {
-                ok = VectorBasicTypeConvert(destination, source);
-            }
-            if (source.GetNumberOfDimensions() == 2u) {
-                ok = MatrixBasicTypeConvert(destination, source);
-            }
+    if (ok){
+        ok = (nDims < 3);
+    }
+
+    if (ok && (nDims>0) ){
+        ok = (destinationDims[0].numberOfElements == sourceDims[0].numberOfElements);
+    }
+
+    if (ok && (nDims>1) ){
+        ok = (destinationDims[1].numberOfElements == sourceDims[1].numberOfElements);
+    }
+
+    if (ok){
+        if (nDims == 0u) {
+            ok = ScalarBasicTypeConvert(destination, source);
+        }
+        if (nDims == 1u) {
+            ok = VectorBasicTypeConvert(destination, source);
+        }
+        if (nDims == 2u) {
+            ok = MatrixBasicTypeConvert(destination, source);
         }
     }
 

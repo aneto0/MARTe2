@@ -56,6 +56,20 @@ class DynamicCString;
 namespace MARTe {
 
 /**
+ * @brief description of a dimension.
+ */
+struct DimensionInfo{
+	/**
+	 * @brief number of elements in this dimension (or nothing if pointer is invalid).
+	 */
+	uint32 numberOfElements;
+	/**
+	 * @brief A for arrays P for pointers to arays p for const pointers to arrays
+	 */
+	char8  type;
+};
+
+/**
  * @brief full description of the type of a variable including modifiers
  */
 class VariableDescriptor{
@@ -98,13 +112,7 @@ public:
      * @brief sets the typeDescriptor
      */
     VariableDescriptor(const TypeDescriptor &td);
-#if 0
-    /**
-     * @brief checks if it has modifiers
-     * @return true if there are modifiers
-     * */
-    inline bool HasModifiers() const;
-#endif
+
     /**
      * @brief returns size of all the memory addressed by this variable.
      * @param[in] pointer, the pointer to the variable
@@ -168,15 +176,14 @@ public:
 
     /**
      * @brief obtains information about multidimensional arrays
-     * @details only in
-     * @param[out] dimensions is a Vector that will be cleaned and reallocated to contain the list of dimensions.
-     * Each dimension can be positive, negative or 0.
+     * @details only handles arrays and pointers to array. Vector and Matrix or ZTA terminate the scan
+     * @param[out] dimensions will be cleaned and reallocated to contain the list of dimensions.
+     * Each dimension can be positive, negative.
      * Positive refers to array dimensions Ann
      * Negative refers to pointer to arrays dimensions PAnn
-     * Zero refers to Vector<n> dimensions
      * @return the type descriptor of the array element. It uses GetSummaryTypeDescriptor()
      */
-    TypeDescriptor GetArrayInformation(Vector<int32> &dimensions);
+    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions);
 private:
     /**
      *  @brief a zero terminated sequence of tokens.
