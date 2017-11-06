@@ -28,7 +28,7 @@
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "DynamicCString.h"
-#include "BasicType.h"
+
 
 namespace MARTe{
 

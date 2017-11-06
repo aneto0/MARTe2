@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CompilerTypes.h"
-#include "BasicType.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "DynamicCString.h"
@@ -60,27 +59,160 @@ namespace MARTe {
  * | :----:           | :----:     | :----:                                                                 |
  * |  1  (=1)         | 1          | 30                                                                     |
  *
- * | isStructuredData | dataConst  | type    | objectSize | spare | bitOffset | numberOfBits     |
- * | :----:           |:----:      | :----:  | :----:     | :---- | :----:    | :----:           |
- * |  1  (=0)         | 1          | 3=u/int | 3=7        | 2     | 6         | 16               |
+ * | fullType                                          | objectSize  | bitOffset | numberOfBits             |
+ * | isStructuredData | dataConst  | category | type   | objectSize  | bitOffset | numberOfBits             |
+ * | :----:           | :----:     | :----:   | :----: | :---------: | :----:    | :----:                   |
+ * |  1  (=1)         | 1          | 2        | 4      | 8           | 8         | 8                        |
  *
- * | isStructuredData | dataConst  | type    | objectSize | ArrayProperty | arraySize  |
- * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:     |
- * |  1  (=0)         | 1          | 3=basic | 3          | 3  (sized)    | 21         |
- *
- * | isStructuredData | dataConst  | type    | objectSize | ArrayProperty |  ArrayType    | spare2
- * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:        | :----:
- * |  1  (=0)         | 1          | 3=basic | 3          | 3 (unsized)   | 3             | 18
- *
- * | isStructuredData | dataConst  | type    | not used   | ArrayProperty |  ArrayType    | spare2     |
- * | :----:           |:----:      | :----:  | :----:     | :----:        | :----:        | :----:     |
- * |  1  (=0)         | 1          | 3=void  | 3          | 3             | 3=Ptr         | 18         |VOID*
- * |  1  (=0)         | 1          | 3=void  | 3          | 3             | n/a           | 18         |VOID
- *
+ * | isStructuredData | dataConst  | category | type   | spare                                              |
+ * | :----:           | :----:     | :----:   | :----: | :---------:                                        |
+ * |  1  (=1)         | 1          | 2        | 4      | 24                                                 |
  *
  * type = complex....
  */
 
+// used to encode fullType in the TypeDescriptor
+typedef uint8 TD_FullType;
+
+/**
+ * @brief mask to extract the category.
+ */
+const TD_FullType TDF_Category 	    = 0x30u;
+
+/**
+ * @brief const to mark a basic Type.
+ */
+const TD_FullType TDF_BasicType 	= 0x00u;
+
+/**
+ * @brief const to mark a complex Type.
+ */
+const TD_FullType TDF_ComplexType 	= 0x10u;
+
+/**
+ * @brief const to mark a complex Type.
+ */
+const TD_FullType TDF_SyntheticType = 0x20u;
+
+/**
+ * @brief const to mark a complex Type.
+ */
+const TD_FullType TDF_SummaryType 	= 0x30u;
+
+/**
+ * @brief The type is a signed integer.
+ */
+const TD_FullType TDF_SignedInteger 	= TDF_BasicType + 0u;
+
+/**
+ * @brief The type is an unsigned integer.
+ */
+const TD_FullType TDF_UnsignedInteger 	= TDF_BasicType + 1u;
+
+/**
+ * @brief The type is a float number.
+ */
+const TD_FullType TDF_Float 			= TDF_BasicType + 2u;
+
+/**
+ * @brief The type is a char .
+ */
+const TD_FullType TDF_Char 				= TDF_BasicType + 3u;
+
+/**
+ * @brief The type is a char .
+ */
+const TD_FullType TDF_Void				= TDF_BasicType + 4u;
+
+/**
+ * @brief The type is a StreamString class.
+ */
+const TD_FullType  TDF_SString 			= TDF_ComplexType + 0u;
+
+/**
+ * @brief The type is a StreamInterface class.
+ */
+const TD_FullType  TDF_Stream 			= TDF_ComplexType + 1u;
+
+/**
+ * @brief  The StructuredDataI type
+ */
+const TD_FullType  TDF_StructuredDataI   = TDF_ComplexType + 2u;
+
+/**
+ * @brief  The CCString/CString
+ */
+const TD_FullType  TDF_CString 			= TDF_SyntheticType + 0u;
+
+/**
+ * @brief  The void *
+ */
+const TD_FullType  TDF_VoidPointer 		= TDF_SyntheticType + 1u;
+
+/**
+ * @brief  The something[]
+ */
+const TD_FullType  TDF_GenericArray 	= TDF_SummaryType + 0u;
+
+/**
+ * @brief  The something wrong
+ */
+const TD_FullType  TDF_Invalid	 		= TDF_SummaryType + 1u;
+
+/**
+ * @brief  The something*
+ */
+const TD_FullType  TDF_GenericPointer   = TDF_SummaryType + 2u;
+
+/**
+ * @brief Definition of BasicArrayType
+ */
+typedef uint8 TDObjectSize;
+
+/**
+ * @brief The type has an unknown size
+ */
+const TDObjectSize SizeUnknown = 0u;
+
+/**
+ * @brief The type has size 8bit
+ */
+const TDObjectSize Size8bit = 1u;
+
+/**
+ * @brief The type has size 16bit
+ */
+const TDObjectSize Size16bit = 2u;
+
+/**
+ * @brief The type has size 32bit
+ */
+const TDObjectSize Size32bit = 3u;
+
+/**
+ * @brief The type has size 64bit
+ */
+const TDObjectSize Size64bit = 4u;
+
+/**
+ * @brief The type has size 128bit
+ */
+const TDObjectSize Size128bit = 5u;
+
+/**
+ * @brief The type has size 256bit
+ */
+const TDObjectSize Size256bit = 6u;
+
+/**
+ * @brief The type has bit size
+ */
+const TDObjectSize SizeBits = 7u;
+
+/**
+ * @brief The size of a pointer
+ */
+const TDObjectSize SizePointer = (sizeof(void*)==8) ? Size64bit : (sizeof(void*)==4) ? Size32bit : Size16bit;
 
 /**
  * Macros to build one field of the TypeDescriptor
@@ -126,21 +258,12 @@ namespace MARTe {
 	    /*  For isStructuredData = true   */                 \
 	    rangeFun(structuredDataIdCode,30   , 2,numberType)   \
 	    /*  For isStructuredData = false   */                \
-	    rangeFun(type                , 3   , 2,numberType)   \
-	    /*  For type = complexType         */                \
-	    rangeFun(complexType         , 3   , 5,numberType)   \
+	    rangeFun(fullType            , 6   , 2,numberType)   \
 	    /*  For type = int uint float char (void)    */      \
-	    rangeFun(objectSize          , 3   , 5,numberType)   \
+	    rangeFun(objectSize          , 8   , 8,numberType)   \
 	    /* For objectSize = 7 SizeBits && int or uint */     \
-	    rangeFun(bitOffset           , 6   ,10,numberType)   \
-	    rangeFun(numberOfBits        ,16   ,16,numberType)   \
-	    /* For objectSize<7 SizeBits && i/uint float char */ \
-	    rangeFun(arrayProperty       , 3   , 8,numberType)   \
-	    /* For arrayProperty sized */                        \
-	    rangeFun(arraySize           ,21   ,11,numberType)   \
-	    /* type = int,float,char For hasSize = false */      \
-	    rangeFun(arrayType           , 3   ,11,numberType)   \
-	    rangeFun(combinedArrayType   , 6   , 8,numberType)
+	    rangeFun(bitOffset           , 8   ,16,numberType)   \
+	    rangeFun(numberOfBits        , 8   ,24,numberType)
 
 
 #define TYPE_DESCRIPTOR_TYPE uint32
@@ -171,6 +294,7 @@ public:
     };
 
     TypeDescriptor();
+
     /**
      * @brief Constructor by 32 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
@@ -178,46 +302,7 @@ public:
      */
     inline TypeDescriptor(const TYPE_DESCRIPTOR_TYPE x);
 
-    /**
-     * TODO
-     * Allows setting the complex subtypes
-     */
-    TypeDescriptor(const bool isConstantIn,const ComplexSubType subType);
-    /**
-     * TODO correct
-     * @brief Basic Byte Types constructor.
-     * @param[in] isConstantIn specifies if the type is constant.
-     * @param[in] typeIn is the type.
-     * @param[in] numberOfBitsIn the number of bits associated to the type.
-     * @param[in] bitsOffsetIn the bit offset of the type from a standard pointer address alignment
-     * @post
-     *   isConstantIn == isConstant &&
-     *   if (bitsOffset=0 and numberOfbits exponential multiple of 8)
-     *       type == signedBitInteger if typeIn was signedInteger
-     *       type == unsignedBitInteger if typeIn was unsignedInteger
-     *       otherwise type = invalid
-     *   else
-     *       type == typeIn
-     *       byteSize = bitSizeIn/8
-     *       arrayType = 1
-     *       arraySize = 1
-     *   end
-     */
-    TypeDescriptor(const bool isConstantIn,
-                   const BasicType typeIn,
-                   const uint32 numberOfBitsIn,
-                   const uint8  bitsOffsetIn = 0);
 
-    /**
-     * @brief Basic Byte Types constructor.
-     * TODO
-     */
-    TypeDescriptor(const bool isConstantIn,
-                   const BasicType typeIn,
-                   const BasicObjectSize objectSizeIn,
-                   const CombinedArrayType arrayTypeIn,
-                   const uint32 arraySizeIn
-                   );
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
@@ -235,7 +320,7 @@ public:
      * If the type is an object compares the structuredDataIdCode.
      */
     /*lint -e(1739) , operation basic_type == TypeDescriptor will not be supported*/
-    bool operator==(const TypeDescriptor &typeDescriptor) const;
+    inline bool operator==(const TypeDescriptor &typeDescriptor) const;
 
     /**
      * @brief Inequality operator used to compare types.
@@ -244,17 +329,22 @@ public:
      * If the type is an object compares the structuredDataIdCode.
      */
     /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
-    bool operator!=(const TypeDescriptor &typeDescriptor) const;
+    inline bool operator!=(const TypeDescriptor &typeDescriptor) const;
 
     /**
-     * whether it is an basic type or one of the special types
+     * @brief whether it is an basic type
      */
-    inline bool IsComplexType() const ;
+    inline bool IsBasicType() const ;
 
     /**
      * whether it is an integer with fractional bit size or offset
      */
     inline bool IsBitType() const ;
+
+    /**
+     * @brief whether it is one of the special types
+     */
+    inline bool IsComplexType() const ;
 
     /**
      * size in byte of the object top layer.
@@ -281,77 +371,82 @@ public:
 };
 
 
-/// the typeDescriptor for a char (not  the 8 bit number )
-#define  Character8Bit               TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
-/// the typeDescriptor for a const char (not  the 8 bit number )
-#define  ConstCharacter8Bit          TypeDescriptor(TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) | TDRANGE(dataIsConstant,1))
-/// the typeDescriptor for a 32 bit float
-#define  Float32Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-/// the typeDescriptor for a 64 bit float
-#define  Float64Bit                  TypeDescriptor(TDRANGE(type,Float)            | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-/// the typeDescriptor for a void
-#define  VoidType                    TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,SizeUnknown) | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  SignedInteger8Bit           TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  SignedInteger16Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  SignedInteger32Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  SignedInteger64Bit          TypeDescriptor(TDRANGE(type,SignedInteger)    | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  UnsignedInteger8Bit         TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size8bit)    | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  UnsignedInteger16Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size16bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1))
-#define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(type,UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   | TDRANGE(arrayProperty, SizedCArray_AP) | TDRANGE(arraySize, 1) )
+#define  Character8Bit_number        TDRANGE(fullType,TDF_Char)  | TDRANGE(objectSize,Size8bit)
+#define  Character8Bit               TypeDescriptor(Character8Bit_number)
+#define  ConstCharacter8Bit_number   TDRANGE(fullType,TDF_Char)  | TDRANGE(objectSize,Size8bit) | TDRANGE(dataIsConstant,1)
+#define  ConstCharacter8Bit          TypeDescriptor(ConstCharacter8Bit_number)
+#define  Float32Bit_number           TDRANGE(fullType,TDF_Float) | TDRANGE(objectSize,Size32bit)
+#define  Float32Bit                  TypeDescriptor(Float32Bit_number)
+#define  Float64Bit_number           TDRANGE(fullType,TDF_Float) | TDRANGE(objectSize,Size64bit)
+#define  Float64Bit                  TypeDescriptor(Float64Bit_number)
+#define  VoidType_number             TDRANGE(fullType,TDF_Void)  | TDRANGE(objectSize,SizeUnknown)
+#define  VoidType                    TypeDescriptor(VoidType_number)
 
-/// the typeDescriptor for a Stream
-#define  StreamType                  TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,Stream) )
-#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,StructuredDataInterface) | TDRANGE(arraySize,1))
-#define  StreamStringType            TypeDescriptor(TDRANGE(type,ComplexType)      | TDRANGE(complexType,SString) | TDRANGE(arraySize,1))
+#define  SignedInteger8Bit           TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger)    | TDRANGE(objectSize,Size8bit)    )
+#define  SignedInteger16Bit          TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger)    | TDRANGE(objectSize,Size16bit)   )
+#define  SignedInteger32Bit          TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger)    | TDRANGE(objectSize,Size32bit)   )
+#define  SignedInteger64Bit          TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger)    | TDRANGE(objectSize,Size64bit)   )
+#define  UnsignedInteger8Bit         TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(objectSize,Size8bit)    )
+#define  UnsignedInteger16Bit        TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(objectSize,Size16bit)   )
+#define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(objectSize,Size32bit)   )
+#define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(objectSize,Size64bit)   )
 
-#define  VoidPointer                 TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray) )
-#define  ConstVoidPointer            TypeDescriptor(TDRANGE(type,Void)             | TDRANGE(objectSize,Size8bit)    | TDRANGE(combinedArrayType,PointerArray)  | TDRANGE(dataIsConstant,1) )
+#define  StreamType                  TypeDescriptor(TDRANGE(fullType,TDF_Stream) )
+#define  StructuredDataInterfaceType TypeDescriptor(TDRANGE(fullType,TDF_StructuredDataI) )
+#define  StreamStringType            TypeDescriptor(TDRANGE(fullType,TDF_SString) )
+
+#define  VoidPointer                 TypeDescriptor(TDRANGE(fullType,TDF_VoidPointer) | TDRANGE(objectSize,SizePointer) )
+#define  ConstVoidPointer            TypeDescriptor(TDRANGE(fullType,TDF_VoidPointer) | TDRANGE(objectSize,SizePointer) | TDRANGE(dataIsConstant,1) )
+#define  GenericPointer              TypeDescriptor(TDRANGE(fullType,TDF_GenericPointer) | TDRANGE(objectSize,SizePointer) )
+
+
 
 /*******************************************************/
 /* Types only used as a summary of a more complex type */
 /*******************************************************/
-#define  GenericPointer_number       TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,PointerArray)
-#define  GenericPointer              TypeDescriptor(GenericPointer_number )
-#define  ConstCharString_number      (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        | TDRANGE(dataIsConstant,1) )
+//#define  GenericPointer_number       TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,PointerArray)
+//#define  GenericPointer              TypeDescriptor(GenericPointer_number )
+#define  ConstCharString_number      (TDRANGE(fullType,TDF_CString) | TDRANGE(objectSize,SizePointer)   | TDRANGE(dataIsConstant,1) )
 #define  ConstCharString             TypeDescriptor(ConstCharString_number)
-#define  GenericArray_number         TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,0)
+#define  GenericArray_number         TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,SizeUnknown)
 #define  GenericArray                TypeDescriptor(InvalidType_number)
-#define  InvalidType_number          TDRANGE(type,ComplexType)      | TDRANGE(complexType,Invalid)
+#define  InvalidType_number          TDRANGE(fullType,TDF_Invalid)
 #define  InvalidType                 TypeDescriptor(InvalidType_number)
 
-
-#if 0
-#define  DelegatedType               TypeDescriptor(TDRANGE(type,Delegated)        | TDRANGE(objectSize,SizeUnknown) | TDRANGE(combinedArrayType,SizedCArray) | TDRANGE(arraySize,1))
-
-#define  CharString_number           (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,ZeroTermArray)        )
-#define  DynamicCharString_number    (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,DynamicZeroTermArray) )
-#define  StaticCharString_number     (TDRANGE(type,Char)             | TDRANGE(objectSize,Size8bit)   | TDRANGE(combinedArrayType,StaticZeroTermArray)  )
-
-#define  CharString                  TypeDescriptor(CharString_number)
-#define  DynamicCharString           TypeDescriptor(DynamicCharString_number)
-#define  StaticCharString            TypeDescriptor(StaticCharString_number)
-#endif
-
-
+#define  UnsignedBitSet_number(bits,offset) TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(objectSize,SizeBits) | TDRANGE(numberOfBits,bits) | TDRANGE(bitOffset,offset)
+#define  UnsignedBitSet(bits,offset) TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(objectSize,SizeBits) | TDRANGE(numberOfBits,bits) | TDRANGE(bitOffset,offset))
+#define  SignedBitSet_number(bits,offset) TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(objectSize,SizeBits) | TDRANGE(numberOfBits,bits) | TDRANGE(bitOffset,offset)
+#define  SignedBitSet(bits,offset) TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(objectSize,SizeBits) | TDRANGE(numberOfBits,bits) | TDRANGE(bitOffset,offset))
+#define  BitSetBoolean(offset) UnsignedBitSet(1,offset)
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+bool TypeDescriptor::IsBasicType() const {
+    return ( !isStructuredData && ((fullType & TDF_Category) == TDF_BasicType) );
+};
+
 bool TypeDescriptor::IsBitType() const {
-    return ((objectSize ==  SizeBits ) && (type != ComplexType) );
+    return ((objectSize ==  SizeBits ) && IsBasicType() );
 };
 
 bool TypeDescriptor::IsComplexType() const {
-    return (type ==  ComplexType );
+    return ( !isStructuredData && ((fullType & TDF_Category) == TDF_ComplexType) );
 };
 
 TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
 
+bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
+    return all == typeDescriptor.all;
+}
+
+bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
+    return all == typeDescriptor.all;
+}
 }
 
 #endif /* TYPEDESCRIPTOR_H_ */

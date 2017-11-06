@@ -26,8 +26,7 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicType.x \
-        ListNode.x \
+OBJSX=  ListNode.x \
         LinkedListable.x \
         LinkedListHolder.x \
         BalancedTreeNode.x \

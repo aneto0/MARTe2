@@ -35,8 +35,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeDescriptor.h"
-#include "BasicType.h"
 #include "ClassRegistryDatabase.h"
+#include "FractionalInteger.h"
 #include "Matrix.h"
 #include "StringHelper.h"
 #include "ZeroTerminatedArray.h"
@@ -724,22 +724,17 @@ void VariableDescriptor::Match(void * * p) {
 
 template<typename baseType, uint8 bitOffset>
 void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
-	TypeDescriptor td(false,UnsignedInteger,1,bitOffset);
-	FinaliseCode(td);
+	FinaliseCode( BitSetBoolean(bitOffset));
 }
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 void VariableDescriptor::Match(BitRange<baseType, bitSize, bitOffset> * bitRange) {
-    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
-    TypeDescriptor td(false,type,bitSize,bitOffset);
-	FinaliseCode(td);
+	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(bitSize,bitOffset) : UnsignedBitSet(bitSize,bitOffset));
 }
 
 template<typename baseType, uint8 bitSize>
 void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractionalInt) {
-    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
-    TypeDescriptor td(false,type,bitSize,0);
-	FinaliseCode(td);
+	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(bitSize,0) : UnsignedBitSet(bitSize,0));
 }
 
 void VariableDescriptor::AddConstantCode(){

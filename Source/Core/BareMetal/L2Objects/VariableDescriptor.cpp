@@ -34,7 +34,6 @@
 #include "MemoryOperationsHelper.h"
 #include "DynamicCString.h"
 #include "MemoryCheck.h"
-#include "APLookup.h"
 #include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -865,6 +864,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 //printf("{%c}",modifierString[0]);
 			if (modifierString[0] == '\0'){
 				if ((modifier == 'Z')||(modifier == 'z')){
+//printf("(%x %x %x)",typeDescriptor.all,Character8Bit.all,ConstCharacter8Bit.all);
 					if (typeDescriptor == Character8Bit){
 						if (modifier == 'z'){
 							string.AppendN("const ");

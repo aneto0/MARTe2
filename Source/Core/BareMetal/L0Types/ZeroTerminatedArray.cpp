@@ -40,6 +40,7 @@ bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize){
 void ZeroTerminatedArrayZero(uint8 *pointer, uint32 elSize){
 	while(elSize > 0){
 		*pointer++ = 0;
+		elSize--;
 	}
 }
 
