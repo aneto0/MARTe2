@@ -198,7 +198,7 @@ public:
      * @brief Gets the size of the stream.
      * @return the size of the stream.
      */
-    virtual uint64 Size() = 0;
+    virtual uint64 Size() const = 0;
 
     /**
      * @brief Moves within the stream to an absolute location.
@@ -236,7 +236,7 @@ public:
      * @brief Gets the current position.
      * @return the current position in the stream.
      */
-    virtual uint64 Position() = 0;
+    virtual uint64 Position() const = 0;
 
     /**
      * @brief Clips the stream size.

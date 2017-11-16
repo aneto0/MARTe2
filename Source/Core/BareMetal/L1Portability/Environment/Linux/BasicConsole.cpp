@@ -471,11 +471,11 @@ bool BasicConsole::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 
-uint64 BasicConsole::Position() {
+uint64 BasicConsole::Position() const {
     return 0xffffffffffffffffu;
 }
 
-uint64 BasicConsole::Size() {
+uint64 BasicConsole::Size() const {
     return 0xffffffffffffffffu;
 }
 

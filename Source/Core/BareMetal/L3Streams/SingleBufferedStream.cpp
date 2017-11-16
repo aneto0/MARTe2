@@ -257,7 +257,9 @@ bool SingleBufferedStream::Write(const char8 * const input,
     return ret;
 }
 
-uint64 SingleBufferedStream::Size() {
+uint64 SingleBufferedStream::Size() const {
+
+#if 0
 // commit all pending changes if any
 // so stream size will be updated
     bool ok = true;
@@ -268,6 +270,18 @@ uint64 SingleBufferedStream::Size() {
     if (ok) {
         size = OSSize();
     }
+#else  // const implementation
+    uint64 size = 0u;
+    size = OSSize();
+
+    if (mutexWriteMode) {
+        uint64 size2 = OSPosition() + internalBuffer.UsedSize();
+        if (size2 > size){
+        	size = size2;
+        }
+    }
+#endif
+
     return size;
 }
 
@@ -383,7 +397,7 @@ bool SingleBufferedStream::RelativeSeek(const int64 deltaPos) {
     return ok;
 }
 
-uint64 SingleBufferedStream::Position() {
+uint64 SingleBufferedStream::Position() const{
 
     uint64 ret = 0u;
     // if write mode on then just flush out data

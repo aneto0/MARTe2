@@ -243,7 +243,7 @@ bool DoubleBufferedStream::Write(const char8 * const input,
     return ret;
 }
 
-uint64 DoubleBufferedStream::Size() {
+uint64 DoubleBufferedStream::Size() const {
     return OSSize();
 }
 
@@ -255,7 +255,7 @@ bool DoubleBufferedStream::RelativeSeek(const int64 deltaPos) {
     return OSRelativeSeek(deltaPos);
 }
 
-uint64 DoubleBufferedStream::Position() {
+uint64 DoubleBufferedStream::Position() const  {
     return OSPosition();
 }
 

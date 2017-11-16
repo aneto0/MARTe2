@@ -60,17 +60,6 @@ static const int32 MaximumNumberOfHeaps = 16;
  */
 class HeapDatabase: public GlobalObjectI {
 
-    /**
-     * @brief Lists all heaps
-     * all unused heaps have a NULL pointer.
-     */
-    HeapI * heaps[MaximumNumberOfHeaps];
-
-    /**
-     * @brief Internal mutex semaphore.
-     */
-    FastPollingMutexSem mux;
-
 public:
     /**
      * @brief Singleton access to the database.
@@ -109,11 +98,6 @@ public:
                    const HeapI *heap);
 
     /**
-     * @brief constructor
-     * */
-    HeapDatabase();
-
-    /**
      * @brief locks access to database
      * @return true if locking successful
      * */
@@ -130,6 +114,23 @@ public:
      */
     virtual CCString GetClassName() const;
 
+private:
+
+    /**
+     * @brief Lists all heaps
+     * all unused heaps have a NULL pointer.
+     */
+    HeapI * heaps[MaximumNumberOfHeaps];
+
+    /**
+     * @brief Internal mutex semaphore.
+     */
+    FastPollingMutexSem mux;
+
+    /**
+     * @brief constructor
+     * */
+    HeapDatabase();
 };
 
 /*---------------------------------------------------------------------------*/

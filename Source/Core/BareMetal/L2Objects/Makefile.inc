@@ -26,7 +26,9 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  MemoryFileSystem.x \
+OBJSX=  TypeConversionManager.x \
+		SameTypeConversionFactory.x\
+		MemoryFileSystem.x \
 		ClassRegistryDatabase.x \
 		VariableDescriptor.x\
         AnyType.x \

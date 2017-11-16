@@ -158,7 +158,7 @@ public:
      * @brief Gets the size of the stream.
      * @return the current stream size.
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const;
 
     /**
      * @brief Moves within the string to an absolute location.
@@ -185,7 +185,7 @@ public:
      * @brief Gets the current position.
      * @return the current position.
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const ;
 
     /**
      * @brief Sets the size of the buffer.

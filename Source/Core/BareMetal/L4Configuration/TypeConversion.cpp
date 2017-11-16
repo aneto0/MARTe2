@@ -44,36 +44,12 @@
 #include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "MemoryOperationsHelper.h"
+#include "ConversionPrivate.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToFloatGeneric(const char8 * const input,
-                                 float32 * const number,
-                                 const uint32 destBitSize);
-
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToIntegerGeneric(const char8* const source,
-                                   uint8 * const dest,
-                                   const uint32 destBitSize,
-                                   const bool isSigned);
-
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool IntegerToFloatGeneric(const uint8 * const source,
-                                  const uint32 sourceBitSize,
-                                  float32 * const dest,
-                                  const uint32 destBitSize,
-                                  const bool isSigned);
-
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool FloatToIntegerGeneric(const float32 * const source,
-                                  const uint32 sourceBitSize,
-                                  uint8 * const dest,
-                                  const uint32 destBitSize,
-                                  const bool isSigned);
 
 /**
  * @brief Saturate the number in input to the maximum or minimum 32-bit float number.

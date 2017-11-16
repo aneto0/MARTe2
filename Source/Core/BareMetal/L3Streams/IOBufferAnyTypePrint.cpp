@@ -69,7 +69,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 				bool printAsACast = false;
 				//if the element is structured, the print is not supported.
 				if ((td.isStructuredData) ||
-						(td.IsComplexType()))  //Stream,StructuredData,..
+						(td.IsSpecialType()))  //Stream,StructuredData,..
 				{
 					printAsACast = true;
 				} // not a structured data
@@ -169,7 +169,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 							}
 							break;
 							default:{
-								// TODO
+								printAsACast = true;
 							}
 							}// end switch
 						}break;
@@ -177,8 +177,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 							const CCString *data = static_cast<const CCString *>(dataPointer);
 							ret = PrintCCStringFit(iobuff,*data,fd);
 						}break;
-						case TDF_GenericPointer:
-						case TDF_VoidPointer:{
+						case TDF_Pointer:{
 							const uintp *data = static_cast<const uintp *>(dataPointer);
 							ret = IntegerToStream(iobuff, *data, fd);
 						}break;

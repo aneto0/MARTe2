@@ -59,13 +59,19 @@ public:
 	 */
 	SimpleStaticListT();
 
+	/**
+	 *@brief access elements by const reference
+	 *@details acess by index is not protected
+	 *@param index needs to be limited by user to within [0-listSize)
+	 */
+	inline const T &Get(uint32 index) const;
 
 	/**
 	 *@brief access elements by reference
 	 *@details acess by index is not protected
 	 *@param index needs to be limited by user to within [0-listSize)
 	 */
-	T &operator[](uint32 index) ;
+	inline T &operator[](uint32 index) ;
 
 	/**
 	 *@brief adds one element by copying data to next free slot
@@ -77,17 +83,17 @@ public:
 	/**
 	 *@return how many used slots
 	 */
-	inline uint32 NumberOfUsedElements();
+	inline uint32 NumberOfUsedElements() const;
 
 	/**
 	 *@brief how much space left unused
 	 */
-	inline uint32 NumberOfFreeElements();
+	inline uint32 NumberOfFreeElements() const ;
 
 	/**
 	 *@brief how much space was allocated
 	 */
-	inline uint32 NumberOfElements();
+	inline uint32 NumberOfElements() const;
 
 private:
 	/**
@@ -123,7 +129,7 @@ bool SimpleStaticListT<T,allocationSize>::Add(const T &data )
 }
 
 template <class T,uint32 allocationSize>
-uint32 SimpleStaticListT<T,allocationSize>::NumberOfFreeElements(){
+uint32 SimpleStaticListT<T,allocationSize>::NumberOfFreeElements() const{
 	return allocationSize - listSize;
 }
 
@@ -133,12 +139,17 @@ T &SimpleStaticListT<T,allocationSize>::operator[](uint32 index) {
 }
 
 template <class T,uint32 allocationSize>
-uint32 SimpleStaticListT<T,allocationSize>::NumberOfUsedElements(){
+const T &SimpleStaticListT<T,allocationSize>::Get(uint32 index) const{
+	return array[index];
+}
+
+template <class T,uint32 allocationSize>
+uint32 SimpleStaticListT<T,allocationSize>::NumberOfUsedElements() const{
 	return listSize;
 }
 
 template <class T,uint32 allocationSize>
-uint32 SimpleStaticListT<T,allocationSize>::NumberOfElements(){
+uint32 SimpleStaticListT<T,allocationSize>::NumberOfElements() const{
 	return allocationSize;
 }
 

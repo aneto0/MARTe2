@@ -63,12 +63,6 @@ static inline uint32 SizeFromObjectSize(TDObjectSize tdos){
 	} else
 	if (tdos == Size64bit){
 		size = 8;
-	} else
-	if (tdos == Size128bit){
-		size = 16;
-	} else
-	if (tdos == Size256bit){
-		size = 32;
 	}
 	return size;
 }
@@ -131,7 +125,7 @@ const struct {
 		{"Stream" 		  ,  TDF_Stream         },
 		{"StructuredDataI",  TDF_StructuredDataI},
 		{"CCString"       ,  TDF_CString        },
-		{"void*" 	      ,  TDF_VoidPointer    },
+		{"void*" 	      ,  TDF_Pointer    },
 		{"void[]" 	      ,  TDF_GenericArray   },
 		{"invalid"	 	  ,  TDF_Invalid        },
 		{"?*"             ,  TDF_GenericPointer },

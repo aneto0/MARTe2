@@ -43,7 +43,6 @@
 #include "DynamicZeroTerminatedArray.h"
 #include "StaticZeroTerminatedArray.h"
 
-
 namespace MARTe {
 class Object;
 class DynamicCString;
@@ -72,7 +71,7 @@ struct DimensionInfo{
 /**
  * @brief full description of the type of a variable including modifiers
  */
-class VariableDescriptor{
+class DLL_API VariableDescriptor{
 
 public:
 
@@ -153,6 +152,12 @@ public:
 			uint8 maxDepth=100,
 			CCString modifierString = emptyString) const;
 
+    ErrorManagement::ErrorType VariableDescriptor::CopyTo(
+    		const uint8 *sourcePtr,
+    			  uint8 *destPtr,
+    		VariableDescriptor destVd
+    		) const ;
+
     /**
      * @brief Converts type descriptor to C/c++ equivalent
      * @return true if all ok
@@ -183,7 +188,7 @@ public:
      * Negative refers to pointer to arrays dimensions PAnn
      * @return the type descriptor of the array element. It uses GetSummaryTypeDescriptor()
      */
-    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions);
+    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const;
 private:
     /**
      *  @brief a zero terminated sequence of tokens.
@@ -380,13 +385,21 @@ private:
     template <class T>
     inline void Match(T * x);
 
- // SPECIFIC MATCHES
+ // GENERIC VIRTUAL MATCHES
 
     /**
      * @brief Matches a Stream.
      * @param[in] s the Stream
      */
     inline void Match(StreamI *s);
+
+    /**
+     * @brief Constructor from Object (or inherited class).
+     * @param[in] obj the source Object.
+     */
+    void Match(Object *obj);
+
+    // SPECIFIC MATCHES
 
     /**
      * @brief Constructor from 8 bit character.
@@ -461,12 +474,6 @@ private:
      * @param[in] p is the void pointer input.
      */
     inline void Match(void * *p);
-
-    /**
-     * @brief Constructor from Object (or inherited class).
-     * @param[in] obj the source Object.
-     */
-    void Match(Object *obj);
 
     /**
      * @brief Constructor by BitBoolean.
@@ -719,32 +726,27 @@ void VariableDescriptor::Match(float64 * i) {
 }
 
 void VariableDescriptor::Match(void * * p) {
-	FinaliseCode(VoidPointer);
+	FinaliseCode(PointerType);
 }
 
 template<typename baseType, uint8 bitOffset>
 void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
-	FinaliseCode( BitSetBoolean(bitOffset));
+	FinaliseCode( BitSetBoolean(baseType,bitOffset));
 }
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 void VariableDescriptor::Match(BitRange<baseType, bitSize, bitOffset> * bitRange) {
-	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(bitSize,bitOffset) : UnsignedBitSet(bitSize,bitOffset));
+	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(baseType,bitSize,bitOffset) : UnsignedBitSet(baseType,bitSize,bitOffset));
 }
 
 template<typename baseType, uint8 bitSize>
 void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractionalInt) {
-	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(bitSize,0) : UnsignedBitSet(bitSize,0));
+	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(baseType,bitSize,0) : UnsignedBitSet(baseType,bitSize,0));
 }
 
 void VariableDescriptor::AddConstantCode(){
 	typeDescriptor.dataIsConstant = true;
 }
-/*
-bool VariableDescriptor::HasModifiers() const{
-	return (modifiers.GetSize() > 0);
-}
-*/
 
 
 /*---------------------------------------------------------------------------*/

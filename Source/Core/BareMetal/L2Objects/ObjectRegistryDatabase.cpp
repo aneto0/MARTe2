@@ -52,7 +52,10 @@ ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
     static ObjectRegistryDatabase *instance = NULL_PTR(ObjectRegistryDatabase *);
     if (instance == NULL) {
         instance = new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
-        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
+//        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
+        uint32 dexOrd = NUMBER_OF_GLOBAL_OBJECTS - 3u;
+        GlobalObjectsDatabase::Instance().Add(instance, dexOrd);
+
     }
     return instance;
 }

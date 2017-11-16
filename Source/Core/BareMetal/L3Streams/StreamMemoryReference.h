@@ -184,7 +184,7 @@ public:
      * dimension passed in the constructor.
      * @return the current stream size.
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const ;
 
     /**
      * @brief Moves within the stream to an absolute location.
@@ -210,7 +210,7 @@ public:
      * @brief Gets the current position.
      * @return the current position.
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const ;
 
     /**
      * @brief Sets the used size.

@@ -34,10 +34,7 @@
 
 #include "ClassRegistryItem.h"
 #include "ClassRegistryIndex.h"
-//#include "GlobalObjectsDatabase.h"
-//#include "FastPollingMutexSem.h"
-//#include "StaticList.h"
-//#include "FractionalInteger.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

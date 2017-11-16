@@ -20,6 +20,7 @@
  * the class VariableDescriptor (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,12 +30,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "VariableDescriptor.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 #include "DynamicCString.h"
 #include "MemoryCheck.h"
 #include "MemoryOperationsHelper.h"
+#include "TypeConversionManager.h"
+#include "VariableDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -266,11 +268,17 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     		CCString ZTAModifiers = "ZzDdSs";
     		if (ZTAModifiers.In(nextModifier)){
     		    GetLayerInfo(modifiersCopy,firstModifier,size );
-    		    nextModifier= modifiersCopy[0];
-
-    		    if ((nextModifier == 0) && ((typeDescriptor == Character8Bit) || (typeDescriptor == ConstCharacter8Bit))){
-    		    	td = ConstCharString;
+    		    if (modifiersCopy[0] == 0){
+    		    	if ((typeDescriptor == Character8Bit) && (nextModifier == 'Z')){
+        		    	td = DynamicCharString;
+    		    	} else
+   	    		    if ((typeDescriptor == Character8Bit) || (typeDescriptor == ConstCharacter8Bit)){
+    	    		   	td = ConstCharString;
+    	    		}
     		    }
+    		} else
+    		if (nextModifier == 0){
+    			td = PointerType;
     		}
     	}break;
     	case 'V':
@@ -293,7 +301,8 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
 	return td;
 }
 
-TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions){
+#if 0  /// limited to APA and AA types
+TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const{
 	const CCString validModifiers = "APp";
 	const CCString pointerModifiers = "Pp";
 
@@ -349,6 +358,96 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
 
 	return td;
 }
+
+#else // extended to all types
+
+static inline char8 toUpper(char8 c){
+	if ((c >='A') && (c <= 'Z')){
+		c = (c - 'A') + 'a';
+	}
+	return c;
+}
+
+TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const{
+	const CCString pointerModifiers = "Pp";
+	const CCString immediateModifiers = "AVM";
+	const CCString prefixedModifiers = "ZDS";
+	TypeDescriptor td = typeDescriptor;
+
+	dimensions.Truncate(0);
+
+    CCString modifierString = modifiers;
+    CCString previousModifierString = modifiers;
+    CCString savedModifierString = modifiers;
+    DimensionInfo di;
+
+    char8 lastPointer = '\0';
+
+    while (di.type != 0){
+    	previousModifierString = modifierString;
+        GetLayerInfo(modifierString,di.type,di.numberOfElements);
+        char8 c = toUpper(di.type);
+        if (c != '\0'){
+        	if (immediateModifiers.In(c)){
+        		if (lastPointer != '\0'){
+        			if (c == 'A'){
+    					di.type = 'f';
+        				if (lastPointer == 'P'){
+        					di.type = 'F';
+        	        		dimensions.Append(di);
+        				}
+        			} else {
+            			// error PV PM etc...
+        				td = InvalidType;
+        			}
+        		} else {
+            		dimensions.Append(di);
+        		}
+        	} else
+        	if (prefixedModifiers.In(c)){
+        		if (lastPointer != '\0'){
+            		dimensions.Append(di);
+            		lastPointer = '\0';
+        		} else {
+        			//error ZSD without prefix
+        			// stop and exit
+        			di.type = '\0';
+        			// rewind to this layer
+        			modifierString = previousModifierString;
+        		}
+        	} else
+        	if (c == 'P'){
+        		if (lastPointer != '\0'){
+        			//PP!
+        			// stop and exit
+        			di.type = '\0';
+        			modifierString = savedModifierString;
+        		} else {
+        			lastPointer = di.type;
+        			savedModifierString = previousModifierString;
+        		}
+        	}
+        } else { // c == 0
+    		if (lastPointer != '\0'){
+    			//P0!
+    			// restore one level
+    			modifierString = previousModifierString;
+    		}
+        }
+    }
+
+	if (td != InvalidType){
+        VariableDescriptor dummy;
+        dummy.modifiers = modifierString.GetList();
+        dummy.typeDescriptor = typeDescriptor;
+
+        td = dummy.GetSummaryTypeDescriptor();
+	}
+
+	return td;
+}
+
+#endif
 
 
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
@@ -655,6 +754,195 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	return ret;
 }
 
+
+
+
+static inline  uint32 GetDimensionSize(char8 type){
+	char8 c = toUpper(type);
+	uint32 size = 0;
+	switch(c){
+	case 'M':{
+		size = sizeof (Matrix<char8>);
+	}break;
+	case 'V':{
+		size = sizeof (Vector<char8>);
+	}break;
+
+	case 'S':
+	case 'D':
+	case 'Z':
+	case 'F':{
+		size = sizeof (void *);
+	}break;
+	default:{}
+	}
+	return size;
+}
+
+static uint32 GetNextElementSize(
+		const ZeroTerminatedArray<DimensionInfo> &dimensions,
+		TypeDescriptor &td
+		){
+
+	uint32 size = 1;
+	uint32 ix = 1;
+	while (dimensions[ix].type == 'A'){
+		size *= dimensions[ix].numberOfElements;
+		ix++;
+	}
+	if (dimensions[ix].type == 0){
+		size *= td.Size();
+	} else {
+		size *= GetDimensionSize(dimensions[ix].type);
+	}
+
+	return size;
+}
+
+static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr){
+	ErrorManagement::ErrorType ret;
+	const uint8 **pp = (const uint8 **)(ptr);
+	const uint8 *p = *pp;
+	if (!MemoryCheck::Check(p)){
+		ret.exception = true;
+        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+	} else {
+		ptr = p;
+	}
+	return ret;
+}
+
+static inline ErrorManagement::ErrorType HandlePointer(
+		const ZeroTerminatedArray<DimensionInfo> &dimensions,
+		const uint8* &ptr,
+		TypeDescriptor td,
+		uint32 &numberOfElements,
+		uint32 &sourceElementSize
+		){
+	ErrorManagement::ErrorType ok;
+	switch(toupper(dimensions[0].type)){
+	case 'A':{
+		numberOfElements = dimensions[0].numberOfElements;
+		sourceElementSize = GetNextElementSize(dimensions,td);
+	}break;
+	case 'F':{
+		numberOfElements = dimensions[0].numberOfElements;
+		sourceElementSize = GetNextElementSize(dimensions,td);
+		ok = RedirectP(ptr);
+	}break;
+	case 'D':
+	case 'S':
+	case 'Z':{
+		ok = RedirectP(ptr);
+		if (ok){
+			sourceElementSize = GetNextElementSize(dimensions,td);
+			numberOfElements = ZeroTerminatedArrayGetSize(ptr, sourceElementSize);
+		}
+	}break;
+	case 'V':{
+		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
+		numberOfElements = pv->GetNumberOfElements();
+		sourceElementSize = GetNextElementSize(dimensions,td);
+
+		// it works as vector is descendant of Pointer class
+		ok = RedirectP(ptr);
+	}break;
+	case 'M':{
+		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
+		numberOfElements = pm->GetNumberOfElements();
+		sourceElementSize = GetNextElementSize(dimensions,td);
+
+		// it works as vector is descendant of Pointer class
+		ok = RedirectP(ptr);
+	}break;
+	default:{
+
+	}break;
+
+	};
+
+	return ok;
+}
+
+static ErrorManagement::ErrorType LayerOperate(
+		ZeroTerminatedArray<DimensionInfo> sourceDimensions,
+		const uint8* sourcePtr,
+		TypeDescriptor &sourceTd,
+		ZeroTerminatedArray<DimensionInfo> destDimensions,
+		uint8* destPtr,
+		TypeDescriptor &destTd,
+		const TypeConversionOperatorI &op
+		){
+	ErrorManagement::ErrorType ok;
+	ok.internalSetupError = (sourceDimensions.GetSize() == 0);
+	ok.internalSetupError = ok.internalSetupError | (destDimensions.GetSize() != sourceDimensions.GetSize());
+
+	uint32 sourceNumberOfElements = 0;
+	uint32 sourceElementSize = 1;
+	// handle source pointer;
+	if (ok){
+		ok = HandlePointer(sourceDimensions,sourcePtr,sourceTd,sourceNumberOfElements,sourceElementSize);
+	}
+
+	uint32 destNumberOfElements = 0;
+	uint32 destElementSize = 1;
+	// handle dest pointer;
+	if (ok){
+		ok = HandlePointer(destDimensions,(const uint8 *&)destPtr,destTd,destNumberOfElements,destElementSize);
+	}
+
+	if (ok){
+		ok = (sourceNumberOfElements == destNumberOfElements);
+	}
+
+	if (ok){
+		if (destDimensions.GetSize() <= 1){
+			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
+		} else {
+			// skip forward
+			sourceDimensions++;
+			destDimensions++;
+			uint32 ix = 0;
+			for (ix = 0; (ix < sourceNumberOfElements) && ok; ix++){
+				ok = LayerOperate(sourceDimensions,sourcePtr,sourceTd,destDimensions,destPtr,destTd,op);
+				sourcePtr+= sourceElementSize;
+				destPtr+= destElementSize;
+			}
+		}
+	}
+
+	return ok;
+}
+
+ErrorManagement::ErrorType VariableDescriptor::CopyTo(
+		const uint8 *sourcePtr,
+			  uint8 *destPtr,
+			  VariableDescriptor destVd
+		) const {
+
+	ErrorManagement::ErrorType ok;
+
+	DynamicZeroTerminatedArray<DimensionInfo,4> sourceDimensions;
+    TypeDescriptor sourceTd = GetDimensionsInformation(sourceDimensions);
+
+	DynamicZeroTerminatedArray<DimensionInfo,4> destDimensions;
+    TypeDescriptor destTd = destVd.GetDimensionsInformation(destDimensions);
+
+    const TypeConversionOperatorI *tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd);
+
+    ok = ( tco != NULL_PTR(TypeConversionOperatorI *));
+
+    if (ok){
+    	ok = LayerOperate(sourceDimensions.GetList(),sourcePtr,sourceTd,destDimensions.GetList(),destPtr,destTd,*tco);
+    }
+
+    if (tco != NULL_PTR(TypeConversionOperatorI *)){
+    	delete tco;
+    }
+
+    return ok;
+}
+
 /**
  * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
  * @param[in] sourcePtr, the pointer to the variable to be copied
@@ -861,10 +1149,8 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 		char8 nextModifier = modifierString[0];
 		if ( zeroTerMods.In(nextModifier)){
 			GetLayerInfo(modifierString,modifier,size );
-//printf("{%c}",modifierString[0]);
 			if (modifierString[0] == '\0'){
 				if ((modifier == 'Z')||(modifier == 'z')){
-//printf("(%x %x %x)",typeDescriptor.all,Character8Bit.all,ConstCharacter8Bit.all);
 					if (typeDescriptor == Character8Bit){
 						if (modifier == 'z'){
 							string.AppendN("const ");

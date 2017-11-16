@@ -34,7 +34,6 @@
 
 #include "CharBuffer.h"
 #include "HeapManager.h"
-//#include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 
@@ -531,13 +530,13 @@ private:
     uint32 maxUsableAmount;
 
     /**
-     * The remained size from the current position
+     * The remaining size from the current position
      * to the end of the usable memory.
      */
     uint32 amountLeft;
 
     /**
-     * The remained size from the filled memory to the end
+     * The remaining size from the filled memory to the end
      * of the usable memory.
      */
     uint32 fillLeft;

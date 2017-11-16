@@ -34,6 +34,7 @@ OBJSX=	BufferedStreamI.x \
 		IOBufferStringPrint.x \
 		IOBufferStreamPrint.x \
 		IOBufferStructuredPrint.x \
+		ToStringConversionFactory.x\
 		IOBufferAnyTypeInfo.x \
 		IOBufferAnyTypePrint.x \
 		IOBufferStaticFunctions.x \

@@ -403,7 +403,7 @@ public:
      * @brief Unsupported feature.
      * @return 0xFFFFFFFFFFFFFFFF.
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const;
 
     /**
      * @brief Unsupported feature.
@@ -421,7 +421,7 @@ public:
      * @brief Unsupported feature.
      * @return 0xFFFFFFFFFFFFFFFF.
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const ;
 
     /**
      * @brief Unsupported feature.

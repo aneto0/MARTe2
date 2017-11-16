@@ -133,6 +133,12 @@ public:
     inline uint32 GetNumberOfRows() const;
 
     /**
+     * @brief Gets the total n of elements.
+     * @return the total n of elements.
+     */
+    inline uint32 GetNumberOfElements() const;
+
+    /**
      * @brief Returns the vector associated to the specified row.
      * @param[in] rows The row to retrieve.
      * @return the vector associated to the specified row.
@@ -156,14 +162,6 @@ public:
      * @return a T& which can be used for reading/writing the cell.
      */
     T& operator()(const uint32 row, const uint32 col);
-
-#if 0
-    /**
-     * @brief Gets the data pointer associated to the raw matrix data.
-     * @return the data pointer associated to the raw matrix data.
-     */
-    inline void *GetDataPointer() const;
-#endif
 
     /**
      * @brief Performs the matrix product.
@@ -349,6 +347,12 @@ inline uint32 Matrix<T>::GetNumberOfRows() const {
 }
 
 template<typename T>
+inline uint32 Matrix<T>::GetNumberOfElements() const {
+    return numberOfRows * numberOfColumns;
+}
+
+
+template<typename T>
 Vector<T> Matrix<T>::operator[](uint32 element) {
     Vector<T> vec;
 
@@ -373,12 +377,6 @@ T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
     T* mat = reinterpret_cast<T*>(dataPointer);
     return mat[row*numberOfColumns+col];
 }
-/*
-template<typename T>
-inline void* Matrix<T>::GetDataPointer() const {
-    return dataPointer;
-}
-*/
 
 template<typename T>
 bool Matrix<T>::Product(Matrix<T> &factor,

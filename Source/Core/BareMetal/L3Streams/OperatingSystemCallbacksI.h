@@ -38,6 +38,13 @@
 
 namespace MARTe {
 
+/**
+ * @details All modular Stream Buffering mechanisms: SingleBufferStream, DoubleBufferStream
+ * derive from this interface. It is for the final classes, extensions of a Basic Stream to a buffered
+ * stream to implement this interface. This is a copy of the StreamI interface to be used in a callback
+ * fashion by the buffering mechanism. BufferedStreamGenerator automatises the creation of this compound class
+ *
+ */
 class DLL_API OperatingSystemCallbacksI {
 
     friend class BufferedStreamIOBuffer;
@@ -71,7 +78,7 @@ protected:
      * @brief Retrieves the size of the low-level, unbuffered, stream implementation.
      * @return the size of the low-level stream.
      */
-    virtual uint64 OSSize() = 0;
+    virtual uint64 OSSize()const = 0;
 
     /**
      * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.
@@ -91,7 +98,7 @@ protected:
      * @brief Gets the current position in the low-level, unbuffered, stream.
      * @return the current position in the low-level stream.
      */
-    virtual uint64 OSPosition() = 0;
+    virtual uint64 OSPosition() const= 0;
 
     /**
      * @brief Clips the low-level, unbuffered, stream size.

@@ -46,14 +46,11 @@
 
 namespace MARTe {
 
-
-
 class ClassMethodCaller;
 class ObjectBuilder;
 class ClassMember;
 class VariableDescriptor;
 class ClassMethodInterfaceMapper;
-
 
 /**
  * @brief Descriptor of framework base classes.

@@ -39,7 +39,7 @@ namespace MARTe{
  * @return false in case of errors in read and write operations.
  */
  bool PrintStream(IOBuffer & iobuff,
-                        StreamI &stream,
+                        StreamI *stream,
                         const FormatDescriptor &fd,
                         bool addQuotesOnString) {
 
@@ -47,11 +47,11 @@ namespace MARTe{
     //print NULL pointer if the input stream is null.
 
     //the input stream must be seekable, otherwise the cursor is always at the end.
-    if (stream.CanSeek()) {
+    if (stream->CanSeek()) {
 
         //calculates the size from the cursor to the end of the filled memory in the input stream
-        uint64 streamSize = stream.Size();
-        uint64 streamPosition = stream.Position();
+        uint64 streamSize = stream->Size();
+        uint64 streamPosition = stream->Position();
         uint32 streamSizeL = static_cast<uint32>(streamSize - streamPosition);
         uint32 paddingSize = 0u;
 
@@ -107,7 +107,7 @@ namespace MARTe{
                 char8 c;
                 while (streamSizeL > 0u) {
                     uint32 size = 1u;
-                    if (!stream.Read(&c, size)) {
+                    if (!stream->Read(&c, size)) {
                         ret = false;
                     }
                     if (!iobuff.PutC(c)) {

@@ -489,7 +489,7 @@ bool BasicTCPSocket::Seek(const uint64 pos) {
     return false;
 }
 
-uint64 BasicTCPSocket::Size() {
+uint64 BasicTCPSocket::Size() const{
     return 0xffffffffffffffffu;
 }
 
@@ -498,7 +498,7 @@ bool BasicTCPSocket::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 
-uint64 BasicTCPSocket::Position() {
+uint64 BasicTCPSocket::Position() const{
     return 0xffffffffffffffffu;
 }
 

@@ -293,7 +293,7 @@ namespace MARTe {
          * @brief Queries the size.
          * @return the number of characters in the file if it succeeds or 0xFFFFFFFF otherwise.
          */
-        virtual uint64 Size();
+        virtual uint64 Size() const;
 
         /**
          * @brief Move the pointer to the specified position.
@@ -328,7 +328,7 @@ namespace MARTe {
          * @brief Queries the actual position.
          * @return The actual position of the pointer if it succeeds or 0xFFFFFFFF otherwise.
          */
-        virtual uint64 Position();
+        virtual uint64 Position() const;
 
         /**
          * @brief Changes the size of the file

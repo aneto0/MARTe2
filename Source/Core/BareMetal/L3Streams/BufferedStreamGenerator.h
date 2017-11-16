@@ -123,7 +123,7 @@ public:
      * @brief Wraps bufferedStream::Size(*)
      * @see BufferedStreamI::Size(*).
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const ;
 
     /**
      * @brief Wraps bufferedStream::Seek(*)
@@ -141,7 +141,7 @@ public:
      * @brief Wraps bufferedStream::Position(*).
      * BufferedStreamI::Position(*).
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const ;
 
     /**
      * @brief Wraps bufferedStream::SetSize(*).
@@ -172,7 +172,7 @@ protected:
     /**
      * @brief Wraps the basicStream::Size(*)
      */
-    virtual uint64 OSSize();
+    virtual uint64 OSSize() const ;
 
     /**
      * @brief Wraps the basicStream::Seek(*)
@@ -187,7 +187,7 @@ protected:
     /**
      * @brief Wraps the basicStream::Position(*)
      */
-    virtual uint64 OSPosition();
+    virtual uint64 OSPosition() const ;
 
     /**
      * @brief Wraps the basicStream::SetSize(*)
@@ -258,7 +258,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * c
 }
 
 template<class bufferedStream, class basicStream>
-uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Size() {
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Size() const {
     return bufferedStream::Size();
 }
 
@@ -273,7 +273,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::RelativeSeek(const in
 }
 
 template<class bufferedStream, class basicStream>
-uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Position() {
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Position() const {
     return bufferedStream::Position();
 }
 
@@ -298,7 +298,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::CanRead() const {
 }
 
 template<class bufferedStream, class basicStream>
-uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSSize() {
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSSize() const {
     return basicStream::Size();
 }
 
@@ -313,7 +313,7 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRelativeSeek(int64 
 }
 
 template<class bufferedStream, class basicStream>
-uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSPosition() {
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSPosition() const {
     return basicStream::Position();
 }
 

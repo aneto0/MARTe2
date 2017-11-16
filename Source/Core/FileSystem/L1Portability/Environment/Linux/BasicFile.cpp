@@ -438,7 +438,7 @@ bool BasicFile::Write(const char8 * const input,
     return retVal;
 }
 
-uint64 BasicFile::Size() {
+uint64 BasicFile::Size() const{
     uint64 numberOfCharactersFile = 0U;
     if (IsOpen()) {
         struct stat statusFile;
@@ -513,7 +513,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
     return retVal;
 }
 
-uint64 BasicFile::Position() {
+uint64 BasicFile::Position() const{
     int64 pos = 0;
     if (IsOpen()) {
         pos = lseek(properties.identifier, static_cast<int64>(0), SEEK_CUR);

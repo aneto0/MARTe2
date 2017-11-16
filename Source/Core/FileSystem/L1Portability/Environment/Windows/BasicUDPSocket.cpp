@@ -265,7 +265,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
     return (size > 0u);
 }
 
-uint64 BasicUDPSocket::Size() {
+uint64 BasicUDPSocket::Size() const{
     return 0xffffffffffffffffu;
 }
 
@@ -277,7 +277,7 @@ bool BasicUDPSocket::RelativeSeek(const int64 deltaPos) {
     return false;
 }
 
-uint64 BasicUDPSocket::Position() {
+uint64 BasicUDPSocket::Position() const{
     return 0xffffffffffffffffu;
 }
 

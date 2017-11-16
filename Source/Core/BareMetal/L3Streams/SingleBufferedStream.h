@@ -130,7 +130,7 @@ public:
     /**
      * @see StreamI::Size
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const;
 
     /**
      * @see StreamI::Seek
@@ -145,7 +145,7 @@ public:
     /**
      * @see StreamI::Position
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const;
 
     /**
      * @see StreamI::SetSize

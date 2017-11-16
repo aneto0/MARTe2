@@ -140,7 +140,7 @@ public:
     /**
      * @see OperatingSystemCallbacksI::OSSize
      */
-    virtual uint64 Size();
+    virtual uint64 Size() const ;
 
     /**
      * @see OperatingSystemCallbacksI::OSSeek
@@ -155,7 +155,7 @@ public:
     /**
      * @see OperatingSystemCallbacksI::Position
      */
-    virtual uint64 Position();
+    virtual uint64 Position() const ;
 
     /**
      * @see OperatingSystemCallbacksI::OSSetSize

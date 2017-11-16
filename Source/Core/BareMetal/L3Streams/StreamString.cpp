@@ -136,7 +136,7 @@ bool StreamString::CanRead() const {
     return true;
 }
 
-uint64 StreamString::Size() {
+uint64 StreamString::Size() const {
     return buffer.UsedSize();
 }
 
@@ -167,7 +167,7 @@ bool StreamString::RelativeSeek(const int64 deltaPos) {
     return ret;
 }
 
-uint64 StreamString::Position() {
+uint64 StreamString::Position() const {
     return buffer.Position();
 }
 

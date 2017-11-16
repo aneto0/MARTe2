@@ -97,7 +97,7 @@ bool StreamMemoryReference::CanRead() const {
     return (buffer.Buffer() != NULL);
 };
 
-uint64 StreamMemoryReference::Size() {
+uint64 StreamMemoryReference::Size() const{
     return buffer.UsedSize();
 }
 
@@ -133,7 +133,7 @@ bool StreamMemoryReference::RelativeSeek(const int64 deltaPos) {
     return ret;
 }
 
-uint64 StreamMemoryReference::Position() {
+uint64 StreamMemoryReference::Position() const  {
     return buffer.Position();
 }
 

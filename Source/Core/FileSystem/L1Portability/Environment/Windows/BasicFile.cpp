@@ -498,7 +498,7 @@ bool BasicFile::Write(const char8 * const input,
     return ok;
 }
 
-uint64 BasicFile::Size() {
+uint64 BasicFile::Size() const{
     uint64 value = 0u;
 
     //Gets the size of the file if it is opened, otherwise it is 0.
@@ -614,7 +614,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
     return ok;
 }
 
-uint64 BasicFile::Position() {
+uint64 BasicFile::Position() const{
     uint64 value = 0u;
 
     //Gets the position of the file if it is opened, otherwise it is 0.
