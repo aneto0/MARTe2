@@ -83,11 +83,11 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 						const uint32 *number = static_cast<const uint32 *>(dataPointer);
 						ret = BitSetToStream(iobuff, number, bitOffset_, numberOfBits_, false, fd);
 					} else {
-						TDObjectSize objectSize = static_cast<TDObjectSize>(td.objectSize);
+						TDBasicTypeSize basicTypeSize = static_cast<TDBasicTypeSize>(td.basicTypeSize);
 						TD_FullType fullType = static_cast<TD_FullType>(td.fullType);
 						switch (fullType){
 						case TDF_UnsignedInteger:{
-							switch (objectSize) {
+							switch (basicTypeSize) {
 							case Size8bit: {
 								const uint8 *data = static_cast<const uint8 *>(dataPointer);
 								ret = IntegerToStream(iobuff, *data, fd);
@@ -114,7 +114,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 							}  // end case
 						}break;
 						case TDF_SignedInteger:{
-							switch (objectSize) {
+							switch (basicTypeSize) {
 							case Size8bit: {
 								const int8 *data = static_cast<const int8 *>(dataPointer);
 								ret = IntegerToStream(iobuff, *data, fd);
@@ -143,7 +143,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 						}break;
 
 						case TDF_Float:{
-							switch (objectSize){
+							switch (basicTypeSize){
 							case Size32bit: {
 								const float32 *data = static_cast<const float32 *>(dataPointer);
 								ret = FloatToStream(iobuff, *data, fd);
@@ -162,7 +162,7 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 						}break;
 
 						case TDF_Char:{
-							switch (objectSize){
+							switch (basicTypeSize){
 							case Size8bit: {
 								const char8 *data = static_cast<const char8 *>(dataPointer);
 								iobuff.PutC(*data);

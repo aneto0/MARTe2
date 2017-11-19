@@ -53,9 +53,15 @@ INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 
+LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/L2ObjectsB$(LIBEXT)
+
+
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
-	        $(BUILD_DIR)/L3StreamsB.def
+                $(BUILD_DIR)/test2$(EXEEXT) \
+	        $(BUILD_DIR)/L3StreamsB.def 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

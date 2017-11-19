@@ -41,7 +41,7 @@ OBJSX=  FastPollingEventSem.x \
 		ClassRegistryIndex.x \
 		TypeDescriptor.x \
 		DynamicZeroTerminatedArray.x\
-        Matrix.x
+                Matrix.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

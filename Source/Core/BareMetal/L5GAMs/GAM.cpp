@@ -334,7 +334,7 @@ bool GAM::GetSignalDataSourceName(const SignalDirection direction,
 
 TypeDescriptor GAM::GetSignalType(const SignalDirection direction,
                                   const uint32 signalIdx) {
-    TypeDescriptor signalTypeDescriptor = InvalidType;
+    TypeDescriptor signalTypeDescriptor = InvalidType(0);
     bool ret = MoveToSignalIndex(direction, signalIdx);
     StreamString signalType;
     if (ret) {

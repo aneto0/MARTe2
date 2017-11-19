@@ -1,7 +1,7 @@
 /**
- * @file APLookup.h
+ * @file ConversionPrivate.h
  * @brief Header file for class AnyType
- * @date 8 Oct 2017
+ * @date 12 Nov 2017
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef APLOOKUP_H_
-#define APLOOKUP_H_
+#ifndef CONVERSIONPRIVATE_H_
+#define CONVERSIONPRIVATE_H_
 
 
 
@@ -34,10 +34,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeDescriptor.h"
-#include "BasicType.h"
-#include "Vector.h"
-#include "Matrix.h"
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -47,54 +44,33 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
 
-/**
- *
- */
-struct APLookUp{
-	//
-	CombinedArrayType 	arrayCode;
-	//
-	char8 				keyCode;
-	/**
-	 * 0 means unknown size
-	 */
-	uint32 				layerSize;
-	// true for simple arrays[] - they multiply the size of the layer below
-	// false for pointers or objects with pointers inside - data access is indirect
-	bool 				isMultiplyingLayer;
-	//
-	bool 				sizeFollows;
-	//
-	CCString			cExpansionPre;
-	//
-	CCString			cExpansionPost;
-	//
-	CCString			cExpansionEnd;
-};
+namespace MARTe {
 
-extern const CCString nullString;
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+extern bool StringToFloatGeneric(const CCString input,
+                                 float32 * const number,
+                                 const uint32 destBitSize);
 
-extern const APLookUp APLookupTable1[];
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+extern bool StringToIntegerGeneric(const CCString source,
+                                   uint8 * const dest,
+                                   const uint32 destBitSize,
+                                   const bool isSigned);
 
-extern const APLookUp APLookupTable2[];
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+extern bool IntegerToFloatGeneric(const uint8 * const source,
+                                  const uint32 sourceBitSize,
+                                  float32 * const dest,
+                                  const uint32 destBitSize,
+                                  const bool isSigned);
 
-const APLookUp *reverseLookUpCode(char8 code);
-
- CombinedArrayType reverseLookUpArrayTypeGen(char8 code, const APLookUp *apl);
-
-/**
- * returns false if not found.
- * looks in both tables
- */
-bool reverseLookUpArrayProperties(char8 code, const APLookUp *&apl);
-
-char8 lookUpArrayTypeGen(CombinedArrayType arrayCode, const APLookUp *apl);
-
-char8 lookUpArrayType(CombinedArrayType arrayCode);
-
-char8 lookUpCompositeArrayCode(CombinedArrayType arrayCode);
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+extern bool FloatToIntegerGeneric(const float32 * const source,
+                                  const uint32 sourceBitSize,
+                                  uint8 * const dest,
+                                  const uint32 destBitSize,
+                                  const bool isSigned);
 
 
 
@@ -104,4 +80,4 @@ char8 lookUpCompositeArrayCode(CombinedArrayType arrayCode);
 
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_APLOOKUP_H_ */
+#endif /* CONVERSIONPRIVATE_H_ */

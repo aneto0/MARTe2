@@ -168,7 +168,7 @@ public:
      *   if all ok pointer2Variable and variableDescriptor are updated
      *   otherwise the object potentially becomes invalid and cannot be used anymore
      */
-    ErrorManagement::ErrorType  	MultipleDereference (CCString CExpresssion);
+    ErrorManagement::ErrorType  	MultipleDereference (CCString CExpression);
 
     /**
      * @brief pointer2Variable = NULL

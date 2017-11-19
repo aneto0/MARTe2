@@ -49,7 +49,7 @@ StructuredDataI::~StructuredDataI() {
 }
 
 StructuredDataI::operator AnyType() {
-    AnyType anyTypeConversion(StructuredDataInterfaceType, this);
+    AnyType anyTypeConversion(StructuredDataType(0), this);
     return anyTypeConversion;
 }
 

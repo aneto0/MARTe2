@@ -210,7 +210,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
             if (update) {
                 if (ret) {
                     typeDesc = GetSignalType(signalIdx);
-                    ret = (typeDesc != InvalidType);
+                    ret = (typeDesc != InvalidType(0));
                 }
             }
             if (update) {

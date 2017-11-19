@@ -89,7 +89,7 @@ StreamString::StreamString(const StreamString &toCopy) :
 }
 
 StreamString::operator AnyType() {
-    return AnyType( StreamStringType, static_cast<void *>(this));
+    return AnyType( StreamStringType(sizeof(StreamString)), static_cast<void *>(this));
 }
 
 StreamString::~StreamString() {

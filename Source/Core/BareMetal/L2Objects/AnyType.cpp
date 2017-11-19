@@ -128,7 +128,7 @@ static uint32 readNumber(CCString &buffer){
 }
 
 
-ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpresssion){
+ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
 	const CCString dels[6] = {CCString("."),CCString("*"),CCString("->"),CCString("["),CCString("]"),CCString()};
 	const ZeroTerminatedArray<const CCString> delimiters = &dels[0];
 	enum DerefStatus {
@@ -138,7 +138,7 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpresssion)
 		MatrixDone
 	}  status = Normal;
 
-	CCString deref = CExpresssion;
+	CCString deref = CExpression;
 	ErrorManagement::ErrorType ok;
 
 

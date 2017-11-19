@@ -148,12 +148,17 @@ static uint32 readNumber(CCString &buffer){
  * updates the layer string pointer
  */
 static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size ){
-	modifier = modifierString[0];
-	if (modifier == '\0'){
+	if (modifierString.IsNullPtr()){
+		modifier = '\0';
 		size = 0;
 	} else {
-		modifierString++;
-		size = readNumber(modifierString);
+		modifier = modifierString[0];
+		if (modifier == '\0'){
+			size = 0;
+		} else {
+			modifierString++;
+			size = readNumber(modifierString);
+		}
 	}
 }
 
@@ -162,6 +167,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 		const uint8 *pointer,
 		uint64 &numberOfElements,
 		uint32 &elementSize,
+		uint32 &overheadSize,
 		uint32 &arrayStringSize,
 		uint32 &numberOfTermElements,
 		char8 &modifier) const{
@@ -180,6 +186,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 
  	GetLayerInfo(modifierString,c,n);
 
+
  	// only first layer may be a variable size one
  	// between variable size there must be a pointer of sort
 	if (variableLayers.In(c)) {
@@ -193,7 +200,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 	 		uint32 ass = (savePtr - modifierString.GetList());
 	 		uint32 temp;
 	 		// pointer is set to NULL to communicate the fact that this is part of a variable layer
-			ret = FullLayerInfo(modifierString,NULL,numberOfElements,elementSize,arrayStringSize,temp,modifier);
+			ret = FullLayerInfo(modifierString,NULL,numberOfElements,elementSize,overheadSize,arrayStringSize,temp,modifier);
 			ass += arrayStringSize;
 			numberOfTermElements = numberOfElements;
 			layerSize = numberOfElements*elementSize;
@@ -215,7 +222,8 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 	 		GetLayerInfo(modifierString,c,n);
  		}
 		if (c== '\0'){
-	 		elementSize = typeDescriptor.Size();
+			overheadSize = typeDescriptor.OverHeadSize();
+			elementSize = typeDescriptor.Size();
 		} else
 		if ((c=='p') || (c=='P')){
 			elementSize = sizeof(void *);
@@ -236,14 +244,15 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
  }
 
 uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *pointer) const{
-	 uint64 numberOfElements;
-	 uint32 elementSize;
-	 uint32 numberOfTermElements;
+	 uint64 numberOfElements = 0;
+	 uint32 elementSize = 0;
+	 uint32 overheadSize = 0;
+	 uint32 numberOfTermElements = 0;
 	 uint32 temp;
-	 char8 modifier;
+	 char8 modifier = '\0';
 	 CCString modS = modifierString;
 
- 	 FullLayerInfo(modS,pointer,numberOfElements,elementSize,temp,numberOfTermElements,modifier);
+ 	 FullLayerInfo(modS,pointer,numberOfElements,elementSize,overheadSize,temp,numberOfTermElements,modifier);
  	 return (numberOfElements + numberOfTermElements)* elementSize ;
 }
 
@@ -269,10 +278,10 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     		if (ZTAModifiers.In(nextModifier)){
     		    GetLayerInfo(modifiersCopy,firstModifier,size );
     		    if (modifiersCopy[0] == 0){
-    		    	if ((typeDescriptor == Character8Bit) && (nextModifier == 'Z')){
+    		    	if (typeDescriptor.SameAs(Character8Bit) && (nextModifier == 'Z')){
         		    	td = DynamicCharString;
     		    	} else
-   	    		    if ((typeDescriptor == Character8Bit) || (typeDescriptor == ConstCharacter8Bit)){
+   	    		    if (typeDescriptor.SameTypeAndSizeAs(Character8Bit)){
     	    		   	td = ConstCharString;
     	    		}
     		    }
@@ -292,7 +301,7 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     	}break;
 
     	default:{
-    		td = InvalidType;
+    		td = InvalidType(0);
             REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
     	}
     	}
@@ -382,7 +391,7 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
     DimensionInfo di;
 
     char8 lastPointer = '\0';
-
+/// TODO FIX
     while (di.type != 0){
     	previousModifierString = modifierString;
         GetLayerInfo(modifierString,di.type,di.numberOfElements);
@@ -398,7 +407,7 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         				}
         			} else {
             			// error PV PM etc...
-        				td = InvalidType;
+        				td = InvalidType(0);
         			}
         		} else {
             		dimensions.Append(di);
@@ -436,7 +445,7 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         }
     }
 
-	if (td != InvalidType){
+	if (!td.SameAs(InvalidType(0))){
         VariableDescriptor dummy;
         dummy.modifiers = modifierString.GetList();
         dummy.typeDescriptor = typeDescriptor;
@@ -455,13 +464,14 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 
 	ErrorManagement::ErrorType ret;
 
-	uint64 numberOfElements;
-	uint32 elementSize;
+	uint64 numberOfElements = 0;
+	uint32 elementSize = 0;
+	uint32 overheadSize = 0;
 	uint32 temp;
     uint32 numberOfTermElements = 0;
-	char8 modifier;
+	char8 modifier = '\0';
 
-	ret = FullLayerInfo(modifierString,pointer,numberOfElements,elementSize,temp,numberOfTermElements,modifier);
+	ret = FullLayerInfo(modifierString,pointer,numberOfElements,elementSize,overheadSize,temp,numberOfTermElements,modifier);
 	// account for extra array layer (vector and matrix support)
 	numberOfElements = numberOfElements * layerMultiplier;
 	/// include terminators
@@ -577,8 +587,8 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 
 
 		} else {  // '\0' or maxdepth reached
-			storageSize = 0;
-			dataSize = numberOfElementsIncludingTerm * elementSize;
+			storageSize = numberOfElementsIncludingTerm * overheadSize;
+			dataSize = numberOfElementsIncludingTerm * (elementSize-overheadSize);
 		}
 	}
 	return ret;
@@ -586,7 +596,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 
 ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize,uint8  maxDepth) const{
 
-	uint64 storageSz;
+	uint64 storageSz = 0;
 	ErrorManagement::ErrorType ret =  GetDeepSize(modifiers,pointer,dataSize,storageSz,maxDepth);
 
 	dataSize += storageSz;
@@ -973,12 +983,13 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 	uint64 numberOfElements = 1;
 	// size of each element
     uint32 elementSize = 0;
+    uint32 overheadSize = 0;
     uint32 numberOfTermElements = 0;
 	char8 modifier  = '\0';
 	uint32 arrayStringSize=0;
 	uint64 totalLayerSize=0;
 
-	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,arrayStringSize,numberOfTermElements,modifier);
+	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,overheadSize,arrayStringSize,numberOfTermElements,modifier);
 
     if (ret){
     	totalLayerSize = elementSize * (numberOfElements + numberOfTermElements);
@@ -1151,14 +1162,14 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 			GetLayerInfo(modifierString,modifier,size );
 			if (modifierString[0] == '\0'){
 				if ((modifier == 'Z')||(modifier == 'z')){
-					if (typeDescriptor == Character8Bit){
+					if (typeDescriptor.SameAs(Character8Bit)){
 						if (modifier == 'z'){
 							string.AppendN("const ");
 						}
 						string.AppendN("CString");
 						return ret;
 					} else
-					if (typeDescriptor == ConstCharacter8Bit){
+					if (typeDescriptor.SameAs(ConstCharacter8Bit)){
 						if (modifier == 'z'){
 							string.AppendN("const ");
 						}
@@ -1167,7 +1178,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 					}
 				}
 				if ((modifier == 'D')||(modifier == 'd')){
-					if (typeDescriptor == Character8Bit){
+					if (typeDescriptor.SameAs(Character8Bit) ){
 						if (modifier == 'd'){
 							string.AppendN("const ");
 						}
@@ -1176,7 +1187,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 					}
 				}
 				if ((modifier == 'S')||(modifier == 's')){
-					if (typeDescriptor == Character8Bit){
+					if (typeDescriptor.SameAs(Character8Bit)){
 						if (modifier == 'd'){
 							string.AppendN("const ");
 						}

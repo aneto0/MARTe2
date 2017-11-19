@@ -131,7 +131,7 @@ bool DataSourceI::GetSignalIndex(uint32 &signalIdx,
 }
 
 TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
-    TypeDescriptor signalTypeDescriptor = InvalidType;
+    TypeDescriptor signalTypeDescriptor = InvalidType(0);
     bool ret = MoveToSignalIndex(signalIdx);
     StreamString signalType;
     if (ret) {

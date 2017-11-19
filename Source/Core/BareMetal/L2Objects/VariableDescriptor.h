@@ -46,6 +46,9 @@
 namespace MARTe {
 class Object;
 class DynamicCString;
+class StreamString;
+class StructuredDataI;
+class testStruct;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -228,12 +231,13 @@ private:
      * @param[in,out] modifierString, the string of variable modifiers
      * @param[out] numberOfElements is the number of elements in this layer
      * @param[out] elementSize is the size of each element
+     * @param[out] overheadSize is the size not used for data content
      * @param[out] arrayStringSize number of characters in modifierString consumed in arrays 'a' layers
      * @param[out] numberOfTermElements number of elements of size elementSize used as terminator in a ZTA
      * @param[out] modifier is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
      */
     ErrorManagement::ErrorType FullLayerInfo(CCString &modifierString,const uint8 *pointer,
-    		uint64 &numberOfElements,uint32 &elementSize,
+    		uint64 &numberOfElements,uint32 &elementSize,uint32 &overheadSize,
 			uint32 &arrayStringSize,uint32 &numberOfTermElements,
 			char8 &modifier) const;
 
@@ -376,6 +380,8 @@ private:
     template <class T>
     inline void Match(T const * x);
 
+
+    // GENERIC FINAL  MATCHES
     /**
      * @brief Matches a T
      * @tparam T the type of the elements in the vector
@@ -383,24 +389,38 @@ private:
      * @post closes the matching chain assigning the typeDescriptor
      */
     template <class T>
-    inline void Match(T * x);
+    inline void Match(T * x){
+    	MatchFinal(x,x);
+    }
 
- // GENERIC VIRTUAL MATCHES
+    template <class T>
+    inline void MatchFinal(T *y,typename enable_if<!isBaseOf(StreamI,T)&&!isBaseOf(Object,T)&&!isBaseOf(StructuredDataI,T), T>::type *x){
+    	ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
+	    if (cri != NULL) {
+	    	FinaliseCode(cri->GetTypeDescriptor());
+	    }
+	    else {
+	    	FinaliseCode(VoidType);
+	    }
+    }
 
-    /**
-     * @brief Matches a Stream.
-     * @param[in] s the Stream
-     */
-    inline void Match(StreamI *s);
+    template <class T>
+    inline void MatchFinal(T *y,typename enable_if<isBaseOf(StreamI,T), T>::type *x){
+    	FinaliseCode(StreamType(sizeof(T)));
+    }
 
-    /**
-     * @brief Constructor from Object (or inherited class).
-     * @param[in] obj the source Object.
-     */
-    void Match(Object *obj);
+    template <class T>
+    inline void MatchFinal(T *y,typename enable_if<isBaseOf(StructuredDataI,T), T>::type *x){
+    	FinaliseCode(StructuredDataType(sizeof(T)));
+    }
 
-    // SPECIFIC MATCHES
+    template <class T>
+    inline void MatchFinal(T *y,typename enable_if<isBaseOf(Object,T), T>::type *x){
+    	FinaliseCode(ObjectType(sizeof(T)));
+    }
 
+
+    // SPECIFIC FINAL MATCHES
     /**
      * @brief Constructor from 8 bit character.
      * @param[in] i is the 8 bit character input.
@@ -527,6 +547,26 @@ private:
      * @param[in] i is the 8 bit character input.
      */
     inline void Match(CCString *s);
+
+    /**
+     * @brief Constructor from StreamString (or inherited class).
+     * @param[in] obj the source Object.
+     * @details function templated to allow late calculation of sizeof(StreamString)
+     */
+    template <class T>
+    inline void Match(StreamString *obj);
+
+    /**
+     * @brief Constructor from StreamI
+     * @param[in] obj the source Object.
+     */
+    inline void Match(StreamI *s);
+
+    /**
+     * @brief Constructor from StructuredDataI
+     * @param[in] obj the source Object.
+     */
+    inline void Match(StructuredDataI *s);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -666,20 +706,18 @@ void VariableDescriptor::Match(T const * x){
 }
 
 template <class T>
-void VariableDescriptor::Match(T * x){
-    ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
-    if (cri != NULL) {
-    	FinaliseCode(cri->GetTypeDescriptor());
-    }
-    else {
-    	FinaliseCode(VoidType);
-    }
-
+void VariableDescriptor::Match(StreamString *s){
+	FinaliseCode(StreamStringType(sizeof(T)));
 }
 
 void VariableDescriptor::Match(StreamI *s){
-	FinaliseCode(StreamType);
+	FinaliseCode(StreamType(0));
 }
+
+void VariableDescriptor::Match(StructuredDataI *s){
+	FinaliseCode(StructuredDataType(0));
+}
+
 
 void VariableDescriptor::Match(char8 * i) {
 	FinaliseCode(Character8Bit);
@@ -747,6 +785,8 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 void VariableDescriptor::AddConstantCode(){
 	typeDescriptor.dataIsConstant = true;
 }
+
+
 
 
 /*---------------------------------------------------------------------------*/

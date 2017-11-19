@@ -31,11 +31,11 @@ OBJSX=  TypeConversionManager.x \
 		MemoryFileSystem.x \
 		ClassRegistryDatabase.x \
 		VariableDescriptor.x\
-        AnyType.x \
+                AnyType.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
-        StructuredDataI.x \
+                StructuredDataI.x \
 		Object.x \
 		IntrospectionTools.x \
 		ClassMethodInterfaceMapper.x\
@@ -58,7 +58,6 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
                 $(BUILD_DIR)/test$(EXEEXT) \
-                $(BUILD_DIR)/test2$(EXEEXT) \
 		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)
 

@@ -49,28 +49,25 @@ TypeDescriptor::TypeDescriptor() {
     all = 0;
 }
 
-
-static inline uint32 SizeFromObjectSize(TDObjectSize tdos){
+uint32 TypeDescriptor::OverHeadSize() const{
 	uint32 size = 0;
-	if (tdos == Size8bit){
-		size = 1;
-	} else
-	if (tdos == Size16bit){
-		size = 2;
-	} else
-	if (tdos == Size32bit){
-		size = 4;
-	} else
-	if (tdos == Size64bit){
-		size = 8;
+	if (isStructuredData){
+        size = 0;
+	} else {
+	    if (IsBasicType()){
+	        size = 0;
+	    } else {
+			size = objectSize;
+	    }
 	}
 	return size;
 }
 
+
 uint32 TypeDescriptor::Size()const{
 	uint32 size = 0;
 	if (isStructuredData){
-		uint32 size = 0;
+		size = 0;
 		ClassRegistryIndex *cri = ClassRegistryIndex::Instance();
 		if (cri != NULL_PTR(ClassRegistryIndex *)){
 			ClassRegistryBrief *crb = (*cri)[structuredDataIdCode];
@@ -78,22 +75,11 @@ uint32 TypeDescriptor::Size()const{
 				size = crb->sizeOfClass;
 			}
 		}
-        return size;
 	} else {
 	    if (IsBasicType()){
-		    if (IsBitType()){
-				uint32 totalBitSpan = this->numberOfBits + this->bitOffset;
-				uint32 totalByteSpan = ( totalBitSpan +7)/8;
-				uint32 actualSize = 1;
-				while (actualSize < totalByteSpan){
-					actualSize = actualSize * 2;
-				}
-				size = actualSize;
-			} else {
-				size = SizeFromObjectSize(objectSize);
-			}
+			size = SizeFromTDBasicTypeSize(basicTypeSize);
 	    } else {
-			size = SizeFromObjectSize(objectSize);
+			size = objectSize;
 	    }
 	}
 	return size;
@@ -121,11 +107,12 @@ const struct {
 		{"float" 		  ,  TDF_Float          },
 		{"char" 		  ,  TDF_Char           },
 		{"void"		      ,  TDF_Void           },
-        {"SString" 		  ,  TDF_SString        },
-		{"Stream" 		  ,  TDF_Stream         },
+        {"StreamString"	  ,  TDF_SString        },
+		{"StreamI"		  ,  TDF_Stream         },
 		{"StructuredDataI",  TDF_StructuredDataI},
+		{"Object"		  ,  TDF_Object         },
 		{"CCString"       ,  TDF_CString        },
-		{"void*" 	      ,  TDF_Pointer    },
+		{"void*" 	      ,  TDF_Pointer        },
 		{"void[]" 	      ,  TDF_GenericArray   },
 		{"invalid"	 	  ,  TDF_Invalid        },
 		{"?*"             ,  TDF_GenericPointer },
@@ -208,17 +195,19 @@ bool TypeDescriptor::ToString(DynamicCString &string) const{
    		CCString typeName = BasicTypeName(fullType);
    		if (IsBitType()){  // uint5 bitranges
    			string.AppendN(constString);
-   			string.AppendN(typeName);
+   			string.AppendN("BitRange<");
+			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
+   			TYPENAME_CORE()
+   			string.Append(',');
    			uint32 numberOfBitsR = (int)numberOfBits;
    			uint32 bitOffsetR = (int)bitOffset;
    			string.AppendNum(numberOfBitsR);
-   			if (bitOffsetR > 0){
-   				string.Append(':');
-   				string.AppendNum(bitOffsetR);
-   			}
+   			string.Append(',');
+   			string.AppendNum(bitOffsetR);
+   			string.Append('>');
    		}
    		else {// not bit type
-			uint32 bits = 8*SizeFromObjectSize(objectSize);
+			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
    			TYPENAME_CORE()
    		}
    	}

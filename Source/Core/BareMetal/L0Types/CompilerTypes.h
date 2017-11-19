@@ -177,6 +177,42 @@ namespace MARTe {
     #define memberOf(type,field) ((type *)1024)->field
 
 
+    /**
+     * namespace for definitions that are not meant for the user to know or use
+     */
+    namespace Private{
+    	typedef char (&yes)[1];
+    	typedef char (&no)[2];
+
+    	template <typename B, typename D>
+    	struct Host
+		{
+    		operator B*() const;
+    		operator D*();
+		};
+
+    	template <typename B, typename D>
+    	struct is_base_of
+		{
+    		template <typename T>
+    		static yes check(D*, T);
+    		static no check(B*, int);
+
+    		static const bool value = sizeof(check(Host<B,D>(), int())) == sizeof(yes);
+		};
+
+    }
+
+    #define isBaseOf(base,derived)  Private::is_base_of<base,derived>::value
+
+    template <bool, typename T = void>
+    struct enable_if
+    {};
+
+    template <typename T>
+    struct enable_if<true, T> {
+      typedef T type;
+    };
 
 }
 

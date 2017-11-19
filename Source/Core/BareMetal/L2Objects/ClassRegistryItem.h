@@ -224,7 +224,9 @@ private:
      */
     TypeDescriptor            typeDescriptor;
 
-    ///
+    /**
+     *
+     */
     uint32                    sizeOfClass;
 
     /**

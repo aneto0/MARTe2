@@ -1,5 +1,5 @@
 /**
- * @file TypeConvertermanager.h
+ * @file TypeConversionmanager.h
  * @brief Header file for class AnyType
  * @date 10 Nov 2017
  * @author Filippo Sartori

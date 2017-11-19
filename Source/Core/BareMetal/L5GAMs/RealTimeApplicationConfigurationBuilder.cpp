@@ -632,7 +632,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 }
             }
 
-            if (signalTypeDescriptor == InvalidType) {
+            if (signalTypeDescriptor == InvalidType(0)) {
                 uint32 numberOfDimensions = 0u;
                 uint32 numberOfElements = 1u;
                 if (signalDatabase.Read("NumberOfDimensions", numberOfDimensions)) {
@@ -1256,7 +1256,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     TypeDescriptor signalTypeDescriptor;
                     if (ret) {
                         signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(type.Buffer());
-                        ret = (signalTypeDescriptor != InvalidType);
+                        ret = (signalTypeDescriptor != InvalidType(0));
                     }
                     uint32 signalNumberOfBytes = 0u;
                     if (ret) {
@@ -2819,7 +2819,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionSignalsMemorySize(c
                         signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
                     }
                     if (ret) {
-                        ret = (signalTypeDescriptor != InvalidType);
+                        ret = (signalTypeDescriptor != InvalidType(0));
                     }
 
                     uint32 *offsetMatrixBackend = NULL_PTR(uint32 *);

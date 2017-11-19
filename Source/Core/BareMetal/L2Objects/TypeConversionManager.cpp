@@ -85,5 +85,8 @@ void TypeConversionManager::operator delete(void * const p) {
     return GlobalObjectI::operator delete(p);
 }
 
+const FormatDescriptor TypeConversionOperatorI::format;
+
+
 
 } //MARTe

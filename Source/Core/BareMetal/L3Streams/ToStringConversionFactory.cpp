@@ -64,14 +64,14 @@ public:
 	 * @brief switch to next stream
 	 */
 	virtual bool Next(){
-		Flush();
+		return Flush();
 	}
 
 private:
 	/**
 	 * @brief buffer for the IOBuffer
 	 */
-	char buffer[64];
+	char buffer[32];
 };
 
 /**
@@ -409,7 +409,8 @@ public:
 		ErrorManagement::ErrorType  ok;
 		writer->Wrap(dest);
 
-		const void **src = reinterpret_cast<const void ** >(source);
+		uint8 *source1 = const_cast<uint8 * >(source);
+		const void **src = reinterpret_cast<const void ** >(source1);
 		ok.fatalError = PointerToStream(*writer,*src);
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 			ok.illegalOperation=writer->Next();
@@ -664,13 +665,13 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
-	if (destTd == StreamType){
+	if (destTd.SameTypeAs(StreamType(0))){
 		wrapper = new IOBufferWrapperStream();
 	} else
-	if (destTd == StreamStringType){
+	if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 		wrapper = new IOBufferWrapperSString();
 	} else
-	if (destTd == DynamicCharString){
+	if (destTd.SameAs(DynamicCharString)){
 		wrapper = new IOBufferDynStringWrapper();
 	}
 
@@ -679,8 +680,8 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 		if (!sourceTd.isStructuredData){
 			switch(sourceTd.fullType){
 			case TDF_UnsignedInteger:{
-				if (!sourceTd.hasBitSize()){
-					switch(sourceTd.objectSize){
+				if (!sourceTd.hasBitSize){
+					switch(sourceTd.basicTypeSize){
 					case Size8bit:{
 						tco = new IntegerToStringTCO<uint8>(wrapper);
 					}break;
@@ -700,14 +701,14 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 				} else {
 					uint8 numberOfBits = sourceTd.numberOfBits;
 					uint8 bitOffset = sourceTd.bitOffset;
-					uint8 byteSize = SizeFromTDObjectSize(sourceTd.objectSize);
+					uint8 byteSize = SizeFromTDBasicTypeSize(sourceTd.basicTypeSize);
 					tco = new BitSetToStringTCO(wrapper,byteSize,numberOfBits,bitOffset,false);
 				}
 
 			}break;
 			case TDF_SignedInteger:{
-				if (!sourceTd.hasBitSize()){
-					switch(sourceTd.objectSize){
+				if (!sourceTd.hasBitSize){
+					switch(sourceTd.basicTypeSize){
 					case Size8bit:{
 						tco = new IntegerToStringTCO<int8>(wrapper);
 					}break;
@@ -726,12 +727,12 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 				} else {
 					uint8 numberOfBits = sourceTd.numberOfBits;
 					uint8 bitOffset = sourceTd.bitOffset;
-					uint8 byteSize = SizeFromTDObjectSize(sourceTd.objectSize);
+					uint8 byteSize = SizeFromTDBasicTypeSize(sourceTd.basicTypeSize);
 					tco = new BitSetToStringTCO(wrapper,byteSize,numberOfBits,bitOffset,true);
 				}
 			}break;
 			case TDF_Float:{
-				switch(sourceTd.objectSize){
+				switch(sourceTd.basicTypeSize){
 				case Size32bit:{
 					tco = new FloatToStringTCO<float>(wrapper);
 				}break;
