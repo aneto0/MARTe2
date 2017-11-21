@@ -199,11 +199,39 @@ namespace MARTe {
     		static no check(B*, int);
 
     		static const bool value = sizeof(check(Host<B,D>(), int())) == sizeof(yes);
+
 		};
 
+
+    	template<typename T, typename U>
+    	struct is_same
+    	{
+    	    static const bool value = false;
+    	};
+
+    	template<typename T>
+    	struct is_same<T,T>  //specialization
+    	{
+    	   static const bool value = true;
+    	};
     }
 
+    /**
+     *
+     */
     #define isBaseOf(base,derived)  Private::is_base_of<base,derived>::value
+
+    /**
+     *
+     */
+    #define isSame(T1,T2)  Private::is_same<T1,T2>::value
+
+
+    /**
+     *
+     */
+    #define isSameOrBaseOf(base,derived)  (Private::is_base_of<base,derived>::value || Private::is_same<base,derived>::value)
+
 
     template <bool, typename T = void>
     struct enable_if

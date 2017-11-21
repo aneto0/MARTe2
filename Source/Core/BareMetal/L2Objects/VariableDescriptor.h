@@ -386,39 +386,57 @@ private:
      * @brief Matches a T
      * @tparam T the type of the elements in the vector
      * @param[in] x
-     * @post closes the matching chain assigning the typeDescriptor
+     * @post delegates to MatchFinal
      */
     template <class T>
     inline void Match(T * x){
     	MatchFinal(x,x);
     }
 
+    /**
+     * @brief Matches a T if not derivative of StreamI Object or StructuredDataI
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post closes the matching chain assigning the typeDescriptor
+     */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<!isBaseOf(StreamI,T)&&!isBaseOf(Object,T)&&!isBaseOf(StructuredDataI,T), T>::type *x){
-    	ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
-	    if (cri != NULL) {
-	    	FinaliseCode(cri->GetTypeDescriptor());
-	    }
-	    else {
-	    	FinaliseCode(VoidType);
-	    }
-    }
+    inline void MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x);
 
+    /**
+     * @brief Matches a T if derivative of StreamI but not StreamString
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post closes the matching chain assigning the typeDescriptor
+     */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<isBaseOf(StreamI,T), T>::type *x){
-    	FinaliseCode(StreamType(sizeof(T)));
-    }
+    inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StreamI,T) && !isSame(StreamString,T), T>::type *x);
 
+    /**
+     * @brief Matches a T if StreamString - late matching allows sizeof incomplete class
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post closes the matching chain assigning the typeDescriptor
+     */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<isBaseOf(StructuredDataI,T), T>::type *x){
-    	FinaliseCode(StructuredDataType(sizeof(T)));
-    }
+    inline void MatchFinal(T *y,typename enable_if<isSame(StreamString,T), T>::type *x);
 
+    /**
+     * @brief Matches a T if derivative of StructuredDataI
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post closes the matching chain assigning the typeDescriptor
+     */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<isBaseOf(Object,T), T>::type *x){
-    	FinaliseCode(ObjectType(sizeof(T)));
-    }
+    inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StructuredDataI,T), T>::type *x);
 
+    /**
+     * @brief Matches a T if derivative of Object
+     * @tparam T the type of the elements in the vector
+     * @param[in] x
+     * @post closes the matching chain assigning the typeDescriptor
+     */
+    template <class T>
+    inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Object,T), T>::type *x);
 
     // SPECIFIC FINAL MATCHES
     /**
@@ -547,7 +565,6 @@ private:
      * @param[in] i is the 8 bit character input.
      */
     inline void Match(CCString *s);
-
     /**
      * @brief Constructor from StreamString (or inherited class).
      * @param[in] obj the source Object.
@@ -556,17 +573,6 @@ private:
     template <class T>
     inline void Match(StreamString *obj);
 
-    /**
-     * @brief Constructor from StreamI
-     * @param[in] obj the source Object.
-     */
-    inline void Match(StreamI *s);
-
-    /**
-     * @brief Constructor from StructuredDataI
-     * @param[in] obj the source Object.
-     */
-    inline void Match(StructuredDataI *s);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -710,12 +716,35 @@ void VariableDescriptor::Match(StreamString *s){
 	FinaliseCode(StreamStringType(sizeof(T)));
 }
 
-void VariableDescriptor::Match(StreamI *s){
-	FinaliseCode(StreamType(0));
+template <class T>
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x){
+	ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
+    if (cri != NULL) {
+    	FinaliseCode(cri->GetTypeDescriptor());
+    }
+    else {
+    	FinaliseCode(VoidType);
+    }
 }
 
-void VariableDescriptor::Match(StructuredDataI *s){
-	FinaliseCode(StructuredDataType(0));
+template <class T>
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StreamI,T) && !isSame(StreamString,T), T>::type *x){
+	FinaliseCode(StreamType(sizeof(T)));
+}
+
+template <class T>
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSame(StreamString,T), T>::type *x){
+	FinaliseCode(StreamStringType(sizeof(T)));
+}
+
+template <class T>
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StructuredDataI,T), T>::type *x){
+	FinaliseCode(StructuredDataType(sizeof(T)));
+}
+
+template <class T>
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Object,T), T>::type *x){
+	FinaliseCode(ObjectType(sizeof(T)));
 }
 
 

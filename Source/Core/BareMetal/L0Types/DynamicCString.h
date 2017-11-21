@@ -117,9 +117,9 @@ void DynamicCString::operator=(const DynamicCString &s) {
 
 }
 
-
+#if 0
 bool DynamicCString::AppendNum(uint64 num,int32 fill0){
-	bool ret;
+	bool ret = true;
 	if (num > 100000000u){
 		uint64 numH = num/100000000u;
 		num = num - numH * 100000000u;
@@ -151,7 +151,20 @@ bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 	}
 	return ret;
 }
+#else
 
+bool DynamicCString::AppendNum(uint64 num,int32 fill0){
+	bool ret = true;
+	if (num >= 9){
+		uint64 numH = num/10u;
+		num = num - numH * 10u;
+		ret = AppendNum(numH);
+	}
+	ret = ret && Append ((char8)(num) + '0');
+	return ret;
+}
+
+#endif
 
 }
 #endif /* L0TYPES_DYNAMICCSTRING_H_ */
