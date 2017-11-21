@@ -43,7 +43,7 @@
 namespace MARTe {
 
 StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(64u, 0u) {
+        IOBuffer(16u, 0u) {
 
 }
 
