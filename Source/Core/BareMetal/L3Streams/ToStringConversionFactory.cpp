@@ -49,7 +49,7 @@ public:
 	/**
 	 * @brief flush the IOBuffer
 	 */
-	bool Flush(){
+	ErrorManagement::ErrorType  Flush(){
 		return NoMoreSpaceToWrite();
 	}
 
@@ -63,8 +63,10 @@ public:
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual bool Next(){
-		return Flush();
+	virtual ErrorManagement::ErrorType  Next(){
+		ErrorManagement::ErrorType  ret;
+		ret.notCompleted = !NoMoreSpaceToWrite();
+		return ret;
 	}
 
 private:
@@ -82,35 +84,44 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	IOBufferWrapperStream(): IOBufferWrapper(){
+	IOBufferWrapperStream(uint32 sizeIn): IOBufferWrapper(),size(sizeIn){
 		stream = NULL;
+		pointer = NULL;
 	}
 
 	/**
 	 * @brief interfaces to the Stream
 	 */
 	virtual void Wrap(void *ptr){
-		stream = reinterpret_cast<StreamI *>(ptr);
-	}
-
-	/**
-	 * @brief flush the IOBuffer
-	 */
-	bool Flush(){
-		return NoMoreSpaceToWrite();
+		pointer = reinterpret_cast<uint8 *>(ptr);
+		stream = reinterpret_cast<StreamI *>(pointer);
 	}
 
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual bool Next(){
-		Flush();
+	virtual ErrorManagement::ErrorType Next(){
+		ErrorManagement::ErrorType  ret;
+		ret.notCompleted= !NoMoreSpaceToWrite();
+
+		if (ret && (size != 0)){
+			pointer += size;
+			stream = reinterpret_cast<StreamI *>(pointer);
+		} else {
+			ret.illegalOperation = true;
+		}
 		// do not know how to skip to next object
-		return false;
+		return ret;
 	}
 protected:
+	/** pointer to the current output */
+	uint8 *pointer;
+
 	/** the stream */
 	StreamI *stream;
+
+	/** the size of the object StreamI derived */
+	uint32 size;
 
 	/**
 	 * @brief dumps the IOBuffer to the Stream
@@ -148,7 +159,7 @@ protected:
 class IOBufferWrapperSString: public IOBufferWrapperStream{
 public:
 
-	IOBufferWrapperSString():IOBufferWrapperStream(){
+	IOBufferWrapperSString():IOBufferWrapperStream(sizeof(StreamString)){
 		ss = NULL_PTR(StreamString*);
 	}
 
@@ -160,11 +171,12 @@ public:
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual bool Next(){
-		Flush();
+	virtual ErrorManagement::ErrorType  Next(){
+		ErrorManagement::ErrorType  ret;
+		ret.notCompleted= !NoMoreSpaceToWrite();
 		ss++;
 		stream = ss;
-		return true;
+		return ret;
 	}
 protected:
 	StreamString *ss;
@@ -187,10 +199,11 @@ public:
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual bool Next(){
-		Flush();
+	virtual ErrorManagement::ErrorType  Next(){
+		ErrorManagement::ErrorType  ret;
+		ret.notCompleted= !NoMoreSpaceToWrite();
 		string++;
-		return true;
+		return ret;
 	}
 protected:
 
@@ -291,11 +304,16 @@ public:
 			writer->Wrap(dest);
 			uint32 ix = 0;
 			const integerType *pIn = (reinterpret_cast<const integerType *>(source));
-			ok.fatalError = IntegerToStream(*writer,*pIn++,fd);
+			if (!IntegerToStream(*writer,*pIn++,fd)){
+				ok.fatalError = true;
+			}
 			for (ix = 1;(ix<numberOfElements) && ok;ix++){
-				ok.illegalOperation=writer->Next();
+				ok = writer->Next();
+
 				if (ok){
-					ok.fatalError = IntegerToStream(*writer,*pIn++,fd);
+					if (!IntegerToStream(*writer,*pIn++,fd)){
+						ok.fatalError = true;
+					}
 				}
 			}
 			writer->Flush();
@@ -312,9 +330,63 @@ public:
 	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
 		return Convert(dest,source,numberOfElements,format);
 	}
-
-
 };
+
+/**
+ * @brief copies integer to strings
+ */
+class CharToStringTCO: public StringTCO{
+
+public:
+
+	/**
+	 * @brief constructor
+	 */
+	CharToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+	}
+
+	/**
+	 * @brief destructor
+	 */
+	virtual  ~CharToStringTCO(){}
+
+	/**
+	 * @brief data conversion method
+	 */
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+		ErrorManagement::ErrorType  ok;
+		if (writer != NULL){
+			writer->Wrap(dest);
+			uint32 ix = 0;
+			const char *pIn = (reinterpret_cast<const char *>(source));
+			if (!writer->PutC(*pIn)){
+				ok.fatalError = true;
+			}
+			for (ix = 1;(ix<numberOfElements) && ok;ix++){
+				ok = writer->Next();
+
+				if (ok){
+					if (!writer->PutC(*pIn)){
+						ok.fatalError = true;
+					}
+				}
+			}
+			writer->Flush();
+		} else {
+			ok.internalSetupError = true;
+		}
+
+		return ok;
+	}
+
+	/**
+	 * @brief data conversion method
+	 */
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+		return Convert(dest,source,numberOfElements,format);
+	}
+};
+
 
 /**
  * @brief copies bitset integers to strings
@@ -345,12 +417,18 @@ public:
 		ErrorManagement::ErrorType  ok;
 		writer->Wrap(dest);
 
-		ok.fatalError = BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td);
+		if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
+			ok.fatalError = true;
+		}
+
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok.illegalOperation=writer->Next();
+			ok = writer->Next();
+
 			source += byteSize;
 			if (ok){
-				ok.fatalError = BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td);
+				if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
+					ok.fatalError = true;
+				}
 			}
 		}
 		writer->Flush();
@@ -411,9 +489,11 @@ public:
 
 		uint8 *source1 = const_cast<uint8 * >(source);
 		const void **src = reinterpret_cast<const void ** >(source1);
-		ok.fatalError = PointerToStream(*writer,*src);
+		if (!PointerToStream(*writer,*src)){
+			ok.fatalError = true;
+		}
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok.illegalOperation=writer->Next();
+			ok = writer->Next();
 			src++;
 			if (ok){
 				ok.fatalError = PointerToStream(*writer,*src);
@@ -454,12 +534,17 @@ public:
 		writer->Wrap(dest);
 
 		const floatType *src = reinterpret_cast<const floatType *>(source);
-		ok.fatalError = FloatToStream(*writer,*src,fd);
+		if (!FloatToStream(*writer,*src,fd)){
+			ok.fatalError = true;
+		}
+
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok.illegalOperation=writer->Next();
+			ok = writer->Next();
 			src++;
 			if (ok){
-				ok.fatalError = FloatToStream(*writer,*src,fd);
+				if (!FloatToStream(*writer,*src,fd)){
+					ok.fatalError = true;
+				}
 			}
 		}
 		writer->Flush();
@@ -501,12 +586,16 @@ public:
 		writer->Wrap(dest);
 
 		const CCString *src = reinterpret_cast<const CCString *>(source);
-		ok.fatalError = PrintCCString(*writer,*src,fd);
+		if (!PrintCCString(*writer,*src,fd)){
+			ok.fatalError = true;
+		}
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok.illegalOperation=writer->Next();
+			ok = writer->Next();
 			src++;
 			if (ok){
-				ok.fatalError = PrintCCString(*writer,*src,fd);
+				if (!PrintCCString(*writer,*src,fd)){
+					ok.fatalError = true;
+				}
 			}
 		}
 
@@ -557,7 +646,7 @@ public:
 
 			ok.fatalError = PrintStream(*writer,src,fd);
 			for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-				ok.illegalOperation=writer->Next();
+				ok = writer->Next();
 				src++;
 				if (ok){
 					ok.fatalError = PrintStream(*writer,src,fd);
@@ -666,7 +755,7 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
 	if (destTd.SameTypeAs(StreamType(0))){
-		wrapper = new IOBufferWrapperStream();
+		wrapper = new IOBufferWrapperStream(destTd.objectSize);
 	} else
 	if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 		wrapper = new IOBufferWrapperSString();
@@ -679,6 +768,9 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 	if (wrapper != NULL){
 		if (!sourceTd.isStructuredData){
 			switch(sourceTd.fullType){
+			case TDF_Char:{
+				tco = new CharToStringTCO(wrapper);
+			}break;
 			case TDF_UnsignedInteger:{
 				if (!sourceTd.hasBitSize){
 					switch(sourceTd.basicTypeSize){
@@ -747,7 +839,8 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 				tco = new PointerToStringTCO(wrapper);
 			}break;
 			case TDF_DynamicCString:
-			case TDF_CString:{
+			case TDF_CString:
+			case TDF_CCString:{
 				tco = new CCStringToStringTCO(wrapper);
 			}break;
 			case TDF_SString:{

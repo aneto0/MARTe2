@@ -41,6 +41,7 @@ TypeConversionManager &TypeConversionManager::Instance() {
     return *instance;
 }
 
+
 const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd) const {
 	uint32 ix = 0;
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);

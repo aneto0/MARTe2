@@ -173,7 +173,9 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 							}
 							}// end switch
 						}break;
-						case TDF_CString:{
+						case TDF_DynamicCString:
+						case TDF_CString:
+						case TDF_CCString:{
 							const CCString *data = static_cast<const CCString *>(dataPointer);
 							ret = PrintCCStringFit(iobuff,*data,fd);
 						}break;

@@ -151,8 +151,8 @@ protected:
 // private functions to implement the templated methods
 bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest, void const *src);
 bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest, void const *src);
-bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 sizeOfSrc,
-		        uint32 maxAppendSize,void *&dest, void const  *src);
+bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCopy,
+		        /*uint32 maxAppendSize,*/void *&dest, void const  *src);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -258,7 +258,10 @@ bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArra
 	const void *src = static_cast<const void *>(data.GetList());
 	uint32 sizeD = GetSize();
 	uint32 sizeS = data.GetSize();
-	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,maxAppendSize,VoidArray(),src);
+	if (sizeS > maxAppendSize){
+		sizeS = maxAppendSize;
+	}
+	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,VoidArray(),src);
     if (ret)  {
     	//static const T term(0u);
         //operator[](sizeS+sizeD) = term;

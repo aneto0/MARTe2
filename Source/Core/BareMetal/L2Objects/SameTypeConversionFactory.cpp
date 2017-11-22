@@ -105,7 +105,7 @@ TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescri
 	//compare source and dest
 	if (destTd.SameAs(td)){
 		if (destTd.IsBasicType() || destTd.IsStructuredData()){
-			tco = new CopyTCO(td.Size());
+			tco = new CopyTCO(td.StorageSize());
 		}
 	}
 

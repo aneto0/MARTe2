@@ -78,15 +78,14 @@ bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest,
     return ret;
 }
 
-bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 sizeOfSrc,
-				uint32 maxAppendSize,void *&dest,void const *src){
+bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCopy,
+				void *&dest,void const *src){
 
     bool ret = true;
     uint32 size = sizeOfDest;
-    uint32 size2 = sizeOfSrc;
-    if ((maxAppendSize != 0xFFFFFFFF) &&(size2 > maxAppendSize)) {
-        size2 = maxAppendSize;
-    }
+    uint32 size2 = toCopy;
+
+
     uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
 
     ret = HeapManager::Realloc(dest,necessarySize*sizeOfT);

@@ -209,6 +209,12 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
 	return ok;
 }
 
+ErrorManagement::ErrorType AnyType::CopyTo(AnyType destination){
+	const uint8 *sourcePtr =  reinterpret_cast<const uint8 *>(pointer2Variable);
+	uint8 *destPtr         =  reinterpret_cast<uint8 *>(const_cast<void *>(destination.pointer2Variable));
+	return variableDescriptor.CopyTo(sourcePtr,destPtr,destination.variableDescriptor);
+}
+
 
 
 }

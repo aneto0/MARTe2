@@ -167,10 +167,9 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 		const uint8 *pointer,
 		uint64 &numberOfElements,
 		uint32 &elementSize,
-		uint32 &overheadSize,
 		uint32 &arrayStringSize,
 		uint32 &numberOfTermElements,
-		char8 &modifier) const{
+		char8  &modifier) const{
 
 	ErrorManagement::ErrorType ret;
     char8 c = '\0';
@@ -186,7 +185,6 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 
  	GetLayerInfo(modifierString,c,n);
 
-
  	// only first layer may be a variable size one
  	// between variable size there must be a pointer of sort
 	if (variableLayers.In(c)) {
@@ -200,7 +198,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 	 		uint32 ass = (savePtr - modifierString.GetList());
 	 		uint32 temp;
 	 		// pointer is set to NULL to communicate the fact that this is part of a variable layer
-			ret = FullLayerInfo(modifierString,NULL,numberOfElements,elementSize,overheadSize,arrayStringSize,temp,modifier);
+			ret = FullLayerInfo(modifierString,NULL,numberOfElements,elementSize,arrayStringSize,temp,modifier);
 			ass += arrayStringSize;
 			numberOfTermElements = numberOfElements;
 			layerSize = numberOfElements*elementSize;
@@ -209,21 +207,20 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 				ret.unsupportedFeature = true;
 		        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Size of ZTA element too large ");
 			}
-
 		}
 		if (ret){
 			uint32 ztaSize = ZeroTerminatedArrayGetSize(pointer, (uint32)layerSize);
 			numberOfElements = numberOfElements * ztaSize;
 		}
-	} else {
+	} else { // not variable layer
  		while (c == 'A') {
 			numberOfElements = numberOfElements * n;
 	 		arrayStringSize = (savePtr - modifierString.GetList());
 	 		GetLayerInfo(modifierString,c,n);
  		}
 		if (c== '\0'){
-			overheadSize = typeDescriptor.OverHeadSize();
-			elementSize = typeDescriptor.Size();
+			elementSize = typeDescriptor.StorageSize();
+//TODO remove
 		} else
 		if ((c=='p') || (c=='P')){
 			elementSize = sizeof(void *);
@@ -246,13 +243,12 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *pointer) const{
 	 uint64 numberOfElements = 0;
 	 uint32 elementSize = 0;
-	 uint32 overheadSize = 0;
 	 uint32 numberOfTermElements = 0;
 	 uint32 temp;
 	 char8 modifier = '\0';
 	 CCString modS = modifierString;
 
- 	 FullLayerInfo(modS,pointer,numberOfElements,elementSize,overheadSize,temp,numberOfTermElements,modifier);
+ 	 FullLayerInfo(modS,pointer,numberOfElements,elementSize,temp,numberOfTermElements,modifier);
  	 return (numberOfElements + numberOfTermElements)* elementSize ;
 }
 
@@ -274,6 +270,8 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     	case 'P':
     	case 'p':{
     		td = GenericPointer;
+/*
+//TODO remove this
     		CCString ZTAModifiers = "ZzDdSs";
     		if (ZTAModifiers.In(nextModifier)){
     		    GetLayerInfo(modifiersCopy,firstModifier,size );
@@ -286,6 +284,7 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     	    		}
     		    }
     		} else
+*/
     		if (nextModifier == 0){
     			td = PointerType;
     		}
@@ -391,7 +390,8 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
     DimensionInfo di;
 
     char8 lastPointer = '\0';
-/// TODO FIX
+
+    di.type = '?';
     while (di.type != 0){
     	previousModifierString = modifierString;
         GetLayerInfo(modifierString,di.type,di.numberOfElements);
@@ -460,7 +460,7 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
 
 
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
-		                               uint64 &dataSize, uint64 &storageSize,uint8 maxDepth,uint32 layerMultiplier) const {
+		                               uint64 &dataSize, uint64 &overHeadSz,uint8 maxDepth,uint32 layerMultiplier) const {
 
 	ErrorManagement::ErrorType ret;
 
@@ -471,7 +471,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
     uint32 numberOfTermElements = 0;
 	char8 modifier = '\0';
 
-	ret = FullLayerInfo(modifierString,pointer,numberOfElements,elementSize,overheadSize,temp,numberOfTermElements,modifier);
+	ret = FullLayerInfo(modifierString,pointer,numberOfElements,elementSize,temp,numberOfTermElements,modifier);
 	// account for extra array layer (vector and matrix support)
 	numberOfElements = numberOfElements * layerMultiplier;
 	/// include terminators
@@ -484,7 +484,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
         REPORT_ERROR(ErrorManagement::InternalSetupError, "Incorrect sequence VZ or MZ encountered ");
 	}
 
-
 	if (ret){
 		// if we can delve deep and there is deep....
 		if ((maxDepth > 0) && (modifier != '\0')){
@@ -496,36 +495,35 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 				// cannot do this conversion using c++ style casts
 				const uint8 **pp = (const uint8 **)(pointer);
 				//if (true /*isVariableSize(modifierString)*/){
-					storageSize = numberOfElementsIncludingTerm * elementSize;
-					dataSize = 0;
-					uint64 index;
-					for (index = 0; (index < numberOfElements) && ret; index++){
-						const uint8 *p = pp[index];
-						if (p != NULL){
-							if (!MemoryCheck::Check(p)){
-								ret.exception = true;
-						        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
-							}
+				overHeadSz = numberOfElementsIncludingTerm * elementSize;
+				dataSize = overHeadSz;
+				uint64 index;
+				for (index = 0; (index < numberOfElements) && ret; index++){
+					const uint8 *p = pp[index];
+					if (p != NULL){
+						if (!MemoryCheck::Check(p)){
+							ret.exception = true;
+					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+						}
+
+						if (ret){
+							uint64 dataSize2;
+							uint64 overHeadSz2;
+							ret = GetDeepSize(modifierString, p,dataSize2,overHeadSz2,maxDepth);
 
 							if (ret){
-								uint64 dataSize2;
-								uint64 storageSize2;
-								ret = GetDeepSize(modifierString, p,dataSize2,storageSize2,maxDepth);
-
-								if (ret){
-									storageSize = storageSize + storageSize2;
-									dataSize = dataSize + dataSize2 ;
-								}
+								overHeadSz = overHeadSz + overHeadSz2;
+								dataSize = dataSize + dataSize2 ;
 							}
 						}
 					}
-				//}
+				}
 			} break;
 			case 'V':
 			case 'v':{
 				const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(pointer);
-				storageSize = numberOfElementsIncludingTerm * elementSize;
-				dataSize = 0;
+				overHeadSz = numberOfElementsIncludingTerm * elementSize;
+				dataSize = overHeadSz;
 				uint64 index;
 
 				for (index = 0; (index < numberOfElements) && ret; index++){
@@ -542,7 +540,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							ret = GetDeepSize(modifierString, p,dataSize2,storageSize2,maxDepth,numberOfArrayElements);
 
 							if (ret){
-								storageSize = storageSize + storageSize2;
+								overHeadSz = overHeadSz + storageSize2;
 								dataSize = dataSize + dataSize2 ;
 							}
 						}
@@ -551,10 +549,9 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 			} break;
 			case 'M':
 			case 'm':{
-//printf("{M}");
 				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(pointer);
-				storageSize = numberOfElementsIncludingTerm * elementSize;
-				dataSize = 0;
+				overHeadSz = numberOfElementsIncludingTerm * elementSize;
+				dataSize = overHeadSz;
 				uint64 index;
 				for (index = 0; (index < numberOfElements) && ret; index++){
 					const uint8 *p = static_cast<const uint8 *>(pm[index].GetDataPointer());
@@ -570,7 +567,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 							ret = GetDeepSize(modifierString, p,dataSize2,storageSize2,maxDepth,numberOfArrayElements);
 
 							if (ret){
-								storageSize = storageSize + storageSize2;
+								overHeadSz = overHeadSz + storageSize2;
 								dataSize = dataSize + dataSize2 ;
 							}
 						}
@@ -587,21 +584,38 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 
 
 		} else {  // '\0' or maxdepth reached
-			storageSize = numberOfElementsIncludingTerm * overheadSize;
-			dataSize = numberOfElementsIncludingTerm * (elementSize-overheadSize);
+			overHeadSz = numberOfElementsIncludingTerm * elementSize;
+			if (typeDescriptor.IsBasicType() || typeDescriptor.IsStructuredData()){
+				dataSize = numberOfElements * elementSize;
+				overHeadSz -= dataSize;
+			} else
+			if (typeDescriptor.IsCharStreamType()){
+					dataSize = 0;
+					uint64 index;
+					for (index = 0; (index < numberOfElements) && ret; index++){
+						dataSize += typeDescriptor.FullSize(pointer);
+						pointer +=  elementSize;
+					}
+					// add the terminator!
+					if (index < numberOfElementsIncludingTerm){
+						dataSize += elementSize;
+					}
+			} else {
+				dataSize = overHeadSz;
+			}
 		}
 	}
 	return ret;
 }
 
-ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize,uint8  maxDepth) const{
+ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize,uint8  maxDepth) const{
 
-	uint64 storageSz = 0;
-	ErrorManagement::ErrorType ret =  GetDeepSize(modifiers,pointer,dataSize,storageSz,maxDepth);
+	uint64 overHeadSz = 0;
+	ErrorManagement::ErrorType ret =  GetDeepSize(modifiers,pointer,dataSize,overHeadSz,maxDepth);
 
-	dataSize += storageSz;
-	if (storageSize != NULL){
-		*storageSize = storageSz;
+//	dataSize += storageSz;
+	if (overHeadSize != NULL){
+		*overHeadSize = overHeadSz;
 	}
 
 	return ret;
@@ -667,7 +681,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	 		// note that next layer cannot be ZzDdSs but only A or a terminator like PpVvMm and 0
 			if (index < size){
 				uint64 layerSize = FullLayerSize(modifierString,pointer);
-				uint64 step = layerSize * size;
+				uint64 step = layerSize * index;
 				pointer = pointer + step;
 				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 			} else {
@@ -688,7 +702,6 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				ret.unsupportedFeature = true;
 		        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "ZTA element too large");
 			}
-
 			if (ret){
 				uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
 				if (index >= maxIndex){
@@ -697,7 +710,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				}
 			}
 			if (ret){
-				uint64 step = layerSize * size;
+				uint64 step = layerSize * index;
 				pointer = pointer + step;
 				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 			}
@@ -718,7 +731,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 			if (ret){
 				uint64 layerSize = FullLayerSize(modifierString,pointer);
-				uint64 step = layerSize * size;
+				uint64 step = layerSize * index;
 				pointer = p + step;
 				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 			}
@@ -737,7 +750,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 			}
 			if (ret){
 				uint64 layerSize = FullLayerSize(modifierString,pointer);
-				uint64 step = layerSize * size * pm[0].GetNumberOfColumns();
+				uint64 step = layerSize * index * pm[0].GetNumberOfColumns();
 				pointer = p + step;
 
 				DynamicCString modifiersTemp;
@@ -750,8 +763,37 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 	 	}break;
 	 	case '\0':{
-	 		ret.illegalOperation = true;
-	        REPORT_ERROR(ErrorManagement::IllegalOperation, "cannot redirect a basic type");
+	 		if (typeDescriptor.IsCharStreamType()){
+	 			TD_FullType fullType = typeDescriptor.fullType;
+	 			switch (fullType){
+	 			case TDF_DynamicCString:
+	 			case TDF_CString:
+	 			case TDF_CCString:{
+	 				CCString *string = reinterpret_cast<CCString *>(const_cast<uint8 *>(pointer));
+	 				uint32 size = string->GetSize();
+	 				if (size <= index){
+	 					ret.outOfRange = true;
+	 			        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= pm[0].GetNumberOfRows()");
+	 				}
+	 				if (ret){
+	 					pointer = reinterpret_cast<const uint8 *>(string->GetList()+index);
+		 				if (fullType == TDF_CCString){
+			 				typeDescriptor = ConstCharacter8Bit;
+		 				} else {
+			 				typeDescriptor = Character8Bit;
+		 				}
+	 				}
+
+	 			} break;
+	 			default :{
+			 		ret.illegalOperation = true;
+			        REPORT_ERROR(ErrorManagement::IllegalOperation, "can only redirect Zero Term Char streams");
+	 			} break;
+	 			}
+	 		} else {
+		 		ret.illegalOperation = true;
+		        REPORT_ERROR(ErrorManagement::IllegalOperation, "cannot redirect a basic type");
+	 		}
 	 	} break;
 	 	default:{
 	 		ret.internalSetupError = true;
@@ -801,7 +843,8 @@ static uint32 GetNextElementSize(
 		ix++;
 	}
 	if (dimensions[ix].type == 0){
-		size *= td.Size();
+// TODO support variable size terminals
+		size *= td.StorageSize();
 	} else {
 		size *= GetDimensionSize(dimensions[ix].type);
 	}
@@ -830,46 +873,52 @@ static inline ErrorManagement::ErrorType HandlePointer(
 		uint32 &sourceElementSize
 		){
 	ErrorManagement::ErrorType ok;
-	switch(toupper(dimensions[0].type)){
-	case 'A':{
-		numberOfElements = dimensions[0].numberOfElements;
-		sourceElementSize = GetNextElementSize(dimensions,td);
-	}break;
-	case 'F':{
-		numberOfElements = dimensions[0].numberOfElements;
-		sourceElementSize = GetNextElementSize(dimensions,td);
-		ok = RedirectP(ptr);
-	}break;
-	case 'D':
-	case 'S':
-	case 'Z':{
-		ok = RedirectP(ptr);
-		if (ok){
-			sourceElementSize = GetNextElementSize(dimensions,td);
-			numberOfElements = ZeroTerminatedArrayGetSize(ptr, sourceElementSize);
-		}
-	}break;
-	case 'V':{
-		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
-		numberOfElements = pv->GetNumberOfElements();
-		sourceElementSize = GetNextElementSize(dimensions,td);
 
-		// it works as vector is descendant of Pointer class
-		ok = RedirectP(ptr);
-	}break;
-	case 'M':{
-		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
-		numberOfElements = pm->GetNumberOfElements();
-		sourceElementSize = GetNextElementSize(dimensions,td);
+	sourceElementSize = GetNextElementSize(dimensions,td);
+	numberOfElements = 1;
 
-		// it works as vector is descendant of Pointer class
-		ok = RedirectP(ptr);
-	}break;
-	default:{
+	if (dimensions.GetSize() > 0){
+		switch(toupper(dimensions[0].type)){
+		case 'A':{
+			numberOfElements = dimensions[0].numberOfElements;
+	//		sourceElementSize = GetNextElementSize(dimensions,td);
+		}break;
+		case 'F':{
+			numberOfElements = dimensions[0].numberOfElements;
+	//		sourceElementSize = GetNextElementSize(dimensions,td);
+			ok = RedirectP(ptr);
+		}break;
+		case 'D':
+		case 'S':
+		case 'Z':{
+			ok = RedirectP(ptr);
+			if (ok){
+	//			sourceElementSize = GetNextElementSize(dimensions,td);
+				numberOfElements = ZeroTerminatedArrayGetSize(ptr, sourceElementSize);
+			}
+		}break;
+		case 'V':{
+			const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
+			numberOfElements = pv->GetNumberOfElements();
+	//		sourceElementSize = GetNextElementSize(dimensions,td);
 
-	}break;
+			// it works as vector is descendant of Pointer class
+			ok = RedirectP(ptr);
+		}break;
+		case 'M':{
+			const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
+			numberOfElements = pm->GetNumberOfElements();
+	//		sourceElementSize = GetNextElementSize(dimensions,td);
 
-	};
+			// it works as vector is descendant of Pointer class
+			ok = RedirectP(ptr);
+		}break;
+		default:{
+
+		}break;
+
+		};
+	}
 
 	return ok;
 }
@@ -884,25 +933,28 @@ static ErrorManagement::ErrorType LayerOperate(
 		const TypeConversionOperatorI &op
 		){
 	ErrorManagement::ErrorType ok;
-	ok.internalSetupError = (sourceDimensions.GetSize() == 0);
-	ok.internalSetupError = ok.internalSetupError | (destDimensions.GetSize() != sourceDimensions.GetSize());
+	ok.internalSetupError = (destDimensions.GetSize() != sourceDimensions.GetSize());
 
-	uint32 sourceNumberOfElements = 0;
+	uint32 sourceNumberOfElements = 1;
 	uint32 sourceElementSize = 1;
+	uint32 destNumberOfElements = 1;
+	uint32 destElementSize = 1;
+
 	// handle source pointer;
 	if (ok){
 		ok = HandlePointer(sourceDimensions,sourcePtr,sourceTd,sourceNumberOfElements,sourceElementSize);
 	}
 
-	uint32 destNumberOfElements = 0;
-	uint32 destElementSize = 1;
 	// handle dest pointer;
 	if (ok){
 		ok = HandlePointer(destDimensions,(const uint8 *&)destPtr,destTd,destNumberOfElements,destElementSize);
 	}
 
 	if (ok){
-		ok = (sourceNumberOfElements == destNumberOfElements);
+		if (sourceNumberOfElements != destNumberOfElements){
+	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "mismatch in dimensions");
+			ok.unsupportedFeature = true;
+		}
 	}
 
 	if (ok){
@@ -940,7 +992,10 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 
     const TypeConversionOperatorI *tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd);
 
-    ok = ( tco != NULL_PTR(TypeConversionOperatorI *));
+    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
+    	ok.unsupportedFeature = true;
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Conversion Operator not found");
+    }
 
     if (ok){
     	ok = LayerOperate(sourceDimensions.GetList(),sourcePtr,sourceTd,destDimensions.GetList(),destPtr,destTd,*tco);
@@ -983,13 +1038,13 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 	uint64 numberOfElements = 1;
 	// size of each element
     uint32 elementSize = 0;
-    uint32 overheadSize = 0;
+//    uint32 overheadSize = 0;
     uint32 numberOfTermElements = 0;
 	char8 modifier  = '\0';
 	uint32 arrayStringSize=0;
 	uint64 totalLayerSize=0;
 
-	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,overheadSize,arrayStringSize,numberOfTermElements,modifier);
+	ret = FullLayerInfo(modifierString,sourcePtr,numberOfElements,elementSize,arrayStringSize,numberOfTermElements,modifier);
 
     if (ret){
     	totalLayerSize = elementSize * (numberOfElements + numberOfTermElements);

@@ -142,14 +142,19 @@ const TD_FullType  TDF_SString 			= TDF_CharStreamType + 0u;
 const TD_FullType  TDF_Stream 			= TDF_CharStreamType + 1u;
 
 /**
- * @brief  The CCString/CString
+ * @brief  The const char * (CCString, const DynamicCString etc...)
  */
-const TD_FullType  TDF_CString 			= TDF_CharStreamType + 2u;
+const TD_FullType  TDF_CCString 		= TDF_CharStreamType + 2u;
 
 /**
- * @brief  The CCString/CString
+ * @brief  The const char * (CString)
  */
-const TD_FullType  TDF_DynamicCString 	= TDF_CharStreamType + 3u;
+const TD_FullType  TDF_CString 		    = TDF_CharStreamType + 3u;
+
+/**
+ * @brief  The DynamicCString : can be written to
+ */
+const TD_FullType  TDF_DynamicCString 	= TDF_CharStreamType + 4u;
 
 /*****  SPECIAL TYPES *****/
 
@@ -362,14 +367,15 @@ public:
     inline bool SameTypeAs(const TypeDescriptor &td) const;
 
     /**
-     * size in byte of the object top layer.
+     * @brief returns real size in byte of the object including storage size
+     * @details - for character streams, it will compute the actual size
      */
-    uint32 Size() const;
+    uint32 FullSize(const uint8 *address= NULL_PTR(const uint8 *)) const;
 
     /**
-     * size in byte of the object top layer.
+     * @brief the size needed to store the type (sizeof(T) )
      */
-    uint32 OverHeadSize() const;
+    uint32 StorageSize() const;
 
     /**
      * @brief gets name of class from structuredDataIdCode
@@ -435,12 +441,10 @@ private:
 
 /***  !BASIC TYPES */
 #define  StreamStringType(size)      TypeDescriptor(TDRANGE(fullType,TDF_SString) | TDRANGE(objectSize,size))
-#define  ConstCharString_number      (TDRANGE(fullType,TDF_CString) | TDRANGE(objectSize,SizePointer) | TDRANGE(dataIsConstant,1) )
-#define  ConstCharString             TypeDescriptor(ConstCharString_number)
-#define  DynamicCharString_number    (TDRANGE(fullType,TDF_DynamicCString) | TDRANGE(objectSize,SizePointer))
-#define  DynamicCharString           TypeDescriptor(DynamicCharString_number)
-#define  GenericArray_number         TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,0)
-#define  GenericArray                TypeDescriptor(GenericArray_number)
+#define  ConstCharString(size)       TypeDescriptor(TDRANGE(fullType,TDF_CCString) | TDRANGE(objectSize,size))
+#define  CharString           		 TypeDescriptor(TDRANGE(fullType,TDF_CString) | TDRANGE(objectSize,sizeof(CString)))
+#define  DynamicCharString           TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString) | TDRANGE(objectSize,sizeof(DynamicCString)))
+#define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,0))
 #define  StreamType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Stream) | TDRANGE(objectSize,size))
 #define  StructuredDataType(size)    TypeDescriptor(TDRANGE(fullType,TDF_StructuredDataI) | TDRANGE(objectSize,size))
 #define  ObjectType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Object)| TDRANGE(objectSize,size))

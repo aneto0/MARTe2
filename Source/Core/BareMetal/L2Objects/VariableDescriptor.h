@@ -122,11 +122,11 @@ public:
      * limit 0 means just the top layer
      * Note that pointers to type only address one element
      * Vector, Matrix, ZeroTermArray are all supported
-     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
-     * @param[out] storageSize is the memory used in intermediate redirection layers
+     * @param[out] dataSize is the full size of the memory necessary to store this var: auxilliary storages + actual data
+     * @param[out] overHeadSize is the memory used as overhead: pointers etc
      * @return true if all ok
      */
-    ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *storageSize=NULL,uint8 maxDepth=10) const;
+    ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize=NULL,uint8 maxDepth=10) const;
 
     /**
      * @brief removes one indirection layer and update variable pointer
@@ -227,17 +227,19 @@ private:
     uint64 FullLayerSize(CCString modifierString,const uint8 *pointer) const;
 
     /**
-     * @brief calculate size of a full layer - n of array alements * elementsize
+     * @brief calculate properties of a full layer - n of array alements * elementsize
+     * @details the layers start with a fixed/variable modifier and groups all following fixed modifiers
+     * @details this does not calculate size. Only used to speedup operations
      * @param[in,out] modifierString, the string of variable modifiers
      * @param[out] numberOfElements is the number of elements in this layer
-     * @param[out] elementSize is the size of each element
+     * @param[out] elementSize is the storage space occupied by an element - not the data it contains.
      * @param[out] overheadSize is the size not used for data content
      * @param[out] arrayStringSize number of characters in modifierString consumed in arrays 'a' layers
      * @param[out] numberOfTermElements number of elements of size elementSize used as terminator in a ZTA
      * @param[out] modifier is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
      */
     ErrorManagement::ErrorType FullLayerInfo(CCString &modifierString,const uint8 *pointer,
-    		uint64 &numberOfElements,uint32 &elementSize,uint32 &overheadSize,
+    		uint64 &numberOfElements,uint32 &elementSize,
 			uint32 &arrayStringSize,uint32 &numberOfTermElements,
 			char8 &modifier) const;
 
@@ -246,7 +248,7 @@ private:
      * @param[in] modifierString, the string of variable modifiers
      * @param[in] pointer, the pointer to the variable
      * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
-     * @param[out] storageSize is the memory used in intermediate redirection layers
+     * @param[out] overHeadSz is the memory used in intermediate redirection layers
      * @param[in] maxDepth  determine the number of indirected memory to include.
      * -1 means no limit 0 means just the top layer
      * Note that pointers to type only address one element
@@ -255,7 +257,7 @@ private:
      * @return true if all ok
      */
     ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,
-    		uint64 &dataSize, uint64 &storageSize,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
+    		uint64 &dataSize, uint64 &overHeadSz,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
 
     /**
      *  @brief To encode the fact that what is coming next is a constant
@@ -332,7 +334,6 @@ private:
      */
     template <class T,unsigned int n>
     inline void Match(T (*x) [n]);
-
 
     /**
      * @brief Matches a T[n]
@@ -547,6 +548,7 @@ private:
      */
     inline void Match(DynamicCString *s);
 
+
     /**
      * @brief Constructor from zeroterm char[]
      * @param[in] s is the string
@@ -629,29 +631,40 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
 }
 
 void VariableDescriptor::Match(DynamicCString *s){
-	AddModifiersLayerConst('P', 0);
-	AddModifiersLayerConst('D', 0);
-	FinaliseCode(Character8Bit);
+//	AddModifiersLayerConst('P', 0);
+//	AddModifiersLayerConst('D', 0);
+//	FinaliseCode(Character8Bit);
+	bool isConstant = typeDescriptor.dataIsConstant;
+	if (isConstant){
+		FinaliseCode(ConstCharString(sizeof(DynamicCString)));
+	} else {
+		typeDescriptor.dataIsConstant = false;
+		FinaliseCode(DynamicCharString);
+	}
 }
 
 void VariableDescriptor::Match(CString *s){
-	AddModifiersLayerConst('P', 0);
-	AddModifiersLayerConst('Z', 0);
-	FinaliseCode(Character8Bit);
+//	AddModifiersLayerConst('P', 0);
+//	AddModifiersLayerConst('Z', 0);
+//	FinaliseCode(Character8Bit);
+	FinaliseCode(CharString);
 }
 
 void VariableDescriptor::Match(CCString *s){
-	AddModifiersLayerConst('P', 0);
-	AddModifiersLayerConst('Z', 0);
-    AddConstantCode();
-	FinaliseCode(Character8Bit);
+//	AddModifiersLayerConst('P', 0);
+//	AddModifiersLayerConst('Z', 0);
+//    AddConstantCode();
+//	FinaliseCode(Character8Bit);
+	FinaliseCode(ConstCharString(sizeof(CString)));
 }
 
+// TODO wrong. this is not a pointer!
 template <uint32 sz>
 void VariableDescriptor::Match(StaticCString<sz> *s){
-	AddModifiersLayerConst('P', 0);
-	AddModifiersLayerConst('S', sz);
-	FinaliseCode(Character8Bit);
+//	AddModifiersLayerConst('P', 0);
+//	AddModifiersLayerConst('S', sz);
+//	FinaliseCode(Character8Bit);
+	FinaliseCode(ConstCharString(sz));
 }
 
 template <class T,unsigned int n>

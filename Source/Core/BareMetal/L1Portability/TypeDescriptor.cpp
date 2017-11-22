@@ -49,22 +49,7 @@ TypeDescriptor::TypeDescriptor() {
     all = 0;
 }
 
-uint32 TypeDescriptor::OverHeadSize() const{
-	uint32 size = 0;
-	if (isStructuredData){
-        size = 0;
-	} else {
-	    if (IsBasicType()){
-	        size = 0;
-	    } else {
-			size = objectSize;
-	    }
-	}
-	return size;
-}
-
-
-uint32 TypeDescriptor::Size()const{
+uint32 TypeDescriptor::StorageSize() const{
 	uint32 size = 0;
 	if (isStructuredData){
 		size = 0;
@@ -83,7 +68,28 @@ uint32 TypeDescriptor::Size()const{
 	    }
 	}
 	return size;
+
 }
+
+uint32 TypeDescriptor::FullSize(const uint8 *address)const{
+	uint32 size = StorageSize();
+	if (IsCharStreamType() && (address != NULL)){
+		TD_FullType fullType = this->fullType;
+		switch(fullType){
+		case TDF_CString:
+		case TDF_CCString:
+		case TDF_DynamicCString:{
+			CCString *s = reinterpret_cast<CCString *>(const_cast<uint8 *>(address));
+			size += (s->GetSize()+1);
+		} break;
+		default:{
+
+		}
+		}
+	}
+	return size;
+}
+
 
 /**
  * initialised to NULL
@@ -111,7 +117,9 @@ const struct {
 		{"StreamI"		  ,  TDF_Stream         },
 		{"StructuredDataI",  TDF_StructuredDataI},
 		{"Object"		  ,  TDF_Object         },
-		{"CCString"       ,  TDF_CString        },
+		{"CCString"       ,  TDF_CCString       },
+		{"CString"        ,  TDF_CString        },
+		{"DynamicCString" ,  TDF_DynamicCString },
 		{"void*" 	      ,  TDF_Pointer        },
 		{"void[]" 	      ,  TDF_GenericArray   },
 		{"invalid"	 	  ,  TDF_Invalid        },

@@ -170,6 +170,13 @@ public:
      */
     ErrorManagement::ErrorType  	MultipleDereference (CCString CExpression);
 
+
+    /**
+     * @briefs copies the content to destination.
+     * Number of dimensions must be the same or compatible
+     */
+    ErrorManagement::ErrorType  	CopyTo(AnyType destination);
+
     /**
      * @brief pointer2Variable = NULL
      * @return  (pointer2Variable == NULL)
@@ -242,18 +249,6 @@ template <class T>
 AnyType::AnyType(T const &x): variableDescriptor (reinterpret_cast<T const *>(&x)){
     pointer2Variable = const_cast<void *>(reinterpret_cast<const void *>(const_cast<T *>(&x)));
 }
-
-/*
-template <class T>
-AnyType::AnyType(T * &x): variableDescriptor (reinterpret_cast<T **>(&x)){
-    pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(x));
-}
-
-template <class T>
-AnyType::AnyType(T const * &x): variableDescriptor (reinterpret_cast< T const **>(&x)){
-    pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(x));
-}
-*/
 
 const void* AnyType::GetVariablePointer() const{
     return pointer2Variable;
