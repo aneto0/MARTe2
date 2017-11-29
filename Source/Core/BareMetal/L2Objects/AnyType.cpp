@@ -141,7 +141,6 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
 	CCString deref = CExpression;
 	ErrorManagement::ErrorType ok;
 
-
 	while ((deref.GetSize()>0) && (ok)){
 		DynamicCString token;
 		int32 term  =-1;
@@ -151,8 +150,8 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
     	if (token.GetSize() > 0){
         	if (isNumber(token[0])){
         		if (status == Matrix ){
-                        CCString tok = token;
-                        uint32 number = readNumber(tok);
+                    CCString tok = token;
+                    uint32 number = readNumber(tok);
             		ok = Dereference(number);
             		if (ok) {
             			status = MatrixDone;

@@ -38,6 +38,20 @@ namespace MARTe{
 /**
  * @brief provides a generic interface between IOBuffer and arrays of character streams
  */
+class IOBufferWrapper;
+/**
+ * @brief connects IOBuffer to a single Stream
+ */
+class IOBufferWrapperStream;
+/**
+ * @brief connects IOBuffer to a SStrings
+ */
+class IOBufferWrapperSString;
+
+
+/**
+ * @brief provides a generic interface between IOBuffer and arrays of character streams
+ */
 class IOBufferWrapper: public IOBuffer{
 
 public:
@@ -49,25 +63,17 @@ public:
 	/**
 	 * @brief flush the IOBuffer
 	 */
-	ErrorManagement::ErrorType  Flush(){
-		return NoMoreSpaceToWrite();
-	}
+	ErrorManagement::ErrorType  Flush();
 
 	/**
 	 * @brief constructor
 	 */
-	IOBufferWrapper(){
-	    SetBufferReferencedMemory(&buffer[0],sizeof(buffer),0);
-	}
+	IOBufferWrapper();
 
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual ErrorManagement::ErrorType  Next(){
-		ErrorManagement::ErrorType  ret;
-		ret.notCompleted = !NoMoreSpaceToWrite();
-		return ret;
-	}
+	virtual ErrorManagement::ErrorType  Next();
 
 private:
 	/**
@@ -84,35 +90,18 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	IOBufferWrapperStream(uint32 sizeIn): IOBufferWrapper(),size(sizeIn){
-		stream = NULL;
-		pointer = NULL;
-	}
+	IOBufferWrapperStream(uint32 sizeIn);
 
 	/**
 	 * @brief interfaces to the Stream
 	 */
-	virtual void Wrap(void *ptr){
-		pointer = reinterpret_cast<uint8 *>(ptr);
-		stream = reinterpret_cast<StreamI *>(pointer);
-	}
+	virtual void Wrap(void *ptr);
 
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual ErrorManagement::ErrorType Next(){
-		ErrorManagement::ErrorType  ret;
-		ret.notCompleted= !NoMoreSpaceToWrite();
+	virtual ErrorManagement::ErrorType Next();
 
-		if (ret && (size != 0)){
-			pointer += size;
-			stream = reinterpret_cast<StreamI *>(pointer);
-		} else {
-			ret.illegalOperation = true;
-		}
-		// do not know how to skip to next object
-		return ret;
-	}
 protected:
 	/** pointer to the current output */
 	uint8 *pointer;
@@ -126,31 +115,7 @@ protected:
 	/**
 	 * @brief dumps the IOBuffer to the Stream
 	 * */
-	virtual bool NoMoreSpaceToWrite() {
-	    bool retval = false;
-		if (stream != NULL) {
-	        // no buffering!
-	        if (Buffer() != NULL) {
-
-	            // how much was written?
-	            uint32 writeSize = UsedSize();
-	            if (writeSize == 0u) {
-	                retval = true;
-	            }
-	            // write
-	            else {
-	                if (stream->Write(Buffer(), writeSize)) {
-	                    retval = true;
-	                    Empty();
-	                }
-	                else {
-	                    REPORT_ERROR(ErrorManagement::FatalError, "StreamToIOBuffer: Failed Write");
-	                }
-	            }
-	        }
-	    }
-		return retval;
-	}
+	virtual bool NoMoreSpaceToWrite() ;
 };
 
 /**
@@ -159,25 +124,17 @@ protected:
 class IOBufferWrapperSString: public IOBufferWrapperStream{
 public:
 
-	IOBufferWrapperSString():IOBufferWrapperStream(sizeof(StreamString)){
-		ss = NULL_PTR(StreamString*);
-	}
+	/**
+	 * @brief constructor
+	 */
+	IOBufferWrapperSString();
 
-	virtual void Wrap(void *ptr){
-		ss = reinterpret_cast<StreamString *>(ptr);
-		stream = ss;
-	}
+	virtual void Wrap(void *ptr);
 
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual ErrorManagement::ErrorType  Next(){
-		ErrorManagement::ErrorType  ret;
-		ret.notCompleted= !NoMoreSpaceToWrite();
-		ss++;
-		stream = ss;
-		return ret;
-	}
+	virtual ErrorManagement::ErrorType  Next();
 protected:
 	StreamString *ss;
 };
@@ -188,54 +145,23 @@ protected:
 class IOBufferDynStringWrapper: public IOBufferWrapper{
 public:
 
-	IOBufferDynStringWrapper(): IOBufferWrapper(){
-		string = NULL;
-	}
+	/**
+	 * @brief constructor
+	 */
+	IOBufferDynStringWrapper();
 
-	virtual void Wrap(void *ptr){
-		string = reinterpret_cast<DynamicCString *>(ptr);
-	}
+	virtual void Wrap(void *ptr);
 
 	/**
 	 * @brief switch to next stream
 	 */
-	virtual ErrorManagement::ErrorType  Next(){
-		ErrorManagement::ErrorType  ret;
-		ret.notCompleted= !NoMoreSpaceToWrite();
-		string++;
-		return ret;
-	}
+	virtual ErrorManagement::ErrorType  Next();
 protected:
 
 	/**
 	 * @brief dumps the IOBuffer to the Stream
 	 * */
-	virtual bool NoMoreSpaceToWrite() {
-	    bool retval = false;
-		if (string != NULL) {
-	        // no buffering!
-	        if (Buffer() != NULL) {
-
-	            // how much was written?
-	            uint32 writeSize = UsedSize();
-	            if (writeSize == 0u) {
-	                retval = true;
-	            }
-	            // write
-	            else {
-	                if (string->AppendN(Buffer(), writeSize)) {
-	                    retval = true;
-	                    Empty();
-	                }
-	                else {
-	                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferDynStringWrapper: Failed Write");
-	                }
-	            }
-	        }
-	    }
-		return retval;
-	}
-private:
+	virtual bool NoMoreSpaceToWrite();private:
 	/**
 	 * @brief pointer to array of DynamicCString
 	 */
@@ -243,11 +169,181 @@ private:
 };
 
 
+ErrorManagement::ErrorType  IOBufferWrapper::Next(){
+	ErrorManagement::ErrorType  ret;
+	ret.notCompleted = !NoMoreSpaceToWrite();
+	return ret;
+}
+
+ErrorManagement::ErrorType  IOBufferWrapper::Flush(){
+	return NoMoreSpaceToWrite();
+}
+
+
+IOBufferWrapper::IOBufferWrapper(){
+    SetBufferReferencedMemory(&buffer[0],sizeof(buffer),0);
+}
+
+
+IOBufferWrapperStream::IOBufferWrapperStream(uint32 sizeIn): IOBufferWrapper(),size(sizeIn){
+	stream = NULL;
+	pointer = NULL;
+}
+
+void IOBufferWrapperStream::Wrap(void *ptr){
+	pointer = reinterpret_cast<uint8 *>(ptr);
+	stream = reinterpret_cast<StreamI *>(pointer);
+}
+
+ErrorManagement::ErrorType IOBufferWrapperStream::Next(){
+	ErrorManagement::ErrorType  ret;
+	ret.notCompleted= !NoMoreSpaceToWrite();
+
+	if (ret && (size != 0)){
+		pointer += size;
+		stream = reinterpret_cast<StreamI *>(pointer);
+	} else {
+		ret.illegalOperation = true;
+	}
+	// do not know how to skip to next object
+	return ret;
+}
+
+bool IOBufferWrapperStream::NoMoreSpaceToWrite() {
+    bool retval = false;
+	if (stream != NULL) {
+        // no buffering!
+        if (Buffer() != NULL) {
+
+            // how much was written?
+            uint32 writeSize = UsedSize();
+            if (writeSize == 0u) {
+                retval = true;
+            }
+            // write
+            else {
+                if (stream->Write(Buffer(), writeSize)) {
+                    retval = true;
+                    Empty();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "StreamToIOBuffer: Failed Write");
+                }
+            }
+        }
+    }
+	return retval;
+}
+
+IOBufferWrapperSString::IOBufferWrapperSString():IOBufferWrapperStream(sizeof(StreamString)){
+	ss = NULL_PTR(StreamString*);
+}
+
+void IOBufferWrapperSString::Wrap(void *ptr){
+	ss = reinterpret_cast<StreamString *>(ptr);
+	stream = ss;
+}
+
+ErrorManagement::ErrorType  IOBufferWrapperSString::Next(){
+	ErrorManagement::ErrorType  ret;
+	ret.notCompleted= !NoMoreSpaceToWrite();
+	ss++;
+	stream = ss;
+	return ret;
+}
+
+IOBufferDynStringWrapper::IOBufferDynStringWrapper(): IOBufferWrapper(){
+	string = NULL;
+}
+
+void IOBufferDynStringWrapper::Wrap(void *ptr){
+	string = reinterpret_cast<DynamicCString *>(ptr);
+}
+
+/**
+ * @brief switch to next stream
+ */
+ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
+	ErrorManagement::ErrorType  ret;
+	ret.notCompleted= !NoMoreSpaceToWrite();
+	string++;
+	return ret;
+}
+
+/**
+ * @brief dumps the IOBuffer to the Stream
+ * */
+ bool IOBufferDynStringWrapper::NoMoreSpaceToWrite() {
+    bool retval = false;
+	if (string != NULL) {
+        // no buffering!
+        if (Buffer() != NULL) {
+
+            // how much was written?
+            uint32 writeSize = UsedSize();
+            if (writeSize == 0u) {
+                retval = true;
+            }
+            // write
+            else {
+                if (string->AppendN(Buffer(), writeSize)) {
+                    retval = true;
+                    Empty();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferDynStringWrapper: Failed Write");
+                }
+            }
+        }
+    }
+	return retval;
+}
+
+
 /*********************************************************************************************************/
 /*                                                                                                       */
 /*                                TYPE CONVERSION OPERATORS                                              */
 /*                                                                                                       */
 /*********************************************************************************************************/
+
+/**
+ * @brief copies to strings
+ */
+class StringTCO;
+/**
+ * @brief copies integer to strings
+ */
+template <typename integerType>
+class IntegerToStringTCO;
+/**
+ * @brief copies integer to strings
+ */
+class CharToStringTCO;
+/**
+ * @brief copies bitset integers to strings
+ */
+class BitSetToStringTCO;
+/**
+ * @brief copies bitset integers to strings
+ */
+class PointerToStringTCO;
+/**
+ * @brief copies floats to strings
+ */
+template <typename floatType>
+class FloatToStringTCO;
+/**
+ * @brief copies integer to strings
+ */
+class CCStringToStringTCO;
+/**
+ * @brief copies stream to strings
+ */
+class StreamToStringTCO;
+/**
+ * @brief copies integer to strings
+ */
+class SStringToStringTCO;
 
 
 /**
@@ -273,7 +369,6 @@ protected:
 	 * @brief the writer mechanism
 	 */
 	IOBufferWrapper *writer;
-
 };
 
 /**
@@ -398,10 +493,10 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	BitSetToStringTCO(IOBufferWrapper *writerIn,uint8 byteSizeIn,uint8 numberBitShiftIn,uint8 numberBitSizeIn,bool isSignedIn): StringTCO(writerIn){
-		numberBitShift = numberBitShiftIn;
-		numberBitSize  = numberBitSizeIn;
-		byteSize       = byteSizeIn;
+	BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn): StringTCO(writerIn){
+		numberBitSize  = td.numberOfBits;
+		numberBitShift = td.bitOffset;
+		byteSize 	   = SizeFromTDBasicTypeSize(td.basicTypeSize);
 		isSigned       = isSignedIn;
 	}
 
@@ -473,6 +568,7 @@ public:
 	 * @brief constructor
 	 */
 	PointerToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+printf ("PointerToStringTCO\n");
 	}
 
 	/**
@@ -489,6 +585,8 @@ public:
 
 		uint8 *source1 = const_cast<uint8 * >(source);
 		const void **src = reinterpret_cast<const void ** >(source1);
+printf("<%p %p %i>\n",src,*src,numberOfElements);
+#if 0
 		if (!PointerToStream(*writer,*src)){
 			ok.fatalError = true;
 		}
@@ -499,7 +597,7 @@ public:
 				ok.fatalError = PointerToStream(*writer,*src);
 			}
 		}
-
+#endif
 		writer->Flush();
 
 		return ok;
@@ -635,7 +733,7 @@ public:
 	 */
 	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
 		ErrorManagement::ErrorType  ok;
-
+//TODO manage more elements by using their size
 		ok.unsupportedFeature = (numberOfElements!= 1);
 
 		if (ok){
@@ -644,12 +742,16 @@ public:
 			uint8 *srcc = const_cast<uint8 *>(source);
 			StreamString *src = reinterpret_cast<StreamString *>(srcc);
 
-			ok.fatalError = PrintStream(*writer,src,fd);
+			if (!PrintStream(*writer,src,fd)){
+				ok.fatalError = true;
+			}
 			for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 				ok = writer->Next();
 				src++;
 				if (ok){
-					ok.fatalError = PrintStream(*writer,src,fd);
+					if (!PrintStream(*writer,src,fd)){
+						ok.fatalError = true;
+					}
 				}
 			}
 
@@ -695,7 +797,19 @@ public:
 
 		uint8 *sourceD = const_cast<uint8 *>(source);
 		StreamString *ss = reinterpret_cast<StreamString *>(sourceD);
-		ok.fatalError = PrintStream(*writer,ss,fd);
+
+		if (!PrintCCString(*writer,ss->Buffer(),fd)){
+			ok.fatalError = true;
+		}
+		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+			ok = writer->Next();
+			ss++;
+			if (ok){
+				if (!PrintCCString(*writer,ss->Buffer(),fd)){
+					ok.fatalError = true;
+				}
+			}
+		}
 
 		writer->Flush();
 
@@ -791,10 +905,7 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 					}
 					}
 				} else {
-					uint8 numberOfBits = sourceTd.numberOfBits;
-					uint8 bitOffset = sourceTd.bitOffset;
-					uint8 byteSize = SizeFromTDBasicTypeSize(sourceTd.basicTypeSize);
-					tco = new BitSetToStringTCO(wrapper,byteSize,numberOfBits,bitOffset,false);
+					tco = new BitSetToStringTCO(wrapper,sourceTd,false);
 				}
 
 			}break;
@@ -820,7 +931,7 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 					uint8 numberOfBits = sourceTd.numberOfBits;
 					uint8 bitOffset = sourceTd.bitOffset;
 					uint8 byteSize = SizeFromTDBasicTypeSize(sourceTd.basicTypeSize);
-					tco = new BitSetToStringTCO(wrapper,byteSize,numberOfBits,bitOffset,true);
+					tco = new BitSetToStringTCO(wrapper,sourceTd,true);
 				}
 			}break;
 			case TDF_Float:{

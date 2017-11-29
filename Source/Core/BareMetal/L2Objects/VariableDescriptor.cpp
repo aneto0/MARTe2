@@ -309,69 +309,9 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
 	return td;
 }
 
-#if 0  /// limited to APA and AA types
-TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const{
-	const CCString validModifiers = "APp";
-	const CCString pointerModifiers = "Pp";
-
-	dimensions.Truncate(0);
-
-    DimensionInfo di;
-
-    CCString modifierString = modifiers;
-    CCString oldModifierString = modifiers;
-    CCString oldoldModifierString = modifiers;
-    char8 previousModifier = '\0';
-
-    GetLayerInfo(modifierString,di.type,di.numberOfElements);
-
-    while ((di.type != '\0') && validModifiers.In(di.type)){
-    	if (di.type == 'A'){
-    		if (pointerModifiers.In(previousModifier)){
-    			di.type = previousModifier;
-    		}
-    		dimensions.Append(di);
-    	}
-		previousModifier = di.type;
-
-    	// pointers. Double PP sequence not valid here
-		if (pointerModifiers.In(previousModifier) &&
-		    pointerModifiers.In(di.type)){
-			di.type = 'X'; // force exit on invalid
-		}  else {
-			// save pointers to allow two levels of undo
-	    	oldoldModifierString = oldModifierString;
-	    	oldModifierString = modifierString;
-	        GetLayerInfo(modifierString,di.type,di.numberOfElements);
-		}
-    }
-
-	TypeDescriptor td = typeDescriptor;
-
-    if (di.type != '\0'){
-        // exit because of a PP,PZ,PD.or....
-    	if (pointerModifiers.In(previousModifier)){
-        	modifierString = oldoldModifierString;
-        // exit because of a V,M..
-    	} else {
-        	modifierString = oldModifierString;
-    	}
-
-        VariableDescriptor dummy;
-        dummy.modifiers = modifierString.GetList();
-        dummy.typeDescriptor = typeDescriptor;
-
-        td = dummy.GetSummaryTypeDescriptor();
-    }
-
-	return td;
-}
-
-#else // extended to all types
-
 static inline char8 toUpper(char8 c){
-	if ((c >='A') && (c <= 'Z')){
-		c = (c - 'A') + 'a';
+	if ((c >='a') && (c <= 'z')){
+		c = (c - 'a') + 'A';
 	}
 	return c;
 }
@@ -389,6 +329,7 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
     CCString savedModifierString = modifiers;
     DimensionInfo di;
 
+    // stores
     char8 lastPointer = '\0';
 
     di.type = '?';
@@ -396,8 +337,11 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
     	previousModifierString = modifierString;
         GetLayerInfo(modifierString,di.type,di.numberOfElements);
         char8 c = toUpper(di.type);
+        // not a type descriptor yet
         if (c != '\0'){
+        	// Array Vector or Matrix
         	if (immediateModifiers.In(c)){
+        		// PA == F  others: errors
         		if (lastPointer != '\0'){
         			if (c == 'A'){
     					di.type = 'f';
@@ -405,15 +349,17 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         					di.type = 'F';
         	        		dimensions.Append(di);
         				}
-        			} else {
+        			} else { // C != A
             			// error PV PM etc...
         				td = InvalidType(0);
         			}
-        		} else {
+        		} else { // lastPointer == 0
             		dimensions.Append(di);
         		}
-        	} else
+        	} else // NOT Array Vector or Matrix
+        	// Zero Terminated Arrays
         	if (prefixedModifiers.In(c)){
+        		// there must be a P before!
         		if (lastPointer != '\0'){
             		dimensions.Append(di);
             		lastPointer = '\0';
@@ -421,30 +367,51 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         			//error ZSD without prefix
         			// stop and exit
         			di.type = '\0';
+    				td = InvalidType(0);
         			// rewind to this layer
         			modifierString = previousModifierString;
         		}
         	} else
+        	// found a pointer.
         	if (c == 'P'){
+        		// check for a PP sequence
         		if (lastPointer != '\0'){
         			//PP!
         			// stop and exit
         			di.type = '\0';
+    				td = PointerType;
         			modifierString = savedModifierString;
         		} else {
+        			//
         			lastPointer = di.type;
         			savedModifierString = previousModifierString;
         		}
         	}
+        // handle the final case
         } else { // c == 0
+
+        	// handle the P0 case as PA1 case
     		if (lastPointer != '\0'){
-    			//P0!
+    			di.type = 'F';
+    			di.numberOfElements = 1;
+        		dimensions.Append(di);
+    			di.type = '\0';
+
+#if 0
+        		//P0!
     			// restore one level
     			modifierString = previousModifierString;
+				td = PointerType;
+#endif
+    		} else {
+    			di.type = 'A';
+    			di.numberOfElements = 1;
+        		dimensions.Append(di);
+    			di.type = '\0';
     		}
         }
     }
-
+/*
 	if (!td.SameAs(InvalidType(0))){
         VariableDescriptor dummy;
         dummy.modifiers = modifierString.GetList();
@@ -452,11 +419,11 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
 
         td = dummy.GetSummaryTypeDescriptor();
 	}
-
+*/
 	return td;
 }
 
-#endif
+
 
 
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
@@ -933,7 +900,6 @@ static ErrorManagement::ErrorType LayerOperate(
 		const TypeConversionOperatorI &op
 		){
 	ErrorManagement::ErrorType ok;
-	ok.internalSetupError = (destDimensions.GetSize() != sourceDimensions.GetSize());
 
 	uint32 sourceNumberOfElements = 1;
 	uint32 sourceElementSize = 1;
@@ -957,6 +923,24 @@ static ErrorManagement::ErrorType LayerOperate(
 		}
 	}
 
+#if 1
+	if (ok){
+		if (destDimensions.GetSize() == 1){
+			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
+		} else {
+			// skip forward
+			sourceDimensions++;
+			destDimensions++;
+			uint32 ix = 0;
+			for (ix = 0; (ix < sourceNumberOfElements) && ok; ix++){
+				ok = LayerOperate(sourceDimensions,sourcePtr,sourceTd,destDimensions,destPtr,destTd,op);
+				sourcePtr+= sourceElementSize;
+				destPtr+= destElementSize;
+			}
+		}
+	}
+
+#else
 	if (ok){
 		if (destDimensions.GetSize() <= 1){
 			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
@@ -972,7 +956,7 @@ static ErrorManagement::ErrorType LayerOperate(
 			}
 		}
 	}
-
+#endif
 	return ok;
 }
 
@@ -983,6 +967,7 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 		) const {
 
 	ErrorManagement::ErrorType ok;
+	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
 	DynamicZeroTerminatedArray<DimensionInfo,4> sourceDimensions;
     TypeDescriptor sourceTd = GetDimensionsInformation(sourceDimensions);
@@ -990,12 +975,15 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	DynamicZeroTerminatedArray<DimensionInfo,4> destDimensions;
     TypeDescriptor destTd = destVd.GetDimensionsInformation(destDimensions);
 
-    const TypeConversionOperatorI *tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd);
+	ok.internalSetupError = (destDimensions.GetSize() != sourceDimensions.GetSize()) || (destDimensions.GetSize() == 0);
 
-    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
-    	ok.unsupportedFeature = true;
-        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Conversion Operator not found");
-    }
+	if (ok){
+		tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd);
+	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
+	    	ok.unsupportedFeature = true;
+	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Conversion Operator not found");
+	    }
+	}
 
     if (ok){
     	ok = LayerOperate(sourceDimensions.GetList(),sourcePtr,sourceTd,destDimensions.GetList(),destPtr,destTd,*tco);

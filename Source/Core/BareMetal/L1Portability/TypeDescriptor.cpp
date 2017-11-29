@@ -76,6 +76,12 @@ uint32 TypeDescriptor::FullSize(const uint8 *address)const{
 	if (IsCharStreamType() && (address != NULL)){
 		TD_FullType fullType = this->fullType;
 		switch(fullType){
+		case TDF_Stream:
+			/** only works as StreamString is sole descendant of StreamI */
+		case TDF_SString:{
+			StreamI *s = reinterpret_cast<StreamI *>(const_cast<uint8 *>(address));
+			size += s->Size();
+		}break;
 		case TDF_CString:
 		case TDF_CCString:
 		case TDF_DynamicCString:{

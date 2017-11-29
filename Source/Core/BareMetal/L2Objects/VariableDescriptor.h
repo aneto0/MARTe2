@@ -155,10 +155,18 @@ public:
 			uint8 maxDepth=100,
 			CCString modifierString = emptyString) const;
 
+    /**
+     * @brief copies the variable and converts it to the destination type
+     * @details copies pointers to Arrays and to basic types as they were Arrays or basic types if pointer is valid
+     * @param[in] sourcePtr, the pointer to the variable to be copied
+     * @param[in] destPtr, the pointer to the destination
+     * @param[in] destVd, the variable descriptor of the destination
+     * @return true if all ok or the error
+     */
     ErrorManagement::ErrorType VariableDescriptor::CopyTo(
     		const uint8 *sourcePtr,
     			  uint8 *destPtr,
-    		VariableDescriptor destVd
+				  VariableDescriptor destVd
     		) const ;
 
     /**
@@ -184,12 +192,11 @@ public:
 
     /**
      * @brief obtains information about multidimensional arrays
-     * @details only handles arrays and pointers to array. Vector and Matrix or ZTA terminate the scan
+     * @details handles arrays, pointers to array, Vectors, Matrices and ZTA terminated
      * @param[out] dimensions will be cleaned and reallocated to contain the list of dimensions.
-     * Each dimension can be positive, negative.
-     * Positive refers to array dimensions Ann
-     * Negative refers to pointer to arrays dimensions PAnn
-     * @return the type descriptor of the array element. It uses GetSummaryTypeDescriptor()
+     * Pointer to Arrays are coded as F, Pointer to ZTA simply with the ZTA code
+     * It produces at least one dimension if there are no errors
+     * @return the type descriptor of the array element.
      */
     TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const;
 private:
