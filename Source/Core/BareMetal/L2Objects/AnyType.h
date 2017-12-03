@@ -170,12 +170,17 @@ public:
      */
     ErrorManagement::ErrorType  	MultipleDereference (CCString CExpression);
 
-
     /**
      * @briefs copies the content to destination.
      * Number of dimensions must be the same or compatible
      */
     ErrorManagement::ErrorType  	CopyTo(AnyType destination);
+
+    /**
+     * @briefs compare content with destination.
+     * Number of dimensions must be the same or compatible
+     */
+    ErrorManagement::ErrorType  	CompareWith(AnyType destination);
 
     /**
      * @brief pointer2Variable = NULL

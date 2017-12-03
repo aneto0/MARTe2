@@ -45,19 +45,29 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-
 /**
  * @brief data conversion functors
  */
 class DLL_API TypeConversionOperatorI{
 public:
 	/**
-	 * @brief data conversion method
+	 * @brief data conversion-copy/comparison method
+	 * @param[in] dest   pointer to the area to be copied/compared to
+	 * @param[in] source pointer to the area to be read an converted
+	 * @param[in] numberOfElements number of elements to be processed
+	 * @details converts each element pointed by source and copy/compare the conversion to dest
+	 * @return true if no error and if the comparison was ok. comparisonFailure is returned in case of different content
 	 */
 	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const =0;
 
 	/**
-	 * @brief data conversion method
+	 * @brief data conversion-copy/comparison method
+	 * @param[in] dest   pointer to the area to be copied/compared to
+	 * @param[in] source pointer to the area to be read an converted
+	 * @param[in] numberOfElements number of elements to be processed
+	 * @param[in] fd alternative formatDescriptor for the conversion. Only used to convert to string/stream
+	 * @details converts each element pointed by source and copy/compare the conversion to dest
+	 * @return true if no error and if the comparison was ok. comparisonFailure is returned in case of different content
 	 */
 	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd){
 		return Convert(dest, source,numberOfElements);
@@ -69,9 +79,17 @@ public:
 	virtual ~TypeConversionOperatorI(){}
 
 	/*
+	 * @brief sets the compare bit
+	 */
+	TypeConversionOperatorI(){
+
+	}
+
+	/*
 	 * @brief default format
 	 */
 	static const FormatDescriptor format;
+
 };
 
 

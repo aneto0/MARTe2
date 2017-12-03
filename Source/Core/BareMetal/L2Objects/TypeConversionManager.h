@@ -66,7 +66,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 * The operator must be destroyed at the end of its use
 	 */
-	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd) const ;
+	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) const ;
 
     /**
      * @brief Singleton access to the database.

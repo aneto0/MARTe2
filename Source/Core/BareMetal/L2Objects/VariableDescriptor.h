@@ -156,17 +156,19 @@ public:
 			CCString modifierString = emptyString) const;
 
     /**
-     * @brief copies the variable and converts it to the destination type
+     * @brief converts the variable to the destination type and then copies/compares to/with dest
      * @details copies pointers to Arrays and to basic types as they were Arrays or basic types if pointer is valid
      * @param[in] sourcePtr, the pointer to the variable to be copied
      * @param[in] destPtr, the pointer to the destination
      * @param[in] destVd, the variable descriptor of the destination
+     * @param[in] isCompare, true means comparison
      * @return true if all ok or the error
      */
-    ErrorManagement::ErrorType VariableDescriptor::CopyTo(
+    ErrorManagement::ErrorType CopyTo(
     		const uint8 *sourcePtr,
     			  uint8 *destPtr,
-				  VariableDescriptor destVd
+				  VariableDescriptor destVd,
+				  bool isCompare= false
     		) const ;
 
     /**

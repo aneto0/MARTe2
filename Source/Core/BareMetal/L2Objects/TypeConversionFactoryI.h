@@ -65,7 +65,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 * Must be destroyed after its use
 	 */
-	virtual TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd)=0;
+	virtual TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare)=0;
 
 
 };

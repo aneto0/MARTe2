@@ -194,7 +194,9 @@ public:
 
     /**
      * @brief Gets the cursor position.
-     * @return the current position, namely the size from the beginning to the cursor. */
+     * @return the current position, namely the size from the beginning to the cursor.
+     * @detail This is not the position in the stream, but that in the buffer
+     */
     inline uint32 Position() const;
 
     /**

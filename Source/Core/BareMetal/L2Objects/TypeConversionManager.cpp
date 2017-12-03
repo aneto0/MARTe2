@@ -42,12 +42,12 @@ TypeConversionManager &TypeConversionManager::Instance() {
 }
 
 
-const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd) const {
+const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) const {
 	uint32 ix = 0;
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
 		TypeConversionFactoryI *tcf = factories.Get(ix);
-		tco = tcf->GetOperator(destTd,sourceTd);
+		tco = tcf->GetOperator(destTd,sourceTd,isCompare);
 		ix++;
 	}
 

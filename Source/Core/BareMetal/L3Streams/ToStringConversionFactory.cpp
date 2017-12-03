@@ -35,6 +35,8 @@ namespace MARTe{
 /*                                                                                                       */
 /*********************************************************************************************************/
 
+
+
 /**
  * @brief provides a generic interface between IOBuffer and arrays of character streams
  */
@@ -80,6 +82,7 @@ private:
 	 * @brief buffer for the IOBuffer
 	 */
 	char buffer[32];
+
 };
 
 /**
@@ -129,13 +132,20 @@ public:
 	 */
 	IOBufferWrapperSString();
 
+	/**
+	 * @brief interfaces to the Stream
+	 */
 	virtual void Wrap(void *ptr);
 
 	/**
 	 * @brief switch to next stream
 	 */
 	virtual ErrorManagement::ErrorType  Next();
+
 protected:
+	/**
+	 *
+	 */
 	StreamString *ss;
 };
 
@@ -150,6 +160,9 @@ public:
 	 */
 	IOBufferDynStringWrapper();
 
+	/**
+	 * @brief interfaces to the Stream
+	 */
 	virtual void Wrap(void *ptr);
 
 	/**
@@ -161,11 +174,57 @@ protected:
 	/**
 	 * @brief dumps the IOBuffer to the Stream
 	 * */
-	virtual bool NoMoreSpaceToWrite();private:
+	virtual bool NoMoreSpaceToWrite();
+
+private:
 	/**
 	 * @brief pointer to array of DynamicCString
 	 */
 	DynamicCString *string;
+};
+
+/**
+ *
+ */
+class IOBufferCStringCompareWrapper: public IOBufferWrapper{
+public:
+
+	/**
+	 * @brief constructor
+	 */
+	IOBufferCStringCompareWrapper();
+
+	/**
+	 * @brief interfaces to the Stream
+	 */
+	virtual void Wrap(void *ptr);
+
+	/**
+	 * @brief switch to next stream
+	 */
+	virtual ErrorManagement::ErrorType  Next();
+protected:
+
+	/**
+	 * @brief dumps the IOBuffer to the Stream
+	 * */
+	virtual bool NoMoreSpaceToWrite();
+
+private:
+	/**
+	 * @brief pointer to array of CCString
+	 */
+	CCString *string;
+
+	/**
+	 * @brief pointer to current comparison point
+	 */
+	CCString currentString;
+
+	/**
+	 * the result
+	 */
+	bool isSame;
 };
 
 
@@ -179,11 +238,9 @@ ErrorManagement::ErrorType  IOBufferWrapper::Flush(){
 	return NoMoreSpaceToWrite();
 }
 
-
-IOBufferWrapper::IOBufferWrapper(){
+IOBufferWrapper::IOBufferWrapper() {
     SetBufferReferencedMemory(&buffer[0],sizeof(buffer),0);
 }
-
 
 IOBufferWrapperStream::IOBufferWrapperStream(uint32 sizeIn): IOBufferWrapper(),size(sizeIn){
 	stream = NULL;
@@ -197,7 +254,10 @@ void IOBufferWrapperStream::Wrap(void *ptr){
 
 ErrorManagement::ErrorType IOBufferWrapperStream::Next(){
 	ErrorManagement::ErrorType  ret;
+
 	ret.notCompleted= !NoMoreSpaceToWrite();
+
+	Empty();
 
 	if (ret && (size != 0)){
 		pointer += size;
@@ -228,6 +288,7 @@ bool IOBufferWrapperStream::NoMoreSpaceToWrite() {
                 }
                 else {
                     REPORT_ERROR(ErrorManagement::FatalError, "StreamToIOBuffer: Failed Write");
+                    retval = false;
                 }
             }
         }
@@ -247,6 +308,8 @@ void IOBufferWrapperSString::Wrap(void *ptr){
 ErrorManagement::ErrorType  IOBufferWrapperSString::Next(){
 	ErrorManagement::ErrorType  ret;
 	ret.notCompleted= !NoMoreSpaceToWrite();
+	Empty();
+
 	ss++;
 	stream = ss;
 	return ret;
@@ -260,19 +323,14 @@ void IOBufferDynStringWrapper::Wrap(void *ptr){
 	string = reinterpret_cast<DynamicCString *>(ptr);
 }
 
-/**
- * @brief switch to next stream
- */
 ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
 	ErrorManagement::ErrorType  ret;
 	ret.notCompleted= !NoMoreSpaceToWrite();
+	Empty();
 	string++;
 	return ret;
 }
 
-/**
- * @brief dumps the IOBuffer to the Stream
- * */
  bool IOBufferDynStringWrapper::NoMoreSpaceToWrite() {
     bool retval = false;
 	if (string != NULL) {
@@ -299,7 +357,50 @@ ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
 	return retval;
 }
 
+IOBufferCStringCompareWrapper::IOBufferCStringCompareWrapper(): IOBufferWrapper(){
+	string = NULL;
+	isSame = false;
+}
 
+void IOBufferCStringCompareWrapper::Wrap(void *ptr){
+	string = reinterpret_cast<CCString *>(ptr);
+	currentString = string[0];
+	isSame = true;
+}
+
+ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
+	ErrorManagement::ErrorType  ret;
+	NoMoreSpaceToWrite();
+	ret.comparisonFailure = !isSame;
+	string++;
+	currentString = string[0];
+	return ret;
+}
+
+ bool IOBufferCStringCompareWrapper::NoMoreSpaceToWrite() {
+    bool retval = false;
+	if (!currentString.IsNullPtr() && isSame) {
+        // no buffering!
+        if (Buffer() != NULL) {
+
+            // how much was written?
+            uint32 writeSize = UsedSize();
+            if (writeSize == 0u) {
+                retval = true;
+            }
+            // write
+            else {
+            	if (MemoryOperationsHelper::Compare(Buffer(),currentString.GetList(),writeSize)==0){
+                    retval = true;
+                    Empty();
+                } else {
+                	isSame = false;
+                }
+            }
+        }
+    }
+	return retval;
+}
 /*********************************************************************************************************/
 /*                                                                                                       */
 /*                                TYPE CONVERSION OPERATORS                                              */
@@ -355,21 +456,28 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	StringTCO(IOBufferWrapper *writerIn): writer(writerIn){
-	}
-
+	StringTCO(IOBufferWrapper *writerIn);
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~StringTCO(){
-		delete writer;
-	}
+	virtual  ~StringTCO();
 protected:
 	/*
 	 * @brief the writer mechanism
 	 */
 	IOBufferWrapper *writer;
 };
+
+StringTCO::StringTCO(IOBufferWrapper *writerIn): writer(writerIn){
+}
+
+/**
+ * @brief destructor
+ */
+StringTCO::~StringTCO(){
+	delete writer;
+}
+
 
 /**
  * @brief copies integer to strings
@@ -585,8 +693,8 @@ printf ("PointerToStringTCO\n");
 
 		uint8 *source1 = const_cast<uint8 * >(source);
 		const void **src = reinterpret_cast<const void ** >(source1);
-printf("<%p %p %i>\n",src,*src,numberOfElements);
-#if 0
+//printf("<%p %p %i>\n",src,*src,numberOfElements);
+#if 1
 		if (!PointerToStream(*writer,*src)){
 			ok.fatalError = true;
 		}
@@ -850,8 +958,7 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd);
-
+	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
 
 private:
 
@@ -864,18 +971,26 @@ ToStringConversionFactory::ToStringConversionFactory(){
 ToStringConversionFactory::~ToStringConversionFactory(){
 }
 
-TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd){
+TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
-	if (destTd.SameTypeAs(StreamType(0))){
-		wrapper = new IOBufferWrapperStream(destTd.objectSize);
-	} else
-	if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
-		wrapper = new IOBufferWrapperSString();
-	} else
-	if (destTd.SameAs(DynamicCharString)){
-		wrapper = new IOBufferDynStringWrapper();
+	if (isCompare){
+		if (destTd.SameAs(DynamicCharString) ||
+			destTd.SameTypeAs(ConstCharString(sizeof(CCString))) ||
+		    destTd.SameTypeAs(CharString)){
+			wrapper = new IOBufferCStringCompareWrapper();
+		}
+	} else {
+		if (destTd.SameTypeAs(StreamType(0))){
+			wrapper = new IOBufferWrapperStream(destTd.objectSize);
+		} else
+		if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
+			wrapper = new IOBufferWrapperSString();
+		} else
+		if (destTd.SameAs(DynamicCharString)){
+			wrapper = new IOBufferDynStringWrapper();
+		}
 	}
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString

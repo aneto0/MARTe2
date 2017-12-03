@@ -923,7 +923,6 @@ static ErrorManagement::ErrorType LayerOperate(
 		}
 	}
 
-#if 1
 	if (ok){
 		if (destDimensions.GetSize() == 1){
 			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
@@ -940,30 +939,15 @@ static ErrorManagement::ErrorType LayerOperate(
 		}
 	}
 
-#else
-	if (ok){
-		if (destDimensions.GetSize() <= 1){
-			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
-		} else {
-			// skip forward
-			sourceDimensions++;
-			destDimensions++;
-			uint32 ix = 0;
-			for (ix = 0; (ix < sourceNumberOfElements) && ok; ix++){
-				ok = LayerOperate(sourceDimensions,sourcePtr,sourceTd,destDimensions,destPtr,destTd,op);
-				sourcePtr+= sourceElementSize;
-				destPtr+= destElementSize;
-			}
-		}
-	}
-#endif
 	return ok;
 }
+
 
 ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 		const uint8 *sourcePtr,
 			  uint8 *destPtr,
-			  VariableDescriptor destVd
+			  VariableDescriptor destVd,
+			  bool isCompare
 		) const {
 
 	ErrorManagement::ErrorType ok;
@@ -978,7 +962,7 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	ok.internalSetupError = (destDimensions.GetSize() != sourceDimensions.GetSize()) || (destDimensions.GetSize() == 0);
 
 	if (ok){
-		tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd);
+		tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd,isCompare);
 	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
 	    	ok.unsupportedFeature = true;
 	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Conversion Operator not found");

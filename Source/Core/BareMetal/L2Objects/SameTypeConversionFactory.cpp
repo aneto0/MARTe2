@@ -44,19 +44,12 @@ public:
      * @brief allow access to optimal functor for data conversion
 	 *
 	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd);
+	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
 
 
 private:
 
 } sameTypeConversionFactory;
-
-SameTypeConversionFactory::SameTypeConversionFactory(){
-	TypeConversionManager::Instance().Register(this);
-}
-
-SameTypeConversionFactory::~SameTypeConversionFactory(){
-}
 
 /**
  * @brief simple copy functor
@@ -67,23 +60,16 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	CopyTCO(uint32 dataSizeIn){
-		dataSize = dataSizeIn;
-	}
+	CopyTCO(uint32 dataSizeIn,bool isCompare);
 
 	/**
 	 */
-	virtual ~CopyTCO(){}
+	virtual ~CopyTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		ErrorManagement::ErrorType  ok;
-		uint32 toCopySize = dataSize * numberOfElements;
-		MemoryOperationsHelper::Copy(dest,source,toCopySize);
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 
 private:
 	/*
@@ -91,9 +77,27 @@ private:
 	 */
 	uint32 dataSize;
 
+	/*
+	 * @brief if comparison not copy
+	 */
+	const bool compare;
+
 };
 
-TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd){
+
+/************************************************************************************************/
+/*   IMPLEMENTATION */
+/************************************************************************************************/
+
+
+SameTypeConversionFactory::SameTypeConversionFactory(){
+	TypeConversionManager::Instance().Register(this);
+}
+
+SameTypeConversionFactory::~SameTypeConversionFactory(){
+}
+
+TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
 	// sets the sourceTd dataIsConstant to be false
@@ -105,13 +109,35 @@ TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescri
 	//compare source and dest
 	if (destTd.SameAs(td)){
 		if (destTd.IsBasicType() || destTd.IsStructuredData()){
-			tco = new CopyTCO(td.StorageSize());
+			tco = new CopyTCO(td.StorageSize(),isCompare);
 		}
 	}
 
 	return tco;
 }
 
+
+CopyTCO::CopyTCO(uint32 dataSizeIn,bool isCompare):compare(isCompare){
+	dataSize = dataSizeIn;
+}
+
+
+CopyTCO::~CopyTCO(){
+
+}
+
+ErrorManagement::ErrorType CopyTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	ErrorManagement::ErrorType  ok;
+	uint32 toCopySize = dataSize * numberOfElements;
+	if (!compare){
+		MemoryOperationsHelper::Copy(dest,source,toCopySize);
+	} else {
+		if (MemoryOperationsHelper::Compare(dest,source,toCopySize)!= 0){
+			ok.comparisonFailure = true;
+		}
+	}
+	return ok;
+}
 
 
 } //MARTe
