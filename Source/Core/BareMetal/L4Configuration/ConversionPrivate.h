@@ -47,16 +47,49 @@
 
 namespace MARTe {
 
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToFloatGeneric(const CCString input,
-                                 float32 * const number,
-                                 const uint32 destBitSize);
 
+bool StringToInteger(const char8 * const input,uint8  &number);
+bool StringToInteger(const char8 * const input,uint16 &number);
+bool StringToInteger(const char8 * const input,uint32 &number);
+bool StringToInteger(const char8 * const input,uint64 &number);
+bool StringToInteger(const char8 * const input,int8   &number);
+bool StringToInteger(const char8 * const input,int16  &number);
+bool StringToInteger(const char8 * const input,int32  &number);
+bool StringToInteger(const char8 * const input,int64  &number);
+bool StringToFloat  (const char8 * const input,float  &number);
+bool StringToFloat  (const char8 * const input,double &number);
+bool IntegerToFloat (uint8  source,float  &dest);
+bool IntegerToFloat (uint16 source,float  &dest);
+bool IntegerToFloat (uint32 source,float  &dest);
+bool IntegerToFloat (uint64 source,float  &dest);
+bool IntegerToFloat (uint8  source,double &dest);
+bool IntegerToFloat (uint16 source,double &dest);
+bool IntegerToFloat (uint32 source,double &dest);
+bool IntegerToFloat (uint64 source,double &dest);
+bool IntegerToFloat ( int8  source,float  &dest);
+bool IntegerToFloat ( int16 source,float  &dest);
+bool IntegerToFloat ( int32 source,float  &dest);
+bool IntegerToFloat ( int64 source,float  &dest);
+bool IntegerToFloat ( int8  source,double &dest);
+bool IntegerToFloat ( int16 source,double &dest);
+bool IntegerToFloat ( int32 source,double &dest);
+bool IntegerToFloat ( int64 source,double &dest);
+
+
+#if 0
+/**
+ * This conversion provides integer with sufficent size to host that many bits
+ */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool StringToIntegerGeneric(const CCString source,
                                    uint8 * const dest,
                                    const uint32 destBitSize,
                                    const bool isSigned);
+
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+extern bool StringToFloatGeneric(const CCString input,
+                                 float32 * const number,
+                                 const uint32 destBitSize);
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool IntegerToFloatGeneric(const uint8 * const source,
@@ -71,9 +104,7 @@ extern bool FloatToIntegerGeneric(const float32 * const source,
                                   uint8 * const dest,
                                   const uint32 destBitSize,
                                   const bool isSigned);
-
-
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -31,6 +31,8 @@
 
 #include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "ConversionPrivate.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +51,7 @@ namespace MARTe {
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename IntegerType, typename FloatType>
-static bool IntegerToFloat(const IntegerType source,
+static bool IntegerToFloatT(const IntegerType source,
                            FloatType &dest) {
 
     bool ret = true;
@@ -70,6 +72,26 @@ static bool IntegerToFloat(const IntegerType source,
 
 }
 
+bool IntegerToFloat(uint8  source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint16 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint32 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint64 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint8  source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint16 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint32 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat(uint64 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int8  source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int16 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int32 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int64 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int8  source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int16 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int32 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool IntegerToFloat( int64 source,double &dest){	return IntegerToFloatT(source,dest); }
+
+
+
+#if 0
 /**
  * @brief Reinterprets the generic source and destination pointers in input recognizing the source integer type and the destination
  * float type by the bit size.
@@ -176,4 +198,5 @@ bool IntegerToFloatGeneric(const uint8 * const source,
     return ret;
 }
 
+#endif
 }

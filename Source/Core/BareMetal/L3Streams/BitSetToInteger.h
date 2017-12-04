@@ -123,7 +123,7 @@ static inline bool BitSetToBitSet(T *& destination,
  */
 template<typename T, typename T2>
 static inline bool BitSetToInteger(T2 & dest,
-                                   T *& source,
+                                   const T *& source,
                                    uint8 & sourceBitShift,
                                    const uint8 sourceBitSize,
                                    const bool sourceIsSigned);
@@ -151,7 +151,7 @@ static inline bool IntegerToBitSet(T *& destination,
                                    uint8 & destinationBitShift,
                                    const uint8 destinationBitSize,
                                    const bool destinationIsSigned,
-                                   T2 & src);
+                                   const T2 & src);
 }
 
 /*---------------------------------------------------------------------------*/

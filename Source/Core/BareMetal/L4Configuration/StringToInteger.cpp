@@ -34,6 +34,8 @@
 #include "BitSetToInteger.h"
 #include "IOBuffer.h"
 #include "ErrorManagement.h"
+#include "ConversionPrivate.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -409,7 +411,7 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToInteger(const char8 * const input,
+static bool StringToIntegerT(const char8 * const input,
                             T &number) {
 
     number = static_cast<T>(0);
@@ -447,6 +449,32 @@ static bool StringToInteger(const char8 * const input,
     return ret;
 }
 
+bool StringToInteger(const char8 * const input,uint8 &number) {
+	return StringToIntegerT<uint8>(input,number);
+}
+bool StringToInteger(const char8 * const input,uint16 &number) {
+	return StringToIntegerT<uint16>(input,number);
+}
+bool StringToInteger(const char8 * const input,uint32 &number) {
+	return StringToIntegerT<uint32>(input,number);
+}
+bool StringToInteger(const char8 * const input,uint64 &number) {
+	return StringToIntegerT<uint64>(input,number);
+}
+bool StringToInteger(const char8 * const input,int8 &number) {
+	return StringToIntegerT<int8>(input,number);
+}
+bool StringToInteger(const char8 * const input,int16 &number) {
+	return StringToIntegerT<int16>(input,number);
+}
+bool StringToInteger(const char8 * const input,int32 &number) {
+	return StringToIntegerT<int32>(input,number);
+}
+bool StringToInteger(const char8 * const input,int64 &number) {
+	return StringToIntegerT<int64>(input,number);
+}
+
+#if 0
 /**
  * @brief Reinterprets the generic destination pointer in input recognizing the related integer type by the bit size.
  * @param[in] source is the string to be converted in integer number.
@@ -515,5 +543,5 @@ bool StringToIntegerGeneric(const char8* const source,
     }
     return ret;
 }
-
+#endif
 }

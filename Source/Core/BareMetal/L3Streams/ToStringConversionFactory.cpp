@@ -446,7 +446,6 @@ class StreamToStringTCO;
  */
 class SStringToStringTCO;
 
-
 /**
  * @brief copies to strings
  */
@@ -468,17 +467,6 @@ protected:
 	IOBufferWrapper *writer;
 };
 
-StringTCO::StringTCO(IOBufferWrapper *writerIn): writer(writerIn){
-}
-
-/**
- * @brief destructor
- */
-StringTCO::~StringTCO(){
-	delete writer;
-}
-
-
 /**
  * @brief copies integer to strings
  */
@@ -490,49 +478,22 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	IntegerToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	IntegerToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~IntegerToStringTCO(){}
+	virtual  ~IntegerToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
-		if (writer != NULL){
-			writer->Wrap(dest);
-			uint32 ix = 0;
-			const integerType *pIn = (reinterpret_cast<const integerType *>(source));
-			if (!IntegerToStream(*writer,*pIn++,fd)){
-				ok.fatalError = true;
-			}
-			for (ix = 1;(ix<numberOfElements) && ok;ix++){
-				ok = writer->Next();
-
-				if (ok){
-					if (!IntegerToStream(*writer,*pIn++,fd)){
-						ok.fatalError = true;
-					}
-				}
-			}
-			writer->Flush();
-		} else {
-			ok.internalSetupError = true;
-		}
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 };
 
 /**
@@ -545,51 +506,23 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	CharToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	CharToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~CharToStringTCO(){}
+	virtual  ~CharToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
-		if (writer != NULL){
-			writer->Wrap(dest);
-			uint32 ix = 0;
-			const char *pIn = (reinterpret_cast<const char *>(source));
-			if (!writer->PutC(*pIn)){
-				ok.fatalError = true;
-			}
-			for (ix = 1;(ix<numberOfElements) && ok;ix++){
-				ok = writer->Next();
-
-				if (ok){
-					if (!writer->PutC(*pIn)){
-						ok.fatalError = true;
-					}
-				}
-			}
-			writer->Flush();
-		} else {
-			ok.internalSetupError = true;
-		}
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 };
-
 
 /**
  * @brief copies bitset integers to strings
@@ -601,50 +534,22 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn): StringTCO(writerIn){
-		numberBitSize  = td.numberOfBits;
-		numberBitShift = td.bitOffset;
-		byteSize 	   = SizeFromTDBasicTypeSize(td.basicTypeSize);
-		isSigned       = isSignedIn;
-	}
+	BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~BitSetToStringTCO(){}
+	virtual  ~BitSetToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &td) const{
-		ErrorManagement::ErrorType  ok;
-		writer->Wrap(dest);
-
-		if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
-			ok.fatalError = true;
-		}
-
-		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok = writer->Next();
-
-			source += byteSize;
-			if (ok){
-				if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
-					ok.fatalError = true;
-				}
-			}
-		}
-		writer->Flush();
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &td) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 
 private:
 	/**
@@ -675,42 +580,17 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	PointerToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-printf ("PointerToStringTCO\n");
-	}
+	PointerToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~PointerToStringTCO(){}
+	virtual  ~PointerToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		ErrorManagement::ErrorType  ok;
-		writer->Wrap(dest);
-
-		uint8 *source1 = const_cast<uint8 * >(source);
-		const void **src = reinterpret_cast<const void ** >(source1);
-//printf("<%p %p %i>\n",src,*src,numberOfElements);
-#if 1
-		if (!PointerToStream(*writer,*src)){
-			ok.fatalError = true;
-		}
-		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			src++;
-			if (ok){
-				ok.fatalError = PointerToStream(*writer,*src);
-			}
-		}
-#endif
-		writer->Flush();
-
-		return ok;
-	}
-
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 };
 
 /**
@@ -724,46 +604,22 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	FloatToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	FloatToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~FloatToStringTCO(){}
+	virtual  ~FloatToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
-		writer->Wrap(dest);
-
-		const floatType *src = reinterpret_cast<const floatType *>(source);
-		if (!FloatToStream(*writer,*src,fd)){
-			ok.fatalError = true;
-		}
-
-		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			src++;
-			if (ok){
-				if (!FloatToStream(*writer,*src,fd)){
-					ok.fatalError = true;
-				}
-			}
-		}
-		writer->Flush();
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 };
 
 /**
@@ -776,46 +632,22 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	CCStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	CCStringToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~CCStringToStringTCO(){}
+	virtual  ~CCStringToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
-		writer->Wrap(dest);
-
-		const CCString *src = reinterpret_cast<const CCString *>(source);
-		if (!PrintCCString(*writer,*src,fd)){
-			ok.fatalError = true;
-		}
-		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-			ok = writer->Next();
-			src++;
-			if (ok){
-				if (!PrintCCString(*writer,*src,fd)){
-					ok.fatalError = true;
-				}
-			}
-		}
-
-		writer->Flush();
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 };
 
 /**
@@ -828,53 +660,22 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	StreamToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	StreamToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~StreamToStringTCO(){}
+	virtual  ~StreamToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
-//TODO manage more elements by using their size
-		ok.unsupportedFeature = (numberOfElements!= 1);
-
-		if (ok){
-			writer->Wrap(dest);
-
-			uint8 *srcc = const_cast<uint8 *>(source);
-			StreamString *src = reinterpret_cast<StreamString *>(srcc);
-
-			if (!PrintStream(*writer,src,fd)){
-				ok.fatalError = true;
-			}
-			for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
-				ok = writer->Next();
-				src++;
-				if (ok){
-					if (!PrintStream(*writer,src,fd)){
-						ok.fatalError = true;
-					}
-				}
-			}
-
-			writer->Flush();
-		}
-
-		return ok;
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
-	}
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
 
 };
 
@@ -888,50 +689,316 @@ public:
 	/**
 	 * @brief constructor
 	 */
-	SStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
-	}
+	SStringToStringTCO(IOBufferWrapper *writerIn);
 
 	/**
 	 * @brief destructor
 	 */
-	virtual  ~SStringToStringTCO(){}
+	virtual  ~SStringToStringTCO();
 
 	/**
 	 * @brief data conversion method
 	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
-		ErrorManagement::ErrorType  ok;
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const;
+
+	/**
+	 * @brief data conversion method
+	 */
+	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const;
+
+};
+
+/***************************************************************************************************************/
+/*  IMPLEMENTATION */
+/***************************************************************************************************************/
+
+StringTCO::StringTCO(IOBufferWrapper *writerIn): writer(writerIn){
+}
+
+StringTCO::~StringTCO(){
+	delete writer;
+}
+
+template <typename integerType>
+IntegerToStringTCO<integerType>::IntegerToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+template <typename integerType>
+IntegerToStringTCO<integerType>::~IntegerToStringTCO(){}
+
+template <typename integerType>
+ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+	if (writer != NULL){
+		writer->Wrap(dest);
+		uint32 ix = 0;
+		const integerType *pIn = (reinterpret_cast<const integerType *>(source));
+		if (!IntegerToStream(*writer,*pIn++,fd)){
+			ok.fatalError = true;
+		}
+		for (ix = 1;(ix<numberOfElements) && ok;ix++){
+			ok = writer->Next();
+
+			if (ok){
+				if (!IntegerToStream(*writer,*pIn++,fd)){
+					ok.fatalError = true;
+				}
+			}
+		}
+		writer->Flush();
+	} else {
+		ok.internalSetupError = true;
+	}
+
+	return ok;
+}
+
+template <typename integerType>
+ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+CharToStringTCO::CharToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+CharToStringTCO::~CharToStringTCO(){}
+
+ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+	if (writer != NULL){
+		writer->Wrap(dest);
+		uint32 ix = 0;
+		const char *pIn = (reinterpret_cast<const char *>(source));
+		if (!writer->PutC(*pIn)){
+			ok.fatalError = true;
+		}
+		for (ix = 1;(ix<numberOfElements) && ok;ix++){
+			ok = writer->Next();
+
+			if (ok){
+				if (!writer->PutC(*pIn)){
+					ok.fatalError = true;
+				}
+			}
+		}
+		writer->Flush();
+	} else {
+		ok.internalSetupError = true;
+	}
+
+	return ok;
+}
+
+ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+BitSetToStringTCO::BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn): StringTCO(writerIn){
+	numberBitSize  = td.numberOfBits;
+	numberBitShift = td.bitOffset;
+	byteSize 	   = SizeFromTDBasicTypeSize(td.basicTypeSize);
+	isSigned       = isSignedIn;
+}
+
+BitSetToStringTCO::~BitSetToStringTCO(){}
+
+ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &td) const{
+	ErrorManagement::ErrorType  ok;
+	writer->Wrap(dest);
+
+	if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
+		ok.fatalError = true;
+	}
+
+	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+		ok = writer->Next();
+
+		source += byteSize;
+		if (ok){
+			if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
+				ok.fatalError = true;
+			}
+		}
+	}
+	writer->Flush();
+
+	return ok;
+}
+
+ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+PointerToStringTCO::PointerToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){	}
+
+PointerToStringTCO::~PointerToStringTCO(){}
+
+ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	ErrorManagement::ErrorType  ok;
+	writer->Wrap(dest);
+
+	uint8 *source1 = const_cast<uint8 * >(source);
+	const void **src = reinterpret_cast<const void ** >(source1);
+
+	if (!PointerToStream(*writer,*src)){
+		ok.fatalError = true;
+	}
+	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+		ok = writer->Next();
+		src++;
+		if (ok){
+			ok.fatalError = PointerToStream(*writer,*src);
+		}
+	}
+	writer->Flush();
+
+	return ok;
+}
+
+template <typename floatType>
+FloatToStringTCO<floatType>::FloatToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+template <typename floatType>
+FloatToStringTCO<floatType>::~FloatToStringTCO(){}
+
+template <typename floatType>
+ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+	writer->Wrap(dest);
+
+	const floatType *src = reinterpret_cast<const floatType *>(source);
+	if (!FloatToStream(*writer,*src,fd)){
+		ok.fatalError = true;
+	}
+
+	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+		ok = writer->Next();
+		src++;
+		if (ok){
+			if (!FloatToStream(*writer,*src,fd)){
+				ok.fatalError = true;
+			}
+		}
+	}
+	writer->Flush();
+
+	return ok;
+}
+
+template <typename floatType>
+ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+
+CCStringToStringTCO::CCStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+CCStringToStringTCO::~CCStringToStringTCO(){}
+
+ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+	writer->Wrap(dest);
+
+	const CCString *src = reinterpret_cast<const CCString *>(source);
+	if (!PrintCCString(*writer,*src,fd)){
+		ok.fatalError = true;
+	}
+	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+		ok = writer->Next();
+		src++;
+		if (ok){
+			if (!PrintCCString(*writer,*src,fd)){
+				ok.fatalError = true;
+			}
+		}
+	}
+
+	writer->Flush();
+
+	return ok;
+}
+
+ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+
+StreamToStringTCO::StreamToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+StreamToStringTCO::~StreamToStringTCO(){}
+
+ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+//TODO manage more elements by using their size
+	ok.unsupportedFeature = (numberOfElements!= 1);
+
+	if (ok){
 		writer->Wrap(dest);
 
-		uint8 *sourceD = const_cast<uint8 *>(source);
-		StreamString *ss = reinterpret_cast<StreamString *>(sourceD);
+		uint8 *srcc = const_cast<uint8 *>(source);
+		StreamString *src = reinterpret_cast<StreamString *>(srcc);
 
-		if (!PrintCCString(*writer,ss->Buffer(),fd)){
+		if (!PrintStream(*writer,src,fd)){
 			ok.fatalError = true;
 		}
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 			ok = writer->Next();
-			ss++;
+			src++;
 			if (ok){
-				if (!PrintCCString(*writer,ss->Buffer(),fd)){
+				if (!PrintStream(*writer,src,fd)){
 					ok.fatalError = true;
 				}
 			}
 		}
 
 		writer->Flush();
-
-		return ok;
 	}
 
-	/**
-	 * @brief data conversion method
-	 */
-	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
-		return Convert(dest,source,numberOfElements,format);
+	return ok;
+}
+
+ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
+
+SStringToStringTCO::SStringToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
+}
+
+SStringToStringTCO::~SStringToStringTCO(){}
+
+ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements,const FormatDescriptor &fd) const{
+	ErrorManagement::ErrorType  ok;
+	writer->Wrap(dest);
+
+	uint8 *sourceD = const_cast<uint8 *>(source);
+	StreamString *ss = reinterpret_cast<StreamString *>(sourceD);
+
+	if (!PrintCCString(*writer,ss->Buffer(),fd)){
+		ok.fatalError = true;
+	}
+	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
+		ok = writer->Next();
+		ss++;
+		if (ok){
+			if (!PrintCCString(*writer,ss->Buffer(),fd)){
+				ok.fatalError = true;
+			}
+		}
 	}
 
-};
+	writer->Flush();
+
+	return ok;
+}
+
+ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
+	return Convert(dest,source,numberOfElements,format);
+}
+
 
 /*********************************************************************************************************/
 /*                                                                                                       */
@@ -1043,9 +1110,6 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 					}
 					}
 				} else {
-					uint8 numberOfBits = sourceTd.numberOfBits;
-					uint8 bitOffset = sourceTd.bitOffset;
-					uint8 byteSize = SizeFromTDBasicTypeSize(sourceTd.basicTypeSize);
 					tco = new BitSetToStringTCO(wrapper,sourceTd,true);
 				}
 			}break;

@@ -25,22 +25,25 @@
 #############################################################
 
 OBJSX=\
-		LexicalAnalyzer.x \
 		TokenInfo.x \
 		Token.x \
 		FloatToInteger.x \
 		IntegerToFloat.x \
 		StringToFloat.x \
 		StringToInteger.x \
-		TypeConversion.x \
-		ValidateBasicType.x\
-		AnyObject.x \
-		AnyTypeCreator.x \
-		StandardParser.x \
-		XMLParser.x \
-		JsonParser.x \
-		ParserI.x \
-		ConfigurationDatabase.x
+		FromStringConversionFactory.x \
+
+
+#		LexicalAnalyzer.x \
+#		TypeConversion.x \
+#		ValidateBasicType.x\
+#		AnyObject.x \
+#		AnyTypeCreator.x \
+#		StandardParser.x \
+#		XMLParser.x \
+#		JsonParser.x \
+#		ParserI.x \
+#		ConfigurationDatabase.x
 
         
 PACKAGE=Core/BareMetal
@@ -56,7 +59,8 @@ INCLUDES += -I../L3Streams
 
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4ConfigurationB$(LIBEXT) \
-	        $(BUILD_DIR)/L4ConfigurationB.def
+	        $(BUILD_DIR)/L4ConfigurationB.def \
+                $(BUILD_DIR)/test2$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

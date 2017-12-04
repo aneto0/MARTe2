@@ -34,7 +34,8 @@
 #include "FormatDescriptor.h"
 #include "GeneralDefinitions.h"
 #include "IOBuffer.h"
-#include "TypeConversion.h"
+//#include "TypeConversion.h"
+#include "ConversionPrivate.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -318,9 +319,9 @@ static bool StringToFloatPrivate(const char8 * const input,
         // performs the conversion from integer in hex, oct and bin format to float.
         if ((input[1] == 'x') || (input[1] == 'o') || (input[1] == 'b')) {
             uint64 numberTemp = 0u;
-            ret = TypeConvert(numberTemp, input);
+            ret = StringToInteger(input,numberTemp);
             if (ret) {
-                ret = TypeConvert(number, numberTemp);
+                ret = IntegerToFloat(numberTemp,number);
             }
         }
         else {
@@ -333,6 +334,15 @@ static bool StringToFloatPrivate(const char8 * const input,
     return ret;
 }
 
+bool StringToFloat(const char8 * const input,float &number) {
+    return StringToFloatPrivate(input, number);
+}
+
+bool StringToFloat(const char8 * const input,double &number) {
+    return StringToFloatPrivate(input, number);
+}
+
+#if 0
 /**
  * @see StringToFloatPrivate(*).
  */
@@ -350,4 +360,5 @@ bool StringToFloatGeneric(const char8 * const input,
     return ret;
 }
 
+#endif
 }
