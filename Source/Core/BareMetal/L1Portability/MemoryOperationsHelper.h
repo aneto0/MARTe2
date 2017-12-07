@@ -49,10 +49,9 @@ namespace MemoryOperationsHelper {
  * @param[in,out] destination is the pointer to the destination memory location.
  * @param[in] source is the pointer to the source memory location.
  * @param[in] size is the size of the memory to be copied.
- * @return true if source, destination and destination after copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-DLL_API bool Copy(void * const destination,
+DLL_API void Copy(void * const destination,
                   const void * const source,
                   uint32 size);
 
@@ -85,10 +84,9 @@ DLL_API const void *Search(const void * const mem,
  * @param[in,out] destination is the pointer to the destination memory location.
  * @param[in] source is the pointer to the source memory location.
  * @param[in] size is the number of bytes to be copied.
- * @return true if source, destination, and destination after the copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-DLL_API bool Move(void * const destination,
+DLL_API void Move(void * const destination,
                   const void * const source,
                   const uint32 size);
 
@@ -97,10 +95,9 @@ DLL_API bool Move(void * const destination,
  * @param[in,out] mem is the pointer to the memory location.
  * @param[in] c is the character to store.
  * @param[in] size is the number of bytes where c will be written.
- * @return true if the memory could be set to desired value.
  * @pre the size parameter must be minor than the memory block size.
  */
-DLL_API bool Set(void * const mem,
+DLL_API void Set(void * const mem,
                  const char8 c,
                  const uint32 size);
 

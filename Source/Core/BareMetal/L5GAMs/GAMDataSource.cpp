@@ -149,7 +149,7 @@ bool GAMDataSource::AllocateMemory() {
         if (memoryHeap != NULL_PTR(HeapI *)) {
             signalMemory = memoryHeap->Malloc(memorySize);
         }
-        ret = MemoryOperationsHelper::Set(signalMemory, '\0', memorySize);
+        MemoryOperationsHelper::Set(signalMemory, '\0', memorySize);
     }
     return ret;
 }
@@ -227,7 +227,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName,
                         ret = GetSignalByteSize(signalIdx, size);
                     }
                     if (ret) {
-                        ret = MemoryOperationsHelper::Set(thisSignalMemory, '\0', size);
+                        MemoryOperationsHelper::Set(thisSignalMemory, '\0', size);
                     }
                 }
                 else {

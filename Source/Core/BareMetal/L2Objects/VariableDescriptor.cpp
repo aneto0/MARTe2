@@ -1081,7 +1081,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 					}
 				}
 
-				ret.fatalError=MemoryOperationsHelper::Set(&dpp[numberOfElements],0,numberOfTermElements*elementSize);
+				MemoryOperationsHelper::Set(&dpp[numberOfElements],0,numberOfTermElements*elementSize);
 			}break;
 
 			case 'm':
@@ -1112,7 +1112,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 					}
 				}
 				//zero the terminator layer
-				ret.fatalError=MemoryOperationsHelper::Set(&dpm[numberOfElements],0,numberOfTermElements*elementSize);
+				MemoryOperationsHelper::Set(&dpm[numberOfElements],0,numberOfTermElements*elementSize);
 
 			}break;
 			case 'v':
@@ -1144,7 +1144,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				}
 
 				//  zero the terminator layer
-				ret.fatalError=MemoryOperationsHelper::Set(&dpv[numberOfElements],0,numberOfTermElements*elementSize);
+				MemoryOperationsHelper::Set(&dpv[numberOfElements],0,numberOfTermElements*elementSize);
 
 			}break;
 			default:{

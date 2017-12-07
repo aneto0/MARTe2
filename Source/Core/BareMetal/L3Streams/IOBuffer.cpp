@@ -203,10 +203,7 @@ bool IOBuffer::Write(const char8 * const buffer,uint32 &size) {
 
         // fill the buffer with the remainder
         if (size > 0u) {
-            if (!MemoryOperationsHelper::Copy(positionPtr, buffer, size)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
-                retval = false;
-            }
+            MemoryOperationsHelper::Copy(positionPtr, buffer, size);
 
             if (retval) {
                 positionPtr = &positionPtr[size];
@@ -270,14 +267,12 @@ bool IOBuffer::Read(char8 * const buffer,
 
     // fill the buffer with the remainder
     if (size > 0u) {
-        if (!MemoryOperationsHelper::Copy(buffer, positionPtr, size)) {
-            retval = false;
-            REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
-        }
-        if (retval) {
-            amountLeft -= size;
-            positionPtr = &positionPtr[size];
-        }
+        MemoryOperationsHelper::Copy(buffer, positionPtr, size);
+
+        amountLeft -= size;
+        positionPtr = &positionPtr[size];
+    } else {
+    	retval = false;
     }
 
     return retval;

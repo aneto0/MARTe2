@@ -131,10 +131,8 @@ bool StaticListHolder::Add(const void * const copyFrom) {
         /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
         /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * listSize_));
-        ret = MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
-        if (ret) {
-            listSize_++;
-        }
+        MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
+        listSize_++;
     }
 
     return ret;
@@ -171,11 +169,11 @@ bool StaticListHolder::Insert(const uint32 position,
         if (position < (listSize_)) {
             //Expands the array moving the elements to their right position
             /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
-            ret = MemoryOperationsHelper::Move(pointer + listElementSize_, pointer, listElementSize_ * ((listSize_) - position));
+            MemoryOperationsHelper::Move(pointer + listElementSize_, pointer, listElementSize_ * ((listSize_) - position));
         }
 
         if (ret) {
-            ret = MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
+            MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
         }
 
         if (ret) {
@@ -202,7 +200,7 @@ bool StaticListHolder::Peek(const uint32 position,
             /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
             /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
             void * copyFrom = static_cast<void *>(allocatedMemory_ + (listElementSize_ * position));
-            ret = MemoryOperationsHelper::Copy(copyTo, copyFrom, listElementSize_);
+            MemoryOperationsHelper::Copy(copyTo, copyFrom, listElementSize_);
         }
     }
 
@@ -226,7 +224,7 @@ bool StaticListHolder::Remove(const uint32 position) {
         if (position < (listSize_ - 1u)) {
             //Compacts the array moving the elements to their left position
             /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
-            ret = MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
+            MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
         }
 
         if (ret) {
@@ -253,19 +251,15 @@ bool StaticListHolder::Extract(const uint32 position,
         /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
 
-        ret = MemoryOperationsHelper::Copy(copyTo, static_cast<void *>(pointer), listElementSize_);
+        MemoryOperationsHelper::Copy(copyTo, static_cast<void *>(pointer), listElementSize_);
 
-        if (ret) {
-            if (position < (listSize_ - 1u)) {
-                //Compacts the array moving the elements to their left position
-                /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
-                ret = MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
-            }
-
-            if (ret) {
-                listSize_--;
-            }
+        if (position < (listSize_ - 1u)) {
+            //Compacts the array moving the elements to their left position
+            /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+            MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
         }
+
+        listSize_--;
     }
 
     return ret;
@@ -333,7 +327,7 @@ bool StaticListHolder::Set(const uint32 position,
     bool ret = (position < listSize_);
     if (ret) {
         uint32 index = (position * listElementSize_);
-        ret = MemoryOperationsHelper::Copy(&allocatedMemory_[index], value, listElementSize_);
+        MemoryOperationsHelper::Copy(&allocatedMemory_[index], value, listElementSize_);
     }
     return ret;
 

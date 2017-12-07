@@ -49,22 +49,16 @@ namespace MARTe{
 
 namespace MemoryOperationsHelper {
 
-bool Copy(void* const destination,
+void Copy(void* const destination,
           const void * const source,
           const uint32 size) {
 
-    bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
-        }
+        memcpy(destination, source, static_cast<osulong>(size)) != NULL;
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
-
-    return ret;
 
 }
 
@@ -110,43 +104,29 @@ const void* Search(const void * const mem,
     return ret;
 }
 
-bool Move(void * const destination,
+void Move(void * const destination,
           const void * const source,
           const uint32 size) {
-
-    bool ret = false;
-
     if ((source != NULL) && (destination != NULL)) {
 
-        ret = memmove(destination, source, static_cast<size_t>(size)) != NULL;
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memmove()");
-        }
+        memmove(destination, source, static_cast<size_t>(size)) != NULL;
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
-    return ret;
 
 }
 
-bool Set(void * const mem,
+void Set(void * const mem,
          const char8 c,
          const uint32 size) {
-    bool ret = false;
     if (mem != NULL) {
 
-        ret = memset(mem, c, static_cast<size_t>(size)) != NULL;
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memset()");
-        }
+        memset(mem, c, static_cast<size_t>(size)) != NULL;
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
-
-    return ret;
-
 }
 
 }

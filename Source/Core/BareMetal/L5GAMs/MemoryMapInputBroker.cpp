@@ -54,7 +54,7 @@ bool MemoryMapInputBroker::Execute() {
     bool ret = true;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
         if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            ret = MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer, copyTable[n].copySize);
+            MemoryOperationsHelper::Copy(copyTable[n].gamPointer, copyTable[n].dataSourcePointer, copyTable[n].copySize);
         }
     }
     return ret;

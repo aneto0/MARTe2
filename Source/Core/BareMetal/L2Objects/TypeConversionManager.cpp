@@ -41,14 +41,16 @@ TypeConversionManager &TypeConversionManager::Instance() {
     return *instance;
 }
 
-
+#include <stdio.h>
 const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) const {
 	uint32 ix = 0;
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+//printf("<NF=%i>",factories.NumberOfUsedElements());
 	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
 		TypeConversionFactoryI *tcf = factories.Get(ix);
 		tco = tcf->GetOperator(destTd,sourceTd,isCompare);
 		ix++;
+//printf("!");
 	}
 
 	return tco;

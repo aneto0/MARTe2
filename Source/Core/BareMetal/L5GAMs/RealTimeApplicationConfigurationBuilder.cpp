@@ -2636,7 +2636,7 @@ bool RealTimeApplicationConfigurationBuilder::BuildProducersRanges() {
                             uint32 newSize = reachSignalRanges + 2u;
                             uint32 *temp = new uint32[newSize];
                             uint32 copySize = minNumberOfSignalRanges * static_cast<uint32>(sizeof(uint32));
-                            ret = MemoryOperationsHelper::Copy(temp, signalRanges, copySize);
+                            MemoryOperationsHelper::Copy(temp, signalRanges, copySize);
                             minNumberOfSignalRanges = newSize;
                             delete[] signalRanges;
                             signalRanges = temp;

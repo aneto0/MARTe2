@@ -50,7 +50,7 @@ static void RTThreadRoutine(const RTThreadParam &par) {
         float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-        (void) MemoryOperationsHelper::Copy(par.cycleTime, &absTime, sizeToCopy);
+        MemoryOperationsHelper::Copy(par.cycleTime, &absTime, sizeToCopy);
         cycleTimeStamp = HighResolutionTimer::Counter();
     }
 

@@ -46,6 +46,13 @@
 #define NULL NULL_PTR(void *)
 #endif
 
+/***
+ * Defined in WinDef.h
+ * Conflicts with the methods min() and max() of <limits>
+ */
+#undef max
+#undef min
+
 namespace MARTe {
 
     /** Large enough to store a pointer*/
@@ -178,12 +185,15 @@ namespace MARTe {
 
 
     /**
-     * namespace for definitions that are not meant for the user to know or use
+     * @brief namespace for definitions that are not meant for the user to know or use
      */
     namespace Private{
     	typedef char (&yes)[1];
     	typedef char (&no)[2];
 
+        /**
+         * if D derives from Bit contains value constant true
+        */
     	template <typename B, typename D>
     	struct Host
 		{
@@ -203,6 +213,9 @@ namespace MARTe {
 		};
 
 
+        /**
+         * if T and U are the same it contains value constant true
+        */
     	template<typename T, typename U>
     	struct is_same
     	{
@@ -217,22 +230,23 @@ namespace MARTe {
     }
 
     /**
-     *
+     *	@return true if derived is derived from base.
      */
     #define isBaseOf(base,derived)  Private::is_base_of<base,derived>::value
 
     /**
-     *
+     *	@return true if T1 and T2 are the same class.
      */
     #define isSame(T1,T2)  Private::is_same<T1,T2>::value
 
-
     /**
-     *
+     *	@return true if derived is derived from base or is base
      */
     #define isSameOrBaseOf(base,derived)  (Private::is_base_of<base,derived>::value || Private::is_same<base,derived>::value)
 
-
+    /**
+     *	@brief A class that inherits from this will inherit from T only if bool is True.
+     */
     template <bool, typename T = void>
     struct enable_if
     {};

@@ -113,7 +113,7 @@ bool MemoryArea::Add(const void * const source,
                      uint32 &offset) {
     bool ret = Add(memorySize, offset);
     if (ret) {
-        ret = (MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], source, memorySize));
+        MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], source, memorySize);
     }
     return ret;
 }

@@ -120,7 +120,7 @@ bool GAM::AllocateInputSignalsMemory() {
         if (ret) {
             inputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (inputSignalsMemory != NULL_PTR(void*)) {
-                ret = MemoryOperationsHelper::Set(inputSignalsMemory, '\0', totalByteSize);
+                MemoryOperationsHelper::Set(inputSignalsMemory, '\0', totalByteSize);
             }
             else {
                 ret = false;
@@ -174,7 +174,7 @@ bool GAM::AllocateOutputSignalsMemory() {
         if (ret) {
             outputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (outputSignalsMemory != NULL_PTR(void*)) {
-                ret = MemoryOperationsHelper::Set(outputSignalsMemory, '\0', totalByteSize);
+                MemoryOperationsHelper::Set(outputSignalsMemory, '\0', totalByteSize);
             }
             else {
                 ret = false;

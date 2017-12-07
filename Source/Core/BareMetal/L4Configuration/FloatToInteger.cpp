@@ -31,6 +31,8 @@
 #include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
 #include "Shift.h"
+#include "ConversionPrivate.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,7 +57,7 @@ namespace MARTe {
 /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: the integer type could be signed or not depending on the template type.*/
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType, typename IntegerType>
-bool FloatToInteger(const FloatType floatNumber,
+bool FloatToIntegerT(const FloatType floatNumber,
                     IntegerType &integerNumber) {
 
     bool ret = true;
@@ -109,6 +111,25 @@ bool FloatToInteger(const FloatType floatNumber,
     return ret;
 }
 
+bool NumberToNumber(float  source,uint8  &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source,uint16 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source,uint32 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source,uint64 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source,uint8  &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source,uint16 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source,uint32 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source,uint64 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source, int8  &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source, int16 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source, int32 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(float  source, int64 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source, int8  &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source, int16 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source, int32 &dest){	return FloatToIntegerT(source,dest); }
+bool NumberToNumber(double source, int64 &dest){	return FloatToIntegerT(source,dest); }
+
+
+#if 0
 /*lint -e{740} -e{826} -e{927}  [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to pointer cast requested from this implementation.*/
 bool FloatToIntegerGeneric(const float32 * const source,
                            const uint32 sourceBitSize,
@@ -213,5 +234,5 @@ bool FloatToIntegerGeneric(const float32 * const source,
     }
     return ret;
 }
-
+#endif
 }

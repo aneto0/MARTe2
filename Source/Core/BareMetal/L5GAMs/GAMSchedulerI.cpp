@@ -391,7 +391,7 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-            ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
+            MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
         }
     }
 

@@ -162,7 +162,7 @@ namespace MARTe {
 /*lint -save -e774 -e740 -e826 -e927 -e928 -e669
  * 774 [MISRA C++ Rule 0-1-1] [MISRA C++ Rule 0-1-2] [MISRA C++ Rule 0-1-9]. Justification: Return value depends on template type.
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
- * 669 . Justification: BSToBS(*) should be used only truth BitSetToBitSet(*). The BitSetToBitSet(*) function controls the template type assuring
+ * 669 . Justification: BSToBS(*) should be used only through BitSetToBitSet(*). The BitSetToBitSet(*) function controls the template type assuring
  * that it has enough size such that the memory copy will be done without overrun.
  * */
 
@@ -202,12 +202,8 @@ static inline void BSToBS(T * const & destination,
     T sourceCopy = static_cast<T>(0);
     uint32 sourceByteSize = ((static_cast<uint32>(sourceBitSize) + static_cast<uint32>(sourceBitShift)) + 7u) / 8u;
 
-
     // copy
-    if (!MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
-
+    MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize);
 
     // shift number so LSB at bit 0
     // removes lower bits
@@ -280,17 +276,14 @@ static inline void BSToBS(T * const & destination,
 
 
     // copy
-    if (!MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
+    MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize);
+
     destinationMask &= destinationCopy;
 
     // merge into sourceCopy
     sourceCopy |= destinationMask;
 
-    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
+    MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize);
 
 }
 

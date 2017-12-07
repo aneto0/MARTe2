@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CompilerTypes.h"
+#include <limits>
+#include <float.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -40,7 +42,28 @@
 
 namespace MARTe {
 
+/***
+ * Defined in WinDef.h
+ * Conflicts with the methods min() and max() of <limits>
+ */
+#undef max
+#undef min
+
+/**
+ * @brief Remaps and extends <limits>
+ */
 namespace TypeCharacteristics {
+
+/**
+ *  @brief Returns true if the type is a float, false otherwise.
+ *  @tparam T a float/integer type
+ *  @return true if the type is a float, false otherwise.
+ */
+template<typename T>
+bool IsFloat() {
+    /*lint -e{???}   Operator '!=' always evaluates to True\False. Justification: it depends by the template instance. */
+    return ((static_cast<T>(0.1F)) != static_cast<T>(0));
+}
 
 /**
  *  @brief Returns true if the integer type is signed, false otherwise.
@@ -50,43 +73,65 @@ namespace TypeCharacteristics {
 template<typename T>
 bool IsSigned() {
     /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
-    return ((static_cast<T>(-1)) < 0);
+    return IsFloat<T>() || ((static_cast<T>(-1)) < 0);
 }
 
 /**
- * @brief Returns the maximum possible value of the template integer type.
- * @tparam T An integer type
+ * @brief Returns the maximum possible value of the template integer/float type.
+ * @tparam T An integer/float type
  * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
  */
 template<typename T>
 const T MaxValue() {
+	return std::numeric_limits<T>::max();
+#if 0
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const T maxValue = (IsSigned<T>()) ? static_cast<T>((static_cast<T>(1) << (sizeof(T) * 8u - 1u)) - static_cast<T>(1)) : static_cast<T>(-1);
     return maxValue;
+#endif
 }
 
 /**
  * @brief Returns the minimum possible value of the template integer type.
- * @tparam T An integer type
+ * @tparam T An integer/float type
  * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
  */
 template<typename T>
 const T MinValue() {
-    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+	return std::numeric_limits<T>::min();
+
+#if 0
+	/*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const T minValue = (IsSigned<T>()) ? static_cast<T>(1 << (sizeof(T) * 8u - 1u)) : static_cast<T>(0);
     return minValue;
+#endif
 }
 
 /**
  * @brief Returns the type usable bit size.
- * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
  * @tparam T An integer type
  * @return the type usable bit size.
  */
 template<typename T>
 const uint8 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
-    const uint8 nOfBits = (IsSigned<T>()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u);
+    const uint8 nOfBits = (IsFloat<T>()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    		((IsSigned<T>()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u));
+    return nOfBits;
+}
+
+/**
+ * @brief Returns the type usable bit size in the negative range.
+ * @details For unsigned types the usable bit size is 0, for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+ * @tparam T An integer type
+ * @return the type usable bit size.
+ */
+template<typename T>
+const uint8 UsableNegativeBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsFloat<T>()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    		((IsSigned<T>()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0);
     return nOfBits;
 }
 
@@ -144,7 +189,7 @@ const uint8 UsableBitSize() {
  * @param[in] input is the input value.
  * @return If the input value is minor than the maximum value (depending on the specified type and bit size)
  * and greater than the minimum value it will be returned untouched. Otherwise this function returns the
- * maximum value if it is minor than the input, or the minimum value if is greater than the input.
+ * maximum value if it is smaller than the input, or the minimum value if is greater than the input.
  */
 template<typename outputType, typename inputType, uint8 bitSize>
 outputType SaturateInteger(const inputType input) {

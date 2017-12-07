@@ -32,6 +32,7 @@ OBJSX=\
 		StringToFloat.x \
 		StringToInteger.x \
 		FromStringConversionFactory.x \
+		NumericConversionFactory.x \
 
 
 #		LexicalAnalyzer.x \

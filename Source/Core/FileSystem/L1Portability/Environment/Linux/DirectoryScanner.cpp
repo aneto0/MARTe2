@@ -161,10 +161,7 @@ bool DirectoryScanner::Scan(const char8 * const path,
                 Directory *entry = new Directory();
 
                 // empties statAddr
-                if (!MemoryOperationsHelper::Set(&statAddr[0], '\0', pathSize)) {
-                    ret = false;
-                }
-
+                MemoryOperationsHelper::Set(&statAddr[0], '\0', pathSize);
                 if (ret) {
                     // put in statAddr the base path
                     if (!StringHelper::Concatenate(&statAddr[0], basePath)) {

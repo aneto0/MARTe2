@@ -72,22 +72,22 @@ static bool IntegerToFloatT(const IntegerType source,
 
 }
 
-bool IntegerToFloat(uint8  source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint16 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint32 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint64 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint8  source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint16 source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint32 source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat(uint64 source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int8  source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int16 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int32 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int64 source,float  &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int8  source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int16 source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int32 source,double &dest){	return IntegerToFloatT(source,dest); }
-bool IntegerToFloat( int64 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint8  source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint16 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint32 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint64 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint8  source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint16 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint32 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber(uint64 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int8  source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int16 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int32 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int64 source,float  &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int8  source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int16 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int32 source,double &dest){	return IntegerToFloatT(source,dest); }
+bool NumberToNumber( int64 source,double &dest){	return IntegerToFloatT(source,dest); }
 
 
 

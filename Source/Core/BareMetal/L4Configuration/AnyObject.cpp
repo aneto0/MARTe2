@@ -89,7 +89,7 @@ static bool SerializeStaticMatrix(const AnyType &typeIn,   AnyType &typeOut) {
     }
     else {
         // copy all the block
-        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
     return ret;
 }
@@ -143,7 +143,7 @@ static bool SerializeHeapMatrix(const AnyType &typeIn,
         }
         else {
             // copy all the row block
-            ret = MemoryOperationsHelper::Copy(destPointer[r], sourcePointer[r], rowSize);
+            MemoryOperationsHelper::Copy(destPointer[r], sourcePointer[r], rowSize);
         }
     }
     return ret;
@@ -226,12 +226,12 @@ static bool SerializeVector(const AnyType &typeIn,
             }
             char8 **destBegin = reinterpret_cast<char8 **>(destPointer);
             destBegin[i] = static_cast<char8 *>(HeapManager::Malloc(tokenLength));
-            ret = MemoryOperationsHelper::Copy(destBegin[i], token, tokenLength);
+            MemoryOperationsHelper::Copy(destBegin[i], token, tokenLength);
         }
     }
     else {
         // it works also for static matrix of characters!!
-        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
 
     return ret;
@@ -272,7 +272,7 @@ static bool SerializeScalar(const AnyType &typeIn, AnyType &typeOut) {
         }
         uint32 tokenLength = StringHelper::Length(token) + 1u;
         destPointer = HeapManager::Malloc(tokenLength);
-        ret = MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
+        MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
     }
     else if (isPointer) {
         destPointer = sourcePointer;
@@ -280,7 +280,7 @@ static bool SerializeScalar(const AnyType &typeIn, AnyType &typeOut) {
     else {
         uint32 memoryAllocationSize = typeIn.GetByteSize();
         destPointer = HeapManager::Malloc(memoryAllocationSize);
-        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+        MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
     }
 
     typeOut = typeIn;

@@ -48,7 +48,7 @@ bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest
 
     dest = HeapManager::Malloc(necessarySize*sizeOfT);
     if (dest != NULL) {
-        ret = MemoryOperationsHelper::Copy(dest,src,(1 + sizeOfData)*sizeOfT);
+        MemoryOperationsHelper::Copy(dest,src,(1 + sizeOfData)*sizeOfT);
     } else {
         REPORT_ERROR(ErrorManagement::FatalError, "DZTInitCopy: Error: zero term array duplicated creation failed");
         ret = false;
@@ -85,7 +85,6 @@ bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCop
     uint32 size = sizeOfDest;
     uint32 size2 = toCopy;
 
-
     uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
 
     ret = HeapManager::Realloc(dest,necessarySize*sizeOfT);
@@ -96,10 +95,7 @@ bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCop
 
     if (ret)  {
         void *destOff      = static_cast<void *>(static_cast<char *>(dest)+size*sizeOfT);
-        ret = MemoryOperationsHelper::Copy(destOff,src,size2*sizeOfT);
-        if (!ret) {
-            REPORT_ERROR(ErrorManagement::FatalError, "DynamicZeroTerminatedArray: Failed HeapManager::Copy()");
-        }
+        MemoryOperationsHelper::Copy(destOff,src,size2*sizeOfT);
     }
 
     return ret;
