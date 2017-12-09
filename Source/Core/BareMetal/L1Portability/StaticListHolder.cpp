@@ -58,7 +58,7 @@ StaticListHolder::StaticListHolder(const uint32 listElementSize,
         //Calculates and initializes the maximum capacity
         maxListCapacity_(
         		(listAbsoluteMaximumCapacity == 0) ?
-                ((TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
+                ((TypeCharacteristics<uint32>::MaxValue() / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
                         / listElementSize_         :
 			    listAbsoluteMaximumCapacity
                         ),

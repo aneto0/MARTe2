@@ -61,11 +61,11 @@ namespace MARTe {
  *
  * | isStructuredData |dataIsConstant| fulltype | basicTypeSize | hasBitSize | sp | bitOffset | numberOfBits             |
  * | :----:           | :----:       | :----:   | :---------:   | :---------:|    | :----:    | :----:                   |
- * |  1  (=1)         | 1            | 6        | 4             |  1         | 3  | 8         | 8                        |
+ * |  1  (=0)         | 1            | 6        | 4             |  1         | 3  | 8         | 8                        |
  *
  * | isStructuredData |dataIsConstant| fulltype | objectSize  |
  * | :----:           | :----:       | :----:   | :---------: |
- * |  1  (=1)         | 1            | 6        | 24          |
+ * |  1  (=0)         | 1            | 6        | 24          |
  */
 
 // used to encode fullType in the TypeDescriptor
@@ -352,6 +352,11 @@ public:
     inline bool IsBitType() const ;
 
     /**
+     * @brief whether the type is float or signed int
+     */
+    inline bool IsSigned() const;
+
+    /**
      * @brief matches all details
      */
     inline bool SameAs(const TypeDescriptor &td) const;
@@ -494,6 +499,10 @@ bool TypeDescriptor::IsCharStreamType() const {
 
 bool TypeDescriptor::IsSpecialType() const {
     return ( !isStructuredData && ((fullType & TDF_Category) == TDF_SpecialType) );
+};
+
+bool TypeDescriptor::IsSigned() const {
+	return !isStructuredData && ((fullType == TDF_SignedInteger)||(fullType == TDF_Float));
 };
 
 TypeDescriptor::TypeDescriptor(const uint32 x) {

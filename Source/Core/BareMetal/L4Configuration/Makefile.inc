@@ -27,8 +27,6 @@
 OBJSX=\
 		TokenInfo.x \
 		Token.x \
-		FloatToInteger.x \
-		IntegerToFloat.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		FromStringConversionFactory.x \

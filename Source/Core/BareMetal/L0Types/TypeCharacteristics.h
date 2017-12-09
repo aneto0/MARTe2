@@ -52,6 +52,82 @@ namespace MARTe {
 /**
  * @brief Remaps and extends <limits>
  */
+template<typename T>
+class  TypeCharacteristics {
+public:
+/**
+ *  @brief Returns true if the type is a float, false otherwise.
+ *  @tparam T a float/integer type
+ *  @return true if the type is a float, false otherwise.
+ */
+static bool IsFloat() {
+    /*lint -e{???}   Operator '!=' always evaluates to True\False. Justification: it depends by the template instance. */
+    return ((static_cast<T>(0.1F)) != static_cast<T>(0));
+}
+/**
+ *  @brief Returns true if the integer type is signed, false otherwise.
+ *  @tparam T An integer type
+ *  @return true if the type is signed, false otherwise.
+ */
+static bool IsSigned() {
+    /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
+    return IsFloat() || ((static_cast<T>(-1)) < 0);
+}
+
+/**
+ * @brief Returns the maximum possible value of the template integer/float type.
+ * @tparam T An integer/float type
+ * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ */
+static const T MaxValue() {
+	return std::numeric_limits<T>::max();
+}
+
+/**
+ * @brief Returns the minimum possible value of the template integer type.
+ * @tparam T An integer/float type
+ * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+ */
+static const T MinValue() {
+	T ret = std::numeric_limits<T>::min();
+	if (IsFloat()){
+		ret = -std::numeric_limits<T>::max();
+	}
+	return ret;
+}
+
+/**
+ * @brief Returns the type usable bit size.
+ * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+ * @tparam T An integer type
+ * @return the type usable bit size.
+ */
+static const uint8 UsableBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u));
+    return nOfBits;
+}
+
+/**
+ * @brief Returns the type usable bit size in the negative range.
+ * @details For unsigned types the usable bit size is 0, for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+ * @tparam T An integer type
+ * @return the type usable bit size.
+ */
+static const uint8 UsableNegativeBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0);
+    return nOfBits;
+}
+
+};
+
+#if 0
+/**
+ * @brief Remaps and extends <limits>
+ */
 namespace TypeCharacteristics {
 
 /**
@@ -106,6 +182,7 @@ const T MinValue() {
     return minValue;
 #endif
 }
+
 
 /**
  * @brief Returns the type usable bit size.
@@ -179,8 +256,39 @@ const uint8 UsableBitSize() {
     return nOfBits;
 }
 
+};
+
+#endif
+
+/**
+ * @briefs converts any number to any other number saturating the conversion
+ * @return false if saturation was necessary
+ */
+template <typename inputType,typename outputType>
+inline bool SafeNumber2Number(inputType src,outputType &dest){
+	 bool ret = true;
+	 // more bits in the input format. Might need to saturate
+	 if (TypeCharacteristics<inputType>::UsableBitSize()>TypeCharacteristics<outputType>::UsableBitSize()){
+		 const inputType maxSource = static_cast<inputType>(TypeCharacteristics<outputType>::MaxValue());
+		 if (src > maxSource) {
+			 src = maxSource;
+			 ret = false;
+		 }
+	 }
+	 if (TypeCharacteristics<inputType>::UsableNegativeBitSize()>TypeCharacteristics<outputType>::UsableNegativeBitSize()){
+		 const inputType minSource = static_cast<inputType>(TypeCharacteristics<outputType>::MinValue());
+		 if (src < minSource) {
+			 src = minSource;
+			 ret = false;
+		 }
+	 }
+
+	 dest = static_cast<outputType>(src);
+
+	 return ret;
 }
 
+#if 1
 /**
  * @brief Saturates the input if it does not fit within the range of numbers with the specified bit size.
  * @tparam outputType An integer type
@@ -194,11 +302,10 @@ const uint8 UsableBitSize() {
 template<typename outputType, typename inputType, uint8 bitSize>
 outputType SaturateInteger(const inputType input) {
 
-    const bool isSigned = TypeCharacteristics::IsSigned<outputType>();
+    const bool isSigned = TypeCharacteristics<outputType>::IsSigned();
 
-    const outputType minValue = TypeCharacteristics::MinValue<outputType, bitSize>();
-
-    const outputType maxValue = TypeCharacteristics::MaxValue<outputType, bitSize>();
+	const outputType minValue = (isSigned)?(std::numeric_limits<outputType>::min()>>(sizeof(outputType)*8 - bitSize)):0;
+	const outputType maxValue = std::numeric_limits<outputType>::max()>>(sizeof(outputType)*8 - bitSize);
 
     //default assignment
     outputType value = static_cast<outputType>(input);
@@ -207,7 +314,7 @@ outputType SaturateInteger(const inputType input) {
     if (input >= static_cast<inputType>(0)) {
 
         // cast to the type which has the max usable size
-        if (TypeCharacteristics::UsableBitSize<inputType>() > TypeCharacteristics::UsableBitSize<outputType>()) {
+        if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<outputType>::UsableBitSize()) {
             if (input > static_cast<inputType>(maxValue)) {
                 value = maxValue;
             }
@@ -230,7 +337,7 @@ outputType SaturateInteger(const inputType input) {
 
             // only consider signed against signed for minimum
             // unsigned have 0 as minimum which is greater than the minimum of all fractional signed
-            if (TypeCharacteristics::UsableBitSize<inputType>() > TypeCharacteristics::UsableBitSize<outputType>()) {
+            if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<outputType>::UsableBitSize()) {
                 if (input < static_cast<inputType>(minValue)) {
                     value = minValue;
                 }
@@ -247,6 +354,7 @@ outputType SaturateInteger(const inputType input) {
     return value;
 }
 
+#endif
 }
 
 #endif /* TYPECHARACTERISTICS_H_ */

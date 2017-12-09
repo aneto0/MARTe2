@@ -321,7 +321,7 @@ static bool StringToFloatPrivate(const char8 * const input,
             uint64 numberTemp = 0u;
             ret = StringToInteger(input,numberTemp);
             if (ret) {
-                ret = NumberToNumber(numberTemp,number);
+            	ret = SafeNumber2Number<uint64,T>(numberTemp,number);
             }
         }
         else {

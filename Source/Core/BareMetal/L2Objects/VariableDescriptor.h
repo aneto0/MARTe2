@@ -825,12 +825,12 @@ void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 void VariableDescriptor::Match(BitRange<baseType, bitSize, bitOffset> * bitRange) {
-	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(baseType,bitSize,bitOffset) : UnsignedBitSet(baseType,bitSize,bitOffset));
+	FinaliseCode((TypeCharacteristics<baseType>::IsSigned()) ? SignedBitSet(baseType,bitSize,bitOffset) : UnsignedBitSet(baseType,bitSize,bitOffset));
 }
 
 template<typename baseType, uint8 bitSize>
 void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractionalInt) {
-	FinaliseCode((TypeCharacteristics::IsSigned<baseType>()) ? SignedBitSet(baseType,bitSize,0) : UnsignedBitSet(baseType,bitSize,0));
+	FinaliseCode((TypeCharacteristics<baseType>::IsSigned()) ? SignedBitSet(baseType,bitSize,0) : UnsignedBitSet(baseType,bitSize,0));
 }
 
 void VariableDescriptor::AddConstantCode(){

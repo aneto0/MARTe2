@@ -331,6 +331,41 @@ public:
                        const AnyType& par4,
                        const AnyType& par5);
 
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(CCString const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5,
+    				   const AnyType& par6);
+
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(CCString const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5,
+					   const AnyType& par6,
+					   const AnyType& par7);
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(CCString const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5,
+					   const AnyType& par6,
+					   const AnyType& par7,
+					   const AnyType& par8);
+
 protected:
 
     /**
@@ -397,6 +432,44 @@ bool BufferedStreamI::Printf(CCString const format,
     AnyType pars[6] = { par1, par2, par3, par4, par5, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
+
+bool BufferedStreamI::Printf(CCString const format,
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4,
+                             const AnyType& par5,
+							 const AnyType& par6) {
+    AnyType pars[] = { par1, par2, par3, par4, par5, par6, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(CCString const format,
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4,
+                             const AnyType& par5,
+							 const AnyType& par6,
+							 const AnyType& par7)
+ {
+    AnyType pars[] = { par1, par2, par3, par4, par5, par6, par7, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
+bool BufferedStreamI::Printf(CCString const format,
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4,
+                             const AnyType& par5,
+							 const AnyType& par6,
+							 const AnyType& par7,
+							 const AnyType& par8){
+    AnyType pars[] = { par1, par2, par3, par4, par5, par6, par7, par8, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
+
 
 }
 #endif /* BUFFEREDSTREAMI_H_ */

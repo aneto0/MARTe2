@@ -255,7 +255,7 @@ public:
 	virtual ErrorManagement::ErrorType Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
 		ErrorManagement::ErrorType  ok;
 
-		integerBitsSize *destI;
+		integerBitsSize *destI = reinterpret_cast<integerBitsSize *>(dest);
 		if (reader == NULL_PTR(StringReader *)){
 			ok.internalSetupError = true;
 		}

@@ -130,6 +130,72 @@ FractionalInteger<baseType, numberOfBits>::operator baseType() const {
     return value;
 }
 
+template <typename baseType, uint8 numberOfBits>
+class TypeCharacteristics<FractionalInteger<baseType, numberOfBits>>{
+public:
+
+	/**
+	 *  @brief Returns true if the type is a float, false otherwise.
+	 *  @tparam T a float/integer type
+	 *  @return true if the type is a float, false otherwise.
+	 */
+	static bool IsFloat() {
+	    return false;
+	}
+	/**
+	 *  @brief Returns true if the integer type is signed, false otherwise.
+	 *  @tparam T An integer type
+	 *  @return true if the type is signed, false otherwise.
+	 */
+	static bool IsSigned() {
+	    /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
+	    return ((static_cast<baseType>(-1)) < 0);
+	}
+
+	/**
+	 * @brief Returns the maximum possible value of the template integer/float type.
+	 * @tparam T An integer/float type
+	 * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+	 */
+	static const baseType MaxValue() {
+		const baseType maxNum = (std::numeric_limits<baseType>::max()>>(sizeof(baseType)*8 - numberOfBits));
+		return maxNum;
+	}
+
+	/**
+	 * @brief Returns the minimum possible value of the template integer type.
+	 * @tparam T An integer/float type
+	 * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+	 */
+	static const baseType MinValue() {
+		const baseType minNum = (IsSigned())?(std::numeric_limits<baseType>::min()>>(sizeof(baseType)*8 - numberOfBits)):0;
+		return minNum;
+	}
+
+	/**
+	 * @brief Returns the type usable bit size.
+	 * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+	 * @tparam T An integer type
+	 * @return the type usable bit size.
+	 */
+	static const uint8 UsableBitSize() {
+		const uint8 nOfBits = (IsSigned())?numberOfBits-1:numberOfBits;
+	    return nOfBits;
+	}
+
+	/**
+	 * @brief Returns the type usable bit size in the negative range.
+	 * @details For unsigned types the usable bit size is 0, for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+	 * @tparam T An integer type
+	 * @return the type usable bit size.
+	 */
+	static const uint8 UsableNegativeBitSize() {
+		const uint8 nOfBits = (IsSigned())?numberOfBits-1:0;
+	    return nOfBits;
+	}
+};
+
+
 /**
  * Unsigned 1 bit integer.
  */
