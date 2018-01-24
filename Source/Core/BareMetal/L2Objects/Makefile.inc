@@ -28,14 +28,13 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  TypeConversionManager.x \
 		SameTypeConversionFactory.x\
-		MemoryFileSystem.x \
 		ClassRegistryDatabase.x \
 		VariableDescriptor.x\
-                AnyType.x \
+        AnyType.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
-                StructuredDataI.x \
+        StructuredDataI.x \
 		Object.x \
 		IntrospectionTools.x \
 		ClassMethodInterfaceMapper.x\
@@ -44,7 +43,9 @@ OBJSX=  TypeConversionManager.x \
 		ObjectRegistryDatabase.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x 
+		ReferenceContainerFilterObjectName.x \
+		ProgressiveFixedSizeTypeCreator.x \
+		ProgressiveCStringArrayCreator.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

@@ -73,24 +73,26 @@ uint32 TypeDescriptor::StorageSize() const{
 
 uint32 TypeDescriptor::FullSize(const uint8 *address)const{
 	uint32 size = StorageSize();
-	if (IsCharStreamType() && (address != NULL)){
-		TD_FullType fullType = this->fullType;
-		switch(fullType){
-		case TDF_Stream:
-			/** only works as StreamString is sole descendant of StreamI */
-		case TDF_SString:{
-			StreamI *s = reinterpret_cast<StreamI *>(const_cast<uint8 *>(address));
-			size += s->Size();
-		}break;
-		case TDF_CString:
-		case TDF_CCString:
-		case TDF_DynamicCString:{
-			CCString *s = reinterpret_cast<CCString *>(const_cast<uint8 *>(address));
-			size += (s->GetSize()+1);
-		} break;
-		default:{
+	if (IsCharStreamType()) {
+		if (address != NULL){
+			TD_FullType fullType = this->fullType;
+			switch(fullType){
+			case TDF_Stream:
+				/** only works as StreamString is sole descendant of StreamI */
+			case TDF_SString:{
+				StreamI *s = reinterpret_cast<StreamI *>(const_cast<uint8 *>(address));
+				size += s->Size();
+			}break;
+			case TDF_CString:
+			case TDF_CCString:
+			case TDF_DynamicCString:{
+				CCString *s = reinterpret_cast<CCString *>(const_cast<uint8 *>(address));
+				size += (s->GetSize()+1);
+			} break;
+			default:{
 
-		}
+			}
+			}
 		}
 	}
 	return size;

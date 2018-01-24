@@ -204,14 +204,16 @@ public:
 		integerType *destI = reinterpret_cast<integerType *>(dest);
 		if (reader == NULL_PTR(StringReader *)){
 			ok.internalSetupError = true;
+			REPORT_ERROR(ok,"reader == NULL");
 		}
 		for (int i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;
+				REPORT_ERROR(ok,"token == NULL");
 			} else {
 				integerType num;
-				ok.fatalError = StringToInteger(token.GetList(),num);
+				ok.fatalError = !StringToInteger(token.GetList(),num);
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destI[i]);
@@ -258,25 +260,23 @@ public:
 		integerBitsSize *destI = reinterpret_cast<integerBitsSize *>(dest);
 		if (reader == NULL_PTR(StringReader *)){
 			ok.internalSetupError = true;
+			REPORT_ERROR(ok,"reader == NULL");
 		}
 		for (int i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;
+				REPORT_ERROR(ok,"empty token");
 			} else {
 				integerBitsSize num;
-				ok.fatalError = StringToInteger(token.GetList(),num);
+				ok.fatalError = !StringToInteger(token.GetList(),num);
 				if (ok){
 					if (compare){
 						integerBitsSize num2;
 						BSToBS(&num2,0,sizeof(num2)*8,isSigned,&destI[i],numberBitShift,numberBitSize,isSigned);
-//						ok.fatalError = BitSetToInteger<integerHolderSize,integerBitsSize>(num2,&destI[i],numberBitShift,numberBitSize,isSigned);
-//						if (ok){
-							ok.comparisonFailure = (num != num2);
-//						}
+						ok.comparisonFailure = (num != num2);
 					} else {
 						BSToBS(&destI[i],numberBitShift,numberBitSize,isSigned,&num,0,sizeof(num)*8,isSigned);
-//						ok.fatalError = IntegerToBitSet<integerHolderSize,integerBitsSize>(&destI[i],numberBitShift,numberBitSize,isSigned,num);
 					}
 				}
 			}
@@ -327,14 +327,17 @@ public:
 		floatType *destF = reinterpret_cast<floatType *>(dest);
 		if (reader == NULL_PTR(StringReader *)){
 			ok.internalSetupError = true;
+			REPORT_ERROR(ok,"reader == NULL");
 		}
 		for (int i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;
+				REPORT_ERROR(ok,"empty token");
+
 			} else {
 				floatType num;
-				ok.fatalError = StringToFloat(token.GetList(),num);
+				ok.fatalError = !StringToFloat(token.GetList(),num);
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destF[i]);
@@ -385,48 +388,53 @@ FromStringConversionFactory::~FromStringConversionFactory(){
 TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
+
 	StringReader *reader = NULL_PTR(StringReader *);
-	if (destTd.SameTypeAs(StreamType(0))){
+	if (sourceTd.SameTypeAs(StreamType(0))){
 		reader = new StreamReader(destTd.objectSize);
 	} else
-	if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
+	if (sourceTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 		reader = new SStringReader();
 	} else
-	if (destTd.SameAs(DynamicCharString) ||
-		destTd.SameTypeAs(ConstCharString(sizeof(CCString))) ||
-	    destTd.SameTypeAs(CharString)){
+	if (sourceTd.SameAs(DynamicCharString) ||
+		sourceTd.SameTypeAs(ConstCharString(sizeof(CCString))) ||
+		sourceTd.SameTypeAs(CharString)){
 		reader = new CCStringReader();
 	}
+
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (reader != NULL){
 		if (!destTd.isStructuredData){
-			switch(destTd.fullType){
+			uint32 fullType = destTd.fullType;
+			uint32 basicTypeSize = destTd.basicTypeSize;
+			bool hasBitSize = destTd.hasBitSize;
+			switch(fullType){
 			case TDF_UnsignedInteger:{
-				switch(sourceTd.basicTypeSize){
+				switch(basicTypeSize){
 				case Size8bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<uint8>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<uint8>(reader,destTd,false,isCompare);
 					}
 				}break;
 				case Size16bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<uint16>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<uint16>(reader,destTd,false,isCompare);
 					}
 				}break;
 				case Size32bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<uint32>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<uint32>(reader,destTd,false,isCompare);
 					}
 				}break;
 				case Size64bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<uint64>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<uint64>(reader,destTd,false,isCompare);
@@ -438,30 +446,32 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDesc
 				}
 			}break;
 			case TDF_SignedInteger:{
-				switch(sourceTd.basicTypeSize){
+
+				switch(basicTypeSize){
 				case Size8bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<int8>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<int8>(reader,destTd,true,isCompare);
 					}
 				}break;
 				case Size16bit:{
-					if (!sourceTd.hasBitSize){
+
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<int16>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<int16>(reader,destTd,true,isCompare);
 					}
 				}break;
 				case Size32bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<int32>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<int32>(reader,destTd,true,isCompare);
 					}
 				}break;
 				case Size64bit:{
-					if (!sourceTd.hasBitSize){
+					if (!hasBitSize){
 						tco = new StringToIntegerTCO<int64>(reader,isCompare);
 					} else {
 						tco = new StringToBitSetTCO<int64>(reader,destTd,true,isCompare);
@@ -473,7 +483,7 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDesc
 				}
 			}break;
 			case TDF_Float:{
-				switch(sourceTd.basicTypeSize){
+				switch(basicTypeSize){
 				case Size32bit:{
 					tco = new StringToFloatTCO<float>(reader,isCompare);
 				}break;
@@ -487,7 +497,6 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDesc
 
 
 			default:{
-
 			}
 			}
 		}

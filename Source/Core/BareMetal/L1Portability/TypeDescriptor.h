@@ -270,11 +270,12 @@ const TDBasicTypeSize SizePointer = (sizeof(void*)==8) ? Size64bit : (sizeof(voi
 	    rangeFun(structuredDataIdCode,30   , 2,numberType)   \
 	    /*  For isStructuredData = false   */                \
 	    rangeFun(fullType            , 6   , 2,numberType)   \
-	    /*  For type = int uint float char (void)    */      \
+		/* For type != int uint float char (void)  */        \
 	    rangeFun(objectSize          ,24   , 8,numberType)   \
+	    /*  For type = int uint float char (void)    */      \
 	    rangeFun(basicTypeSize       , 4   , 8,numberType)   \
 		boolFun (hasBitSize                ,12,numberType)   \
-	    /* For basicTypeSize with hasBitSize    */              \
+	    /* For basicTypeSize with hasBitSize    */           \
 	    rangeFun(bitOffset           , 8   ,16,numberType)   \
 	    rangeFun(numberOfBits        , 8   ,24,numberType)
 

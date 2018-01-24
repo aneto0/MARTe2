@@ -26,6 +26,7 @@
 
 #include "ProgressiveFixedSizeTypeCreator.h"
 #include "TypeConversionManager.h"
+#include "GlobalObjectsDatabase.h"
 
 namespace MARTe{
 
@@ -36,8 +37,10 @@ namespace MARTe{
  */
 class MemoryPageObject: public AnyObjectI{
 
-
 public:
+    CLASS_REGISTER_DECLARATION()
+
+
 	/**
 	 * constructor
 	 */
@@ -90,6 +93,7 @@ private:
 	AnyType 	anyType;
 };
 
+CLASS_REGISTER(MemoryPageObject, "1.0")
 
 /**
  * @brief Creates the object selecting the type to convert to and the default PageSize
@@ -144,8 +148,6 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 	} else {
 		status 				= error;
 	}
-
-
 	return ret;
 }
 
@@ -154,7 +156,12 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 	 */
 	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::AddElement(CCString typeStringRepresentation){
 		ErrorManagement::ErrorType ret;
-		ret.internalStateError = !Started();
+
+		if (!Started()){
+			ret.internalStateError = true;
+			REPORT_ERROR(ret,"AddElement and status not started");
+		}
+
 		bool newRow = false;
 		if (ret){
 			/// update status
@@ -271,7 +278,6 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		}
 
 		if (!ret.ErrorsCleared()){
-			REPORT_ERROR(ret,"Error in AddElement");
 			status = error;
 		}
 		return ret;
@@ -367,9 +373,11 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 	 */
 	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReference(ReferenceT<AnyObjectI> &x){
 		ErrorManagement::ErrorType  ret;
-		ret.fatalError = !Finished();
 
-printf ("status = %x\n",status);
+		if (!Finished()){
+			ret.fatalError = true;
+			REPORT_ERROR(ret,"Not Finished");
+		}
 
 		void *auxPtr  = NULL;
 		uint32 auxSize = 0;
@@ -390,7 +398,6 @@ printf ("status = %x\n",status);
 				// new page if needed
 				if (ret){
 					ret = CheckAndNewPage(auxSize);
-printf ("checkAndNew\n");
 				}
 
 				// get the address map and close up memory pages
@@ -399,21 +406,18 @@ printf ("checkAndNew\n");
 					pageWritePos += auxSize;
 					sizeLeft -= auxSize;
 					ret = CheckAndClosePage(0);
-printf ("checkAndClose\n");
 				}
 			}
-
 		}
-
 
 		if ((numberOfPages > 0) && ret){
 			page.FlipOrder();
 		}
 
 		if (ret){
-printf ("getRefPriv\n");
 			void *dataPtr =  page.Address(0);
 			ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
+
 		}
 		return ret;
 	}
@@ -434,7 +438,10 @@ printf ("getRefPriv\n");
 		case finishedM:{
 			// auzPtr not NULL means fragmented
 			if (auxPtr != NULL){
-				ret = (auxSize == sizeof (void *) * matrixRowSize) && (auxPtr != NULL);
+				if (auxSize != sizeof (void *) * matrixRowSize){
+					ret.internalSetupError = true;
+					REPORT_ERROR(ret,"auxSize is not adequate");
+				}
 
 				// reorder the pages correctly to allow access to data
 				if (ret){
@@ -444,7 +451,10 @@ printf ("getRefPriv\n");
 					uint32 vectorByteSize = vectorSize * objectSize;
 					for (int i = 0;(i<matrixRowSize) && ret;i++){
 						void *address = page.DeepAddress(pageDepth,vectorByteSize);
-						ret.fatalError = (address == NULL);
+						if (address == NULL){
+							ret.fatalError = true;
+							REPORT_ERROR(ret,"deep address out of boundary");
+						}
 
 						if (ret){
 							addressMap[i] = address;
@@ -469,8 +479,10 @@ printf ("getRefPriv\n");
 			}
 		}break;
 		case finishedSM:{
-
-			ret = (auxSize == sizeof (Vector<uint8>) * matrixRowSize) && (auxPtr != NULL);
+			if ((auxSize != (sizeof (Vector<uint8>) * matrixRowSize)) || (auxPtr == NULL)){
+				ret.internalSetupError = true;
+				REPORT_ERROR(ret,"auxSize is not adequate or auxPtr is NULL");
+			}
 
 			// now get the address and then reorder the pages correctly to allow access to data
 			if (ret){
@@ -481,7 +493,10 @@ printf ("getRefPriv\n");
 					uint32 vectorByteSize = sizeStack[i] * objectSize;
 
 					uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,vectorByteSize));
-					ret.fatalError = (address == NULL_PTR(uint8 *));
+					if (address == NULL_PTR(uint8 *)){
+						ret.fatalError = true;
+						REPORT_ERROR(ret,"deep address out of boundary");
+					}
 
 					if (ret){
 						addressMap[i].Set(address,sizeStack[i]);
@@ -500,13 +515,23 @@ printf ("getRefPriv\n");
 		}break;
 		case error:{
 			ret.fatalError = true;
+			REPORT_ERROR(ret,"On Error");
 		}break;
 		default:{
 			ret.notCompleted = true;
+			REPORT_ERROR(ret,"Unexpected state?");
 		}
 		}
 
 		ReferenceT<MemoryPageObject> mpor;
+		if (ret){
+			//ReferenceT<MemoryPageObject> mpor2(buildNow);
+			mpor = ReferenceT<MemoryPageObject> (buildNow);
+			if (!mpor.IsValid()){
+				ret.outOfMemory = true;
+				REPORT_ERROR(ret,"MemoryPageObject construction failed");
+			}
+		}
 
 		if (ret){
 			mpor->Setup(type,mods,page.Address(0));
@@ -514,8 +539,6 @@ printf ("getRefPriv\n");
 			x = mpor;
 
 			status = notStarted;
-		} else {
-
 		}
 
 		return ret;
@@ -672,14 +695,20 @@ printf ("getRefPriv\n");
 
 		if (mph != NULL_PTR(MemoryPageHeader *)){
 			// should grow not shrink
-			ret.parametersError = (newBufferSize <= mph->pageSize);
+			if (newBufferSize <= mph->pageSize){
+				ret.parametersError = true;
+				REPORT_ERROR(ret,"Grow to a smaller size??");
+			}
 		}
 
 		MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
 		if (ret){
 			// failure to allocate new page
 			newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-			ret.outOfMemory = (newMemory == NULL_PTR(MemoryPageHeader *));
+			if (newMemory == NULL_PTR(MemoryPageHeader *)){
+				ret.outOfMemory = true;
+				REPORT_ERROR(ret,"realloc failed");
+			}
 		}
 
 		if (ret){
@@ -697,13 +726,20 @@ printf ("getRefPriv\n");
 
 		if (mph != NULL_PTR(MemoryPageHeader *)){
 			// should shrink not grow
-			ret.parametersError = (newBufferSize >= mph->pageSize);
+			if (newBufferSize >= mph->pageSize){
+				ret.parametersError = true;
+				REPORT_ERROR(ret,"Shrink to a bigger size??");
+			}
+
 		}
 		MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
 		if (ret){
 			// failure to allocate new page
 			newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-			ret.outOfMemory = (newMemory == NULL_PTR(MemoryPageHeader *));
+			if (newMemory == NULL_PTR(MemoryPageHeader *)){
+				ret.outOfMemory = true;
+				REPORT_ERROR(ret,"realloc failed");
+			}
 		}
 
 		if (ret){
@@ -720,7 +756,12 @@ printf ("getRefPriv\n");
 		ErrorManagement::ErrorType ret;
 		MemoryPageHeader *newMemory;
 		newMemory = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
-		ret.outOfMemory = (newMemory == NULL_PTR(MemoryPageHeader *));
+
+		if (newMemory == NULL_PTR(MemoryPageHeader *)){
+			ret.outOfMemory = true;
+			REPORT_ERROR(ret,"malloc failed");
+		}
+
 		if (ret){
 			newMemory->pageSize = size;
 			newMemory->previous = mph;

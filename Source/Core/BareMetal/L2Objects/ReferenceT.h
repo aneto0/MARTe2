@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Reference.h"
+#include "GlobalObjectsDatabase.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,6 +48,13 @@ namespace MARTe {
 #define ConstReferenceT(x) ReferenceT<const x>
 
 /**
+ * used to select the constructor ReferenceT(BuildCode code);
+ */
+enum ReferenceTBuildCode {
+	buildNow   = 1
+};
+
+/**
  * @brief Template version of the shared pointer implementation (see Reference).
  * @param T the base type of the objects referenced by instances of this class
  */
@@ -55,8 +64,15 @@ public:
 
     /**
      * @brief Creates an empty reference (referenced object is set to NULL).
+     * @param[in] build if true builds an object of class T on the StandardHeap
      */
     ReferenceT();
+
+    /**
+     * @brief Allows creating a reference loaded with an instance of T constructed on the standard heap.
+     * @param[in] code has to be set to buildNow
+     */
+    ReferenceT(ReferenceTBuildCode code);
 
     /**
      * @brief Creates an empty reference or a reference to base type T.
@@ -191,10 +207,14 @@ ReferenceT<T>::ReferenceT(const Reference& sourceReference) :
 
 /*lint -e{1566} Init function initializes members */
 template<typename T>
-ReferenceT<T>::ReferenceT() :
+ReferenceT<T>::ReferenceT():
         Reference() {
     Init();
 }
+
+template<typename T>
+ReferenceT<T>::ReferenceT(ReferenceTBuildCode code): ReferenceT<T>::ReferenceT(&GlobalObjectsDatabase::Instance().GetStandardHeap())
+{}
 
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting

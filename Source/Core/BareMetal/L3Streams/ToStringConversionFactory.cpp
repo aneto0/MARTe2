@@ -1062,14 +1062,18 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (wrapper != NULL){
-		if (!sourceTd.isStructuredData){
-			switch(sourceTd.fullType){
+		uint32 fullType = sourceTd.fullType;
+		uint32 basicTypeSize = sourceTd.basicTypeSize;
+		bool hasBitSize = sourceTd.hasBitSize;
+		bool isStructuredData = sourceTd.isStructuredData;
+		if (!isStructuredData){
+			switch(fullType){
 			case TDF_Char:{
 				tco = new CharToStringTCO(wrapper);
 			}break;
 			case TDF_UnsignedInteger:{
-				if (!sourceTd.hasBitSize){
-					switch(sourceTd.basicTypeSize){
+				if (!hasBitSize){
+					switch(basicTypeSize){
 					case Size8bit:{
 						tco = new IntegerToStringTCO<uint8>(wrapper);
 					}break;
@@ -1092,8 +1096,8 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 
 			}break;
 			case TDF_SignedInteger:{
-				if (!sourceTd.hasBitSize){
-					switch(sourceTd.basicTypeSize){
+				if (!hasBitSize){
+					switch(basicTypeSize){
 					case Size8bit:{
 						tco = new IntegerToStringTCO<int8>(wrapper);
 					}break;
@@ -1114,7 +1118,7 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 				}
 			}break;
 			case TDF_Float:{
-				switch(sourceTd.basicTypeSize){
+				switch(basicTypeSize){
 				case Size32bit:{
 					tco = new FloatToStringTCO<float>(wrapper);
 				}break;

@@ -59,7 +59,11 @@ public:
 	 * @brief The only interface provided by an AnyObject is the ability to provide its data via an AnyType.
 	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
 	 */
-	virtual AnyType operator AnyType()= 0;
+	virtual operator AnyType()= 0;
+
+	inline AnyType GetAnyType(){
+		return this->operator AnyType();
+	}
 
 };
 

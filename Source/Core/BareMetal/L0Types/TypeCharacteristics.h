@@ -102,9 +102,9 @@ static const T MinValue() {
  * @tparam T An integer type
  * @return the type usable bit size.
  */
-static const uint8 UsableBitSize() {
+static const uint16 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
-    const uint8 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    const uint16 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
     		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u));
     return nOfBits;
 }
@@ -115,9 +115,9 @@ static const uint8 UsableBitSize() {
  * @tparam T An integer type
  * @return the type usable bit size.
  */
-static const uint8 UsableNegativeBitSize() {
+static const uint16 UsableNegativeBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
-    const uint8 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    const uint16 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
     		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0);
     return nOfBits;
 }

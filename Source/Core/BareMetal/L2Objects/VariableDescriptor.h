@@ -109,11 +109,18 @@ public:
      * @brief copy operator
      */
     VariableDescriptor &operator=(const VariableDescriptor &x );
-
+#if 0
     /**
      * @brief sets the typeDescriptor
      */
     VariableDescriptor(const TypeDescriptor &td);
+#endif
+    /**
+     * @brief sets the typeDescriptor
+     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
+     * @param[in] modifiers contains the modifiers string in the appropriate language (see VariableDescriptor).
+     */
+    VariableDescriptor(const TypeDescriptor &td, CCString modifierString=emptyString);
 
     /**
      * @brief returns size of all the memory addressed by this variable.

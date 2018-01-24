@@ -137,6 +137,17 @@ public:
     inline AnyType(T const &x);
 
     /**
+     * @brief Allows to setup an Anytype of any type....
+     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
+     * @param[in] modifiers contains the modifiers string in the appropriate language (see VariableDescriptor).
+     * @param[in] dataPointerIn is the pointer to the constant data.
+     * @post
+     *   GetDataPointer() == dataPointerIn &&
+     *   GetDataDescriptor() == dataDescriptorIn
+     */
+    inline void Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const void* const dataPointerIn);
+
+    /**
      * @brief moves the pointer to referencing the a variable that is referenced to by the current variable (if pointer)
      * @param[in] index allows addressing arrays
      * @return ErrorType::ErrorsCleared()= true if operation successful
@@ -234,6 +245,12 @@ bool AnyType::IsVoid() const{
 AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):variableDescriptor(typeDescriptorIn){
     pointer2Variable = const_cast<void *>(dataPointerIn);
 }
+
+void AnyType::Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const void* const dataPointerIn){
+	variableDescriptor = VariableDescriptor(dataDescriptorIn,modifiers);
+    pointer2Variable = const_cast<void *>(dataPointerIn);
+}
+
 
 AnyType::AnyType( AnyType &x):variableDescriptor(x.variableDescriptor) {
     /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/

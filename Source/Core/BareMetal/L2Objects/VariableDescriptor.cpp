@@ -104,8 +104,9 @@ VariableDescriptor::VariableDescriptor(){
 VariableDescriptor::~VariableDescriptor(){
 }
 
-VariableDescriptor::VariableDescriptor(const TypeDescriptor &td){
+VariableDescriptor::VariableDescriptor(const TypeDescriptor &td, CCString modifierString){
     typeDescriptor = td;
+    modifiers.AppendN(modifierString.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
@@ -125,15 +126,21 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     return *this;
 }
 
-static bool isNumber(char8 c){
+static inline bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
 }
 
-static uint32 toNumber(char8 c){
+static inline uint32 toNumber(char8 c){
 	return  static_cast<uint32>(c - '0') ;
 }
 
-static uint32 readNumber(CCString &buffer){
+static inline char8 toUpper(char8 c){
+	if ((c >='a') && (c <= 'z')){
+		c = (c - 'a') + 'A';
+	}
+	return c;
+}/** string to integer */
+static inline uint32 readNumber(CCString &buffer){
 	uint32 result = 0;
 	while (isNumber(buffer[0])){
 		result = result * 10u;
@@ -146,6 +153,7 @@ static uint32 readNumber(CCString &buffer){
 /**
  * extracts information about a layer
  * updates the layer string pointer
+ * used 8 times
  */
 static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size ){
 	if (modifierString.IsNullPtr()){
@@ -162,6 +170,7 @@ static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 
 	}
 }
 
+// used 4 times
 ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 		CCString &modifierString,
 		const uint8 *pointer,
@@ -220,7 +229,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
  		}
 		if (c== '\0'){
 			elementSize = typeDescriptor.StorageSize();
-//TODO remove
+
 		} else
 		if ((c=='p') || (c=='P')){
 			elementSize = sizeof(void *);
@@ -240,6 +249,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
  	return ret;
  }
 
+// used 4 times
 uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *pointer) const{
 	 uint64 numberOfElements = 0;
 	 uint32 elementSize = 0;
@@ -252,7 +262,7 @@ uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *po
  	 return (numberOfElements + numberOfTermElements)* elementSize ;
 }
 
-
+// used externally 4 times
 TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     CCString modifiersCopy = modifiers;
     char8 firstModifier  = '\0';
@@ -270,21 +280,7 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     	case 'P':
     	case 'p':{
     		td = GenericPointer;
-/*
-//TODO remove this
-    		CCString ZTAModifiers = "ZzDdSs";
-    		if (ZTAModifiers.In(nextModifier)){
-    		    GetLayerInfo(modifiersCopy,firstModifier,size );
-    		    if (modifiersCopy[0] == 0){
-    		    	if (typeDescriptor.SameAs(Character8Bit) && (nextModifier == 'Z')){
-        		    	td = DynamicCharString;
-    		    	} else
-   	    		    if (typeDescriptor.SameTypeAndSizeAs(Character8Bit)){
-    	    		   	td = ConstCharString;
-    	    		}
-    		    }
-    		} else
-*/
+
     		if (nextModifier == 0){
     			td = PointerType;
     		}
@@ -309,13 +305,8 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
 	return td;
 }
 
-static inline char8 toUpper(char8 c){
-	if ((c >='a') && (c <= 'z')){
-		c = (c - 'a') + 'A';
-	}
-	return c;
-}
 
+// used by copyTo twice.
 TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const{
 	const CCString pointerModifiers = "Pp";
 	const CCString immediateModifiers = "AVM";
@@ -397,12 +388,6 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         		dimensions.Append(di);
     			di.type = '\0';
 
-#if 0
-        		//P0!
-    			// restore one level
-    			modifierString = previousModifierString;
-				td = PointerType;
-#endif
     		} else {
     			di.type = 'A';
     			di.numberOfElements = 1;
@@ -411,21 +396,11 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
     		}
         }
     }
-/*
-	if (!td.SameAs(InvalidType(0))){
-        VariableDescriptor dummy;
-        dummy.modifiers = modifierString.GetList();
-        dummy.typeDescriptor = typeDescriptor;
 
-        td = dummy.GetSummaryTypeDescriptor();
-	}
-*/
 	return td;
 }
 
-
-
-
+// used internally 4 time
 ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierString, const uint8 *pointer,
 		                               uint64 &dataSize, uint64 &overHeadSz,uint8 maxDepth,uint32 layerMultiplier) const {
 
@@ -580,7 +555,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
 	uint64 overHeadSz = 0;
 	ErrorManagement::ErrorType ret =  GetDeepSize(modifiers,pointer,dataSize,overHeadSz,maxDepth);
 
-//	dataSize += storageSz;
 	if (overHeadSize != NULL){
 		*overHeadSize = overHeadSz;
 	}
@@ -773,9 +747,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	return ret;
 }
 
-
-
-
+//used by GetNextElementSize
 static inline  uint32 GetDimensionSize(char8 type){
 	char8 c = toUpper(type);
 	uint32 size = 0;
@@ -798,6 +770,7 @@ static inline  uint32 GetDimensionSize(char8 type){
 	return size;
 }
 
+// used by HandlePointer
 static uint32 GetNextElementSize(
 		const ZeroTerminatedArray<DimensionInfo> &dimensions,
 		TypeDescriptor &td
@@ -832,6 +805,7 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr){
 	return ret;
 }
 
+//used by LayerOperate
 static inline ErrorManagement::ErrorType HandlePointer(
 		const ZeroTerminatedArray<DimensionInfo> &dimensions,
 		const uint8* &ptr,
@@ -890,6 +864,7 @@ static inline ErrorManagement::ErrorType HandlePointer(
 	return ok;
 }
 
+// used by CopyTo
 static ErrorManagement::ErrorType LayerOperate(
 		ZeroTerminatedArray<DimensionInfo> sourceDimensions,
 		const uint8* sourcePtr,
