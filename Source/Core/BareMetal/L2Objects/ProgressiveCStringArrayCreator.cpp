@@ -131,7 +131,6 @@ ErrorManagement::ErrorType ProgressiveCStringArrayCreator::GetReference(Referenc
 
 	ret.fatalError = !Finished();
 
-
 	uint32 neededSize = numberOfElements * sizeof(CString);
 	if (ret){
 		// close if not big enough

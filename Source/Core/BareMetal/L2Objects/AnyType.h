@@ -197,7 +197,7 @@ public:
      * @brief pointer2Variable = NULL
      * @return  (pointer2Variable == NULL)
      */
-    inline bool IsVoid() const;
+    inline bool 					IsVoid() const;
 
     /** INTERFACES GETTERS*/
 
@@ -212,6 +212,13 @@ public:
      * This is the full Variable description with all modifiers
      */
     inline const VariableDescriptor &GetFullVariableDescriptor() const;
+
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     * @return true if all ok
+     */
+    inline ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
+
 
 private:
 
@@ -277,8 +284,13 @@ const void* AnyType::GetVariablePointer() const{
 }
 
 const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
-    return this->variableDescriptor;
+    return variableDescriptor;
 }
+
+ErrorManagement::ErrorType AnyType::ToString(DynamicCString &string,bool rawFormat) const{
+	return variableDescriptor.ToString(string,rawFormat);
+}
+
 
 /**
  * used as terminator

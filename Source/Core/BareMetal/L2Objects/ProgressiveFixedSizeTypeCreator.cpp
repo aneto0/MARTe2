@@ -147,6 +147,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		status 				= started;
 	} else {
 		status 				= error;
+		REPORT_ERROR(ret,"Start failed");
 	}
 	return ret;
 }
@@ -203,15 +204,22 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			}
 		}
 
+//printf ("< %i %i\n",pageWritePos,numberOfElements);
+
+		// in case of new vector check if there is space for one based on the size of the previous
+		// close page otherwise
 		if (ret && newRow){
+//printf("CheckAndClosePage %i %i\n",vectorSize,objectSize);
 			ret = CheckAndClosePage(vectorSize * objectSize);
 		}
+//printf ("< %i %i\n",pageWritePos,numberOfElements);
 
 		// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
 		if (ret){
 			// no memory - allocate
 			// could be at the beginning or after a vector has been completed
 			// if no more vectors of the same size can be fitted
+//printf("CheckAndNewPage %i\n",defaultPageSize);
 			ret = CheckAndNewPage(defaultPageSize);
 		}
 
@@ -220,6 +228,8 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		if (ret){
 			// not enough space
 			if (neededSize > sizeLeft){
+printf("neededSize > sizeLeft %i %i \n",neededSize,sizeLeft);
+
 				// need to allocate a new page and shrink this page?
 				// or need to move part of current page into a new page and shrink this page?
 				// or need to increase page size
@@ -274,11 +284,14 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 				sizeLeft -= neededSize;
 				pageWritePos += neededSize;
 				numberOfElements++;
+
+//printf ("> %i %i\n",pageWritePos,numberOfElements);
 			}
 		}
 
 		if (!ret.ErrorsCleared()){
 			status = error;
+			REPORT_ERROR(ret,"AddElement failed");
 		}
 		return ret;
 	}
@@ -331,6 +344,10 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			status = error;
 		}
 		}
+
+		if (!ret){
+			REPORT_ERROR(ret,"EndVector failed");
+		}
 		return ret;
 	}
 
@@ -364,6 +381,9 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			ret.internalStateError = true;
 		}
 		}
+		if (!ret){
+			REPORT_ERROR(ret,"End() failed");
+		}
 		return ret;
 	}
 
@@ -386,12 +406,15 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 
 			if (status == finishedSM){
 				auxSize  = sizeof (Vector<uint8>) * matrixRowSize;
+printf("SM\n");
 			} else
-			if ((status == finishedM)&&(numberOfPages > 0)){
+			if ((status == finishedM)&&(numberOfPages > 1)){
+printf("MP numberOfPages = %i\n",numberOfPages);
 				auxSize = sizeof (void *) * matrixRowSize;
 			}
 
 			if (auxSize > 0){
+printf("auxSize = %i\n",auxSize);
 				// shrink if needed
 				ret = CheckAndClosePage(auxSize);
 
@@ -418,7 +441,10 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			void *dataPtr =  page.Address(0);
 			ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
 
+		} else {
+			REPORT_ERROR(ret,"GetReference failed");
 		}
+
 		return ret;
 	}
 
@@ -446,17 +472,21 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 				// reorder the pages correctly to allow access to data
 				if (ret){
 					void **addressMap = reinterpret_cast<void **>(auxPtr);
+printf("addressMap = %p\n",addressMap);
 
 					uint64 pageDepth=0;
 					uint32 vectorByteSize = vectorSize * objectSize;
+printf("vectorByteSize = %i\n",vectorByteSize);
 					for (int i = 0;(i<matrixRowSize) && ret;i++){
-						void *address = page.DeepAddress(pageDepth,vectorByteSize);
+						uint32 sizeLeftOnPage = vectorByteSize;
+						void *address = page.DeepAddress(pageDepth,sizeLeftOnPage);
 						if (address == NULL){
 							ret.fatalError = true;
 							REPORT_ERROR(ret,"deep address out of boundary");
 						}
 
 						if (ret){
+printf("depth = %lli address = %p %i\n",pageDepth,address,vectorByteSize);
 							addressMap[i] = address;
 							pageDepth = pageDepth + vectorByteSize;
 						}
@@ -466,7 +496,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 				if (ret){
 					mods.Append('A');
 					mods.AppendNum(matrixRowSize);
-					mods.Append('PA');
+					mods.AppendN("PA");
 					mods.AppendNum(vectorSize);
 					dataPtr = auxPtr;
 				}
@@ -491,8 +521,8 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 				uint64 pageDepth=0;
 				for (int i = 0;(i<matrixRowSize) && ret;i++){
 					uint32 vectorByteSize = sizeStack[i] * objectSize;
-
-					uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,vectorByteSize));
+					uint32 sizeLeftOnPage = vectorByteSize;
+					uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,sizeLeftOnPage));
 					if (address == NULL_PTR(uint8 *)){
 						ret.fatalError = true;
 						REPORT_ERROR(ret,"deep address out of boundary");
@@ -534,13 +564,15 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		}
 
 		if (ret){
-			mpor->Setup(type,mods,page.Address(0));
+printf("data Ptr = %p\n",dataPtr);
+			mpor->Setup(type,mods,dataPtr);
 			mpor->Copy(page);
 			x = mpor;
 
 			status = notStarted;
+		} else {
+			REPORT_ERROR(ret,"GetReferencePrivate failed");
 		}
-
 		return ret;
 	}
 
@@ -556,12 +588,20 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			// check if enough space to store another vector
 			if ((sizeLeft < neededSize) || (neededSize == 0)){
 				ret = page.Shrink(pageWritePos);
+				if (ret){
+printf("end page to %i\n", pageWritePos);
+					pageSize = 0;
+					sizeLeft = 0;
+					pageWritePos = 0;
+				}
 			}
-			if (ret){
-				pageSize = 0;
-				sizeLeft = 0;
-				pageWritePos = 0;
-			}
+		}
+		if (!ret){
+			DynamicCString errs;
+			errs.AppendN("CheckAndClosePage(");
+			errs.AppendNum(neededSize);
+			errs.Append(')');
+			REPORT_ERROR(ret,errs.GetList());
 		}
 		return ret;
 	}
@@ -578,14 +618,63 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		if (pageSize == 0){
 			ret = page.Allocate(neededSize);
 			if (ret){
+printf("new page %i\n", neededSize);
 				sizeLeft = neededSize;
 				pageWritePos = 0;
 				pageSize = neededSize;
 				numberOfPages++;
 			}
 		}
+		if (!ret){
+			DynamicCString errs;
+			errs.AppendN("CheckAndNewPage(");
+			errs.AppendNum(neededSize);
+			errs.Append(')');
+			REPORT_ERROR(ret,errs.GetList());
+		}
+
 		return ret;
 	}
+#if 0
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckAndRenewPage(uint32 neededSize,uint32 newPageSize){
+		ErrorManagement::ErrorType ret;
+		// do nothing if pageSize == 0
+		if (pageSize > 0){
+			// check if enough space to store another vector
+			if ((sizeLeft < neededSize) || (neededSize == 0)){
+				ret = page.Shrink(pageWritePos);
+			}
+			if (ret){
+				pageSize = 0;
+				sizeLeft = 0;
+				pageWritePos = 0;
+			}
+		}
+
+		// no memory - allocate
+		// could be at the beginning or after a vector has been completed
+		// if no more vectors of the same size can be fitted
+		if (ret && (pageSize==0)){
+			ret = page.Allocate(newPageSize);
+			if (ret){
+				sizeLeft = newPageSize;
+				pageWritePos = 0;
+				pageSize = newPageSize;
+				numberOfPages++;
+			}
+		}
+		if (!ret){
+			DynamicCString errs;
+			errs.AppendN("CheckAndRenewPage(");
+			errs.AppendNum(neededSize);
+			errs.Append(',');
+			errs.AppendNum(newPageSize);
+			errs.Append(')');
+			REPORT_ERROR(ret,errs.GetList());
+		}
+		return ret;
+	}
+#endif
 
 	/**
 	 * Header used in each page
@@ -726,9 +815,14 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 
 		if (mph != NULL_PTR(MemoryPageHeader *)){
 			// should shrink not grow
-			if (newBufferSize >= mph->pageSize){
+			if (newBufferSize > mph->pageSize){
 				ret.parametersError = true;
-				REPORT_ERROR(ret,"Shrink to a bigger size??");
+				DynamicCString errMsg;
+				errMsg.AppendN("Shrink to a bigger size??:new= ");
+				errMsg.AppendNum(newBufferSize);
+				errMsg.AppendN(" old= ");
+				errMsg.AppendNum(mph->pageSize);
+				REPORT_ERROR(ret,errMsg.GetList());
 			}
 
 		}

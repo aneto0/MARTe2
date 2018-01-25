@@ -344,6 +344,8 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
             			// error PV PM etc...
         				td = InvalidType(0);
         			}
+        			// consume last pointer
+        			lastPointer = '\0';
         		} else { // lastPointer == 0
             		dimensions.Append(di);
         		}
@@ -647,7 +649,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				uint32 maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize);
 				if (index >= maxIndex){
 					ret.outOfRange = true;
-			        REPORT_ERROR(ErrorManagement::OutOfRange, "index >= maxIndex");
+			        REPORT_ERROR(ret, "index >= maxIndex");
 				}
 			}
 			if (ret){
@@ -798,7 +800,13 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr){
 	const uint8 *p = *pp;
 	if (!MemoryCheck::Check(p)){
 		ret.exception = true;
-        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+		DynamicCString errM;
+		errM.AppendN("bad pointer (");
+		errM.AppendHex(reinterpret_cast<uint64>(p));
+		errM.AppendN(") at (");
+		errM.AppendHex(reinterpret_cast<uint64>(pp));
+		errM.Append(')');
+        REPORT_ERROR(ret, errM.GetList());
 	} else {
 		ptr = p;
 	}
@@ -822,40 +830,48 @@ static inline ErrorManagement::ErrorType HandlePointer(
 		switch(toupper(dimensions[0].type)){
 		case 'A':{
 			numberOfElements = dimensions[0].numberOfElements;
-	//		sourceElementSize = GetNextElementSize(dimensions,td);
 		}break;
 		case 'F':{
 			numberOfElements = dimensions[0].numberOfElements;
-	//		sourceElementSize = GetNextElementSize(dimensions,td);
 			ok = RedirectP(ptr);
+			if (!ok){
+		        REPORT_ERROR(ok, "pointer to array redirection failed");
+			}
 		}break;
 		case 'D':
 		case 'S':
 		case 'Z':{
 			ok = RedirectP(ptr);
+			if (!ok){
+		        REPORT_ERROR(ok, "pointer to Zero Term array redir failed");
+			}
 			if (ok){
-	//			sourceElementSize = GetNextElementSize(dimensions,td);
 				numberOfElements = ZeroTerminatedArrayGetSize(ptr, sourceElementSize);
 			}
 		}break;
 		case 'V':{
 			const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
 			numberOfElements = pv->GetNumberOfElements();
-	//		sourceElementSize = GetNextElementSize(dimensions,td);
 
 			// it works as vector is descendant of Pointer class
 			ok = RedirectP(ptr);
+			if (!ok){
+		        REPORT_ERROR(ok, "pointer to Vector Data redir failed");
+			}
 		}break;
 		case 'M':{
 			const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
 			numberOfElements = pm->GetNumberOfElements();
-	//		sourceElementSize = GetNextElementSize(dimensions,td);
 
 			// it works as vector is descendant of Pointer class
 			ok = RedirectP(ptr);
+			if (!ok){
+		        REPORT_ERROR(ok, "pointer to Matrix Data redir failed");
+			}
 		}break;
 		default:{
-
+			ok.fatalError = true;
+	        REPORT_ERROR(ok, "Default case reached");
 		}break;
 
 		};
@@ -876,6 +892,8 @@ static ErrorManagement::ErrorType LayerOperate(
 		){
 	ErrorManagement::ErrorType ok;
 
+printf("layer start %p %p t=%c\n",sourcePtr,destPtr,sourceDimensions[0].type);
+
 	uint32 sourceNumberOfElements = 1;
 	uint32 sourceElementSize = 1;
 	uint32 destNumberOfElements = 1;
@@ -884,39 +902,58 @@ static ErrorManagement::ErrorType LayerOperate(
 	// handle source pointer;
 	if (ok){
 		ok = HandlePointer(sourceDimensions,sourcePtr,sourceTd,sourceNumberOfElements,sourceElementSize);
+		if (!ok){
+	        REPORT_ERROR(ok, "source pointer handling failed");
+		}
 	}
 
 	// handle dest pointer;
 	if (ok){
 		ok = HandlePointer(destDimensions,(const uint8 *&)destPtr,destTd,destNumberOfElements,destElementSize);
+		if (!ok){
+	        REPORT_ERROR(ok, "destination pointer handling failed");
+		}
 	}
+
+printf("layer end  %p %p N=%i ND=%i\n",sourcePtr,destPtr,sourceNumberOfElements,destDimensions.GetSize());
 
 	if (ok){
 		if (sourceNumberOfElements != destNumberOfElements){
-	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "mismatch in dimensions");
 			ok.unsupportedFeature = true;
+	        REPORT_ERROR(ok, "mismatch in dimensions");
 		}
 	}
 
 	if (ok){
-		if (destDimensions.GetSize() == 1){
+		// the last dimension is always the scalar typed
+		if (destDimensions.GetSize() <= 2){
 			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
+			if (!ok){
+		        REPORT_ERROR(ok, "conversion failed");
+			}
 		} else {
-			// skip forward
 			sourceDimensions++;
 			destDimensions++;
+			// skip forward
 			uint32 ix = 0;
 			for (ix = 0; (ix < sourceNumberOfElements) && ok; ix++){
 				ok = LayerOperate(sourceDimensions,sourcePtr,sourceTd,destDimensions,destPtr,destTd,op);
 				sourcePtr+= sourceElementSize;
 				destPtr+= destElementSize;
+
+				if (!ok){
+					DynamicCString errM;
+					errM.AppendN("Failed at row (");
+					errM.AppendNum(ix);
+					errM.Append(')');
+			        REPORT_ERROR(ok, errM.GetList());
+				}
 			}
 		}
 	}
 
 	return ok;
 }
-
 
 ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 		const uint8 *sourcePtr,
@@ -934,13 +971,16 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	DynamicZeroTerminatedArray<DimensionInfo,4> destDimensions;
     TypeDescriptor destTd = destVd.GetDimensionsInformation(destDimensions);
 
-	ok.internalSetupError = (destDimensions.GetSize() != sourceDimensions.GetSize()) || (destDimensions.GetSize() == 0);
+	if ((destDimensions.GetSize() != sourceDimensions.GetSize()) || (destDimensions.GetSize() == 0)){
+		ok.internalSetupError = true;
+        REPORT_ERROR(ok, "Dimension mismatch");
+	}
 
 	if (ok){
 		tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd,isCompare);
 	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
 	    	ok.unsupportedFeature = true;
-	        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Conversion Operator not found");
+	        REPORT_ERROR(ok, "Conversion Operator not found");
 	    }
 	}
 

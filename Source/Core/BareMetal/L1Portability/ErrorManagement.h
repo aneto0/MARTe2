@@ -48,6 +48,7 @@ namespace ErrorManagement {
 
 /**
  * @brief The type of a user provided ErrorProcessing function
+ * @param[in] errorDescription is the error description. Will be copied. Does not need to be valid after the call.
  */
 typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo, CCString const errorDescription);
 
@@ -75,7 +76,7 @@ DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
  * @details The thread identifier is stored in the ErrorInformation structure only if interrupts are disabled, because
  * it is not possible get the thread id in an interrupt routine.
  * @param[in] code is the error code.
- * @param[in] errorDescription is the error description.
+ * @param[in] errorDescription is the error description. Will be copied. Does not need to be valid after the call.
  * @param[in] fileName is the file name where the error was triggered.
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
@@ -90,7 +91,7 @@ DLL_API void ReportError(const ErrorType &code,
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
  * @details The thread identifier is always stored in the ErrorInformation structure.
  * @param[in] code is the error code.
- * @param[in] errorDescription is the error description.
+ * @param[in] errorDescription is the error description. Will be copied. Does not need to be valid after the call.
  * @param[in] fileName is the file name where the error was triggered.
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.

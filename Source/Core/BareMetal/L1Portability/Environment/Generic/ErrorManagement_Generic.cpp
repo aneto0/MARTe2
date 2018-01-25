@@ -44,36 +44,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#include <stdio.h>
 
 namespace MARTe {
 
 namespace ErrorManagement {
 
-ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
-    if (!e){
-        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
-        while (!etl->name.IsNullPtr()){
-            if ((etl->errorBitSet &  e.format_as_integer)!= 0){
-                printf("(err=%s)",etl->name.GetList());
-            }
-            etl++;
-        }
-    }
-
-    return e;
-}
-
-
-void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription){
-	printf ("err = ");
-	PrintError(errorInfo.header.errorType);
-	printf ("line = %i ",errorInfo.header.lineNumber);
-	printf ("fn = %s ",errorInfo.functionName);
-	printf ("err = %s",errorDescription.GetList());
-	printf ("\n");
-
-}
+extern void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription);
 
 
 ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;

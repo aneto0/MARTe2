@@ -197,6 +197,11 @@ public:
 	 */
 	ErrorManagement::ErrorType GetReference(ReferenceT<AnyObjectI> &x);
 
+	/**
+	 * @brief returns Actual page size after growth etc...
+	 */
+	inline uint32 DefaultPageSize();
+
 protected:
 
 	enum PTCState {
@@ -235,13 +240,19 @@ protected:
 	/**
 	 * @brief Check if the current segment has enough space to store another vector.
 	 * If there is no need (neededSize== 0) or if the space is not large enough
-	 * close the current memory page segment and open a new one
+	 * close the current memory page segment
 	 */
 	ErrorManagement::ErrorType CheckAndClosePage(uint32 neededSize);
 	/**
 	 * @brief If pageSize is 0 allocate a new page of desired size
 	 */
 	ErrorManagement::ErrorType CheckAndNewPage(uint32 neededSize);
+	/**
+	 * @brief Check if the current segment has enough space to store another vector.
+	 * If there is no need (neededSize== 0) or if the space is not large enough
+	 * close the current memory page segment and open a new one
+	 */
+//	ErrorManagement::ErrorType CheckAndRenewPage(uint32 neededSize,uint32 newPageSize);
 
 	/**
 	 * @brief Core of implementation of GetObject
@@ -371,6 +382,10 @@ bool ProgressiveFixedSizeTypeCreator::Started(){
 	const uint32 startedMask 	= static_cast<uint32>(PTCState::started);
 	uint32 statusAsInt = static_cast<uint32>(status);
 	return ((statusAsInt & mask) == startedMask);
+}
+
+inline uint32 ProgressiveFixedSizeTypeCreator::DefaultPageSize(){
+	return defaultPageSize;
 }
 
 

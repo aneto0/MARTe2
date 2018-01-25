@@ -277,6 +277,48 @@ ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck){
 
     return err;
 }
+
+static void PrintType(AnyType at){
+    ErrorManagement::ErrorType err;
+    DynamicCString string;
+
+    err = at.ToString(string);
+	printf("%s",string);
+}
+
+ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
+    ErrorManagement::ErrorType err;
+
+    DynamicCString string1;
+    DynamicCString string2;
+
+    if (err){
+        const VariableDescriptor &vd =  at1.GetFullVariableDescriptor();
+        err = vd.ToString(string1);
+        if (!err){
+            printf("ToString error");
+        }
+    }
+    if (err){
+        const VariableDescriptor &vd =  at2.GetFullVariableDescriptor();
+        err = vd.ToString(string2);
+        if (!err){
+            printf("ToString error");
+        }
+    }
+
+    if (err){
+        if (!string1.isSameAs(string2.GetList())){
+            err.comparisonFailure = true;
+            printf("%s != %s ",string1.GetList(),string2.GetList());
+        }
+    }
+
+    return err;
+}
+
+
+
 ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 storageSizeCheck ){
     ErrorManagement::ErrorType err;
 
@@ -431,79 +473,131 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 	printf("\n");
 }
 
-#if 0
-template <typename T>
-void Check4(ProgressiveFixedSizeTypeCreator &pfstc){
+template <typename T, int size1, int size2>
+void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
-	T target;
+	T targetA[size1][size2];
+	T (*targetB[size1])[size2];
+	{
+		for (int i=0;i<size1;i++){
+			targetB[i] = reinterpret_cast<T (*)[size2]>(malloc(sizeof(T)*size2));
+		}
+		printf ("targetB %p %p", &targetB[0],targetB[0]);
+	}
 
-	AnyType at(target);
-	VariableDescriptor vd = at.GetFullVariableDescriptor();
-	TypeDescriptor td = vd.GetTypeDescriptor();
-	uint32 dimensions[2];
-	bool sparse;
+	AnyType at;
+	if (sizeof (targetA) > pfstc.DefaultPageSize()){
+//printf ("%i > %i",sizeof (targetA),pfstc.PageSize());
+		at = AnyType(targetB);
+	} else {
+		at = AnyType(targetA);
+	}
+
+//	VariableDescriptor vd = at.GetFullVariableDescriptor();
+//	TypeDescriptor td = vd.GetTypeDescriptor();
+//	uint32 dimensions[2];
+//	bool sparse;
+
+	printf("Progressive Gen ");
+	PrintType(at);
+	printf(" : ");
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
-
 	if (!ret){
-		printf ("pfstc.Start: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		for (int i=0;(i<32) && ret ;i++){
-			int16 k = rand();
-			target[i] = k;
-			char8 buffer[32];
-			sprintf(buffer,"%i",k);
-			ret = pfstc.AddElement(buffer);
+		REPORT_ERROR(ret,"pfstc.Start failed");
+	}
+
+	if (ret){
+		for (int j=0;(j<size1) && ret ;j++){
+			for (int i=0;(i<size2) && ret ;i++){
+				T k = rand();
+				(*targetB[j])[i]=k;
+				targetA[j][i] = k;
+				char8 buffer[32];
+				uint64 kk = k;
+				sprintf(buffer,"%lli",kk);
+				ret = pfstc.AddElement(buffer);
+				if (!ret){
+					DynamicCString errMsg;
+					errMsg.AppendN("pfstc.AddElement(");
+					errMsg.AppendN(buffer);
+					errMsg.AppendN(")");
+					REPORT_ERROR(ret,errMsg);
+				}
+			}
+			if (ret){
+				ret = pfstc.EndVector();
+				if (!ret){
+					REPORT_ERROR(ret,"pfstc.EndVector failed");
+				}
+			}
 		}
 	}
-	ReferenceT<AnyObjectI> aoi;
-	if (!ret){
-		printf ("pfstc.AddElement: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.EndVector();
-	}
-	if (!ret){
-		printf ("pfstc.EndVector: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.End();
-	}
-	if (!ret){
-		printf ("pfstc.End: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.GetReference(aoi);
-	}
-	if (!ret){
-		printf ("pfstc.GetReference: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		AnyType x = aoi->GetAnyType();
-	    ret = x.CompareWith(nn);
-	}
-	if (!ret){
-		printf ("Compare fault");
-		PrintError(ret);
-		printf ("\n");
-		AnyType x = aoi->GetAnyType();
-	    Check1(nn,"","int16[32]",64,0);
-	    Check1(x,"","int16[32]",64,0);
-	} else {
 
+	ReferenceT<AnyObjectI> aoi;
+	if (ret){
+		printf("Ended : ");
+		ret = pfstc.End();
+		if (!ret){
+			REPORT_ERROR(ret,"pfstc.End failed");
+		}
+	}
+
+	if (ret){
+		ret = pfstc.GetReference(aoi);
+		if (!ret){
+			REPORT_ERROR(ret,"pfstc.GetReference failed");
+		}
+	}
+
+	if (ret){
+		AnyType x = aoi->GetAnyType();
+		ret = CompareType(x,at);
+		if (!ret){
+			printf ("Type Diff ");
+			PrintError(ret);
+			printf (" != ");
+			PrintType(aoi->GetAnyType());
+			printf (" != ");
+			PrintType(at);
+			printf (" \n ");
+		} else {
+			printf("Type OK (");
+			PrintType(aoi->GetAnyType());
+			printf("): ");
+		}
+	}
+
+	if (ret){
+
+		AnyType x = aoi->GetAnyType();
+	    ret = x.CompareWith(at);
+		if (!ret){
+			REPORT_ERROR(ret,"Compare content fault");
+		} else {
+			printf ("Content OK \n");
+		}
+	}
+
+	if (!ret){
+		DynamicCString string;
+		string.AppendN("Failed ");
+		at.ToString(string);
+		REPORT_ERROR(ret, string.GetList());
+		printf ("Failed (see log) \n");
+	}
+
+
+	{
+		for (int i=0;i<size1;i++){
+			delete (targetB[i]);
+		}
 	}
 
 	pfstc.Clean();
 }
 
-#endif
 
 template <typename T1,typename T2>
 void TestSafeN2N(T1 value)
@@ -607,76 +701,13 @@ void Test(){
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
-
 	ProgressiveFixedSizeTypeCreator pfstc(1024);
 
-	ErrorManagement::ErrorType ret;
-	ret = pfstc.Start(SignedInteger16Bit);
-	int16 nn[32];
-
-	if (!ret){
-		printf ("pfstc.Start: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		for (int i=0;(i<32) && ret ;i++){
-			double kk = rand();
-			kk = (kk / RAND_MAX) * 32767;
-			int16 k = (int16)k;
-			nn[i] = k;
-			char8 buffer[32];
-			sprintf(buffer,"%i",k);
-			ret = pfstc.AddElement(buffer);
-		}
-	}
-	ReferenceT<AnyObjectI> aoi;
-	if (!ret){
-		printf ("pfstc.AddElement: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.EndVector();
-	}
-	if (!ret){
-		printf ("pfstc.EndVector: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.End();
-	}
-	if (!ret){
-		printf ("pfstc.End: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		ret = pfstc.GetReference(aoi);
-	}
-	if (!ret){
-		printf ("pfstc.GetReference: ");
-		PrintError(ret);
-		printf ("\n");
-	} else {
-		AnyType x = aoi->GetAnyType();
-	    ret = x.CompareWith(nn);
-	}
-	if (!ret){
-		printf ("Compare fault");
-		PrintError(ret);
-		printf ("\n");
-		AnyType x = aoi->GetAnyType();
-	    Check1(nn,"","int16[32]",64,0);
-	    Check1(x,"","int16[32]",64,0);
-	} else {
-		AnyType x = aoi->GetAnyType();
-		nn[0] = nn[0]+1;
-	    ret = x.CompareWith(nn);
-		if (!ret){
-			printf ("Sanity check OK\n");
-		} else {
-			printf ("Check not working\n");
-		}
-	}
-
+	Check4<int64,1,10>(pfstc,SignedInteger64Bit);
+	Check4<int32,12,10>(pfstc,SignedInteger32Bit);
+	Check4<int16,34,12>(pfstc,SignedInteger16Bit);
+	Check4<int8 ,56,87>(pfstc,SignedInteger8Bit);
+	Check4<int8 ,256,87>(pfstc,SignedInteger8Bit);
 
 }
 }

@@ -685,7 +685,9 @@ void VariableDescriptor::Match(StaticCString<sz> *s){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match(T (*x) [n]){
-	AddModifiersLayerConst('A', n);
+	if (n > 1){ // collapsing away [1]
+		AddModifiersLayerConst('A', n);
+	}
 
     T *pp = NULL;
     Match(pp);
@@ -693,7 +695,9 @@ inline void VariableDescriptor::Match(T (*x) [n]){
 
 template <class T,unsigned int n>
 inline void VariableDescriptor::Match( const T (*x) [n]){
-	AddModifiersLayerConst('A', n);
+	if (n > 1){// collapsing away [1]
+		AddModifiersLayerConst('A', n);
+	}
 
     const T *pp = NULL;
     Match(pp);

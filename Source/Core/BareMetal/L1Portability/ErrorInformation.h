@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ErrorType.h"
+#include "CCString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -73,13 +75,19 @@ struct ErrorInformation {
 
     /**
      * The error file name.
+     * A pointer to a const char * which is persistent
+     * so a real constant, not a char * relabeled as const char *
+     * scope. It should be global to the application and persistent
      */
-    const char8 * fileName;
+    CCString fileName;
 
     /**
      * The error function name
+     * A pointer to a const char * which is persistent
+     * so a real constant, not a char * relabeled as const char *
+     * scope. It should be global to the application and persistent
      */
-    const char8 * functionName;
+    CCString functionName;
 
     /**
      * thread ID of the threads who generate the error.
@@ -97,7 +105,7 @@ struct ErrorInformation {
      * so a real constant, not a char * relabeled as const char *
      * scope. It should be global to the application and persistent
      */
-    const char8 * className;
+    CCString className;
 
 };
 }

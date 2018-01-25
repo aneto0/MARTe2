@@ -86,6 +86,11 @@ public:
      */
     inline bool AppendNum(uint64 num,int32 fill0=0);
 
+    /**
+     * TODO
+     */
+    inline bool AppendHex(uint64 num);
+
 };
 
 
@@ -155,7 +160,7 @@ bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 
 bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 	bool ret = true;
-	if (num >= 9){
+	if (num > 9){
 		uint64 numH = num/10u;
 		num = num - numH * 10u;
 		ret = AppendNum(numH);
@@ -163,6 +168,17 @@ bool DynamicCString::AppendNum(uint64 num,int32 fill0){
 	ret = ret && Append ((char8)(num) + '0');
 	return ret;
 }
+
+bool DynamicCString::AppendHex(uint64 num){
+	bool ret = true;
+	for (int i = 60;(i>=0) && ret;i-=4){
+		uint8 n = (num >> i) & 0xF;
+		if (n >= 10) ret = ret && Append('A'+n-10);
+		else         ret = ret && Append('0'+n);
+	}
+	return ret;
+}
+
 
 #endif
 
