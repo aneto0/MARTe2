@@ -473,30 +473,28 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 	printf("\n");
 }
 
-template <typename T, int size1, int size2>
+template <typename T, int size1, int size2,int minSize2=size2>
 void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
 	T targetA[size1][size2];
 	T (*targetB[size1])[size2];
+	Vector<T>targetC[size1];
 	{
 		for (int i=0;i<size1;i++){
 			targetB[i] = reinterpret_cast<T (*)[size2]>(malloc(sizeof(T)*size2));
 		}
-		printf ("targetB %p %p", &targetB[0],targetB[0]);
 	}
 
 	AnyType at;
-	if (sizeof (targetA) > pfstc.DefaultPageSize()){
-//printf ("%i > %i",sizeof (targetA),pfstc.PageSize());
-		at = AnyType(targetB);
+	if (minSize2 != size2){
+		at = AnyType(targetC);
 	} else {
-		at = AnyType(targetA);
+		if (sizeof (targetA) > pfstc.DefaultPageSize()){
+			at = AnyType(targetB);
+		} else {
+			at = AnyType(targetA);
+		}
 	}
-
-//	VariableDescriptor vd = at.GetFullVariableDescriptor();
-//	TypeDescriptor td = vd.GetTypeDescriptor();
-//	uint32 dimensions[2];
-//	bool sparse;
 
 	printf("Progressive Gen ");
 	PrintType(at);
@@ -510,7 +508,15 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
 	if (ret){
 		for (int j=0;(j<size1) && ret ;j++){
-			for (int i=0;(i<size2) && ret ;i++){
+
+			int actualSize2 = size2;
+			if (minSize2 < size2){
+				actualSize2 = rand();
+				actualSize2 = actualSize2 % (size2-minSize2+1);
+				actualSize2 = actualSize2 + minSize2;
+			}
+
+			for (int i=0;(i<actualSize2) && ret ;i++){
 				T k = rand();
 				(*targetB[j])[i]=k;
 				targetA[j][i] = k;
@@ -526,6 +532,8 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 					REPORT_ERROR(ret,errMsg);
 				}
 			}
+			targetC[j].Set(reinterpret_cast<T *>(&targetA[j]),actualSize2);
+
 			if (ret){
 				ret = pfstc.EndVector();
 				if (!ret){
@@ -708,6 +716,10 @@ void Test(){
 	Check4<int16,34,12>(pfstc,SignedInteger16Bit);
 	Check4<int8 ,56,87>(pfstc,SignedInteger8Bit);
 	Check4<int8 ,256,87>(pfstc,SignedInteger8Bit);
+	Check4<uint16 ,72,4>(pfstc,UnsignedInteger16Bit);
+	Check4<uint32 ,27,17>(pfstc,UnsignedInteger32Bit);
+
+	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
 
 }
 }

@@ -97,6 +97,8 @@ SameTypeConversionFactory::SameTypeConversionFactory(){
 SameTypeConversionFactory::~SameTypeConversionFactory(){
 }
 
+#include <stdio.h>
+
 TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
@@ -107,7 +109,7 @@ TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescri
 	td.dataIsConstant = false;
 
 	//compare source and dest
-	if (destTd.SameAs(td)){
+	if (destTd.SameTypeAndSizeAs(td)){
 		if (destTd.IsBasicType() || destTd.IsStructuredData()){
 			tco = new CopyTCO(td.StorageSize(),isCompare);
 		}

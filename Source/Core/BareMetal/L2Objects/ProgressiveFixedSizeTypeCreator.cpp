@@ -228,7 +228,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		if (ret){
 			// not enough space
 			if (neededSize > sizeLeft){
-printf("neededSize > sizeLeft %i %i \n",neededSize,sizeLeft);
+//printf("neededSize > sizeLeft %i %i \n",neededSize,sizeLeft);
 
 				// need to allocate a new page and shrink this page?
 				// or need to move part of current page into a new page and shrink this page?
@@ -406,15 +406,15 @@ printf("neededSize > sizeLeft %i %i \n",neededSize,sizeLeft);
 
 			if (status == finishedSM){
 				auxSize  = sizeof (Vector<uint8>) * matrixRowSize;
-printf("SM\n");
+//printf("SM\n");
 			} else
 			if ((status == finishedM)&&(numberOfPages > 1)){
-printf("MP numberOfPages = %i\n",numberOfPages);
+//printf("MP numberOfPages = %i\n",numberOfPages);
 				auxSize = sizeof (void *) * matrixRowSize;
 			}
 
 			if (auxSize > 0){
-printf("auxSize = %i\n",auxSize);
+//printf("auxSize = %i\n",auxSize);
 				// shrink if needed
 				ret = CheckAndClosePage(auxSize);
 
@@ -472,11 +472,11 @@ printf("auxSize = %i\n",auxSize);
 				// reorder the pages correctly to allow access to data
 				if (ret){
 					void **addressMap = reinterpret_cast<void **>(auxPtr);
-printf("addressMap = %p\n",addressMap);
+//printf("addressMap = %p\n",addressMap);
 
 					uint64 pageDepth=0;
 					uint32 vectorByteSize = vectorSize * objectSize;
-printf("vectorByteSize = %i\n",vectorByteSize);
+//printf("vectorByteSize = %i\n",vectorByteSize);
 					for (int i = 0;(i<matrixRowSize) && ret;i++){
 						uint32 sizeLeftOnPage = vectorByteSize;
 						void *address = page.DeepAddress(pageDepth,sizeLeftOnPage);
@@ -486,7 +486,7 @@ printf("vectorByteSize = %i\n",vectorByteSize);
 						}
 
 						if (ret){
-printf("depth = %lli address = %p %i\n",pageDepth,address,vectorByteSize);
+//printf("depth = %lli address = %p %i\n",pageDepth,address,vectorByteSize);
 							addressMap[i] = address;
 							pageDepth = pageDepth + vectorByteSize;
 						}
@@ -564,7 +564,7 @@ printf("depth = %lli address = %p %i\n",pageDepth,address,vectorByteSize);
 		}
 
 		if (ret){
-printf("data Ptr = %p\n",dataPtr);
+//printf("data Ptr = %p\n",dataPtr);
 			mpor->Setup(type,mods,dataPtr);
 			mpor->Copy(page);
 			x = mpor;
@@ -589,7 +589,7 @@ printf("data Ptr = %p\n",dataPtr);
 			if ((sizeLeft < neededSize) || (neededSize == 0)){
 				ret = page.Shrink(pageWritePos);
 				if (ret){
-printf("end page to %i\n", pageWritePos);
+//printf("end page to %i\n", pageWritePos);
 					pageSize = 0;
 					sizeLeft = 0;
 					pageWritePos = 0;
@@ -618,7 +618,7 @@ printf("end page to %i\n", pageWritePos);
 		if (pageSize == 0){
 			ret = page.Allocate(neededSize);
 			if (ret){
-printf("new page %i\n", neededSize);
+//printf("new page %i @%p\n", neededSize,page.Address(0));
 				sizeLeft = neededSize;
 				pageWritePos = 0;
 				pageSize = neededSize;
@@ -635,46 +635,7 @@ printf("new page %i\n", neededSize);
 
 		return ret;
 	}
-#if 0
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckAndRenewPage(uint32 neededSize,uint32 newPageSize){
-		ErrorManagement::ErrorType ret;
-		// do nothing if pageSize == 0
-		if (pageSize > 0){
-			// check if enough space to store another vector
-			if ((sizeLeft < neededSize) || (neededSize == 0)){
-				ret = page.Shrink(pageWritePos);
-			}
-			if (ret){
-				pageSize = 0;
-				sizeLeft = 0;
-				pageWritePos = 0;
-			}
-		}
 
-		// no memory - allocate
-		// could be at the beginning or after a vector has been completed
-		// if no more vectors of the same size can be fitted
-		if (ret && (pageSize==0)){
-			ret = page.Allocate(newPageSize);
-			if (ret){
-				sizeLeft = newPageSize;
-				pageWritePos = 0;
-				pageSize = newPageSize;
-				numberOfPages++;
-			}
-		}
-		if (!ret){
-			DynamicCString errs;
-			errs.AppendN("CheckAndRenewPage(");
-			errs.AppendNum(neededSize);
-			errs.Append(',');
-			errs.AppendNum(newPageSize);
-			errs.Append(')');
-			REPORT_ERROR(ret,errs.GetList());
-		}
-		return ret;
-	}
-#endif
 
 	/**
 	 * Header used in each page
@@ -747,10 +708,11 @@ printf("new page %i\n", neededSize);
 	 * returns NULL if outside range or not contiguous span
 	 */
 	void *MemoryPage::DeepAddress(uint64 index,uint32 &consecutiveSpan){
+//printf("%index = lli index\n",index);
 		MemoryPageHeader *mphp = mph;
 		uint32 localIndex = 0;
 		while ((index > 0) && (mphp != NULL_PTR(MemoryPageHeader *))){
-			if (index > mphp->pageSize){
+			if ((index + consecutiveSpan)> mphp->pageSize) {
 				index -= mphp->pageSize;
 				mphp = mphp->previous;
 			} else {
@@ -850,6 +812,7 @@ printf("new page %i\n", neededSize);
 		ErrorManagement::ErrorType ret;
 		MemoryPageHeader *newMemory;
 		newMemory = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
+//printf("malloc %i @%p\n", size,newMemory);
 
 		if (newMemory == NULL_PTR(MemoryPageHeader *)){
 			ret.outOfMemory = true;

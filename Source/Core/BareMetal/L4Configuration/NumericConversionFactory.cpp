@@ -72,7 +72,18 @@ public:
 			 if (ret){
 				 Tdest dst = static_cast<Tdest>(src);
 				 if (compare){
-					 ret.comparisonFailure = (destt[i] != dst);
+					 if (destt[i] != dst){
+						 ret.comparisonFailure = true;
+						 DynamicCString errM;
+						 errM.Append('@');
+						 errM.AppendNum(i);
+						 errM.Append('(');
+						 errM.AppendNum(destt[i]);
+						 errM.Append(',');
+						 errM.AppendNum(dst);
+						 errM.Append(')');
+						 REPORT_ERROR(ret,errM);
+					 }
 				 } else {
 					 destt[i] = dst;
 				 }
@@ -129,6 +140,7 @@ public:
 				 Tdest tmp = sourcet[i];
 				 BSToBS(destt+i,dstNumberBitShift,dstNumberBitSize,dstIsSigned,&tmp,srcNumberBitShift,srcNumberBitSize,srcIsSigned);
 			 }
+// TODO Add Compare function
 		 }
 
 		 ret.outOfRange = outOfRange;
@@ -218,7 +230,19 @@ public:
 			 if (ret){
 				 Tdest dst = static_cast<Tdest>(src);
 				 if (compare){
-					 ret.comparisonFailure = (destt[i] != dst);
+					 if (destt[i] != dst){
+						 ret.comparisonFailure = true;
+						 DynamicCString errM;
+						 errM.Append('@');
+						 errM.AppendNum(i);
+						 errM.Append('(');
+						 errM.AppendNum(destt[i]);
+						 errM.Append(',');
+						 errM.AppendNum(dst);
+						 errM.Append(')');
+						 REPORT_ERROR(ret,errM);
+					 }
+
 				 } else {
 					 destt[i] = dst;
 				 }
@@ -298,7 +322,18 @@ public:
 				 if (compare){
 					 Tdest tmp;
 					 BSToBS(&tmp,0,sizeof(Tdest)*8,isSigned,destt+i,numberBitShift,numberBitSize,isSigned);
-					 ret.comparisonFailure = (dst != tmp);
+					 if (tmp != dst){
+						 ret.comparisonFailure = true;
+						 DynamicCString errM;
+						 errM.Append('@');
+						 errM.AppendNum(i);
+						 errM.Append('(');
+						 errM.AppendNum(destt[i]);
+						 errM.Append(',');
+						 errM.AppendNum(dst);
+						 errM.Append(')');
+						 REPORT_ERROR(ret,errM);
+					 }
 				 } else {
 					 BSToBS(destt+i,numberBitShift,numberBitSize,isSigned,&dst,0,sizeof(Tdest)*8,isSigned);
 				 }
@@ -554,19 +589,20 @@ public:
 TypeConversionOperatorI *NumericConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
-	if (destTd.IsBasicType() && sourceTd.IsBasicType()){
-		if (!destTd.IsBitType() && !sourceTd.IsBitType()){
-			tco = FullSelectTCO<FullSelectTCO<N2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
-		} else
-		if (destTd.IsBitType() && sourceTd.IsBitType()){
-			tco = IntSelectTCO<IntSelectTCO<B2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
-		} else
-		if (destTd.IsBitType() ){
-			tco = IntSelectTCO<FullSelectTCO<N2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
-		} else {
-			tco = FullSelectTCO<IntSelectTCO<B2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+	if (!destTd.SameTypeAndSizeAs(sourceTd))
+		if (destTd.IsBasicType() && sourceTd.IsBasicType()){
+			if (!destTd.IsBitType() && !sourceTd.IsBitType()){
+				tco = FullSelectTCO<FullSelectTCO<N2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+			} else
+			if (destTd.IsBitType() && sourceTd.IsBitType()){
+				tco = IntSelectTCO<IntSelectTCO<B2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+			} else
+			if (destTd.IsBitType() ){
+				tco = IntSelectTCO<FullSelectTCO<N2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+			} else {
+				tco = FullSelectTCO<IntSelectTCO<B2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+			}
 		}
-	}
 
 	return tco;
 }

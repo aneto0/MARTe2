@@ -892,7 +892,7 @@ static ErrorManagement::ErrorType LayerOperate(
 		){
 	ErrorManagement::ErrorType ok;
 
-printf("layer start %p %p t=%c\n",sourcePtr,destPtr,sourceDimensions[0].type);
+///printf("layer start %p %p t=%c\n",sourcePtr,destPtr,sourceDimensions[0].type);
 
 	uint32 sourceNumberOfElements = 1;
 	uint32 sourceElementSize = 1;
@@ -915,7 +915,7 @@ printf("layer start %p %p t=%c\n",sourcePtr,destPtr,sourceDimensions[0].type);
 		}
 	}
 
-printf("layer end  %p %p N=%i ND=%i\n",sourcePtr,destPtr,sourceNumberOfElements,destDimensions.GetSize());
+//printf("layer end  %p %p N=%i ND=%i\n",sourcePtr,destPtr,sourceNumberOfElements,destDimensions.GetSize());
 
 	if (ok){
 		if (sourceNumberOfElements != destNumberOfElements){
