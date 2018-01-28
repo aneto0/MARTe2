@@ -343,6 +343,11 @@ public:
     inline bool IsStructuredData() const ;
 
     /**
+     * @brief whether it is a form of char *
+     */
+    inline bool IsCharString() const ;
+
+    /**
      * @brief whether it is any of the special types
      */
     inline bool IsSpecialType() const;
@@ -497,6 +502,10 @@ bool TypeDescriptor::IsBitType() const {
 bool TypeDescriptor::IsCharStreamType() const {
     return ( !isStructuredData && ((fullType & TDF_Category) == TDF_CharStreamType) );
 };
+
+bool TypeDescriptor::IsCharString() const {
+	return (!isStructuredData && ((fullType == TDF_CCString) || (fullType == TDF_CString) || (fullType == TDF_DynamicCString)))   ;
+}
 
 bool TypeDescriptor::IsSpecialType() const {
     return ( !isStructuredData && ((fullType & TDF_Category) == TDF_SpecialType) );

@@ -532,7 +532,8 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 					REPORT_ERROR(ret,errMsg);
 				}
 			}
-			targetC[j].Set(reinterpret_cast<T *>(&targetA[j]),actualSize2);
+			targetC[j].InitVector(reinterpret_cast<T *>(&targetA[j]),actualSize2);
+//printf("S@%p -> (%p %i)\n",&targetC[j],&targetA[j],actualSize2);
 
 			if (ret){
 				ret = pfstc.EndVector();
@@ -718,8 +719,10 @@ void Test(){
 	Check4<int8 ,256,87>(pfstc,SignedInteger8Bit);
 	Check4<uint16 ,72,4>(pfstc,UnsignedInteger16Bit);
 	Check4<uint32 ,27,17>(pfstc,UnsignedInteger32Bit);
-
 	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
+	Check4<uint64 ,14,23,5>(pfstc,UnsignedInteger64Bit);
+
+//	Check4<DynamicCString ,14,23,5>(pfstc,ConstCharString(sizeof(CCString)));
 
 }
 }

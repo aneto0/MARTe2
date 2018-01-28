@@ -131,7 +131,15 @@ ErrorManagement::ErrorType ProgressiveCStringArrayCreator::GetReference(Referenc
 
 	ret.fatalError = !Finished();
 
-	uint32 neededSize = numberOfElements * sizeof(CString);
+	uint32 numberOfElements = matrixRowSize * vectorSize;
+	if (ret && (status == finishedSM)){
+		numberOfElements = 0;
+		for (uint32 i= 0;i<matrixRowSize;i++){
+			numberOfElements += sizeStack[i];
+		}
+	}
+
+	uint32 neededSize = numberOfElements * sizeof(CCString);
 	if (ret){
 		// close if not big enough
 		ret = CheckAndClosePage(neededSize);

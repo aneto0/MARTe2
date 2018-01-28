@@ -23,7 +23,7 @@
 
 #define DLL_API
 
-
+#include <new.h>
 #include "ProgressiveFixedSizeTypeCreator.h"
 #include "TypeConversionManager.h"
 #include "GlobalObjectsDatabase.h"
@@ -129,7 +129,8 @@ void ProgressiveFixedSizeTypeCreator::Clean(){
 	vectorSize 			= 0;
 	currentVectorSize 	= 0;
 	numberOfPages 		= 0;
-	numberOfElements    = 0;
+	isString            = false;
+//	numberOfElements    = 0;
 }
 
 ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor typeIn){
@@ -140,8 +141,10 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 	type 				= typeIn;
 	objectSize 			= typeIn.StorageSize();
 	converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
+	isString 			= typeIn.IsCharString();
 	ret.internalSetupError = (objectSize == 0);
 	ret.unsupportedFeature = (converter == NULL);
+	ret.parametersError = !(isString || typeIn.IsBasicType());
 
 	if (ret){
 		status 				= started;
@@ -149,6 +152,98 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		status 				= error;
 		REPORT_ERROR(ret,"Start failed");
 	}
+	return ret;
+}
+
+ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryStringEl(uint32 neededSize){
+	ErrorManagement::ErrorType ret;
+
+	if (ret){
+		ret = CheckAndClosePage(neededSize);
+	}
+
+	// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
+	if (ret){
+		// no memory - allocate
+		// could be at the beginning or after a vector has been completed
+		// if no more vectors of the same size can be fitted
+		ret = CheckAndNewPage(defaultPageSize);
+	}
+
+
+	return ret;
+}
+
+
+ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSizeEl(bool newRow){
+	ErrorManagement::ErrorType ret;
+
+	// in case of new vector check if there is space for one based on the size of the previous
+	// close page otherwise
+	if (ret && newRow){
+		ret = CheckAndClosePage(vectorSize * objectSize);
+	}
+
+	// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
+	if (ret){
+		// no memory - allocate
+		// could be at the beginning or after a vector has been completed
+		// if no more vectors of the same size can be fitted
+		ret = CheckAndNewPage(defaultPageSize);
+	}
+
+	uint32 neededSize = objectSize;
+	// check memory availability to complete current vector
+	if (ret){
+		// not enough space
+		if (neededSize > sizeLeft){
+
+			// need to allocate a new page and shrink this page?
+			// or need to move part of current page into a new page and shrink this page?
+			// or need to increase page size
+
+			// there were some other vectors in this page
+			// increase so that we can fit also this last one
+			uint32 currentVectorUsedSize = (currentVectorSize-1) * objectSize;
+			if (currentVectorUsedSize <= pageSize){
+				// add enough to store the biggest vector so far
+				uint32 vectorUsedSize = vectorSize * objectSize;
+				uint32 newPageSize = pageSize + vectorUsedSize;
+
+				if (newPageSize < pageSize){
+					ret.outOfMemory = true;
+					REPORT_ERROR(ret,"Out of Memory");
+				}
+
+				if (ret){
+					ret = page.Grow(newPageSize);
+				}
+
+				if (ret){
+					sizeLeft += vectorUsedSize;
+					pageSize = newPageSize;
+				}
+			} else { // means that one vector cannot fit in the page
+
+				uint32 newPageSize = pageSize + defaultPageSize;
+				// check math overflow!
+				if (newPageSize < pageSize){
+					ret.outOfMemory = true;
+					REPORT_ERROR(ret,"Out of Memory");
+				}
+
+				if (ret){
+					ret = page.Grow(newPageSize);
+				}
+
+				if (ret){
+					sizeLeft +=  pageSize;
+					pageSize =  newPageSize;
+				}
+			}
+		}
+	}
+
 	return ret;
 }
 
@@ -204,97 +299,44 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			}
 		}
 
-//printf ("< %i %i\n",pageWritePos,numberOfElements);
-
-		// in case of new vector check if there is space for one based on the size of the previous
-		// close page otherwise
-		if (ret && newRow){
-//printf("CheckAndClosePage %i %i\n",vectorSize,objectSize);
-			ret = CheckAndClosePage(vectorSize * objectSize);
-		}
-//printf ("< %i %i\n",pageWritePos,numberOfElements);
-
-		// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
-		if (ret){
-			// no memory - allocate
-			// could be at the beginning or after a vector has been completed
-			// if no more vectors of the same size can be fitted
-//printf("CheckAndNewPage %i\n",defaultPageSize);
-			ret = CheckAndNewPage(defaultPageSize);
-		}
-
 		uint32 neededSize = objectSize;
-		// check memory availability to complete current vector
 		if (ret){
-			// not enough space
-			if (neededSize > sizeLeft){
-//printf("neededSize > sizeLeft %i %i \n",neededSize,sizeLeft);
+			if (isString){
+				neededSize = typeStringRepresentation.GetSize()+1;
+				// checks memory available in current page
+				// if not enough opens a new page
+				ret = CheckMemoryStringEl(neededSize);
 
-				// need to allocate a new page and shrink this page?
-				// or need to move part of current page into a new page and shrink this page?
-				// or need to increase page size
+				if (ret){
+					MemoryOperationsHelper::Copy(page.Address(pageWritePos),typeStringRepresentation.GetList(),neededSize);
+				}
 
-				// there were some other vectors in this page
-				// increase so that we can fit also this last one
-				uint32 currentVectorUsedSize = (currentVectorSize-1) * objectSize;
-				if (currentVectorUsedSize <= pageSize){
-					// add enough to store the biggest vector so far
-					uint32 vectorUsedSize = vectorSize * objectSize;
-					uint32 newPageSize = pageSize + vectorUsedSize;
+			} else {
+				// checks memory available in current page
+				// if not enough resize
+				// in case of new Rows check if space is enough for a row
+				// otherwise opens a new page
+				ret = CheckMemoryFixedSizeEl(newRow);
 
-					if (newPageSize < pageSize){
-						ret.outOfMemory = true;
-						REPORT_ERROR(ret,"Out of Memory");
-					}
-
-					if (ret){
-						ret = page.Grow(newPageSize);
-					}
-
-					if (ret){
-						sizeLeft += vectorUsedSize;
-						pageSize = newPageSize;
-					}
-				} else { // means that one vector cannot fit in the page
-
-					uint32 newPageSize = pageSize + defaultPageSize;
-					// check math overflow!
-					if (newPageSize < pageSize){
-						ret.outOfMemory = true;
-						REPORT_ERROR(ret,"Out of Memory");
-					}
-
-					if (ret){
-						ret = page.Grow(newPageSize);
-					}
-
-					if (ret){
-						sizeLeft +=  pageSize;
-						pageSize =  newPageSize;
-					}
+				if (ret){
+					// queue type to memory
+					ret = converter->Convert(	reinterpret_cast<uint8 *>(page.Address(pageWritePos)),
+										reinterpret_cast<const uint8 *>(&typeStringRepresentation),1);
 				}
 			}
 		}
 
+		// all ok - means we used some memory
 		if (ret){
-			// queue type to memory
-			ret = converter->Convert(	reinterpret_cast<uint8 *>(page.Address(pageWritePos)),
-								reinterpret_cast<const uint8 *>(&typeStringRepresentation),1);
-			if (ret){
-				sizeLeft -= neededSize;
-				pageWritePos += neededSize;
-				numberOfElements++;
-
-//printf ("> %i %i\n",pageWritePos,numberOfElements);
-			}
-		}
-
-		if (!ret.ErrorsCleared()){
+			sizeLeft -= neededSize;
+			pageWritePos += neededSize;
+		} else {
 			status = error;
 			REPORT_ERROR(ret,"AddElement failed");
 		}
 		return ret;
 	}
+
 
 	/**
 	 * @brief Marks the end of a row of elements
@@ -387,6 +429,129 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 		return ret;
 	}
 
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteFixedSizeEl(uint32 &auxSize,void *&auxPtr){
+		ErrorManagement::ErrorType  ret;
+
+		if (status == finishedSM){
+			auxSize  = sizeof (Vector<uint8>) * matrixRowSize;
+		} else
+		if ((status == finishedM)&&(numberOfPages > 1)){
+			auxSize = sizeof (void *) * matrixRowSize;
+		}
+
+		if (auxSize > 0){
+			// shrink if needed
+			ret = CheckAndClosePage(auxSize);
+
+			// new page if needed
+			if (ret){
+				ret = CheckAndNewPage(auxSize);
+			}
+
+			// get the address map and close up memory pages
+			if (ret){
+				auxPtr = reinterpret_cast<void *>(page.Address(this->pageWritePos));
+				pageWritePos += auxSize;
+				sizeLeft -= auxSize;
+				ret = CheckAndClosePage(0);
+			}
+		}
+
+		if ((numberOfPages > 0) && ret){
+			page.FlipOrder();
+		}
+
+		return ret;
+	}
+
+	static inline bool stringBoundSize(CCString s, uint32 &sizeInOut){
+		const char8 *p = s.GetList();
+		bool ret = (p!=NULL);
+
+		if (ret){
+			uint32 sz = 0;
+			while ((sz < sizeInOut) && (*p!='\0')){
+				p++;
+				sz++;
+			}
+
+			if (*p == '\0'){
+				sizeInOut = sz;
+			} else {
+				ret = false;
+			}
+		}
+
+		return ret;
+
+	}
+
+
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteStringEl(void *&dataPtr){
+		ErrorManagement::ErrorType  ret;
+
+		uint32 numberOfElements = matrixRowSize * vectorSize;
+		if (ret && (status == finishedSM)){
+			numberOfElements = 0;
+			for (uint32 i= 0;i<matrixRowSize;i++){
+				numberOfElements += sizeStack[i];
+			}
+		}
+
+		uint32 neededSize = numberOfElements * sizeof(CCString);
+		if (ret){
+			// close if not big enough
+			ret = CheckAndClosePage(neededSize);
+		}
+
+		if (ret){
+			// open if no page
+			ret = CheckAndNewPage(neededSize);
+		}
+
+		// process memory and create list of pointers
+		CCString *strings = NULL;
+		if (ret){
+			// remember pointer to string array
+			strings = reinterpret_cast<CCString *>(page.Address(this->pageWritePos));
+
+			// put oldest page on top
+			if (numberOfPages > 0){
+				page.FlipOrder();
+			}
+
+			uint64 pageDepth=0;
+			// prepare table of string addresses
+			for (int i = 0;(i<numberOfElements) && ret;i++){
+				// consecutiveSpan is how much space is left on page
+				uint32 consecutiveSpan;
+				// get pointer to element within pages at overall address pageDepth
+				CCString s = reinterpret_cast<char8 *> (page.DeepAddress(pageDepth,consecutiveSpan));
+				// empty string error?
+				ret.fatalError = (s.GetList() == NULL);
+				// calculate string length
+				uint32 length = consecutiveSpan;
+				if (ret){
+					// length but do not scan beyond end of
+					ret.fatalError = !stringBoundSize(s,length);
+				}
+				// update pointer to page
+				if (ret){
+					// include 0
+					length = length+1;
+					strings[i] = s;
+					pageDepth += length;
+				}
+			}
+		}
+
+		if (ret){
+			void *dataPtr = reinterpret_cast<void *>(strings);
+		}
+
+		return ret;
+	}
+
 	/**
 	 * @brief Allows retrieving the Object that has been built.
 	 * Can only be done after End has been called
@@ -399,49 +564,25 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			REPORT_ERROR(ret,"Not Finished");
 		}
 
+		void *dataPtr = NULL;
 		void *auxPtr  = NULL;
 		uint32 auxSize = 0;
 
 		if (ret){
+			if (isString){
+				ret = CompleteStringEl(dataPtr);
 
-			if (status == finishedSM){
-				auxSize  = sizeof (Vector<uint8>) * matrixRowSize;
-//printf("SM\n");
-			} else
-			if ((status == finishedM)&&(numberOfPages > 1)){
-//printf("MP numberOfPages = %i\n",numberOfPages);
-				auxSize = sizeof (void *) * matrixRowSize;
+			} else {
+				ret = CompleteFixedSizeEl(auxSize,auxPtr);
+				dataPtr =  page.Address(0);
 			}
-
-			if (auxSize > 0){
-//printf("auxSize = %i\n",auxSize);
-				// shrink if needed
-				ret = CheckAndClosePage(auxSize);
-
-				// new page if needed
-				if (ret){
-					ret = CheckAndNewPage(auxSize);
-				}
-
-				// get the address map and close up memory pages
-				if (ret){
-					auxPtr = reinterpret_cast<void *>(page.Address(this->pageWritePos));
-					pageWritePos += auxSize;
-					sizeLeft -= auxSize;
-					ret = CheckAndClosePage(0);
-				}
-			}
-		}
-
-		if ((numberOfPages > 0) && ret){
-			page.FlipOrder();
 		}
 
 		if (ret){
-			void *dataPtr =  page.Address(0);
 			ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
+		}
 
-		} else {
+		if (!ret) {
 			REPORT_ERROR(ret,"GetReference failed");
 		}
 
@@ -517,19 +658,24 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 			// now get the address and then reorder the pages correctly to allow access to data
 			if (ret){
 				Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
+//printf("aux=%p aMap = %p\n",auxPtr,addressMap);
 
 				uint64 pageDepth=0;
+printf("rows = %i\n",matrixRowSize);
 				for (int i = 0;(i<matrixRowSize) && ret;i++){
-					uint32 vectorByteSize = sizeStack[i] * objectSize;
+					uint32 size  = sizeStack[i];
+					uint32 vectorByteSize = size * objectSize;
 					uint32 sizeLeftOnPage = vectorByteSize;
 					uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,sizeLeftOnPage));
 					if (address == NULL_PTR(uint8 *)){
 						ret.fatalError = true;
 						REPORT_ERROR(ret,"deep address out of boundary");
 					}
+printf("index = %i depth = %lli vectorS = %i\n",i,pageDepth,vectorByteSize);
 
 					if (ret){
-						addressMap[i].Set(address,sizeStack[i]);
+//printf("@%p -> (%p %i)\n",&addressMap[i],address,size);
+						addressMap[i].InitVector(address,size);
 						pageDepth += vectorByteSize;
 					}
 				}

@@ -237,6 +237,14 @@ protected:
 		mask				= 0x00F0
 	};
 
+	ErrorManagement::ErrorType CheckMemoryFixedSizeEl(bool newRow);
+
+	ErrorManagement::ErrorType CompleteFixedSizeEl(uint32 &auxSize,void *&auxPtr);
+
+	ErrorManagement::ErrorType CheckMemoryStringEl(uint32 neededSize);
+
+	ErrorManagement::ErrorType CompleteStringEl(void *&dataPtr);
+
 	/**
 	 * @brief Check if the current segment has enough space to store another vector.
 	 * If there is no need (neededSize== 0) or if the space is not large enough
@@ -296,7 +304,7 @@ protected:
 	/**
 	 * vectorSize*matrixRowSize or something less for sparse matrices
 	 */
-	uint32 numberOfElements;
+//	uint32 numberOfElements;
 
 	/**
 	 * The object containing the memory
@@ -335,6 +343,9 @@ protected:
 	 * the type of the data;
 	 */
 	TypeDescriptor type;
+
+
+	bool isString;
 
 	/**
 	 * > 0 if data spread across more than one page.

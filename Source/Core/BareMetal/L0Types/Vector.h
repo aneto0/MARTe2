@@ -80,15 +80,16 @@ public:
     Vector(T *existingArray,uint32 nOfElements);
 
     /**
-     * @brief Initialises an empty vector and associates it to an existent
-     * array with a given size.
+     * @brief initialises Vector to point to the given memory area.
+     * Use only as first initialisation as it will not check the allocation flag and try deallocating what the pointer addresses
+     * Can be used to initialise Vectors created in memory.
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfElements The number of elements of the vector
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray
      */
-    void Set(T *existingArray,uint32 nOfElements);
+    void InitVector(T *existingArray,uint32 nOfElements);
 
     /**
      * @brief Frees any existing memory and allocate enough to store nOfElements
@@ -196,8 +197,8 @@ Vector<T>::Vector(T *existingArray,uint32 nOfElements):Pointer(existingArray) {
 }
 
 template<typename T>
-void Vector<T>::Set(T *existingArray,uint32 nOfElements) {
-	FreeMemory();
+void Vector<T>::InitVector(T *existingArray,uint32 nOfElements) {
+// does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
     canDestroy = false;
     numberOfElements = nOfElements;
@@ -246,7 +247,7 @@ T Vector<T>::operator [](uint32 idx) const {
 }
 
 template<typename T>
-inline uint32 Vector<T>::GetNumberOfElements() const {
+uint32 Vector<T>::GetNumberOfElements() const {
     return numberOfElements;
 }
 

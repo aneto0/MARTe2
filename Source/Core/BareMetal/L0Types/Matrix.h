@@ -73,7 +73,9 @@ public:
 
 
     /**
-     * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
+     * @brief initialises Matrix to point to the given memory area.
+     * Use only as first initialisation as it will not check the allocation flag and try deallocating what the pointer addresses
+     * Can be used to initialise matrices created in memory.
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfRows The number of rows
      * @param[in] nOfColumns The number of columns
@@ -82,7 +84,7 @@ public:
      *   GetNumberOfColumns() == nOfColumns &&
      *   GetDataPointer() == existingArray
      */
-    void Set(T *existingArray,
+    void InitMatrix(T *existingArray,
            uint32 nOfRows,
            uint32 nOfColumns);
 
@@ -292,10 +294,10 @@ Matrix<T>::Matrix(uint32 nOfRows,
 }
 
 template<typename T>
-void Matrix<T>::Set(T *existingArray,
+void Matrix<T>::InitMatrix(T *existingArray,
                   uint32 nOfRows,
                   uint32 nOfColumns) {
-	FreeMemory();
+	// does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
