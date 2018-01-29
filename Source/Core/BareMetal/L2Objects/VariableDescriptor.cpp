@@ -1111,7 +1111,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				uint32 index;
 				for (index = 0; (index < numberOfElements) && ret; index++){
 					const uint8 *p = static_cast<const uint8 *>(psm[index].GetDataPointer());
-					dpm[index].Set(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
+					dpm[index].InitMatrix(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
 				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
@@ -1142,7 +1142,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 				uint32 index;
 				for (index = 0; (index < numberOfElements) && ret; index++){
 					const uint8 *p = static_cast<const uint8 *>(psm[index].GetDataPointer());
-					dpv[index].Set(destFreePtr,psm[index].GetNumberOfElements()) ;
+					dpv[index].InitVector(destFreePtr,psm[index].GetNumberOfElements()) ;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
 				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");

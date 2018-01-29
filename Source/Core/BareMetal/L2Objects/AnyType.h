@@ -51,6 +51,7 @@
 
 namespace MARTe {
 class Object;
+class Reference;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -126,6 +127,7 @@ public:
      */
     template <class T>
     inline AnyType(T &x);
+//    inline AnyType(typename enable_if<!isSameOrBaseOf(Reference,T), T>::type &x);
 
     /**
      * @brief Constructor from const non-ptr. Uses VariableDescriptor constructor.
@@ -271,6 +273,7 @@ AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
 
 template <class T>
 AnyType::AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
+//AnyType::AnyType(typename enable_if<!isSameOrBaseOf(Reference,T), T>::type &x): variableDescriptor (reinterpret_cast<T *>(&x)){
     pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(&x));
 }
 

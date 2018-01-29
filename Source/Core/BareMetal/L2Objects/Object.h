@@ -38,6 +38,7 @@
 #include "ErrorType.h"
 #include "CLASSREGISTER.h"
 #include "StreamI.h"
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -227,6 +228,13 @@ public:
      * @pre newName != NULL
      */
     void SetName(CCString const newName);
+
+
+    /**
+     * @brief Returns the Anytype conversion of this object. By default it is represented by a struct type
+     * @return an Anytype pointing to the object. NOTE the pointer is safe only while the Object is kept in memory
+     */
+    virtual operator AnyType();
 
     /**
      * @brief Calls a registered method without arguments.

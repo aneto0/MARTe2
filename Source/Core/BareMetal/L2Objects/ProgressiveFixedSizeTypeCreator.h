@@ -39,7 +39,6 @@
 #include "StaticListHolder.h"
 #include "TypeCharacteristics.h"
 #include "ReferenceT.h"
-#include "AnyObjectI.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -77,6 +76,11 @@ public:
 	 *
 	 */
 	inline uint32 operator[](uint32 index);
+
+	/**
+	 *
+	 */
+	inline void Clean();
 
 };
 
@@ -195,7 +199,7 @@ public:
 	 * @brief Allows retrieving the Object that has been built.
 	 * Can only be done after End has been called. Callable after End()
 	 */
-	ErrorManagement::ErrorType GetReference(ReferenceT<AnyObjectI> &x);
+	ErrorManagement::ErrorType GetReference(Reference &x);
 
 	/**
 	 * @brief returns Actual page size after growth etc...
@@ -245,6 +249,8 @@ protected:
 
 	ErrorManagement::ErrorType CompleteStringEl(void *&dataPtr);
 
+	ErrorManagement::ErrorType PageGrow(uint32 amount);
+
 	/**
 	 * @brief Check if the current segment has enough space to store another vector.
 	 * If there is no need (neededSize== 0) or if the space is not large enough
@@ -269,7 +275,7 @@ protected:
 	 * Therefore requires memory flipping.
 	 * Would not support fragmented table of string pointers. (not generated currently)
 	 */
-	ErrorManagement::ErrorType GetReferencePrivate(ReferenceT<AnyObjectI> &x, void *dataPtr, void *auxPtr,uint32 auxSize);
+	ErrorManagement::ErrorType GetReferencePrivate(Reference &x, void *dataPtr, void *auxPtr,uint32 auxSize);
 
 	/**
 	 * status within the progressive creation
@@ -374,6 +380,11 @@ uint32 SizeStack::operator[](uint32 index){
 	Peek(index,&value);
 	return value;
 }
+
+void SizeStack::Clean(){
+	StaticListHolder::Clean();
+}
+
 
 /**
  * Any of the finished states or error

@@ -35,7 +35,7 @@ namespace MARTe{
 /**
  * @brief a class to contain synthetic objects
  */
-class MemoryPageObject: public AnyObjectI{
+class MemoryPageObject: public Object{
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -79,7 +79,6 @@ public:
 		return anyType;
 	}
 
-
 private:
 	/**
 	 * contains the memory of the object
@@ -108,7 +107,7 @@ ProgressiveFixedSizeTypeCreator::ProgressiveFixedSizeTypeCreator(uint32 pageSize
  * @deletes the object and any memory allocated in the pages
  */
 ProgressiveFixedSizeTypeCreator::~ProgressiveFixedSizeTypeCreator(){
-	delete converter;
+	Clean();
 }
 
 
@@ -130,6 +129,7 @@ void ProgressiveFixedSizeTypeCreator::Clean(){
 	currentVectorSize 	= 0;
 	numberOfPages 		= 0;
 	isString            = false;
+	sizeStack.Clean();
 //	numberOfElements    = 0;
 }
 
@@ -140,17 +140,27 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 
 	type 				= typeIn;
 	objectSize 			= typeIn.StorageSize();
-	converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
 	isString 			= typeIn.IsCharString();
-	ret.internalSetupError = (objectSize == 0);
-	ret.unsupportedFeature = (converter == NULL);
-	ret.parametersError = !(isString || typeIn.IsBasicType());
+	if (objectSize == 0){
+		ret.parametersError = true;
+		REPORT_ERROR(ret,"Type with 0 size");
+	}
+	if (!(isString || typeIn.IsBasicType())){
+		ret.parametersError = !(isString || typeIn.IsBasicType());
+		REPORT_ERROR(ret,"Unsupported type. Must be CString or BasicType");
+	}
+	if (ret && !isString){
+		converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
+		if (converter == NULL){
+			ret.unsupportedFeature = true;
+			REPORT_ERROR(ret,"Cannot find type converter");
+		}
+	}
 
 	if (ret){
 		status 				= started;
 	} else {
 		status 				= error;
-		REPORT_ERROR(ret,"Start failed");
 	}
 	return ret;
 }
@@ -174,6 +184,11 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryStringEl(
 	return ret;
 }
 
+static inline uint32 max(uint32 x,uint32 y){
+	uint32 ret = x;
+	if (y > x) ret = y;
+	return ret;
+}
 
 ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSizeEl(bool newRow){
 	ErrorManagement::ErrorType ret;
@@ -189,7 +204,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		// no memory - allocate
 		// could be at the beginning or after a vector has been completed
 		// if no more vectors of the same size can be fitted
-		ret = CheckAndNewPage(defaultPageSize);
+		ret = CheckAndNewPage(max(defaultPageSize,vectorSize * objectSize));
 	}
 
 	uint32 neededSize = objectSize;
@@ -207,39 +222,12 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			uint32 currentVectorUsedSize = (currentVectorSize-1) * objectSize;
 			if (currentVectorUsedSize <= pageSize){
 				// add enough to store the biggest vector so far
-				uint32 vectorUsedSize = vectorSize * objectSize;
-				uint32 newPageSize = pageSize + vectorUsedSize;
+				ret = PageGrow(vectorSize * objectSize);
 
-				if (newPageSize < pageSize){
-					ret.outOfMemory = true;
-					REPORT_ERROR(ret,"Out of Memory");
-				}
-
-				if (ret){
-					ret = page.Grow(newPageSize);
-				}
-
-				if (ret){
-					sizeLeft += vectorUsedSize;
-					pageSize = newPageSize;
-				}
 			} else { // means that one vector cannot fit in the page
 
-				uint32 newPageSize = pageSize + defaultPageSize;
-				// check math overflow!
-				if (newPageSize < pageSize){
-					ret.outOfMemory = true;
-					REPORT_ERROR(ret,"Out of Memory");
-				}
-
-				if (ret){
-					ret = page.Grow(newPageSize);
-				}
-
-				if (ret){
-					sizeLeft +=  pageSize;
-					pageSize =  newPageSize;
-				}
+				// multiply the size
+				ret = PageGrow(defaultPageSize);
 			}
 		}
 	}
@@ -376,6 +364,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		}break;
 		case sparseMatrixRow:
 		case sparseMatrixRE:{
+printf("nEl = %i\n",currentVectorSize);
 			sizeStack.Push(currentVectorSize);
 			currentVectorSize = 0;
 			status = sparseMatrixRE;
@@ -491,7 +480,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		ErrorManagement::ErrorType  ret;
 
 		uint32 numberOfElements = matrixRowSize * vectorSize;
-		if (ret && (status == finishedSM)){
+		if (status == finishedSM){
 			numberOfElements = 0;
 			for (uint32 i= 0;i<matrixRowSize;i++){
 				numberOfElements += sizeStack[i];
@@ -527,14 +516,23 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 				uint32 consecutiveSpan;
 				// get pointer to element within pages at overall address pageDepth
 				CCString s = reinterpret_cast<char8 *> (page.DeepAddress(pageDepth,consecutiveSpan));
+
 				// empty string error?
-				ret.fatalError = (s.GetList() == NULL);
+				if (s.GetList() == NULL){
+					ret.fatalError = true;
+					REPORT_ERROR(ret,"NULL String");
+				}
+
 				// calculate string length
 				uint32 length = consecutiveSpan;
 				if (ret){
 					// length but do not scan beyond end of
-					ret.fatalError = !stringBoundSize(s,length);
+					if (!stringBoundSize(s,length)){
+						ret.fatalError = true;
+						REPORT_ERROR(ret,"String exceeding page boundaries");
+					}
 				}
+
 				// update pointer to page
 				if (ret){
 					// include 0
@@ -546,7 +544,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		}
 
 		if (ret){
-			void *dataPtr = reinterpret_cast<void *>(strings);
+			dataPtr = reinterpret_cast<void *>(strings);
 		}
 
 		return ret;
@@ -556,7 +554,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	 * @brief Allows retrieving the Object that has been built.
 	 * Can only be done after End has been called
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReference(ReferenceT<AnyObjectI> &x){
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReference(Reference &x){
 		ErrorManagement::ErrorType  ret;
 
 		if (!Finished()){
@@ -589,7 +587,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		return ret;
 	}
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReferencePrivate(ReferenceT<AnyObjectI> &x, void *dataPtr, void *auxPtr,uint32 auxSize){
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReferencePrivate(Reference &x, void *dataPtr, void *auxPtr,uint32 auxSize){
 		ErrorManagement::ErrorType  ret;
 
 		DynamicCString mods;
@@ -671,7 +669,7 @@ printf("rows = %i\n",matrixRowSize);
 						ret.fatalError = true;
 						REPORT_ERROR(ret,"deep address out of boundary");
 					}
-printf("index = %i depth = %lli vectorS = %i\n",i,pageDepth,vectorByteSize);
+printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vectorByteSize);
 
 					if (ret){
 //printf("@%p -> (%p %i)\n",&addressMap[i],address,size);
@@ -735,7 +733,7 @@ printf("index = %i depth = %lli vectorS = %i\n",i,pageDepth,vectorByteSize);
 			if ((sizeLeft < neededSize) || (neededSize == 0)){
 				ret = page.Shrink(pageWritePos);
 				if (ret){
-//printf("end page to %i\n", pageWritePos);
+printf("end page to %i\n", pageWritePos);
 					pageSize = 0;
 					sizeLeft = 0;
 					pageWritePos = 0;
@@ -764,7 +762,7 @@ printf("index = %i depth = %lli vectorS = %i\n",i,pageDepth,vectorByteSize);
 		if (pageSize == 0){
 			ret = page.Allocate(neededSize);
 			if (ret){
-//printf("new page %i @%p\n", neededSize,page.Address(0));
+printf("new page %i @%p\n", neededSize,page.Address(0));
 				sizeLeft = neededSize;
 				pageWritePos = 0;
 				pageSize = neededSize;
@@ -783,6 +781,39 @@ printf("index = %i depth = %lli vectorS = %i\n",i,pageDepth,vectorByteSize);
 	}
 
 
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::PageGrow(uint32 amount){
+		ErrorManagement::ErrorType ret;
+
+		uint32 newPageSize = pageSize + amount;
+
+		// check math overflow!
+		if (newPageSize < pageSize){
+			ret.fatalError = true;
+			REPORT_ERROR(ret,"Overflow");
+		}
+
+		if (ret){
+			ret = page.Grow(newPageSize);
+			if (!ret){
+				ret.outOfMemory = true;
+				REPORT_ERROR(ret,"Out of Memory");
+			}
+		}
+
+		if (ret){
+			uint32 oldPageSize = pageSize;
+			pageSize = page.Size();
+			if (pageSize > oldPageSize){
+				sizeLeft += (pageSize - oldPageSize);
+printf("end page to %i\n", pageSize);
+			} else {
+				ret.fatalError = true;
+				REPORT_ERROR(ret,"page.Grow results in a smaller page!");
+			}
+		}
+
+		return ret;
+	}
 	/**
 	 * Header used in each page
 	 */

@@ -290,6 +290,15 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
+Object::operator AnyType(){
+	ClassRegistryItem *cri = GetClassRegistryItem();
+//TODO This only works if Object is the single root class
+//TODO Better would be to add a static function to convert Object *this to T*
+	AnyType at(cri->GetTypeDescriptor(),this);
+	return at;
+}
+
+
 CLASS_REGISTER(Object, "1.0")
 
 }

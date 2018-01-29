@@ -473,6 +473,38 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 	printf("\n");
 }
 
+/*
+template<typename T1>
+struct Setter
+{
+ static inline  void Set(T1 &dest,const uint32 &source)
+ {
+		SafeNumber2Number(dest,source);
+ }
+};
+
+struct Setter<DynamicCString>
+{
+	static inline void Set(DynamicCString &dest,uint32 &source)
+ {
+		dest.Truncate(0);
+		dest.AppendNum(source);
+ }
+};
+*/
+template<typename T1>
+ static inline  void NumSet(T1 &dest, uint64 &source) {
+		SafeNumber2Number(source,dest);
+		SafeNumber2Number(dest,source);
+ }
+
+//static inline void NumSet<DynamicCString>(DynamicCString &dest,uint32 &source) {
+static inline void NumSet(DynamicCString &dest,uint64 &source) {
+		dest.Truncate(0);
+		dest.AppendNum(source);
+ }
+
+
 template <typename T, int size1, int size2,int minSize2=size2>
 void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
@@ -481,7 +513,8 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 	Vector<T>targetC[size1];
 	{
 		for (int i=0;i<size1;i++){
-			targetB[i] = reinterpret_cast<T (*)[size2]>(malloc(sizeof(T)*size2));
+//			targetB[i] = reinterpret_cast<T (*)[size2]>(malloc(sizeof(T)*size2));
+			targetB[i] = reinterpret_cast<T (*)[size2]>(new T[size2]);
 		}
 	}
 
@@ -517,11 +550,12 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 			}
 
 			for (int i=0;(i<actualSize2) && ret ;i++){
-				T k = rand();
+				uint64 kk = rand();
+				T k;
+				NumSet(k,kk);
 				(*targetB[j])[i]=k;
 				targetA[j][i] = k;
 				char8 buffer[32];
-				uint64 kk = k;
 				sprintf(buffer,"%lli",kk);
 				ret = pfstc.AddElement(buffer);
 				if (!ret){
@@ -544,7 +578,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 		}
 	}
 
-	ReferenceT<AnyObjectI> aoi;
+	Reference aoi;
 	if (ret){
 		printf("Ended : ");
 		ret = pfstc.End();
@@ -561,26 +595,26 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 	}
 
 	if (ret){
-		AnyType x = aoi->GetAnyType();
+		AnyType x = aoi.operator AnyType();
 		ret = CompareType(x,at);
 		if (!ret){
 			printf ("Type Diff ");
 			PrintError(ret);
 			printf (" != ");
-			PrintType(aoi->GetAnyType());
+			PrintType(x);
 			printf (" != ");
 			PrintType(at);
 			printf (" \n ");
 		} else {
 			printf("Type OK (");
-			PrintType(aoi->GetAnyType());
+			PrintType(x);
 			printf("): ");
 		}
 	}
 
 	if (ret){
 
-		AnyType x = aoi->GetAnyType();
+		AnyType x = aoi.operator AnyType();
 	    ret = x.CompareWith(at);
 		if (!ret){
 			REPORT_ERROR(ret,"Compare content fault");
@@ -600,7 +634,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
 	{
 		for (int i=0;i<size1;i++){
-			delete (targetB[i]);
+			delete[] (targetB[i]);
 		}
 	}
 
@@ -720,9 +754,9 @@ void Test(){
 	Check4<uint16 ,72,4>(pfstc,UnsignedInteger16Bit);
 	Check4<uint32 ,27,17>(pfstc,UnsignedInteger32Bit);
 	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
-	Check4<uint64 ,14,23,5>(pfstc,UnsignedInteger64Bit);
+	Check4<uint64 ,141,532,5>(pfstc,UnsignedInteger64Bit);
 
-//	Check4<DynamicCString ,14,23,5>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,5,5>(pfstc,ConstCharString(sizeof(CCString)));
 
 }
 }

@@ -49,6 +49,7 @@ class DynamicCString;
 class StreamString;
 class StructuredDataI;
 class testStruct;
+class Reference;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -417,7 +418,7 @@ private:
      * @post closes the matching chain assigning the typeDescriptor
      */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x);
+    inline void MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x);
 
     /**
      * @brief Matches a T if derivative of StreamI but not StreamString
@@ -446,6 +447,7 @@ private:
     template <class T>
     inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StructuredDataI,T), T>::type *x);
 
+#if 0 // replaced by Object->AnyType()
     /**
      * @brief Matches a T if derivative of Object
      * @tparam T the type of the elements in the vector
@@ -454,6 +456,7 @@ private:
      */
     template <class T>
     inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Object,T), T>::type *x);
+#endif
 
     // SPECIFIC FINAL MATCHES
     /**
@@ -750,7 +753,7 @@ void VariableDescriptor::Match(StreamString *s){
 }
 
 template <class T>
-void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x){
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x){
 	ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
     if (cri != NULL) {
     	FinaliseCode(cri->GetTypeDescriptor());
@@ -775,10 +778,12 @@ void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Struc
 	FinaliseCode(StructuredDataType(sizeof(T)));
 }
 
+#if 0 // Object knows how to generate AnyType
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Object,T), T>::type *x){
 	FinaliseCode(ObjectType(sizeof(T)));
 }
+#endif
 
 
 void VariableDescriptor::Match(char8 * i) {

@@ -158,6 +158,12 @@ public:
      */
     inline Object* operator->();
 
+    /**
+     * @brief Provides access to the underlying object by mean of his AnyType
+     * @return the AnyType of the object
+     */
+    inline operator AnyType();
+
 protected:
 
     /**
@@ -200,6 +206,12 @@ namespace MARTe {
 Object* Reference::operator->() {
     return objectPointer;
 }
+
+Reference::operator AnyType(){
+    return objectPointer->operator AnyType();
+
+}
+
 
 }
 

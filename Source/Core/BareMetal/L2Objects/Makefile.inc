@@ -44,8 +44,7 @@ OBJSX=  TypeConversionManager.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
 		ReferenceContainerFilterObjectName.x \
-		ProgressiveFixedSizeTypeCreator.x \
-		ProgressiveCStringArrayCreator.x
+		ProgressiveFixedSizeTypeCreator.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
