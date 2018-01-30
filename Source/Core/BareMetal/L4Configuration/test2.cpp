@@ -296,28 +296,30 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
         const VariableDescriptor &vd =  at1.GetFullVariableDescriptor();
         err = vd.ToString(string1);
         if (!err){
-            printf("ToString error");
+			REPORT_ERROR(err,"at1 Variable Descriptor to string conversion error");
         }
     }
     if (err){
         const VariableDescriptor &vd =  at2.GetFullVariableDescriptor();
         err = vd.ToString(string2);
         if (!err){
-            printf("ToString error");
+			REPORT_ERROR(err,"at2 Variable Descriptor to string conversion error");
         }
     }
 
     if (err){
         if (!string1.isSameAs(string2.GetList())){
             err.comparisonFailure = true;
-            printf("%s != %s ",string1.GetList(),string2.GetList());
+            DynamicCString errM;
+            errM.AppendN(string1.GetList());
+            errM.AppendN(" != ");
+            errM.AppendN(string2.GetList());
+			REPORT_ERROR(err,errM.GetList());
         }
     }
 
     return err;
 }
-
-
 
 ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 storageSizeCheck ){
     ErrorManagement::ErrorType err;
@@ -505,27 +507,34 @@ static inline void NumSet(DynamicCString &dest,uint64 &source) {
  }
 
 
-template <typename T, int size1, int size2,int minSize2=size2>
+template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
 void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
+	// remapped types for type comparison - in case T is for storing only
+	typedef  T2 (TAu)[size1][size2];
+	typedef  T2 (*(TBu)[size1])[size2];
+	typedef  Vector<T2>(TCu)[size1];
 
+	// Data structures to store comparison values
 	T targetA[size1][size2];
 	T (*targetB[size1])[size2];
 	Vector<T>targetC[size1];
 	{
 		for (int i=0;i<size1;i++){
-//			targetB[i] = reinterpret_cast<T (*)[size2]>(malloc(sizeof(T)*size2));
 			targetB[i] = reinterpret_cast<T (*)[size2]>(new T[size2]);
 		}
 	}
+	TAu *targetAu = reinterpret_cast<TAu *>(&targetA);
+	TBu *targetBu = reinterpret_cast<TBu *>(&targetB);
+	TCu *targetCu = reinterpret_cast<TCu *>(&targetC);
 
 	AnyType at;
 	if (minSize2 != size2){
-		at = AnyType(targetC);
+		at = AnyType(*targetCu);
 	} else {
 		if (sizeof (targetA) > pfstc.DefaultPageSize()){
-			at = AnyType(targetB);
+			at = AnyType(*targetBu);
 		} else {
-			at = AnyType(targetA);
+			at = AnyType(*targetAu);
 		}
 	}
 
@@ -598,13 +607,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 		AnyType x = aoi.operator AnyType();
 		ret = CompareType(x,at);
 		if (!ret){
-			printf ("Type Diff ");
-			PrintError(ret);
-			printf (" != ");
-			PrintType(x);
-			printf (" != ");
-			PrintType(at);
-			printf (" \n ");
+			printf ("Type Diff \n");
 		} else {
 			printf("Type OK (");
 			PrintType(x);
@@ -617,6 +620,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 		AnyType x = aoi.operator AnyType();
 	    ret = x.CompareWith(at);
 		if (!ret){
+			printf ("Content Differ \n");
 			REPORT_ERROR(ret,"Compare content fault");
 		} else {
 			printf ("Content OK \n");
@@ -756,7 +760,8 @@ void Test(){
 	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
 	Check4<uint64 ,141,532,5>(pfstc,UnsignedInteger64Bit);
 
-	Check4<DynamicCString ,5,5>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,5,5,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,125,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 
 }
 }

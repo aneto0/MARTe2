@@ -119,6 +119,13 @@ public:
 	void *DeepAddress(uint64 index,uint32 &consecutiveSpan);
 
 	/**
+	 * @brief finds the index corresponding to the given address
+	 * @param [in] address the address to find
+	 * @param [out] index
+	 */
+	ErrorManagement::ErrorType Address2Index(void * address,uint64 &index) const;
+
+	/**
 	 * @brief return address of element index
 	 */
 	void *Address(uint32 index);
@@ -247,7 +254,7 @@ protected:
 
 	ErrorManagement::ErrorType CheckMemoryStringEl(uint32 neededSize);
 
-	ErrorManagement::ErrorType CompleteStringEl(void *&dataPtr);
+	ErrorManagement::ErrorType CompleteStringEl(void *&dataPtr,uint32 &auxSize,void *&auxPtr);
 
 	ErrorManagement::ErrorType PageGrow(uint32 amount);
 
@@ -310,7 +317,7 @@ protected:
 	/**
 	 * vectorSize*matrixRowSize or something less for sparse matrices
 	 */
-//	uint32 numberOfElements;
+	uint64 numberOfElements;
 
 	/**
 	 * The object containing the memory

@@ -130,7 +130,7 @@ void ProgressiveFixedSizeTypeCreator::Clean(){
 	numberOfPages 		= 0;
 	isString            = false;
 	sizeStack.Clean();
-//	numberOfElements    = 0;
+	numberOfElements    = 0;
 }
 
 ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor typeIn){
@@ -179,8 +179,6 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryStringEl(
 		// if no more vectors of the same size can be fitted
 		ret = CheckAndNewPage(defaultPageSize);
 	}
-
-
 	return ret;
 }
 
@@ -318,6 +316,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		if (ret){
 			sizeLeft -= neededSize;
 			pageWritePos += neededSize;
+			numberOfElements++;
 		} else {
 			status = error;
 			REPORT_ERROR(ret,"AddElement failed");
@@ -364,7 +363,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		}break;
 		case sparseMatrixRow:
 		case sparseMatrixRE:{
-printf("nEl = %i\n",currentVectorSize);
+//printf("nEl = %i\n",currentVectorSize);
 			sizeStack.Push(currentVectorSize);
 			currentVectorSize = 0;
 			status = sparseMatrixRE;
@@ -470,15 +469,13 @@ printf("nEl = %i\n",currentVectorSize);
 				ret = false;
 			}
 		}
-
 		return ret;
-
 	}
 
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteStringEl(void *&dataPtr){
+	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteStringEl(void *&dataPtr,uint32 &auxSize,void *&auxPtr){
 		ErrorManagement::ErrorType  ret;
-
+/*
 		uint32 numberOfElements = matrixRowSize * vectorSize;
 		if (status == finishedSM){
 			numberOfElements = 0;
@@ -486,8 +483,17 @@ printf("nEl = %i\n",currentVectorSize);
 				numberOfElements += sizeStack[i];
 			}
 		}
+*/
+		// table of CCString (pointers)
+		uint32 CCStringTableSize = numberOfElements * sizeof(CCString);
+		// table of Vector<CCString>
+		if (status == finishedSM){
+			auxSize = sizeof (Vector<uint8>) * matrixRowSize;
+		}
 
-		uint32 neededSize = numberOfElements * sizeof(CCString);
+		/** try to fit both */
+		uint32 neededSize = CCStringTableSize + auxSize;
+
 		if (ret){
 			// close if not big enough
 			ret = CheckAndClosePage(neededSize);
@@ -502,25 +508,34 @@ printf("nEl = %i\n",currentVectorSize);
 		CCString *strings = NULL;
 		if (ret){
 			// remember pointer to string array
-			strings = reinterpret_cast<CCString *>(page.Address(this->pageWritePos));
+			strings = reinterpret_cast<CCString *>(page.Address(pageWritePos));
+			if (auxSize > 0){
+				auxPtr = page.Address(pageWritePos + CCStringTableSize);
+			}
 
 			// put oldest page on top
-			if (numberOfPages > 0){
+			if (numberOfPages > 1){
 				page.FlipOrder();
+				numberOfPages = 1;
 			}
 
 			uint64 pageDepth=0;
 			// prepare table of string addresses
 			for (int i = 0;(i<numberOfElements) && ret;i++){
-				// consecutiveSpan is how much space is left on page
-				uint32 consecutiveSpan;
+				// consecutiveSpan as input is how many character we need
+				uint32 consecutiveSpan=1;
 				// get pointer to element within pages at overall address pageDepth
 				CCString s = reinterpret_cast<char8 *> (page.DeepAddress(pageDepth,consecutiveSpan));
-
+				// consecutiveSpan now is how much space is left on page
+//printf("string=%s span = %i\n",s.GetList(),consecutiveSpan);
 				// empty string error?
 				if (s.GetList() == NULL){
 					ret.fatalError = true;
-					REPORT_ERROR(ret,"NULL String");
+					DynamicCString errM;
+					errM.AppendN("String ");
+					errM.AppendNum(i);
+					errM.AppendN(" has zero length");
+					REPORT_ERROR(ret,errM.GetList());
 				}
 
 				// calculate string length
@@ -529,7 +544,12 @@ printf("nEl = %i\n",currentVectorSize);
 					// length but do not scan beyond end of
 					if (!stringBoundSize(s,length)){
 						ret.fatalError = true;
-						REPORT_ERROR(ret,"String exceeding page boundaries");
+						DynamicCString errM;
+						errM.AppendN("String ");
+						errM.AppendNum(i);
+						errM.AppendN(" exceeding page boundaries ");
+						errM.AppendNum(consecutiveSpan);
+						REPORT_ERROR(ret,errM.GetList());
 					}
 				}
 
@@ -545,6 +565,9 @@ printf("nEl = %i\n",currentVectorSize);
 
 		if (ret){
 			dataPtr = reinterpret_cast<void *>(strings);
+			if (status == finishedSM){
+				auxPtr = page.Address(pageWritePos + auxSize);
+			}
 		}
 
 		return ret;
@@ -562,21 +585,31 @@ printf("nEl = %i\n",currentVectorSize);
 			REPORT_ERROR(ret,"Not Finished");
 		}
 
+		// points to data or to pointers to data (CCString)
 		void *dataPtr = NULL;
+		// auxiliary structures (array of pointers or array of Vector<>
 		void *auxPtr  = NULL;
 		uint32 auxSize = 0;
 
 		if (ret){
 			if (isString){
-				ret = CompleteStringEl(dataPtr);
-
+				// Flip multi page data
+				// prepares pointers to actual strings - returns that as main data
+				// allocate Vector<> array in case of sparse matrices
+				ret = CompleteStringEl(dataPtr,auxSize,auxPtr);
 			} else {
+				// Flip multi page data
+				// allocate Vector<> array in case of sparse matrices
+				// allocate array of pointers in case of multipage data
 				ret = CompleteFixedSizeEl(auxSize,auxPtr);
 				dataPtr =  page.Address(0);
 			}
 		}
 
 		if (ret){
+			// Completes operation
+			// fills aux Data
+			// creates Object
 			ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
 		}
 
@@ -608,12 +641,17 @@ printf("nEl = %i\n",currentVectorSize);
 					REPORT_ERROR(ret,"auxSize is not adequate");
 				}
 
+				uint64 pageDepth;
+				if (ret){
+					ret = page.Address2Index(dataPtr,pageDepth);
+				}
+
 				// reorder the pages correctly to allow access to data
 				if (ret){
 					void **addressMap = reinterpret_cast<void **>(auxPtr);
 //printf("addressMap = %p\n",addressMap);
 
-					uint64 pageDepth=0;
+//					uint64 pageDepth=0;
 					uint32 vectorByteSize = vectorSize * objectSize;
 //printf("vectorByteSize = %i\n",vectorByteSize);
 					for (int i = 0;(i<matrixRowSize) && ret;i++){
@@ -650,7 +688,16 @@ printf("nEl = %i\n",currentVectorSize);
 		case finishedSM:{
 			if ((auxSize != (sizeof (Vector<uint8>) * matrixRowSize)) || (auxPtr == NULL)){
 				ret.internalSetupError = true;
-				REPORT_ERROR(ret,"auxSize is not adequate or auxPtr is NULL");
+				if (auxPtr == NULL){
+					REPORT_ERROR(ret,"auxPtr is NULL");
+				} else {
+					REPORT_ERROR(ret,"auxSize is not adequate");
+				}
+			}
+
+			uint64 pageDepth;
+			if (ret){
+				ret = page.Address2Index(dataPtr,pageDepth);
 			}
 
 			// now get the address and then reorder the pages correctly to allow access to data
@@ -658,8 +705,7 @@ printf("nEl = %i\n",currentVectorSize);
 				Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
 //printf("aux=%p aMap = %p\n",auxPtr,addressMap);
 
-				uint64 pageDepth=0;
-printf("rows = %i\n",matrixRowSize);
+//printf("rows = %i\n",matrixRowSize);
 				for (int i = 0;(i<matrixRowSize) && ret;i++){
 					uint32 size  = sizeStack[i];
 					uint32 vectorByteSize = size * objectSize;
@@ -667,9 +713,13 @@ printf("rows = %i\n",matrixRowSize);
 					uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,sizeLeftOnPage));
 					if (address == NULL_PTR(uint8 *)){
 						ret.fatalError = true;
+						DynamicCString errM;
+						errM.AppendN("deep address ");
+						errM.AppendNum(pageDepth);
+						errM.AppendN(" out of boundary");
 						REPORT_ERROR(ret,"deep address out of boundary");
 					}
-printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vectorByteSize);
+//printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vectorByteSize);
 
 					if (ret){
 //printf("@%p -> (%p %i)\n",&addressMap[i],address,size);
@@ -733,7 +783,7 @@ printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vect
 			if ((sizeLeft < neededSize) || (neededSize == 0)){
 				ret = page.Shrink(pageWritePos);
 				if (ret){
-printf("end page to %i\n", pageWritePos);
+//printf("end page to %i\n", pageWritePos);
 					pageSize = 0;
 					sizeLeft = 0;
 					pageWritePos = 0;
@@ -762,7 +812,7 @@ printf("end page to %i\n", pageWritePos);
 		if (pageSize == 0){
 			ret = page.Allocate(neededSize);
 			if (ret){
-printf("new page %i @%p\n", neededSize,page.Address(0));
+//printf("new page %i @%p\n", neededSize,page.Address(0));
 				sizeLeft = neededSize;
 				pageWritePos = 0;
 				pageSize = neededSize;
@@ -805,7 +855,7 @@ printf("new page %i @%p\n", neededSize,page.Address(0));
 			pageSize = page.Size();
 			if (pageSize > oldPageSize){
 				sizeLeft += (pageSize - oldPageSize);
-printf("end page to %i\n", pageSize);
+//printf("end page to %i\n", pageSize);
 			} else {
 				ret.fatalError = true;
 				REPORT_ERROR(ret,"page.Grow results in a smaller page!");
@@ -879,33 +929,61 @@ printf("end page to %i\n", pageSize);
 		return size;
 	}
 
-	/**
-	 * @brief return address of the element at the deep address index
-	 * and checks that the elements from that point to that + span are contiguous
-	 * returns NULL if outside range or not contiguous span
-	 */
+
+	ErrorManagement::ErrorType MemoryPage::Address2Index(void * address,uint64 &index) const{
+		ErrorManagement::ErrorType ret;
+
+		uint8 *addressU8 = reinterpret_cast<uint8 *>(address);
+		index = 0;
+		bool found = false;
+		MemoryPageHeader *mphp = mph;
+		while (!found && (mphp != NULL_PTR(MemoryPageHeader *))){
+			uint8 *start = mphp->Data();
+			uint8 *end   = mphp->Data() + mphp->pageSize;
+			if ((addressU8 >= start) && (addressU8 <end)){
+				found = true;
+				index += (addressU8 - start);
+			} else {
+				index += mphp->pageSize;
+				mphp = mphp->previous;
+			}
+		}
+
+		if (!found){
+			ret.outOfRange = true;
+			REPORT_ERROR(ret,"address out of range");
+		}
+
+		return ret;
+	}
+
+
 	void *MemoryPage::DeepAddress(uint64 index,uint32 &consecutiveSpan){
 //printf("%index = lli index\n",index);
 		MemoryPageHeader *mphp = mph;
+
 		uint32 localIndex = 0;
 		while ((index > 0) && (mphp != NULL_PTR(MemoryPageHeader *))){
-			if ((index + consecutiveSpan)> mphp->pageSize) {
+			if (index >= mphp->pageSize) {
 				index -= mphp->pageSize;
 				mphp = mphp->previous;
 			} else {
 				localIndex  = index;
-				consecutiveSpan = mphp->pageSize - index;
 				index = 0;
 			}
 		}
 
 		void *address = NULL;
 		if (mphp != NULL){
-			address = reinterpret_cast<void *>((mphp->Data()+localIndex));
+			uint32 requiredSpan = consecutiveSpan;
+			consecutiveSpan = mphp->pageSize - localIndex;
+			if (requiredSpan <= consecutiveSpan){
+				address = reinterpret_cast<void *>((mphp->Data()+localIndex));
+			}
+//printf("%p req=%i avail=%i pos=%i\n",address, requiredSpan, consecutiveSpan,localIndex);
 		}
 		return address;
 	}
-
 
 	/**
 	 * @brief return address of element index
