@@ -111,6 +111,11 @@ public:
     bool TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers();
 
     /**
+     * @brief Tests the Execute method with 1 PreTriggerBuffers and 0 PostTriggerBuffers and the where the first signal of the GAM is not Trigger.
+     */
+    bool TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal();
+
+    /**
      * @brief Tests the Execute method with 1 PreTriggerBuffers and 1 PostTriggerBuffers.
      */
     bool TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers();

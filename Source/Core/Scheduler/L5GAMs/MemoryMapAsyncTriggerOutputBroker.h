@@ -284,6 +284,11 @@ private:
      * Do not store pre-trigger of empty buffers that were never acquired
      */
     int32 numberOfPreBuffersWritten;
+
+    /**
+     * The index of the trigger on the GAM signal (it is for sure zero in the DataSource, but it is not necessarily zero in the GAM memory).
+     */
+    uint32 triggerIndexInGAMMemory;
 };
 }
 

@@ -99,6 +99,11 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_Po
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers());
 }
 
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal) {
+    MemoryMapAsyncTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal());
+}
+
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers());
