@@ -27,22 +27,22 @@
 OBJSX=\
 		TokenInfo.x \
 		Token.x \
-		StringToFloat.x \
-		StringToInteger.x \
+		StringToNumber.x \
 		FromStringConversionFactory.x \
 		NumericConversionFactory.x \
+		LexicalAnalyzer.x \
+		ParserI.x \
+		StandardParser.x \
+		XMLParser.x \
+		JsonParser.x \
+
+#		ConfigurationDatabase.x
 
 
-#		LexicalAnalyzer.x \
 #		TypeConversion.x \
 #		ValidateBasicType.x\
 #		AnyObject.x \
 #		AnyTypeCreator.x \
-#		StandardParser.x \
-#		XMLParser.x \
-#		JsonParser.x \
-#		ParserI.x \
-#		ConfigurationDatabase.x
 
         
 PACKAGE=Core/BareMetal

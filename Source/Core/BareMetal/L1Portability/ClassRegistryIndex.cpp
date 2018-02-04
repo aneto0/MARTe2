@@ -91,16 +91,36 @@ uint32 ClassRegistryIndex::GetClassSize (uint32 classRegistrationNo){
 	ClassRegistryBrief *crb =  (*this)[classRegistrationNo];
 	uint32 size = 0;
 	if (crb != NULL){
-		size = crb->sizeOfClass;
+		size = crb->GetSizeOfClass();
 	}
 	return size;
+}
+
+TypeDescriptor ClassRegistryIndex::GetTypeDescriptor(CCString name){
+	TypeDescriptor td = InvalidType(0);
+	for (int i = 0; (i < NumberOfRegisteredClasses()) && (td.all == InvalidType(0).all); i++){
+		ClassRegistryBrief *crb =  (*this)[i];
+		if (crb != NULL){
+			if (crb->crii != NULL){
+				CCString className = crb->crii->GetClassName();
+				if (name.isSameAs(className.GetList())){
+					td = crb->crii->GetTypeDescriptor();
+				}
+			}
+		}
+	}
+	return td;
 }
 
 ClassRegistryItem *  ClassRegistryIndex::GetClassRegistryItem (uint32 classRegistrationNo){
 	ClassRegistryBrief *crb =  (*this)[classRegistrationNo];
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	if (crb != NULL){
-		cri = crb->cri;
+//		// works only if ClassRegistryItemI is the sole ancestor of ClassRegistryItem
+//		cri = reinterpret_cast<ClassRegistryItem *>(crb->crii);
+		if (crb->crii != NULL){
+			cri = crb->crii->GetBasePtr();
+		}
 	}
 	return cri;
 
@@ -147,15 +167,15 @@ uint32 ClassRegistryIndex::AllocateFreeSlots(){
 }
 
 #include <stdio.h>
-uint32 ClassRegistryIndex::Add(ClassRegistryItem *criIn,uint32 size){
+uint32 ClassRegistryIndex::Add(ClassRegistryItemI *criIn,uint32 size){
 	uint32 no = 0xFFFFFFFF;
 	uint32 availableSize = AllocateFreeSlots();
 	if (availableSize > 0){
 		ClassRegistryIndexCell *cric = index[index.NumberOfUsedElements() - 1];
 		if (cric != NULL){
 			ClassRegistryBrief crb;
-			crb.sizeOfClass = size;
-			crb.cri = criIn;
+//			crb.sizeOfClass = size;
+			crb.crii = criIn;
 			cric->Add(crb);
 			no = (index.NumberOfUsedElements()-1) << IndexBits;
 			no += (cric->NumberOfUsedElements() - 1);

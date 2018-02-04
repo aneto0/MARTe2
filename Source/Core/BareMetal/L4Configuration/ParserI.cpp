@@ -57,10 +57,6 @@ static CCString GetCurrentTokenData(Token * const token) {
     return (token != NULL)?(token->GetData()):(emptyString);
 }
 
-static uint32 GetCurrentTokenId(const Token * const token) {
-    return (token != NULL)?(token->GetId()):(ERROR_TOKEN);
-}
-
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
     return (token != NULL)?(token->GetLineNumber()):0u;
 }
@@ -73,23 +69,16 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 
 namespace MARTe {
 
-ParserI::ParserI(StreamI &stream,
-                 StructuredDataI &databaseIn,
-                 BufferedStreamI * const err,
-                 const GrammarInfo &grammarIn) :
-        tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
-                      grammarIn.endMultipleLinesComment),
-        memory(1u) {
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
+ParserI::ParserI(StreamI &stream,StructuredDataI &databaseIn,BufferedStreamI * const err,const GrammarInfo &grammarIn) :
+        tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment,
+        		grammarIn.beginMultipleLinesComment,grammarIn.endMultipleLinesComment),memory(1024*1024) {
+
+	parseStatus.Init();
+
     database = &databaseIn;
     errorStream = err;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
     grammar = grammarIn;
     currentToken = static_cast<Token*>(NULL);
-    isError = false;
 }
 
 ParserI::~ParserI() {
@@ -150,119 +139,109 @@ GrammarInfo ParserI::GetGrammarInfo() const {
 }
 
 void ParserI::GetTypeCast() {
-    typeName = GetCurrentTokenData(currentToken);
+	if ((currentToken != NULL_PTR(Token *)) && (parseStatus.ok)){
+		parseStatus.td = TypeDescriptor(currentToken->GetData());
+	}
 }
 
 void ParserI::BlockEnd() {
     if (!database->MoveToAncestor(1u)) {
         PrintErrorOnStream("\nFailed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
+		parseStatus.ok.fatalError = true;
     }
 }
 
 void ParserI::CreateNode() {
     if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
         PrintErrorOnStream("\nFailed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
+		parseStatus.ok.fatalError = true;
     }
 }
 
 void ParserI::AddLeaf() {
-    // use numberOfRows and numberOfColumns as dimensions # elements
-    if (numberOfDimensions == 1u) {
-        numberOfRows = 1u;
-    }
-    // a scalar
-    if (numberOfDimensions == 0u) {
-        numberOfRows = 1u;
-        numberOfColumns = firstNumberOfColumns;
-    }
+	Reference ref;
 
+	if (parseStatus.ok){
+		parseStatus.ok = memory.End();
+		if (!parseStatus.ok){
+	        PrintErrorOnStream("\n Failed ending construction of object[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+		}
+	}
 
-    uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
-    /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-    AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);
-    bool ret = !(element.GetVariablePointer() == NULL);
-    if (ret) {
-        ret = database->Write(nodeName.Buffer(), element);
-        if (!ret) {
-            PrintErrorOnStream("\nFailed adding a leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-    typeName = defaultTypeName;
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
-    memory.CleanUp(1u);
+	if (parseStatus.ok){
+		parseStatus.ok = memory.GetReference(ref);
+		if (!ref.IsValid()){
+			parseStatus.ok.fatalError = true;
+		}
+		if (!parseStatus.ok){
+	        PrintErrorOnStream("\n Failed creating object[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+		}
+	}
+
+	if (parseStatus.ok){
+		ref->SetName(parseStatus.nodeName);
+
+		// no errors if ref is valid. which must be since we got here
+        database->Write(ref);
+	}
+
+	parseStatus.Init();
+
 }
 
 void ParserI::GetNodeName() {
-    nodeName = GetCurrentTokenData(currentToken);
+	if ((currentToken != NULL_PTR(Token *)) && (parseStatus.ok)){
+		parseStatus.nodeName = currentToken->GetData().GetList();
+	}
 }
 
 void ParserI::AddScalar() {
-    if (tokenType == 0u) {
-        tokenType = GetCurrentTokenId(currentToken);
-    }
+	if ((currentToken != NULL_PTR(Token *)) && (parseStatus.ok)){
 
-    if (tokenType == GetCurrentTokenId(currentToken)) {
-        bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
+		// restart parsing
+		if (parseStatus.parseElStatus == ParseStatus::parseElFinished){
+			memory.Start(parseStatus.td);
+		}
 
-        if (ret) {
-            firstNumberOfColumns++;
-        }
-        else {
-            PrintErrorOnStream("\nFailed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("\nCannot mix different types in a vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
+		parseStatus.ok = memory.AddElement(currentToken->GetData());
+		if (!parseStatus.ok){
+	        PrintErrorOnStream("\n Failed adding element[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+		}
+	}
 }
 
 void ParserI::EndVector() {
-    if (numberOfColumns == 0u) {
-        numberOfColumns = firstNumberOfColumns;
-    }
-    else {
-        if (numberOfColumns != firstNumberOfColumns) {
-            PrintErrorOnStream("\nIncorrect matrix format! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    firstNumberOfColumns = 0u;
-    numberOfRows++;
-    if (numberOfDimensions == 0u) {
-        numberOfDimensions = 1u;
-    }
+	if (parseStatus.ok){
+		parseStatus.ok = memory.EndVector();
+		if (!parseStatus.ok){
+	        PrintErrorOnStream("\n Failed ending vector [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+		}
+	}
 }
 
 void ParserI::EndMatrix() {
-    numberOfDimensions = 2u;
 }
 
 void ParserI::End() {
     if (!database->MoveToRoot()) {
         PrintErrorOnStream("\nFailed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
+        parseStatus.ok.fatalError = true;
     }
 }
 
-bool ParserI::Parse() {
-    typeName = defaultTypeName;
+void ParserI::ParseStatus::Init(){
+	nodeName.Truncate(0);
+	ok = true;
+	parseElStatus = ParseStatus::parseElFinished;
+	td = ConstCharString(sizeof(CCString));
+}
+
+ErrorManagement::ErrorType ParserI::Parse() {
+	parseStatus.Init();
 
     bool isEOF = false;
 
-    while ((!isError) && (!isEOF)) {
+    while ((parseStatus.ok) && (!isEOF)) {
 
         uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
         uint32 *stack = &stackArray[0];
@@ -275,7 +254,7 @@ bool ParserI::Parse() {
         uint32 token = GetNextTokenType();
         uint32 new_token = token;
 
-        for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);) {
+        for (uint32 symbol = StackPop(top); (symbol > 0u) && (parseStatus.ok);) {
             if (symbol >= GetConstant(ParserConstant::START_ACTION)) {
                 Execute(symbol - (GetConstant(ParserConstant::START_ACTION) - 1u));
 
@@ -306,16 +285,16 @@ bool ParserI::Parse() {
                         }
                     }
                     else {
-                        (token == 0u) ? (isEOF = true) : (isError = true);
-                        if (isError) {
+                        (token == 0u) ? (isEOF = true) : (parseStatus.ok.invalidOperation = true);
+                        if (!parseStatus.ok) {
                             PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                         }
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
                 }
                 else {
-                    (token == 0u) ? (isEOF = true) : (isError = true);
-                    if (isError) {
+                    (token == 0u) ? (isEOF = true) : (parseStatus.ok.invalidOperation = true);
+                    if (!parseStatus.ok) {
                         PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                     }
                     new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
@@ -328,7 +307,7 @@ bool ParserI::Parse() {
                         new_token = token;
                     }
                     else {
-                        isError = true;
+                    	parseStatus.ok.internalSetupError = true;
                         PrintErrorOnStream("\nInvalid Expression! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -346,11 +325,11 @@ bool ParserI::Parse() {
         }
         if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
+            parseStatus.ok.internalSetupError = true;
         }
     }
 
-    return !isError;
+    return parseStatus.ok;
 }
 
 }

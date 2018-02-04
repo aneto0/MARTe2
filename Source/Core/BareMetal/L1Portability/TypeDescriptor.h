@@ -316,7 +316,6 @@ public:
      */
     inline TypeDescriptor(const TYPE_DESCRIPTOR_TYPE x);
 
-
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
@@ -326,6 +325,15 @@ public:
      *   structuredDataIdCodeIn == structuredDataIdCode
      */
     TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn);
+
+    /**
+     * @brief String to typeDescriptor
+     * recognizes basic Types, CCString,CString, and BitRange<type,nn,nn>
+     * recognizes registered classes
+     * does not handle modifiers like const
+     */
+    TypeDescriptor(CCString typeName);
+
 
     /**
      * @brief whether it is an basic type

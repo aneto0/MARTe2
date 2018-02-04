@@ -126,9 +126,10 @@ public:
      * @brief Checks if the input \a arrayIn has the same content as the array
      * @details This function allows implementing operator==
      * @param[in] arrayIn is the array to be compared
+     * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const T *arrayIn) const;
+    inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
 protected:
 
     /**
@@ -314,8 +315,8 @@ bool DynamicZeroTerminatedArray<T,granularity>::Remove(uint32 characters){
 }
 
 template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::isSameAs(const T *arrayIn) const {
-    return ZeroTerminatedArray<T>::isSameAs(arrayIn);
+bool DynamicZeroTerminatedArray<T,granularity>::isSameAs(const T *arrayIn,uint32 limit) const {
+    return ZeroTerminatedArray<T>::isSameAs(arrayIn,limit);
 }
 
 

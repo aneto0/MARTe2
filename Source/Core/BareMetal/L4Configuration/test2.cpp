@@ -26,6 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
 
+#include "../L2Objects/ProgressiveTypeCreator.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +41,6 @@
 #include "MemoryCheck.h"
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
-#include "ProgressiveFixedSizeTypeCreator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -508,14 +508,19 @@ static inline void NumSet(DynamicCString &dest,uint64 &source) {
 
 
 template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
-void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
+void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 	// remapped types for type comparison - in case T is for storing only
+	typedef  T (TA)[size1][size2];
+	typedef  T (*(TB)[size1])[size2];
+	typedef  Vector<T>(TC)[size1];
 	typedef  T2 (TAu)[size1][size2];
 	typedef  T2 (*(TBu)[size1])[size2];
 	typedef  Vector<T2>(TCu)[size1];
 
 	// Data structures to store comparison values
-	T targetA[size1][size2];
+	TA *targetAP = (TA*)new T[size1*size2];
+	TA& targetA(*targetAP);
+	//	T targetA[size1][size2];
 	T (*targetB[size1])[size2];
 	Vector<T>targetC[size1];
 	{
@@ -538,7 +543,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 		}
 	}
 
-	printf("Progressive Gen ");
+	printf("Gen ");
 	PrintType(at);
 	printf(" : ");
 
@@ -589,7 +594,6 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
 	Reference aoi;
 	if (ret){
-		printf("Ended : ");
 		ret = pfstc.End();
 		if (!ret){
 			REPORT_ERROR(ret,"pfstc.End failed");
@@ -598,12 +602,16 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 
 	if (ret){
 		ret = pfstc.GetReference(aoi);
+		ret.fatalError = !aoi.IsValid();
 		if (!ret){
 			REPORT_ERROR(ret,"pfstc.GetReference failed");
+		} else {
+			printf ("%s :",aoi->GetClassRegistryItem()->GetClassNameA());
 		}
 	}
 
 	if (ret){
+
 		AnyType x = aoi.operator AnyType();
 		ret = CompareType(x,at);
 		if (!ret){
@@ -640,6 +648,7 @@ void Check4(ProgressiveFixedSizeTypeCreator &pfstc,TypeDescriptor td){
 		for (int i=0;i<size1;i++){
 			delete[] (targetB[i]);
 		}
+		delete[] targetAP;
 	}
 
 	pfstc.Clean();
@@ -748,20 +757,33 @@ void Test(){
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
-	ProgressiveFixedSizeTypeCreator pfstc(1024);
+	ProgressiveTypeCreator pfstc(1024);
 
+	Check4<int8,1,2>(pfstc,SignedInteger8Bit);
+	Check4<int16,1,2>(pfstc,SignedInteger16Bit);
+	Check4<int32,1,2>(pfstc,SignedInteger32Bit);
+	Check4<int64,1,2>(pfstc,SignedInteger64Bit);
+	Check4<int32,1,8>(pfstc,SignedInteger32Bit);
+	Check4<int16,1,32>(pfstc,SignedInteger16Bit);
+	Check4<int64,2,2>(pfstc,SignedInteger64Bit);
+	Check4<int8,8,8>(pfstc,SignedInteger8Bit);
 	Check4<int64,1,10>(pfstc,SignedInteger64Bit);
 	Check4<int32,12,10>(pfstc,SignedInteger32Bit);
+	Check4<uint32,2,2>(pfstc,UnsignedInteger32Bit);
 	Check4<int16,34,12>(pfstc,SignedInteger16Bit);
 	Check4<int8 ,56,87>(pfstc,SignedInteger8Bit);
+	Check4<uint8,22,3>(pfstc,UnsignedInteger8Bit);
 	Check4<int8 ,256,87>(pfstc,SignedInteger8Bit);
 	Check4<uint16 ,72,4>(pfstc,UnsignedInteger16Bit);
 	Check4<uint32 ,27,17>(pfstc,UnsignedInteger32Bit);
 	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
 	Check4<uint64 ,141,532,5>(pfstc,UnsignedInteger64Bit);
 
+	Check4<DynamicCString ,1,6,6,CCString>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,2,2,2,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,5,5,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
-	Check4<DynamicCString ,125,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,2,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,515,235,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 
 }
 }

@@ -35,11 +35,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "TypeDescriptor.h"
 #include "GlobalObjectI.h"
 #include "SimpleStaticListT.h"
 #include "CCString.h"
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,8 +49,56 @@ namespace MARTe {
 /**
  * declared and implemented in level2
  * Here only to allow defining pointers to it
+ * To access its content
  * */
 class ClassRegistryItem;
+
+/**
+ * Interface requirement for ClassRegistryItem
+ */
+class ClassRegistryItemI{
+
+public:
+
+	/**
+	 *
+	 */
+	virtual ~ClassRegistryItemI(){}
+
+    /**
+     * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
+     * @return the TypeDescriptor.
+     */
+    virtual const TypeDescriptor &  GetTypeDescriptor() const = 0;
+
+    /**
+     * @brief  Get the name of the class (by default the same as returned by typeid.
+     */
+    virtual CCString                GetClassName() const 	= 0;
+
+    /**
+     * @brief  The name of the class as returned by typeid.
+     */
+    virtual CCString                GetTypeidName() const = 0;
+
+    /**
+     * @brief  The version of the class.
+     */
+    virtual CCString                GetClassVersion() const = 0;
+
+    /**
+     * @brief  The size of the class.
+     */
+    virtual uint32                  GetSizeOfClass() const	= 0;
+
+    /**
+     * @brief  allows recovering the base pointer to ClassRegistryItem from this interface
+     * without using dynamic_cast which might not works as this class is not known here
+     */
+    virtual ClassRegistryItem* 		GetBasePtr() = 0;
+
+};
+
 
 /**
  * Just to provide the information of size at level 1!
@@ -60,21 +107,46 @@ class ClassRegistryItem;
 struct ClassRegistryBrief{
 
 	/**
+	 * TODO
 	 * pointer to ClassRegistryItem
 	 */
-	class ClassRegistryItem  *cri;
+	class ClassRegistryItemI  *crii;
+
+	/**
+	 * TODO
+	 * sizeof ()
+	 */
+	uint32 GetSizeOfClass(){
+		uint32 size = 0;
+		if (crii != NULL_PTR(ClassRegistryItemI *)){
+			size = crii->GetSizeOfClass();
+		}
+		return size;
+	}
+
+	/**
+	 * TODO
+	 * sizeof ()
+	 */
+	CCString GetClassName(){
+		CCString name;
+		if (crii != NULL_PTR(ClassRegistryItemI *)){
+			name = crii->GetClassName();
+		}
+		return name;
+	}
 
 	/**
 	 * sizeof ()
 	 */
-    uint32                    sizeOfClass;
+//    uint32                    sizeOfClass;
 
     /**
      *
      */
     ClassRegistryBrief(){
-    	cri = NULL_PTR(ClassRegistryItem *);
-    	sizeOfClass = 0;
+    	crii = NULL_PTR(ClassRegistryItemI *);
+//    	sizeOfClass = 0;
     }
 };
 
@@ -156,6 +228,13 @@ public:
     uint32 GetClassSize (uint32 classRegistrationNo);
 
     /**
+     * @brief Access to basic information of a class
+     * @return NULL if index is outside range
+     *
+     */
+    TypeDescriptor GetTypeDescriptor(CCString name);
+
+    /**
      * @brief Access to full information of a class
      * @return NULL if index is outside range
      *
@@ -173,7 +252,7 @@ public:
      * @param[in] cri the element to be added.
      * @return the index number of the object. Returns 0xFFFFFFFF in case of error
      */
-    uint32 Add(ClassRegistryItem * const cri,uint32 size);
+    uint32 Add(ClassRegistryItemI * const crii,uint32 size);
 
     /**
      * @return number of classes in database

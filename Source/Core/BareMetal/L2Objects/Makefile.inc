@@ -44,7 +44,9 @@ OBJSX=  TypeConversionManager.x \
 		ReferenceContainerFilter.x \
 		ReferenceContainerFilterReferences.x \
 		ReferenceContainerFilterObjectName.x \
-		ProgressiveFixedSizeTypeCreator.x
+		MemoryPage.x  \
+		MemoryPageObject.x  \
+		ProgressiveTypeCreator.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

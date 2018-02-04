@@ -99,7 +99,7 @@ static const char8 * Terminal_name[] = { "0"
 
  */
 
-static const char8 *GetTerminalName(const uint32 symbol) {
+static const CCString GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
 }
 
@@ -127,11 +127,11 @@ void XMLParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
-const char8 *XMLParser::GetSymbolName(const uint32 symbol)const  {
-    const char8 *symbolName = static_cast<const char8 *>(NULL);
+CCString XMLParser::GetSymbolName(const uint32 symbol)const  {
+	CCString symbolName;
 
     if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
-        symbolName=GetTerminalName(symbol);
+        symbolName=GetTerminalName(symbol).GetList();
     }
     else {
         symbolName="not a symbol";

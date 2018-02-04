@@ -168,9 +168,10 @@ public:
      * @brief Checks if the input \a arrayIn has the same content as the array
      * @details This function allows implementing operator==
      * @param[in] arrayIn is the array to be compared
+     * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const T *arrayIn) const;
+    inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
 
 
@@ -220,36 +221,12 @@ inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
 template<typename T>
 uint32 ZeroTerminatedArray<T>::GetSize() const {
 	return ZeroTerminatedArrayGetSize((const uint8 *)array,sizeof(T));
-/*
-    uint32 size = 0u;
-    if (array != NULL_PTR(T*)) {
-        const T * listP = array;
-        while (!Zero(listP[0])) {
-            listP = &listP[1];
-            size++;
-        }
-    }
-    return size;
-    */
 }
 
 
 template<typename T>
 uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
 	return ZeroTerminatedArrayFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
-/*
-    uint32 pos = 0xFFFFFFFFu;
-    if (array != NULL_PTR(T*)) {
-        uint32 index = 0;
-        while (!Zero(array[index]) && (pos == 0xFFFFFFFFu)) {
-        	if (data == array[index]){
-        		pos = index;
-        	}
-            index++;
-        }
-    }
-    return pos;
-    */
 }
 
 template<typename T>
@@ -289,16 +266,17 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
 
 
 template<typename T>
-bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn) const {
+bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
 
     bool same = true;
     if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
         const T * list2P = arrayIn;
-        while (!IsZero(*listP) && same) {
+        while (!IsZero(*listP) && same && limit > 0) {
             same = (*listP == *list2P);
             listP++;
             list2P++;
+            limit--;
         }
         if (same){
         	same = ZeroTerminatedArrayIsZero((const uint8 *)list2P,sizeof(T));

@@ -67,7 +67,7 @@ public:
      * @post
      *   GetTimeout() == TTInfiniteWait
      */
-ReferenceContainer    ();
+	ReferenceContainer    ();
 
     /**
      * @brief Copy Constructor

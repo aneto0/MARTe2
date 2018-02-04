@@ -34,7 +34,7 @@
 #include "ErrorManagement.h"
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
-#include "TypeConversion.h"
+#include "StringToNumber.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -412,7 +412,8 @@ void LexicalAnalyzer::AddToken(CString tokenBuffer,const bool isString) {
         if (!converted) {
             // not an integer! Try a float (number)
             float64 possibleFloat = 0.0;
-            if (TypeConvert(possibleFloat, tokenBuffer)) {
+            // this conversion is only done to the purpose of validating the number
+            if (StringToNumber(tokenBuffer,possibleFloat)){
                 /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
                 Token *toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
                 if (!tokenQueue.Add(toAdd)) {

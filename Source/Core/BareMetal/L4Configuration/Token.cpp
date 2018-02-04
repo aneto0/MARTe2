@@ -43,35 +43,30 @@ namespace MARTe {
 
 Token::Token() {
     tokenId = 0u;
-    tokenLineNumber = 0u;
-
+    lineNumber = 0u;
 }
 
 Token::Token(const uint32 id,
              CCString const description,
 			 CCString const data,
-             const uint32 lineNumber) {
+             const uint32 lineNumberIn) {
     tokenId = id;
-    tokenDescription = description;
-    tokenData = data;
-    tokenLineNumber = lineNumber;
+    tokenDescription = description.GetList();
+    tokenData = data.GetList();
+    lineNumber = lineNumberIn;
 }
 
 Token::Token(TokenInfo tokenInfo,
 			 CCString const data,
-             const uint32 lineNumber) {
+             const uint32 lineNumberIn) {
     tokenId = tokenInfo.GetTokenId();
-    tokenDescription = tokenInfo.GetDescription();
-    tokenData = data;
-    tokenLineNumber = lineNumber;
+    tokenDescription = tokenInfo.GetDescription().GetList();
+    tokenData = data.GetList();
+    lineNumber = lineNumberIn;
 }
 
 Token::~Token() {
 
-}
-
-uint32 Token::GetId() const {
-    return tokenId;
 }
 
 /*lint -e{1529} . Justification: Remove the warning */
@@ -79,20 +74,8 @@ Token &Token::operator=(const Token &td) {
     tokenId = td.tokenId;
     tokenData = td.tokenData;
     tokenDescription = td.tokenDescription;
-    tokenLineNumber = td.tokenLineNumber;
+    lineNumber = td.lineNumber;
     return *this;
-}
-
-CCString Token::GetDescription() {
-    return tokenDescription.Buffer();
-}
-
-CCString Token::GetData() {
-    return tokenData.Buffer();
-}
-
-uint32 Token::GetLineNumber() const {
-    return tokenLineNumber;
 }
 
 }

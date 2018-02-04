@@ -34,9 +34,9 @@
 
 #include "Token.h"
 #include "StructuredDataI.h"
-#include "StreamString.h"
-#include "AnyTypeCreator.h"
+#include "DynamicCString.h"
 #include "LexicalAnalyzer.h"
+#include "ProgressiveTypeCreator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -114,7 +114,7 @@ public:
      * In case of failure, the error causing the failure is printed on the
      * \a err stream in input (if it is not NULL).
      */
-    bool Parse();
+    ErrorManagement::ErrorType Parse();
 
     /**
      * @brief Retrieves the grammar used by this parser.
@@ -124,6 +124,7 @@ public:
 
 protected:
 
+// Callbacks from SLK engine
     /**
      * @brief Moves into the built structured data to the root.
      */
@@ -169,6 +170,8 @@ protected:
      * @brief Moves into the structuredData to the father.
      */
     virtual void BlockEnd();
+
+//      END of syntax callbacks
 
     /**
      * @brief Retrieves the next expected token identifiers to be
@@ -271,31 +274,68 @@ protected:
 
 private:
 
-    /**
-     * The type name.
-     */
-    StreamString typeName;
+    struct ParseStatus{
+        /**
+         * The parse Error State
+         */
+        ErrorManagement::ErrorType ok;
 
-    /**
-     * The StructuredData node or leaf name.
-     */
-    StreamString nodeName;
+        /**
+         * The type name.
+         */
+        TypeDescriptor 			td;
 
+        /**
+         * The StructuredData node or leaf name.
+         */
+        DynamicCString 			nodeName;
+
+        /**
+         * Status of a variable element parsing
+         */
+        enum {
+        	parseElFinished,
+			parseElStarted
+        }						parseElStatus;
+
+        void Init();
+
+    } parseStatus;
+
+// PARSING STATUS
+
+// PARSER COMPONENTS
     /**
      * The StructuredData to be built
      */
     StructuredDataI *database;
 
     /**
-     * A flag to specify if an error occurred.
-     */
-    bool isError;
-
-    /**
      * The lexical analyzer reading the stream and providing the tokens.
      */
     LexicalAnalyzer tokenProducer;
 
+    /**
+     * The object used to store the read element and create the AnyType leaf.
+     */
+    ProgressiveTypeCreator memory;
+
+    /**
+     * The stream to print the error messages.
+     */
+    BufferedStreamI *errorStream;
+
+    /**
+     * Stores the information about the language to be parsed.
+     */
+    GrammarInfo grammar;
+
+    /**
+     * A flag to specify if an error occurred.
+     */
+//    bool isError;
+
+#if 0
     /**
      * The number of columns in case of read of vector.
      */
@@ -312,29 +352,16 @@ private:
     uint32 numberOfRows;
 
     /**
-     * The object used to store the read element and create the AnyType leaf.
-     */
-    AnyTypeCreator memory;
-
-    /**
-     * The stream to print the error messages.
-     */
-    BufferedStreamI *errorStream;
-
-    /**
-     * The token id.
-     */
-    uint32 tokenType;
-
-    /**
      * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
      */
     uint8 numberOfDimensions;
 
     /**
-     * Stores the information about the language to be parsed.
+     * The token id of the current set of tokens being loaded in a data object
      */
-    GrammarInfo grammar;
+    uint32 tokenType;
+
+#endif
 
 };
 

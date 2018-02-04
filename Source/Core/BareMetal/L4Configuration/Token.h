@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "CCString.h"
-#include "StreamString.h"
+#include "DynamicCString.h"
 #include "TokenInfo.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -92,34 +92,34 @@ public:
     ~Token();
 
     /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
-     */
-    uint32 GetId() const;
-
-    /**
      * @brief Copy operator.
      * @param[in] td is the Token to be copied into this.
      */
     Token &operator=(const Token &td);
 
     /**
+     * @brief Retrieves the token identifier.
+     * @return the token identifier.
+     */
+    inline uint32 GetId() const;
+
+    /**
      * @brief Retrieves the token description.
      * @return the token description.
      */
-    CCString GetDescription();
+    inline CCString GetDescription() const ;
 
     /**
      * @brief Retrieves the token data.
      * @return the token data.
      */
-    CCString GetData();
+    inline CCString GetData() const ;
 
     /**
      * @brief Retrieves the token line number.
      * @return the token line number.
      */
-    uint32 GetLineNumber() const;
+    inline uint32 GetLineNumber() const;
 
 private:
     /**
@@ -130,17 +130,17 @@ private:
     /**
      * The meaning of the token
      */
-    StreamString tokenDescription;
+    DynamicCString tokenDescription;
 
     /**
      * The parsed part of the text
      */
-    StreamString tokenData;
+    DynamicCString tokenData;
 
     /**
      * What line the token was found at
      */
-    uint32 tokenLineNumber;
+    uint32 lineNumber;
 
 };
 
@@ -181,6 +181,24 @@ static const uint32 SEPARATOR_TOKEN = 5u;
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
+CCString Token::GetDescription() const {
+    return CCString(tokenDescription.GetList());
+}
+
+CCString Token::GetData() const {
+    return CCString(tokenData.GetList());
+}
+
+uint32 Token::GetId() const {
+    return tokenId;
+}
+
+uint32 Token::GetLineNumber() const {
+    return lineNumber;
+}
+
 
 }
 

@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabaseTest.h"
-#include "AnyObject.h"
+
+#include "../../../../Source/Core/BareMetal/L2Objects/AnyObjectT.h"
 #include "IntrospectionTestHelper.h"
 
 using namespace MARTe;

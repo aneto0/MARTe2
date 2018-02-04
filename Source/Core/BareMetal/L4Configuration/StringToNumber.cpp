@@ -1,6 +1,6 @@
 /**
- * @file StringToInteger.cpp
- * @brief Source file for class StringToInteger
+ * @file StringToNumber.cpp
+ * @brief Source file for class StringToNumber
  * @date 11/11/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringToInteger (public, protected, and private). Be aware that some 
+ * the class StringToNumber (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -32,9 +32,9 @@
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
-#include "IOBuffer.h"
+//#include "IOBuffer.h"
 #include "ErrorManagement.h"
-#include "ConversionPrivate.h"
+#include "StringToNumber.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -67,8 +67,7 @@ namespace MARTe {
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToIntegerDecimalNotation(const char8* const input,
-                                           T &number) {
+static bool StringToIntegerDecimalNotation(CCString input, T &number) {
 
     bool ret = true;
     bool canReturn = false;
@@ -199,8 +198,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToIntegerExadecimalNotation(const char8* const input,
-                                              T &number) {
+static bool StringToIntegerExadecimalNotation(CCString input, T &number) {
 
     bool ret = true;
     bool canReturn = false;
@@ -269,8 +267,7 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToIntegerOctalNotation(const char8 * const input,
-                                         T &number) {
+static bool StringToIntegerOctalNotation(CCString input, T &number) {
 
     bool ret = true;
     bool canReturn = false;
@@ -351,8 +348,7 @@ static bool StringToIntegerOctalNotation(const char8 * const input,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToIntegerBinaryNotation(const char8* const input,
-                                          T &number) {
+static bool StringToIntegerBinaryNotation(CCString input, T &number) {
 
     bool ret = true;
     bool canReturn = false;
@@ -411,8 +407,7 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToIntegerT(const char8 * const input,
-                            T &number) {
+static bool StringToIntegerT(CCString input, T &number) {
 
     number = static_cast<T>(0);
     bool ret = false;
@@ -420,15 +415,15 @@ static bool StringToIntegerT(const char8 * const input,
     if (input[0] == '0') {
         switch (input[1]) {
         case ('x'): {
-            ret = StringToIntegerExadecimalNotation(&input[2], number);
+            ret = StringToIntegerExadecimalNotation(CCString(input.GetList()+2), number);
         }
             break;
         case ('o'): {
-            ret = StringToIntegerOctalNotation(&input[2], number);
+            ret = StringToIntegerOctalNotation(CCString(input.GetList()+2), number);
         }
             break;
         case ('b'): {
-            ret = StringToIntegerBinaryNotation(&input[2], number);
+            ret = StringToIntegerBinaryNotation(CCString(input.GetList()+2), number);
         }
             break;
         case ('\0'): {
@@ -449,99 +444,323 @@ static bool StringToIntegerT(const char8 * const input,
     return ret;
 }
 
-bool StringToInteger(const char8 * const input,uint8 &number) {
-	return StringToIntegerT<uint8>(input,number);
-}
-bool StringToInteger(const char8 * const input,uint16 &number) {
-	return StringToIntegerT<uint16>(input,number);
-}
-bool StringToInteger(const char8 * const input,uint32 &number) {
-	return StringToIntegerT<uint32>(input,number);
-}
-bool StringToInteger(const char8 * const input,uint64 &number) {
-	return StringToIntegerT<uint64>(input,number);
-}
-bool StringToInteger(const char8 * const input,int8 &number) {
-	return StringToIntegerT<int8>(input,number);
-}
-bool StringToInteger(const char8 * const input,int16 &number) {
-	return StringToIntegerT<int16>(input,number);
-}
-bool StringToInteger(const char8 * const input,int32 &number) {
-	return StringToIntegerT<int32>(input,number);
-}
-bool StringToInteger(const char8 * const input,int64 &number) {
-	return StringToIntegerT<int64>(input,number);
+
+#define CHECK_AND_MUL(number,step,exponent)\
+if (exponent >= step){ \
+number *= static_cast<T>(1E ## step); \
+exponent-=step;\
 }
 
-#if 0
+#define CHECK_AND_DIV(number,step,exponent)\
+if (exponent >= step){ \
+number *= static_cast<T>(1E- ## step); \
+exponent-=step;\
+}
+
+
 /**
- * @brief Reinterprets the generic destination pointer in input recognizing the related integer type by the bit size.
- * @param[in] source is the string to be converted in integer number.
- * @param[in,out] dest is the pointer to the integer type in output.
- * @param[in] destBitSize is the bit size of the output integer type.
- * @param[in] isSigned specifies if the integer type is signed.
- * @return true if the conversion succeeds, false otherwise.
- * @pre
- *   source != NULL &&
- *   dest != NULL
+ * @brief Given number and exponent performs the operation number*(10^exponent).
+ * @param[in,out] number is the float number in input which will be multiplied with 10^exponent.
+ * @param[in] exponent is the absolute value of the exponent.
+ * @param[in] expPositive specifies the sign of the exponent (true=positive, false=negative).
+ * @post
+ *   number=number*(10^(+/- exponent));
  */
-bool StringToIntegerGeneric(const char8* const source,
-                            uint8 * const dest,
-                            const uint32 destBitSize,
-                            const bool isSigned) {
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+template<typename T>
+static void AddExponent(T &number,int32 exponent, const bool expPositive) {
+
+    // check and mul/div progressively following a logarithmic pattern
+    if (expPositive) {
+        if (sizeof(T) > 4u) {
+            CHECK_AND_MUL(number, 256, exponent)
+            CHECK_AND_MUL(number, 128, exponent)
+            CHECK_AND_MUL(number, 64, exponent)
+        }
+        CHECK_AND_MUL(number, 32, exponent)
+        CHECK_AND_MUL(number, 16, exponent)
+        CHECK_AND_MUL(number, 8, exponent)
+        CHECK_AND_MUL(number, 4, exponent)
+        CHECK_AND_MUL(number, 2, exponent)
+        if (exponent >= 1) {
+            number *= static_cast<T>(10.0);
+        }
+    }
+    else {
+        if (sizeof(T) > 4u) {
+            CHECK_AND_DIV(number, 256, exponent)
+            CHECK_AND_DIV(number, 128, exponent)
+            CHECK_AND_DIV(number, 64, exponent)
+        }
+        CHECK_AND_DIV(number, 32, exponent)
+        CHECK_AND_DIV(number, 16, exponent)
+        CHECK_AND_DIV(number, 8, exponent)
+        CHECK_AND_DIV(number, 4, exponent)
+        CHECK_AND_DIV(number, 2, exponent)
+        if (exponent >= 1) {
+            number /= static_cast<T>(10.0);
+        }
+    }
+}
+
+/**
+ * @brief Performs the conversion from a token to a float number.
+ * @param[in] input is the token in input.
+ * @param[out] number is the conversion result.
+ * @return true if the token represents a float number, false in case of invalid token or in case of overflow.
+ * @pre
+ *   input must represent a float number;
+ *   "+/-" at the beginning specifies if the number is positive or negative (no sign means positive);
+ *     "." specifies the beginning of the decimal part.
+ *     "E" specifies that the exponent follows.
+ *       "+/-" specifies the sign of the exponent (no sign means positive exponent).
+ * @post
+ *   If the token represents a number too big for the output size, the conversion will stop returning false
+ *   and the number converted until the overflow exception (i.e for 32-bit float "123.5E+100" will return 123.5);
+ *   If an invalid character is read, the conversion will stop returning false
+ *   and the number converted until the overflow exception (i.e "123.5e+100" will return 123 because 'e' is invalid);
+ */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+template<typename T>
+static bool StringToNormalFloatPrivate(CCString input,T &number) {
+
+    bool canReturn = false;
+    bool ret = true;
+    bool isNegative = false;
+
+    number = static_cast<T>(0.0);
+
+    uint32 i = 0u;
+
+    char8 digit = '\0';
+
+    if (input[i] == '-') {
+        isNegative = true;
+        i++;
+    }
+    else {
+        //skip the eventual sign
+        if (input[i] == '+') {
+            i++;
+        }
+    }
+
+    // Find the dot or the exponent
+    for (; (!canReturn) && (i < 1000u); i++) {
+
+        digit = input[i];
+        int8 zero = static_cast<int8>('0');
+        int8 newDigit = (static_cast<int8>(digit) - zero);
+
+        if ((newDigit >= 0) && (newDigit <= 9)) {
+            T numberTemp = number * static_cast<T>(10.0);
+            bool nanNumber = IsNaN(numberTemp);
+            bool infNumber = IsInf(numberTemp);
+            if ((!nanNumber) && (!infNumber)) {
+                numberTemp += static_cast<T>(newDigit);
+                nanNumber = IsNaN(numberTemp);
+                infNumber = IsInf(numberTemp);
+                if ((!nanNumber) && (!infNumber)) {
+                    number = numberTemp;
+                }
+                else {
+                    canReturn = true;
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                }
+            }
+            else {
+                canReturn = true;
+                ret = false;
+                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+            }
+        }
+        else {
+            if ((digit == '.') || (digit == 'E') || (digit == 'e')) {
+                break;
+            }
+            else {
+                if (digit != '\0') {
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                }
+                //return false is nothing is read
+                canReturn = true;
+            }
+        }
+    }
+
+    if (!canReturn) {
+
+        // Find the exponent
+        if (digit == '.') {
+            i++;
+            T decimalPart = static_cast<T>(0.0);
+            T decimalExp = static_cast<T>(1.0);
+
+            for (; (!canReturn) && (i < 1000u); i++) {
+                digit = input[i];
+                int8 zero = static_cast<int8>('0');
+                int8 newDigit = (static_cast<int8>(digit) - zero);
+
+                if ((newDigit >= 0) && (newDigit <= 9)) {
+                    decimalExp *= static_cast<T>(10.0);
+                    bool nanExp = IsNaN(decimalExp);
+                    bool infExp = IsInf(decimalExp);
+                    if ((!nanExp) && (!infExp)) {
+                        decimalPart += static_cast<T>(newDigit) / decimalExp;
+                    }
+                    else {
+                        canReturn = true;
+                        REPORT_ERROR(ErrorManagement::Warning, "StringToFloatPrivate: Too much decimal precision for this float type");
+                    }
+                }
+                else {
+
+                    if ((digit == 'E') || (digit == 'e')) {
+                        break;
+                    }
+                    else {
+                        if (digit != '\0') {
+                            ret = false;
+                            REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                        }
+                        canReturn = true;
+                    }
+                }
+            }
+            T numberTemp = number;
+            numberTemp += decimalPart;
+            bool nanNumber = IsNaN(numberTemp);
+            bool infNumber = IsInf(numberTemp);
+            if ((!nanNumber) && (!infNumber)) {
+                number = numberTemp;
+            }
+            else {
+                canReturn = true;
+                ret = false;
+                REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+            }
+        }
+
+        // take the exponent (in case of compact...)
+        if (((digit == 'E') || (digit == 'e')) && (!canReturn)) {
+            i++;
+            int32 exponent = 0;
+            bool expPositive = true;
+            digit = input[i];
+            if (digit == '+') {
+                i++;
+            }
+            else {
+                if (digit == '-') {
+                    expPositive = false;
+                    i++;
+                }
+            }
+
+            for (; (!canReturn) && (i < 1000u); i++) {
+                digit = input[i];
+                int8 zero = static_cast<int8>('0');
+                int8 newDigit = (static_cast<int8>(digit) - zero);
+                if ((newDigit >= 0) && (newDigit <= 9)) {
+                    exponent *= 10;
+                    exponent += newDigit;
+                    if (exponent >= 512) {
+                        ret = false;
+                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                        canReturn = true;
+                    }
+                }
+                else {
+                    if (digit != '\0') {
+                        ret = false;
+                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Invalid Token");
+                    }
+                    break;
+                }
+            }
+            if (!canReturn) {
+                T numberTemp = number;
+                AddExponent(numberTemp, exponent, expPositive);
+                bool nanNumber = IsNaN(numberTemp);
+                bool infNumber = IsInf(numberTemp);
+                if ((!nanNumber) && (!infNumber)) {
+                    number = numberTemp;
+                }
+                else {
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                }
+            }
+        }
+    }
+
+    if (isNegative) {
+        number = -number;
+    }
+
+    return ret;
+}
+
+/**
+ * @brief In case of number in hexadecimal, octal or binary format, converts it to a float number, otherwise calls StringToNormalFloatPrivate(*).
+ */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+template<typename T>
+static bool StringToFloatPrivate(CCString input, T &number) {
 
     bool ret = false;
-    if (destBitSize <= 8u) {
-        if (isSigned) {
-            int8 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int8*>(dest)) = tempDest;
+    if (input[0] == '0') {
+        // performs the conversion from integer in hex, oct and bin format to float.
+        if ((input[1] == 'x') || (input[1] == 'o') || (input[1] == 'b')) {
+            uint64 numberTemp = 0u;
+            ret = StringToNumber(input,numberTemp);
+            if (ret) {
+            	ret = SafeNumber2Number<uint64,T>(numberTemp,number);
+            }
         }
         else {
-            uint8 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *dest = tempDest;
+            ret = StringToNormalFloatPrivate(input, number);
         }
     }
-    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
-        if (isSigned) {
-            int16 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int16*>(dest)) = tempDest;
-        }
-        else {
-            uint16 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint16*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
-
-        if (isSigned) {
-            int32 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int32*>(dest)) = tempDest;
-        }
-        else {
-            uint32 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint32*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
-        if (isSigned) {
-            int64 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int64*>(dest)) = tempDest;
-        }
-        else {
-            uint64 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint64*>(dest)) = tempDest;
-        }
+    else {
+        ret = StringToNormalFloatPrivate(input, number);
     }
     return ret;
 }
-#endif
+
+bool StringToNumber(CCString input,uint8 &number) {
+	return StringToIntegerT<uint8>(input,number);
 }
+bool StringToNumber(CCString input,uint16 &number) {
+	return StringToIntegerT<uint16>(input,number);
+}
+bool StringToNumber(CCString input,uint32 &number) {
+	return StringToIntegerT<uint32>(input,number);
+}
+bool StringToNumber(CCString input,uint64 &number) {
+	return StringToIntegerT<uint64>(input,number);
+}
+bool StringToNumber(CCString input,int8 &number) {
+	return StringToIntegerT<int8>(input,number);
+}
+bool StringToNumber(CCString input,int16 &number) {
+	return StringToIntegerT<int16>(input,number);
+}
+bool StringToNumber(CCString input,int32 &number) {
+	return StringToIntegerT<int32>(input,number);
+}
+bool StringToNumber(CCString input,int64 &number) {
+	return StringToIntegerT<int64>(input,number);
+}
+bool StringToNumber(CCString input,float &number) {
+    return StringToFloatPrivate(input, number);
+}
+bool StringToNumber(CCString input,double &number) {
+    return StringToFloatPrivate(input, number);
+}
+
+
+}
+

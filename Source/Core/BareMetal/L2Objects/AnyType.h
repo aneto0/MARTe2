@@ -110,7 +110,7 @@ public:
     inline AnyType();
 
     /**
-     * @brief Generic constructor for a constant type non-bitset.
+     * @brief Generic constructor from TypeDescriptor.
      * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
      * @param[in] dataPointerIn is the pointer to the constant data.
      * @post
@@ -118,6 +118,16 @@ public:
      *   GetDataDescriptor() == dataDescriptorIn
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn);
+
+    /**
+     * @brief Generic constructor
+     * @param[in] dataDescriptorIn contains the type informations in a VariableDescriptor class.
+     * @param[in] dataPointerIn is the pointer to the constant data.
+     * @post
+     *   GetDataPointer() == dataPointerIn &&
+     *   GetDataDescriptor() == dataDescriptorIn
+     */
+    inline AnyType(const VariableDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
     /**
      * @brief Constructor from non-const non-ptr. Uses VariableDescriptor constructor.
@@ -251,7 +261,12 @@ bool AnyType::IsVoid() const{
 }
 
 
-AnyType::AnyType(const TypeDescriptor &typeDescriptorIn,const void* const dataPointerIn):variableDescriptor(typeDescriptorIn){
+AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn):variableDescriptor(dataDescriptorIn){
+    pointer2Variable = const_cast<void *>(dataPointerIn);
+}
+
+AnyType::AnyType(const VariableDescriptor &dataDescriptorIn,const void* const dataPointerIn):variableDescriptor(dataDescriptorIn) {
+    /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
     pointer2Variable = const_cast<void *>(dataPointerIn);
 }
 

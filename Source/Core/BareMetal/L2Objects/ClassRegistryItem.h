@@ -38,6 +38,8 @@
 #include "LoadableLibrary.h"
 #include "TypeDescriptor.h"
 #include "LinkedListHolderT.h"
+#include "ClassRegistryIndex.h"
+
 
 
 /*---------------------------------------------------------------------------*/
@@ -58,8 +60,9 @@ class ClassMethodInterfaceMapper;
  * they have the property of being automatically instantiated and managed by the framework.
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
+ * NOTE! ClassRegistryItemI must be the sole ancestor or else a mechanism to retrieve the root must be provided
  */
-class DLL_API ClassRegistryItem {
+class DLL_API ClassRegistryItem: public ClassRegistryItemI {
 public:
 
     /**
@@ -114,27 +117,36 @@ public:
      * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
      * @return the TypeDescriptor.
      */
-    const TypeDescriptor &  GetTypeDescriptor() const;
+    virtual const TypeDescriptor &  GetTypeDescriptor() const;
 
     /**
      * @brief  Get the name of the class (by default the same as returned by typeid.
      */
-    CCString                GetClassName() const;
+    virtual CCString                GetClassName() const;
 
     /**
      * @brief  The name of the class as returned by typeid.
      */
-    CCString                GetTypeidName() const;
+    virtual CCString                GetTypeidName() const;
 
     /**
      * @brief  The version of the class.
      */
-    CCString                GetClassVersion() const;
+    virtual CCString                GetClassVersion() const;
 
     /**
      * @brief  The size of the class.
      */
-    uint32                  GetSizeOfClass() const;
+    virtual uint32                  GetSizeOfClass() const;
+
+    /**
+     * @brief  allows recovering the base pointer to ClassRegistryItem from this interface
+     * without using dynamic_cast which might not works as this class is not known here
+     */
+    virtual ClassRegistryItem *		GetBasePtr() {
+    	return this;
+    }
+
 
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
@@ -169,11 +181,10 @@ public:
      */
     void                    AddMember(ClassMember * const member);
 
-
     /**
      * @brief Destructor.
      */
-                            ~ClassRegistryItem();
+    virtual                 ~ClassRegistryItem();
 
     /**
      * @brief Allows obtaining per-class singleton ClassRegistryItem

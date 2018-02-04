@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "AnyObject.h"
+#include "AnyObject_obsolete.h"
 #include "ErrorType.h"
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
@@ -63,7 +63,22 @@ void ConfigurationDatabase::CleanUp() {
     rootNode->CleanUp();
 }
 
-bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value) {
+bool ConfigurationDatabase::Write(Reference object){
+	bool ok = object.IsValid();
+
+	if (ok){
+		// result is not needed
+		// if the objects are found then are deleted
+		// if they are not found fine too
+		currentNode->Delete(object->GetName());
+		currentNode->Insert(object);
+	}
+
+	return ok;
+}
+
+
+bool ConfigurationDatabase::Write(CCString name, const AnyType &value) {
 
     bool ok = false;
     // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
@@ -103,7 +118,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
     return ok;
 }
 
-AnyType ConfigurationDatabase::GetType(const char8 * const name) {
+AnyType ConfigurationDatabase::GetType(CCString name) {
     bool found = false;
     Reference foundReference;
     uint32 i;
@@ -165,7 +180,7 @@ bool ConfigurationDatabase::MoveToRoot() {
     return ok;
 }
 
-bool ConfigurationDatabase::Read(const char8 * const name,
+bool ConfigurationDatabase::Read(CCString name,
                                  const AnyType &value) {
 
     bool ok = false;
@@ -204,7 +219,7 @@ bool ConfigurationDatabase::Read(const char8 * const name,
     return ok;
 }
 
-bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
+bool ConfigurationDatabase::MoveAbsolute(CCString path) {
 
     ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
@@ -223,7 +238,7 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
+bool ConfigurationDatabase::MoveRelative(CCString path) {
 
     ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
@@ -265,7 +280,7 @@ bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
+bool ConfigurationDatabase::CreateNodes(CCString path) {
     StreamString pathStr = path;
     bool ok = pathStr.Seek(0Lu);
     if (ok) {
@@ -319,16 +334,16 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateAbsolute(const char8 * const path) {
+bool ConfigurationDatabase::CreateAbsolute(CCString path) {
     currentNode = rootNode;
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
+bool ConfigurationDatabase::CreateRelative(CCString path) {
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::Delete(const char8 * const name) {
+bool ConfigurationDatabase::Delete(CCString name) {
     bool ok = false;
     Reference foundReference;
     uint32 i;

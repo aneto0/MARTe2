@@ -23,8 +23,8 @@
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
 #include "StreamString.h"
-#include "ConversionPrivate.h"
 #include "BitSetToInteger.h"
+#include "StringToNumber.h"
 
 namespace MARTe{
 

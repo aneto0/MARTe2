@@ -1,5 +1,5 @@
 /**
- * @file ProgressiveFixedSizeTypeCreator.h
+ * @file ProgressiveTypeCreator.h
  * @brief Header file for class AnyType
  * @date 5 Jan 2018
  * @author Filippo Sartori
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PROGRESSIVEFIXEDSIZETYPECREATOR_H_
-#define PROGRESSIVEFIXEDSIZETYPECREATOR_H_
+#ifndef PROGRESSIVETYPECREATOR_H_
+#define PROGRESSIVETYPECREATOR_H_
 
 
 /*---------------------------------------------------------------------------*/
@@ -39,6 +39,7 @@
 #include "StaticListHolder.h"
 #include "TypeCharacteristics.h"
 #include "ReferenceT.h"
+#include "MemoryPage.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -84,98 +85,22 @@ public:
 
 };
 
-struct MemoryPageHeader;
-/**
- * A set of memory pages linked together.
- * To be used by an application to load a memory structure into memory
- * Object destruction deletes all pages
- */
-class MemoryPage{
-
-public:
-	/**
-	 * basic constructor empty pages
-	 */
-	MemoryPage();
-	/**
-	 * @brief Steals content from another MemoryPage
-	 */
-	void Copy (MemoryPage &stealFrom);
-	/**
-	 * @brief Deletes all pages of memory
-	 */
-	~MemoryPage();
-	/**
-	 * @brief Deletes all pages of memory
-	 */
-	void Clean();
-
-	/**
-	 * @brief return address of the element at the deep address index
-	 * and checks that the elements from that point to that + span are contiguous
-	 * in consecutiveSpan returns the number of consecutive bytes available
-	 * returns NULL if outside range
-	 */
-	void *DeepAddress(uint64 index,uint32 &consecutiveSpan);
-
-	/**
-	 * @brief finds the index corresponding to the given address
-	 * @param [in] address the address to find
-	 * @param [out] index
-	 */
-	ErrorManagement::ErrorType Address2Index(void * address,uint64 &index) const;
-
-	/**
-	 * @brief return address of element index
-	 */
-	void *Address(uint32 index);
-
-
-	/**
-	 * @brief increases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType Grow(uint32 newBufferSize);
-
-	/**
-	 * @brief decreases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType Shrink(uint32 newBufferSize);
-
-	/**
-	 *  @brief allocate a new page
-	 */
-	ErrorManagement::ErrorType Allocate(uint32 size);
-
-	// last operation before closing the use of this memory
-	// change previous to next so that the memory can be parsed in the right order
-	void FlipOrder();
-
-	/** size of payload */
-	uint32 Size();
-
-private:
-	/**
-	 * The pointer to the current page
-	 */
-	MemoryPageHeader *mph;
-};
-
 
 /**
  * @brief A tool to create AnyObjectI that contains scalar/vectors/arrays of fixed size objects
  */
-class DLL_API ProgressiveFixedSizeTypeCreator{
+class DLL_API ProgressiveTypeCreator{
 
 public:
 	/**
 	 * @brief Creates the object selecting the type to convert to and the default PageSize
 	 */
-	ProgressiveFixedSizeTypeCreator(uint32 pageSizeIn );
+	ProgressiveTypeCreator(uint32 pageSizeIn );
 
 	/**
 	 * @deletes the object and any memory allocated in the pages
 	 */
-	virtual ~ProgressiveFixedSizeTypeCreator();
+	virtual ~ProgressiveTypeCreator();
 
 	/**
 	 * @brief first call - sets the output type
@@ -396,7 +321,7 @@ void SizeStack::Clean(){
 /**
  * Any of the finished states or error
  */
-bool ProgressiveFixedSizeTypeCreator::Finished(){
+bool ProgressiveTypeCreator::Finished(){
 	const uint32 mask 			= static_cast<uint32>(PTCState::mask);
 	const uint32 finishedMask 	= static_cast<uint32>(PTCState::finishedS);
 	uint32 statusAsInt = static_cast<uint32>(status);
@@ -406,14 +331,14 @@ bool ProgressiveFixedSizeTypeCreator::Finished(){
 /**
  * Any of the start,
  */
-bool ProgressiveFixedSizeTypeCreator::Started(){
+bool ProgressiveTypeCreator::Started(){
 	const uint32 mask 			= static_cast<uint32>(PTCState::mask);
 	const uint32 startedMask 	= static_cast<uint32>(PTCState::started);
 	uint32 statusAsInt = static_cast<uint32>(status);
 	return ((statusAsInt & mask) == startedMask);
 }
 
-inline uint32 ProgressiveFixedSizeTypeCreator::DefaultPageSize(){
+inline uint32 ProgressiveTypeCreator::DefaultPageSize(){
 	return defaultPageSize;
 }
 

@@ -85,7 +85,7 @@ static const char8 * Terminal_name[] = { "0"
 , "STRING", ":", "[", "]", "{", "}", "NUMBER", "END_OF_SLK_INPUT" };
 
 
-static const char8 *GetTerminalName(const uint32 symbol) {
+static const CCString GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
 }
 
@@ -112,11 +112,11 @@ void JsonParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
-const char8 *JsonParser::GetSymbolName(const uint32 symbol)const  {
+CCString JsonParser::GetSymbolName(const uint32 symbol)const  {
     const char8 *symbolName = static_cast<const char8 *>(NULL);
 
     if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
-        symbolName=GetTerminalName(symbol);
+        symbolName=GetTerminalName(symbol).GetList();
     }
     else {
         symbolName="not a symbol";

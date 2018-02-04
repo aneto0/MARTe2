@@ -394,6 +394,15 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
                     retval = true;
                     Empty();
                 } else {
+
+//printf("String @%p = %s\n",currentString.GetList(),currentString.GetList());
+                	DynamicCString errM;
+                	errM.AppendN("String (");
+                	errM.AppendN(Buffer(),writeSize);
+                	errM.AppendN(") != (");
+                	errM.AppendN(currentString.GetList());
+                	errM.AppendN(") ");
+        			REPORT_ERROR(ErrorManagement::ComparisonFailure,errM.GetList());
                 	isSame = false;
                 }
             }
@@ -735,13 +744,22 @@ ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest,
 		const integerType *pIn = (reinterpret_cast<const integerType *>(source));
 		if (!IntegerToStream(*writer,*pIn++,fd)){
 			ok.fatalError = true;
+			REPORT_ERROR(ok,"IntegerToStream Failed");
 		}
 		for (ix = 1;(ix<numberOfElements) && ok;ix++){
 			ok = writer->Next();
+			if (!ok){
+				DynamicCString errM;
+				errM.AppendN("switch to element ");
+				errM.AppendNum(ix);
+				errM.AppendN(" failed");
+				REPORT_ERROR(ok,errM.GetList());
+			}
 
 			if (ok){
 				if (!IntegerToStream(*writer,*pIn++,fd)){
 					ok.fatalError = true;
+					REPORT_ERROR(ok,"IntegerToStream Failed");
 				}
 			}
 		}
@@ -771,13 +789,22 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 		const char *pIn = (reinterpret_cast<const char *>(source));
 		if (!writer->PutC(*pIn)){
 			ok.fatalError = true;
+			REPORT_ERROR(ok,"PutC Failed");
 		}
 		for (ix = 1;(ix<numberOfElements) && ok;ix++){
 			ok = writer->Next();
+			if (!ok){
+				DynamicCString errM;
+				errM.AppendN("switch to element ");
+				errM.AppendNum(ix);
+				errM.AppendN(" failed");
+				REPORT_ERROR(ok,errM.GetList());
+			}
 
 			if (ok){
 				if (!writer->PutC(*pIn)){
 					ok.fatalError = true;
+					REPORT_ERROR(ok,"PutC Failed");
 				}
 			}
 		}
@@ -808,15 +835,24 @@ ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *
 
 	if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
 		ok.fatalError = true;
+		REPORT_ERROR(ok,"BitSetToStream Failed");
 	}
 
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
+		if (!ok){
+			DynamicCString errM;
+			errM.AppendN("switch to element ");
+			errM.AppendNum(ix);
+			errM.AppendN(" failed");
+			REPORT_ERROR(ok,errM.GetList());
+		}
 
 		source += byteSize;
 		if (ok){
 			if (!BitSetToStream(*writer,reinterpret_cast<uint32 const * >(source),numberBitShift,numberBitSize,isSigned,td)){
 				ok.fatalError = true;
+    			REPORT_ERROR(ok,"BitSetToStream Failed");
 			}
 		}
 	}
@@ -845,6 +881,13 @@ ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 
 	}
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
+		if (!ok){
+			DynamicCString errM;
+			errM.AppendN("switch to element ");
+			errM.AppendNum(ix);
+			errM.AppendN(" failed");
+			REPORT_ERROR(ok,errM.GetList());
+		}
 		src++;
 		if (ok){
 			ok.fatalError = PointerToStream(*writer,*src);
@@ -870,14 +913,23 @@ ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, con
 	const floatType *src = reinterpret_cast<const floatType *>(source);
 	if (!FloatToStream(*writer,*src,fd)){
 		ok.fatalError = true;
+		REPORT_ERROR(ok,"FloatToStream Failed");
 	}
 
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
+		if (!ok){
+			DynamicCString errM;
+			errM.AppendN("switch to element ");
+			errM.AppendNum(ix);
+			errM.AppendN(" failed");
+			REPORT_ERROR(ok,errM.GetList());
+		}
 		src++;
 		if (ok){
 			if (!FloatToStream(*writer,*src,fd)){
 				ok.fatalError = true;
+    			REPORT_ERROR(ok,"FloatToStream Failed");
 			}
 		}
 	}
@@ -902,15 +954,32 @@ ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8
 	writer->Wrap(dest);
 
 	const CCString *src = reinterpret_cast<const CCString *>(source);
+
+//{ // TODO remove
+//printf("@ %p string[%i]\n",src,numberOfElements);
+//for (uint32 ix = 0; (ix < numberOfElements) && ok;ix++){
+//	printf("%i @%p string \n",ix,src[ix].GetList());
+//}
+//}
+
 	if (!PrintCCString(*writer,*src,fd)){
 		ok.fatalError = true;
+		REPORT_ERROR(ok,"PrintCCString Failed");
 	}
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
+		if (!ok){
+			DynamicCString errM;
+			errM.AppendN("switch to element ");
+			errM.AppendNum(ix);
+			errM.AppendN(" failed");
+			REPORT_ERROR(ok,errM.GetList());
+		}
 		src++;
 		if (ok){
 			if (!PrintCCString(*writer,*src,fd)){
 				ok.fatalError = true;
+    			REPORT_ERROR(ok,"PrintCCString Failed");
 			}
 		}
 	}
@@ -923,7 +992,6 @@ ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8
 ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8 *source,uint32 numberOfElements) const{
 	return Convert(dest,source,numberOfElements,format);
 }
-
 
 StreamToStringTCO::StreamToStringTCO(IOBufferWrapper *writerIn): StringTCO(writerIn){
 }
@@ -943,13 +1011,22 @@ ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *
 
 		if (!PrintStream(*writer,src,fd)){
 			ok.fatalError = true;
+			REPORT_ERROR(ok,"PrintStream Failed");
 		}
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 			ok = writer->Next();
+			if (!ok){
+				DynamicCString errM;
+				errM.AppendN("switch to element ");
+				errM.AppendNum(ix);
+				errM.AppendN(" failed");
+				REPORT_ERROR(ok,errM.GetList());
+			}
 			src++;
 			if (ok){
 				if (!PrintStream(*writer,src,fd)){
 					ok.fatalError = true;
+	    			REPORT_ERROR(ok,"PrintStream Failed");
 				}
 			}
 		}
@@ -979,13 +1056,22 @@ ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 
 
 	if (!PrintCCString(*writer,ss->Buffer(),fd)){
 		ok.fatalError = true;
+		REPORT_ERROR(ok,"PrintCCString Failed");
 	}
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
+		if (!ok){
+			DynamicCString errM;
+			errM.AppendN("switch to element ");
+			errM.AppendNum(ix);
+			errM.AppendN(" failed");
+			REPORT_ERROR(ok,errM.GetList());
+		}
 		ss++;
 		if (ok){
 			if (!PrintCCString(*writer,ss->Buffer(),fd)){
 				ok.fatalError = true;
+				REPORT_ERROR(ok,"PrintCCString Failed");
 			}
 		}
 	}

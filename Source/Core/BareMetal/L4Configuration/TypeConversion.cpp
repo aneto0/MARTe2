@@ -44,7 +44,7 @@
 #include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "MemoryOperationsHelper.h"
-#include "ConversionPrivate.h"
+#include "StringToNumber.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

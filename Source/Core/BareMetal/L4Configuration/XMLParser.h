@@ -155,7 +155,7 @@ protected:
     /**
      * @see ParserI::GetSymbolName(*)
      */
-    virtual const char8 *GetSymbolName(const uint32 symbol) const;
+    virtual CCString GetSymbolName(const uint32 symbol) const;
 
     /**
      * @see ParserI::Execute(*)

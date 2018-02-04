@@ -47,17 +47,46 @@
 
 namespace MARTe {
 
-
-bool StringToInteger(const char8 * const input,uint8  &number);
-bool StringToInteger(const char8 * const input,uint16 &number);
-bool StringToInteger(const char8 * const input,uint32 &number);
-bool StringToInteger(const char8 * const input,uint64 &number);
-bool StringToInteger(const char8 * const input,int8   &number);
-bool StringToInteger(const char8 * const input,int16  &number);
-bool StringToInteger(const char8 * const input,int32  &number);
-bool StringToInteger(const char8 * const input,int64  &number);
-bool StringToFloat  (const char8 * const input,float  &number);
-bool StringToFloat  (const char8 * const input,double &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,uint8  &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,uint16 &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,uint32 &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,uint64 &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,int8   &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,int16  &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,int32  &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,int64  &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,float  &number);
+/**
+ * @conversion of a CString to a numeric value
+ */
+bool StringToNumber(CCString input,double &number);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

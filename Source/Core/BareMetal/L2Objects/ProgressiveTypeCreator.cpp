@@ -1,5 +1,5 @@
 /**
- * @file ProgressiveFixedSizeTypeCreator.cpp
+ * @file ProgressiveTypeCreator.cpp
  * @brief Header file for class AnyType
  * @date 10 Jan 2018
  * @author Filippo Sartori
@@ -24,80 +24,19 @@
 #define DLL_API
 
 #include <new.h>
-#include "ProgressiveFixedSizeTypeCreator.h"
+#include "ProgressiveTypeCreator.h"
 #include "TypeConversionManager.h"
 #include "GlobalObjectsDatabase.h"
+#include "MemoryPageObject.h"
+#include "AnyObjectT.h"
 
 namespace MARTe{
 
 
-
-/**
- * @brief a class to contain synthetic objects
- */
-class MemoryPageObject: public Object{
-
-public:
-    CLASS_REGISTER_DECLARATION()
-
-
-	/**
-	 * constructor
-	 */
-	MemoryPageObject(){	}
-
-	/**
-	 * destructor
-	 */
-	virtual ~MemoryPageObject(){	}
-
-	/**
-	 * constructor
-	 */
-	void Copy(MemoryPage &toStealFrom){
-		mp.Copy(toStealFrom);
-	}
-
-    /**
-     * @brief Allows to setup an Anytype of any type....
-     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
-     * @param[in] modifiers contains the modifiers string in the appropriate language (see VariableDescriptor).
-     * @param[in] dataPointerIn is the pointer to the constant data.
-     * @post
-     *   GetDataPointer() == dataPointerIn &&
-     *   GetDataDescriptor() == dataDescriptorIn
-     */
-    void Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const void* const dataPointerIn){
-    	anyType.Setup(dataDescriptorIn,modifiers,dataPointerIn);
-    }
-
-	/**
-	 * @brief The only interface provided by an AnyObject is the ability to provide its data via an AnyType.
-	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
-	 */
-	virtual operator AnyType(){
-		return anyType;
-	}
-
-private:
-	/**
-	 * contains the memory of the object
-	 */
-	MemoryPage 	mp;
-
-	/**
-	 * the descriptor of the type
-	 * and the reference to it
-	 */
-	AnyType 	anyType;
-};
-
-CLASS_REGISTER(MemoryPageObject, "1.0")
-
 /**
  * @brief Creates the object selecting the type to convert to and the default PageSize
  */
-ProgressiveFixedSizeTypeCreator::ProgressiveFixedSizeTypeCreator(uint32 pageSizeIn ){
+ProgressiveTypeCreator::ProgressiveTypeCreator(uint32 pageSizeIn ){
 	defaultPageSize 	= pageSizeIn;
 	converter 			= NULL;
 	Clean();
@@ -106,12 +45,12 @@ ProgressiveFixedSizeTypeCreator::ProgressiveFixedSizeTypeCreator(uint32 pageSize
 /**
  * @deletes the object and any memory allocated in the pages
  */
-ProgressiveFixedSizeTypeCreator::~ProgressiveFixedSizeTypeCreator(){
+ProgressiveTypeCreator::~ProgressiveTypeCreator(){
 	Clean();
 }
 
 
-void ProgressiveFixedSizeTypeCreator::Clean(){
+void ProgressiveTypeCreator::Clean(){
 	if (converter != NULL){
 		delete converter;
 		converter = NULL;
@@ -133,7 +72,7 @@ void ProgressiveFixedSizeTypeCreator::Clean(){
 	numberOfElements    = 0;
 }
 
-ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor typeIn){
+ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	ErrorManagement::ErrorType ret;
 
 	Clean();
@@ -165,7 +104,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::Start(TypeDescriptor
 	return ret;
 }
 
-ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryStringEl(uint32 neededSize){
+ErrorManagement::ErrorType ProgressiveTypeCreator::CheckMemoryStringEl(uint32 neededSize){
 	ErrorManagement::ErrorType ret;
 
 	if (ret){
@@ -188,7 +127,7 @@ static inline uint32 max(uint32 x,uint32 y){
 	return ret;
 }
 
-ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSizeEl(bool newRow){
+ErrorManagement::ErrorType ProgressiveTypeCreator::CheckMemoryFixedSizeEl(bool newRow){
 	ErrorManagement::ErrorType ret;
 
 	// in case of new vector check if there is space for one based on the size of the previous
@@ -236,7 +175,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	/**
 	 * @adds an element. It will convert the string to the specified type
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::AddElement(CCString typeStringRepresentation){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStringRepresentation){
 		ErrorManagement::ErrorType ret;
 
 		if (!Started()){
@@ -328,7 +267,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	/**
 	 * @brief Marks the end of a row of elements
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::EndVector(){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 		ErrorManagement::ErrorType  ret;
 
 		/// update status
@@ -384,7 +323,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	/**
 	 * @brief Marks the end of the object construction
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::End(){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::End(){
 		ErrorManagement::ErrorType  ret;
 
 		switch (status){
@@ -417,7 +356,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		return ret;
 	}
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteFixedSizeEl(uint32 &auxSize,void *&auxPtr){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteFixedSizeEl(uint32 &auxSize,void *&auxPtr){
 		ErrorManagement::ErrorType  ret;
 
 		if (status == finishedSM){
@@ -427,14 +366,15 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			auxSize = sizeof (void *) * matrixRowSize;
 		}
 
-		if (auxSize > 0){
-			// shrink if needed
-			ret = CheckAndClosePage(auxSize);
+		// shrink if needed
+		// if auxSize = 0 or if auxSize bigger than available
+		ret = CheckAndClosePage(auxSize);
+
+		// if auxSize is not zero
+		if (ret && (auxSize > 0)){
 
 			// new page if needed
-			if (ret){
-				ret = CheckAndNewPage(auxSize);
-			}
+			ret = CheckAndNewPage(auxSize);
 
 			// get the address map and close up memory pages
 			if (ret){
@@ -473,19 +413,12 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	}
 
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CompleteStringEl(void *&dataPtr,uint32 &auxSize,void *&auxPtr){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(void *&dataPtr,uint32 &auxSize,void *&auxPtr){
 		ErrorManagement::ErrorType  ret;
-/*
-		uint32 numberOfElements = matrixRowSize * vectorSize;
-		if (status == finishedSM){
-			numberOfElements = 0;
-			for (uint32 i= 0;i<matrixRowSize;i++){
-				numberOfElements += sizeStack[i];
-			}
-		}
-*/
 		// table of CCString (pointers)
 		uint32 CCStringTableSize = numberOfElements * sizeof(CCString);
+//printf("Strings Pointer Table size= %i\n",CCStringTableSize); // TODO remove
+
 		// table of Vector<CCString>
 		if (status == finishedSM){
 			auxSize = sizeof (Vector<uint8>) * matrixRowSize;
@@ -504,14 +437,22 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			ret = CheckAndNewPage(neededSize);
 		}
 
+
 		// process memory and create list of pointers
 		CCString *strings = NULL;
 		if (ret){
 			// remember pointer to string array
 			strings = reinterpret_cast<CCString *>(page.Address(pageWritePos));
+printf("Strings Pointer Table base = %p\n",strings); // TODO remove
 			if (auxSize > 0){
 				auxPtr = page.Address(pageWritePos + CCStringTableSize);
+printf("String Vector Table base = %p\n",auxPtr);   // TODO
 			}
+
+			// close up memory pages
+			pageWritePos += neededSize;
+			sizeLeft -= neededSize;
+			ret = CheckAndClosePage(0);
 
 			// put oldest page on top
 			if (numberOfPages > 1){
@@ -526,8 +467,11 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 				uint32 consecutiveSpan=1;
 				// get pointer to element within pages at overall address pageDepth
 				CCString s = reinterpret_cast<char8 *> (page.DeepAddress(pageDepth,consecutiveSpan));
+
+//printf("String %i address = %p\n",i,s.GetList());  // TODO remove
+
 				// consecutiveSpan now is how much space is left on page
-//printf("string=%s span = %i\n",s.GetList(),consecutiveSpan);
+//printf("string=%s span = %i\n",s.GetList(),consecutiveSpan);  // TODO remove
 				// empty string error?
 				if (s.GetList() == NULL){
 					ret.fatalError = true;
@@ -563,11 +507,14 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			}
 		}
 
+{// TODO remove
+	for (int i = 0;(i<numberOfElements) && ret;i++){
+		printf("strings[%i] = %p\n",i,strings[i].GetList());
+	}
+}
+
 		if (ret){
 			dataPtr = reinterpret_cast<void *>(strings);
-			if (status == finishedSM){
-				auxPtr = page.Address(pageWritePos + auxSize);
-			}
 		}
 
 		return ret;
@@ -577,7 +524,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	 * @brief Allows retrieving the Object that has been built.
 	 * Can only be done after End has been called
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReference(Reference &x){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 		ErrorManagement::ErrorType  ret;
 
 		if (!Finished()){
@@ -610,6 +557,8 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			// Completes operation
 			// fills aux Data
 			// creates Object
+//printf("Aux =%p data=%p\n",auxPtr,dataPtr);
+
 			ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
 		}
 
@@ -620,7 +569,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		return ret;
 	}
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::GetReferencePrivate(Reference &x, void *dataPtr, void *auxPtr,uint32 auxSize){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference &x, void *dataPtr, void *auxPtr,uint32 auxSize){
 		ErrorManagement::ErrorType  ret;
 
 		DynamicCString mods;
@@ -634,7 +583,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			mods.AppendNum(vectorSize);
 		}break;
 		case finishedM:{
-			// auzPtr not NULL means fragmented
+			// auxPtr not NULL means fragmented
 			if (auxPtr != NULL){
 				if (auxSize != sizeof (void *) * matrixRowSize){
 					ret.internalSetupError = true;
@@ -698,11 +647,14 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 			uint64 pageDepth;
 			if (ret){
 				ret = page.Address2Index(dataPtr,pageDepth);
+//printf("Data @ %p pageDepth= %lli\n",dataPtr,pageDepth);
+//printf("Aux  @ %p \n",auxPtr);
 			}
 
 			// now get the address and then reorder the pages correctly to allow access to data
 			if (ret){
 				Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
+//printf("Vector Table base %p\n",addressMap);
 //printf("aux=%p aMap = %p\n",auxPtr,addressMap);
 
 //printf("rows = %i\n",matrixRowSize);
@@ -722,7 +674,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 //printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vectorByteSize);
 
 					if (ret){
-//printf("@%p -> (%p %i)\n",&addressMap[i],address,size);
+//printf("Vector %i size %i points to %p\n",i,size,address);
 						addressMap[i].InitVector(address,size);
 						pageDepth += vectorByteSize;
 					}
@@ -747,25 +699,67 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 		}
 		}
 
-		ReferenceT<MemoryPageObject> mpor;
 		if (ret){
-			//ReferenceT<MemoryPageObject> mpor2(buildNow);
-			mpor = ReferenceT<MemoryPageObject> (buildNow);
-			if (!mpor.IsValid()){
-				ret.outOfMemory = true;
-				REPORT_ERROR(ret,"MemoryPageObject construction failed");
+			uint32 pageSize = page.CurrentPageSize();
+printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
+			if ((page.NumberOfPages()==1) && (pageSize <= 64)){
+				if (pageSize <= 4){
+					ReferenceT<AnyObjectT<4>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						x = ao;
+					}
+				} else
+				if (pageSize <= 8){
+					ReferenceT<AnyObjectT<8>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						x = ao;
+					}
+				} else
+				if (pageSize <= 16){
+					ReferenceT<AnyObjectT<16>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						x = ao;
+					}
+				} else
+				if (pageSize <= 32){
+					ReferenceT<AnyObjectT<32>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						x = ao;
+					}
+				} else  {
+					ReferenceT<AnyObjectT<64>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						x = ao;
+					}
+				}
+
+
+			} else {
+				ReferenceT<MemoryPageObject> mpor;
+
+				mpor = ReferenceT<MemoryPageObject> (buildNow);
+				if (!mpor.IsValid()){
+					ret.outOfMemory = true;
+					REPORT_ERROR(ret,"MemoryPageObject construction failed");
+				}
+
+				if (ret){
+					mpor->Setup(type,mods,dataPtr,page);
+					x = mpor;
+
+				}
 			}
 		}
 
-		if (ret){
-//printf("data Ptr = %p\n",dataPtr);
-			mpor->Setup(type,mods,dataPtr);
-			mpor->Copy(page);
-			x = mpor;
-
-			status = notStarted;
-		} else {
+		if (!ret){
 			REPORT_ERROR(ret,"GetReferencePrivate failed");
+		} else {
+			status = notStarted;
 		}
 		return ret;
 	}
@@ -775,7 +769,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	 * @brief Check if the current segment has enough space to store another vector.
 	 * If there is no need (neededSize== 0) or if the space is not large enough close the current memory page segment and open a new one
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckAndClosePage(uint32 neededSize){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::CheckAndClosePage(uint32 neededSize){
 		ErrorManagement::ErrorType ret;
 		// do nothing if pageSize == 0
 		if (pageSize > 0){
@@ -804,7 +798,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	/**
 	 * @brief If pageSize is 0 allocate a new page of desired size
 	 */
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckAndNewPage(uint32 neededSize){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::CheckAndNewPage(uint32 neededSize){
 		ErrorManagement::ErrorType ret;
 		// no memory - allocate
 		// could be at the beginning or after a vector has been completed
@@ -831,7 +825,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 	}
 
 
-	ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::PageGrow(uint32 amount){
+	ErrorManagement::ErrorType ProgressiveTypeCreator::PageGrow(uint32 amount){
 		ErrorManagement::ErrorType ret;
 
 		uint32 newPageSize = pageSize + amount;
@@ -852,7 +846,7 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 
 		if (ret){
 			uint32 oldPageSize = pageSize;
-			pageSize = page.Size();
+			pageSize = page.CurrentPageSize();
 			if (pageSize > oldPageSize){
 				sizeLeft += (pageSize - oldPageSize);
 //printf("end page to %i\n", pageSize);
@@ -864,236 +858,8 @@ ErrorManagement::ErrorType ProgressiveFixedSizeTypeCreator::CheckMemoryFixedSize
 
 		return ret;
 	}
-	/**
-	 * Header used in each page
-	 */
-	struct MemoryPageHeader{
-		/**
-		 * Link to previous/next
-		 */
-		MemoryPageHeader * 	previous;
-		/**
-		 * page size (payload only - no header)
-		 */
-		uint32				pageSize;
-		/**
-		 * Allow access to the payload section
-		 */
-		uint8 				*Data(){
-			MemoryPageHeader *ptr = this +1;
-			return reinterpret_cast<uint8 *>(ptr);
-		};
-		/**
-		 * individual access to each member of payload
-		 * range checks not performed
-		 */
-		uint8 &operator[] (uint32 index){
-			return Data()[index];
-		}
-	};
 
 
-	/**
-	 * basic constructor empty pages
-	 */
-	MemoryPage::MemoryPage(){
-		mph = NULL_PTR(MemoryPageHeader *);
-	}
-	/**
-	 * @brief Steals content from another MemoryPage
-	 */
-	void MemoryPage::Copy (MemoryPage &stealFrom){
-		mph = stealFrom.mph;
-		stealFrom.mph = NULL_PTR(MemoryPageHeader *);
-	}
-	/**
-	 * @brief Deletes all pages of memory
-	 */
-	MemoryPage::~MemoryPage(){
-		Clean();
-	}
-
-	void MemoryPage::Clean(){
-		while (mph != NULL_PTR(MemoryPageHeader *)){
-			MemoryPageHeader * memoryP = mph->previous;
-			free(mph);
-			mph = memoryP;
-		}
-	}
-
-	uint32 MemoryPage::Size(){
-		uint32 size = 0;
-		if (mph != NULL) {
-			size = mph->pageSize;
-		}
-		return size;
-	}
-
-
-	ErrorManagement::ErrorType MemoryPage::Address2Index(void * address,uint64 &index) const{
-		ErrorManagement::ErrorType ret;
-
-		uint8 *addressU8 = reinterpret_cast<uint8 *>(address);
-		index = 0;
-		bool found = false;
-		MemoryPageHeader *mphp = mph;
-		while (!found && (mphp != NULL_PTR(MemoryPageHeader *))){
-			uint8 *start = mphp->Data();
-			uint8 *end   = mphp->Data() + mphp->pageSize;
-			if ((addressU8 >= start) && (addressU8 <end)){
-				found = true;
-				index += (addressU8 - start);
-			} else {
-				index += mphp->pageSize;
-				mphp = mphp->previous;
-			}
-		}
-
-		if (!found){
-			ret.outOfRange = true;
-			REPORT_ERROR(ret,"address out of range");
-		}
-
-		return ret;
-	}
-
-
-	void *MemoryPage::DeepAddress(uint64 index,uint32 &consecutiveSpan){
-//printf("%index = lli index\n",index);
-		MemoryPageHeader *mphp = mph;
-
-		uint32 localIndex = 0;
-		while ((index > 0) && (mphp != NULL_PTR(MemoryPageHeader *))){
-			if (index >= mphp->pageSize) {
-				index -= mphp->pageSize;
-				mphp = mphp->previous;
-			} else {
-				localIndex  = index;
-				index = 0;
-			}
-		}
-
-		void *address = NULL;
-		if (mphp != NULL){
-			uint32 requiredSpan = consecutiveSpan;
-			consecutiveSpan = mphp->pageSize - localIndex;
-			if (requiredSpan <= consecutiveSpan){
-				address = reinterpret_cast<void *>((mphp->Data()+localIndex));
-			}
-//printf("%p req=%i avail=%i pos=%i\n",address, requiredSpan, consecutiveSpan,localIndex);
-		}
-		return address;
-	}
-
-	/**
-	 * @brief return address of element index
-	 */
-	void *MemoryPage::Address(uint32 index){
-		return reinterpret_cast<void *> (mph->Data()+index);
-	}
-
-
-	/**
-	 * @brief increases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType MemoryPage::Grow(uint32 newBufferSize){
-		ErrorManagement::ErrorType ret;
-
-		if (mph != NULL_PTR(MemoryPageHeader *)){
-			// should grow not shrink
-			if (newBufferSize <= mph->pageSize){
-				ret.parametersError = true;
-				REPORT_ERROR(ret,"Grow to a smaller size??");
-			}
-		}
-
-		MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
-		if (ret){
-			// failure to allocate new page
-			newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-			if (newMemory == NULL_PTR(MemoryPageHeader *)){
-				ret.outOfMemory = true;
-				REPORT_ERROR(ret,"realloc failed");
-			}
-		}
-
-		if (ret){
-			mph = newMemory;
-			mph->pageSize = newBufferSize;
-		}
-		return ret;
-	}
-
-	/**
-	 * @brief decreases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType MemoryPage::Shrink(uint32 newBufferSize){
-		ErrorManagement::ErrorType ret;
-
-		if (mph != NULL_PTR(MemoryPageHeader *)){
-			// should shrink not grow
-			if (newBufferSize > mph->pageSize){
-				ret.parametersError = true;
-				DynamicCString errMsg;
-				errMsg.AppendN("Shrink to a bigger size??:new= ");
-				errMsg.AppendNum(newBufferSize);
-				errMsg.AppendN(" old= ");
-				errMsg.AppendNum(mph->pageSize);
-				REPORT_ERROR(ret,errMsg.GetList());
-			}
-
-		}
-		MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
-		if (ret){
-			// failure to allocate new page
-			newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-			if (newMemory == NULL_PTR(MemoryPageHeader *)){
-				ret.outOfMemory = true;
-				REPORT_ERROR(ret,"realloc failed");
-			}
-		}
-
-		if (ret){
-			mph = newMemory;
-			mph->pageSize = newBufferSize;
-		}
-		return ret;
-	}
-
-	/**
-	 *  @brief allocate a new page
-	 */
-	ErrorManagement::ErrorType  MemoryPage::Allocate(uint32 size){
-		ErrorManagement::ErrorType ret;
-		MemoryPageHeader *newMemory;
-		newMemory = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
-//printf("malloc %i @%p\n", size,newMemory);
-
-		if (newMemory == NULL_PTR(MemoryPageHeader *)){
-			ret.outOfMemory = true;
-			REPORT_ERROR(ret,"malloc failed");
-		}
-
-		if (ret){
-			newMemory->pageSize = size;
-			newMemory->previous = mph;
-			mph = newMemory;
-		}
-		return ret;
-	}
-
-	// last operation before closing the use of this memory
-	// change previous to next so that the memory can be parsed in the right order
-	void MemoryPage::FlipOrder(){
-		MemoryPageHeader *ptr = mph->previous;
-		mph->previous = NULL;
-		while (ptr != NULL){
-			MemoryPageHeader *ptr2 = ptr->previous;
-			ptr->previous = mph;
-			mph = ptr;
-			ptr = ptr2;
-		}
-	}
 
 
 } //MARTe

@@ -32,8 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "AnyObject.h"
-#include "TypeConversion.h"
 #include "StructuredDataI.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
@@ -73,6 +71,9 @@ public:
     //TODO test and document
     void CleanUp();
 
+
+/// StructuredDataI Interface
+
     /**
      * @see StructuredDataI::Read
      * @details It is possible read directly a structure or a class if
@@ -80,12 +81,12 @@ public:
      * In this case the class must be introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Read(const char8 * const name,const AnyType &value);
+    virtual bool Read(CCString name,const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
      */
-    virtual AnyType GetType(const char8 * const name);
+    virtual AnyType GetType(CCString name);
 
     /**
      * @see StructuredDataI::Write
@@ -93,7 +94,15 @@ public:
      * if it is introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Write(const char8 * const name, const AnyType &value);
+    virtual bool Write(CCString name, const AnyType &value);
+
+    /**
+     * TODO
+     * Same as write but inserts an object without copying it
+     * Removes any object with the same name
+     * object name must not include '.'
+     */
+    virtual bool Write(Reference object);
 
     /**
      * @see StructuredDataI::Copy
@@ -113,22 +122,22 @@ public:
     /**
      * @see StructuredDataI::MoveAbsolute
      */
-    virtual bool MoveAbsolute(const char8 * const path);
+    virtual bool MoveAbsolute(CCString path);
 
     /**
      * @see StructuredDataI::MoveRelative
      */
-    virtual bool MoveRelative(const char8 * const path);
+    virtual bool MoveRelative(CCString path);
 
     /**
      * @see StructuredDataI::CreateAbsolute
      */
-    virtual bool CreateAbsolute(const char8 * const path);
+    virtual bool CreateAbsolute(CCString path);
 
     /**
      * @see StructuredDataI::CreateRelative
      */
-    virtual bool CreateRelative(const char8 * const path);
+    virtual bool CreateRelative(CCString path);
 
     /**
      * @see StructuredDataI::AddToCurrentNode
@@ -138,7 +147,7 @@ public:
     /**
      * @see StructuredDataI::Delete
      */
-    virtual bool Delete(const char8 * const name);
+    virtual bool Delete(CCString name);
 
     /**
      * @brief StructuredDataI::GetName
@@ -184,7 +193,7 @@ private:
      * @param[in] path the path to be created.
      * @return true if the path creation is successful.
      */
-    bool CreateNodes(const char8 * const path);
+    bool CreateNodes(CCString path);
 
     /**
      * The current node to where the database is pointing.

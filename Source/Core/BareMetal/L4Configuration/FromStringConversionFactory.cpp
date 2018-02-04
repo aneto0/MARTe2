@@ -23,8 +23,8 @@
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
 #include "StreamString.h"
-#include "ConversionPrivate.h"
 #include "BitSetToInteger.h"
+#include "StringToNumber.h"
 
 namespace MARTe{
 
@@ -213,7 +213,7 @@ public:
 				REPORT_ERROR(ok,"token == NULL");
 			} else {
 				integerType num;
-				ok.fatalError = !StringToInteger(token.GetList(),num);
+				ok.fatalError = !StringToNumber(token.GetList(),num);
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destI[i]);
@@ -269,7 +269,7 @@ public:
 				REPORT_ERROR(ok,"empty token");
 			} else {
 				integerBitsSize num;
-				ok.fatalError = !StringToInteger(token.GetList(),num);
+				ok.fatalError = !StringToNumber(token.GetList(),num);
 				if (ok){
 					if (compare){
 						integerBitsSize num2;
@@ -337,7 +337,7 @@ public:
 
 			} else {
 				floatType num;
-				ok.fatalError = !StringToFloat(token.GetList(),num);
+				ok.fatalError = !StringToNumber(token.GetList(),num);
 				if (ok){
 					if (compare){
 						ok.comparisonFailure = (num != destF[i]);
