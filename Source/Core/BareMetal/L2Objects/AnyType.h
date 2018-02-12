@@ -44,13 +44,15 @@
 #include "ClassRegistryDatabase.h"
 #include "Matrix.h"
 #include "ErrorType.h"
+#include "Object.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class Object;
+//class Object;
 class Reference;
 }
 
@@ -130,6 +132,21 @@ public:
     inline AnyType(const VariableDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
     /**
+     * @brief constructor from Reference
+     * @param[in] reference is the Reference to get the pointer from.
+     * Note that ToAnyType is a virtual function of Object. By default the TypeDescriptor describes the class of the object
+     */
+    inline AnyType(Reference &reference);
+
+    /**
+     * @brief constructor from specialized Reference
+     * @param[in] reference is the Reference to get the pointer from.
+     * Note that ToAnyType is a virtual function of Object. By default the TypeDescriptor describes the class of the object
+     */
+    template <class T>
+    inline AnyType(ReferenceT<T> &reference);
+
+    /**
      * @brief Constructor from non-const non-ptr. Uses VariableDescriptor constructor.
      * @param[in] x is any variable non-const non-ptr
      * @post
@@ -137,7 +154,6 @@ public:
      */
     template <class T>
     inline AnyType(T &x);
-//    inline AnyType(typename enable_if<!isSameOrBaseOf(Reference,T), T>::type &x);
 
     /**
      * @brief Constructor from const non-ptr. Uses VariableDescriptor constructor.
@@ -207,9 +223,9 @@ public:
 
     /**
      * @brief pointer2Variable = NULL
-     * @return  (pointer2Variable == NULL)
+     * @return  (pointer2Variable == NULL) .
      */
-    inline bool 					IsVoid() const;
+    inline bool 					IsValid() const;
 
     /** INTERFACES GETTERS*/
 
@@ -256,10 +272,9 @@ AnyType::AnyType(){
     pointer2Variable = NULL_PTR(void *);
 }
 
-bool AnyType::IsVoid() const{
+bool AnyType::IsValid() const{
 	return (pointer2Variable == NULL_PTR(void *));
 }
-
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn):variableDescriptor(dataDescriptorIn){
     pointer2Variable = const_cast<void *>(dataPointerIn);
@@ -275,7 +290,6 @@ void AnyType::Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const voi
     pointer2Variable = const_cast<void *>(dataPointerIn);
 }
 
-
 AnyType::AnyType( AnyType &x):variableDescriptor(x.variableDescriptor) {
     /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
     this->pointer2Variable = x.pointer2Variable;
@@ -286,9 +300,17 @@ AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
     this->pointer2Variable = x.pointer2Variable;
 }
 
+AnyType::AnyType(Reference &reference):AnyType(){
+	reference.ToAnyType(*this);
+}
+
+template <class T>
+AnyType::AnyType(ReferenceT<T> &reference):AnyType(){
+	reference.ToAnyType(*this);
+}
+
 template <class T>
 AnyType::AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){
-//AnyType::AnyType(typename enable_if<!isSameOrBaseOf(Reference,T), T>::type &x): variableDescriptor (reinterpret_cast<T *>(&x)){
     pointer2Variable = reinterpret_cast<void *>(const_cast<T *>(&x));
 }
 

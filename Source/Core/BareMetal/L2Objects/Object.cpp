@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
+#include "AnyType.h"
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "ReferenceContainer.h"
@@ -290,12 +291,11 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
-Object::operator AnyType(){
+void Object::ToAnyType(AnyType &at){
 	ClassRegistryItem *cri = GetClassRegistryItem();
-//TODO This only works if Object is the single root class
-//TODO Better would be to add a static function to convert Object *this to T*
-	AnyType at(cri->GetTypeDescriptor(),this);
-	return at;
+	//TODO This only works if Object is the single root class
+	//TODO Better would be to add a static function to convert Object *this to T*
+	at = AnyType (cri->GetTypeDescriptor(),this);
 }
 
 

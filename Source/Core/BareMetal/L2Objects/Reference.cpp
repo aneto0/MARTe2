@@ -52,6 +52,7 @@
 
 namespace MARTe {
 
+
 Reference::Reference() {
     objectPointer = NULL_PTR(Object*);
 }
@@ -198,6 +199,23 @@ Object *Reference::CreateByName(CCString const className,HeapI* const heap) cons
     }
 
     return obj;
+}
+
+void Reference::ToAnyType(AnyType &at){
+	if (objectPointer != NULL){
+	    objectPointer->ToAnyType(at);
+	} else {
+		at = AnyType();
+	}
+}
+
+Reference::Reference(AnyType anyType){
+	if (anyType.IsValid()){
+		//TODO put real copy code here
+		*this = Reference();
+	} else {
+		*this = Reference();
+	}
 }
 
 }

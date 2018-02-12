@@ -119,17 +119,17 @@
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-	return MARTe::ClassRegistryItem::Instance<className>();                                                       \
+	return MARTe::ClassRegistryItem::Instance<className>();                                                            \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        return MARTe::ClassRegistryItem::Instance<className>();                                                       \
+        return MARTe::ClassRegistryItem::Instance<className>();                                                        \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * className::operator new(const MARTe::osulong size, MARTe::HeapI *heap) {                              \
+    void * className::operator new(const MARTe::osulong size, MARTe::HeapI *heap) {                                    \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \

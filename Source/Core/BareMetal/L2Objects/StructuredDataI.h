@@ -34,6 +34,7 @@
 
 
 #include "CCString.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -58,18 +59,19 @@ namespace MARTe {
  * The root node always exits and is anonymous to the users of the interface. This implies that the following
  * function calls are valid: CreateAbsolute("A.B.C")  && CreateAbsolute("D.E.F") &&
  * MoveToRoot() && MoveAbsolute("A.B.C") && MoveAbsolute("D.E.F")
+ * Whenever the variable named path of type CCString is used, a sequence of path steps can be specified with the syntax above.
  *
  * Irrespectively of the interface the implementation shall support the concepts of navigable nodes and leafs
  * and shall support the following features:
  *
  * - Nodes shall be identified by a name;
  * - Leafs shall be identified by a name;
- * - One node may contain one or more nodes;
- * - One node may contain one or more leafs;
- * - One node shall not contain any AnyType value;
- * - One leaf shall contain one, and only one, AnyType value;
- * - Leafs shall not contain nodes;
- * - A write operation shall create a new leaf;
+ * - Each node may contain one or more nodes;
+ * - Each node may contain one or more leafs;
+ * - Node shall not directly contain AnyType values;
+ * - A leaf shall contain a single AnyType value;
+ * - Leafs shall not contain nodes or leafs;
+ * - Successful write operations shall create a new leaf;
  * - A read operation shall be performed on an existing leaf;
  * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
  * Create operation was performed).
@@ -84,28 +86,48 @@ public:
     virtual ~StructuredDataI();
 
     /**
-     * @brief Reads a previously stored AnyType. The node with this name has to be a child of the current node.
-     * @param[in] name the name of the leaf used to store the AnyType \a value.
-     * @param[out] value the read AnyType will be stored in this parameter. If the AnyType
-     * cannot be successfully read its value will be set to VoidType and the function will return false.
-     * @return true if the AnyType is successfully read.
+     * @brief Reads a previously stored AnyType and converts-copies it into the memory of the provided AnyType
+     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
+     * @param[out] on success the converted AnyType will be stored in this parameter.
+     * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
      * @pre
-     *   GetType(name).GetTypeDescriptor() != VoidType
+     *   GetType(path).GetTypeDescriptor() != VoidType
      */
-    virtual bool Read(CCString name,const AnyType &value) = 0;
+    virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value) = 0;
+
+    /**
+     * @brief Reads a previously stored AnyType and creates an Object.
+     * If borrowed the object is part of the structuredDataI internal implementation and therefore cannot be modified.
+     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
+     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
+     * @param[out] the object reference to point to the output object
+     * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
+     * @pre
+     *   GetType(path).GetTypeDescriptor() != VoidType
+     */
+    virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true) = 0;
+
+    /**
+     * @brief Automatic cast to AnyType.
+     */
+    operator AnyType();
 
     /**
      * @brief Gets the type of a previously stored AnyType.
-     * @param[in] name the name of the leaf used to store the AnyType \a value.
+     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
      * @return the type of the stored AnyType or VoidType if this \a name does not exist.
      */
-    virtual AnyType GetType(CCString name) = 0;
+    virtual AnyType GetType(CCString path) = 0;
+
+    /**
+     * Affect the current position
+     */
 
     /**
      * @brief Moves the current node to the root node.
      * @return true if the move is successful and the current node is now the root node.
      */
-    virtual bool MoveToRoot() = 0;
+    virtual ErrorManagement::ErrorType MoveToRoot() = 0;
 
     /**
      * @brief Moves to the generations-th node containing this node.
@@ -114,7 +136,7 @@ public:
      * @pre
      *   generations > 0
      */
-    virtual bool MoveToAncestor(uint32 generations) = 0;
+    virtual ErrorManagement::ErrorType MoveToAncestor(uint32 generations) = 0;
 
     /**
      * @brief Moves the current node to a new node address specified by an absolute path.
@@ -122,7 +144,7 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveAbsolute(CCString path) = 0;
+    virtual ErrorManagement::ErrorType MoveAbsolute(CCString path) = 0;
 
     /**
      * @brief Moves the current node to an address specified by a path relative to the current node address.
@@ -130,7 +152,11 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveRelative(CCString path) = 0;
+    virtual ErrorManagement::ErrorType MoveRelative(CCString path) = 0;
+
+    /**
+     * Read path information
+     */
 
     /**
      * @brief Retrieves the name of the current node.
@@ -151,11 +177,6 @@ public:
      */
     virtual uint32 GetNumberOfChildren()=0;
 
-    /**
-     * @brief Automatic cast to AnyType.
-     */
-    operator AnyType();
-
 
 /**
  * require write access!
@@ -164,30 +185,36 @@ public:
     /**
      * @brief Writes an AnyType against the provided \a name and adds it to the current node.
      * @details If the name already exists the value will be overridden.
-     * @param[in] name the name of the leaf against which the AnyType will be stored.
+     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
      * @pre
      *   name != NULL &&
      *   StringHelper::Length(name) > 0
      */
-    virtual bool Write(CCString name, const AnyType &value) = 0;
+    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value) = 0;
 
     /**
      * @brief Writes an object into the current node of the database.
      * @details The implementation shall assume that the object does not need to be copied but can be referenced to.
      * @param[in] object the object to be added to the database. object->GetName() provides the name.
+     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
      * @return true if object is valid
      */
-    virtual bool Write(Reference object) = 0;
+    virtual ErrorManagement::ErrorType Write(Reference object,bool borrow = true) = 0;
 
     /**
      * @brief Copies the content of the current node to the provided destination.
      * @details A deep copy of the contents is recursively performed.
      * @param[out] destination where the database will be copied to.
      * @return true if the copy is successful.
+     * TODO clarify if this copy is from root or
      */
-    virtual bool Copy(StructuredDataI &destination) = 0;
+    virtual ErrorManagement::ErrorType Copy(StructuredDataI &destination) = 0;
+
+/**
+ *  Affect path
+ */
 
     /**
      * @brief Adds a node to the current node.
@@ -197,7 +224,7 @@ public:
      *   If successful: the current node will be node
      *   If unsuccessful: the current node will not be changed
      */
-    virtual bool AddToCurrentNode(Reference node) = 0;
+    virtual ErrorManagement::ErrorType AddToCurrentNode(Reference node) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided absolute path.
@@ -209,7 +236,7 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateAbsolute(CCString path) = 0;
+    virtual ErrorManagement::ErrorType CreateAbsolute(CCString path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided relative path.
@@ -221,14 +248,14 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateRelative(CCString path) = 0;
+    virtual ErrorManagement::ErrorType CreateRelative(CCString path) = 0;
 
     /**
      * @brief Deletes the node with \a name under the current node (and as a consequence all the nodes underneath).
      * @param[in] name the name of the node to be deleted.
      * @return true if the current node is successfully removed.
      */
-    virtual bool Delete(CCString name) = 0;
+    virtual ErrorManagement::ErrorType Delete(CCString path) = 0;
 
 };
 

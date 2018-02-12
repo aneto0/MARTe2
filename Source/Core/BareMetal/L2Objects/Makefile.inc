@@ -29,6 +29,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=  TypeConversionManager.x \
 		SameTypeConversionFactory.x\
 		ClassRegistryDatabase.x \
+		VDPrivate.x \
 		VariableDescriptor.x\
         AnyType.x \
 		Reference.x \

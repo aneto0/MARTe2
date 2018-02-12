@@ -53,6 +53,7 @@ class ObjectBuilder;
 class ClassMember;
 class VariableDescriptor;
 class ClassMethodInterfaceMapper;
+class Object;
 
 /**
  * @brief Descriptor of framework base classes.
@@ -146,7 +147,6 @@ public:
     virtual ClassRegistryItem *		GetBasePtr() {
     	return this;
     }
-
 
     /**
      * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
@@ -257,9 +257,10 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 template <class T>
  ClassRegistryItem *ClassRegistryItem::Instance(){
+	bool generic = !isSameOrBaseOf(Object,T);
+//TODO handle generic
     /**
      * static variable. not automatic! persistent across calls
      * will be initialised with a pointer to the only valid instance of this
@@ -269,6 +270,7 @@ template <class T>
     /// first time will go inside here
     if (instance == NULL_PTR(ClassRegistryItem *)) {
 
+    	T *dummy;
         /// all common code here
         instance = new ClassRegistryItem(typeid(T).name(),sizeof(T) );
 

@@ -48,7 +48,7 @@ namespace MARTe {
  * It may holds and manage a memory space with a copy of the data of a generic variable or is a simply a reference to it
  */
 template <unsigned int objectSize>
-class DLL_API AnyObjectT: public Object {
+class AnyObjectT: public Object {
 
 public:
 
@@ -75,46 +75,11 @@ public:
      */
     void Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const void* const dataPointerIn,uint32 size);
 
-#if 0
-
-    /**
-     * @brief frees any memory and the pointer.
-     */
-    void CleanUp();
-
-    /**
-     * @brief Cleanup() then allocates memory and copies the provided data
-     * @details The input AnyType \a typeIn will be copied and its contents
-     * (provided by typeIn.GetDataPointer()) copied into a memory space managed by this
-     * AnyObjectT. This memory will be freed by the destructor of the AnyType.
-     * @param[in] typeIn the AnyType whose data is to be copied.
-     * @return true if all the memory allocation and copy operations are successful.
-     * @pre
-     *   GetType().GetDataPointer() == NULL
-     * @post
-     *   GetType() == typeIn
-     *   canDestroy = true
-     */
-    ErrorManagement::ErrorType Copy(const AnyType &typeIn);
-
-    /**
-     * @brief Cleanup() then Holds a reference to the provided data together with its type information
-     * @details The input AnyType \a typeIn will be copied to the local Anytype
-     * @param[in] typeIn the AnyType to be copied.
-     * @return true if all the memory allocation and copy operations are successful.
-     * @pre
-     *   GetType().GetDataPointer() == NULL
-     * @post
-     *   GetType() == typeIn
-     *   canDestroy = false
-     */
-    ErrorManagement::ErrorType Refer(const AnyType &typeIn);
-#endif
     /*
 	 * @brief The main interface provided by an AnyObjectT is the ability to provide its data via an AnyType.
 	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
 	 */
-	virtual operator AnyType();
+    virtual void ToAnyType(AnyType &at);
 
 private:
 
@@ -143,8 +108,8 @@ AnyObjectT<objectSize>::~AnyObjectT(){
 };
 
 template <unsigned int objectSize>
- AnyObjectT<objectSize>::operator AnyType(){
-	return AnyType(vd,&data);
+void AnyObjectT<objectSize>::ToAnyType(AnyType &at){
+	at = AnyType(vd,&data);
 }
 
 template <unsigned int objectSize>

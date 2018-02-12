@@ -64,6 +64,7 @@ bool Check(const void * const address,
     MEMORY_BASIC_INFORMATION mbi = {0};
     if (ret) {
     	ret = VirtualQuery(address, &mbi, sizeof(mbi));
+//printf("protect = %x address = %p\n",mbi.Protect,address);
     }
     if (ret){
 		ret = ((mbi.Protect & (PAGE_GUARD|PAGE_NOACCESS))==0);
@@ -73,10 +74,10 @@ bool Check(const void * const address,
     		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE))!=0);
     	}
     	if (accessMode & ReadAccessMode){
-    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE))!=0);
+    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
     	}
         if (accessMode & WriteAccessMode){
-        	ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE))!=0);
+        	ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
         }
     }
 //if (!ret){

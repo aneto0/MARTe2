@@ -37,6 +37,7 @@
 #include "MemoryOperationsHelper.h"
 #include "TypeConversionManager.h"
 #include "VariableDescriptor.h"
+#include "VDPrivate.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -90,13 +91,6 @@ void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 }
 
 
-void VariableDescriptor::FinaliseCode(TypeDescriptor td){
-
-	bool isConst = typeDescriptor.dataIsConstant;
-	typeDescriptor = td;
-	if (isConst) typeDescriptor.dataIsConstant = true;
-}
-
 VariableDescriptor::VariableDescriptor(){
     typeDescriptor = VoidType;
 }
@@ -126,6 +120,8 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     return *this;
 }
 
+
+
 static inline bool isNumber(char8 c){
 	return ((c >='0') && (c <='9'));
 }
@@ -139,7 +135,9 @@ static inline char8 toUpper(char8 c){
 		c = (c - 'a') + 'A';
 	}
 	return c;
-}/** string to integer */
+}
+
+/** string to integer */
 static inline uint32 readNumber(CCString &buffer){
 	uint32 result = 0;
 	while (isNumber(buffer[0])){
@@ -168,6 +166,49 @@ static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 
 			size = readNumber(modifierString);
 		}
 	}
+}
+
+// used externally 4 times
+TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
+    CCString modifiersCopy = modifiers;
+    char8 firstModifier  = '\0';
+    char8 nextModifier  = '\0';
+    uint32 size = 0;
+    GetLayerInfo(modifiersCopy,firstModifier,size );
+    nextModifier= modifiersCopy[0];
+
+    TypeDescriptor td;
+
+    if (firstModifier == '\0'){
+    	td = typeDescriptor;
+    } else {
+    	switch (firstModifier){
+    	case 'P':
+    	case 'p':{
+    		td = GenericPointer;
+
+    		if (nextModifier == 0){
+    			td = PointerType;
+    		}
+    	}break;
+    	case 'V':
+    	case 'v':
+    	case 'M':
+    	case 'm':{
+    		td = GenericPointer;
+    	}break;
+    	case 'A':{
+    		td = GenericArray;
+    	}break;
+
+    	default:{
+    		td = InvalidType(0);
+            REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
+    	}
+    	}
+    }
+
+	return td;
 }
 
 // used 4 times
@@ -199,7 +240,7 @@ ErrorManagement::ErrorType VariableDescriptor::FullLayerInfo(
 	if (variableLayers.In(c)) {
 		if (pointer == NULL){
 			ret.internalSetupError = true;
-	        REPORT_ERROR(ErrorManagement::InternalSetupError, "pointer=NULL and a ZTA is found. sequence of two ZTA var layers not possible");
+	        REPORT_ERROR(ret, "pointer=NULL and a ZTA is found. sequence of two ZTA var layers not possible");
 		}
 
 		uint64 layerSize  = 0;
@@ -262,50 +303,6 @@ uint64 VariableDescriptor::FullLayerSize(CCString modifierString,const uint8 *po
  	 return (numberOfElements + numberOfTermElements)* elementSize ;
 }
 
-// used externally 4 times
-TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
-    CCString modifiersCopy = modifiers;
-    char8 firstModifier  = '\0';
-    char8 nextModifier  = '\0';
-    uint32 size = 0;
-    GetLayerInfo(modifiersCopy,firstModifier,size );
-    nextModifier= modifiersCopy[0];
-
-    TypeDescriptor td;
-
-    if (firstModifier == '\0'){
-    	td = typeDescriptor;
-    } else {
-    	switch (firstModifier){
-    	case 'P':
-    	case 'p':{
-    		td = GenericPointer;
-
-    		if (nextModifier == 0){
-    			td = PointerType;
-    		}
-    	}break;
-    	case 'V':
-    	case 'v':
-    	case 'M':
-    	case 'm':{
-    		td = GenericPointer;
-    	}break;
-    	case 'A':{
-    		td = GenericArray;
-    	}break;
-
-    	default:{
-    		td = InvalidType(0);
-            REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
-    	}
-    	}
-    }
-
-	return td;
-}
-
-
 // used by copyTo twice.
 TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const{
 	const CCString pointerModifiers = "Pp";
@@ -342,7 +339,12 @@ TypeDescriptor VariableDescriptor::GetDimensionsInformation(DynamicZeroTerminate
         				}
         			} else { // C != A
             			// error PV PM etc...
-        				td = InvalidType(0);
+//        				td = InvalidType(0);
+        				// treat as a pointer
+            			// stop and exit
+            			di.type = '\0';
+        				td = PointerType;
+            			modifierString = savedModifierString;
         			}
         			// consume last pointer
         			lastPointer = '\0';
@@ -425,7 +427,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 	/// means that a sequence VZ is encountered instead of the correct VPZ
 	if ((numberOfTermElements > 0) && (layerMultiplier > 1)){
 		ret.internalSetupError = true;
-        REPORT_ERROR(ErrorManagement::InternalSetupError, "Incorrect sequence VZ or MZ encountered ");
+        REPORT_ERROR(ret, "Incorrect sequence VZ or MZ encountered ");
 	}
 
 	if (ret){
@@ -447,7 +449,13 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 					if (p != NULL){
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
-					        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+							DynamicCString errM;
+							errM.AppendN("Pointer[");
+							errM.AppendNum(index);
+							errM.AppendN("]=");
+							errM.AppendHex(reinterpret_cast<uint64>(p));
+							errM.AppendN(" is Invalid");
+					        REPORT_ERROR(ret,errM.GetList());
 						}
 
 						if (ret){
@@ -552,17 +560,6 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 	return ret;
 }
 
-ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize,uint8  maxDepth) const{
-
-	uint64 overHeadSz = 0;
-	ErrorManagement::ErrorType ret =  GetDeepSize(modifiers,pointer,dataSize,overHeadSz,maxDepth);
-
-	if (overHeadSize != NULL){
-		*overHeadSize = overHeadSz;
-	}
-
-	return ret;
-}
 
 /**
  * @brief removes one indirection layer and update variable pointer
@@ -749,6 +746,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	return ret;
 }
 
+
 //used by GetNextElementSize
 static inline  uint32 GetDimensionSize(char8 type){
 	char8 c = toUpper(type);
@@ -760,7 +758,6 @@ static inline  uint32 GetDimensionSize(char8 type){
 	case 'V':{
 		size = sizeof (Vector<char8>);
 	}break;
-
 	case 'S':
 	case 'D':
 	case 'Z':
@@ -790,7 +787,6 @@ static uint32 GetNextElementSize(
 	} else {
 		size *= GetDimensionSize(dimensions[ix].type);
 	}
-
 	return size;
 }
 
@@ -955,16 +951,198 @@ static ErrorManagement::ErrorType LayerOperate(
 	return ok;
 }
 
+
+// used by CopyTo
+static ErrorManagement::ErrorType CopyToRecursive(
+		uint32 							level,
+		const DimensionHandler 			&sourceDimensions,
+		const uint8* 					sourcePtr,
+		const DimensionHandler 			&destDimensions,
+		uint8* 							destPtr,
+		const TypeConversionOperatorI &	op
+		){
+	ErrorManagement::ErrorType ok;
+/*
+char c1 = 	sourceDimensions[0].type;
+char c2 = 	sourceDimensions[1].type;
+printf ("%i %c %i\n",sourceDimensions.NDimensions(),c1,c2);
+c1 = 	destDimensions[0].type;
+c2 = 	destDimensions[1].type;
+printf ("%i %c %i\n",destDimensions.NDimensions(),c1,c2);
+*/
+	uint32 sourceNumberOfElements = 1;
+	uint64 sourceElementSize = 1;
+	uint32 destNumberOfElements = 1;
+	uint64 destElementSize = 1;
+	uint32 overHead;
+
+	ok = sourceDimensions.UpdatePointerAndSize(level,sourcePtr,sourceNumberOfElements,sourceElementSize,overHead);
+	if (!ok){
+        REPORT_ERROR(ok, "source pointer handling failed");
+	}
+
+	if (ok){
+		ok = destDimensions.UpdatePointerAndSize(level,(const uint8 *&)destPtr,destNumberOfElements,destElementSize,overHead);
+		if (!ok){
+	        REPORT_ERROR(ok, "destination pointer handling failed");
+		}
+	}
+
+	if (ok){
+		if (sourceNumberOfElements != destNumberOfElements){
+			ok.unsupportedFeature = true;
+	        REPORT_ERROR(ok, "mismatch in dimensions");
+		}
+	}
+	if (ok){
+		// the last dimension is always the scalar typed
+		if (destDimensions.NDimensions() <= (level+2)){
+//printf("OP[%i]\n",destNumberOfElements);
+			ok = op.Convert(destPtr,sourcePtr,destNumberOfElements);
+			if (!ok){
+//printf("3 sp=%p dp=%p\n",sourcePtr,destPtr);
+		        REPORT_ERROR(ok, "conversion failed");
+			}
+		} else {
+			// skip forward
+			uint32 ix = 0;
+			for (ix = 0; (ix < sourceNumberOfElements) && ok; ix++){
+				ok = CopyToRecursive(level+1,sourceDimensions,sourcePtr,destDimensions,destPtr,op);
+				sourcePtr+= sourceElementSize;
+				destPtr+= destElementSize;
+
+				if (!ok){
+					DynamicCString errM;
+					errM.AppendN("Failed at row (");
+					errM.AppendNum(ix);
+					errM.Append(')');
+			        REPORT_ERROR(ok, errM.GetList());
+				}
+			}
+		}
+	}
+	return ok;
+}
+
+
+static ErrorManagement::ErrorType GetSizeRecursive(
+		uint32 							level,
+		const DimensionHandler 			&handler,
+		const uint8* 					pointer,
+		uint64 							&dataSize,
+		uint64 							&auxSize
+		){
+	ErrorManagement::ErrorType ok;
+
+
+	uint32 multiplier = 1;
+	uint64 nextElSize;
+	uint32 overHead;
+	ok = handler.UpdatePointerAndSize(level, pointer,multiplier,nextElSize,overHead);
+	dataSize 			= overHead;
+	auxSize 			= overHead;
+
+	// not the last level therefore could be 'A's
+	if (handler.NDimensions() > (level+1)){
+		level++;
+		char8 type = handler[level].type;
+		while (type=='A'){
+			multiplier 	= multiplier * handler[level].numberOfElements;
+			level++;
+			nextElSize 	= handler[level].elementSize;
+			type 		= handler[level].type;
+		}
+	}
+
+	// either was the last level or we are looking at one more levels below
+	// either way if we find a '0' here we can act accordingly
+	if (handler[level].type == '\0'){
+		TypeDescriptor td = handler.GetTypeDescriptor();
+		uint32 storageSize = handler[level].elementSize;
+		bool hasVariableSize = td.IsCharStreamType();
+		if (hasVariableSize){
+			auxSize += multiplier * storageSize;
+			for (uint64 i = 0;i < multiplier;i++){
+				dataSize += td.FullSize(pointer);
+				pointer += storageSize;
+			}
+		} else {
+			dataSize += multiplier * storageSize;
+		}
+	// not a '0' so not last level so we are at least one level below
+	} else {
+		for (uint64 i = 0;i < multiplier;i++){
+			uint64 dataSize2;
+			uint64 auxSize2;
+			GetSizeRecursive(level,handler,pointer,dataSize2,auxSize2);
+			dataSize 			+= dataSize2;
+			auxSize 			+= auxSize2;
+			pointer 			+= nextElSize;
+		}
+	}
+
+
+	return ok;
+}
+
+ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize) const{
+	ErrorManagement::ErrorType ret;
+	uint64 overHeadSz = 0;
+#if 1
+	DimensionHandler handler(this->modifiers,this->typeDescriptor);
+
+	ret = GetSizeRecursive(0,handler,pointer,dataSize,overHeadSz);
+#else
+	maxDepth = 10;
+	ret =  GetDeepSize(modifiers,pointer,dataSize,overHeadSz,maxDepth);
+#endif
+	if (overHeadSize != NULL){
+		*overHeadSize = overHeadSz;
+	}
+	return ret;
+}
+
 ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 		const uint8 *sourcePtr,
 			  uint8 *destPtr,
-			  VariableDescriptor destVd,
+			  const VariableDescriptor &destVd,
 			  bool isCompare
 		) const {
+
+//printf("2 sp=%p dp=%p\n",sourcePtr,destPtr);
 
 	ErrorManagement::ErrorType ok;
 	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
+#if 1
+	DimensionHandler sourceHandler(this->modifiers,this->typeDescriptor);
+	DimensionHandler destHandler(destVd.modifiers,destVd.typeDescriptor);
+/*
+char c1 = 	sourceHandler[0].type;
+char c2 = 	sourceHandler[1].type;
+printf ("%i %c %i\n",sourceHandler.NDimensions(),c1,c2);
+c1 = 	destHandler[0].type;
+c2 = 	destHandler[1].type;
+printf ("%i %c %i\n",destHandler.NDimensions(),c1,c2);
+*/
+	if (!destHandler.HasSameDimensionsAs(sourceHandler)){
+		ok.internalSetupError = true;
+        REPORT_ERROR(ok, "Dimension mismatch");
+	}
+
+	if (ok){
+		tco = TypeConversionManager::Instance().GetOperator(destHandler.GetTypeDescriptor(),sourceHandler.GetTypeDescriptor(),isCompare);
+	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
+	    	ok.unsupportedFeature = true;
+	        REPORT_ERROR(ok, "Conversion Operator not found");
+	    }
+	}
+
+    if (ok){
+    	ok = CopyToRecursive(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
+    }
+
+#else
 	DynamicZeroTerminatedArray<DimensionInfo,4> sourceDimensions;
     TypeDescriptor sourceTd = GetDimensionsInformation(sourceDimensions);
 
@@ -987,6 +1165,7 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
     if (ok){
     	ok = LayerOperate(sourceDimensions.GetList(),sourcePtr,sourceTd,destDimensions.GetList(),destPtr,destTd,*tco);
     }
+#endif
 
     if (tco != NULL_PTR(TypeConversionOperatorI *)){
     	delete tco;
@@ -1083,7 +1262,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 					dpp[index] = destFreePtr;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
-				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+				        REPORT_ERROR(ret, "bad pointer");
 					}
 					if (ret){
 						if (index == 0){
@@ -1114,7 +1293,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 					dpm[index].InitMatrix(destFreePtr,psm[index].GetNumberOfRows(),psm[index].GetNumberOfColumns()) ;
 					if (!MemoryCheck::Check(p)){
 						ret.exception = true;
-				        REPORT_ERROR(ErrorManagement::Exception, "bad pointer");
+				        REPORT_ERROR(ret, "bad pointer");
 					}
 					if (ret){
 						if (index == 0){

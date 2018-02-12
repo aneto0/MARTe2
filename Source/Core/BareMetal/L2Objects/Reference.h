@@ -42,6 +42,8 @@
 
 namespace MARTe {
 
+class AnyType;
+
 /**
  * Reference to a constant Object.
  */
@@ -77,8 +79,7 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(CCString const typeName,
-              HeapI* const heap = static_cast<HeapI *>(NULL));
+    Reference(CCString const typeName,HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
      * @brief Creates a reference to an existing \a pointer.
@@ -86,6 +87,13 @@ public:
      * @param[in] pointer source object to assign.
      */
     Reference(Object * const pointer);
+
+    /**
+     * @brief Creates a special Object that is the copy of the type referred to by anytype
+     * @details Creates an AnyObject
+     * @param[in] anyType the pointer to the object to copy
+     */
+    Reference(AnyType anyType);
 
     /**
      * @brief Destructor. Removes the reference to the underlying object.
@@ -99,8 +107,7 @@ public:
      * @param[in] initOnly if true the object is supposed to be already created and will be only initialized.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
-    virtual bool Initialise(StructuredDataI &data,
-                            const bool &initOnly);
+    virtual bool Initialise(StructuredDataI &data,const bool &initOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -162,7 +169,7 @@ public:
      * @brief Provides access to the underlying object by mean of his AnyType
      * @return the AnyType of the object
      */
-    inline operator AnyType();
+    void ToAnyType(AnyType &at);
 
 protected:
 
@@ -207,10 +214,6 @@ Object* Reference::operator->() {
     return objectPointer;
 }
 
-Reference::operator AnyType(){
-    return objectPointer->operator AnyType();
-
-}
 
 
 }

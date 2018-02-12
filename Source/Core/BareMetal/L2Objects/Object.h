@@ -38,7 +38,6 @@
 #include "ErrorType.h"
 #include "CLASSREGISTER.h"
 #include "StreamI.h"
-#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -47,6 +46,7 @@
 namespace MARTe {
 class StructuredDataI;
 class ReferenceContainer;
+class AnyType;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -229,13 +229,11 @@ public:
      */
     void SetName(CCString const newName);
 
-
     /**
      * @brief Returns the Anytype conversion of this object. By default it is represented by a struct type
      * @return an Anytype pointing to the object. NOTE the pointer is safe only while the Object is kept in memory
      */
-    virtual operator AnyType();
-
+    virtual void ToAnyType(AnyType &at);
     /**
      * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.

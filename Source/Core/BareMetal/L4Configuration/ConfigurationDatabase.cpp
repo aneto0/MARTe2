@@ -30,13 +30,10 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "AnyObject_obsolete.h"
 #include "ErrorType.h"
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "StreamString.h"
-#include "TypeConversion.h"
 #include "GlobalObjectsDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -50,7 +47,8 @@ namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
-    ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance().GetStandardHeap());
+    ReferenceT < ReferenceContainer > rootContainer(buildNow);
+//    ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance().GetStandardHeap());
     rootNode = rootContainer;
     currentNode = rootNode;
 }
@@ -63,8 +61,12 @@ void ConfigurationDatabase::CleanUp() {
     rootNode->CleanUp();
 }
 
-bool ConfigurationDatabase::Write(Reference object){
-	bool ok = object.IsValid();
+ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
+	ErrorManagement::ErrorType ok;
+	if (!object.IsValid()){
+		ok.parametersError = true;
+		REPORT_ERROR(ok,"parameter is an invalid reference");
+	}
 
 	if (ok){
 		// result is not needed
@@ -79,6 +81,9 @@ bool ConfigurationDatabase::Write(Reference object){
 
 
 bool ConfigurationDatabase::Write(CCString name, const AnyType &value) {
+
+	value.
+
 
     bool ok = false;
     // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI

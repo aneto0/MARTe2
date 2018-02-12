@@ -77,6 +77,15 @@ public:
 	 */
 	virtual ErrorManagement::ErrorType  Next();
 
+	/**
+	 * @brief check for any error
+	 */
+	virtual ErrorManagement::ErrorType  Check(){
+		ErrorManagement::ErrorType  ret;
+		return ret;
+	}
+
+
 private:
 	/**
 	 * @brief buffer for the IOBuffer
@@ -169,6 +178,7 @@ public:
 	 * @brief switch to next stream
 	 */
 	virtual ErrorManagement::ErrorType  Next();
+
 protected:
 
 	/**
@@ -203,6 +213,11 @@ public:
 	 * @brief switch to next stream
 	 */
 	virtual ErrorManagement::ErrorType  Next();
+
+	/**
+	 * @brief check for any error
+	 */
+	virtual ErrorManagement::ErrorType  Check();
 protected:
 
 	/**
@@ -229,6 +244,7 @@ private:
 
 
 ErrorManagement::ErrorType  IOBufferWrapper::Next(){
+printf(">>\n");
 	ErrorManagement::ErrorType  ret;
 	ret.notCompleted = !NoMoreSpaceToWrite();
 	return ret;
@@ -368,10 +384,20 @@ void IOBufferCStringCompareWrapper::Wrap(void *ptr){
 	isSame = true;
 }
 
+ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Check(){
+	ErrorManagement::ErrorType  ret;
+	if (!isSame){
+		ret.comparisonFailure = true;
+	}
+	return ret;
+}
+
 ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
 	ErrorManagement::ErrorType  ret;
 	NoMoreSpaceToWrite();
-	ret.comparisonFailure = !isSame;
+	if (!isSame){
+		ret.comparisonFailure = true;
+	}
 	string++;
 	currentString = string[0];
 	return ret;
@@ -764,6 +790,9 @@ ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest,
 			}
 		}
 		writer->Flush();
+		if (ok){
+			ok = writer->Check();
+		}
 	} else {
 		ok.internalSetupError = true;
 	}
@@ -809,6 +838,9 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 			}
 		}
 		writer->Flush();
+		if (ok){
+			ok = writer->Check();
+		}
 	} else {
 		ok.internalSetupError = true;
 	}
@@ -857,6 +889,9 @@ ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *
 		}
 	}
 	writer->Flush();
+	if (ok){
+		ok = writer->Check();
+	}
 
 	return ok;
 }
@@ -894,6 +929,9 @@ ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 
 		}
 	}
 	writer->Flush();
+	if (ok){
+		ok = writer->Check();
+	}
 
 	return ok;
 }
@@ -934,6 +972,9 @@ ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, con
 		}
 	}
 	writer->Flush();
+	if (ok){
+		ok = writer->Check();
+	}
 
 	return ok;
 }
@@ -983,8 +1024,10 @@ ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8
 			}
 		}
 	}
-
 	writer->Flush();
+	if (ok){
+		ok = writer->Check();
+	}
 
 	return ok;
 }
@@ -1030,8 +1073,10 @@ ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *
 				}
 			}
 		}
-
 		writer->Flush();
+		if (ok){
+			ok = writer->Check();
+		}
 	}
 
 	return ok;
@@ -1075,8 +1120,10 @@ ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 
 			}
 		}
 	}
-
 	writer->Flush();
+	if (ok){
+		ok = writer->Check();
+	}
 
 	return ok;
 }

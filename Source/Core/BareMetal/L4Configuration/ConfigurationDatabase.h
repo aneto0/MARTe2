@@ -71,6 +71,19 @@ public:
     //TODO test and document
     void CleanUp();
 
+    /**
+     * @brief Locks the shared semaphore.
+     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
+     * @return true if the shared semaphore is successfully locked.
+     */
+    ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
+
+    /**
+     * @brief Unlocks the shared semaphore.
+     * @return true if the shared semaphore is successfully unlocked.
+     */
+    void Unlock();
+
 
 /// StructuredDataI Interface
 
@@ -81,12 +94,12 @@ public:
      * In this case the class must be introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Read(CCString name,const AnyType &value);
+    virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
      */
-    virtual AnyType GetType(CCString name);
+    virtual AnyType GetType(CCString path);
 
     /**
      * @see StructuredDataI::Write
@@ -94,7 +107,7 @@ public:
      * if it is introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual bool Write(CCString name, const AnyType &value);
+    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value);
 
     /**
      * TODO
@@ -102,80 +115,68 @@ public:
      * Removes any object with the same name
      * object name must not include '.'
      */
-    virtual bool Write(Reference object);
+    virtual ErrorManagement::ErrorType Write(Reference object);
 
     /**
      * @see StructuredDataI::Copy
      */
-    virtual bool Copy(StructuredDataI &destination);
+    virtual ErrorManagement::ErrorType Copy(StructuredDataI &destination);
 
     /**
      * @see StructuredDataI::MoveToRoot
      */
-    virtual bool MoveToRoot();
+    virtual ErrorManagement::ErrorType MoveToRoot();
 
     /**
      * @see StructuredDataI::MoveToAncestor
      */
-    virtual bool MoveToAncestor(const uint32 generations);
+    virtual ErrorManagement::ErrorType MoveToAncestor(const uint32 generations);
 
     /**
      * @see StructuredDataI::MoveAbsolute
      */
-    virtual bool MoveAbsolute(CCString path);
+    virtual ErrorManagement::ErrorType MoveAbsolute(CCString path);
 
     /**
      * @see StructuredDataI::MoveRelative
      */
-    virtual bool MoveRelative(CCString path);
+    virtual ErrorManagement::ErrorType MoveRelative(CCString path);
 
     /**
      * @see StructuredDataI::CreateAbsolute
      */
-    virtual bool CreateAbsolute(CCString path);
+    virtual ErrorManagement::ErrorType CreateAbsolute(CCString path);
 
     /**
      * @see StructuredDataI::CreateRelative
      */
-    virtual bool CreateRelative(CCString path);
+    virtual ErrorManagement::ErrorType CreateRelative(CCString path);
 
     /**
      * @see StructuredDataI::AddToCurrentNode
      */
-    virtual bool AddToCurrentNode(Reference node);
+    virtual ErrorManagement::ErrorType AddToCurrentNode(Reference node);
 
     /**
      * @see StructuredDataI::Delete
      */
-    virtual bool Delete(CCString name);
+    virtual ErrorManagement::ErrorType Delete(CCString name);
 
     /**
      * @brief StructuredDataI::GetName
      */
-    virtual const char8 *GetName();
+    virtual CCString GetName();
 
     /**
      * @brief StructuredDataI::GetChildName
      */
-    virtual const char8 *GetChildName(const uint32 index);
+    virtual CCString GetChildName(const uint32 index);
 
     /**
      * @brief StructuredDataI::GetNumberOfChildren
      */
     virtual uint32 GetNumberOfChildren();
 
-    /**
-     * @brief Locks the shared semaphore.
-     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
-     * @return true if the shared semaphore is successfully locked.
-     */
-    bool Lock(const TimeoutType &timeout);
-
-    /**
-     * @brief Unlocks the shared semaphore.
-     * @return true if the shared semaphore is successfully unlocked.
-     */
-    void Unlock();
 
     // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
     /*operator ReferenceT<ReferenceContainer>(){

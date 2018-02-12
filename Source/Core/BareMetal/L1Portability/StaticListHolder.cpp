@@ -321,6 +321,10 @@ bool StaticListHolder::IncreaseCapacity(uint32 minimumSize) {
 void* StaticListHolder::GetAllocatedMemory() {
     return reinterpret_cast<void *>(allocatedMemory_);
 }
+const void* StaticListHolder::GetAllocatedMemoryConst() const {
+    return reinterpret_cast<const void *>(allocatedMemory_);
+}
+
 
 bool StaticListHolder::Set(const uint32 position,
                            const void * const value) {

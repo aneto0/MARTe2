@@ -277,6 +277,12 @@ public:
      */
     void* GetAllocatedMemory();
 
+    /**
+     * @brief Retrieves the pointer to the allocated memory area.
+     * @return the pointer to the allocated memory area.
+     */
+    const void* GetAllocatedMemoryConst() const;
+
 private:
 
     /**

@@ -99,6 +99,7 @@ public:
 
     /**
      * @see StaticListHolder::Add()
+     * @brief copies value into memory of StaticList
      */
     bool Add(const elementType &value);
 
@@ -133,7 +134,9 @@ public:
      *   if (pos >= GetSize())
      *      return last element in the list
      */
-    elementType operator[](uint32 pos);
+    const elementType &operator[](uint32 pos) const;
+
+    elementType &Access(uint32 pos);
 
 private:
 
@@ -217,9 +220,23 @@ bool StaticList<elementType, listAllocationGranularity>::Set(const uint32 positi
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
-elementType StaticList<elementType, listAllocationGranularity>::operator[](uint32 pos) {
-    return (pos > (slh.GetSize() - 1u)) ?
-            (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[slh.GetSize() - 1u]) : (reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[pos]);
+ elementType &StaticList<elementType, listAllocationGranularity>::Access(uint32 pos) {
+	static uint8 dummy[sizeof(elementType)];
+	elementType *dummyPtr = reinterpret_cast<elementType *>(&dummy[0]);
+	uint32 size = slh.GetSize();
+	return ((size == 0u) || (pos >= size))?
+			*dummyPtr : reinterpret_cast<elementType*>(slh.GetAllocatedMemory())[pos];
+}
+
+
+template<typename elementType, uint32 listAllocationGranularity>
+const elementType &StaticList<elementType, listAllocationGranularity>::operator[](uint32 pos) const{
+	static uint8 dummy[sizeof(elementType)];
+	uint32 size = slh.GetSize();
+	return  ((size == 0u) || (pos >= size))?
+	   *(reinterpret_cast<const elementType*>(&dummy[0])) : (reinterpret_cast<const elementType*>(slh.GetAllocatedMemoryConst())[pos]);
+//    return (pos > (slh.GetSize() - 1u)) ?
+//            (reinterpret_cast<const elementType*>(slh.GetAllocatedMemoryConst())[slh.GetSize() - 1u]) : (reinterpret_cast<const elementType*>(slh.GetAllocatedMemoryConst())[pos]);
 }
 
 }

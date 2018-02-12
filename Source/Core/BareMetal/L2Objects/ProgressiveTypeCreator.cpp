@@ -443,10 +443,10 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CheckMemoryFixedSizeEl(bool n
 		if (ret){
 			// remember pointer to string array
 			strings = reinterpret_cast<CCString *>(page.Address(pageWritePos));
-printf("Strings Pointer Table base = %p\n",strings); // TODO remove
+//printf("Strings Pointer Table base = %p\n",strings); // TODO remove
 			if (auxSize > 0){
 				auxPtr = page.Address(pageWritePos + CCStringTableSize);
-printf("String Vector Table base = %p\n",auxPtr);   // TODO
+//printf("String Vector Table base = %p\n",auxPtr);   // TODO
 			}
 
 			// close up memory pages
@@ -507,11 +507,11 @@ printf("String Vector Table base = %p\n",auxPtr);   // TODO
 			}
 		}
 
-{// TODO remove
-	for (int i = 0;(i<numberOfElements) && ret;i++){
-		printf("strings[%i] = %p\n",i,strings[i].GetList());
-	}
-}
+//{// TODO remove
+//	for (int i = 0;(i<numberOfElements) && ret;i++){
+//		printf("strings[%i] = %p\n",i,strings[i].GetList());
+//	}
+//}
 
 		if (ret){
 			dataPtr = reinterpret_cast<void *>(strings);
@@ -701,7 +701,7 @@ printf("String Vector Table base = %p\n",auxPtr);   // TODO
 
 		if (ret){
 			uint32 pageSize = page.CurrentPageSize();
-printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
+//printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
 			if ((page.NumberOfPages()==1) && (pageSize <= 64)){
 				if (pageSize <= 4){
 					ReferenceT<AnyObjectT<4>> ao(buildNow);

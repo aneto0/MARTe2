@@ -67,7 +67,7 @@ struct DimensionInfo{
 	 */
 	uint32 numberOfElements;
 	/**
-	 * @brief A for arrays P for pointers to arays p for const pointers to arrays
+	 * @brief A for arrays F/f for pointers to arrays, ZSDzsd for pointers to ZTA, MVmv for matrix & vectors
 	 */
 	char8  type;
 };
@@ -110,12 +110,7 @@ public:
      * @brief copy operator
      */
     VariableDescriptor &operator=(const VariableDescriptor &x );
-#if 0
-    /**
-     * @brief sets the typeDescriptor
-     */
-    VariableDescriptor(const TypeDescriptor &td);
-#endif
+
     /**
      * @brief sets the typeDescriptor
      * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
@@ -126,15 +121,18 @@ public:
     /**
      * @brief returns size of all the memory addressed by this variable.
      * @param[in] pointer, the pointer to the variable
-     * @param[in] maxDepth  determine the number of indirected memory to include.
-     * limit 0 means just the top layer
-     * Note that pointers to type only address one element
-     * Vector, Matrix, ZeroTermArray are all supported
+     * The functions handles complex arrays where dimensions are linked by pointers and maybe of variable size
+     * The dimensions are considered linked if:
+     * 1) linked by an Array or a vector:  Vector<int [][]>[][] is considered a 5 dimensional array (1 variable)
+     * 2) linked by a Zero Terminated:     ZeroTerminatedArray<int [][]>[][] is considered a 5 dimensional array (1 variable)
+     * 3) linked by a pointer to an Array: (* [][])[][] is considered a 4 dimensional array (the * dimension is dropped)
+     * 4) will not link pointer to data types: a float * is simply a pointer
+     * Note that pointers to type are considered just pointers
      * @param[out] dataSize is the full size of the memory necessary to store this var: auxilliary storages + actual data
      * @param[out] overHeadSize is the memory used as overhead: pointers etc
      * @return true if all ok
      */
-    ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize=NULL,uint8 maxDepth=10) const;
+    ErrorManagement::ErrorType GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize=NULL) const;
 
     /**
      * @brief removes one indirection layer and update variable pointer
@@ -166,6 +164,13 @@ public:
     /**
      * @brief converts the variable to the destination type and then copies/compares to/with dest
      * @details copies pointers to Arrays and to basic types as they were Arrays or basic types if pointer is valid
+     * The functions also copies complex arrays where dimensions are linked by pointers and maybe of variable size
+     * The dimensions are considered linked if:
+     * 1) linked by an Array or a vector:  Vector<int [][]>[][] is considered a 5 dimensional array (1 variable)
+     * 2) linked by a Zero Terminated:     ZeroTerminatedArray<int [][]>[][] is considered a 5 dimensional array (1 variable)
+     * 3) linked by a pointer to an Array: (* [][])[][] is considered a 4 dimensional array (the * dimension is dropped)
+     * 4) will not link pointer to data types: a float * is simply a pointer
+     * The function will copy/compare among object with the same number of dimensions if each dimension has the same size
      * @param[in] sourcePtr, the pointer to the variable to be copied
      * @param[in] destPtr, the pointer to the destination
      * @param[in] destVd, the variable descriptor of the destination
@@ -175,7 +180,7 @@ public:
     ErrorManagement::ErrorType CopyTo(
     		const uint8 *sourcePtr,
     			  uint8 *destPtr,
-				  VariableDescriptor destVd,
+				  const VariableDescriptor &destVd,
 				  bool isCompare= false
     		) const ;
 
@@ -200,15 +205,6 @@ public:
      */
     TypeDescriptor GetSummaryTypeDescriptor() const;
 
-    /**
-     * @brief obtains information about multidimensional arrays
-     * @details handles arrays, pointers to array, Vectors, Matrices and ZTA terminated
-     * @param[out] dimensions will be cleaned and reallocated to contain the list of dimensions.
-     * Pointer to Arrays are coded as F, Pointer to ZTA simply with the ZTA code
-     * It produces at least one dimension if there are no errors
-     * @return the type descriptor of the array element.
-     */
-    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const;
 private:
     /**
      *  @brief a zero terminated sequence of tokens.
@@ -226,13 +222,23 @@ private:
  */
 
     /**
-     * @brief adds one layer of modifiers to the top
-     * @return true if operation succeeded                       */
+     * @brief obtains information about multidimensional arrays
+     * @details handles arrays, pointers to array, Vectors, Matrices and ZTA terminated
+     * @param[out] dimensions will be cleaned and reallocated to contain the list of dimensions.
+     * Pointer to Arrays are coded as F, Pointer to ZTA simply with the ZTA code
+     * It produces at least one dimension if there are no errors
+     * @return the type descriptor of the array element.
+     */
+    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const;
+
+    /**
+     * @brief adds one layer of modifiers to the top used in building the object
+     * @return true if operation succeeded
+     */
     void AddModifiersLayerConst(char8 modifier, uint64 size);
 
     /**
      * @brief Converts type descriptor to C/c++ equivalent
-     *
      */
     ErrorManagement::ErrorType  ToStringPrivate(DynamicCString &string,CCString modifierString,bool start,int8 &priority) const;
 
@@ -255,10 +261,14 @@ private:
      * @param[out] numberOfTermElements number of elements of size elementSize used as terminator in a ZTA
      * @param[out] modifier is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
      */
-    ErrorManagement::ErrorType FullLayerInfo(CCString &modifierString,const uint8 *pointer,
-    		uint64 &numberOfElements,uint32 &elementSize,
-			uint32 &arrayStringSize,uint32 &numberOfTermElements,
-			char8 &modifier) const;
+    ErrorManagement::ErrorType FullLayerInfo(
+    		CCString &		modifierString,
+			const uint8 *	pointer,
+    		uint64 &		numberOfElements,
+			uint32 &		elementSize,
+			uint32 &		arrayStringSize,
+			uint32 &		numberOfTermElements,
+			char8 &			modifier) const;
 
     /**
      * @brief returns size of all the memory addressed by this variable.
@@ -273,18 +283,18 @@ private:
      * @param[in] layerMultiplier >1 it is an array[layerMultiplier] of the type described by modifierString
      * @return true if all ok
      */
-    ErrorManagement::ErrorType GetDeepSize(CCString modifierString, const uint8 *pointer,
-    		uint64 &dataSize, uint64 &overHeadSz,uint8 maxDepth=100,uint32 layerMultiplier=1) const;
-
-    /**
-     *  @brief To encode the fact that what is coming next is a constant
-     */
-    inline void AddConstantCode();
+    ErrorManagement::ErrorType GetDeepSize(
+    		CCString 		modifierString,
+			const uint8 *	pointer,
+    		uint64 &		dataSize,
+			uint64 &		overHeadSz,
+			uint8 			maxDepth=100,
+			uint32 			layerMultiplier=1) const;
 
     /**
      * @brief to encode the actual data type. It will incorporate the const and Array code
      */
-    void FinaliseCode(TypeDescriptor td);
+    inline void FinaliseCode(TypeDescriptor td);
 
     // GENERAL MATCHES
     // called by the main constructor
@@ -407,9 +417,8 @@ private:
      * @post delegates to MatchFinal
      */
     template <class T>
-    inline void Match(T * x){
-    	MatchFinal(x,x);
-    }
+    inline void Match(T * x);
+    //{    	MatchFinal(x,x);    }
 
     /**
      * @brief Matches a T if not derivative of StreamI Object or StructuredDataI
@@ -446,17 +455,6 @@ private:
      */
     template <class T>
     inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StructuredDataI,T), T>::type *x);
-
-#if 0 // replaced by Object->AnyType()
-    /**
-     * @brief Matches a T if derivative of Object
-     * @tparam T the type of the elements in the vector
-     * @param[in] x
-     * @post closes the matching chain assigning the typeDescriptor
-     */
-    template <class T>
-    inline void MatchFinal(T *y,typename enable_if<isSameOrBaseOf(Object,T), T>::type *x);
-#endif
 
     // SPECIFIC FINAL MATCHES
     /**
@@ -650,9 +648,6 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
 }
 
 void VariableDescriptor::Match(DynamicCString *s){
-//	AddModifiersLayerConst('P', 0);
-//	AddModifiersLayerConst('D', 0);
-//	FinaliseCode(Character8Bit);
 	bool isConstant = typeDescriptor.dataIsConstant;
 	if (isConstant){
 		FinaliseCode(ConstCharString(sizeof(DynamicCString)));
@@ -663,26 +658,16 @@ void VariableDescriptor::Match(DynamicCString *s){
 }
 
 void VariableDescriptor::Match(CString *s){
-//	AddModifiersLayerConst('P', 0);
-//	AddModifiersLayerConst('Z', 0);
-//	FinaliseCode(Character8Bit);
 	FinaliseCode(CharString);
 }
 
 void VariableDescriptor::Match(CCString *s){
-//	AddModifiersLayerConst('P', 0);
-//	AddModifiersLayerConst('Z', 0);
-//    AddConstantCode();
-//	FinaliseCode(Character8Bit);
 	FinaliseCode(ConstCharString(sizeof(CString)));
 }
 
 // TODO wrong. this is not a pointer!
 template <uint32 sz>
 void VariableDescriptor::Match(StaticCString<sz> *s){
-//	AddModifiersLayerConst('P', 0);
-//	AddModifiersLayerConst('S', sz);
-//	FinaliseCode(Character8Bit);
 	FinaliseCode(ConstCharString(sz));
 }
 
@@ -706,19 +691,16 @@ inline void VariableDescriptor::Match( const T (*x) [n]){
     Match(pp);
 }
 
-
 template <class T>
 inline void VariableDescriptor::Match(T ** x){
 	AddModifiersLayerConst('P', 0);
-
     T *pp = NULL;
     Match(pp);
 }
 
 template <class T>
 inline void VariableDescriptor::Match(T * const * x){
-
-    AddConstantCode();
+	typeDescriptor.dataIsConstant = true;
     T ** pp=NULL;
     Match(pp);
 }
@@ -733,18 +715,21 @@ inline void VariableDescriptor::Match(T const * * x){
 
 template <class T>
 inline void VariableDescriptor::Match(T const * const * x){
-
-    AddConstantCode();
+	typeDescriptor.dataIsConstant = true;
     T const * * pp=NULL;
     Match(pp);
 }
 
 template <class T>
 void VariableDescriptor::Match(T const * x){
-
-    AddConstantCode();
+	typeDescriptor.dataIsConstant = true;
     T * pp=NULL;
     Match(pp);
+}
+
+template <class T>
+inline void VariableDescriptor::Match(T * x){
+	MatchFinal(x,x);
 }
 
 template <class T>
@@ -849,9 +834,12 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 	FinaliseCode((TypeCharacteristics<baseType>::IsSigned()) ? SignedBitSet(baseType,bitSize,0) : UnsignedBitSet(baseType,bitSize,0));
 }
 
-void VariableDescriptor::AddConstantCode(){
-	typeDescriptor.dataIsConstant = true;
+void VariableDescriptor::FinaliseCode(TypeDescriptor td){
+	bool isConst = typeDescriptor.dataIsConstant;
+	typeDescriptor = td;
+	if (isConst) typeDescriptor.dataIsConstant = true;
 }
+
 
 
 

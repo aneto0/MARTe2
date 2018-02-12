@@ -34,6 +34,7 @@
 
 #include "MemoryPage.h"
 #include "Object.h"
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -77,7 +78,7 @@ public:
 	 * @brief The only interface provided by an AnyObject is the ability to provide its data via an AnyType.
 	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
 	 */
-	virtual operator AnyType();
+    virtual void ToAnyType(AnyType &at);
 
 private:
 	/**

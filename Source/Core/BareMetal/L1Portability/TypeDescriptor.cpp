@@ -49,7 +49,6 @@ TypeDescriptor::TypeDescriptor() {
     all = 0;
 }
 
-
 uint32 TypeDescriptor::StorageSize() const{
 	uint32 size = 0;
 	if (isStructuredData){

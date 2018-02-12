@@ -41,7 +41,7 @@
 #include "MemoryCheck.h"
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
-
+#include "AnyObjectT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -62,7 +62,13 @@ namespace MARTe{
 #define memberDeclSubTemplate(type,typeName,arrayDims,className)\
         CLASS_MEMBER_REGISTER(className,typeName)
 
-typedef int64 (*myPArrType[12])[25] ;
+#define mypPAA1 3
+#define mypPAA2 5
+#define mypPAA3 7
+#define mypPAA4 11
+typedef int64 (*myPArrType[mypPAA4])[mypPAA3*mypPAA1] ;
+typedef int16 (*myPArrType2[mypPAA1][mypPAA2])[mypPAA3][mypPAA4] ;
+typedef int16 (*myPArrType0)[mypPAA3][mypPAA4] ;
 
 typedef BitRange<uint32,1, 0> uint32_1_0 ;
 typedef BitRange<uint32,2, 1> uint32_2_1 ;
@@ -131,6 +137,7 @@ private:
         subTemplateArr(int16,int16Arr,[12],className)\
         subTemplateArr(int64,int64Arr,[12][25],className)\
         subTemplate(myPArrType,int64PArr,[],className)\
+        subTemplate(myPArrType2,int16AAPAA,[],className)\
         subTemplate(int32 *,int32PVar,[],className)\
         subTemplate(CCString,CCStringVar,[],className)\
         subTemplate(CString,CStringVar,[],className)\
@@ -163,6 +170,8 @@ const char8* data[] = {
         "nonnapapera"
 };
 char8 dataBuffer[]="mizzega";
+
+static int16 int16AAPAA[mypPAA1][mypPAA2][mypPAA3][mypPAA4];
 
 void PrepareTestObject(){
     test1Class.int8Var = 18;
@@ -197,9 +206,26 @@ void PrepareTestObject(){
     test1Class.CStringVar  = dataBuffer;
     test1Class.DCStringVar = data[2];
 
-    static int64 arr1[25] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+    static int64 arr1[mypPAA3*mypPAA1] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21};
+    for (int i=0;i<mypPAA4;i++) test1Class.int64PArr[i] = NULL;
     test1Class.int64PArr[0]= &arr1;
     test1Class.int64PArr[4]= &arr1;
+
+    static int16 (*int16AAPAAp)[mypPAA1*mypPAA2][mypPAA1*mypPAA2] ;
+
+    {
+    	uint32 i,j;
+    	int16 *pdummy = &int16AAPAA[0][0][0][0];
+    	for (i=0;i<mypPAA1*mypPAA2*mypPAA1*mypPAA2;i++) {
+    		pdummy[i] = rand();
+    	}
+    	myPArrType0 *p =  &test1Class.int16AAPAA[0][0];
+    	for (i=0;i<mypPAA1*mypPAA2;i++) {
+    		p[i] = (myPArrType0 )&int16AAPAA[i/mypPAA2][i%mypPAA2][0][0];
+    	}
+    }
+
+//printf("&arr1 = %p\n",&arr1);
     static CCString pippo[] = {
             CCString("uno"),
             CCString("duo"),
@@ -250,8 +276,6 @@ ErrorManagement::ErrorType PrintError(ErrorManagement::ErrorType e){
 
     return e;
 }
-
-
 
 ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck){
     ErrorManagement::ErrorType err;
@@ -322,27 +346,39 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
 }
 
 ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 storageSizeCheck ){
-    ErrorManagement::ErrorType err;
+    ErrorManagement::ErrorType ok;
 
     uint64 dataSize;
     uint64 storageSize;
 
-    if (err){
+    if (ok){
         const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
-        err = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-    	if (!err){
-    		printf("GetSize error");
+        ok = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+    	if (!ok){
+    		REPORT_ERROR(ok,"GetSize error");
     	}
     }
 
-    if (err){
+    if (ok){
         if ((dataSize != dataSizeCheck) || (storageSize != storageSizeCheck)){
-            err.comparisonFailure = true;
-            printf("(%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,dataSizeCheck,storageSizeCheck);
+        	ok.comparisonFailure = true;
+        	DynamicCString errM;
+        	errM.Append('(');
+        	errM.AppendNum(dataSize);
+        	errM.Append(',');
+        	errM.AppendNum(storageSize);
+        	errM.AppendN(") != (");
+        	errM.AppendNum(dataSizeCheck);
+        	errM.Append(',');
+        	errM.AppendNum(storageSizeCheck);
+        	errM.Append(')');
+    		REPORT_ERROR(ok,errM.GetList());
+
+//            printf("(%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,dataSizeCheck,storageSizeCheck);
         }
     }
 
-    return err;
+    return ok;
 }
 
 ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
@@ -351,7 +387,7 @@ ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
 	DynamicCString destinationString;
    	ok=at.CopyTo(destinationString);
    	if (!ok){
-       	printf("AnyType::CopyTo error");
+		REPORT_ERROR(ok,"CopyTo error");
    	}
 
     if (ok){
@@ -369,12 +405,7 @@ ErrorManagement::ErrorType CheckAnyContent(AnyType at,AnyType contentCheck){
 
    	ok=at.CompareWith(contentCheck);
    	if (!ok){
-
-       	if (ok.comparisonFailure){
-        	printf("Values Differ");
-       	} else {
-           	printf("AnyType::CompareWith error");
-       	}
+		REPORT_ERROR(ok,"CheckAnyContent error");
    	}
 
     return ok;
@@ -389,7 +420,7 @@ void Check1(AnyType at,CCString expression,CCString typeCheck,uint64 dataSizeChe
     printf ("%s ->",expression.GetList());
 
     if (!ok){
-    	printf("MultipleDereference error");
+		REPORT_ERROR(ok,"MultipleDereference error");
     } else {
     	ok = CheckType(at,typeCheck);
     }
@@ -399,8 +430,8 @@ void Check1(AnyType at,CCString expression,CCString typeCheck,uint64 dataSizeChe
     }
 
     if (!ok){
-    	printf("NO  -->err ");
-    	PrintError(ok);
+		REPORT_ERROR(ok,expression.GetList());
+    	printf("*NO*  -->See error Log ");
     } else {
         printf ("OK %s,sz=%lli,stor=%lli",typeCheck.GetList(),dataSizeCheck,storageSizeCheck);
     }
@@ -411,13 +442,15 @@ void Check1(AnyType at,CCString expression,CCString typeCheck,uint64 dataSizeChe
 
 void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck ){
     ErrorManagement::ErrorType ok;
+
 	ok = at.MultipleDereference(expression);
+
 
     for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
     printf ("%s ->",expression.GetList());
 
     if (!ok){
-    	printf("MultipleDereference error");
+		REPORT_ERROR(ok,"MultipleDereference error");
     } else {
     	ok = CheckType(at,typeCheck);
     }
@@ -428,14 +461,11 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 
     if (ok){
     	ok = CheckContent(at,contentCheck);
-    	if (!ok){
-        	printf("CheckContent error");
-    	}
     }
 
     if (!ok){
-    	printf("NO  -->error ");
-    	PrintError(ok);
+		REPORT_ERROR(ok,expression.GetList());
+    	printf("*NO*  -->See error Log ");
     } else {
         printf("OK (%s)%s,sz=%lli,stor=%lli",typeCheck.GetList(),contentCheck.GetList(),dataSizeCheck,storageSizeCheck);
     }
@@ -450,7 +480,7 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
     printf ("%s ->",expression.GetList());
 
     if (!ok){
-    	printf("MultipleDereference error");
+		REPORT_ERROR(ok,"MultipleDereference error");
     } else {
     	ok = CheckType(at,typeCheck);
     }
@@ -462,13 +492,18 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
     if (ok){
     	ok = CheckAnyContent(at,contentCheck);
     	if (!ok){
-        	printf("CheckContent error");
+    		REPORT_ERROR(ok,"CheckContent error");
     	}
     }
 
     if (!ok){
-    	printf("NO  -->error ");
-    	PrintError(ok);
+    	DynamicCString errM;
+    	errM.AppendN(expression.GetList());
+    	errM.AppendN(" --> ");
+		contentCheck.ToString(errM);
+		REPORT_ERROR(ok,errM.GetList());
+
+    	printf("*NO*  -->See error Log ");
     } else {
         printf("OK (%s){content},sz=%lli,stor=%lli",typeCheck.GetList(),dataSizeCheck,storageSizeCheck);
     }
@@ -612,7 +647,8 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 
 	if (ret){
 
-		AnyType x = aoi.operator AnyType();
+		AnyType x;
+		aoi.ToAnyType(x);
 		ret = CompareType(x,at);
 		if (!ret){
 			printf ("Type Diff \n");
@@ -625,7 +661,8 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 
 	if (ret){
 
-		AnyType x = aoi.operator AnyType();
+		AnyType x;
+		aoi.ToAnyType(x);
 	    ret = x.CompareWith(at);
 		if (!ret){
 			printf ("Content Differ \n");
@@ -676,6 +713,8 @@ void Test(){
 
     AnyType at(test1Class);
 
+printf ("%c %p\n",test1Class.char8Var,&test1Class.char8Var);
+
     Check2(at,".char8Var","char8","c",sizeof(char8),0);
     Check2(at,".int8Var","int8","18",sizeof(int8),0);
     Check2(at,".int16Var","int16","116",sizeof(int16),0);
@@ -705,10 +744,10 @@ void Test(){
     Check1(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
     Check2(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0);
     Check1(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
-    Check1(at,".int64PArr","int64( *[12])[25]",496,sizeof(test1Class.int64PArr));
-    Check1(at,".int64PArr[4]","int64( *)[25]",208,8);
+    Check1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr));
+    Check1(at,".int64PArr[4]","int64( *)[21]",176,8);
     Check2(at,".int64PArr[4][5]","int64","6",8,0);
-    Check1(at,".int32PVar","int32 *",12,8);
+    Check1(at,".int32PVar","int32 *",8,0);
     Check1(at,".int32PVar*","int32",4,0);
     Check2(at,".CCStringVar","CCString","pippo",14,8);
     Check2(at,".CCStringVar[0]","const char8","p",1,0);
@@ -729,33 +768,17 @@ void Test(){
     Check2(at,".CStringVAZTAVar[1][2][0][3]","const char8","i",1,0);
     CCString testPatt[3] = {CCString("grande"),CCString("spazio"),CCString("aperto")};
     Check3(at,".CStringVAZTAVar[1][1]","Vector<CCString>",testPatt,61,40);
+    Check3(at,".int16AAPAA","int16( *[3][5])[7][11]",int16AAPAA,2430,120);
     Check1(at,".MFloat10","Matrix<float( *)[10]>",864,824);
     Check1(at,".pStreamI","StreamI *",30,16);
     Check2(at,".pStreamI*","StreamI","riello",22,8);
     test1Class.pStreamI->Seek(3);
-    Check2(at,".pStreamI","StreamI *","chiarriello",30,16);
+    Check2(at,".pStreamI*","StreamI","chiarriello",22,8);
+//    Check2(at,".pStreamI","StreamI *","chiarriello",30,16);  // this we do not support anymore
     Check2(at,".SString","StreamString","succhiarriello",78,64);
     Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64);
     Check3(at,".SString","StreamString",CCString("succhiarriello"),78,64);
     Check1(at,".myStream","StreamI",72,72);
-
-    TestSafeN2N<float,int20>(1e6);
-    TestSafeN2N<float,int21>(1e6);
-    TestSafeN2N<float,uint19>(1e6);
-    TestSafeN2N<float,uint20>(1e6);
-    TestSafeN2N<float,int20>(-1e6);
-    TestSafeN2N<float,int21>(-1e6);
-    TestSafeN2N<uint30,int27>(1000000000);
-    TestSafeN2N<uint35,int32>(4000000000);
-    TestSafeN2N<uint35,uint32>(4000000000);
-    TestSafeN2N<int35 ,uint32>(4000000000);
-    TestSafeN2N<int35 ,float>(4000000000);
-    TestSafeN2N<int35 ,double>(4000000000);
-    TestSafeN2N<double,uint17>(4000000000);
-
-    printf ("%i %i %le \n",TypeCharacteristics<double>::UsableBitSize(),DBL_MAX_EXP,TypeCharacteristics<double>::MaxValue());
-    printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
-    printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
 	ProgressiveTypeCreator pfstc(1024);
 
@@ -785,6 +808,43 @@ void Test(){
 	Check4<DynamicCString ,2,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,515,235,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 
+    TestSafeN2N<float,int20>(1e6);
+    TestSafeN2N<float,int21>(1e6);
+    TestSafeN2N<float,uint19>(1e6);
+    TestSafeN2N<float,uint20>(1e6);
+    TestSafeN2N<float,int20>(-1e6);
+    TestSafeN2N<float,int21>(-1e6);
+    TestSafeN2N<uint30,int27>(1000000000);
+    TestSafeN2N<uint35,int32>(4000000000);
+    TestSafeN2N<uint35,uint32>(4000000000);
+    TestSafeN2N<int35 ,uint32>(4000000000);
+    TestSafeN2N<int35 ,float>(4000000000);
+    TestSafeN2N<int35 ,double>(4000000000);
+    TestSafeN2N<double,uint17>(4000000000);
+
+    printf ("%i %i %le \n",TypeCharacteristics<double>::UsableBitSize(),DBL_MAX_EXP,TypeCharacteristics<double>::MaxValue());
+    printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
+    printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
+
+	int32 temp;
+	AnyType xx;
+	Reference zz;
+
+	PrintType(temp);printf("\n");
+	PrintType(zz);printf("\n");
+	PrintType(xx);printf("\n");
+
+	xx = temp;
+	PrintType(xx);printf("\n");
+
+	ReferenceT<AnyObjectT<9>> ao8(buildNow);
+	ao8->Setup(SignedInteger32Bit,"",&temp,sizeof(temp));
+
+	xx = ao8;
+	PrintType(xx);printf("\n");
+    zz = ao8;
+    xx = zz;
+	PrintType(xx);printf("\n");
 }
 }
 
