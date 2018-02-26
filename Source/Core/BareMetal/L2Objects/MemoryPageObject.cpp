@@ -38,7 +38,7 @@ MemoryPageObject::~MemoryPageObject(){	}
 void MemoryPageObject::Setup(TypeDescriptor dataDescriptorIn,CCString modifiers,const void* const dataPointerIn,MemoryPage &pagesToTransfer){
 	anyType.Setup(dataDescriptorIn,modifiers,dataPointerIn);
 
-	mp.Copy(pagesToTransfer);
+	mp.StealAndJoinAtEnd(pagesToTransfer);
 }
 
 void MemoryPageObject::ToAnyType(AnyType &at){

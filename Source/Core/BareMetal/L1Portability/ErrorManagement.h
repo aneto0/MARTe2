@@ -126,7 +126,6 @@ DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 #define REPORT_ERROR(code,message)\
 MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-#if 0
 /**
  * @brief Checks a condition, reports error and sets an error variable
  * @details If condition true, Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs and sets the errorVariable
@@ -138,13 +137,11 @@ MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCT
 /*lint -save -e9026
  * 9026: function-like macro defined.
  */
-#define MANAGE_ERROR(errorVariable,errorCode,condition,message)\
-	if (condition ){\
-		errorVariable. ## errorCode = true; \
-		MARTe::ErrorManagement::ReportError(ErrorManagement:: ## errorCode,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+#define CONDITIONAL_REPORT_ERROR(code,message)\
+	if (!code){\
+		MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
 	}
 
-#endif
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.

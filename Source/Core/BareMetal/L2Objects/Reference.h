@@ -90,7 +90,7 @@ public:
 
     /**
      * @brief Creates a special Object that is the copy of the type referred to by anytype
-     * @details Creates an AnyObject
+     * @details Uses AnyObjectT or MemoryPageObject
      * @param[in] anyType the pointer to the object to copy
      */
     Reference(AnyType anyType);

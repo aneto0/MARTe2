@@ -310,6 +310,7 @@ static void PrintType(AnyType at){
 	printf("%s",string);
 }
 
+
 ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
     ErrorManagement::ErrorType err;
 
@@ -445,7 +446,6 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 
 	ok = at.MultipleDereference(expression);
 
-
     for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
     printf ("%s ->",expression.GetList());
 
@@ -472,7 +472,7 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 	printf("\n");
 }
 
-void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck ){
+void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool expectFail=false ){
     ErrorManagement::ErrorType ok;
 	ok = at.MultipleDereference(expression);
 
@@ -503,32 +503,22 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 		contentCheck.ToString(errM);
 		REPORT_ERROR(ok,errM.GetList());
 
-    	printf("*NO*  -->See error Log ");
+		if (expectFail){
+	    	printf("OK! Failed as expected - see log");
+		} else {
+	    	printf("*NO*  -->See error Log ");
+		}
     } else {
-        printf("OK (%s){content},sz=%lli,stor=%lli",typeCheck.GetList(),dataSizeCheck,storageSizeCheck);
+		if (expectFail){
+	    	printf("*NO*!  -->Should have failed ");
+		} else {
+			printf("OK (%s){content},sz=%lli,stor=%lli",typeCheck.GetList(),dataSizeCheck,storageSizeCheck);
+		}
     }
 	printf("\n");
 }
 
-/*
-template<typename T1>
-struct Setter
-{
- static inline  void Set(T1 &dest,const uint32 &source)
- {
-		SafeNumber2Number(dest,source);
- }
-};
 
-struct Setter<DynamicCString>
-{
-	static inline void Set(DynamicCString &dest,uint32 &source)
- {
-		dest.Truncate(0);
-		dest.AppendNum(source);
- }
-};
-*/
 template<typename T1>
  static inline  void NumSet(T1 &dest, uint64 &source) {
 		SafeNumber2Number(source,dest);
@@ -578,9 +568,12 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		}
 	}
 
-	printf("Gen ");
-	PrintType(at);
-	printf(" : ");
+	DynamicCString message;
+	at.ToString(message);
+
+    for (uint32 ix= message.GetSize();ix<28;ix++) putchar(' ');
+    printf ("%s ->",message.GetList());
+    message.Truncate(0);
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
@@ -588,6 +581,7 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		REPORT_ERROR(ret,"pfstc.Start failed");
 	}
 
+//int32 counter = 0;	//TODO
 	if (ret){
 		for (int j=0;(j<size1) && ret ;j++){
 
@@ -605,6 +599,7 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 				(*targetB[j])[i]=k;
 				targetA[j][i] = k;
 				char8 buffer[32];
+//kk = counter++;//TODO
 				sprintf(buffer,"%lli",kk);
 				ret = pfstc.AddElement(buffer);
 				if (!ret){
@@ -641,34 +636,26 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		if (!ret){
 			REPORT_ERROR(ret,"pfstc.GetReference failed");
 		} else {
-			printf ("%s :",aoi->GetClassRegistryItem()->GetClassNameA());
+			message.AppendN(aoi->GetClassRegistryItem()->GetClassNameA());
+			message.AppendN(" to impl ");
 		}
 	}
 
 	if (ret){
-
 		AnyType x;
 		aoi.ToAnyType(x);
 		ret = CompareType(x,at);
-		if (!ret){
-			printf ("Type Diff \n");
-		} else {
-			printf("Type OK (");
-			PrintType(x);
-			printf("): ");
+		if (ret){
+			x.ToString(message);
 		}
 	}
 
 	if (ret){
-
 		AnyType x;
 		aoi.ToAnyType(x);
 	    ret = x.CompareWith(at);
 		if (!ret){
-			printf ("Content Differ \n");
 			REPORT_ERROR(ret,"Compare content fault");
-		} else {
-			printf ("Content OK \n");
 		}
 	}
 
@@ -677,7 +664,9 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		string.AppendN("Failed ");
 		at.ToString(string);
 		REPORT_ERROR(ret, string.GetList());
-		printf ("Failed (see log) \n");
+		printf ("*NO* Random Creation/CopyTo Compare Failed (see log) \n");
+	} else {
+		printf ("OK %s :Random Creation/CopyTo Compare \n",message.GetList());
 	}
 
 
@@ -770,24 +759,26 @@ printf ("%c %p\n",test1Class.char8Var,&test1Class.char8Var);
     Check3(at,".CStringVAZTAVar[1][1]","Vector<CCString>",testPatt,61,40);
     Check3(at,".int16AAPAA","int16( *[3][5])[7][11]",int16AAPAA,2430,120);
     Check1(at,".MFloat10","Matrix<float( *)[10]>",864,824);
-    Check1(at,".pStreamI","StreamI *",30,16);
+    Check1(at,".pStreamI","StreamI *",8,0); // treat as a pointer
     Check2(at,".pStreamI*","StreamI","riello",22,8);
     test1Class.pStreamI->Seek(3);
     Check2(at,".pStreamI*","StreamI","chiarriello",22,8);
 //    Check2(at,".pStreamI","StreamI *","chiarriello",30,16);  // this we do not support anymore
     Check2(at,".SString","StreamString","succhiarriello",78,64);
-    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64);
+    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,true); // expect to fail as char8* is not considered a string
     Check3(at,".SString","StreamString",CCString("succhiarriello"),78,64);
     Check1(at,".myStream","StreamI",72,72);
 
 	ProgressiveTypeCreator pfstc(1024);
 
+	Check4<int8,1,1>(pfstc,SignedInteger8Bit);
 	Check4<int8,1,2>(pfstc,SignedInteger8Bit);
 	Check4<int16,1,2>(pfstc,SignedInteger16Bit);
 	Check4<int32,1,2>(pfstc,SignedInteger32Bit);
 	Check4<int64,1,2>(pfstc,SignedInteger64Bit);
 	Check4<int32,1,8>(pfstc,SignedInteger32Bit);
 	Check4<int16,1,32>(pfstc,SignedInteger16Bit);
+	Check4<int64 ,20,3000,5>(pfstc,SignedInteger64Bit);
 	Check4<int64,2,2>(pfstc,SignedInteger64Bit);
 	Check4<int8,8,8>(pfstc,SignedInteger8Bit);
 	Check4<int64,1,10>(pfstc,SignedInteger64Bit);
@@ -801,11 +792,11 @@ printf ("%c %p\n",test1Class.char8Var,&test1Class.char8Var);
 	Check4<uint32 ,27,17>(pfstc,UnsignedInteger32Bit);
 	Check4<uint32 ,4,45,5>(pfstc,UnsignedInteger32Bit);
 	Check4<uint64 ,141,532,5>(pfstc,UnsignedInteger64Bit);
-
+	Check4<DynamicCString ,1,1,1,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,1,6,6,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,2,2,2,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,5,5,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
-	Check4<DynamicCString ,2,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
+	Check4<DynamicCString ,10,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,515,235,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 
     TestSafeN2N<float,int20>(1e6);

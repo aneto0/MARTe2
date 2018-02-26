@@ -39,7 +39,7 @@
 #include "StaticListHolder.h"
 #include "TypeCharacteristics.h"
 #include "ReferenceT.h"
-#include "MemoryPage.h"
+#include "MemoryPageFile.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -50,41 +50,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-
 namespace MARTe{
-
-class MemoryPage;
-/**
- * @brief a growable container of uint32
- */
-class SizeStack: protected StaticListHolder{
-
-public:
-	/**
-	 *
-	 */
-	inline SizeStack();
-	/**
-	 *
-	 */
-	inline bool Push(uint32 size);
-	/**
-	 *
-	 */
-	inline uint32 numberOfElements();
-	/**
-	 *
-	 */
-	inline uint32 operator[](uint32 index);
-
-	/**
-	 *
-	 */
-	inline void Clean();
-
-};
-
 
 /**
  * @brief A tool to create AnyObjectI that contains scalar/vectors/arrays of fixed size objects
@@ -138,8 +104,41 @@ public:
 	 */
 	inline uint32 DefaultPageSize();
 
-protected:
+private:
 
+	/**
+	 * @brief a growable container of uint32
+	 */
+	class SizeStack: protected StaticListHolder{
+
+	public:
+		/**
+		 *
+		 */
+		inline SizeStack();
+		/**
+		 *
+		 */
+		inline bool Push(uint32 size);
+		/**
+		 *
+		 */
+		inline uint32 NumberOfElements();
+		/**
+		 *
+		 */
+		inline uint32 operator[](uint32 index);
+
+		/**
+		 *
+		 */
+		inline void Clean();
+
+	};
+
+	/**
+	 *
+	 */
 	enum PTCState {
 		// no data yet
 		started 			= 0x0000,
@@ -173,16 +172,32 @@ protected:
 		mask				= 0x00F0
 	};
 
-	ErrorManagement::ErrorType CheckMemoryFixedSizeEl(bool newRow);
+	/**
+	 *
+	 */
+//	ErrorManagement::ErrorType CheckMemoryFixedSizeEl(bool newRow);
 
-	ErrorManagement::ErrorType CompleteFixedSizeEl(uint32 &auxSize,void *&auxPtr);
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType CompleteFixedSizeEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr);
 
-	ErrorManagement::ErrorType CheckMemoryStringEl(uint32 neededSize);
+	/**
+	 *
+	 */
+//	ErrorManagement::ErrorType CheckMemoryStringEl(uint32 neededSize);
 
-	ErrorManagement::ErrorType CompleteStringEl(void *&dataPtr,uint32 &auxSize,void *&auxPtr);
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType CompleteStringEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr);
 
+#if 0
+
+	/**
+	 *
+	 */
 	ErrorManagement::ErrorType PageGrow(uint32 amount);
-
 	/**
 	 * @brief Check if the current segment has enough space to store another vector.
 	 * If there is no need (neededSize== 0) or if the space is not large enough
@@ -193,13 +208,7 @@ protected:
 	 * @brief If pageSize is 0 allocate a new page of desired size
 	 */
 	ErrorManagement::ErrorType CheckAndNewPage(uint32 neededSize);
-	/**
-	 * @brief Check if the current segment has enough space to store another vector.
-	 * If there is no need (neededSize== 0) or if the space is not large enough
-	 * close the current memory page segment and open a new one
-	 */
-//	ErrorManagement::ErrorType CheckAndRenewPage(uint32 neededSize,uint32 newPageSize);
-
+#endif
 	/**
 	 * @brief Core of implementation of GetObject
 	 * called by GetObject
@@ -207,7 +216,7 @@ protected:
 	 * Therefore requires memory flipping.
 	 * Would not support fragmented table of string pointers. (not generated currently)
 	 */
-	ErrorManagement::ErrorType GetReferencePrivate(Reference &x, void *dataPtr, void *auxPtr,uint32 auxSize);
+	ErrorManagement::ErrorType GetReferencePrivate(Reference &x, uint8 *dataPtr, uint8 *auxPtr,uint32 auxSize);
 
 	/**
 	 * status within the progressive creation
@@ -247,8 +256,8 @@ protected:
 	/**
 	 * The object containing the memory
 	 */
-	MemoryPage page;
-
+	MemoryPageFile pageFile;
+#if 0
 	/**
 	 * Reference pageSize specified by user
 	 */
@@ -262,13 +271,18 @@ protected:
 	 */
 	uint32 	sizeLeft;
 	/**
-	 * Size of one object in bytes
-	 */
-	uint32 	objectSize;
-	/**
 	 * how much of pageSize was used
 	 */
 	uint32 pageWritePos;
+	/**
+	 * > 0 if data spread across more than one page.
+	 */
+	uint32 numberOfPages;
+#endif
+	/**
+	 * Size of one object in bytes
+	 */
+	uint32 	objectSize;
 	/**
 	 * converts from string to type
 	 */
@@ -282,40 +296,22 @@ protected:
 	 */
 	TypeDescriptor type;
 
-
+	/**
+	 *
+	 */
 	bool isString;
 
 	/**
-	 * > 0 if data spread across more than one page.
+	 * As set by the user. Different from defaultPageSize that has potentially grown
 	 */
-	uint32 numberOfPages;
+	uint32 originalPageSize;
+
 };
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-SizeStack::SizeStack():StaticListHolder(sizeof(uint32),64,0,0){
-}
-
-bool SizeStack::Push(uint32 size){
-	return Add(&size);
-}
-
-uint32 SizeStack::numberOfElements(){
-	return GetSize();
-}
-
-uint32 SizeStack::operator[](uint32 index){
-	uint32 value=0;
-	Peek(index,&value);
-	return value;
-}
-
-void SizeStack::Clean(){
-	StaticListHolder::Clean();
-}
 
 
 /**
@@ -339,7 +335,7 @@ bool ProgressiveTypeCreator::Started(){
 }
 
 inline uint32 ProgressiveTypeCreator::DefaultPageSize(){
-	return defaultPageSize;
+	return pageFile.GetDefaultPageSize();
 }
 
 

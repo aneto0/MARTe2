@@ -162,8 +162,29 @@ public:
 			CCString modifierString = emptyString) const;
 
     /**
+    * @brief creates an object clone of the variable
+    * @details:
+    * The functions also copies complex arrays where dimensions are linked by pointers and maybe of variable size
+    * The dimensions are considered linked if:
+    * 1) linked by an Array or a vector:  Vector<int [][]>[][] is considered a 5 dimensional array (1 variable)
+    * 2) linked by a Zero Terminated:     ZeroTerminatedArray<int [][]>[][] is considered a 5 dimensional array (1 variable)
+    * 3) linked by a pointer to an Array: (* [][])[][] is considered a 4 dimensional array (the * dimension is dropped)
+    * 4) will not link pointer to data types: a float * is simply a pointer
+    * The function will copy/compare among object with the same number of dimensions if each dimension has the same size
+    * @param[in] sourcePtr, the pointer to the variable to be copied
+    * @param[in] destVd, the variable descriptor of the destination
+    * @param[out] reference, the Reference to an Object clone of this data
+    * @return true if all ok or the error
+    */
+    ErrorManagement::ErrorType Clone(
+    		const uint8 *		Pointer,
+			VariableDescriptor &destVd,
+			Reference 		&reference
+			) const;
+
+    /**
      * @brief converts the variable to the destination type and then copies/compares to/with dest
-     * @details copies pointers to Arrays and to basic types as they were Arrays or basic types if pointer is valid
+     * @details
      * The functions also copies complex arrays where dimensions are linked by pointers and maybe of variable size
      * The dimensions are considered linked if:
      * 1) linked by an Array or a vector:  Vector<int [][]>[][] is considered a 5 dimensional array (1 variable)

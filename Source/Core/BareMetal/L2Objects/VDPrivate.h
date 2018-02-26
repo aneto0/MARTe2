@@ -35,7 +35,7 @@
 #include "CCString.h"
 #include "StaticList.h"
 #include "ErrorManagement.h"
-#include "TypeDescriptor.h"
+#include "VariableDescriptor.h"
 #include "ErrorManagement.h"
 
 
@@ -49,7 +49,135 @@
 
 namespace MARTe{
 
+/**
+ * Special size code to indicate that the size is variable
+ */
+const uint32 variableSize32			= 0xFFFFFFFF;
 
+/**
+ * Special size code to indicate that the size is not defined
+ */
+const uint32 indeterminateSize32	= 0xFFFFFFFE;
+
+/**
+ * Special size code to indicate that the size is variable
+ */
+const uint32 tooLarge32				= 0xFFFFFFF0;
+
+
+class  DimensionSize{
+public:
+	inline DimensionSize(uint32 x=0,bool force=false){
+		if ((!force )&&(x >= tooLarge32)){
+			x = tooLarge32;
+		}
+		value = x;
+	}
+
+	inline DimensionSize operator= (const DimensionSize &x){
+		value = x.value;
+		return *this;
+	}
+
+	inline bool operator== (const DimensionSize &x){
+		return (value == x.value);
+	}
+
+	inline bool operator!= (const DimensionSize &x){
+		return (value != x.value);
+	}
+
+	inline DimensionSize operator*(const DimensionSize &m) const{
+		DimensionSize d;
+		if (( m.value == tooLarge32 ) || ( value == tooLarge32 )){
+			d.value = tooLarge32;
+		} else
+		if (( m.value == indeterminateSize32 ) || ( value == indeterminateSize32 )){
+			d.value = indeterminateSize32;
+		} else
+		if (( m.value == variableSize32 ) || ( value == variableSize32 )){
+			d.value = variableSize32;
+		} else {
+			uint64 o = m.value * value;
+			if (o >= tooLarge32){
+				d.value = tooLarge32;
+			} else {
+				d.value = o;
+			}
+		}
+		return d;
+	}
+
+	inline DimensionSize operator+(const DimensionSize &m) const{
+		DimensionSize d;
+		if (( m.value == tooLarge32 ) || ( value == tooLarge32 )){
+			d.value = tooLarge32;
+		} else
+		if (( m.value == indeterminateSize32 ) || ( value == indeterminateSize32 )){
+			d.value = indeterminateSize32;
+		} else
+		if (( m.value == variableSize32 ) || ( value == variableSize32 )){
+			d.value = variableSize32;
+		} else {
+			uint64 o = m.value + value;
+			if (o >= tooLarge32){
+				d.value = tooLarge32;
+			} else {
+				d.value = o;
+			}
+		}
+		return d;
+	}
+
+	inline bool isTooLarge() const{
+		return (value == tooLarge32);
+	}
+
+	inline bool isVariableSize() const{
+		return (value == variableSize32);
+	}
+
+	inline bool isIndeterminateSize() const{
+		return (value == indeterminateSize32);
+	}
+
+	inline bool isNotANumber() const{
+		return (value >= tooLarge32);
+	}
+
+	ErrorManagement::ErrorType toUint32(uint32 &x) const{
+		ErrorManagement::ErrorType ret;
+		if (isNotANumber()){
+			ret.outOfRange = true;
+		} else {
+			x = value;
+		}
+		return ret;
+	}
+
+	uint32 toUint32Unchecked() const{
+		return value;
+	}
+private:
+	uint32 value;
+
+	operator uint32(){ return value;}
+};
+
+/**
+ * Special size code to indicate that the size is variable
+ */
+const DimensionSize variableSize(variableSize32,true);
+
+/**
+ * Special size code to indicate that the size is not defined
+ */
+const DimensionSize indeterminateSize(indeterminateSize32,true);
+
+/**
+ * Special size code to indicate that the size is variable
+ */
+const DimensionSize tooLarge(tooLarge32,true);
 
 /**
  * @brief description of a dimension.
@@ -59,35 +187,35 @@ struct DimensionInfoElement{
 	 * @brief A for arrays F/f for pointers to arrays, ZSDzsd for pointers to ZTA, MVmv for matrix & vectors /0 final
 	 */
 	char8  type;
+
 	/**
 	 * @brief P/p for pointer F/f for pointers to arrays, ZSDzsd for pointers to ZTA, MVmv for matrix & vectors /0 final
 	 */
 	char8  layerEnd;
+
+	/**
+	 * @brief used to mark the type used for the output
+	 */
+	char8 outputType;
+
 	/**
 	 * @brief number of elements in this dimension
-	 * 0 for variable size (ZSDMV)
+	 * DynamicSize for variable size (ZSDMV)
 	 */
-	uint32 numberOfElements;
+	DimensionSize numberOfElements;
 
 	/**
 	 * product of all the underlying dimensions up to a terminal dimension.
 	 * include size of terminating type (void *), vector<>,matrix<> or sizeof(T)
 	 */
-	uint64 elementSize;
+	DimensionSize elementSize;
 
-	/**
-	 * @brief Size of each element. Product of size of layers below up to a redirection
-	 * 0 for variable size
-	 */
-//	uint64 dimensionsProduct;
-
-
-	DimensionInfoElement(char8 typeIn,uint32 numberOfElementsIn){
+	DimensionInfoElement(char8 typeIn,DimensionSize numberOfElementsIn){
 		type = typeIn;
 		numberOfElements = numberOfElementsIn;
 		layerEnd = '\0';
-//		dimensionsProduct = numberOfElements;
 		elementSize = 0;
+		outputType = type;
 	}
 
 };
@@ -104,28 +232,40 @@ public:
 	/**
 	 * Allow access to all DimensionInfoElement
 	 */
-	inline const DimensionInfoElement &operator[](uint32 index) const;
+	inline DimensionInfoElement &operator[](uint32 index);
 
 	/**
 	 * How many DimensionInfoElement
 	 */
-	inline uint32 NDimensions() const ;
+	inline uint32 				NDimensions() const ;
 
 	/**
 	 * Compares two DimensionHandlers
 	 */
-	ErrorManagement::ErrorType HasSameDimensionsAs(const DimensionHandler &other) const ;
+	ErrorManagement::ErrorType 	HasSameDimensionsAs(const DimensionHandler &other) const ;
 
 	/**
 	 * access type
 	 * This is either the original tdIn or a synthetic pointer type
 	 */
-	inline TypeDescriptor GetTypeDescriptor() const ;
+	inline TypeDescriptor 		GetTypeDescriptor() const ;
 
 	/**
-	 * allows redirecting to next layer and at the same time obtain updated number of elements
+	 * Creates a VariableDescriptor using the outputType
 	 */
-	ErrorManagement::ErrorType UpdatePointerAndSize(uint32 layerIndex, const uint8 *&pointer,uint32 &numberOfElements,uint64 &elementSize,uint32 &overHead) const ;
+	void 						GetOutputModifiers(DynamicCString &dc) const ;
+
+	/**
+	 * @brief allows redirecting to next layer and at the same time obtain updated number of elements
+	 * Note that elementSize refers to next level.
+	 * Only exception is for the last level where it is the same
+	 */
+	ErrorManagement::ErrorType 	UpdatePointerAndSize(
+			uint32 			layerIndex,
+			const uint8 *&	pointer,
+			uint32 &		numberOfElements,
+			uint32 &		nextElementSize,
+			uint32 &		overHead)  ;
 
 private:
 
@@ -142,7 +282,7 @@ private:
 	/**
 	 * size of a dimension code
 	 */
-	uint32 DimensionSize(char8 c) const;
+	DimensionSize Type2Size(char8 c) const;
 
 	/**
 	 *
@@ -166,7 +306,7 @@ TypeDescriptor DimensionHandler::GetTypeDescriptor() const{
 	return td;
 }
 //#include <stdio.h>
-inline const DimensionInfoElement &DimensionHandler::operator[](uint32 index) const{
+inline  DimensionInfoElement &DimensionHandler::operator[](uint32 index) {
 	static DimensionInfoElement dummy('\0',0);
 	DimensionInfoElement &ret = dummy;
 	if (index < dimensions.GetSize()){

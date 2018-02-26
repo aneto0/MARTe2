@@ -39,13 +39,6 @@ static inline uint32 toNumber(char8 c){
 	return  static_cast<uint32>(c - '0') ;
 }
 
-static inline char8 toUpper(char8 c){
-	if ((c >='a') && (c <= 'z')){
-		c = (c - 'a') + 'A';
-	}
-	return c;
-}
-
 /** string to integer */
 static inline uint32 readNumber(CCString &buffer){
 	uint32 result = 0;
@@ -85,6 +78,8 @@ static inline bool IsConst(char8 c){
 	return ret;
 }
 
+
+
 //#include <stdio.h>
 /**
  *
@@ -92,7 +87,7 @@ static inline bool IsConst(char8 c){
 DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn){
 	td = tdIn;
 //printf("%i %i\n",dimensions.GetCapacity(),dimensions.GetMaxCapacity());
-//printf ("modifier = %s ",modifiers.GetList());
+//printf( "[%s]\n ",modifiers.GetList());//TODO
 	const CCString terminals = "VMvm";
 	const CCString Zterminals = "ZDSzds";
 	char8 modifier;
@@ -145,14 +140,14 @@ DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn){
 					finished = true;
 				} else {
 //printf("{%c}\n",modifier);
-					dimensions.Add(DimensionInfoElement(modifier,0));
+					dimensions.Add(DimensionInfoElement(modifier,indeterminateSize));
 				}
 			} else
 			if (Zterminals.In(modifier)){
 				// only PZ PD PS are allowed
 				if (pointer != '\0') {
 					pointer = '\0';
-					dimensions.Add(DimensionInfoElement(modifier,0));
+					dimensions.Add(DimensionInfoElement(modifier,indeterminateSize));
 				} else {
 					td = InvalidType(0);
 				}
@@ -167,26 +162,57 @@ DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn){
 
 //printf("%i %i\n",dimensions.GetCapacity(),dimensions.GetMaxCapacity());
 
-	uint64 elementSize = 1;
-//	uint64 dimensionsProduct = 1;
+	DimensionSize elementSize = 1;
 	char8 layerEnd = '\0';
 	for (int i = (dimensions.GetSize()-1); i >= 0; i--){
 		if (dimensions[i].type != 'A'){
-//			dimensionsProduct = 1;
 			layerEnd = dimensions[i].type;
-			elementSize = DimensionSize(dimensions[i].type);
+			elementSize = Type2Size(dimensions[i].type);
 		} else {
-			elementSize *= dimensions[i].numberOfElements;
+			elementSize = elementSize * dimensions[i].numberOfElements ;
 		}
-//		dimensionsProduct *= dimensions[i].numberOfElements;
-		// this includes the dimension of this layer
-//		dimensions.Access(i).dimensionsProduct = dimensionsProduct;
 		dimensions.Access(i).layerEnd = layerEnd;
 		dimensions.Access(i).elementSize = elementSize;
+
+//char c = (dimensions[i].type=='\0')?'0':dimensions[i].type; //TODO
+//char d = (dimensions[i].layerEnd=='\0')?'0':dimensions[i].layerEnd;//TODO
+//printf( "[%i>%c %i %i %c]\n ",i,c,dimensions.Access(i).numberOfElements,dimensions.Access(i).elementSize,d);
 	}
 
-//printf("%i %i\n",dimensions.GetCapacity(),dimensions.GetMaxCapacity());
 
+
+}
+
+void DimensionHandler::GetOutputModifiers(DynamicCString &dc) const {
+	ErrorManagement::ErrorType ret;
+
+	for (int i = 0; i < NDimensions();i++){
+		switch (dimensions[i].outputType){
+		case '\0':{
+		} break;
+		case 'A':{
+			dc.Append('A');
+			uint32 size;
+			dimensions[i].numberOfElements.toUint32(size);
+			dc.AppendNum(size);
+		}break;
+		case 'f':{
+			dc.AppendN("pA");
+			uint32 size;
+			dimensions[i].numberOfElements.toUint32(size);
+			dc.AppendNum(size);
+		}break;
+		case 'F':{
+			dc.AppendN("PA");
+			uint32 size;
+			dimensions[i].numberOfElements.toUint32(size);
+			dc.AppendNum(size);
+		}break;
+		default:{
+			dc.Append(dimensions[i].outputType);
+		}
+		};
+	}
 }
 
 
@@ -221,20 +247,19 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
         REPORT_ERROR(ok, errM.GetList());
 	}
 
-	other[0].numberOfElements;
 	for (int i = 0;ok && (i < nDim); i++){
-		uint32 d1 = dimensions[i].numberOfElements;
-		uint32 d2 = other.dimensions[i].numberOfElements;
+		DimensionSize d1 = dimensions[i].numberOfElements;
+		DimensionSize d2 = other.dimensions[i].numberOfElements;
 
-		if ((d1 != d2) && ( d1!=0 ) && ( d2 != 0)){
+		if (((d1 != d2) && ( d1!=indeterminateSize ) && ( d2 != indeterminateSize)) || ( d1 == tooLarge)){
 			ok.invalidOperation=true;
 			DynamicCString errM;
 			errM.AppendN("dimension[");
 			errM.AppendNum(i);
 			errM.AppendN("] d1= ");
-			errM.AppendNum(d1);
+			errM.AppendNum(d1.toUint32Unchecked());
 			errM.AppendN(" d2= ");
-			errM.AppendNum(d2);
+			errM.AppendNum(d2.toUint32Unchecked());
 	        REPORT_ERROR(ok, errM.GetList());
 		}
 	}
@@ -242,11 +267,11 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
 	return ok;
 }
 
-uint32 DimensionHandler::DimensionSize(char8 c) const{
+DimensionSize DimensionHandler::Type2Size(char8 c) const{
 	const CCString matrixS = "Mm";
 	const CCString vectorS = "Vv";
 	const CCString pointerS = "FfSDZPsdzp";
-	uint32 size = 0;
+	DimensionSize size = 0;
 	if (pointerS.In(c)){
 		size = sizeof(void *);
 	} else
@@ -284,27 +309,38 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowN
 }
 
 #include <stdio.h>
-ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(uint32 layerIndex, const uint8 *&ptr,uint32 &numberOfElements,uint64 &elementSize,uint32 &overHead) const {
+ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
+			uint32 			layerIndex,
+			const uint8 *&	ptr,
+			uint32 &		numberOfElementsIO,
+			uint32 &		nextElementSize,
+			uint32 &		overHead)  {
 	ErrorManagement::ErrorType ok;
-	bool isZta = false;
-	const DimensionInfoElement &di = dimensions[layerIndex];
+
 	const DimensionInfoElement &diNext = dimensions[layerIndex+1];
-	elementSize = diNext.elementSize;
+	DimensionInfoElement &di = dimensions.Access(layerIndex);
+
 	uint8 type = di.type;
+	bool isZta = false;
 	bool allowNULL = false;
+	bool updateNumberOfElements = false;
 	overHead = 0;
-/*
-printf("[%i] Type=%i ",layerIndex,di.type);
-printf("[%i] Type=%i ",layerIndex+1,diNext.type);
-*/
+
+	DimensionSize numberOfElements(0);
+	DimensionSize nextElementSizeD(0);
+
+	nextElementSizeD = diNext.elementSize;
+
 	switch (type){
 
 	case '\0':{
 		numberOfElements = 1;
 		type = 'A';
-		elementSize = di.elementSize;
-//printf("[0NEL=%i]",numberOfElements);
+		nextElementSizeD = di.elementSize;
+//printf ("elSz = %i nEl = %i\n",elementSize.toUint32Unchecked(),numberOfElements.toUint32Unchecked());
+
 	} break;
+	case 'x': // F or f with NULLs - created at this level
 	case 'f':
 	case 'F':{
 		overHead = sizeof (void *);
@@ -322,16 +358,18 @@ printf("[%i] Type=%i ",layerIndex+1,diNext.type);
 	case 'S':
 	case 'Z':{
 		isZta = true;
-		overHead = sizeof (void *) + diNext.elementSize;
+		updateNumberOfElements = true;
+		overHead = sizeof (void *) + diNext.elementSize.toUint32Unchecked();
 	}break;
 	case 'v':
 	case 'V':{
 		overHead = sizeof (Vector<char8>);
 		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
 		numberOfElements = pv->GetNumberOfElements();
-		if (numberOfElements == 0){
+		if (numberOfElements == DimensionSize(0U)){
 			allowNULL = true;
 		}
+		updateNumberOfElements = true;
 //printf("[VNEL=%i]",numberOfElements);
 	}break;
 	case 'm':
@@ -339,9 +377,10 @@ printf("[%i] Type=%i ",layerIndex+1,diNext.type);
 		overHead = sizeof (Matrix<char8>);
 		const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
 		numberOfElements = pm->GetNumberOfElements();
-		if (numberOfElements == 0){
+		if (numberOfElements == DimensionSize(0U)){
 			allowNULL = true;
 		}
+		updateNumberOfElements = true;
 	}break;
 	default:{
 		ok.fatalError = true;
@@ -349,7 +388,6 @@ printf("[%i] Type=%i ",layerIndex+1,diNext.type);
 	}break;
 
 	}
-
 
 	if ((type != 'A') && ok){
 		// it works as vector is descendant of Pointer class
@@ -363,15 +401,51 @@ printf("[%i] Type=%i ",layerIndex+1,diNext.type);
 			errM.AppendN(" redirection failed ");
 	        REPORT_ERROR(ok, errM.GetList());
 		}
-		if (ptr == NULL){
+		// handle case of null pointers
+		// change F to X type
+		if (ptr == NULL) {
 			numberOfElements = 0;
+			if ((type == 'f') || (type == 'F')){
+				di.type = 'x';
+			}
 		}
 	}
 //printf("els=%lli \n",elementSize);
 
+	// calculate actual size of each ZTA
 	if (isZta && ok){
-		numberOfElements = ZeroTerminatedArrayGetSize(ptr, diNext.elementSize);
+		uint32 n;
+		ok = diNext.elementSize.toUint32(n);
+	    CONDITIONAL_REPORT_ERROR(ok, "diNext.elementSize is infinite/indefinite");
+		if (ok){
+			numberOfElements = ZeroTerminatedArrayGetSize(ptr, n);
+		}
 	}
+
+#if 0
+//printf ("2elSz = %i nEl = %i\n",elementSize.toUint32Unchecked(),numberOfElements.toUint32Unchecked());
+	if (updateNumberOfElements && ok){
+		if (di.numberOfElements.isNotANumber()){
+			if (di.numberOfElements.isIndeterminateSize()){
+				di.numberOfElements = numberOfElements;
+			}
+		} else
+		if (di.numberOfElements != numberOfElements){
+			di.numberOfElements = variableSize;
+		}
+	}
+#endif
+
+	if (ok){
+		ok = numberOfElements.toUint32(numberOfElementsIO);
+	    CONDITIONAL_REPORT_ERROR(ok, "numberOfElements is infinite/indefinite");
+	}
+	if (ok){
+		ok = nextElementSizeD.toUint32(nextElementSize);
+	    CONDITIONAL_REPORT_ERROR(ok, "elementSize is infinite/indefinite");
+	}
+//printf ("3elSz = %i nEl = %i\n",elementSize.toUint32Unchecked(),numberOfElements.toUint32Unchecked());
+
 	return ok;
 }
 

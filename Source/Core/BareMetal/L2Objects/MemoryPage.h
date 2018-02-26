@@ -43,7 +43,98 @@
 
 namespace MARTe{
 
-struct MemoryPageHeader;
+
+/**
+ * Header used in each page
+ */
+struct MemoryPageHeader{
+	/**
+	 * Link to previous/next
+	 */
+	MemoryPageHeader * 	next;
+	/**
+	 * page size (payload only - no header)
+	 */
+	uint32				pageSize;
+	/**
+	 * Allow access to the payload section
+	 */
+	uint8 				*Data(){
+		MemoryPageHeader *ptr = this +1;
+		return reinterpret_cast<uint8 *>(ptr);
+	};
+	/**
+	 * individual access to each member of payload
+	 * range checks not performed
+	 */
+	uint8 &operator[] (uint32 index){
+		return Data()[index];
+	}
+};
+
+class MemoryPage{
+public:
+
+	/**
+	 *
+	 */
+								MemoryPage();
+
+	/**
+	 *
+	 */
+								~MemoryPage();
+
+	/**
+	 * @brief Deletes all pages of memory
+	 */
+	void 						Clean();
+
+
+	/**
+	* @brief Steals content from another MemoryPage and joins it at the end
+	*/
+	ErrorManagement::ErrorType 	StealAndJoinAtEnd  (MemoryPage &stealFrom);
+
+
+protected:
+	/**
+	 *	@brief the top of the list of pages
+	 */
+	MemoryPageHeader *	firstPage;
+};
+
+
+#if 0
+
+/**
+ * Header used in each page
+ */
+struct MemoryPageHeader{
+	/**
+	 * Link to previous/next
+	 */
+	MemoryPageHeader * 	previous;
+	/**
+	 * page size (payload only - no header)
+	 */
+	uint32				pageSize;
+	/**
+	 * Allow access to the payload section
+	 */
+	uint8 				*Data(){
+		MemoryPageHeader *ptr = this +1;
+		return reinterpret_cast<uint8 *>(ptr);
+	};
+	/**
+	 * individual access to each member of payload
+	 * range checks not performed
+	 */
+	uint8 &operator[] (uint32 index){
+		return Data()[index];
+	}
+};
+
 /**
  * A set of memory pages linked together.
  * To be used by an application to load a memory structure into memory
@@ -55,19 +146,19 @@ public:
 	/**
 	 * basic constructor empty pages
 	 */
-	MemoryPage();
+								MemoryPage();
 	/**
 	 * @brief Steals content from another MemoryPage
 	 */
-	void Copy (MemoryPage &stealFrom);
+	void 						Copy (MemoryPage &stealFrom);
 	/**
 	 * @brief Deletes all pages of memory
 	 */
-	~MemoryPage();
+								~MemoryPage();
 	/**
 	 * @brief Deletes all pages of memory
 	 */
-	void Clean();
+	void 						Clean();
 
 	/**
 	 * @brief return address of the element at the deep address index
@@ -75,54 +166,52 @@ public:
 	 * in consecutiveSpan returns the number of consecutive bytes available
 	 * returns NULL if outside range
 	 */
-	void *DeepAddress(uint64 index,uint32 &consecutiveSpan);
+	void *						DeepAddress(uint64 index,uint32 &consecutiveSpan);
 
 	/**
 	 * @brief finds the index corresponding to the given address
 	 * @param [in] address the address to find
 	 * @param [out] index
 	 */
-	ErrorManagement::ErrorType Address2Index(void * address,uint64 &index) const;
+	ErrorManagement::ErrorType 	Address2Index(void * address,uint64 &index) const;
 
 	/**
 	 * @brief return address of element index
 	 */
-	void *Address(uint32 index);
-
+	void *						Address(uint32 index);
 
 	/**
 	 * @brief increases current page to size newBufferSize
 	 */
-	ErrorManagement::ErrorType Grow(uint32 newBufferSize);
+	ErrorManagement::ErrorType 	Grow(uint32 newBufferSize);
 
 	/**
 	 * @brief decreases current page to size newBufferSize
 	 */
-	ErrorManagement::ErrorType Shrink(uint32 newBufferSize);
+	ErrorManagement::ErrorType 	Shrink(uint32 newBufferSize);
 
 	/**
 	 *  @brief allocate a new page
 	 */
-	ErrorManagement::ErrorType Allocate(uint32 size);
+	ErrorManagement::ErrorType 	Allocate(uint32 size);
 
 	/**
 	 * @brief  last operation before closing
 	 * the use of this memory change previous to next so that the memory can be parsed in the right order
 	 */
-	void FlipOrder();
+	void 						FlipOrder();
 
 	/**
 	 *  @brief size of current page
 	 */
-	uint32 CurrentPageSize();
+	uint32 						CurrentPageSize();
 
 	/**
 	 *  @brief How many pages
 	 */
-	uint32 NumberOfPages();
+	uint32 						NumberOfPages();
 
-
-private:
+protected:
 	/**
 	 * The pointer to the current page
 	 */
@@ -132,6 +221,8 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+#endif
 
 } // MARTe
 
