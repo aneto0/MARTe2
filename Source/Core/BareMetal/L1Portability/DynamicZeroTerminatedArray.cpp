@@ -80,24 +80,24 @@ bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest,
 
 bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCopy,
 				void *&dest,void const *src){
-
     bool ret = true;
     uint32 size = sizeOfDest;
     uint32 size2 = toCopy;
+    uint32 currentBlocks = ((size + 1 + granularity) / granularity) ;
+    uint32 necessaryBlocks = ((size + size2 + 1 + granularity) / granularity) ;
 
-    uint32 necessarySize = ((size + size2 + 1 + granularity) / granularity) * granularity;
-
-    ret = HeapManager::Realloc(dest,necessarySize*sizeOfT);
-    ret = ret && (dest != NULL_PTR(void *));
-    if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "DZTAppendN: Failed HeapManager::Realloc()");
+    if (necessaryBlocks > currentBlocks){
+        ret = HeapManager::Realloc(dest,necessaryBlocks*sizeOfT* granularity);
+        ret = ret && (dest != NULL_PTR(void *));
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::FatalError, "DZTAppendN: Failed HeapManager::Realloc()");
+        }
     }
 
     if (ret)  {
         void *destOff      = static_cast<void *>(static_cast<char *>(dest)+size*sizeOfT);
         MemoryOperationsHelper::Copy(destOff,src,size2*sizeOfT);
     }
-
     return ret;
 }
 }

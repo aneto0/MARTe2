@@ -72,7 +72,7 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
         //in addressNumberNodes = 0
 
     	// copy address
-    	addressToSearchWhole.AppendN(address);
+    	addressToSearchWhole.Append(address);
 
     	// count dots
     	char8 *p = addressToSearchWhole.GetList();
@@ -129,7 +129,7 @@ void ReferenceContainerFilterObjectName::GetPath(DynamicCString &path) const{
 		if (!start){
 			path.Append('.');
 		}
-		path.AppendN(*pList);
+		path.Append(*pList);
 		start = false;
 		pList++;
 	}

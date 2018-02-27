@@ -126,7 +126,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 				// extract the first part up to ::
 				DynamicCString dllName;
 				uint32 dllNameBaseSize = className.GetSize() - classOnlyPartName.GetSize();
-				dllName.AppendN(className.GetList(),dllNameBaseSize);
+				dllName.Append(className.GetList(),dllNameBaseSize);
 
 				// try open a dll with this name
 	            LoadableLibrary *loader = new LoadableLibrary();
@@ -135,7 +135,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 	            //Check for all known operating system extensions.
 	            while ((operatingSystemDLLExtensions[osExtIndex] != 0) && (!dllOpened)) {
 	                dllName.Truncate(dllNameBaseSize);
-					dllName.AppendN(operatingSystemDLLExtensions[osExtIndex]);
+					dllName.Append(operatingSystemDLLExtensions[osExtIndex]);
 					osExtIndex++;
 	                dllOpened = loader->Open(dllName.GetList());
 	            }

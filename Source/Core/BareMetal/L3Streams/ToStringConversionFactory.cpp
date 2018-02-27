@@ -360,7 +360,7 @@ ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
             }
             // write
             else {
-                if (string->AppendN(Buffer(), writeSize)) {
+                if (string->Append(Buffer(), writeSize)) {
                     retval = true;
                     Empty();
                 }
@@ -423,11 +423,11 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
 
 //printf("String @%p = %s\n",currentString.GetList(),currentString.GetList());
                 	DynamicCString errM;
-                	errM.AppendN("String (");
-                	errM.AppendN(Buffer(),writeSize);
-                	errM.AppendN(") != (");
-                	errM.AppendN(currentString.GetList());
-                	errM.AppendN(") ");
+                	errM.Append("String (");
+                	errM.Append(Buffer(),writeSize);
+                	errM.Append(") != (");
+                	errM.Append(currentString.GetList());
+                	errM.Append(") ");
         			REPORT_ERROR(ErrorManagement::ComparisonFailure,errM.GetList());
                 	isSame = false;
                 }
@@ -776,9 +776,9 @@ ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest,
 			ok = writer->Next();
 			if (!ok){
 				DynamicCString errM;
-				errM.AppendN("switch to element ");
-				errM.AppendNum(ix);
-				errM.AppendN(" failed");
+				errM.Append("switch to element ");
+				errM.Append(ix);
+				errM.Append(" failed");
 				REPORT_ERROR(ok,errM.GetList());
 			}
 
@@ -824,9 +824,9 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 			ok = writer->Next();
 			if (!ok){
 				DynamicCString errM;
-				errM.AppendN("switch to element ");
-				errM.AppendNum(ix);
-				errM.AppendN(" failed");
+				errM.Append("switch to element ");
+				errM.Append(ix);
+				errM.Append(" failed");
 				REPORT_ERROR(ok,errM.GetList());
 			}
 
@@ -874,9 +874,9 @@ ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *
 		ok = writer->Next();
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("switch to element ");
-			errM.AppendNum(ix);
-			errM.AppendN(" failed");
+			errM.Append("switch to element ");
+			errM.Append(ix);
+			errM.Append(" failed");
 			REPORT_ERROR(ok,errM.GetList());
 		}
 
@@ -918,9 +918,9 @@ ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 
 		ok = writer->Next();
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("switch to element ");
-			errM.AppendNum(ix);
-			errM.AppendN(" failed");
+			errM.Append("switch to element ");
+			errM.Append(ix);
+			errM.Append(" failed");
 			REPORT_ERROR(ok,errM.GetList());
 		}
 		src++;
@@ -958,9 +958,9 @@ ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, con
 		ok = writer->Next();
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("switch to element ");
-			errM.AppendNum(ix);
-			errM.AppendN(" failed");
+			errM.Append("switch to element ");
+			errM.Append(ix);
+			errM.Append(" failed");
 			REPORT_ERROR(ok,errM.GetList());
 		}
 		src++;
@@ -1011,9 +1011,9 @@ ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8
 		ok = writer->Next();
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("switch to element ");
-			errM.AppendNum(ix);
-			errM.AppendN(" failed");
+			errM.Append("switch to element ");
+			errM.Append(ix);
+			errM.Append(" failed");
 			REPORT_ERROR(ok,errM.GetList());
 		}
 		src++;
@@ -1060,9 +1060,9 @@ ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *
 			ok = writer->Next();
 			if (!ok){
 				DynamicCString errM;
-				errM.AppendN("switch to element ");
-				errM.AppendNum(ix);
-				errM.AppendN(" failed");
+				errM.Append("switch to element ");
+				errM.Append(ix);
+				errM.Append(" failed");
 				REPORT_ERROR(ok,errM.GetList());
 			}
 			src++;
@@ -1107,9 +1107,9 @@ ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 
 		ok = writer->Next();
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("switch to element ");
-			errM.AppendNum(ix);
-			errM.AppendN(" failed");
+			errM.Append("switch to element ");
+			errM.Append(ix);
+			errM.Append(" failed");
 			REPORT_ERROR(ok,errM.GetList());
 		}
 		ss++;

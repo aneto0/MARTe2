@@ -282,7 +282,6 @@ ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck){
 
     DynamicCString string;
     DynamicCString string2;
-
     if (err){
         const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
         err = vd.ToString(string);
@@ -298,7 +297,6 @@ ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck){
             printf("(%s)%s != %s ",string2.GetList(),string.GetList(),typeCheck.GetList());
         }
     }
-
     return err;
 }
 
@@ -316,17 +314,15 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
 
     DynamicCString string1;
     DynamicCString string2;
+    const VariableDescriptor &vd1 =  at1.GetFullVariableDescriptor();
+    const VariableDescriptor &vd2 =  at2.GetFullVariableDescriptor();
 
-    if (err){
-        const VariableDescriptor &vd =  at1.GetFullVariableDescriptor();
-        err = vd.ToString(string1);
-        if (!err){
-			REPORT_ERROR(err,"at1 Variable Descriptor to string conversion error");
-        }
+    err = vd1.ToString(string1);
+    if (!err){
+		REPORT_ERROR(err,"at1 Variable Descriptor to string conversion error");
     }
     if (err){
-        const VariableDescriptor &vd =  at2.GetFullVariableDescriptor();
-        err = vd.ToString(string2);
+        err = vd2.ToString(string2);
         if (!err){
 			REPORT_ERROR(err,"at2 Variable Descriptor to string conversion error");
         }
@@ -336,10 +332,17 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
         if (!string1.isSameAs(string2.GetList())){
             err.comparisonFailure = true;
             DynamicCString errM;
-            errM.AppendN(string1.GetList());
-            errM.AppendN(" != ");
-            errM.AppendN(string2.GetList());
+            errM.Append(string1.GetList());
+            errM.Append('{');
+            errM.Append(vd1.GetModifiers());
+            errM.Append("} != ");
+            errM.Append(string2.GetList());
+            errM.Append('{');
+            errM.Append(vd2.GetModifiers());
+            errM.Append('}');
 			REPORT_ERROR(err,errM.GetList());
+
+
         }
     }
 
@@ -365,13 +368,13 @@ ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 stor
         	ok.comparisonFailure = true;
         	DynamicCString errM;
         	errM.Append('(');
-        	errM.AppendNum(dataSize);
+        	errM.Append(dataSize);
         	errM.Append(',');
-        	errM.AppendNum(storageSize);
-        	errM.AppendN(") != (");
-        	errM.AppendNum(dataSizeCheck);
+        	errM.Append(storageSize);
+        	errM.Append(") != (");
+        	errM.Append(dataSizeCheck);
         	errM.Append(',');
-        	errM.AppendNum(storageSizeCheck);
+        	errM.Append(storageSizeCheck);
         	errM.Append(')');
     		REPORT_ERROR(ok,errM.GetList());
 
@@ -446,7 +449,7 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 
 	ok = at.MultipleDereference(expression);
 
-    for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+	for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
     printf ("%s ->",expression.GetList());
 
     if (!ok){
@@ -498,8 +501,8 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 
     if (!ok){
     	DynamicCString errM;
-    	errM.AppendN(expression.GetList());
-    	errM.AppendN(" --> ");
+    	errM.Append(expression.GetList());
+    	errM.Append(" --> ");
 		contentCheck.ToString(errM);
 		REPORT_ERROR(ok,errM.GetList());
 
@@ -528,7 +531,7 @@ template<typename T1>
 //static inline void NumSet<DynamicCString>(DynamicCString &dest,uint32 &source) {
 static inline void NumSet(DynamicCString &dest,uint64 &source) {
 		dest.Truncate(0);
-		dest.AppendNum(source);
+		dest.Append(source);
  }
 
 
@@ -604,9 +607,9 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 				ret = pfstc.AddElement(buffer);
 				if (!ret){
 					DynamicCString errMsg;
-					errMsg.AppendN("pfstc.AddElement(");
-					errMsg.AppendN(buffer);
-					errMsg.AppendN(")");
+					errMsg.Append("pfstc.AddElement(");
+					errMsg.Append(buffer);
+					errMsg.Append(")");
 					REPORT_ERROR(ret,errMsg);
 				}
 			}
@@ -636,11 +639,11 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		if (!ret){
 			REPORT_ERROR(ret,"pfstc.GetReference failed");
 		} else {
-			message.AppendN(aoi->GetClassRegistryItem()->GetClassNameA());
-			message.AppendN(" to impl ");
+			message.Append(aoi->GetClassRegistryItem()->GetClassName());
+//			message.Append(aoi->GetClassRegistryItem()->GetTypeidName());
+			message.Append("{");
 		}
 	}
-
 	if (ret){
 		AnyType x;
 		aoi.ToAnyType(x);
@@ -648,6 +651,7 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		if (ret){
 			x.ToString(message);
 		}
+		message.Append("}");
 	}
 
 	if (ret){
@@ -661,7 +665,7 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 
 	if (!ret){
 		DynamicCString string;
-		string.AppendN("Failed ");
+		string.Append("Failed ");
 		at.ToString(string);
 		REPORT_ERROR(ret, string.GetList());
 		printf ("*NO* Random Creation/CopyTo Compare Failed (see log) \n");
@@ -701,8 +705,6 @@ void TestSafeN2N(T1 value)
 void Test(){
 
     AnyType at(test1Class);
-
-printf ("%c %p\n",test1Class.char8Var,&test1Class.char8Var);
 
     Check2(at,".char8Var","char8","c",sizeof(char8),0);
     Check2(at,".int8Var","int8","18",sizeof(int8),0);
@@ -817,7 +819,7 @@ printf ("%c %p\n",test1Class.char8Var,&test1Class.char8Var);
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
-	int32 temp;
+    int32 temp;
 	AnyType xx;
 	Reference zz;
 

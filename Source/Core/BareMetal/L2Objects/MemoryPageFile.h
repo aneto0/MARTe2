@@ -45,65 +45,6 @@
 
 namespace MARTe{
 
-#if 0
-
-/**
- * Header used in each page
- */
-struct MemoryPageHeader{
-	/**
-	 * Link to previous/next
-	 */
-	MemoryPageHeader * 	next;
-	/**
-	 * page size (payload only - no header)
-	 */
-	uint32				pageSize;
-	/**
-	 * Allow access to the payload section
-	 */
-	uint8 				*Data(){
-		MemoryPageHeader *ptr = this +1;
-		return reinterpret_cast<uint8 *>(ptr);
-	};
-	/**
-	 * individual access to each member of payload
-	 * range checks not performed
-	 */
-	uint8 &operator[] (uint32 index){
-		return Data()[index];
-	}
-};
-
-class MemoryPage{
-public:
-
-	/**
-	 *
-	 */
-								MemoryPage();
-
-	/**
-	 *
-	 */
-								~MemoryPage();
-
-	/**
-	* @brief Steals content from another MemoryPage and joins it at the end
-	*/
-	ErrorManagement::ErrorType 	StealAndJoinAtEnd  (MemoryPage &stealFrom);
-
-
-protected:
-	/**
-	 *	@brief the top of the list of pages
-	 */
-	MemoryPageHeader *	firstPage;
-};
-
-
-#endif
-
 /**
  * allows Sequential Write to a MemoryPage
  */

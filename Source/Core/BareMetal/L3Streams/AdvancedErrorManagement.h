@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "StreamMemoryReference.h"
 
 /*---------------------------------------------------------------------------*/

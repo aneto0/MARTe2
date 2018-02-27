@@ -38,6 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
 /**
  * These macros are required for the application to automatically register in the ClassRegistryDatabase
  * the information associated to every class that inherits from Object.
@@ -85,22 +86,12 @@
      * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
      /*lint -e{1511} This function will be redeclared in descendants */                                                \
-      static void operator delete(void *p);
+     static void operator delete(void *p);                                                                             \
+                                                                                                                       \
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-#if 0
-    /*                                                                                                                 \
-     * Class properties of this class type. One instance per class type automatically instantiated at the start        \
-     * of an application or loading of a loadable library.                                                             \
-     * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
-     */                                                                                                                \
-    MARTe::ClassProperties className::classProperties( #className , typeid(className).name(), ver, static_cast<MARTe::uint32>(sizeof(className)));
-#endif
-
-
 
 
 /**
@@ -119,12 +110,12 @@
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
-	return MARTe::ClassRegistryItem::Instance<className>();                                                            \
+	    return MARTe::ClassRegistryItem::Instance<className>();                                        \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \
     MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
-        return MARTe::ClassRegistryItem::Instance<className>();                                                        \
+        return MARTe::ClassRegistryItem::Instance<className>();                                        \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
@@ -148,28 +139,33 @@
             /* TODO error here */                                                                                      \
         }                                                                                                              \
         GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
-    }
+    }                                                                                                                  \
+	static class className ## _Initializer_{                                                                           \
+    	public: className ## _Initializer_(){                                                                          \
+		    className::GetClassRegistryItem_Static()->SetClassDetails(CCString(#className),CCString(#ver));            \
+		};                                                                                                             \
+    } className ## _Initializer_Instance;                                                                              \
 
 
-#define TEMPLATE_CLASS_REGISTER(className,ver,tempDecl)                                                      \
+#define TEMPLATE_CLASS_REGISTER(className,ver,tempDecl)                                                                \
                                                                                                                        \
     /*                                                                                                                 \
      */                                                                                                                \
 	template <tempDecl>                                                                                                \
-    MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                   \
-	return MARTe::ClassRegistryItem::Instance<className>();                                                            \
+    MARTe::ClassRegistryItem * className::GetClassRegistryItem_Static() {                                              \
+	    return MARTe::ClassRegistryItem::Instance<className>();                                                        \
     }                                                                                                                  \
     /*                                                                                                                 \
      */                                                                                                                \
 	template <tempDecl>                                                                                                \
-    MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                    \
+    MARTe::ClassRegistryItem * className::GetClassRegistryItem() const {                                               \
         return MARTe::ClassRegistryItem::Instance<className>();                                                        \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
 	template <tempDecl>                                                                                                \
-    void * className::operator new(const MARTe::osulong size, MARTe::HeapI *heap) {                           \
+    void * className::operator new(const MARTe::osulong size, MARTe::HeapI *heap) {                                    \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<MARTe::uint32>(size));                                                      \
@@ -183,13 +179,15 @@
      * e.g. void *MyClassType::operator delete(void *p);                                                               \
      */                                                                                                                \
 	template <tempDecl>                                                                                                \
-    void className::operator delete(void *p) {                                                              \
+    void className::operator delete(void *p) {                                                                         \
         bool ok = MARTe::HeapManager::Free(p);                                                                         \
         if(!ok){                                                                                                       \
             /* TODO error here */                                                                                      \
         }                                                                                                              \
         GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
-    }
+    }                                                                                                                  \
+
+
 /*lint -restore */
 
 #endif /* CLASSREGISTER_H_ */

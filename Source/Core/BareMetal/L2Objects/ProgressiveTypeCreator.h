@@ -33,7 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "TypeDescriptor.h"
 #include "TypeConversionOperatorI.h"
 #include "StaticListHolder.h"
@@ -175,40 +175,13 @@ private:
 	/**
 	 *
 	 */
-//	ErrorManagement::ErrorType CheckMemoryFixedSizeEl(bool newRow);
-
-	/**
-	 *
-	 */
 	ErrorManagement::ErrorType CompleteFixedSizeEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr);
-
-	/**
-	 *
-	 */
-//	ErrorManagement::ErrorType CheckMemoryStringEl(uint32 neededSize);
 
 	/**
 	 *
 	 */
 	ErrorManagement::ErrorType CompleteStringEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr);
 
-#if 0
-
-	/**
-	 *
-	 */
-	ErrorManagement::ErrorType PageGrow(uint32 amount);
-	/**
-	 * @brief Check if the current segment has enough space to store another vector.
-	 * If there is no need (neededSize== 0) or if the space is not large enough
-	 * close the current memory page segment
-	 */
-	ErrorManagement::ErrorType CheckAndClosePage(uint32 neededSize);
-	/**
-	 * @brief If pageSize is 0 allocate a new page of desired size
-	 */
-	ErrorManagement::ErrorType CheckAndNewPage(uint32 neededSize);
-#endif
 	/**
 	 * @brief Core of implementation of GetObject
 	 * called by GetObject
@@ -257,28 +230,7 @@ private:
 	 * The object containing the memory
 	 */
 	MemoryPageFile pageFile;
-#if 0
-	/**
-	 * Reference pageSize specified by user
-	 */
-	uint32  defaultPageSize;
-	/**
-	 *Actual page size after growth etc...
-	 */
-	uint32 	pageSize;
-	/**
-	 * Space left within pageSize
-	 */
-	uint32 	sizeLeft;
-	/**
-	 * how much of pageSize was used
-	 */
-	uint32 pageWritePos;
-	/**
-	 * > 0 if data spread across more than one page.
-	 */
-	uint32 numberOfPages;
-#endif
+
 	/**
 	 * Size of one object in bytes
 	 */

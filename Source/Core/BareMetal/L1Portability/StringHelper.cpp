@@ -209,7 +209,7 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
             c = string[inputIndex];
         }
 
-        // skip separator - to save time avoid calling CompareN - check other reason to have terminatred previous loop
+        // skip separator - to save time avoid calling CompareN - check other reason to have terminated previous loop
         if (c!=0 && (!keepTerm || (token.GetSize()==0))) {
         	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
             inputIndex++;

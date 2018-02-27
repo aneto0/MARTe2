@@ -162,22 +162,22 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 }
 
 #define TYPENAME_CORE()             			\
-   	string.AppendN(constString);				\
+   	string.Append(constString);				\
 	if ((fullType == TDF_Float) && (bits == 32)){\
-		string.AppendN("float");				\
+		string.Append("float");				\
 	} else 										\
 	if ((fullType == TDF_Float) && (bits == 64)){\
-		string.AppendN("double");				\
+		string.Append("double");				\
 	} else {									\
-       	string.AppendN(typeName);   			\
-       	string.AppendNum(bits);					\
+       	string.Append(typeName);   			\
+       	string.Append(bits);					\
 	}
 
 #define TEMPLATED_TYPENAME_CORE(className)       \
-       	string.AppendN(#className "<");          \
-       	string.AppendN(constString);			 \
-       	string.AppendN(typeName);   			 \
-       	string.AppendNum(bits);                  \
+       	string.Append(#className "<");          \
+       	string.Append(constString);			 \
+       	string.Append(typeName);   			 \
+       	string.Append(bits);                  \
        	string.Append('>');
 
 
@@ -191,36 +191,36 @@ bool TypeDescriptor::ToString(DynamicCString &string) const{
     }
 
     if (isStructuredData){
-    	string.AppendN(constString);
+    	string.Append(constString);
     	CCString className = GetNameOfClassFromStructureId();
 
     	if (className.GetSize()==0){
-        	string.AppendN("unknown_struct_code(");
+        	string.Append("unknown_struct_code(");
         	uint32 idCode = structuredDataIdCode;
-        	string.AppendNum(idCode);
+        	string.Append(idCode);
         	string.Append(')');
     	} else {
-           	string.AppendN(className);
+           	string.Append(className);
     	}
     }
     else // !isStructuredData
    	if (!IsBasicType()){  //Stream,StructuredData,..
-   		string.AppendN(constString);
-   		string.AppendN(BasicTypeName(fullType));
+   		string.Append(constString);
+   		string.Append(BasicTypeName(fullType));
    	}
    	else { //!IsComplexType()
    		CCString typeName = BasicTypeName(fullType);
    		if (IsBitType()){  // uint5 bitranges
-   			string.AppendN(constString);
-   			string.AppendN("BitRange<");
+   			string.Append(constString);
+   			string.Append("BitRange<");
 			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
    			TYPENAME_CORE()
    			string.Append(',');
    			uint32 numberOfBitsR = (int)numberOfBits;
    			uint32 bitOffsetR = (int)bitOffset;
-   			string.AppendNum(numberOfBitsR);
+   			string.Append(numberOfBitsR);
    			string.Append(',');
-   			string.AppendNum(bitOffsetR);
+   			string.Append(bitOffsetR);
    			string.Append('>');
    		}
    		else {// not bit type

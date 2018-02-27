@@ -54,7 +54,6 @@ void ProgressiveTypeCreator::SizeStack::Clean(){
 	StaticListHolder::Clean();
 }
 
-
 /**
  * @brief Creates the object selecting the type to convert to and the default PageSize
  */
@@ -81,9 +80,6 @@ void ProgressiveTypeCreator::Clean(){
 	pageFile.Clean(originalPageSize);
 	type 				= InvalidType(0);
 	objectSize 			= 0;
-	//	pageSize			= 0;
-	//	sizeLeft 			= 0;
-	//	pageWritePos 		= 0;
 	status 				= notStarted;
 	converter 			= NULL;
 	matrixRowSize 		= 0;
@@ -125,86 +121,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	}
 	return ret;
 }
-#if 0
-ErrorManagement::ErrorType ProgressiveTypeCreator::CheckMemoryStringEl(uint32 neededSize){
-	ErrorManagement::ErrorType ret;
-
-	if (ret){
-		ret = pageFile.CheckAndTrimPage(neededSize);
-		//		ret = CheckAndClosePage(neededSize);
-	}
-
-	// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
-	if (ret){
-		// no memory - allocate
-		// could be at the beginning or after a vector has been completed
-		// if no more vectors of the same size can be fitted
-		ret = pageFile.CheckAndNewPage();
-		//		ret = CheckAndNewPage(defaultPageSize);
-	}
-	return ret;
-}
-
-static inline uint32 max(uint32 x,uint32 y){
-	uint32 ret = x;
-	if (y > x) ret = y;
-	return ret;
-}
-
-ErrorManagement::ErrorType ProgressiveTypeCreator::CheckMemoryFixedSizeEl(bool newRow){
-	ErrorManagement::ErrorType ret;
-
-	uint32 neededSize = vectorSize * objectSize;
-
-	// in case of new vector check if there is space for one based on the size of the previous
-	// close page otherwise
-	if (ret && newRow){
-		ret = pageFile.CheckAndTrimPage(neededSize);
-
-		//		ret = CheckAndClosePage(vectorSize * objectSize);
-	}
-
-	// check for initial 0 size page or begin of new vector 0 size page (after CheckAndClosePage)
-	if (ret){
-		// no memory - allocate
-		// could be at the beginning or after a vector has been completed
-		// if no more vectors of the same size can be fitted
-		ret = pageFile.CheckAndNewPage(max(pageFile.GetDefaultPageSize(),neededSize));
-		//		ret = CheckAndNewPage(max(defaultPageSize,vectorSize * objectSize));
-	}
-
-	//	uint32 neededSize = objectSize;
-	// check memory availability to complete current vector
-	if (ret){
-		// not enough space
-		//		if (neededSize > sizeLeft){
-		if (objectSize > pageFile.FreeSizeLeftBytes()){
-
-			// need to allocate a new page and shrink this page?
-			// or need to move part of current page into a new page and shrink this page?
-			// or need to increase page size
-
-			// there were some other vectors in this page
-			// increase so that we can fit also this last one
-			uint32 currentVectorUsedSize = (currentVectorSize-1) * objectSize;
-			//			if (currentVectorUsedSize <= pageSize){
-			if (currentVectorUsedSize <= pageFile.CurrentPageSize()){
-				// add enough to store the biggest vector so far
-				//				ret = PageGrow(vectorSize * objectSize);
-				ret = pageFile.PageGrow(neededSize);
-
-			} else { // means that one vector cannot fit in the page
-
-				// multiply the size
-				//				ret = pageFile.PageGrow(defaultPageSize);
-				ret = pageFile.PageGrow(pageFile.GetDefaultPageSize());
-			}
-		}
-	}
-
-	return ret;
-}
-#endif
 
 /**
  * @adds an element. It will convert the string to the specified type
@@ -267,13 +183,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 			ret = pageFile.WriteReserveAtomic(pointer,neededSize);
 			CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 
-			// checks memory available in current page
-			// if not enough opens a new page
-			//				ret = CheckMemoryStringEl(neededSize);
-
 			if (ret){
 				MemoryOperationsHelper::Copy(pointer,typeStringRepresentation.GetList(),neededSize);
-				//					MemoryOperationsHelper::Copy(page.Address(pageWritePos),typeStringRepresentation.GetList(),neededSize);
 			}
 
 		} else {
@@ -281,10 +192,10 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 			// if not enough resize
 			// in case of new Rows check if space is enough for a row
 			// otherwise opens a new page
-			//				ret = CheckMemoryFixedSizeEl(newRow);
 			if (newRow){
 				uint32 estimatedSizeNeeded = vectorSize * objectSize;
 //printf("CheckAndTrimPage(%i)\n",estimatedSizeNeeded); //TODO
+
 				// in case of new vector check if there is space for one based on the size of the previous
 				// close page otherwise
 				ret = pageFile.CheckAndTrimPage(estimatedSizeNeeded);
@@ -314,8 +225,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 
 	// all ok - means we used some memory
 	if (ret){
-		//			sizeLeft -= neededSize;
-		//			pageWritePos += neededSize;
 		numberOfElements++;
 	} else {
 		status = error;
@@ -324,10 +233,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 	return ret;
 }
 
-
-/**
- * @brief Marks the end of a row of elements
- */
 ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 	ErrorManagement::ErrorType  ret;
 
@@ -363,7 +268,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 	}break;
 	case sparseMatrixRow:
 	case sparseMatrixRE:{
-		//printf("nEl = %i\n",currentVectorSize);
+//printf("nEl = %i\n",currentVectorSize); TODO
 		sizeStack.Push(currentVectorSize);
 		currentVectorSize = 0;
 		status = sparseMatrixRE;
@@ -381,9 +286,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 	return ret;
 }
 
-/**
- * @brief Marks the end of the object construction
- */
 ErrorManagement::ErrorType ProgressiveTypeCreator::End(){
 	ErrorManagement::ErrorType  ret;
 
@@ -430,23 +332,9 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteFixedSizeEl(uint8 *&d
 			auxSize = sizeof (void *) * matrixRowSize;
 		}
 
-	// shrink if needed
-	// if auxSize = 0 or if auxSize bigger than available
-	//		ret = CheckAndClosePage(auxSize);
 
 	// if auxSize is not zero
 	if (auxSize > 0){
-
-		// new page if needed
-		//			ret = CheckAndNewPage(auxSize);
-
-		// get the address map and close up memory pages
-		//			if (ret){
-		//				auxPtr = reinterpret_cast<void *>(page.Address(this->pageWritePos));
-		//				pageWritePos += auxSize;
-		//				sizeLeft -= auxSize;
-		//				ret = CheckAndClosePage(0);
-		//			}
 
 		ret = pageFile.WriteReserveAtomic(auxPtr,auxSize);
 		CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
@@ -458,39 +346,15 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteFixedSizeEl(uint8 *&d
 	}
 
 
-	//		if ((numberOfPages > 0) && ret){
-	//			page.FlipOrder();
-	//		}
-
 	return ret;
 }
-#if 0
-static inline bool stringBoundSize(CCString s, uint32 &sizeInOut){
-	const char8 *p = s.GetList();
-	bool ret = (p!=NULL);
-
-	if (ret){
-		uint32 sz = 0;
-		while ((sz < sizeInOut) && (*p!='\0')){
-			p++;
-			sz++;
-		}
-
-		if (*p == '\0'){
-			sizeInOut = sz;
-		} else {
-			ret = false;
-		}
-	}
-	return ret;
-}
-#endif
 
 ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr){
 	ErrorManagement::ErrorType  ret;
 	// table of CCString (pointers)
 	uint32 CCStringTableSize = numberOfElements * sizeof(CCString);
-	//printf("Strings Pointer Table size= %i\n",CCStringTableSize); //
+
+//printf("Strings Pointer Table size= %i\n",CCStringTableSize); // TODO
 //printf ("numberOfElements=%i\n",numberOfElements); //TODO
 
 	// table of Vector<CCString>
@@ -498,19 +362,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 		auxSize = sizeof (Vector<uint8>) * matrixRowSize;
 //printf ("matrixRowSize=%i\n",matrixRowSize); //TODO
 	}
-
-	/** try to fit both */
-	//		uint32 neededSize = CCStringTableSize + auxSize;
-
-	//		if (ret){
-	// close if not big enough
-	//			ret = CheckAndClosePage(neededSize);
-	//		}
-
-	//		if (ret){
-	//			// open if no page
-	//			ret = CheckAndNewPage(neededSize);
-	//		}
 
 	CCString *strings = NULL;
 
@@ -532,31 +383,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 		CONDITIONAL_REPORT_ERROR(ret,"CheckAndTrimPage Failed");
 	}
 
-
-	// process memory and create list of pointers
-	//		CCString *strings = NULL;
-	//		if (ret){
-	// remember pointer to string array
-	//			strings = reinterpret_cast<CCString *>(page.Address(pageWritePos));
-	//printf("Strings Pointer Table base = %p\n",strings); //
-	//			if (auxSize > 0){
-	//				auxPtr = page.Address(pageWritePos + CCStringTableSize);
-	//printf("String Vector Table base = %p\n",auxPtr);   //
-	//			}
-
-	// close up memory pages
-	//			pageWritePos += neededSize;
-	//			sizeLeft -= neededSize;
-	//			ret = CheckAndClosePage(0);
-
-	// put oldest page on top
-	//			if (numberOfPages > 1){
-	//				page.FlipOrder();
-	//				numberOfPages = 1;
-	//			}
-	//		}
-
-
 	if (ret){
 
 		uint64 pageDepth=0;
@@ -574,56 +400,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 			//				CCString s = reinterpret_cast<char8 *> (page.DeepAddress(pageDepth,consecutiveSpan));
 			ret = pageFile.ConsumeReadAtomic(0);
 
-#if 0
-			//printf("String %i address = %p\n",i,s.GetList());  //
-
-			// consecutiveSpan now is how much space is left on page
-			//printf("string=%s span = %i\n",s.GetList(),consecutiveSpan);  //
-			// empty string error?
-			if (s.GetList() == NULL){
-				ret.fatalError = true;
-				DynamicCString errM;
-				errM.AppendN("String ");
-				errM.AppendNum(i);
-				errM.AppendN(" has zero length");
-				REPORT_ERROR(ret,errM.GetList());
-			}
-
-			// calculate string length
-			uint32 length = consecutiveSpan;
-			if (ret){
-				// length but do not scan beyond end of
-				if (!stringBoundSize(s,length)){
-					ret.fatalError = true;
-					DynamicCString errM;
-					errM.AppendN("String ");
-					errM.AppendNum(i);
-					errM.AppendN(" exceeding page boundaries ");
-					errM.AppendNum(consecutiveSpan);
-					REPORT_ERROR(ret,errM.GetList());
-				}
-			}
-			// update pointer to page
-			if (ret){
-				// include 0
-				length = length+1;
-				strings[i] = s;
-				pageDepth += length;
-			}
-#endif
-
 		}
 	}
-
-	//{//
-	//	for (int i = 0;(i<numberOfElements) && ret;i++){
-	//		printf("strings[%i] = %p\n",i,strings[i].GetList());
-	//	}
-	//}
-
-	//if (ret){
-	//	dataPtr = reinterpret_cast<uint8 *>(strings);
-	//}
 
 	return ret;
 }
@@ -659,7 +437,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 			// allocate array of pointers in case of multipage data
 			ret = CompleteFixedSizeEl(dataPtr,auxSize,auxPtr);
 			CONDITIONAL_REPORT_ERROR(ret,"CompleteFixedSizeEl Failed");
-			//				dataPtr =  pageFile.Address(0);
 		}
 	}
 
@@ -667,7 +444,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 		// Completes operation
 		// fills aux Data
 		// creates Object
-		//printf("Aux =%p data=%p\n",auxPtr,dataPtr);
+//printf("Aux =%p data=%p\n",auxPtr,dataPtr); TODO
 
 		ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
 		CONDITIONAL_REPORT_ERROR(ret,"GetReferencePrivate Failed");
@@ -687,72 +464,54 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 	DynamicCString mods;
 	switch (status){
 	case finishedS:{
-		//			CheckAndClosePage(0);
 	}break;
 	case finishedV:{
-		//			CheckAndClosePage(0);
-		mods.Append('A');
-		mods.AppendNum(vectorSize);
+		if (vectorSize > 1){
+			mods.Append('A');
+			mods.Append(vectorSize);
+		}
 	}break;
 	case finishedM:{
 		// auxPtr not NULL means fragmented
 		if (auxPtr != NULL){
-printf("AUXPTR !NULL\n");
+//printf("AUXPTR !NULL\n"); //todo
 			if (auxSize != sizeof (void *) * matrixRowSize){
 				ret.internalSetupError = true;
 				REPORT_ERROR(ret,"auxSize is not adequate");
 			}
 
-			//				uint64 pageDepth;
-			//				if (ret){
-			//					ret = page.Address2Index(dataPtr,pageDepth);
-			//				}
 
 			// reorder the pages correctly to allow access to data
 			if (ret){
 				uint8**addressMap = reinterpret_cast<uint8**>(auxPtr);
-				//printf("addressMap = %p\n",addressMap);
+//printf("addressMap = %p\n",addressMap); TODO
 
-				//					uint64 pageDepth=0;
 				uint32 vectorByteSize = vectorSize * objectSize;
-				//printf("vectorByteSize = %i\n",vectorByteSize);
+//printf("vectorByteSize = %i\n",vectorByteSize); TODO
 				for (int i = 0;(i<matrixRowSize) && ret;i++){
 					addressMap[i] = pageFile.CurrentReadPointer();
 
 					ret = pageFile.ConsumeReadAtomic(vectorByteSize);
 					CONDITIONAL_REPORT_ERROR(ret,"ConsumeReadAtomic failed");
-
-					//						uint32 sizeLeftOnPage = vectorByteSize;
-					//						void *address = page.DeepAddress(pageDepth,sizeLeftOnPage);
-					//						if (address == NULL){
-					//							ret.fatalError = true;
-					//							REPORT_ERROR(ret,"deep address out of boundary");
-					//						}
-
-					//						if (ret){
-					//printf("depth = %lli address = %p %i\n",pageDepth,address,vectorByteSize);
-					//							addressMap[i] = address;
-					//							pageDepth = pageDepth + vectorByteSize;
-					//						}
 				}
 			}
 
 			if (ret){
 				mods.Append('A');
-				mods.AppendNum(matrixRowSize);
-				mods.AppendN("PA");
-				mods.AppendNum(vectorSize);
+				mods.Append(matrixRowSize);
+				mods.Append("PA");
+				mods.Append(vectorSize);
 				dataPtr = auxPtr;
 			}
 
 		} else {
 			if (matrixRowSize > 1){
 				mods.Append('A');
-				mods.AppendNum(matrixRowSize);
+				mods.Append(matrixRowSize);
 			}
 			if (vectorSize > 1){
 				mods.Append('A');
-				mods.AppendNum(vectorSize);
+				mods.Append(vectorSize);
 			}
 		}
 	}break;
@@ -766,20 +525,13 @@ printf("AUXPTR !NULL\n");
 			}
 		}
 
-		//			uint64 pageDepth;
-		//			if (ret){
-		//				ret = page.Address2Index(dataPtr,pageDepth);
-		//printf("Data @ %p pageDepth= %lli\n",dataPtr,pageDepth);
-		//printf("Aux  @ %p \n",auxPtr);
-		//			}
-
 		// now get the address and then reorder the pages correctly to allow access to data
 		if (ret){
 			Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
-			//printf("Vector Table base %p\n",addressMap);
-			//printf("aux=%p aMap = %p\n",auxPtr,addressMap);
+//printf("Vector Table base %p\n",addressMap); TODO
+//printf("aux=%p aMap = %p\n",auxPtr,addressMap); TODO
+//printf("rows = %i\n",matrixRowSize); TODO
 
-			//printf("rows = %i\n",matrixRowSize);
 			for (int i = 0;(i<matrixRowSize) && ret;i++){
 				uint32 size  = sizeStack[i];
 				uint32 vectorByteSize = size * objectSize;
@@ -789,32 +541,12 @@ printf("AUXPTR !NULL\n");
 				ret = pageFile.ConsumeReadAtomic(vectorByteSize);
 				CONDITIONAL_REPORT_ERROR(ret,"ConsumeReadAtomic failed");
 
-
-#if 0
-				uint32 sizeLeftOnPage = vectorByteSize;
-				uint8 *address = reinterpret_cast<uint8 *> (page.DeepAddress(pageDepth,sizeLeftOnPage));
-				if (address == NULL_PTR(uint8 *)){
-					ret.fatalError = true;
-					DynamicCString errM;
-					errM.AppendN("deep address ");
-					errM.AppendNum(pageDepth);
-					errM.AppendN(" out of boundary");
-					REPORT_ERROR(ret,"deep address out of boundary");
-				}
-				//printf("index = %i size = %i depth = %lli vectorS = %i\n",i,size, pageDepth,vectorByteSize);
-
-				if (ret){
-					//printf("Vector %i size %i points to %p\n",i,size,address);
-					addressMap[i].InitVector(address,size);
-					pageDepth += vectorByteSize;
-				}
-#endif
 			}
 		}
 
 		if (ret){
 			mods.Append('A');
-			mods.AppendNum(matrixRowSize);
+			mods.Append(matrixRowSize);
 			mods.Append('V');
 			dataPtr = auxPtr;
 		}
@@ -894,103 +626,6 @@ printf("AUXPTR !NULL\n");
 	}
 	return ret;
 }
-
-#if 0
-/**
- * @brief Check if the current segment has enough space to store another vector.
- * If there is no need (neededSize== 0) or if the space is not large enough close the current memory page segment and open a new one
- */
-ErrorManagement::ErrorType ProgressiveTypeCreator::CheckAndClosePage(uint32 neededSize){
-	ErrorManagement::ErrorType ret;
-	// do nothing if pageSize == 0
-	if (pageSize > 0){
-		// check if enough space to store another vector
-		if ((sizeLeft < neededSize) || (neededSize == 0)){
-			ret = page.Shrink(pageWritePos);
-			if (ret){
-				//printf("end page to %i\n", pageWritePos);
-				pageSize = 0;
-				sizeLeft = 0;
-				pageWritePos = 0;
-			}
-		}
-	}
-	if (!ret){
-		DynamicCString errs;
-		errs.AppendN("CheckAndClosePage(");
-		errs.AppendNum(neededSize);
-		errs.Append(')');
-		REPORT_ERROR(ret,errs.GetList());
-	}
-	return ret;
-}
-
-
-/**
- * @brief If pageSize is 0 allocate a new page of desired size
- */
-ErrorManagement::ErrorType ProgressiveTypeCreator::CheckAndNewPage(uint32 neededSize){
-	ErrorManagement::ErrorType ret;
-	// no memory - allocate
-	// could be at the beginning or after a vector has been completed
-	// if no more vectors of the same size can be fitted
-	if (pageSize == 0){
-		ret = page.Allocate(neededSize);
-		if (ret){
-			//printf("new page %i @%p\n", neededSize,page.Address(0));
-			sizeLeft = neededSize;
-			pageWritePos = 0;
-			pageSize = neededSize;
-			numberOfPages++;
-		}
-	}
-	if (!ret){
-		DynamicCString errs;
-		errs.AppendN("CheckAndNewPage(");
-		errs.AppendNum(neededSize);
-		errs.Append(')');
-		REPORT_ERROR(ret,errs.GetList());
-	}
-
-	return ret;
-}
-
-
-ErrorManagement::ErrorType ProgressiveTypeCreator::PageGrow(uint32 amount){
-	ErrorManagement::ErrorType ret;
-
-	uint32 newPageSize = pageSize + amount;
-
-	// check math overflow!
-	if (newPageSize < pageSize){
-		ret.fatalError = true;
-		REPORT_ERROR(ret,"Overflow");
-	}
-
-	if (ret){
-		ret = page.Grow(newPageSize);
-		if (!ret){
-			ret.outOfMemory = true;
-			REPORT_ERROR(ret,"Out of Memory");
-		}
-	}
-
-	if (ret){
-		uint32 oldPageSize = pageSize;
-		pageSize = page.CurrentPageSize();
-		if (pageSize > oldPageSize){
-			sizeLeft += (pageSize - oldPageSize);
-			//printf("end page to %i\n", pageSize);
-		} else {
-			ret.fatalError = true;
-			REPORT_ERROR(ret,"page.Grow results in a smaller page!");
-		}
-	}
-
-	return ret;
-}
-#endif
-
 
 
 } //MARTe

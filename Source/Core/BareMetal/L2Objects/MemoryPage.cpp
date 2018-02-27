@@ -21,6 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#include "CompositeErrorManagement.h"
 #include "DynamicCString.h"
 #include "MemoryPageFile.h"
 
@@ -114,9 +115,9 @@ ErrorManagement::ErrorType  MemoryPageFile::Allocate(uint32 size){
 	if (newPage == NULL_PTR(MemoryPageHeader *)){
 		ret.outOfMemory = true;
 		DynamicCString errs;
-		errs.AppendN("Allocate(");
-		errs.AppendNum(size);
-		errs.AppendN(") failed");
+		errs.Append("Allocate(");
+		errs.Append(size);
+		errs.Append(") failed");
 		REPORT_ERROR(ret,errs.GetList());
 	}
 
@@ -159,9 +160,9 @@ ErrorManagement::ErrorType  MemoryPageFile::ReSize(uint32 newSize){
 		if (newPage == NULL_PTR(MemoryPageHeader *)){
 			ret.outOfMemory = true;
 			DynamicCString errs;
-			errs.AppendN("Realloc(");
-			errs.AppendNum(actualSize);
-			errs.AppendN(") failed");
+			errs.Append("Realloc(");
+			errs.Append(actualSize);
+			errs.Append(") failed");
 			REPORT_ERROR(ret,errs.GetList());
 		} else {
 			newPage->pageSize = newSize;
@@ -217,8 +218,8 @@ ErrorManagement::ErrorType MemoryPageFile::CheckAndTrimPage(uint32 neededSize){
 	}
 	if (!ret){
 		DynamicCString errs;
-		errs.AppendN("CheckAndClosePage(");
-		errs.AppendNum(neededSize);
+		errs.Append("CheckAndClosePage(");
+		errs.Append(neededSize);
 		errs.Append(')');
 		REPORT_ERROR(ret,errs.GetList());
 	}
@@ -242,11 +243,12 @@ ErrorManagement::ErrorType MemoryPageFile::CheckAndNewPage(uint32 newPageSize){
 	}
 //printf("CheckAndNewPage2 CPSZ=%i NPSZ=%i DPSZ=%i \n",CurrentPageSize(),newPageSize,defaultPageSize); // TODO
 	if (!ret){
-		DynamicCString errs;
-		errs.AppendN("CheckAndNewPage(");
-		errs.AppendNum(newPageSize);
-		errs.Append(')');
-		REPORT_ERROR(ret,errs.GetList());
+		COMPOSITE_REPORT_ERROR(ret,"CheckAndNewPage(",newPageSize,')')
+//		DynamicCString errs;
+//		errs.Append("CheckAndNewPage(");
+//		errs.Append(newPageSize);
+//		errs.Append(')');
+//		REPORT_ERROR(ret,errs.GetList());
 	}
 	return ret;
 }
@@ -332,10 +334,6 @@ ErrorManagement::ErrorType  MemoryPageFile::WriteReserveExtended(uint8 *&reserve
 	return ret;
 }
 
-
-
-
-
 ErrorManagement::ErrorType  MemoryPageFile::ConsumeReadAtomic(uint32 numberOfBytes){
 	ErrorManagement::ErrorType ret;
 
@@ -414,222 +412,4 @@ uint8 *MemoryPageFile::Address(uint64 index){
 	return address;
 }
 
-
-#if 0
-
-
-/**
- * basic constructor empty pages
- */
-MemoryPage::MemoryPage(){
-	mph = NULL_PTR(MemoryPageHeader *);
-}
-/**
- * @brief Steals content from another MemoryPage
- */
-void MemoryPage::Copy (MemoryPage &stealFrom){
-	mph = stealFrom.mph;
-	stealFrom.mph = NULL_PTR(MemoryPageHeader *);
-}
-/**
- * @brief Deletes all pages of memory
- */
-MemoryPage::~MemoryPage(){
-	Clean();
-}
-
-void MemoryPage::Clean(){
-	while (mph != NULL_PTR(MemoryPageHeader *)){
-		MemoryPageHeader * memoryP = mph->previous;
-		free(mph);
-		mph = memoryP;
-	}
-}
-
-uint32 MemoryPage::CurrentPageSize(){
-	uint32 size = 0;
-	if (mph != NULL) {
-		size = mph->pageSize;
-	}
-	return size;
-}
-
-uint32 MemoryPage::NumberOfPages(){
-	uint32 n = 0;
-	MemoryPageHeader * memoryP = mph;
-	while (memoryP != NULL){
-		n++;
-		memoryP = memoryP->previous;
-	}
-	return n;
-}
-
-
-ErrorManagement::ErrorType MemoryPage::Address2Index(void * address,uint64 &index) const{
-	ErrorManagement::ErrorType ret;
-
-	uint8 *addressU8 = reinterpret_cast<uint8 *>(address);
-	index = 0;
-	bool found = false;
-	MemoryPageHeader *mphp = mph;
-	while (!found && (mphp != NULL_PTR(MemoryPageHeader *))){
-		uint8 *start = mphp->Data();
-		uint8 *end   = mphp->Data() + mphp->pageSize;
-		if ((addressU8 >= start) && (addressU8 <end)){
-			found = true;
-			index += (addressU8 - start);
-		} else {
-			index += mphp->pageSize;
-			mphp = mphp->previous;
-		}
-	}
-
-	if (!found){
-		ret.outOfRange = true;
-		REPORT_ERROR(ret,"address out of range");
-	}
-
-	return ret;
-}
-
-
-void *MemoryPage::DeepAddress(uint64 index,uint32 &consecutiveSpan){
-//printf("%index = lli index\n",index);
-	MemoryPageHeader *mphp = mph;
-
-	uint32 localIndex = 0;
-	while ((index > 0) && (mphp != NULL_PTR(MemoryPageHeader *))){
-		if (index >= mphp->pageSize) {
-			index -= mphp->pageSize;
-			mphp = mphp->previous;
-		} else {
-			localIndex  = index;
-			index = 0;
-		}
-	}
-
-	void *address = NULL;
-	if (mphp != NULL){
-		uint32 requiredSpan = consecutiveSpan;
-		consecutiveSpan = mphp->pageSize - localIndex;
-		if (requiredSpan <= consecutiveSpan){
-			address = reinterpret_cast<void *>((mphp->Data()+localIndex));
-		}
-//printf("%p req=%i avail=%i pos=%i\n",address, requiredSpan, consecutiveSpan,localIndex);
-	}
-	return address;
-}
-
-/**
- * @brief return address of element index
- */
-void *MemoryPage::Address(uint32 index){
-	return reinterpret_cast<void *> (mph->Data()+index);
-}
-
-
-/**
- * @brief increases current page to size newBufferSize
- */
-ErrorManagement::ErrorType MemoryPage::Grow(uint32 newBufferSize){
-	ErrorManagement::ErrorType ret;
-
-	if (mph != NULL_PTR(MemoryPageHeader *)){
-		// should grow not shrink
-		if (newBufferSize <= mph->pageSize){
-			ret.parametersError = true;
-			REPORT_ERROR(ret,"Grow to a smaller size??");
-		}
-	}
-
-	MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
-	if (ret){
-		// failure to allocate new page
-		newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-		if (newMemory == NULL_PTR(MemoryPageHeader *)){
-			ret.outOfMemory = true;
-			REPORT_ERROR(ret,"realloc failed");
-		}
-	}
-
-	if (ret){
-		mph = newMemory;
-		mph->pageSize = newBufferSize;
-	}
-	return ret;
-}
-
-/**
- * @brief decreases current page to size newBufferSize
- */
-ErrorManagement::ErrorType MemoryPage::Shrink(uint32 newBufferSize){
-	ErrorManagement::ErrorType ret;
-
-	if (mph != NULL_PTR(MemoryPageHeader *)){
-		// should shrink not grow
-		if (newBufferSize > mph->pageSize){
-			ret.parametersError = true;
-			DynamicCString errMsg;
-			errMsg.AppendN("Shrink to a bigger size??:new= ");
-			errMsg.AppendNum(newBufferSize);
-			errMsg.AppendN(" old= ");
-			errMsg.AppendNum(mph->pageSize);
-			REPORT_ERROR(ret,errMsg.GetList());
-		}
-
-	}
-	MemoryPageHeader *newMemory = NULL_PTR(MemoryPageHeader *);
-	if (ret){
-		// failure to allocate new page
-		newMemory = reinterpret_cast<MemoryPageHeader*>(realloc(mph, newBufferSize + sizeof (MemoryPageHeader)));
-		if (newMemory == NULL_PTR(MemoryPageHeader *)){
-			ret.outOfMemory = true;
-			REPORT_ERROR(ret,"realloc failed");
-		}
-	}
-
-	if (ret){
-		mph = newMemory;
-		mph->pageSize = newBufferSize;
-	}
-	return ret;
-}
-
-/**
- *  @brief allocate a new page
- */
-ErrorManagement::ErrorType  MemoryPage::Allocate(uint32 size){
-	ErrorManagement::ErrorType ret;
-	MemoryPageHeader *newMemory;
-	newMemory = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
-//printf("malloc %i @%p\n", size,newMemory);
-
-	if (newMemory == NULL_PTR(MemoryPageHeader *)){
-		ret.outOfMemory = true;
-		REPORT_ERROR(ret,"malloc failed");
-	}
-
-	if (ret){
-		newMemory->pageSize = size;
-		newMemory->previous = mph;
-		mph = newMemory;
-	}
-	return ret;
-}
-
-// last operation before closing the use of this memory
-// change previous to next so that the memory can be parsed in the right order
-void MemoryPage::FlipOrder(){
-	MemoryPageHeader *ptr = mph->previous;
-	mph->previous = NULL;
-	while (ptr != NULL){
-		MemoryPageHeader *ptr2 = ptr->previous;
-		ptr->previous = mph;
-		mph = ptr;
-		ptr = ptr2;
-	}
-}
-
-
-#endif
 } //MARTe

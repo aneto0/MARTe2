@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -104,125 +104,6 @@ protected:
 	MemoryPageHeader *	firstPage;
 };
 
-
-#if 0
-
-/**
- * Header used in each page
- */
-struct MemoryPageHeader{
-	/**
-	 * Link to previous/next
-	 */
-	MemoryPageHeader * 	previous;
-	/**
-	 * page size (payload only - no header)
-	 */
-	uint32				pageSize;
-	/**
-	 * Allow access to the payload section
-	 */
-	uint8 				*Data(){
-		MemoryPageHeader *ptr = this +1;
-		return reinterpret_cast<uint8 *>(ptr);
-	};
-	/**
-	 * individual access to each member of payload
-	 * range checks not performed
-	 */
-	uint8 &operator[] (uint32 index){
-		return Data()[index];
-	}
-};
-
-/**
- * A set of memory pages linked together.
- * To be used by an application to load a memory structure into memory
- * Object destruction deletes all pages
- */
-class MemoryPage{
-
-public:
-	/**
-	 * basic constructor empty pages
-	 */
-								MemoryPage();
-	/**
-	 * @brief Steals content from another MemoryPage
-	 */
-	void 						Copy (MemoryPage &stealFrom);
-	/**
-	 * @brief Deletes all pages of memory
-	 */
-								~MemoryPage();
-	/**
-	 * @brief Deletes all pages of memory
-	 */
-	void 						Clean();
-
-	/**
-	 * @brief return address of the element at the deep address index
-	 * and checks that the elements from that point to that + span are contiguous
-	 * in consecutiveSpan returns the number of consecutive bytes available
-	 * returns NULL if outside range
-	 */
-	void *						DeepAddress(uint64 index,uint32 &consecutiveSpan);
-
-	/**
-	 * @brief finds the index corresponding to the given address
-	 * @param [in] address the address to find
-	 * @param [out] index
-	 */
-	ErrorManagement::ErrorType 	Address2Index(void * address,uint64 &index) const;
-
-	/**
-	 * @brief return address of element index
-	 */
-	void *						Address(uint32 index);
-
-	/**
-	 * @brief increases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType 	Grow(uint32 newBufferSize);
-
-	/**
-	 * @brief decreases current page to size newBufferSize
-	 */
-	ErrorManagement::ErrorType 	Shrink(uint32 newBufferSize);
-
-	/**
-	 *  @brief allocate a new page
-	 */
-	ErrorManagement::ErrorType 	Allocate(uint32 size);
-
-	/**
-	 * @brief  last operation before closing
-	 * the use of this memory change previous to next so that the memory can be parsed in the right order
-	 */
-	void 						FlipOrder();
-
-	/**
-	 *  @brief size of current page
-	 */
-	uint32 						CurrentPageSize();
-
-	/**
-	 *  @brief How many pages
-	 */
-	uint32 						NumberOfPages();
-
-protected:
-	/**
-	 * The pointer to the current page
-	 */
-	MemoryPageHeader *mph;
-};
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif
 
 } // MARTe
 

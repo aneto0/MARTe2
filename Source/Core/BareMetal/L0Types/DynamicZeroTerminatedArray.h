@@ -32,11 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 #include "CompilerTypes.h"
 #include "ZeroTerminatedArray.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
-#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -143,7 +143,7 @@ protected:
     T *&TArray();
 
     /**
-     * @brief to write a terminator
+     * @brief to write a terminator (zeroes) at the given position
      */
     inline void Terminate(uint32 position);
 
@@ -174,18 +174,16 @@ template<typename T,uint32 granularity>
 T *&DynamicZeroTerminatedArray<T,granularity>::TArray(){
     return ZeroTerminatedArray<T>::TArray();
 }
-
+#include <stdio.h>
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
     const uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
     VoidArray() = HeapManager::Malloc(necessarySize*sizeof(T));
+    // if ok write the terminator
     if (TArray() != NULL_PTR(T *)) {
-//    	static const T term(0u);
-//    	TArray()[0] = term;
     	Terminate(0);
     }
 }
-
 
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
@@ -264,8 +262,6 @@ bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArra
 	}
 	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,VoidArray(),src);
     if (ret)  {
-    	//static const T term(0u);
-        //operator[](sizeS+sizeD) = term;
     	Terminate(sizeS+sizeD);
     }
 

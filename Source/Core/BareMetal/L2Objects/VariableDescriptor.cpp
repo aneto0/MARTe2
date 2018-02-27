@@ -90,7 +90,7 @@ void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 		}
 		}
 		modifiers.Append(modifier);
-		if (size > 0) modifiers.AppendNum(size);
+		if (size > 0) modifiers.Append(size);
 	}
 }
 
@@ -104,23 +104,23 @@ VariableDescriptor::~VariableDescriptor(){
 
 VariableDescriptor::VariableDescriptor(const TypeDescriptor &td, CCString modifierString){
     typeDescriptor = td;
-    modifiers.AppendN(modifierString.GetList());
+    modifiers.Append(modifierString.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-    modifiers.AppendN(x.modifiers.GetList());
+    modifiers.Append(x.modifiers.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-    modifiers.AppendN(x.modifiers.GetList());
+    modifiers.Append(x.modifiers.GetList());
 }
 
 VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
     modifiers.Truncate(0);
-    modifiers.AppendN(x.modifiers.GetList());
+    modifiers.Append(x.modifiers.GetList());
     return *this;
 }
 
@@ -454,11 +454,11 @@ ErrorManagement::ErrorType VariableDescriptor::GetDeepSize(CCString modifierStri
 						if (!MemoryCheck::Check(p)){
 							ret.exception = true;
 							DynamicCString errM;
-							errM.AppendN("Pointer[");
-							errM.AppendNum(index);
-							errM.AppendN("]=");
+							errM.Append("Pointer[");
+							errM.Append(index);
+							errM.Append("]=");
 							errM.AppendHex(reinterpret_cast<uint64>(p));
-							errM.AppendN(" is Invalid");
+							errM.Append(" is Invalid");
 					        REPORT_ERROR(ret,errM.GetList());
 						}
 
@@ -698,11 +698,11 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				pointer = p + step;
 
 				DynamicCString modifiersTemp;
-				modifiersTemp.AppendN(modifierString);
+				modifiersTemp.Append(modifierString);
 				modifiers.Truncate(0);
 				modifiers.Append('A');
-				modifiers.AppendNum(pm[0].GetNumberOfColumns());
-				modifiers.AppendN(modifiersTemp);
+				modifiers.Append(pm[0].GetNumberOfColumns());
+				modifiers.Append(modifiersTemp);
 			}
 
 	 	}break;
@@ -801,9 +801,9 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr){
 	if (!MemoryCheck::Check(p)){
 		ret.exception = true;
 		DynamicCString errM;
-		errM.AppendN("bad pointer (");
+		errM.Append("bad pointer (");
 		errM.AppendHex(reinterpret_cast<uint64>(p));
-		errM.AppendN(") at (");
+		errM.Append(") at (");
 		errM.AppendHex(reinterpret_cast<uint64>(pp));
 		errM.Append(')');
         REPORT_ERROR(ret, errM.GetList());
@@ -943,8 +943,8 @@ static ErrorManagement::ErrorType LayerOperate(
 
 				if (!ret){
 					DynamicCString errM;
-					errM.AppendN("Failed at row (");
-					errM.AppendNum(ix);
+					errM.Append("Failed at row (");
+					errM.Append(ix);
 					errM.Append(')');
 			        REPORT_ERROR(ret, errM.GetList());
 				}
@@ -1010,8 +1010,8 @@ printf ("%i %c %i\n",destDimensions.NDimensions(),c1,c2);
 
 				if (!ret){
 					DynamicCString errM;
-					errM.AppendN("Failed at row (");
-					errM.AppendNum(ix);
+					errM.Append("Failed at row (");
+					errM.Append(ix);
 					errM.Append(')');
 			        REPORT_ERROR(ret, errM.GetList());
 				}
@@ -1934,7 +1934,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 
     if (ret){
     	// copy all multiplying modifiers A,Z,D,S,z,d,s
-	    destVd.modifiers.AppendN(modifierStringSave,arrayStringSize);
+	    destVd.modifiers.Append(modifierStringSave,arrayStringSize);
 
 		if (((maxDepth == 0) || (modifier == '\0')) /* && !((modifier == 'P') && (nextIsVariableLayer))*/ ){
 
@@ -2052,7 +2052,8 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
 	ErrorManagement::ErrorType  ret;
 	if (rawFormat){
-		bool retbool = string.AppendN(modifiers);
+		bool retbool = true;
+		retbool = string.Append(modifiers);
 		string.Append(' ');
 		retbool = retbool && typeDescriptor.ToString(string);
 		ret.fatalError = !retbool;
@@ -2084,35 +2085,35 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 				if ((modifier == 'Z')||(modifier == 'z')){
 					if (typeDescriptor.SameAs(Character8Bit)){
 						if (modifier == 'z'){
-							string.AppendN("const ");
+							string.Append("const ");
 						}
-						string.AppendN("CString");
+						string.Append("CString");
 						return ret;
 					} else
 					if (typeDescriptor.SameAs(ConstCharacter8Bit)){
 						if (modifier == 'z'){
-							string.AppendN("const ");
+							string.Append("const ");
 						}
-						string.AppendN("CCString");
+						string.Append("CCString");
 						return ret;
 					}
 				}
 				if ((modifier == 'D')||(modifier == 'd')){
 					if (typeDescriptor.SameAs(Character8Bit) ){
 						if (modifier == 'd'){
-							string.AppendN("const ");
+							string.Append("const ");
 						}
-						string.AppendN("DynamicCString");
+						string.Append("DynamicCString");
 						return ret;
 					}
 				}
 				if ((modifier == 'S')||(modifier == 's')){
 					if (typeDescriptor.SameAs(Character8Bit)){
 						if (modifier == 'd'){
-							string.AppendN("const ");
+							string.Append("const ");
 						}
-						string.AppendN("StaticCString<");
-						string.AppendNum(size);
+						string.Append("StaticCString<");
+						string.Append(size);
 						string.Append('>');
 						return ret;
 					}
@@ -2135,14 +2136,14 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 					priority = 0;
 					string.Append('(');
 				}
-				string.AppendN(" *");
+				string.Append(" *");
 			} else
 			if (modifier == 'p'){
 				if (priority == 1){
 					priority = 0;
 					string.Append('(');
 				}
-				string.AppendN(" * const");
+				string.Append(" * const");
 			}
 
 			// if this was the start of the sequence now do the forward section to add the vectors[]
@@ -2159,7 +2160,7 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 							string.Append(')');
 						}
 						string.Append('[');
-						string.AppendNum(size);
+						string.Append(size);
 						string.Append(']');
 					}break;
 					case 'p':
@@ -2235,13 +2236,13 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 			}
 
 			if (ret){
-				string.AppendN(templateName);
+				string.Append(templateName);
 				// insert the type of what follows
 				int8 localPriority=0;
 				ret = ToStringPrivate(string,modifierString,true,localPriority);
 				if (hasSize){
 					string.Append(',');
-					string.AppendNum(size);
+					string.Append(size);
 				}
 				// close the template
 				string.Append('>');

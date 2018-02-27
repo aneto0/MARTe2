@@ -178,17 +178,17 @@ public:
 protected:
 
     /**
-     * The array
+     * @brief The array
      */
     T * array;
 
     /**
-     * to access pointer as void
+     * @brief to access pointer as void
      */
     inline void *&VoidArray();
 
     /**
-     * to access pointer as void
+     * @brief to access pointer as T
      */
     inline T *&TArray();
 

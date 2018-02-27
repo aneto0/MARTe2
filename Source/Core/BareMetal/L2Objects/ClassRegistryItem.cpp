@@ -55,8 +55,7 @@ namespace MARTe {
 
 class Introspection;
 
-ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn):
-        classMethods() {
+ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn):classMethods() {
 
     numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);

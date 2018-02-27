@@ -76,11 +76,11 @@ public:
 						 ret.comparisonFailure = true;
 						 DynamicCString errM;
 						 errM.Append('@');
-						 errM.AppendNum(i);
+						 errM.Append(i);
 						 errM.Append('(');
-						 errM.AppendNum(destt[i]);
+						 errM.Append(destt[i]);
 						 errM.Append(',');
-						 errM.AppendNum(dst);
+						 errM.Append(dst);
 						 errM.Append(')');
 						 REPORT_ERROR(ret,errM);
 					 }
@@ -234,11 +234,11 @@ public:
 						 ret.comparisonFailure = true;
 						 DynamicCString errM;
 						 errM.Append('@');
-						 errM.AppendNum(i);
+						 errM.Append(i);
 						 errM.Append('(');
-						 errM.AppendNum(destt[i]);
+						 errM.Append(destt[i]);
 						 errM.Append(',');
-						 errM.AppendNum(dst);
+						 errM.Append(dst);
 						 errM.Append(')');
 						 REPORT_ERROR(ret,errM);
 					 }
@@ -326,11 +326,11 @@ public:
 						 ret.comparisonFailure = true;
 						 DynamicCString errM;
 						 errM.Append('@');
-						 errM.AppendNum(i);
+						 errM.Append(i);
 						 errM.Append('(');
-						 errM.AppendNum(destt[i]);
+						 errM.Append(destt[i]);
 						 errM.Append(',');
-						 errM.AppendNum(dst);
+						 errM.Append(dst);
 						 errM.Append(')');
 						 REPORT_ERROR(ret,errM);
 					 }

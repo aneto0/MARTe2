@@ -27,8 +27,6 @@
 #include "MemoryCheck.h"
 #include "ZeroTerminatedArray.h"
 
-
-
 namespace MARTe{
 
 static inline bool isNumber(char8 c){
@@ -194,19 +192,19 @@ void DimensionHandler::GetOutputModifiers(DynamicCString &dc) const {
 			dc.Append('A');
 			uint32 size;
 			dimensions[i].numberOfElements.toUint32(size);
-			dc.AppendNum(size);
+			dc.Append(size);
 		}break;
 		case 'f':{
-			dc.AppendN("pA");
+			dc.Append("pA");
 			uint32 size;
 			dimensions[i].numberOfElements.toUint32(size);
-			dc.AppendNum(size);
+			dc.Append(size);
 		}break;
 		case 'F':{
-			dc.AppendN("PA");
+			dc.Append("PA");
 			uint32 size;
 			dimensions[i].numberOfElements.toUint32(size);
-			dc.AppendNum(size);
+			dc.Append(size);
 		}break;
 		default:{
 			dc.Append(dimensions[i].outputType);
@@ -228,22 +226,22 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
 		ok.invalidOperation=true;
         REPORT_ERROR(ok, "different number of dimensions");
 		DynamicCString errM;
-		errM.AppendN("N of dim[");
+		errM.Append("N of dim[");
 		for (int i = 0;i < nDim;i++){
 			char8 type = dimensions[i].type;
 			if (type != '\0') errM.Append(type);
 			else errM.Append('0');
 		}
-		errM.AppendN( "]= ");
-		errM.AppendNum(nDimO);
-		errM.AppendN(" != [");
+		errM.Append( "]= ");
+		errM.Append(nDimO);
+		errM.Append(" != [");
 		for (int i = 0;i < nDim;i++){
 			char8 type = other.dimensions[i].type;
 			if (type != '\0') errM.Append(type);
 			else errM.Append('0');
 		}
 		errM.Append(']');
-		errM.AppendNum(nDimO);
+		errM.Append(nDimO);
         REPORT_ERROR(ok, errM.GetList());
 	}
 
@@ -254,12 +252,12 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
 		if (((d1 != d2) && ( d1!=indeterminateSize ) && ( d2 != indeterminateSize)) || ( d1 == tooLarge)){
 			ok.invalidOperation=true;
 			DynamicCString errM;
-			errM.AppendN("dimension[");
-			errM.AppendNum(i);
-			errM.AppendN("] d1= ");
-			errM.AppendNum(d1.toUint32Unchecked());
-			errM.AppendN(" d2= ");
-			errM.AppendNum(d2.toUint32Unchecked());
+			errM.Append("dimension[");
+			errM.Append(i);
+			errM.Append("] d1= ");
+			errM.Append(d1.toUint32Unchecked());
+			errM.Append(" d2= ");
+			errM.Append(d2.toUint32Unchecked());
 	        REPORT_ERROR(ok, errM.GetList());
 		}
 	}
@@ -296,9 +294,9 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowN
 	if ((p == NULL) || (!MemoryCheck::Check(p))){
 		ret.exception = true;
 		DynamicCString errM;
-		errM.AppendN("bad pointer (");
+		errM.Append("bad pointer (");
 		errM.AppendHex(reinterpret_cast<uint64>(p));
-		errM.AppendN(") at (");
+		errM.Append(") at (");
 		errM.AppendHex(reinterpret_cast<uint64>(pp));
 		errM.Append(')');
         REPORT_ERROR(ret, errM.GetList());
@@ -396,9 +394,9 @@ ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
 //printf(" p2=%p \n",ptr);
 		if (!ok){
 			DynamicCString errM;
-			errM.AppendN("type ");
+			errM.Append("type ");
 			errM.Append(type);
-			errM.AppendN(" redirection failed ");
+			errM.Append(" redirection failed ");
 	        REPORT_ERROR(ok, errM.GetList());
 		}
 		// handle case of null pointers

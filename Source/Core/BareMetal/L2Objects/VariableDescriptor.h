@@ -226,6 +226,11 @@ public:
      */
     TypeDescriptor GetSummaryTypeDescriptor() const;
 
+    /**
+     * @brief getter for modifiers
+     */
+    inline const char8 *GetModifiers() const;
+
 private:
     /**
      *  @brief a zero terminated sequence of tokens.
@@ -861,6 +866,9 @@ void VariableDescriptor::FinaliseCode(TypeDescriptor td){
 	if (isConst) typeDescriptor.dataIsConstant = true;
 }
 
+const char8 *VariableDescriptor::GetModifiers() const{
+	return modifiers.GetList();
+}
 
 
 

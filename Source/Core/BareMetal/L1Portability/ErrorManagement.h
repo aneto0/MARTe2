@@ -108,11 +108,11 @@ DLL_API void ReportErrorFullContext(const ErrorType &code,
  */
 DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 
 /**
  * @brief The function to call in case of errors.
@@ -126,21 +126,6 @@ DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 #define REPORT_ERROR(code,message)\
 MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
-/**
- * @brief Checks a condition, reports error and sets an error variable
- * @details If condition true, Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs and sets the errorVariable
- * @param[in] errorCode is the ErrorType code error and the errorVariable error field.
- * @param[in] message is the description associated to the error.
- * @param[in] condition is the boolean condition that has to be true
- * @param[in] errorVariable is the variable to be set
- */
-/*lint -save -e9026
- * 9026: function-like macro defined.
- */
-#define CONDITIONAL_REPORT_ERROR(code,message)\
-	if (!code){\
-		MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
-	}
 
 /**
  * @brief The function to call in case of errors.
@@ -150,6 +135,8 @@ MARTe::ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCT
  */
 #define REPORT_ERROR_FULL(code,message)\
 MARTe::ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
+
+}
 
 }
 #endif /* ERRORMANAGEMENT_H_ */

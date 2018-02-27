@@ -33,10 +33,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CCString.h"
+#include "CompositeErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "StaticList.h"
-#include "ErrorManagement.h"
 #include "VariableDescriptor.h"
-#include "ErrorManagement.h"
 
 
 /*---------------------------------------------------------------------------*/

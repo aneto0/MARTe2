@@ -44,13 +44,12 @@
 namespace MARTe{
 
 /**
-* TODO
 * @brief Wrapper for writable char buffers
 * */
 class DynamicCString: public DynamicZeroTerminatedArray<char8,16>{
 public:
     /**
-     *TODO
+     * @brief constructor
      */
     inline DynamicCString ();
 
@@ -65,31 +64,107 @@ public:
     inline DynamicCString (char8 const * const &s);
 
     /**
-     * TODO
+     * @brief returns a CCString containing the same pointer.
+     * Note that after any operation affecting the size of this
+     * string the pointer may change
      */
     inline operator CCString() const;
 
     /**
-     * TODO
+     * @Brief compare content
      */
     inline bool operator==(const CCString &s) const;
 
     /**
      * @Brief copies one string to another.
      * Necessary to avoid default copy operator use!
-     * TODO
      */
     inline void  operator=(const DynamicCString &s) ;
 
     /**
-     * TODO
+     * @brief append a number at the end of the string
      */
-    inline bool AppendNum(uint64 num,int32 fill0=0);
+//    inline bool Append(uint64 num,int32 fill0=0);
 
     /**
-     * TODO
+     * @brief append a number at the end of the string
      */
     inline bool AppendHex(uint64 num);
+
+    /**
+     * @brief append a char at the end of the string
+     */
+    inline bool Append(const char8 c);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const char8 *s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const CCString &s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const DynamicCString &s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint64 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint32 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint16 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint8 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int64 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int32 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int16 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int8 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const double num);
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const float num);
+
+private:
+    bool AppendN(const ZeroTerminatedArray<const char8> & data,uint32 maxAppendSize){ return false;}
+
+    template <typename T>
+    inline bool AppendT(T num);
 
 };
 
@@ -99,7 +174,6 @@ public:
 /*---------------------------------------------------------------------------*/
 
 DynamicCString::DynamicCString (){
-
 }
 
 DynamicCString::DynamicCString(DynamicCString const &s):DynamicZeroTerminatedArray<char8,16>(s){
@@ -109,78 +183,119 @@ DynamicCString::DynamicCString (char8 const * const &s):DynamicZeroTerminatedArr
 }
 
 DynamicCString::operator CCString() const{
-    return CCString(GetList());
+    return CCString(DynamicZeroTerminatedArray<char8,16>::GetList());
 }
 
 bool DynamicCString::operator==(const CCString &s) const{
-	return isSameAs(s.GetList());
+	return DynamicZeroTerminatedArray<char8,16>::isSameAs(s.GetList());
 }
 
 void DynamicCString::operator=(const DynamicCString &s) {
 	Truncate(0U);
-	AppendN(s);
-
+	DynamicZeroTerminatedArray<char8,16>::AppendN(s);
 }
 
-#if 0
-bool DynamicCString::AppendNum(uint64 num,int32 fill0){
+bool DynamicCString::Append(const uint64 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const uint32 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const uint16 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const uint8 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const int64 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const int32 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const int16 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const int8 num){
+	return AppendT(num);
+}
+
+bool DynamicCString::Append(const float num){
+	int64 numI = num;
+	return AppendT(numI);
+}
+
+bool DynamicCString::Append(const double num){
+	int64 numI = num;
+	return AppendT(numI);
+}
+
+template <typename T>
+bool DynamicCString::AppendT(T num){
 	bool ret = true;
-	if (num > 100000000u){
-		uint64 numH = num/100000000u;
-		num = num - numH * 100000000u;
-		ret = AppendNum(numH,fill0-8);
-		ret = ret && AppendNum(num,8);
-	} else
-	if (num > 10000u){
-		uint32 numH = num/10000u;
-		num = num - numH * 10000u;
-		ret = AppendNum(numH,fill0-4);
-		ret = ret && AppendNum(num,4);
-	} else
-	if (num > 100u){
-		uint32 numH = num/100u;
-		num = num - numH * 100u;
-		ret = AppendNum(numH,fill0-2);
-		ret = ret && AppendNum(num,2);
-	} else {
-		while (fill0>2){
-			Append('0');
-			fill0--;
-		}
-		uint32 numH = num/10u;
-		if ((num >= 10) || (fill0>=2)){
-			ret = Append ((char8)(numH) + '0');
-		}
-		num = num - numH * 10u;
-		ret = ret && Append ((char8)(num) + '0');
+	if (num < 0){
+		ret = ret && Append('-');
+		num = -num;
+	}
+
+	T tester = 1;
+	T tested = num/10;
+	while (tester <= tested){
+		tester *= 10;
+	}
+	while (tester > 0){
+		uint8 digit = num/tester;
+		ret = ret && Append(static_cast<char8>(static_cast<uint8>('0')+digit));
+		num     = num%tester;
+		tester /= 10;
 	}
 	return ret;
 }
-#else
 
-bool DynamicCString::AppendNum(uint64 num,int32 fill0){
+#if 0
+bool DynamicCString::Append(uint64 num,int32 fill0){
 	bool ret = true;
 	if (num > 9){
 		uint64 numH = num/10u;
 		num = num - numH * 10u;
-		ret = AppendNum(numH);
+		ret = Append(numH);
 	}
-	ret = ret && Append ((char8)(num) + '0');
+	ret = ret && Append (static_cast<char8>(static_cast<uint8>('0')+num));
 	return ret;
 }
+#endif
 
 bool DynamicCString::AppendHex(uint64 num){
 	bool ret = true;
 	for (int i = 60;(i>=0) && ret;i-=4){
 		uint8 n = (num >> i) & 0xF;
-		if (n >= 10) ret = ret && Append('A'+n-10);
-		else         ret = ret && Append('0'+n);
+		if (n >= 10) ret = ret && Append(static_cast<char8>(static_cast<uint8>('A')+n-10));
+		else         ret = ret && Append(static_cast<char8>(static_cast<uint8>('0')+n));
 	}
 	return ret;
 }
 
+bool DynamicCString::Append(const char8 c){
+	return DynamicZeroTerminatedArray<char8,16>::Append(c);
+}
 
-#endif
+bool DynamicCString::Append(const char8 *s,uint32 maxAppendSize){
+	return DynamicZeroTerminatedArray<char8,16>::AppendN(s,maxAppendSize);
+}
+bool DynamicCString::Append(const DynamicCString &s,uint32 maxAppendSize){
+	return DynamicZeroTerminatedArray<char8,16>::AppendN(s.GetList(),maxAppendSize);
+}
+
+bool DynamicCString::Append(const CCString &s,uint32 maxAppendSize){
+	return DynamicZeroTerminatedArray<char8,16>::AppendN(s.GetList(),maxAppendSize);
+}
 
 }
 #endif /* L0TYPES_DYNAMICCSTRING_H_ */

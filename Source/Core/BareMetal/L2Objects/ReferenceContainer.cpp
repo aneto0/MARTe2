@@ -253,7 +253,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     }
                     if (ok) {
                         token.Truncate(0);
-                        ok = token.AppendN(CCString (nextToken.GetList()));
+                        ok = token.Append(CCString (nextToken.GetList()));
                     }
                 }
             }
