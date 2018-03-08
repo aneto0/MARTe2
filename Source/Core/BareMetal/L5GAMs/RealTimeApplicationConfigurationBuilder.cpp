@@ -1116,8 +1116,8 @@ bool RealTimeApplicationConfigurationBuilder::AddSignalToDataSource(StreamString
                     if (!ret) {
                         //Report mismatch!
                         StreamString fullPropertyName;
-                        ret = fullPropertyName.Printf("%s.%s", originalSignalName.Buffer(), properties[p]);
-                        if (!ret) {
+                        bool retPrintf = fullPropertyName.Printf("%s.%s", originalSignalName.Buffer(), properties[p]);
+                        if (!retPrintf) {
                             fullPropertyName = "Unknown";
                         }
                         REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Mismatch in signal with name: %s: %s asked for %s while %s asked for %s", fullPropertyName.Buffer(),
