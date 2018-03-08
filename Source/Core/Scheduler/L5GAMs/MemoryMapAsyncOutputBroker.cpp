@@ -189,11 +189,13 @@ bool MemoryMapAsyncOutputBroker::Execute() {
     bool ret = true;
 
     if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
-        if (bufferMemoryMap[writeIdx].toConsume) {
-            //Buffer overrun...
-            const uint32 idx = writeIdx;
-            REPORT_ERROR(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx);
-            ret = false;
+        if (!ignoreBufferOverrun) {
+            if (bufferMemoryMap[writeIdx].toConsume) {
+                //Buffer overrun...
+                const uint32 idx = writeIdx;
+                REPORT_ERROR(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx);
+                ret = false;
+            }
         }
         uint32 n;
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
@@ -285,6 +287,14 @@ ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(const Executio
         }
     }
     return err;
+}
+
+void MemoryMapAsyncOutputBroker::SetIgnoreBufferOverrun(const bool ignoreBufferOverrunIn) {
+    ignoreBufferOverrun = ignoreBufferOverrunIn;
+}
+
+bool MemoryMapAsyncOutputBroker::IsIgnoringBufferOverrun() const {
+    return ignoreBufferOverrun;
 }
 
 CLASS_REGISTER(MemoryMapAsyncOutputBroker, "1.0")

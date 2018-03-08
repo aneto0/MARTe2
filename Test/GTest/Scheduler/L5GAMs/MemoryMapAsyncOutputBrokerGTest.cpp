@@ -98,3 +98,13 @@ TEST(MemoryMapAsyncOutputBrokerGTest,TestGetStackSize) {
     MemoryMapAsyncOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetStackSize());
 }
+
+TEST(MemoryMapAsyncOutputBrokerGTest,TestIsIgnoringBufferOverrun) {
+    MemoryMapAsyncOutputBrokerTest test;
+    ASSERT_TRUE(test.TestIsIgnoringBufferOverrun());
+}
+
+TEST(MemoryMapAsyncOutputBrokerGTest,TestSetIgnoreBufferOverrun) {
+    MemoryMapAsyncOutputBrokerTest test;
+    ASSERT_TRUE(test.TestSetIgnoreBufferOverrun());
+}

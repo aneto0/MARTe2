@@ -137,6 +137,19 @@ MemoryMapAsyncOutputBroker    ();
      */
     uint32 GetNumberOfBuffers() const;
 
+    /**
+     * @brief Sets if buffer overruns shall be ignored (i.e. the consumer thread is not consuming the data fast enough).
+     * @param[in] ignoreBufferOverrunIn if true no error will be triggered if there is a buffer overrun.
+     */
+    void SetIgnoreBufferOverrun(bool ignoreBufferOverrunIn);
+
+    /**
+     * @brief Gets if buffer overruns is being ignored (i.e. the consumer thread is not consuming the data fast enough).
+     * @return if true no error is to be triggered when there is a buffer overrun.
+     */
+    bool IsIgnoringBufferOverrun() const;
+
+
 private:
 
     /**
@@ -211,6 +224,11 @@ private:
      * The binder for the SingleThreadService.
      */
     EmbeddedServiceMethodBinderT<MemoryMapAsyncOutputBroker> binder;
+
+    /**
+     * If true buffer overruns will be ignored.
+     */
+    bool ignoreBufferOverrun;
 };
 }
 

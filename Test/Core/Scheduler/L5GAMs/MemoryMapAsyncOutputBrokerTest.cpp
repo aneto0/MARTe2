@@ -1096,3 +1096,23 @@ bool MemoryMapAsyncOutputBrokerTest::TestExecute_Buffer_Overrun() {
     godb->Purge();
     return ok;
 }
+
+bool MemoryMapAsyncOutputBrokerTest::TestIsIgnoringBufferOverrun() {
+    using namespace MARTe;
+    MemoryMapAsyncOutputBroker broker;
+
+    bool ok = !broker.IsIgnoringBufferOverrun();
+    if (ok) {
+        broker.SetIgnoreBufferOverrun(true);
+        ok = broker.IsIgnoringBufferOverrun();
+    }
+    if (ok) {
+        broker.SetIgnoreBufferOverrun(false);
+        ok = !broker.IsIgnoringBufferOverrun();
+    }
+    return ok;
+}
+
+bool MemoryMapAsyncOutputBrokerTest::TestSetIgnoreBufferOverrun() {
+    return TestIsIgnoringBufferOverrun();
+}

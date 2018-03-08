@@ -100,6 +100,16 @@ public:
      */
     bool TestGetNumberOfBuffers();
 
+    /**
+     * @brief Tests the IsIgnoringBufferOverrun method.
+     */
+    bool TestIsIgnoringBufferOverrun();
+
+    /**
+     * @brief Tests the TestSetIgnoreBufferOverrun method.
+     */
+    bool TestSetIgnoreBufferOverrun();
+
 };
 
 /*---------------------------------------------------------------------------*/
