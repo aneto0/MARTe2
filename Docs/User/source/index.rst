@@ -2,7 +2,7 @@
    sphinx-quickstart on Fri Mar 23 15:31:24 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-   date: 23/04/2018
+   date: 23/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -22,8 +22,8 @@ Welcome to MARTe2's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   core/configuration/configuration
    contributing/development/environment
-   contributing/development/environment/linux
 
 
 Indices and tables

@@ -1,4 +1,4 @@
-.. date: 23/03/2018
+.. date: 24/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,20 +11,14 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Development environment
-=======================
+Object configuration
+====================
 
-The standard development environment is based on a set of tools which are available in different operating systems, namely Microsoft Windows and Linux.
-
-In order to develop and contribute to the MARTe project you are not constrained to use any of the proposed development environments, provided that the implementation of all the quality rules (coding standard, minimum coverage, ...) is guaranteed.
-
-Nevertheless, the use of the proposed tool-set should facilitate the development and compliance with the development standard.
+TODO
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   environment/linux
-   environment/windows
-   environment/eclipse
-
+   parser
+   
