@@ -1,4 +1,4 @@
-.. date: 23/03/2018
+.. date: 25/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,36 +11,38 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
+Building
+========
 
-Development environment for Linux
-=================================
+Linux
+-----
 
 The MARTe development environment can be setup in any modern desktop Linux distribution.
 
 For the sake of simplicity these instructions are shown for the CentOS distribution but should be easily adaptable to any other mainstream distribution.
 
-Prerequisites
--------------
+If you wish to integrate with Eclispe follow :doc:`these steps </contributing/development/environment/linux>`.
 
-- `CentOS 7 <http://www.centos.org/download/>`_;
-- `Cppcheck <http://cppcheck.sourceforge.net/>`_;
-- `Doxyget <http://www.doxygen.org/>`_;
-- `gcov <http://gcc.gnu.org/onlinedocs/gcc/Gcov.html>`_;
-- `lcov <http://downloads.sourceforge.net/ltp/lcov-1.11.tar.gz>`_;
+Instructions
+~~~~~~~~~~~~
 
-Configuration
--------------
-
-1. Install the CentOS distribution;
+1. Install `CentOS 7 <http://www.centos.org/download/>`_;
 2. Open a terminal;
 
    a. Update the distribution: ``yum -y update``
    b. Make sure that the development tools are installed: ``yum groupinstall "Development tools"``
-   c. Install Cppcheck: ``yum install -y cppcheck``
-   d. Install Doxygen: ``yum install -y doxygen``
+
+3. In the following instructions, it is assumed that this is cloned into a folder named ``MARTe2-dev``.
    
-3. lcov can be deployed in any folder of the operating provided that the developer has write and execution access
-   
-   a. ``wget http://downloads.sourceforge.net/ltp/lcov-1.11.tar.gz``
-   b. ``tar zxf lcov-1.11.tar.gz``
+   a. Git clone of the `MARTe2 documentation infrastructure <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-doc.git>`_;
+
+4. ``cd MARTe2-dev``
+5. ``make -f Makefile.linux``
+
+
+Windows
+-------
+
+Follow :doc:`these instructions </contributing/development/environment/windows>`.
+
 

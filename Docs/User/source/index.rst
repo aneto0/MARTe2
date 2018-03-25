@@ -22,6 +22,7 @@ Welcome to MARTe2's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   building/sources
    core/configuration/configuration
    contributing/development/environment
 
