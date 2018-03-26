@@ -24,7 +24,6 @@
 #include "VDPrivate.h"
 #include "Matrix.h"
 #include "TypeDescriptor.h"
-#include "MemoryCheck.h"
 #include "ZeroTerminatedArray.h"
 
 namespace MARTe{
@@ -138,14 +137,14 @@ DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn){
 					finished = true;
 				} else {
 //printf("{%c}\n",modifier);
-					dimensions.Add(DimensionInfoElement(modifier,indeterminateSize));
+					dimensions.Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
 				}
 			} else
 			if (Zterminals.In(modifier)){
 				// only PZ PD PS are allowed
 				if (pointer != '\0') {
 					pointer = '\0';
-					dimensions.Add(DimensionInfoElement(modifier,indeterminateSize));
+					dimensions.Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
 				} else {
 					td = InvalidType(0);
 				}
@@ -176,9 +175,6 @@ DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn){
 //char d = (dimensions[i].layerEnd=='\0')?'0':dimensions[i].layerEnd;//TODO
 //printf( "[%i>%c %i %i %c]\n ",i,c,dimensions.Access(i).numberOfElements,dimensions.Access(i).elementSize,d);
 	}
-
-
-
 }
 
 void DimensionHandler::GetOutputModifiers(DynamicCString &dc) const {
@@ -190,20 +186,17 @@ void DimensionHandler::GetOutputModifiers(DynamicCString &dc) const {
 		} break;
 		case 'A':{
 			dc.Append('A');
-			uint32 size;
-			dimensions[i].numberOfElements.toUint32(size);
+			uint32 size = dimensions[i].numberOfElements.GetData();
 			dc.Append(size);
 		}break;
 		case 'f':{
 			dc.Append("pA");
-			uint32 size;
-			dimensions[i].numberOfElements.toUint32(size);
+			uint32 size = dimensions[i].numberOfElements.GetData();
 			dc.Append(size);
 		}break;
 		case 'F':{
 			dc.Append("PA");
-			uint32 size;
-			dimensions[i].numberOfElements.toUint32(size);
+			uint32 size = dimensions[i].numberOfElements.GetData();
 			dc.Append(size);
 		}break;
 		default:{
@@ -212,7 +205,6 @@ void DimensionHandler::GetOutputModifiers(DynamicCString &dc) const {
 		};
 	}
 }
-
 
 ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const DimensionHandler &other) const{
 	ErrorManagement::ErrorType ok = true;
@@ -249,15 +241,15 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
 		DimensionSize d1 = dimensions[i].numberOfElements;
 		DimensionSize d2 = other.dimensions[i].numberOfElements;
 
-		if (((d1 != d2) && ( d1!=indeterminateSize ) && ( d2 != indeterminateSize)) || ( d1 == tooLarge)){
+		if (((d1 != d2) && ( !d1.isIndeterminate()) && ( !d2.isIndeterminate())) || ( d1.isPositiveInf())){
 			ok.invalidOperation=true;
 			DynamicCString errM;
 			errM.Append("dimension[");
 			errM.Append(i);
 			errM.Append("] d1= ");
-			errM.Append(d1.toUint32Unchecked());
+			errM.Append(d1.GetData());
 			errM.Append(" d2= ");
-			errM.Append(d2.toUint32Unchecked());
+			errM.Append(d2.GetData());
 	        REPORT_ERROR(ok, errM.GetList());
 		}
 	}
@@ -265,11 +257,11 @@ ErrorManagement::ErrorType  DimensionHandler::HasSameDimensionsAs(const Dimensio
 	return ok;
 }
 
-DimensionSize DimensionHandler::Type2Size(char8 c) const{
+uint32 DimensionHandler::Type2Size(char8 c) const{
 	const CCString matrixS = "Mm";
 	const CCString vectorS = "Vv";
 	const CCString pointerS = "FfSDZPsdzp";
-	DimensionSize size = 0;
+	uint32 size = 0;
 	if (pointerS.In(c)){
 		size = sizeof(void *);
 	} else
@@ -284,27 +276,6 @@ DimensionSize DimensionHandler::Type2Size(char8 c) const{
 	return size;
 }
 
-static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
-	ErrorManagement::ErrorType ret;
-	const uint8 **pp = (const uint8 **)(ptr);
-	const uint8 *p = *pp;
-	if ((p == NULL) && (allowNULL)){
-		ptr = p;
-	} else
-	if ((p == NULL) || (!MemoryCheck::Check(p))){
-		ret.exception = true;
-		DynamicCString errM;
-		errM.Append("bad pointer (");
-		errM.AppendHex(reinterpret_cast<uint64>(p));
-		errM.Append(") at (");
-		errM.AppendHex(reinterpret_cast<uint64>(pp));
-		errM.Append(')');
-        REPORT_ERROR(ret, errM.GetList());
-	} else {
-		ptr = p;
-	}
-	return ret;
-}
 
 #include <stdio.h>
 ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
@@ -357,7 +328,7 @@ ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
 	case 'Z':{
 		isZta = true;
 		updateNumberOfElements = true;
-		overHead = sizeof (void *) + diNext.elementSize.toUint32Unchecked();
+		overHead = sizeof (void *) + diNext.elementSize.GetData();
 	}break;
 	case 'v':
 	case 'V':{
@@ -413,7 +384,7 @@ ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
 	// calculate actual size of each ZTA
 	if (isZta && ok){
 		uint32 n;
-		ok = diNext.elementSize.toUint32(n);
+		ok = diNext.elementSize.ToNumber(n);
 	    CONDITIONAL_REPORT_ERROR(ok, "diNext.elementSize is infinite/indefinite");
 		if (ok){
 			numberOfElements = ZeroTerminatedArrayGetSize(ptr, n);
@@ -435,11 +406,11 @@ ErrorManagement::ErrorType DimensionHandler::UpdatePointerAndSize(
 #endif
 
 	if (ok){
-		ok = numberOfElements.toUint32(numberOfElementsIO);
+		ok = numberOfElements.ToNumber(numberOfElementsIO);
 	    CONDITIONAL_REPORT_ERROR(ok, "numberOfElements is infinite/indefinite");
 	}
 	if (ok){
-		ok = nextElementSizeD.toUint32(nextElementSize);
+		ok = nextElementSizeD.ToNumber(nextElementSize);
 	    CONDITIONAL_REPORT_ERROR(ok, "elementSize is infinite/indefinite");
 	}
 //printf ("3elSz = %i nEl = %i\n",elementSize.toUint32Unchecked(),numberOfElements.toUint32Unchecked());

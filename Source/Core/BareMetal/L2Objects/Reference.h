@@ -93,7 +93,7 @@ public:
      * @details Uses AnyObjectT or MemoryPageObject
      * @param[in] anyType the pointer to the object to copy
      */
-    Reference(AnyType anyType);
+    Reference(const AnyType &anyType);
 
     /**
      * @brief Destructor. Removes the reference to the underlying object.

@@ -142,7 +142,7 @@ public:
      * @return true if all ok or the error
      */
     ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=emptyString) ;
-
+#if 0
     /**
      * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
      * @param[in] sourcePtr, the pointer to the variable to be copied
@@ -160,7 +160,7 @@ public:
 			VariableDescriptor &destVd,
 			uint8 maxDepth=100,
 			CCString modifierString = emptyString) const;
-
+#endif
     /**
     * @brief creates an object clone of the variable
     * @details:
@@ -178,8 +178,7 @@ public:
     */
     ErrorManagement::ErrorType Clone(
     		const uint8 *		Pointer,
-			VariableDescriptor &destVd,
-			Reference 		&reference
+			Reference 		   &reference
 			) const;
 
     /**

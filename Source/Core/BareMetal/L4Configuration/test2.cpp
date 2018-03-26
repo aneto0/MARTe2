@@ -42,6 +42,9 @@
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
 #include "AnyObjectT.h"
+#include "SaturatedInteger.h"
+
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -416,22 +419,43 @@ ErrorManagement::ErrorType CheckAnyContent(AnyType at,AnyType contentCheck){
 }
 
 
-void Check1(AnyType at,CCString expression,CCString typeCheck,uint64 dataSizeCheck,uint64 storageSizeCheck ){
+void Check1(AnyType at,CCString expression, CCString typeCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
     ErrorManagement::ErrorType ok;
 	ok = at.MultipleDereference(expression);
+	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
 
-    for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-    printf ("%s ->",expression.GetList());
+	// creates a clone
+	Reference atc;
+	if (ok && clone){
+		atc = Reference(at);
 
-    if (!ok){
-		REPORT_ERROR(ok,"MultipleDereference error");
-    } else {
-    	ok = CheckType(at,typeCheck);
-    }
+		if (atc.IsValid()){
+			atc.ToAnyType(at);
+		} else {
+			ok.fatalError = true;
+			REPORT_ERROR(ok,"Cloning of variable failed");
+		}
+	}
 
     if (ok){
-    	ok = CheckSize(at,dataSizeCheck,storageSizeCheck);
+        for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+        printf ("%s ->",expression.GetList());
+        if (clone){
+            printf ("(cloned)");
+        }
+
+        ErrorManagement::ErrorType ok2;
+        ok2 = CheckType(at,typeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+
+    	ok.SetError(ok2);
+
+    	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+
+    	ok.SetError(ok2);
     }
+
 
     if (!ok){
 		REPORT_ERROR(ok,expression.GetList());
@@ -444,27 +468,48 @@ void Check1(AnyType at,CCString expression,CCString typeCheck,uint64 dataSizeChe
 
 
 
-void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck ){
+void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
     ErrorManagement::ErrorType ok;
 
 	ok = at.MultipleDereference(expression);
+	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
 
-	for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-    printf ("%s ->",expression.GetList());
+	Reference atc;
+	if (ok && clone){
+		atc = Reference(at);
 
-    if (!ok){
-		REPORT_ERROR(ok,"MultipleDereference error");
-    } else {
-    	ok = CheckType(at,typeCheck);
-    }
+		if (atc.IsValid()){
+			atc.ToAnyType(at);
+		} else {
+			ok.fatalError = true;
+			REPORT_ERROR(ok,"Cloning of variable failed");
+		}
+	}
 
-    if (ok){
-    	ok = CheckSize(at,dataSizeCheck,storageSizeCheck);
-    }
+	if (ok){
+		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+	    printf ("%s ->",expression.GetList());
+        if (clone){
+            printf ("(cloned)");
+        }
 
-    if (ok){
-    	ok = CheckContent(at,contentCheck);
-    }
+	    ErrorManagement::ErrorType ok2;
+
+	    ok2 = CheckType(at,typeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+
+    	ok.SetError(ok2);
+
+    	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+
+    	ok.SetError(ok2);
+
+    	ok2 = CheckContent(at,contentCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckContent error");
+
+    	ok.SetError(ok2);
+	}
 
     if (!ok){
 		REPORT_ERROR(ok,expression.GetList());
@@ -475,29 +520,53 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 	printf("\n");
 }
 
-void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool expectFail=false ){
-    ErrorManagement::ErrorType ok;
+/**
+ * Takes anytype at, then evaluates the expression on it.
+ * It is then checked against typeCheck,contentCheck, and dataSizeChecks
+ */
+void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone=true,bool expectFail=false ){
+	ErrorManagement::ErrorType ok;
+
 	ok = at.MultipleDereference(expression);
+	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
 
-    for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-    printf ("%s ->",expression.GetList());
+	Reference atc;
+	if (ok && clone){
+		atc = Reference(at);
 
-    if (!ok){
-		REPORT_ERROR(ok,"MultipleDereference error");
-    } else {
-    	ok = CheckType(at,typeCheck);
+		if (atc.IsValid()){
+			atc.ToAnyType(at);
+		} else {
+			ok.fatalError = true;
+			REPORT_ERROR(ok,"Cloning of variable failed");
+		}
+	}
+
+	if (ok){
+		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+		printf ("%s ->",expression.GetList());
+        if (clone){
+            printf ("(cloned)");
+        }
+
+	    ErrorManagement::ErrorType ok2;
+
+	    ok2 = CheckType(at,typeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+
+    	ok.SetError(ok2);
+
+    	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+
+    	ok.SetError(ok2);
+
+    	ok2 = CheckAnyContent(at,contentCheck);
+    	CONDITIONAL_REPORT_ERROR(ok2,"CheckAnyContent error");
+
+    	ok.SetError(ok2);
     }
 
-    if (ok){
-    	ok = CheckSize(at,dataSizeCheck,storageSizeCheck);
-    }
-
-    if (ok){
-    	ok = CheckAnyContent(at,contentCheck);
-    	if (!ok){
-    		REPORT_ERROR(ok,"CheckContent error");
-    	}
-    }
 
     if (!ok){
     	DynamicCString errM;
@@ -534,6 +603,18 @@ static inline void NumSet(DynamicCString &dest,uint64 &source) {
 		dest.Append(source);
  }
 
+
+/**
+ * Creates an object of type T and dimensions [size1] [minSize2:size2] using 3 forms:
+ * T[size1][size2]
+ * T(*[size1])[size2]
+ * Vector<T>[size1]
+ * depending on variability (minSize2 != size2) and size (check pfstc.DefaultPageSize()) chooses one format
+ * and then generates a set of random values and, at the same time, fills the chosen object and creates
+ * an object using the ProgressiveTypeCreator.
+ * Finally it compares the type and the content of the chosen object and the dynamically created object.
+ *
+ */
 
 template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
 void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
@@ -701,13 +782,52 @@ void TestSafeN2N(T1 value)
 
 }
 
+template <typename T1>
+void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteger<T1> expected)
+{
+	SaturatedInteger<T1> x1(mul1);
+	SaturatedInteger<T1> x2(mul2);
+	SaturatedInteger<T1> x3(sum1);
+	SaturatedInteger<T1> x4(sub1);
+	SaturatedInteger<T1> x5 = (x1*x2)+x3 - x4;
+    StreamString ss;
+
+    T1 x;
+	ss.Printf("(%?)((%f*%f)+%f-%f) == ",x,mul1,mul2, sum1, sub1);
+
+	if (x5.notANormalNumber()){
+		ss.Printf("%s",CCString("saturated"));
+	} else {
+		ss.Printf("%i",x5.GetData());
+	}
+
+	if (x5 == expected){
+	    printf("OK: ");
+		ss.Printf("%s",CCString(" == "));
+	} else {
+	    printf("NO! ");
+		ss.Printf("%s",CCString(" != "));
+	}
+
+	if (expected.notANormalNumber()){
+		ss.Printf("%s\n",CCString("saturated"));
+	} else {
+		ss.Printf("%i\n",expected.GetData());
+	}
+    printf("%s",ss.Buffer());
+
+}
+
+
+
+
 
 void Test(){
 
     AnyType at(test1Class);
 
-    Check2(at,".char8Var","char8","c",sizeof(char8),0);
     Check2(at,".int8Var","int8","18",sizeof(int8),0);
+    Check2(at,".char8Var","char8","c",sizeof(char8),0);
     Check2(at,".int16Var","int16","116",sizeof(int16),0);
     Check2(at,".int32Var","int32","132",sizeof(int32),0);
     Check2(at,".uint32Var","uint32","132",sizeof(uint32),0);
@@ -735,10 +855,10 @@ void Test(){
     Check1(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
     Check2(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0);
     Check1(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
-    Check1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr));
-    Check1(at,".int64PArr[4]","int64( *)[21]",176,8);
+    Check1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr),false); // cannot clone pointers
+    Check1(at,".int64PArr[4]","int64( *)[21]",176,8,false); // cannot clone pointers
     Check2(at,".int64PArr[4][5]","int64","6",8,0);
-    Check1(at,".int32PVar","int32 *",8,0);
+    Check1(at,".int32PVar","int32 *",8,0,false);  // cannot clone pointers
     Check1(at,".int32PVar*","int32",4,0);
     Check2(at,".CCStringVar","CCString","pippo",14,8);
     Check2(at,".CCStringVar[0]","const char8","p",1,0);
@@ -767,7 +887,7 @@ void Test(){
     Check2(at,".pStreamI*","StreamI","chiarriello",22,8);
 //    Check2(at,".pStreamI","StreamI *","chiarriello",30,16);  // this we do not support anymore
     Check2(at,".SString","StreamString","succhiarriello",78,64);
-    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,true); // expect to fail as char8* is not considered a string
+    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,true,true); // expect to fail as char8* is not considered a string
     Check3(at,".SString","StreamString",CCString("succhiarriello"),78,64);
     Check1(at,".myStream","StreamI",72,72);
 
@@ -814,6 +934,11 @@ void Test(){
     TestSafeN2N<int35 ,float>(4000000000);
     TestSafeN2N<int35 ,double>(4000000000);
     TestSafeN2N<double,uint17>(4000000000);
+
+    TestSatInteger(1e4,1e4,5000,4000,SaturatedInteger<uint32>(uint32(100001000)));
+    TestSatInteger(1e4,1e4,5000,4000,SaturatedInteger<uint16>(uint32(100001000)));
+
+
 
     printf ("%i %i %le \n",TypeCharacteristics<double>::UsableBitSize(),DBL_MAX_EXP,TypeCharacteristics<double>::MaxValue());
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());

@@ -206,15 +206,15 @@ void Reference::ToAnyType(AnyType &at){
 	    objectPointer->ToAnyType(at);
 	} else {
 		at = AnyType();
+		REPORT_ERROR(ErrorManagement::FatalError,"Trying to get Anytype of invalid reference");
 	}
 }
 
-Reference::Reference(AnyType anyType){
+Reference::Reference(const AnyType &anyType):Reference(){
 	if (anyType.IsValid()){
-		//TODO put real copy code here
-		*this = Reference();
+		*this = anyType.Clone();
 	} else {
-		*this = Reference();
+		REPORT_ERROR(ErrorManagement::FatalError,"AnyType parameter is not valid");
 	}
 }
 

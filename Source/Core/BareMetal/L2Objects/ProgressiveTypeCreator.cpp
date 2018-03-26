@@ -567,7 +567,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 	if (ret){
 		uint32 pageSize = pageFile.CurrentPageSize();
 		//printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
-		if ((pageFile.NumberOfPages()==1) && (firstElPtr == dataPtr) && (pageSize < 64)){
+		if ((pageFile.NumberOfPages()==1) && (firstElPtr == dataPtr) && (pageSize < 128)){
 			if (pageSize <= 4){
 				ReferenceT<AnyObjectT<4>> ao(buildNow);
 				if (ao.IsValid()){
@@ -595,13 +595,27 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 								ao->Setup(type,mods,dataPtr,pageSize);
 								x = ao;
 							}
-						} else  {
+						} else
+						if (pageSize <= 64){
 							ReferenceT<AnyObjectT<64>> ao(buildNow);
 							if (ao.IsValid()){
 								ao->Setup(type,mods,dataPtr,pageSize);
 								x = ao;
 							}
-						}
+						} else
+							if (pageSize <= 96){
+								ReferenceT<AnyObjectT<96>> ao(buildNow);
+								if (ao.IsValid()){
+									ao->Setup(type,mods,dataPtr,pageSize);
+									x = ao;
+								}
+							} else  {
+								ReferenceT<AnyObjectT<128>> ao(buildNow);
+								if (ao.IsValid()){
+									ao->Setup(type,mods,dataPtr,pageSize);
+									x = ao;
+								}
+							}
 		}
 		else {
 			ReferenceT<MemoryPageObject> mpor;

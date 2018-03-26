@@ -1,9 +1,9 @@
-/**
+/** 
  * @file AnyType.cpp
  * @brief Source file for class AnyType
  * @date Nov 12, 2015
  * @author aneto
- *
+ * 
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
@@ -208,17 +208,18 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
 	return ok;
 }
 
-ErrorManagement::ErrorType AnyType::CopyTo(AnyType destination){
+ErrorManagement::ErrorType AnyType::CopyTo(AnyType destination) const{
 	const uint8 *sourcePtr =  reinterpret_cast<const uint8 *>(pointer2Variable);
 	uint8 *destPtr         =  reinterpret_cast<uint8 *>(const_cast<void *>(destination.pointer2Variable));
 	return variableDescriptor.CopyTo(sourcePtr,destPtr,destination.variableDescriptor,false);
 }
 
-ErrorManagement::ErrorType AnyType::CompareWith(AnyType destination){
+ErrorManagement::ErrorType AnyType::CompareWith(AnyType destination) const{
 	const uint8 *sourcePtr =  reinterpret_cast<const uint8 *>(pointer2Variable);
 	uint8 *destPtr         =  reinterpret_cast<uint8 *>(const_cast<void *>(destination.pointer2Variable));
 	return variableDescriptor.CopyTo(sourcePtr,destPtr,destination.variableDescriptor,true);
 }
+
 
 
 

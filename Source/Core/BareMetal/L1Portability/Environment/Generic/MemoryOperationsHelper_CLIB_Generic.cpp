@@ -54,7 +54,7 @@ void Copy(void* const destination,
           const uint32 size) {
 
     if ((source != NULL) && (destination != NULL)) {
-        memcpy(destination, source, static_cast<osulong>(size)) != NULL;
+        memcpy(destination, source, static_cast<osulong>(size));
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
@@ -109,7 +109,7 @@ void Move(void * const destination,
           const uint32 size) {
     if ((source != NULL) && (destination != NULL)) {
 
-        memmove(destination, source, static_cast<size_t>(size)) != NULL;
+        memmove(destination, source, static_cast<size_t>(size));
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
@@ -122,7 +122,7 @@ void Set(void * const mem,
          const uint32 size) {
     if (mem != NULL) {
 
-        memset(mem, c, static_cast<size_t>(size)) != NULL;
+        memset(mem, c, static_cast<size_t>(size));
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");

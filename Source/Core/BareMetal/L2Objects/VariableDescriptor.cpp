@@ -42,6 +42,8 @@
 #include "ReferenceT.h"
 #include "AnyObjectT.h"
 #include "MemoryPageObject.h"
+#include "ZeroTerminatedArray.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -1021,6 +1023,51 @@ printf ("%i %c %i\n",destDimensions.NDimensions(),c1,c2);
 	return ret;
 }
 
+ErrorManagement::ErrorType VariableDescriptor::CopyTo(
+		const uint8 *sourcePtr,
+			  uint8 *destPtr,
+			  const VariableDescriptor &destVd,
+			  bool isCompare
+		) const {
+
+//printf("2 sp=%p dp=%p\n",sourcePtr,destPtr);
+
+	ErrorManagement::ErrorType ret;
+	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+
+	DimensionHandler sourceHandler(this->modifiers,this->typeDescriptor);
+	DimensionHandler destHandler(destVd.modifiers,destVd.typeDescriptor);
+/*
+char c1 = 	sourceHandler[0].type;
+char c2 = 	sourceHandler[1].type;
+printf ("%i %c %i\n",sourceHandler.NDimensions(),c1,c2);
+c1 = 	destHandler[0].type;
+c2 = 	destHandler[1].type;
+printf ("%i %c %i\n",destHandler.NDimensions(),c1,c2);
+*/
+	if (!destHandler.HasSameDimensionsAs(sourceHandler)){
+		ret.internalSetupError = true;
+        REPORT_ERROR(ret, "Dimension mismatch");
+	}
+
+	if (ret){
+		tco = TypeConversionManager::Instance().GetOperator(destHandler.GetTypeDescriptor(),sourceHandler.GetTypeDescriptor(),isCompare);
+	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
+	    	ret.unsupportedFeature = true;
+	        REPORT_ERROR(ret, "Conversion Operator not found");
+	    }
+	}
+
+    if (ret){
+    	ret = CopyToRecursive(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
+    }
+
+    if (tco != NULL_PTR(TypeConversionOperatorI *)){
+    	delete tco;
+    }
+
+    return ret;
+}
 
 static ErrorManagement::ErrorType GetSizeRecursive(
 		uint32 							level,
@@ -1048,10 +1095,10 @@ static ErrorManagement::ErrorType GetSizeRecursive(
 		while ((type=='A')&& ret){
 			multiplierD 	= multiplierD * handler[level].numberOfElements;
 			level++;
-			ret = handler[level].elementSize.toUint32(nextElSize);
+			ret = handler[level].elementSize.ToNumber(nextElSize);
 			type 		= handler[level].type;
 		}
-		ret = multiplierD.toUint32(multiplier);
+		ret = multiplierD.ToNumber(multiplier);
 	}
 
 //printf("mul=%i sz=%i\n",multiplier,nextElSize); //TODO
@@ -1084,794 +1131,24 @@ static ErrorManagement::ErrorType GetSizeRecursive(
 		}
 	}
 
-
 	return ret;
 }
-#if 0
-static inline ErrorManagement::ErrorType SafeProduct32(uint32 &result,uint32 n1,uint32 n2){
-	ErrorManagement::ErrorType ret;
-	uint64 result64 = n1*n2;
-	if (result64 < 0xFFFFFFFF){
-		result = result64;
-	} else {
-		ret.outOfRange= true;
-        REPORT_ERROR(ret, "Overflow");
-	}
-
-	return ret;
-}
-#endif
-
-#if enableClone==1
-
-class VDCloner{
-public:
-	VDCloner(CCString modifiers,TypeDescriptor tdIn): handler(modifiers,tdIn),pageFile(1024*1024)/*,indexPageFile(1024*1024)*/{
-		finalElementSize = 0;
-		isString = false;
-	}
-
-	ErrorManagement::ErrorType Init(){
-		ErrorManagement::ErrorType ret;
-
-		// force allocation of first page
-		ret = pageFile.CheckAndNewPage();
-		CONDITIONAL_REPORT_ERROR(ret, "CheckAndNewPage(1) failed");
-
-		isString = handler.GetTypeDescriptor().IsCharString();
-		bool isFixedData = (handler.GetTypeDescriptor().IsStructuredData() || handler.GetTypeDescriptor().IsBasicType());
-
-		if (!isString || !isFixedData){
-			ret.unsupportedFeature = true;
-			CONDITIONAL_REPORT_ERROR(ret, "Unsupported type");
-		}
-
-		return ret;
-	}
-
-#if 0
-
-	ErrorManagement::ErrorType CloneCreateStringR(
-			uint32 							level,
-			const uint8* 					pointer,
-			const TypeConversionOperatorI * copier,
-	){
-		ErrorManagement::ErrorType ret;
-
-		uint32 multiplier = 1;
-		uint32 nextElSize;
-		uint32 overHead;
-		ret = handler.UpdatePointerAndSize(level, pointer,multiplier,nextElSize,overHead);
-
-		if (handler[level+1].type == '\0'){
-			for (uint32 i = 0;(i < multiplier) && ret;i++){
-				DynamicCString dc;
-				ret = copier->Convert((uint8 *)dc.GetList(),pointer,1);
-		        if (ret){
-					ret = pageFile.WriteAtomic((const uint8 *)dc.GetList(),dc.GetSize()+1);
-			        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteAtomic failed");
-		        }
-				pointer += nextElSize;
-			}
-		} else {
-			for (int i = 0;(i<multiplier) && ret;i++){
-				ret = CloneCreateStringR(level+1,pointer,copier);
-		        CONDITIONAL_REPORT_ERROR(ret, "CloneCreateStringR failed");
-				pointer += nextElSize;
-			}
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Copies all data to the pageFile
-	 * Does not create indexes
-	 */
-	ErrorManagement::ErrorType CloneCreateFixR(
-			uint32 							level,
-			int32  &						pageBreakLevel,
-			uint32 &						subTreeSizeBytes,
-			const uint8* 					pointer
-	){
-		ErrorManagement::ErrorType ret;
-		pageBreakLevel--;
-
-		uint32 multiplier = 1;
-		uint32 nextElSize;
-		uint32 overHead;
-		ret = handler.UpdatePointerAndSize(level, pointer,multiplier,nextElSize,overHead);
-
-		if (handler[level+1].type == '\0'){
-			uint32 subTreeSizeBytes;
-			ret = SafeProduct32(subTreeSizeBytes,multiplier,nextElSize);
-	        CONDITIONAL_REPORT_ERROR(ret, "SafeProduct32 failed");
-
-			// try to fit the whole vector in current page
-			// if cannot than mark the level above as a break
-	        if (ret){
-				uint32 np = pageFile.NumberOfPages();
-				ret = pageFile.WriteAtomic(pointer,subTreeSizeBytes);
-		        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteAtomic failed");
-		        if (pageFile.NumberOfPages() > np){
-		        	if (pageBreakLevel < -1) {
-		        		pageBreakLevel = -1;
-		        	}
-		        }
-	        }
-		} else {
-			// if we have a suggested tree size from the level above
-			// try to make it fit in the same page
-			// if cannot than mark this level as a break
-			if (subTreeSizeBytes != 0){
-				uint32 np = pageFile.NumberOfPages();
-				ret = pageFile.CheckAndTrimPage(subTreeSizeBytes);
-		        CONDITIONAL_REPORT_ERROR(ret, "CheckAndTrimPage failed");
-		        if (pageFile.NumberOfPages() > np){
-		        	if (pageBreakLevel < 0) {
-		        		pageBreakLevel = 0;
-		        	}
-		        }
-			}
-			uint32 maxSubTreeSizeBytes = 0;
-			uint32 accumulatedSubTreeSize  = 0;
-			for (int i = 0;(i<multiplier) && ret;i++){
-
-				uint32 newSubTreeSizeBytes = maxSubTreeSizeBytes;
-				ret = CloneCreateFixR(level+1,pageBreakLevel,newSubTreeSizeBytes,pointer);
-		        CONDITIONAL_REPORT_ERROR(ret, "CloneCreateFixR failed");
-
-		        if (ret){
-					if (newSubTreeSizeBytes > maxSubTreeSizeBytes){
-						maxSubTreeSizeBytes = newSubTreeSizeBytes;
-					}
-
-					uint32 temp = accumulatedSubTreeSize + newSubTreeSizeBytes;
-		        	if (temp > accumulatedSubTreeSize){
-		        		accumulatedSubTreeSize = temp;
-		        	} else {
-		        		ret.outOfRange = true;
-				        REPORT_ERROR(ret, "SubTree too large > 4GB");
-		        	}
-		        }
-
-				pointer += nextElSize;
-			}
-
-			// report back a new larger subtree size
-			if (ret && (accumulatedSubTreeSize > subTreeSizeBytes)){
-				subTreeSizeBytes = 	accumulatedSubTreeSize;
-			}
-		}
-
-		pageBreakLevel++;
-
-		return ret;
-	}
-
-	ErrorManagement::ErrorType DecideIndexing(
-		int32  							pageBreakLevel
-	){
-		ErrorManagement::ErrorType ret;
-
-		char layerEnd = '\0';
-		// loop through levels and create the description of the output type
-		// skip '/0' level
-		for (uint32 level=handler.NDimensions()-1;level>=0;level-- ){
-			DimensionInfoElement &die = handler[level];
-
-			// an aggregator level
-			if (die.type != '\0'){
-				if (die.type == 'x'){
-					die.outputType = 'f';// allows for zero size
-					if (level > pageBreakLevel){
-						pageBreakLevel = level;
-					}
-					layerEnd = 'f';
-				} else
-				// variable size level
-				if (die.numberOfElements.isNotANumber()){
-					die.outputType = 'v';
-					// if we have a set of pointers at lower level we do not need another at higher
-					if (level > pageBreakLevel){
-						pageBreakLevel = level;
-					}
-					layerEnd = 'v';
-				} else
-				if (level == pageBreakLevel){
-					die.outputType = 'f';
-					layerEnd = 'f';
-				} else {
-					die.outputType = 'A';
-				}
-			}
-			die.layerEnd = layerEnd;
-		}
-
-		return ret;
-	}
-
-	ErrorManagement::ErrorType DoIndexR(
-			uint32 							level,
-			const uint8* 					inputPointer,
-			uint8 *&						startOfOutput,
-			uint8 *&						addressOfOutput,
-			DimensionSize 					sizeOfOutput
-	){
-		ErrorManagement::ErrorType ret;
-
-		if (handler[level].outputType == '\0'){
-			sizeOfOutput = sizeOfOutput * finalElementSize;
-			uint32 totalSize;
-			ret = sizeOfOutput.toUint32(totalSize);
-        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
-
-			// a string
-			if (isString){
-	        	if (ret){
-					uint8** pointerArray;
-					ret = indexPageFile.WriteReserveAtomic(reinterpret_cast<uint8 *&>(pointerArray), sizeof(uint8 *)*totalSize);
-        			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-					startOfOutput = reinterpret_cast<uint8*>(pointerArray);
-
-					for (uint32 i = 0;(i < totalSize) && ret;i++){
-						pointerArray[i] = pageFile.CurrentReadPointer();
-						ret =  pageFile.ConsumeReadAtomic(0);
-	    	    		CONDITIONAL_REPORT_ERROR(ret, "ConsumeReadAtomic failed");
-					}
-	        	}
-			} else { // not a string
-
-	        	if (ret){
-					startOfOutput = pageFile.CurrentReadPointer();
-					ret =  pageFile.ConsumeReadAtomic(totalSize);
-			        CONDITIONAL_REPORT_ERROR(ret, "ConsumeReadAtomic failed");
-		        }
-			}
-
-		} else {
-			uint32 multiplier = 1;
-			uint32 nextElSize;
-			uint32 overHead;
-			ret = handler.UpdatePointerAndSize(level, inputPointer,multiplier,nextElSize,overHead);
-
-			if (handler[level].outputType == 'A'){
-				//
-				sizeOfOutput = sizeOfOutput * multiplier;
-				// on a layer terminating with \0 only navigate one side of the tree
-				// at the end (case above) consume the whole size of this subtree
-				if (handler[level].layerEnd == '\0'){
-					ret = DoIndexR(level+1,inputPointer,startOfOutput,addressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-				// normal case where layerend is a pointer type
-				// navigate full tree
-				// when reach the end allocate pointer memory only on left most navigation
-				// until addressOfOutput becomes not NULL
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoIndexR(level+1,inputPointer,startOfOutput,addressOfOutput,sizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-			} else
-			if (handler[level].outputType == 'v'){
-				if (addressOfOutput == NULL){
-					ret = indexPageFile.WriteReserveAtomic(addressOfOutput, sizeof(Vector<uint8 *>)*sizeOfOutput);
-					startOfOutput = addressOfOutput;
-			        CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-				} else {
-					addressOfOutput += sizeof(Vector<uint8 *>);
-				}
-				Vector<uint8 *> *vp = reinterpret_cast<Vector<uint8 *> *>(addressOfOutput);
-
-				uint8 *newAddressOfOutput = NULL;
-				uint8 *newStartOfOutput = NULL;
-				DimensionSize newSizeOfOutput(1);
-
-				if (handler[level].layerEnd == '\0'){
-					ret = DoIndexR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoIndexR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,newSizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-				vp->InitVector(reinterpret_cast<uint8**>(newStartOfOutput),multiplier);
-			} else
-			if (handler[level].outputType == 'f'){
-				if (addressOfOutput == NULL){
-					ret = indexPageFile.WriteReserveAtomic(addressOfOutput, sizeof(uint8**)*sizeOfOutput);
-					startOfOutput = addressOfOutput;
-			        CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-				} else {
-					addressOfOutput += sizeof(uint8**);
-				}
-				uint8 **pp = reinterpret_cast<uint8**>(addressOfOutput);
-
-				uint8 *newAddressOfOutput = NULL;
-				uint8 *newStartOfOutput = NULL;
-				DimensionSize newSizeOfOutput(1);
-
-				if (handler[level].layerEnd == '\0'){
-					ret = DoIndexR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoIndexR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,newSizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-				*pp = newStartOfOutput;
-			}
-		}
-
-		return ret;
-	}
-#endif
-
-	ErrorManagement::ErrorType DecideSimpleIndexing(){
-		ErrorManagement::ErrorType ret;
-
-		CCString variableVectors("vVzZdDsS");
-		CCString variableMatrices("mM");
-		CCString conditionalArrays("fF");
-
-		char layerEnd = '\0';
-		// loop through levels and create the description of the output type
-		// skip '/0' level
-		for (uint32 level=handler.NDimensions()-1;level>=0;level-- ){
-			DimensionInfoElement &die = handler[level];
-
-			// an aggregator level
-			if (die.type != '\0'){
-				if (conditionalArrays.In(die.type)){
-					die.outputType = 'f';
-					layerEnd = 'f';
-				} else
-				if (variableVectors.In(die.type)){
-					die.outputType = 'v';
-					layerEnd = 'v';
-				} else
-//TODO correctly implement matrices
-				if (variableMatrices.In(die.type)){
-					die.outputType = 'v';
-					layerEnd = 'v';
-				} else {
-					die.outputType = 'A';
-				}
-			}
-			die.layerEnd = layerEnd;
-		}
-
-		return ret;
-	}
-
-
-ErrorManagement::ErrorType DoCreateR(
-			uint32 							level,
-			const uint8* 					inputPointer,
-			uint8 *&						startOfOutput,
-			uint8 *&						addressOfOutput,
-			DimensionSize 					sizeOfOutput
-	){
-		ErrorManagement::ErrorType ret;
-
-		if (handler[level].outputType == '\0'){
-			sizeOfOutput = sizeOfOutput * finalElementSize;
-			uint32 totalSize;
-			ret = sizeOfOutput.toUint32(totalSize);
-        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
-
-			// a string
-			if (isString){
-	        	if (ret){
-					ret = pageFile.WriteReserveAtomic(startOfOutput, sizeof(uint8 *)*totalSize);
-        			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-
-					uint8 **pointerArray = reinterpret_cast<uint8*>(startOfOutput);
-
-					CCString *inputs = reinterpret_cast<CCString *>(inputPointer);
-
-					for (uint32 i = 0;(i < totalSize) && ret;i++){
-						uint32 stringSize = inputs->GetSize() + 1;
-						uint8 *ptr;
-						ret = pageFile.WriteReserveAtomic(ptr,stringSize);
-				        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteReserve failed");
-
-				        if (ret){
-							pointerArray[i] = ptr;
-							MemoryOperationsHelper::Copy(ptr,inputs->GetList(),stringSize);
-				        }
-						inputs++;
-					}
-
-	        	}
-			} else { // not a string
-
-	        	if (ret){
-					ret = pageFile.WriteReserveAtomic(startOfOutput, sizeOfOutput);
-					if (ret){
-						MemoryOperationsHelper::Copy(startOfOutput,inputPointer,sizeOfOutput);
-					}
-			        CONDITIONAL_REPORT_ERROR(ret, "ConsumeReadAtomic failed");
-		        }
-			}
-
-		} else {
-			uint32 multiplier = 1;
-			uint32 nextElSize;
-			uint32 overHead;
-			ret = handler.UpdatePointerAndSize(level, inputPointer,multiplier,nextElSize,overHead);
-
-			if (handler[level].outputType == 'A'){
-				//
-				sizeOfOutput = sizeOfOutput * multiplier;
-				// on a layer terminating with \0 only navigate one side of the tree
-				// at the end (case above) consume the whole size of this subtree
-				if (handler[level].layerEnd == '\0'){
-					ret = DoCreateR(level+1,inputPointer,startOfOutput,addressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-				// normal case where layerend is a pointer type
-				// navigate full tree
-				// when reach the end allocate pointer memory only on left most navigation
-				// until addressOfOutput becomes not NULL
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoCreateR(level+1,inputPointer,startOfOutput,addressOfOutput,sizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-			} else
-			if (handler[level].outputType == 'v'){
-				if (addressOfOutput == NULL){
-					ret = pageFile.WriteReserveAtomic(addressOfOutput, sizeof(Vector<uint8 *>)*sizeOfOutput);
-					startOfOutput = addressOfOutput;
-			        CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-				} else {
-					addressOfOutput += sizeof(Vector<uint8 *>);
-				}
-				Vector<uint8 *> *vp = reinterpret_cast<Vector<uint8 *> *>(addressOfOutput);
-
-				uint8 *newAddressOfOutput = NULL;
-				uint8 *newStartOfOutput = NULL;
-				DimensionSize newSizeOfOutput(1);
-
-				if (handler[level].layerEnd == '\0'){
-					ret = DoCreateR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoCreateR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,newSizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-				vp->InitVector(reinterpret_cast<uint8**>(newStartOfOutput),multiplier);
-			} else
-			if (handler[level].outputType == 'f'){
-				if (addressOfOutput == NULL){
-					ret = pageFile.WriteReserveAtomic(addressOfOutput, sizeof(uint8**)*sizeOfOutput);
-					startOfOutput = addressOfOutput;
-			        CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
-				} else {
-					addressOfOutput += sizeof(uint8**);
-				}
-				uint8 **pp = reinterpret_cast<uint8**>(addressOfOutput);
-
-				uint8 *newAddressOfOutput = NULL;
-				uint8 *newStartOfOutput = NULL;
-				DimensionSize newSizeOfOutput(1);
-
-				if (handler[level].layerEnd == '\0'){
-					ret = DoCreateR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,sizeOfOutput);
-			        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-				} else {
-					for (uint32 i = 0; (i < multiplier) && ret; i++){
-						ret = DoCreateR(level+1,inputPointer,newStartOfOutput,newAddressOfOutput,newSizeOfOutput);
-				        CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-						inputPointer += nextElSize;
-					}
-				}
-				*pp = newStartOfOutput;
-			}
-		}
-
-		return ret;
-	}
-
-public:
-	DimensionHandler 				handler;
-	// used to store data
-	MemoryPageFile					pageFile;
-	// to store pointers to data
-//	MemoryPageFile					indexPageFile;
-
-	/**
-	 * 	0 means 0 terminated string element
-	 * 	>0 is the size in bytes of the element
-	 */
-	uint32 							finalElementSize;
-
-	/**
-	 * Data is finally encoded as zero term strings
-	 */
-	bool							isString;
-
-};
-
-#if 1
-// simple algorithm
-// without optimisation
-ErrorManagement::ErrorType VariableDescriptor::Clone(
-		const uint8 *				pointer,
-		VariableDescriptor &		destVd,
-		Reference &					reference
-		) const{
-	ErrorManagement::ErrorType ret;
-
-	VDCloner cloner(this->modifiers,this->typeDescriptor);
-
-	ret = cloner.Init();
-
-	// decide how to produce output
-	if (ret){
-		ret = cloner.DecideSimpleIndexing();
-	}
-
-	// copy and create indexes
-	uint8 *dataPtr = NULL;
-	if (ret){
-		// move it down one level
-		uint8 *addressOfOutput = NULL;
-		DimensionSize ds(1);
-		ret = cloner.DoCreateR(0,pointer,dataPtr,addressOfOutput,ds);
-	}
-
-	VariableDescriptor vd;
-	if (ret){
-		DynamicCString mods;
-		cloner.handler.GetOutputModifiers(mods);
-		TypeDescriptor type = cloner.handler.GetTypeDescriptor();
-
-		if (ret){
-			uint32 pageSize = cloner.pageFile.CurrentPageSize();
-//printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
-			if ((cloner.pageFile.NumberOfPages()==1) && (pageSize <= 64)){
-				if (pageSize <= 4){
-					ReferenceT<AnyObjectT<4>> ao(buildNow);
-					if (ao.IsValid()){
-						ao->Setup(type,mods,dataPtr,pageSize);
-						reference = ao;
-					}
-				} else
-				if (pageSize <= 8){
-					ReferenceT<AnyObjectT<8>> ao(buildNow);
-					if (ao.IsValid()){
-						ao->Setup(type,mods,dataPtr,pageSize);
-						reference = ao;
-					}
-				} else
-				if (pageSize <= 16){
-					ReferenceT<AnyObjectT<16>> ao(buildNow);
-					if (ao.IsValid()){
-						ao->Setup(type,mods,dataPtr,pageSize);
-						reference = ao;
-					}
-				} else
-				if (pageSize <= 32){
-					ReferenceT<AnyObjectT<32>> ao(buildNow);
-					if (ao.IsValid()){
-						ao->Setup(type,mods,dataPtr,pageSize);
-						reference = ao;
-					}
-				} else  {
-					ReferenceT<AnyObjectT<64>> ao(buildNow);
-					if (ao.IsValid()){
-						ao->Setup(type,mods,dataPtr,pageSize);
-						reference = ao;
-					}
-				}
-			} else {
-				ReferenceT<MemoryPageObject> mpor;
-
-				mpor = ReferenceT<MemoryPageObject> (buildNow);
-				if (!mpor.IsValid()){
-					ret.outOfMemory = true;
-					REPORT_ERROR(ret,"MemoryPageObject construction failed");
-				}
-
-				if (ret){
-					mpor->Setup(type,mods,dataPtr,cloner.pageFile);
-					reference = mpor;
-
-				}
-			}
-		}
-	}
-
-	return ret;
-}
-
-
-
-#else
-
-ErrorManagement::ErrorType VariableDescriptor::Clone(
-		const uint8 *				pointer,
-		VariableDescriptor &		destVd,
-		Reference &					reference
-		) const{
-	ErrorManagement::ErrorType ret;
-
-	VDCloner cloner(this->modifiers,this->typeDescriptor);
-
-	ret = cloner.Init();
-
-	int32 pageBreakLevel = 0;
-	// if we have strings we need to load them to memory first
-	// later we can create nested structures with the pointers
-	if (cloner.handler.GetTypeDescriptor().IsCharString()){
-
-		const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-		tco = TypeConversionManager::Instance().GetOperator(DynamicCharString,cloner.handler.GetTypeDescriptor(),false);
-	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
-	    	ret.unsupportedFeature = true;
-	        REPORT_ERROR(ret, "Conversion Operator not found");
-	    }
-	    if (ret){
-			ret = cloner.CloneCreateStringR(0,pointer,tco);
-	        CONDITIONAL_REPORT_ERROR(ret, "CloneCreateStringR failed");
-	    }
-
-	    if (tco != NULL){
-	    	delete tco;
-	    }
-
-		cloner.isString = true;
-	} else {
-		// copy content to memory page
-		uint32 subTreeSizeBytes = 0; // contiguous size of subTree
-		if (ret){
-			ret = cloner.CloneCreateFixR(0,pageBreakLevel,subTreeSizeBytes,pointer);
-		}
-	}
-	ret = cloner.pageFile.CheckAndTrimPage();
-	CONDITIONAL_REPORT_ERROR(ret, "Trimming last data page failed");
-
-	// process the handler and create output format
-	if (ret){
-		// move it down one level
-		pageBreakLevel++;
-		ret = cloner.DecideIndexing(pageBreakLevel);
-	}
-	// check if will need to create indexes
-	// or maybe we have already finished
-	if (ret && ((cloner.handler[0].layerEnd != '\0') || (cloner.isString))){
-		cloner.finalElementSize = cloner.handler.GetTypeDescriptor().StorageSize();
-
-		ret = cloner.indexPageFile.CheckAndNewPage();
-		CONDITIONAL_REPORT_ERROR(ret, "CheckAndNewPage failed");
-
-		// create any necessary missing layer of indexes
-		uint8 *startOfOutput = NULL;
-		if (ret){
-			// move it down one level
-			uint8 *addressOfOutput = NULL;
-			DimensionSize ds(1);
-			ret = cloner.DoIndexR(0,pointer,startOfOutput,addressOfOutput,ds);
-		}
-
-		ret = cloner.indexPageFile.CheckAndTrimPage();
-		CONDITIONAL_REPORT_ERROR(ret, "Trimming last index page failed");
-
-		//join the data portion after the index portion
-		cloner.indexPageFile.StealAndJoinAtEnd(cloner.pageFile);
-	}
-
-	// create Variable descriptor
-
-	// create AnyObject
-
-	return ret;
-}
-
-#endif
-
-#endif
 
 ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint64 &dataSize, uint64 *overHeadSize) const{
 	ErrorManagement::ErrorType ret;
 	uint64 overHeadSz = 0;
-#if 1
+
 	DimensionHandler handler(this->modifiers,this->typeDescriptor);
 
 	ret = GetSizeRecursive(0,handler,pointer,dataSize,overHeadSz);
-#else
-	maxDepth = 10;
-	ret =  GetDeepSize(modifiers,pointer,dataSize,overHeadSz,maxDepth);
-#endif
+
 	if (overHeadSize != NULL){
 		*overHeadSize = overHeadSz;
 	}
 	return ret;
 }
 
-ErrorManagement::ErrorType VariableDescriptor::CopyTo(
-		const uint8 *sourcePtr,
-			  uint8 *destPtr,
-			  const VariableDescriptor &destVd,
-			  bool isCompare
-		) const {
-
-//printf("2 sp=%p dp=%p\n",sourcePtr,destPtr);
-
-	ErrorManagement::ErrorType ret;
-	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-
-#if 1
-	DimensionHandler sourceHandler(this->modifiers,this->typeDescriptor);
-	DimensionHandler destHandler(destVd.modifiers,destVd.typeDescriptor);
-/*
-char c1 = 	sourceHandler[0].type;
-char c2 = 	sourceHandler[1].type;
-printf ("%i %c %i\n",sourceHandler.NDimensions(),c1,c2);
-c1 = 	destHandler[0].type;
-c2 = 	destHandler[1].type;
-printf ("%i %c %i\n",destHandler.NDimensions(),c1,c2);
-*/
-	if (!destHandler.HasSameDimensionsAs(sourceHandler)){
-		ret.internalSetupError = true;
-        REPORT_ERROR(ret, "Dimension mismatch");
-	}
-
-	if (ret){
-		tco = TypeConversionManager::Instance().GetOperator(destHandler.GetTypeDescriptor(),sourceHandler.GetTypeDescriptor(),isCompare);
-	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
-	    	ret.unsupportedFeature = true;
-	        REPORT_ERROR(ret, "Conversion Operator not found");
-	    }
-	}
-
-    if (ret){
-    	ret = CopyToRecursive(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
-    }
-
-#else
-	DynamicZeroTerminatedArray<DimensionInfo,4> sourceDimensions;
-    TypeDescriptor sourceTd = GetDimensionsInformation(sourceDimensions);
-
-	DynamicZeroTerminatedArray<DimensionInfo,4> destDimensions;
-    TypeDescriptor destTd = destVd.GetDimensionsInformation(destDimensions);
-
-	if ((destDimensions.GetSize() != sourceDimensions.GetSize()) || (destDimensions.GetSize() == 0)){
-		ret.internalSetupError = true;
-        REPORT_ERROR(ret, "Dimension mismatch");
-	}
-
-	if (ret){
-		tco = TypeConversionManager::Instance().GetOperator(destTd,sourceTd,isCompare);
-	    if ( tco == NULL_PTR(TypeConversionOperatorI *)){
-	    	ret.unsupportedFeature = true;
-	        REPORT_ERROR(ret, "Conversion Operator not found");
-	    }
-	}
-
-    if (ret){
-    	ret = LayerOperate(sourceDimensions.GetList(),sourcePtr,sourceTd,destDimensions.GetList(),destPtr,destTd,*tco);
-    }
-#endif
-
-    if (tco != NULL_PTR(TypeConversionOperatorI *)){
-    	delete tco;
-    }
-
-    return ret;
-}
+#if 0
 
 /**
  * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
@@ -2048,6 +1325,7 @@ ErrorManagement::ErrorType VariableDescriptor::Copy(
 
 	return ret;
 }
+#endif
 
 ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
 	ErrorManagement::ErrorType  ret;
@@ -2249,6 +1527,387 @@ ErrorManagement::ErrorType VariableDescriptor::ToStringPrivate(DynamicCString &s
 			}
 		}
 	} // end of reverse action
+
+	return ret;
+}
+
+
+class VDCloner{
+public:
+	VDCloner(CCString modifiers,TypeDescriptor tdIn): handler(modifiers,tdIn),pageFile(1024*1024)/*,indexPageFile(1024*1024)*/{
+//		finalElementSize = 0;
+		isString = false;
+	}
+
+	ErrorManagement::ErrorType Init(){
+		ErrorManagement::ErrorType ret;
+
+		// force allocation of first page
+		ret = pageFile.CheckAndNewPage();
+		CONDITIONAL_REPORT_ERROR(ret, "CheckAndNewPage(1) failed");
+
+		isString = handler.GetTypeDescriptor().IsCharString();
+		bool isFixedData = (handler.GetTypeDescriptor().IsStructuredData() || handler.GetTypeDescriptor().IsBasicType());
+
+		if (!isString && !isFixedData){
+			ret.unsupportedFeature = true;
+			CONDITIONAL_REPORT_ERROR(ret, "Unsupported type");
+		}
+
+		if (ret){
+			ret = DecideSimpleIndexing();
+			CONDITIONAL_REPORT_ERROR(ret, "DecideSimpleIndexing failed");
+		}
+
+		return ret;
+	}
+
+	ErrorManagement::ErrorType DecideSimpleIndexing(){
+		ErrorManagement::ErrorType ret;
+
+		CCString variableVectors("vVzZdDsS");
+		CCString variableMatrices("mM");
+		CCString conditionalArrays("fF");
+
+		char layerEnd = '\0';
+		// loop through levels and create the description of the output type
+		// skip '/0' level
+		for (int32 level=handler.NDimensions()-1;level>=0;level-- ){
+			DimensionInfoElement &die = handler[level];
+
+			// an aggregator level
+			if (die.type != '\0'){
+				if (conditionalArrays.In(die.type)){
+					die.outputType = 'f';
+					layerEnd = 'f';
+				} else
+				if (variableVectors.In(die.type)){
+					die.outputType = 'v';
+					layerEnd = 'v';
+				} else
+//TODO correctly implement matrices
+				if (variableMatrices.In(die.type)){
+					die.outputType = 'v';
+					layerEnd = 'v';
+				} else {
+					die.outputType = 'A';
+				}
+			}
+			die.layerEnd = layerEnd;
+		}
+
+		return ret;
+	}
+
+/**
+ * Recursive function
+ * @param level is the current level of variable level indirection
+ * @param inputPointer is the pointer to the data to be copied
+ * @param startOfOutput
+ * @param addressOfOutput address of the block created in the current level
+ * @param sizeOfOutput  --> number of elements
+ */
+ErrorManagement::ErrorType DoCreateR(
+			uint32 							level,
+			const uint8* 					inputPointer,
+			uint8 *&						addressOfOutput,
+			DimensionSize 					numberOfElementsD
+	){
+		ErrorManagement::ErrorType ret;
+
+		// handle the simple scalar type
+		// consider the numberOfElements to be copied
+		if (handler[level].outputType == '\0'){
+			// calculate total Size needed to store final layer
+			// multiply the numberOfElements by each size
+			DimensionSize totalSizeD = numberOfElementsD * handler.GetTypeDescriptor().StorageSize();
+			uint32 totalSize;
+			ret = totalSizeD.ToNumber(totalSize);
+        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
+
+        	if (ret){
+    			// reserve space either for the constant size data or for the string pointers
+    			ret = pageFile.WriteReserveAtomic(addressOfOutput, totalSize);
+    			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
+        	}
+
+        	if (ret){
+    			// a string need to allocate space for each string and save the pointers
+        		if (isString){
+					uint8 **pointerArray = reinterpret_cast<uint8**>(addressOfOutput);
+					const CCString *inputs = reinterpret_cast<const CCString *>(inputPointer);
+
+					// numberOfElementsD is good otherwise we would have had an overflow when calculating totalSize
+					for (uint32 i = 0;(i < numberOfElementsD.GetData()) && ret;i++){
+						const CCString &string =  inputs[i];
+						uint32 stringSize = string.GetSize() + 1;
+						uint8 *ptr;
+						ret = pageFile.WriteReserveAtomic(ptr,stringSize);
+				        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteReserve failed");
+
+				        if (ret){
+							pointerArray[i] = ptr;
+							MemoryOperationsHelper::Copy(ptr,string.GetList(),stringSize);
+				        }
+					}
+
+        		} else { // not a string
+					MemoryOperationsHelper::Copy(addressOfOutput,inputPointer,totalSize);
+		        }
+			}
+        // not the final layer
+        // maybe an array or an array pointer or a vector or a zero terminated pointer...
+		} else {
+
+			if (handler[level].outputType == 'A'){
+				// increase multiplier
+				numberOfElementsD = numberOfElementsD * handler[level].numberOfElements;//multiplier;
+				// navigate one side of the tree
+				// at the end (case above) consume the whole size of this subtree
+				ret = DoCreateR(level+1,inputPointer,addressOfOutput,numberOfElementsD);
+				CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
+			} else // note that ZzDdMmV becomes v in the indexing creation
+			if (handler[level].outputType == 'v'){
+				// first time we reach this subtree node
+				// calculate total Size needed to store this layer
+				// multiply the numberOfElements by each size
+				DimensionSize totalSizeD = numberOfElementsD * sizeof(Vector<uint8 *>);
+				uint32 totalSize;
+				ret = totalSizeD.ToNumber(totalSize);
+	        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
+
+	        	if (ret){
+	    			// reserve space either for the constant size data or for the string pointers
+	    			ret = pageFile.WriteReserveAtomic(addressOfOutput, totalSize);
+	    			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
+	        	}
+				Vector<uint8 *> *vp = reinterpret_cast<Vector<uint8 *> *>(addressOfOutput);
+
+				switch (handler[level].type){
+				case 'v':
+				case 'V':{
+					const Vector<uint8 *> *vip = reinterpret_cast<const Vector<uint8 *> *>(inputPointer);
+					// loop through the collapsed layer
+					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
+						uint8 *newAddressOfOutput;
+						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(vip->GetDataPointer());
+						ret = RedirectP(newInputPointer,false);
+		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
+						if (ret){
+							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(vip->GetNumberOfElements()));
+			    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+						}
+						if (ret){
+							vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),vip->GetNumberOfElements());
+						}
+						vp++;
+						vip++;
+					}
+				}break;
+				case 'm':
+				case 'M':{
+					const Matrix<uint8 *> *mip = reinterpret_cast<const Matrix<uint8 *> *>(inputPointer);
+					// loop through the collapsed layer
+					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
+						uint8 *newAddressOfOutput;
+						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(mip->GetDataPointer());
+						ret = RedirectP(newInputPointer,false);
+		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
+						if (ret){
+							uint32 numberOfElements = mip->GetNumberOfElements();
+							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(numberOfElements));
+			    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+							if (ret){
+								vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),numberOfElements);
+							}
+						}
+						vp++;
+						mip++;
+					}
+				}break;
+				case 'd':
+				case 'D':
+				case 's':
+				case 'S':
+				case 'z':
+				case 'Z':{
+					const uint8 * const *zip = reinterpret_cast<const uint8 * const *>(inputPointer);
+					// loop through the collapsed layer
+					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
+						uint8 *newAddressOfOutput;
+						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(zip);
+						ret = RedirectP(newInputPointer,true);
+		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
+		    			if (newInputPointer != NULL){
+							uint32 numberOfElements= ZeroTerminatedArrayGetSize(*zip, handler[level+1].elementSize.GetData());
+							if (ret){
+								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(numberOfElements));
+				    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+							}
+							if (ret){
+								vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),numberOfElements);
+							}
+		    			} else {
+							vp->InitVector(reinterpret_cast<uint8**>(NULL),0);
+		    			}
+						vp++;
+						zip++;
+					}
+				}break;
+				default:{
+					ret.internalSetupError=true;
+	    			CONDITIONAL_REPORT_ERROR(ret, "unexpected case");
+				}
+				}
+			} else
+			if (handler[level].outputType == 'f'){
+				// first time we reach this subtree node
+				// calculate total Size needed to store this layer
+				// multiply the numberOfElements by each size
+				DimensionSize totalSizeD = numberOfElementsD * sizeof(uint8 *);
+				uint32 totalSize;
+				ret = totalSizeD.ToNumber(totalSize);
+	        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
+
+	        	if (ret){
+	    			// reserve space either for the constant size data or for the string pointers
+	    			ret = pageFile.WriteReserveAtomic(addressOfOutput, totalSize);
+	    			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
+	        	}
+				uint8 **fp = reinterpret_cast<uint8 **>(addressOfOutput);
+				const uint8 * const *fip = reinterpret_cast<const uint8 * const *>(inputPointer);
+				// loop through the collapsed layer
+				for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
+					uint8 *newAddressOfOutput;
+					const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(fip);
+					ret = RedirectP(newInputPointer,true);
+	    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
+	    			if (newInputPointer != NULL){
+						if (ret){
+							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,handler[level].elementSize);
+			    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+						}
+						if (ret){
+							*fp = newAddressOfOutput;
+						}
+	    			}
+					fp++;
+					fip++;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+public:
+	DimensionHandler 				handler;
+	// used to store data
+	MemoryPageFile					pageFile;
+	// to store pointers to data
+	/**
+	 * Data is finally encoded as zero term strings
+	 */
+	bool							isString;
+
+};
+
+
+// simple algorithm
+// without optimisation
+ErrorManagement::ErrorType VariableDescriptor::Clone(
+		const uint8 *				pointer,
+		Reference &					reference
+		) const{
+	ErrorManagement::ErrorType ret;
+
+	VDCloner cloner(this->modifiers,this->typeDescriptor);
+
+	ret = cloner.Init();
+	CONDITIONAL_REPORT_ERROR(ret,"cloner.Init() failed ");
+
+	// copy and create indexes
+	if (ret){
+		// move it down one level
+		uint8 *addressOfOutput = NULL;
+		DimensionSize ds(1);
+		ret = cloner.DoCreateR(0,pointer,addressOfOutput,ds);
+		CONDITIONAL_REPORT_ERROR(ret,"cloner.DoCreateR() failed ");
+	}
+
+	// free unused memory
+	if (ret){
+		ret = cloner.pageFile.CheckAndTrimPage(0);
+		CONDITIONAL_REPORT_ERROR(ret,"cloner.pageFile.CheckAndTrimPage() failed ");
+	}
+
+	// get start pointer
+	uint8 *dataPtr = NULL;
+	if (ret){
+		dataPtr = cloner.pageFile.Address(0);
+	}
+
+	VariableDescriptor vd;
+	if (ret){
+		DynamicCString mods;
+		cloner.handler.GetOutputModifiers(mods);
+		TypeDescriptor type = cloner.handler.GetTypeDescriptor();
+
+		if (ret){
+			uint32 pageSize = cloner.pageFile.CurrentPageSize();
+//printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
+			if ((cloner.pageFile.NumberOfPages()==1) && (pageSize <= 64)){
+				if (pageSize <= 4){
+					ReferenceT<AnyObjectT<4>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						reference = ao;
+					}
+				} else
+				if (pageSize <= 8){
+					ReferenceT<AnyObjectT<8>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						reference = ao;
+					}
+				} else
+				if (pageSize <= 16){
+					ReferenceT<AnyObjectT<16>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						reference = ao;
+					}
+				} else
+				if (pageSize <= 32){
+					ReferenceT<AnyObjectT<32>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						reference = ao;
+					}
+				} else  {
+					ReferenceT<AnyObjectT<64>> ao(buildNow);
+					if (ao.IsValid()){
+						ao->Setup(type,mods,dataPtr,pageSize);
+						reference = ao;
+					}
+				}
+			} else {
+				ReferenceT<MemoryPageObject> mpor;
+
+				mpor = ReferenceT<MemoryPageObject> (buildNow);
+				if (!mpor.IsValid()){
+					ret.outOfMemory = true;
+					REPORT_ERROR(ret,"MemoryPageObject construction failed");
+				}
+
+				if (ret){
+					mpor->Setup(type,mods,dataPtr,cloner.pageFile);
+					reference = mpor;
+
+				}
+			}
+		}
+	}
 
 	return ret;
 }

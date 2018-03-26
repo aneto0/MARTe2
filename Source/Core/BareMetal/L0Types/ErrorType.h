@@ -227,6 +227,12 @@ public:
     inline void ClearError(const ErrorIntegerFormat errorBitSet);
 
     /**
+     * @brief Sets the same error bits as in input
+     * @param[in] input is the set of bits to copy from.
+     */
+    inline void SetError(const ErrorType &input);
+
+    /**
      * @brief Checks if the current error bits contains the provided \a errorBitSet.
      * @param[in] errorBitSet Error bits to verify.
      * @return true if the current error bits contains the provided \a errorBitSet.
@@ -314,6 +320,11 @@ inline ErrorIntegerFormat ErrorType::operator =(const bool error) {
 inline void ErrorType::SetError(const ErrorIntegerFormat errorBitSet) {
     format_as_integer |= errorBitSet;
 }
+
+inline void ErrorType::SetError(const ErrorType &input){
+    format_as_integer |= input.format_as_integer;
+}
+
 
 inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
     format_as_integer &= ~errorBitSet;

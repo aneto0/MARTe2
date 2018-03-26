@@ -40,17 +40,15 @@ ILKEXT=.ilk
 PDBEXT=.pdb
 DEFEXT=.def
 
-OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
-OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.obj) 
-OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.obj) 
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)\\%.obj) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)\\%.obj) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)\\%.obj) 
 
-PP=   $(PPX:%.x=msc\%.pp) 
+PP=   $(PPX:%.x=msc\\%.pp) 
 
-#OBJS += $(OBJSXRTTI:%.x=msc\%.rtti.obj) 
-
-OBJS_=  $(OBJSX:%.x=msc/%.obj) 
-OBJS2_= $(OBJSX2:%.x=msc/%.obj) 
-OBJS3_= $(OBJSX3:%.x=msc/%.obj) 
+OBJS_=  $(OBJSX:%.x=msc\\%.obj) 
+OBJS2_= $(OBJSX2:%.x=msc\\%.obj) 
+OBJS3_= $(OBJSX3:%.x=msc\\%.obj) 
 
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJ2 = $(SPB2:%.x=%.spb)

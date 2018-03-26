@@ -34,9 +34,11 @@
 
 #include "CCString.h"
 #include "CompositeErrorManagement.h"
-#include "CompositeErrorManagement.h"
 #include "StaticList.h"
 #include "VariableDescriptor.h"
+#include "SaturatedInteger.h"
+#include "MemoryCheck.h"
+
 
 
 /*---------------------------------------------------------------------------*/
@@ -50,135 +52,9 @@
 namespace MARTe{
 
 /**
- * Special size code to indicate that the size is variable
+ * use a SaturatedInteger<uint32> to describes number of elements in the structures
  */
-const uint32 variableSize32			= 0xFFFFFFFF;
-
-/**
- * Special size code to indicate that the size is not defined
- */
-const uint32 indeterminateSize32	= 0xFFFFFFFE;
-
-/**
- * Special size code to indicate that the size is variable
- */
-const uint32 tooLarge32				= 0xFFFFFFF0;
-
-
-class  DimensionSize{
-public:
-	inline DimensionSize(uint32 x=0,bool force=false){
-		if ((!force )&&(x >= tooLarge32)){
-			x = tooLarge32;
-		}
-		value = x;
-	}
-
-	inline DimensionSize operator= (const DimensionSize &x){
-		value = x.value;
-		return *this;
-	}
-
-	inline bool operator== (const DimensionSize &x){
-		return (value == x.value);
-	}
-
-	inline bool operator!= (const DimensionSize &x){
-		return (value != x.value);
-	}
-
-	inline DimensionSize operator*(const DimensionSize &m) const{
-		DimensionSize d;
-		if (( m.value == tooLarge32 ) || ( value == tooLarge32 )){
-			d.value = tooLarge32;
-		} else
-		if (( m.value == indeterminateSize32 ) || ( value == indeterminateSize32 )){
-			d.value = indeterminateSize32;
-		} else
-		if (( m.value == variableSize32 ) || ( value == variableSize32 )){
-			d.value = variableSize32;
-		} else {
-			uint64 o = m.value * value;
-			if (o >= tooLarge32){
-				d.value = tooLarge32;
-			} else {
-				d.value = o;
-			}
-		}
-		return d;
-	}
-
-	inline DimensionSize operator+(const DimensionSize &m) const{
-		DimensionSize d;
-		if (( m.value == tooLarge32 ) || ( value == tooLarge32 )){
-			d.value = tooLarge32;
-		} else
-		if (( m.value == indeterminateSize32 ) || ( value == indeterminateSize32 )){
-			d.value = indeterminateSize32;
-		} else
-		if (( m.value == variableSize32 ) || ( value == variableSize32 )){
-			d.value = variableSize32;
-		} else {
-			uint64 o = m.value + value;
-			if (o >= tooLarge32){
-				d.value = tooLarge32;
-			} else {
-				d.value = o;
-			}
-		}
-		return d;
-	}
-
-	inline bool isTooLarge() const{
-		return (value == tooLarge32);
-	}
-
-	inline bool isVariableSize() const{
-		return (value == variableSize32);
-	}
-
-	inline bool isIndeterminateSize() const{
-		return (value == indeterminateSize32);
-	}
-
-	inline bool isNotANumber() const{
-		return (value >= tooLarge32);
-	}
-
-	ErrorManagement::ErrorType toUint32(uint32 &x) const{
-		ErrorManagement::ErrorType ret;
-		if (isNotANumber()){
-			ret.outOfRange = true;
-		} else {
-			x = value;
-		}
-		return ret;
-	}
-
-	uint32 toUint32Unchecked() const{
-		return value;
-	}
-private:
-	uint32 value;
-
-	operator uint32(){ return value;}
-};
-
-/**
- * Special size code to indicate that the size is variable
- */
-const DimensionSize variableSize(variableSize32,true);
-
-/**
- * Special size code to indicate that the size is not defined
- */
-const DimensionSize indeterminateSize(indeterminateSize32,true);
-
-/**
- * Special size code to indicate that the size is variable
- */
-const DimensionSize tooLarge(tooLarge32,true);
-
+typedef  SaturatedInteger<uint32> DimensionSize;
 /**
  * @brief description of a dimension.
  */
@@ -205,12 +81,15 @@ struct DimensionInfoElement{
 	DimensionSize numberOfElements;
 
 	/**
-	 * product of all the underlying dimensions up to a terminal dimension.
+	 * @brief product of all the underlying dimensions up to a terminal dimension.
 	 * include size of terminating type (void *), vector<>,matrix<> or sizeof(T)
 	 */
 	DimensionSize elementSize;
 
-	DimensionInfoElement(char8 typeIn,DimensionSize numberOfElementsIn){
+	/**
+	 * @brief constructor
+	 */
+	DimensionInfoElement(char8 typeIn,const DimensionSize &numberOfElementsIn){
 		type = typeIn;
 		numberOfElements = numberOfElementsIn;
 		layerEnd = '\0';
@@ -220,14 +99,38 @@ struct DimensionInfoElement{
 
 };
 
+static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
+	ErrorManagement::ErrorType ret;
+	const uint8 **pp = (const uint8 **)(ptr);
+	const uint8 *p = *pp;
+	if ((p == NULL) && (allowNULL)){
+		ptr = p;
+	} else
+	if ((p == NULL) || (!MemoryCheck::Check(p))){
+		ret.exception = true;
+		DynamicCString errM;
+		errM.Append("bad pointer (");
+		errM.AppendHex(reinterpret_cast<uint64>(p));
+		errM.Append(") at (");
+		errM.AppendHex(reinterpret_cast<uint64>(pp));
+		errM.Append(')');
+        REPORT_ERROR(ret, errM.GetList());
+	} else {
+		ptr = p;
+	}
+	return ret;
+}
 
+
+/**
+ * A more expanded and useful version of VariableDescriptor
+ */
 class DimensionHandler{
 public:
 	/**
-	 * prepare a table of DimensionInfoElement s
+	 * @brief prepare a table of DimensionInfoElement s
 	 */
 	DimensionHandler(CCString modifiers,TypeDescriptor tdIn);
-
 
 	/**
 	 * Allow access to all DimensionInfoElement
@@ -270,25 +173,28 @@ public:
 private:
 
 	/**
-	 *
+	 *	@brief constructor
 	 */
 	DimensionHandler( const DimensionHandler &){}
 
 	/**
-	 *
+	 * @brief copy operator
 	 */
 	void operator=(const DimensionHandler &){}
 
 	/**
-	 * size of a dimension code
+	 * @brief size of a dimension code
 	 */
-	DimensionSize Type2Size(char8 c) const;
+	uint32  Type2Size(char8 c) const;
+
+	/**
+	 * @brief the dimensions
+	 */
+	StaticList<DimensionInfoElement> dimensions;
 
 	/**
 	 *
 	 */
-	StaticList<DimensionInfoElement> dimensions;
-
 	TypeDescriptor td;
 
 };
@@ -305,13 +211,11 @@ uint32 DimensionHandler::NDimensions() const {
 TypeDescriptor DimensionHandler::GetTypeDescriptor() const{
 	return td;
 }
-//#include <stdio.h>
+
 inline  DimensionInfoElement &DimensionHandler::operator[](uint32 index) {
 	static DimensionInfoElement dummy('\0',0);
 	DimensionInfoElement &ret = dummy;
 	if (index < dimensions.GetSize()){
-//printf("[%i %c %c %i]",index,dimensions[0].type,dimensions[1].type,dimensions[index].type);
-
 		ret = dimensions[index];
 	}
 	return ret;

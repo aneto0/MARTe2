@@ -213,13 +213,19 @@ public:
      * @briefs copies the content to destination.
      * Number of dimensions must be the same or compatible
      */
-    ErrorManagement::ErrorType  	CopyTo(AnyType destination);
+    ErrorManagement::ErrorType  	CopyTo(AnyType destination) const;
+
+    /**
+     * @brief Creates a clone of the variable and returns a reference to it
+     * The reference points to an Object derivative that holds the clone an the Variable Descriptor
+     */
+    inline Reference				Clone() const;
 
     /**
      * @briefs compare content with destination.
      * Number of dimensions must be the same or compatible
      */
-    ErrorManagement::ErrorType  	CompareWith(AnyType destination);
+    ErrorManagement::ErrorType  	CompareWith(AnyType destination) const;
 
     /**
      * @brief pointer2Variable = NULL
@@ -273,7 +279,7 @@ AnyType::AnyType(){
 }
 
 bool AnyType::IsValid() const{
-	return (pointer2Variable == NULL_PTR(void *));
+	return (pointer2Variable != NULL_PTR(void *));
 }
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,const void* const dataPointerIn):variableDescriptor(dataDescriptorIn){
@@ -329,6 +335,16 @@ const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
 
 ErrorManagement::ErrorType AnyType::ToString(DynamicCString &string,bool rawFormat) const{
 	return variableDescriptor.ToString(string,rawFormat);
+}
+
+Reference AnyType::Clone() const{
+	Reference ref;
+	const uint8 *sourcePtr =  reinterpret_cast<const uint8 *>(pointer2Variable);
+	ErrorManagement::ErrorType ok = variableDescriptor.Clone(sourcePtr,ref);
+	if (!ok){
+		REPORT_ERROR(ok,"variableDescriptor.Clone error");
+	}
+	return ref;
 }
 
 
