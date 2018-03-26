@@ -188,4 +188,6 @@ epub_exclude_files = ['search.html']
 todo_include_todos = True
 
 # External links
-extlinks = {'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', '')}
+extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L0Types/%s.h', ''),
+			'vciscorebml1': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L1Portability/%s.h', ''),
+			'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', '')}
