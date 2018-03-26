@@ -11,8 +11,8 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Building
-========
+From sources
+============
 
 Linux
 -----
@@ -21,7 +21,7 @@ The MARTe development environment can be setup in any modern desktop Linux distr
 
 For the sake of simplicity these instructions are shown for the CentOS distribution but should be easily adaptable to any other mainstream distribution.
 
-If you wish to integrate with Eclispe follow :doc:`these steps </contributing/development/environment/linux>`.
+If you wish to integrate with Eclipse follow :doc:`these steps </contributing/development/environment/linux>`.
 
 Instructions
 ~~~~~~~~~~~~
