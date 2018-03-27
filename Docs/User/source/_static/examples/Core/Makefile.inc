@@ -24,8 +24,8 @@
 
 OBJSX=ErrorLoggerExample.x
 
-PACKAGE=
-ROOT_DIR=../../
+PACKAGE=Examples
+ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

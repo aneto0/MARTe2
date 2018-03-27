@@ -24,12 +24,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include "ErrorLoggerExample.h"
+
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ErrorLoggerExample.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -56,6 +57,3 @@ void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation 
     printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     printf(RST);
 }
-
-
-	

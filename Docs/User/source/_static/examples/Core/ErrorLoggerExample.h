@@ -47,4 +47,3 @@
 void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription);
 
 #endif /* CONCEPTS_ERRORLOGGER_H_ */
-	

@@ -1,6 +1,6 @@
 /**
- * @file ReferencesExample4.cpp
- * @brief Source file for class ReferencesExample4
+ * @file ReferencesExample3.cpp
+ * @brief Source file for class ReferencesExample3
  * @date 14/03/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferencesExample4 (public, protected, and private). Be aware that some
+ * the class ReferencesExample3 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -26,16 +26,15 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "ClassRegistryDatabase.h"
+#include "ErrorLoggerExample.h"
 #include "Object.h"
 #include "Reference.h"
-#include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StreamString.h"
 
@@ -43,28 +42,38 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void ErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    using namespace MARTe;
-    const char8 * RED = "\x1B[31m";
-    const char8 * GRN = "\x1B[32m";
-    const char8 * RST = "\x1B[0m";
-
-    StreamString errorCodeStr;
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
-    }
-    else {
-        printf(RED);
-    }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printf(RST);
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe2Tutorial {
+/**
+ * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ */
+class MotorEx1: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief NOOP.
+     */
+MotorEx1    () {
+        property = 0u;
+    }
+
+    virtual ~MotorEx1() {
+        using namespace MARTe;
+        if (GetName() != NULL) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    /**
+     * A property.
+     */
+    MARTe::uint32 property;
+};
+
+CLASS_REGISTER(MotorEx1, "")
 
 class ControllerEx1: public MARTe::Object {
 public:
@@ -74,7 +83,7 @@ public:
      * @brief NOOP.
      */
 ControllerEx1    () {
-        gain = 0u;
+        property2 = 0u;
     }
 
     virtual ~ControllerEx1() {
@@ -92,7 +101,7 @@ ControllerEx1    () {
     /**
      * A property.
      */
-    MARTe::uint32 gain;
+    MARTe::uint32 property2;
 };
 
 CLASS_REGISTER(ControllerEx1, "")
@@ -126,68 +135,43 @@ PIDEx1    () {
 CLASS_REGISTER(PIDEx1, "")
 }
 
-//Note that rc is passed by value
-void ListReferenceContainerContents(MARTe::ReferenceContainer rc) {
-    using namespace MARTe;
-
-    uint32 i;
-    uint32 size = rc.Size();
-    for (i = 0u; i < size; i++) {
-        Reference r = rc.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function ReferenceContainer[%d] = %s", i, r->GetName());
-    }
-    Reference r = rc.Get(0);
-    rc.Delete(r);
-    size = rc.Size();
-    for (i = 0u; i < size; i++) {
-        Reference r = rc.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function after Delete ReferenceContainer[%d] = %s", i, r->GetName());
-    }
-}
-
 int main(int argc, char **argv) {
     using namespace MARTe;
     using namespace MARTe2Tutorial;
-    SetErrorProcessFunction(&ErrorProcessFunction);
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
-    CCString className1 = "ControllerEx1";
-    CCString className2 = "PIDEx1";
+    CCString className1 = "MotorEx1";
+    CCString className2 = "ControllerEx1";
+    CCString className3 = "PIDEx1";
 
     //Automatically generate a new object instance based on the class name and on the correct Heap and with the template reference.
-    ReferenceT<ControllerEx1> ref1(className1, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    ReferenceT<MotorEx1> ref1(className1, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (ref1.IsValid()) {
-        ref1->SetName("ControllerInstance1");
+        ref1->SetName("MotorInstance1");
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className1.GetList());
     }
-    ReferenceT<ControllerEx1> ref2(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    if (ref2.IsValid()) {
-        ref2->SetName("ControllerInstance2");
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className1.GetList());
+
+    //This should fail because className2 is not of type MotorEx1
+    ReferenceT<MotorEx1> ref2(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (!ref2.IsValid()) {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected, could not create an instance of %s", className2.GetList());
     }
-    //This mechanism also works with compatible subclasses PIDEx1->ControllerEx1
-    ReferenceT<PIDEx1> ref3(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+    //Now it should work as the requested class name of is of the expected type (.
+    ReferenceT<ControllerEx1> ref3(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (ref3.IsValid()) {
-        ref3->SetName("PIDInstance1");
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className2.GetList());
+        ref3->SetName("ControllerInstance1");
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className3.GetList());
     }
 
-    ReferenceContainer container;
-    container.Insert(ref1);
-    container.Insert(ref2);
-    container.Insert(ref3);
+    //This mechanism also works with compatible subclasses PIDEx1->ControllerEx1
+    ReferenceT<ControllerEx1> ref4(className3, GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    if (ref4.IsValid()) {
+        ref4->SetName("PIDInstance1");
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s using the ReferenceT<ControllerEx1>", className3.GetList());
+        ref4->AFunction();
+    }
 
-    uint32 i;
-    uint32 size = container.Size();
-    for (i = 0u; i < size; i++) {
-        Reference r = container.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "ReferenceContainer[%d] = %s", i, r->GetName());
-    }
-    ListReferenceContainerContents(container);
-    size = container.Size();
-    for (i = 0u; i < size; i++) {
-        Reference r = container.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "After function call: ReferenceContainer[%d] = %s", i, r->GetName());
-    }
     return 0;
 }
 

@@ -26,7 +26,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -34,6 +33,7 @@
 #include "AdvancedErrorManagement.h"
 #include "ClassRegistryDatabase.h"
 #include "ConfigurationDatabase.h"
+#include "ErrorLoggerExample.h"
 #include "JsonParser.h"
 #include "Matrix.h"
 #include "Object.h"
@@ -48,24 +48,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-void ErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    using namespace MARTe;
-    const char8 * RED = "\x1B[31m";
-    const char8 * GRN = "\x1B[32m";
-    const char8 * RST = "\x1B[0m";
-
-    StreamString errorCodeStr;
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
-    }
-    else {
-        printf(RED);
-    }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printf(RST);
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -297,7 +279,7 @@ CLASS_REGISTER(ControllerEx1, "")
 int main(int argc, char **argv) {
     using namespace MARTe;
     using namespace MARTe2Tutorial;
-    SetErrorProcessFunction(&ErrorProcessFunction);
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
     StreamString configurationCfg = ""
             "+ControllerInstance1 = {\n"
@@ -328,7 +310,7 @@ int main(int argc, char **argv) {
             "    }\n"
             "}";
 
-    printf("Loading CFG:\n%s", configurationCfg.Buffer());
+    REPORT_ERROR_STATIC("Loading CFG:\n%s", configurationCfg.Buffer());
     ConfigurationDatabase cdb;
     StreamString err;
     //Force the string to be seeked to the beginning.

@@ -1,6 +1,6 @@
 /**
- * @file ObjectsExample1.cpp
- * @brief Source file for class ObjectsExample1
+ * @file ObjectsExample2.cpp
+ * @brief Source file for class ObjectsExample2
  * @date 14/03/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ObjectsExample1 (public, protected, and private). Be aware that some
+ * the class ObjectsExample2 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -26,37 +26,19 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "ClassRegistryDatabase.h"
+#include "ErrorLoggerExample.h"
 #include "Object.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-void ErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    using namespace MARTe;
-    const char8 * RED = "\x1B[31m";
-    const char8 * GRN = "\x1B[32m";
-    const char8 * RST = "\x1B[0m";
-
-    StreamString errorCodeStr;
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
-    }
-    else {
-        printf(RED);
-    }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printf(RST);
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -72,8 +54,8 @@ public:
     /**
      * @brief NOOP.
      */
-ControllerEx1    () {
-        gain = 0u;
+    ControllerEx1() {
+        gain = 0xffu;
     }
 
     /**
@@ -87,28 +69,30 @@ CLASS_REGISTER(ControllerEx1, "")
 
 int main(int argc, char **argv) {
     using namespace MARTe;
-    SetErrorProcessFunction(&ErrorProcessFunction);
-
-    //List all the classes that have been registered.
-    uint32 i;
-    ClassRegistryDatabase *crdSingleton = ClassRegistryDatabase::Instance();
-    uint32 numberOfClasses = crdSingleton->GetSize();
-    for (i = 0u; i < numberOfClasses; i++) {
-        const ClassRegistryItem *classRegistryItem = crdSingleton->Peek(i);
-        const ClassProperties *classProperties = classRegistryItem->GetClassProperties();
-        CCString className = classProperties->GetName();
-        uint14 classUID = classProperties->GetUniqueIdentifier();
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Counter: %d | Class: %s | UID : %d", i, className.GetList(), classUID);
-    }
+    using namespace MARTe2Tutorial;
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
     //Find the ControllerEx1 class
+    ClassRegistryDatabase *crdSingleton = ClassRegistryDatabase::Instance();
     CCString classNameToSearch = "ControllerEx1";
     const ClassRegistryItem *classRegistryItem = crdSingleton->Find(classNameToSearch);
     if (classRegistryItem != NULL) {
-        const ClassProperties *classProperties = classRegistryItem->GetClassProperties();
-        CCString className = classProperties->GetName();
-        uint14 classUID = classProperties->GetUniqueIdentifier();
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Found class: %s | UID : %d", className.GetList(), classUID);
+        //Get the object builder (which knows how to build classes of this type).
+        const ObjectBuilder *builder = classRegistryItem->GetObjectBuilder();
+        if (builder != NULL) {
+            //Build the class using the specified memory heap
+            Object *obj = builder->Build(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+            if (obj != NULL) {
+                ControllerEx1 *obj2 = dynamic_cast<ControllerEx1 *>(obj);
+                if (obj2 != NULL) {
+                    obj2->SetName("ControllerInstance1");
+                    REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully managed to create an instance of: %s and to set its name to %s", classNameToSearch.GetList(), obj2->GetName());
+                }
+            }
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find the ObjectBuilder for the class with name: %s", classNameToSearch.GetList());
+        }
     }
     else {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find class with name: %s", classNameToSearch.GetList());

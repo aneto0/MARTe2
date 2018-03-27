@@ -1,8 +1,4 @@
-.. MARTe2 documentation master file, created by
-   sphinx-quickstart on Fri Mar 23 15:31:24 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-   date: 23/03/2018
+.. date: 27/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -15,25 +11,15 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Welcome to MARTe2's documentation!
-==================================
+Examples
+========
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+To run the examples follow theses instructions:
 
-   concepts
-   core/core
-   examples
-   building/building
-   building/deploying   
-   contributing/contributing
-   faq
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. code-block:: bash
+   
+   export MARTe2_DIR=FOLDER_WHERE_MARTe2_IS_INSTALLED
+   cd $MARTe2_DIR/Docs/User/source/_static/examples/Core
+   make -f Makefile.linux
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/linux/Core/
+   ../../../../../../Build/linux/Examples/Core/EXAMPLE_TO_RUN.ex

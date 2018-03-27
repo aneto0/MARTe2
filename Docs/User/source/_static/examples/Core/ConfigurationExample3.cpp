@@ -48,24 +48,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void ErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    using namespace MARTe;
-    const char8 * RED = "\x1B[31m";
-    const char8 * GRN = "\x1B[32m";
-    const char8 * RST = "\x1B[0m";
-
-    StreamString errorCodeStr;
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
-    }
-    else {
-        printf(RED);
-    }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printf(RST);
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -351,7 +333,7 @@ void LoadCfg() {
 
     ConfigurationDatabase cdb;
     StreamString err;
-    printf("Loading CFG:\n%s", configurationCfg.Buffer());
+    REPORT_ERROR_STATIC("Loading CFG:\n%s", configurationCfg.Buffer());
     //Force the string to be seeked to the beginning.
     configurationCfg.Seek(0LLU);
     StandardParser parser(configurationCfg, cdb, &err);
@@ -401,7 +383,7 @@ void LoadXml() {
 
     ConfigurationDatabase cdb;
     StreamString err;
-    printf("Loading XML:\n%s", configurationXml.Buffer());
+    REPORT_ERROR_STATIC("Loading XML:\n%s", configurationXml.Buffer());
     //Force the string to be seeked to the beginning.
     configurationXml.Seek(0LLU);
     XMLParser parser(configurationXml, cdb, &err);
@@ -448,7 +430,7 @@ void LoadJson() {
             "        }\n"
             "   }\n"
             "}\n";
-    printf("Loading Json:\n%s", configurationJson.Buffer());
+    REPORT_ERROR_STATIC("Loading Json:\n%s", configurationJson.Buffer());
     ConfigurationDatabase cdb;
     StreamString err;
     //Force the string to be seeked to the beginning.
@@ -468,7 +450,7 @@ void LoadJson() {
 }
 
 int main(int argc, char **argv) {
-    SetErrorProcessFunction(&ErrorProcessFunction);
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
     LoadCfg();
     LoadXml();
     LoadJson();

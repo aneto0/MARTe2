@@ -38,18 +38,63 @@ CString  A C string.
 CCString A C constant string.
 ======== =======
 
+TypeDescriptor
+--------------
+The :vcisdoxygencl:`TypeDescriptor` is used to describe any of the MARTe basic types. In particular it can be used to describe a type using a string (e.g. "uint32" => UnsignedInteger32).
+It is also a core component of the :vcisdoxygencl:`AnyType` described here below. 
+
+AnyType
+-------
+The :vcisdoxygencl:`AnyType` allows to encapsulate the value and to describe any of the MARTe2 variables. The AnyType is capable of constructing itself from any of the BasicTypes and can be used as a generic interface to a given function.
+
+.. warning:: The AnyType has no internal memory! The instances of AnyType do not hold a copy of the actual value, but a pointer to it, so the value must be accessible during the life of the AnyType instance (be particularly careful when returning AnyTypes that represent automatic variables or variables that get out of scope!
+
+.. code-block:: c++
+   
+   void PrintType(const MARTe::AnyType &input) {
+      using namespace MARTe;
+      //Get the TypeDescriptor
+      TypeDescriptor td = input.GetTypeDescriptor();
+      uint32 numberOfBits = td.numberOfBits;
+      //Automatically retrieve the name
+      const char8 *const typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
+      //The logging mechanism will automatically print the value (note the %!) based on the TypeDescriptor.
+      REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "Type: %s; NumberOfBits: %d; Constant? :%d, "
+          "Value: %!", typeName, numberOfBits, isConstant, input);
+   }
+   
+   ...
+   
+   uint16 anUInt16 = 116;
+   //Note that the AnyType is automatically constructed.
+   PrintType(anUInt16);
+   PrintType(32.0);
+
+The :vcisdoxygencl:`AnyType` is a key design element on all the components that accept many types and also require type interpretation (i.e. need to adapt their behaviour based on the type). Examples are the :vcisdoxygencl:`StructuredDataI` Read and Write functions and the :vcisdoxygencl:`IOBuffer` Printf.   
+
 Other types
 -----------
 
-=================================== =======
-Type                                Meaning
-=================================== =======
-:vciscorebml0:`BitBoolean`          When used in an union allows to have the same effect of a struct with a 1 bit boolean (e.g. :vciscorebml1:`TypeDescriptor`).
-:vciscorebml0:`BitRange`            When used in an union allows to have the same effect of a struct with bit fielded attributes (e.g. :vciscorebml1:`TypeDescriptor`).
-:vciscorebml0:`FractionalInteger`   An helper class that is used to define integer types with non-standard bit sizes, such as uint3 or uint63.
-:vciscorebml0:`Matrix`              Fixed size matrix of values.
-:vciscorebml0:`Vector`              Fixed size array of values.
-:vciscorebml0:`ZeroTerminatedArray` Describes a zero terminated array.
-=================================== =======
+==================================== =======
+Type                                 Meaning
+==================================== =======
+:vcisdoxygencl:`BitBoolean`          When used in an union allows to have the same effect of a struct with a 1 bit boolean (e.g. :vcisdoxygencl:`TypeDescriptor`).
+:vcisdoxygencl:`BitRange`            When used in an union allows to have the same effect of a struct with bit fielded attributes (e.g. :vcisdoxygencl:`TypeDescriptor`).
+:vcisdoxygencl:`FractionalInteger`   An helper class that is used to define integer types with non-standard bit sizes, such as uint3 or uint63.
+:vcisdoxygencl:`Matrix`              Fixed size matrix of values.
+:vcisdoxygencl:`Vector`              Fixed size array of values.
+:vcisdoxygencl:`ZeroTerminatedArray` Describes a zero terminated array.
+==================================== =======
 
+Example
+-------
 
+The following example highlights the usage of the AnyType and of the TypeDescriptor.  
+
+.. literalinclude:: /_static/examples/Core/TypesExample1.cpp
+   :language: c++
+   :emphasize-lines: 59,73-75,88,92
+   :caption: AnyType example (TypesExample1)
+   :linenos:
+   
+Instructions on how to compile and execute the example can be found :doc:`here </examples>`.
