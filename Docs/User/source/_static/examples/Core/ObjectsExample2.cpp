@@ -45,7 +45,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe2Tutorial {
 /**
- * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ * @brief A simple MARTe::Object class will be automatically registered
+ * into the ClassRegistryDatabase.
  */
 class ControllerEx1: public MARTe::Object {
 public:
@@ -86,16 +87,20 @@ int main(int argc, char **argv) {
                 ControllerEx1 *obj2 = dynamic_cast<ControllerEx1 *>(obj);
                 if (obj2 != NULL) {
                     obj2->SetName("ControllerInstance1");
-                    REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully managed to create an instance of: %s and to set its name to %s", classNameToSearch.GetList(), obj2->GetName());
+                    REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully managed "
+                    		"to create an instance of: %s and to set "
+                    		"its name to %s", classNameToSearch.GetList(), obj2->GetName());
                 }
             }
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find the ObjectBuilder for the class with name: %s", classNameToSearch.GetList());
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find the ObjectBuilder "
+            		"for the class with name: %s", classNameToSearch.GetList());
         }
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find class with name: %s", classNameToSearch.GetList());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find class "
+        		"with name: %s", classNameToSearch.GetList());
     }
 
     return 0;

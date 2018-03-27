@@ -16,6 +16,8 @@ Object configuration
 
 TODO
 
+Also explain how the Class= is used with other libraries
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:

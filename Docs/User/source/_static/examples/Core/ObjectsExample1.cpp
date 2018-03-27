@@ -45,7 +45,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe2Tutorial {
 /**
- * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ * @brief A simple MARTe::Object class will be automatically registered
+ * into the ClassRegistryDatabase.
  */
 class ControllerEx1: public MARTe::Object {
 public:
@@ -80,7 +81,8 @@ int main(int argc, char **argv) {
         const ClassProperties *classProperties = classRegistryItem->GetClassProperties();
         CCString className = classProperties->GetName();
         uint14 classUID = classProperties->GetUniqueIdentifier();
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Counter: %d | Class: %s | UID : %d", i, className.GetList(), classUID);
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Counter: %d | "
+        		"Class: %s | UID : %d", i, className.GetList(), classUID);
     }
 
     //Find the ControllerEx1 class
@@ -90,10 +92,12 @@ int main(int argc, char **argv) {
         const ClassProperties *classProperties = classRegistryItem->GetClassProperties();
         CCString className = classProperties->GetName();
         uint14 classUID = classProperties->GetUniqueIdentifier();
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Found class: %s | UID : %d", className.GetList(), classUID);
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Found class: %s |"
+        		" UID : %d", className.GetList(), classUID);
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find class with name: %s", classNameToSearch.GetList());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not find class "
+        		"with name: %s", classNameToSearch.GetList());
     }
 
     return 0;
