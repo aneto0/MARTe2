@@ -11,9 +11,13 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Main concepts
-=============
+FAQ
+===
 
-Namespace 
+TODO
 
-Architecture and operating system folders
+Where do I start from?
+
+Does MARTe2 guarantee realtime?
+
+...

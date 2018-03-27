@@ -23,10 +23,11 @@ Welcome to MARTe2's documentation!
    :caption: Contents:
 
    concepts
-   core/types/types
-   core/configuration/configuration
-   building/building   
-   contributing/development/environment
+   core/core
+   building/building
+   building/deploying   
+   contributing/contributing
+   faq
 
 
 Indices and tables

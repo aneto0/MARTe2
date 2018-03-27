@@ -1,4 +1,4 @@
-.. date: 26/03/2018
+.. date: 27/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,9 +11,17 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Main concepts
-=============
+Deploying
+=========
 
-Namespace 
+Typical MARTe2 projects folder structure...
 
-Architecture and operating system folders
+Tips and tricks on how to improve real-time behaviour in ...
+TODO
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   deploying/linux
+   
