@@ -16,4 +16,4 @@ Main concepts
 
 Namespace 
 
-Architecture and operating system folders
+Architecture and operating system folders and portability
