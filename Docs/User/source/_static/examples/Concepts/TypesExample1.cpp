@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationExample1.cpp
- * @brief Source file for class ConfigurationExample1
+ * @file TypesExample1.cpp
+ * @brief Source file for class TypesExample1
  * @date 14/03/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ConfigurationExample1 (public, protected, and private). Be aware that some
+ * the class TypesExample1 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -44,24 +44,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-void ErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
-    using namespace MARTe;
-    const char8 * RED = "\x1B[31m";
-    const char8 * GRN = "\x1B[32m";
-    const char8 * RST = "\x1B[0m";
-
-    StreamString errorCodeStr;
-    ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
-    if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
-    }
-    else {
-        printf(RED);
-    }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
-    printf(RST);
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -252,7 +234,7 @@ CLASS_REGISTER(ControllerEx1, "")
 int main(int argc, char **argv) {
     using namespace MARTe;
     using namespace MARTe2Tutorial;
-    SetErrorProcessFunction(&ErrorProcessFunction);
+    SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
     CCString className1 = "ControllerEx1";
 

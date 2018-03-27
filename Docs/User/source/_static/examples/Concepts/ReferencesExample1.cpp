@@ -1,6 +1,6 @@
 /**
- * @file Playground.cpp
- * @brief Source file for class Playground
+ * @file ReferencesExample1.cpp
+ * @brief Source file for class ReferencesExample1
  * @date 14/03/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Playground (public, protected, and private). Be aware that some 
+ * the class ReferencesExample1 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

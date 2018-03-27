@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX=
+OBJSX=ErrorLoggerExample.x
 
 PACKAGE=
 ROOT_DIR=../../
@@ -53,7 +53,8 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample2$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample3$(EXEEXT) \
-        $(BUILD_DIR)/ConfigurationExample4$(EXEEXT)
+        $(BUILD_DIR)/ConfigurationExample4$(EXEEXT) \
+        $(BUILD_DIR)/TypesExample1$(EXEEXT)
 	echo  $(OBJS)
 
 
