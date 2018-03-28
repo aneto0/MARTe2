@@ -86,6 +86,9 @@ Type                                 Meaning
 :vcisdoxygencl:`ZeroTerminatedArray` Describes a zero terminated array.
 ==================================== =======
 
+Lists
+~~~~~
+
 ==================================== =======
 Type                                 Meaning
 ==================================== =======

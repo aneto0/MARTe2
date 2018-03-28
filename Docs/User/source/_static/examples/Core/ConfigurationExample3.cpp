@@ -98,7 +98,8 @@ ControllerEx1    () {
             delete [] fastWaveform.values;
         }
         if (GetName() != NULL) {
-            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at"
+            		" %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
         }
     }
 

@@ -18,9 +18,15 @@ TODO
 
 Also explain how the Class= is used with other libraries
 
+Object registry database
+
+Parsers
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
+   objects
    parser
+   slkparser
    
