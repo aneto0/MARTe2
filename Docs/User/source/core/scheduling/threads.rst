@@ -11,24 +11,9 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Core library
-============
+Threads and semaphores
+======================
 
 TODO
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
-
-   types/types
-   objects/objectsintro
-   logging/logging
-   configuration/configuration
-   messages/messages
-   statemachine/statemachine
-   streams/streams   
-   gams/rtapp
-   scheduling/services
-   scheduling/threads
-   
    
