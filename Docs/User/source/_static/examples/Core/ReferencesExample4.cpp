@@ -62,7 +62,9 @@ ControllerEx1    () {
     virtual ~ControllerEx1() {
         using namespace MARTe;
         if (GetName() != NULL) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references "
+            		"pointing at %s [%s]. The Object will "
+            		"be safely deleted.", GetName(), GetClassProperties()->GetName());
         }
     }
 
@@ -92,7 +94,9 @@ PIDEx1    () {
 
     virtual ~PIDEx1() {
         using namespace MARTe;
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references "
+        		"pointing at %s [%s]. The Object will "
+        		"be safely deleted.", GetName(), GetClassProperties()->GetName());
     }
 
     virtual void AFunction () {
@@ -116,14 +120,16 @@ void ListReferenceContainerContents(MARTe::ReferenceContainer rc) {
     uint32 size = rc.Size();
     for (i = 0u; i < size; i++) {
         Reference r = rc.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function ReferenceContainer[%d] = %s", i, r->GetName());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function "
+        		"ReferenceContainer[%d] = %s", i, r->GetName());
     }
     Reference r = rc.Get(0);
     rc.Delete(r);
     size = rc.Size();
     for (i = 0u; i < size; i++) {
         Reference r = rc.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function after Delete ReferenceContainer[%d] = %s", i, r->GetName());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "@Function "
+        		"after Delete ReferenceContainer[%d] = %s", i, r->GetName());
     }
 }
 
@@ -135,22 +141,26 @@ int main(int argc, char **argv) {
     CCString className1 = "ControllerEx1";
     CCString className2 = "PIDEx1";
 
-    //Automatically generate a new object instance based on the class name and on the correct Heap and with the template reference.
+    //Automatically generate a new object instance based on the class
+    //name and on the correct Heap and with the template reference.
     ReferenceT<ControllerEx1> ref1(className1, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (ref1.IsValid()) {
         ref1->SetName("ControllerInstance1");
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className1.GetList());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully "
+        		"created an instance of %s", className1.GetList());
     }
     ReferenceT<ControllerEx1> ref2(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (ref2.IsValid()) {
         ref2->SetName("ControllerInstance2");
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className1.GetList());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully "
+        		"created an instance of %s", className2.GetList());
     }
     //This mechanism also works with compatible subclasses PIDEx1->ControllerEx1
     ReferenceT<PIDEx1> ref3(className2, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     if (ref3.IsValid()) {
         ref3->SetName("PIDInstance1");
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully created an instance of %s", className2.GetList());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully "
+        		"created an instance of %s", className2.GetList());
     }
 
     ReferenceContainer container;
@@ -168,7 +178,8 @@ int main(int argc, char **argv) {
     size = container.Size();
     for (i = 0u; i < size; i++) {
         Reference r = container.Get(i);
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "After function call: ReferenceContainer[%d] = %s", i, r->GetName());
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "After function call: "
+        		"ReferenceContainer[%d] = %s", i, r->GetName());
     }
     return 0;
 }

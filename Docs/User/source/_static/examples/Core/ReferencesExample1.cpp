@@ -46,7 +46,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe2Tutorial {
 /**
- * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ * @brief A simple MARTe::Object class will be automatically
+ * registered into the ClassRegistryDatabase.
  */
 class ControllerEx1: public MARTe::Object {
 public:
@@ -87,14 +88,18 @@ int main(int argc, char **argv) {
         Object *referencedObj2 = ref2.operator ->();
 
         if (referencedObj1 != referencedObj2) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected ref1 and ref2 are NOT pointing at the same instance (%s != %s).", ref1->GetName(), ref2->GetName());
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected ref1 "
+            		"and ref2 are NOT pointing at the "
+            		"same instance (%s != %s).", ref1->GetName(), ref2->GetName());
         }
 
         ref3 = ref1;
         //ref3 is now valid and should point at the same object as ref1
         Object *referencedObj3 = ref3.operator ->();
         if (referencedObj1 == referencedObj3) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected ref1 and ref3 are pointing at the same instance (%s == %s).", ref1->GetName(), ref3->GetName());
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected ref1 "
+            		"and ref3 are pointing at the "
+            		"same instance (%s == %s).", ref1->GetName(), ref3->GetName());
         }
     }
     else {

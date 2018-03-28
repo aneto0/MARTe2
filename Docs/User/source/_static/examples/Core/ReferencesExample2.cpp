@@ -46,7 +46,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe2Tutorial {
 /**
- * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ * @brief A simple MARTe::Object class will be automatically registered
+ * into the ClassRegistryDatabase.
  */
 class ControllerEx1: public MARTe::Object {
 public:
@@ -62,7 +63,9 @@ public:
     virtual ~ControllerEx1() {
         using namespace MARTe;
         if (GetName() != NULL) {
-            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No more "
+            		"references pointing at %s [%s]. The Object will be "
+            		"safely deleted.", GetName(), GetClassProperties()->GetName());
         }
     }
 
@@ -77,13 +80,15 @@ CLASS_REGISTER(ControllerEx1, "")
 
 void Function (MARTe::Reference ref) {
     using namespace MARTe;
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references pointing at %s is %d", ref->GetName(), ref.NumberOfReferences());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references "
+    		"pointing at %s is %d", ref->GetName(), ref.NumberOfReferences());
 
     CCString className = "ControllerEx1";
     //Automatically generate a new object instance based on the class name and on the correct Heap
     Reference ref2(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ref2->SetName("ControllerInstance2(FunctionMember)");
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references pointing at %s is %d", ref2->GetName(), ref2.NumberOfReferences());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references "
+    		"pointing at %s is %d", ref2->GetName(), ref2.NumberOfReferences());
 }
 
 int main(int argc, char **argv) {
@@ -94,12 +99,15 @@ int main(int argc, char **argv) {
     //Automatically generate a new object instance based on the class name and on the correct Heap
     Reference ref1(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ref1->SetName("ControllerInstance1");
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references "
+    		"pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
     Reference ref2 = ref1;
     Reference ref3 = ref1;
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references "
+    		"pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
     Function(ref3);
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Number of references "
+    		"pointing at %s is %d", ref1->GetName(), ref1.NumberOfReferences());
 
     return 0;
 }

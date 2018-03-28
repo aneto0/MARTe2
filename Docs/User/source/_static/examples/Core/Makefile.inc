@@ -50,6 +50,8 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ReferencesExample2$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
+		$(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
+		$(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample2$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample3$(EXEEXT) \

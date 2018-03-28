@@ -1,4 +1,4 @@
-.. date: 27/03/2018
+.. date: 24/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,23 +11,17 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Core library
-============
+Objects and References
+======================
 
-TODO
+.. hint::
+   The instantiation, configuration and interconnection of all the framework objects shall be fully data-driven, that is, without requiring any code recompilation.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   types/types
-   objects/objectsintro
-   logging/logging
-   configuration/configuration
-   messages/messages
-   statemachine/statemachine
-   streams/streams   
-   gams/rtapp
-   services/services
-   
+   objects
+   references
+   referencecontainers
    

@@ -16,15 +16,13 @@ Objects
 
 The MARTe2 :vcisdoxygencl:`Object` is the root class of the framework and offers the following features:
 
-- Automatic life cycle management using a smart pointer mechanism (see :ref:`references`);
+- Automatic life cycle management using a smart pointer mechanism (see :doc:`references`);
 - Data driven construction (in runtime) using the class name;
 - Standard initialisation and configuration interface (more information :doc:`here </core/configuration/configuration>`);
 - Standard messaging interface (more information :doc:`here </core/messages/messages>`);
 - Allocation on a user selectable heap.
 
 .. image:: Objects-1.png
-
-.. note:: The vision is that the instantiation, configuration and interconnection of all the framework objects shall be fully data-driven, that is, without recompiling any code.
 
 ClassRegistryDatabase
 ---------------------
@@ -60,6 +58,9 @@ When a MARTe application starts (or when one of the shared libraries is explicit
 
 Once the class is registered the database can be queried and new object instances created.   
    
+Examples
+--------
+   
 The following examples show how to query the contents of a ClassRegistryDatabase...  
 
 .. literalinclude:: /_static/examples/Core/ObjectsExample1.cpp
@@ -76,10 +77,5 @@ The following examples show how to query the contents of a ClassRegistryDatabase
    :caption: Object instantation example (ObjectsExample2)
    :linenos:
    
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.   
-            
-.. _references:
-   
-References
-----------
+Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.   
 
