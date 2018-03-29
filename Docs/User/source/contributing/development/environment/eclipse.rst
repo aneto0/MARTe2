@@ -22,7 +22,7 @@ Prerequisites
 -------------
 
 - `Java Runtime Environment <http://www.oracle.com/technetwork/java/javase/downloads/index.html>`_;
-- `Eclipse IDE for C/C++ Developers <http://www.eclipse.org/downloads/>`_;
+- `Eclipse IDE for C/C++ Developers <http://www.eclipse.org/downloads/>`_; (version used for this tutorial: Oxygen.3 Release (4.7.3))
 - Git clone of the `MARTe2 development infrastructure <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git>`_;
 
    - In the following instructions, it is assumed that this is cloned into a folder named ``MARTe2-dev``.
@@ -58,14 +58,18 @@ Configuration
    III. Select **C/C++** |rarrow| **Editor** |rarrow| **Templates** and click on **Import**;
 
       a. Select the file ``MARTe2-doc/Assets/Configuration/marte_cpp_editor_templates.xml``.
-      b. Select the "User code formatter" option.
+      b. Select the "Use code formatter" option.
+      
+      .. image:: C_CppEditorTemplatesImport.png
 
    IV. Select **General** |rarrow| **Editor** |rarrow| **Text Editors** |rarrow| *Spelling**;
 
-      a. Make sure to select **first** the option ``C/C++ spelling engine`` in the **Select spelling engine to use** drop-box;
+      a. Make sure to select **first** the option ``Enable spell checking``;
       b. In **User defined dictionary** click on **Browse...** and select the file ``.dictionary`` which is the root folder of the ``MARTe2-dev`` repository (in Linux this file may not be visible in the dialog and consequently its path needs to be explicitly written in the text field).
-
-   V. Click OK to close the Preferences window.
+	  
+	  .. image:: GeneralEditorsTextEditorsSpellin.png
+   
+   V. Click **Apply and Close** to close the Preferences window.
 
 4. Open **Project** |rarrow| **Properties**;
 
@@ -136,7 +140,7 @@ Configuration
             e. Select **Add to all languages**;
             f. Click **OK**;
          
-   III. Click **OK** to close the Properties window.
+   III. Click **Apply and Close** to close the Properties window.
    
 5. Compile the project by selecting **Project** |rarrow| **Build All**;
 6. Select **Help** |rarrow| **Install New Software**;
@@ -145,10 +149,15 @@ Configuration
    II. Select **Programming Languages** |rarrow| **C/C++ Unit Testing Support**;
    III. Click on **Next** and follow the instructions;
    
+   .. image:: HelpInstallNewSoftwareUniteTest.png
+   
 7. Open **Run** |rarrow| **Run Configurations**;
 
-   I. Select the **C/C++ Unit on the left pane**;
-   II. Press the **New launch configuration button**;
+   I. Select the **C/C++ Unit** on the left pane;
+   II. Press the **New launch configuration button** (on the top left side);
+   
+   .. image:: RunConfigurationC_CppUnitNew.png
+   
    III. Select the **Main** tab;
    
       1. Write ``MARTe2 GTest`` in the **Name** text field;
@@ -158,7 +167,7 @@ Configuration
          a. Write ``Build\msc\GTest\MainGTest.exe`` if you are developing in Microsoft Windows;
          b. Write ``Build/linux/GTest/MainGTest.ex`` if you are developing in Linux;
          
-        .. image:: eclipse-configuration-4.png
+        .. image:: RunConfigurationsC_CppUnitTestCreation.png
          
       4. In the **Build configuration** select **Default**;
 
@@ -186,37 +195,29 @@ Configuration
 
 8. Select **Help** |rarrow| **Install New Software**;
 
-   .. image:: eclipse-configuration-5.png
-
    I. Click on the **Add..** button;
       
       a. In the **Name** text field write ``Eclox``;
-      b. In the **Location** text field write: ``http://download.gna.org/eclox/update``;
+      b. In the **Location** text field write: ``http://anb0s.github.io/eclox``;
    
-   II. In the **Work with** select ``Eclox - http://download.gna.org/eclox/update``;
-   III. Select ``eclox`` in the menu;
-   IV. Click on **Finish**.
+   II. In the **Work with** select ``Eclox - http://anb0s.github.io/eclox``;
+   III. Select ``eclox 0.12`` and ``Eclox Doxygen`` in the menu;
+   IV. Click on **Next** and follow the instructions to install the pulg-in.
+   
+      .. image:: InstallEclox.png
 
 9. Select **File** |rarrow| **Import**;
 
-   I. Select **General** |rarrow| **Existing Projects into Workspace**;
+   I. Select **General** |rarrow| **Existing Projects into Workspace**, click **next**;
    II. In the **Select root directory** browse to the location of the ``MARTe2-doc`` folder (previously cloned);
    III. Under **Projects** select the ``MARTe2-doc`` project.
    IV. Click **Finish**;
    
-10. On the toolbar click in the @ sign and select **Choose Doxyfile**.
+10. On the toolbar click in the @ sign and select **Build Doxyfile**.
 
-   I. Select the ``marte_cpp_doxygen_config.doxyfile``;
+   I. Select the **MARTe2-dev** |rarrow| **Doxyfile**;
    II. Click **OK**;
-   
-11. In the **Project Explorer**, in the ``MARTe2-doc`` project, browse to **Assets** |rarrow| **Configuration**;
-
-   .. image:: eclipse-configuration-6.png
-   
-   I. Double-click in the ``marte_cpp_doxygen_config.doxyfile``;
-   II. Click on **Add** in the input directories table, and provide the path of the Source directory (example).
-
-   .. image:: eclipse-configuration-7.png
+   III. Verify that html files are created in ``MARTe2-dev/Biuld/dox/html`` directory.
 
 12. Select **Help** |rarrow| **Eclipse MarketPlace**.
 
@@ -228,34 +229,32 @@ Coverage
 
 Linux developers can integrate the coverage tool (lcov) with-in the eclipse development environment. 
 It should be noted that the gcov integration delivered with the `Linux Tools - Gcov Support <https://eclipse.org/linuxtools/projectPages/gcov/>`_ does not work well with the folder structure of the MARTe2 project.
-
-1. Edit the script file ``EclipseLcov.sh``;
-
-   I. Set the ``LCOV_DIR`` value appropriately;
    
-2. Open **Run** |rarrow| **External Tools** |rarrow| **External Tools Configurations...**;
+1. Open **Run** |rarrow| **External Tools** |rarrow| **External Tools Configurations...**;
 
-   I. In the **Name** text field write: ``MARTe2 lcov``
-   II. Select the **Main** tab:
+   I. Click **New launch configuration**
+   II. In the **Name** text field write: ``MARTe2 lcov``
+   III. Select the **Main** tab:
       
       a. In the **Location** text field write: ``${workspace_loc:/MARTe2-dev/EclipseLcov.sh}``
       b. In the **Working Directory** text field write: ``${workspace_loc:/MARTe2-dev}``
 
-   III. Select the **Refresh** tab:
-
-      a. Select **The project containing the selected resources**
-      b. Mark **Recursively include sub-folders**
+   IV. Select the **Refresh** tab:
+   
+      a. Select **Refresh resources upon completion**.
+      b. Select **The project containing the selected resources**
+      c. Mark **Recursively include sub-folders**
       
-   IV. Select the **Build** tab:
+   V. Select the **Build** tab:
 
       a. Unselect **Build before launch**
 
-   V. Select the **Common** tab:
+   VI. Select the **Common** tab:
 
       a. Select **External Tools** in the **Display in favorites menu** pane.
 
-   VI. Click **Apply**;
-   VII. Click **Close**.
+   VII. Click **Apply**;
+   VIII. Click **Run**.
 
 The coverage html will be generated in a folder named cov_html under the Build folder. Open the index.html file to browse the results.
 
@@ -266,12 +265,7 @@ Linting
 
 Core developers in the F4E premises can configure the linting procedure as follows:
 
-1. Edit the script file, the name is:
-
-   I. ``EclipseLint.bat`` if you are developing in Microsoft Windows;
-   II. ``EclipseLint.sh`` if you are developing in Linux;
-   III. Change the variables appropriately. In principle only the ``USER`` value should be updated;
-   IV. Make sure that you can login using SSH to the lint server (defined with the variable HOST) using public key authentication (i.e. without a password);
+1. Make sure that you can login using SSH to the lint server (defined with the variable HOST) using public key authentication (i.e. without a password);
 
 2. Open **Project** |rarrow| **Build Configurations** |rarrow| **Manage**;
 
@@ -283,13 +277,14 @@ Core developers in the F4E premises can configure the linting procedure as follo
    
 3. Open **Project** |rarrow| **Properties**;
 
-   I. Select **C/C++ Build**;
+   I. Select **C/C++ Build**
+   
       a. Select ``MARTe2 linting`` in the **Configuration** list;
       b. Unselect **Use default built command**;
       c. In the **Build command** text field:
 
-         1. Write the full path to the ``EclipseLint.bat`` script if you are developing in Microsoft Windows;
-         2. Write the full path to the ``EclipseLint.sh`` script if you are developing in Linux;
+         + Write the full path to the ``EclipseLint.bat`` script if you are developing in Microsoft Windows;
+         + Write the full path to the ``EclipseLint.sh`` script if you are developing in Linux;
          
          .. image:: eclipse-configuration-9.png
          
@@ -300,7 +295,7 @@ Core developers in the F4E premises can configure the linting procedure as follo
          1. Unselect **Stop on first build error**;
          2. Unselect **Clean**;
 
-      g. Click **OK**.
+      g. Click **Apply and close**.
 
 Tips and tricks
 ---------------
