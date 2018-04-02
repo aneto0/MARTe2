@@ -439,9 +439,10 @@ void Check1(AnyType at,CCString expression, CCString typeCheck,uint64 dataSizeCh
 
     if (ok){
         for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-        printf ("%s ->",expression.GetList());
         if (clone){
-            printf ("(cloned)");
+            printf ("%s-C>",expression.GetList());
+        } else {
+            printf ("%s ->",expression.GetList());
         }
 
         ErrorManagement::ErrorType ok2;
@@ -488,9 +489,10 @@ void Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCh
 
 	if (ok){
 		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-	    printf ("%s ->",expression.GetList());
         if (clone){
-            printf ("(cloned)");
+            printf ("%s-C>",expression.GetList());
+        } else {
+            printf ("%s ->",expression.GetList());
         }
 
 	    ErrorManagement::ErrorType ok2;
@@ -544,9 +546,10 @@ void Check3(AnyType at,CCString expression,CCString typeCheck,AnyType contentChe
 
 	if (ok){
 		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
-		printf ("%s ->",expression.GetList());
         if (clone){
-            printf ("(cloned)");
+            printf ("%s-C>",expression.GetList());
+        } else {
+            printf ("%s ->",expression.GetList());
         }
 
 	    ErrorManagement::ErrorType ok2;
@@ -665,7 +668,7 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		REPORT_ERROR(ret,"pfstc.Start failed");
 	}
 
-//int32 counter = 0;	//TODO
+	//int32 counter = 0;	//TODO
 	if (ret){
 		for (int j=0;(j<size1) && ret ;j++){
 
@@ -731,9 +734,13 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 		ret = CompareType(x,at);
 		if (ret){
 			x.ToString(message);
+//			DynamicCString s;
+//			x.ToString(s);
+//			message.Append(s.GetList());
 		}
 		message.Append("}");
 	}
+	//ok
 
 	if (ret){
 		AnyType x;
@@ -743,7 +750,6 @@ void Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 			REPORT_ERROR(ret,"Compare content fault");
 		}
 	}
-
 	if (!ret){
 		DynamicCString string;
 		string.Append("Failed ");
@@ -818,10 +824,6 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
 
 }
 
-
-
-
-
 void Test(){
 
     AnyType at(test1Class);
@@ -855,7 +857,7 @@ void Test(){
     Check1(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
     Check2(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0);
     Check1(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
-    Check1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr),false); // cannot clone pointers
+    Check1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr),false/* cannot clone pointers*/);
     Check1(at,".int64PArr[4]","int64( *)[21]",176,8,false); // cannot clone pointers
     Check2(at,".int64PArr[4][5]","int64","6",8,0);
     Check1(at,".int32PVar","int32 *",8,0,false);  // cannot clone pointers
@@ -866,30 +868,37 @@ void Test(){
     Check2(at,".CStringVar[2]","char8","z",1,0);
     Check2(at,".DCStringVar","DynamicCString","paperino",17,8);
     Check2(at,".DCStringVar[3]","char8","e",1,0);
-    Check1(at,".VCharVar","Vector<char8>",16,16);
+    Check1(at,".VCharVar","Vector<char8>",16,16,false/* clone creates only non modifiable structures*/);
+    Check1(at,".VCharVar","const Vector<char8>",16,16/* clone creates only non modifiable structures*/);
     Check1(at,".MFloatVar","Matrix<float>",24,24);
-    Check1(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56);
+    Check1(at,".CStringZTAVar","const Vector<CCString>",83,56/* clone converts ZTA to vector */);
+    Check1(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56,false/* clone converts ZTA to vector */);
     Check2(at,".CStringZTAVar[0]","CCString","uno",12,8);
     Check2(at,".CStringZTAVar[2]","CCString","tre",12,8);
     Check2(at,".CStringZTAVar[2][2]","const char8","e",1,0);
-    Check1(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712);
-    Check1(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
-    Check1(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24);
+    Check1(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712,false/* cloning changes type*/);
+    Check1(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656/* cloning changes to const Vector*/);
+    Check1(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144,false);
+    Check1(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144/* cloning changes to const Vector*/);
+    Check1(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24,false);
+    Check1(at,".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24);
     Check2(at,".CStringVAZTAVar[1][2][0]","CCString","agii",13,8);
     Check2(at,".CStringVAZTAVar[1][2][0][3]","const char8","i",1,0);
     CCString testPatt[3] = {CCString("grande"),CCString("spazio"),CCString("aperto")};
-    Check3(at,".CStringVAZTAVar[1][1]","Vector<CCString>",testPatt,61,40);
-    Check3(at,".int16AAPAA","int16( *[3][5])[7][11]",int16AAPAA,2430,120);
+    Check3(at,".CStringVAZTAVar[1][1]","Vector<CCString>",testPatt,61,40,false/* cloning creates const structs*/);
+    Check3(at,".CStringVAZTAVar[1][1]","const Vector<CCString>",testPatt,61,40,true/* cloning creates const structs*/);
+    Check3(at,".int16AAPAA","int16( *[3][5])[7][11]",int16AAPAA,2430,120,false/* cloning creates const structs*/);
+    Check3(at,".int16AAPAA","int16( * const[3][5])[7][11]",int16AAPAA,2430,120,true/* cloning creates const structs*/);
     Check1(at,".MFloat10","Matrix<float( *)[10]>",864,824);
-    Check1(at,".pStreamI","StreamI *",8,0); // treat as a pointer
-    Check2(at,".pStreamI*","StreamI","riello",22,8);
+    Check1(at,".pStreamI","StreamI *",8,0,false/* pointers not supporte by clone */); // treat as a pointer
+    Check2(at,".pStreamI*","StreamI","riello",22,8,false);
     test1Class.pStreamI->Seek(3);
-    Check2(at,".pStreamI*","StreamI","chiarriello",22,8);
+    Check2(at,".pStreamI*","StreamI","chiarriello",22,8,false);
 //    Check2(at,".pStreamI","StreamI *","chiarriello",30,16);  // this we do not support anymore
-    Check2(at,".SString","StreamString","succhiarriello",78,64);
-    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,true,true); // expect to fail as char8* is not considered a string
-    Check3(at,".SString","StreamString",CCString("succhiarriello"),78,64);
-    Check1(at,".myStream","StreamI",72,72);
+    Check2(at,".SString","StreamString","succhiarriello",78,64,false);
+    Check3(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,false,true); // expect to fail as char8* is not considered a string
+    Check3(at,".SString","StreamString",CCString("succhiarriello"),78,64,false);
+    Check1(at,".myStream","StreamI",72,72,false);
 
 	ProgressiveTypeCreator pfstc(1024);
 
@@ -921,7 +930,7 @@ void Test(){
 	Check4<DynamicCString ,10,35,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 	Check4<DynamicCString ,515,235,5,CCString>(pfstc,ConstCharString(sizeof(CCString)));
 
-    TestSafeN2N<float,int20>(1e6);
+	TestSafeN2N<float,int20>(1e6);
     TestSafeN2N<float,int21>(1e6);
     TestSafeN2N<float,uint19>(1e6);
     TestSafeN2N<float,uint20>(1e6);

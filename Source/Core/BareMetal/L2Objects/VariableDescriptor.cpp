@@ -1082,7 +1082,7 @@ static ErrorManagement::ErrorType GetSizeRecursive(
 	uint32 overHead;
 	uint32 multiplier;
 	ret = handler.UpdatePointerAndSize(level, pointer,multiplier,nextElSize,overHead);
-	dataSize 			= overHead;
+ 	dataSize 			= overHead;
 	auxSize 			= overHead;
 
 //printf("mul=%i sz=%i\n",multiplier,nextElSize); //TODO
@@ -1615,9 +1615,13 @@ ErrorManagement::ErrorType DoCreateR(
 	){
 		ErrorManagement::ErrorType ret;
 
+		char8 outputType = handler[level].outputType;
+		char8 inputType = handler[level].type;
+
+
 		// handle the simple scalar type
 		// consider the numberOfElements to be copied
-		if (handler[level].outputType == '\0'){
+		if (outputType == '\0'){
 			// calculate total Size needed to store final layer
 			// multiply the numberOfElements by each size
 			DimensionSize totalSizeD = numberOfElementsD * handler.GetTypeDescriptor().StorageSize();
@@ -1634,21 +1638,29 @@ ErrorManagement::ErrorType DoCreateR(
         	if (ret){
     			// a string need to allocate space for each string and save the pointers
         		if (isString){
+        			// I do not need to break the page here and open a new one
+        			// as this page will never be reallocated if a string cannot fit in it
+        			// each string is instead potentially allocated in its own page
 					uint8 **pointerArray = reinterpret_cast<uint8**>(addressOfOutput);
 					const CCString *inputs = reinterpret_cast<const CCString *>(inputPointer);
 
 					// numberOfElementsD is good otherwise we would have had an overflow when calculating totalSize
 					for (uint32 i = 0;(i < numberOfElementsD.GetData()) && ret;i++){
-						const CCString &string =  inputs[i];
-						uint32 stringSize = string.GetSize() + 1;
-						uint8 *ptr;
-						ret = pageFile.WriteReserveAtomic(ptr,stringSize);
-				        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteReserve failed");
+						if (inputs[i].IsNullPtr()) {
+							pointerArray[i] = NULL_PTR(uint8 *);
+						} else {
+							const CCString &string =  inputs[i];
+							uint32 stringSize = string.GetSize() + 1;
+							uint8 *ptr;
+							// reserve page for a string - potentially create new page
+							ret = pageFile.WriteReserveAtomic(ptr,stringSize);
+					        CONDITIONAL_REPORT_ERROR(ret, "pageFile.WriteReserve failed");
 
-				        if (ret){
-							pointerArray[i] = ptr;
-							MemoryOperationsHelper::Copy(ptr,string.GetList(),stringSize);
-				        }
+					        if (ret){
+								pointerArray[i] = ptr;
+								MemoryOperationsHelper::Copy(ptr,string.GetList(),stringSize);
+					        }
+						}
 					}
 
         		} else { // not a string
@@ -1658,16 +1670,26 @@ ErrorManagement::ErrorType DoCreateR(
         // not the final layer
         // maybe an array or an array pointer or a vector or a zero terminated pointer...
 		} else {
-
-			if (handler[level].outputType == 'A'){
+			/**
+			 * Handling of static arrays
+			 * treat simply as a multiplier to next layer
+			 * no pointer table allocated here
+			 */
+			if (outputType == 'A'){
 				// increase multiplier
 				numberOfElementsD = numberOfElementsD * handler[level].numberOfElements;//multiplier;
 				// navigate one side of the tree
 				// at the end (case above) consume the whole size of this subtree
 				ret = DoCreateR(level+1,inputPointer,addressOfOutput,numberOfElementsD);
 				CONDITIONAL_REPORT_ERROR(ret, "DoIndexR failed");
-			} else // note that ZzDdMmV becomes v in the indexing creation
-			if (handler[level].outputType == 'v'){
+			} else
+
+			/**
+			 * Handling of vectors
+			 * This is a pointer (or array of) to data, associated with the size
+			 */
+			// note that ZzDdMmV becomes v in the indexing creation
+			if (outputType == 'v'){
 				// first time we reach this subtree node
 				// calculate total Size needed to store this layer
 				// multiply the numberOfElements by each size
@@ -1683,22 +1705,30 @@ ErrorManagement::ErrorType DoCreateR(
 	        	}
 				Vector<uint8 *> *vp = reinterpret_cast<Vector<uint8 *> *>(addressOfOutput);
 
-				switch (handler[level].type){
+				switch (inputType){
 				case 'v':
 				case 'V':{
 					const Vector<uint8 *> *vip = reinterpret_cast<const Vector<uint8 *> *>(inputPointer);
 					// loop through the collapsed layer
 					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
-						uint8 *newAddressOfOutput;
-						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(vip->GetDataPointer());
-						ret = RedirectP(newInputPointer,false);
-		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
-						if (ret){
-							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(vip->GetNumberOfElements()));
-			    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
-						}
-						if (ret){
-							vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),vip->GetNumberOfElements());
+
+						if (vip->GetDataPointer() == NULL_PTR(uint8 *)){
+							if (vip->GetNumberOfElements() != 0){
+								ret.internalSetupError = true;
+				    			REPORT_ERROR(ret, "Vector with size > 0 and NULL ptr");
+							}
+						} else {
+							uint8 *newAddressOfOutput;
+							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(vip->GetDataPointer());
+//							ret = RedirectP(newInputPointer,false);
+//			    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
+							if (ret){
+								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(vip->GetNumberOfElements()));
+				    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+							}
+							if (ret){
+								vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),vip->GetNumberOfElements());
+							}
 						}
 						vp++;
 						vip++;
@@ -1709,16 +1739,23 @@ ErrorManagement::ErrorType DoCreateR(
 					const Matrix<uint8 *> *mip = reinterpret_cast<const Matrix<uint8 *> *>(inputPointer);
 					// loop through the collapsed layer
 					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
-						uint8 *newAddressOfOutput;
-						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(mip->GetDataPointer());
-						ret = RedirectP(newInputPointer,false);
-		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
-						if (ret){
-							uint32 numberOfElements = mip->GetNumberOfElements();
-							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(numberOfElements));
-			    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+						if (mip->GetDataPointer() == NULL_PTR(uint8 *)){
+							if (mip->GetNumberOfElements() != 0){
+								ret.internalSetupError = true;
+				    			REPORT_ERROR(ret, "Matrix with size > 0 and NULL ptr");
+							}
+						} else {
+							uint8 *newAddressOfOutput;
+							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(mip->GetDataPointer());
+//							ret = RedirectP(newInputPointer,false);
+//			    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
 							if (ret){
-								vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),numberOfElements);
+								uint32 numberOfElements = mip->GetNumberOfElements();
+								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(numberOfElements));
+				    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+								if (ret){
+									vp->InitVector(reinterpret_cast<uint8**>(newAddressOfOutput),numberOfElements);
+								}
 							}
 						}
 						vp++;
@@ -1739,7 +1776,7 @@ ErrorManagement::ErrorType DoCreateR(
 						ret = RedirectP(newInputPointer,true);
 		    			CONDITIONAL_REPORT_ERROR(ret, "RedirectP failed");
 		    			if (newInputPointer != NULL){
-							uint32 numberOfElements= ZeroTerminatedArrayGetSize(*zip, handler[level+1].elementSize.GetData());
+							uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].elementSize.GetData());
 							if (ret){
 								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(numberOfElements));
 				    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
@@ -1760,7 +1797,9 @@ ErrorManagement::ErrorType DoCreateR(
 				}
 				}
 			} else
-			if (handler[level].outputType == 'f'){
+
+
+			if (outputType == 'f'){
 				// first time we reach this subtree node
 				// calculate total Size needed to store this layer
 				// multiply the numberOfElements by each size
@@ -1794,21 +1833,33 @@ ErrorManagement::ErrorType DoCreateR(
 					fp++;
 					fip++;
 				}
+			} else {
+				ret.fatalError = true;
+    			CONDITIONAL_REPORT_ERROR(ret, "Unmapped outputType");
 			}
 		}
+
+
 
 		return ret;
 	}
 
 public:
+	/**
+	 *
+	 */
 	DimensionHandler 				handler;
-	// used to store data
+
+	/**
+	 * used to store data
+	 */
 	MemoryPageFile					pageFile;
-	// to store pointers to data
+
 	/**
 	 * Data is finally encoded as zero term strings
 	 */
 	bool							isString;
+
 
 };
 
@@ -1856,7 +1907,7 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 		if (ret){
 			uint32 pageSize = cloner.pageFile.CurrentPageSize();
 //printf("pages = %i size = %i\n",page.NumberOfPages(),pageSize);
-			if ((cloner.pageFile.NumberOfPages()==1) && (pageSize <= 64)){
+			if ((cloner.pageFile.NumberOfPages()==1) && (pageSize <= 64) && (false)){
 				if (pageSize <= 4){
 					ReferenceT<AnyObjectT<4>> ao(buildNow);
 					if (ao.IsValid()){

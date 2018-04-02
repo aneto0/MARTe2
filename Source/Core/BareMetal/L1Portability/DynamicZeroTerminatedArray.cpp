@@ -44,7 +44,7 @@ namespace MARTe{
 
 bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest,void const *src){
     bool ret = true;
-	uint32 necessarySize = ((1 + sizeOfData + granularity)/ granularity)*granularity;
+	uint32 necessarySize = ((sizeOfData + 1 + granularity-1)/ granularity)*granularity;
 
     dest = HeapManager::Malloc(necessarySize*sizeOfT);
     if (dest != NULL) {
@@ -56,17 +56,17 @@ bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest
     return ret;
 }
 
-bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest,void const *src){
+bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest){
 
     bool ret = true;
     // assuming memory is allocated in a granular way
     // we can use this indicator to assess whether we need to allocate or we can simply write
     // freeSpace is normally granularity - actual free space
     // but in case of zero free space it becomes zero.
-    uint32 freeSpace = (sizeOfDest + 1) % granularity ;
+    bool hasFreeSpace = (((sizeOfDest + 1) % granularity) != 0);
 
     // extreme case indicating in the worst case no more memory
-    if (freeSpace == 0){
+    if (!hasFreeSpace){
         uint32 necessarySize = (sizeOfDest + 1 + granularity);
 
         bool ok = HeapManager::Realloc(dest,necessarySize*sizeOfT);
@@ -83,8 +83,11 @@ bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCop
     bool ret = true;
     uint32 size = sizeOfDest;
     uint32 size2 = toCopy;
-    uint32 currentBlocks = ((size + 1 + granularity) / granularity) ;
-    uint32 necessaryBlocks = ((size + size2 + 1 + granularity) / granularity) ;
+    /* size +1 accounts for terminator
+     * adding granularity-1 make sure that if 1 more than exact multiple will add one block
+     */
+    uint32 currentBlocks = ((size + 1 + granularity - 1) / granularity) ;
+    uint32 necessaryBlocks = ((size + size2 + 1 + granularity - 1) / granularity) ;
 
     if (necessaryBlocks > currentBlocks){
         ret = HeapManager::Realloc(dest,necessaryBlocks*sizeOfT* granularity);

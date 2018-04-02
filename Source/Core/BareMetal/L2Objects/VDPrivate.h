@@ -213,11 +213,7 @@ TypeDescriptor DimensionHandler::GetTypeDescriptor() const{
 }
 
 inline  DimensionInfoElement &DimensionHandler::operator[](uint32 index) {
-	static DimensionInfoElement dummy('\0',0);
-	DimensionInfoElement &ret = dummy;
-	if (index < dimensions.GetSize()){
-		ret = dimensions[index];
-	}
+	DimensionInfoElement &ret = dimensions.Access(index);
 	return ret;
 }
 

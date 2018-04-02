@@ -559,16 +559,15 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                     else {
 
                         // if void simply skip and continue
-                        if (!pars[parsIndex].IsValid()) {
+                        if (pars[parsIndex].IsValid()) {
                             // use it to process parameters
                         	if (!PrintAnyType(iob, fd, pars[parsIndex])){
-//                            if (!PrintToStream(iob, pars[parsIndex], fd)) {
                                 ret = false;
                                 quit = true;
                             }
-                            parsIndex++;
                         }
-                    }
+						parsIndex++;
+					}
                 }
             }
         }
