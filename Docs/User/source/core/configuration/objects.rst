@@ -91,7 +91,7 @@ For matrices a similar strategy applies:
 Navigating the database
 -----------------------
    
-The StructuredDataI can be navigated using the Move methods. Paths in the tree are separated using a **.**. This allows to create configurations that map into nested structures of any complexity. 
+The StructuredDataI can be navigated using the Move methods. Paths in the tree are separated using dots (**.**). This allows to create configurations that map into nested structures of any complexity. 
 
 .. code-block:: c++
 

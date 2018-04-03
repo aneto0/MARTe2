@@ -14,11 +14,7 @@
 Object configuration
 ====================
 
-TODO
-
-Also explain how the Class= is used with other libraries
-
-Object registry database
+The MARTe library offers an infrastructure which allows to build fully data-driven applications: from object instantation to object configuration.
 
 Parsers
 
@@ -28,5 +24,6 @@ Parsers
 
    objects
    parser
+   objectregistrydatabase
    slkparser
    

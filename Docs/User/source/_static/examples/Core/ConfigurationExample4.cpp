@@ -68,9 +68,88 @@ struct Waveforms {
 };
 
 /**
+ * @brief A MARTe::Object that will be inserted (data-driven) inside the ControllerEx1.
+ */
+class ReferenceEx1: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+ReferenceEx1    () {
+        waveform.times = NULL;
+        waveform.values = NULL;
+    }
+
+    virtual ~ReferenceEx1 () {
+        if (waveform.times != NULL) {
+            delete [] waveform.times;
+        }
+        if (waveform.values != NULL) {
+            delete [] waveform.values;
+        }
+        if (GetName() != NULL) {
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing"
+                    " at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    /**
+     * Read the waveform properties
+     * Times  = {0 0.1 0.2 1}
+     * Values = {1 2   3   4}
+     */
+    virtual bool Initialise(MARTe::StructuredDataI &data) {
+        using namespace MARTe;
+        bool ok = Object::Initialise(data);
+
+        if (ok) {
+            ok = ReadArray(data, "Times", waveform.times);
+        }
+        if (ok) {
+            ok = ReadArray(data, "Values", waveform.values);
+        }
+
+        return ok;
+    }
+
+private:
+    bool ReadArray(MARTe::StructuredDataI &data, const MARTe::char8 * const arrayName, MARTe::float32 *&dest) {
+        using namespace MARTe;
+        if (dest != NULL) {
+            delete [] dest;
+        }
+
+        AnyType arrayDescription = data.GetType(arrayName);
+        bool ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
+        uint32 numberOfElements = 0u;
+        if (ok) {
+            numberOfElements = arrayDescription.GetNumberOfElements(0u);
+            ok = (numberOfElements > 0u);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array with name %s", arrayName);
+            }
+        }
+        if (ok) {
+            dest = new float32[numberOfElements];
+            Vector<float32> readVector(dest, numberOfElements);
+            ok = data.Read(arrayName, readVector);
+            if (ok) {
+                REPORT_ERROR(ErrorManagement::Information, "Array set to %f", readVector);
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the array with name %s", arrayName);
+            }
+        }
+        return ok;
+    }
+
+    Waveforms waveform;
+};
+CLASS_REGISTER(ReferenceEx1, "")
+
+/**
  * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
  */
-class ControllerEx1: public MARTe::Object {
+class ControllerEx1: public MARTe::ReferenceContainer {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -78,28 +157,13 @@ public:
      * @brief NOOP.
      */
 ControllerEx1    () {
-        slowWaveform.times = NULL;
-        slowWaveform.values = NULL;
-        fastWaveform.times = NULL;
-        fastWaveform.values = NULL;
 
     }
 
     virtual ~ControllerEx1 () {
-        if (slowWaveform.times != NULL) {
-            delete [] slowWaveform.times;
-        }
-        if (slowWaveform.values != NULL) {
-            delete [] slowWaveform.values;
-        }
-        if (fastWaveform.times != NULL) {
-            delete [] fastWaveform.times;
-        }
-        if (fastWaveform.values != NULL) {
-            delete [] fastWaveform.values;
-        }
         if (GetName() != NULL) {
-            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
         }
     }
 
@@ -115,24 +179,20 @@ ControllerEx1    () {
      *         Gain2 = 9.0;
      *     }
      * }
-     * References = {
-     *     Slow = {
-     *         Waveform = {
-     *             Times  = {0 0.1 0.2 1}
-     *             Values = {1 2   3   4}
-     *         }
-     *     }
-     *     Fast = {
-     *         Waveform = {
-     *             Times  = {0 0.1 0.2 1}
-     *             Values = {1 2   3   4}
-     *         }
-     *     }
+     * +SlowReference = {
+     *     Class = ReferenceEx1
+     *     Times  = {0 0.1 0.2 1}
+     *     Values = {1 2   3   4}
+     * }
+     * +FastReference = {
+     *     Class = ReferenceEx1
+     *     Times  = {0 0.1 0.2 1}
+     *     Values = {1 4   8   12}
      * }
      */
     virtual bool Initialise(MARTe::StructuredDataI &data) {
         using namespace MARTe;
-        bool ok = Object::Initialise(data);
+        bool ok = ReferenceContainer::Initialise(data);
         if (ok) {
             //Move in the tree
             ok = data.MoveRelative("Gains");
@@ -193,73 +253,25 @@ ControllerEx1    () {
                 REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gain2");
             }
         }
+
         if (ok) {
-            //Move to the ancestor
-            ok = data.MoveToAncestor(2u);
+            //Check if the waveforms were declared
+            slowWaveform = Get(0);
+            ok = slowWaveform.IsValid();
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Could not move back to the References section");
+                REPORT_ERROR(ErrorManagement::ParametersError, "Could not find the SlowWaveform");
             }
-        }
-        if (ok) {
-            ok = data.MoveRelative("References.Slow.Waveform");
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Could not move to the References.Slow.Waveform section");
-            }
-        }
-        if (ok) {
-            ok = ReadArray(data, "Times", slowWaveform.times);
-        }
-        if (ok) {
-            ok = ReadArray(data, "Values", slowWaveform.values);
-        }
-        //Move back to the parent
-        if (ok) {
-            ok = data.MoveToAncestor(2u);
-        }
-        if (ok) {
-            ok = data.MoveRelative("Fast.Waveform");
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Could not move to the References.fast.Waveform section");
-            }
-        }
-        if (ok) {
-            ok = ReadArray(data, "Times", fastWaveform.times);
-        }
-        if (ok) {
-            ok = ReadArray(data, "Values", fastWaveform.values);
         }
 
-        return ok;
-    }
-
-private:
-    bool ReadArray(MARTe::StructuredDataI &data, const MARTe::char8 * const arrayName, MARTe::float32 *&dest) {
-        using namespace MARTe;
-        if (dest != NULL) {
-            delete [] dest;
-        }
-
-        AnyType arrayDescription = data.GetType(arrayName);
-        bool ok = arrayDescription.GetDataPointer() != NULL_PTR(void *);
-        uint32 numberOfElements = 0u;
         if (ok) {
-            numberOfElements = arrayDescription.GetNumberOfElements(0u);
-            ok = (numberOfElements > 0u);
+            //Check if the waveforms were declared
+            fastWaveform = Get(1);
+            ok = fastWaveform.IsValid();
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "No elements defined in the array with name %s", arrayName);
+                REPORT_ERROR(ErrorManagement::ParametersError, "Could not find the FastWaveform");
             }
         }
-        if (ok) {
-            dest = new float32[numberOfElements];
-            Vector<float32> readVector(dest, numberOfElements);
-            ok = data.Read(arrayName, readVector);
-            if (ok) {
-                REPORT_ERROR(ErrorManagement::Information, "Array set to %f", readVector);
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the array with name %s", arrayName);
-            }
-        }
+
         return ok;
     }
 
@@ -268,8 +280,8 @@ private:
      */
     Gains lowGains;
     Gains highGains;
-    Waveforms slowWaveform;
-    Waveforms fastWaveform;
+    MARTe::ReferenceT<ReferenceEx1> slowWaveform;
+    MARTe::ReferenceT<ReferenceEx1> fastWaveform;
 };
 
 CLASS_REGISTER(ControllerEx1, "")
@@ -294,23 +306,20 @@ int main(int argc, char **argv) {
             "            Gain2 = 9.0\n"
             "        }\n"
             "    }\n"
-            "    References = {\n"
-            "        Slow = {\n"
-            "            Waveform = {\n"
-            "                Times  = {0 0.1 0.2 1}\n"
-            "                Values = {1 2   3   4}\n"
-            "            }\n"
-            "        }\n"
-            "        Fast = {\n"
-            "            Waveform = {\n"
-            "                Times  = {0 0.1 0.2 1}\n"
-            "                Values = {1 2   3   4}\n"
-            "            }\n"
-            "        }\n"
+            "    +SlowWaveform = {\n"
+            "        Class = ReferenceEx1\n"
+            "        Times  = {0 0.1 0.2 1}\n"
+            "        Values = {1 2   3   4}\n"
+            "    }\n"
+            "    +FastWaveform = {\n"
+            "        Class = ReferenceEx1\n"
+            "        Times  = {0 0.1 0.2 1}\n"
+            "        Values = {1 4   6   8}\n"
             "    }\n"
             "}";
 
-    REPORT_ERROR_STATIC("Loading CFG:\n%s", configurationCfg.Buffer());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "Loading CFG:\n%s",
+                        configurationCfg.Buffer());
     ConfigurationDatabase cdb;
     StreamString err;
     //Force the string to be seeked to the beginning.
@@ -325,11 +334,13 @@ int main(int argc, char **argv) {
     else {
         StreamString errPrint;
         errPrint.Printf("Failed to parse %s", err.Buffer());
-        REPORT_ERROR_STATIC(ErrorManagement::ParametersError, errPrint.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::ParametersError,
+                            errPrint.Buffer());
     }
 
     if (ok) {
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully loaded the configuration file");
+        REPORT_ERROR_STATIC(ErrorManagement::Information,
+                            "Successfully loaded the configuration file");
     }
 
     return 0;
