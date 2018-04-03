@@ -11,47 +11,54 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-SLK Parser
-==========
 
-The MARTe parsers are developed using the `slk tool <http://www.slkpg.com/download.html>`_.
+Parsers
+=======
 
-Lexical Analyzer
-----------------
+The core of the framework offers three parsers. 
 
-The MARTe2 lexical analyzer recognizes five type of tokens:
+All the parsers implement the :vcisdoxygencl:`ParserI` interface and are capable of transforming an input stream, encoded in any of the supported languages, into a :vcisdoxygencl:`ConfigurationDatabase`. 
 
-- STRING: any token beginning with a non-number character or enclosed by double quotes.
-- NUMBER: any token which could represent a number.
-- TERMINAL: one of the terminal characters in the terminals list provided by the user.
-- EOF: end of the stream.
-- ERROR: none of the previous ones.
+==================================== =======
+Type                                 Meaning
+==================================== =======
+:vcisdoxygencl:`StandardParser`      The :ref:`MARTeConfigurationLanguage`.
+:vcisdoxygencl:`XmlParser`           `XML <https://www.w3.org/TR/xml>`_.
+:vcisdoxygencl:`JsonParser`          `JSON <https://www.json.org/>`_.
+==================================== =======  
 
-The analyzer allows to configure the separator and terminal characters and the comment patterns (which depend on the language to be parsed). 
-For more informations about the MARTe2 lexical analyzer see the documentation of the :vcisdoxygencl:`LexicalAnalyzer` class.
+.. _MARTeConfigurationLanguage:
 
-Grammar file
-------------
+MARTe configuration language
+----------------------------
 
-The file containing the parser grammar must be provided by the user as an input for the slk tool. 
-It is a file with the extension ``*.ll`` and must be written using the slk language and respecting the token detailed above in order to use the MARTe2 lexical analyzer. 
+The MARTe configuration language has a syntax similar to JSON and is parsed using the :vcisdoxygencl:`StandardParser`. 
 
-The available MARTe supported grammars are available `here <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-doc/tree/master/Assets/Snippets/Parsing>`_.
+The syntax is composed by a tree of name/value pairs separated by an **=** sign. Curly braces are used to define multi-dimensional arrays and to create new named nodes in the tree.
 
-Adding a new grammar
---------------------
+An example of a configuration file using the MARTe language:
 
+.. code-block:: c++
 
-The MARTe2 class :vcisdoxygencl:`ParserI` provides the implementation of all the required callbacks that are required to construct a new :vcisdoxygencl:`StructuredDataI` from a given configuration file. 
+   A = {
+      B = 1
+      C = "ABCD"
+      D = {1, 2, 3, 4}
+      E = {"A", "B"}
+      F = {
+         G = 3.34
+         H = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
+      }
+   }
+   
+Examples
+--------
 
-A parser for a new configuration language can be implemented following these steps:
+The following example shows how to parse configuration files in all the supported languages. 
 
-1. Write the parser grammar file (grammar_file_name.ll) using the same token types defined in the MARTe2 :vcisdoxygencl:`LexicalAnalyzer` class and the callbacks implemented in the :vcisdoxygencl:`ParserI` class.
-2. Create your parser class copying from an existent parser (:vcisdoxygencl:`StandardParser`, :vcisdoxygencl:`XMLParser`, :vcisdoxygencl:`JSonParser`).
-3. Type on the console ``slk -C++ grammar_file_name.ll`` to generate the the parser files.
-4. Open the generated file ``SlkParse.cpp`` and copy the arrays at the beginning, in the source file of your parser class (the array named ``Parse[]`` should be renamed to ``ParseArray[]`` to avoid conflicts with the function ``ParserI::Parse()``.
-5. Copy the constants defined in ``SlkParse.cpp``(just after the arrays) in the ``Constants[]`` array maintaining the same order: ``{ START_SYMBOL, END_OF_SLK_INPUT_, START_STATE, START_CONFLICT,END_CONFLICT, START_ACTION, END_ACTION, TOTAL_CONFLICTS }``
-6. Open the generated file ``SlkString.cpp`` and copy the array ``Terminal_name[]`` in the source file of your parser class.
-7. Open the generated file ``SlkTable.cpp`` and copy the content of the function ``initialize_table()`` inside your parser constructor changing the namespace ``SlkAction`` with the name of your parser class.
-8. Make a ParserGrammar constant structure with the separators, terminals and comment patterns of the language to be parsed and use it to initialize the parent class :vcisdoxygencl:`ParserI` in your parser constructor.
-9. All the other functions can be copied without any modification from any other existent parser class.
+.. literalinclude:: /_static/examples/Core/ConfigurationExample3.cpp
+   :language: c++
+   :caption: Object configuration example (ConfigurationExample3)
+   :linenos:
+
+Instructions on how to compile and execute the example can be found :doc:`here </examples>`.

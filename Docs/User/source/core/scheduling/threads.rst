@@ -1,4 +1,4 @@
-.. date: 24/03/2018
+.. date: 27/03/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,19 +11,9 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Object configuration
-====================
+Threads and semaphores
+======================
 
-The MARTe library offers an infrastructure which allows to build fully data-driven applications: from object instantation to object configuration.
+TODO
 
-Parsers
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
-
-   objects
-   parser
-   objectregistrydatabase
-   slkparser
    

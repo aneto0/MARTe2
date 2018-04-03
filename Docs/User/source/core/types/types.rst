@@ -86,6 +86,18 @@ Type                                 Meaning
 :vcisdoxygencl:`ZeroTerminatedArray` Describes a zero terminated array.
 ==================================== =======
 
+Lists
+~~~~~
+
+==================================== =======
+Type                                 Meaning
+==================================== =======
+:vcisdoxygencl:`LinkedListable`      Singly linked list.
+:vcisdoxygencl:`StaticList`          Templated version of the StaticListHolder.
+:vcisdoxygencl:`StaticListHolder`    Abstract Data Type (ADT) for an unbounded list.
+:vcisdoxygencl:`CircularStaticList`  Circular buffer implementation of the StaticList.
+==================================== =======
+
 Example
 -------
 

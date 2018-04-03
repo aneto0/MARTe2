@@ -56,7 +56,7 @@ public:
 	/**
 	 * @brief NOOP.
 	 */
-ObjectEx1	() {
+	ObjectEx1 () {
 	}
 
 	virtual ~ObjectEx1() {
@@ -68,14 +68,14 @@ ObjectEx1	() {
 		}
 	}
 
-	void AddParent(MARTe::Reference ref) {
-		anotherContainer.Insert(ref);
+	void SetParent(MARTe::Reference ref) {
+		parent = ref;
 	}
 
 	/**
 	 * A private container. This should be avoided!
 	 */
-	MARTe::ReferenceContainer anotherContainer;
+	MARTe::Reference parent;
 
 };
 
@@ -91,7 +91,7 @@ public:
 	/**
 	 * @brief NOOP.
 	 */
-ContainerEx1	() {
+	ContainerEx1 () {
 	}
 
 	virtual ~ContainerEx1() {
@@ -101,11 +101,11 @@ ContainerEx1	() {
 				"be safely deleted.", GetName(), GetClassProperties()->GetName());
 	}
 
-	void SetAReference(MARTe::Reference aReferenceIn) {
-		aReference = aReferenceIn;
+	void CreateLoop(MARTe::Reference aReferenceIn) {
+		aReference.Insert(aReferenceIn);
 	}
 
-	MARTe::Reference aReference;
+	MARTe::ReferenceContainer aReference;
 };
 CLASS_REGISTER(ContainerEx1, "")
 
@@ -119,7 +119,7 @@ public:
 	/**
 	 * @brief NOOP.
 	 */
-ContainerEx2	() {
+	ContainerEx2 () {
 	}
 
 	virtual ~ContainerEx2() {
@@ -135,11 +135,12 @@ ContainerEx2	() {
 	virtual void Purge(MARTe::ReferenceContainer &purgeList) {
 		using namespace MARTe;
 		//Destroy the circular link
-		aReference = Reference();
+		aReference.Purge();
 		//Alternative which would also destroy the link
-		/*ReferenceT<ObjectEx1> ref = Get(0);
+		/*ReferenceT<ObjectEx1> ref = aReference.Get(0);
 		if (ref.IsValid()) {
-			ref->anotherContainer.Purge();
+			//Set an invalid reference to break the link.
+			ref->SetParent(Reference());
 		}*/
 		//Do not forget to call the parent implementation
 		ReferenceContainer::Purge(purgeList);
@@ -181,8 +182,8 @@ int main(int argc, char **argv) {
 		ref3->SetName("ContainerExIntance1");
 		ref3->Insert(ref1);
 		//This will create a circular dependency
-		ref3->SetAReference(ref1);
-		ref1->AddParent(ref3);
+		ref3->CreateLoop(ref1);
+		ref1->SetParent(ref3);
 		REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully "
 				"created an instance of %s", className2.GetList());
 
@@ -192,8 +193,8 @@ int main(int argc, char **argv) {
 	if (ref4.IsValid()) {
 		ref4->SetName("ContainerExIntance2");
 		ref4->Insert(ref2);
-		ref4->SetAReference(ref2);
-		ref2->AddParent(ref4);
+		ref4->CreateLoop(ref2);
+		ref2->SetParent(ref4);
 		REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully "
 				"created an instance of %s", className3.GetList());
 	}
