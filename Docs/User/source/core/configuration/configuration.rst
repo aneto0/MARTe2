@@ -14,9 +14,8 @@
 Object configuration
 ====================
 
-The MARTe library offers an infrastructure which allows to build fully data-driven applications: from object instantation to object configuration.
-
-Parsers
+.. hint::
+   The MARTe library offers an infrastructure which allows to build fully data-driven applications: from object instantiation to object configuration.
 
 .. toctree::
    :maxdepth: 1

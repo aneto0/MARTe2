@@ -190,6 +190,7 @@ todo_include_todos = True
 # External links
 extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L0Types/%s.h', ''),
 			'vciscorebml1': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L1Portability/%s.h', ''),
+			'vciscorebml3': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L3Streams/%s.h', ''),
 			'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', ''),
 			'vciscorescsml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/Scheduler/L4StateMachine/%s.h', ''),
 			'vcisdoxygencl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2/doxygen/classMARTe_1_1%s.html', '')

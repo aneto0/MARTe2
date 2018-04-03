@@ -14,6 +14,53 @@
 Logging
 =======
 
-TODO
+MARTe offers a logging mechanism that is both thread and interrupt safe. 
 
+.. note::
+   The number of logging messages is expected to be maximised in any MARTe component.
+
+ErrorType
+---------
+
+The framework offers the following ErrorTypes (i.e. severities, see :vcisdoxygencl:`ErrorType`).
+
+=================== =======
+Type                Meaning
+=================== =======
+FatalError          An error which is not recoverable.
+RecoverableError    The component can recover from this error.
+InitialisationError Error which occurred during the initialisation of the component.
+OSError             Operating system error (typically used when developing interfaces to hardware).
+ParametersError     Initialisation error due to misconfiguration of parameters.
+IllegalOperation    Operation not possible in a given state.
+ErrorSharing        Given resource cannot be shared.
+ErrorAccessDenied   Access denied to a given resource.
+Exception           Runtime exception triggered.
+Timeout             Timeout waiting for a given resource.
+CommunicationError  Communication error (sockets, files, ...).
+SyntaxError         Invalid syntax.
+UnsupportedFeature  Request for a feature that is not available (possibly available on other states).
+InternalSetupError  Error due 
+Debug               Debug messages.
+Information         Information messages.
+Warning             Warning messages.
+Completed           ErrorType to be used when a given operation has completed.
+NotCompleted        ErrorType to be used when a given operation has not yet completed. Usually a retry is expected.
+=================== =======  
+
+Log macros
+----------
+
+The :vciscorebml3:`AdvancedErrorManagement` defines two main error logging macros. 
+
+The **REPORT_ERROR_STATIC** is to be called by classes that do not inherit from :vcisdoxygencl:`Object` while the **REPORT_ERROR** should be called by classes that inherit from Object, since this will automatically add the object name, class name and object pointer to the log message.  
+
+Both macros expect a compulsory :vcisdoxygencl:`ErrorType`, followed by a compulsory error/information string and a list of optional parameters that will be Printf in the String using the rules described in the :doc:`/core/streams/streams` section. 
+
+.. code-block:: c++   
+
+   ...
+   REPORT_ERROR(ErrorManagement::Information, "Array set to %f", readVector);
+   ...
    
+TODO CALLBACK FUNCTION AND EXISTING DECOUPLING COMPONENTS + EXAMPLES 

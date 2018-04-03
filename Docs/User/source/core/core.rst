@@ -21,9 +21,9 @@ TODO
    :caption: Contents:
 
    types/types
-   objects/objectsintro
-   logging/logging
+   objects/objectsintro   
    configuration/configuration
+   logging/logging
    messages/messages
    statemachine/statemachine
    streams/streams   
