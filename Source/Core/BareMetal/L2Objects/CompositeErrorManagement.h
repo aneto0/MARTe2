@@ -170,7 +170,7 @@ MARTe::ErrorManagement::ConditionalReportError(code,message,__FILE__,__LINE__,__
 
 
 #define COMPOSITE_REPORT_ERROR(code,part1,...)															  \
-MARTe::ErrorManagement::CompositeReportError(code,part1, __VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+MARTe::ErrorManagement::CompositeReportError(code,part1, __VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
 
 

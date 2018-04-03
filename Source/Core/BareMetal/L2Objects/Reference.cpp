@@ -206,7 +206,7 @@ void Reference::ToAnyType(AnyType &at){
 	    objectPointer->ToAnyType(at);
 	} else {
 		at = AnyType();
-		REPORT_ERROR(ErrorManagement::FatalError,"Trying to get Anytype of invalid reference");
+//		REPORT_ERROR(ErrorManagement::FatalError,"Trying to get Anytype of invalid reference");
 	}
 }
 

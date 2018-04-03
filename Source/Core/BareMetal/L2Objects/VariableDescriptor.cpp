@@ -1587,8 +1587,8 @@ public:
 				} else
 //TODO correctly implement matrices
 				if (variableMatrices.In(die.type)){
-					die.outputType = 'v';
-					layerEnd = 'v';
+					die.outputType = 'm';
+					layerEnd = 'm';
 				} else {
 					die.outputType = 'A';
 				}
@@ -1734,6 +1734,7 @@ ErrorManagement::ErrorType DoCreateR(
 						vip++;
 					}
 				}break;
+#if 0
 				case 'm':
 				case 'M':{
 					const Matrix<uint8 *> *mip = reinterpret_cast<const Matrix<uint8 *> *>(inputPointer);
@@ -1762,6 +1763,7 @@ ErrorManagement::ErrorType DoCreateR(
 						mip++;
 					}
 				}break;
+#endif
 				case 'd':
 				case 'D':
 				case 's':
@@ -1798,6 +1800,63 @@ ErrorManagement::ErrorType DoCreateR(
 				}
 			} else
 
+			/**
+			 * Handling of matrices
+			 * This is a pointer (or array of) to data, associated with the sizes
+			 */
+			// note that ZzDdMmV becomes v in the indexing creation
+			if (outputType == 'm'){
+				// first time we reach this subtree node
+				// calculate total Size needed to store this layer
+				// multiply the numberOfElements by each size
+				DimensionSize totalSizeD = numberOfElementsD * sizeof(Matrix<uint8 >);
+				uint32 totalSize;
+				ret = totalSizeD.ToNumber(totalSize);
+	        	CONDITIONAL_REPORT_ERROR(ret, "Overflow");
+
+	        	if (ret){
+	    			// reserve space either for the constant size data or for the string pointers
+	    			ret = pageFile.WriteReserveAtomic(addressOfOutput, totalSize);
+	    			CONDITIONAL_REPORT_ERROR(ret, "pageFile.ReserveAtomic failed");
+	        	}
+				Matrix<uint8 > *mp = reinterpret_cast<Matrix<uint8 > *>(addressOfOutput);
+
+				switch (inputType){
+				case 'm':
+				case 'M':{
+					const Matrix<uint8 > *mip = reinterpret_cast<const Matrix<uint8 > *>(inputPointer);
+					// loop through the collapsed layer
+					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
+						if (mip->GetDataPointer() == NULL_PTR(uint8 *)){
+							if (mip->GetNumberOfElements() != 0){
+								ret.internalSetupError = true;
+				    			REPORT_ERROR(ret, "Matrix with size > 0 and NULL ptr");
+							}
+						} else {
+							uint8 *newAddressOfOutput;
+							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(mip->GetDataPointer());
+							if (ret){
+								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,DimensionSize(mip->GetNumberOfElements()));
+				    			CONDITIONAL_REPORT_ERROR(ret, "DoCreateR failed");
+								if (ret){
+									mp->InitMatrix(newAddressOfOutput,mip->GetNumberOfRows(),mip->GetNumberOfColumns());
+								}
+							}
+						}
+						mp++;
+						mip++;
+					}
+				}break;
+				default:{
+					ret.internalSetupError=true;
+	    			CONDITIONAL_REPORT_ERROR(ret, "unexpected case");
+				}
+				}
+			} else
+
+			/**
+			*
+		    */
 
 			if (outputType == 'f'){
 				// first time we reach this subtree node
