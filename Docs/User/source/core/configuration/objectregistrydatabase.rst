@@ -19,17 +19,17 @@ Using the mechanisms described in the :doc:`/core/objects/objectsintro` and in t
 Syntax
 ------
 
-The Initialise method of the :vcisdoxygencl:`ReferenceContainer` will look for any name starting with the character **+**. 
+The ``Initialise`` method of the :vcisdoxygencl:`ReferenceContainer` will look for any name starting with the character ``+``. 
 
-When the **+** signal is character, the property **Class=LIB::CLASS** shall exist in the subtree. **LIB** is the named of the shared library holding the compiled **CLASS**.  
+When the ``+`` character is found, the property ``Class=LIB::CLASS`` shall exist in the subtree. ``LIB`` is the name of the shared library holding the compiled ``CLASS``.  
 
-The **CLASS** shall inherit from Object and shall implement the macros defined in the :doc:`/core/objects/objects` section.  
+The ``CLASS`` shall inherit from ``Object`` and shall implement the macros defined in the :doc:`/core/objects/objects` section.  
 
-If **LIB** is not defined, it is assumed that the class was already registered (e.g. because it was statically linked) or that the name of the library is equal to the name of the class. 
+If ``LIB`` is not defined, it is assumed that the class was already registered (e.g. because it was statically linked) or that the name of the library is equal to the name of the class. 
 
 This process is recursively repeated and a tree of Objects is built. The name of the Object is automatically set to the name of the node.
 
-In the following example an Object named **A**, of type AClass, would be created, together with another Object of type AClass, named **B**, and with an Object of type CClass named **C**. It is assumed that the AClass inherits from ReferenceContainer and that, as a consequence, calling **Get(0)** on the instance named **B** would return a Reference to **C**. 
+In the following example, an object named ``A``, of type ``AClass``, would be created, together with another object of type ``AClass``, named ``B``, and with an object of type ``CClass`` named ``C``. It is assumed that the ``AClass`` inherits from ``ReferenceContainer`` and that, as a consequence, calling ``Get(0)`` on the instance named ``B`` would return a ``Reference`` to ``C``. 
 
 .. code-block:: c++   
 
@@ -43,9 +43,9 @@ In the following example an Object named **A**, of type AClass, would be created
       }
    }
       
-The :vcisdoxygencl:`ObjectRegistryDatabase` is a ReferenceContainer which offers a database to hold and link all the Objects defined in a given configuration stream.    
+The :vcisdoxygencl:`ObjectRegistryDatabase` is a ``ReferenceContainer`` which offers a database to hold and link all the ``Objects`` defined in a given configuration stream.    
 
-The Find method can be used to find any of the instantiated Objects in the tree. 
+The ``Find`` method can be used to find any of the instantiated ``Objects`` in the tree. 
 
 A dot **.** is used as the path separator.
 
@@ -57,9 +57,9 @@ A dot **.** is used as the path separator.
    if (obj.IsValid()) {
       ...
    
-If the node name starts with a **$**, besides implementing the same behaviour described before for the **+**, it will also set the node as a search *domain*. 
+If the node name starts with a ``$``, besides implementing the same behaviour described before for the ``+``, it will also set the node as a search *domain*. 
 
-This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` *Find* method, the **:** symbol will allow to perform searchs related to a given root domain. For example:
+This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` ``Find`` method, the ``:`` symbol will allow to perform searchs related to a given root domain. For example:
 
 .. code-block:: none
 
@@ -82,7 +82,7 @@ This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` *Find* me
       }
    }
    
-Would allow to Find **C**, **C.E**, **D** and **D.F**, using **B** as the root domain (see the example below).
+Would allow to Find ``C``, ``C.E``, ``D`` and ``D.F``, using ``B`` as the root domain (see the example below).
 
 Examples
 --------

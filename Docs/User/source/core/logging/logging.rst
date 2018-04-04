@@ -14,7 +14,7 @@
 Logging
 =======
 
-MARTe offers a logging mechanism that is both thread and interrupt safe. 
+MARTe offers a logging mechanism that is both :ref:`thread and interrupt safe <loggerservice>`. 
 
 .. note::
    The number of logging messages is expected to be maximised in any MARTe component.
@@ -53,9 +53,9 @@ Log macros
 
 The :vciscorebml3:`AdvancedErrorManagement` defines two main error logging macros. 
 
-The **REPORT_ERROR_STATIC** is to be called by classes that do not inherit from :vcisdoxygencl:`Object` while the **REPORT_ERROR** should be called by classes that inherit from Object, since this will automatically add the object name, class name and object pointer to the log message.  
+The ``REPORT_ERROR_STATIC`` is to be called by classes that do not inherit from :vcisdoxygencl:`Object` while the ``REPORT_ERROR`` should be called by classes that inherit from Object, since this will automatically add the object name, class name and object pointer to the log message.  
 
-Both macros expect a compulsory :vcisdoxygencl:`ErrorType`, followed by a compulsory error/information string and a list of optional parameters that will be Printf in the String using the rules described in the :doc:`/core/streams/streams` section. 
+Both macros expect a compulsory :vcisdoxygencl:`ErrorType`, followed by a compulsory error/information string and a list of optional parameters that will be ``Printf`` in the String using the rules described in the :doc:`/core/streams/streams` section. 
 
 .. code-block:: c++   
 
@@ -63,4 +63,34 @@ Both macros expect a compulsory :vcisdoxygencl:`ErrorType`, followed by a compul
    REPORT_ERROR(ErrorManagement::Information, "Array set to %f", readVector);
    ...
    
+Callback
+--------
+
+The messages are processed by a user registered callback function. 
+
+This is set by calling the global function ``SetErrorProcessFunction`` with a pointer to user error handling function.
+
+.. code-block:: c++
+
+   typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo, const char8 * const errorDescription);   
+   
+The ``errorDescription`` already contains the *printfed* message while the :vcisdoxygenclem:`ErrorInformation` provides a list of properties related to the conditions at the time of the logging (e.g. time, line number, ...).
+
+.. code-block:: c++
+   
+   void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
+      ...
+      printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+      printf(RST);
+      ...
+   
+.. _loggerservice:
+
+LoggerService
+-------------   
+
+The framework also offers a data-driven :vcisdoxygencl:`LoggerService` which decouples the log production from the log consumption. 
+
+In order to 
+
 TODO CALLBACK FUNCTION AND EXISTING DECOUPLING COMPONENTS + EXAMPLES 
