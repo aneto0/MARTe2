@@ -89,8 +89,22 @@ The ``errorDescription`` already contains the *printfed* message while the :vcis
 LoggerService
 -------------   
 
-The framework also offers a data-driven :vcisdoxygencl:`LoggerService` which decouples the log production from the log consumption. 
+The framework also offers a data-driven :vcisdoxygencl:`LoggerService` which decouples the log production from the log consumption using a decoupling queue.
 
-In order to 
+The :vcisdoxygencl:`LoggerService` allows to register one or more :vcisdoxygencl:`LoggerConsumerI` components, which will consume the logging message accordingly. Note that the ``LoggerService`` will override any callback function previously set by the user. 
 
-TODO CALLBACK FUNCTION AND EXISTING DECOUPLING COMPONENTS + EXAMPLES 
+The framework currently offers the following consumers: :vcisdoxygencl:`ConsoleLogger`, :vcisdoxygencl:`UDPLogger` and :vcisdoxygenmccl:`SysLogger` (from the :vcisgl:`MARTe2-components`).  
+
+Examples
+--------
+
+The following is an example of a LoggerService instance which prints the logging messages in the console. 
+
+.. literalinclude:: /_static/examples/Core/LoggerServiceExample1.cpp
+   :language: c++
+   :caption: LoggerService example (LoggerServiceExample1)
+   :linenos:
+   :emphasize-lines: 107-109,112
+
+Instructions on how to compile and execute the example can be found :doc:`here </examples>`.  
+
