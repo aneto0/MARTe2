@@ -31,8 +31,29 @@ MAKEDEFAULTDIR=../../MakeDefaults
 ROOT_DIR=../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES += -IBareMetal/L0Types
+INCLUDES += -IBareMetal/L1Portability
+INCLUDES += -IBareMetal/L2Objects
+INCLUDES += -IBareMetal/L3Streams
+INCLUDES += -IBareMetal/L4Configuration
+INCLUDES += -IBareMetal/L4Logger
+INCLUDES += -IBareMetal/L4Messages
+INCLUDES += -IBareMetal/L5GAMs
+INCLUDES += -IBareMetal/L6App
+INCLUDES += -IFileSystem/L1Portability
+INCLUDES += -IFileSystem/L3Streams
+INCLUDES += -IFileSystem/L4LoggerService
+INCLUDES += -IFileSystem/L6App
+INCLUDES += -IScheduler/L1Portability
+INCLUDES += -IScheduler/L3Services
+INCLUDES += -IScheduler/L4LoggerService
+INCLUDES += -IScheduler/L4Messages
+INCLUDES += -IScheduler/L4StateMachine
+INCLUDES += -IScheduler/L5GAMs
+
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTe2$(DLLEXT) 
+		$(BUILD_DIR)/MARTe2$(DLLEXT) \
+		$(BUILD_DIR)/MARTeApp$(EXEEXT)
 	echo  $(OBJS)
 
 
