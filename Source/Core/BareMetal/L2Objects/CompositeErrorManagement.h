@@ -89,6 +89,29 @@ inline void CompositeReportError(const ErrorType &code,
 											 CCString const fileName,
 											 const int16 lineNumber,
 											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5,class T6>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -154,6 +177,52 @@ void ErrorManagement::CompositeReportError(const ErrorType &code,
 		ConditionalReportError(code,err,fileName,lineNumber,functionName);
 	}
 }
+
+template <class T1,class T2,class T3,class T4,class T5>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
+
+
+template <class T1,class T2,class T3,class T4,class T5,class T6>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											T6 part6,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		err.Append(part6);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
+
 /**
  * @brief Checks a condition, reports error and sets an error variable
  * @details If condition true, Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs and sets the errorVariable

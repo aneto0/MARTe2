@@ -58,19 +58,6 @@ class Reference;
 
 namespace MARTe {
 
-/**
- * @brief description of a dimension.
- */
-struct DimensionInfo{
-	/**
-	 * @brief number of elements in this dimension (or nothing if pointer is invalid).
-	 */
-	uint32 numberOfElements;
-	/**
-	 * @brief A for arrays F/f for pointers to arrays, ZSDzsd for pointers to ZTA, MVmv for matrix & vectors
-	 */
-	char8  type;
-};
 
 /**
  * @brief full description of the type of a variable including modifiers
@@ -142,25 +129,7 @@ public:
      * @return true if all ok or the error
      */
     ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=emptyString) ;
-#if 0
-    /**
-     * @brief copies the variable layer by layer. The copied layer is implemented in contiguous memory
-     * @param[in] sourcePtr, the pointer to the variable to be copied
-     * @param[in,out] destFreePtr, pointer to the memory area to copy the variable to. Returns the pointer to the unused area
-     * @param[in,out] destFreeSize, length of the memory area to copy to. Returns the unused area size
-     * @param[out] destVd, the variable descriptor of the used area, must be empty to start!. Note that all varieties of ZeroTermarrays become ZeroTermArray<const T>
-     * @param[in] maxDepth, the max number of pointer redirection to include in the copy
-     * @param[in] modifierString, at start points at full modifiers.After each recursion it is progressively consumed.
-     * @return true if all ok or the error
-     */
-    ErrorManagement::ErrorType Copy(
-    		const uint8 *sourcePtr,
-    		uint8 *&destFreePtr,
-			uint64 &destFreeSize,
-			VariableDescriptor &destVd,
-			uint8 maxDepth=100,
-			CCString modifierString = emptyString) const;
-#endif
+
     /**
     * @brief creates an object clone of the variable
     * @details:
@@ -214,7 +183,7 @@ public:
      * @brief Converts C/c++ string to type descriptor
      * @return true if all ok
      */
-    ErrorManagement::ErrorType  FromString(DynamicCString &string);
+    //ErrorManagement::ErrorType  FromString(DynamicCString &string);
 
     /**
      * @brief provides a typeDescriptor for the overall variable.
@@ -247,74 +216,10 @@ private:
  */
 
     /**
-     * @brief obtains information about multidimensional arrays
-     * @details handles arrays, pointers to array, Vectors, Matrices and ZTA terminated
-     * @param[out] dimensions will be cleaned and reallocated to contain the list of dimensions.
-     * Pointer to Arrays are coded as F, Pointer to ZTA simply with the ZTA code
-     * It produces at least one dimension if there are no errors
-     * @return the type descriptor of the array element.
-     */
-    TypeDescriptor GetDimensionsInformation(DynamicZeroTerminatedArray<DimensionInfo,4> &dimensions) const;
-
-    /**
      * @brief adds one layer of modifiers to the top used in building the object
      * @return true if operation succeeded
      */
     void AddModifiersLayerConst(char8 modifier, uint64 size);
-
-    /**
-     * @brief Converts type descriptor to C/c++ equivalent
-     */
-    ErrorManagement::ErrorType  ToStringPrivate(DynamicCString &string,CCString modifierString,bool start,int8 &priority) const;
-
-    /**
-     * @brief calculate size of a full layer - n of array alements * elementsize
-     * @param[in] modifierString, the string of variable modifiers
-     * @return the full size of the memory necessary to store this layer
-     */
-    uint64 FullLayerSize(CCString modifierString,const uint8 *pointer) const;
-
-    /**
-     * @brief calculate properties of a full layer - n of array alements * elementsize
-     * @details the layers start with a fixed/variable modifier and groups all following fixed modifiers
-     * @details this does not calculate size. Only used to speedup operations
-     * @param[in,out] modifierString, the string of variable modifiers
-     * @param[out] numberOfElements is the number of elements in this layer
-     * @param[out] elementSize is the storage space occupied by an element - not the data it contains.
-     * @param[out] overheadSize is the size not used for data content
-     * @param[out] arrayStringSize number of characters in modifierString consumed in arrays 'a' layers
-     * @param[out] numberOfTermElements number of elements of size elementSize used as terminator in a ZTA
-     * @param[out] modifier is the last code that terminated this scan (0 for the end of modifiers or one of PVNZSDpvnzsd
-     */
-    ErrorManagement::ErrorType FullLayerInfo(
-    		CCString &		modifierString,
-			const uint8 *	pointer,
-    		uint64 &		numberOfElements,
-			uint32 &		elementSize,
-			uint32 &		arrayStringSize,
-			uint32 &		numberOfTermElements,
-			char8 &			modifier) const;
-
-    /**
-     * @brief returns size of all the memory addressed by this variable.
-     * @param[in] modifierString, the string of variable modifiers
-     * @param[in] pointer, the pointer to the variable
-     * @param[out] dataSize is the full size of the memory necessary to store this var including redirections
-     * @param[out] overHeadSz is the memory used in intermediate redirection layers
-     * @param[in] maxDepth  determine the number of indirected memory to include.
-     * -1 means no limit 0 means just the top layer
-     * Note that pointers to type only address one element
-     * Vector, Matrix, ZeroTermArray are all supported
-     * @param[in] layerMultiplier >1 it is an array[layerMultiplier] of the type described by modifierString
-     * @return true if all ok
-     */
-    ErrorManagement::ErrorType GetDeepSize(
-    		CCString 		modifierString,
-			const uint8 *	pointer,
-    		uint64 &		dataSize,
-			uint64 &		overHeadSz,
-			uint8 			maxDepth=100,
-			uint32 			layerMultiplier=1) const;
 
     /**
      * @brief to encode the actual data type. It will incorporate the const and Array code
