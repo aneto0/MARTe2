@@ -103,8 +103,10 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         ret.parametersError = !loaderParameters.Write("DefaultCPUs", defaultCPUs);
     }
     if (ret) {
-        StreamString parserType = "cdb";
-        (void) argsConfiguration.Read("-p", parserType);
+        StreamString parserType;
+        if (!argsConfiguration.Read("-p", parserType)) {
+            parserType = "cdb";
+        }
         ret.parametersError = !loaderParameters.Write("Parser", parserType.Buffer());
     }
     if (ret) {

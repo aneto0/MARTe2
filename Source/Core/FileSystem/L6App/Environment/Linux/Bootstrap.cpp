@@ -88,6 +88,8 @@ ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &lo
         else {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to open the input file %s", filename.Buffer());
         }
+    }
+    if (ret) {
         configurationStream = &inputConfigurationFile;
     }
     return ret;
