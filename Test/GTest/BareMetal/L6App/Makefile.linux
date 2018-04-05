@@ -22,10 +22,9 @@
 # $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+
 TARGET=linux
 
 include Makefile.inc
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)
+INCLUDES += -I../../../../Lib/gtest-1.7.0/include

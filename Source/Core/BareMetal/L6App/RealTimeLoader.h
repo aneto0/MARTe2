@@ -44,48 +44,56 @@
 namespace MARTe {
 
 /**
- * @brief TODO.
- *
- * @details TODO.
- *
+ * @brief Starts a generic MARTe RealTimeApplication from a given configuration stream.
+ * @details The Loader parses (see Initialise) a given configuration stream and configures the RealTimeApplication.
+ * The Start method allows to trigger the Start of the application, either by specifying the first state or by sending a message to given destination (see Loader::Start).
  */
 class DLL_API RealTimeLoader: public Loader {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief TODO
+     * @brief Constructor. NOOP.
      */
-RealTimeLoader    ();
+    RealTimeLoader();
 
     /**
-     * @brief TODO
+     * @brief Destructor. NOOP.
      */
     virtual ~RealTimeLoader();
 
     /**
-     * @brief TODO
+     * @brief Initialises the RealTimeApplication with the parameters specified in \a data and with the \a configuration stream (see Loader::Initialise).
+     * @details If Loader::Initialise succeeds, a RealTimeApplication is search in the ObjectRegistryDatabase and, if found, the RealTimeApplication::ConfigureApplication is called.
+     * @param[in] data see Loader::Initialise for other parameters:
+     * - FirstState (optional): the first state to be called in the RealTimeApplication when Start is called.
+     * @param[in] configuration see Loader::Initialise.
+     * @return ErrorManagement::NoError if the Parser is specified, the \a configuration can be parsed, the ObjectRegistryDatabase can be Initialised with the parsed configuration and if the RealTimeApplication::ConfigureApplication is successful. An error is returned otherwise.
      */
     virtual ErrorManagement::ErrorType Initialise(StructuredDataI &data, StreamI &configuration);
 
     /**
-     * @brief TODO
+     * @brief Start the RealTimeApplication.
+     * @details If FirstState was set, calls RealTimeApplication::StartNextStateExecution with this state. Otherwise Loader::Start is called.
+     * @return ErrorManagement::NoError if the FirstState was set and RealTimeApplication::StartNextStateExecution or if FirstState was not set and Loader::Start succeeds. An error is returned otherwise.
      */
     virtual ErrorManagement::ErrorType Start();
 
     /**
-     * @brief TODO
+     * @brief Stops the RealTimeApplication.
+     * @details Calls RealTimeApplication::StopCurrentStateExecution.
+     * @return  ErrorManagement::NoError if the application was successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop();
 
 private:
     /**
-     * @brief TODO
+     * @brief The (optional) first state of the RealTimeApplication.
      */
     StreamString firstState;
 
     /**
-     * @brief TODO
+     * @brief The RealTimeApplication.
      */
     ReferenceT<RealTimeApplication> rtApp;
 };

@@ -19,13 +19,10 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=linux
+TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)

@@ -58,7 +58,7 @@ ErrorManagement::ErrorType RealTimeLoader::Initialise(StructuredDataI& data, Str
     uint32 nOfObjs = objDb->Size();
     uint32 n;
     bool found = false;
-    for (n = 0u; (n < nOfObjs) && (!found); n++) {
+    for (n = 0u; (ret) && (n < nOfObjs) && (!found); n++) {
         rtApp = objDb->Get(n);
         found = rtApp.IsValid();
         if (found) {
@@ -69,7 +69,7 @@ ErrorManagement::ErrorType RealTimeLoader::Initialise(StructuredDataI& data, Str
         }
     }
     if (found) {
-        (void) parsedConfiguration.Read("FirstState", firstState);
+        (void) data.Read("FirstState", firstState);
     }
     else {
         REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Could not find a RealTimeApplication");
@@ -85,7 +85,7 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing state %s ", firstState);
         ret.initialisationError = !rtApp->PrepareNextState(firstState.Buffer());
         if (ret) {
-            ret.initialisationError = rtApp->StartNextStateExecution();
+            ret = rtApp->StartNextStateExecution();
             if (ret) {
                 REPORT_ERROR_STATIC(ErrorManagement::Information, "Started application in state %s ", firstState);
             }
@@ -98,7 +98,7 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
         }
     }
     else {
-        ret.initialisationError = Loader::Start();
+        ret = Loader::Start();
     }
     return ret;
 }
@@ -106,7 +106,7 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
 ErrorManagement::ErrorType RealTimeLoader::Stop() {
     ErrorManagement::ErrorType ret = rtApp.IsValid();
     if (ret) {
-        ret.fatalError = !rtApp->StopCurrentStateExecution();
+        ret = rtApp->StopCurrentStateExecution();
         if (ret) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to StopCurrentStateExecution");
         }

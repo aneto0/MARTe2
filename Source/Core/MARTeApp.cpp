@@ -21,6 +21,11 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+/**
+ * @file A generic MARTe application which uses a Bootstrap to read the input parameters and to setup the execution environment.
+ * Note that the Loader to be used is one of the user parameters, so that this main should be sufficiently generic for most use-cases.
+ */
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -32,7 +37,7 @@
 #include "Bootstrap.h"
 #include "Loader.h"
 #include "ObjectRegistryDatabase.h"
-#include "ProcessorType.h"
+#include "ReferenceT.h"
 #include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -45,7 +50,7 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
     MARTe::StreamString err;
-    err.Printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    err.Printf("[%s - %s:%d]: %s", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     bootstrap.Printf(err.Buffer());
 }
 
@@ -57,23 +62,27 @@ int main(int argc, char **argv) {
     SetErrorProcessFunction(&MainErrorProcessFunction);
 
     ConfigurationDatabase loaderParameters;
-    StreamString init;
-    StreamI &configurationStream = init;
-    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters, configurationStream);
+    StreamI *configurationStream = NULL_PTR(StreamI *);
+
+    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+    if (ret) {
+        ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
+        if (ret) {
+            ret.fatalError = (configurationStream == NULL_PTR(StreamI *));
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not GetConfigurationStream.");
+        }
+    }
+    else {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
+    }
 
     StreamString loaderClass;
-
     if (ret) {
-        uint32 defaultCPUs = 0x1;
-        if (!loaderParameters.Read("DefaultCPUs", defaultCPUs)) {
-            REPORT_ERROR_STATIC(ErrorManagement::Warning, "DefaultCPUs not specified");
-        }
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "DefaultCPUs set to %d", defaultCPUs);
-        ProcessorType::SetDefaultCPUs(defaultCPUs);
-
-        if (!loaderParameters.Read("Loader", loaderClass)) {
+        ret.fatalError = !loaderParameters.Read("Loader", loaderClass);
+        if (!ret) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Loader not specified");
-            ret = ErrorManagement::FatalError;
         }
     }
 
@@ -82,13 +91,13 @@ int main(int argc, char **argv) {
     if (ret) {
         loaderRef = Reference(loaderClass.Buffer(), GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (loaderRef.IsValid()) {
-            ret = loaderRef->Initialise(loaderParameters, configurationStream);
+            ret = loaderRef->Initialise(loaderParameters, *configurationStream);
             if (!ret) {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not Initialise the loader %s", loaderClass.Buffer());
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not Initialise the loader with name %s", loaderClass.Buffer());
             }
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not instantiate loader %s", loaderClass.Buffer());
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not instantiate loader with name %s", loaderClass.Buffer());
             ret = ErrorManagement::FatalError;
         }
     }

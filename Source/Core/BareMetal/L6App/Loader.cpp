@@ -55,9 +55,15 @@ Loader::~Loader() {
 
 ErrorManagement::ErrorType Loader::Initialise(StructuredDataI &data, StreamI &configuration) {
     ErrorManagement::ErrorType ret = Object::Initialise(data);
+    uint32 defaultCPUs = 0x1;
+    if (!data.Read("DefaultCPUs", defaultCPUs)) {
+        REPORT_ERROR_STATIC(ErrorManagement::Warning, "DefaultCPUs not specified");
+    }
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "DefaultCPUs set to %d", defaultCPUs);
+    ProcessorType::SetDefaultCPUs(defaultCPUs);
+
     StreamString parserType;
     StreamString parserError;
-
     //Read the parser type
     if (ret) {
         ret.parametersError = !data.Read("Parser", parserType);
@@ -112,8 +118,8 @@ ErrorManagement::ErrorType Loader::Initialise(StructuredDataI &data, StreamI &co
 }
 
 ErrorManagement::ErrorType Loader::Start() {
-    ErrorManagement::ErrorType ret = (messageDestination.Size() == 0u);
-    if (ret) {
+    ErrorManagement::ErrorType ret;
+    if (messageDestination.Size() > 0u) {
         ReferenceT<Message> message(new Message());
         ConfigurationDatabase msgConfig;
         ret.parametersError = !msgConfig.Write("Destination", messageDestination);
@@ -123,14 +129,10 @@ ErrorManagement::ErrorType Loader::Start() {
         if (ret) {
             ret.initialisationError = !message->Initialise(msgConfig);
         }
-        if (ret.initialisationError) {
-            ret.initialisationError = MessageI::SendMessage(message);
+        if (ret) {
+            ret = MessageI::SendMessage(message);
         }
 
-    }
-    else {
-        ret = ErrorManagement::InitialisationError;
-        REPORT_ERROR_STATIC(ret, "MessageDestination was not set");
     }
     return ret;
 }

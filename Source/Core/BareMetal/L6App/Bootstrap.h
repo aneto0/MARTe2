@@ -41,36 +41,54 @@
 namespace MARTe {
 
 /**
- * @brief TODO.
- *
- * @details TODO.
- *
+ * @brief Bootstraps the main arguments and provides the (environment specific) execution context (see Run).
+ * @details The implementation of the class is operating system specific.
  */
 class DLL_API Bootstrap {
 public:
-
     /**
-     * @brief TODO
+     * @brief Constructor. NOOP.
      */
     Bootstrap();
 
     /**
-     * @brief TODO
+     * @brief Destructor. NOOP.
      */
     ~Bootstrap();
 
     /**
-     * @brief TODO
+     * @brief Translate the main (argc and argv) parameters into a StructuredDataI.
+     * @param[in] argc the number of arguments provided in the main.
+     * @param[in] argv the list of arguments provided in the main.
+     * @param[out] loaderParameters the list of parsed parameters:
+     * - Loader: the type of loader class to be used;
+     * - Filename: the name of the file to be load;
+     * - DefaultCPUs: sets the threads defaults CPUs (see ProcessorType::SetDefaultCPUs);\n
+     * - Parser: the type of parser to be parse the \a configuration as one of:cdb, xml and json;\n
+     * - MessageDestination (optional): the name of the Object that will receive the message upon program Start (see Loader::Initialise);\n
+     * - MessageFunction (optional): the name of the Function to be called in the MessageDestination (see Loader::Initialise);\n
+     * - FirstState (optional): the name of the FirstState in a RealTimeApplication (see RealTimeLoader::Initialise).
+     * @return ErrorManagement::NoError if all the compulsory parameters can be read from the \a argv and written into the loaderParameters. A specific ErrorType otherwise.
      */
-    ErrorManagement::ErrorType ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters, StreamI &configurationStream);
+    ErrorManagement::ErrorType ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters);
 
     /**
-     * @brief TODO
+     * @brief Gets the configuration stream to be used for the application start.
+     * @param[in] loaderParameters the parameters that were read with ReadParameters.
+     * @param[out] configurationStream the stream to be read.
+     * @return ErrorManagement::NoError if the stream is ready to be read. A specific ErrorType otherwise.
+     */
+    ErrorManagement::ErrorType GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream);
+
+    /**
+     * @brief Setup the execution specific environment and wait for (an environment specific) signal to terminate the program.
+     * @return only when the program is to be terminated. ErrorManagement::NoError if the execution was successfully cleaned.
      */
     ErrorManagement::ErrorType Run();
 
     /**
-     * @brief TODO
+     * @brief How to printf in the specific environment.
+     * @param[in] msg the message to printf.
      */
     void Printf(const char8 * const msg);
 
