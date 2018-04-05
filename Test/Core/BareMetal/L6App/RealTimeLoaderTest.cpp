@@ -239,24 +239,24 @@ bool RealTimeLoaderTest::TestConstructor() {
     return true;
 }
 
-bool RealTimeLoaderTest::TestInitialise() {
+bool RealTimeLoaderTest::TestConfigure() {
     using namespace MARTe;
     StreamString config = config1;
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     RealTimeLoader l;
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
-bool RealTimeLoaderTest::TestInitialise_False_FailedConfiguration() {
+bool RealTimeLoaderTest::TestConfigure_False_FailedConfiguration() {
     using namespace MARTe;
     StreamString config = config2;
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     RealTimeLoader l;
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
@@ -268,7 +268,7 @@ bool RealTimeLoaderTest::TestStart_FirstState() {
     params.Write("Parser", "cdb");
     params.Write("FirstState", "State1");
     RealTimeLoader l;
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = l.Start();
     }
@@ -299,7 +299,7 @@ bool RealTimeLoaderTest::TestStart_Message() {
     params.Write("MessageDestination", "B");
     params.Write("MessageFunction", "Callback");
     RealTimeLoader l;
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = l.Start();
     }

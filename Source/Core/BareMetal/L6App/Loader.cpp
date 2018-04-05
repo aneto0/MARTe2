@@ -47,15 +47,15 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-Loader::Loader() {
+Loader::Loader() : Object() {
 }
 
 Loader::~Loader() {
 }
 
-ErrorManagement::ErrorType Loader::Initialise(StructuredDataI &data, StreamI &configuration) {
+ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &configuration) {
     ErrorManagement::ErrorType ret = Object::Initialise(data);
-    uint32 defaultCPUs = 0x1;
+    uint32 defaultCPUs = 0x1u;
     if (!data.Read("DefaultCPUs", defaultCPUs)) {
         REPORT_ERROR_STATIC(ErrorManagement::Warning, "DefaultCPUs not specified");
     }
@@ -65,16 +65,16 @@ ErrorManagement::ErrorType Loader::Initialise(StructuredDataI &data, StreamI &co
     StreamString parserType;
     StreamString parserError;
     //Read the parser type
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret.parametersError = !data.Read("Parser", parserType);
         if (!ret) {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "No Parser specified");
         }
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret.initialisationError = !configuration.Seek(0LLU);
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         if (parserType == "xml") {
             XMLParser parser(configuration, parsedConfiguration, &parserError);
             ret.initialisationError = !parser.Parse();
@@ -93,20 +93,20 @@ ErrorManagement::ErrorType Loader::Initialise(StructuredDataI &data, StreamI &co
         }
         if (!ret) {
             StreamString errPrint;
-            errPrint.Printf("Failed to parse %s", parserError.Buffer());
+            (void) errPrint.Printf("Failed to parse %s", parserError.Buffer());
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, errPrint.Buffer());
         }
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret.fatalError = !parsedConfiguration.MoveToRoot();
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret.initialisationError = !ObjectRegistryDatabase::Instance()->Initialise(parsedConfiguration);
         if (!ret) {
             REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Failed to initialise the ObjectRegistryDatabase");
         }
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         if (data.Read("MessageDestination", messageDestination)) {
             ret.parametersError = !data.Read("MessageFunction", messageFunction);
             if (!ret) {
@@ -123,13 +123,13 @@ ErrorManagement::ErrorType Loader::Start() {
         ReferenceT<Message> message(new Message());
         ConfigurationDatabase msgConfig;
         ret.parametersError = !msgConfig.Write("Destination", messageDestination);
-        if (ret) {
+        if (ret.ErrorsCleared()) {
             ret.initialisationError = !msgConfig.Write("Function", messageFunction);
         }
-        if (ret) {
+        if (ret.ErrorsCleared()) {
             ret.initialisationError = !message->Initialise(msgConfig);
         }
-        if (ret) {
+        if (ret.ErrorsCleared()) {
             ret = MessageI::SendMessage(message);
         }
 

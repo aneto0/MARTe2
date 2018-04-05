@@ -48,49 +48,49 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the Initialise method
+     * @brief Tests the Configure method
      */
-    bool TestInitialise();
+    bool TestConfigure();
 
     /**
-     * @brief Tests the Initialise method with non default cpus
+     * @brief Tests the Configure method with non default cpus
      */
-    bool TestInitialise_CPUs();
+    bool TestConfigure_CPUs();
 
     /**
-     * @brief Tests the Initialise method with the json parser.
+     * @brief Tests the Configure method with the json parser.
      */
-    bool TestInitialise_Json();
+    bool TestConfigure_Json();
 
     /**
-     * @brief Tests the Initialise method with the xml parsers.
+     * @brief Tests the Configure method with the xml parsers.
      */
-    bool TestInitialise_Xml();
+    bool TestConfigure_Xml();
 
     /**
-     * @brief Tests the Initialise method without specifying a parser.
+     * @brief Tests the Configure method without specifying a parser.
      */
-    bool TestInitialise_False_NoParser();
+    bool TestConfigure_False_NoParser();
 
     /**
-     * @brief Tests the Initialise method specifying an inexistent parser.
+     * @brief Tests the Configure method specifying an inexistent parser.
      */
-    bool TestInitialise_False_BadParser();
+    bool TestConfigure_False_BadParser();
 
     /**
-     * @brief Tests the Initialise method with a Parser that fails to Parse.
+     * @brief Tests the Configure method with a Parser that fails to Parse.
      */
-    bool TestInitialise_False_FailedParser();
+    bool TestConfigure_False_FailedParser();
 
     /**
-     * @brief Tests the Initialise method with a bad configuration (parsed ok but not initialised).
+     * @brief Tests the Configure method with a bad configuration (parsed ok but not initialised).
      */
-    bool TestInitialise_False_FailedConfiguration();
+    bool TestConfigure_False_FailedConfiguration();
 
     /**
-     * @brief Tests the Initialise method specifying a MessageDestination but not specifying a MessageFunction.
+     * @brief Tests the Configure method specifying a MessageDestination but not specifying a MessageFunction.
      */
-    bool TestInitialise_False_FailedMessageFunction();
+    bool TestConfigure_False_FailedMessageFunction();
 
     /**
      * @brief Tests the Start method.

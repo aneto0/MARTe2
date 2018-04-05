@@ -93,6 +93,7 @@ LinkedListHolder.cpp
 LinkedListHolderT.h
 LinkedListable.cpp
 LoadableLibrary.cpp
+Loader.cpp
 Logger.cpp
 LoggerConsumerI.cpp
 LoggerService.cpp
@@ -135,6 +136,7 @@ QueueingMessageFilter.cpp
 QueuedReplyMessageCatcherFilter.cpp
 RealTimeApplication.cpp
 RealTimeApplicationConfigurationBuilder.cpp
+RealTimeLoader.cpp
 RealTimeState.cpp
 RealTimeThread.cpp
 Reference.cpp

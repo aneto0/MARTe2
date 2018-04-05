@@ -48,14 +48,14 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the Initialise method
+     * @brief Tests the Configure method
      */
-    bool TestInitialise();
+    bool TestConfigure();
 
     /**
-     * @brief Tests the Initialise method with a bad configuration (parsed ok but not initialised).
+     * @brief Tests the Configure method with a bad configuration (parsed ok but not initialised).
      */
-    bool TestInitialise_False_FailedConfiguration();
+    bool TestConfigure_False_FailedConfiguration();
 
     /**
      * @brief Tests the Start method

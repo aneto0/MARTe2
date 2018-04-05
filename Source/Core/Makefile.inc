@@ -56,6 +56,4 @@ all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeApp$(EXEEXT)
 	echo  $(OBJS)
 
-
-
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

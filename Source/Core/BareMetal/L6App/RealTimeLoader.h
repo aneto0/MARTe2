@@ -70,7 +70,7 @@ public:
      * @param[in] configuration see Loader::Initialise.
      * @return ErrorManagement::NoError if the Parser is specified, the \a configuration can be parsed, the ObjectRegistryDatabase can be Initialised with the parsed configuration and if the RealTimeApplication::ConfigureApplication is successful. An error is returned otherwise.
      */
-    virtual ErrorManagement::ErrorType Initialise(StructuredDataI &data, StreamI &configuration);
+    virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
     /**
      * @brief Start the RealTimeApplication.

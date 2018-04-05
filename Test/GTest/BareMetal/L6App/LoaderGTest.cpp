@@ -44,49 +44,49 @@ TEST(LoaderGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(LoaderGTest,TestInitialise) {
+TEST(LoaderGTest,TestConfigure) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise());
+    ASSERT_TRUE(test.TestConfigure());
 }
 
-TEST(LoaderGTest,TestInitialise_CPUs) {
+TEST(LoaderGTest,TestConfigure_CPUs) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_CPUs());
+    ASSERT_TRUE(test.TestConfigure_CPUs());
 }
 
-TEST(LoaderGTest,TestInitialise_Json) {
+TEST(LoaderGTest,TestConfigure_Json) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_Json());
+    ASSERT_TRUE(test.TestConfigure_Json());
 }
 
-TEST(LoaderGTest,TestInitialise_Xml) {
+TEST(LoaderGTest,TestConfigure_Xml) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_Xml());
+    ASSERT_TRUE(test.TestConfigure_Xml());
 }
 
-TEST(LoaderGTest,TestInitialise_False_BadParser) {
+TEST(LoaderGTest,TestConfigure_False_BadParser) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_BadParser());
+    ASSERT_TRUE(test.TestConfigure_False_BadParser());
 }
 
-TEST(LoaderGTest,TestInitialise_False_FailedConfiguration) {
+TEST(LoaderGTest,TestConfigure_False_FailedConfiguration) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedConfiguration());
+    ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());
 }
 
-TEST(LoaderGTest,TestInitialise_False_FailedParser) {
+TEST(LoaderGTest,TestConfigure_False_FailedParser) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedParser());
+    ASSERT_TRUE(test.TestConfigure_False_FailedParser());
 }
 
-TEST(LoaderGTest,TestInitialise_False_NoParser) {
+TEST(LoaderGTest,TestConfigure_False_NoParser) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_NoParser());
+    ASSERT_TRUE(test.TestConfigure_False_NoParser());
 }
 
-TEST(LoaderGTest,TestInitialise_False_FailedMessageFunction) {
+TEST(LoaderGTest,TestConfigure_False_FailedMessageFunction) {
     LoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedMessageFunction());
+    ASSERT_TRUE(test.TestConfigure_False_FailedMessageFunction());
 }
 
 TEST(LoaderGTest,TestStart) {

@@ -44,15 +44,15 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-RealTimeLoader::RealTimeLoader() {
+RealTimeLoader::RealTimeLoader() : Loader() {
 }
 
 RealTimeLoader::~RealTimeLoader() {
 
 }
 
-ErrorManagement::ErrorType RealTimeLoader::Initialise(StructuredDataI& data, StreamI &configuration) {
-    ErrorManagement::ErrorType ret = Loader::Initialise(data, configuration);
+ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, StreamI &configuration) {
+    ErrorManagement::ErrorType ret = Loader::Configure(data, configuration);
 
     ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
     uint32 nOfObjs = objDb->Size();
@@ -84,9 +84,9 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
     if (firstState.Size() > 0u) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing state %s ", firstState);
         ret.initialisationError = !rtApp->PrepareNextState(firstState.Buffer());
-        if (ret) {
+        if (ret.ErrorsCleared()) {
             ret = rtApp->StartNextStateExecution();
-            if (ret) {
+            if (ret.ErrorsCleared()) {
                 REPORT_ERROR_STATIC(ErrorManagement::Information, "Started application in state %s ", firstState);
             }
             else {
@@ -105,13 +105,13 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
 
 ErrorManagement::ErrorType RealTimeLoader::Stop() {
     ErrorManagement::ErrorType ret = rtApp.IsValid();
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret = rtApp->StopCurrentStateExecution();
-        if (ret) {
+        if (ret.ErrorsCleared()) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to StopCurrentStateExecution");
         }
     }
-    if (ret) {
+    if (ret.ErrorsCleared()) {
         ret = Loader::Stop();
     }
     return ret;

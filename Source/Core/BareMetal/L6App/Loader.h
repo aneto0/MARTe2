@@ -71,7 +71,7 @@ public:
      * @param[in] configuration the MARTe configuration stream to be loaded (and parsed using the Parser defined above).
      * @return ErrorManagement::NoError if the Parser is specified, the \a configuration can be parsed and if the ObjectRegistryDatabase can be Initialised with the parsed configuration. An error is returned otherwise.
      */
-    virtual ErrorManagement::ErrorType Initialise(StructuredDataI &data, StreamI &configuration);
+    virtual ErrorManagement::ErrorType Configure(StructuredDataI &data, StreamI &configuration);
 
     /**
      * @brief If the MessageDestination was specified in Initialise, sends the Message to the specified destination.

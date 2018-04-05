@@ -27,3 +27,5 @@ TARGET=cov
 
 include Makefile.inc
 
+LIBRARIES_STATIC = Environment/Linux/cov/L6App$(LIBEXT)
+

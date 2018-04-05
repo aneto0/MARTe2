@@ -70,7 +70,7 @@ bool LoaderTest::TestConstructor() {
     return true;
 }
 
-bool LoaderTest::TestInitialise() {
+bool LoaderTest::TestConfigure() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
@@ -78,12 +78,12 @@ bool LoaderTest::TestInitialise() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == 0x1);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_CPUs() {
+bool LoaderTest::TestConfigure_CPUs() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
@@ -93,12 +93,12 @@ bool LoaderTest::TestInitialise_CPUs() {
     params.Write("Parser", "cdb");
     uint32 defaultCPUs = 0xf;
     params.Write("DefaultCPUs", defaultCPUs);
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     ok = (ProcessorType::GetDefaultCPUs() == defaultCPUs);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_Json() {
+bool LoaderTest::TestConfigure_Json() {
     using namespace MARTe;
     Loader l;
     StreamString config = "\"+A\" : {\n"
@@ -106,11 +106,11 @@ bool LoaderTest::TestInitialise_Json() {
             "}\n";
     ConfigurationDatabase params;
     params.Write("Parser", "json");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_Xml() {
+bool LoaderTest::TestConfigure_Xml() {
     using namespace MARTe;
     Loader l;
     StreamString config = "<+A>"
@@ -118,22 +118,22 @@ bool LoaderTest::TestInitialise_Xml() {
             "</+A>";
     ConfigurationDatabase params;
     params.Write("Parser", "xml");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_False_NoParser() {
+bool LoaderTest::TestConfigure_False_NoParser() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
             "   Class = ReferenceContainer"
             "}";
     ConfigurationDatabase params;
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_False_BadParser() {
+bool LoaderTest::TestConfigure_False_BadParser() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
@@ -141,11 +141,11 @@ bool LoaderTest::TestInitialise_False_BadParser() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "zdb");
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_False_FailedParser() {
+bool LoaderTest::TestConfigure_False_FailedParser() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={{"
@@ -153,11 +153,11 @@ bool LoaderTest::TestInitialise_False_FailedParser() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_False_FailedConfiguration() {
+bool LoaderTest::TestConfigure_False_FailedConfiguration() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
@@ -165,11 +165,11 @@ bool LoaderTest::TestInitialise_False_FailedConfiguration() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     return ok;
 }
 
-bool LoaderTest::TestInitialise_False_FailedMessageFunction() {
+bool LoaderTest::TestConfigure_False_FailedMessageFunction() {
     using namespace MARTe;
     Loader l;
     StreamString config = "+A={"
@@ -181,7 +181,7 @@ bool LoaderTest::TestInitialise_False_FailedMessageFunction() {
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "B");
-    bool ok = !l.Initialise(params, config);
+    bool ok = !l.Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
@@ -199,7 +199,7 @@ bool LoaderTest::TestStart() {
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "B");
     params.Write("MessageFunction", "Callback");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = l.Start();
     }
@@ -229,7 +229,7 @@ bool LoaderTest::TestStart_WrongMessage() {
     params.Write("Parser", "cdb");
     params.Write("MessageDestination", "C");
     params.Write("MessageFunction", "Callback");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = !l.Start();
     }
@@ -249,7 +249,7 @@ bool LoaderTest::TestStart_NoMessage() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = l.Start();
     }
@@ -269,7 +269,7 @@ bool LoaderTest::TestStop() {
             "}";
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
-    bool ok = l.Initialise(params, config);
+    bool ok = l.Configure(params, config);
     if (ok) {
         ok = l.Stop();
     }

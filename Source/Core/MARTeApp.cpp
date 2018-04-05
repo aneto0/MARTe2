@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
     if (ret) {
         loaderRef = Reference(loaderClass.Buffer(), GlobalObjectsDatabase::Instance()->GetStandardHeap());
         if (loaderRef.IsValid()) {
-            ret = loaderRef->Initialise(loaderParameters, *configurationStream);
+            ret = loaderRef->Configure(loaderParameters, *configurationStream);
             if (!ret) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not Initialise the loader with name %s", loaderClass.Buffer());
             }

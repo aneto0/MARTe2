@@ -44,14 +44,14 @@ TEST(RealTimeLoaderGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeLoaderGTest,TestInitialise) {
+TEST(RealTimeLoaderGTest,TestConfigure) {
     RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise());
+    ASSERT_TRUE(test.TestConfigure());
 }
 
-TEST(RealTimeLoaderGTest,TestInitialise_False_FailedConfiguration) {
+TEST(RealTimeLoaderGTest,TestConfigure_False_FailedConfiguration) {
     RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedConfiguration());
+    ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());
 }
 
 TEST(RealTimeLoaderGTest,TestStart_FirstState) {
@@ -69,65 +69,3 @@ TEST(RealTimeLoaderGTest,TestStop) {
     ASSERT_TRUE(test.TestStop());
 }
 
-#if 0
-
-TEST(RealTimeLoaderGTest,TestInitialise_CPUs) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_CPUs());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_Json) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_Json());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_Xml) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_Xml());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_False_BadParser) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_BadParser());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_False_FailedConfiguration) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedConfiguration());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_False_FailedParser) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedParser());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_False_NoParser) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_NoParser());
-}
-
-TEST(RealTimeLoaderGTest,TestInitialise_False_FailedMessageFunction) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestInitialise_False_FailedMessageFunction());
-}
-
-TEST(RealTimeLoaderGTest,TestStart) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestStart());
-}
-
-TEST(RealTimeLoaderGTest,TestStart_NoMessage) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestStart_NoMessage());
-}
-
-TEST(RealTimeLoaderGTest,TestStart_WrongMessage) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestStart_WrongMessage());
-}
-
-TEST(RealTimeLoaderGTest,TestStop) {
-    RealTimeLoaderTest test;
-    ASSERT_TRUE(test.TestStop());
-}
-#endif

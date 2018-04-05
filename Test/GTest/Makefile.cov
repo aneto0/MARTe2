@@ -38,4 +38,4 @@ LIBRARIES   += BareMetal/cov/MARTeBGTest$(LIBEXT)
 LIBRARIES   += Scheduler/cov/MARTeSGTest$(LIBEXT)
 LIBRARIES   += FileSystem/cov/MARTeFGTest$(LIBEXT)
 
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a  
