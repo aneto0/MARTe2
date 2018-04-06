@@ -24,35 +24,35 @@
 #
 #############################################################
 OBJSX=
-SPB    = BareMetal.x Scheduler.x FileSystem.x
+SPB    =
 PACKAGE=
 MAKEDEFAULTDIR=../../MakeDefaults
 
 ROOT_DIR=../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -IBareMetal/L0Types
-INCLUDES += -IBareMetal/L1Portability
-INCLUDES += -IBareMetal/L2Objects
-INCLUDES += -IBareMetal/L3Streams
-INCLUDES += -IBareMetal/L4Configuration
-INCLUDES += -IBareMetal/L4Logger
-INCLUDES += -IBareMetal/L4Messages
-INCLUDES += -IBareMetal/L5GAMs
-INCLUDES += -IBareMetal/L6App
-INCLUDES += -IFileSystem/L1Portability
-INCLUDES += -IFileSystem/L3Streams
-INCLUDES += -IFileSystem/L4LoggerService
-INCLUDES += -IFileSystem/L6App
-INCLUDES += -IScheduler/L1Portability
-INCLUDES += -IScheduler/L3Services
-INCLUDES += -IScheduler/L4LoggerService
-INCLUDES += -IScheduler/L4Messages
-INCLUDES += -IScheduler/L4StateMachine
-INCLUDES += -IScheduler/L5GAMs
+INCLUDES += -I../Core/BareMetal/L0Types
+INCLUDES += -I../Core/BareMetal/L1Portability
+INCLUDES += -I../Core/BareMetal/L2Objects
+INCLUDES += -I../Core/BareMetal/L3Streams
+INCLUDES += -I../Core/BareMetal/L4Configuration
+INCLUDES += -I../Core/BareMetal/L4Logger
+INCLUDES += -I../Core/BareMetal/L4Messages
+INCLUDES += -I../Core/BareMetal/L5GAMs
+INCLUDES += -I../Core/BareMetal/L6App
+INCLUDES += -I../Core/FileSystem/L1Portability
+INCLUDES += -I../Core/FileSystem/L3Streams
+INCLUDES += -I../Core/FileSystem/L4LoggerService
+INCLUDES += -I../Core/FileSystem/L6App
+INCLUDES += -I../Core/Scheduler/L1Portability
+INCLUDES += -I../Core/Scheduler/L3Services
+INCLUDES += -I../Core/Scheduler/L4LoggerService
+INCLUDES += -I../Core/Scheduler/L4Messages
+INCLUDES += -I../Core/Scheduler/L4StateMachine
+INCLUDES += -I../Core/Scheduler/L5GAMs
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTe2$(DLLEXT)
+		$(BUILD_DIR)/MARTeApp$(EXEEXT)
 	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

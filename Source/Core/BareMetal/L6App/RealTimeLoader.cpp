@@ -82,19 +82,19 @@ ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, Stre
 ErrorManagement::ErrorType RealTimeLoader::Start() {
     ErrorManagement::ErrorType ret;
     if (firstState.Size() > 0u) {
-        REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing state %s ", firstState);
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing state %s ", firstState.Buffer());
         ret.initialisationError = !rtApp->PrepareNextState(firstState.Buffer());
         if (ret.ErrorsCleared()) {
             ret = rtApp->StartNextStateExecution();
             if (ret.ErrorsCleared()) {
-                REPORT_ERROR_STATIC(ErrorManagement::Information, "Started application in state %s ", firstState);
+                REPORT_ERROR_STATIC(ErrorManagement::Information, "Started application in state %s ", firstState.Buffer());
             }
             else {
-                REPORT_ERROR_STATIC(ret, "Failed to StartNextStateExecution for state %s ", firstState);
+                REPORT_ERROR_STATIC(ret, "Failed to StartNextStateExecution for state %s ", firstState.Buffer());
             }
         }
         else {
-            REPORT_ERROR_STATIC(ret, "Failed to PrepareNextState for state %s ", firstState);
+            REPORT_ERROR_STATIC(ret, "Failed to PrepareNextState for state %s ", firstState.Buffer());
         }
     }
     else {

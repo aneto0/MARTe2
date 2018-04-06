@@ -54,6 +54,21 @@ TEST(RealTimeLoaderGTest,TestConfigure_False_FailedConfiguration) {
     ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());
 }
 
+TEST(RealTimeLoaderGTest,TestConfigure_False_FailedRealTimeApplicationConfiguration) {
+    RealTimeLoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_False_FailedRealTimeApplicationConfiguration());
+}
+
+TEST(RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration) {
+    RealTimeLoaderTest test;
+    ASSERT_TRUE(test.TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration());
+}
+
+TEST(RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration) {
+    RealTimeLoaderTest test;
+    ASSERT_TRUE(test.TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration());
+}
+
 TEST(RealTimeLoaderGTest,TestStart_FirstState) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStart_FirstState());

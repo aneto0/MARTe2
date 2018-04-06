@@ -29,6 +29,7 @@ ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+INCLUDES += -I.
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
@@ -58,7 +59,8 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ConfigurationExample4$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample5$(EXEEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
-        $(BUILD_DIR)/TypesExample1$(EXEEXT)
+        $(BUILD_DIR)/TypesExample1$(EXEEXT) \
+        $(BUILD_DIR)/FixedGAMExample1$(GAMEXT)
 	echo  $(OBJS)
 
 

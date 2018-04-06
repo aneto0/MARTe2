@@ -58,6 +58,11 @@ public:
     bool TestConfigure_False_FailedConfiguration();
 
     /**
+     * @brief Tests the Configure method with a bad RealTimeApplication configuration
+     */
+    bool TestConfigure_False_FailedRealTimeApplicationConfiguration();
+
+    /**
      * @brief Tests the Start method
      */
     bool TestStart_FirstState();
@@ -66,6 +71,16 @@ public:
      * @brief Tests that the Start method also work with the message
      */
     bool TestStart_Message();
+
+    /**
+     * @brief Tests the Configure method with a bad RealTimeApplication that returns False on StartNextStateExecution
+     */
+    bool TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration();
+
+    /**
+     * @brief Tests the Configure method with a bad RealTimeApplication that returns False on PrepareNextState
+     */
+    bool TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration();
 
     /**
      * @brief Tests the Stop method.

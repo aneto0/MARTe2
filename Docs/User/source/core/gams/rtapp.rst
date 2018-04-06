@@ -16,4 +16,8 @@ RealTimeApplications
 
 TODO
 
-   
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   gam   

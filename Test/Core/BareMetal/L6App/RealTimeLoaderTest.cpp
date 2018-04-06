@@ -97,6 +97,25 @@ RealTimeLoaderTestScheduler    () {
 CLASS_REGISTER(RealTimeLoaderTestScheduler, "1.0")
 
 /**
+ * Dummy scheduler for the tests that fails on StartNextStateExecution
+ */
+class RealTimeLoaderTestSchedulerFailStartNextStateExecution: public RealTimeLoaderTestScheduler {
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+RealTimeLoaderTestSchedulerFailStartNextStateExecution    () {
+
+    }
+
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution() {
+        return MARTe::ErrorManagement::FatalError;
+    }
+
+};
+CLASS_REGISTER(RealTimeLoaderTestSchedulerFailStartNextStateExecution, "1.0")
+
+/**
  * Dummy GAM
  */
 /**
@@ -230,6 +249,118 @@ static const MARTe::char8 * const config2 = "$RTApp = {"
         "    }"
         "}";
 
+//Bad RealTimeApplication configuration
+static const MARTe::char8 * const config3 = "$RTApp = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = RealTimeLoaderTestGAM"
+        "            OutputSignals = {"
+        "                Signal1 = {"
+        "                    DataSource = DDB1"
+        "                    Type = uint32"
+        "                }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = RealTimeLoaderTestGAM"
+        "            InputSignals = {"
+        "                Signal1 = {"
+        "                    DataSource = DDB1"
+        "                    Type = uint32"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        DefaultDataSource = DDB1"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA, GAMB, GAMC}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeLoaderTestScheduler"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}"
+        "+B={"
+        "   Class = RealTimeLoaderTestMessageObject1"
+        "}";
+
+//Configuration that fails on StartNextStateExecution
+static const MARTe::char8 * const config4 = "$RTApp = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAMA = {"
+        "            Class = RealTimeLoaderTestGAM"
+        "            OutputSignals = {"
+        "                Signal1 = {"
+        "                    DataSource = DDB1"
+        "                    Type = uint32"
+        "                }"
+        "            }"
+        "        }"
+        "        +GAMB = {"
+        "            Class = RealTimeLoaderTestGAM"
+        "            InputSignals = {"
+        "                Signal1 = {"
+        "                    DataSource = DDB1"
+        "                    Type = uint32"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        DefaultDataSource = DDB1"
+        "        +DDB1 = {"
+        "            Class = GAMDataSource"
+        "        }"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAMA, GAMB}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = RealTimeLoaderTestSchedulerFailStartNextStateExecution"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}"
+        "+B={"
+        "   Class = RealTimeLoaderTestMessageObject1"
+        "}";
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -255,6 +386,18 @@ bool RealTimeLoaderTest::TestConfigure_False_FailedConfiguration() {
     StreamString config = config2;
     ConfigurationDatabase params;
     params.Write("Parser", "cdb");
+    RealTimeLoader l;
+    bool ok = !l.Configure(params, config);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool RealTimeLoaderTest::TestConfigure_False_FailedRealTimeApplicationConfiguration() {
+    using namespace MARTe;
+    StreamString config = config3;
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("FirstState", "State1");
     RealTimeLoader l;
     bool ok = !l.Configure(params, config);
     ObjectRegistryDatabase::Instance()->Purge();
@@ -312,6 +455,36 @@ bool RealTimeLoaderTest::TestStart_Message() {
         ok = obj->functionCalled;
     }
 
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool RealTimeLoaderTest::TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration() {
+    using namespace MARTe;
+    StreamString config = config4;
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("FirstState", "State1");
+    RealTimeLoader l;
+    bool ok = l.Configure(params, config);
+    if (ok) {
+        ok = !l.Start();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool RealTimeLoaderTest::TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration() {
+    using namespace MARTe;
+    StreamString config = config1;
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("FirstState", "State2");
+    RealTimeLoader l;
+    bool ok = l.Configure(params, config);
+    if (ok) {
+        ok = !l.Start();
+    }
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }

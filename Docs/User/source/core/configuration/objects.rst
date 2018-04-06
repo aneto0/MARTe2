@@ -41,7 +41,7 @@ The :vcisdoxygencl:`ConfigurationDatabase` offers a read/write implementation of
 Reading values
 --------------
 
-The ``StructuredDataI::Read`` method accepts an :vcisdoxygencl:`AnyType`` and will automatically convert the value stored in the database into the target type (i.e. the type of the variable passed in the Read).
+The ``StructuredDataI::Read`` method accepts an :vcisdoxygencl:`AnyType` and will automatically convert the value stored in the database into the target type (i.e. the type of the variable passed in the Read).
 
 The return value should always be checked. It will fail if the type cannot be converted or if the variable does not exist in the database.
  
@@ -65,7 +65,7 @@ To read multi-dimensional values, the memory must be allocated beforehand. As a 
 
 .. warning::
 
-   The StructuredDataI::GetType method does not return any memory/value and shall only be used to query information about the type. 
+   The ``StructuredDataI::GetType`` method does not return any memory/value and shall only be used to query information about the type. 
 
 For matrices a similar strategy applies:
 
