@@ -26,4 +26,4 @@ TARGET=linux
 
 include Makefile.inc
 
-LIBRARIES   = -L$(MARTe2_DIR)/Build/linux/Core -lMARTe2
+LIBRARIES   = -L$(BUILD_DIR)/../Core -lMARTe2

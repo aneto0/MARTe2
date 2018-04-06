@@ -26,3 +26,4 @@ TARGET=cov
 
 include Makefile.inc
 
+LIBRARIES   = -L$(BUILD_DIR)/../Core -lMARTe2
