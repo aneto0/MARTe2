@@ -1,5 +1,5 @@
 /**
- * @file AnyObject.cpp
+ * @file AnyObjectM.cpp
  * @brief Header file for class AnyType
  * @date 8 Apr 2018
  * @author Filippo Sartori
@@ -21,44 +21,36 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "AnyObject.h"
-#include "AnyObjectT.h"
 #include "AnyObjectM.h"
-
-#define CHECKANDMAKE(size)									\
-		if (sizeToCopy <= size){							\
-			ReferenceT<AnyObjectT<size>> ao(buildNow);		\
-			if (ao.IsValid()){								\
-				ao->Setup(sizeToCopy,pointer,descriptor);	\
-				reference = ao;								\
-			}												\
-		} else												\
+#include "GlobalObjectsDatabase.h"
 
 
 namespace MARTe{
 
-Reference AnyObject::Clone(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor){
-	Reference reference;
+AnyObjectM::AnyObjectM():vd(InvalidType(0),""){
+	data = NULL;
+};
 
-	CHECKANDMAKE(4)
-	CHECKANDMAKE(8)
-	CHECKANDMAKE(16)
-	CHECKANDMAKE(24)
-	CHECKANDMAKE(32)
-	CHECKANDMAKE(40)
-	CHECKANDMAKE(48)
-	CHECKANDMAKE(56)
-	CHECKANDMAKE(64)
-	{
-		ReferenceT<AnyObjectM> ao(buildNow);
-		if (ao.IsValid()){
-			ao->Setup(sizeToCopy,pointer,descriptor);
-			reference = ao;
-		}
-	}
+AnyObjectM::~AnyObjectM(){
+	GlobalObjectsDatabase::Instance().GetStandardHeap().Free(data);
+};
 
-	return reference;
+void AnyObjectM::ToAnyType(AnyType &at){
+	at = AnyType(vd,data);
 }
+
+void AnyObjectM::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor){
+	vd = descriptor;
+	data = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(sizeToCopy);
+	if (data == NULL){
+		REPORT_ERROR(ErrorManagement::OutOfMemory,"Malloc failed");
+		vd = VariableDescriptor();
+	} else {
+		MemoryOperationsHelper::Copy(data,pointer,sizeToCopy);
+	}
+}
+
+CLASS_REGISTER(AnyObjectM,"1.0")
 
 
 

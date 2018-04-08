@@ -46,6 +46,8 @@ OBJSX=  TypeConversionManager.x \
 		ReferenceContainerFilterObjectName.x \
 		MemoryPage.x  \
 		MemoryPageObject.x  \
+		AnyObject.x \
+		AnyObjectM.x \
 		ProgressiveTypeCreator.x
 
 

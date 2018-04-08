@@ -361,9 +361,7 @@ ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 stor
     if (ok){
         const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
         ok = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-    	if (!ok){
-    		REPORT_ERROR(ok,"GetSize error");
-    	}
+    	CONDITIONAL_REPORT_ERROR(ok,"GetSize error");
     }
 
     if (ok){
@@ -654,9 +652,9 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
-	if (!ret){
-		REPORT_ERROR(ret,"pfstc.Start failed");
-	}
+//	if (!ret){
+		CONDITIONAL_REPORT_ERROR(ret,"pfstc.Start failed");
+//	}
 
 	//int32 counter = 0;	//TODO
 	if (ret){
@@ -679,6 +677,8 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 //kk = counter++;//TODO
 				sprintf(buffer,"%lli",kk);
 				ret = pfstc.AddElement(buffer);
+				COMPOSITE_REPORT_ERROR(ret,"pfstc.AddElement(",buffer,")");
+/*
 				if (!ret){
 					DynamicCString errMsg;
 					errMsg.Append("pfstc.AddElement(");
@@ -686,15 +686,16 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 					errMsg.Append(")");
 					REPORT_ERROR(ret,errMsg);
 				}
+*/
 			}
 			targetC[j].InitVector(reinterpret_cast<T *>(&targetA[j]),actualSize2);
 //printf("S@%p -> (%p %i)\n",&targetC[j],&targetA[j],actualSize2);
 
 			if (ret){
 				ret = pfstc.EndVector();
-				if (!ret){
-					REPORT_ERROR(ret,"pfstc.EndVector failed");
-				}
+//				if (!ret){
+					CONDITIONAL_REPORT_ERROR(ret,"pfstc.EndVector failed");
+//				}
 			}
 		}
 	}
@@ -702,9 +703,9 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 	Reference aoi;
 	if (ret){
 		ret = pfstc.End();
-		if (!ret){
-			REPORT_ERROR(ret,"pfstc.End failed");
-		}
+//		if (!ret){
+			CONDITIONAL_REPORT_ERROR(ret,"pfstc.End failed");
+//		}
 	}
 
 	if (ret){
@@ -986,7 +987,6 @@ void Test(){
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
-
     int32 temp;
 	AnyType xx;
 	Reference zz;
@@ -999,7 +999,7 @@ void Test(){
 	PrintType(xx);printf("\n");
 
 	ReferenceT<AnyObjectT<9>> ao8(buildNow);
-	ao8->Setup(SignedInteger32Bit,"",&temp,sizeof(temp));
+	ao8->Setup(sizeof(temp),&temp,VariableDescriptor(&temp));
 
 	xx = ao8;
 	PrintType(xx);printf("\n");

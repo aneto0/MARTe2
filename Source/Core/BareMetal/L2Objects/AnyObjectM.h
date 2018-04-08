@@ -1,6 +1,6 @@
 /**
- * @file AnyObjectT.h
- * @brief Header file for class AnyObjectT
+ * @file AnyObjectM.h
+ * @brief Header file for class AnyObjectM
  * @date 30/10/2017
  * @author Filippo Sartori
  *
@@ -16,14 +16,14 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AnyObjectT
+ * @details This header file contains the declaration of the class AnyObjectM
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
 
-#ifndef ANYOBJECT_T_H_
-#define ANYOBJECT_T_H_
+#ifndef ANYOBJECT_M_H_
+#define ANYOBJECT_M_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -46,9 +46,9 @@ namespace MARTe {
  * @brief An Object derivative either referring to or containing a generic variable described by an AnyType .
  * @details This class allows to associate a name and a reference to an AnyType.
  * It may holds and manage a memory space with a copy of the data of a generic variable or is a simply a reference to it
+ * The memory space is malloced
  */
-template <unsigned int objectSize>
-class AnyObjectT: public Object {
+class AnyObjectM: public Object {
 
 public:
 
@@ -57,13 +57,13 @@ public:
     /**
      * @brief Default constructor. NOOP.
      */
-	AnyObjectT();
+	AnyObjectM();
 
     /**
      * @brief Default destructor.
      * @details Calls CleanUp()
      */
-    virtual ~AnyObjectT();
+    virtual ~AnyObjectM();
 
     /**
      * @brief Allows to setup an Anytype of any type....
@@ -74,7 +74,7 @@ public:
 	void Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor);
 
     /*
-	 * @brief The main interface provided by an AnyObjectT is the ability to provide its data via an AnyType.
+	 * @brief The main interface provided by an AnyObjectM is the ability to provide its data via an AnyType.
 	 * @return a valid AnyType that describes the content of this object and allows read only access to its content
 	 */
     virtual void ToAnyType(AnyType &at);
@@ -89,7 +89,7 @@ private:
     /**
      *
      */
-    char8 data[objectSize];
+    void *data;
 };
 
 
@@ -98,31 +98,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template <unsigned int objectSize>
-AnyObjectT<objectSize>::AnyObjectT():vd(InvalidType(0),""){
-};
-
-template <unsigned int objectSize>
-AnyObjectT<objectSize>::~AnyObjectT(){
-
-};
-
-template <unsigned int objectSize>
-void AnyObjectT<objectSize>::ToAnyType(AnyType &at){
-	at = AnyType(vd,&data);
-}
-
-template <unsigned int objectSize>
-void AnyObjectT<objectSize>::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor){
-	vd = descriptor;
-	if (sizeToCopy > objectSize){
-		sizeToCopy = objectSize;
-	}
-	MemoryOperationsHelper::Copy(data,pointer,sizeToCopy);
-}
-
-
-TEMPLATE_CLASS_REGISTER(AnyObjectT<objectSize>,"1.0",unsigned int objectSize)
 
 
 }
