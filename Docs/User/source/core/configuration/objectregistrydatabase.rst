@@ -84,6 +84,40 @@ This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` ``Find`` 
    
 Would allow to Find ``C``, ``C.E``, ``D`` and ``D.F``, using ``B`` as the root domain (see the example below).
 
+   
+Reading C structures
+--------------------
+
+If a ``C struct`` has been :doc:`registered </core/objects/introspection>` in the ClassRegistryDatabase it is possible to directly map the contents of a configuration node to the registered structure (see example below).
+
+To read/write a registered structure an AnyType which describes the registered type must be created:
+
+.. code-block:: C++
+   
+   struct AStruct {
+      float32 f1;
+      float32 f2;
+   };
+   ///Register the struct with the required macros.
+   AStruct aStruct1;
+   AStruct aStruct2;
+   ClassRegistryItem * registeredStructClassProperties = ClassRegistryDatabase::Instance()->Find("AStruct");
+   ...
+   ClassUID registeredStructUID = registeredStructClassProperties->GetUniqueIdentifier();
+   TypeDescriptor registeredStructTypeDescriptor(false, registeredStructUID);
+   AnyType registeredStructAnyType1 = AnyType(registeredStructTypeDescriptor, 0u, &aStruct1);
+   AnyType registeredStructAnyType2 = AnyType(registeredStructTypeDescriptor, 0u, &aStruct2);
+   ...
+   data.Read("AStruct1", registeredStructAnyType1);
+   data.Read("AStruct2", registeredStructAnyType2);
+   ...
+   if (aStruct1.f1 == aStruct2.f1) {
+   ...  
+
+.. note::
+
+   Only the types and structure of the configuration tree must match with the types and structure of the ``C struct``, i.e. the names are ignored. 
+
 Examples
 --------
 
@@ -95,7 +129,7 @@ Note that Objects can be nested inside other Objects (provided that the containe
    :language: c++   
    :caption: Data driven application example (ConfigurationExample4)
    :linenos:  
-   :emphasize-lines: 193,295-296,307-308,312-313,330
+   :emphasize-lines: 195,297-299,309-310,314-315,332
    
 This example highlights how the Find method can be used to search for Objects in the ObjectRegistryDatabase. Note how the reference **G.H** is found with respect to **B**.    
 
@@ -104,5 +138,13 @@ This example highlights how the Find method can be used to search for Objects in
    :caption: ObjectRegistryDatabase Find example (ConfigurationExample5)
    :linenos:  
    :emphasize-lines: 143
+   
+This example shows how to read and write directly from a registered ``C struct``:
+
+.. literalinclude:: /_static/examples/Core/ConfigurationExample6.cpp
+   :language: c++   
+   :caption: Reading registered structures (ConfigurationExample6)
+   :linenos:  
+   :emphasize-lines: 73,80,149,152,280-281
    
 Instructions on how to compile and execute the example can be found :doc:`here </examples>`.

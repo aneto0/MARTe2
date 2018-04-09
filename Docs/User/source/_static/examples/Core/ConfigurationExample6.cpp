@@ -67,7 +67,8 @@ DECLARE_CLASS_MEMBER(Gain, gain1, float32, "", "");
 DECLARE_CLASS_MEMBER(Gain, gain2, float32, "", "");
 DECLARE_CLASS_MEMBER(Gain, gain3, float32, "[6]", "");
 
-static const MARTe::IntrospectionEntry* GainStructEntries[] = { &Gain_gain1_introspectionEntry, &Gain_gain2_introspectionEntry, &Gain_gain3_introspectionEntry, 0 };
+static const MARTe::IntrospectionEntry* GainStructEntries[] = { &Gain_gain1_introspectionEntry,
+        &Gain_gain2_introspectionEntry, &Gain_gain3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(Gain, GainStructEntries)
 
@@ -250,6 +251,39 @@ int main(int argc, char **argv) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully loaded the configuration file");
     }
 
+    //Write a structure to a ConfigurationDatabase
+    ClassRegistryItem *gainsStructClassRegistryItem = NULL_PTR(ClassRegistryItem *);
+    if (ok) {
+        gainsStructClassRegistryItem = ClassRegistryDatabase::Instance()->Find("Gains");
+    }
+    AnyType gainsAnyType;
+    const ClassProperties *gainsStructClassProperties = NULL_PTR(ClassProperties *);
+    if (ok) {
+        gainsStructClassProperties = gainsStructClassRegistryItem->GetClassProperties();
+    }
+    if (ok) {
+        ConfigurationDatabase cdb;
+        Gains gainsExample;
+        gainsExample.lowGains.gain1 = 1;
+        gainsExample.lowGains.gain2 = 2;
+        gainsExample.lowGains.gain3[0] = -1;
+        gainsExample.lowGains.gain3[5] = 1;
+        gainsExample.highGains.gain1 = -1;
+        gainsExample.highGains.gain2 = -2;
+        gainsExample.highGains.gain3[0] = 1;
+        gainsExample.highGains.gain3[5] = -1;
+
+        ClassUID gainsStructClassUID = gainsStructClassProperties->GetUniqueIdentifier();
+        //Encapsulate the AnyType
+
+        TypeDescriptor gainsTypeDescriptor(false, gainsStructClassUID);
+        gainsAnyType = AnyType(gainsTypeDescriptor, 0u, &gainsExample);
+        ok = cdb.Write("DumpStruct", gainsAnyType);
+        if (ok) {
+            cdb.MoveToRoot();
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Wrote structure %!", cdb);
+        }
+    }
     return 0;
 }
 
