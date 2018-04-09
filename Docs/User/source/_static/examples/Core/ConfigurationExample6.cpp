@@ -73,7 +73,8 @@ DECLARE_STRUCT_INTROSPECTION(Gain, GainStructEntries)
 
 DECLARE_CLASS_MEMBER(Gains, lowGains, Gain, "", "");
 DECLARE_CLASS_MEMBER(Gains, highGains, Gain, "", "");
-static const MARTe::IntrospectionEntry* GainsStructEntries[] = { &Gains_lowGains_introspectionEntry, &Gains_highGains_introspectionEntry, 0 };
+static const MARTe::IntrospectionEntry* GainsStructEntries[] = { &Gains_lowGains_introspectionEntry,
+        &Gains_highGains_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(Gains, GainsStructEntries)
 

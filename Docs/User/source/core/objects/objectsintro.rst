@@ -24,4 +24,5 @@ Objects and References
    objects
    references
    referencecontainers
+   introspection
    

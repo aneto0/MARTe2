@@ -47,6 +47,7 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \
         $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \
+        $(BUILD_DIR)/ObjectsExample3$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample1$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample2$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
