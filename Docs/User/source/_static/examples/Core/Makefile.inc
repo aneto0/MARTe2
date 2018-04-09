@@ -62,7 +62,8 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/TypesExample1$(EXEEXT) \
-        $(BUILD_DIR)/FixedGAMExample1$(GAMEXT)
+        $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
+        $(BUILD_DIR)/ModelGAMExample1$(GAMEXT)
 	echo  $(OBJS)
 
 

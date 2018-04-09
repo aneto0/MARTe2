@@ -40,9 +40,9 @@
 /*---------------------------------------------------------------------------*/
 
 FixedGAMExample1::FixedGAMExample1() {
-    /*gain = 0u;
+    gain = 0u;
     inputSignal = NULL_PTR(MARTe::uint32);
-    outputSignal = NULL_PTR(MARTe::uint32);*/
+    outputSignal = NULL_PTR(MARTe::uint32);
 }
 
 FixedGAMExample1::~FixedGAMExample1() {

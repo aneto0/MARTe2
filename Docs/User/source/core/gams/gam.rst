@@ -94,6 +94,7 @@ NumberOfDimensions   The number of dimensions (0 if scalar, 1 if vector, 2 if ma
 Samples              The number of samples to read from a DataSource.  This number defines the number of samples that the DataSource shall acquire for each control cycle. Note that each sample may contain an array. Indeed, the amount of memory required to hold a signal of type T, with M samples and N elements is: sizeof(T) x M x N. Typical use cases: i) ADC: M samples, 1 element; ii) Image: 1 sample, N elements; iii) Video: M samples, N elements.   
 Ranges               In the case of a vector read/write only a subset. The format is a matrix, indexed to zero, of the ranges that are to be read (e.g. ``{{0, 1}, {3, 5}}`` would read elements 0, 1, 3, 4 and 5 of the array).
 Alias                The name of the signal in the DataSource (which can be different from the name of the signal in the GAM).
+Defaults             The default value to be used in the first control cycle (if needed, i.e. if it depends from a value of the previous cycle).
 ==================== =======  
    
    
