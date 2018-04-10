@@ -34,7 +34,6 @@
 #include "ClassRegistryDatabase.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorLoggerExample.h"
-#include "Matrix.h"
 #include "Object.h"
 #include "Reference.h"
 #include "ReferenceT.h"

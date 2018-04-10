@@ -1,7 +1,7 @@
 /**
- * @file ModelGAMExample1.h
- * @brief Header file for class ModelGAMExample1
- * @date 09/04/2018
+ * @file ChildGAMGroupExample1.h
+ * @brief Header file for class ChildGAMGroupExample1
+ * @date 06/04/2018
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ModelGAMExample1
+ * @details This header file contains the declaration of the class ChildGAMGroupExample1
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CORE_MODELGAMEXAMPLE1_H_
-#define CORE_MODELGAMEXAMPLE1_H_
+#ifndef EXAMPLES_CORE_CHILDGAMGROUPEXAMPLE1_H_
+#define EXAMPLES_CORE_CHILDGAMGROUPEXAMPLE1_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,67 +31,70 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GAM.h"
-#include "Introspection.h"
+#include "GAMGroupSharedInfoExample1.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * Define the structured signal produced by this GAM
- */
-struct ModelGAMExampleStructInner1 {
-    MARTe::float32 f1;
-    MARTe::float32 f2;
-    MARTe::float32 f3[6];
-};
-struct ModelGAMExampleStructSignal {
-    MARTe::uint32 u1;
-    ModelGAMExampleStructInner1 s1;
-    ModelGAMExampleStructInner1 s2;
-};
-
-/**
- * @brief An example of a GAM which has a structured output signal (the previous state is read as an input signal).
+ * @brief An example of a GAM which requires information that is made available by a parent GAMGroup.
+ *
+ * @details This GAM multiplies the input signal the matrix shared by the GAMGroup (see SetContext).
  *
  * +GAMExample1 = {
- *     Class = ModelGAMExample1
+ *     Class = ChildGAMGroupExample1
  *     InputSignals = {
  *         Signal1 = {
  *             DataSource = "DDB1"
- *             Type = ModelGAMExampleStructSignal
+ *             Type = uint32
  *         }
  *     }
  *     OutputSignals = {
  *         Signal1 = {
  *             DataSource = "DDB1"
- *             Type = ModelGAMExampleStructSignal
+ *             Type = uint32
  *         }
  *     }
  * }
  */
-class ModelGAMExample1 : public MARTe::GAM {
+class ChildGAMGroupExample1 : public MARTe::GAM {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Constructor. NOOP.
      */
-    ModelGAMExample1();
+    ChildGAMGroupExample1();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~ModelGAMExample1();
+    virtual ~ChildGAMGroupExample1();
+
+    /**
+     * @brief See GAM::SetContext
+     * @return true if the parent MARTe::ReferenceT<const GAMGroupSharedInfoExample1> is Valid and if the matrix dimensions are compatible with the input/output signal properties.
+     */
+    virtual bool SetContext(ConstReference context);
 
     /**
      * @brief Verifies correctness of the GAM configuration.
-     * @return true if the Input and Output signal characteristics match with the ModelGAMExampleStructSignal.
+     * @details Checks that the number of input signals is equal to the number of output signals is equal to one and that the same type is used.
+     * @return true if the pre-conditions are met.
+     * @pre
+     *   SetConfiguredDatabase() &&
+     *   GetNumberOfInputSignals() == GetNumberOfOutputSignals() == 1 &&
+     *   GetSignalType(InputSignals, 0) == GetSignalType(OutputSignals, 0) == uint32 &&
+     *   GetSignalNumberOfDimensions(InputSignals, 0) == GetSignalNumberOfDimensions(OutputSignals, 0) == 0 &&
+     *   GetSignalNumberOfSamples(InputSignals, 0) == GetSignalNumberOfSamples(OutputSignals, 0) == 1 &&
+     *   GetSignalNumberOfElements(InputSignals, 0) == GetSignalNumberOfElements(OutputSignals, 0) == 1
      */
     virtual bool Setup();
 
     /**
-     * @brief Generates some random number based on the previous state values.
+     * @brief Multiplies the input signal by the Gain.
      * @return true.
      */
     virtual bool Execute();
@@ -99,29 +102,29 @@ public:
 private:
 
     /**
-     * @brief Checks if the signal is configured as expected.
-     * @param[in] signalDirection the signal direction to check.
-     * @param[in] introEntry the introspectable member to be queried.
-     * @param[in] signalIdx the index of the signal mapping to the member.
-     * @return If the member and the signal properties match.
-     */
-    bool CheckSignal(MARTe::SignalDirection signalDirection, MARTe::IntrospectionEntry introEntry, MARTe::uint32 signalIdx);
-
-    /**
      * The input signal
      */
-    ModelGAMExampleStructSignal *inputSignal;
+    MARTe::Matrix<MARTe::uint32> *inputSignal;
 
     /**
      * The output signal
      */
-    ModelGAMExampleStructSignal *outputSignal;
+    MARTe::Matrix<MARTe::uint32> *outputSignal;
+
+    /**
+     * True if the context has been set
+     */
+    bool contextSet;
+
+    /**
+     * The context containing the Matrix to be shared.
+     */
+    MARTe::ReferenceT<const GAMGroupSharedInfoExample1> matrixModelContext;
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* CORE_MODELGAMEXAMPLE1_H_ */
+#endif /* EXAMPLES_CORE_CHILDGAMGROUPEXAMPLE1_H_ */
+

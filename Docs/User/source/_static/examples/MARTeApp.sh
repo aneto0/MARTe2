@@ -81,10 +81,18 @@ MARTeAPP=$MARTe2_DIR/Build/linux/App/MARTeApp.ex
 #Start with cgdb or with strace
 if [ "$DEBUG" = "cgdb" ]
 then
-    cgdb --args $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+	if [ -z ${STATE+x} ]; then
+        cgdb --args $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+	else
+        cgdb --args $MARTeAPP -l $LOADER -f $FILE -s $STATE
+	fi
 elif [ "$DEBUG" = "strace" ]
 then
-    strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+	if [ -z ${STATE+x} ]; then
+        strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+	else
+        strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -s $STATE
+	fi
 else
 	if [ -z ${STATE+x} ]; then
 		$MARTeAPP -l $LOADER -f $FILE -m $MESSAGE

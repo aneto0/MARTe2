@@ -1,6 +1,6 @@
 /**
- * @file FixedGAMExample1.cpp
- * @brief Source file for class FixedGAMExample1
+ * @file ChildGAMGroupExample1.cpp
+ * @brief Source file for class ChildGAMGroupExample1
  * @date 06/04/2018
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class FixedGAMExample1 (public, protected, and private). Be aware that some 
+ * the class ChildGAMGroupExample1 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "FixedGAMExample1.h"
+#include "ChildGAMGroupExample1.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,35 +39,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-FixedGAMExample1::FixedGAMExample1() {
-    gain = 0u;
-    inputSignal = NULL_PTR(MARTe::uint32 *);
-    outputSignal = NULL_PTR(MARTe::uint32 *);
+ChildGAMGroupExample1::ChildGAMGroupExample1() {
+    contextSet = false;
+    inputSignal = NULL_PTR(MARTe::Matrix<MARTe::uint32> *);
+    outputSignal = NULL_PTR(MARTe::Matrix<MARTe::uint32> *);
 }
 
-FixedGAMExample1::~FixedGAMExample1() {
-
+ChildGAMGroupExample1::~ChildGAMGroupExample1() {
+    if (inputSignal != NULL_PTR(MARTe::Matrix<MARTe::uint32> *)) {
+        delete inputSignal;
+    }
+    if (outputSignal != NULL_PTR(MARTe::Matrix<MARTe::uint32> *)) {
+        delete outputSignal;
+    }
 }
 
-bool FixedGAMExample1::Initialise(MARTe::StructuredDataI & data) {
-    using namespace MARTe;
-    bool ok = GAM::Initialise(data);
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "Could not Initialise the GAM");
-    }
-    if (ok) {
-        ok = data.Read("Gain", gain);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "The parameter Gain shall be set");
-        }
-    }
-    if (ok) {
-        REPORT_ERROR(ErrorManagement::Information, "Parameter Gain set to %d", gain);
-    }
-    return ok;
-}
-
-bool FixedGAMExample1::Setup() {
+bool ChildGAMGroupExample1::Setup() {
     using namespace MARTe;
     uint32 numberOfInputSignals = GetNumberOfInputSignals();
     uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
@@ -125,44 +112,58 @@ bool FixedGAMExample1::Setup() {
             ok = (numberOfInputDimensions == numberOfOutputDimensions);
         }
         if (ok) {
-            ok = (numberOfInputDimensions == 0u);
+            ok = (numberOfInputDimensions == 1u);
         }
         if (!ok) {
             REPORT_ERROR(ErrorManagement::ParametersError,
-                         "The number of input and output signals dimensions shall be equal to 0. numberOfInputDimensions = %d numberOfOutputDimensions = %d",
+                         "The number of input and output signals dimensions shall be equal to 1. numberOfInputDimensions = %d numberOfOutputDimensions = %d",
                          numberOfInputDimensions, numberOfOutputDimensions);
         }
-    }
-    if (ok) {
-        uint32 numberOfInputElements = 0u;
-        uint32 numberOfOutputElements = 0u;
-        ok = GetSignalNumberOfElements(InputSignals, 0u, numberOfInputElements);
-        if (ok) {
-            ok = GetSignalNumberOfElements(OutputSignals, 0u, numberOfOutputElements);
-        }
-        if (ok) {
-            ok = (numberOfInputElements == numberOfOutputElements);
-        }
-        if (ok) {
-            ok = (numberOfInputElements == 1u);
-        }
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::ParametersError,
-                         "The number of input and output signals elements shall be equal to 1. numberOfInputElements = %d numberOfOutputElements = %d",
-                         numberOfInputElements, numberOfOutputElements);
-        }
-    }
-    if (ok) {
-        inputSignal = reinterpret_cast<uint32 *>(GetInputSignalMemory(0u));
-        outputSignal = reinterpret_cast<uint32 *>(GetOutputSignalMemory(0u));
     }
     return ok;
 
 }
 
-bool FixedGAMExample1::Execute() {
-    *outputSignal = gain * *inputSignal;
-    return true;
+bool ChildGAMGroupExample1::SetContext(ConstReference context) {
+    using namespace MARTe;
+
+    matrixModelContext = context;
+    contextSet = context.IsValid();
+    bool ok = contextSet;
+    //Check that the matrix dimensions are valid.
+    uint32 numberOfInputElements = 0u;
+    uint32 numberOfOutputElements = 0u;
+    if (ok) {
+        ok = GetSignalNumberOfElements(InputSignals, 0u, numberOfInputElements);
+        if (ok) {
+            ok = GetSignalNumberOfElements(OutputSignals, 0u, numberOfOutputElements);
+        }
+        if (ok) {
+            ok = (numberOfInputElements == matrixModelContext->matrixModel->GetNumberOfRows());
+        }
+        if (ok) {
+            ok = (numberOfInputElements == numberOfOutputElements);
+        }
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError,
+            "The number of input and output signals elements shall be equal. numberOfInputElements = %d numberOfOutputElements = %d",
+            numberOfInputElements, numberOfOutputElements);
+        }
+    }
+    if (ok) {
+        inputSignal = new Matrix<uint32>(reinterpret_cast<uint32 *>(GetInputSignalMemory(0u)), numberOfInputElements, 1);
+        outputSignal = new Matrix<uint32>(reinterpret_cast<uint32 *>(GetOutputSignalMemory(0u)), numberOfOutputElements, 1);
+    }
+
+    return contextSet;
 }
 
-CLASS_REGISTER(FixedGAMExample1, "")
+bool ChildGAMGroupExample1::Execute() {
+    using namespace MARTe;
+    if (contextSet) {
+        matrixModelContext->matrixModel->Product(*inputSignal, *outputSignal);
+    }
+    return contextSet;
+}
+
+CLASS_REGISTER(ChildGAMGroupExample1, "")

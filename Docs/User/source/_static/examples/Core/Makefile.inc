@@ -22,7 +22,8 @@
 #
 #############################################################
 
-OBJSX=ErrorLoggerExample.x
+OBJSX=ErrorLoggerExample.x \
+    GAMGroupSharedInfoExample1.x
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
@@ -45,25 +46,29 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \
-        $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \
-        $(BUILD_DIR)/ObjectsExample3$(EXEEXT) \
-        $(BUILD_DIR)/ReferencesExample1$(EXEEXT) \
-        $(BUILD_DIR)/ReferencesExample2$(EXEEXT) \
-        $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
-        $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
-        $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
-	$(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/ChildGAMGroupExample1$(GAMEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample2$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample3$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample4$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample5$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
-        $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
-        $(BUILD_DIR)/TypesExample1$(EXEEXT) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
-        $(BUILD_DIR)/ModelGAMExample1$(GAMEXT)
+        $(BUILD_DIR)/GAMGroupExample1$(GAMEXT) \
+        $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
+        $(BUILD_DIR)/ModelGAMExample1$(GAMEXT) \
+        $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \
+        $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \
+        $(BUILD_DIR)/ObjectsExample3$(EXEEXT) \
+        $(BUILD_DIR)/ParentGAMGroupExample1$(GAMEXT) \
+        $(BUILD_DIR)/ReferencesExample1$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample2$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
+	$(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/TypesExample1$(EXEEXT) \
+        $(BUILD_DIR)/VariableGAMExample1$(GAMEXT)
 	echo  $(OBJS)
 
 

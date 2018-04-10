@@ -39,12 +39,12 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 /**
  * Reference to a constant Object.
  */
-#define ConstReference ReferenceT<const Object>
+#define ConstReference MARTe::ReferenceT<const Object>
+
+namespace MARTe {
 
 /**
  * @brief Shared pointer implementation.
