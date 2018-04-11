@@ -79,7 +79,6 @@ bool ModelGAMExample1::CheckSignal(MARTe::SignalDirection signalDirection, MARTe
             const char8 * const introMemberTypeStr = TypeDescriptor::GetTypeNameFromTypeDescriptor(introMemberType);
             REPORT_ERROR(ErrorManagement::ParametersError, "Output type signal mismatch = %s != %s for signal %s", memberTypeTypeStr, introMemberTypeStr,
                          signalName.Buffer());
-
         }
     }
     if (ok) {

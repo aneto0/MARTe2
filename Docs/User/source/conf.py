@@ -40,9 +40,9 @@ release = u'v0.15.2'
 # ones.
 extensions = [
     'sphinx.ext.todo',
-    'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'sphinx.ext.extlinks', 
+    'rst2pdf.pdfbuilder',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -136,6 +136,8 @@ latex_documents = [
      u'F4E', 'manual'),
 ]
 
+# PDF properties
+pdf_documents = [('index', u'rst2pdf', u'MARTe2 documentation', u'F4E'),]
 
 # -- Options for manual page output ------------------------------------------
 
