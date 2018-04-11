@@ -55,7 +55,9 @@ enum SignalDirection {
  * @details The main role of components that implement this interface is to
  * offer a communication channel between signals of GAM components and signals
  * that typically exist in hardware components.
+ *
  * The minimum configuration structure is (more information about the syntax in RealTimeApplicationConfigurationBuilder):
+ * <pre>
  * +ThisDataSourceIObjectName = {"
  *    Class = ClassThatImplementsDataSourceI"
  *    Signals = {
@@ -66,6 +68,7 @@ enum SignalDirection {
  *       }
  *    }
  * }
+ * </pre>
  */
 class DLL_API DataSourceI: public ReferenceContainer, public StatefulI {
 
@@ -581,12 +584,14 @@ public:
     /**
      * @brief Gets the name of the broker for the signal information available in the input \a data.
      * @param[in] data the information about the signal. The structure is:
+     * <pre>
      *   QualifiedName = "Name of the signal"
      *   NumberOfDimensions = N
      *   NumberOfElements = N
      *   Samples = N
      *   Frequency = N
      *   Trigger = N
+     * </pre>
      * @param[in] direction the signal direction.
      * @return the name of the BrokerI class that will handle the copy of this signal from the DataSourceI memory to the GAM memory.
      */

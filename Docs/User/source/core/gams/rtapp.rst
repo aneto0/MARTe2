@@ -20,4 +20,5 @@ TODO
    :maxdepth: 1
    :caption: Contents:
 
-   gam   
+   gam
+   datasource
