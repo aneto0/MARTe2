@@ -16,6 +16,8 @@ DataSource & Brokers
 
 Components inheriting from :vcisdoxygencl:`DataSourceI` provide a real-time interface for the interchange of input and output signals with the hardware.
 
+.. image:: DataSource-1.png
+
 Configuration
 -------------
 
@@ -32,7 +34,7 @@ A DataSource is initialised just like any other :doc:`MARTe Object </core/config
 
 The properties related to the DataSource signals are available when the ``SetConfiguredDatabase`` method is called. 
 
-At this stage any of the signal related methods described in the :vcisdoxygencl:`DataSourceI` API can be used to query the signal properties.
+At this stage any of the signal related methods, described in the :vcisdoxygencl:`DataSourceI` API, can be used to query the available signal properties.
 
 .. code-block:: c++
 
@@ -52,7 +54,7 @@ At this stage any of the signal related methods described in the :vcisdoxygencl:
 
 As in the case of the :doc:`GAMs </core/gams/gam>`, the DataSources can be conceptually divided in two sets: one where the signals (number, type and dimensions) are fixed by design (e.g. :vcisdoxygenmccl:`LinuxTimer`); and another where the behaviour of the hardware is adapted to the signal characteristics of a given real-time application (e.g. :vcisdoxygenmccl:`FileReader`). 
 
-DataSourceI can also use :doc:`registered structured types </core/objects/introspection>` as input/output signals (the strategy is identical to the one shown for the :doc:`GAMs </core/gams/gam>`). 
+The DataSourceI can also use :doc:`registered structured types </core/objects/introspection>` as input/output signals (the strategy is identical to the one described for the :doc:`GAMs </core/gams/gam>`). 
 
 Signal properties
 ~~~~~~~~~~~~~~~~~
@@ -63,10 +65,8 @@ The signal name (in the context of the DataSource) is the name of the node. Othe
 Property             Meaning
 ==================== =======
 Type                 The signal type as any of the supported :doc:`/core/types/types` or a structure type.
-DataSource           The name of the DataSource from where the signal will read/written from/to.
 NumberOfElements     The number of elements (1 if the signal is a scalar).
 NumberOfDimensions   The number of dimensions (0 if scalar, 1 if vector, 2 if matrix).
-Samples              The number of samples to read.  This number defines the number of samples that the DataSource shall acquire for each control cycle. Note that each sample may contain an array. Indeed, the amount of memory required to hold a signal of type T, with M samples and N elements is: sizeof(T) x M x N. Typical use cases: i) ADC: M samples, 1 element; ii) Image: 1 sample, N elements; iii) Video: M samples, N elements.   
 ==================== =======  
    
 Brokers
@@ -107,7 +107,7 @@ Conversely, after the GAM finishes its execution, all the Brokers that read data
 Returning Input and Output Brokers
 ----------------------------------
  
-The DataSourceI will have to instantiate and return the appropriate brokers, depending on the signal type. The name of the broker returned in the ``GetBrokerName`` shall be consistent with the class type of the Brokers that are added in the ``GetInputBrokers`` and ``GetOutputBrokers``.
+The DataSourceI will have to instantiate and return the appropriate brokers, depending on the signal type. The name of the broker returned in the ``GetBrokerName`` method shall be consistent with the class type of the Brokers that are added in the ``GetInputBrokers`` and ``GetOutputBrokers``.
 
 .. code-block:: c++
    
@@ -133,7 +133,7 @@ The DataSourceI will have to instantiate and return the appropriate brokers, dep
                ok = inputBrokers.Insert(broker);
            ...
 
-A Broker may be specificly developed for a given DataSource (e.g. because the Broker needs to access an hardware dependent function) or one of the MARTe standard brokers may be used:
+A Broker may be specifically developed for a given DataSource (e.g. because the Broker needs to access an hardware dependent function) or one of the MARTe standard brokers may be used:
 
 ================================================== ===========
 Name Description
@@ -149,7 +149,7 @@ Name Description
 
 All the functions which are related to data transformation should be implemented in a Broker. This allows to reuse the same Broker class in different DataSource implementations (e.g. the :vcisdoxygencl:`MemoryMapInperpolatedInputBroker` can be reused on any DataSourceI which requires data interpolation).
 
-Note that the interpolation and the time window brokers are reused in different hardware interfaces.  
+In the example below, the interpolation and the time window brokers are reused in different hardware interfaces.  
 
 .. figure:: Brokers-2.png
    
@@ -166,9 +166,9 @@ Note that the interpolation and the time window brokers are reused in different 
 Broker synchronisation
 ----------------------
 
-All the Brokers implement the :vcisdoxygencl:`BrokerI` and are thus scheduled by the application scheduler.
+All the Brokers implement the :vcisdoxygencl:`ExecutableI` interface and are thus scheduled by the application scheduler.
 
-As discussed above, their main function is to copy the data from/to the GAM memory, but they can also used as a synchronisation point, blocking the execution until new data is available or by triggering the output when data is written.
+As discussed above, their main function is to copy the data from/to the GAM memory, but they can also be used as a synchronisation point: either by blocking the execution until new data is available; or by triggering the output when data is written.
 
 Examples of synchronisation brokers are the :vcisdoxygencl:`MemoryMapSynchronisedInputBroker` and the :vcisdoxygencl:`MemoryMapSynchronisedOutputBroker`.
 
@@ -181,7 +181,7 @@ Examples of synchronisation brokers are the :vcisdoxygencl:`MemoryMapSynchronise
        err = synchSem.ResetWait(TTInfiniteWait);
        ...
 
-Asynchronous brokers are expected to provide unblocking data (i.e. as soon as the broker asks for it), which is typically made available by another thread.
+Asynchronous brokers are expected to provide unblocking data (i.e. as soon as the broker asks for it). This data is typically made available by another thread.
 
 .. warning::
 
@@ -190,26 +190,26 @@ Asynchronous brokers are expected to provide unblocking data (i.e. as soon as th
 GAMDataSource (DDB)
 -------------------
 
-The :vcisdoxygencl:`GAMDataSource` (also known as DDB) is a framework standard DataSource component for the real-time interchange of data between GAMs that belong to the same real-time thread.
+The :vcisdoxygencl:`GAMDataSource` (also known as DDB) is a framework standard DataSource component for the real-time interchange of data between GAMs that belong to the same :vcisdoxygencl:`RealTimeThread`.
 
 The DDB is based on a non-blocking (i.e. without any synchronisation) scatter and gather mechanism. 
 
-First the data is coppied (gather) to the GAM input signal memory: 
+First the data is copied (gather) to the GAM input signal memory... 
 
 .. figure:: GAMDataSource-1.png
 
-Then the data is processed by the GAM:
+...then is processed by the GAM ...
 
 .. figure:: GAMDataSource-2.png
 
-And finally the data is scattered back to the DDB:
+...and finally the data is scattered back to the DDB:
 
 .. figure:: GAMDataSource-3.png
 
 Examples
 --------
 
-The following is an example which uses 4 distinct DataSources. Note that the signals will be automatically to the GAMDataSource and to the LoggerDataSource, based on the GAM *requests*.
+The following is an example which uses 4 distinct DataSources. Note that the signals will be automatically added to the GAMDataSource and to the LoggerDataSource, based on the GAM *requests*.
 
 .. literalinclude:: /_static/examples/Configurations/GAMs-1.cfg
    :language: bash	
