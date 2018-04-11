@@ -47,6 +47,7 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ChildGAMGroupExample1$(GAMEXT) \
+        $(BUILD_DIR)/ChildGAMGroupExample2$(GAMEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample2$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample3$(EXEEXT) \
