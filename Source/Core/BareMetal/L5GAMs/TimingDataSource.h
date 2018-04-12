@@ -42,9 +42,9 @@ namespace MARTe {
 
 /**
  * @brief GAMDataSource implementation that is used to store the executions timing of the MARTe components.
- * @details For every Thread in the application it will generate a signal named THREAD_NAME_CycleTime,
- * where THREAD_NAME is the object name of the RealTimeThread instance. The type of this signal is uint32
- * and it holds the thread cycle time.
+ * @details For every Thread in the application it will generate a signal named STATE_NAME.THREAD_NAME_CycleTime,
+ * STATE_NAME is the object name of the RealTimeState instance and THREAD_NAME is the object name of the RealTimeThread instance.
+ * The type of this signal is uint32 and it holds the thread cycle time.
  * For every GAM in the application it will generate three signals named GAM_NAME_ReadTime, GAM_NAME_WriteTime,
  * GAM_NAME_ExecTime where GAM_NAME is the object name of the GAM instance. The type of these signals is uint32.
  * The GAM_NAME_ReadTime holds the time elapsed from the beginning of the cycle until all the input brokers

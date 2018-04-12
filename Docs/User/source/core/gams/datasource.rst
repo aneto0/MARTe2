@@ -76,11 +76,11 @@ The :vcisdoxygencl:`BrokerI` components provide the interface between the GAMs m
 
 .. image:: Brokers-1.png
 
-The DataSource implementation will return the most appropriate Broker based **only** on the GAM signal properties:
+The DataSource implementation will return the most appropriate Broker based **only** on the GAM signal properties (see ``DataSourceI::GetBrokerName`` to read the available properties):
 
 .. code-block:: c++
    
-   //This function will be called for every signal that interacts with this DataSource
+   //This function will be called for every signal that interacts with this DataSource.
    const char8* LinuxTimer::GetBrokerName(StructuredDataI& data, const SignalDirection direction) {
        const char8 *brokerName = NULL_PTR(const char8 *);
        if (direction == InputSignals) {
@@ -146,6 +146,8 @@ Name Description
 :vcisdoxygencl:`MemoryMapAsyncOutputBroker`        Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
 :vcisdoxygencl:`MemoryMapAsyncTriggerOutputBroker` Only stores data based on an event trigger (with pre and post windows). Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
 ================================================== ===========
+
+The memory map based brokers access the DataSource memory using the ``DataSourceI::GetSignalMemoryBuffer``.
 
 All the functions which are related to data transformation should be implemented in a Broker. This allows to reuse the same Broker class in different DataSource implementations (e.g. the :vcisdoxygencl:`MemoryMapInperpolatedInputBroker` can be reused on any DataSourceI which requires data interpolation).
 

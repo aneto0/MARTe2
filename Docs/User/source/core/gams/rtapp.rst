@@ -22,3 +22,4 @@ TODO
 
    gam
    datasource
+   rtappdetails

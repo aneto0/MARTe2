@@ -62,6 +62,7 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \
         $(BUILD_DIR)/ObjectsExample3$(EXEEXT) \
         $(BUILD_DIR)/ParentGAMGroupExample1$(GAMEXT) \
+        $(BUILD_DIR)/RealTimeApplicationConfigurationBuilderExample1$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample1$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample2$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
