@@ -358,7 +358,9 @@ The state can be changed by calling the methods ``PrepareNextState``, ``StopCurr
 Synchronising multiple threads
 ------------------------------
 
-The synchronisation between threads is performed using the :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource component.  
+The synchronisation between threads is performed using the :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource component. This guarantees
+
+ 
 
 Examples
 --------
