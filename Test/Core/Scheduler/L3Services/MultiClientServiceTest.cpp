@@ -51,7 +51,7 @@ public:
         mux.Create();
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStageSpecific() == MARTe::ExecutionInfo::StartupStage) {
             mux.Lock();
             numberConnectionsWaiting++;
@@ -64,6 +64,8 @@ public:
                 connectionRequested = false;
                 numberConnectionsWaiting--;
                 numberConnectionsServing++;
+                void *invalidPtr = (void *)0xAABBCCDD;
+                information.SetThreadSpecificContext(invalidPtr);
                 mux.UnLock();
                 return MARTe::ErrorManagement::NoError;
             }
@@ -101,7 +103,7 @@ public:
         done = false;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
             internalState--;
         }

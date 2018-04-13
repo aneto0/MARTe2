@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+namespace MARTe2Tutorial {
 ParentGAMGroupExample1::ParentGAMGroupExample1() {
 }
 
@@ -69,3 +69,4 @@ bool ParentGAMGroupExample1::PrepareNextState(const MARTe::char8*, const MARTe::
 }
 
 CLASS_REGISTER(ParentGAMGroupExample1, "")
+}

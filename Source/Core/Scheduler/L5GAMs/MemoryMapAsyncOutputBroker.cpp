@@ -222,7 +222,8 @@ bool MemoryMapAsyncOutputBroker::Execute() {
     return ret;
 }
 
-ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(const ExecutionInfo & info) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;

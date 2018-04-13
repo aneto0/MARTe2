@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
+namespace MARTe2Tutorial {
 /**
  * @brief A MARTe Object which contains information to be shared amongst GAMs in a GAMGroup.
  */
@@ -68,7 +68,7 @@ public:
      */
     MARTe::Matrix<MARTe::uint32> *matrixModel;
 };
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

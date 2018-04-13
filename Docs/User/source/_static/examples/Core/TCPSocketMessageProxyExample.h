@@ -1,7 +1,7 @@
 /**
- * @file ParentGAMGroupExample1.h
- * @brief Header file for class ParentGAMGroupExample1
- * @date 06/04/2018
+ * @file TCPSocketMessageProxyExample.h
+ * @brief Header file for class TCPSocketMessageProxyExample
+ * @date 13/04/2018
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ParentGAMGroupExample1
+ * @details This header file contains the declaration of the class TCPSocketMessageProxyExample
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EXAMPLES_CORE_PARENTGAMGROUPEXAMPLE1_H_
-#define EXAMPLES_CORE_PARENTGAMGROUPEXAMPLE1_H_
+#ifndef EXAMPLES_CORE_TCPSOCKETMESSAGEPROXYEXAMPLE_H_
+#define EXAMPLES_CORE_TCPSOCKETMESSAGEPROXYEXAMPLE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,58 +32,88 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GAM.h"
-#include "GAMGroup.h"
-#include "GAMGroupSharedInfoExample1.h"
-
+#include "EmbeddedServiceMethodBinderI.h"
+#include "Object.h"
+#include "ReferenceContainer.h"
+#include "MultiClientService.h"
+#include "TCPSocket.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+
 namespace MARTe2Tutorial {
 /**
- * @brief A GAMGroup which shares a context (containing a matrix) with many GAMs .
+ * @brief An example of an Object which relays TCP encoded messages to MARTe messages.
  *
- * +GAMExample1 = {
- *     Class = ParentGAMGroupExample1
- *     Model = {{2, 0, 0}, {0, 3, 0}, {0, 0, 4}}
+ * @details The messages send using TCP shall be a one line encoded string containing the Message configuration (as prescribed in Message.h)
+ *
+ * <pre>
+ * +TCPMessageProxy = {
+ *     Class = TCPSocketMessageProxyExample
+ *     Port = 24680//Compulsory. The port where to listen for the TCP messages.
  * }
+ * </pre>
  */
-class ParentGAMGroupExample1: public MARTe::GAMGroup {
+class TCPSocketMessageProxyExample : public MARTe::Object, public MARTe::EmbeddedServiceMethodBinderI {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
      * @brief Constructor. NOOP.
      */
-ParentGAMGroupExample1    ();
+TCPSocketMessageProxyExample();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~ParentGAMGroupExample1();
+    virtual ~TCPSocketMessageProxyExample();
 
     /**
-     * @brief Reads the Model from the configuration file and creates a GAMGroupSharedInfoExample1 reference to be shared with all the child GAMs.
-     * @return true if the parameter Model can be read as a Matrix.
+     * @brief Reads the Port from the configuration file.
+     * @param[in] data see Object::Initialise. The parameter Port shall exist the socket will be opened to listen on this port.
+     * @return true if the Port parameter can be read, socket opened and the TCP listening service started.
      */
     virtual bool Initialise(MARTe::StructuredDataI & data);
 
     /**
-     * @brief Calls SetContext with the Matrix read during initialisation on all the child GAMs.
-     * @return true if SetContext returns true on all the child GAMs.
+     * @brief Callback function for the EmbeddedThread that waits for TCP messages .
+     * @param[in] info see EmbeddedServiceMethodBinderI
+     * @return ErrorManagement::NoError.
      */
-    virtual bool PrepareNextState(const MARTe::char8*, const MARTe::char8*);
+    virtual MARTe::ErrorManagement::ErrorType Execute(MARTe::ExecutionInfo & info);
+
 
 private:
 
     /**
-     * The context containing the Matrix to be shared.
+     * Listens for new messages on this socket.
      */
-    MARTe::ReferenceT<GAMGroupSharedInfoExample1> matrixModelContext;
+    MARTe::TCPSocket socket;
+
+    /**
+     * The service that listens for new messages on the socket.
+     */
+    MARTe::MultiClientService tcpClientService;
+
+    /**
+     * A mux to guarantee locked access to the sockets.
+     */
+    MARTe::MutexSem mux;
+
+    /**
+     * True if the thread shall wait for a connection.
+     */
+    bool waitForConnection;
+
+    /**
+     * The timeout in ms
+     */
+    MARTe::TimeoutType timeout;
 };
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* EXAMPLES_CORE_PARENTGAMGROUPEXAMPLE1_H_ */
-
+#endif /* EXAMPLES_CORE_TCPSOCKETMESSAGEPROXYEXAMPLE_H_ */

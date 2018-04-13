@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+namespace MARTe2Tutorial {
 VariableGAMExample1::VariableGAMExample1() {
     numberOfOutputSignals = 0u;
     gains = NULL_PTR(MARTe::uint32 *);
@@ -210,3 +210,4 @@ bool VariableGAMExample1::Execute() {
 }
 
 CLASS_REGISTER(VariableGAMExample1, "")
+}

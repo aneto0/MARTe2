@@ -81,7 +81,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         internalState++;
         MARTe::Sleep::Sec(0.1);
         return MARTe::ErrorManagement::NoError;
@@ -96,7 +96,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::AsyncTerminationStage) {
             internalState--;
         }
@@ -124,7 +124,7 @@ EmbeddedThreadITest::EmbeddedThreadITest() {
 EmbeddedThreadITest::~EmbeddedThreadITest() {
 }
 
-MARTe::ErrorManagement::ErrorType EmbeddedThreadITest::CallbackFunction(const MARTe::ExecutionInfo &information) {
+MARTe::ErrorManagement::ErrorType EmbeddedThreadITest::CallbackFunction(MARTe::ExecutionInfo &information) {
     MARTe::Sleep::Sec(0.1);
     executeCalled = true;
     return MARTe::ErrorManagement::NoError;

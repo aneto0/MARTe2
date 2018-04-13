@@ -158,7 +158,7 @@ private:
      * @return ErrorManagement::NoError if the synchronisation semaphore with the Execute method returns no errors. At the end of the application, i.e.
      *  after the destructor has been called, it returns ErrorManagement::Completed.
      */
-    ErrorManagement::ErrorType BufferLoop(const ExecutionInfo & info);
+    ErrorManagement::ErrorType BufferLoop(ExecutionInfo & info);
 
     /**
      * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.

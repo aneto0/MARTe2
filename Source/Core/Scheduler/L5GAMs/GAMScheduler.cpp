@@ -206,7 +206,8 @@ void GAMScheduler::CustomPrepareNextState() {
 
 }
 
-ErrorManagement::ErrorType GAMScheduler::Execute(const ExecutionInfo &information) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType GAMScheduler::Execute(ExecutionInfo & information) {
     ErrorManagement::ErrorType ret;
     uint32 threadNumber = information.GetThreadNumber();
     uint32 idx = RealTimeApplication::GetIndex();

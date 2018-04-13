@@ -123,7 +123,7 @@ public:
      * @param[in] information (see EmbeddedThread)
      * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
      */
-    ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
+    ErrorManagement::ErrorType Execute(ExecutionInfo &information);
 
     /**
      * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge

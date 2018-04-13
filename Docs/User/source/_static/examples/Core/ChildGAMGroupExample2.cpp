@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe2Tutorial {
 
 ChildGAMGroupExample2::ChildGAMGroupExample2() {
     contextSet = false;
@@ -173,3 +174,4 @@ bool ChildGAMGroupExample2::Execute() {
 }
 
 CLASS_REGISTER(ChildGAMGroupExample2, "")
+}

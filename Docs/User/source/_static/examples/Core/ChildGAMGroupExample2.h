@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "GAM.h"
 #include "GAMGroupSharedInfoExample1.h"
 
@@ -39,6 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe2Tutorial {
 /**
  * @brief An example of a GAM which requires information that is made available by a parent GAMGroup.
  *
@@ -127,6 +127,7 @@ private:
     MARTe::ReferenceT<const GAMGroupSharedInfoExample1> matrixModelContext;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

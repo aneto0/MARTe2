@@ -54,7 +54,7 @@ EmbeddedThreadTest::EmbeddedThreadTest() {
 EmbeddedThreadTest::~EmbeddedThreadTest() {
 }
 
-MARTe::ErrorManagement::ErrorType EmbeddedThreadTest::CallbackFunction(const MARTe::ExecutionInfo &information) {
+MARTe::ErrorManagement::ErrorType EmbeddedThreadTest::CallbackFunction(MARTe::ExecutionInfo &information) {
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         startup = true;
         //Force triggering of start-up error.

@@ -334,7 +334,8 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
     return ret;
 }
 
-ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     bool ret = true;
     if (info.GetStage() == ExecutionInfo::MainStage) {

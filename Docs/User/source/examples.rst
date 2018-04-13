@@ -29,10 +29,20 @@ Standalone examples are run with:
 
    ../../../../../../Build/linux/Examples/Core/EXAMPLE_TO_RUN.ex
    
-Examples which are related to the real-time execution of a configuration file are launched with:
+Examples which are related to the real-time execution of a configuration file and which are provided with a given start-up **State** are launched :
 
 .. code-block:: bash
    
    export MARTe2_DIR=FOLDER_WHERE_MARTe2_IS_INSTALLED
+   export MARTe2_Components_DIR=FOLDER_WHERE_MARTe2_Components_IS_INSTALLED
    cd $MARTe2_DIR/Docs/User/source/_static/examples
    ./MARTeApp.sh -l RealTimeLoader -s NAME_OF_THE_STATE -f Configurations/NAME_OF_THE_CONFIGURATION_FILE
+
+Examples which are related to the real-time execution of a configuration file and which are provided with a given start-up **Message** are launched :
+
+.. code-block:: bash
+   
+   export MARTe2_DIR=FOLDER_WHERE_MARTe2_IS_INSTALLED
+   export MARTe2_Components_DIR=FOLDER_WHERE_MARTe2_Components_IS_INSTALLED
+   cd $MARTe2_DIR/Docs/User/source/_static/examples
+   ./MARTeApp.sh -l RealTimeLoader -m MESSAGE -f Configurations/NAME_OF_THE_CONFIGURATION_FILE

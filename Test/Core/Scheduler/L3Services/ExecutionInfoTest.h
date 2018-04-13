@@ -97,6 +97,16 @@ public:
      */
     bool TestReset();
 
+    /**
+     * @brief Tests the SetThreadSpecificContext method.
+     */
+    bool TestSetThreadSpecificContext();
+
+    /**
+     * @brief Tests the GetThreadSpecificContext method.
+     */
+    bool TestGetThreadSpecificContext();
+
 };
 
 /*---------------------------------------------------------------------------*/

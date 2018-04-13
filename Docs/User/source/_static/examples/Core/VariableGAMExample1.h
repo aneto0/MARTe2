@@ -38,6 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe2Tutorial {
 /**
  * @brief An example of a GAM which has fixed inputs and outputs.
  *
@@ -131,7 +132,7 @@ private:
      */
     MARTe::uint32 *gains;
 };
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

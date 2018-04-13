@@ -120,7 +120,7 @@ bool LoggerService::Initialise(StructuredDataI &data) {
 }
 
 /*lint -e{715} the consuming algorithm is independent of the thread state*/
-ErrorManagement::ErrorType LoggerService::Execute(const ExecutionInfo & info) {
+ErrorManagement::ErrorType LoggerService::Execute(ExecutionInfo & info) {
     if (logger != NULL_PTR(Logger *)) {
         uint32 i;
         if (consumers != NULL_PTR(LoggerConsumerI **)) {

@@ -39,6 +39,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe2Tutorial {
+
 GAMGroupSharedInfoExample1::GAMGroupSharedInfoExample1() {
     matrixModel = NULL_PTR(MARTe::Matrix<MARTe::uint32> *);
 }
@@ -98,3 +100,4 @@ bool GAMGroupSharedInfoExample1::Initialise(MARTe::StructuredDataI & data) {
 }
 
 CLASS_REGISTER(GAMGroupSharedInfoExample1, "")
+}

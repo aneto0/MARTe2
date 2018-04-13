@@ -161,7 +161,7 @@ TimingDataSource
 
 The RealTimeApplication will automatically add to the TimingDataSource the following signals: 
 
-- For every RealTimeThread, it will generate a signal named ``THREAD_NAME_CycleTime``, where ``THREAD_NAME`` is the name of the RealTimeThread object instance. The type of this signal is uint32 and it holds the thread cycle time.
+- For every RealTimeThread, it will generate a signal named ``STATE_NAME.THREAD_NAME_CycleTime``, where ``STATE_NAME`` is the name of the state where the thread is running and ``THREAD_NAME`` is the name of the RealTimeThread object instance. The type of this signal is uint32 and it holds the thread cycle time.
 - For every GAM, it will generate three signals named ``GAM_NAME_ReadTime``, ``GAM_NAME_WriteTime`` and ``GAM_NAME_ExecTime`` where `GAM_NAME`` is the object name of the GAM instance. The type of these signals is uint32.
    - The ``GAM_NAME_ReadTime`` holds the time elapsed from the beginning of the cycle until all the input brokers for this ``GAM_NAME`` have been executed;
    - The ``GAM_NAME_WriteTime`` holds the time elapsed from the beginning of the cycle until all the output brokers for this ``GAM_NAME`` have been executed;
@@ -207,6 +207,18 @@ The RealTimeApplication will automatically add to the TimingDataSource the follo
             Class = TimingDataSource
          }
          ...
+         
+
+.. warning::
+   
+   Given that a MARTe object name may not contain a ``.`` and given that the cycle time signal produced by the Timings DataSource is named ``STATE_NAME.THREAD_NAME_CycleTime``, an Alias will always have to be used to read the signal.
+   
+   .. code-block:: bash
+   
+      InputSignals = {
+         State1_Thread1_CycleTime = {
+            Alias = State1.Thread1_CycleTime
+            DataSource = Timings
          
 
 States
@@ -353,97 +365,106 @@ Signal rules
 State change
 ------------
 
-The state can be changed by calling the methods ``PrepareNextState``, ``StopCurrentStateExecution`` and ``StartNextStateExecution``. These are methods are registered as RPC functions and thus can be triggered using the message mechanisms.
+The state can be changed by calling the methods ``PrepareNextState``, ``StopCurrentStateExecution`` and ``StartNextStateExecution`` on the :vcisdoxygencl:`RealTimeApplication`.
+
+These are methods are registered as RPC functions and thus can be triggered using the :doc:`messaging mechanisms </core/messages/messages>`.
+
+Tipically the interface to the state chaning mechanism is provided by the :doc:`StateMachine </core/statemachine/statemachine>`.
+
+.. image:: RealTimeStateMachineExampleStateMachine.png
+
+.. code-block:: bash
+   
+   +StateMachine = {
+      Class = StateMachine
+      ...
+      +STATE1 = {
+         Class = ReferenceContainer
+         +GOTOSTATE2 = {
+            Class = StateMachineEvent
+            NextState = "STATE2"
+            NextStateError = "ERROR"
+            Timeout = 0
+            +PrepareChangeToState2Msg = {
+               Class = Message
+               Destination = TestApp
+               Mode = ExpectsReply
+               Function = PrepareNextState
+               +Parameters = {
+                  Class = ConfigurationDatabase
+                  param1 = State2
+               }
+            }
+            +StopCurrentStateExecutionMsg = {
+               Class = Message
+               Destination = TestApp
+               Function = StopCurrentStateExecution
+               Mode = ExpectsReply
+            }
+            +StartNextStateExecutionMsg = {
+               Class = Message
+               Destination = TestApp
+               Function = StartNextStateExecution
+               Mode = ExpectsReply
+            }
+            ...
 
 Synchronising multiple threads
 ------------------------------
 
-The synchronisation between threads is performed using the :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource component. This guarantees
+The synchronisation between threads is performed using the :vcisdoxygenmccl:`RealTimeThreadSynchronisation` DataSource component.
 
- 
+.. image:: RTApp-3.png
+
+The threads synchronising in the master thread (i.e. the one with the GAM writing to the DataSource) can run at a frequency which is sub-multiple of the master thread frequency. This is expressed by asking for a number of samples (> 1) to the RealTimeThreadSynchronisation DataSource.
+
+The TODO component also allows to exchange data between threads without an explicit synchronisation point. This means that the consumer threads will use the latest available data.
+
 
 Examples
 --------
 
-Fixed GAM
-~~~~~~~~~
+Ranges and alias
+~~~~~~~~~~~~~~~~
 
-The following is an example of GAM which has a fixed number of signals. 
+Execution times
+~~~~~~~~~~~~~~~
 
-.. literalinclude:: /_static/examples/Core/FixedGAMExample1.cpp
-   :language: c++   
-   :caption: Fixed signals GAM (FixedGAMExample1)
-   :linenos:
-   :emphasize-lines: 72,84,101,120,139,156-157,164
-   
-.. literalinclude:: /_static/examples/Configurations/GAMs-1.cfg
+.. image:: RealTimeSynchExampleStateState1.png
+
+The following is an example of a RealTimeApplication which prints the execution times of the real-time thread and of the GAMs (including the brokers' read/write times).
+	
+.. literalinclude:: /_static/examples/Configurations/RTApp-1.cfg
    :language: bash	
-   :caption: Fixed signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-1.cfg)
+   :caption: Fixed signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-1.cfg)
    :linenos:
-   :emphasize-lines: 29-44
-   
-Variable GAM
-~~~~~~~~~~~~
+   :emphasize-lines: 56-58,61-63,65-67,69-71
 
-The following is an example of GAM which adapts to the number of output signals. 
+Multiple states
+~~~~~~~~~~~~~~~
 
-.. literalinclude:: /_static/examples/Core/VariableGAMExample1.cpp
-   :language: c++   
-   :caption: Variable signals GAM (VariableGAMExample1)
-   :linenos:
-   :emphasize-lines: 82,99,106,113,118,121,137,140,157,160,177,180,194,198,206-207
-   
-.. literalinclude:: /_static/examples/Configurations/GAMs-2.cfg
+.. image:: RealTimeStateMachineExampleRTApp.png
+
+TODO add SocketMessageListenerExample
+	
+.. literalinclude:: /_static/examples/Configurations/RTApp-3.cfg
    :language: bash	
-   :caption: Variable signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-2.cfg)
+   :caption: Fixed signals configuration (Run with NAME_OF_THE_MESSGE=StateMachine:START and NAME_OF_THE_CONFIGURATION_FILE=RTApp-3.cfg)
    :linenos:
-   :emphasize-lines: 29-68
-     
-Structure GAM
-~~~~~~~~~~~~~
+   :emphasize-lines: 56-58,61-63,65-67,69-71
 
-The following is an example of GAM which uses a (registered) structured signal in input and output.
+Thread Synchronisation
+~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: /_static/examples/Core/ModelGAMExample1.cpp
-   :language: c++   
-   :caption: Structured signal GAM (ModelGAMExample1)
-   :linenos:
-   :emphasize-lines: 39-55,140,151,161,173,176,185,194,206,215,218,224-242
+The following is an example of a RealTimeApplication with multiple synchronised threads. Note that the Thread2 and the Thread3 run at a sub-frequency of Thread1.
+
+.. image:: RealTimeSynchExampleStateState1.png
    
-.. literalinclude:: /_static/examples/Configurations/GAMs-3.cfg
+.. literalinclude:: /_static/examples/Configurations/RTApp-2.cfg
    :language: bash	
-   :caption: Structured signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-3.cfg)
+   :caption: Fixed signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-2.cfg)
    :linenos:
-   :emphasize-lines: 34-45,51-54,67,72,121-122
-
-GAMGroup
-~~~~~~~~
-
-The following is an example of GAMGroup which shares a Matrix with several GAMs.
-
-.. literalinclude:: /_static/examples/Core/ParentGAMGroupExample1.cpp
-   :language: c++   
-   :caption: Parent GAMGroup which shares a Matrix with the ChildGAMGroupExample1 and ChildGAMGroupExample2 instances.
-   :linenos:
-   :emphasize-lines: 66
-   
-.. literalinclude:: /_static/examples/Core/ChildGAMGroupExample1.cpp
-   :language: c++   
-   :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
-   :linenos:
-   :emphasize-lines: 127,130-131,142,164
-
-.. literalinclude:: /_static/examples/Core/ChildGAMGroupExample2.cpp
-   :language: c++   
-   :caption: Child GAMGroup which shares a Matrix with the ParentGAMGroupExample1 instance.
-   :linenos:
-   :emphasize-lines: 131,134-135,146,160,169-170
-      
-.. literalinclude:: /_static/examples/Configurations/GAMs-4.cfg
-   :language: bash	
-   :caption: GAMGroup example (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=GAMs-4.cfg)
-   :linenos:
-   :emphasize-lines: 45-47,198
+   :emphasize-lines: 90,133
 
    
 Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.

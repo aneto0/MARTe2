@@ -205,7 +205,7 @@ public:
      * @param[in] information information about the current state of the execution thread.
      * @return the ErrorType returned by the user function.
      */
-    inline ErrorManagement::ErrorType Execute(const ExecutionInfo & information);
+    inline ErrorManagement::ErrorType Execute(ExecutionInfo & information);
 
     /**
      * @brief Gets the current thread status.
@@ -373,7 +373,7 @@ private:
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-ErrorManagement::ErrorType EmbeddedThreadI::Execute(const ExecutionInfo & information) {
+ErrorManagement::ErrorType EmbeddedThreadI::Execute(ExecutionInfo & information) {
     return method.Execute(information);
 }
 

@@ -152,6 +152,17 @@ public:
      */
     void Reset();
 
+    /**
+     * @brief Gets the thread specific context information (which allows to share information between functions).
+     */
+    void *GetThreadSpecificContext();
+
+    /**
+     * @brief Sets the thread specific context information (which allows to share information between functions).
+     * @param[in] context the thread specific context to set.
+     */
+    void SetThreadSpecificContext(void * const & contextIn);
+
 private:
 
     /**
@@ -168,6 +179,11 @@ private:
      * The operating stage of the thread (specific to the class inhering from EmbeddedServiceI).
      */
     uint8 stageSpecific;
+
+    /**
+     * The thread specific context.
+     */
+    void *context;
 
 };
 }

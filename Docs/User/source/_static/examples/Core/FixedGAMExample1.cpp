@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+namespace MARTe2Tutorial {
 FixedGAMExample1::FixedGAMExample1() {
     gain = 0u;
     inputSignal = NULL_PTR(MARTe::uint32 *);
@@ -166,3 +166,4 @@ bool FixedGAMExample1::Execute() {
 }
 
 CLASS_REGISTER(FixedGAMExample1, "")
+}

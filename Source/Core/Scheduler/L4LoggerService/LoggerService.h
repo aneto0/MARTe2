@@ -92,7 +92,7 @@ LoggerService    ();
      * @param[in] info see EmbeddedServiceMethodBinderI
      * @return ErrorManagement::NoError.
      */
-    virtual ErrorManagement::ErrorType Execute(const ExecutionInfo & info);
+    virtual ErrorManagement::ErrorType Execute(ExecutionInfo & info);
 
     /**
      * @brief Gets the configured number of log pages.
