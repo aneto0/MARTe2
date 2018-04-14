@@ -56,7 +56,7 @@ MAKE     = make
 DEBUG = -g -ggdb
 OPTIM = 
 INCLUDE =
-LFLAGS = -Wl,--no-as-needed -fPIC -fPIC
+LFLAGS = -Wl,--no-as-needed -fPIC
 CFLAGS = -fPIC -Wall
 CPPFLAGS = -fPIC -frtti -Wall -std=c++98 -Werror -Wno-invalid-offsetof
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread

@@ -133,17 +133,17 @@ MARTe::ErrorManagement::ErrorType TCPSocketMessageProxyExample::Execute(MARTe::E
         }
     }
     if (info.GetStageSpecific() == MARTe::ExecutionInfo::ServiceRequestStageSpecific) {
-        TCPSocket *client = reinterpret_cast<TCPSocket *>(info.GetThreadSpecificContext());
+        BasicTCPSocket *client = reinterpret_cast<BasicTCPSocket *>(info.GetThreadSpecificContext());
         if (client != NULL_PTR(BasicTCPSocket *)) {
             const uint32 BUFFER_SIZE = 1024u;
             char8 buffer[BUFFER_SIZE];
             uint32 readBytes = BUFFER_SIZE;
             MemoryOperationsHelper::Set(&buffer[0], '\0', BUFFER_SIZE);
-            while (client->Read(buffer, readBytes)) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "Received configuration message [size=%d]:%s", readBytes, buffer);
+            while (client->Read(&buffer[0], readBytes)) {
+                StreamString configurationCfg = buffer;
+                REPORT_ERROR(ErrorManagement::ParametersError, "Received configuration message [size=%d]:%s", readBytes, configurationCfg.Buffer());
                 //Try to parse the configuration message
                 StreamString err;
-                StreamString configurationCfg = buffer;
                 //Force the string to be seeked to the beginning.
                 configurationCfg.Seek(0LLU);
                 ConfigurationDatabase msgCdb;
@@ -154,7 +154,7 @@ MARTe::ErrorManagement::ErrorType TCPSocketMessageProxyExample::Execute(MARTe::E
                 if (msgError.ErrorsCleared()) {
                     //After parsing the tree is pointing at the last leaf
                     msgCdb.MoveToRoot();
-                    msgError.parametersError = msg->Initialise(msgCdb);
+                    msgError.parametersError = !msg->Initialise(msgCdb);
                     if (!msgError.ErrorsCleared()) {
                         REPORT_ERROR(ErrorManagement::ParametersError, "Failed to initialise message");
                     }
