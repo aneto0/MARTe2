@@ -41,43 +41,32 @@ $(BUILD_DIR)/%.o : %.c
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
-$(BUILD_DIR)/%.a : $(OBJS) createLibrary
+$(BUILD_DIR)/%.a : createLibrary $(OBJS)
 	touch $@
 	rm -f $(BUILD_DIR)/$*.a
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 	rm -f createLibrary
-	
 
-$(BUILD_DIR)/%.so : $(OBJS) createLibrary
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
 	touch $@
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
 	rm -f createLibrary
-	
-
-%.ifo :  %.h
-	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint  -i temp/temp.pp $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.ifo
-
-%.sinfo.cpp :  %.h
-	$(COMPILER) -D_CINT -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
 
 $(BUILD_DIR)/%.def : 
 	touch a.out
 	objdump -t $(@:%.def=%.a) > $@
 	rm a.out
 
-$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o 
+$(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS) 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
-	
 
 depends.linux: dependsRaw.linux 
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
@@ -90,10 +79,10 @@ dependsRaw.linux:
 	@mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 %.spb : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) 

@@ -23,7 +23,8 @@
 #############################################################
 
 OBJSX=ErrorLoggerExample.x \
-    GAMGroupSharedInfoExample1.x
+    GAMGroupSharedInfoExample1.x \
+    TCPSocketMessageProxyExample.x
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
@@ -45,7 +46,7 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
-all: $(OBJS) $(SUBPROJ)   \
+all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ChildGAMGroupExample1$(GAMEXT) \
         $(BUILD_DIR)/ChildGAMGroupExample2$(GAMEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
@@ -68,13 +69,12 @@ all: $(OBJS) $(SUBPROJ)   \
         $(BUILD_DIR)/ReferencesExample3$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
-	$(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/TCPSocketMessageProxyExample$(DLLEXT) \
         $(BUILD_DIR)/TypesExample1$(EXEEXT) \
         $(BUILD_DIR)/VariableGAMExample1$(GAMEXT)
 	echo  $(OBJS)
 
-
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-

@@ -29,6 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "Message.h"
+#include "MessageI.h"
+#include "StandardParser.h"
 #include "TCPSocketMessageProxyExample.h"
 
 /*---------------------------------------------------------------------------*/
@@ -63,7 +67,6 @@ TCPSocketMessageProxyExample::~TCPSocketMessageProxyExample() {
     }
 }
 
-
 bool TCPSocketMessageProxyExample::Initialise(MARTe::StructuredDataI & data) {
     using namespace MARTe;
     uint32 port;
@@ -75,11 +78,28 @@ bool TCPSocketMessageProxyExample::Initialise(MARTe::StructuredDataI & data) {
         }
     }
     if (ok) {
-        socket.Open();
+        ok = socket.Open();
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Could not Open server socket");
+        }
+    }
+    if (ok) {
+        ok = socket.Listen(port);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Could not Listen on port %d", port);
+        }
+    }
+    if (ok) {
+        ok = (tcpClientService.Start() == ErrorManagement::NoError);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Could not Start tcpClientService");
+        }
+    }
+    if (ok) {
+        REPORT_ERROR(ErrorManagement::Information, "Server listening in port %d", port);
     }
     return ok;
 }
-
 
 MARTe::ErrorManagement::ErrorType TCPSocketMessageProxyExample::Execute(MARTe::ExecutionInfo & info) {
     using namespace MARTe;
@@ -91,36 +111,78 @@ MARTe::ErrorManagement::ErrorType TCPSocketMessageProxyExample::Execute(MARTe::E
             waitForConnection = false;
             mux.UnLock();
             BasicTCPSocket *client = socket.WaitConnection(timeout);
-            if (client != NULL) {
+            if (client != NULL_PTR(BasicTCPSocket *)) {
+                REPORT_ERROR(ErrorManagement::Information, "Connection accepted!");
                 mux.Lock();
                 waitForConnection = true;
                 info.SetThreadSpecificContext(reinterpret_cast<void *>(client));
+                err = ErrorManagement::NoError;
+                mux.UnLock();
+            }
+            else {
+                mux.Lock();
+                waitForConnection = true;
+                err = ErrorManagement::Timeout;
                 mux.UnLock();
             }
         }
         else {
             mux.UnLock();
-            MARTe::Sleep::Sec(0.1);
+            MARTe::Sleep::MSec(timeout);
             err = ErrorManagement::Timeout;
-            tcpClientService.
         }
     }
-    if (information.GetStageSpecific() == MARTe::ExecutionInfo::ServiceRequestStageSpecific) {
-        MARTe::Sleep::Sec(0.1);
-        delete client;
-
-        mux.Lock();
-        if (connectIsServed) {
-            connectIsServed = false;
-            numberConnectionsServing--;
-            mux.UnLock();
-            return MARTe::ErrorManagement::Completed;
+    if (info.GetStageSpecific() == MARTe::ExecutionInfo::ServiceRequestStageSpecific) {
+        TCPSocket *client = reinterpret_cast<TCPSocket *>(info.GetThreadSpecificContext());
+        if (client != NULL_PTR(BasicTCPSocket *)) {
+            const uint32 BUFFER_SIZE = 1024u;
+            char8 buffer[BUFFER_SIZE];
+            uint32 readBytes = BUFFER_SIZE;
+            MemoryOperationsHelper::Set(&buffer[0], '\0', BUFFER_SIZE);
+            while (client->Read(buffer, readBytes)) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Received configuration message [size=%d]:%s", readBytes, buffer);
+                //Try to parse the configuration message
+                StreamString err;
+                StreamString configurationCfg = buffer;
+                //Force the string to be seeked to the beginning.
+                configurationCfg.Seek(0LLU);
+                ConfigurationDatabase msgCdb;
+                StandardParser parser(configurationCfg, msgCdb, &err);
+                ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+                ErrorManagement::ErrorType msgError;
+                msgError.parametersError = !parser.Parse();
+                if (msgError.ErrorsCleared()) {
+                    //After parsing the tree is pointing at the last leaf
+                    msgCdb.MoveToRoot();
+                    msgError.parametersError = msg->Initialise(msgCdb);
+                    if (!msgError.ErrorsCleared()) {
+                        REPORT_ERROR(ErrorManagement::ParametersError, "Failed to initialise message");
+                    }
+                }
+                else {
+                    StreamString errPrint;
+                    errPrint.Printf("Failed to parse %s", err.Buffer());
+                    REPORT_ERROR(ErrorManagement::ParametersError, errPrint.Buffer());
+                }
+                if (msgError.ErrorsCleared()) {
+                    msgError = MessageI::SendMessage(msg, this);
+                    if (!msgError.ErrorsCleared()) {
+                        REPORT_ERROR(ErrorManagement::ParametersError, "Error while sending message to destination %s with function %s",
+                                     msg->GetDestination().GetList(), msg->GetFunction().GetList());
+                    }
+                }
+                readBytes = BUFFER_SIZE;
+            }
+            if (!client->Close()) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Failed to Close client connection");
+            }
+            delete client;
         }
-        mux.UnLock();
-        return MARTe::ErrorManagement::NoError;
+        return MARTe::ErrorManagement::Completed;
     }
     return err;
 }
 
+CLASS_REGISTER(TCPSocketMessageProxyExample, "")
 }
 

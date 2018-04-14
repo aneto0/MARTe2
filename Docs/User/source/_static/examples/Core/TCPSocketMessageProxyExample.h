@@ -36,6 +36,7 @@
 #include "Object.h"
 #include "ReferenceContainer.h"
 #include "MultiClientService.h"
+#include "MutexSem.h"
 #include "TCPSocket.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,7 +47,7 @@ namespace MARTe2Tutorial {
 /**
  * @brief An example of an Object which relays TCP encoded messages to MARTe messages.
  *
- * @details The messages send using TCP shall be a one line encoded string containing the Message configuration (as prescribed in Message.h)
+ * @details The messages send using TCP shall be a CDB encoded string containing the Message configuration (as prescribed in Message.h)
  *
  * <pre>
  * +TCPMessageProxy = {
@@ -108,7 +109,7 @@ private:
     /**
      * The timeout in ms
      */
-    MARTe::TimeoutType timeout;
+    MARTe::int32 timeout;
 };
 }
 
