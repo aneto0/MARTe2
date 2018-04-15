@@ -18,6 +18,8 @@ A MARTe :vcisdoxygencl:`RealTimeApplication` is assembled by connecting together
 
 GAMs are grouped in real-time threads which are executed in the context of specific states. A :vcisdoxygencl:`RealTimeApplication` shall be in one (and only one) given state at any given time.
 
+The orchestration of the states is performed by means of :doc:`messages  </core/messages/messages>` (e.g. by a component that relays HTTP requests into MARTe messages). 
+
 .. image:: RTApp-1.png
 
 Configuration
@@ -25,12 +27,12 @@ Configuration
 
 The configuration of a RealTimeApplication has to follow a set of strict rules. 
 
-In particular the nodes ``Functions``, ``Data``, ``States`` and ``Scheduler`` shall exist and shall be configured using the rules defined below:
+In particular, the nodes ``Functions``, ``Data``, ``States`` and ``Scheduler`` shall exist and shall be configured using the rules defined below:
 
 Functions
 ---------
 
-The list of GAMs is listed inside a node named ``Functions`` of type ``ReferenceContainer``.
+GAMs are listed inside a node named ``Functions`` of type ``ReferenceContainer``.
 
 .. code-block:: bash
 
@@ -61,7 +63,7 @@ The list of GAMs is listed inside a node named ``Functions`` of type ``Reference
       ...
    }
 
-GAMs can also be grouped inside reference containers (in order to improve readability) and inside GAMGroups.
+GAMs can also be grouped inside reference containers (in order to improve the readability of a configuration stream) and inside :doc:`GAMGroups </core/gams/gam>`.
 
 .. code-block:: bash
 
@@ -154,7 +156,9 @@ DataSources are grouped inside a node named ``Data`` of type ``ReferenceContaine
       ...
    }
    
-A component of class type ``TimingDataSource`` shall exist and the property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/gams/gam>` signals do not specify the ``DataSource`` property.
+A component of class type ``TimingDataSource`` shall exist.
+
+The property ``DefaultDataSource`` shall define what is the DataSource to be used when the :doc:`GAM </core/gams/gam>` signals do not specify the ``DataSource`` property.
 
 TimingDataSource
 ~~~~~~~~~~~~~~~~
@@ -162,7 +166,7 @@ TimingDataSource
 The RealTimeApplication will automatically add to the TimingDataSource the following signals: 
 
 - For every RealTimeThread, it will generate a signal named ``STATE_NAME.THREAD_NAME_CycleTime``, where ``STATE_NAME`` is the name of the state where the thread is running and ``THREAD_NAME`` is the name of the RealTimeThread object instance. The type of this signal is uint32 and it holds the thread cycle time.
-- For every GAM, it will generate three signals named ``GAM_NAME_ReadTime``, ``GAM_NAME_WriteTime`` and ``GAM_NAME_ExecTime`` where `GAM_NAME`` is the object name of the GAM instance. The type of these signals is uint32.
+- For every GAM, it will generate three signals named: ``GAM_NAME_ReadTime``, ``GAM_NAME_WriteTime`` and ``GAM_NAME_ExecTime`` where `GAM_NAME`` is the object name of the GAM instance. The type of these signals is uint32.
    - The ``GAM_NAME_ReadTime`` holds the time elapsed from the beginning of the cycle until all the input brokers for this ``GAM_NAME`` have been executed;
    - The ``GAM_NAME_WriteTime`` holds the time elapsed from the beginning of the cycle until all the output brokers for this ``GAM_NAME`` have been executed;
    - The ``GAM_NAME_ExecTime`` holds the time elapsed from the beginning of the cycle until this ``GAM_NAME`` has finished its execution.
@@ -224,11 +228,11 @@ The RealTimeApplication will automatically add to the TimingDataSource the follo
 States
 ------
 
-The list of possible RealTimeApplication states are listed inside a node named ``States`` of type :vcisdoxygencl:`RealTimeState`.
+The available RealTimeApplication states are listed inside a node named ``States`` of type :vcisdoxygencl:`RealTimeState`.
 
 Each state shall have a node named ``Threads`` with the list of :vcisdoxygencl:`RealTimeThread` components to be executed in that state.
 
-Each RealTimeThread contains the name of the ``Functions`` to be executed. Note that if the function is a ReferenceContainer or a GAMGroup, the GAMs contained inside these containers shall not be declared (as they are automatically added for scheduling). 
+Each RealTimeThread shall contain the name of the ``Functions`` to be executed. Note that if the function is a ReferenceContainer or a GAMGroup, the GAMs contained inside these containers shall not be declared (as they are automatically added for scheduling). 
 
 .. code-block:: bash
 
@@ -342,7 +346,7 @@ The following rules have to be met and are verified by the ``RealTimeApplication
 Global rules
 ~~~~~~~~~~~~
 
-1. The nodes ``Functions``, ``Data``, ``States`` and ``Scheduler`` shall exists;
+1. The nodes ``Functions``, ``Data``, ``States`` and ``Scheduler`` shall exist;
 2. At least one GAM shall be declared;
 3. At least one DataSource shall be declared;
 4. Exactly one TimingDataSource shall be declared;
@@ -356,11 +360,12 @@ Signal rules
 1. For every thread, the input port of each GAM or DataSource shall be connected to exactly one signal (from another GAM or from a DataSource);
 2. For every thread, the output port of a given GAM or DataSource may be connected to zero or more signals (in another GAM or DataSource);
 3. The properties (type, number of elements and number of dimensions) of each signal shall be fully consistent between the signal producer and the signal consumer;
-4. The signal type shall be defined either by the signal producer or by one of the signal consumers;
-   4.1. If the number of elements is not defined, one is assumed;
-   4.2. If the number of dimensions is not defined, zero is assumed (scalar signal);
-   4.3. If no Default value is specified, zeor is assumed;
-5. For every thread, at most one signal shall define the property `Frequency` (i.e. at most one synchronisation point per thread);
+4. The signal type shall be defined either by the signal producer or by one of the signal consumers:
+   
+   a. If the number of elements is not defined, one is assumed;
+   b. the number of dimensions is not defined, zero is assumed (scalar signal);
+   c. If no Default value is specified, zero is assumed.
+5. For every thread, at most one signal shall define the property `Frequency` (i.e. at most one synchronisation point per thread).
 
 State change
 ------------
@@ -369,7 +374,7 @@ The state can be changed by calling the methods ``PrepareNextState``, ``StopCurr
 
 These are methods are registered as RPC functions and thus can be triggered using the :doc:`messaging mechanisms </core/messages/messages>`.
 
-Tipically the interface to the state chaning mechanism is provided by the :doc:`StateMachine </core/statemachine/statemachine>`.
+Tipically the interface to the state changing mechanism is provided by the :doc:`StateMachine </core/statemachine/statemachine>`.
 
 .. image:: RealTimeStateMachineExampleStateMachine.png
 
@@ -416,7 +421,7 @@ The synchronisation between threads is performed using the :vcisdoxygenmccl:`Rea
 
 .. image:: RTApp-3.png
 
-The threads synchronising in the master thread (i.e. the one with the GAM writing to the DataSource) can run at a frequency which is sub-multiple of the master thread frequency. This is expressed by asking for a number of samples (> 1) to the RealTimeThreadSynchronisation DataSource.
+The threads synchronising can run at a frequency which is sub-multiple of the master (i.e. the one with the GAM writing to the DataSource) thread frequency . This is expressed by asking for a number of samples (> 1) to the RealTimeThreadSynchronisation DataSource.
 
 The TODO component also allows to exchange data between threads without an explicit synchronisation point. This means that the consumer threads will use the latest available data.
 
@@ -424,8 +429,18 @@ The TODO component also allows to exchange data between threads without an expli
 Examples
 --------
 
-Ranges and alias
-~~~~~~~~~~~~~~~~
+GAMGroup and Ranges
+~~~~~~~~~~~~~~~~~~~
+
+In the RealTimeApplication example below, note that only the name of the parent GAMGroup has to be set for scheduling (as opposed to individually listing all of its internal GAM members). 
+
+Note also how the ``Ranges`` can be used to only access a subset of an array. 
+   
+.. literalinclude:: /_static/examples/Configurations/RTApp-4.cfg
+   :language: bash   
+   :caption: GAMGroups and Ranges (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-4.cfg)
+   :linenos:
+   :emphasize-lines: 45,132-133,161,202
 
 Execution times
 ~~~~~~~~~~~~~~~
@@ -436,7 +451,7 @@ The following is an example of a RealTimeApplication which prints the execution 
 	
 .. literalinclude:: /_static/examples/Configurations/RTApp-1.cfg
    :language: bash	
-   :caption: Fixed signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-1.cfg)
+   :caption: Execution times measuremetn (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-1.cfg)
    :linenos:
    :emphasize-lines: 56-58,61-63,65-67,69-71
 
@@ -445,13 +460,17 @@ Multiple states
 
 .. image:: RealTimeStateMachineExampleRTApp.png
 
-TODO add SocketMessageListenerExample
+This is an example of a RealTimeApplication with two states. The custom component ``TCPSocketMessageProxyExample`` forwards TCP *messages* into MARTe messages. 
+
+**Start the application with the -m parameter**.
+
+In order to change state, start the application and, in another console, type ``echo -e "Destination=StateMachine\nFunction=GOTOSTATE2" | nc 127.0.0.1 24680``.
 	
 .. literalinclude:: /_static/examples/Configurations/RTApp-3.cfg
    :language: bash	
-   :caption: Fixed signals configuration (Run with NAME_OF_THE_MESSGE=StateMachine:START and NAME_OF_THE_CONFIGURATION_FILE=RTApp-3.cfg)
+   :caption: Multiple states configuration (Run with NAME_OF_THE_MESSAGE=StateMachine:START and NAME_OF_THE_CONFIGURATION_FILE=RTApp-3.cfg)
    :linenos:
-   :emphasize-lines: 56-58,61-63,65-67,69-71
+   :emphasize-lines: 1-3,477,482,490,493,495,498,500,503,511,514
 
 Thread Synchronisation
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -462,7 +481,7 @@ The following is an example of a RealTimeApplication with multiple synchronised 
    
 .. literalinclude:: /_static/examples/Configurations/RTApp-2.cfg
    :language: bash	
-   :caption: Fixed signals configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-2.cfg)
+   :caption: Thread synchronisation configuration (Run with NAME_OF_THE_STATE=State1 and NAME_OF_THE_CONFIGURATION_FILE=RTApp-2.cfg)
    :linenos:
    :emphasize-lines: 90,133
 
