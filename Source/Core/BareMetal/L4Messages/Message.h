@@ -79,7 +79,7 @@ public:
      *   By default, the sender will not wait for a message reply.
      *   !!!!! IMPORTANT !!!! a reply is always contained in the same Message object used to send
      *   a    direct reply is performed by transforming the Message object into a reply
-     *   an indirect reply is performed by transforming the Message object into a reply and by sending to the sender
+     *   an indirect reply is performed by transforming the Message object into a reply and by sending it back to the sender (i.e. by calling SendMessage as it was a message)
      * @see ReferenceContainer::Initialise(*)
      */
     virtual bool Initialise(StructuredDataI &data);
@@ -111,8 +111,8 @@ public:
     bool ExpectsReply() const;
 
     /**
-     * @brief Checks if this message requires an immediate reply.
-     * @return true if this message requires an immediate reply, false otherwise.
+     * @brief Checks if this message requires an indirect reply.
+     * @return true if this message requires an indirect reply, false otherwise.
      */
     bool ExpectsIndirectReply() const;
 

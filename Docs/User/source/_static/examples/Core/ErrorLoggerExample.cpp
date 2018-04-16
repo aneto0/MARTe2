@@ -54,6 +54,11 @@ void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation 
     else {
         printf(RED);
     }
-    printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    if (errorInfo.objectName) {
+        printf("[%s - %s:%d - %s]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorInfo.objectName, errorDescription);
+    }
+    else {
+        printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
+    }
     printf(RST);
 }

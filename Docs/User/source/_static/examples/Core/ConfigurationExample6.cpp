@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationExample4.cpp
- * @brief Source file for class ConfigurationExample4
+ * @file ConfigurationExample6.cpp
+ * @brief Source file for class ConfigurationExample6
  * @date 08/04/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ConfigurationExample4 (public, protected, and private). Be aware that some
+ * the class ConfigurationExample6 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
