@@ -367,6 +367,22 @@ Signal rules
    c. If no Default value is specified, zero is assumed.
 5. For every thread, at most one signal shall define the property `Frequency` (i.e. at most one synchronisation point per thread).
 
+The following is a valid example where the GAM resolves the signal type from the DataSource.
+
+.. image:: RTApp-SignalResolution-1.png
+
+In this example the type of the signal *A1* is not defined by the producer nor by the source and thus the configuration is invalid and will fail.
+
+.. image:: RTApp-SignalResolution-2.png
+
+In the following, there is a contradiction between the properties of the signal *A1* and thus the configuration will also fail.
+
+.. image:: RTApp-SignalResolution-3.png
+
+The correct way to access an array of smaller dimensions is to use the parameter ``Ranges``. The GAM parameter will only use (and allocate memory) to the first two elements of the array:
+
+.. image:: RTApp-SignalResolution-4.png 
+
 State change
 ------------
 
