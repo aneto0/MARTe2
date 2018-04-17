@@ -157,7 +157,7 @@ MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::Refere
         example->SetName("REPLY");
         messageToTest->Insert(example);
         if (messageToTest->ExpectsIndirectReply()) {
-            //Indirect reply... resend the message
+            //Indirect reply... resends the message
             err = MessageI::SendMessage(messageToTest, this);
         }
     }

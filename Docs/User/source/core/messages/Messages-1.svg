@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.47 r22583"
    sodipodi:docname="Messages-1.svg"
-   inkscape:export-filename="/home/aneto/Projects/MARTe2-dev/Docs/User/source/core/gams/Messages-1.png"
+   inkscape:export-filename="/home/aneto/Projects/MARTe2-dev/Docs/User/source/core/messages/Messages-1.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -127,9 +127,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="231.25932"
-     inkscape:cy="978.01789"
+     inkscape:zoom="0.70000001"
+     inkscape:cx="347.92558"
+     inkscape:cy="861.01761"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -152,7 +152,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
