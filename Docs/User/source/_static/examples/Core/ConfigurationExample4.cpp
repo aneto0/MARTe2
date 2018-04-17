@@ -147,7 +147,7 @@ private:
 CLASS_REGISTER(ReferenceEx1, "")
 
 /**
- * @brief A simple MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
+ * @brief A MARTe::Object class will be automatically registered into the ClassRegistryDatabase.
  */
 class ControllerEx1: public MARTe::ReferenceContainer {
 public:

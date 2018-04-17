@@ -83,14 +83,14 @@ private:
 CLASS_REGISTER(MessageFilterEx1, "")
 
 /**
- * @brief A simple MARTe::Object class that will receive messages.
+ * @brief A MARTe::Object class that will receive messages.
  */
 class MessageEx1: public MARTe::Object, public MARTe::MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief NOOP.
+     * @brief Install the message filter.
      */
 MessageEx1    () : MARTe::Object(), MARTe::MessageI() {
         using namespace MARTe;
@@ -112,6 +112,9 @@ MessageEx1    () : MARTe::Object(), MARTe::MessageI() {
         RemoveMessageFilter(filter);
     }
 
+    /**
+     * @brief Print the message contents in the screen.
+     */
     MARTe::ErrorManagement::ErrorType CheckMessage(MARTe::ReferenceT<MARTe::Message> &messageToTest) {
         using namespace MARTe;
         CCString sender = messageToTest->GetSender();
@@ -135,6 +138,7 @@ private:
 
 CLASS_REGISTER(MessageEx1, "")
 
+//Delegate to the owner the handling of the message (but could be handled by the filter itself as well).
 MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::ReferenceT<MARTe::Message> &messageToTest) {
     MARTe::ReferenceT<MessageEx1> ownerT = owner;
     MARTe::ErrorManagement::ErrorType err;
@@ -144,6 +148,43 @@ MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::Refere
     }
     return err;
 }
+
+/**
+ * @brief A MARTe::ReferenceContainer class that will send any messages inserted into it. Note that it does not inherit from MessageI.
+ */
+class MessageEx2: public MARTe::ReferenceContainer {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief NOOP.
+     */
+MessageEx2    () : MARTe::ReferenceContainer() {
+    }
+
+    virtual ~MessageEx2 () {
+        if (GetName() != NULL) {
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    void SendMessages() {
+        using namespace MARTe;
+        uint32 numberOfMessages = Size();
+        uint32 i;
+        for (i=0u; i<numberOfMessages; i++) {
+            ReferenceT<Message> msg = Get(i);
+            if (msg.IsValid()) {
+                ErrorManagement::ErrorType err = MessageI::SendMessage(msg, this);
+                REPORT_ERROR(err, "Message %s sent", msg->GetName());
+            }
+        }
+    }
+
+};
+
+CLASS_REGISTER(MessageEx2, "")
 
 }
 /*---------------------------------------------------------------------------*/
@@ -156,30 +197,30 @@ int main(int argc, char **argv) {
     SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
     StreamString configurationCfg = ""
-            "+MsgEx1 = {\n"
+            "+MsgRec1 = {\n"
             "    Class = MessageEx1\n"
             "}\n"
-            "+MsgEx2 = {\n"
+            "+MsgRec2 = {\n"
             "    Class = MessageEx1\n"
             "}\n"
-            "+MsgEx3 = {\n"
+            "+MsgRec3 = {\n"
             "    Class = MessageEx1\n"
             "}\n"
-            "+Messages = {\n"
-            "    Class = ReferenceContainer\n"
+            "+MsgSender1= {\n"
+            "    Class = MessageEx2\n"
             "    +Msg1 = {\n"
             "        Class = Message\n"
-            "        Destination = MsgEx3"
+            "        Destination = MsgRec3"
             "        Function = \"AFunction\""
             "    }"
             "    +Msg2 = {\n"
             "        Class = Message\n"
-            "        Destination = MsgEx2"
+            "        Destination = MsgRec2"
             "        Function = \"BFunction\""
             "    }"
             "    +Msg3 = {\n"
             "        Class = Message\n"
-            "        Destination = MsgEx1"
+            "        Destination = MsgRec1"
             "        Function = \"CFunction\""
             "    }"
             "}";
@@ -206,24 +247,22 @@ int main(int argc, char **argv) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Successfully loaded the configuration file");
     }
 
-    ReferenceT<MessageEx1> msgEx1 = ObjectRegistryDatabase::Instance()->Find("MsgEx1");
-    ReferenceT<MessageEx1> msgEx2 = ObjectRegistryDatabase::Instance()->Find("MsgEx2");
-    ReferenceT<MessageEx1> msgEx3 = ObjectRegistryDatabase::Instance()->Find("MsgEx3");
-    ReferenceT<Message> msg1 = ObjectRegistryDatabase::Instance()->Find("Messages.Msg1");
-    ReferenceT<Message> msg2 = ObjectRegistryDatabase::Instance()->Find("Messages.Msg2");
-    ReferenceT<Message> msg3 = ObjectRegistryDatabase::Instance()->Find("Messages.Msg3");
-    MessageI::SendMessage(msg1, NULL_PTR(Object *));
-    MessageI::SendMessage(msg2, NULL_PTR(Object *));
-    MessageI::SendMessage(msg3, NULL_PTR(Object *));
+    ReferenceT<MessageEx1> msgRec1 = ObjectRegistryDatabase::Instance()->Find("MsgRec1");
+    ReferenceT<MessageEx1> msgRec2 = ObjectRegistryDatabase::Instance()->Find("MsgRec2");
+    ReferenceT<MessageEx1> msgRec3 = ObjectRegistryDatabase::Instance()->Find("MsgRec3");
+    ReferenceT<MessageEx2> msgSender1 = ObjectRegistryDatabase::Instance()->Find("MsgSender1");
 
-    while (!msgEx1->messageReceived) {
-        Sleep::MSec(100);
-    }
-    while (!msgEx2->messageReceived) {
-        Sleep::MSec(100);
-    }
-    while (!msgEx3->messageReceived) {
-        Sleep::MSec(100);
+    if ((msgSender1.IsValid()) && (msgRec1.IsValid()) && (msgRec2.IsValid()) && (msgRec3.IsValid())) {
+        msgSender1->SendMessages();
+        while (!msgRec1->messageReceived) {
+            Sleep::MSec(100);
+        }
+        while (!msgRec2->messageReceived) {
+            Sleep::MSec(100);
+        }
+        while (!msgRec3->messageReceived) {
+            Sleep::MSec(100);
+        }
     }
     //Purge all the Objects!
     MARTe::ObjectRegistryDatabase::Instance()->Purge();

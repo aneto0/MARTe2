@@ -58,6 +58,10 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample1$(EXEEXT) \
+        $(BUILD_DIR)/MessageExample2$(EXEEXT) \
+        $(BUILD_DIR)/MessageExample3$(EXEEXT) \
+        $(BUILD_DIR)/MessageExample4$(EXEEXT) \
+        $(BUILD_DIR)/MessageExample5$(EXEEXT) \
         $(BUILD_DIR)/ModelGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \
         $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \

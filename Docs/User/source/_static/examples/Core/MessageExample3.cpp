@@ -1,6 +1,6 @@
 /**
- * @file MessageExample2.cpp
- * @brief Source file for class MessageExample2
+ * @file MessageExample3.cpp
+ * @brief Source file for class MessageExample3
  * @date 17/04/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MessageExample2 (public, protected, and private). Be aware that some
+ * the class MessageExample3 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -37,6 +37,7 @@
 #include "MessageFilter.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
+#include "ReplyMessageCatcherMessageFilter.h"
 #include "Sleep.h"
 #include "StandardParser.h"
 
@@ -154,21 +155,27 @@ MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::Refere
         ReferenceT<Object> example = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         example->SetName("REPLY");
         messageToTest->Insert(example);
+        if (messageToTest->ExpectsIndirectReply()) {
+            //Indirect reply... resend the message
+            err = MessageI::SendMessage(messageToTest, this);
+        }
     }
     return err;
 }
 
 /**
- * @brief A MARTe::ReferenceContainer class that will send any messages inserted into it. Note that it does not inherit from MessageI.
+ * @brief A MARTe::Object class that will send indirect reply messages and waits for the reply.
+ * Note that the method SendMessageAndWaitIndirectReply will automatically register a ReplyMessageCatcherMessageFilter filter
  */
-class MessageEx2: public MARTe::ReferenceContainer {
+class MessageEx2: public MARTe::ReferenceContainer, public MARTe::MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief NOOP.
+     * @brief NOOP
      */
-MessageEx2    () : MARTe::ReferenceContainer() {
+    MessageEx2 () : MARTe::ReferenceContainer(), MARTe::MessageI() {
+        using namespace MARTe;
         replyReceived = false;
     }
 
@@ -188,7 +195,10 @@ MessageEx2    () : MARTe::ReferenceContainer() {
             ErrorManagement::ErrorType err;
             err.fatalError = !msg.IsValid();
             if (err.ErrorsCleared()) {
-                err = MessageI::SendMessageAndWaitReply(msg, this);
+                if (!msg->ExpectsIndirectReply()) {
+                    msg->SetExpectsIndirectReply(true);
+                }
+                err = SendMessageAndWaitIndirectReply(msg);
                 REPORT_ERROR(err, "Message %s sent", msg->GetName());
             }
             if (err.ErrorsCleared()) {
@@ -235,16 +245,19 @@ int main(int argc, char **argv) {
             "        Class = Message\n"
             "        Destination = MsgRec3"
             "        Function = \"AFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "    +Msg2 = {\n"
             "        Class = Message\n"
             "        Destination = MsgRec2"
             "        Function = \"BFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "    +Msg3 = {\n"
             "        Class = Message\n"
             "        Destination = MsgRec1"
             "        Function = \"CFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "}";
 

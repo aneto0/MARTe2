@@ -31,17 +31,17 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "GAM.h"
+#include "GAMSchedulerI.h"
+#include "Matrix.h"
 #include "RealTimeApplication.h"
+#include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeState.h"
+#include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
-#include "GAM.h"
-#include "GAMSchedulerI.h"
-#include "AdvancedErrorManagement.h"
-#include "Matrix.h"
-#include "RealTimeApplicationConfigurationBuilder.h"
-#include "RealTimeThread.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -80,7 +80,7 @@ static const MARTe::IntrospectionEntry* GainsStructEntries[] = { &Gains_lowGains
 DECLARE_STRUCT_INTROSPECTION(Gains, GainsStructEntries)
 
 /**
- * @brief A simple MARTe::Object class that will read directly read its configuration from a structure.
+ * @brief A MARTe::Object class that will read directly read its configuration from a structure.
  */
 class ControllerEx1: public MARTe::ReferenceContainer {
 public:

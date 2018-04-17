@@ -51,6 +51,9 @@ void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation 
     if (errorInfo.header.errorType == ErrorManagement::Information) {
         printf(GRN);
     }
+    else if (errorInfo.header.errorType == ErrorManagement::NoError) {
+        printf(GRN);
+    }
     else {
         printf(RED);
     }

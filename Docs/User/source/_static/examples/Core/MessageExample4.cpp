@@ -1,6 +1,6 @@
 /**
- * @file MessageExample2.cpp
- * @brief Source file for class MessageExample2
+ * @file MessageExample4.cpp
+ * @brief Source file for class MessageExample4
  * @date 17/04/2018
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MessageExample2 (public, protected, and private). Be aware that some
+ * the class MessageExample4 (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -37,6 +37,8 @@
 #include "MessageFilter.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
+#include "QueuedMessageI.h"
+#include "QueuedReplyMessageCatcherFilter.h"
 #include "Sleep.h"
 #include "StandardParser.h"
 
@@ -55,7 +57,7 @@ public:
     /**
      * @brief NOOP.
      */
-MessageFilterEx1    () : MARTe::Object(), MARTe::MessageFilter(true) {
+    MessageFilterEx1 () : MARTe::Object(), MARTe::MessageFilter(true) {
         using namespace MARTe;
     }
 
@@ -85,18 +87,18 @@ CLASS_REGISTER(MessageFilterEx1, "")
 /**
  * @brief A MARTe::Object class that will receive and reply to messages.
  */
-class MessageEx1: public MARTe::Object, public MARTe::MessageI {
+class MessageEx1: public MARTe::Object, public MARTe::QueuedMessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Install the message filter.
      */
-MessageEx1    () : MARTe::Object(), MARTe::MessageI() {
+MessageEx1    () : MARTe::Object(), MARTe::QueuedMessageI() {
         using namespace MARTe;
         filter = ReferenceT<MessageFilterEx1>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         filter->SetOwner(this);
-        ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+        ErrorManagement::ErrorType ret = QueuedMessageI::InstallMessageFilter(filter);
         messageReceived = false;
     }
 
@@ -154,21 +156,26 @@ MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::Refere
         ReferenceT<Object> example = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         example->SetName("REPLY");
         messageToTest->Insert(example);
+        if (messageToTest->ExpectsIndirectReply()) {
+            //Indirect reply... resend the message
+            err = MessageI::SendMessage(messageToTest, this);
+        }
     }
     return err;
 }
 
 /**
- * @brief A MARTe::ReferenceContainer class that will send any messages inserted into it. Note that it does not inherit from MessageI.
+ * @brief A MARTe::Object class that will send indirect reply messages and wait for the reply also using a queue.
  */
-class MessageEx2: public MARTe::ReferenceContainer {
+class MessageEx2: public MARTe::ReferenceContainer, public MARTe::MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief NOOP.
+     * @brief NOOP
      */
-MessageEx2    () : MARTe::ReferenceContainer() {
+MessageEx2    () : MARTe::ReferenceContainer(), MARTe::MessageI() {
+        using namespace MARTe;
         replyReceived = false;
     }
 
@@ -181,24 +188,67 @@ MessageEx2    () : MARTe::ReferenceContainer() {
 
     void SendMessages() {
         using namespace MARTe;
-        uint32 numberOfMessages = Size();
+        ErrorManagement::ErrorType err;
+        //Semaphore to wait for replies
+        EventSem waitSem;
+        bool ok = waitSem.Create();
+        if (ok) {
+            ok = waitSem.Reset();
+        }
+
+        //Prepare to wait for eventual replies
+        ReferenceContainer eventReplyContainer;
         uint32 i;
-        for (i=0u; i<numberOfMessages; i++) {
-            ReferenceT<Message> msg = Get(i);
-            ErrorManagement::ErrorType err;
-            err.fatalError = !msg.IsValid();
-            if (err.ErrorsCleared()) {
-                err = MessageI::SendMessageAndWaitReply(msg, this);
-                REPORT_ERROR(err, "Message %s sent", msg->GetName());
+
+        //Only accept indirect replies
+        for (i = 0u; i < Size(); i++) {
+            ReferenceT<Message> eventMsg = Get(i);
+            if (eventMsg.IsValid()) {
+                if (eventMsg->ExpectsReply()) {
+                    eventMsg->SetExpectsIndirectReply(true);
+                }
+                if (eventMsg->ExpectsIndirectReply()) {
+                    err = !eventReplyContainer.Insert(eventMsg);
+                }
             }
-            if (err.ErrorsCleared()) {
-                if (msg->IsReply()) {
-                    REPORT_ERROR(err, "Message %s is now a reply as expected", msg->GetName());
-                }
-                if (msg->Size() > 0) {
-                    Reference ref = msg->Get(0);
-                    REPORT_ERROR(err, "Message %s contains an object in the reply with name %s", msg->GetName(), ref->GetName());
-                }
+        }
+
+        if (ok) {
+            ok = err.ErrorsCleared();
+        }
+        //Prepare the filter which will wait for all the replies
+        if ((eventReplyContainer.Size() > 0u) && (ok)) {
+            ReferenceT<QueuedReplyMessageCatcherFilter> filter(new (NULL) QueuedReplyMessageCatcherFilter());
+            filter->SetMessagesToCatch(eventReplyContainer);
+            filter->SetEventSemaphore(waitSem);
+            err = MessageI::InstallMessageFilter(filter, 0);
+        }
+
+        ok = err.ErrorsCleared();
+        for (i = 0u; (i < Size()) && (ok); i++) {
+            ReferenceT<Message> msg = Get(i);
+            if (msg.IsValid()) {
+                msg->SetAsReply(false);
+                err = MessageI::SendMessage(msg, this);
+            }
+            ok = err.ErrorsCleared();
+        }
+        //Wait for all the replies to arrive...
+        if (ok) {
+            if (eventReplyContainer.Size() > 0u) {
+                err = waitSem.Wait(TTInfiniteWait);
+            }
+            ok = err.ErrorsCleared();
+
+        }
+        for (i = 0u; (i < Size()) && (ok); i++) {
+            ReferenceT<Message> msg = Get(i);
+            if (msg->IsReply()) {
+                REPORT_ERROR(err, "Message %s is now a reply as expected", msg->GetName());
+            }
+            if (msg->Size() > 0) {
+                Reference ref = msg->Get(0);
+                REPORT_ERROR(err, "Message %s contains an object in the reply with name %s", msg->GetName(), ref->GetName());
             }
         }
         replyReceived = true;
@@ -235,16 +285,19 @@ int main(int argc, char **argv) {
             "        Class = Message\n"
             "        Destination = MsgRec3"
             "        Function = \"AFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "    +Msg2 = {\n"
             "        Class = Message\n"
             "        Destination = MsgRec2"
             "        Function = \"BFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "    +Msg3 = {\n"
             "        Class = Message\n"
             "        Destination = MsgRec1"
             "        Function = \"CFunction\""
+            "        Mode = \"ExpectsIndirectReply\""
             "    }"
             "}";
 
@@ -276,6 +329,9 @@ int main(int argc, char **argv) {
     ReferenceT<MessageEx2> msgSender1 = ObjectRegistryDatabase::Instance()->Find("MsgSender1");
 
     if ((msgSender1.IsValid()) && (msgRec1.IsValid()) && (msgRec2.IsValid()) && (msgRec3.IsValid())) {
+        msgRec1->Start();
+        msgRec2->Start();
+        msgRec3->Start();
         msgSender1->SendMessages();
         while (!msgRec1->messageReceived) {
             Sleep::MSec(100);
@@ -289,6 +345,9 @@ int main(int argc, char **argv) {
         while (!msgSender1->replyReceived) {
             Sleep::MSec(100);
         }
+        msgRec1->Stop();
+        msgRec2->Stop();
+        msgRec3->Stop();
     }
     //Purge all the Objects!
     MARTe::ObjectRegistryDatabase::Instance()->Purge();
