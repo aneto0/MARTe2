@@ -35,8 +35,7 @@ OBJSX=\
 		StandardParser.x \
 		XMLParser.x \
 		JsonParser.x \
-
-#		ConfigurationDatabase.x
+		ConfigurationDatabase.x
 
 
 #		TypeConversion.x \

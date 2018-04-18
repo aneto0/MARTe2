@@ -76,14 +76,13 @@ public:
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
      */
-    ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
+    inline ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
 
     /**
      * @brief Unlocks the shared semaphore.
      * @return true if the shared semaphore is successfully unlocked.
      */
-    void Unlock();
-
+    inline void Unlock();
 
 /// StructuredDataI Interface
 
@@ -97,9 +96,16 @@ public:
     virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value);
 
     /**
-     * @see StructuredDataI::GetType
+     * @brief Reads a previously stored AnyType and creates an Object.
+     * If borrowed the object is part of the structuredDataI internal implementation and therefore cannot be modified.
+     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
+     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
+     * @param[out] the object reference to point to the output object
+     * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
+     * @pre
+     *   GetType(path).GetTypeDescriptor() != VoidType
      */
-    virtual AnyType GetType(CCString path);
+    virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true);
 
     /**
      * @see StructuredDataI::Write
@@ -194,7 +200,7 @@ private:
      * @param[in] path the path to be created.
      * @return true if the path creation is successful.
      */
-    bool CreateNodes(CCString path);
+    ErrorManagement::ErrorType CreateNodes(CCString path);
 
     /**
      * The current node to where the database is pointing.
@@ -206,6 +212,9 @@ private:
      */
     ReferenceT<ReferenceContainer> rootNode;
 
+
+    //TODO use a path instead of rootNode, currentNode
+
     /**
      * The shared mutex semaphore.
      */
@@ -213,11 +222,21 @@ private:
 
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+ErrorManagement::ErrorType ConfigurationDatabase::Lock(const TimeoutType &timeout) {
+    return mux.FastLock(timeout);
+}
+
+void ConfigurationDatabase::Unlock() {
+    mux.FastUnLock();
+}
+
+}
+
 
 #endif /* CONFIGURATIONDATABASE_H_ */
 

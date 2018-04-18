@@ -90,8 +90,6 @@ public:
      * @param[in] path the relative path to the leaf used to store the AnyType \a value.
      * @param[out] on success the converted AnyType will be stored in this parameter.
      * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
-     * @pre
-     *   GetType(path).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value) = 0;
 
@@ -102,8 +100,6 @@ public:
      * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
      * @param[out] the object reference to point to the output object
      * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
-     * @pre
-     *   GetType(path).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true) = 0;
 
@@ -112,12 +108,15 @@ public:
      */
     operator AnyType();
 
+#if 0  // OBSOLETED as one can Read/Borrow an object and then inspect its type. This method name is misleading
+       // as in fact it allows access to the type in a borrow like manner
     /**
      * @brief Gets the type of a previously stored AnyType.
      * @param[in] path the relative path to the leaf used to store the AnyType \a value.
      * @return the type of the stored AnyType or VoidType if this \a name does not exist.
      */
     virtual AnyType GetType(CCString path) = 0;
+#endif
 
     /**
      * Affect the current position

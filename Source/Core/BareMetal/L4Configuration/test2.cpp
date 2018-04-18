@@ -550,7 +550,6 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
     	ok.SetError(ok2);
 
     	ok2=at.CompareWith(contentCheck);
-//    	ok2 = CheckAnyContent(at,contentCheck);
     	CONDITIONAL_REPORT_ERROR(ok2,"CompareWith error");
 
     	ok.SetError(ok2);
@@ -652,11 +651,8 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
-//	if (!ret){
-		CONDITIONAL_REPORT_ERROR(ret,"pfstc.Start failed");
-//	}
+	CONDITIONAL_REPORT_ERROR(ret,"pfstc.Start failed");
 
-	//int32 counter = 0;	//TODO
 	if (ret){
 		for (int j=0;(j<size1) && ret ;j++){
 
@@ -674,28 +670,15 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 				(*targetB[j])[i]=k;
 				targetA[j][i] = k;
 				char8 buffer[32];
-//kk = counter++;//TODO
 				sprintf(buffer,"%lli",kk);
 				ret = pfstc.AddElement(buffer);
 				COMPOSITE_REPORT_ERROR(ret,"pfstc.AddElement(",buffer,")");
-/*
-				if (!ret){
-					DynamicCString errMsg;
-					errMsg.Append("pfstc.AddElement(");
-					errMsg.Append(buffer);
-					errMsg.Append(")");
-					REPORT_ERROR(ret,errMsg);
-				}
-*/
 			}
 			targetC[j].InitVector(reinterpret_cast<T *>(&targetA[j]),actualSize2);
-//printf("S@%p -> (%p %i)\n",&targetC[j],&targetA[j],actualSize2);
 
 			if (ret){
 				ret = pfstc.EndVector();
-//				if (!ret){
-					CONDITIONAL_REPORT_ERROR(ret,"pfstc.EndVector failed");
-//				}
+				CONDITIONAL_REPORT_ERROR(ret,"pfstc.EndVector failed");
 			}
 		}
 	}
@@ -703,31 +686,26 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 	Reference aoi;
 	if (ret){
 		ret = pfstc.End();
-//		if (!ret){
-			CONDITIONAL_REPORT_ERROR(ret,"pfstc.End failed");
-//		}
+		CONDITIONAL_REPORT_ERROR(ret,"pfstc.End failed");
 	}
 
 	if (ret){
 		ret = pfstc.GetReference(aoi);
 		ret.fatalError = !aoi.IsValid();
-		if (!ret){
-			REPORT_ERROR(ret,"pfstc.GetReference failed");
-		} else {
+		CONDITIONAL_REPORT_ERROR(ret,"pfstc.GetReference failed");
+
+		if (ret){
 			message.Append(aoi->GetClassRegistryItem()->GetClassName());
-//			message.Append(aoi->GetClassRegistryItem()->GetTypeidName());
 			message.Append("{");
 		}
 	}
+
 	if (ret){
 		AnyType x;
 		aoi.ToAnyType(x);
 		ret = CompareType(x,at);
 		if (ret){
 			x.ToString(message);
-//			DynamicCString s;
-//			x.ToString(s);
-//			message.Append(s.GetList());
 		}
 		message.Append("}");
 	}
@@ -737,10 +715,9 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 		AnyType x;
 		aoi.ToAnyType(x);
 	    ret = x.CompareWith(at);
-		if (!ret){
-			REPORT_ERROR(ret,"Compare content fault");
-		}
+		CONDITIONAL_REPORT_ERROR(ret,"Compare content fault");
 	}
+
 	if (!ret){
 		DynamicCString string;
 		string.Append("Failed ");

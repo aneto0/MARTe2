@@ -219,7 +219,7 @@ public:
      * @brief Creates a clone of the variable and returns a reference to it
      * The reference points to an Object derivative that holds the clone an the Variable Descriptor
      */
-    inline Reference				Clone() const;
+    ErrorManagement::ErrorType 		Clone(Reference &cloned) const;
 
     /**
      * @briefs compare content with destination.
@@ -335,16 +335,6 @@ const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
 
 ErrorManagement::ErrorType AnyType::ToString(DynamicCString &string,bool rawFormat) const{
 	return variableDescriptor.ToString(string,rawFormat);
-}
-
-Reference AnyType::Clone() const{
-	Reference ref;
-	const uint8 *sourcePtr =  reinterpret_cast<const uint8 *>(pointer2Variable);
-	ErrorManagement::ErrorType ok = variableDescriptor.Clone(sourcePtr,ref);
-	if (!ok){
-		REPORT_ERROR(ok,"variableDescriptor.Clone error");
-	}
-	return ref;
 }
 
 

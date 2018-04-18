@@ -547,14 +547,9 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 	if ((type != 'A') && ok){
 		// it works as vector is descendant of Pointer class
 		ok = RedirectP(ptr,allowNULL);
-		if (!ok){
-			DynamicCString errM;
-			errM.Append("type ");
-			errM.Append(type);
-			errM.Append(" redirection failed ");
-	        REPORT_ERROR(ok, errM.GetList());
-		}
-		// handle case of null pointers
+        COMPOSITE_REPORT_ERROR(ok, "type ",type," redirection failed ");
+
+        // handle case of null pointers
 		// change F to X type
 		if (ptr == NULL) {
 			numberOfElements = 0;
@@ -591,33 +586,31 @@ static ErrorManagement::ErrorType HasSameDimensionsAs(const DimensionHandler &fi
 	ErrorManagement::ErrorType ok = true;
 	uint32 nDim = first.NDimensions();
 	uint32 nDimO = second.NDimensions();
-	if (nDim == 0){
-		ok.internalSetupError=true;
-        REPORT_ERROR(ok, "NDimensions == 0");
-	}
-	if (nDim != nDimO){
-		ok.invalidOperation=true;
+	ok.internalSetupError=(nDim == 0);
+	CONDITIONAL_REPORT_ERROR(ok, "NDimensions == 0");
 
-		DynamicCString errM;
-		errM.Append("N of dim[");
-		for (int i = 0;i < nDim;i++){
-			char8 type = first[i].type;
-			if (type != '\0') errM.Append(type);
-			else errM.Append('0');
+	if (ok){
+		ok.invalidOperation=(nDim != nDimO);
+		if (!ok){
+			DynamicCString errM;
+			errM.Append("N of dim[");
+			for (int i = 0;i < nDim;i++){
+				char8 type = first[i].type;
+				if (type != '\0') errM.Append(type);
+				else errM.Append('0');
+			}
+			errM.Append( "]= ");
+			errM.Append(nDimO);
+			errM.Append(" != [");
+			for (int i = 0;i < nDim;i++){
+				char8 type = second[i].type;
+				if (type != '\0') errM.Append(type);
+				else errM.Append('0');
+			}
+			errM.Append(']');
+			errM.Append(nDimO);
+	        REPORT_ERROR(ok, errM.GetList());
 		}
-		errM.Append( "]= ");
-		errM.Append(nDimO);
-		errM.Append(" != [");
-		for (int i = 0;i < nDim;i++){
-			char8 type = second[i].type;
-			if (type != '\0') errM.Append(type);
-			else errM.Append('0');
-		}
-		errM.Append(']');
-		errM.Append(nDimO);
-        REPORT_ERROR(ok, errM.GetList());
-
-        COMPOSITE_REPORT_ERROR(ok,"different number of dimensions: ",errM.GetList())
 	}
 
 	for (int i = 0;ok && (i < nDim); i++){
@@ -986,12 +979,13 @@ ErrorManagement::ErrorType VDCloner::DoCreateR(
 					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
 
 						if (vip->GetDataPointer() == NULL_PTR(uint8 *)){
-							if (vip->GetNumberOfElements() != 0){
-								ret.internalSetupError = true;
-				    			REPORT_ERROR(ret, "Vector with size > 0 and NULL ptr");
-							} else {
+
+							ret.internalSetupError = (vip->GetNumberOfElements() != 0);
+			    			CONDITIONAL_REPORT_ERROR(ret, "Vector with size > 0 and NULL ptr");
+							if (ret){
 								vp->InitVector(NULL_PTR(uint8**),0);
 							}
+
 						} else {
 							uint8 *newAddressOfOutput;
 							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(vip->GetDataPointer());
@@ -1073,12 +1067,13 @@ ErrorManagement::ErrorType VDCloner::DoCreateR(
 					// loop through the collapsed layer
 					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
 						if (mip->GetDataPointer() == NULL_PTR(uint8 *)){
-							if (mip->GetNumberOfElements() != 0){
-								ret.internalSetupError = true;
-				    			REPORT_ERROR(ret, "Matrix with size > 0 and NULL ptr");
-							} else {
+
+							ret.internalSetupError = (mip->GetNumberOfElements() != 0);
+			    			CONDITIONAL_REPORT_ERROR(ret, "Matrix with size > 0 and NULL ptr");
+			    			if (ret){
 								mp->InitMatrix(NULL_PTR(uint8*),0,0);
-							}
+			    			}
+
 						} else {
 							uint8 *newAddressOfOutput;
 							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(mip->GetDataPointer());
@@ -1256,10 +1251,8 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 
 				ReferenceT<MemoryPageObject> mpor;
 				mpor = ReferenceT<MemoryPageObject> (buildNow);
-				if (!mpor.IsValid()){
-					ret.outOfMemory = true;
-					REPORT_ERROR(ret,"MemoryPageObject construction failed");
-				}
+				ret.outOfMemory = (!mpor.IsValid());
+				CONDITIONAL_REPORT_ERROR(ret,"MemoryPageObject construction failed");
 
 				if (ret){
 					mpor->Setup(type,mods,dataPtr,cloner.pageFile);

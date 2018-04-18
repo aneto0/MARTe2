@@ -116,15 +116,18 @@ public:
 
     /**
      * @brief Finds the first location in the array that contains T
+     * @param[in] data is the element to be found.
      * @return the position in the array where T is found, 0xFFFFFFFF if not found.
      */
     uint32 Find(const T & data) const;
 
     /**
      * @brief Checks if data is in this array
+     * @param[in] data is the element to be found.
      * @return true if found
      */
     inline bool In(const T& data) const;
+
     /**
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
@@ -172,7 +175,6 @@ public:
      * @return true if \a arrayIn is the same.
      */
     inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
-
 
 
 protected:

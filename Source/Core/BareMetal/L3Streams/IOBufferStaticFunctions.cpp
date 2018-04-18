@@ -391,8 +391,9 @@ bool IOBuffer::GetToken(
         }
         else {
 
-            bool isTerminator = (StringHelper::SearchChar(terminator, c) != NULL);
-            bool isSkip = (StringHelper::SearchChar(skipCharacters, c) != NULL);
+        	bool isTerminator = (terminator.In(c));
+        	bool isSkip = skipCharacters.In(c);
+
             if ((isTerminator) || (c == '\0')) {
 
                 // quit only if some data was read, otw just skip separator block
@@ -462,8 +463,9 @@ bool IOBuffer::GetToken(
         }
         else {
 
-            bool isTerminator = !(StringHelper::SearchChar(terminator, c).IsNullPtr());
-            bool isSkip = !(StringHelper::SearchChar(skipCharacters, c).IsNullPtr());
+        	bool isTerminator = (terminator.In(c));
+        	bool isSkip = skipCharacters.In(c);
+
             if ((isTerminator) || (c == '\0')) {
                 // quit only if some data was read, otw just skip separator block
                 if ((tokenSize != 0u) || (!isSkip)) {
@@ -500,8 +502,9 @@ bool IOBuffer::SkipTokens(IOBuffer &iob, uint32 count, CCString terminator){
             count = 0u;
         }
         else {
-            //
-            if (!(StringHelper::SearchChar(terminator, c).IsNullPtr()) || (c == '\0')) {
+
+        	//
+            if (terminator.In(c) || (c == '\0')) {
                 // quit only if some data was read, otherwise just skip separator block
                 if (tokenSize != 0u) {
                     tokenSize = 0u;

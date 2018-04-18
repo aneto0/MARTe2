@@ -76,7 +76,6 @@ void ProgressiveTypeCreator::Clean(){
 		delete converter;
 		converter = NULL;
 	}
-//printf("pageFile.Clean()\n"); // TODO
 	pageFile.Clean(originalPageSize);
 	type 				= InvalidType(0);
 	objectSize 			= 0;
@@ -98,20 +97,17 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	type 				= typeIn;
 	objectSize 			= typeIn.StorageSize();
 	isString 			= typeIn.IsCharString();
-	if (objectSize == 0){
-		ret.parametersError = true;
-		REPORT_ERROR(ret,"Type with 0 size");
-	}
+	ret.parametersError = (objectSize == 0);
+	CONDITIONAL_REPORT_ERROR(ret,"Type with 0 size");
+
 	if (!(isString || typeIn.IsBasicType())){
 		ret.parametersError = !(isString || typeIn.IsBasicType());
 		REPORT_ERROR(ret,"Unsupported type. Must be CString or BasicType");
 	}
 	if (ret && !isString){
 		converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
-		if (converter == NULL){
-			ret.unsupportedFeature = true;
-			REPORT_ERROR(ret,"Cannot find type converter");
-		}
+		ret.unsupportedFeature = (converter == NULL);
+		CONDITIONAL_REPORT_ERROR(ret,"Cannot find type converter");
 	}
 
 	if (ret){
@@ -128,10 +124,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStringRepresentation){
 	ErrorManagement::ErrorType ret;
 
-	if (!Started()){
-		ret.internalStateError = true;
-		REPORT_ERROR(ret,"AddElement and status not started");
-	}
+	ret.internalStateError = (!Started());
+	CONDITIONAL_REPORT_ERROR(ret,"AddElement and status not started");
 
 	bool newRow = false;
 	if (ret){
@@ -413,10 +407,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 	ErrorManagement::ErrorType  ret;
 
-	if (!Finished()){
-		ret.fatalError = true;
-		REPORT_ERROR(ret,"Not Finished");
-	}
+	ret.fatalError = (!Finished());
+	CONDITIONAL_REPORT_ERROR(ret,"Not Finished");
 
 	// points to data or to pointers to data (CCString)
 	uint8 *dataPtr = NULL;
@@ -444,8 +436,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 		// Completes operation
 		// fills aux Data
 		// creates Object
-//printf("Aux =%p data=%p\n",auxPtr,dataPtr); TODO
-
 		ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
 		CONDITIONAL_REPORT_ERROR(ret,"GetReferencePrivate Failed");
 	}
@@ -474,20 +464,14 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 	case finishedM:{
 		// auxPtr not NULL means fragmented
 		if (auxPtr != NULL){
-//printf("AUXPTR !NULL\n"); //todo
-			if (auxSize != sizeof (void *) * matrixRowSize){
-				ret.internalSetupError = true;
-				REPORT_ERROR(ret,"auxSize is not adequate");
-			}
-
+			ret.internalSetupError = (auxSize != sizeof (void *) * matrixRowSize);
+			CONDITIONAL_REPORT_ERROR(ret,"auxSize is not adequate");
 
 			// reorder the pages correctly to allow access to data
 			if (ret){
 				uint8**addressMap = reinterpret_cast<uint8**>(auxPtr);
-//printf("addressMap = %p\n",addressMap); TODO
-
 				uint32 vectorByteSize = vectorSize * objectSize;
-//printf("vectorByteSize = %i\n",vectorByteSize); TODO
+
 				for (int i = 0;(i<matrixRowSize) && ret;i++){
 					addressMap[i] = pageFile.CurrentReadPointer();
 
@@ -528,9 +512,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 		// now get the address and then reorder the pages correctly to allow access to data
 		if (ret){
 			Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
-//printf("Vector Table base %p\n",addressMap); TODO
-//printf("aux=%p aMap = %p\n",auxPtr,addressMap); TODO
-//printf("rows = %i\n",matrixRowSize); TODO
 
 			for (int i = 0;(i<matrixRowSize) && ret;i++){
 				uint32 size  = sizeStack[i];
@@ -566,7 +547,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 
 	if (ret){
 		uint32 pageSize = pageFile.CurrentPageSize();
-		if ((pageFile.NumberOfPages()==1) && (firstElPtr == dataPtr) && (pageSize <= 256)){
+		if ((pageFile.NumberOfPages()==1) && (firstElPtr == dataPtr) && (pageSize <= 64)){
 			VariableDescriptor vd(type,mods);
 
 			x = AnyObject::Clone(pageSize,reinterpret_cast<void *>(dataPtr),vd);
@@ -575,10 +556,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 			ReferenceT<MemoryPageObject> mpor;
 
 			mpor = ReferenceT<MemoryPageObject> (buildNow);
-			if (!mpor.IsValid()){
-				ret.outOfMemory = true;
-				REPORT_ERROR(ret,"MemoryPageObject construction failed");
-			}
+			ret.outOfMemory = (!mpor.IsValid());
+			CONDITIONAL_REPORT_ERROR(ret,"MemoryPageObject construction failed");
 
 			if (ret){
 				mpor->Setup(type,mods,dataPtr,pageFile);

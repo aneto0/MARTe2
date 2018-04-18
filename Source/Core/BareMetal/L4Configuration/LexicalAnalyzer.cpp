@@ -157,7 +157,6 @@ bool LexicalAnalyzer::SkipComment(StreamI &stream,
         if (GetC(stream, c)) {
             //stop loop, not a separator
         	if (!separators.In(c)){
-//            if (StringHelper::SearchChar(separators, c) == NULL) {
                 skip = false;
             }
             else {
@@ -488,7 +487,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         bool isString1 = false;
         // take the tokenString
         while (ok) {
-//            if ((StringHelper::SearchChar(separatorsUsed.Buffer(), c) != NULL) && (!escape)) {
         	if ((separatorsUsed.In(c)) && (!escape)) {
                 // this means that a string is found! Read everything until another " is found
                 if (isString1) {
@@ -503,7 +501,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 }
                 separator = c;
             }
-//            else if ((StringHelper::SearchChar(terminalsUsed.Buffer(), c) != NULL) && (!escape)) {
             else if ((terminalsUsed.In(c)) && (!escape)) {
                 terminal = c;
                 if(bufferSize>0u) {

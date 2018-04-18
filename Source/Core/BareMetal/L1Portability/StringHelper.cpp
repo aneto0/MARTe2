@@ -44,25 +44,6 @@ namespace MARTe{
 
 namespace StringHelper {
 
-/*lint -e{925} cast pointer to pointer required */
-CString StringDup(CCString const s) {
-
-    CString duplicate;
-    if (!s.IsNullPtr()) {
-
-        void *copy = HeapManager::Duplicate(static_cast<const void *>(s.GetList()));
-        duplicate = reinterpret_cast<char8 *>(copy);
-        if (duplicate.IsNullPtr()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed");
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
-    }
-
-    return duplicate;
-}
-
 CCString  SearchChar(CCString  const string,  const char8 c) {
 
     CCString  ret;
@@ -275,7 +256,7 @@ CCString  Tokenize( CCString  const string,
     return ret;
 
 }
-
+/*
 
 CCString TokenizeByString(CCString const string,CCString const terminator,DynamicCString & result) {
 
@@ -310,7 +291,7 @@ CCString TokenizeByString(CCString const string,CCString const terminator,Dynami
     return ret;
 
 }
-
+*/
 
 int32 SearchIndex(CCString  const string1, CCString  const string2) {
 

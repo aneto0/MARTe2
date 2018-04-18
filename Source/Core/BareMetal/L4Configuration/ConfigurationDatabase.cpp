@@ -30,11 +30,13 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "ErrorType.h"
+#include "CompositeErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "GlobalObjectsDatabase.h"
+#include "AnyType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +50,6 @@ namespace MARTe {
 ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
     ReferenceT < ReferenceContainer > rootContainer(buildNow);
-//    ReferenceT < ReferenceContainer > rootContainer(GlobalObjectsDatabase::Instance().GetStandardHeap());
     rootNode = rootContainer;
     currentNode = rootNode;
 }
@@ -61,14 +62,13 @@ void ConfigurationDatabase::CleanUp() {
     rootNode->CleanUp();
 }
 
+//TODO clarify if object is copied or the reference is copied.
 ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
-	ErrorManagement::ErrorType ok;
-	if (!object.IsValid()){
-		ok.parametersError = true;
-		REPORT_ERROR(ok,"parameter is an invalid reference");
-	}
+	ErrorManagement::ErrorType ret;
+	ret.parametersError = !object.IsValid();
+	CONDITIONAL_REPORT_ERROR(ret,"parameter is an invalid reference");
 
-	if (ok){
+	if (ret){
 		// result is not needed
 		// if the objects are found then are deleted
 		// if they are not found fine too
@@ -76,203 +76,209 @@ ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
 		currentNode->Insert(object);
 	}
 
-	return ok;
+	return ret;
 }
 
 
-bool ConfigurationDatabase::Write(CCString name, const AnyType &value) {
+ErrorManagement::ErrorType ConfigurationDatabase::Write(CCString name, const AnyType &value) {
+	ErrorManagement::ErrorType ret;
 
-	value.
+	Reference ref = Reference(value);
 
+	ret.fatalError = !ref.IsValid();
 
-    bool ok = false;
-    // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
-    bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
-    bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
-    if ((isRegisteredObject) || (isStructuredDataI)) {
-        ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
-        if (CreateRelative(name)) {
-            ok = TypeConvert((*this).operator MARTe::AnyType(), value);
-        }
-        currentNode = storeCurrentNode;
-    }
-    else {
-        ok = (StringHelper::Length(name) > 0u);
-        if (ok) {
-            AnyType existentType = GetType(name);
-            if (existentType.GetTypeDescriptor().type != VoidType.type) {
-                ok = Delete(name);
-            }
-        }
-        if (ok) {
+	if (ret){
+		ref->SetName(name);
+	}
 
-            ReferenceT < AnyObject > objToWrite(GlobalObjectsDatabase::Instance().GetStandardHeap());
-            ok = objToWrite.IsValid();
-            if (ok) {
-                ok = objToWrite->Serialise(value);
-                if (ok) {
-                    objToWrite->SetName(name);
-                    ok = currentNode.IsValid();
-                    if (ok) {
-                        ok = currentNode->Insert(objToWrite);
-                    }
-                }
-            }
-        }
-    }
-    return ok;
+	if (ret){
+		ret = Write(ref);
+	}
+
+	return ret;
+
 }
 
+#define SAVE_NODE_POSITION()    ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
+#define RESTORE_NODE_POSITION() currentNode = storeCurrentNode;
+
+
+ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path,Reference &object,bool borrow){
+	ErrorManagement::ErrorType ret;
+
+	SAVE_NODE_POSITION()
+
+	ret = MoveRelative(path);
+	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path )
+
+    if (ret) {
+    	if (borrow){
+    		object = currentNode;
+    	} else {
+    		AnyType at;
+    		currentNode->ToAnyType(at);
+
+    		ret = at.Clone(object);
+    	}
+    }
+
+	RESTORE_NODE_POSITION()
+
+	return ret;
+}
+
+ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyType &value) {
+	ErrorManagement::ErrorType ret;
+
+	SAVE_NODE_POSITION()
+
+	ret = MoveRelative(path);
+	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path )
+	AnyType at;
+
+    if (ret) {
+   		currentNode->ToAnyType(at);
+   		ret = at.CopyTo(value);
+    }
+
+	RESTORE_NODE_POSITION()
+
+	return ret;
+}
+
+/*
 AnyType ConfigurationDatabase::GetType(CCString name) {
     bool found = false;
     Reference foundReference;
     uint32 i;
     for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
         foundReference = currentNode->Get(i);
-        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+        found = name.isSameAs(foundReference->GetName().GetList());
     }
 
     AnyType retType;
     if (found) {
-        ReferenceT < AnyObject > objToRead = foundReference;
-        if (objToRead.IsValid()) {
-            retType = objToRead->GetType();
+        if (foundReference.IsValid()) {
+            foundReference->ToAnyType(retType);
         }
     }
 
     return retType;
 }
+*/
 
-bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
-    ReferenceT < ReferenceContainer > foundNode;
-    bool ok = true;
-    for (uint32 i = 0u; (i < currentNode->Size()) && (ok); i++) {
-        foundNode = currentNode->Get(i);
+ErrorManagement::ErrorType  ConfigurationDatabase::Copy(StructuredDataI &destination) {
+	ErrorManagement::ErrorType ret;
+
+	ReferenceT < ReferenceContainer > foundNode;
+    for (uint32 i = 0u; (i < currentNode->Size()) && (ret); i++) {
+
+    	foundNode = currentNode->Get(i);
         if (foundNode.IsValid()) {
-            if (!destination.CreateRelative(foundNode->GetName())) {
-                ok = false;
-            }
-            if ((!MoveRelative(foundNode->GetName())) && ok) {
-                ok = false;
-            }
-            if (ok) {
+        	ret = destination.CreateRelative(foundNode->GetName());
+        	COMPOSITE_REPORT_ERROR(ret,"Failed to Create node ",foundNode->GetName())
+
+        	if (ret){
+        		ret = MoveRelative(foundNode->GetName());
+            	COMPOSITE_REPORT_ERROR(ret,"Failed to Move to ",foundNode->GetName())
+        	}
+
+        	if (ret) {
                 // go recursively !
-                ok = Copy(destination);
+                ret = Copy(destination);
+            	CONDITIONAL_REPORT_ERROR(ret,"Failed to Copy recursively")
             }
-            if ((!MoveToAncestor(1u)) && ok) {
-                ok = false;
-            }
-            if ((!destination.MoveToAncestor(1u)) && ok) {
-                ok = false;
-            }
+
+        	if (ret){
+        		ret = MoveToAncestor(1u);
+            	CONDITIONAL_REPORT_ERROR(ret,"Failed to move back one level")
+        	}
+
+        	if (ret){
+        		ret = destination.MoveToAncestor(1u);
+            	CONDITIONAL_REPORT_ERROR(ret,"Failed to move back one level destination")
+        	}
         }
         else {
-            ReferenceT < AnyObject > foundLeaf = currentNode->Get(i);
-
-            if (foundLeaf.IsValid()) {
-                ok = destination.Write(foundLeaf->GetName(), foundLeaf->GetType());
-            }
+            Reference foundLeaf = currentNode->Get(i);
+            ret = destination.Write(foundLeaf->GetName(), foundLeaf);
         }
     }
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::MoveToRoot() {
-    bool ok = rootNode.IsValid();
-    if (ok) {
+ErrorManagement::ErrorType ConfigurationDatabase::MoveToRoot() {
+	ErrorManagement::ErrorType ret;
+	ret.fatalError = !rootNode.IsValid();
+
+	if (ret) {
         currentNode = rootNode;
     }
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::Read(CCString name,
-                                 const AnyType &value) {
-
-    bool ok = false;
-    // call conversion Object-StructuredDataI or StructuredDataI-StructuredDataI
-    bool isRegisteredObject = (value.GetTypeDescriptor().isStructuredData);
-    bool isStructuredDataI = (value.GetTypeDescriptor() == StructuredDataInterfaceType);
-    if ((isRegisteredObject) || (isStructuredDataI)) {
-        ReferenceT < ReferenceContainer > storeCurrentNode = currentNode;
-        if (MoveRelative(name)) {
-            ok = TypeConvert(value, (*this).operator MARTe::AnyType());
-        }
-        currentNode = storeCurrentNode;
-    }
-    else {
-
-        //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
-        bool found = false;
-        Reference foundReference;
-        uint32 i;
-        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-            foundReference = currentNode->Get(i);
-            found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-        }
-
-        ok = found;
-        if (ok) {
-
-            ReferenceT < AnyObject > objToRead = foundReference;
-            ok = objToRead.IsValid();
-            if (ok) {
-                ok = TypeConvert(value, objToRead->GetType());
-            }
-        }
-    }
-
-    return ok;
-}
-
-bool ConfigurationDatabase::MoveAbsolute(CCString path) {
+ErrorManagement::ErrorType ConfigurationDatabase::MoveAbsolute(CCString path) {
+	ErrorManagement::ErrorType ret;
 
     ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
+    ret.invalidOperation = (resultSingle.Size() == 0u);
+    COMPOSITE_REPORT_ERROR(ret,"Cannot find absolute path ",path)
 
-    bool ok = (resultSingle.Size() > 0u);
-    if (ok) {
+    if (ret) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok=container.IsValid();
-        if (ok) {
+        ret = !container.IsValid();
+        COMPOSITE_REPORT_ERROR(ret,"Absolute path ",path," not found or not a node")
+        if (ret) {
             currentNode = container;
         }
     }
 
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::MoveRelative(CCString path) {
+ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
+	ErrorManagement::ErrorType ret;
 
     ReferenceContainerFilterObjectName filter(1, 0u, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 
-    bool ok = (resultSingle.Size() > 0u);
-    if (ok) {
+    ret.invalidOperation = (resultSingle.Size() == 0u);
+    COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path)
+
+    if (ret) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        ok=container.IsValid();
-        if (ok) {
+        ret = !container.IsValid();
+        COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node")
+        if (ret) {
             currentNode = container;
         }
     }
 
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
-    bool ok = (generations != 0u);
-    if (ok) {
+ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
+	ErrorManagement::ErrorType ret;
+
+    if (generations > 0u) {
         ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
         ReferenceContainer resultPath;
         rootNode->Find(resultPath, filter);
-        ok = (resultPath.Size() > 0u);
-        if (ok) {
+
+        ret.invalidOperation = (resultPath.Size() == 0u);
+        CONDITIONAL_REPORT_ERROR(ret,"Cannot find myself from root")
+
+        if (ret) {
             int32 newPositionIdx = (static_cast<int32>(resultPath.Size()) - 1) - static_cast<int32>(generations);
-            ok = (newPositionIdx >= -1);
-            if (ok) {
+            ret.fatalError= !(newPositionIdx >= -1);
+            COMPOSITE_REPORT_ERROR(ret,"Moving back too many steps: ",generations)
+
+            if (ret) {
                 if (newPositionIdx == -1) {
                     currentNode = rootNode;
                 }
@@ -282,116 +288,123 @@ bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
             }
         }
     }
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::CreateNodes(CCString path) {
-    StreamString pathStr = path;
-    bool ok = pathStr.Seek(0Lu);
-    if (ok) {
-        ok = (pathStr.Size() > 0u);
-    }
-    StreamString token;
-    char8 c;
+
+
+ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
+	ErrorManagement::ErrorType ret;
+
+    DynamicCString token;
     bool created = false;
     ReferenceT < ReferenceContainer > currentNodeOld = currentNode;
 
-    while ((pathStr.GetToken(token, ".", c)) && (ok)) {
-        ok = (token.Size() > 0u);
-        if (ok) {
-            //Check if a node with this name already exists
-            bool found = false;
-            Reference foundReference;
-            uint32 i;
-            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-                foundReference = currentNode->Get(i);
-                found = (StringHelper::Compare(foundReference->GetName(), token.Buffer()) == 0);
-            }
+    path = StringHelper::Tokenize(path, token,".","");
+    while ((token.GetSize() > 0) && ret){
 
-            if (found) {
-                currentNode = foundReference;
-            }
-            else {
-                ReferenceT < ReferenceContainer > container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                container->SetName(token.Buffer());
-                ok = currentNode->Insert(container);
-                if (ok) {
-                    currentNode = container;
-                    created = true;
-                }
+        bool found = false;
+        Reference foundReference;
+        uint32 i;
+        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+            foundReference = currentNode->Get(i);
+            found = (token.isSameAs(foundReference->GetName().GetList()));
+        }
+
+        if (found) {
+            currentNode = foundReference;
+        } else {
+        	ReferenceT < ReferenceContainer > container(buildNow);
+        	ret.fatalError = !container.IsValid();
+            CONDITIONAL_REPORT_ERROR(ret,"container(buildNow) failed")
+
+        	if (ret){
+                container->SetName(token);
+                ret.fatalError = !currentNode->Insert(container);
+                CONDITIONAL_REPORT_ERROR(ret,"Node->Insert() failed")
+        	}
+
+            if (ret) {
+                currentNode = container;
+                created = true;
             }
         }
 
-        if (ok) {
-            ok = token.Seek(0Lu);
-            if (ok) {
-                ok = token.SetSize(0Lu);
-            }
+    	if (ret && (path.GetSize()>0)){
+            path = StringHelper::Tokenize(path, token,".","");
+    	} else {
+    		token = "";
+    	}
+    }
 
-        }
+    if (ret){
+        ret.notCompleted = !created;
+        // not really an error so do not report
     }
-    if (ok) {
-        ok = created;
-    }
-    if (!ok) {
+    // on error switch back
+    // but is not doing cleanup
+    if (!ret) {
         currentNode = currentNodeOld;
     }
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::CreateAbsolute(CCString path) {
+ErrorManagement::ErrorType  ConfigurationDatabase::CreateAbsolute(CCString path) {
     currentNode = rootNode;
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::CreateRelative(CCString path) {
+ErrorManagement::ErrorType  ConfigurationDatabase::CreateRelative(CCString path) {
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::Delete(CCString name) {
-    bool ok = false;
-    Reference foundReference;
+ErrorManagement::ErrorType  ConfigurationDatabase::Delete(CCString name) {
+	ErrorManagement::ErrorType ret;
+
+	Reference foundReference;
     uint32 i;
-    for (i = 0u; (i < currentNode->Size()) && (!ok); i++) {
+    bool found = false;
+    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
         foundReference = currentNode->Get(i);
-        ok = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
     }
 
-    if (ok) {
-        ok = currentNode->Delete(foundReference);
+    if (found) {
+        ret.fatalError = !currentNode->Delete(foundReference);
+        CONDITIONAL_REPORT_ERROR(ret,"Node.Delete() failed")
     }
+    // not really an error. Not reporting
+    ret.notCompleted = !found;
 
-    return ok;
+    return ret;
 }
 
-bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
-    ReferenceT < ReferenceContainer > nodeToAdd = node;
-    bool ok = nodeToAdd.IsValid();
-    if (ok) {
-        ok = currentNode->Insert(nodeToAdd);
+ErrorManagement::ErrorType  ConfigurationDatabase::AddToCurrentNode(Reference node) {
+	ErrorManagement::ErrorType ret;
+
+	ReferenceT < ReferenceContainer > nodeToAdd = node;
+
+	ret.parametersError = !nodeToAdd.IsValid();
+    CONDITIONAL_REPORT_ERROR(ret,"node is not a valid ReferenceContainer")
+
+    if (ret) {
+        ret.fatalError = !currentNode->Insert(nodeToAdd);
+        CONDITIONAL_REPORT_ERROR(ret,"Node->Insert failed")
     }
-    return ok;
+    return ret;
 }
 
-const char8 *ConfigurationDatabase::GetName() {
+CCString ConfigurationDatabase::GetName() {
     return (currentNode.IsValid()) ? (currentNode->GetName()) : (NULL_PTR(const char8*));
 }
 
-const char8 *ConfigurationDatabase::GetChildName(const uint32 index) {
+CCString ConfigurationDatabase::GetChildName(const uint32 index) {
     Reference foundReference = currentNode->Get(index);
     return (foundReference.IsValid()) ? (foundReference->GetName()) : (NULL_PTR(const char8*));
 }
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {
     return currentNode->Size();
-}
-
-bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {
-    return (mux.FastLock(timeout) == ErrorManagement::NoError);
-}
-
-void ConfigurationDatabase::Unlock() {
-    mux.FastUnLock();
 }
 
 CLASS_REGISTER(ConfigurationDatabase, "1.0")
