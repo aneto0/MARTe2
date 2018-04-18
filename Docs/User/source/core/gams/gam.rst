@@ -350,4 +350,4 @@ The following is an example of GAMGroup which shares a Matrix with several GAMs.
    :emphasize-lines: 45-47,198
 
    
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.

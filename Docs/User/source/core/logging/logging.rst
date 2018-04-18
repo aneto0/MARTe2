@@ -106,5 +106,5 @@ The following is an example of a LoggerService instance which prints the logging
    :linenos:
    :emphasize-lines: 107-109,112
 
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.  
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.  
 

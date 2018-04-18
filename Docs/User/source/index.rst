@@ -24,9 +24,7 @@ Welcome to MARTe2's documentation!
 
    concepts
    core/core
-   examples
-   building/building
-   building/deploying   
+   deploying/deploying
    contributing/contributing
    faq
 

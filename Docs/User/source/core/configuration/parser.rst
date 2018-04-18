@@ -61,4 +61,4 @@ The following example shows how to parse configuration files in all the supporte
    :caption: Object configuration example (ConfigurationExample3)
    :linenos:
 
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.

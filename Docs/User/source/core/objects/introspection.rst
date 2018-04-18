@@ -75,5 +75,5 @@ The following example show how to register a structure, a MARTe object and to ho
    :caption: Introspection example (ObjectsExample3)
    :linenos:
 
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.   
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.   
 

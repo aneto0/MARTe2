@@ -23,5 +23,6 @@ TODO
    :maxdepth: 1
    :caption: Contents:
 
-   deploying/linux
+   buildsources
+   linux
    

@@ -75,4 +75,4 @@ This example shows how the :vcisdoxygencl:`ReferenceT` can be used to verify com
    :caption: ReferenceT (ReferencesExample3)
    :linenos:
 
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.     
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.     

@@ -109,4 +109,4 @@ The following example highlights the usage of the AnyType and of the TypeDescrip
    :caption: AnyType example (TypesExample1)
    :linenos:
    
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.

@@ -147,4 +147,4 @@ This example shows how to read and write directly from a registered ``C struct``
    :linenos:  
    :emphasize-lines: 73,80,149,152,280-281
    
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.

@@ -77,5 +77,5 @@ The following examples show how to query the contents of a ClassRegistryDatabase
    :caption: Object instantation example (ObjectsExample2)
    :linenos:
    
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.   
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.   
 

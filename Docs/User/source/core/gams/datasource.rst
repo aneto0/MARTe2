@@ -221,4 +221,4 @@ The following is an example which uses 4 distinct DataSources. Note that the sig
    :linenos:
    :emphasize-lines: 72-92
 
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.

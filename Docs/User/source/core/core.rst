@@ -14,12 +14,13 @@
 Core library
 ============
 
-TODO
+The following chapters describe in detail the main concepts behind the MARTe core library. 
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
+   structure/code
    makefile/makefile
    types/types
    objects/objectsintro   
@@ -31,4 +32,5 @@ TODO
    gams/rtapp
    scheduling/services
    scheduling/threads
+   examples
    

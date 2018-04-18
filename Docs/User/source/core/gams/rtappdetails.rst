@@ -502,4 +502,4 @@ The following is an example of a RealTimeApplication with multiple synchronised 
    :emphasize-lines: 90,133
 
    
-Instructions on how to compile and execute the examples can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.

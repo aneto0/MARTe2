@@ -119,4 +119,4 @@ This is a similar example, highlighting structured configurations.
    :caption: Object configuration example (ConfigurationExample2)
    :linenos:
    
-Instructions on how to compile and execute the example can be found :doc:`here </examples>`.
+Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.
