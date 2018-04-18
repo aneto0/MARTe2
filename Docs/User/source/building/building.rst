@@ -14,12 +14,9 @@
 Building
 ========
 
-Instructions on how to build the MARTe2 core library can be found in the :doc:`a </building/sources>`.
-
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   makefile
    sources
 

@@ -20,6 +20,7 @@ TODO
    :maxdepth: 1
    :caption: Contents:
 
+   makefile/makefile
    types/types
    objects/objectsintro   
    configuration/configuration
@@ -30,5 +31,4 @@ TODO
    gams/rtapp
    scheduling/services
    scheduling/threads
-   
    
