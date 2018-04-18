@@ -16,7 +16,7 @@ Code organisation
 
 In order to ease the portability to other architectures and operating systems the code is organised in three tiers and seven levels.
 
-Each tier is an independent library. The expectation being that the ``BareMetal`` library does not have any dependencies on the file system nor the scheduler, thus allowing to deploy the framework in very embedded systems.
+Each tier is an independent library.  The ``BareMetal`` library is designed to be independent from the file system and from the scheduler, thus allowing to deploy the framework in very embedded systems.
 
 Each level encapsulates a given functional concept and only depends on the functionality provided by any levels above it.
 
