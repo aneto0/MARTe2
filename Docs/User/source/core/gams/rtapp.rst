@@ -14,7 +14,12 @@
 Real-time Applications
 ======================
 
-TODO
+.. hint::
+   MARTe real-time applications are designed to promote modularity and synergies between development teams.
+   
+   Decoupling hardware interfaces, plant integrations services and algorithm implementation, allows to replace each of these components by functionally equivalent simulators. 
+   
+   As a consequence, different teams (physics modellers, control engineers, software developers, hardware engineers, ...) can work and fully verify their work in parallel, thus greatly increasing the confidence that the system will be successfully integrated at the end. 
 
 .. toctree::
    :maxdepth: 1

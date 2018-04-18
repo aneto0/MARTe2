@@ -159,7 +159,8 @@ MARTe::ErrorManagement::ErrorType MessageFilterEx1::ConsumeMessage(MARTe::Refere
 }
 
 /**
- * @brief A MARTe::ReferenceContainer class that will send any messages inserted into it. Note that it does not inherit from MessageI.
+ * @brief A MARTe::ReferenceContainer class that will send any messages inserted into it.
+ * Note that it does not inherit from MessageI.
  */
 class MessageEx2: public MARTe::ReferenceContainer {
 public:
