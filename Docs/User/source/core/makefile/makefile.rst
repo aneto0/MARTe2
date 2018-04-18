@@ -48,10 +48,12 @@ The following are definitions from the MakeDefaults/MakeStdLibDefs.\ **os-arch**
 ================ ==========
 Acronym          Definition
 ================ ==========
+ARCHITECTURE     The architecture being compiled (e.g. x86_gcc).
 BUILD_DIR        Default location where the compiled output files are written into. The default rule is: ``$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/DIR_NAME``, where DIR_NAME is the name of the directory where the source files are being compiled. 
 CFLAGS           Compiler flags specific to **C** unit files (e.g. -fPIC).
 CPPFLAGS         Compiler flags specific to **C++** unit files (e.g. -frtti).
 DEBUG            Debug related flags (e.g. -g).
+ENVIRONMENT      The operating system environment being compiled (e.g. Linux).
 INCLUDES         Folders to be included during the compilation process.
 LIBRARIES        Shared libraries to be used during the linking process (e.g. -lm).
 LIBRARIES_STATIC Static libraries to be used during the linking process.

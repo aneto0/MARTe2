@@ -1,4 +1,4 @@
-.. date: 27/03/2018
+.. date: 18/04/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -11,27 +11,9 @@
    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
    or implied. See the Licence permissions and limitations under the Licence.
 
-Core library
-============
+Application kick-start
+======================
 
-The following chapters describe in detail the main concepts behind the MARTe core library. 
+TODO
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
-
-   structure/code
-   makefile/makefile
-   types/types
-   objects/objectsintro   
-   configuration/configuration
-   logging/logging
-   messages/messages
-   statemachine/statemachine
-   streams/streams   
-   gams/rtapp
-   scheduling/services
-   scheduling/threads
-   app/app
-   examples
    
