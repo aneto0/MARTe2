@@ -40,7 +40,7 @@ Grammar file
 The file containing the parser grammar must be provided by the user as an input for the slk tool. 
 It is a file with the extension ``*.ll`` and must be written using the slk language and respecting the token detailed above in order to use the MARTe2 lexical analyzer. 
 
-The available MARTe supported grammars are available `here <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-doc/tree/master/Assets/Snippets/Parsing>`_.
+The available MARTe supported grammars are available `here <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/tree/master/Docs/Assets/Snippets/Parsing>`_.
 
 Adding a new grammar
 --------------------

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.constructorcomment_context" deleted="false" description="Comment for created constructors" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.constructorcomment" name="constructorcomment">/*
+ * @brief   ${todo} Write a brief description for the ${enclosing_type} constructor
+ * @details ${todo} Write a detailed description for the ${enclosing_type} constructor
+ */
+	</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.destructorcomment_context" deleted="false" description="Comment for created destructors" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.destructorcomment" name="destructorcomment">/*
+ * @brief   ${todo} Write a brief description for the ${enclosing_type} destructor
+ * @details ${todo} Write a detailed description for the ${enclosing_type} destructor
+ */</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.filecomment_context" deleted="false" description="Comment for created C/C++ files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.filecomment" name="filecomment"> * @date ${date} ${todo} Verify the value and format of the date
+ * @author ${user} ${todo} Verify the name and format of the author
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.typecomment_context" deleted="false" description="Comment for created classes" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.typecomment" name="typecomment">/**
+ * @brief TODO Write into the brief the main concept that the class represents 
+ * explained into a single line paragraph.
+ * @details TODO Write into the details a detailed description of the class 
+ * that can span multiple lines on one paragraph. If more paragraphs are 
+ * needed, then put subsequent "@details" tags. This description shall explain 
+ * the  concept which the class represents alongside its responsibilities or 
+ * services it provides. Example: "This class represents a stack of doubles,
+ * that is, a data structure which ..."
+ */</template><template autoinsert="true" context="org.eclipse.cdt.ui.text.codetemplates.fieldcomment_context" deleted="false" description="Comment for fields" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.fieldcomment" name="fieldcomment">/*
+ *
+ */
+	</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.methodcomment_context" deleted="false" description="Comment for methods" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.methodcomment" name="methodcomment">/*
+ * @brief   ${todo} Write a brief description for the ${enclosing_type} method
+ * @details ${todo} Write a detailed description for the ${enclosing_type} method
+ */
+	</template><template autoinsert="false" context="org.eclipse.cdt.core.cxxSource.contenttype_context" deleted="false" description="Default template for newly created C++ source files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.cppsourcefile" name="Default C++ source template">/**
+ * @file ${file_name}
+ * @brief Source file for class ${file_base}
+${filecomment}
+
+ * @details This source file contains the definition of all the methods for
+ * the class ${file_base} (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+#define DLL_API
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+${includes}
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace {
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}
+	</template><template autoinsert="true" context="org.eclipse.cdt.core.cxxSource.contenttype_context" deleted="false" description="Default template for newly created C++ test files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.cpptestfile" name="Default C++ test template">${filecomment}
+${includes}
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}
+	</template><template autoinsert="false" context="org.eclipse.cdt.core.cxxHeader.contenttype_context" deleted="false" description="Default template for newly created C++ header files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.cppheaderfile" name="Default C++ header template">/**
+ * @file ${file_name}
+ * @brief Header file for class ${file_base}
+${filecomment}
+
+ * @details This header file contains the declaration of the class ${file_base}
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef ${include_guard_symbol}
+#define ${include_guard_symbol}
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
+${includes}
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* ${include_guard_symbol} */
+	</template><template autoinsert="false" context="org.eclipse.cdt.core.cSource.contenttype_context" deleted="false" description="Default template for newly created C source files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.csourcefile" name="Default C source template">/**
+ * @file ${file_name}
+ * @brief Source file for module ${file_base}
+${filecomment}
+
+ * @details This source file contains the definition of all the functions for
+ * the module ${file_base}, both public and private. Be aware that some 
+ * functions, such as those inline could be defined on the header file,
+ * instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+${includes}
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                          Function definitions                             */
+/*---------------------------------------------------------------------------*/
+
+${declarations}
+</template><template autoinsert="false" context="org.eclipse.cdt.core.cHeader.contenttype_context" deleted="false" description="Default template for newly created C header files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.cheaderfile" name="Default C header template">/**
+ * @file ${file_name}
+ * @brief Header file for module ${file_base}
+${filecomment}
+
+ * @details This header file contains the declaration of all the public 
+ * functions for the module ${file_base}. It may also include definitions 
+ * for inline methods which need to be visible to the compiler.
+ *
+ * @details TODO Explain the general purpose of this module
+ */
+
+#ifndef ${include_guard_symbol}
+#define ${include_guard_symbol}
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
+${includes}
+
+/*---------------------------------------------------------------------------*/
+/*                          Function declarations                            */
+/*---------------------------------------------------------------------------*/
+
+${declarations}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* ${include_guard_symbol} */
+	</template><template autoinsert="true" context="org.eclipse.cdt.ui.text.codetemplates.namespace_context" deleted="false" description="Beginning of namespace declaration" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.namespace_begin" name="namespace_begin">namespace ${namespace_name} {</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.namespace_context" deleted="false" description="End of namespace declaration" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.namespace_end" name="namespace_end">}
+	</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.class_context" deleted="false" description="Code in created class definitions" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.class_body" name="class_body">//${todo} Add the macro DLL_API to the class declaration (i.e. class DLL_API ${enclosing_type})
+${declarations}</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.methodbody_context" deleted="false" description="Code in created method stubs" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.methodbody" name="methodbody">//${todo} Auto-generated method stub
+${body_statement}
+	</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.constructorbody_context" deleted="false" description="Code in created constructor stubs" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.constructorbody" name="constructorbody">//Auto-generated constructor stub for ${enclosing_type}
+${body_statement}
+
+//${todo} Verify if manual additions are needed here</template><template autoinsert="false" context="org.eclipse.cdt.ui.text.codetemplates.destructorbody_context" deleted="false" description="Code in created destructor stubs" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.destructorbody" name="destructorbody">//Auto-generated destructor stub for ${enclosing_type}&#13;
+${body_statement}&#13;
+&#13;
+//${todo} Verify if manual additions are needed here</template><template autoinsert="true" context="org.eclipse.cdt.core.asmSource.contenttype_context" deleted="false" description="Default template for newly created assembly files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.asmsourcefile" name="Default assembly template">${filecomment}
+	</template><template autoinsert="true" context="org.eclipse.core.runtime.text.contenttype_context" deleted="false" description="Default template for newly created text files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.textfile" name="Default text file template">${file_name}
+Created on: ${date}
+Author: ${user}
+
+	</template></templates>

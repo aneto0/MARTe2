@@ -73,7 +73,7 @@ L1Portability                                                    Scheduler code 
 Portability
 -----------
 
-The operating systems and architecture dependent code is encapsulated in the ``Architecture`` and ``Environment`` folders inside the ``L1Portability`` and  ``L6App`` folders. In the levels' root folders no operating system and architecture code shall exist.
+The operating system and architecture dependent code is encapsulated in the ``Architecture`` and ``Environment`` folders inside the ``L1Portability`` and  ``L6App`` folders. In the levels' root folders no operating system and architecture code shall exist.
 
 .. image:: Structure-2.png
 

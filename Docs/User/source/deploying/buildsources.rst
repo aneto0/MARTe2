@@ -33,9 +33,6 @@ Instructions
    b. Make sure that the development tools are installed: ``yum groupinstall "Development tools"``
 
 3. In the following instructions, it is assumed that this is cloned into a folder named ``MARTe2-dev``.
-   
-   a. Git clone of the `MARTe2 documentation infrastructure <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-doc.git>`_;
-
 4. ``cd MARTe2-dev``
 5. ``make -f Makefile.linux``
 

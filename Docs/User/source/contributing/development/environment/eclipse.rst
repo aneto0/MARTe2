@@ -26,9 +26,6 @@ Prerequisites
 - Git clone of the `MARTe2 development infrastructure <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git>`_;
 
    - In the following instructions, it is assumed that this is cloned into a folder named ``MARTe2-dev``.
-- Git clone of the `MARTe2 documentation infrastructure <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-doc.git>`_;
-   
-    - In the following instructions, it is assumed that this is cloned into a folder named ``MARTe2-doc``.
 
 Configuration
 -------------
@@ -49,15 +46,15 @@ Configuration
 
    I. Select **C/C++** |rarrow| **Code Style** |rarrow| **Code Templates** and click on **Import**;
 
-      a. Select the file ``MARTe2-doc/Assets/Configuration/marte_cpp_code_templates.xml``.
+      a. Select the file ``Docs/Assets/Configuration/marte_cpp_code_templates.xml``.
 
    II. Select **C/C++** |rarrow| **Code Style** |rarrow| **Formatter** and click on **Import**;
 
-      a. Select the file ``MARTe2-doc/Assets/Configuration/marte_cpp_formatting_rules.xml``.
+      a. Select the file ``Docs/Assets/Configuration/marte_cpp_formatting_rules.xml``.
 
    III. Select **C/C++** |rarrow| **Editor** |rarrow| **Templates** and click on **Import**;
 
-      a. Select the file ``MARTe2-doc/Assets/Configuration/marte_cpp_editor_templates.xml``.
+      a. Select the file ``Docs/Assets/Configuration/marte_cpp_editor_templates.xml``.
       b. Select the "Use code formatter" option.
       
       .. image:: C_CppEditorTemplatesImport.png
@@ -206,20 +203,13 @@ Configuration
    
       .. image:: InstallEclox.png
 
-9. Select **File** |rarrow| **Import**;
-
-   I. Select **General** |rarrow| **Existing Projects into Workspace**, click **next**;
-   II. In the **Select root directory** browse to the location of the ``MARTe2-doc`` folder (previously cloned);
-   III. Under **Projects** select the ``MARTe2-doc`` project.
-   IV. Click **Finish**;
-   
-10. On the toolbar click in the @ sign and select **Build Doxyfile**.
+9. On the toolbar click in the @ sign and select **Build Doxyfile**.
 
    I. Select the **MARTe2-dev** |rarrow| **Doxyfile**;
    II. Click **OK**;
-   III. Verify that html files are created in ``MARTe2-dev/Biuld/dox/html`` directory.
+   III. Verify that html files are created in ``MARTe2-dev/Build/dox/html`` directory.
 
-12. Select **Help** |rarrow| **Eclipse MarketPlace**.
+10. Select **Help** |rarrow| **Eclipse MarketPlace**.
 
    I. Search for ``cppcheclipse`` and install it following the instructions.
 

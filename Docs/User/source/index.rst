@@ -22,11 +22,15 @@ Welcome to MARTe2's documentation!
    :maxdepth: 1
    :caption: Contents:
 
-   concepts
+   overview
    core/core
+   components
    deploying/deploying
    contributing/contributing
    faq
+   publications
+   contacts
+   licence
 
 
 Indices and tables

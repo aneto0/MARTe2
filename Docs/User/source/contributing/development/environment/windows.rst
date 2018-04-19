@@ -32,15 +32,15 @@ Prerequisites
 Configuration
 -------------
 
-1. Add the folder which contains cl.exe (Usually in C:/Program Files (x86)/Microsoft Visual Studio .../VC/bin) to the environment PATH variable (Control Panel - System - Advanced system settings - Environment Variables);
-2. Add to the PATH environment variable the IDE path (Usually in Program Files/Microsoft Visual Studio ../Common7/IDE) which contains the dll libraries for Visual Studio;
+1. Add the folder which contains cl.exe (Usually in ``C:/Program Files (x86)/Microsoft Visual Studio .../VC/bin``) to the environment PATH variable (Control Panel - System - Advanced system settings - Environment Variables);
+2. Add to the PATH environment variable the IDE path (Usually in ``Program Files/Microsoft Visual Studio ../Common7/IDE``) which contains the dll libraries for Visual Studio;
 3. In the same folder of the compiler cl.exe there should be a script file called vcvars32 (or vcvars64 for the 64 bit compiler), open a console and write ``vcvars32`` setting the variables of Visual Studio environment;
 4. Open a cmd console;
 5. Type ``vcvars32`` on the console, followed by ``echo %PATH%`` and copy the result to the PATH environment variable (Control Panel - System...);
 6. Write on the same console ``echo %INCLUDE%``, add an environment variable called INCLUDE and insert the result there (by Control Panel - System...);
 7. Write on the same console ``echo %LIB%``, add an environment variable called LIB and insert the result there (by Control Panel - System...);
 8. Install the GnuWin32 and MinGW downloaded above;
-9. Add the path which contains the GnuWin32 programs (Usually in C:/Program Files (x86)/GnuWin32/bin) to the PATH environment variable;
-10. Add the path which contains the MinGW programs (Usually in C:/Program Files (x86)/MinGW/bin) to the PATH environment variable;
+9. Add the path which contains the GnuWin32 programs (Usually in ``C:/Program Files (x86)/GnuWin32/bin``) to the PATH environment variable;
+10. Add the path which contains the MinGW programs (Usually in ``C:/Program Files (x86)/MinGW/bin``) to the PATH environment variable;
 11. Install Doxygen.
 
