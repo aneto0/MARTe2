@@ -79,7 +79,7 @@ This subset is defined by means of a list of coding rules, which will address ma
 
 The code and documentation review process includes the manual verification of the API documentation and the verification that a set of best practices were followed during the code implementation. 
 
-This activity includes the execution of the ``flexelint`` static code analysis tool which verifies the compliance of the source code against the coding standard and in particular against the MISRA standard. 
+This activity includes the execution of the static code analysis tool which verifies the compliance of the source code against the coding standard and in particular against the MISRA standard. 
 
 For those rules which are not automatable, a manual review is performed before any major release.
 
@@ -140,6 +140,34 @@ The relevant user-story is updated as follows:
    (*) Or write only "N/A" instead of a list if review passed without non-conformities.
    
 
+Implementation
+--------------
+
+The software lifecycle is managed using a mixture between a waterfall and an Agile approach. Each user-story aims at developing the components required to satisfy at least one of the framework requirements. 
+
+The processes described above are supported by a set of tools which aim at assisting the developer at consistently meeting the coding standard rules, the quality reviewer at maximising the number of automatic verifications and the project manager at having a sound overview of the project status.
+
+Source cove versioning is performed using Git and `GitLab <https://vcis-gitlab.f4e.europa.eu>`_. 
+
+The Git workflow, which based in an `existent model <http://nvie.com/posts/a-successful-git-branching-model/>`_, is as follows:
+
+.. image:: GitWorkflow-1.png
+
+Each user-story is always created from the development branch. This branch is only merged back into development if it successfully passes all the quality checks. At the end of the sprint the development branch, which includes all the finalised user-stories, is merged into the release branch. All the quality auditing is performed over this branch and minor bug fixing is allowed. 
+
+Finally, the release branch is merged into the master branch and a new tag with the version number created. It should be noted that after being merged into develop branch, the user-story feature is deleted. An hotfix branch is used to resolve critical bugs in the master version. When resolved, the branch will be merged back into the master and develop branches (if applicable it will also be merged to the release branch).
+
+The `Redmine <https://vcis-redmine.f4e.europa.eu>`_ issue tracking system is used to manage the Agile workflow and to store all the quality reports, including the audits and the Agile sprint planning and review meeting minutes. 
+
+More specifically, each user-story is assigned to a redmine issue and its life-cycle managed using the `Redmine Agile plugin <http://www.redminecrm.com/>`_. The plugin was configured in order to provide a one-to-one mapping with the V-model, greatly simplifying the management and overview of the QA review process. Unit testing is performed using the `google-test framework <https://github.com/google/googletest>`_. 
+
+Nevertheless, and given that MARTe is also expected to be deployed in bare-metal systems (i.e. processors without an operating system), the google-test framework is only used as a front-end engine to execute the MARTe unit test class methods, which are written without any dependencies on the google-test framework. This allows for the same tests to be easily ported to another testing framework. 
+
+Code coverage is implemented with `gcov <https://gcc.gnu.org/onlinedocs/gcc/Gcov.html>`_, the GNU Project Compiler Collection coverage testing tool and is complemented with a graphical front-end named `lcov <http://ltp.sourceforge.net/coverage/lcov.php>`_. 
+
+Static code analysis and compliance to the MISRA C++:2008 standard is performed using the `Gimpel Software FlexeLint tool <http://www.gimpel.com/html/flex.htm>`_. Common project deviations to the standard are added to a file that is shared among all the developers (see `here <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/tree/master/MakeDefaults/Lint>`_). Specific deviations to the standard are directly justified in the source-code using a special syntax inside a C++ comment.
+
+Code is expected to be developed using the Eclipse CDT integrated development environment (IDE). Eclipse is :doc:`configured </contributing/development/environment/eclipse>` with the project formatting, code and editor templates, as specified in the verification and validation plan. 
 
 QA documentation
 ----------------
