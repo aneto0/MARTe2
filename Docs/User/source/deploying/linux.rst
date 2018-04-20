@@ -14,5 +14,17 @@
 Deploying in Linux
 ==================
 
-isolcpus...
+The MARTe real-time performance is as good as the operating system real-time performance.
 
+In Linux, the best strategy is to isolate the CPUs from the Linux scheduler (using the ``isolcpus`` parameter) and to assign the :doc:`MARTe real-time threads </core/gams/rtapp>` to these CPUs.  
+
+Best practices from existent projects
+-------------------------------------
+
+1. Switch off all the services which are not required for the project and in particular any services that might interfere with the CPU performance and interrupt allocation (e.g. ``cpuspeed`` and ``irqbalance``).
+
+2. Boot with isolated CPUs
+
+.. code-block:: bash
+
+   isolcpus=1,2,3 intel_idle.max_cstate=0 processor.max_cstate=0 idle=poll selinux=0 maxcpus=4

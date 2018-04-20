@@ -1,4 +1,4 @@
-.. date: 19/04/2018
+.. date: 20/04/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -14,4 +14,8 @@
 Components
 ==========
 
-TODO
+The `MARTe2-components <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2-components>`_ repository offers a set of components that are deemed useful to the community. 
+
+These include general purpose GAMs, support to off-the-shelf hardware and interfaces to known supervisory control and data acquisition systems.
+
+It is expected that, driven by project specific use-cases, the community will contribute with new components. This repository abides to the same :doc:`QA </contributing/qa/qa>` standard of the core library.

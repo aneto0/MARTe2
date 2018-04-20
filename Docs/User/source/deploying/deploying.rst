@@ -14,10 +14,9 @@
 Deploying
 =========
 
-Typical MARTe2 projects folder structure...
+A typical MARTe2 project is made of: the core library; a set of reusable components from the :doc:`MARTe2-components library </components>` and a collection of project specific components (i.e. that are not distributed to the community in the MARTe2-components).
 
-Tips and tricks on how to improve real-time behaviour in ...
-TODO
+.. image:: MARTeProj-1.png
 
 .. toctree::
    :maxdepth: 1

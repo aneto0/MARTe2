@@ -29,7 +29,6 @@ Welcome to MARTe2's documentation!
    contributing/contributing
    faq
    publications
-   contacts
    licence
 
 

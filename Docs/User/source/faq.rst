@@ -14,10 +14,16 @@
 FAQ
 ===
 
-TODO
-
 Where do I start from?
+----------------------
 
-Does MARTe2 guarantee realtime?
+If you wish to understand how to build a MARTe real-time application, you should start from the concepts explained :doc:`here </core/gams/rtapp>` (top-down approach).
 
-...
+If you would like to understand the foundations of the library, the best place to start is from the :doc:`code structure </core/structure/code>` and to follow the help (bottom-up approach).
+
+Deployment of new applications is detailed :doc:`here </deploying/deploying>`.
+
+How does MARTe guarantee real-time?
+-----------------------------------
+
+The framework is designed to ensure a fully predictable behaviour of the real-time execution loops. The real-time performance will, nevertheless, always depend on the underlying infrastructure (including the operating system) setup. 
