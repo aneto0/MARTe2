@@ -206,6 +206,7 @@ extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blo
 			'vciscorebml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/BareMetal/L4Configuration/%s.h', ''),
 			'vciscorescsml4': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/Core/Scheduler/L4StateMachine/%s.h', ''),
 			'vcisdoxygencl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2/doxygen/classMARTe_1_1%s.html', ''),
+			'vcisdoxygenns': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2/doxygen/namespaceMARTe_1_1%s.html', ''),
 			'vcisdoxygenclem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2/doxygen/structMARTe_1_1ErrorManagement_1_1%s.html', ''),
 			'vcisdoxygenmccl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-Components/doxygen/classMARTe_1_1%s.html', ''),
 			'vcisgl': ('https://vcis-gitlab.f4e.europa.eu/aneto/%s', ''),

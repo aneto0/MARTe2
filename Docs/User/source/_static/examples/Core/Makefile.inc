@@ -47,6 +47,7 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ) \
+        $(BUILD_DIR)/AtomicExample1$(EXEEXT) \
         $(BUILD_DIR)/ChildGAMGroupExample1$(GAMEXT) \
         $(BUILD_DIR)/ChildGAMGroupExample2$(GAMEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
@@ -56,6 +57,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ConfigurationExample5$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
+        $(BUILD_DIR)/HighResolutionTimerExample1$(EXEEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample2$(EXEEXT) \
@@ -75,6 +77,9 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
         $(BUILD_DIR)/TCPSocketMessageProxyExample$(DLLEXT) \
+        $(BUILD_DIR)/ThreadsExample1$(EXEEXT) \
+        $(BUILD_DIR)/ThreadsExample2$(EXEEXT) \
+        $(BUILD_DIR)/ThreadsExample3$(EXEEXT) \
         $(BUILD_DIR)/TypesExample1$(EXEEXT) \
         $(BUILD_DIR)/VariableGAMExample1$(GAMEXT)
 	echo  $(OBJS)

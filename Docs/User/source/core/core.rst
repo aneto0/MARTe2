@@ -25,12 +25,12 @@ The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/
    structure/code
    makefile/makefile
    types/types
-   objects/objectsintro   
+   objects/objectsintro
+   streams/streams
    configuration/configuration
    logging/logging
    messages/messages
-   statemachine/statemachine
-   streams/streams   
+   statemachine/statemachine   
    gams/rtapp
    scheduling/services
    scheduling/threads
