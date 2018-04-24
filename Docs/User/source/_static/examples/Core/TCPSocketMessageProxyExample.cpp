@@ -139,7 +139,7 @@ MARTe::ErrorManagement::ErrorType TCPSocketMessageProxyExample::Execute(MARTe::E
             char8 buffer[BUFFER_SIZE];
             uint32 readBytes = BUFFER_SIZE;
             MemoryOperationsHelper::Set(&buffer[0], '\0', BUFFER_SIZE);
-            while (client->Read(&buffer[0], readBytes)) {
+            if (client->Read(&buffer[0], readBytes)) {
                 StreamString configurationCfg = buffer;
                 REPORT_ERROR(ErrorManagement::ParametersError, "Received configuration message [size=%d]:%s", readBytes, configurationCfg.Buffer());
                 //Try to parse the configuration message

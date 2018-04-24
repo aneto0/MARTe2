@@ -64,6 +64,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/MessageExample3$(EXEEXT) \
         $(BUILD_DIR)/MessageExample4$(EXEEXT) \
         $(BUILD_DIR)/MessageExample5$(EXEEXT) \
+        $(BUILD_DIR)/MultiThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/ModelGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \
         $(BUILD_DIR)/ObjectsExample2$(EXEEXT) \
@@ -76,6 +77,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/SingleThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/TCPSocketMessageProxyExample$(DLLEXT) \
         $(BUILD_DIR)/ThreadsExample1$(EXEEXT) \
         $(BUILD_DIR)/ThreadsExample2$(EXEEXT) \

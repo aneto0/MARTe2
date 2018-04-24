@@ -91,8 +91,8 @@ Semaphores
 The framework offers three distinct sets of portables semaphores:
  
 - :vcisdoxygencl:`MutexSem`: mutex semaphore that offers exclusive access to a critical area;
-- :vcisdoxygencl:`EventSem`: barrier semaphore that, after being released, allow shared access to a critical area;
-- :vcisdoxygencl:`FastPollingMutexSem` and :vcisdoxygencl:`FastPollingEventSem`: mutex and event semaphores that do not require an operating system scheduler. Both work by polling, with atomic operations, a given memory region.
+- :vcisdoxygencl:`EventSem`: barrier semaphore that, after being released, allows shared access to a critical area;
+- :vcisdoxygencl:`FastPollingMutexSem` and :vcisdoxygencl:`FastPollingEventSem`: mutex and event semaphores that do not require an operating system scheduler. Both work by polling, with atomic operations, a given memory location.
 
 .. code-block:: c++
 
