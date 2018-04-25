@@ -78,6 +78,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
         $(BUILD_DIR)/SingleThreadServiceExample1$(EXEEXT) \
+        $(BUILD_DIR)/StateMachineExample1$(EXEEXT) \
         $(BUILD_DIR)/TCPSocketMessageProxyExample$(DLLEXT) \
         $(BUILD_DIR)/ThreadsExample1$(EXEEXT) \
         $(BUILD_DIR)/ThreadsExample2$(EXEEXT) \

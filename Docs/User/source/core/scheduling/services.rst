@@ -113,7 +113,7 @@ MultiThreadService
 This is an example similar to the above but with a MultiThreadService.
 
 .. literalinclude:: /_static/examples/Core/MultiThreadServiceExample1.cpp
-   :language: bash	
+   :language: c++
    :caption: Example of a MultiThreadService
    :linenos:
    :emphasize-lines: 48,53,72,87,90,99,104,112,139,169,176,179
@@ -124,7 +124,7 @@ MultiClientService
 The custom component ``TCPSocketMessageProxyExample`` forwards TCP *messages* into MARTe messages.
 
 .. literalinclude:: /_static/examples/Core/TCPSocketMessageProxyExample.cpp
-   :language: bash	
+   :language: c++
    :caption: Example of a MultiClientService
    :linenos:
    :emphasize-lines: 49,58-59,93,108,118-119,125,132,136,181
