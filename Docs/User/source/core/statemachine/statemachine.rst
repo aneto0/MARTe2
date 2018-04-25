@@ -166,3 +166,5 @@ The following is an example which shows how a state machine can be used to trigg
    :caption: Example of a StateMachine receiving and triggering messages.
    :linenos:
    :emphasize-lines: 136,138,140-143,145-153,207-219
+   
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.
