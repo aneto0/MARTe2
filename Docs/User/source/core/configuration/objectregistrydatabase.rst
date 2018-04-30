@@ -59,7 +59,7 @@ A dot **.** is used as the path separator.
    
 If the node name starts with a ``$``, besides implementing the same behaviour described before for the ``+``, it will also set the node as a search *domain*. 
 
-This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` ``Find`` method, the ``:`` symbol will allow to perform searchs related to a given root domain. For example:
+This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` ``Find`` method, the ``:`` symbol will allow to perform searches related to a given root domain. For example:
 
 .. code-block:: none
 

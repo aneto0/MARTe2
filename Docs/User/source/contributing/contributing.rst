@@ -22,7 +22,7 @@ These contributions can be in the form of:
 - Implementation of new features;
 - Provision of new components (GAMs, DataSources, Brokers, ...);
 - New or improved documentation;
-- Contributation to quality revisions. 
+- Contribution to quality revisions. 
 
 A quick way of finding where you can help is by visiting the `core <https://vcis-redmine.f4e.europa.eu/projects/marte2/issues?utf8=%E2%9C%93&set_filter=1&sort=id%3Adesc&f%5B%5D=status_id&op%5Bstatus_id%5D=o&f%5B%5D=tracker_id&op%5Btracker_id%5D=%3D&v%5Btracker_id%5D%5B%5D=7&f%5B%5D=&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=priority&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=updated_on&group_by=&t%5B%5D=>`_ and `components <https://vcis-redmine.f4e.europa.eu/projects/marte2-components/issues?utf8=%E2%9C%93&set_filter=1&sort=id%3Adesc&f%5B%5D=status_id&op%5Bstatus_id%5D=o&f%5B%5D=tracker_id&op%5Btracker_id%5D=%3D&v%5Btracker_id%5D%5B%5D=7&f%5B%5D=&c%5B%5D=tracker&c%5B%5D=status&c%5B%5D=priority&c%5B%5D=subject&c%5B%5D=assigned_to&c%5B%5D=updated_on&group_by=&t%5B%5D=>`_ redmine projects and look for unassigned user-stories. 
 

@@ -230,7 +230,7 @@ GAMs can also be grouped into a context where a set of constant data is shared b
 
 Typical use-cases for GAMGroups are the need to share initialisation data which is either onerous to compute or that requires the storing of a large amount of memory. In both cases it would be a waste of resources to repeat and store the same initialisation process on all the GAMs requiring access to this information. 
 
-The shared context is set by calling the method ``GAMGroup::SetContext`` in the class inheriting from :vcisdoxygencl:`GAMGroup`. This will then triggger the calling of the method ``SetContext`` on all the :vcisdoxygencl:`GAM` components that, in the configuration stream, are a child of this GAMGroup instance. 
+The shared context is set by calling the method ``GAMGroup::SetContext`` in the class inheriting from :vcisdoxygencl:`GAMGroup`. This will then trigger the calling of the method ``SetContext`` on all the :vcisdoxygencl:`GAM` components that, in the configuration stream, are a child of this GAMGroup instance. 
 
 .. code-block:: c++
 

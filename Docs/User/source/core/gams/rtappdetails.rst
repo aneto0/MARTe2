@@ -323,7 +323,7 @@ The name of the node containing the TimingDataSource class shall be defined in a
          TimingDataSource = Timings
       }
 
-The framework offers a multi-thread scheduler (see :vcisdoxygencl:`GAMScheduler`). Bare metal applications will tipically develop bespoke scheduling mechanims. 
+The framework offers a multi-thread scheduler (see :vcisdoxygencl:`GAMScheduler`). Bare metal applications will typically develop bespoke scheduling mechanisms. 
 
 Initialisation
 --------------
@@ -390,7 +390,7 @@ The state can be changed by calling the methods ``PrepareNextState``, ``StopCurr
 
 These are methods are registered as RPC functions and thus can be triggered using the :doc:`messaging mechanisms </core/messages/messages>`.
 
-Tipically the interface to the state changing mechanism is provided by the :doc:`StateMachine </core/statemachine/statemachine>`.
+Typically the interface to the state changing mechanism is provided by the :doc:`StateMachine </core/statemachine/statemachine>`.
 
 .. image:: RealTimeStateMachineExampleStateMachine.png
 

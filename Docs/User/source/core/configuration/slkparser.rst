@@ -23,7 +23,7 @@ The MARTe parsers are developed using the `slk tool <http://www.slkpg.com/downlo
 Lexical Analyzer
 ----------------
 
-The MARTe2 lexical analyzer recognizes five type of tokens:
+The MARTe2 lexical analyser recognizes five type of tokens:
 
 - STRING: any token beginning with a non-number character or enclosed by double quotes.
 - NUMBER: any token which could represent a number.
@@ -31,14 +31,14 @@ The MARTe2 lexical analyzer recognizes five type of tokens:
 - EOF: end of the stream.
 - ERROR: none of the previous ones.
 
-The analyzer allows to configure the separator and terminal characters and the comment patterns (which depend on the language to be parsed). 
-For more informations about the MARTe2 lexical analyzer see the documentation of the :vcisdoxygencl:`LexicalAnalyzer` class.
+The analyser allows to configure the separator and terminal characters and the comment patterns (which depend on the language to be parsed). 
+For more informations about the MARTe2 lexical analyser see the documentation of the :vcisdoxygencl:`LexicalAnalyzer` class.
 
 Grammar file
 ------------
 
 The file containing the parser grammar must be provided by the user as an input for the slk tool. 
-It is a file with the extension ``*.ll`` and must be written using the slk language and respecting the token detailed above in order to use the MARTe2 lexical analyzer. 
+It is a file with the extension ``*.ll`` and must be written using the slk language and respecting the token detailed above in order to use the MARTe2 lexical analyser. 
 
 The available MARTe supported grammars are available `here <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/tree/master/Docs/Assets/Snippets/Parsing>`_.
 
@@ -51,7 +51,7 @@ A parser for a new configuration language can be implemented following these ste
 
 1. Write the parser grammar file (grammar_file_name.ll) using the same token types defined in the MARTe2 :vcisdoxygencl:`LexicalAnalyzer` class and the callbacks implemented in the :vcisdoxygencl:`ParserI` class.
 2. Create your parser class copying from an existent parser (:vcisdoxygencl:`StandardParser`, :vcisdoxygencl:`XMLParser`, :vcisdoxygencl:`JSonParser`).
-3. Type on the console ``slk -C++ grammar_file_name.ll`` to generate the the parser files.
+3. Type on the console ``slk -C++ grammar_file_name.ll`` to generate the parser files.
 4. Open the generated file ``SlkParse.cpp`` and copy the arrays at the beginning, in the source file of your parser class (the array named ``Parse[]`` should be renamed to ``ParseArray[]`` to avoid conflicts with the function ``ParserI::Parse()``.
 5. Copy the constants defined in ``SlkParse.cpp``(just after the arrays) in the ``Constants[]`` array maintaining the same order: ``{ START_SYMBOL, END_OF_SLK_INPUT_, START_STATE, START_CONFLICT,END_CONFLICT, START_ACTION, END_ACTION, TOTAL_CONFLICTS }``
 6. Open the generated file ``SlkString.cpp`` and copy the array ``Terminal_name[]`` in the source file of your parser class.

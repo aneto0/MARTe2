@@ -77,7 +77,7 @@ These *ticks* (see ``HighResolutionTimer::Counter()``) can be converted from/int
 Sleep
 -----
 
-The :vcisdoxygenns:`Sleep` API allows to voluntarily return the control back to the scheduler. The only exception is the ``Sleep::Busy`` which waits for a given time to ellapse without yielding the CPU.
+The :vcisdoxygenns:`Sleep` API allows to voluntarily return the control back to the scheduler. The only exception is the ``Sleep::Busy`` which waits for a given time to elapse without yielding the CPU.
 
 .. code-block:: c++
 

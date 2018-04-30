@@ -69,7 +69,7 @@ Publications
 - `T. Bellizio, G. De Tommasi, P. McCullen, et. al, "The Software Architecture of the New Vertical-Stabilization System for the JET Tokamak" <http://dx.doi.org/10.1109/TPS.2010.2053721>`_
 - `Real-time software for the COMPASS tokamak plasma control|D. F. Valcarcel, A. S. Duarte, A. C. Neto, et. al, "Real-time software for the COMPASS tokamak plasma control" <http://dx.doi.org/10.1016/j.fusengdes.2010.03.049>`_
 - `D. F. Valcarcel, A. Barbalace, A. C. Neto, "EPICS as a MARTe configuration environment" <http://dx.doi.org/10.1109/RTC.2010.5750468>`_
-- `D. F. Varcalcel, A. C. Neto, I. S. Carvalho, "The COMPASS tokamak plasma control software performance" <http://dx.doi.org/10.1109/RTC.2010.5750467>`_
+- `D. F. Valcarcel, A. C. Neto, I. S. Carvalho, "The COMPASS tokamak plasma control software performance" <http://dx.doi.org/10.1109/RTC.2010.5750467>`_
 
 2009
 ----

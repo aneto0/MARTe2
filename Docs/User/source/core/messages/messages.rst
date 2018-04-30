@@ -20,7 +20,7 @@ Messages enable to change the behaviour of an application based only on configur
 
 Messages also provide a generic interface between MARTe components and any components and protocols that live outside a MARTe application. This allows, for instance, to replace an external component without changing the internal message protocol.
 
-This interface is tipically used for non real-time activities, such as configuration and state management. In particular, messages are the main technology behind the :doc:`StateMachine </core/statemachine/statemachine>` 
+This interface is typically used for non real-time activities, such as configuration and state management. In particular, messages are the main technology behind the :doc:`StateMachine </core/statemachine/statemachine>` 
 
 .. image:: Messages-0.png
 
@@ -154,7 +154,7 @@ The framework offers a set of standard filters that are ready to be used:
 Filter                                                   Description
 ======================================================== ===========
 :vcisdoxygencl:`RegisteredMethodsMessageFilter`          Enables the call of remote Object functions using messages (see below). 
-:vcisdoxygencl:`ReplyMessageCatcherMessageFilter`        Waits for a given reply to arrive. Tipically used with *indirect* messages.
+:vcisdoxygencl:`ReplyMessageCatcherMessageFilter`        Waits for a given reply to arrive. Typically used with *indirect* messages.
 :vcisdoxygencl:`QueueingMessageFilter`                   Listens for messages in the context of a different thread and puts the messages in a queue (shall be used with a :vcisdoxygencl:`QueuedMessageI`).
 :vcisdoxygencl:`QueuedReplyMessageCatcherFilter`         Similar to the :vcisdoxygencl:`ReplyMessageCatcherMessageFilter` but waits for the message in the context of a different thread.
 ======================================================== ===========

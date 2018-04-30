@@ -20,7 +20,7 @@ The previous version of the framework (aka `MARTe1 <https://vcis-gitlab.f4e.euro
 
 One of the main advantages of the MARTe architecture is the :doc:`bold separation </core/structure/code>` between the platform specific implementation, the environment details and the real-time algorithms (i.e. the user code). 
 
-The platform is defined by the target processor and the operating system, while the environment encapsulates all the interfacing details which are related to the peculiarities of the location where the final system is to be deployed. This includes both the interfacing with the hardware plaform and the binding to the services that allow to configure and retrieve data from the system. 
+The platform is defined by the target processor and the operating system, while the environment encapsulates all the interfacing details which are related to the peculiarities of the location where the final system is to be deployed. This includes both the interfacing with the hardware platform and the binding to the services that allow to configure and retrieve data from the system. 
 
 This clear separation of concern has allowed to reuse many components inside the same environment (e.g. all the systems deployed at JET share the same services for parameter configuration and data retrieval) and to develop and test the user algorithms in non-real-time operating systems and to later deploy the same exact code in a previously tested platform.
 
