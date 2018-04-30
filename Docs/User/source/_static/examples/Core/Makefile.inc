@@ -48,6 +48,8 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/AtomicExample1$(EXEEXT) \
+        $(BUILD_DIR)/BasicStreamsExample1$(EXEEXT) \
+        $(BUILD_DIR)/BufferedStreamsExample1$(EXEEXT) \
         $(BUILD_DIR)/ChildGAMGroupExample1$(GAMEXT) \
         $(BUILD_DIR)/ChildGAMGroupExample2$(GAMEXT) \
         $(BUILD_DIR)/ConfigurationExample1$(EXEEXT) \
@@ -79,6 +81,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
         $(BUILD_DIR)/SingleThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/StateMachineExample1$(EXEEXT) \
+        $(BUILD_DIR)/StreamStringExample1$(EXEEXT) \
         $(BUILD_DIR)/TCPSocketMessageProxyExample$(DLLEXT) \
         $(BUILD_DIR)/ThreadsExample1$(EXEEXT) \
         $(BUILD_DIR)/ThreadsExample2$(EXEEXT) \
