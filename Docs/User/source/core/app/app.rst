@@ -14,6 +14,12 @@
 Application kick-start
 ======================
 
-TODO
+MARTe offers a generic application loader (see `MARTeApp.cpp <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Source/App/MARTeApp.cpp>`_), that should be sufficiently generic for most use-cases.
 
-   
+The ``MARTeApp`` uses a portable :vcisdoxygencl:`Bootstrap` to read the input parameters and to setup the execution environment. The parameters expected by the Loaders (see the Configure method in :vcisdoxygencl:`Loader`) can be hardcoded in the application specific ``Bootstrap`` (embedded case) or can be read from the main ``argv`` parameters using the ``Bootstrap::ReadParameters`` method. With the configuration stream returned by the ``Bootstrap``, the :vcisdoxygencl:`Loader` is used by the ``MARTeApp`` to configure the application.
+
+Upon a successful configuration, the ``MARTeApp`` calls the ``Loader::Start`` method. The standard implementation sends a Message to the destination specified in the configuration stream. The :vcisdoxygencl:`RealTimeLoader` implementation, configures the :doc:`RealTimeApplication </core/gams/rtappdetails>` (that is expected to exist in the configuration stream) and triggers the Start of the ``RealTimeApplication`` (either with a Message or by changing to a state specified in the configuration stream).
+ 
+The :vcisdoxygencl:`Bootstrap` ``Run`` method is then expected to lock until the application is terminated, upon which the :vcisdoxygencl:`Loader` ``Stop`` method is called.
+
+.. image:: MARTeApp-1.png
