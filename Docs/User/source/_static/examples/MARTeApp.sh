@@ -3,6 +3,7 @@
 #-l LOADER=The Loader to use
 #-f FILENAME=MARTe configuration file
 #-m MESSAGE=Start message
+#-s STATE=RealTimeApplication first state 
 #-d cgdb=Run with cgdb
 #-d strace=Run with strace
 
@@ -81,22 +82,22 @@ MARTeAPP=$MARTe2_DIR/Build/linux/App/MARTeApp.ex
 #Start with cgdb or with strace
 if [ "$DEBUG" = "cgdb" ]
 then
-	if [ -z ${STATE+x} ]; then
+    if [ -z ${STATE+x} ]; then
         cgdb --args $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
-	else
+    else
         cgdb --args $MARTeAPP -l $LOADER -f $FILE -s $STATE
-	fi
+    fi
 elif [ "$DEBUG" = "strace" ]
 then
-	if [ -z ${STATE+x} ]; then
+    if [ -z ${STATE+x} ]; then
         strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
-	else
+    else
         strace -o/tmp/strace.err $MARTeAPP -l $LOADER -f $FILE -s $STATE
-	fi
+    fi
 else
-	if [ -z ${STATE+x} ]; then
-		$MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
-	else
-    	$MARTeAPP -l $LOADER -f $FILE -s $STATE 
-	fi
+    if [ -z ${STATE+x} ]; then
+        $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+    else
+        $MARTeAPP -l $LOADER -f $FILE -s $STATE 
+    fi
 fi

@@ -1,4 +1,4 @@
-.. date: 18/04/2018
+.. date: 30/04/2018
    author: Andre' Neto
    copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
    the Development of Fusion Energy ('Fusion for Energy').
@@ -23,3 +23,11 @@ Upon a successful configuration, the ``MARTeApp`` calls the ``Loader::Start`` me
 The :vcisdoxygencl:`Bootstrap` ``Run`` method is then expected to lock until the application is terminated, upon which the :vcisdoxygencl:`Loader` ``Stop`` method is called.
 
 .. image:: MARTeApp-1.png
+
+The MARTeApp is used in the MARTeApp.sh script (see :doc:`examples </core/examples>`):
+
+.. literalinclude:: /_static/examples/MARTeApp.sh
+   :language: bash
+   :emphasize-lines: 79,98,100
+   :caption: 
+   :linenos: 
