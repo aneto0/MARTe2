@@ -22,14 +22,14 @@ All the Makefiles share a common Makefile.inc which in turn imports the main def
 
 The definitions and the Makefile rules for the selected operating system and architecture will have to exist in the `MakeDefaults <https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/tree/master/MakeDefaults>`_ folder.
 
-The Makefile.inc defines all the rules that are common to all the operating systems and architecture. The Makefile.\ **os-arch** (where **os.arch** is the selected operating systems/architecture) shall include, as a minimum, the Makefile.inc and shall define the ``TARGET`` operating system/architecture.  
+The Makefile.inc defines all the rules that are common to all the operating systems and architecture. The Makefile.\ **os-arch** (where **os.arch** is the selected operating systems/architecture) shall include, as a minimum, the Makefile.inc and shall define the ``TARGET`` operating system/architecture (if not already defined as a system property).
 
 .. code-block:: makefile
    
    TARGET=os-arch
    include Makefile.inc
 
-Where **os-arch** is the selected operating systems/architecture.
+Where **os-arch** is the selected operating systems/architecture (i.e. the value of the ``TARGET`` environment variable).
 
 As an example, a Makefile to compile for linux on an armv8 (i.e. ``Makefile.armv8-linux``) could look like:
 
@@ -39,6 +39,10 @@ As an example, a Makefile to compile for linux on an armv8 (i.e. ``Makefile.armv
    include Makefile.inc
    #Example of an operating system/architecture specific flag
    LIBRARIES += -lm
+
+.. note::
+
+   The ``Makefile.gcc`` allows to recycle the same Makefile for several ``gcc`` based projects. The ``Makefile.linux`` in the root folder of MARTe2 assumes ``TARGET=x86-linux``. For gcc projects in other operating systems/architectures, make sure to export the appropriate architecture before executing ``make -f Makefile.gcc``.
 
 Definitions
 -----------
@@ -146,10 +150,10 @@ The following example builds a library using the files File1.cpp and File2.cpp. 
    :caption: Makefile.inc
    :linenos:
 
-.. literalinclude:: /_static/examples/Makefiles/Makefile.linux
+.. literalinclude:: /_static/examples/Makefiles/Makefile.gcc
    :language: makefile
-   :emphasize-lines: 27,32
-   :caption: Makefile.linux
+   :emphasize-lines: 28,33
+   :caption: Makefile.x86-linux
    :linenos:
    
 To try the example execute:
