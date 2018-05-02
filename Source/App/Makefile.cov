@@ -25,6 +25,6 @@
 #############################################################
 TARGET=cov
 
-include Makefile.inc
+all:
 
-LIBRARIES   = -L$(BUILD_DIR)/../Core -lMARTe2
+clean_gen:

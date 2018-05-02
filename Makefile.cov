@@ -27,5 +27,3 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES += -lm
-
