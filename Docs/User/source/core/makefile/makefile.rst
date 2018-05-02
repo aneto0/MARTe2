@@ -150,7 +150,7 @@ The following example builds a library using the files File1.cpp and File2.cpp. 
    :caption: Makefile.inc
    :linenos:
 
-.. literalinclude:: /_static/examples/Makefiles/Makefile.gcc
+.. literalinclude:: /_static/examples/Makefiles/Makefile.x86-linux
    :language: makefile
    :emphasize-lines: 28,33
    :caption: Makefile.x86-linux
