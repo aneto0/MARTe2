@@ -159,7 +159,7 @@ public:
 
     /**
      * @brief Sets the thread specific context information (which allows to share information between functions).
-     * @param[in] context the thread specific context to set.
+     * @param[in] contextIn the thread specific context to set.
      */
     void SetThreadSpecificContext(void * const & contextIn);
 

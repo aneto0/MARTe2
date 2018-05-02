@@ -158,7 +158,7 @@ public:
 
     /**
      * @brief Sets the thread stack size for all the threads.
-     * @param[in] priorityLevelIn the thread priority level.
+     * @param[in] stackSizeIn the thread stack size.
      * @pre
      *   GetStatus(*) == OffState
      */
