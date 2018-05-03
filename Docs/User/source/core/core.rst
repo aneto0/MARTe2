@@ -16,7 +16,7 @@ Core library
 
 The following chapters describe in detail the main concepts behind the MARTe core library.
 
-The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/MARTe2/doxygen/annotated.html>`_.
+The core library API can be found `here <https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/annotated.html>`_.
 
 .. toctree::
    :maxdepth: 1
