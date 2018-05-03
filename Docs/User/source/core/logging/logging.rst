@@ -22,7 +22,7 @@ MARTe offers a logging mechanism that is both :ref:`thread and interrupt safe <l
 ErrorType
 ---------
 
-The framework offers the following ErrorTypes (i.e. severities, see :vcisdoxygencl:`ErrorType`).
+The framework offers the following ErrorTypes (i.e. severities, see :vcisdoxygenclem:`ErrorType`).
 
 =================== =======
 Type                Meaning
@@ -55,7 +55,7 @@ The :vciscorebml3:`AdvancedErrorManagement` defines two main error logging macro
 
 The ``REPORT_ERROR_STATIC`` is to be called by classes that do not inherit from :vcisdoxygencl:`Object` while the ``REPORT_ERROR`` should be called by classes that inherit from Object, since this will automatically add the object name, class name and object pointer to the log message.  
 
-Both macros expect a compulsory :vcisdoxygencl:`ErrorType`, followed by a compulsory error/information string and a list of optional parameters that will be ``Printf`` in the String using the rules described in the :doc:`/core/streams/streams` section. 
+Both macros expect a compulsory :vcisdoxygenclem:`ErrorType`, followed by a compulsory error/information string and a list of optional parameters that will be ``Printf`` in the String using the rules described in the :doc:`/core/streams/streams` section. 
 
 .. code-block:: c++   
 
