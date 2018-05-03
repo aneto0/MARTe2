@@ -74,7 +74,7 @@ This is set by calling the global function ``SetErrorProcessFunction`` with a po
 
    typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo, const char8 * const errorDescription);   
    
-The ``errorDescription`` already contains the *printfed* message while the :vcisdoxygenclem:`ErrorInformation` provides a list of properties related to the conditions at the time of the logging (e.g. time, line number, ...).
+The ``errorDescription`` already contains the *printfed* message while the :vcisdoxygenstem:`ErrorInformation` provides a list of properties related to the conditions at the time of the logging (e.g. time, line number, ...).
 
 .. code-block:: c++
    
