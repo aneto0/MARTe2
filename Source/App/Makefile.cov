@@ -28,3 +28,5 @@ TARGET=cov
 all:
 
 clean_gen:
+
+clean:
