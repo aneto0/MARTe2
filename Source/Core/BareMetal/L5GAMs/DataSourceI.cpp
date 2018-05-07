@@ -646,4 +646,31 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     return ret;
 }
 
+uint32 DataSourceI::GetNumberOfStatefulMemoryBuffers() {
+    return 1u;
+}
+
+uint32 DataSourceI::GetCurrentStateBuffer() {
+    return 0u;
+}
+
+void DataSourceI::PrepareOffsets() {
+}
+
+int32 DataSourceI::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples) {
+    return -1;
+}
+
+int32 DataSourceI::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples) {
+    return -1;
+}
+
+bool DataSourceI::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
+    return true;
+}
+
+bool DataSourceI::TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
+    return true;
+}
+
 }

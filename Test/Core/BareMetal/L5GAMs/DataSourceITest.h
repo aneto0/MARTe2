@@ -222,6 +222,41 @@ public:
      * @brief Tests the IsSupportedBroker method.
      */
     bool TestIsSupportedBroker();
+
+    /**
+     * @brief Tests the GetCurrentStateBuffer() method.
+     */
+    bool TestGetCurrentStateBuffer();
+
+    /**
+     * @brief Tests the GetNumberOfStatefulMemoryBuffers() method.
+     */
+    bool TestGetNumberOfStatefulMemoryBuffers();
+
+    /**
+     * @brief Tests the PrepareOffsets() method.
+     */
+    bool TestPrepareOffsets();
+
+    /**
+     * @brief Tests the GetInputOffset() method.
+     */
+    bool TestGetInputOffset();
+
+    /**
+     * @brief Tests the GetOutputOffset() method.
+     */
+    bool TestGetOutputOffset();
+
+    /**
+     * @brief Tests the TerminateInputCopy() method.
+     */
+    bool TestTerminateInputCopy();
+
+    /**
+     * @brief Tests the TerminateOutputCopy() method.
+     */
+    bool TestTerminateOutputCopy();
 };
 
 /*---------------------------------------------------------------------------*/

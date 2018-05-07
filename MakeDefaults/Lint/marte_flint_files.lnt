@@ -101,10 +101,14 @@ Matrix.h
 MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
+MemoryDataSourceI.cpp
 MemoryMapBroker.cpp
 MemoryMapInputBroker.cpp
 MemoryMapInterpolatedInputBroker.cpp
 MemoryMapInterpolatedInputBroker.h
+MemoryMapMultiBufferBroker.cpp
+MemoryMapMultiBufferInputBroker.cpp
+MemoryMapMultiBufferOutputBroker.cpp
 MemoryMapOutputBroker.cpp
 MemoryMapStatefulBroker.cpp
 MemoryMapStatefulInputBroker.cpp
