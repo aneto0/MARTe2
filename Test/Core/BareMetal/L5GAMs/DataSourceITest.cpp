@@ -2151,3 +2151,16 @@ bool DataSourceITest::TestTerminateOutputCopy() {
     }
     return ret;
 }
+
+bool DataSourceITest::TestGetNumberOfMemoryBuffers() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfMemoryBuffers() == 1u);
+    }
+    return ret;
+}

@@ -220,6 +220,11 @@ public:
      */
     static uint32 GetIndex();
 
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
 private:
 
     /**

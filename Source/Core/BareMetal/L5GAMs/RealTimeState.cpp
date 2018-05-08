@@ -90,6 +90,12 @@ uint32 RealTimeState::GetNumberOfStatefuls() {
     return statefuls.Size();
 }
 
+
+void RealTimeState::Purge(ReferenceContainer &purgeList) {
+    statefuls.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
+}
+
 CLASS_REGISTER(RealTimeState, "1.0")
 
 }

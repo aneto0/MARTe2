@@ -182,6 +182,11 @@ public:
      */
     virtual ErrorManagement::ErrorType StopCurrentStateExecution()=0;
 
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
 protected:
     /**
      * @brief Gets a pointer to the address of the two possible ScheduledStates (the current and the next).

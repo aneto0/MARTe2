@@ -256,6 +256,16 @@ bool GAM::SetContext(ConstReference context) {
     return true;
 }
 
+void GAM::Purge(ReferenceContainer &purgeList) {
+    inputBrokers.Purge(purgeList);
+    outputBrokers.Purge(purgeList);
+    inputSignalsDatabaseNode.Purge(purgeList);
+    outputSignalsDatabaseNode.Purge(purgeList);
+    signalsDatabase.Purge(purgeList);
+    configuredDatabase.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
+}
+
 uint32 GAM::GetNumberOfInputSignals() const {
     return numberOfInputSignals;
 }

@@ -257,6 +257,11 @@ public:
      * @brief Tests the TerminateOutputCopy() method.
      */
     bool TestTerminateOutputCopy();
+
+    /**
+     * @brief Tests the GetNumberOfMemoryBuffers() method.
+     */
+    bool TestGetNumberOfMemoryBuffers();
 };
 
 /*---------------------------------------------------------------------------*/

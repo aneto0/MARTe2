@@ -248,3 +248,8 @@ TEST(DataSourceIGTest,TestTerminateOutputCopy) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestTerminateOutputCopy());
 }
+
+TEST(DataSourceIGTest,TestGetNumberOfMemoryBuffers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
+}

@@ -75,7 +75,7 @@ bool MemoryMapBroker::Init(const SignalDirection direction, DataSourceI &dataSou
     if (ret) {
         ret = (numberOfCopies > 0u);
     }
-    uint32 numberOfBuffers = dataSource->GetNumberOfMemoryBuffers();
+    uint32 numberOfBuffers = dataSource->GetNumberOfStatefulMemoryBuffers();
     if (ret) {
         uint32 totalNumberOfElements = (numberOfCopies * numberOfBuffers);
         copyTable = new MemoryMapBrokerCopyTableEntry[totalNumberOfElements];

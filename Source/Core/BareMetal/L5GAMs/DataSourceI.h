@@ -506,16 +506,9 @@ public:
     virtual bool AllocateMemory() = 0;
 
     /**
-     * @brief Gets the number of memory buffers supported by this DataSourceI.
-     * @details This information can be used by a BrokerI to implement, for example, a circular buffer interface.
-     * @return the number of memory buffers supported by this DataSourceI.
-     */
-    virtual uint32 GetNumberOfMemoryBuffers() = 0;
-
-    /**
      * @brief Gets the memory address for the signal at index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
-     * @param[in] bufferIdx the index of the buffer (see GetNumberOfMemoryBuffers()).
+     * @param[in] bufferIdx the index of the state buffer (see GetNumberOfStatefulMemoryBuffers()). Not to be confused with the buffer index given by GetNumberOfMemoryBuffers (which is handled with the Offset functions below).
      * @param[out] signalAddress a pointer to the memory address of this signal for this \a bufferIdx.
      * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
      * @pre
@@ -559,12 +552,19 @@ public:
     virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr)=0;
 
     /**
-     * @brief Gets the number of stateful memory buffers (i.e. number of buffer for any given state) that is supported by this DataSourceI.
+     * @brief Gets the number of stateful memory buffers (i.e. number of buffers for any given state) that is supported by this DataSourceI.
      * @details This information can be used by a BrokerI to implement, for example, a stateful buffer interface. Note that total number of buffers will
-     *  be GetNumberOfMemoryBuffers() * GetNumberOfStatefulMemoryBuffers()
+     *  be GetNumberOfMemoryBuffers() * GetNumberOfStatefulMemoryBuffers(), i.e. each Stateful buffer will hold N GetNumberOfMemoryBuffers.
      * @return the number of stateful memory buffers supported by this DataSourceI.
      */
     virtual uint32 GetNumberOfStatefulMemoryBuffers();
+
+    /**
+     * @brief Gets the number of memory buffers supported by this DataSourceI.
+     * @details This information can be used by a BrokerI to implement, for example, a circular buffer interface. Not to be confused with GetNumberOfStatefulMemoryBuffers.
+     * @return the number of memory buffers supported by this DataSourceI.
+     */
+    virtual uint32 GetNumberOfMemoryBuffers();
 
     /**
      * @brief Returns the index of the buffer associated to the current state.
@@ -580,7 +580,7 @@ public:
     virtual void PrepareOffsets();
 
     /**
-     * @brief Gets the memory offset from where a given signal should be copied from.
+     * @brief Gets the memory offset (in bytes) from where a given signal should be copied from w.r.t. to the pointer returned by GetSignalMemoryBuffer for the same signalIdx.
      * @details Only meaningful for DataSources whose input signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal to copy.
      * @param[in] numberOfSamples the number of samples to be copied.
@@ -589,7 +589,7 @@ public:
     virtual int32 GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples);
 
     /**
-     * @brief Gets the memory offset from where a given signal should be copied from.
+     * @brief Gets the memory offset (in bytes) from where a given signal should be copied to w.r.t. to the pointer returned by GetSignalMemoryBuffer for the same signalIdx.
      * @details Only meaningful for DataSources whose output signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal to copy.
      * @param[in] numberOfSamples the number of samples to be copied.
@@ -599,7 +599,6 @@ public:
 
     /**
      * @brief Enables a Broker to inform the DataSource that a given signal has been copied from its memory.
-     * @details Only meaningful for DataSources whose input signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal that was copied.
      * @param[in] signalIdx the offset of the signal that was copied.
      * @param[in] numberOfSamples the number of samples of the signal that was copied.
@@ -609,13 +608,18 @@ public:
 
     /**
      * @brief Enables a Broker to inform the DataSource that a given signal has been copied to its memory.
-     * @details Only meaningful for DataSources whose input signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal that was copied.
      * @param[in] signalIdx the offset of the signal that was copied.
      * @param[in] numberOfSamples the number of samples of the signal that was copied.
      * @return true if the DataSource post-copy action was successful.
      */
     virtual bool TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples);
+
+
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 protected:
 

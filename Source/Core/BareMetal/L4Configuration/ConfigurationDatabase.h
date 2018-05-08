@@ -211,6 +211,12 @@ ConfigurationDatabase    ();
      */
     void SetCurrentNodeAsRootNode();
 
+
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
 private:
 
     /**

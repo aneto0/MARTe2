@@ -646,7 +646,17 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     return ret;
 }
 
+void DataSourceI::Purge(ReferenceContainer &purgeList){
+    signalsDatabaseNode.Purge(purgeList);
+    functionsDatabaseNode.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
+}
+
 uint32 DataSourceI::GetNumberOfStatefulMemoryBuffers() {
+    return 1u;
+}
+
+uint32 DataSourceI::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 

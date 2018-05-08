@@ -413,6 +413,15 @@ void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
     rootNode = currentNode;
 }
 
+void ConfigurationDatabase::Purge(ReferenceContainer &purgeList) {
+    if (currentNode.IsValid()) {
+        currentNode->Purge(purgeList);
+    }
+    if (rootNode.IsValid()) {
+        rootNode->Purge(purgeList);
+    }
+}
+
 CLASS_REGISTER(ConfigurationDatabase, "1.0")
 
 }

@@ -427,5 +427,12 @@ ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
 
 }
 
+void GAMSchedulerI::Purge(ReferenceContainer &purgeList) {
+    if (timingDataSource.IsValid()) {
+        timingDataSource->Purge(purgeList);
+    }
+    ReferenceContainer::Purge(purgeList);
+}
+
 }
 

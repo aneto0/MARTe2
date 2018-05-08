@@ -527,6 +527,25 @@ uint32 RealTimeApplication::GetIndex() {
     return index;
 }
 
+void RealTimeApplication::Purge(ReferenceContainer &purgeList) {
+    if (statesContainer.IsValid()) {
+        statesContainer->Purge(purgeList);
+    }
+    if (functionsContainer.IsValid()) {
+        functionsContainer->Purge(purgeList);
+    }
+    if (scheduler.IsValid()) {
+        scheduler->Purge(purgeList);
+    }
+    if (dataSourceContainer.IsValid()) {
+        dataSourceContainer->Purge(purgeList);
+    }
+    statefulsInData.Purge(purgeList);
+    functionsDatabase.Purge(purgeList);
+    dataSourcesDatabase.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
+}
+
 CLASS_REGISTER(RealTimeApplication, "1.0")
 
 CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
