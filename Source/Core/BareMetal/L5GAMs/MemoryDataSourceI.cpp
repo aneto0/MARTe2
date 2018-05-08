@@ -44,6 +44,8 @@ namespace MARTe {
 
 MemoryDataSourceI::MemoryDataSourceI() {
     numberOfBuffers = 0u;
+    stateMemorySize = 0u;
+    totalMemorySize = 0u;
     memory = NULL_PTR(uint8 *);
     signalOffsets = NULL_PTR(uint32 *);
     memoryHeap = NULL_PTR(HeapI *);
@@ -85,31 +87,35 @@ bool MemoryDataSourceI::AllocateMemory() {
         }
     }
 
-    uint32 memorySize = 0u;
+    stateMemorySize = 0u;
     for (uint32 s = 0u; (s < nOfSignals) && (ret); s++) {
         uint32 thisSignalMemorySize;
         ret = GetSignalByteSize(s, thisSignalMemorySize);
 
         if (ret) {
             if (signalOffsets != NULL_PTR(uint32 *)) {
-                signalOffsets[s] = memorySize;
+                signalOffsets[s] = stateMemorySize;
             }
         }
         if (ret) {
             ret = (thisSignalMemorySize > 0u);
         }
         if (ret) {
-            memorySize += (thisSignalMemorySize * numberOfBuffers);
+            stateMemorySize += (thisSignalMemorySize * numberOfBuffers);
             /*lint -e{613} null pointer checked before.*/
             signalSize[s] = thisSignalMemorySize;
         }
     }
+    uint32 numberOfStateBuffers = GetNumberOfStatefulMemoryBuffers();
     if (ret) {
-        memorySize *= GetNumberOfMemoryBuffers();
+        ret = (numberOfStateBuffers > 0u);
+    }
+    if (ret) {
+        totalMemorySize = stateMemorySize * numberOfStateBuffers;
         if (memoryHeap != NULL_PTR(HeapI *)) {
-            memory = reinterpret_cast<uint8 *>(memoryHeap->Malloc(memorySize));
+            memory = reinterpret_cast<uint8 *>(memoryHeap->Malloc(totalMemorySize));
         }
-        ret = MemoryOperationsHelper::Set(memory, '\0', memorySize);
+        ret = MemoryOperationsHelper::Set(memory, '\0', totalMemorySize);
     }
     return ret;
 
@@ -148,7 +154,7 @@ bool MemoryDataSourceI::Initialise(StructuredDataI & data) {
 }
 
 bool MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
-    bool ret = (bufferIdx < 1u);
+    bool ret = (bufferIdx < GetNumberOfStatefulMemoryBuffers());
     uint32 nOfSignals = GetNumberOfSignals();
     if (ret) {
         ret = (signalIdx < nOfSignals);
@@ -156,6 +162,10 @@ bool MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint
 
     if (ret) {
         char8 *signalAddressChar = reinterpret_cast<char8 *>(memory);
+        //Move to the correct state buffer
+        uint32 stateBufferOffset = stateMemorySize * bufferIdx;
+        signalAddressChar = &signalAddressChar[stateBufferOffset];
+
         uint32 offset = 0u;
         if (signalOffsets != NULL_PTR(uint32 *)) {
             offset = signalOffsets[signalIdx];

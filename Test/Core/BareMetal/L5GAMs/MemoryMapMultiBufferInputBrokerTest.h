@@ -1,7 +1,7 @@
 /**
- * @file MemoryMapMultiBufferBrokerTest.h
- * @brief Header file for class MemoryMapMultiBufferBrokerTest
- * @date 04/05/2018
+ * @file MemoryMapMultiBufferInputBrokerTest.h
+ * @brief Header file for class MemoryMapMultiBufferInputBrokerTest
+ * @date 16/04/2018
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryMapMultiBufferBrokerTest
+ * @details This header file contains the declaration of the class MemoryMapMultiBufferInputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYMAPMULTIBUFFERBROKERTEST_H_
-#define MEMORYMAPMULTIBUFFERBROKERTEST_H_
+#ifndef MEMORYMAPUNRELATEDINPUTBROKERTEST_H_
+#define MEMORYMAPUNRELATEDINPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,25 +31,25 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryMapMultiBufferBroker.h"
-
+#include "MemoryMapMultiBufferInputBroker.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
- * @brief Tests the MemoryMapInputBroker public methods.
+ * @brief Tests the MemoryMapMultiBufferInputBroker public methods.
  */
-class MemoryMapMultiBufferBrokerTest {
+class MemoryMapMultiBufferInputBrokerTest {
 public:
     /**
      * @brief Constructor. NOOP.
      */
-    MemoryMapMultiBufferBrokerTest();
+    MemoryMapMultiBufferInputBrokerTest();
 
     /**
      * @brief Destructor. NOOP.
      */
-    virtual ~MemoryMapMultiBufferBrokerTest();
+    ~MemoryMapMultiBufferInputBrokerTest();
 
     /**
      * @brief Tests the constructor.
@@ -57,30 +57,14 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the Init method.
+     * @brief Tests the Execute method.
      */
-    bool TestInit();
-
-    /**
-     * @brief Tests the Init method with another configuration.
-     */
-    bool TestInit1();
-
-    /**
-     * @brief Tests the CopyInputs method.
-     */
-    bool TestCopyInputs();
-
-    /**
-     * @brief Tests the CopyOutputs method.
-     */
-    bool TestCopyOutputs();
-
+    bool TestExecute();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPMULTIBUFFERBROKERTEST_H_ */
+#endif /* MEMORYMAPUNRELATEDINPUTBROKERTEST_H_ */
 

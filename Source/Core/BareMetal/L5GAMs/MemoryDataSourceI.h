@@ -90,7 +90,7 @@ public:
      * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
      * @pre
      *   signalIdx < GetNumberOfSignals() &&
-     *   bufferIdx < GetNumberOfMemoryBuffers()
+     *   bufferIdx < 1
      */
     virtual bool GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
 
@@ -106,6 +106,16 @@ protected:
      * The memory address.
      */
     uint8 *memory;
+
+    /**
+     * The memory size for each state buffer
+     */
+    uint32 stateMemorySize;
+
+    /**
+     * The total memory size
+     */
+    uint32 totalMemorySize;
 
     /**
      * The offset of the signals in memory.

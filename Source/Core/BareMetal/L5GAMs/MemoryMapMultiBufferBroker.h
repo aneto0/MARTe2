@@ -49,10 +49,9 @@ namespace MARTe {
  * @brief Multi-buffer memory mapped BrokerI implementation.
  * @details This class knows how to copy from/to a DataSourceI multi-buffer memory address to/from a GAM signal memory address.
  *
- * This broker will query, for each signal, the current offset in memory of the signal in the DataSourceI. Note that this offset
- *  is allowed to be different for each signal. This broker is expected to be used in DataSourceI implementations that stored data
- *  in buffers of a given length (e.g. dual circular), so that the DataSourceI may be writing in a given memory offset while this broker
- *   is reading from another offset.
+ * This broker will query, for each signal, the current offset (bytes) of the signal memory in the DataSourceI (as returned by the GetSignalMemoryBuffer method).
+ * Note that this offset is allowed to be different for each signal. This broker is expected to be used in DataSourceI implementations that stored data
+ *  in buffers of a given length (e.g. dual circular), so that the DataSourceI may be writing in a given memory offset while this broker is reading from another offset.
  *
  * The reason why the offset needs to be computed for every signal is that there might be DataSourceI implementations where a given signal is ready
  *  before others and thus can be copied in advanced.

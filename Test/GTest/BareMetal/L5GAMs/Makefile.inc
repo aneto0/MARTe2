@@ -33,6 +33,8 @@ OBJSX=  BrokerIGTest.x\
         MemoryMapInputBrokerGTest.x\
         MemoryMapInterpolatedInputBrokerGTest.x\
         MemoryMapMultiBufferBrokerGTest.x\
+        MemoryMapMultiBufferInputBrokerGTest.x\
+        MemoryMapMultiBufferOutputBrokerGTest.x\
         MemoryMapOutputBrokerGTest.x\
         MemoryMapSynchronisedInputBrokerGTest.x\
         MemoryMapSynchronisedOutputBrokerGTest.x\
