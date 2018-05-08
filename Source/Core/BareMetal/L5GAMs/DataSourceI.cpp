@@ -667,12 +667,12 @@ uint32 DataSourceI::GetCurrentStateBuffer() {
 void DataSourceI::PrepareOffsets() {
 }
 
-int32 DataSourceI::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples) {
-    return -1;
+bool DataSourceI::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+    return false;
 }
 
-int32 DataSourceI::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples) {
-    return -1;
+bool DataSourceI::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+    return false;
 }
 
 bool DataSourceI::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {

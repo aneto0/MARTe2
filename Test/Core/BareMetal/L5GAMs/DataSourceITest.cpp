@@ -2108,7 +2108,8 @@ bool DataSourceITest::TestGetInputOffset() {
         ret = dataSource.IsValid();
     }
     if (ret) {
-        ret = (dataSource->GetInputOffset(0, 0) == -1);
+        uint32 offset;
+        ret = (!dataSource->GetInputOffset(0, 0, offset));
     }
     return ret;
 }
@@ -2121,7 +2122,8 @@ bool DataSourceITest::TestGetOutputOffset() {
         ret = dataSource.IsValid();
     }
     if (ret) {
-        ret = (dataSource->GetOutputOffset(0, 0) == -1);
+        uint32 offset;
+        ret = (!dataSource->GetOutputOffset(0, 0, offset));
     }
     return ret;
 }

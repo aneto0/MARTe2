@@ -1,8 +1,8 @@
 /**
  * @file RealTimeApplicationGTest.cpp
  * @brief Source file for class RealTimeApplicationGTest
- * @date 04/ago/2016
- * @author pc
+ * @date 04/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

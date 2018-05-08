@@ -57,19 +57,15 @@ MemoryMapMultiBufferBrokerDSTest    ();
 
     virtual ~MemoryMapMultiBufferBrokerDSTest();
 
-    virtual int32 GetInputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetInputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
-    virtual int32 GetOutputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetOutputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
-    virtual uint32 GetCurrentBuffer();
+    virtual uint32 GetCurrentStateBuffer();
 
     virtual uint32 GetNumberOfStatefulMemoryBuffers();
 
     virtual uint32 GetNumberOfMemoryBuffers();
-
-    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx,
-            const uint32 bufferIdx,
-            void *&signalAddress);
 
     virtual bool AllocateMemory();
 
@@ -87,7 +83,6 @@ protected:
 
     uint32 currentOffsets[3];
     uint32 currentBuffer;
-    uint32 memorySize;
 };
 
 MemoryMapMultiBufferBrokerDSTest::MemoryMapMultiBufferBrokerDSTest() {
@@ -95,7 +90,6 @@ MemoryMapMultiBufferBrokerDSTest::MemoryMapMultiBufferBrokerDSTest() {
     currentOffsets[1] = 0u;
     currentOffsets[2] = 0u;
     currentBuffer = 0u;
-    memorySize = 0u;
 
 }
 
@@ -103,14 +97,14 @@ MemoryMapMultiBufferBrokerDSTest::~MemoryMapMultiBufferBrokerDSTest() {
 
 }
 
-int32 MemoryMapMultiBufferBrokerDSTest::GetInputOffset(const uint32 signalIdx, const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferBrokerDSTest::GetInputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
-int32 MemoryMapMultiBufferBrokerDSTest::GetOutputOffset(const uint32 signalIdx, const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferBrokerDSTest::GetOutputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
 uint32 MemoryMapMultiBufferBrokerDSTest::GetNumberOfMemoryBuffers() {
@@ -133,78 +127,12 @@ bool MemoryMapMultiBufferBrokerDSTest::PrepareNextState(const char8 * const curr
     return true;
 }
 
-bool MemoryMapMultiBufferBrokerDSTest::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
-    bool ret = (bufferIdx < 2u);
-    uint32 nOfSignals = GetNumberOfSignals();
-    uint32 bufferSize = 0u;
-    if (ret) {
-        for (uint32 i = 0u; i < nOfSignals; i++) {
-            bufferSize += signalSize[i];
-        }
-
-        ret = (signalIdx < nOfSignals);
-    }
-
-    if (ret) {
-        char8 *signalAddressChar = reinterpret_cast<char8 *>(memory);
-        uint32 offset = 0u;
-        if (signalOffsets != NULL_PTR(uint32 *)) {
-            offset = signalOffsets[signalIdx];
-        }
-        if (signalAddressChar != NULL_PTR(char8 *)) {
-            signalAddressChar = &signalAddressChar[bufferSize * bufferIdx + offset];
-            signalAddress = reinterpret_cast<void *&>(signalAddressChar);
-        }
-    }
-
-    return ret;
-}
 
 bool MemoryMapMultiBufferBrokerDSTest::AllocateMemory() {
-
-    uint32 nOfSignals = GetNumberOfSignals();
-    bool ret = (memory == NULL_PTR(uint8 *));
-    if (ret) {
-        if (nOfSignals > 0u) {
-            signalOffsets = new uint32[nOfSignals];
-            ret = (signalOffsets != NULL_PTR(uint32*));
-            if (ret) {
-                signalSize = new uint32[nOfSignals];
-                ret = (signalSize != NULL_PTR(uint32*));
-            }
-        }
-    }
-
-    memorySize = 0u;
-    for (uint32 s = 0u; (s < nOfSignals) && (ret); s++) {
-        uint32 thisSignalMemorySize;
-        ret = GetSignalByteSize(s, thisSignalMemorySize);
-
-        if (ret) {
-            if (signalOffsets != NULL_PTR(uint32 *)) {
-                signalOffsets[s] = memorySize;
-            }
-        }
-        if (ret) {
-            ret = (thisSignalMemorySize > 0u);
-        }
-        if (ret) {
-            memorySize += (thisSignalMemorySize * numberOfBuffers);
-            /*lint -e{613} null pointer checked before.*/
-            signalSize[s] = thisSignalMemorySize;
-        }
-    }
-    if (ret) {
-        memorySize *= GetNumberOfStatefulMemoryBuffers();
-        if (memoryHeap != NULL_PTR(HeapI *)) {
-            memory = reinterpret_cast<uint8 *>(memoryHeap->Malloc(memorySize));
-        }
-        ret = MemoryOperationsHelper::Set(memory, '\0', memorySize);
-    }
-
+    bool ret = MemoryDataSourceI::AllocateMemory();
     if (ret) {
         uint32 *memint = (uint32 *) memory;
-        for (uint32 i = 0u; i < (memorySize / 4); i++) {
+        for (uint32 i = 0u; i < (totalMemorySize / 4); i++) {
             memint[i] = i;
         }
     }
@@ -213,7 +141,7 @@ bool MemoryMapMultiBufferBrokerDSTest::AllocateMemory() {
 
 }
 
-uint32 MemoryMapMultiBufferBrokerDSTest::GetCurrentBuffer() {
+uint32 MemoryMapMultiBufferBrokerDSTest::GetCurrentStateBuffer() {
     return currentBuffer;
 }
 
@@ -636,28 +564,28 @@ bool MemoryMapMultiBufferBrokerTest::TestCopyInputs() {
     if (ret) {
         broker->CopyInputs();
         ret = (data[0] == 0);
-        ret &= data[1] == 1;
-        ret &= data[2] == 0;
-        ret &= data[3] == 2;
-        ret &= data[4] == 5;
-        ret &= data[5] == 2;
-        ret &= data[6] == 4;
-        ret &= data[7] == 7;
-        ret &= data[8] == 4;
+        ret &= (data[1] == 1);
+        ret &= (data[2] == 0);
+        ret &= (data[3] == 2);
+        ret &= (data[4] == 5);
+        ret &= (data[5] == 2);
+        ret &= (data[6] == 4);
+        ret &= (data[7] == 7);
+        ret &= (data[8] == 4);
     }
 
     if (ret) {
         dataSource->Synchronise();
         broker->CopyInputs();
         ret = (data[0] == 1);
-        ret &= data[1] == 0;
-        ret &= data[2] == 1;
-        ret &= data[3] == 5;
-        ret &= data[4] == 2;
-        ret &= data[5] == 5;
-        ret &= data[6] == 7;
-        ret &= data[7] == 4;
-        ret &= data[8] == 7;
+        ret &= (data[1] == 0);
+        ret &= (data[2] == 1);
+        ret &= (data[3] == 5);
+        ret &= (data[4] == 2);
+        ret &= (data[5] == 5);
+        ret &= (data[6] == 7);
+        ret &= (data[7] == 4);
+        ret &= (data[8] == 7);
     }
 
     return ret;
@@ -743,26 +671,26 @@ bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs() {
     if (ret) {
         broker->CopyOutputs();
         ret = (data[0] == 2);
-        ret &= data[1] == 1;
-        ret &= data[2] == 5;
-        ret &= data[3] == 3;
-        ret &= data[4] == 8;
-        ret &= data[5] == 4;
-        ret &= data[6] == 6;
-        ret &= data[7] == 7;
+        ret &= (data[1] == 1);
+        ret &= (data[2] == 5);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 8);
+        ret &= (data[5] == 4);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 7);
 
     }
     if (ret) {
         dataSource->Synchronise();
         broker->CopyOutputs();
         ret = (data[0] == 1);
-        ret &= data[1] == 2;
-        ret &= data[2] == 4;
-        ret &= data[3] == 3;
-        ret &= data[4] == 7;
-        ret &= data[5] == 5;
-        ret &= data[6] == 6;
-        ret &= data[7] == 8;
+        ret &= (data[1] == 2);
+        ret &= (data[2] == 4);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 7);
+        ret &= (data[5] == 5);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 8);
     }
     return ret;
 }

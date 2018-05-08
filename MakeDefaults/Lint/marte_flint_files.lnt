@@ -1,4 +1,4 @@
-AdvancedErrorManagement.h
+/*AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
@@ -101,7 +101,7 @@ Matrix.h
 MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
-MemoryDataSourceI.cpp
+MemoryDataSourceI.cpp*/
 MemoryMapBroker.cpp
 MemoryMapInputBroker.cpp
 MemoryMapInterpolatedInputBroker.cpp
@@ -111,10 +111,12 @@ MemoryMapMultiBufferInputBroker.cpp
 MemoryMapMultiBufferOutputBroker.cpp
 MemoryMapOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
+MemoryMapSynchronisedMultiBufferInputBroker.cpp
+MemoryMapSynchronisedMultiBufferOutputBroker.cpp
 MemoryMapSynchronisedOutputBroker.cpp
 MemoryMapAsyncOutputBroker.cpp
 MemoryMapAsyncTriggerOutputBroker.cpp
-MemoryOperationsHelper.h
+/*MemoryOperationsHelper.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp
 MessageFilter.cpp
@@ -199,3 +201,4 @@ ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
 ZeroTerminatedArray.h
+*/

@@ -2,7 +2,7 @@
  * @file ValidateBasicType.cpp
  * @brief Source file for class ValidateBasicType
  * @date 25/gen/2016
- * @author pc
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

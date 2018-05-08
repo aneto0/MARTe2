@@ -1,7 +1,7 @@
 /**
- * @file RealTimeStateGTest.cpp
- * @brief Source file for class RealTimeStateGTest
- * @date 04/08/2016
+ * @file MemoryMapSynchronisedMultiBufferInputBrokerGTest.cpp
+ * @brief Source file for class MemoryMapSynchronisedMultiBufferInputBrokerGTest
+ * @date 26/04/2018
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,20 +17,26 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeStateGTest (public, protected, and private). Be aware that some 
+ * the class MemoryMapSynchronisedMultiBufferInputBrokerGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 #include <limits.h>
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeStateTest.h"
+#include "MemoryMapSynchronisedMultiBufferInputBrokerTest.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,27 +45,18 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeStateGTest,TestConstructor) {
-    RealTimeStateTest test;
+
+
+TEST(MemoryMapSynchronisedMultiBufferInputBrokerGTest,TestConstructor) {
+    MemoryMapSynchronisedMultiBufferInputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeStateGTest,TestAddStatefuls) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestAddStatefuls());
+
+TEST(MemoryMapSynchronisedMultiBufferInputBrokerGTest,TestExecute) {
+    MemoryMapSynchronisedMultiBufferInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute());
 }
 
-TEST(RealTimeStateGTest,TestAddStatefulsFalse_InvalidStateful) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestAddStatefulsFalse_InvalidStateful());
-}
 
-TEST(RealTimeStateGTest,TestPrepareNextState) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestPrepareNextState());
-}
-
-TEST(RealTimeStateGTest,TestGetNumberOfStatefuls) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestGetNumberOfStatefuls());
-}
+	

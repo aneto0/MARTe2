@@ -56,9 +56,9 @@ MemoryMapMultiBufferOutputBrokerDSTest    ();
 
     ~MemoryMapMultiBufferOutputBrokerDSTest();
 
-    virtual int32 GetInputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetInputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
-    virtual int32 GetOutputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetOutputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
     virtual void PrepareOffsets();
 
@@ -117,14 +117,14 @@ bool MemoryMapMultiBufferOutputBrokerDSTest::IsSupportedBroker(const SignalDirec
     return ret;
 }
 
-int32 MemoryMapMultiBufferOutputBrokerDSTest::GetInputOffset(const uint32 signalIdx, const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferOutputBrokerDSTest::GetInputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
-int32 MemoryMapMultiBufferOutputBrokerDSTest::GetOutputOffset(const uint32 signalIdx, const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferOutputBrokerDSTest::GetOutputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
 void MemoryMapMultiBufferOutputBrokerDSTest::PrepareOffsets() {
@@ -438,7 +438,6 @@ bool MemoryMapMultiBufferOutputBrokerTest::TestExecute() {
             if (ret) {
                 ret &= (dataPtr[0 + offsetBuffer] == 0);
                 ret &= (dataPtr[2 + offsetBuffer] == 1);
-                //call terminate read here because of range at shifts the buffer!!
                 ret &= (dataPtr[4 + (2 % nBuffers) * 10 + offsetBuffer] == 2);
                 ret &= (dataPtr[22 + offsetBuffer] == 3);
             }
@@ -449,7 +448,6 @@ bool MemoryMapMultiBufferOutputBrokerTest::TestExecute() {
             if (ret) {
                 ret &= (dataPtr[0 + (1 % nBuffers) + offsetBuffer] == 0);
                 ret &= (dataPtr[2 + (4 % nBuffers) * 10 + offsetBuffer] == 1);
-                //call terminate read here!!
                 ret &= (dataPtr[4 + (6 % nBuffers) * 10 + offsetBuffer] == 2);
                 ret &= (dataPtr[22 + (3 % nBuffers) + offsetBuffer] == 3);
             }

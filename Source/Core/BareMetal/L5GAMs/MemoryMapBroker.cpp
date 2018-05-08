@@ -132,8 +132,9 @@ bool MemoryMapBroker::Init(const SignalDirection direction, DataSourceI &dataSou
                 for (bo = 0u; (bo < numberOfByteOffsets) && (ret); bo++) {
                     //in this case only one node with the whole size
                     if (noRanges) {
-                        samples = 1;
+                        samples = 1u;
                     }
+                    /*lint -e{613} copyTable cannot be NULL as otherwise ret would be false*/
                     for (uint32 h = 0u; (h < samples) && (ret); h++) {
                         copyTable[c].copySize = GetCopyByteSize(c % (numberOfCopies));
                         copyTable[c].gamPointer = GetFunctionPointer(c % (numberOfCopies));

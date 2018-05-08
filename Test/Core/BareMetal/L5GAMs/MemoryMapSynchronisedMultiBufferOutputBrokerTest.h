@@ -1,7 +1,7 @@
 /**
- * @file GAMSchedulerTest.h
- * @brief Header file for class GAMSchedulerTest
- * @date 09/08/2016
+ * @file MemoryMapSynchronisedMultiBufferOutputBrokerTest.h
+ * @brief Header file for class MemoryMapSynchronisedMultiBufferOutputBrokerTest
+ * @date 26/04/2018
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GAMSchedulerTest
+ * @details This header file contains the declaration of the class MemoryMapSynchronisedMultiBufferOutputBrokerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GAMSCHEDULERTEST_H_
-#define GAMSCHEDULERTEST_H_
+#ifndef MEMORYMAPSYNCHRONISEDMULTIBUFFEROUTPUTBROKERTEST_H_
+#define MEMORYMAPSYNCHRONISEDMULTIBUFFEROUTPUTBROKERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,94 +31,41 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMScheduler.h"
+#include "MemoryMapSynchronisedMultiBufferOutputBroker.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
 /**
- * @brief Tests all the GAMScheduler functions
+ * @brief Tests the MemoryMapSynchronisedMultiBufferOutputBroker public methods.
  */
-class GAMSchedulerTest {
-
+class MemoryMapSynchronisedMultiBufferOutputBrokerTest {
 public:
-
     /**
-     * @brief Creates the application configuration stream
+     * @brief Constructor. NOOP.
      */
-    GAMSchedulerTest();
+    MemoryMapSynchronisedMultiBufferOutputBrokerTest();
 
     /**
-     * @brief Destroys the ObjectRegistryDatabase
+     * @brief Destructor. NOOP.
      */
-    ~GAMSchedulerTest();
+    virtual ~MemoryMapSynchronisedMultiBufferOutputBrokerTest();
 
     /**
-     * @brief Initialises the ObjectRegistryDatabase
-     */
-    bool Init(StreamString &config);
-
-    /**
-     * @brief Tests the scheduler constructor
+     * @brief Tests the Constructor.
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests the execution of a multi-thread MARTe application
+     * @brief Tests the Execute method.
      */
-    bool TestStartNextStateExecution();
-
-    /**
-     * @brief Tests that starting the execution of a multi-thread MARTe application without Preparing the state returns false
-     */
-    bool TestStartNextStateExecution_False_PrepareNextState();
-
-    /**
-     * @brief Tests the execution of a multi-thread MARTe application
-     */
-    bool TestStopCurrentStateExecution();
-
-    /**
-     * @brief Tests the Initialise method
-     */
-    bool TestInitialise();
-
-    /**
-     * @brief Tests the Initialise method with an ErrorMessage
-     */
-    bool TestInitialise_ErrorMessage();
-
-    /**
-     * @brief Tests the Initialise method with more than one message defined
-     */
-    bool TestInitialise_False_MoreThanOneErrorMessage();
-
-    /**
-     * @brief Tests the Initialise method with an invalid message
-     */
-    bool TestInitialise_False_InvalidMessage();
-
-    /**
-     * @brief Tests GAMScheduler integrated with the StateMachine
-     */
-    bool TestIntegrated();
-
-    /**
-     * @brief Tests GAMScheduler integrated with the StateMachine
-     */
-    bool TestIntegrated_TriggerErrorMessage();
-
-    /**
-     * @brief Tests that the purge kills all threads
-     */
-    bool TestPurge();
+    bool TestExecute();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GAMSCHEDULERTEST_H_ */
+#endif /* MEMORYMAPSYNCHRONISEDMULTIBUFFEROUTPUTBROKERTEST_H_ */
 

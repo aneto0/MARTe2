@@ -40,6 +40,8 @@ OBJSX=BrokerI.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
     MemoryMapSynchronisedInputBroker.x \
+    MemoryMapSynchronisedMultiBufferInputBroker.x \
+    MemoryMapSynchronisedMultiBufferOutputBroker.x \
     MemoryMapSynchronisedOutputBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \

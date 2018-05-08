@@ -56,9 +56,9 @@ MemoryMapMultiBufferInputBrokerDSTest    ();
 
     ~MemoryMapMultiBufferInputBrokerDSTest();
 
-    virtual int32 GetInputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetInputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
-    virtual int32 GetOutputOffset(const uint32 signalIdx,const uint32 samples);
+    virtual bool GetOutputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
     virtual uint32 GetCurrentStateBuffer();
 
@@ -98,16 +98,14 @@ MemoryMapMultiBufferInputBrokerDSTest::~MemoryMapMultiBufferInputBrokerDSTest() 
 
 }
 
-int32 MemoryMapMultiBufferInputBrokerDSTest::GetInputOffset(const uint32 signalIdx,
-                                                     const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferInputBrokerDSTest::GetInputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
-int32 MemoryMapMultiBufferInputBrokerDSTest::GetOutputOffset(const uint32 signalIdx,
-                                                     const uint32 samples) {
-
-    return currentOffsets[signalIdx % 3];
+bool MemoryMapMultiBufferInputBrokerDSTest::GetOutputOffset(const uint32 signalIdx, const uint32 samples, uint32 &offset) {
+    offset = currentOffsets[signalIdx % 3];
+    return true;
 }
 
 uint32 MemoryMapMultiBufferInputBrokerDSTest::GetNumberOfStatefulMemoryBuffers() {
@@ -118,11 +116,9 @@ bool MemoryMapMultiBufferInputBrokerDSTest::Synchronise() {
     return true;
 }
 
-bool MemoryMapMultiBufferInputBrokerDSTest::PrepareNextState(const char8 * const currentStateName,
-                                                           const char8 * const nextStateName) {
+bool MemoryMapMultiBufferInputBrokerDSTest::PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
     return true;
 }
-
 
 bool MemoryMapMultiBufferInputBrokerDSTest::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
     ReferenceT<MemoryMapMultiBufferInputBroker> broker("MemoryMapMultiBufferInputBroker");
@@ -155,7 +151,6 @@ const char8 *MemoryMapMultiBufferInputBrokerDSTest::GetBrokerName(StructuredData
     return "MemoryMapMultiBufferOutputBroker";
 }
 
-
 bool MemoryMapMultiBufferInputBrokerDSTest::AllocateMemory() {
     bool ret = MemoryDataSourceI::AllocateMemory();
 
@@ -170,9 +165,7 @@ bool MemoryMapMultiBufferInputBrokerDSTest::AllocateMemory() {
 
 }
 
-bool MemoryMapMultiBufferInputBrokerDSTest::TerminateInputCopy(const uint32 signalIdx,
-                                                        const uint32 offset,
-                                                        const uint32 samples) {
+bool MemoryMapMultiBufferInputBrokerDSTest::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 samples) {
 
     uint32 index = (signalIdx % 3);
     if (index == 0) {
@@ -370,7 +363,7 @@ bool MemoryMapMultiBufferInputBrokerTest::TestExecute() {
     if (ret) {
         ret = broker->Execute();
         uint32 nBuffers = dataSource->GetNumberOfMemoryBuffers();
-        uint32 signal4Shift = 2;    //2 buffers
+        uint32 signal4Shift = 2; //2 buffers
         uint32 bufferOffset = 26;
 
         if (ret) {
@@ -378,7 +371,6 @@ bool MemoryMapMultiBufferInputBrokerTest::TestExecute() {
             if (ret) {
                 ret &= (gamPtr[0] == 0 + signal4Shift + bufferOffset);
                 ret &= (gamPtr[1] == 2 + signal4Shift + bufferOffset);
-                //call terminate read here because of range at shifts the buffer!!
                 //signal 2 shift of 3!
                 ret &= (gamPtr[2] == 4 + (3 % nBuffers) * 10 + signal4Shift + bufferOffset);
                 //signal 3 shift of 4%2=21!
@@ -391,7 +383,6 @@ bool MemoryMapMultiBufferInputBrokerTest::TestExecute() {
             if (ret) {
                 ret &= (gamPtr[0] == 0 + (2 % nBuffers) + signal4Shift + bufferOffset);
                 ret &= (gamPtr[1] == 2 + (6 % nBuffers) * 10 + signal4Shift + bufferOffset);
-                //call terminate read here!!
                 ret &= (gamPtr[2] == 4 + (9 % nBuffers) * 10 + signal4Shift + bufferOffset);
                 ret &= (gamPtr[3] == 22 + (1 % nBuffers) + signal4Shift + bufferOffset);
             }

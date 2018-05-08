@@ -1,7 +1,7 @@
 /**
- * @file RealTimeStateGTest.cpp
- * @brief Source file for class RealTimeStateGTest
- * @date 04/08/2016
+ * @file MemoryMapSynchronisedMultiBufferInputBroker.cpp
+ * @brief Source file for class MemoryMapSynchronisedMultiBufferInputBroker
+ * @date 12/04/2018
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,20 +17,19 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class RealTimeStateGTest (public, protected, and private). Be aware that some 
+ * the class MemoryMapSynchronisedMultiBufferInputBroker (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeStateTest.h"
+
+#include "MemoryMapSynchronisedMultiBufferInputBroker.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,27 +38,25 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeStateGTest,TestConstructor) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestConstructor());
+namespace MARTe {
+
+MemoryMapSynchronisedMultiBufferInputBroker::MemoryMapSynchronisedMultiBufferInputBroker() :
+        MemoryMapMultiBufferBroker() {
 }
 
-TEST(RealTimeStateGTest,TestAddStatefuls) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestAddStatefuls());
+MemoryMapSynchronisedMultiBufferInputBroker::~MemoryMapSynchronisedMultiBufferInputBroker() {
+
 }
 
-TEST(RealTimeStateGTest,TestAddStatefulsFalse_InvalidStateful) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestAddStatefulsFalse_InvalidStateful());
-}
+bool MemoryMapSynchronisedMultiBufferInputBroker::Execute() {
 
-TEST(RealTimeStateGTest,TestPrepareNextState) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestPrepareNextState());
-}
+    bool ret = dataSource->Synchronise();
 
-TEST(RealTimeStateGTest,TestGetNumberOfStatefuls) {
-    RealTimeStateTest test;
-    ASSERT_TRUE(test.TestGetNumberOfStatefuls());
+    if (ret) {
+        ret = MemoryMapMultiBufferBroker::CopyInputs();
+    }
+
+    return ret;
+}
+CLASS_REGISTER(MemoryMapSynchronisedMultiBufferInputBroker, "1.0")
 }

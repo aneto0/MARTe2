@@ -1,8 +1,8 @@
 /**
  * @file TypeDescriptorGTest.cpp
  * @brief Source file for class TypeDescriptorGTest
- * @date 03/set/2015
- * @author pc
+ * @date 03/09/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

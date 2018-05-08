@@ -66,31 +66,39 @@ MemoryMapMultiBufferBroker::~MemoryMapMultiBufferBroker() {
     }
 }
 
+/*lint -e{613} no NULL pointers expected at this stage as this would violate the pre-conditions to use this function (i.e. to have had a valid Init).*/
 bool MemoryMapMultiBufferBroker::CopyInputs() {
     uint32 n;
     bool ret = true;
-    /*lint -e{613} null pointer checked before.*/
     uint32 currentBuffer = dataSource->GetCurrentStateBuffer();
+
     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-            /*lint -e{613} null pointer checked before.*/
-            int32 offset = dataSource->GetInputOffset(signalIdxArr[n], samples[n]);
-            if (offset >= 0) {
+            uint32 ioffset = 0u;
+            ret = dataSource->GetInputOffset(signalIdxArr[n], samples[n], ioffset);
+            if (ret) {
                 uint32 dataSourceIndex = ((currentBuffer * numberOfCopies) + n);
                 uint32 allowedSize = copyTable[n].copySize;
                 uint32 gamOffset = 0u;
-                offset %= maxOffset[n];
-                //trap the circular buffer exception
-                if ((GetCopyOffset(n) + offset) >= maxOffset[n]) {
+                uint32 copyOffsetN = GetCopyOffset(n);
+                ioffset %= maxOffset[n];
+
+                //Trap the circular buffer exceptions
+                //Note that the offset is allowed to be negative, meaning that it has to copy N bytes before the current position of the dataSourcePointer
+                int32 offset = static_cast<int32>(ioffset);
+                if ((copyOffsetN + ioffset) >= maxOffset[n]) {
                     offset = (offset - maxOffset[n]);
                 }
-                if (allowedSize > (maxOffset[n] - (GetCopyOffset(n) + offset))) {
+                else if (allowedSize > (maxOffset[n] - (copyOffsetN + ioffset))) {
                     allowedSize = (maxOffset[n] - offset);
                     (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
                                                         &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), allowedSize);
                     offset = (offset - maxOffset[n]) + allowedSize;
                     gamOffset = allowedSize;
                     allowedSize = (copyTable[n].copySize - allowedSize);
+                }
+                else {
+                    //NOOP
                 }
                 (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
                                                     &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), allowedSize);
@@ -102,6 +110,7 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
     return ret;
 }
 
+/*lint -e{613} no NULL pointers expected at this stage as this would violate the pre-conditions to use this function (i.e. to have had a valid Init).*/
 bool MemoryMapMultiBufferBroker::CopyOutputs() {
 
     uint32 n;
@@ -142,10 +151,8 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
     return ret;
 }
 
-bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
-                                    DataSourceI &dataSourceIn,
-                                    const char8 * const functionName,
-                                    void * const gamMemoryAddress) {
+bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+                                      void * const gamMemoryAddress) {
     dataSource = &dataSourceIn;
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
 
@@ -209,15 +216,15 @@ bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
                     ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
                     signalType = dataSource->GetSignalType(signalIdx);
                 }
-                uint32 nSamples;
+                uint32 nSamples = 0u;
                 if (ret) {
                     ret = dataSource->GetFunctionSignalSamples(direction, functionIdx, n, nSamples);
                 }
-                uint32 maxSignalOffset;
+                uint32 maxSignalOffset = 0u;
                 if (ret) {
                     maxSignalOffset = dataSource->GetNumberOfMemoryBuffers();
                 }
-                uint32 byteSize;
+                uint32 byteSize = 0u;
                 if (ret) {
                     ret = dataSource->GetSignalByteSize(signalIdx, byteSize);
                     maxSignalOffset *= byteSize;
@@ -239,10 +246,10 @@ bool MemoryMapMultiBufferBroker::Init(const SignalDirection direction,
                     //in this case only one node with the whole size
                     uint32 nFakeSamples = nSamples;
                     if (noRanges) {
-                        nFakeSamples = 1;
+                        nFakeSamples = 1u;
                     }
+                    /*lint -e{613} copyTable cannot be NULL as otherwise ret would be false*/
                     for (uint32 h = 0u; (h < nFakeSamples) && (ret); h++) {
-
                         copyTable[c].copySize = GetCopyByteSize(c % (numberOfCopies));
                         copyTable[c].gamPointer = GetFunctionPointer(c % (numberOfCopies));
                         copyTable[c].type = signalType;

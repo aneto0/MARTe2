@@ -37,6 +37,8 @@ OBJSX=  BrokerIGTest.x\
         MemoryMapMultiBufferOutputBrokerGTest.x\
         MemoryMapOutputBrokerGTest.x\
         MemoryMapSynchronisedInputBrokerGTest.x\
+        MemoryMapSynchronisedMultiBufferInputBrokerGTest.x\
+        MemoryMapSynchronisedMultiBufferOutputBrokerGTest.x\
         MemoryMapSynchronisedOutputBrokerGTest.x\
         RealTimeApplicationGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\

@@ -584,18 +584,20 @@ public:
      * @details Only meaningful for DataSources whose input signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal to copy.
      * @param[in] numberOfSamples the number of samples to be copied.
-     * @return the memory offset of the signal to be copied.
+     * @param[out] offset the offset to return.
+     * @return true if the offset could be retrieved.
      */
-    virtual int32 GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples);
+    virtual bool GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset);
 
     /**
      * @brief Gets the memory offset (in bytes) from where a given signal should be copied to w.r.t. to the pointer returned by GetSignalMemoryBuffer for the same signalIdx.
      * @details Only meaningful for DataSources whose output signal offsets vary over time (i.e. multi-buffer DataSources).
      * @param[in] signalIdx the index of the signal to copy.
      * @param[in] numberOfSamples the number of samples to be copied.
-     * @return the memory offset of the signal to be copied.
+     * @param[out] offset the offset to return.
+     * @return true if the offset could be retrieved.
      */
-    virtual int32 GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples);
+    virtual bool GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset);
 
     /**
      * @brief Enables a Broker to inform the DataSource that a given signal has been copied from its memory.
@@ -656,7 +658,6 @@ protected:
      */
     bool MoveToFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx);
 
-protected:
     /**
      * Number of signals assigned to this DataSourceI.
      */
