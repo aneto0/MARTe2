@@ -39,9 +39,6 @@ OBJSX=BrokerI.x \
     MemoryMapMultiBufferOutputBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
-    MemoryMapStatefulBroker.x \
-    MemoryMapStatefulInputBroker.x \
-    MemoryMapStatefulOutputBroker.x \
     MemoryMapSynchronisedInputBroker.x \
     MemoryMapSynchronisedOutputBroker.x \
     RealTimeApplication.x \

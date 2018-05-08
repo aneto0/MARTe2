@@ -110,9 +110,6 @@ MemoryMapMultiBufferBroker.cpp
 MemoryMapMultiBufferInputBroker.cpp
 MemoryMapMultiBufferOutputBroker.cpp
 MemoryMapOutputBroker.cpp
-MemoryMapStatefulBroker.cpp
-MemoryMapStatefulInputBroker.cpp
-MemoryMapStatefulOutputBroker.cpp
 MemoryMapSynchronisedInputBroker.cpp
 MemoryMapSynchronisedOutputBroker.cpp
 MemoryMapAsyncOutputBroker.cpp
