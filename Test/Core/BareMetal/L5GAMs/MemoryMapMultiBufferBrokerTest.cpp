@@ -127,7 +127,6 @@ bool MemoryMapMultiBufferBrokerDSTest::PrepareNextState(const char8 * const curr
     return true;
 }
 
-
 bool MemoryMapMultiBufferBrokerDSTest::AllocateMemory() {
     bool ret = MemoryDataSourceI::AllocateMemory();
     if (ret) {
@@ -591,6 +590,631 @@ bool MemoryMapMultiBufferBrokerTest::TestCopyInputs() {
     return ret;
 }
 
+bool MemoryMapMultiBufferBrokerTest::TestCopyInputs_N_Times_More_Samples_Than_Buffers() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 9"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 9"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestInputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetInputBrokers(brokers);
+        broker = brokers.Get(0);
+        data = (uint32*) gam->GetInputMemoryBuffer();
+    }
+
+    uint32 nSamples = 9;
+    if (ret) {
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 0);
+            }
+            else {
+                ret &= (data[i] == 1);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) != 0) {
+                ret &= (data[i] == 2);
+            }
+            else {
+                ret &= (data[i] == 5);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 4);
+            }
+            else {
+                ret &= (data[i] == 7);
+            }
+        }
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 1);
+            }
+            else {
+                ret &= (data[i] == 0);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) != 0) {
+                ret &= (data[i] == 5);
+            }
+            else {
+                ret &= (data[i] == 2);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 7);
+            }
+            else {
+                ret &= (data[i] == 4);
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyInputs_Equal_Samples_And_Buffers() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 2"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 2"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestInputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetInputBrokers(brokers);
+        broker = brokers.Get(0);
+        data = (uint32*) gam->GetInputMemoryBuffer();
+    }
+
+    uint32 nSamples = 2;
+    if (ret) {
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 0);
+            }
+            else {
+                ret &= (data[i] == 1);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 2);
+            }
+            else {
+                ret &= (data[i] == 5);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 4);
+            }
+            else {
+                ret &= (data[i] == 7);
+            }
+        }
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 1);
+            }
+            else {
+                ret &= (data[i] == 0);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 5);
+            }
+            else {
+                ret &= (data[i] == 2);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 7);
+            }
+            else {
+                ret &= (data[i] == 4);
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyInputs_Equal_Samples_And_Buffers_NTimes() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 6"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 6"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestInputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetInputBrokers(brokers);
+        broker = brokers.Get(0);
+        data = (uint32*) gam->GetInputMemoryBuffer();
+    }
+
+    uint32 nSamples = 6;
+    if (ret) {
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 0);
+            }
+            else {
+                ret &= (data[i] == 1);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 2);
+            }
+            else {
+                ret &= (data[i] == 5);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 4);
+            }
+            else {
+                ret &= (data[i] == 7);
+            }
+        }
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        uint32 i;
+        for (i = 0; (i < nSamples) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 1);
+            }
+            else {
+                ret &= (data[i] == 0);
+            }
+        }
+        for (; (i < (nSamples * 2)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 5);
+            }
+            else {
+                ret &= (data[i] == 2);
+            }
+        }
+        for (; (i < (nSamples * 3)) && (ret); i++) {
+            if ((i % 2) == 0) {
+                ret &= (data[i] == 7);
+            }
+            else {
+                ret &= (data[i] == 4);
+            }
+        }
+    }
+
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyInputs_NoSamples() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestInputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetInputBrokers(brokers);
+        broker = brokers.Get(0);
+        data = (uint32*) gam->GetInputMemoryBuffer();
+    }
+
+    if (ret) {
+        broker->CopyInputs();
+        ret = (data[0] == 0);
+        ret &= (data[1] == 2);
+        ret &= (data[2] == 4);
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        ret = (data[0] == 1);
+        ret &= (data[1] == 5);
+        ret &= (data[2] == 7);
+    }
+
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyInputs_MoreBuffersThanSamples() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            InputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 2"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 2"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 3"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestInputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetInputBrokers(brokers);
+        broker = brokers.Get(0);
+        data = (uint32*) gam->GetInputMemoryBuffer();
+    }
+
+    if (ret) {
+        broker->CopyInputs();
+        ret = (data[0] == 0);
+        ret &= (data[1] == 1);
+        ret &= (data[2] == 3);
+        ret &= (data[3] == 6);
+        ret &= (data[4] == 5);
+        ret &= (data[5] == 8);
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        ret = (data[0] == 1);
+        ret &= (data[1] == 2);
+        ret &= (data[2] == 6);
+        ret &= (data[3] == 9);
+        ret &= (data[4] == 8);
+        ret &= (data[5] == 11);
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyInputs();
+        ret = (data[0] == 2);
+        ret &= (data[1] == 0);
+        ret &= (data[2] == 9);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 11);
+        ret &= (data[5] == 5);
+    }
+
+    return ret;
+}
+
 bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs() {
     static const char8 * const config1 = ""
             "$Application1 = {"
@@ -695,3 +1319,558 @@ bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs() {
     return ret;
 }
 
+bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs_NoSamples() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            OutputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestOutputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetOutputBrokers(brokers);
+        broker = brokers.Get(0);
+        dataSource->GetSignalMemoryBuffer(0, 0, (void*&) data);
+    }
+
+    if (ret) {
+        broker->CopyOutputs();
+        //Remember that the memory of the DataSource is also initialised.
+        ret = (data[0] == 0);
+        ret &= (data[1] == 1);
+        //Only update first buffer
+        //First buffer three elements
+        ret &= (data[2] == 1);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 2);
+        //Second buffer three elements
+        ret &= (data[5] == 5);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 7);
+    }
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 0);
+        ret &= (data[1] == 0);
+        ret &= (data[2] == 1);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 2);
+        //Only update second buffer
+        ret &= (data[5] == 1);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 2);
+    }
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs_N_Times_More_Samples_Than_Buffers() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            OutputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 9"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 9"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestOutputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetOutputBrokers(brokers);
+        broker = brokers.Get(0);
+        dataSource->GetSignalMemoryBuffer(0, 0, (void*&) data);
+    }
+
+    if (ret) {
+        broker->CopyOutputs();
+        ret = (data[0] == 8);
+        ret &= (data[1] == 7);
+        ret &= (data[2] == 17);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 26);
+        ret &= (data[5] == 16);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 25);
+
+    }
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 7);
+        ret &= (data[1] == 8);
+        ret &= (data[2] == 16);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 25);
+        ret &= (data[5] == 17);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 26);
+    }
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs_Equal_Samples_And_Buffers() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            OutputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 4"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 4"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestOutputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetOutputBrokers(brokers);
+        broker = brokers.Get(0);
+        dataSource->GetSignalMemoryBuffer(0, 0, (void*&) data);
+    }
+
+    if (ret) {
+        broker->CopyOutputs();
+        ret = (data[0] == 2);
+        ret &= (data[1] == 3);
+        ret &= (data[2] == 6);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 10);
+        ret &= (data[5] == 7);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 11);
+
+    }
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 3);
+        ret &= (data[1] == 2);
+        ret &= (data[2] == 7);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 11);
+        ret &= (data[5] == 6);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 10);
+    }
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs_Equal_Samples_And_Buffers_NTimes() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            OutputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 6"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 6"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 2"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestOutputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetOutputBrokers(brokers);
+        broker = brokers.Get(0);
+        dataSource->GetSignalMemoryBuffer(0, 0, (void*&) data);
+    }
+
+    if (ret) {
+        broker->CopyOutputs();
+        ret = (data[0] == 4);
+        ret &= (data[1] == 5);
+        ret &= (data[2] == 10);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 16);
+        ret &= (data[5] == 11);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 17);
+
+    }
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 5);
+        ret &= (data[1] == 4);
+        ret &= (data[2] == 11);
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 17);
+        ret &= (data[5] == 10);
+        ret &= (data[6] == 6);
+        ret &= (data[7] == 16);
+    }
+    return ret;
+}
+
+bool MemoryMapMultiBufferBrokerTest::TestCopyOutputs_MoreBuffersThanSamples() {
+    static const char8 * const config1 = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = MemoryMapMultiBufferBrokerTestGAM1"
+            "            OutputSignals = {"
+            "               Signal1 = {"
+            "                   DataSource = Drv1"
+            "                   Type = uint32"
+            "                   Samples = 2"
+            "               }"
+            "               Signal2 = {"
+            "                   DataSource = Drv1"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   Type = uint32"
+            "                   Ranges = {{0, 0}, {2, 2}}"
+            "                   Samples = 2"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        +Drv1 = {"
+            "            Class = MemoryMapMultiBufferBrokerDSTest"
+            "            NumberOfBuffers = 3"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = MemoryMapInputBrokerTestScheduler1"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    MemoryMapMultiBufferBrokerTestInputBroker brokerTest;
+
+    ReferenceT<MemoryMapMultiBufferBrokerDSTest> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+
+    ReferenceT<MemoryMapMultiBufferBrokerTestGAM1> gam;
+    if (ret) {
+        gam = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gam.IsValid();
+    }
+    ReferenceContainer brokers;
+    ReferenceT<MemoryMapMultiBufferBrokerTestOutputBroker> broker;
+    uint32* data = NULL;
+    if (ret) {
+        gam->GetOutputBrokers(brokers);
+        broker = brokers.Get(0);
+        dataSource->GetSignalMemoryBuffer(0, 0, (void*&) data);
+    }
+
+    if (ret) {
+        broker->CopyOutputs();
+        ret = (data[0] == 0);
+        ret &= (data[1] == 1);
+        ret &= (data[2] == 2);
+
+        ret &= (data[3] == 2);
+        ret &= (data[4] == 4);
+        ret &= (data[5] == 4);
+
+        ret &= (data[6] == 3);
+        ret &= (data[7] == 7);
+        ret &= (data[8] == 5);
+
+        ret &= (data[9] == 9);
+        ret &= (data[10] == 10);
+        ret &= (data[11] == 11);
+
+    }
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 0);
+        ret &= (data[1] == 0);
+        ret &= (data[2] == 1);
+
+        ret &= (data[3] == 2);
+        ret &= (data[4] == 4);
+        ret &= (data[5] == 4);
+
+        ret &= (data[6] == 2);
+        ret &= (data[7] == 7);
+        ret &= (data[8] == 4);
+
+        ret &= (data[9] == 3);
+        ret &= (data[10] == 10);
+        ret &= (data[11] == 5);
+    }
+
+    if (ret) {
+        dataSource->Synchronise();
+        broker->CopyOutputs();
+        ret = (data[0] == 1);
+        ret &= (data[1] == 0);
+        ret &= (data[2] == 0);
+
+        ret &= (data[3] == 3);
+        ret &= (data[4] == 4);
+        ret &= (data[5] == 5);
+
+        ret &= (data[6] == 2);
+        ret &= (data[7] == 7);
+        ret &= (data[8] == 4);
+
+        ret &= (data[9] == 2);
+        ret &= (data[10] == 10);
+        ret &= (data[11] == 4);
+    }
+    return ret;
+}

@@ -62,8 +62,57 @@ TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs) {
     ASSERT_TRUE(test.TestCopyInputs());
 }
 
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_N_Times_More_Samples_Than_Buffers) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyInputs_N_Times_More_Samples_Than_Buffers());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyInputs_Equal_Samples_And_Buffers());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_Equal_Samples_And_Buffers_NTimes) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyInputs_Equal_Samples_And_Buffers_NTimes());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_NoSamples) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyInputs_NoSamples());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyInputs_MoreBuffersThanSamples) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyInputs_MoreBuffersThanSamples());
+}
+
 TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs) {
     MemoryMapMultiBufferBrokerTest test;
     ASSERT_TRUE(test.TestCopyOutputs());
 }
 
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_NoSamples) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyOutputs_NoSamples());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_N_Times_More_Samples_Than_Buffers) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyOutputs_N_Times_More_Samples_Than_Buffers());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyOutputs_Equal_Samples_And_Buffers());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_Equal_Samples_And_Buffers_NTimes) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyOutputs_Equal_Samples_And_Buffers_NTimes());
+}
+
+TEST(MemoryMapMultiBufferBrokerGTest,TestCopyOutputs_MoreBuffersThanSamples) {
+    MemoryMapMultiBufferBrokerTest test;
+    ASSERT_TRUE(test.TestCopyOutputs_MoreBuffersThanSamples());
+}

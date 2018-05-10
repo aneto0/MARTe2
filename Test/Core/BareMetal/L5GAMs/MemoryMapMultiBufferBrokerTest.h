@@ -72,10 +72,59 @@ public:
     bool TestCopyInputs();
 
     /**
+     * @brief Tests the CopyInputs method with more N times more samples than buffers.
+     */
+    bool TestCopyInputs_N_Times_More_Samples_Than_Buffers();
+
+    /**
+     * @brief Tests the CopyInputs method with a number of samples which is an exact number of the number of buffer.
+     */
+    bool TestCopyInputs_Equal_Samples_And_Buffers();
+
+    /**
+     * @brief Tests the CopyInputs method with a number of samples which is an exact multiple of the number buffers.
+     */
+    bool TestCopyInputs_Equal_Samples_And_Buffers_NTimes();
+
+    /**
+     * @brief Tests the CopyInputs method with no samples.
+     */
+    bool TestCopyInputs_NoSamples();
+
+    /**
+     * @brief Tests the CopyInputs method with more buffers than samples.
+     */
+    bool TestCopyInputs_MoreBuffersThanSamples();
+
+    /**
      * @brief Tests the CopyOutputs method.
      */
     bool TestCopyOutputs();
 
+    /**
+     * @brief Tests the CopyOutputs method with no samples.
+     */
+    bool TestCopyOutputs_NoSamples();
+
+    /**
+     * @brief Tests the CopyOutputs method with more N times more samples than buffers.
+     */
+    bool TestCopyOutputs_N_Times_More_Samples_Than_Buffers();
+
+    /**
+     * @brief Tests the CopyOutputs method with a number of samples which is an exact number of the number of buffer.
+     */
+    bool TestCopyOutputs_Equal_Samples_And_Buffers();
+
+    /**
+     * @brief Tests the CopyOutputs method with  a number of samples which is an exact multiple of the number buffers.
+     */
+    bool TestCopyOutputs_Equal_Samples_And_Buffers_NTimes();
+
+    /**
+     * @brief Tests the CopyOutputs method with more buffers than samples.
+     */
+    bool TestCopyOutputs_MoreBuffersThanSamples();
 };
 
 /*---------------------------------------------------------------------------*/

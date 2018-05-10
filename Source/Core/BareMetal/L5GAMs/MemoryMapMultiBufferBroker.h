@@ -106,7 +106,7 @@ protected:
     /**
      * The offset in bytes to be copied for each copy. Needed to trap out-of-bounds exceptions in circular buffer implementations.
      */
-    uint32 *maxOffset;
+    int32 *maxOffset;
 };
 }
 
