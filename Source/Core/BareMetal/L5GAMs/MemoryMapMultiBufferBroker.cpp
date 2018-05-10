@@ -86,24 +86,55 @@ bool MemoryMapMultiBufferBroker::CopyInputs() {
                 //Trap the circular buffer exceptions
                 //Note that the offset is allowed to be negative, meaning that it has to copy N bytes before the current position of the dataSourcePointer
                 int32 offset = static_cast<int32>(ioffset);
-                if ((copyOffsetN + ioffset) >= maxOffset[n]) {
+                //copyOffsetN will take into account the number of samples to be copied. There will be one copy for every sample and some of the samples might be requesting ranges that require the circular buffer to restart
+                //Copy would go over boundary? This is only possible if the number of samples is > than the number of memory buffers and assumes that a circular buffer is required.
+                //Only do (at most) one of the following whiles
+                bool offsetChanged = false;
+                while ((copyOffsetN + offset) >= maxOffset[n]) {
                     offset = (offset - maxOffset[n]);
+                    offsetChanged = true;
                 }
-                else if (allowedSize > (maxOffset[n] - (copyOffsetN + ioffset))) {
-                    allowedSize = (maxOffset[n] - offset);
-                    (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
-                                                        &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), allowedSize);
-                    offset = (offset - maxOffset[n]) + allowedSize;
-                    gamOffset = allowedSize;
-                    allowedSize = (copyTable[n].copySize - allowedSize);
-                }
-                else {
-                    //NOOP
+                if (!offsetChanged) {
+                    //Circular buffer where one might need to copy the a sub-buffer from the end, N buffers in the middle and the reminder at the end again
+                    if (allowedSize > (maxOffset[n] - (copyOffsetN + offset))) {
+                        //allowedSize is the number of bytes that are to be copied from the data source: N samples x size of the type to be copied
+                        //maxOffset is the maximum number of bytes that can be copied from the data source at a time: Number of buffers x size of the type to be copied. If the allowedSize is greater than the maxOffset, the copy must restart from the beginning of the memory
+                        //overSize if how much bigger is the allowedSize w.r.t. to the overSize (e.g. copy 3 samples of an uint32 => allowedSize = 12, dual buffer in the data source => 2 x 4 = 8) => overSize = 4
+                        uint32 overSize = allowedSize % maxOffset[n];
+
+                        //The allowedSize may be many times bigger than the maxOffset, so that the copy of all the data source memory may need to be performed many times
+                        uint32 numberOfFullCopies = ((allowedSize - overSize) / maxOffset[n]);
+                        bool isMultiple = (((allowedSize - overSize) % maxOffset[n]) == 0);
+
+                        //If the numberOfFullCopies is a multiple do one less copy, because at the end
+                        if (isMultiple) {
+                            overSize += maxOffset[n];
+                            numberOfFullCopies--;
+                        }
+                        uint32 allowedSizePhase = 0u;
+                        if (overSize > (maxOffset[n] - (copyOffsetN + offset))) {
+                            allowedSizePhase = (maxOffset[n] - offset);
+
+                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
+                                                                &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), allowedSizePhase);
+                            gamOffset = allowedSizePhase;
+                            offset = 0;
+                        }
+
+                        for (uint32 z = 0u; z < numberOfFullCopies; z++) {
+                            (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
+                                                                &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                                maxOffset[n]);
+
+                            gamOffset += maxOffset[n];
+                        }
+                        allowedSize = allowedSize - (maxOffset[n] * numberOfIterations) - allowedSizePhase;
+                    }
                 }
                 (void) MemoryOperationsHelper::Copy(&(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]),
                                                     &((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]), allowedSize);
                 /*lint -e{613} null pointer checked before.*/
-                ret = dataSource->TerminateInputCopy(signalIdxArr[n], static_cast<uint32>(offset), samples[n]);
+                ret = dataSource->TerminateInputCopy(signalIdxArr[n], ioffset, samples[n]);
             }
         }
     }
@@ -119,32 +150,40 @@ bool MemoryMapMultiBufferBroker::CopyOutputs() {
     uint32 currentBuffer = dataSource->GetCurrentStateBuffer();
     if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
+            uint32 ioffset = 0u;
             /*lint -e{613} null pointer checked before.*/
-            int32 offset = dataSource->GetOutputOffset(signalIdxArr[n], samples[n]);
-            if (offset >= 0) {
+            ret = dataSource->GetOutputOffset(signalIdxArr[n], samples[n], ioffset);
+            if (ret) {
                 uint32 dataSourceIndex = ((currentBuffer * numberOfCopies) + n);
-
                 uint32 allowedSize = copyTable[n].copySize;
                 uint32 gamOffset = 0u;
-                offset %= maxOffset[n];
+                uint32 copyOffsetN = GetCopyOffset(n);
+                ioffset %= maxOffset[n];
+                //Trap the circular buffer exceptions
+                //Note that the offset is allowed to be negative, meaning that it has to copy N bytes before the current position of the dataSourcePointer
+                int32 offset = static_cast<int32>(ioffset);
+                //Only do (at most) one of the following whiles
+                bool offsetChanged = false;
 
-                //trap the circular buffer exception
-                if ((GetCopyOffset(n) + offset) >= maxOffset[n]) {
+                while ((copyOffsetN + offset) >= maxOffset[n]) {
                     offset = (offset - maxOffset[n]);
+                    offsetChanged = true;
                 }
-                if (allowedSize > (maxOffset[n] - (GetCopyOffset(n) + offset))) {
-                    allowedSize = (maxOffset[n] - offset);
-                    (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
-                                                        &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]), allowedSize);
-                    gamOffset = allowedSize;
-                    offset = (offset - maxOffset[n]) + allowedSize;
-                    allowedSize = (copyTable[n].copySize - allowedSize);
+                if (!offsetChanged) {
+                    while (allowedSize > (maxOffset[n] - (copyOffsetN + offset))) {
+                        allowedSize = (maxOffset[n] - offset);
+                        (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
+                                                            &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]), allowedSize);
+                        gamOffset = allowedSize;
+                        offset = (offset - maxOffset[n]) + allowedSize;
+                        allowedSize = (copyTable[n].copySize - allowedSize);
+                    }
                 }
 
                 (void) MemoryOperationsHelper::Copy(&((reinterpret_cast<uint8 *>(copyTable[dataSourceIndex].dataSourcePointer))[offset]),
                                                     &(reinterpret_cast<uint8 *>(copyTable[n].gamPointer)[gamOffset]), allowedSize);
                 /*lint -e{613} null pointer checked before.*/
-                ret = dataSource->TerminateOutputCopy(signalIdxArr[n], static_cast<uint32>(offset), samples[n]);
+                ret = dataSource->TerminateOutputCopy(signalIdxArr[n], ioffset, samples[n]);
             }
         }
     }

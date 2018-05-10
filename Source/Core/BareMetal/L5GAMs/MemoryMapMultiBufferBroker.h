@@ -53,6 +53,8 @@ namespace MARTe {
  * Note that this offset is allowed to be different for each signal. This broker is expected to be used in DataSourceI implementations that stored data
  *  in buffers of a given length (e.g. dual circular), so that the DataSourceI may be writing in a given memory offset while this broker is reading from another offset.
  *
+ * If the number of samples provided by the DataSourceI is > than the number of memory buffers a circular buffer implementation will be assumed.
+ *
  * The reason why the offset needs to be computed for every signal is that there might be DataSourceI implementations where a given signal is ready
  *  before others and thus can be copied in advanced.
  */
