@@ -60,6 +60,8 @@ public:
     /**
      * @brief Calls DataSourceI::PrepareOffsets and then MemoryMapMultiBufferBroker::CopyInputs.
      * @return the return value of MemoryMapMultiBufferBroker::CopyInputs.
+     * @pre
+     *     Init()
      */
     virtual bool Execute();
 

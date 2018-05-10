@@ -667,18 +667,22 @@ uint32 DataSourceI::GetCurrentStateBuffer() {
 void DataSourceI::PrepareOffsets() {
 }
 
+/*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
 bool DataSourceI::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
     return false;
 }
 
+/*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
 bool DataSourceI::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
     return false;
 }
 
+/*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
 bool DataSourceI::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
     return true;
 }
 
+/*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/
 bool DataSourceI::TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
     return true;
 }

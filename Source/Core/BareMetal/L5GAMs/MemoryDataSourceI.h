@@ -74,7 +74,7 @@ public:
      * @brief Allocates the memory to store all the signals declared in the DataSourceI.
      * @return true if the memory can be successfully allocated.
      */
-    bool AllocateMemory();
+    virtual bool AllocateMemory();
 
     /**
      * @brief Gets the number of memory buffers defined in the Initialise method.
@@ -89,6 +89,8 @@ public:
      * @param[out] signalAddress a pointer to the memory address of this signal for this \a bufferIdx.
      * @return true if the signalIdx and the bufferIdx exist and the memory address can be retrieved for this signal.
      * @pre
+     *   Initialise()
+     *   SetConfiguredDatabase
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < 1
      */

@@ -48,8 +48,8 @@ MemoryMapSynchronisedMultiBufferInputBroker::~MemoryMapSynchronisedMultiBufferIn
 
 }
 
+/*lint -e{613} a valid Init of this class is a pre-condition for the Execute method and it assures dataSource to be != NULL*/
 bool MemoryMapSynchronisedMultiBufferInputBroker::Execute() {
-
     bool ret = dataSource->Synchronise();
 
     if (ret) {

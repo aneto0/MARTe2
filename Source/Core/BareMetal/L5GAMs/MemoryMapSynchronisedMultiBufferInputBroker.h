@@ -64,6 +64,8 @@ public:
     /**
      * @brief Calls DataSourceI::Synchronise and then MemoryMapMultiBufferBroker::CopyInputs.
      * @return the return value of MemoryMapMultiBufferBroker::CopyInputs if DataSourceI::Synchronise is successful.
+     * @pre
+     *     Init()
      */
     virtual bool Execute();
 

@@ -149,8 +149,8 @@ bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI 
         copyByteSize = new uint32[numberOfCopies];
         copyOffset = new uint32[numberOfCopies];
 
+        samples = 0u;
         uint32 memoryOffset = 0u;
-        uint32 samples = 0u;
         uint32 byteSize = 0u;
         uint32 c = 0u;
         //The same signal can be copied from different ranges. An entry is added for each signal range.

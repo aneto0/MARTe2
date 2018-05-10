@@ -42,7 +42,8 @@
 
 namespace MARTe {
 
-MemoryDataSourceI::MemoryDataSourceI() {
+MemoryDataSourceI::MemoryDataSourceI() :
+        DataSourceI() {
     numberOfBuffers = 0u;
     stateMemorySize = 0u;
     totalMemorySize = 0u;
@@ -153,6 +154,7 @@ bool MemoryDataSourceI::Initialise(StructuredDataI & data) {
     return ret;
 }
 
+/*lint -e{613} a valid Initialise is a pre-condition that guarantees memory to be != NULL*/
 bool MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
     bool ret = (bufferIdx < GetNumberOfStatefulMemoryBuffers());
     uint32 nOfSignals = GetNumberOfSignals();
@@ -170,10 +172,9 @@ bool MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint
         if (signalOffsets != NULL_PTR(uint32 *)) {
             offset = signalOffsets[signalIdx];
         }
-        if (signalAddressChar != NULL_PTR(char8 *)) {
-            signalAddressChar = &signalAddressChar[offset];
-            signalAddress = reinterpret_cast<void *&>(signalAddressChar);
-        }
+        signalAddressChar = &signalAddressChar[offset];
+        signalAddress = reinterpret_cast<void *&>(signalAddressChar);
+
     }
 
     return ret;
