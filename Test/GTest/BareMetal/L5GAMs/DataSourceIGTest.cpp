@@ -253,3 +253,13 @@ TEST(DataSourceIGTest,TestGetNumberOfMemoryBuffers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
 }
+
+TEST(DataSourceIGTest,TestGetInputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetInputBrokers());
+}
+
+TEST(DataSourceIGTest,TestGetOutputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetOutputBrokers());
+}

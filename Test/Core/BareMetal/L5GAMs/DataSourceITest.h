@@ -262,6 +262,16 @@ public:
      * @brief Tests the GetNumberOfMemoryBuffers() method.
      */
     bool TestGetNumberOfMemoryBuffers();
+
+    /**
+     * @brief Tests the TestGetInputBrokers() method.
+     */
+    bool TestGetInputBrokers();
+
+    /**
+     * @brief Tests the TestGetOutputBrokers() method.
+     */
+    bool TestGetOutputBrokers();
 };
 
 /*---------------------------------------------------------------------------*/
