@@ -50,7 +50,7 @@ $(BUILD_DIR)/%.a : createLibrary $(OBJS)
 
 $(BUILD_DIR)/%.so : createLibrary $(OBJS)
 	touch $@
-	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
