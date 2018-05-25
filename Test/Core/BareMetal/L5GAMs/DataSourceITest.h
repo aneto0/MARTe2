@@ -234,9 +234,14 @@ public:
     bool TestGetNumberOfStatefulMemoryBuffers();
 
     /**
-     * @brief Tests the PrepareOffsets() method.
+     * @brief Tests the PrepareInputOffsets() method.
      */
-    bool TestPrepareOffsets();
+    bool TestPrepareInputOffsets();
+
+    /**
+     * @brief Tests the PrepareOutputOffsets() method.
+     */
+    bool TestPrepareOutputOffsets();
 
     /**
      * @brief Tests the GetInputOffset() method.

@@ -27,7 +27,10 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-OBJSX = GAMScheduler.x MemoryMapAsyncOutputBroker.x MemoryMapAsyncTriggerOutputBroker.x
+OBJSX = CircularBufferThreadInputDataSource.x \
+	GAMScheduler.x \
+	MemoryMapAsyncOutputBroker.x \
+	MemoryMapAsyncTriggerOutputBroker.x 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

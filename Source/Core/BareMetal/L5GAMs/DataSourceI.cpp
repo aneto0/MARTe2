@@ -842,7 +842,10 @@ uint32 DataSourceI::GetCurrentStateBuffer() {
     return 0u;
 }
 
-void DataSourceI::PrepareOffsets() {
+void DataSourceI::PrepareInputOffsets() {
+}
+
+void DataSourceI::PrepareOutputOffsets() {
 }
 
 /*lint -e{715} The symbols are not referenced because this is a default implementation, i.e. it is expected to be implemented on derived classes.*/

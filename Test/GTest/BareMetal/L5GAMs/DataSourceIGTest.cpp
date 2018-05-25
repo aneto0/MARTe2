@@ -224,9 +224,14 @@ TEST(DataSourceIGTest,TestGetNumberOfStatefulMemoryBuffers) {
     ASSERT_TRUE(test.TestGetNumberOfStatefulMemoryBuffers());
 }
 
-TEST(DataSourceIGTest,TestPrepareOffsets) {
+TEST(DataSourceIGTest,TestPrepareInputOffsets) {
     DataSourceITest test;
-    ASSERT_TRUE(test.TestPrepareOffsets());
+    ASSERT_TRUE(test.TestPrepareInputOffsets());
+}
+
+TEST(DataSourceIGTest,TestPrepareOutputOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestPrepareOutputOffsets());
 }
 
 TEST(DataSourceIGTest,TestGetInputOffset) {

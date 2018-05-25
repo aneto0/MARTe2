@@ -405,7 +405,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                         }
                     }
                     else {
-                        const uint32 maxSize = 64u;
+                        const uint32 maxSize = 128u;
                         char8 errorMsg[maxSize];
                         errorMsg[0] = '\0';
                         bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");

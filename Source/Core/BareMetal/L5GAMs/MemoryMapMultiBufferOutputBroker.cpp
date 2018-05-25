@@ -53,7 +53,7 @@ MemoryMapMultiBufferOutputBroker::~MemoryMapMultiBufferOutputBroker() {
 
 /*lint -e{613} a valid Init of this class is a pre-condition for the Execute method and it assures dataSource to be != NULL*/
 bool MemoryMapMultiBufferOutputBroker::Execute() {
-    dataSource->PrepareOffsets();
+    dataSource->PrepareOutputOffsets();
     bool ret = MemoryMapMultiBufferBroker::CopyOutputs();
     return ret;
 }

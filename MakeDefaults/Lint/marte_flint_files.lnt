@@ -28,6 +28,7 @@ CLASSREGISTER.h
 ClassRegistryDatabase.cpp
 ClassRegistryItem.cpp
 ClassRegistryItemT.h
+CircularBufferThreadInputDataSource.cpp
 CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp

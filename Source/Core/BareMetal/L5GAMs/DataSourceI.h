@@ -578,10 +578,17 @@ public:
     virtual uint32 GetCurrentStateBuffer();
 
     /**
-     * @brief Warns the DataSourceI that GetInputOffset or GetOutputOffset will be called.
-     * @details Only meaningful for DataSources whose input signal offsets vary over time (i.e. multi-buffer DataSources).
+     * @brief Warns the DataSourceI that GetInputOffset will be called.
+     * @details Only meaningful for DataSources whose signal offsets vary over time (i.e. multi-buffer DataSources).
      */
-    virtual void PrepareOffsets();
+    virtual void PrepareInputOffsets();
+
+    /**
+     * @brief Warns the DataSourceI that  GetOutputOffset will be called.
+     * @details Only meaningful for DataSources whose signal offsets vary over time (i.e. multi-buffer DataSources).
+     */
+    virtual void PrepareOutputOffsets();
+
 
     /**
      * @brief Gets the memory offset (in bytes) from where a given signal should be copied from w.r.t. to the pointer returned by GetSignalMemoryBuffer for the same signalIdx.
