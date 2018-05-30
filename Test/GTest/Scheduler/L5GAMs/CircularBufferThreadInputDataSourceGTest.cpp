@@ -44,7 +44,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(CircularBufferThreadInputDataSourceGTest,TestConstructor) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestConstructor());
@@ -53,6 +52,26 @@ TEST(CircularBufferThreadInputDataSourceGTest,TestConstructor) {
 TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_CpuMask) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_CpuMask());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_PriorityLevel());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_StackSize) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_StackSize());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_SignalDefinitionInterleaved) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestInitialise_SignalDefinitionInterleaved());
 }
 
 TEST(CircularBufferThreadInputDataSourceGTest,TestSynchronise) {
@@ -93,6 +112,31 @@ TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase) {
 TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_WrittenSignal) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_WrittenSignal());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_PacketMemberSizes) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_PacketMemberSizes());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_SignalDefinitionInterleaved) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_SignalDefinitionInterleaved());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_InvalidPacketMemberSize) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_False_InvalidPacketMemberSize());
+}
+
+TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_PacketMemberSizeGreater) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_False_PacketMemberSizeGreater());
 }
 
 TEST(CircularBufferThreadInputDataSourceGTest,TestPrepareNextState) {
@@ -184,4 +228,6 @@ TEST(CircularBufferThreadInputDataSourceGTest,TestTerminateInputCopy) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestTerminateInputCopy());
 }
+
+
 

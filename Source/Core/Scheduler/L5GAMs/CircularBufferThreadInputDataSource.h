@@ -31,37 +31,46 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MemoryDataSourceI.h"
 #include "EmbeddedServiceMethodBinderI.h"
-#include "SingleThreadService.h"
 #include "FastPollingMutexSem.h"
+#include "MemoryDataSourceI.h"
+#include "SingleThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 
 namespace MARTe {
 
 /**
  * @brief Multi circular buffer data source interface. An internal thread acquires sequentially a sample of each signal using the interface \a DriverRead(*).
- * This function has to be implemented for the specific data source.
  *
- * @details Two optional signals can be defined and are recognised by name:
+ * @details This function has to be implemented for the specific data source. An internal counter (nBrokerOpPerSignalCounter) monitors how many brokers have read the target buffer. When this counter gets to zero the buffer
+ *  is allowed to be written again by the thread, otherwise a buffer over-run will be generated.
+ *
+ * Two optional signals can be defined and are recognised by name:
  *   \a InternalTimeStamp: stores the HighResolutionTimer::Counter() time stamp of the signals once they have been read. It must be
- *     uint64 type and it must have a number of elements equal to the number of ssignals that the data source produces.
+ *     uint64 type and it must have a number of elements equal to the number of signals that the data source produces.
  *   \a ErrorCheck: provides an error flag for each signal. It must be uint32 type and it must have a number of elements equal to
  *     the number of the signals that the data source produces. Only 2 bits are used in this implementation:
  *       - bit 0: DriverRead(*) function returns false.
  *       - bit 1: Write overlap. Attempting to write on a sample that hasn't been read yet by the consumers.
  *
+ * This data source also allows to specify signals as being "interleaved". In order to achieve this, each signal must declared a field named PacketMemberSizes which describes its structure.
+ * As an example PacketMemberSizes={4,2,2,8} would mean that the signal (whose NumberOfElements shall be 16 for an uint8 type) is composed of an uint32, followed by 2 uint16 and finally followed by an uint64.
+ * A series of protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information, together with the number of samples, to go from an interleaved memory representation to a non-interleaved representation (where each signal contains N consecutive samples of its type).
+ *
+ * If the parameter SignalDefinitionInterleaved is = 1, it is assumed that the defined signals form part of a packet that is interleaved (and replicated for N samples).
+ * Again, the protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information.
  *
  * @details The configuration syntax is (names and signal quantity are only given as an example):
  * <pre>
  * +CircularBuffer_0 = {
  *     Class = (child of) CircularBufferThreadInputDataSource
  *     NumberOfBuffers = N (the number of buffers)
+ *     *SignalDefinitionInterleaved = 0 (the listed signals, excluding the InternalTimeStamp and the ErrorCheck, define a packet that is replicated N samples times).
  *     *CpuMask = 0x1 (the cpus where the internal thread is allowed to run: default is 0xFFFF)
  *     *ReceiverThreadPriority = 0-31 (the priority of the internal thread, default is 31)
+ *     *ReceiverThreadStackSize = 0-31 (the stack size of the internal thread, default is THREADS_DEFAULT_STACKSIZE)
  *     Signals = {
  *         *InternalTimeStamp = {
  *             Type = uint64
@@ -72,6 +81,13 @@ namespace MARTe {
  *             Type = uint32
  *             NumberOfDimensions = 1
  *             NumberOfElements = N //the number of signals belonging to this dataSource (except InternalTimeStamp and ErrorCheck)
+ *         }
+ *         Signal1 = {
+ *             Type = uint8
+ *             NumberOfDimensions = 1
+ *             NumberOfElements = 16
+ *             PacketMemberSizes={4,2,2,8} //Optional and only relevant for interleaved signals.
+ *             Samples = 5 //Unpack the interleaved memory representation into individual signals.
  *         }
  *         ....
  *         ....
@@ -122,16 +138,13 @@ public:
      *    if (direction==InputSignals): if(Frequency>=0.F) then returns "MemoryMapSynchronisedMultiBufferInputBroker" else returns "MemoryMapMultiBufferInputBroker"\n
      *    if (direction==OutputSignals): returns NULL_PTR(const char8 *)
      */
-    virtual const char8 *GetBrokerName(StructuredDataI &data,
-                                       const SignalDirection direction);
+    virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction);
 
     /**
      * @brief Since this is an input DataSource, no GAMs should require output brokers.
      * @return false.
      */
-    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                  const char8* const functionName,
-                                  void * const gamMemPtr);
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr);
 
     /**
      * @brief Creates the memory for the internal state variables and checks the signals types and dimensions.
@@ -145,15 +158,14 @@ public:
     /**
      * @brief Fills the state dependent variables and launches the internal thread.
      * @see StatefulI::PrepareNextState
-     * @details Computes the \a triggerAfterNPackets fields with the maximum of the declared number of samples
+     * @details Computes the \a triggerAfterNSamples fields with the maximum of the declared number of samples
      * for each signal and the \a nBrokerOpPerSignal fields with the number of operations that the brokers perform
      * for each signal (depending also by the number of ranges and samples of each operation). This allows to set the
      * buffers as read at the end of all the read operations made by brokers.
      * @post
      *   executor.Start()
      */
-    virtual bool PrepareNextState(const char8 * const currentStateName,
-                                  const char8 * const nextStateName);
+    virtual bool PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName);
 
     /**
      * @brief Sets the lastReadBuffer indexes to the last buffer written by the internal thread for all the signals.
@@ -165,22 +177,17 @@ public:
      */
     virtual void PrepareInputOffsets();
 
-
     /**
      * @brief Returns the offset to the last \a numberOfSamples written for the signal \a signalIdx.
      * @see DataSourceI::GetInputOffset
      */
-    virtual bool GetInputOffset(const uint32 signalIdx,
-                                const uint32 numberOfSamples,
-                                uint32 &offset);
+    virtual bool GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset);
 
     /**
-     * @brief Returns false.
+     * @brief Returns the offset to the last \a numberOfSamples written for the signal \a signalIdx.
      * @see DataSourceI::GetOutputOffset
      */
-    virtual bool GetOutputOffset(const uint32 signalIdx,
-                                const uint32 numberOfSamples,
-                                uint32 &offset);
+    virtual bool GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset);
 
     /**
      * @brief The internal thread callback. It reads sequentially all the signals calling the DriverRead method.
@@ -195,13 +202,11 @@ public:
 
     /**
      * The low level interface to be implemented for the specific data source to read the signals.
-     * @param[in, out] bufferToFill is the buffer to be filled with the rad data.
+     * @param[in, out] bufferToFill is the buffer to be filled with the raw data.
      * @param[in, out] sizeToRead specifies the signal's byte size in input and returns in output the number of bytes effectively read.
      * @param[in] signalIdx is the index of the signal to be read.
      */
-    virtual bool DriverRead(char8 * const bufferToFill,
-                            uint32 &sizeToRead,
-                            const uint32 signalIdx)=0;
+    virtual bool DriverRead(char8 * const bufferToFill, uint32 &sizeToRead, const uint32 signalIdx)=0;
 
     /**
      * @see ReferenceContainer::Purge
@@ -209,20 +214,18 @@ public:
      */
     virtual void Purge(ReferenceContainer &purgeList);
 
-
     /**
      * @brief Sets as read, all the samples read by the brokers for the signal \a signalIdx.
      * @see DataSourceI::TerminateInputCopy
      */
-    virtual bool TerminateInputCopy(const uint32 signalIdx,
-                                    const uint32 offset,
-                                    const uint32 numberOfSamples);
+    virtual bool TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples);
 
 protected:
     /**
      * The last buffer written by the internal thread
      */
     uint32 *currentBuffer;
+
     /**
      * The internal thread executor
      */
@@ -254,7 +257,7 @@ protected:
     /**
      * The number of samples of the sync.
      */
-    uint32 triggerAfterNPackets;
+    uint32 triggerAfterNSamples;
 
     /**
      * The number of calls made by brokers for each signal.
@@ -290,7 +293,43 @@ protected:
     /**
      * How much time to sleep in lock.
      */
-    float32 sleepInMutexSec;
+    float64 sleepInMutexSec;
+
+    /**
+     * The ratio between the signal size (NOfElements * TypeSize) / Size of the packet will define how many times the packet structure is repeated inside the memory. This is the content that will be transformed from interleaved to flat.
+     */
+    uint32 *numberOfInterleavedSamples;
+
+    /**
+     * Size of each interleaved packet (which is replicated N numberOfInterleavedSamples).
+     */
+    uint32 *interleavedSignalByteSize;
+
+    /**
+     * Number of members for each interleaved input signal.
+     */
+    uint32 *numberOfInterleavedSignalMembers;
+
+    /**
+     * Dimensions of the member sizes for each input signal.
+     */
+    uint32 *interleavedPacketMemberByteSize;
+
+    /**
+     * If true the signal definition is considered to be interleaved.
+     */
+    bool signalDefinitionInterleaved;
+
+private:
+    /**
+     * @brief Helper function to create the interleaved accelerators
+     */
+    bool GenererateInterleavedAccelerators();
+
+    /**
+     * @brief Helper function to create the interleaved accelerators for the signalDefinitionInterleaved case
+     */
+    bool GenererateInterleavedAcceleratorsSignalDefinitionInterleaved();
 };
 }
 

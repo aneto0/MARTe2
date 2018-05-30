@@ -672,7 +672,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
             float32 freq;
             ret = GetFunctionSignalReadFrequency(InputSignals, functionIdx, i, freq);
             if (ret) {
-                isSyncOrTrigger = (freq > 0);
+                isSyncOrTrigger = (freq >= 0.F);
             }
         }
         if (ret) {
@@ -680,7 +680,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                 uint32 trigger;
                 ret = GetFunctionSignalTrigger(InputSignals, functionIdx, i, trigger);
                 if (ret) {
-                    isSyncOrTrigger = (trigger > 0);
+                    isSyncOrTrigger = (trigger > 0u);
                 }
             }
         }
@@ -761,7 +761,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
             float32 freq;
             ret = GetFunctionSignalReadFrequency(OutputSignals, functionIdx, i, freq);
             if (ret) {
-                isSyncOrTrigger = (freq > 0);
+                isSyncOrTrigger = (freq > 0.F);
             }
         }
         if (ret) {
@@ -769,7 +769,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                 uint32 trigger;
                 ret = GetFunctionSignalTrigger(OutputSignals, functionIdx, i, trigger);
                 if (ret) {
-                    isSyncOrTrigger = (trigger > 0);
+                    isSyncOrTrigger = (trigger > 0u);
                 }
             }
         }
@@ -842,6 +842,7 @@ uint32 DataSourceI::GetCurrentStateBuffer() {
     return 0u;
 }
 
+/*lint -estring(1960, "*external side-effects*") only the default implementation has no external side effects*/
 void DataSourceI::PrepareInputOffsets() {
 }
 

@@ -62,6 +62,26 @@ public:
     bool TestInitialise();
 
     /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise specifying a CpuMask
+     */
+    bool TestInitialise_CpuMask();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise specifying a PriorityLevel
+     */
+    bool TestInitialise_PriorityLevel();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise specifying a StackSize
+     */
+    bool TestInitialise_StackSize();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::Initialise specifying a SignalDefinitionInterleaved
+     */
+    bool TestInitialise_SignalDefinitionInterleaved();
+
+    /**
      * @brief Tests the CircularBufferThreadInputDataSource::GetBrokerName
      */
     bool TestGetBrokerName();
@@ -80,6 +100,21 @@ public:
      * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase
      */
     bool TestSetConfiguredDatabase();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with packet member sizes
+     */
+    bool TestSetConfiguredDatabase_PacketMemberSizes();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with SignalDefinitionInterleaved
+     */
+    bool TestSetConfiguredDatabase_SignalDefinitionInterleaved();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with SignalDefinitionInterleaved with different number of samples
+     */
+    bool TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples();
 
     /**
      * @brief Tests that CircularBufferThreadInputDataSource::SetConfiguredDatabase returns
@@ -166,6 +201,16 @@ public:
     bool TestSetConfiguredDatabase_ErrorCheck_False_BadSize();
 
     /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with invalid PacketMemberSizes
+     */
+    bool TestSetConfiguredDatabase_False_InvalidPacketMemberSize();
+
+    /**
+     * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase with PacketMemberSizes>ByteSize
+     */
+    bool TestSetConfiguredDatabase_False_PacketMemberSizeGreater();
+
+    /**
      * @brief Tests the CircularBufferThreadInputDataSource::Execute with the InternalTimeSTamp signal
      */
     bool TestExecute_TimeStamp();
@@ -188,7 +233,6 @@ public:
      */
     bool TestSetConfiguredDatabase_TimeStamp_False_BadType();
 
-
     /**
      * @brief Tests the CircularBufferThreadInputDataSource::SetConfiguredDatabase that fails if the
      * InternalTimeStamp signal has a bad number of elements
@@ -204,7 +248,6 @@ public:
      * @brief Tests the CircularBufferThreadInputDataSource::TerminateInputCopy
      */
     bool TestTerminateInputCopy();
-
 
 };
 

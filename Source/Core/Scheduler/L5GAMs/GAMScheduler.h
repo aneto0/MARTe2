@@ -138,9 +138,6 @@ protected:
      */
     virtual void CustomPrepareNextState();
 
-
-protected:
-
     /**
      * The array of identifiers of the thread in execution.
      */
