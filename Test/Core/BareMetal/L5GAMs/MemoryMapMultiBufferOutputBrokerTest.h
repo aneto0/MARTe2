@@ -57,11 +57,6 @@ public:
     bool TestConstructor();
 
     /**
-     * @brief Tests the Init method.
-     */
-    bool TestInit();
-
-    /**
      * @brief Tests the Execute method.
      */
     bool TestExecute();

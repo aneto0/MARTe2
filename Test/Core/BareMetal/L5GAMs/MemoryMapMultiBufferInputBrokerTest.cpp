@@ -62,7 +62,7 @@ MemoryMapMultiBufferInputBrokerDSTest    ();
 
     virtual uint32 GetCurrentStateBuffer();
 
-    virtual void PrepareOffsets();
+    virtual void PrepareInputOffsets();
 
     virtual bool AllocateMemory();
 
@@ -185,7 +185,7 @@ uint32 MemoryMapMultiBufferInputBrokerDSTest::GetCurrentStateBuffer() {
     return currentBuffer;
 }
 
-void MemoryMapMultiBufferInputBrokerDSTest::PrepareOffsets() {
+void MemoryMapMultiBufferInputBrokerDSTest::PrepareInputOffsets() {
     currentBuffer++;
     currentBuffer %= 2;
 }

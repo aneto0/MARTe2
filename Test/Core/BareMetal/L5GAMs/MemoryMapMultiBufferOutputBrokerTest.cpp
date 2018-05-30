@@ -60,7 +60,7 @@ MemoryMapMultiBufferOutputBrokerDSTest    ();
 
     virtual bool GetOutputOffset(const uint32 signalIdx,const uint32 samples, uint32 &offset);
 
-    virtual void PrepareOffsets();
+    virtual void PrepareOutputOffsets();
 
     virtual uint32 GetCurrentStateBuffer();
 
@@ -127,7 +127,7 @@ bool MemoryMapMultiBufferOutputBrokerDSTest::GetOutputOffset(const uint32 signal
     return true;
 }
 
-void MemoryMapMultiBufferOutputBrokerDSTest::PrepareOffsets() {
+void MemoryMapMultiBufferOutputBrokerDSTest::PrepareOutputOffsets() {
     currentBuffer++;
     currentBuffer %= 2;
 }
