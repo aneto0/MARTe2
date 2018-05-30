@@ -118,6 +118,7 @@ MemoryMapSynchronisedOutputBroker.cpp
 MemoryMapAsyncOutputBroker.cpp
 MemoryMapAsyncTriggerOutputBroker.cpp
 MemoryOperationsHelper.h
+MemoryOperationsHelper.cpp
 MemoryOperationsHelper_CLIB_Generic.cpp
 Message.cpp
 MessageFilter.cpp

@@ -108,4 +108,13 @@ TEST(MemoryOperationsHelperGTest,TestSearchZeroSize) {
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchZeroSize());
 }
 
-	
+TEST(MemoryOperationsHelperGTest,TestInterleavedToFlat) {
+    MemoryOperationsHelperTest test;
+    ASSERT_TRUE(test.TestInterleavedToFlat());
+}
+
+TEST(MemoryOperationsHelperGTest,TestFlatToInterleaved) {
+    MemoryOperationsHelperTest test;
+    ASSERT_TRUE(test.TestFlatToInterleaved());
+}
+
