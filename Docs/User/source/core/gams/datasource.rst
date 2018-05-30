@@ -137,17 +137,22 @@ The DataSourceI will have to instantiate and return the appropriate brokers, dep
 
 A Broker may be specifically developed for a given DataSource (e.g. because the Broker needs to access an hardware dependent function) or one of the MARTe standard brokers may be used:
 
-================================================== ===========
+============================================================= ===========
 Name Description
-================================================== ===========
-:vcisdoxygencl:`MemoryMapInputBroker`              Copies the signals from a memory area declared in the DataSource.
-:vcisdoxygencl:`MemoryMapInperpolatedInputBroker`  Interpolates the signals from the DataSource.
-:vcisdoxygencl:`MemoryMapOutputBroker`             Copies the signals to a memory area declared in the DataSource.
-:vcisdoxygencl:`MemoryMapSynchronisedInputBroker`  Calls the ``Synchronise`` method on the DataSource before copying the signals.
-:vcisdoxygencl:`MemoryMapSynchronisedOutputBroker` Calls the ``Synchronise`` method on the DataSource after copying the signals.
-:vcisdoxygencl:`MemoryMapAsyncOutputBroker`        Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
-:vcisdoxygencl:`MemoryMapAsyncTriggerOutputBroker` Only stores data based on an event trigger (with pre and post windows). Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
-================================================== ===========
+============================================================= ===========
+:vcisdoxygencl:`MemoryMapInputBroker`                         Copies the signals from a memory area declared in the DataSource.
+:vcisdoxygencl:`MemoryMapInperpolatedInputBroker`             Interpolates the signals from the DataSource.
+:vcisdoxygencl:`MemoryMapMultiBufferBroker`                   Copy from/to a DataSourceI multi-buffer memory address. A different buffer is allocated for each signal.  
+:vcisdoxygencl:`MemoryMapMultiBufferInputBroker`              Input version of the MemoryMapMultiBufferBroker.
+:vcisdoxygencl:`MemoryMapMultiBufferOutputBroker`             Output version of the MemoryMapMultiBufferBroker.
+:vcisdoxygencl:`MemoryMapOutputBroker`                        Copies the signals to a memory area declared in the DataSource.
+:vcisdoxygencl:`MemoryMapSynchronisedInputBroker`             Calls the ``Synchronise`` method on the DataSource before copying the signals.
+:vcisdoxygencl:`MemoryMapSynchronisedMultiBufferInputBroker`  Synchronised input implementation of the MemoryMapMultiBufferBroker.
+:vcisdoxygencl:`MemoryMapSynchronisedMultiBufferOutputBroker` Synchronised output implementation of the MemoryMapMultiBufferBroker.
+:vcisdoxygencl:`MemoryMapSynchronisedOutputBroker`            Calls the ``Synchronise`` method on the DataSource after copying the signals.
+:vcisdoxygencl:`MemoryMapAsyncOutputBroker`                   Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
+:vcisdoxygencl:`MemoryMapAsyncTriggerOutputBroker`            Only stores data based on an event trigger (with pre and post windows). Asynchronously (i.e. in the context of another, decoupled, thread) calls the ``Synchronise`` method on the DataSource after copying the signals into a circular buffer.
+============================================================= ===========
 
 The memory map based brokers access the DataSource memory using the ``DataSourceI::GetSignalMemoryBuffer``.
 
@@ -209,6 +214,20 @@ First the data is copied (gather) to the GAM input signal memory...
 ...and finally the data is scattered back to the DDB:
 
 .. figure:: GAMDataSource-3.png
+
+MemoryDataSourceI
+-----------------
+
+The :vcisdoxygencl:`MemoryDataSourceI` can be used as a base class to develop data sources which require a memory map (eventually multi-buffer) implementation.
+
+The :vcisdoxygenmccl:`RealTimeThreadAsyncBridge` is an example of a :vcisdoxygencl:`MemoryDataSourceI` implementation.
+
+CircularBufferThreadInputDataSource
+-----------------------------------
+
+The :vcisdoxygencl:`CircularBufferThreadInputDataSource` can be used as a base class for data sources which require a circular buffer interface to the underlying data. This abstract class already offers all the circular buffer implementation and the threading mechanisms that allows to decouple the access to the data from the real-time thread interface. 
+
+The TODO is an example of a :vcisdoxygencl:`CircularBufferThreadInputDataSource` implementation.
 
 Examples
 --------

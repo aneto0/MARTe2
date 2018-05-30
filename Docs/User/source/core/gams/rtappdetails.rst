@@ -439,7 +439,7 @@ The synchronisation between threads is performed using the :vcisdoxygenmccl:`Rea
 
 The threads synchronising can run at a frequency which is sub-multiple of the master (i.e. the one with the GAM writing to the DataSource) thread frequency . This is expressed by asking for a number of samples (> 1) to the RealTimeThreadSynchronisation DataSource.
 
-The TODO component also allows to exchange data between threads without an explicit synchronisation point. This means that the consumer threads will use the latest available data.
+The :vcisdoxygenmccl:`RealTimeThreadAsyncBridge` component also allows to exchange data between threads without an explicit synchronisation point. This means that the consumer threads will use the latest available data.
 
 
 Examples
