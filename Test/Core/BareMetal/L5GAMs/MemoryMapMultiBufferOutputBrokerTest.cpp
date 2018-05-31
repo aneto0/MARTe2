@@ -304,8 +304,6 @@ MemoryMapMultiBufferOutputBrokerTest::~MemoryMapMultiBufferOutputBrokerTest() {
  * Helper function to setup a MARTe execution environment
  */
 static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config) {
-
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = config;
     configStream.Seek(0);

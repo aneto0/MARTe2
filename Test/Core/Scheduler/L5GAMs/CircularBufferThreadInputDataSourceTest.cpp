@@ -340,8 +340,6 @@ static const char8 * const config = ""
  * Helper function to setup a MARTe execution environment
  */
 static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config) {
-
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = config;
     configStream.Seek(0);
@@ -403,8 +401,6 @@ bool CircularBufferThreadInputDataSourceTest::TestConstructor() {
 
 bool CircularBufferThreadInputDataSourceTest::TestInitialise() {
     CircularBufferThreadInputDataSourceTestDS dataSource;
-
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = config;
     configStream.Seek(0);
@@ -480,7 +476,6 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_CpuMask() {
             "    }"
             "}";
 
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = configL;
     configStream.Seek(0);
@@ -556,7 +551,6 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_PriorityLevel() {
             "    }"
             "}";
 
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = configL;
     configStream.Seek(0);
@@ -632,7 +626,6 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_StackSize() {
             "    }"
             "}";
 
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = configL;
     configStream.Seek(0);
@@ -709,7 +702,6 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_SignalDefinitionInt
             "    }"
             "}";
 
-    HeapManager::AddHeap(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ConfigurationDatabase cdb;
     StreamString configStream = configL;
     configStream.Seek(0);
@@ -833,6 +825,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise() {
             ret = (offset == 200);
         }
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -941,6 +934,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise_FullRolling() {
             }
         }
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
 }
@@ -1061,6 +1055,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise_GetLatest() {
             }
         }
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
 }
@@ -1121,7 +1116,6 @@ bool CircularBufferThreadInputDataSourceTest::TestGetInputBrokers() {
     }
 
     ObjectRegistryDatabase::Instance()->Purge();
-
     return ret;
 }
 
@@ -2609,7 +2603,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_ErrorChe
             "    }"
             "}";
 
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_ErrorCheck_False_BadSize() {
@@ -2674,7 +2670,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_ErrorChe
             "    }"
             "}";
 
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_InvalidPacketMemberSize() {
@@ -2746,8 +2744,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_In
             "        TimingDataSource = Timings"
             "    }"
             "}";
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
-
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_PacketMemberSizeGreater() {
@@ -2819,7 +2818,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_False_Pa
             "        TimingDataSource = Timings"
             "    }"
             "}";
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp() {
@@ -2945,7 +2946,6 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp() {
         }
     }
     ObjectRegistryDatabase::Instance()->Purge();
-
     return ret;
 }
 
@@ -3103,7 +3103,6 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp_NoRead() {
         }
     }
     ObjectRegistryDatabase::Instance()->Purge();
-
     return ret;
 }
 
@@ -3261,7 +3260,6 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp_FalseDriverR
         }
     }
     ObjectRegistryDatabase::Instance()->Purge();
-
     return ret;
 }
 
@@ -3326,8 +3324,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_TimeStam
             "        TimingDataSource = Timings"
             "    }"
             "}";
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
     ObjectRegistryDatabase::Instance()->Purge();
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_TimeStamp_False_BadSize() {
@@ -3393,8 +3392,9 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_TimeStam
             "        TimingDataSource = Timings"
             "    }"
             "}";
+    bool ret = !InitialiseMemoryMapInputBrokerEnviroment(config2);
     ObjectRegistryDatabase::Instance()->Purge();
-    return !InitialiseMemoryMapInputBrokerEnviroment(config2);
+    return ret;
 }
 
 bool CircularBufferThreadInputDataSourceTest::TestPurge() {
