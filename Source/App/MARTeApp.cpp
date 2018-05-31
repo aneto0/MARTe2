@@ -22,7 +22,7 @@
  */
 
 /**
- * @file A generic MARTe application which uses a Bootstrap to read the input parameters and to setup the execution environment.
+ * @brief A generic MARTe application which uses a Bootstrap to read the input parameters and to setup the execution environment.
  * Note that the Loader to be used is one of the user parameters, so that this main should be sufficiently generic for most use-cases.
  */
 
@@ -46,6 +46,11 @@
 
 static MARTe::Bootstrap bootstrap;
 
+/**
+ * @brief The default error processing function for the main program.
+ * @param[in] errorInfo information about the error.
+ * @param[in] errorDescription error textual description.
+ */
 void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
     MARTe::StreamString errorCodeStr;
     MARTe::ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
@@ -57,6 +62,12 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief Main function.
+ * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
+ * @param[in] argv the value of the arguments to be parsed by the MARTe::Bootstrap.
+ * @return 0
+ */
 int main(int argc, char **argv) {
     using namespace MARTe;
     SetErrorProcessFunction(&MainErrorProcessFunction);

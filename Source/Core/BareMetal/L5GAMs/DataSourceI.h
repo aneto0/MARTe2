@@ -613,7 +613,7 @@ public:
     /**
      * @brief Enables a Broker to inform the DataSource that a given signal has been copied from its memory.
      * @param[in] signalIdx the index of the signal that was copied.
-     * @param[in] signalIdx the offset of the signal that was copied.
+     * @param[in] offset the offset of the signal that was copied.
      * @param[in] numberOfSamples the number of samples of the signal that was copied.
      * @return true if the DataSource post-copy action was successful.
      */
@@ -622,7 +622,7 @@ public:
     /**
      * @brief Enables a Broker to inform the DataSource that a given signal has been copied to its memory.
      * @param[in] signalIdx the index of the signal that was copied.
-     * @param[in] signalIdx the offset of the signal that was copied.
+     * @param[in] offset the offset of the signal that was copied.
      * @param[in] numberOfSamples the number of samples of the signal that was copied.
      * @return true if the DataSource post-copy action was successful.
      */

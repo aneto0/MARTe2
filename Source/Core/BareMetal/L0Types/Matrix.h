@@ -70,8 +70,7 @@ public:
      *   GetDataPointer() != NULL &&
      *   not IsStaticDeclared()
      */
-    Matrix(uint32 nOfRows,
-           uint32 nOfColumns);
+    Matrix(uint32 nOfRows, uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -84,9 +83,7 @@ public:
      *   GetDataPointer() == existingArray &&
      *   not IsStaticDeclared()
      */
-    Matrix(T **existingArray,
-           uint32 nOfRows,
-           uint32 nOfColumns);
+    Matrix(T **existingArray, uint32 nOfRows, uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -99,9 +96,7 @@ public:
      *   GetDataPointer() == existingArray &&
      *   IsStaticDeclared()
      */
-    Matrix(T *existingArray,
-           uint32 nOfRows,
-           uint32 nOfColumns);
+    Matrix(T *existingArray, uint32 nOfRows, uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
@@ -153,8 +148,7 @@ public:
      *   col >= 0 && col < GetNumberOfColumns()
      * @return a T& which can be used for reading/writing the cell.
      */
-    T& operator()(const uint32 row,
-                  const uint32 col);
+    T& operator()(const uint32 row, const uint32 col);
 
     /**
      * @brief Gets the data pointer associated to the raw matrix data.
@@ -180,8 +174,7 @@ public:
      * @post
      *   result holds the product matrix between *this and factor
      */
-    bool Product(Matrix<T> &factor,
-                 Matrix<T> &result) const;
+    bool Product(Matrix<T> &factor, Matrix<T> &result) const;
 
     /**
      * @brief Performs the matrix sum.
@@ -196,8 +189,7 @@ public:
      * @post
      *   result holds the matrix sum between *this and addend.
      */
-    bool Sum(Matrix<T> &addend,
-             Matrix<T> &result) const;
+    bool Sum(Matrix<T> &addend, Matrix<T> &result) const;
 
     /**
      * @brief Performs the matrix copy.
@@ -230,11 +222,7 @@ public:
      * @post
      *   subMatrix holds the requested sub matrix from *this
      */
-    bool SubMatrix(const uint32 beginRow,
-                   const uint32 endRow,
-                   const uint32 beginColumn,
-                   const uint32 endColumn,
-                   Matrix<T> &subMatrix) const;
+    bool SubMatrix(const uint32 beginRow, const uint32 endRow, const uint32 beginColumn, const uint32 endColumn, Matrix<T> &subMatrix) const;
 
     /**
      * @brief Retrieves the transpose of this matrix.
@@ -251,6 +239,7 @@ public:
     /**
      * @brief Calculates the matrix determinant.
      * @details This operation is allowed only for float matrices.
+     * @tparam T the matrix type.
      * @param[out] det is the calculated determinant in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
@@ -323,8 +312,7 @@ Matrix<T>::Matrix() {
 }
 
 template<typename T>
-Matrix<T>::Matrix(uint32 nOfRows,
-                  uint32 nOfColumns) {
+Matrix<T>::Matrix(uint32 nOfRows, uint32 nOfColumns) {
     T** rows = new T*[nOfRows];
     dataPointer = reinterpret_cast<void *>(rows);
     numberOfColumns = nOfColumns;
@@ -337,9 +325,7 @@ Matrix<T>::Matrix(uint32 nOfRows,
 }
 
 template<typename T>
-Matrix<T>::Matrix(T **existingArray,
-                  uint32 nOfRows,
-                  uint32 nOfColumns) {
+Matrix<T>::Matrix(T **existingArray, uint32 nOfRows, uint32 nOfColumns) {
     dataPointer = reinterpret_cast<void *>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
@@ -348,9 +334,7 @@ Matrix<T>::Matrix(T **existingArray,
 }
 
 template<typename T>
-Matrix<T>::Matrix(T *existingArray,
-                  uint32 nOfRows,
-                  uint32 nOfColumns) {
+Matrix<T>::Matrix(T *existingArray, uint32 nOfRows, uint32 nOfColumns) {
     dataPointer = reinterpret_cast<void *>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
@@ -408,8 +392,7 @@ Vector<T> Matrix<T>::operator[](uint32 element) {
 }
 
 template<typename T>
-T& Matrix<T>::operator()(const uint32 row,
-                         const uint32 col) {
+T& Matrix<T>::operator()(const uint32 row, const uint32 col) {
     T* result;
     if (!staticDeclared) {
         T** mat = reinterpret_cast<T**>(dataPointer);
@@ -434,8 +417,7 @@ inline bool Matrix<T>::IsStaticDeclared() const {
 }
 
 template<typename T>
-bool Matrix<T>::Product(Matrix<T> &factor,
-                        Matrix<T> &result) const {
+bool Matrix<T>::Product(Matrix<T> &factor, Matrix<T> &result) const {
     bool cond1 = (factor.numberOfRows == numberOfColumns);
     bool cond2 = (result.numberOfRows == numberOfRows);
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
@@ -461,8 +443,7 @@ bool Matrix<T>::Product(Matrix<T> &factor,
 }
 
 template<typename T>
-bool Matrix<T>::Sum(Matrix<T> & addend,
-                    Matrix<T> &result) const {
+bool Matrix<T>::Sum(Matrix<T> & addend, Matrix<T> &result) const {
     bool cond1 = (addend.numberOfRows == numberOfRows) && (result.numberOfRows == numberOfRows);
     bool cond2 = (addend.numberOfColumns == numberOfColumns) && (result.numberOfColumns == numberOfColumns);
     bool ret = (cond1 && cond2);
@@ -484,11 +465,11 @@ bool Matrix<T>::Sum(Matrix<T> & addend,
 }
 
 template<typename T>
-bool Matrix<T>::Copy(Matrix<T> &matrixToCopy){
+bool Matrix<T>::Copy(Matrix<T> &matrixToCopy) {
     bool cond1 = (matrixToCopy.numberOfRows == numberOfRows);
     bool cond2 = (matrixToCopy.numberOfColumns == numberOfColumns);
     bool ret = cond1 && cond2;
-    if(ret){
+    if (ret) {
         Matrix<T> temp;
         if (staticDeclared) {
             temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
@@ -506,11 +487,7 @@ bool Matrix<T>::Copy(Matrix<T> &matrixToCopy){
 }
 
 template<typename T>
-bool Matrix<T>::SubMatrix(const uint32 beginRow,
-                          const uint32 endRow,
-                          const uint32 beginColumn,
-                          const uint32 endColumn,
-                          Matrix<T> &subMatrix) const {
+bool Matrix<T>::SubMatrix(const uint32 beginRow, const uint32 endRow, const uint32 beginColumn, const uint32 endColumn, Matrix<T> &subMatrix) const {
     bool cond1 = (endRow >= beginRow);
     bool cond2 = (endColumn >= beginColumn);
     bool cond3 = (endRow < numberOfRows);
@@ -572,6 +549,11 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
     return ret;
 }
 
+/**
+ * @brief float32 implementation of the Determinant.
+ * @param[out] det see Matrix<T>::Determinant.
+ * @return see Matrix<T>::Determinant.
+ */
 template<> inline
 bool Matrix<float32>::Determinant(float32 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
@@ -614,6 +596,11 @@ bool Matrix<float32>::Determinant(float32 &det) const {
     return ret;
 }
 
+/**
+ * @brief float32 implementation of the Determinant.
+ * @param[out] det see Matrix<T>::Determinant.
+ * @return see Matrix<T>::Determinant.
+ */
 template<> inline
 bool Matrix<float64>::Determinant(float64 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
@@ -655,6 +642,11 @@ bool Matrix<float64>::Determinant(float64 &det) const {
     return ret;
 }
 
+/**
+ * @brief float32 implementation of the Inverse.
+ * @param[out] inverse see Matrix<T>::Inverse.
+ * @return see Matrix<T>::Inverse.
+ */
 template<> inline
 bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
@@ -702,6 +694,11 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     return ret;
 }
 
+/*
+ * @brief float64 implementation of the Inverse.
+ * @param[out] inverse see Matrix<T>::Inverse.
+ * @return see Matrix<T>::Inverse.
+ */
 template<> inline
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);

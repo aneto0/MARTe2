@@ -78,9 +78,11 @@ do {                                                                            
 
 /**
  * @brief Macro to be called to print logging messages on classes that do not inherit from Object (and that thus do not object name, class name nor object pointer).
- * @param[in] code the ErrorType code.
- * @param[in] message the logging message to be printed.
- * @param[in] ... the parameters to be sent to a Printf (if any).
+ * <pre>
+ * param1: code the ErrorType code.
+ * param2: message the logging message to be printed.
+ * param3: ... the parameters to be sent to a Printf (if any).
+ * </pre>
  */
 #define REPORT_ERROR_STATIC(...) REPORT_ERROR_STATIC_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_PARAMETERS, REPORT_ERROR_STATIC_0, REPORT_ERROR_STATIC_U)( __VA_ARGS__)
 
@@ -135,9 +137,11 @@ do {                                                                            
 
 /**
  * @brief Macro to be called to print logging messages on classes that inherit from Object (this will automatically add the object name, class name and object pointer to the log message).
- * @param[in] code the ErrorType code.
- * @param[in] message the logging message to be printed.
- * @param[in] ... the parameters to be sent to a Printf (if any).
+ * <pre>
+ * param1: code the ErrorType code.
+ * param2: message the logging message to be printed.
+ * param3: ... the parameters to be sent to a Printf (if any).
+ * </pre>
  */
 #define REPORT_ERROR(...) REPORT_ERROR_MACRO_CHOOSER(__VA_ARGS__, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_PARAMETERS, REPORT_ERROR_0, REPORT_ERROR_U)( __VA_ARGS__)
 }

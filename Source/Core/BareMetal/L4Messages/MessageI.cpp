@@ -1,5 +1,5 @@
 /**
- * @file messageI.cpp
+ * @file MessageI.cpp
  * @brief Source file for class messageI
  * @date 14/04/2016
  * @author Filippo Sartori

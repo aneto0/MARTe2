@@ -38,6 +38,11 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+/**
+ * @brief Callback function for the logger. Add the logs to the FastResourceContainer queue.
+ * @param[in] errorInfo the error information.
+ * @param[in] errorDescription the error textual description.
+ */
 /*lint -estring(459, "*LoggerErrorProcessFunction*") this function is supposed to have access to the Logger singleton and to the error information.*/
 void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
                                        const char8 * const errorDescription) {

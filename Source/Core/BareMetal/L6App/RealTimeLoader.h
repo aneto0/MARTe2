@@ -1,5 +1,5 @@
 /**
- * @file RealTimeRealTimeLoader.h
+ * @file RealTimeLoader.h
  * @brief Header file for class RealTimeLoader
  * @date 4/4/2018
  * @author Andre Neto
