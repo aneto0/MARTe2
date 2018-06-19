@@ -1067,7 +1067,15 @@ bool ReferenceContainerTest::TestIsBuildToken() {
     ReferenceContainer container;
     ReferenceContainer::AddBuildToken('_');
     ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
     ReferenceContainer::AddBuildToken('%');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
 
     ConfigurationDatabase simpleCDB;
     simpleCDB.CreateAbsolute("+A");
@@ -1117,8 +1125,12 @@ bool ReferenceContainerTest::TestRemoveBuildToken() {
 bool ReferenceContainerTest::TestIsDomainToken() {
     ReferenceContainer container;
     ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
     ReferenceContainer::AddDomainToken('*');
     ReferenceContainer::AddDomainToken('%');
+    ReferenceContainer::AddDomainToken('*');
+    ReferenceContainer::AddDomainToken('*');
 
     ConfigurationDatabase simpleCDB;
     simpleCDB.CreateAbsolute("+A");
@@ -1163,6 +1175,15 @@ bool ReferenceContainerTest::TestIsDomainToken() {
     }
     if (ok) {
         ReferenceContainer::RemoveDomainToken('*');
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
         ok = ReferenceContainer::AddDomainToken('@');
     }
     ReferenceContainer::RemoveDomainToken('@');

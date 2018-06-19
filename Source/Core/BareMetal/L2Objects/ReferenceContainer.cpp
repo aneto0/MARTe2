@@ -518,12 +518,17 @@ bool ReferenceContainer::IsReferenceContainer() const {
 
 bool ReferenceContainer::AddToken(char8 * const tokenList, char8 token) {
     uint32 i = 0u;
-    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+    bool exists = false;
+    while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+        exists = (tokenList[i] == token);
         i++;
     }
-    bool ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
-    if (ok) {
-        tokenList[i] = token;
+    bool ok = exists;
+    if (!ok) {
+        ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
+        if (ok) {
+            tokenList[i] = token;
+        }
     }
     return ok;
 }
