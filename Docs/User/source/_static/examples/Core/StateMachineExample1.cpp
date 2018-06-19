@@ -58,7 +58,7 @@ MessageReceiverEx1    () : MARTe::Object(), MARTe::MessageI() {
         using namespace MARTe;
         filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         filter->SetDestination(this);
-        ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+        MessageI::InstallMessageFilter(filter);
         fun0Called = false;
         fun1Called = false;
         fun2Called = false;

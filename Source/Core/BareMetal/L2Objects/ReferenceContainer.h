@@ -231,6 +231,17 @@ ReferenceContainer    ();
      * @return true.
      */
     virtual bool IsReferenceContainer() const;
+
+    /**
+     * @brief The token that identifies in the first character of an Object name, that a new object is to be built.
+     */
+    static char8 BUILD_TOKEN;
+
+    /**
+     * @brief The token that identifies in the first character of an Object name, that a new object is to be set as a Domain object.
+     */
+    static char8 DOMAIN_TOKEN;
+
 private:
 
     /**

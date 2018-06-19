@@ -1517,11 +1517,6 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_SignalDe
         ret = (dataSource->GetNumberOfChannels() == 5);
     }
 
-    uint32 numberOfSignals = 0u;
-    if (ret) {
-        numberOfSignals = dataSource->GetNumberOfSignals();
-    }
-
     if (ret) {
         uint32 *inputSamples = dataSource->GetNumberOfInterleavedSamples();
         ret = (inputSamples[0] == 10u);

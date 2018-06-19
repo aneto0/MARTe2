@@ -45,6 +45,10 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+    char8 ReferenceContainer::BUILD_TOKEN = '+';
+    char8 ReferenceContainer::DOMAIN_TOKEN = '$';
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -388,14 +392,14 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
         ok = (childName != NULL);
         if (ok) {
             // case object
-            if ((childName[0] == '+') || (childName[0] == '$')) {
+            if ((childName[0] == BUILD_TOKEN) || (childName[0] == DOMAIN_TOKEN)) {
                 if (data.MoveRelative(childName)) {
                     Reference newObject;
                     ok = newObject.Initialise(data, false);
                     if (ok) {
                         ok = (newObject.IsValid());
                         if (ok) {
-                            if (childName[0] == '$') {
+                            if (childName[0] == DOMAIN_TOKEN) {
                                 newObject->SetDomain(true);
                             }
                             ok = ReferenceContainer::Insert(newObject);
@@ -436,7 +440,7 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
     //To include $ or +
     objNameLength += 1u;
     char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
-    objNameToCreate[0] = (IsDomain()) ? ('$') : ('+');
+    objNameToCreate[0] = (IsDomain()) ? (DOMAIN_TOKEN) : (BUILD_TOKEN);
     bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
 
     if (ret) {

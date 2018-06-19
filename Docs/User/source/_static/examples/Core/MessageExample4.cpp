@@ -98,7 +98,7 @@ MessageEx1    () : MARTe::Object(), MARTe::QueuedMessageI() {
         using namespace MARTe;
         filter = ReferenceT<MessageFilterEx1>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         filter->SetOwner(this);
-        ErrorManagement::ErrorType ret = QueuedMessageI::InstallMessageFilter(filter);
+        QueuedMessageI::InstallMessageFilter(filter);
         messageReceived = false;
     }
 

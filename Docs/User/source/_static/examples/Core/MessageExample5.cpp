@@ -62,7 +62,7 @@ public:
         using namespace MARTe;
         filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         filter->SetDestination(this);
-        ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+        MessageI::InstallMessageFilter(filter);
     }
 
     virtual ~MessageEx1 () {
