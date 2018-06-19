@@ -84,7 +84,10 @@ This means that when using the :vcisdoxygencl:`ObjectRegistryDatabase` ``Find`` 
    
 Would allow to Find ``C``, ``C.E``, ``D`` and ``D.F``, using ``B`` as the root domain (see the example below).
 
-   
+.. note::
+
+    Other characters can also be set as a identifiers for the new Object creation and for the setting of a given Object as the root domain. See the methods ``AddBuildToken``, ``RemoveBuildToken``, ``IsBuildToken``, ``AddDomainToken``, ``RemoveDomainToken`` and ``IsDomainToken`` in  :vcisdoxygencl:`ReferenceContainer`. 
+
 Reading C structures
 --------------------
 

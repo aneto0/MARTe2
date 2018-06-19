@@ -530,3 +530,33 @@ TEST(ReferenceContainerGTest,TestIsReferenceContainer) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestIsReferenceContainer());
 }
+
+TEST(ReferenceContainerGTest,TestAddBuildToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestAddBuildToken());
+}
+
+TEST(ReferenceContainerGTest,TestIsBuildToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestIsBuildToken());
+}
+
+TEST(ReferenceContainerGTest,TestRemoveBuildToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestRemoveBuildToken());
+}
+
+TEST(ReferenceContainerGTest,TestAddDomainToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestAddDomainToken());
+}
+
+TEST(ReferenceContainerGTest,TestIsDomainToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestIsDomainToken());
+}
+
+TEST(ReferenceContainerGTest,TestRemoveDomainToken) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestRemoveDomainToken());
+}

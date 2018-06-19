@@ -46,8 +46,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-    char8 ReferenceContainer::BUILD_TOKEN = '+';
-    char8 ReferenceContainer::DOMAIN_TOKEN = '$';
+char8 ReferenceContainer::buildTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS] = { '+', '\0', '\0', '\0', '\0' };
+char8 ReferenceContainer::domainTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS] = { '$', '\0', '\0', '\0', '\0' };
 }
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -126,8 +126,7 @@ ReferenceContainer::~ReferenceContainer() {
 }
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
-bool ReferenceContainer::Insert(Reference ref,
-                                const int32 &position) {
+bool ReferenceContainer::Insert(Reference ref, const int32 &position) {
     bool ok = (Lock());
     if (ok) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
@@ -151,8 +150,7 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
-bool ReferenceContainer::Insert(const char8 * const path,
-                                Reference ref) {
+bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
     bool ok = ref.IsValid();
     if (ok) {
         if (StringHelper::Length(path) == 0u) {
@@ -161,8 +159,10 @@ bool ReferenceContainer::Insert(const char8 * const path,
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(
+                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(
+                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -249,11 +249,8 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
     return ref.IsValid() ? ref->IsReferenceContainer() : false;
 }
 
-
-
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
-void ReferenceContainer::Find(ReferenceContainer &result,
-                              ReferenceContainerFilter &filter) {
+void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilter &filter) {
     int32 index = 0;
     bool ok = Lock();
     if (ok) {
@@ -266,7 +263,9 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+            while ((!filter.IsFinished())
+                    && ((filter.IsReverse() && (index > -1))
+                            || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
                 Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
@@ -287,12 +286,14 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                                          "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                                  "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -329,7 +330,8 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                              "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
@@ -352,8 +354,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     UnLock();
 }
 
-Reference ReferenceContainer::Find(const char8 * const path,
-                                   const bool recursive) {
+Reference ReferenceContainer::Find(const char8 * const path, const bool recursive) {
     Reference ret;
     uint32 mode = ReferenceContainerFilterMode::SHALLOW;
     if (recursive) {
@@ -392,14 +393,14 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
         ok = (childName != NULL);
         if (ok) {
             // case object
-            if ((childName[0] == BUILD_TOKEN) || (childName[0] == DOMAIN_TOKEN)) {
+            if ((IsBuildToken(childName[0])) || (IsDomainToken(childName[0]))) {
                 if (data.MoveRelative(childName)) {
                     Reference newObject;
                     ok = newObject.Initialise(data, false);
                     if (ok) {
                         ok = (newObject.IsValid());
                         if (ok) {
-                            if (childName[0] == DOMAIN_TOKEN) {
+                            if (IsDomainToken(childName[0])) {
                                 newObject->SetDomain(true);
                             }
                             ok = ReferenceContainer::Insert(newObject);
@@ -440,7 +441,7 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
     //To include $ or +
     objNameLength += 1u;
     char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
-    objNameToCreate[0] = (IsDomain()) ? (DOMAIN_TOKEN) : (BUILD_TOKEN);
+    objNameToCreate[0] = (IsDomain()) ? (domainTokensList[0u]) : (buildTokensList[0u]);
     bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
 
     if (ret) {
@@ -495,7 +496,7 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
         Reference node = Get(0u);
         if (node.IsValid()) {
             ok = purgeList.Insert(node);
-            if(ok) {
+            if (ok) {
                 ok = Delete(node);
             }
             purgeEnd++;
@@ -513,6 +514,64 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
 
 bool ReferenceContainer::IsReferenceContainer() const {
     return true;
+}
+
+bool ReferenceContainer::AddToken(char8 * const tokenList, char8 token) {
+    uint32 i = 0u;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+        i++;
+    }
+    bool ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
+    if (ok) {
+        tokenList[i] = token;
+    }
+    return ok;
+}
+
+void ReferenceContainer::RemoveToken(char8 * const tokenList, char8 token) {
+    uint32 i = 0u;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
+        i++;
+    }
+    while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
+        tokenList[i] = tokenList[i + 1u];
+        i++;
+    }
+    tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
+}
+
+bool ReferenceContainer::IsToken(const char8 * const tokenList, char8 token) {
+    uint32 i = 0u;
+    bool ok = false;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
+        ok = (tokenList[i] == token);
+        i++;
+    }
+    return ok;
+}
+
+bool ReferenceContainer::AddBuildToken(char8 token) {
+    return AddToken(buildTokensList, token);
+}
+
+void ReferenceContainer::RemoveBuildToken(char8 token) {
+    return RemoveToken(buildTokensList, token);
+}
+
+bool ReferenceContainer::IsBuildToken(char8 token) {
+    return IsToken(buildTokensList, token);
+}
+
+bool ReferenceContainer::AddDomainToken(char8 token) {
+    return AddToken(domainTokensList, token);
+}
+
+void ReferenceContainer::RemoveDomainToken(char8 token) {
+    return RemoveToken(domainTokensList, token);
+}
+
+bool ReferenceContainer::IsDomainToken(char8 token) {
+    return IsToken(domainTokensList, token);
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")
