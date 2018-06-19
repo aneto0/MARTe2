@@ -393,6 +393,7 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
         ok = (childName != NULL);
         if (ok) {
             // case object
+            //lint -e{9007} there are no side-effects on IsBuildToken or IsDomainToken, but these cannot be declared const.
             if ((IsBuildToken(childName[0])) || (IsDomainToken(childName[0]))) {
                 if (data.MoveRelative(childName)) {
                     Reference newObject;
@@ -516,7 +517,7 @@ bool ReferenceContainer::IsReferenceContainer() const {
     return true;
 }
 
-bool ReferenceContainer::AddToken(char8 * const tokenList, char8 token) {
+bool ReferenceContainer::AddToken(char8 * const tokenList, const char8 token) {
     uint32 i = 0u;
     bool exists = false;
     while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
@@ -533,19 +534,19 @@ bool ReferenceContainer::AddToken(char8 * const tokenList, char8 token) {
     return ok;
 }
 
-void ReferenceContainer::RemoveToken(char8 * const tokenList, char8 token) {
+void ReferenceContainer::RemoveToken(char8 * const tokenList, const char8 token) {
     uint32 i = 0u;
     while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
         i++;
     }
     while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
-        tokenList[i] = tokenList[i + 1u];
+        tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
         i++;
     }
     tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
 }
 
-bool ReferenceContainer::IsToken(const char8 * const tokenList, char8 token) {
+bool ReferenceContainer::IsToken(const char8 * const tokenList, const char8 token) {
     uint32 i = 0u;
     bool ok = false;
     while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
@@ -555,28 +556,28 @@ bool ReferenceContainer::IsToken(const char8 * const tokenList, char8 token) {
     return ok;
 }
 
-bool ReferenceContainer::AddBuildToken(char8 token) {
-    return AddToken(buildTokensList, token);
+bool ReferenceContainer::AddBuildToken(const char8 token) {
+    return AddToken(&buildTokensList[0], token);
 }
 
-void ReferenceContainer::RemoveBuildToken(char8 token) {
-    return RemoveToken(buildTokensList, token);
+void ReferenceContainer::RemoveBuildToken(const char8 token) {
+    return RemoveToken(&buildTokensList[0], token);
 }
 
-bool ReferenceContainer::IsBuildToken(char8 token) {
-    return IsToken(buildTokensList, token);
+bool ReferenceContainer::IsBuildToken(const char8 token) {
+    return IsToken(&buildTokensList[0], token);
 }
 
-bool ReferenceContainer::AddDomainToken(char8 token) {
-    return AddToken(domainTokensList, token);
+bool ReferenceContainer::AddDomainToken(const char8 token) {
+    return AddToken(&domainTokensList[0], token);
 }
 
-void ReferenceContainer::RemoveDomainToken(char8 token) {
-    return RemoveToken(domainTokensList, token);
+void ReferenceContainer::RemoveDomainToken(const char8 token) {
+    return RemoveToken(&domainTokensList[0], token);
 }
 
-bool ReferenceContainer::IsDomainToken(char8 token) {
-    return IsToken(domainTokensList, token);
+bool ReferenceContainer::IsDomainToken(const char8 token) {
+    return IsToken(&domainTokensList[0], token);
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")
