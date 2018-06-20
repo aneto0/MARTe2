@@ -41,23 +41,33 @@
 namespace MARTe {
 
 /**
- * @brief TODO
+ * @brief A message filter that allows to purge and load the ObjectRegistryDatabase.
+ * @details This filter will accepts messages with two type of functions, named "purge" and "load".
+ *
+ * If the message contains a valid StructuredDataI (messageToTest->Get(0u)), a parameter named Root allows to act on the specified
+ *  subtree of the ObjectRegistryDatabase.
+ *
+ * The "purge" function will Purge() the ObjectRegistryDatabase (or a specified SubTree). The "load" function will Initialise the ObjectRegistryDatabase (or a specified SubTree)
+ *  with the configuration available in messageToTest->Get(0u).
+ *
  */
 class ObjectRegistryDatabaseMessageFilter: public MessageFilter, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
-     * @brief TODO
+     * @brief Sets the MessageFilter as permanent.
      */
     ObjectRegistryDatabaseMessageFilter();
 
     /**
-     * @brief TODO
+     * @brief NOOP.
      */
     virtual ~ObjectRegistryDatabaseMessageFilter();
 
     /**
-     * @brief TODO
+     * @brief Implements the specification detailed in the class description.
+     * @param[in] messageToTest the message.
+     * @return ErrorManagement::NoError if the message is valid (i.e. contains one of the two known functions) and the function is successfully completed.
      */
     virtual ErrorManagement::ErrorType ConsumeMessage(ReferenceT<Message> &messageToTest);
 

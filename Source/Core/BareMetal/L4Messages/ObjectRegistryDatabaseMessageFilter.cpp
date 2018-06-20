@@ -60,40 +60,39 @@ ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(R
     StreamString function;
     ReferenceT<StructuredDataI> params;
     StreamString rootNodeStr;
-    ReferenceT<ReferenceContainer> rootNode;
+    //Do not do this rootNode = ReferenceT<ReferenceContainer>(ord) as otherwise the smart pointer implementation would destroy the ObjectRegistryDatabase!
+    ReferenceContainer *rootNode = NULL_PTR(ReferenceContainer *);
 
     if (err.ErrorsCleared()) {
-        function = messageToTest->GetFunction().GetList();
+        CCString functionStr = messageToTest->GetFunction();
+        function = functionStr.GetList();
         params = messageToTest->Get(0u);
         if (params.IsValid()) {
-            err.parametersError = !params->Read("Root", rootNodeStr);
-            if (!err.ErrorsCleared()) {
-                REPORT_ERROR(err, "Could not read the Root from where to purge");
+            if(params->Read("Root", rootNodeStr)) {
+                REPORT_ERROR(ErrorManagement::Information, "Going to act on %s", rootNodeStr.Buffer());
             }
         }
         if (rootNodeStr.Size() == 0u) {
-            rootNode = ReferenceT<ReferenceContainer>(ord);
+            rootNode = ord;
             rootNodeStr = "root";
         }
         else {
-            rootNode = ord->Find(rootNodeStr.Buffer());
-        }
-        if (rootNode.IsValid()) {
-            REPORT_ERROR(ErrorManagement::Information, "Going to act on the ObjectRegistryDatabase node %s", rootNode->GetName());
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Could not find the node %s in the ObjectRegistryDatabase", rootNodeStr.Buffer());
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if (function == "purge") {
-            err.parametersError = (rootNode == ReferenceT<ReferenceContainer>(ord));
+            ReferenceT<ReferenceContainer> foundNode = ord->Find(rootNodeStr.Buffer());
+            err.parametersError = !foundNode.IsValid();
             if (err.ErrorsCleared()) {
-                REPORT_ERROR(ErrorManagement::Information, "Going to purge node %s", rootNode->GetName());
-                rootNode->Purge();
+                rootNode = foundNode.operator ->();
             }
             else {
-                REPORT_ERROR(err, "Cannot purge the root node");
+                REPORT_ERROR(err, "Could not find the node with name %s", rootNodeStr.Buffer());
+            }
+        }
+    }
+    //lint -e{613} the rootNode cannot be NULL as otherwise err.ErrorsCleared() would be false.
+    if (err.ErrorsCleared()) {
+        if (function == "purge") {
+            rootNode->Purge();
+            if (rootNode != ord) {
+                err.fatalError = !ord->Delete(rootNodeStr.Buffer());
             }
         }
         else if (function == "load") {
@@ -102,7 +101,8 @@ ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(R
                 ReferenceT<ReferenceContainer> rc(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 err.parametersError = !rc->Initialise(*params.operator ->());
                 uint32 i;
-                for (i = 0u; (i < rc->Size()) && (err.ErrorsCleared()); i++) {
+                uint32 nElements = rc->Size();
+                for (i = 0u; (err.ErrorsCleared()) && (i < nElements); i++) {
                     err.parametersError = !rootNode->Insert(rc->Get(i));
                 }
             }

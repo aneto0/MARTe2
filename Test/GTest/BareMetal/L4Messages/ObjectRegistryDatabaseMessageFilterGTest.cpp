@@ -49,3 +49,34 @@ TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Purge) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Purge());
 }
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_PurgeAll) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_PurgeAll());
+}
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_Load());
+}
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_LoadSubTree) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_LoadSubTree());
+}
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidNode) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_False_InvalidNode());
+}
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidFunction) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_False_InvalidFunction());
+}
+
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_EmptyConfiguration) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_Load_False_EmptyConfiguration());
+}
+

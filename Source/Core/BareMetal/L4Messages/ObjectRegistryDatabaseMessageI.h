@@ -41,18 +41,18 @@
 namespace MARTe {
 
 /**
- * @brief TODO
+ * @brief A MessageI implementation which registers a ObjectRegistryDatabaseMessageFilter and thus allows to manage the ObjectRegistryDatabase using messages.
  */
 class ObjectRegistryDatabaseMessageI: public MessageI, public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
-     * @brief TODO
+     * @brief Installs an ObjectRegistryDatabaseMessageFilter.
      */
     ObjectRegistryDatabaseMessageI();
 
     /**
-     * @brief TODO
+     * @brief NOOP.
      */
     virtual ~ObjectRegistryDatabaseMessageI();
 };

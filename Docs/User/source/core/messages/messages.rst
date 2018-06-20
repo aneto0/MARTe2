@@ -153,6 +153,7 @@ The framework offers a set of standard filters that are ready to be used:
 ======================================================== ===========
 Filter                                                   Description
 ======================================================== ===========
+:vcisdoxygencl:`ObjectRegistryDatabaseMessageFilter`     Allows to manage (purge and load) the ObjectRegistryDatabase and thus change the configuration of the application in runtime .
 :vcisdoxygencl:`RegisteredMethodsMessageFilter`          Enables the call of remote Object functions using messages (see below). 
 :vcisdoxygencl:`ReplyMessageCatcherMessageFilter`        Waits for a given reply to arrive. Typically used with *indirect* messages.
 :vcisdoxygencl:`QueueingMessageFilter`                   Listens for messages in the context of a different thread and puts the messages in a queue (shall be used with a :vcisdoxygencl:`QueuedMessageI`).
