@@ -331,3 +331,42 @@ bool ObjectRegistryDatabaseMessageFilterTest::TestConsumeMessage_Load_False_Empt
     ord->Purge();
     return ok;
 }
+
+bool ObjectRegistryDatabaseMessageFilterTest::TestConsumeMessage_Load_False_Not_ReferenceContainer() {
+    using namespace MARTe;
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+    ord->Purge();
+    ConfigurationDatabase cdb;
+    cdb.CreateAbsolute("+ObjectRegistryDatabaseMessageHandler");
+    cdb.Write("Class", "ObjectRegistryDatabaseMessageI");
+    cdb.CreateAbsolute("+A");
+    cdb.Write("Class", "Object");
+    cdb.MoveToRoot();
+    bool ok = ord->Initialise(cdb);
+    if (ok) {
+        ok = (ord->Size() == 2);
+    }
+    if (ok) {
+        ReferenceT<Message> msg(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ConfigurationDatabase cdbMsg;
+        cdbMsg.Write("Function", "load");
+        cdbMsg.Write("Destination", "ObjectRegistryDatabaseMessageHandler");
+        ReferenceT<ConfigurationDatabase> cdbMsgPayload(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        cdbMsgPayload->CreateAbsolute("+B");
+        cdbMsgPayload->Write("Class", "ReferenceContainer");
+        cdbMsgPayload->CreateAbsolute("+C");
+        cdbMsgPayload->Write("Class", "ReferenceContainer");
+        cdbMsgPayload->CreateAbsolute("+D");
+        cdbMsgPayload->Write("Class", "ReferenceContainer");
+        cdbMsgPayload->CreateAbsolute("+D.+C");
+        cdbMsgPayload->Write("Class", "ReferenceContainer");
+        cdbMsgPayload->MoveToRoot();
+        cdbMsgPayload->Write("Root", "A");
+        msg->Initialise(cdbMsg);
+        msg->Insert(cdbMsgPayload);
+        ErrorManagement::ErrorType err = MessageI::SendMessage(msg);
+        ok = !err.ErrorsCleared();
+    }
+    ord->Purge();
+    return ok;
+}

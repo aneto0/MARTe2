@@ -92,6 +92,11 @@ public:
      */
     bool TestConsumeMessage_Load_False_EmptyConfiguration();
 
+    /**
+     * @brief Test that the ConsumeMessage fails when trying to load into something that is not a ReferenceContainer.
+     */
+    bool TestConsumeMessage_Load_False_Not_ReferenceContainer();
+
 };
 
 /*---------------------------------------------------------------------------*/

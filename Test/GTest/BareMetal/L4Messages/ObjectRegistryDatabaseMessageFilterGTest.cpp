@@ -80,3 +80,8 @@ TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_Empt
     ASSERT_TRUE(target.TestConsumeMessage_Load_False_EmptyConfiguration());
 }
 
+TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_Not_ReferenceContainer) {
+    ObjectRegistryDatabaseMessageFilterTest target;
+    ASSERT_TRUE(target.TestConsumeMessage_Load_False_Not_ReferenceContainer());
+}
+
