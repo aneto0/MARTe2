@@ -153,6 +153,7 @@ The framework offers a set of standard filters that are ready to be used:
 ======================================================== ===========
 Filter                                                   Description
 ======================================================== ===========
+:vcisdoxygencl:`ObjectRegistryDatabaseMessageFilter`     Allows to manage (purge and load) the ObjectRegistryDatabase and thus change the configuration of the application in runtime (see example below).
 :vcisdoxygencl:`RegisteredMethodsMessageFilter`          Enables the call of remote Object functions using messages (see below). 
 :vcisdoxygencl:`ReplyMessageCatcherMessageFilter`        Waits for a given reply to arrive. Typically used with *indirect* messages.
 :vcisdoxygencl:`QueueingMessageFilter`                   Listens for messages in the context of a different thread and puts the messages in a queue (shall be used with a :vcisdoxygencl:`QueuedMessageI`).
@@ -300,4 +301,14 @@ The following is an example of remote function calls using messages.
    :caption: Remote functions calling using messages.
    :linenos:
    :emphasize-lines: 54, 79, 84, 89, 91-92, 96, 106-109, 154, 157, 189, 197-200, 208-211, 219-221 
-   
+
+Configuration management
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following is an example of how to update the framework configuration in runtime.
+
+.. literalinclude:: /_static/examples/Core/MessageExample6.cpp
+   :language: c++   
+   :caption: Change of configuration  using messages.
+   :linenos:
+   :emphasize-lines: 83, 128, 145, 148, 181 

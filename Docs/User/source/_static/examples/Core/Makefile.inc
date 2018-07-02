@@ -66,6 +66,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/MessageExample3$(EXEEXT) \
         $(BUILD_DIR)/MessageExample4$(EXEEXT) \
         $(BUILD_DIR)/MessageExample5$(EXEEXT) \
+        $(BUILD_DIR)/MessageExample6$(EXEEXT) \
         $(BUILD_DIR)/MultiThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/ModelGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/ObjectsExample1$(EXEEXT) \

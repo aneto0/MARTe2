@@ -26,6 +26,8 @@
 OBJSX=  MessageFilterPoolGTest.x \
         MessageGTest.x \
 	MessageIGTest.x \
+	ObjectRegistryDatabaseMessageFilterGTest.x \
+	ObjectRegistryDatabaseMessageIGTest.x \
 	RegisteredMethodsMessageFilterGTest.x \
 	ReplyMessageCatcherMessageFilterGTest.x
 		

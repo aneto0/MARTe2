@@ -132,6 +132,8 @@ Object.cpp
 ObjectBuilder.h
 ObjectBuilderT.h
 ObjectRegistryDatabase.cpp
+ObjectRegistryDatabaseMessageFilter.cpp
+ObjectRegistryDatabaseMessageI.cpp
 OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
