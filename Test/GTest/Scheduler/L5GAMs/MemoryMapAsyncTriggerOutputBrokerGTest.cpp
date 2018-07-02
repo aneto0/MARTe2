@@ -79,9 +79,9 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_SamplesGreaterThanOne) {
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_Samples) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
-    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_SamplesGreaterThanOne());
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_Samples());
 }
 
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_WrongTriggerSignalType) {

@@ -645,7 +645,7 @@ static const MARTe::char8 * const config7 = ""
         "               Signal1 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
-        "                   Samples = 2"
+        "                   Samples = 0"
         "               }"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -838,7 +838,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_MoreThan
     return !TestIntegratedInApplication(config6, true);
 }
 
-bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_SamplesGreaterThanOne() {
+bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_Samples() {
     using namespace MARTe;
     return !TestIntegratedInApplication(config7, true);
 }

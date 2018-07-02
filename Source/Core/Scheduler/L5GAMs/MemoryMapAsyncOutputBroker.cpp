@@ -138,10 +138,10 @@ bool MemoryMapAsyncOutputBroker::InitWithBufferParameters(const SignalDirection 
             uint32 samples;
             ok = dataSourceIn.GetFunctionSignalSamples(OutputSignals, 0u, s, samples);
             if (ok) {
-                ok = (samples == 1u);
+                ok = (samples > 0u);
             }
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be == 1.");
+                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be positivedd.");
             }
         }
     }

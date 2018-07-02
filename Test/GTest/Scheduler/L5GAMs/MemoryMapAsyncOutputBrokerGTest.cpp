@@ -64,9 +64,9 @@ TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_MoreThan
     ASSERT_TRUE(test.TestInitWithBufferParameters_False_MoreThanOneGAM());
 }
 
-TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_SamplesGreaterThanOne) {
+TEST(MemoryMapAsyncOutputBrokerGTest,TestInitWithBufferParameters_False_Samples) {
     MemoryMapAsyncOutputBrokerTest test;
-    ASSERT_TRUE(test.TestInitWithBufferParameters_False_SamplesGreaterThanOne());
+    ASSERT_TRUE(test.TestInitWithBufferParameters_False_Samples());
 }
 
 TEST(MemoryMapAsyncOutputBrokerGTest,TestExecute_1_Buffer) {

@@ -83,7 +83,7 @@ public:
     /**
      * @brief Tests the InitWithTriggerParameters method signals that have Samples > 1.
      */
-    bool TestInitWithTriggerParameters_False_SamplesGreaterThanOne();
+    bool TestInitWithTriggerParameters_False_Samples();
 
     /**
      * @brief Tests the InitWithTriggerParameters method with a wrong signal type for the trigger.
