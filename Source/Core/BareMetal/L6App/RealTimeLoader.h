@@ -95,7 +95,7 @@ private:
     /**
      * @brief The RealTimeApplication.
      */
-    ReferenceT<RealTimeApplication> rtApp;
+    ReferenceContainer rtApps;
 };
 
 }

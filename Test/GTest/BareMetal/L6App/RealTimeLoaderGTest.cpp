@@ -49,6 +49,11 @@ TEST(RealTimeLoaderGTest,TestConfigure) {
     ASSERT_TRUE(test.TestConfigure());
 }
 
+TEST(RealTimeLoaderGTest,TestConfigure_MoreApplications) {
+    RealTimeLoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_MoreApplications());
+}
+
 TEST(RealTimeLoaderGTest,TestConfigure_False_FailedConfiguration) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());

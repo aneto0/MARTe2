@@ -62,6 +62,9 @@ public:
      */
     bool TestConfigure_False_FailedRealTimeApplicationConfiguration();
 
+
+    bool TestConfigure_MoreApplications();
+
     /**
      * @brief Tests the Start method
      */
