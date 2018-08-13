@@ -107,7 +107,7 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
         if (initOK) {
             result &= (StringHelper::Compare(mess.GetDestination(), table[i].destination) == 0);
             result &= (StringHelper::Compare(mess.GetFunction(), table[i].function) == 0);
-            result &= (StringHelper::Compare(mess.GetSender(), "") == 0);
+            result &= (mess.GetSender() == NULL_PTR(Message *));
             result &= (mess.GetReplyTimeout() == table[i].replyTimeout);
             if (StringHelper::Compare(table[i].mode, "ExpectsReply") == 0) {
                 result &= mess.ExpectsReply();
@@ -229,8 +229,9 @@ bool MessageTest::TestSetSender() {
     using namespace MARTe;
     bool result = true;
     Message mess;
-    mess.SetSender("sender");
-    result &= (StringHelper::Compare(mess.GetSender(), "sender") == 0);
+    Object sender;
+    mess.SetSender(&sender);
+    result &= (mess.GetSender() != NULL_PTR(Message *));
     return result;
 }
 

@@ -133,12 +133,12 @@ Message::MessageFlags::MessageFlags(CCString asString) {
     isReply = false;
 }
 
-CCString Message::GetSender() {
-    return sender.Buffer();
+const Object * const Message::GetSender() {
+    return sender;
 }
 
-void Message::SetSender(CCString senderName) {
-    sender = senderName.GetList();
+void Message::SetSender(const Object * const senderIn) {
+    sender = senderIn;
 }
 
 CCString Message::GetFunction() {
