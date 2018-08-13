@@ -129,16 +129,19 @@ void GAMScheduler::Purge(ReferenceContainer &purgeList) {
 ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
     ErrorManagement::ErrorType err;
     if (GetSchedulableStates() != NULL_PTR(ScheduledState **)) {
-        uint32 newBuffer = RealTimeApplication::GetIndex();
-        ScheduledState *newState = GetSchedulableStates()[newBuffer];
-        if (newState != NULL_PTR(ScheduledState *)) {
-            if (!eventSem.Post()) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+        err = !realTimeApplicationT.IsValid();
+        if (err.ErrorsCleared()) {
+            uint32 newBuffer = realTimeApplicationT->GetIndex();
+            ScheduledState *newState = GetSchedulableStates()[newBuffer];
+            if (newState != NULL_PTR(ScheduledState *)) {
+                if (!eventSem.Post()) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "Failed Post(*) of the event semaphore");
+                }
             }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "newState is NULL. Did you call PrepareNextState?");
-            err.fatalError = true;
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "newState is NULL. Did you call PrepareNextState?");
+                err.fatalError = true;
+            }
         }
     }
     else {
@@ -150,10 +153,12 @@ ErrorManagement::ErrorType GAMScheduler::StartNextStateExecution() {
 }
 
 ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
-    uint32 currentIndex = RealTimeApplication::GetIndex();
-    ErrorManagement::ErrorType err;
-    if (multiThreadService[currentIndex] != NULL) {
-        err = multiThreadService[currentIndex]->Stop();
+    ErrorManagement::ErrorType err(realTimeApplicationT.IsValid());
+    if (err.ErrorsCleared()) {
+        uint32 currentIndex = realTimeApplicationT->GetIndex();
+        if (multiThreadService[currentIndex] != NULL) {
+            err = multiThreadService[currentIndex]->Stop();
+        }
     }
     return err;
 }
@@ -161,43 +166,47 @@ ErrorManagement::ErrorType GAMScheduler::StopCurrentStateExecution() {
 void GAMScheduler::CustomPrepareNextState() {
     ErrorManagement::ErrorType err;
     if (eventSem.Reset()) {
-        //Launches the threads for the next state
-        uint32 nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
-        ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
-        uint32 numberOfThreads = nextState->numberOfThreads;
-        if (multiThreadService[nextBuffer] != NULL) {
-            err = multiThreadService[nextBuffer]->Stop();
-            delete multiThreadService[nextBuffer];
-        }
+        realTimeApplicationT = realTimeApp;
+        err = !realTimeApplicationT.IsValid();
         if (err.ErrorsCleared()) {
-            multiThreadService[nextBuffer] = new (NULL) MultiThreadService(binder);
-            multiThreadService[nextBuffer]->SetNumberOfPoolThreads(numberOfThreads);
-            if (rtThreadInfo[nextBuffer] != NULL) {
-                delete rtThreadInfo[nextBuffer];
+            //Launches the threads for the next state
+            uint32 nextBuffer = (realTimeApplicationT->GetIndex() + 1u) % 2u;
+            ScheduledState *nextState = GetSchedulableStates()[nextBuffer];
+            uint32 numberOfThreads = nextState->numberOfThreads;
+            if (multiThreadService[nextBuffer] != NULL) {
+                err = multiThreadService[nextBuffer]->Stop();
+                delete multiThreadService[nextBuffer];
             }
-            err = multiThreadService[nextBuffer]->CreateThreads();
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed to Stop() MultiThreadService.");
-        }
-        if (err.ErrorsCleared()) {
-            rtThreadInfo[nextBuffer] = new RTThreadParam[numberOfThreads];
-            for (uint32 i = 0u; i < numberOfThreads; i++) {
-                rtThreadInfo[nextBuffer][i].executables = nextState->threads[i].executables;
-                rtThreadInfo[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
-                rtThreadInfo[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
-                rtThreadInfo[nextBuffer][i].lastCycleTimeStamp = 0u;
-                multiThreadService[nextBuffer]->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, i);
-                multiThreadService[nextBuffer]->SetCPUMaskThreadPool(nextState->threads[i].cpu, i);
-                multiThreadService[nextBuffer]->SetStackSizeThreadPool(nextState->threads[i].stackSize, i);
+            if (err.ErrorsCleared()) {
+                multiThreadService[nextBuffer] = new (NULL) MultiThreadService(binder);
+                multiThreadService[nextBuffer]->SetNumberOfPoolThreads(numberOfThreads);
+                if (rtThreadInfo[nextBuffer] != NULL) {
+                    delete rtThreadInfo[nextBuffer];
+                }
+                err = multiThreadService[nextBuffer]->CreateThreads();
             }
-            err = multiThreadService[nextBuffer]->Start();
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
-        }
-        if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to Stop() MultiThreadService.");
+            }
+            if (err.ErrorsCleared()) {
+                rtThreadInfo[nextBuffer] = new RTThreadParam[numberOfThreads];
+                for (uint32 i = 0u; i < numberOfThreads; i++) {
+                    rtThreadInfo[nextBuffer][i].executables = nextState->threads[i].executables;
+                    rtThreadInfo[nextBuffer][i].numberOfExecutables = nextState->threads[i].numberOfExecutables;
+                    rtThreadInfo[nextBuffer][i].cycleTime = nextState->threads[i].cycleTime;
+                    rtThreadInfo[nextBuffer][i].lastCycleTimeStamp = 0u;
+                    multiThreadService[nextBuffer]->SetPriorityClassThreadPool(Threads::RealTimePriorityClass, i);
+                    multiThreadService[nextBuffer]->SetCPUMaskThreadPool(nextState->threads[i].cpu, i);
+                    multiThreadService[nextBuffer]->SetStackSizeThreadPool(nextState->threads[i].stackSize, i);
+                }
+                err = multiThreadService[nextBuffer]->Start();
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to CreateThreads().");
+            }
+            if (!err.ErrorsCleared()) {
+                REPORT_ERROR(ErrorManagement::FatalError, "Failed to Start() MultiThreadService.");
+            }
         }
     }
     else {
@@ -210,7 +219,7 @@ void GAMScheduler::CustomPrepareNextState() {
 ErrorManagement::ErrorType GAMScheduler::Execute(ExecutionInfo & information) {
     ErrorManagement::ErrorType ret;
     uint32 threadNumber = information.GetThreadNumber();
-    uint32 idx = RealTimeApplication::GetIndex();
+    uint32 idx = realTimeApplicationT->GetIndex();
 
     if (information.GetStage() == MARTe::ExecutionInfo::StartupStage) {
         ret = eventSem.Wait(TTInfiniteWait);

@@ -48,8 +48,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-uint32 RealTimeApplication::index = 1u;
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,6 +61,7 @@ RealTimeApplication::RealTimeApplication() :
         REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
     }
     defaultDataSourceName = "";
+    index=1u;
 
 }
 
@@ -251,7 +250,7 @@ bool RealTimeApplication::ConfigureApplication() {
         REPORT_ERROR(ErrorManagement::Information, "Going to configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->ConfigureScheduler();
+            ret = scheduler->ConfigureScheduler(this);
         }
         if (!ret) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
@@ -332,7 +331,7 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
         REPORT_ERROR(ErrorManagement::Information, "Going to check configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->ConfigureScheduler();
+            ret = scheduler->ConfigureScheduler(this);
         }
         if (!ret) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
@@ -391,7 +390,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
                 if (ret) {
                     ret = ds->AllocateMemory();
                     if (!ret) {
-                        REPORT_ERROR(ErrorManagement::ParametersError, "GAM %s AllocateMemory failed", fullDsName.Buffer());
+                        REPORT_ERROR(ErrorManagement::ParametersError, "DataSource %s AllocateMemory failed", fullDsName.Buffer());
                     }
                 }
             }
@@ -530,15 +529,19 @@ uint32 RealTimeApplication::GetIndex() {
 void RealTimeApplication::Purge(ReferenceContainer &purgeList) {
     if (statesContainer.IsValid()) {
         statesContainer->Purge(purgeList);
+        statesContainer.RemoveReference();
     }
     if (functionsContainer.IsValid()) {
         functionsContainer->Purge(purgeList);
+        functionsContainer.RemoveReference();
     }
     if (scheduler.IsValid()) {
         scheduler->Purge(purgeList);
+        scheduler.RemoveReference();
     }
     if (dataSourceContainer.IsValid()) {
         dataSourceContainer->Purge(purgeList);
+        dataSourceContainer.RemoveReference();
     }
     statefulsInData.Purge(purgeList);
     functionsDatabase.Purge(purgeList);

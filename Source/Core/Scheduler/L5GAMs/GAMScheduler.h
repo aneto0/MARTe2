@@ -35,6 +35,7 @@
 #include "GAMSchedulerI.h"
 #include "Message.h"
 #include "MultiThreadService.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -162,6 +163,11 @@ protected:
      * Message to be fired in case of execution error
      */
     ReferenceT<Message> errorMessage;
+
+    /**
+     * Specialised real-time application reference.
+     */
+    ReferenceT<RealTimeApplication> realTimeApplicationT;
 };
 
 }

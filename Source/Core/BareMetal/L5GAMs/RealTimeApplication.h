@@ -218,7 +218,7 @@ public:
      * @brief Gets the current execution index. This number swaps between 0 and 1 each time StartExecution is called.
      * @return the current execution index.
      */
-    static uint32 GetIndex();
+    uint32 GetIndex();
 
     /**
      * @see ReferenceContainer::Purge()
@@ -259,7 +259,7 @@ private:
     /**
      * The unique RealTimeApplication index which swaps between 0/1 at every state change.
      */
-    static uint32 index;
+    uint32 index;
 
     /**
      * The +States container.
