@@ -34,7 +34,7 @@
 #include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "ObjectBuilder.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
@@ -211,10 +211,13 @@ void Reference::ToAnyType(AnyType &at){
 }
 
 Reference::Reference(const AnyType &anyType):Reference(){
-	if (anyType.IsValid()){
-		*this = anyType.Clone();
-	} else {
-		REPORT_ERROR(ErrorManagement::FatalError,"AnyType parameter is not valid");
+	ErrorManagement::ErrorType ok;
+	ok.parametersError = !anyType.IsValid();
+	CONDITIONAL_REPORT_ERROR(ok,"AnyType parameter is not valid");
+
+	if (ok){
+		ok = anyType.Clone(*this);
+		CONDITIONAL_REPORT_ERROR(ok,"Clone Failed");
 	}
 }
 

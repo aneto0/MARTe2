@@ -138,7 +138,7 @@ bool PrintStream(IOBuffer & iobuff,
                         const FormatDescriptor &fd,
                         bool addQuotesOnString = false);
 
-
+#if 0
 /**
  * @brief Prints a StructuredDataInterface.
  * @param[out] iobuff is the output stream buffer.
@@ -149,6 +149,7 @@ bool PrintStream(IOBuffer & iobuff,
 bool PrintStructuredDataInterface(IOBuffer &iobuff,
                                          StructuredDataI * const structuredData,
                                          uint32 nodeLevel = 0u);
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

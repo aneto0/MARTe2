@@ -40,8 +40,7 @@ OBJSX=\
 
 #		TypeConversion.x \
 #		ValidateBasicType.x\
-#		AnyObject.x \
-#		AnyTypeCreator.x \
+
 
         
 PACKAGE=Core/BareMetal

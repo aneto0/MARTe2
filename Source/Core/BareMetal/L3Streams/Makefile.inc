@@ -33,7 +33,6 @@ OBJSX=	BufferedStreamI.x \
 		IOBufferIntegerPrint.x \
 		IOBufferStringPrint.x \
 		IOBufferStreamPrint.x \
-		IOBufferStructuredPrint.x \
 		ToStringConversionFactory.x\
 		IOBufferAnyTypeInfo.x \
 		IOBufferAnyTypePrint.x \
@@ -42,7 +41,10 @@ OBJSX=	BufferedStreamI.x \
 		StreamMemoryReference.x \
 		StreamString.x\
 		StreamStringIOBuffer.x
-        
+
+# IOBufferStructuredPrint.x \
+
+
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

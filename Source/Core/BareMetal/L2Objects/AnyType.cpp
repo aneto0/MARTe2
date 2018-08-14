@@ -100,7 +100,7 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	if (ret){
 		cm = cri->FindMember(field);
 		ret.unsupportedFeature = (cm == NULL_PTR(ClassMember const *));
-		COMPOSITE_REPORT_ERROR(ret,"Cannot get field ",field," for class ",cri->className)
+		COMPOSITE_REPORT_ERROR(ret,"Cannot get field ",field," for class ",cri->GetClassName())
 	}
 
 	if (ret){

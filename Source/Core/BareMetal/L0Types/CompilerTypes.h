@@ -55,6 +55,7 @@
 
 namespace MARTe {
 
+#if 0 // use uintp
     /** Large enough to store a pointer*/
 #ifdef __LP64__
     typedef unsigned long intptr;
@@ -64,6 +65,7 @@ namespace MARTe {
     typedef unsigned long long intptr;
 #else
     typedef unsigned long intptr;
+#endif
 #endif
 
     /** Macro for dll export and import */
@@ -169,11 +171,11 @@ namespace MARTe {
 
     /** A tool to find indexes of structures fields.
      1024 has been used to avoid alignment problems. */
-    #define indexof(type,field) ((MARTe::intptr)&(((type *)1024)->field) - 1024)
+    #define indexof(type,field) ((MARTe::uintp)&(((type *)1024)->field) - 1024)
 
     /** A tool to find indexes of structures fields.
      1024 has been used to avoid alignment problems. */
-    #define ancestorIndexof(type,ancestor) ((MARTe::intptr)( (ancestor *)((type *)1024)  ) - 1024)
+    #define ancestorIndexof(type,ancestor) ((MARTe::uintp)( (ancestor *)((type *)1024)  ) - 1024)
 
     /** A tool to find the size of structures fields.
      1024 has been used to avoid alignment problems. */
@@ -182,6 +184,45 @@ namespace MARTe {
     /** A tool to find the type of class/structures fields.
      1024 has been used to avoid alignment problems. */
     #define memberOf(type,field) ((type *)1024)->field
+
+    extern const uint8 zCTable[256];
+    extern const uint8 pETable[256];
+
+    /**
+     * @brief templated function to discover the position of the first 0 bit .
+     * @tparam indexType the integer type used by the parameter ix. MUST be unsigned
+     * @param ix the number to be analyzed
+     * @return the number of consecutive non zero bits, starting from the LSB
+     */
+    template <typename indexType>
+    uint8 firstZeroBit(indexType ix){
+    	uint8 result = 0;
+    	uint8 fb = pETable[ix & 0xFF];
+    	while (fb >= 8){
+    		ix= ix >> 8;
+    		result += 8;
+    		fb = pETable[ix & 0xFF];
+    	}
+    	return result + fb;
+    }
+
+    /**
+     * @brief templated function to discover the number of zeroes in a number
+     * @tparam indexType the integer type used by the parameter ix. MUST be unsigned
+     * @param ix the number to be analyzed
+     * @return the number of zeroes in the number. The result depends and is limited by sizeof(indexType)
+     */
+    template <typename indexType>
+    uint8 nOfZeroes(indexType ix){
+    	uint8 result = 0;
+    	int i = 0;
+    	for (i = 0 ; i < sizeof(indexType); i++){
+    		result += zCTable[ix & 0xFF];
+    		ix = ix >> 8;
+    	}
+    	return result ;
+    }
+
 
 
     /**
