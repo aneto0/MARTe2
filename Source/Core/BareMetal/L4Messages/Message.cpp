@@ -46,13 +46,14 @@ namespace MARTe {
 
 Message::Message() :
         ReferenceContainer(),
-        sender(),
         destination(),
         function(),
         maxWait(),
         flags() {
+    sender = NULL_PTR(const Object *);
 }
 
+/*lint -e{1540} sender is destroyed by caller of SetSender.*/
 Message::~Message() {
 }
 
@@ -133,7 +134,7 @@ Message::MessageFlags::MessageFlags(CCString asString) {
     isReply = false;
 }
 
-const Object * const Message::GetSender() {
+const Object * const Message::GetSender() const {
     return sender;
 }
 

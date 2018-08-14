@@ -218,7 +218,7 @@ public:
      * @brief Gets the current execution index. This number swaps between 0 and 1 each time StartExecution is called.
      * @return the current execution index.
      */
-    uint32 GetIndex();
+    uint32 GetIndex() const;
 
     /**
      * @see ReferenceContainer::Purge()

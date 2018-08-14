@@ -522,7 +522,7 @@ bool RealTimeApplication::GetStates(ReferenceContainer &states) const {
     return ret;
 }
 
-uint32 RealTimeApplication::GetIndex() {
+uint32 RealTimeApplication::GetIndex() const {
     return index;
 }
 

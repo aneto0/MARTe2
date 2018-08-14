@@ -103,7 +103,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 // Check if it exists in the tree!
                 Reference ref(const_cast<Object *>(message->GetSender()));
                 ReferenceContainer result;
-                ReferenceContainerFilterReferences filter(1u, ReferenceContainerFilterMode::RECURSIVE, ref);
+                ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, ref);
                 ReferenceContainer *ord = dynamic_cast<ReferenceContainer*>(ObjectRegistryDatabase::Instance());
                 if (ord != NULL_PTR(ReferenceContainer *)) {
                     ord->Find(result, filter);

@@ -134,7 +134,7 @@ public:
      * destination of the reply (namely the address of the sender Object).
      * @return the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
-    const Object * const GetSender();
+    const Object * const GetSender() const;
 
     /**
      * @brief Sets the sender Object address.
