@@ -129,18 +129,18 @@ public:
     CCString GetDestination();
 
     /**
-     * @brief Retrieved the address of the sender Object in the ObjectRegistryDatabase.
+     * @brief Gets the address of the sender Object.
      * @details After that the destination received a message expecting a reply, it will call this function to get the
      * destination of the reply (namely the address of the sender Object).
-     * @return the address of the sender Object in the ObjectRegistryDatabase.
+     * @return the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
-    CCString GetSender();
+    const Object * const GetSender() const;
 
     /**
-     * @brief Sets the sender Object address in the ObjectRegistryDatabase.
-     * @param[in] senderName is the address of the sender Object in the ObjectRegistryDatabase.
+     * @brief Sets the sender Object address.
+     * @param[in] senderName is the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
-    void SetSender(CCString senderName);
+    void SetSender(const Object * const senderIn);
 
     /**
      * @brief Retrieves the name of the registered class method of the destination Object which has to be called.
@@ -229,7 +229,7 @@ private:
      * The originator of the message
      * empty means anonymous
      * */
-    StreamString sender;
+    const Object * sender;
 
     /**
      * The destination of the message

@@ -36,6 +36,7 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReplyMessageCatcherMessageFilter.h"
+#include "ReplyMessageCatcherMessageFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -77,7 +78,7 @@ ReferenceT<MessageI> MessageI::FindDestination(CCString destination) {
 
 ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                                                  const Object * const sender) {
-    CCString destination = "";
+    Reference destination;
     ErrorManagement::ErrorType ret;
 
     if (!message.IsValid()) {
@@ -98,20 +99,29 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 REPORT_ERROR_STATIC_0(ErrorManagement::CommunicationError, "Message does not expect and indirect reply as it should.");
             }
             else {
-
                 // if it is a reply then the destination is the original sender
-                destination = message->GetSender();
+                // Check if it exists in the tree!
+                Reference ref(const_cast<Object *>(message->GetSender()));
+                ReferenceContainer result;
+                ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, ref);
+                ReferenceContainer *ord = dynamic_cast<ReferenceContainer*>(ObjectRegistryDatabase::Instance());
+                if (ord != NULL_PTR(ReferenceContainer *)) {
+                    ord->Find(result, filter);
+                }
+                if (result.Size() > 0u) {
+                    destination = result.Get(0u);
+                }
             }
 
         }
         else { // not a reply
 
             // if it is not a reply then use the proper destination
-            destination = message->GetDestination();
+            destination = FindDestination(message->GetDestination());
 
             // assigns the sender
             if (sender != NULL) {
-                message->SetSender(sender->GetName());
+                message->SetSender(sender);
             }
             else {
                 // no Object ==> no reply possible
@@ -126,7 +136,7 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 
     if (ret.ErrorsCleared()) {
         // implicit dynamic cast here
-        ReferenceT<MessageI> destinationObject = FindDestination(destination);
+        ReferenceT<MessageI> destinationObject = destination;
 
         if (destinationObject.IsValid()) {
             ret = destinationObject->messageFilters.ReceiveMessage(message);

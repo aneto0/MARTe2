@@ -83,8 +83,9 @@ bool RealTimeApplicationTestScheduler::Started() {
 }
 MARTe::ErrorManagement::ErrorType RealTimeApplicationTestScheduler::StartNextStateExecution() {
     started = true;
-    ExecuteSingleCycle(GetSchedulableStates()[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                       GetSchedulableStates()[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+    ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
+    ExecuteSingleCycle(GetSchedulableStates()[realTimeAppT->GetIndex()]->threads[threadId].executables,
+                       GetSchedulableStates()[realTimeAppT->GetIndex()]->threads[threadId].numberOfExecutables);
     return MARTe::ErrorManagement::NoError;
 }
 
@@ -94,7 +95,8 @@ MARTe::ErrorManagement::ErrorType RealTimeApplicationTestScheduler::StopCurrentS
 }
 
 const char8 *RealTimeApplicationTestScheduler::GetStateName() {
-    return GetSchedulableStates()[RealTimeApplication::GetIndex()]->name;
+    ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
+    return GetSchedulableStates()[realTimeAppT->GetIndex()]->name;
 }
 
 CLASS_REGISTER(RealTimeApplicationTestScheduler, "1.0")
