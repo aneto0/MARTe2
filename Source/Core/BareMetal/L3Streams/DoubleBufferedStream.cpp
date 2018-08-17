@@ -279,6 +279,6 @@ void DoubleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
     readBuffer.SetTimeout(timeoutIn);
     writeBuffer.SetTimeout(timeoutIn);
 }
-
+ 
 }
 

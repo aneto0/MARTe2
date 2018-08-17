@@ -69,7 +69,10 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
      * in operating system api*/
     m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
     if (m == NULL) {
-        REPORT_ERROR(ErrorManagement::OSError, "LoadableLibrary: Failed dlopen()");
+        DynamicCString error = "LoadableLibrary: Failed dlopen(): ";
+        CCString dlError (dlerror());
+        error += dlError;
+        REPORT_ERROR(ErrorManagement::OSError, error);
         ret = false;
     }
     SetModule(m);

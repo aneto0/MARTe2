@@ -97,9 +97,64 @@ public:
     bool TestConfigureApplication();
 
     /**
+     * @brief Tests the ConfigureApplication forcing an error in ConfigureAfterInitialisation
+     */
+    bool TestConfigureApplication_False_ConfigureAfterInitialisation();
+
+    /**
+     * @brief Tests the ConfigureApplication forcing an error in PostConfigureDataSources
+     */
+    bool TestConfigureApplication_False_PostConfigureDataSources();
+
+    /**
+     * @brief Tests the ConfigureApplication forcing an error in AllocateGAMMemory
+     */
+    bool TestConfigureApplication_False_AllocateGAMMemory();
+
+    /**
+     * @brief Tests the ConfigureApplication forcing an error in AllocateDataSourceMemory
+     */
+    bool TestConfigureApplication_False_AllocateDataSourceMemory();
+
+    /**
+     * @brief Tests the ConfigureApplication forcing an error in ConfigureScheduler
+     */
+    bool TestConfigureApplication_False_ConfigureScheduler();
+
+    /**
      * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation
      */
     bool TestConfigureApplicationNoInit();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in AssignBrokersToFunctions.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in PostConfigureDataSources.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in AllocateGAMMemory.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in AllocateDataSourceMemory.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in AddBrokersToFunctions.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions();
+
+    /**
+     * @brief Tests the ConfigureApplication compiling the ConfigurationDatabase before initialisation and failing in ConfigureScheduler.
+     */
+    bool TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler();
 
     /**
      * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch
@@ -107,14 +162,29 @@ public:
     bool TestPrepareNextState();
 
     /**
+     * @brief Tests if the function refreshes the correct GAMs, DataSources and Scheduler for a state switch that is sent with a message
+     */
+    bool TestPrepareNextState_Message();
+
+    /**
      * @brief Tests if the function launches the scheduler execution
      */
-    bool TestStartExecution();
+    bool TestStartNextStateExecution();
+
+    /**
+     * @brief Tests if the function launches the scheduler execution using a message
+     */
+    bool TestStartNextStateExecution_Message();
 
     /**
      * @brief Tests if the function stops the scheduler execution
      */
-    bool TestStopExecution();
+    bool TestStopCurrentStateExecution();
+
+    /**
+     * @brief Tests if the function stops the scheduler execution using a message
+     */
+    bool TestStopCurrentStateExecution_Message();
 
     /**
      * @brief Tests the GetStates method.

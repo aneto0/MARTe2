@@ -286,7 +286,7 @@ int32 StreamString::Locate(const StreamString &x) const {
                         break;
                     }
                     index2++;
-                }
+                } 
                 // found it as we exit with index2 at the max value
                 if (index2 == x.buffer.UsedSize()) {
                     ret = index;

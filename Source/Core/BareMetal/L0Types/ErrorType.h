@@ -258,14 +258,11 @@ public:
     };
 
 };
-}
-}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
-namespace ErrorManagement {
 
 inline ErrorType::ErrorType(const ErrorIntegerFormat errorBitSet) {
      format_as_integer = errorBitSet;
@@ -337,5 +334,6 @@ inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
 }
 
 }
+
 
 #endif /* ERRORTYPE */

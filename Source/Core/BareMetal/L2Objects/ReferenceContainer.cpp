@@ -116,61 +116,16 @@ void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
 ReferenceContainer::~ReferenceContainer() {
-
-}
-
-void ReferenceContainer::CleanUp() {
-
-    uint32 numberOfElements;
-    if (!Lock()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-    }
-    numberOfElements = list.ListSize() + purgeList.ListSize();
-    UnLock();
-
-    //flat recursion due to avoid stack waste!!
-    for (uint32 i = 0u; i < numberOfElements; i++) {
-        if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-        }
-        if (purgeList.ListSize() >= numberOfElements) {
-            UnLock();
-            break;
-        }
-        //extract the element from the list
-        ReferenceContainerNode *node = list.ListExtract(0u);
-        if (node != NULL) {
-            purgeList.ListInsert(node);
-        }
-        UnLock();
-    }
-
-    for (uint32 i = 0u; i < numberOfElements; i++) {
-        if (!Lock()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
-        }
-        if (purgeList.ListSize() == 0u) {
-            UnLock();
-            break;
-        }
-
-        ReferenceContainerNode * node = purgeList.ListExtract(0u);
-        UnLock();
-
-        ReferenceT<ReferenceContainer> element;
-        if (node != NULL) {
-            element = node->GetReference();
-        }
-
-        if (element.IsValid()) {
-            element->CleanUp();
-        }
-        //extract and delete the element from the list
-        if (node != NULL) {
-            delete node;
-        }
+    LinkedListable *p = list.List();
+    list.Reset();
+    while (p != NULL) {
+        LinkedListable *q = p;
+        p = p->Next();
+        delete q;
     }
 }
+
+
 
 /*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
 bool ReferenceContainer::Insert(Reference ref,  const int32 &position) {
@@ -284,8 +239,7 @@ bool ReferenceContainer::Delete(CCString const path) {
 }
 
 bool ReferenceContainer::IsContainer(const Reference &ref) const {
-    ReferenceT<ReferenceContainer> test = ref;
-    return test.IsValid();
+    return ref.IsValid() ? ref->IsReferenceContainer() : false;
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
@@ -298,13 +252,14 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             if (filter.IsReverse()) {
                 index = static_cast<int32>(list.ListSize()) - 1;
             }
+
+            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
+
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
             while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
-
-                Reference currentNodeReference = currentNode->GetReference();
+                Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
                 bool found = filter.Test(result, currentNodeReference);
                 if (found) {
@@ -319,6 +274,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
                                     if (!filter.IsReverse()) {
                                         index--;
+                                        currentNode = (list.ListPeek(static_cast<uint32>(index)));
                                     }
                                 }
                                 else {
@@ -369,9 +325,13 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 }
                 if (!filter.IsReverse()) {
                     index++;
+                    if (currentNode != NULL_PTR(ReferenceContainerNode *)) {
+                        currentNode = dynamic_cast<ReferenceContainerNode *>(currentNode->Next());
+                    }
                 }
                 else {
                     index--;
+                    currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 }
             }
         }
@@ -440,22 +400,13 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
                     }
                     else {
 
-// TODO use StaticCString
-                        const uint32 maxSize = 64u;
-                        char8 errorMsgBuffer[maxSize];
-                        StaticCString<64> errorMsg(errorMsgBuffer);
-//                        errorMsg[0] = '\0';
-                        CCString msg = "Failed to Initialise object with name ";
-                        bool ret = errorMsg.Append(msg);
-//                        bool ret = StringHelper::Concatenate(&errorMsg[0], "Failed to Initialise object with name ");
-//                        uint32 sizeLeft = 0u;
-                        if (ret) {
-                            ret = errorMsg.Append(childName);
-//                            sizeLeft = maxSize - StringHelper::Length(&errorMsg[0]);
-//                            ret = StringHelper::ConcatenateN(&errorMsg[0], childName, sizeLeft);
+						DynamicCString msg;
+                        ok = msg.Append("Failed to Initialise object with name ");
+                        if (ok){
+                        	msg.Append(childName);
                         }
-                        if (ret) {
-                            REPORT_ERROR(ErrorManagement::FatalError, errorMsg.GetList());
+                        if (ok) {
+                            REPORT_ERROR(ErrorManagement::FatalError, msg.GetList());
                         }
                     }
                 }
@@ -530,6 +481,43 @@ bool ReferenceContainer::Lock() {
 
 void ReferenceContainer::UnLock() {
     mux.FastUnLock();
+}
+
+void ReferenceContainer::Purge() {
+    ReferenceContainer purgeList;
+    Purge(purgeList);
+}
+
+void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
+    uint32 purgeStart = purgeList.Size();
+    uint32 purgeEnd = purgeStart;
+    uint32 numberOfElements = Size();
+
+    bool ok = true;
+    //flat recursion to avoid stack waste
+    for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
+        //extract the element from the list
+        Reference node = Get(0u);
+        if (node.IsValid()) {
+            ok = purgeList.Insert(node);
+            if(ok) {
+                ok = Delete(node);
+            }
+            purgeEnd++;
+        }
+    }
+
+    //Recurse on all the sub nodes
+    for (uint32 i = purgeStart; i < purgeEnd; i++) {
+        Reference nodeObj = purgeList.Get(i);
+        if (nodeObj.IsValid()) {
+            nodeObj->Purge(purgeList);
+        }
+    }
+}
+
+bool ReferenceContainer::IsReferenceContainer() const {
+    return true;
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

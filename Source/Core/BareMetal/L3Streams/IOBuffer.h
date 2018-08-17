@@ -627,7 +627,7 @@ void IOBuffer::Empty() {
 
 /*---------------------------------------------------------------------------*/
 
-bool IOBuffer::PutC(const char8 c) {
+bool IOBuffer::PutC(const char8 c) { 
 
     bool retval = (positionPtr != NULL);
     if(retval) {

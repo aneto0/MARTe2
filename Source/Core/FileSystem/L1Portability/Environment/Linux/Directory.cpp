@@ -61,6 +61,9 @@ Directory::Directory(const char8 * const path) :
     }
     else {
         MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)));
+        if(!MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)))) {
+            REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
+        }
         fname=NULL_PTR(char8*);
     }
     /*

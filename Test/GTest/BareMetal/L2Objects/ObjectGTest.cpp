@@ -142,3 +142,8 @@ TEST(ObjectGTest,TestCallRegisteredMethod_StreamI) {
     ASSERT_TRUE(objectTest.TestCallRegisteredMethod_StreamI());
 }
 
+TEST(ObjectGTest,TestIsReferenceContainer) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestIsReferenceContainer());
+}
+

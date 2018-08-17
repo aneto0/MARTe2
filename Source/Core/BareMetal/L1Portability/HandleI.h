@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief Interface which offers access to read and write filesystem handles.
  * @details This interface offers methods for getting system dependent read
  * and write handles for device classes like files, sockets and consoles.
- * @note When the class that implements this interface has only one handle,
+ * @remark When the class that implements this interface has only one handle,
  * then is is expected that both methods (read and write handles) will return
  * the same handle.
  */
@@ -70,7 +70,7 @@ public:
 
     /**
      * @brief Queries the write handle
-     */
+     */ 
     virtual Handle GetWriteHandle() const = 0;
 };
 }

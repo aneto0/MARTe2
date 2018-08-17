@@ -41,7 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe { 
 
 /**
  * @brief An implementation of StructuredDataI where node paths are identified and separated by dots.
@@ -68,8 +68,10 @@ public:
      */
     virtual ~ConfigurationDatabase();
 
-    //TODO test and document
-    void CleanUp();
+    /**
+     * @brief Removes all the elements from the database.
+     */
+    void Purge();
 
     /**
      * @brief Locks the shared semaphore.

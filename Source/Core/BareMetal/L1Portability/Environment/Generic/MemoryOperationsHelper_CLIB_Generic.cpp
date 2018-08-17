@@ -49,17 +49,22 @@ namespace MARTe{
 
 namespace MemoryOperationsHelper {
 
-void Copy(void* const destination,
+bool Copy(void* const destination,
           const void * const source,
           const uint32 size) {
 
+	bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
         memcpy(destination, source, static_cast<osulong>(size));
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
+	return ret;
 }
 
 int32 Compare(const void * const mem1,
@@ -104,29 +109,39 @@ const void* Search(const void * const mem,
     return ret;
 }
 
-void Move(void * const destination,
+bool Move(void * const destination,
           const void * const source,
           const uint32 size) {
+	bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
 
-        memmove(destination, source, static_cast<size_t>(size));
+        ret = memmove(destination, source, static_cast<size_t>(size)) != NULL;
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memmove()");
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
-
+	return ret;
 }
 
-void Set(void * const mem,
+bool Set(void * const mem,
          const char8 c,
          const uint32 size) {
+    bool ret = false;
     if (mem != NULL) {
 
-        memset(mem, c, static_cast<size_t>(size));
+        ret = memset(mem, c, static_cast<size_t>(size)) != NULL;
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memset()");
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
+    
+    return ret;
 }
 
 }

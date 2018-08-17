@@ -97,7 +97,7 @@ namespace MARTe {
  * Formulae
  * --------
  *
- * MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>()
+ * MAXINDEX = TypeDefinition::TypeCharacteristics<uint32>::MaxValue()
  *
  * MAXCAPACITY = \f$
  * \frac {
@@ -177,13 +177,13 @@ public:
     /**
      * @brief Adds an element at the end of the list
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
+     * @return false if precondition is broken or memory allocation fails
      * @pre
      *   copyFrom != NULL
      * @post
      *   GetSize() == this'old->GetSize() + 1 &&
      *   GetCapacity() >= this'old->GetCapacity() &&
      *   {value:*elementType | Peek(GetSize()-1,value) => *value == *copyFrom}
-     * @return false if precondition is broken or memory allocation fails
      * @warning *copyFrom must be a valid allocated memory of size GetElementSize()
      */
     bool Add(const void * const copyFrom);
@@ -198,6 +198,7 @@ public:
      * @brief Inserts an element at a given position of the list
      * @param[in] position The index where the new element has to be added
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
+     * @return false if precondition is broken or memory allocation fails
      * @pre
      *   position>=0 &&
      *   position<=GetSize() &&
@@ -209,7 +210,6 @@ public:
      *   {value1,value2:*elementType; i:uint32 in [position+1..GetSize()-1] |
      *    Peek(i,value1) && this'old->Peek(i-1,value2) => *value1 == *value2}
      * @warning *copyFrom must be valid allocated memory of size GetElementSize()
-     * @return false if precondition is broken or memory allocation fails
      */
     bool Insert(const uint32 position,
                 const void * const copyFrom);
@@ -290,9 +290,9 @@ private:
      * @param[in] minimumSize - the desired minimum size for the list.
      * The actual size will be a larger value, multiple of listAllocationGranularity.
      * if minimumSize=0 then the list is simply increased to next granularity step
+     * @return false if precondition is broken or memory allocation fails
      * @pre GetCapacity() + GetAllocationGranularity() <= GetMaxCapacity()
      * @post GetCapacity() == GetCapacity()'old + GetAllocationGranularity()
-     * @return false if precondition is broken or memory allocation fails
      */
     bool IncreaseCapacity(uint32 minimumSize=0);
 

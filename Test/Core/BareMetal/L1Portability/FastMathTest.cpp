@@ -107,3 +107,47 @@ bool FastMathTest::All() {
     ok = ok && TestCos(FastMath::PI_4, COS_PI_4);
     return ok;
 }
+
+
+bool FastMathTest::TestSquareRootUint8(const uint8 testVal,const  uint8 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<uint8>(testVal));
+}
+
+
+bool FastMathTest::TestSquareRootUint16(const uint16 testVal,const  uint16 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<uint16>(testVal));
+}
+
+
+bool FastMathTest::TestSquareRootUint32(const uint32 testVal,const  uint32 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<uint32>(testVal));
+}
+
+
+bool FastMathTest::TestSquareRootUint64(const uint64 testVal,const  uint64 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<uint64>(testVal));
+}
+
+bool FastMathTest::TestSquareRootInt8(const int8 testVal,const  int8 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<int8>(testVal));
+}
+
+bool FastMathTest::TestSquareRootInt16(const int16 testVal,const  int16 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<int16>(testVal));
+}
+
+bool FastMathTest::TestSquareRootInt32(const int32 testVal,const  int32 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<int32>(testVal));
+}
+
+bool FastMathTest::TestSquareRootInt64(const int64 testVal,const  int64 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<int64>(testVal));
+}
+
+bool FastMathTest::TestSquareRootFloat32(const float32 testVal,const  float32 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<float32>(testVal));
+}
+
+bool FastMathTest::TestSquareRootFloat64(const float64 testVal,const  float64 expectedRes){
+    return (expectedRes==FastMath::SquareRoot<float64>(testVal));
+}

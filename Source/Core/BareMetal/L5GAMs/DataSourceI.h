@@ -43,6 +43,9 @@
 
 namespace MARTe {
 
+/**
+ * @brief Enumeration of signal directions
+ */
 enum SignalDirection {
     InputSignals, OutputSignals, None
 };
@@ -109,6 +112,7 @@ public:
      *        NumberOfDimensions = 0|1|2
      *        NumberOfElements = NUMBER>0
      *        +Frequency = -1|NUMBER>0
+     *        +Trigger = 0|1
      *        +States = {
      *          *StateN = {
      *            GAMConsumers = { "0" ... "N" }
@@ -127,6 +131,7 @@ public:
      *                QualifiedName = "QualifiedName of the Signal"
      *                +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                Frequency = -1|NUMBER>0
+     *                Trigger = 0|1
      *                Samples = -1|NUMBER>0
      *                Broker = "Name of the Broker returned by the DataSource"
      *              }
@@ -198,7 +203,7 @@ public:
      * @brief Gets the number of elements of the signal at position \a signalIdx.
      * @details The default number of elements of a signal is 1.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] numberOfDimensions the number of elements.
+     * @param[out] numberOfElements the number of elements.
      * @return true if the signalIdx exists.
      * @pre
      *   SetConfiguredDatabase
@@ -312,7 +317,7 @@ public:
      * @return the type of the default value for the signal with index \a signalIdx or VoidType if the Default was not specified.
      * @pre
      *   SetConfiguredDatabase
-     * @warning Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
+     * @remark Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
      */
     AnyType GetSignalDefaultValueType(const uint32 signalIdx);
 
@@ -486,11 +491,27 @@ public:
                                         float32 &frequency);
 
     /**
+     * @brief Gets the trigger that was set for the signal with index \a functionSignalIdx.
+     * @details The Trigger parameter defines if the reading/writing of this signal should trigger the DataSourceI.
+     * @param[in] direction the signal direction.
+     * @param[in] functionIdx the index of the function.
+     * @param[in] functionSignalIdx the index of the signal in this function.
+     * @param[out] trigger the value will be one if the reading/writing of this signal should trigger the DataSourceI.
+     * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
+     * @pre
+     *   SetConfiguredDatabase
+     */
+    bool GetFunctionSignalTrigger(const SignalDirection direction,
+                                  const uint32 functionIdx,
+                                  const uint32 functionSignalIdx,
+                                  uint32 &trigger);
+
+    /**
      * @brief Gets the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
      * @param[in] direction the signal direction.
      * @param[in] functionIdx the index of the function.
      * @param[in] functionSignalIdx the index of the signal in this function.
-     * @param[out] offset the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
+     * @param[out] memoryOffset the offset in bytes of this signal with respect to the beginning of the GAM signal memory address.
      * @return true if the functionIdx and the functionSignalIdx exist in the specified direction.
      * @pre
      *   SetConfiguredDatabase
@@ -565,6 +586,7 @@ public:
      *   NumberOfElements = N
      *   Samples = N
      *   Frequency = N
+     *   Trigger = N
      * @param[in] direction the signal direction.
      * @return the name of the BrokerI class that will handle the copy of this signal from the DataSourceI memory to the GAM memory.
      */
@@ -635,6 +657,16 @@ private:
      * Number of signals assigned to this function
      */
     uint32 numberOfSignals;
+
+    /**
+     * Accelerator reference for the signalsDatabaseNode.
+     */
+    ConfigurationDatabase signalsDatabaseNode;
+       
+    /**
+     * Accelerator reference for the functionsDatabaseNode.
+     */
+    ConfigurationDatabase functionsDatabaseNode;
 };
 
 }

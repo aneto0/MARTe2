@@ -75,46 +75,5 @@ ErrorManagement::ErrorType ClassMethodCaller::Call(Object *object){
 }
 
 
-
-ErrorManagement::ErrorType ClassMethodCaller::Parameters2ReferenceContainerCall(Object *object, StructuredDataI &parameters) {
-
-    ReferenceContainer param1;
-
-    Object * o = dynamic_cast<Object *>(&parameters);
-
-    Reference ref(o);
-
-    ErrorManagement::ErrorType err;
-    if (ref.IsValid()) {
-        param1.Insert(ref);
-        err = Call(object, param1);
-    }
-    else {
-        err = ErrorManagement::ParametersError;
-    }
-
-    return err;
-}
-
-ErrorManagement::ErrorType ClassMethodCaller::ReferenceContainer2ParametersCall(Object *object, ReferenceContainer &parameters) {
-    ErrorManagement::ErrorType err(true);
-
-    ReferenceT<StructuredDataI> sI = parameters.Get(0);
-
-    err.parametersError = !sI.IsValid();
-    if (err.ErrorsCleared()) {
-        err = Call(object, *(sI.operator->()));
-    }
-
-    return err;
-}
-
-StreamI* ClassMethodCaller::StreamIFromReferenceContainer(ReferenceContainer &parameters){
-
-    ReferenceT<StreamI> param = parameters.Get(0);
-
-    return param.operator->();
-}
-
 }
 

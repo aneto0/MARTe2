@@ -50,7 +50,7 @@ ExecutionInfoTest::~ExecutionInfoTest() {
 bool ExecutionInfoTest::TestDefaultConstructor() {
     using namespace MARTe;
     ExecutionInfo info;
-    bool ok = (info.GetThreadNumber() == 0u);
+    bool ok = (info.GetThreadNumber() == 0xFFFFu);
     ok &= (info.GetStage() == ExecutionInfo::StartupStage);
     ok &= (info.GetStageSpecific() == ExecutionInfo::NullStageSpecific);
     return ok;
@@ -59,7 +59,7 @@ bool ExecutionInfoTest::TestDefaultConstructor() {
 bool ExecutionInfoTest::TestSetThreadNumber() {
     using namespace MARTe;
     ExecutionInfo info;
-    bool ok = (info.GetThreadNumber() == 0u);
+    bool ok = (info.GetThreadNumber() == 0xFFFFu);
     info.SetThreadNumber(100);
     ok &= (info.GetThreadNumber() == 100u);
     return ok;
@@ -68,7 +68,7 @@ bool ExecutionInfoTest::TestSetThreadNumber() {
 bool ExecutionInfoTest::TestSetThreadNumber_StageNotStartup() {
     using namespace MARTe;
     ExecutionInfo info;
-    bool ok = (info.GetThreadNumber() == 0u);
+    bool ok = (info.GetThreadNumber() == 0xFFFFu);
     info.SetThreadNumber(100);
     ok &= (info.GetThreadNumber() == 100u);
     info.SetStage(ExecutionInfo::MainStage);
@@ -111,7 +111,7 @@ bool ExecutionInfoTest::TestGetStageSpecific() {
 bool ExecutionInfoTest::TestReset() {
     using namespace MARTe;
     ExecutionInfo info;
-    bool ok = (info.GetThreadNumber() == 0u);
+    bool ok = (info.GetThreadNumber() == 0xFFFFu);
     ok &= (info.GetStage() == ExecutionInfo::StartupStage);
     ok &= (info.GetStageSpecific() == ExecutionInfo::NullStageSpecific);
     return ok;

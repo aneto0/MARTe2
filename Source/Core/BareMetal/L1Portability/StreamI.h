@@ -66,7 +66,7 @@ namespace MARTe {
  *
  * (*) The class supplies a standard implementation for these operations.
  *
- * @warning The generic capabilities for reading, writing, and seeking can not
+ * @remark The generic capabilities for reading, writing, and seeking can not
  * assured to be available on all kind of mapped streams, so an additional set
  * of "CanXXX" methods will advise the user what can be done with the stream.
  *
@@ -123,7 +123,7 @@ public:
 
     /**
      * @brief Reads data from the stream.
-     * @detail Reads up to \a size bytes into \a output. The actual read size
+     * @details Reads up to \a size bytes into \a output. The actual read size
      * is returned in \a size.
      * @param[out] output the buffer where to write the data into.
      * @param[in,out] size the number of bytes to read. Upon return of the
@@ -137,7 +137,7 @@ public:
 
     /**
      * @brief Writes data into the stream.
-     * @detail Writes up to \a size bytes into \a input. The actual written
+     * @details Writes up to \a size bytes into \a input. The actual written
      * size is returned in \a size.
      * @param[in] input the buffer where to read the data from.
      * @param[in,out] size the number of bytes to write. Upon return of the
@@ -163,7 +163,7 @@ public:
      *   error in the stream  ==> no point to try again
      *   parameters error, for instance buffer = NULL
      * Note: The behaviour depends on derived classes implementation.
-     * @param[out] buffer is the buffer where data must be copied
+     * @param[out] output is the buffer where data must be copied
      * from the stream.
      * @param[in,out] size is the desired number of bytes to read.
      * @param[in] timeout is the desired timeout.
@@ -174,11 +174,6 @@ public:
 
     /**
      * @brief Writes from a const char8* buffer to the stream.
-     * @param[in] buffer contains the data which must be copied
-     * on the stream.
-     * @param[in,out] size is the desired number of bytes to write.
-     * @param[in] timeout is the desired timeout.
-     *
      * @details As much as size byte are written, actual written size is
      * returned in size.
      * timeout is how much the operation should last.
@@ -189,6 +184,10 @@ public:
      *   error in the stream ==> no point to try again
      *   parameters error, for instance buffer = NULL
      * Note: The behaviour depends by derived classes implementation.
+     * @param[in] input contains the data which must be copied
+     * on the stream.
+     * @param[in,out] size is the desired number of bytes to write.
+     * @param[in] timeout is the desired timeout.
      */
     virtual bool Write(const char8 * const input,
             uint32 & size,
@@ -226,7 +225,7 @@ public:
      *   pos + deltaPos <= Size() =>
      *   Position() == this'old->Position() + deltaPos &&
      *   pos + deltaPos > Size() => Position() == Size()
-     * @warning The deltaPos is a signed integer, so it will always have a
+     * @remark The deltaPos is a signed integer, so it will always have a
      * half addressable space with respect to its unsigned counterpart, i.e.
      * the Seek() method.
      */

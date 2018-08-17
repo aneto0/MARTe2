@@ -57,7 +57,7 @@ public:
 
     /**
      * @brief Method called by a GAMSchedulerI to trigger the execution of the component.
-     * @return true if the component is successsfully executed.
+     * @return true if the component is successfully executed.
      */
     virtual bool Execute() = 0;
 

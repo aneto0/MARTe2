@@ -50,7 +50,7 @@ namespace MARTe {
  * a LinkedListable instance.
  * @details The classes that realise this interface will implement a specific
  * action assuming that the parameter will be an object of type LinkedListable.
- * @note In order to apply an action on all items of a list, the user will
+ * @remark In order to apply an action on all items of a list, the user will
  * have to call the Do method for each element of the list.
  */
 class Iterator {

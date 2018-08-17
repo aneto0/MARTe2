@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 #include <MultiThreadServiceTest.h>
 #include "gtest/gtest.h"
 
@@ -51,17 +50,85 @@ TEST(MultiThreadServiceGTest,TestDefaultConstructor_Template) {
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
 
-
 TEST(MultiThreadServiceGTest,TestInitialise) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(MultiThreadServiceGTest,TestInitialise_False) {
+TEST(MultiThreadServiceGTest,TestInitialise_False_Timeout) {
     MultiThreadServiceTest target;
-    ASSERT_TRUE(target.TestInitialise_False());
+    ASSERT_TRUE(target.TestInitialise_False_Timeout());
 }
 
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_TypeConvert) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_TypeConvert());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_OutOfRangeIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_OutOfRangeIndex());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_Invalid) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_Invalid());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_NotMatrix) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_NotMatrix());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesClass_Columns) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesClass_Columns());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesLevel_OutOfRangeIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesLevel_OutOfRangeIndex());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesLevel_NotMatrix) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesLevel_NotMatrix());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_PrioritiesLevel_Columns) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_PrioritiesLevel_Columns());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_OutOfRangeIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_OutOfRangeIndex());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_NotMatrix) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_NotMatrix());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_StackSizes_Columns) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_StackSizes_Columns());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_CPUMasks_OutOfRangeIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_CPUMasks_OutOfRangeIndex());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_CPUMasks_NotMatrix) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_CPUMasks_NotMatrix());
+}
+
+TEST(MultiThreadServiceGTest,TestInitialise_False_CPUMasks_Columns) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestInitialise_False_CPUMasks_Columns());
+}
 
 TEST(MultiThreadServiceGTest,TestStart) {
     MultiThreadServiceTest target;
@@ -76,6 +143,21 @@ TEST(MultiThreadServiceGTest,TestStart_False) {
 TEST(MultiThreadServiceGTest,TestStart_Restart) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestStart_Restart());
+}
+
+TEST(MultiThreadServiceGTest,TestCreateThreads) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestCreateThreads());
+}
+
+TEST(MultiThreadServiceGTest,TestCreateThreads_False) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestCreateThreads_False());
+}
+
+TEST(MultiThreadServiceGTest,TestCreateThreads_Restart) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestCreateThreads_Restart());
 }
 
 TEST(MultiThreadServiceGTest,TestStop) {
@@ -111,5 +193,125 @@ TEST(MultiThreadServiceGTest,TestGetNumberOfPoolThreads) {
 TEST(MultiThreadServiceGTest,TestSetNumberOfPoolThreads) {
     MultiThreadServiceTest target;
     ASSERT_TRUE(target.TestSetNumberOfPoolThreads());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityClass) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevel) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(MultiThreadServiceGTest, TestSetStackSize) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMask) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityClass_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClass_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevel_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetStackSize_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSize_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMask_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMask_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityClassThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityClassThreadPool_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevelThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetPriorityLevelThreadPool_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetStackSizeThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSizeThreadPool_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMaskThreadPool_Start) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetCPUMaskThreadPool_Start());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityClassThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestSetPriorityClassThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestSetPriorityLevelThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestSetPriorityLevelThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestSetStackSizeThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestSetStackSizeThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestSetCPUMaskThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestSetCPUMaskThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetPriorityClassThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetPriorityClassThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetPriorityLevelThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetPriorityLevelThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetStackSizeThreadPool) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetStackSizeThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetCPUMaskThreadPool) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetCPUMaskThreadPool());
+}
+
+TEST(MultiThreadServiceGTest, TestGetPriorityClassThreadPool_OutOfIndex) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetPriorityClassThreadPool_OutOfIndex());
+}
+
+TEST(MultiThreadServiceGTest, TestGetPriorityLevelThreadPool_OutOfIndex) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetPriorityLevelThreadPool_OutOfIndex());
+}
+
+TEST(MultiThreadServiceGTest, TestGetCPUMaskThreadPool_OutOfIndex) {
+    MultiThreadServiceTest target; 
+    ASSERT_TRUE(target.TestGetCPUMaskThreadPool_OutOfIndex());
+}
+
+TEST(MultiThreadServiceGTest, TestGetStackSizeThreadPool_OutOfIndex) {
+    MultiThreadServiceTest target;
+    ASSERT_TRUE(target.TestGetStackSizeThreadPool_OutOfIndex());
 }
 

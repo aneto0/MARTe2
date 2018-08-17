@@ -35,13 +35,12 @@
 #include "ClassMethodCaller.h"
 //#include "ReferenceContainer.h"
 #include "ReferenceT.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-
-
-class ReferenceContainer;
 
 /**
  * These constants specify if the value of the template parameters below are being by reference and
@@ -66,11 +65,12 @@ static const uint32 PARAM4_IS_REFERENCE = 0x0001u;
  * E.g.:
  * + ClassMethodCallerT<ClassA, int, float, char, short> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
- * @param argType1 is the type of the input parameter to be passed to the target method.
- * @param argType2 is the type of the input parameter to be passed to the target method.
- * @param argType3 is the type of the input parameter to be passed to the target method.
- * @param argType4 is the type of the input parameter to be passed to the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
+ * @tparam argType1 is the type of the input parameter to be passed to the target method.
+ * @tparam argType2 is the type of the input parameter to be passed to the target method.
+ * @tparam argType3 is the type of the input parameter to be passed to the target method.
+ * @tparam argType4 is the type of the input parameter to be passed to the target method.
  * @warning no pointers are allowed as input parameters.
  */
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3, typename argType4>
@@ -127,10 +127,11 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, int32, float32, char8> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
- * @param argType1 is the type of the input parameter to be passed to the target method.
- * @param argType2 is the type of the input parameter to be passed to the target method.
- * @param argType3 is the type of the input parameter to be passed to the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
+ * @tparam argType1 is the type of the input parameter to be passed to the target method.
+ * @tparam argType2 is the type of the input parameter to be passed to the target method.
+ * @tparam argType3 is the type of the input parameter to be passed to the target method.
  * @warning no pointers are allowed as input parameters.
  */
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3>
@@ -188,9 +189,10 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, int32, float32> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
- * @param argType1 is the type of the input parameter to be passed to the target method.
- * @param argType2 is the type of the input parameter to be passed to the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
+ * @tparam argType1 is the type of the input parameter to be passed to the target method.
+ * @tparam argType2 is the type of the input parameter to be passed to the target method.
  * @warning no pointers are allowed as input parameters.
  */
 template<class className, typename MethodPointer, typename argType1, typename argType2>
@@ -247,8 +249,9 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, int32> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
- * @param argType1 is the type of the input parameter to be passed to the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
+ * @tparam argType1 is the type of the input parameter to be passed to the target method.
  * @warning no pointers are allowed as input parameters.
  */
 template<class className, typename MethodPointer, typename argType1>
@@ -305,7 +308,8 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
  */
 template<class className, typename MethodPointer>
 class ClassMethodCallerT<className, MethodPointer, void, void, void, void> : public ClassMethodCaller {
@@ -314,7 +318,7 @@ public:
     /**
      * @brief Constructor from a class method with void parameters.
      * @param[in] method is a pointer to the class method with void parameters.
-     * @param[in] maskIn not used.
+     * @param[in] mask not used.
      */
     ClassMethodCallerT(MethodPointer method, uint32 mask);
 
@@ -365,7 +369,8 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, StructuredDataI> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
  */
 template<class className, typename MethodPointer>
 class ClassMethodCallerT<className, MethodPointer, StructuredDataI, void, void, void> : public ClassMethodCaller {
@@ -418,7 +423,8 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, ReferenceContainer> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
  */
 template<class className, typename MethodPointer>
 class ClassMethodCallerT<className, MethodPointer, ReferenceContainer, void, void, void> : public ClassMethodCaller {
@@ -427,7 +433,7 @@ public:
     /**
      * @brief Constructor from a class method with one input parameter of type ReferenceContainer.
      * @param[in] method is a pointer to the class method with one input parameter of type ReferenceContainer.
-     * @param[in] maskIn not used.
+     * @param[in] mask not used.
      */
     ClassMethodCallerT(MethodPointer method, uint32 mask);
 
@@ -470,7 +476,8 @@ private:
  * E.g.:
  * + ClassMethodCallerT<ClassA, StreamI> mc(&ClassA::MethodX);
  *
- * @param className is the class owning the target method.
+ * @tparam className is the class owning the target method.
+ * @tparam MethodPointer is the pointer type of the target method.
  */
 template<class className, typename MethodPointer>
 class ClassMethodCallerT<className, MethodPointer, StreamI, void, void, void> : public ClassMethodCaller {
@@ -479,7 +486,7 @@ public:
     /**
      * @brief Constructor from a class method with one input parameter of type StreamI.
      * @param[in] method is a pointer to the class method with one input parameter of type StreamI.
-     * @param[in] maskIn not used.
+     * @param[in] mask not used.
      */
     ClassMethodCallerT(MethodPointer method, uint32 mask);
 
@@ -596,10 +603,17 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3, typename argType4>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, argType4>::Call(Object *object, ReferenceContainer &parameters) {
-    return ReferenceContainer2ParametersCall(object, parameters);
+    ErrorManagement::ErrorType err(true);
+
+    ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+    err.parametersError = !sI.IsValid();
+    if (err.ErrorsCleared()) {
+        err = Call(object, *(sI.operator->()));
+    }
+
+    return err;
 }
-
-
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3>
 ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, void>::ClassMethodCallerT(MethodPointer method, uint32 maskIn) {
@@ -666,7 +680,15 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2, typename argType3>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, argType3, void>::Call(Object *object, ReferenceContainer &parameters) {
-    return ReferenceContainer2ParametersCall(object, parameters);
+    ErrorManagement::ErrorType err(true);
+    ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+    err.parametersError = !sI.IsValid();
+    if (err.ErrorsCleared()) {
+        err = Call(object, *(sI.operator->()));
+    }
+
+    return err;
 }
 
 template<class className, typename MethodPointer, typename argType1, typename argType2>
@@ -722,7 +744,16 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1, typename argType2>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, argType2, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-    return ReferenceContainer2ParametersCall(object, parameters);
+    ErrorManagement::ErrorType err(true);
+
+    ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+    err.parametersError = !sI.IsValid();
+    if (err.ErrorsCleared()) {
+        err = Call(object, *(sI.operator->()));
+    }
+
+    return err;
 }
 
 
@@ -763,7 +794,16 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
 template<class className, typename MethodPointer, typename argType1>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-    return ReferenceContainer2ParametersCall(object, parameters);
+
+    ErrorManagement::ErrorType err;
+    ReferenceT<StructuredDataI> param = parameters.Get(0);
+    if (param.IsValid()) {
+        err = Call(object, *(param.operator->()));
+    }
+    else {
+        err = ErrorManagement::ParametersError;
+    }
+    return err;
 }
 
 template<class className, typename MethodPointer>
@@ -813,7 +853,16 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, Structur
 
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, StructuredDataI, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
-    return ReferenceContainer2ParametersCall(object, parameters);
+    ErrorManagement::ErrorType err(true);
+
+    ReferenceT<StructuredDataI> sI = parameters.Get(0);
+
+    err.parametersError = !sI.IsValid();
+    if (err.ErrorsCleared()) {
+        err = Call(object, *(sI.operator->()));
+    }
+
+    return err;
 }
 
 
@@ -828,7 +877,23 @@ ClassMethodCallerT<className, MethodPointer, ReferenceContainer, void, void, voi
 
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, ReferenceContainer, void, void, void>::Call(Object *object, StructuredDataI &parameters) {
-    return Parameters2ReferenceContainerCall(object,parameters);
+
+    ReferenceContainer param1;
+
+    Object * o = dynamic_cast<Object *>(&parameters);
+
+    Reference ref(o);
+
+    ErrorManagement::ErrorType err;
+    if (ref.IsValid()) {
+        param1.Insert(ref);
+        err = Call(object, param1);
+    }
+    else {
+        err = ErrorManagement::ParametersError;
+    }
+
+    return err;
 }
 
 template<class className, typename MethodPointer>
@@ -849,15 +914,10 @@ ClassMethodCallerT<className, MethodPointer, StreamI, void, void, void>::~ClassM
 template<class className, typename MethodPointer>
 ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, StreamI, void, void, void>::Call(Object *object, ReferenceContainer &parameters) {
     className* actual = dynamic_cast<className *>(object);
-    StreamI * si = StreamIFromReferenceContainer(parameters);
 
-    ErrorManagement::ErrorType error = ErrorManagement::ParametersError;
+    ReferenceT<StreamI> param = parameters.Get(0);
 
-    if (si != NULL_PTR(StreamI *)){
-        error = (actual->*pFun)(*si);
-    }
-
-    return error;
+    return (actual->*pFun)(*(param.operator->()));
 }
 
 template<class className, typename MethodPointer>

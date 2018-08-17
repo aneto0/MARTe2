@@ -32,8 +32,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "EventSem.h"
 #include "Atomic.h"
+#include "ErrorManagement.h"
+#include "EventSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -255,7 +256,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
                         ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
                         if (!ok) {
                             err = ErrorManagement::Timeout;
-                            REPORT_ERROR(err, "Information: timeout occurred");
+                    //        REPORT_ERROR(err, "Information: timeout occurred");
                         }
                     }
                 }

@@ -31,13 +31,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "StandardParser.h"
+#include "StringHelper.h"
 #include "ValidateBasicType.h"
 #include <TypeDescriptor_old.h>
 #include "TypeConversion.h"
-#include "StringHelper.h"
-#include "StandardParser.h"
-#include "ConfigurationDatabase.h"
-#include "ErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -963,5 +964,5 @@ bool ValidateBasicType(const AnyType &value,
 
     return ret;
 }
-
+ 
 }

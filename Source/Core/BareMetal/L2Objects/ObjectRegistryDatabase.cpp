@@ -64,10 +64,9 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
         ReferenceContainer() {
 }
 
-/*lint -e{1551} .*/
+/*lint -e{1551} Guarantees that all the nodes are cleared before destroying the application.*/
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
-    ReferenceContainer::CleanUp();
-    // The ReferenceContainer destructor does the work
+    Purge();
 }
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,

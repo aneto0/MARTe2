@@ -79,7 +79,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
         else {
             REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
         }
-
+ 
         if (size > 0u) {
             CCString pattern("MHz");
             CCString bufferString(&buffer[0]);
@@ -102,6 +102,9 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     else {
         REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
     }
+
+
+    osScheduleTicks = frequency / (1000000 / GetOsSleepUsec());
 }
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
@@ -134,12 +137,5 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
     return ret;
 }
 
-uint64 HighResolutionTimerCalibrator::GetFrequency() const {
-    return frequency;
-}
-
-float64 HighResolutionTimerCalibrator::GetPeriod() const {
-    return period;
-}
 
 }

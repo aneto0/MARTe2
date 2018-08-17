@@ -60,6 +60,8 @@ public:
 
     /**
      * @brief Constructor with one input pointer parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with one input pointer parameter.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -69,6 +71,9 @@ public:
 
     /**
      * @brief Constructor with two inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -78,6 +83,9 @@ public:
 
     /**
      * @brief Constructor with two inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -87,6 +95,10 @@ public:
 
     /**
      * @brief Constructor with three inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -96,6 +108,10 @@ public:
 
     /**
      * @brief Constructor with three inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -105,6 +121,10 @@ public:
 
     /**
      * @brief Constructor with three inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -114,6 +134,11 @@ public:
 
     /**
      * @brief Constructor with four inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -123,6 +148,11 @@ public:
 
     /**
      * @brief Constructor with four inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -132,6 +162,11 @@ public:
 
     /**
      * @brief Constructor with four inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -141,6 +176,11 @@ public:
 
     /**
      * @brief Constructor with four inputs where one of them is a pointer.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four input pointer parameters, where one of parameters is a pointer.
      * @post
      *   GetMethodCaller() == NULL given that pointer parameters are not supported.
@@ -150,6 +190,7 @@ public:
 
     /**
      * @brief Constructor with zero inputs.
+     * @tparam className is the class owning the target method.
      * @param[in] MethodPointer function with void parameters.
      * @post
      *   GetMethodCaller() != NULL.
@@ -159,6 +200,8 @@ public:
 
     /**
      * @brief Constructor with one constant reference input parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with one constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -168,6 +211,8 @@ public:
 
     /**
      * @brief Constructor with one reference output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with one reference output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -177,6 +222,8 @@ public:
 
     /**
      * @brief Constructor with one input parameter that is passed by copy.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with one input parameter that is passed by copy.
      * @post
      *   GetMethodCaller() != NULL.
@@ -187,6 +234,9 @@ public:
     /**
      * @brief Constructor with two parameters where the second is a constant reference input parameter.
      * @details The other parameter can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the second is a constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -197,6 +247,9 @@ public:
     /**
      * @brief Constructor with two parameters where the second parameter is an output parameter.
      * @details The other parameter can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the second is an output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -207,6 +260,9 @@ public:
     /**
      * @brief Constructor with two parameters where the second is a parameter passed by copy.
      * @details The other parameter can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the second is a parameter passed by copy.
      * @post
      *   GetMethodCaller() != NULL.
@@ -216,6 +272,10 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the first is a constant reference parameter.
      * @param[in] mask a bit-field which identifies if the second parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the second parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -228,6 +288,10 @@ public:
                                                 void (className::*MethodPointer2)(argType2Stripped));
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the first is an output parameter.
      * @param[in] mask a bit-field which identifies if the second parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the second parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -241,6 +305,10 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with two parameters where the first is a parameter passed by copy.
      * @param[in] mask a bit-field which identifies if the second parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the second parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -255,6 +323,10 @@ public:
     /**
      * @brief Constructor with three parameters where the third is a constant reference input parameter.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the third is a constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -265,6 +337,10 @@ public:
     /**
      * @brief Constructor with three parameters where the third parameter is an output parameter.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the third parameter is an output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -275,6 +351,10 @@ public:
     /**
      * @brief Constructor with three parameters where the third is a parameter passed by copy.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the third is a parameter passed by copy.
      * @post
      *   GetMethodCaller() != NULL.
@@ -284,6 +364,11 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the second is a constant reference parameter.
      * @param[in] mask a bit-field which identifies if the third parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -297,6 +382,11 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the second is an output parameter.
      * @param[in] mask a bit-field which identifies if the third parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -310,6 +400,11 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the second parameter is passed by copy.
      * @param[in] mask a bit-field which identifies if the third parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -322,9 +417,15 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the first parameter is a constant reference.
      * @param[in] mask a bit-field which identifies if the second and third parameters are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -334,9 +435,15 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the first parameter is an output parameter.
      * @param[in] mask a bit-field which identifies if the second and third parameters are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -347,9 +454,15 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with three parameters where the first parameter is passed by copy.
      * @param[in] mask a bit-field which identifies if the second and third parameters are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third parameter stripped of any information regarding its modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -361,6 +474,11 @@ public:
     /**
      * @brief Constructor with four parameters where the forth is a constant reference input parameter.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the forth is a constant reference input parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -371,6 +489,11 @@ public:
     /**
      * @brief Constructor with four parameters where the forth is an output parameter.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the forth is an output parameter.
      * @post
      *   GetMethodCaller() != NULL.
@@ -381,6 +504,11 @@ public:
     /**
      * @brief Constructor with four parameters where the forth is a parameter passed by copy.
      * @details The other parameters can be a constant reference, a parameter passed by copy or an output parameter.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the forth is a parameter passed by copy.
      * @post
      *   GetMethodCaller() != NULL.
@@ -390,6 +518,12 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the third parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the third is a constant reference parameter.
      * @param[in] mask a bit-field which identifies if the forth parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the forth parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -403,6 +537,12 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the third parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the third is an output parameter.
      * @param[in] mask a bit-field which identifies if the forth parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the forth parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -416,6 +556,12 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the third parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the third parameter is passed by copy.
      * @param[in] mask a bit-field which identifies if the forth parameter is a constant reference, a parameter passed by copy or an output parameter.
      * @param[in] MethodPointer2 function with the forth parameter stripped of any information regarding its modifiers (const and reference). This is only used to
@@ -429,9 +575,16 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the second is a constant reference parameter.
      * @param[in] mask a bit-field which identifies if the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -442,9 +595,16 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the second is an output parameter.
      * @param[in] mask a bit-field which identifies if the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -455,9 +615,16 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the second parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the second parameter is passed by copy.
      * @param[in] mask a bit-field which identifies if the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer3 function with the third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -468,9 +635,17 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the first parameter is a constant reference.
      * @param[in] mask a bit-field which identifies if the second, the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer4 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -481,9 +656,17 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the first is an output parameter.
      * @param[in] mask a bit-field which identifies if the second, the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer4 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -494,9 +677,17 @@ public:
 
     /**
      * @brief Helper function with template magic to resolve the first parameter type without doing all the possible combinations of parameter types.
+     * @tparam className is the class owning the target method.
+     * @tparam argType1 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2 is the type of the input parameter to be passed to the target method.
+     * @tparam argType3 is the type of the input parameter to be passed to the target method.
+     * @tparam argType4 is the type of the input parameter to be passed to the target method.
+     * @tparam argType2Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType3Stripped is the type of the input parameter to be passed to the target method.
+     * @tparam argType4Stripped is the type of the input parameter to be passed to the target method.
      * @param[in] MethodPointer function with four parameters where the first passed by copy.
      * @param[in] mask a bit-field which identifies if the second, the third and forth parameter are a constant reference, a parameter passed by copy or an output parameter.
-     * @param[in] MethodPointer2 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
+     * @param[in] MethodPointer4 function with the second, third and forth parameters stripped of any information regarding their modifiers (const and reference). This is only used to
      * help the template find this function.
      * @return a pointer to a new ClassMethodCaller instance which knows how to call the MethodPointer.
      */
@@ -544,6 +735,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -826,7 +1018,6 @@ ClassMethodCaller *ClassMethodInterfaceMapper::ClassMethodCallerCreate4(ErrorMan
 
 
 }
-
 
 #endif /* CLASSMETHODINTERFACEMAPPER_H_ */
 

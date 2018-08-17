@@ -57,10 +57,11 @@ ConfigurationDatabase::ConfigurationDatabase() : Object() {
 ConfigurationDatabase::~ConfigurationDatabase() {
 }
 
-void ConfigurationDatabase::CleanUp() {
+void ConfigurationDatabase::Purge() {
     currentNode = rootNode;
-    rootNode->CleanUp();
+    rootNode->Purge();
 }
+
 
 //TODO clarify if object is copied or the reference is copied.
 ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
@@ -341,7 +342,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         ret.notCompleted = !created;
         // not really an error so do not report
     }
-    // on error switch back
+    // on error switch back 
     // but is not doing cleanup
     if (!ret) {
         currentNode = currentNodeOld;

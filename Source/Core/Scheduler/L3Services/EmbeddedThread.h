@@ -36,20 +36,29 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief EmbeddedThreadI implementation that calls Execute while GetCommands == KeepRunningCommand.
  * @details The ThreadLoop only terminates when the GetCommands != KeepRunningCommand.
  * The user call-back function should not block. It will be continuously called by the
  * ThreadLoop with ExecutionInfo::MainStage set.
  */
-class DLL_API EmbeddedThread: public EmbeddedThreadI {
+class EmbeddedThread: public EmbeddedThreadI {
 public:
     /**
      * @brief Constructor. Forces the setting of the method binder.
      * @param[in] binder the method which will be called in the context of this thread.
      */
     EmbeddedThread(EmbeddedServiceMethodBinderI &binder);
+
+    /**
+     * @brief Constructor. Forces the setting of the method binder.
+     * @param[in] binder the method which will be called in the context of this thread.
+     * @param[in] threadNumberIn a thread unique identifier which will be set in the ExecutionInfo (see ExecutionInfo::SetThreadNumber).
+     */
+    EmbeddedThread(EmbeddedServiceMethodBinderI &binder, uint16 threadNumberIn);
 
     /**
      * @brief Destructor. NOOP.
@@ -70,6 +79,7 @@ private:
      * Information about the status of the thread being executed.
      */
     ExecutionInfo information;
+
 
     /*lint -e{1712} This class does not have a default constructor because
      * the callback method must be defined at construction time and will remain constant

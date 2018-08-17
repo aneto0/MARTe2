@@ -165,7 +165,7 @@ public:
                               uint32 & numberOfRows) const;
 
     /**
-     * @brief Sets the console window size (@see WindowSizeSupported).
+     * @brief Sets the console window size (see WindowSizeSupported).
      * @details The console window size must be smaller than the console size (@see GetSize and @see SetSize).\n
      * The actual implementation details depend on the operating system but it is expected that a window
      * will enable scroll bars if its size is smaller than the underlying console size.
@@ -201,7 +201,7 @@ public:
     virtual bool WindowSizeSupported() const;
 
     /**
-     * @brief Sets the cursor position (@see CursorPositionSupported).
+     * @brief Sets the cursor position (see CursorPositionSupported).
      * @param[in] column is the desired cursor x coordinate.
      * @param[in] row is the desired cursor y coordinate.
      * @return true if the cursor can be set in the required position, false in case of error. The error code will be: \n
@@ -234,7 +234,7 @@ public:
     virtual bool CursorPositionSupported() const;
 
     /**
-     * @brief Switches to display this console buffer (@see ConsoleBufferSupported).
+     * @brief Switches to display this console buffer (see ConsoleBufferSupported).
      * @details It is possible to write to an inactive screen buffer and then use
      * this function to display the buffer's contents.
      * @return true if the buffer is successfully displayed, false in case of error. The error code will be: \n
@@ -298,7 +298,7 @@ public:
                           const uint32 &row);
 
     /**
-     * @brief Update the console title (@see TitleBarSupported).
+     * @brief Update the console title (see TitleBarSupported).
      * @param[in] title is the desired title.
      * @return true if the title can be successfully set, false in case of error. The error code will be: \n
      * ErrorManagement::OSError if there is any operating
@@ -309,20 +309,17 @@ public:
     virtual bool SetTitleBar(CCString title);
 
     /**
-     * @brief Returns the console title (@see TitleBarSupported).
+     * @brief Returns the console title (see TitleBarSupported).
      * @param[out] title is a destination buffer.
+     * @param[out] size is the size of the title.
      * @return true if the title can be successfully retrieved. In case of errors it returns false and the error code will be: \n
      * ErrorManagement::OSError if there is any operating
      * system related problem while performing the operation;
      * ErrorManagement::UnsupportedFeature if the feature is not available
      * in the operating system specific implementation;
      */
-    template <uint32 sizeOfBuffer>
-    inline bool GetTitleBar(StaticCString<sizeOfBuffer>title) const{
-        uint32 size = sizeOfBuffer-1;
-        return GetTitleBar(title.GetList(),size);
-    }
-
+    virtual bool GetTitleBar(CString const title,
+                             const uint32 &size) const;
 
     /**
      * @brief Checks if changing or reading the console title is supported
@@ -368,13 +365,13 @@ public:
     /**
      * @brief Writes to the console.
      * @details A specified number of bytes of the buffer are written to the console output.
-     * @param[in] buffer memory data to be written on the console.
+     * @param[in] input memory data to be written on the console.
      * @param[in,out] size maximum size in bytes to write on the console. If a minor number of bytes is written,
      * size will contain the number of bytes actually written.
      * @param [in] timeout maximum time to wait for writing to the console.
      * @return - true if a number of bytes greater than 0 is successfully written.
      * Returns false in case of errors. The error code will be:
-     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (see TimeoutSupported);
      * - ErrorManagement::Warning if zero bytes are written and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      * @pre Size has not to be larger than the buffer size.
@@ -387,11 +384,11 @@ public:
      * @brief Reads from the console.
      * @details Reads from the console input into the buffer.
      * If PerformCharacterInput mode is enabled, it will return without waiting for LF.
-     * @param[in] buffer memory space where the read bytes are written into.
+     * @param[in] output memory space where the read bytes are written into.
      * @param[in,out] size number of bytes to read.
      * @param[in] timeout maximum time to wait for the operation to be successfully completed.
      * @return - true if at least one byte is read, false in case of errors. The error code will be:
-     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (see TimeoutSupported);
      * - ErrorManagement::Warning if zero bytes are read and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      */
@@ -421,7 +418,7 @@ public:
      * @brief Unsupported feature.
      * @return 0xFFFFFFFFFFFFFFFF.
      */
-    virtual uint64 Position() const ;
+    virtual uint64 Position() const;
 
     /**
      * @brief Unsupported feature.
@@ -441,17 +438,6 @@ public:
 
 private:
 
-    /**
-     * @brief Returns the console title (@see TitleBarSupported).
-     * @param[out] title is a destination buffer.
-     * @param[out] size is the size of the title.
-     * @return true if the title can be successfully retrieved. In case of errors it returns false and the error code will be: \n
-     * ErrorManagement::OSError if there is any operating
-     * system related problem while performing the operation;
-     * ErrorManagement::UnsupportedFeature if the feature is not available
-     * in the operating system specific implementation;
-     */
-    virtual bool GetTitleBar(CString const title, const uint32 &size) const;
 
     /**
      * @brief Portable paged write implementation.
@@ -462,7 +448,7 @@ private:
      * size become the number of bytes written.
      * @param[in] msecTimeout is the timeout.
      * @return true if a number of bytes greater than 0 is successfully written. Otherwise, it will return false.
-     * if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported) or ErrorManagement::OSError
+     * if the time to complete the operation is greater than the specified timeout (see TimeoutSupported) or ErrorManagement::OSError
      * if there is any operating system related problem while performing the operation.
      */
     inline bool PagedWrite(const char8* const buffer,
@@ -478,7 +464,7 @@ private:
      * size will contain the number of bytes actually written.
      * @param [in] timeout maximum time to wait for writing to the console.
      * @return - true if a number of bytes greater than 0 is successfully written;
-     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - ErrorManagement::Timeout if the time to complete the operation is greater than the specified timeout (see TimeoutSupported);
      * - ErrorManagement::Warning if zero bytes are written and no ErrorManagement::OSError is flagged;
      * - ErrorManagement::OSError if there is any operating system related problem while performing the operation.
      */

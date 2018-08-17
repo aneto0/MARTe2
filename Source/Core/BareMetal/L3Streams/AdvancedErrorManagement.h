@@ -55,7 +55,7 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
     }                                                                                       \
     \
 }
-
+ 
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

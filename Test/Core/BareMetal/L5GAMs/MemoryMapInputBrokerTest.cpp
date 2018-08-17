@@ -49,9 +49,9 @@ public:
 
 MemoryMapInputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState();
 
@@ -62,12 +62,12 @@ MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
 
 }
 
-void MemoryMapInputBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType  MemoryMapInputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapInputBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType   MemoryMapInputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 void MemoryMapInputBrokerTestScheduler1::CustomPrepareNextState(){
@@ -297,7 +297,7 @@ static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config)
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

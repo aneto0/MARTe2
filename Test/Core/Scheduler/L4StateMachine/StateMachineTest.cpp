@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "CLASSMETHODREGISTER.h"
 #include "ObjectRegistryDatabase.h"
@@ -182,11 +183,11 @@ bool StateMachineTest::TestInitialise() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
     ok &= stateMachine.IsValid();
@@ -209,11 +210,11 @@ bool StateMachineTest::TestInitialise_False_NoStates() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -272,11 +273,11 @@ bool StateMachineTest::TestInitialise_False_NoEvents() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -335,11 +336,11 @@ bool StateMachineTest::TestInitialise_False_NextState() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -404,11 +405,11 @@ bool StateMachineTest::TestInitialise_False_NextStateError() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     return !ok;
 }
@@ -482,11 +483,11 @@ bool StateMachineTest::TestEventTriggered() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -606,11 +607,11 @@ bool StateMachineTest::TestGetState() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -747,11 +748,11 @@ bool StateMachineTest::TestGetStateStatus() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiverTimeout> receiver2 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
@@ -902,11 +903,11 @@ bool StateMachineTest::TestEventTriggered_SendMessage() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1038,11 +1039,11 @@ bool StateMachineTest::TestEventTriggered_SendMessage_WaitReply() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1177,11 +1178,11 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiverError> receiver1 = ReferenceT<StateMachineTestMessageReceiverError>(
             GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1317,11 +1318,11 @@ bool StateMachineTest::TestEventTriggered_SendMessage_GoToError_Timeout() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiverTimeout> receiver1 = ReferenceT<StateMachineTestMessageReceiverTimeout>(
             GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -1496,11 +1497,11 @@ bool StateMachineTest::TestEventTriggered_SendMessage_PingPong() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ReferenceT<StateMachineTestMessageReceiver> receiver1 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     ReferenceT<StateMachineTestMessageReceiver> receiver2 = ReferenceT<StateMachineTestMessageReceiver>(GlobalObjectsDatabase::Instance()->GetStandardHeap());

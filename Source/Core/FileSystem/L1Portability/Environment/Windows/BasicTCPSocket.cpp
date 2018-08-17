@@ -395,7 +395,7 @@ bool BasicTCPSocket::Read(char8* const output,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeout");
             }
             else {
-                if (Read(output, sizeToRead)) {
+                if (BasicTCPSocket::Read(output, sizeToRead)) {
                     size = sizeToRead;
                 }
             }
@@ -405,7 +405,7 @@ bool BasicTCPSocket::Read(char8* const output,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeout");
             }
         }
-        else if (Read(output, sizeToRead)) {
+        else if (BasicTCPSocket::Read(output, sizeToRead)) {
             size = sizeToRead;
         }
     }
@@ -432,7 +432,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             if (ret != 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeoutVal");
             }
-            else if (Write(input, sizeToWrite)) {
+            else if (BasicTCPSocket::Write(input, sizeToWrite)) {
                 size = sizeToWrite;
             }
 
@@ -442,7 +442,7 @@ bool BasicTCPSocket::Write(const char8* const input,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeoutVal");
             }
         }
-        else if (Write(input, sizeToWrite)) {
+        else if (BasicTCPSocket::Write(input, sizeToWrite)) {
             size = sizeToWrite;
         }
     }

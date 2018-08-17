@@ -694,3 +694,9 @@ bool ObjectTest::TestCallRegisteredMethod_StreamI() {
     result &= (StringHelper::Compare(target->GetLastMethodExecuted().Buffer(), "MethodWithOutputStreamI(StreamI&)") == 0u);
     return result;
 }
+
+bool ObjectTest::TestIsReferenceContainer() {
+    using namespace MARTe;
+    Object o;
+    return !o.IsReferenceContainer();
+}

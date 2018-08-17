@@ -86,13 +86,13 @@ public:
      * @details If the semaphore is locked tries to lock until the timeout expire. A double consecutive lock
      * by the same thread causes a deadlock.
      * @param[in] timeout is the desired timeout.
-     * @param[in] sleepTime is the amount of time the CPU is to be released in-between each polling loop cycle.
+     * @param[in] sleepTimeUsec is the amount of time the CPU is to be released in-between each polling loop cycle.
      * If sleepTime = 0 the CPU is never released and the spin-lock is continuously polled.
      * @return ErrorManagement::Timeout if the semaphore is locked for a period which is greater than the
      * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
     ErrorManagement::ErrorType FastLock(const TimeoutType &timeout = TTInfiniteWait,
-                                        float64 sleepTime = 1e-3);
+    									const uint32 sleepTimeUsec = 1000);
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.

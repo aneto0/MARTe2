@@ -32,11 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
+#include "CLASSMETHODREGISTER.h"
+#include "GAMSchedulerI.h"
+#include "MessageI.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "StatefulI.h"
-#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -98,14 +101,14 @@ namespace MARTe {
  * }\n
  */
 /*lint -e{9109} RealTimeApplication is forward declared in RealTimeApplicationConfigurationBuilder.*/
-class DLL_API RealTimeApplication: public ReferenceContainer {
+class DLL_API RealTimeApplication: public ReferenceContainer, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. NOOP
      */
-RealTimeApplication    ();
+    RealTimeApplication();
 
     /**
      * @brief Destructor. NOOP.
@@ -189,24 +192,26 @@ RealTimeApplication    ();
      * @param[in] nextStateName the name of the next state to be executed.
      * @return true iff PrepareNextState is successful on all the StatefulI components.
      */
-    virtual bool PrepareNextState(const char8 * const nextStateName);
+    ErrorManagement::ErrorType PrepareNextState(StreamString nextStateName);
 
     /**
      * @brief Swaps the current execution index (RealTimeApplication::GetIndex) and calls GAMSchedulerI::StartExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StartNextStateExecution
      */
-    void StartExecution();
+    ErrorManagement::ErrorType StartNextStateExecution();
 
     /**
-     * @brief Calls GAMSchedulerI::StoptExecution on the defined application Scheduler.
+     * @brief Calls GAMSchedulerI::StopCurrentExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StopCurrentExecution
      */
-    void StopExecution();
+    ErrorManagement::ErrorType StopCurrentStateExecution();
 
     /**
      * @brief Gets the declared RealTimeState components.
      * @param[out] states container to add all the RealTimeApplication States.
      * @return true if the RealTimeState components exist and can be successfully copied into the \a states container.
      */
-    bool GetStates(ReferenceContainer &states);
+    bool GetStates(ReferenceContainer &states) const;
 
     /**
      * @brief Gets the current execution index. This number swaps between 0 and 1 each time StartExecution is called.
@@ -286,9 +291,14 @@ private:
     ConfigurationDatabase dataSourcesDatabase;
 
     /**
-      *The default data source name to be used when this is not specified in the Signals.
+     * The default data source name to be used when this is not specified in the Signals.
      */
     StreamString defaultDataSourceName;
+
+    /**
+     * Filter to receive the RPC
+     */
+    ReferenceT<RegisteredMethodsMessageFilter> filter;
 
 };
 

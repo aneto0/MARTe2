@@ -112,7 +112,7 @@ DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &
  */
 DLL_API int32 SearchIndex(CCString  const string1,   CCString  const string2);
 
-
+ 
 }
 
 

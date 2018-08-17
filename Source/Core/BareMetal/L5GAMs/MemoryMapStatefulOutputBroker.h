@@ -72,5 +72,5 @@ CLASS_REGISTER_DECLARATION()
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPOUTPUTBROKER_H_ */
+#endif /* MEMORYMAPSTATEFULOUTPUTBROKER_H_ */
 	

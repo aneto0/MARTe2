@@ -42,7 +42,7 @@
 #include "ErrorManagement.h"
 #include "GlobalObjectsDatabase.h"
 
-
+ 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -206,7 +206,7 @@ CCString GetNameOfClassFromId(TypeDescriptor td){
     }
     return ret;
 }
-
+ 
 // register GetNameOfClassFromId function into TypeDescriptor
 // thus allowing class name resolution from level 1
 class CRDTD_Register{

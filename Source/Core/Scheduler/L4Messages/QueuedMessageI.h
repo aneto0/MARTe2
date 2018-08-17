@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L3Services/SingleThreadService.h"
 #include "MessageI.h"
 #include "ReferenceContainer.h"
 #include "QueueingMessageFilter.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

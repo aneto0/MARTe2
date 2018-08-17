@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GAMSchedulerI.h"
 #include "EventSem.h"
+#include "GAMSchedulerI.h"
+#include "Message.h"
+#include "MultiThreadService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,10 +45,7 @@ namespace MARTe {
  * @brief Thread parameter structure
  */
 struct RTThreadParam {
-    /**
-     * The scheduler
-     */
-    GAMSchedulerI *scheduler;
+
     /**
      * The list of executables
      */
@@ -60,20 +59,26 @@ struct RTThreadParam {
      */
     uint32* cycleTime;
     /**
-     * A spinlock allowing to stop the thread execution
+     * HRT value last cycle time
      */
-    volatile int32 *spinLock;
-
-    /**
-     * The event semaphore where threads wait before start their execution
-     */
-    EventSem *eventSem;
+    uint64 lastCycleTimeStamp;
 };
 
 /**
- * @brief The GAM scheduler
+ * @brief The GAM scheduler.
+ * @details The syntax in the configuration stream has to be:
+ *
+ * +Scheduler = {\n
+ *    Class = Scheduler_name
+ *     ...\n
+ *    TimingDataSource = "Name of the TimingDataSource"
+ *    +ErrorMessage = { //Optional. Fired every time there is an execution error. Name is only an example.
+ *        Class = Message
+ *        ...
+ *    }
+ * }\n
  */
-class DLL_API GAMScheduler: public GAMSchedulerI {
+class GAMScheduler: public GAMSchedulerI {
 
 public:
     CLASS_REGISTER_DECLARATION()
@@ -89,14 +94,42 @@ public:
     virtual ~GAMScheduler();
 
     /**
-     * @brief Starts the multi-thread execution for the current state.
+     * @brief Verifies if there is an ErrorMessage defined.
+     * @param[in] data the StructuredDataI with the TimingDataSource name and with an optional ErrorMessage defined.
+     * @return At most one message shall be defined and this will be considered as the ErrorMessage.
+     * @see GAMSchedulerI::Initialise.
      */
-    virtual void StartExecution();
+    virtual bool Initialise(StructuredDataI & data);
+
+    /**
+     * @brief Starts the multi-thread execution for the current state.
+     * @return ErrorManagement::NoError if the next state was configured (see PrepareNextState) and the MultiThreadService could be successfully started.
+     * @pre
+     *   PrepareNextState()
+     */
+    virtual ErrorManagement::ErrorType StartNextStateExecution();
 
     /**
      * @brief Stops the execution application
+     * @return ErrorManagement::NoError if the current state was configured (see PrepareNextState) and the MultiThreadService could be successfully stopped.
+     * @pre
+     *   PrepareNextState()
      */
-    virtual void StopExecution();
+    virtual ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    /**
+     * @brief Callback function for the MultiThreadService.
+     * @details Loops on all the real-time threads and executes its ExecutableI
+     * @param[in] information (see EmbeddedThread)
+     * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
+     */
+    ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
+
+    /**
+     * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge
+     * @see ReferenceContainer::Purge
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 protected:
 
@@ -111,23 +144,27 @@ private:
     /**
      * The array of identifiers of the thread in execution.
      */
-    ThreadIdentifier *tid[2];
-
-    /**
-     * Synchronization spin-lock
-     */
-    volatile int32 spinLock[2];
+    MultiThreadService *multiThreadService[2];
 
     /**
      * The array of the thread parameters
      */
-    RTThreadParam *param[2];
+    RTThreadParam *rtThreadInfo[2];
 
     /**
      * The eventSemaphore
      */
     EventSem eventSem;
 
+    /**
+     * Registers the callback function to be called by the MultiThreadService
+     */
+    EmbeddedServiceMethodBinderT<GAMScheduler> binder;
+
+    /**
+     * Message to be fired in case of execution error
+     */
+    ReferenceT<Message> errorMessage;
 };
 
 }

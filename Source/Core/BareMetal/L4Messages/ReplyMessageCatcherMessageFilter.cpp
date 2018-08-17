@@ -62,7 +62,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
 
         //check reply flag
         if (!messageToTest->IsReply()) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName())
+            REPORT_ERROR_STATIC(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName());
             ret.warning = true;
         }
         HandleReplyMessage(messageToTest);
@@ -88,7 +88,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutT
         Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
-            err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
+            err.timeout = (deltaT > maxWait.HighResolutionTimerTicks());
         }
     }
 

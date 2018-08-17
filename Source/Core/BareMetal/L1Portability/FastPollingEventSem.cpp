@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 #include "FastPollingEventSem.h"
 
 /*---------------------------------------------------------------------------*/
@@ -40,6 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 FastPollingEventSem::FastPollingEventSem() {
     internalFlag = 0;
     flag = &internalFlag;
@@ -60,27 +62,30 @@ void FastPollingEventSem::Create(const bool wait) {
 }
 
 ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &timeout,
-                                                         float64 sleepTime) const {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    uint64 ticksStop = timeout.HighResolutionTimerTicks();
-    ticksStop += HighResolutionTimer::Counter();
+                                                         const uint32 sleepTimeUsec) const {
+    // default initialisation is without error
+	ErrorManagement::ErrorType err;
 
-    // sets the default if negative
-    if (sleepTime < 0.0) {
-        sleepTime = 1e-3;
-    }
+    uint64 ticksSleep = timeout.HighResolutionTimerTicks();
+    uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
 
-    bool noSleep = IsEqual(sleepTime, 0.0);
 
     while (*flag == 0) {
         if (timeout != TTInfiniteWait) {
-            if (HighResolutionTimer::Counter() > ticksStop) {
+
+        	/*
+        	 * to proper handle saturation the best approach is to first calculate missing time as unsigned
+        	 * This calculation works even if tickStop is result of an overflow.
+        	 * When the time is passed the result would be negative and thus overflows as a very large int
+        	 */
+        	uint64 toWait = HighResolutionTimer::Counter() - ticksStop;
+            if (toWait > ticksSleep) {
                 err = ErrorManagement::Timeout;
                 break;
             }
         }
-        if (!noSleep) {
-            Sleep::Sec(sleepTime);
+        if (sleepTimeUsec > 0) {
+            Sleep::PreciseUsec(sleepTimeUsec,0);
         }
     }
 
@@ -96,9 +101,9 @@ void FastPollingEventSem::Reset() {
 }
 
 ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &timeout,
-                                                              const float64 &sleepTime) {
+                                                              const uint32 sleepTimeUsec) {
     Reset();
-    return FastWait(timeout, sleepTime);
+    return FastWait(timeout, sleepTimeUsec);
 }
 
 }

@@ -97,7 +97,7 @@ bool MessageITest::TestSendMessage() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -127,7 +127,7 @@ bool MessageITest::TestSendMessage_NULL_Source() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -149,7 +149,7 @@ bool MessageITest::TestSendMessage_False_InvalidMessage() {
     receiver->SetName("receiver");
 
     ReferenceT<Message> mess;
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -179,7 +179,7 @@ bool MessageITest::TestSendMessage_False_NotExpectedIndirectReply() {
 
     mess->SetAsReply();
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -208,7 +208,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForReply() {
 
     mess->SetExpectsReply(true);
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -237,7 +237,7 @@ bool MessageITest::TestSendMessage_False_NoDestinationForExpectedReply() {
 
     mess->SetExpectsReply(true);
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
     status = MessageI::SendMessage(mess, NULL);
@@ -266,7 +266,7 @@ bool MessageITest::TestSendMessage_False_InvalidDestination() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -296,7 +296,7 @@ bool MessageITest::TestSendMessage_False_InvalidFunction() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -327,7 +327,7 @@ bool MessageITest::TestSendMessageAndWaitReply() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -358,7 +358,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_InvalidMessage() {
 
     ReferenceT<Message> mess;
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -390,7 +390,7 @@ bool MessageITest::TestSendMessageAndWaitReply_False_ReplyOfReply() {
 
     mess->SetAsReply();
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -420,7 +420,7 @@ bool MessageITest::TestSendMessage_ExpectsIndirectReply() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -465,7 +465,7 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 
@@ -513,7 +513,7 @@ bool MessageITest::TestSendMessageAndWaitIndirectReply_InvalidDestination() {
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Insert(sender);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
 

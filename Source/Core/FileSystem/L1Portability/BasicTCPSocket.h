@@ -90,9 +90,9 @@ public:
      * @param [in,out] size is the number of bytes to read.
      * @param[in] timeout is the desired timeout in milliseconds.
      * @return false in case of errors or timeout.
-     * @warning If the socket is in non-block mode, the timeout has no meaning.
      * @post
      *   size is the number of read bytes.
+     * @remark If the socket is in non-block mode, the timeout has no meaning.
      */
     virtual bool Read(char8* const output,
                       uint32 &size,
@@ -104,9 +104,9 @@ public:
      * @param[in,out] size is the number of bytes to write.
      * @param[in] timeout is the desired timeout.
      * @return false in case of errors or timeout.
-     * @warning If the socket is in non-block mode, the timeout has no meaning.
      * @post
      *   size is the number of read bytes.
+     * @remark If the socket is in non-block mode, the timeout has no meaning.
      */
     virtual bool Write(const char8* const input,
                        uint32 &size,
@@ -191,8 +191,8 @@ public:
      * @param[in] address is the IP address of the server.
      * @param[in] port is the server port.
      * @param[in] timeout is the desired timeout.
-     * @warning If the socket is in non-block mode, the timeout has no meaning.
      * @return false in case of errors.
+     * @remark If the socket is in non-block mode, the timeout has no meaning.
      */
     bool Connect(const char8 * const address,
                  const uint16 port,
@@ -207,9 +207,9 @@ public:
      * @brief Accepts the next connection in the pending queue returning the relative socket.
      * @param[in] timeout is the desired timeout.
      * @param[in] client is the new BasicTCPSocket which will be created for the new connection.
-     * @warning If the socket is in non-block mode, the timeout has no meaning.\n
-     * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
      * @return NULL in case of failure, the new created socket otherwise.
+     * @remark If the socket is in non-block mode, the timeout has no meaning.\n
+     * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
      */
     BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));

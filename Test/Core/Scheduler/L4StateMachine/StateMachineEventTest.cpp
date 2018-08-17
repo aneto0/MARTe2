@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "AdvancedErrorManagement.h"
 #include "ConfigurationDatabase.h"
 #include "CLASSMETHODREGISTER.h"
 #include "ObjectRegistryDatabase.h"
@@ -217,11 +218,11 @@ bool StateMachineEventTest::TestConsumeMessage() {
     StandardParser parser(configStream, cdb, &parserErr);
     bool ok = parser.Parse();
     if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, parserErr.Buffer());
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
         return false;
     }
 
-    ObjectRegistryDatabase::Instance()->CleanUp();
+    ObjectRegistryDatabase::Instance()->Purge();
     ObjectRegistryDatabase::Instance()->Initialise(cdb);
     ObjectRegistryDatabase::Instance()->Insert(receiver);
     ReferenceT<StateMachineEvent> event = ObjectRegistryDatabase::Instance()->Find("StateMachine.A.E1");

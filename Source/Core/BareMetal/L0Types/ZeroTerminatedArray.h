@@ -295,6 +295,6 @@ bool ZeroTerminatedArray<T>::In(const T& data) const{
 
 
 }
-
+ 
 #endif /* ZEROTERMINATEDARRAY_H_ */
 

@@ -44,7 +44,7 @@ namespace MARTe {
 
 namespace ErrorManagement {
 
-
+#if 0
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
  * Only acts if code contains a valid error code!
@@ -61,7 +61,7 @@ inline void ConditionalReportError(const ErrorType &code,
                          CCString const fileName = static_cast<const char8 *>(NULL),
                          const int16 lineNumber = 0,
                          CCString const functionName = static_cast<const char8 *>(NULL));
-
+#endif
 
 template <class T1,class T2>
 inline void CompositeReportError(const ErrorType &code,
@@ -117,7 +117,7 @@ inline void CompositeReportError(const ErrorType &code,
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
+#if 0
 void ErrorManagement::ConditionalReportError(const ErrorType &code,
                          	 	 	 	 	 CCString const errorDescription,
 											 CCString const fileName,
@@ -127,6 +127,7 @@ void ErrorManagement::ConditionalReportError(const ErrorType &code,
 		ReportError(code,errorDescription,fileName,lineNumber,functionName);
 	}
 }
+#endif
 
 template <class T1,class T2>
 void ErrorManagement::CompositeReportError(const ErrorType &code,
@@ -234,8 +235,8 @@ void ErrorManagement::CompositeReportError(const ErrorType &code,
 /*lint -save -e9026
  * 9026: function-like macro defined.
  */
-#define CONDITIONAL_REPORT_ERROR(code,message)\
-MARTe::ErrorManagement::ConditionalReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
+//#define CONDITIONAL_REPORT_ERROR(code,message)\
+//MARTe::ErrorManagement::ConditionalReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__); \
 
 
 #define COMPOSITE_REPORT_ERROR(code,part1,...)															  \

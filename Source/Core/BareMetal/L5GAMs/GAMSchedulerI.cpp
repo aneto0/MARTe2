@@ -107,7 +107,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
         timingDataSource = rtApp->Find(timingDataSourceAddress.Buffer());
         ret = timingDataSource.IsValid();
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer())
+            REPORT_ERROR(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer());
         }
     }
 
@@ -170,9 +170,7 @@ bool GAMSchedulerI::ConfigureScheduler() {
                                 //add input brokers
                                 StreamString gamFullName;
                                 ReferenceT<GAM> gam = gams.Get(k);
-                                if (ret) {
-                                    ret = gam->GetQualifiedName(gamFullName);
-                                }
+                                ret = gam->GetQualifiedName(gamFullName);
                                 if (ret) {
                                     ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
                                 }
@@ -219,7 +217,7 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
                                        const char8 * const gamFullName,
                                        const uint32 stateIdx,
                                        const uint32 threadIdx,
-                                       uint32 &executableIdx) {
+                                       uint32 &executableIdx) const{
 
     //add input brokers
     StreamString timeSignalName = gamFullName;
@@ -267,7 +265,7 @@ bool GAMSchedulerI::InsertGAM(ReferenceT<GAM> gam,
                               const char8 * const gamFullName,
                               const uint32 stateIdx,
                               const uint32 threadIdx,
-                              const uint32 executableIdx) {
+                              const uint32 executableIdx) const {
 
     StreamString timeSignalName = gamFullName;
     timeSignalName += "_ExecTime";
@@ -301,7 +299,7 @@ bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
                                         const char8 * const gamFullName,
                                         const uint32 stateIdx,
                                         const uint32 threadIdx,
-                                        uint32 &executableIdx) {
+                                        uint32 &executableIdx) const {
     StreamString timeSignalName = gamFullName;
     timeSignalName += "_WriteTime";
     uint32 signalIdx;
@@ -376,7 +374,7 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
 }
 
 bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
-                                       const uint32 numberOfExecutables) const{
+                                       const uint32 numberOfExecutables) const {
     // warning: possible segmentation faults if the previous operations
     // lack or fail and the pointers are invalid.
 
@@ -386,7 +384,7 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         // save the time before
         // execute the gam
         ret = executables[i]->Execute();
-        uint64 tmp=(HighResolutionTimer::Counter() - absTicks);
+        uint64 tmp = (HighResolutionTimer::Counter() - absTicks);
         float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e6;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {

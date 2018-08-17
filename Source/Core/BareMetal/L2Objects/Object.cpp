@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "IntrospectionTools.h"
 
 #include "Object.h"
 #include "AnyType.h"
@@ -40,7 +41,6 @@
 #include "Atomic.h"
 #include "ClassMethodCaller.h"
 #include "ClassRegistryDatabase.h"
-#include "IntrospectionTools.h"
 #include "CCString.h"
 #include "CString.h"
 
@@ -298,7 +298,15 @@ void Object::ToAnyType(AnyType &at){
 	at = AnyType (cri->GetTypeDescriptor(),this);
 }
 
+/*lint -e{715} purgeList is not used in the default implementation of the method*/
+void Object::Purge(ReferenceContainer &purgeList) {
 
-CLASS_REGISTER(Object, "1.0")
+}
+
+bool Object::IsReferenceContainer() const {
+    return false;
+}
+
+CLASS_REGISTER(Object, "1.0") 
 
 }

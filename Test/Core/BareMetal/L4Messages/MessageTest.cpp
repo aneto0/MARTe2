@@ -118,7 +118,7 @@ bool MessageTest::TestInitialise(const MessageInitTableTest * table) {
             result &= !mess.IsReply();
         }
 
-        mess.CleanUp(); //??
+        mess.Purge(); //??
         i++;
     }
 

@@ -199,7 +199,7 @@ Object *Reference::CreateByName(CCString const className,HeapI* const heap) cons
     }
 
     return obj;
-}
+} 
 
 void Reference::ToAnyType(AnyType &at){
 	if (objectPointer != NULL){

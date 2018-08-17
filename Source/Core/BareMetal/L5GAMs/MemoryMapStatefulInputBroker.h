@@ -69,5 +69,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* MEMORYMAPINPUTBROKER_H_ */
+#endif /* MEMORYMAPSTATEFULINPUTBROKER_H_ */
 

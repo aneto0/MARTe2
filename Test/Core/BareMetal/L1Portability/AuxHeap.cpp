@@ -68,7 +68,7 @@ void *AuxHeap::Malloc(const uint32 size) {
     //void *pointer = malloc(size);
     //void *pointer = new char8[size];
 
-    void* pointer = NULL_PTR(void*);
+    void* pointer = NULL_PTR(void*); 
 
     if (size != 0u) {
         pointer = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(static_cast<osulong>(size));

@@ -86,6 +86,11 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     frequency *= 2000000;
 
     period = 1.0 / frequency;
+
+    //
+    // Assumes a granularity of 10ms
+    //
+    osScheduleTicks = frequency / (1000000 / GetOsSleepUsec());
 }
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
@@ -113,12 +118,5 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
     return ret;
 }
 
-uint64 HighResolutionTimerCalibrator::GetFrequency() const {
-    return frequency;
-}
-
-float64 HighResolutionTimerCalibrator::GetPeriod() const {
-    return period;
-}
 
 }

@@ -28,11 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#define DLL_API
-
-#include <SingleThreadService.h>
+#include "AdvancedErrorManagement.h"
 #include "ExecutionInfo.h"
+#include "SingleThreadService.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,7 +45,6 @@ namespace MARTe {
 SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderI &binder) :
         EmbeddedServiceI(),
         embeddedThread(binder) {
-    SetTimeout(TTInfiniteWait);
 }
 
 /*lint -e{1551} the only reason why this could throw an exception is if
@@ -64,30 +61,6 @@ SingleThreadService::~SingleThreadService() {
     }
 }
 
-bool SingleThreadService::Initialise(StructuredDataI &data) {
-    uint32 msecTimeout;
-    ErrorManagement::ErrorType err;
-    err.parametersError = !data.Read("Timeout", msecTimeout);
-    if (err.ErrorsCleared()) {
-        if (msecTimeout == 0u) {
-            SetTimeout(TTInfiniteWait);
-        }
-        else {
-            SetTimeout(msecTimeout);
-        }
-    }
-
-    return err;
-}
-
-void SingleThreadService::SetTimeout(const TimeoutType &msecTimeoutIn) {
-    embeddedThread.SetTimeout(msecTimeoutIn);
-}
-
-TimeoutType SingleThreadService::GetTimeout() const {
-    return embeddedThread.GetTimeout();
-}
-
 ErrorManagement::ErrorType SingleThreadService::Start() {
     return embeddedThread.Start();
 }
@@ -98,6 +71,51 @@ ErrorManagement::ErrorType SingleThreadService::Stop() {
 
 EmbeddedThreadI::States SingleThreadService::GetStatus() {
     return embeddedThread.GetStatus();
+}
+
+void SingleThreadService::SetTimeout(const TimeoutType &msecTimeoutIn) {
+    EmbeddedServiceI::SetTimeout(msecTimeoutIn);
+    embeddedThread.SetTimeout(msecTimeoutIn);
+}
+
+void SingleThreadService::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    if (GetStatus() == EmbeddedThreadI::OffState) {
+        EmbeddedServiceI::SetPriorityClass(priorityClassIn);
+        embeddedThread.SetPriorityClass(priorityClassIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority class cannot be changed if the service is running");
+    }
+}
+
+void SingleThreadService::SetPriorityLevel(const uint8 priorityLevelIn) {
+    if (GetStatus() == EmbeddedThreadI::OffState) {
+        EmbeddedServiceI::SetPriorityLevel(priorityLevelIn);
+        embeddedThread.SetPriorityLevel(priorityLevelIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority level cannot be changed if the service is running");
+    }
+}
+
+void SingleThreadService::SetStackSize(const uint32 stackSizeIn) {
+    if (GetStatus() == EmbeddedThreadI::OffState) {
+        EmbeddedServiceI::SetStackSize(stackSizeIn);
+        embeddedThread.SetStackSize(stackSizeIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Stack size cannot be changed if the service is running");
+    }
+}
+
+void SingleThreadService::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    if (GetStatus() == EmbeddedThreadI::OffState) {
+        EmbeddedServiceI::SetCPUMask(cpuMaskIn);
+        embeddedThread.SetCPUMask(cpuMaskIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "CPUMask cannot be changed if the service is running");
+    }
 }
 
 }

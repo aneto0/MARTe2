@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "Object.h"
 #include "QueuedMessageI.h"
 #include "StateMachineEvent.h"
@@ -94,7 +93,7 @@ namespace MARTe {
  *     }
  * }
  */
-class DLL_API StateMachine: public ReferenceContainer, public QueuedMessageI {
+class StateMachine: public ReferenceContainer, public QueuedMessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -129,7 +128,7 @@ StateMachine    ();
     };
 
     /**
-     * @brief Initialises the StateMachine (@see ReferenceContainer::Initialise)
+     * @brief Initialises the StateMachine (see ReferenceContainer::Initialise)
      * @details Verifies that at least one state shall exist.
      * For every state at least one event shall be defined.
      * For every event in every state the NextState shall be defined and shall exists.
@@ -180,6 +179,13 @@ StateMachine    ();
      *  if the state rules defined above are valid.
      */
     virtual bool Initialise(StructuredDataI &data);
+
+
+    /**
+     * @brief Calls ReferenceContainer::Purge after removing all the StateMachineEvents from the queue
+     * @param[in] purgeList (see Object::Purge)
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
     /**
      * @brief To be called by a StateMachineEvent which has received a relevant event and wishes to change state.

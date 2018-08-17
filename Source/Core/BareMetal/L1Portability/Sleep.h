@@ -7,14 +7,14 @@
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
- * by the European Commission - subsequent versions of the EUPL (the "Licence")
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ * by the European Commission - subsequent versions of the EUPL (the "License")
+ * You may not use this work except in compliance with the License.
+ * You may obtain a copy of the License at: http://ec.europa.eu/idabc/eupl
  *
  * @warning Unless required by applicable law or agreed to in writing, 
- * software distributed under the Licence is distributed on an "AS IS"
+ * software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the Licence permissions and limitations under the Licence.
+ * or implied. See the License permissions and limitations under the License.
 
  * @details This header file contains the declaration of the module Sleep
  * with all of its public, protected and private members. It may also include
@@ -50,61 +50,48 @@ namespace Sleep {
 DLL_API int32 GetDateSeconds(void);
 
 /**
- * @brief Sleeps for the time requested or more.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] sec is the time in seconds to sleep (at least).
- * TODO float64 is absolutely excessive!!! Change to float32
- * TODO this will cause unnecessary burden for small embedded systems
+ * @brief Sleeps the requested time trying not to sleep more.
+ * @details This function uses HighResolutionTimer functions. It adopts a mix between a busy-sleep and a OS yield one.
+ * @param[in] usec is the time in micro-seconds to sleep (no more). Max sleep time is 4000 seconds.
+ * @param[in] margin is the number of OS schedule granularities to leave to the busy-sleep part.
  */
-DLL_API void AtLeast(const float64 sec);
+DLL_API void PreciseUsec(uint32 usec, uint32 margin=1);
 
 /**
- * @brief Sleeps no more than the requested time.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] sec is the time in seconds to sleep (no more).
+ * @brief Sleeps for sec seconds (float32 value).
+ * @details This function uses HighResolutionTimer functions. It adopts a mix between a busy-sleep and a OS yield one.
+ * @param[in] seconds is the time to sleep. Max sleep time is 4E6 seconds. Below 4000 a precise sleep algorithm is used.
+ * @param[in] margin is the number of OS schedule granularities to leave to the busy-sleep part.
  */
-DLL_API void NoMore(const float64 sec);
+DLL_API void PreciseSeconds(const float32 seconds, uint32 margin=1);
 
-/**
- * @brief Sleeps for sec seconds (float64 value).
- * @param[in] sec is the time to sleep.
- */
-DLL_API void Sec(const float64 sec);
-
-/**
- * @brief Sleeps for msec milliseconds.
- * @param[in] msec is the number of milliseconds to sleep.
- */
-DLL_API void MSec(const int32 msec);
 
 /**
  * @brief Sleep without yield cpu.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the seconds to sleep.
  */
-inline void Busy(float64 sec);
-
-/**
- * @brief Sleep yielding cpu for nonBusySleepSec.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] totalSleepSec is the total time in seconds to sleep.
- * @param[in] nonBusySleepSec is the time to sleep without use cpu.
- */
-DLL_API void SemiBusy(const float64 totalSleepSec,
-                      const float64 nonBusySleepSec);
-}
+inline void Busy(float32 seconds);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-void Sleep::Busy(const float64 sec) {
+void Sleep::Busy(const float32 seconds) {
     uint64 startCounter = HighResolutionTimer::Counter();
-    uint64 endCounter = static_cast<uint64>(sec) * HighResolutionTimer::Frequency();
-    uint64 sleepUntilCounter = startCounter + endCounter;
-    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
+    float64 frequencyF = static_cast<float64>(HighResolutionTimer::Frequency());
+    float64 secondsAsTicksF = (seconds * frequencyF);
+    uint64 secondsAsTicks = static_cast<uint64>(secondsAsTicksF);
+    uint64 sleepUntilCounter = startCounter + secondsAsTicks;
+
+    // this will overflow - but it is ok
+    uint64 toSleepLeft = (HighResolutionTimer::Counter() - sleepUntilCounter);
+    while (toSleepLeft < secondsAsTicks) {
+        toSleepLeft = (HighResolutionTimer::Counter() - sleepUntilCounter);
     }
 }
 
-}
+} // Sleep
+
+} // MARTe
 #endif /* SLEEP_H_ */

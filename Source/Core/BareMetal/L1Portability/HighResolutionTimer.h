@@ -35,6 +35,7 @@
 //#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
 #include "TimeStamp.h"
+
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
 
@@ -86,6 +87,22 @@ namespace MARTe {
          * @return true if the operating system calls returns with no errors.
          */
         inline bool GetTimeStamp(TimeStamp &date);
+
+        /**
+         * @brief Returns as ticks the worst case OS sleep granularity
+         * @see TimeValues.
+         * @return the minimum number of ticks the OS will sleep in the worst case on a thread with priority.
+         */
+        inline uint64 GetOsSleepGranularityTicks();
+
+        /**
+         * @brief Returns as usecs the worst case OS sleep granularity
+         * @see TimeValues.
+         * @return the minimum number of usecs the OS will sleep in the worst case on a thread with priority.
+         */
+        inline uint32 GetOsSleepGranularityUsec();
+
+
     }
 
 }

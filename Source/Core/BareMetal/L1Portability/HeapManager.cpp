@@ -57,7 +57,7 @@ static const int32 MaximumNumberOfHeaps = 16;
  * which are addressable by a numeric index. It also offers methods for
  * locking the access to the database. It is intended to be created following
  * the singleton pattern by means of the Instance method.
- */
+ */ 
 class HeapDatabase: public GlobalObjectI {
 
 public:
@@ -141,8 +141,7 @@ HeapDatabase *HeapDatabase::Instance() {
     static HeapDatabase *instance = NULL_PTR(HeapDatabase *);
     if (instance == NULL_PTR(HeapDatabase *)) {
         instance = new HeapDatabase();
-        uint32 order = NUMBER_OF_GLOBAL_OBJECTS - 1u;
-        GlobalObjectsDatabase::Instance().Add(instance, order);
+        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 1u);
     }
     return instance;
 }

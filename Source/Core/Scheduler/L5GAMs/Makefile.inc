@@ -27,7 +27,7 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-OBJSX = GAMScheduler.x
+OBJSX = GAMScheduler.x MemoryMapAsyncOutputBroker.x MemoryMapAsyncTriggerOutputBroker.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -39,7 +39,7 @@ INCLUDES += -I../../BareMetal/L4Configuration
 INCLUDES += -I../../BareMetal/L4Messages
 INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
-
+INCLUDES += -I../../Scheduler/L3Services
 
 
 all: $(OBJS) $(SUBPROJ)   \

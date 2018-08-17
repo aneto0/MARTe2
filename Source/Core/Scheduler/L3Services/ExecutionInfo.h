@@ -107,7 +107,7 @@ public:
      * @pre
      *   GetStage() == StartupStage
      */
-    void SetThreadNumber(const ThreadIdentifier &number);
+    void SetThreadNumber(uint32 number);
 
     /**
      * @brief Sets the current stage (as encoded above).
@@ -129,7 +129,7 @@ public:
      * @brief Gets the thread unique number in a thread pool of an EmbeddedServiceI.
      * @return the thread unique number in a thread pool.
      */
-    ThreadIdentifier GetThreadNumber() const;
+    uint32 GetThreadNumber() const;
 
     /**
      * @brief Gets the current stage (as encoded above).
@@ -146,7 +146,7 @@ public:
     /**
      * @brief Resets the thread number and the stages to their initial values.
      * @post
-     *   GetThreadNumber() == 0 &&
+     *   GetThreadNumber() == 0xFFFF &&
      *   GetStage() == StartupStage &&
      *   GetStageSpecific() == NullStageSpecific
      */
@@ -157,7 +157,7 @@ private:
     /**
      * ThreadNumber is an unique id that identifies a thread within an EmbeddedService.
      */
-    ThreadIdentifier threadNumber;
+    uint32 threadNumber;
 
     /**
      * The operating stage of the thread.

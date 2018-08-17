@@ -96,7 +96,7 @@ public:
      *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
-    static ErrorManagement::ErrorType WaitForReply(ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+    static ErrorManagement::ErrorType WaitForReply(const ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief sends a message expecting direct reply and waits for it
@@ -105,6 +105,7 @@ public:
      * @param[in,out] message is the message to be sent. It will be modified to contain the reply.
      * @param[in] sender is the Object sending the message.
      * @param[in] maxWait is the maximum time allowed waiting for the message reply.
+     * @param[in] pollingTimeUsec is the period between check of the arrival as us
      * @return
      *   ErrorManagement::NoError() if the reply is obtained on time.
      *   ErrorManagement::ParametersError if message is no valid pointer
@@ -138,7 +139,8 @@ public:
      * @brief A message is sent requiring indirect reply.
      * @details Installs a ReplyMessageCatcherMessageFilter. Sends The message. Waits on the filter.
      * @param[in,out] message is the message to be sent. It can be modified if the destination re-sends it to the sender as a reply.
-     * @param[in] sender is the Object sending the message.
+     * @param[in] maxWait is the maximum time allowed waiting for the message reply.
+     * @param[in] pollingTimeUsec is the period between check of the arrival as us
      */
     ErrorManagement::ErrorType SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
                                                                   const uint32 pollingTimeUsec = 1000u);

@@ -63,14 +63,14 @@ public:
     ClassMethodCaller();
 
     /**
-     * @brief. Destructor.
+     * @brief Destructor.
      */
     virtual ~ClassMethodCaller();
 
     /**
      * @brief Calls the class method using a Stream as the source of the parameters
      * @param[in] object is the pointer to the object owning the method.
-     * @param[in] parameters a reference to a Stream that will be used to fill the parameters to call the functions.
+     * @param[in] stream a reference to a Stream that will be used to fill the parameters to call the functions.
      * @return
      * + ErrorManagement::ParametersError if no match between parameters provided and the function call is possible
      * + ErrorManagement::UnsupportedFeature if dynamic_cast to specialised class type is possible with provided argument object
@@ -112,23 +112,11 @@ public:
      */
     virtual ErrorManagement::ErrorType Call(Object *object);
 
-protected:
-
-    /** @brief calls Call(Object,ReferenceContainer) loading in the container the parameters */
-    ErrorManagement::ErrorType Parameters2ReferenceContainerCall(Object *object, StructuredDataI &parameters);
-
-    /** @brief calls Call(Object,Parameters) loading in the container the parameters */
-    ErrorManagement::ErrorType ReferenceContainer2ParametersCall(Object *object, ReferenceContainer &parameters);
-
-    /**
-     * TODO
-     */
-    StreamI* StreamIFromReferenceContainer(ReferenceContainer &parameters);
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+} // MARTe
 #endif /* CLASSMETHODCALLER_H_ */

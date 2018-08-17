@@ -48,7 +48,7 @@ namespace MARTe {
  *  @tparam baseType the standard type which is used as a base for the new type
  *  @tparam numberOfBits the actual bit size of the new type
  *  @tparam bitOffset the actual bit offset of the new type
- *  @warning numberOfBits + bitOffset must be minor than the bit size of baseType.
+ *  @remark numberOfBits + bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
  basic type because this type must be used as a binary number.*/

@@ -67,6 +67,15 @@ inline bool GetTimeStamp(TimeStamp &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
 }
 
+inline uint64 GetOsSleepGranularityTicks() {
+    return calibratedHighResolutionTimer.GetOsSleepTicks();
+}
+
+inline uint32 GetOsSleepGranularityUsec() {
+    return calibratedHighResolutionTimer.GetOsSleepUsec();
+}
+
+
 }
 
 }

@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+#include "AdvancedErrorManagement.h"
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
 #include "StringToNumber.h"

@@ -60,7 +60,7 @@ public:
 
     /**
      * @brief Converts the seconds from epoch in input to the time stamp.
-     * @param[in] The seconds elapsed from epoch (January 1, 1970).
+     * @param[in] secondsFromEpoch The seconds elapsed from epoch (January 1, 1970).
      * @return false in case of errors, true otherwise.
      */
     bool ConvertFromEpoch(const oslong secondsFromEpoch);
@@ -97,7 +97,7 @@ public:
 
     /**
      * @brief Sets the minutes in time stamp.
-     * @param[in] microsecondsIn is the input for minutes member.
+     * @param[in] minutesIn is the input for minutes member.
      * @pre
      *   minutesIn in [0, 59];
      * @post

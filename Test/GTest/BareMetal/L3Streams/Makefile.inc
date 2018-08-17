@@ -23,16 +23,17 @@
 #############################################################
 
 
-OBJSX=  BitSetToIntegerGTest.x \
-		BufferedStreamIGTest.x \
-		BufferedStreamIOBufferGTest.x \
-		CharBufferGTest.x \
-		DoubleBufferedStreamGTest.x \
-		IOBufferGTest.x \
-		SingleBufferedStreamGTest.x \
-		StreamMemoryReferenceGTest.x \
-		StreamStringGTest.x \
-		StreamStringIOBufferGTest.x 
+OBJSX=  AdvancedErrorManagementGTest.x \
+        BitSetToIntegerGTest.x \
+	BufferedStreamIGTest.x \
+	BufferedStreamIOBufferGTest.x \
+	CharBufferGTest.x \
+	DoubleBufferedStreamGTest.x \
+	IOBufferGTest.x \
+	SingleBufferedStreamGTest.x \
+	StreamMemoryReferenceGTest.x \
+	StreamStringGTest.x \
+	StreamStringIOBufferGTest.x
 
 
 PACKAGE=GTest/BareMetal

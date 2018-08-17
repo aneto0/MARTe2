@@ -64,7 +64,7 @@ public:
      * @brief Retrieves the Reference at the given address.
      * @param[in] path is the address of the Reference into the database. The syntax is
      * "A.B.C" where A, B and C must be replaced with the specific object names.
-     * param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
+     * @param[in] current is the research start point. In this case we admit the syntax "::A.B.C"
      * where the ':' symbol set the search start point to the previous domain with respect to \a current.
      * If no ':' is found at the beginning of the path, the start point is the root.
      * @return the reference found at the provided \a path or an invalid reference in case of failure.
@@ -90,7 +90,7 @@ private:
     /**
      * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
      * @param[in] p is the pointer to be freed.
-     */
+     */ 
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::delete(*) */
     static void operator delete(void * const p);
 

@@ -93,7 +93,7 @@ public:
      *   GetDataDescriptor() == x.GetDataDescriptor()
      */
     inline AnyType(AnyType &x);
-
+ 
     /**
      * @brief Copy constructor.
      * @param[in] x is the AnyType to be copied.

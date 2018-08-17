@@ -66,12 +66,6 @@ public:
     bool TestDeleteFalse();
 
     /**
-     * @brief Tests the ClassRegistryDatabase::Add function.
-     * @return true if after adding a ClassRegistryItem element to the database, it can be found and the database size is incremented.
-     */
-//    bool TestAdd();
-
-    /**
      * @brief Tests the Add function with two classes with the same name.
      * @return true if the last class to be added is saved in the database, false otherwise.
      */
@@ -83,7 +77,7 @@ public:
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return true if the find on registered class names succeeds and fails if the class is not registered.
      */
-//    bool TestFind();
+    bool TestFind();
 
     /**
      * @brief Tests the Find function using a string length > 129u and the pattern dllname::name.

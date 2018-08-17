@@ -78,7 +78,7 @@ protected:
      * @brief Retrieves the size of the low-level, unbuffered, stream implementation.
      * @return the size of the low-level stream.
      */
-    virtual uint64 OSSize()const = 0;
+    virtual uint64 OSSize() const = 0;
 
     /**
      * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.

@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CompilerTypes.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -42,10 +42,16 @@
 
 namespace MARTe {
 
+/**
+ * @brief Macro for getting the name of the function on error reporting.
+ */
 #ifndef __ERROR_FUNCTION_NAME__
 #define __ERROR_FUNCTION_NAME__ __func__
 #endif
 
+/**
+ * @brief Type for a generic callback function.
+ */
 typedef void (GenericFn)(void*);
 
 
@@ -101,37 +107,7 @@ typedef void (GenericFn)(void*);
         return (!IsNaN(x)) && (IsNaN(x - x));
     }
 
-    /**
-     * @brief Checks if the given float numbers are equal
-     */
-    static inline bool IsEqual(const float32 f1, const float32 f2) {
-        float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
-        return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
-    }
-
-    /**
-     * @brief Checks if the given float numbers are equal
-     */
-    static inline bool IsEqual(const float64 f1, const float64 f2) {
-        float64 *min=reinterpret_cast<float64*>(const_cast<uint64*>(&EPSILON_FLOAT64));
-        return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
-    }
-
-    /**
-     * @brief Checks if the given float numbers are equal
-     */
-    static inline bool IsEqual(const float64 f1, const float32 f2) {
-        float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
-        return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
-    }
-
-    /**
-     * @brief Checks if the given float numbers are equal
-     */
-    static inline bool IsEqual(const float32 f1, const float64 f2) {
-        float32 *min=reinterpret_cast<float32*>(const_cast<uint32*>(&EPSILON_FLOAT32));
-        return ((f1-f2)<(*min)) && ((f1-f2)>-(*min));
-    }
+ 
 }
 
 /*---------------------------------------------------------------------------*/

@@ -66,7 +66,7 @@ bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
             }
         }
         else{
-	    	REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError,"Trying to add a not StatefulI object in RealTimeState %s", GetName())
+	    	REPORT_ERROR(ErrorManagement::FatalError,"Trying to add a not StatefulI object in RealTimeState %s", GetName());
         }
     }
     return ret;
@@ -90,6 +90,6 @@ uint32 RealTimeState::GetNumberOfStatefuls() {
     return statefuls.Size();
 }
 
-CLASS_REGISTER(RealTimeState, "1.0");
+CLASS_REGISTER(RealTimeState, "1.0")
 
 }

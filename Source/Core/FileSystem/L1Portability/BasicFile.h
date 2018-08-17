@@ -135,7 +135,7 @@ namespace MARTe {
 
         /**
          * @brief Changes the flags of the file.
-         * @detail When the file is already opened not all the flags can be
+         * @details When the file is already opened not all the flags can be
          * changed, ONLY the following list can be modified:
          *    FLAG_APPEND
          * The rest of the flags are ignored.
@@ -147,7 +147,7 @@ namespace MARTe {
 
         /**
          * @brief Gets the flags of the opened file.
-         * @detail If the file is not opened the returned value is 0.
+         * @details If the file is not opened the returned value is 0.
          * @return An uint32 containing the flags information.
          */
         uint32 GetFlags() const;
@@ -232,7 +232,7 @@ namespace MARTe {
          * @details The timeout is the time waiting for reading, not the time while reading. If the timeout is exceeded the read fails.
          * @param[out] output Is a pointer which indicates where the read characters have to be saved.
          * @param[in,out] size Indicates how many characters have to be read. At the end it is modified with the characters actually read.
-         * @param[in] timeout indicates the maximum time that the method can wait for beginning reading.
+         * @param[in] msecTimeout indicates the maximum time that the method can wait for beginning reading.
          * @pre
          *    IsOpen() &&
          *    CanRead() &&
@@ -272,7 +272,7 @@ namespace MARTe {
          * @details The timeout is the time waiting for writing, not the time while writing. If the timeout is exceeded the write fails.
          * @param[in] input Is a pointer which contains the characters to be write to.
          * @param[in,out] size Indicates how many characters have to be written. At the end it is modified with the characters actually written.
-         * @param[in] timeout indicates the maximum time that the method can wait for beginning writing.
+         * @param[in] msecTimeout indicates the maximum time that the method can wait for beginning writing.
          * @pre
          *    IsOpen() &&
          *    CanWrite() &&
@@ -311,7 +311,7 @@ namespace MARTe {
 
         /**
          * @brief Move the pointer to the specified position.
-         * @detail The function move the pointer deltaPos from the current position. If the deltaPos plus current position is beyond the size of the file the pointer is moved
+         * @details The function move the pointer deltaPos from the current position. If the deltaPos plus current position is beyond the size of the file the pointer is moved
          * to the end of the file.
          * @pre
          *   IsOpen() &&
@@ -332,7 +332,7 @@ namespace MARTe {
 
         /**
          * @brief Changes the size of the file
-         * @detail If the new size is smaller than the old size the extra data is lost. Instead, if the size is larger than the old size, the size is extended and the gaps are filled with "\0" characters.
+         * @details If the new size is smaller than the old size the extra data is lost. Instead, if the size is larger than the old size, the size is extended and the gaps are filled with "\0" characters.
          * @pre
          *    IsOpen() &&
          *    CanWrite()
@@ -351,7 +351,7 @@ namespace MARTe {
 
         /**
          * @brief Queries the read handle of the file.
-         * @detail For the BasicFile the read handle and the write handle are the same,
+         * @details For the BasicFile the read handle and the write handle are the same,
          * however the BasicConsol has two different handles: one for read and one for write.
          * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
          */
@@ -359,7 +359,7 @@ namespace MARTe {
 
         /**
          * @brief Queries the write handle of the file.
-         * @detail For the BasicFile the read handle and the write handle are the same,
+         * @details For the BasicFile the read handle and the write handle are the same,
          * however the BasicConsol has two different handles: one for read and one for write.
          * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
          */

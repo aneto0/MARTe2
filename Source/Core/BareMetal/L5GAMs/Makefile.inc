@@ -32,12 +32,14 @@ OBJSX=BrokerI.x \
     GAMSchedulerI.x \
     GAMDataSource.x \
     MemoryMapBroker.x \
+    MemoryMapInterpolatedInputBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
     MemoryMapStatefulBroker.x \
     MemoryMapStatefulInputBroker.x \
     MemoryMapStatefulOutputBroker.x \
     MemoryMapSynchronisedInputBroker.x \
+    MemoryMapSynchronisedOutputBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \
     RealTimeState.x \
@@ -55,6 +57,7 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 INCLUDES += -I../L4Configuration
+INCLUDES += -I../L4Messages
 
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \

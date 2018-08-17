@@ -163,7 +163,7 @@ public:
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.
      */
-    inline Object* operator->();
+    inline Object* operator->() const;
 
     /**
      * @brief Provides access to the underlying object by mean of his AnyType
@@ -210,7 +210,7 @@ private:
 
 namespace MARTe {
 
-Object* Reference::operator->() {
+Object* Reference::operator->() const {
     return objectPointer;
 }
 

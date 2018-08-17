@@ -25,32 +25,32 @@
 #############################################################
 
 OBJSX=  AtomicTest.x \
-		AuxHeap.x\
-		BasicConsoleTest.x \
-		EndianityTest.x \
-		ErrorManagementTest.x \
-		FastMathTest.x \
-		FastPollingMutexSemTest.x \
-		FastPollingEventSemTest.x \
-		FormatDescriptorTest.x \
-		GlobalObjectsDatabaseTest.x \
-		HeapManagerTest.x \
-		HighResolutionTimerTest.x \
-		LoadableLibraryTest.x \
-		MemoryAreaTest.x \
-		MemoryCheckTest.x \
-		MemoryOperationsHelperTest.x\
-		ProcessorTypeTest.x \
-		SleepTest.x\
-		StandardHeap_GenericTest.x \
-		StaticListTest.x \
-		StringHelperTest.x \
-		StringPortableTest.x \
-		TimeStampTest.x \
-		TimeoutTypeTest.x \
-		TypeDescriptorTest.x 
+	AuxHeap.x\
+	BasicConsoleTest.x \
+	EndianityTest.x \
+	ErrorManagementTest.x \
+	FastMathTest.x \
+	FastPollingMutexSemTest.x \
+	FastPollingEventSemTest.x \
+	FastResourceContainerTest.x \
+	FormatDescriptorTest.x \
+	GlobalObjectsDatabaseTest.x \
+	HeapManagerTest.x \
+	HighResolutionTimerTest.x \
+	LoadableLibraryTest.x \
+	MemoryAreaTest.x \
+	MemoryCheckTest.x \
+	MemoryOperationsHelperTest.x\
+	ProcessorTypeTest.x \
+	SleepTest.x\
+	StandardHeap_GenericTest.x \
+	StaticListTest.x \
+	StringHelperTest.x \
+	StringPortableTest.x \
+	TimeStampTest.x \
+	TimeoutTypeTest.x \
+	TypeDescriptorTest.x
 		
-
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

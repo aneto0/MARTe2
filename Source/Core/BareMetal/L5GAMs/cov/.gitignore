@@ -60,3 +60,9 @@
 /TimingDataSource.gcda
 /TimingDataSource.gcno
 /TimingDataSource.o
+/MemoryMapSynchronisedOutputBroker.gcda
+/MemoryMapSynchronisedOutputBroker.gcno
+/MemoryMapSynchronisedOutputBroker.o
+/MemoryMapInterpolatedInputBroker.gcda
+/MemoryMapInterpolatedInputBroker.gcno
+/MemoryMapInterpolatedInputBroker.o

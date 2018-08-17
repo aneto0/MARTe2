@@ -288,7 +288,6 @@ inline bool SafeNumber2Number(inputType src,outputType &dest){
 	 return ret;
 }
 
-#if 1
 /**
  * @brief Saturates the input if it does not fit within the range of numbers with the specified bit size.
  * @tparam outputType An integer type
@@ -354,7 +353,110 @@ outputType SaturateInteger(const inputType input) {
     return value;
 }
 
-#endif
+/**
+ * Maximum value for integers of 64 bits
+ */
+static const int64 MAX_INT64 = TypeCharacteristics<int64>::MaxValue();
+
+/**
+ * Maximum value for unsigned integers of 64 bits
+ */
+static const uint64 MAX_UINT64 = TypeCharacteristics<uint64>::MaxValue();
+
+/**
+ * Minimum value for integers of 64 bits
+ */
+static const int64 MIN_INT64 = TypeCharacteristics<int64>::MinValue();
+
+/**
+ * Minimum value for unsigned integers of 64 bits
+ */
+static const uint64 MIN_UINT64 = TypeCharacteristics<uint64>::MinValue();
+
+/**
+ * Maximum value for integers of 32 bits
+ */
+static const int32 MAX_INT32 = TypeCharacteristics<int32>::MaxValue();
+
+/**
+ * Maximum value for unsigned integers of 32 bits
+ */
+static const uint32 MAX_UINT32 = TypeCharacteristics<uint32>::MaxValue();
+
+/**
+ * Minimum value for integers of 32 bits
+ */
+static const int32 MIN_INT32 = TypeCharacteristics<int32>::MinValue();
+
+/**
+ * Minimum value for unsigned integers of 32 bits
+ */
+static const uint32 MIN_UINT32 = TypeCharacteristics<uint32>::MinValue();
+
+/**
+ * Maximum value for integers of 16 bits
+ */
+static const int16 MAX_INT16 = TypeCharacteristics<int16>::MaxValue();
+
+/**
+ * Maximum value for unsigned integers of 16 bits
+ */
+static const uint16 MAX_UINT16 = TypeCharacteristics<uint16>::MaxValue();
+
+/**
+ * Minimum value for integers of 16 bits
+ */
+static const int16 MIN_INT16 = TypeCharacteristics<int16>::MinValue();
+
+/**
+ * Minimum value for unsigned integers of 16 bits
+ */
+static const uint16 MIN_UINT16 = TypeCharacteristics<uint16>::MinValue();
+
+/**
+ * Maximum value for integers of 8 bits
+ */
+static const int8 MAX_INT8 = TypeCharacteristics<int8>::MaxValue();
+
+/**
+ * Maximum value for unsigned integers of 8 bits
+ */
+static const uint8 MAX_UINT8 = TypeCharacteristics<uint8>::MaxValue();
+
+/**
+ * Minimum value for integers of 8 bits
+ */
+static const int8 MIN_INT8 = TypeCharacteristics<int8>::MinValue();
+
+/**
+ * Minimum value for unsigned integers of 8 bits
+ */
+static const uint8 MIN_UINT8 = TypeCharacteristics<uint8>::MinValue();
+
+/**
+ * Maximum value for 32 bit floats
+ */
+static const float32 MAX_FLOAT32 = TypeCharacteristics<float32>::MaxValue();
+
+/**
+ * Minimum value for 32 bit floats
+ */
+static const float32 MIN_FLOAT32 = TypeCharacteristics<float32>::MinValue();
+
+/**
+ * Maximum value for 32 bit floats
+ */
+static const float64 MAX_FLOAT64 = TypeCharacteristics<float64>::MaxValue();
+
+/**
+ * Minimum value for 32 bit floats
+ */
+static const float64 MIN_FLOAT64 = TypeCharacteristics<float64>::MinValue();
+
+
+static const uint32 EPSILON_FLOAT32 = 0x34000000u;
+static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
+
 }
 
 #endif /* TYPECHARACTERISTICS_H_ */

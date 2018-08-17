@@ -48,7 +48,7 @@ namespace MARTe {
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter.
  * This class allows to request for a "kind" Stop of the embedded thread and, if this fails, for a direct killing of the thread.
  */
-class DLL_API MultiThreadService: public EmbeddedServiceI {
+class MultiThreadService: public EmbeddedServiceI {
 
 public:
     /**
@@ -60,15 +60,6 @@ public:
     MultiThreadService(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this MultiThreadService.
-     * @post
-     *   GetNumberOfPoolThreads() == 1
-     */
-    template<typename className>
-    MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder);
-
-    /**
      * @brief Destructor.
      * @post
      *   Stop()
@@ -76,16 +67,28 @@ public:
     virtual ~MultiThreadService();
 
     /**
-     * @brief Reads the number of pool threads from the data input.
-     * @param[in] data shall contain a parameter named "NumberOfPoolThreads" holding the number of pool threads
+     * @brief Reads the number of pool threads from the data input. Calls EmbeddedServiceI::Initialise().
+     * @details in addition to the parameters defined in EmbeddedServiceI::Initialise it shall contain a parameter
+     * named "NumberOfPoolThreads" holding the number of pool threads
      * and another parameter named "Timeout" with the timeout to apply to each of the SingleThreadService instances.
-     * If "Timeout=0" => Timeout = TTInfiniteWait
-     * @return true if all the parameters are available.
+     * If "Timeout=0" => Timeout = TTInfiniteWait.
+     * A matrix named PrioritiesClass may be defined. The first column of each row shall contain the thread index to
+     * which to apply the PriorityClass specified in the second column.
+     * A matrix named PrioritiesLevel may be defined. The first column of each row shall contain the thread index to
+     * which to apply the PriorityLevel specified in the second column.
+     * A matrix named StackSizes may be defined. The first column of each row shall contain the thread index to
+     * which to apply the StackSize specified in the second column.
+     * A matrix named CPUMasks may be defined. The first column of each row shall contain the thread index to
+     * which to apply the CPUMask specified in the second column.
+     * If the initialise is successful it calls CreateThreads() and applies the individual thread parameters (priority class and level plus affinity).
+     * @param[in] data is the container with the parameters.
+     * @return true if all the parameters are available and if CreateThreads() returns NoError.
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @brief Starts N (GetNumberOfPoolThreads()) SingleThreadService instances.
+     * @details If the SingleThreadService were not created yet, CreateThreads is called.
      * @return ErrorManagement::NoError if all the instances can be successfully started.
      * ErrorManagement::IllegalOperation if start is called twice without calling stop beforehand.
      */
@@ -98,6 +101,16 @@ public:
      * @return ErrorManagement::NoError if all the instances can be successfully stopped.
      */
     virtual ErrorManagement::ErrorType Stop();
+
+    /**
+     * @brief Creates N (GetNumberOfPoolThreads()) SingleThreadService instances but does not Start them.
+     * @details The SingleThreadServices are configured with the default parameters given by GetPriorityLevel, GetPriorityClass and GetCPUMask.
+     * @return ErrorManagement::NoError if all the instances can be successfully created and configured with the default parameters.
+     * ErrorManagement::IllegalOperation if it is called twice without calling stop beforehand.
+     * @pre
+     *   Stop()
+     */
+    ErrorManagement::ErrorType CreateThreads();
 
     /**
      * @brief Gets the number of pool threads.
@@ -123,15 +136,118 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(const TimeoutType & msecTimeoutIn);
+    virtual void SetTimeout(const TimeoutType & msecTimeoutIn);
 
     /**
-     * @brief Gets the maximum time to execute a state change.
-     * @return the maximum time to execute a state change.
+     * @brief Sets the thread priority class level for all the threads.
+     * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   GetStatus(*) == OffState
      */
-    TimeoutType GetTimeout() const;
+    virtual void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Sets the thread priority level for all the threads.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Sets the thread stack size for all the threads.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetStackSize(uint32 stackSizeIn);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity) level for all the threads.
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   GetStatus(*) == OffState
+     */
+    virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
+
+    /**
+     * @brief Gets the thread priority class for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread priority class or UnknownPriorityClass if the pre conditions are not met.
+     * TODO tests
+     */
+    Threads::PriorityClassType GetPriorityClassThreadPool(uint32 threadIdx);
+
+    /**
+     * @brief Gets the thread priority level for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread priority class or 0 if the pre conditions are not met.
+     */
+    uint8 GetPriorityLevelThreadPool(uint32 threadIdx);
+
+    /**
+     * @brief Gets the thread stack size for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread stack size or 0 if the pre conditions are not met.
+     */
+    uint32 GetStackSizeThreadPool(uint32 threadIdx);
+
+    /**
+     * @brief Gets the thread priority CPU mask for the thread with index \a threadIdx.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   threadIdx < GetNumberOfPoolThreads()
+     * @return the thread CPUMask class or UndefinedCPUs if the pre conditions are not met.
+     */
+    ProcessorType GetCPUMaskThreadPool(uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread priority class level for the thread with index \a threadIdx.
+     * @param[in] priorityClassIn the thread priority class.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetPriorityClassThreadPool(Threads::PriorityClassType priorityClassIn, uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread priority level for the thread with index \a threadIdx.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetPriorityLevelThreadPool(uint8 priorityLevelIn, uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread stack size for the thread with index \a threadIdx.
+     * @param[in] stackSizeIn the thread priority level.
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetStackSizeThreadPool(uint32 stackSizeIn, uint32 threadIdx);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity) level for the thread with index \a threadIdx.
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @param[in] threadIdx the index of the thread.
+     * @pre
+     *   GetStatus(threadIdx) == OffState
+     *   threadIdx < GetNumberOfPoolThreads()
+     */
+    void SetCPUMaskThreadPool(const ProcessorType& cpuMaskIn, uint32 threadIdx);
 
 protected:
     /**
@@ -143,11 +259,6 @@ protected:
      * The fixed number of pool threads.
      */
     uint32 numberOfPoolThreads;
-
-    /**
-     * The timeout to apply to each of the SingleThreadService instances.
-     */
-    uint32 msecTimeout;
 
     /**
      * The callback method
@@ -163,14 +274,6 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename className>
-MultiThreadService::MultiThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(),
-        method(binder) {
-    numberOfPoolThreads = 1;
-    msecTimeout = TTInfiniteWait.GetTimeoutMSec();
-}
 
 }
 

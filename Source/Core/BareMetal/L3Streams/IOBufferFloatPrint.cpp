@@ -40,7 +40,9 @@
 
 /*lint -save -e9023 -e9024
  * 9023, 9024  [MISRA C++ Rule 16-3-1] [MISRA C++ Rule 16-3-2]. Justification: Use of operators # and ## required by this implementation. */
-
+/**
+ * @brief Check and reduce
+ */
 #define CHECK_AND_REDUCE(number,step,exponent)\
 if (number >= static_cast<T>(1E ## step)){ \
 exponent+=step; \
@@ -55,6 +57,9 @@ number *= 1E- ## step ## Q; \
 }
  */
 
+/**
+ * @brief Check and increase
+ */
 #define CHECK_AND_INCREASE(number,step,exponent)\
 if (number <= static_cast<T>(1E- ## step)){ \
 exponent-=(step+1); \

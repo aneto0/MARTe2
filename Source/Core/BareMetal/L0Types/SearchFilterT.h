@@ -54,7 +54,7 @@ namespace MARTe {
  * SearchFilter, parameterising the type of the object that the Test method
  * will check for compliance, with respect to a given searching criteria.
  * @tparam T the type of the object which will be checked by the Test method.
- * @warning It is expected that T be descendant of LinkedListable.
+ * @remark It is expected that T be descendant of LinkedListable.
  */
 template<typename T>
 class SearchFilterT: public SearchFilter {

@@ -29,18 +29,19 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX=  FastPollingEventSem.x \
-		FastPollingMutexSem.x \
-		FormatDescriptor.x \
-		GlobalObjectI.x \
-		GlobalObjectsDatabase.x \
-		HeapManager.x \
-		MemoryArea.x \
-		ProcessorType.x \
-		StaticListHolder.x \
-		StringHelper.x \
-		ClassRegistryIndex.x \
-		TypeDescriptor.x \
-		DynamicZeroTerminatedArray.x\
+	FastPollingMutexSem.x \
+	FastResourceContainer.x \
+	FormatDescriptor.x \
+	GlobalObjectI.x \
+	GlobalObjectsDatabase.x \
+	HeapManager.x \
+	MemoryArea.x \
+	ProcessorType.x \
+	StaticListHolder.x \
+	StringHelper.x \
+	ClassRegistryIndex.x \
+	TypeDescriptor.x \
+	DynamicZeroTerminatedArray.x\
         Matrix.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

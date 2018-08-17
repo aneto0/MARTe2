@@ -123,8 +123,7 @@ BasicConsole::~BasicConsole() {
     if (handle != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
-        /*lint -e{1506} [MISRA C++ Rule 5-0-4] remove the warning of calling Close() inside destructor.*/
-        Close();
+        BasicConsole::Close();
         delete handle;
     }
 }

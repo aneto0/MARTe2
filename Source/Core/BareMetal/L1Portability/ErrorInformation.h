@@ -37,9 +37,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+
 namespace MARTe {
 
 namespace ErrorManagement {
+
 
 /**
  @brief Information structure associated to the error.
@@ -54,7 +57,7 @@ struct ErrorInformation {
         /**
          * The error code.
          */
-        ErrorType errorType;
+    	ErrorType errorType;
 
         /**
          * The error line number.
@@ -98,7 +101,7 @@ struct ErrorInformation {
      * Object may be temporary in memory because the
      * objectPointer will only be printed, not used
      */
-    void * objectPointer;
+    const void * objectPointer;
 
     /**
      * A pointer to a const char * which is persistent
@@ -106,6 +109,13 @@ struct ErrorInformation {
      * scope. It should be global to the application and persistent
      */
     CCString className;
+
+	/**
+     * A pointer to a const char * which is persistent
+     * so a real constant, not a char * relabeled as const char *
+     * scope. It should be global to the application and persistent
+	 */
+	CCString objectName;
 
 };
 }

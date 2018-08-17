@@ -28,9 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#define DLL_API
-
-#include <MultiClientEmbeddedThread.h>
+#include "AdvancedErrorManagement.h"
+#include "MultiClientEmbeddedThread.h"
 #include "MultiClientService.h"
 #include "ReferenceT.h"
 
@@ -38,7 +37,6 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -56,26 +54,17 @@ MultiClientService::MultiClientService(EmbeddedServiceMethodBinderI &binder) :
 
 bool MultiClientService::Initialise(StructuredDataI &data) {
 
-    ErrorManagement::ErrorType err;
-    err.parametersError = !data.Read("MaxNumberOfThreads", maxNumberOfThreads);
-    if (!err.ErrorsCleared()) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "MaxNumberOfThreads was not specified");
+    ErrorManagement::ErrorType err = EmbeddedServiceI::Initialise(data);
+    if (err.ErrorsCleared()) {
+        err.parametersError = !data.Read("MaxNumberOfThreads", maxNumberOfThreads);
+        if (!err.ErrorsCleared()) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "MaxNumberOfThreads was not specified");
+        }
     }
     if (err.ErrorsCleared()) {
         err.parametersError = !data.Read("MinNumberOfThreads", minNumberOfThreads);
         if (!err.ErrorsCleared()) {
             REPORT_ERROR(ErrorManagement::ParametersError, "MinNumberOfThreads was not specified");
-        }
-    }
-    if (err.ErrorsCleared()) {
-        err.parametersError = !data.Read("Timeout", msecTimeout);
-        if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Timeout was not specified");
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if (msecTimeout == 0u) {
-            msecTimeout = TTInfiniteWait.GetTimeoutMSec();
         }
     }
     if (err.ErrorsCleared()) {
@@ -100,8 +89,11 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
     if (err.ErrorsCleared()) {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
-        thread->SetTimeout(msecTimeout);
         if (err.ErrorsCleared()) {
+            thread->SetPriorityClass(GetPriorityClass());
+            thread->SetPriorityLevel(GetPriorityLevel());
+            thread->SetCPUMask(GetCPUMask());
+            thread->SetTimeout(GetTimeout());
             err = thread->Start();
         }
 
@@ -151,7 +143,10 @@ ErrorManagement::ErrorType MultiClientService::Start() {
         ReferenceT<MultiClientEmbeddedThread> thread(new (NULL) MultiClientEmbeddedThread(method, *this));
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
-            thread->SetTimeout(msecTimeout);
+            thread->SetPriorityClass(GetPriorityClass());
+            thread->SetPriorityLevel(GetPriorityLevel());
+            thread->SetCPUMask(GetCPUMask());
+            thread->SetTimeout(GetTimeout());
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
@@ -176,6 +171,9 @@ void MultiClientService::SetMaximumNumberOfPoolThreads(const uint16 maxNumberOfT
             maxNumberOfThreads = maxNumberOfThreadsIn;
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Maximum number of pool threads cannot be changed if the service is running");
+    }
 }
 
 void MultiClientService::SetMinimumNumberOfPoolThreads(const uint16 minNumberOfThreadsIn) {
@@ -186,6 +184,37 @@ void MultiClientService::SetMinimumNumberOfPoolThreads(const uint16 minNumberOfT
             }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Minimum number of pool threads cannot be changed if the service is running");
+    }
+}
+
+void MultiClientService::SetPriorityClass(const Threads::PriorityClassType priorityClassIn) {
+    if (threadPool.Size() == 0u) {
+        EmbeddedServiceI::SetPriorityClass(priorityClassIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority class cannot be changed if the service is running");
+    }
+}
+
+void MultiClientService::SetPriorityLevel(const uint8 priorityLevelIn) {
+    if (threadPool.Size() == 0u) {
+        EmbeddedServiceI::SetPriorityLevel(priorityLevelIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Priority level cannot be changed if the service is running");
+    }
+}
+
+void MultiClientService::SetCPUMask(const ProcessorType& cpuMaskIn) {
+    if (threadPool.Size() == 0u) {
+        EmbeddedServiceI::SetCPUMask(cpuMaskIn);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::ParametersError, "CPUMask cannot be changed if the service is running");
+    }
+
 }
 
 }

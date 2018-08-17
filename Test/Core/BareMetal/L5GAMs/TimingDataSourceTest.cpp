@@ -50,7 +50,7 @@ static bool InitialiseTimingDataSourceEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -70,9 +70,9 @@ public:
 
 TimingDataSourceTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
     virtual void CustomPrepareNextState(){
 
@@ -85,12 +85,12 @@ TimingDataSourceTestScheduler1::TimingDataSourceTestScheduler1() :
 
 }
 
-void TimingDataSourceTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType TimingDataSourceTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void TimingDataSourceTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType TimingDataSourceTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(TimingDataSourceTestScheduler1, "1.0")

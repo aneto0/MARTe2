@@ -48,7 +48,7 @@ namespace MARTe {
  * + Establishing a connection with a remote host.
  * + Binding the socket to a local port and begin listening from it.
  * + Allowing reading/writing using a generic stream interface approach.
- * @note Although being stated as a connection-less socket, it actually adopts
+ * @remark Although being stated as a connection-less socket, it actually adopts
  * a connection-oriented role, because it remembers the destination host and
  * uses it each time a data packet is sent. Nevertheless, as a datagram socket,
  * the order and reliability of the data packets are not guaranteed, hence no

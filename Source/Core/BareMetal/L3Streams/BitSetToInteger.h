@@ -203,7 +203,10 @@ static inline void BSToBS(T * const & destination,
     uint32 sourceByteSize = ((static_cast<uint32>(sourceBitSize) + static_cast<uint32>(sourceBitShift)) + 7u) / 8u;
 
     // copy
-    MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize);
+    if (!MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
+
 
     // shift number so LSB at bit 0
     // removes lower bits
@@ -276,14 +279,17 @@ static inline void BSToBS(T * const & destination,
 
 
     // copy
-    MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize);
-
+    if (!MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
     destinationMask &= destinationCopy;
 
     // merge into sourceCopy
     sourceCopy |= destinationMask;
 
-    MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize);
+    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
 
 }
 

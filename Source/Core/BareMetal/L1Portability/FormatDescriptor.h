@@ -165,7 +165,7 @@ const DesiredAction PrintStruct = 6u;
  * populate the class from a const char8* string which specifies the desired print format
  * in a printf-like fashion.
  *
- * @note The FormatDescriptor is internally represented as a 32-bit bitfield-like union with the following structure:
+ * @remark The FormatDescriptor is internally represented as a 32-bit bitfield-like union with the following structure:
  * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | spareBits |
  * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:    |
  * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 3             | 4         |
@@ -222,9 +222,9 @@ public:
      * - ?: AnyType - prints information about the type;
      * - @: AnyType - prints full content in case of known structures.
      *
-     * @note Note that if the data type does not match <tt>type</tt> a warning will be issued but the correct print will be performed.
+     * @remark Note that if the data type does not match <tt>type</tt> a warning will be issued but the correct print will be performed.
      *
-     * @attention Note that the full printf syntax is:\n
+     * @warning Note that the full printf syntax is:\n
      * @verbatim %[parameter][flags][width][.precision][length]type @endverbatim
      * This syntax is not supported by this function.\n
      */

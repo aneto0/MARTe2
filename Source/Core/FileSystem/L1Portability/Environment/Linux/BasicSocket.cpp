@@ -34,7 +34,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -56,8 +55,10 @@ BasicSocket::BasicSocket() :
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
-    if (!Close()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+    if (BasicSocket::IsValid()) {
+        if (!BasicSocket::Close()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+        }
     }
 }
 
@@ -93,7 +94,7 @@ bool BasicSocket::Close() {
             ret = 0;
         }
     }
-    else{
+    else {
         ret = -1;
     }
     return (ret >= 0);

@@ -60,7 +60,7 @@ bool Concatenate(CString  const destination,
         strcat(destination, source);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -74,7 +74,7 @@ bool ConcatenateN(CString  const destination,
         strncat(destination, source, static_cast<osulong>(size));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -91,7 +91,7 @@ CCString SearchChar(CCString const string,
         ret = strchr(string, c);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -112,7 +112,7 @@ int32 Compare(CCString const string1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -134,7 +134,7 @@ int32 CompareN(CCString const string1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -147,7 +147,7 @@ bool Copy(CString  const destination,
         strcpy(destination, source);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -161,7 +161,7 @@ bool CopyN(CString  const destination,
         strncpy(destination, source, static_cast<osulong>(size));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -173,7 +173,7 @@ int32 SearchIndex(CCString const string1,
         ret = static_cast<int32>(strcspn(string1, string2));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -184,7 +184,7 @@ uint32 Length(CCString const string) {
         ret = static_cast<uint32>(strlen(string));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -196,7 +196,7 @@ CCString SearchChars(CCString const string1,
         ret = strpbrk(string1, string2);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -208,7 +208,7 @@ CCString SearchLastChar(CCString const string,
         ret = strrchr(string, c);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -220,7 +220,7 @@ CCString SearchString(CCString const string,
         ret = strstr(string, substring);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }
@@ -236,7 +236,7 @@ bool SetChar(CString  const string,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
     }
     return ret;
 }

@@ -279,7 +279,7 @@ static bool FloatToType(const AnyType &destination,
                     if (arraySize > 1u) {
                         uint32 lastCharIndex = arraySize - 1u;
                         reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
-                    }
+                    } 
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());

@@ -51,7 +51,7 @@ namespace MARTe {
  * This method will be continuously called (see Start) with the stage encoded in the Information parameter. In particular this class allows to request for a "kind" Stop of the
  * embedded thread and, if this fails, for a direct killing of the thread.
  */
-class DLL_API SingleThreadService: public EmbeddedServiceI {
+class SingleThreadService: public EmbeddedServiceI {
 
 public:
 
@@ -65,28 +65,11 @@ public:
     SingleThreadService(EmbeddedServiceMethodBinderI &binder);
 
     /**
-     * @brief Constructor.
-     * @param[in] binder contains the function to be executed by this SingleThreadService.
-     * @post
-     *   GetTimeout() == TTInfiniteWait &&
-     *   GetStatus() == OffState
-     */
-    template<typename className>
-    SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder);
-
-    /**
      * @brief Destructor.
      * @details Calls the Stop() method.
      */
     virtual ~SingleThreadService();
 
-    /**
-     * @brief Reads the Timeout from the data input.
-     * @param[in] data shall contain a parameter with name "Timeout" holding the timeout in milliseconds.
-     * If "Timeout=0" => Timeout = TTInfiniteWait
-     * @return true if all the parameters are available.
-     */
-    virtual bool Initialise(StructuredDataI &data);
 
     /**
      * @brief Starts the SingleThreadService.
@@ -113,15 +96,9 @@ public:
 
     /**
      * @brief Sets the maximum time to execute a state change.
-     * @param[in] msecTimeout the maximum time in milliseconds to execute a state change.
+     * @param[in] msecTimeoutIn the maximum time in milliseconds to execute a state change.
      */
-    void SetTimeout(const TimeoutType &msecTimeoutIn);
-
-    /**
-     * @brief Gets the maximum time to execute a state change.
-     * @return the maximum time to execute a state change.
-     */
-    TimeoutType GetTimeout() const;
+    virtual void SetTimeout(const TimeoutType &msecTimeoutIn);
 
     /**
      * @brief Gets the Status of the EmbeddedThreadI.
@@ -129,7 +106,40 @@ public:
      */
     EmbeddedThreadI::States GetStatus();
 
+    /**
+     * @brief Sets the thread priority class.
+     * @param[in] priorityClassIn the thread priority class.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetPriorityClass(Threads::PriorityClassType priorityClassIn);
+
+    /**
+     * @brief Sets the thread priority level.
+     * @param[in] priorityLevelIn the thread priority level.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetPriorityLevel(uint8 priorityLevelIn);
+
+    /**
+     * @brief Sets the thread stack size.
+     * @param[in] stackSizeIn the thread stack size.
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetStackSize(uint32 stackSizeIn);
+
+    /**
+     * @brief Sets the thread CPU mask (i.e. thread affinity).
+     * @param[in] cpuMaskIn the thread CPU mask (i.e. thread affinity).
+     * @pre
+     *   GetStatus() == OffState
+     */
+    virtual void SetCPUMask(const ProcessorType& cpuMaskIn);
+
 private:
+
     /**
      * The embedded thread.
      */
@@ -143,13 +153,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename className>
-SingleThreadService::SingleThreadService(EmbeddedServiceMethodBinderT<className> &binder) :
-        EmbeddedServiceI(),
-        embeddedThread(binder) {
-    SetTimeout(TTInfiniteWait);
-}
 
 }
 #endif /* SINGLETHREADSERVICE_H_ */

@@ -48,7 +48,7 @@ static void PrintErrorOnStream(CCString const format,
         if (!err->Printf(format, lineNumber)) {
             REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, format, lineNumber)
+        REPORT_ERROR(ErrorManagement::FatalError, format, lineNumber);
     }
 }
 

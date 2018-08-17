@@ -272,7 +272,7 @@ public:
 
     /**
      * @brief Copies a character buffer.
-     * @detail Copies a character buffer into this stream (from the
+     * @details Copies a character buffer into this stream (from the
      * current position).
      * @param[in] buffer is the buffer to be copied into the stream.
      * @return true if buffer is successfully copied into the stream.

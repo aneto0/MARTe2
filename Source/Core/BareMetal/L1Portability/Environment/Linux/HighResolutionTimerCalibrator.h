@@ -75,6 +75,18 @@ public:
      */
     float64 GetPeriod() const;
 
+    /**
+     * @brief Returns as ticks the worst case OS sleep granularity
+     * @return the minimum number of ticks the OS will sleep in the worst case on a thread with priority.
+     */
+    uint64 GetOsSleepTicks() const;
+
+    /**
+     * @brief Returns as usec the worst case OS sleep granularity
+     * @return the minimum number of usecs the OS will sleep in the worst case on a thread with priority.
+     */
+    uint32 GetOsSleepUsec() const;
+
 private:
 
     /**
@@ -101,11 +113,35 @@ private:
      * Number of elapsed ticks at the time at which a framework instance was executed.
      */
     uint64 initialTicks;
+
+    /**
+     * Quarter of the number of ticks of an OS schedule granularity
+     */
+    uint64 osScheduleTicks;
+
+
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+inline uint64 HighResolutionTimerCalibrator::GetFrequency() const {
+    return frequency;
+}
+
+inline float64 HighResolutionTimerCalibrator::GetPeriod() const {
+    return period;
+}
+
+inline uint64 HighResolutionTimerCalibrator::GetOsSleepTicks() const {
+    return osScheduleTicks;
+}
+
+inline uint32 HighResolutionTimerCalibrator::GetOsSleepUsec() const {
+	//
+    return 2000;
+}
+
+}
 #endif /* HIGHRESOLUTIONTIMERCALIBRATOROS_H_ */

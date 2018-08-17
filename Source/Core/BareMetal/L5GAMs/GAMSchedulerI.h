@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ExecutableI.h"
 #include "GAM.h"
 #include "TimingDataSource.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -130,6 +132,7 @@ public:
 
     /**
      * @brief Reads the TimingDataSource name.
+     * @param[in] data the StructuredDataI with the TimingDataSource.
      * @return false if the TimingDataSource is not defined.
      */
     virtual bool Initialise(StructuredDataI & data);
@@ -143,8 +146,8 @@ public:
 
     /**
      * @brief Stores the GAMSchedulerRecord for the new state in the next buffer.
-     * @param[in] info contains information about the current and the next state
-     * and the active buffer index.
+     * @param[in] currentStateName is the name of the current state
+     * @param[in] nextStateName is the name of the next state
      * @return true if the next state name is found, false otherwise.
      */
     virtual bool PrepareNextState(const char8 * const currentStateName,
@@ -169,13 +172,15 @@ public:
 
     /**
      * @brief Starts the execution of the next state threads.
+     * @pre
+     *    PrepareNextState();
      */
-    virtual void StartExecution()=0;
+    virtual ErrorManagement::ErrorType StartNextStateExecution()=0;
 
     /**
      * @brief Stops the execution of the current state threads.
      */
-    virtual void StopExecution()=0;
+    virtual ErrorManagement::ErrorType StopCurrentStateExecution()=0;
 
 protected:
     /**
@@ -190,6 +195,11 @@ protected:
      * @brief Custom routine to prepare the specific scheduler for the next state execution.
      */
     virtual void CustomPrepareNextState()=0;
+
+    /**
+     * Clock period
+     */
+    const float64 clockPeriod;
 
 private:
 
@@ -220,11 +230,6 @@ private:
     uint32 numberOfStates;
 
     /**
-     * Clock period
-     */
-    const float64 clockPeriod;
-
-    /**
      * @brief Helper function to add the input brokers of the \a gam to the table of states to be executed.
      * @param[in] gamFullName the GAM fully qualified name.
      * @param[in] stateIdx the index of the state to which this GAM input brokers is being added to.
@@ -236,7 +241,7 @@ private:
                             const char8 * const gamFullName,
                             const uint32 stateIdx,
                             const uint32 threadIdx,
-                            uint32 &executableIdx);
+                            uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add the output brokers of the \a gam to the table of states to be executed.
@@ -250,7 +255,7 @@ private:
                              const char8 * const gamFullName,
                              const uint32 stateIdx,
                              const uint32 threadIdx,
-                             uint32 &executableIdx);
+                             uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add this \a gam to the table of states to be executed.
@@ -264,7 +269,7 @@ private:
                    const char8 * const gamFullName,
                    const uint32 stateIdx,
                    const uint32 threadIdx,
-                   const uint32 executableIdx);
+                   const uint32 executableIdx) const ;
 
 };
 

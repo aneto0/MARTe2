@@ -49,12 +49,52 @@ TEST(GAMSchedulerGTest,TestConstructor) {
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMSchedulerGTest,TestStartExecution) {
+TEST(GAMSchedulerGTest,TestStartNextStateExecution) {
     GAMSchedulerTest test;
-    ASSERT_TRUE(test.TestStartExecution());
+    ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
-TEST(GAMSchedulerGTest,TestStopExecution) {
+TEST(GAMSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
     GAMSchedulerTest test;
-    ASSERT_TRUE(test.TestStopExecution());
+    ASSERT_TRUE(test.TestStartNextStateExecution_False_PrepareNextState());
+}
+
+TEST(GAMSchedulerGTest,TestStopCurrentStateExecution) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestStopCurrentStateExecution());
+}
+
+TEST(GAMSchedulerGTest,TestIntegrated) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestIntegrated());
+}
+
+TEST(GAMSchedulerGTest,TestIntegrated_TriggerErrorMessage) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestIntegrated_TriggerErrorMessage());
+}
+
+TEST(GAMSchedulerGTest,TestPurge) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestPurge());
+}
+
+TEST(GAMSchedulerGTest,TestInitialise) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestInitialise());
+}
+
+TEST(GAMSchedulerGTest,TestInitialise_ErrorMessage) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestInitialise_ErrorMessage());
+}
+
+TEST(GAMSchedulerGTest,TestInitialise_False_InvalidMessage) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestInitialise_False_InvalidMessage());
+}
+
+TEST(GAMSchedulerGTest,TestInitialise_False_MoreThanOneErrorMessage) {
+    GAMSchedulerTest test;
+    ASSERT_TRUE(test.TestInitialise_False_MoreThanOneErrorMessage());
 }

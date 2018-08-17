@@ -112,7 +112,7 @@ public:
                HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object (see RemoveReference).
      */
     virtual ~ReferenceT();
 
@@ -157,7 +157,7 @@ public:
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    virtual T* operator->();
+    virtual T* operator->() const;
 
     /**
      * @brief Creates an object from a structured list of elements.
@@ -272,7 +272,7 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
 }
 
 template<typename T>
-T* ReferenceT<T>::operator->() {
+T* ReferenceT<T>::operator->() const {
     return typeTObjectPointer;
 }
 

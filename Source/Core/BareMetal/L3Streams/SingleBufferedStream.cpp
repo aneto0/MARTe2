@@ -431,6 +431,6 @@ TimeoutType SingleBufferedStream::GetTimeout() const {
 void SingleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
     internalBuffer.SetTimeout(timeoutIn);
 }
-
+ 
 }
 

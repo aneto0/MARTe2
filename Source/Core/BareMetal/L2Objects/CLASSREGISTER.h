@@ -93,7 +93,7 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
+ 
 /**
  * This macro has to be inserted in every unit file.
  * The definition of the  _## className ## ClassRegistryItem variable will

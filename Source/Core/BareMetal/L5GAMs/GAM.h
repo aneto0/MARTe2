@@ -76,7 +76,7 @@ namespace MARTe {
  *     }
  * }
  */
-class DLL_API GAM:  public ReferenceContainer,public ExecutableI {
+class DLL_API GAM: public ReferenceContainer, public ExecutableI {
 public:
 
     /**
@@ -144,7 +144,7 @@ public:
      *  @param[in] data the configured database of parameters.
      *  @return true if the \a data can be successfully copied.
      */
-    bool SetConfiguredDatabase(StructuredDataI & data);
+    bool SetConfiguredDatabase(const ConfigurationDatabase & data);
 
     /**
      * @brief Returns the number of input signals.
@@ -176,9 +176,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalName(const SignalDirection direction,
-                       const uint32 signalIdx,
-                       StreamString &signalName);
+    bool GetSignalName(const SignalDirection direction, const uint32 signalIdx, StreamString &signalName);
 
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
@@ -189,9 +187,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalIndex(const SignalDirection direction,
-                        uint32 &signalIdx,
-                        const char8* const signalName);
+    bool GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, const char8* const signalName);
 
     /**
      * @brief Gets the DataSourceI name of the signal with name \a signalIdx.
@@ -202,9 +198,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalDataSourceName(const SignalDirection direction,
-                                 const uint32 signalIdx,
-                                 StreamString &dataSourceName);
+    bool GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, StreamString &dataSourceName);
 
     /**
      * @brief Gets the type of the signal at position \a signalIdx.
@@ -214,8 +208,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    TypeDescriptor GetSignalType(const SignalDirection direction,
-                                 const uint32 signalIdx);
+    TypeDescriptor GetSignalType(const SignalDirection direction, const uint32 signalIdx);
 
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
@@ -227,23 +220,19 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfDimensions(const SignalDirection direction,
-                                     const uint32 signalIdx,
-                                     uint32 &numberOfDimensions);
+    bool GetSignalNumberOfDimensions(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfDimensions);
 
     /**
      * @brief Gets the number of elements of the signal at position \a signalIdx.
      * @details The default number of elements of a signal is 1.
      * @param[in] direction the signal direction.
      * @param[in] signalIdx the index of the signal.
-     * @param[out] numberOfDimensions the number of elements.
+     * @param[out] numberOfElements the number of elements.
      * @return true if the signalIdx exists.
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfElements(const SignalDirection direction,
-                                   const uint32 signalIdx,
-                                   uint32 &numberOfElements);
+    bool GetSignalNumberOfElements(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfElements);
 
     /**
      * @brief Gets the default of the signal with index \a signalIdx.
@@ -254,9 +243,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalDefaultValue(const SignalDirection direction,
-                               const uint32 signalIdx,
-                               const AnyType &defaultValue);
+    bool GetSignalDefaultValue(const SignalDirection direction, const uint32 signalIdx, const AnyType &defaultValue);
 
     /**
      * @brief Gets the number of bytes required to represent the signal at position \a signalIdx.
@@ -267,9 +254,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalByteSize(const SignalDirection direction,
-                           const uint32 signalIdx,
-                           uint32 &byteSize);
+    bool GetSignalByteSize(const SignalDirection direction, const uint32 signalIdx, uint32 &byteSize);
 
     /**
      * @brief Gets the number of different byte offsets (one for each different Range) that were set for the signal with index \a signalIdx.
@@ -281,9 +266,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfByteOffsets(const SignalDirection direction,
-                                      const uint32 signalIdx,
-                                      uint32 &numberOfByteOffsets);
+    bool GetSignalNumberOfByteOffsets(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfByteOffsets);
 
     /**
      * @brief Gets the byte offset index and size (one for each different Range) that were set for the signal with index \a signalIdx.
@@ -296,11 +279,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalByteOffsetInfo(const SignalDirection direction,
-                                 const uint32 signalIdx,
-                                 const uint32 byteOffsetIndex,
-                                 uint32 &byteOffsetStart,
-                                 uint32 &byteOffsetSize);
+    bool GetSignalByteOffsetInfo(const SignalDirection direction, const uint32 signalIdx, const uint32 byteOffsetIndex, uint32 &byteOffsetStart, uint32 &byteOffsetSize);
 
     /**
      * @brief Gets the number of ranges that were set for the signal with index \a signalIdx.
@@ -311,9 +290,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfRanges(const SignalDirection direction,
-                                 const uint32 signalIdx,
-                                 uint32 &numberOfRanges);
+    bool GetSignalNumberOfRanges(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfRanges);
 
     /**
      * @brief Gets the range start and end index (one for each different Range) that were set for the signal with index \a signalIdx.
@@ -326,11 +303,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalRangesInfo(const SignalDirection direction,
-                             const uint32 signalIdx,
-                             const uint32 rangeIndex,
-                             uint32 &rangeStart,
-                             uint32 &rangeEnd);
+    bool GetSignalRangesInfo(const SignalDirection direction, const uint32 signalIdx, const uint32 rangeIndex, uint32 &rangeStart, uint32 &rangeEnd);
 
     /**
      * @brief Gets the number of samples that were set for the signal with index \a signalIdx.
@@ -344,9 +317,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalNumberOfSamples(const SignalDirection direction,
-                                  const uint32 signalIdx,
-                                  uint32 &numberOfSamples);
+    bool GetSignalNumberOfSamples(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfSamples);
 
     /**
      * @brief Gets the frequency that was set for the signal with index \a functionSignalIdx.
@@ -358,9 +329,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalFrequency(const SignalDirection direction,
-                            const uint32 signalIdx,
-                            float32 &frequency);
+    bool GetSignalFrequency(const SignalDirection direction, const uint32 signalIdx, float32 &frequency);
 
     /**
      * @brief Allocates all memory required to hold all the input signals of this GAM.
@@ -368,7 +337,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetInputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateInputSignalsMemory();
 
@@ -378,7 +347,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set &&
      *   GetOutputSignalsMemory() == NULL
-     * @warning From the precondition is inferred that this function cannot be called twice.
+     * @remark From the precondition is inferred that this function cannot be called twice.
      */
     bool AllocateOutputSignalsMemory();
 
@@ -521,7 +490,7 @@ protected:
      * @return true if the Move is successful.
      */
     bool MoveToSignalIndex(const SignalDirection direction,
-                           const uint32 signalIdx);
+    const uint32 signalIdx);
 
     /**
      * Brokers for signal reading.
@@ -538,6 +507,15 @@ protected:
      */
     HeapI *gamHeap;
 
+    /**
+     * Accelerator reference for the inputSignalsDatabaseNode.
+     */
+    ConfigurationDatabase inputSignalsDatabaseNode;
+
+    /**
+     * Accelerator reference for the outputSignalsDatabaseNode.
+     */
+    ConfigurationDatabase outputSignalsDatabaseNode;
 };
 
 /*---------------------------------------------------------------------------*/

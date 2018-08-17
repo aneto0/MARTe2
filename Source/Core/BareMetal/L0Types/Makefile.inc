@@ -1,3 +1,4 @@
+
 #############################################################
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
@@ -26,12 +27,12 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  ListNode.x \
+OBJSX=  CompilerTypes.x  \
+        ListNode.x \
         LinkedListable.x \
         LinkedListHolder.x \
         BalancedTreeNode.x \
         ZeroTerminatedArray.x \
-        CompilerTypes.x \
         ErrorType.x 
         
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
@@ -46,4 +47,5 @@ all: $(OBJS) $(SUBPROJ)   \
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
 

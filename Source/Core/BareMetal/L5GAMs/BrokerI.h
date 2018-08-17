@@ -63,10 +63,10 @@ public:
 
     /**
      * @brief Initialises the BrokerI.
-     * @detail After this function is executed, the Broker is expected to be capable of copying signals
+     * @details After this function is executed, the Broker is expected to be capable of copying signals
      * to/from a DataSourceI to/from a GAM (see InitFunctionPointers).
      * @param[in] direction the signal direction (InputSignals or OutputSignals).
-     * @param[in] dataSource the DataSourceI to be queried.
+     * @param[in] dataSourceIn the DataSourceI to be queried.
      * @param[in] functionName the name of the to which this BrokerI is being allocated to.
      * @param[in] gamMemoryAddress the base address of the GAM memory (where signal data is stored).
      * @return true if all the copy information related to \a functionName can be successfully retrieved.

@@ -57,7 +57,6 @@ uint32 TypeDescriptor::StorageSize() const{
 		if (cri != NULL_PTR(ClassRegistryIndex *)){
 			ClassRegistryBrief *crb = (*cri)[structuredDataIdCode];
 			if (crb != NULL_PTR(ClassRegistryBrief *)){
-//				size = crb->sizeOfClass;
 				size = crb->GetSizeOfClass();
 			}
 		}

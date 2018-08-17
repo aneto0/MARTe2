@@ -45,6 +45,15 @@ TEST(EmbeddedThreadIGTest, TestConstructor) {
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
+TEST(EmbeddedThreadIGTest, TestConstructorThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestConstructorThreadNumber());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetThreadNumber) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetThreadNumber());
+}
 
 TEST(EmbeddedThreadIGTest, TestGetThreadId) {
     EmbeddedThreadITest target;
@@ -59,6 +68,46 @@ TEST(EmbeddedThreadIGTest, TestGetCommands) {
 TEST(EmbeddedThreadIGTest, TestSetCommands) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetCommands());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetPriorityClass) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetPriorityClass());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetPriorityLevel) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetPriorityLevel());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetStackSize) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetStackSize());
+}
+
+TEST(EmbeddedThreadIGTest, TestGetCPUMask) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetCPUMask());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetPriorityClass) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetPriorityClass());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetPriorityLevel) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetPriorityLevel());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetStackSize) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetStackSize());
+}
+
+TEST(EmbeddedThreadIGTest, TestSetCPUMask) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetCPUMask());
 }
 
 TEST(EmbeddedThreadIGTest, TestResetThreadId) {
@@ -109,4 +158,14 @@ TEST(EmbeddedThreadIGTest,TestStart_StartCommand) {
 TEST(EmbeddedThreadIGTest,TestStart_StartCommandTimeout) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart_StartCommandTimeout());
+}
+
+TEST(EmbeddedThreadIGTest,TestGetTimeout) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestGetTimeout());
+}
+
+TEST(EmbeddedThreadIGTest,TestSetTimeout) {
+    EmbeddedThreadITest target;
+    ASSERT_TRUE(target.TestSetTimeout());
 }

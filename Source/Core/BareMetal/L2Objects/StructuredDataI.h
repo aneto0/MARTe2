@@ -86,20 +86,23 @@ public:
     virtual ~StructuredDataI();
 
     /**
-     * @brief Reads a previously stored AnyType and converts-copies it into the memory of the provided AnyType
-     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
-     * @param[out] on success the converted AnyType will be stored in this parameter.
-     * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
+     * @brief Copies the value of a node into any variable. Path is relative to the current node.
+     * @param[in] path the path to the node\a value.
+     * @param[out] value the variable where the value is to be stored to. The variable shall be of a type compatible with AnyType.
+     * @return true if the value is read and converted successfully.
+     * @pre
+     *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value) = 0;
 
     /**
-     * @brief Reads a previously stored AnyType and creates an Object.
-     * If borrowed the object is part of the structuredDataI internal implementation and therefore cannot be modified.
-     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
+     * @brief Copies the value of a node into an Object . Path is relative to the current node.
+     * @param[in] path the path to the node\a value.
      * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
-     * @param[out] the object reference to point to the output object
-     * @return no errors if the AnyType is successfully read. Actual errors are implementation dependent
+     * @param[out] object is a NULL reference which will be set to point an Object whose AnyType is a correct representation of the data
+     * @return true if the value is read and converted successfully.
+     * @pre
+     *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true) = 0;
 
@@ -108,15 +111,38 @@ public:
      */
     operator AnyType();
 
-#if 0  // OBSOLETED as one can Read/Borrow an object and then inspect its type. This method name is misleading
-       // as in fact it allows access to the type in a borrow like manner
+/**
+ * require write access!
+ */
     /**
-     * @brief Gets the type of a previously stored AnyType.
+     * @brief Writes an AnyType against the provided \a name and adds it to the current node.
+     * @details If the name already exists the value will be overridden.
      * @param[in] path the relative path to the leaf used to store the AnyType \a value.
-     * @return the type of the stored AnyType or VoidType if this \a name does not exist.
+     * @param[in] value the AnyType to store.
+     * @return true if the AnyType is successfully stored.
+     * @pre
+     *   name != NULL &&
+     *   StringHelper::Length(name) > 0
      */
-    virtual AnyType GetType(CCString path) = 0;
-#endif
+    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value) = 0;
+
+    /**
+     * @brief Writes an object into the current node of the database.
+     * @details The implementation shall assume that the object does not need to be copied but can be referenced to.
+     * @param[in] object the object to be added to the database. object->GetName() provides the name.
+     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
+     * @return true if object is valid
+     */
+    virtual ErrorManagement::ErrorType Write(Reference object,bool borrow = true) = 0;
+
+    /**
+     * @brief Copies the content of the current node to the provided destination.
+     * @details A deep copy of the contents is recursively performed.
+     * @param[out] destination where the database will be copied to.
+     * @return true if the copy is successful.
+     * TODO clarify if this copy is from root or
+     */
+    virtual ErrorManagement::ErrorType Copy(StructuredDataI &destination) = 0;
 
     /**
      * Affect the current position
@@ -176,40 +202,6 @@ public:
      */
     virtual uint32 GetNumberOfChildren()=0;
 
-
-/**
- * require write access!
- */
-
-    /**
-     * @brief Writes an AnyType against the provided \a name and adds it to the current node.
-     * @details If the name already exists the value will be overridden.
-     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
-     * @param[in] value the AnyType to store.
-     * @return true if the AnyType is successfully stored.
-     * @pre
-     *   name != NULL &&
-     *   StringHelper::Length(name) > 0
-     */
-    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value) = 0;
-
-    /**
-     * @brief Writes an object into the current node of the database.
-     * @details The implementation shall assume that the object does not need to be copied but can be referenced to.
-     * @param[in] object the object to be added to the database. object->GetName() provides the name.
-     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
-     * @return true if object is valid
-     */
-    virtual ErrorManagement::ErrorType Write(Reference object,bool borrow = true) = 0;
-
-    /**
-     * @brief Copies the content of the current node to the provided destination.
-     * @details A deep copy of the contents is recursively performed.
-     * @param[out] destination where the database will be copied to.
-     * @return true if the copy is successful.
-     * TODO clarify if this copy is from root or
-     */
-    virtual ErrorManagement::ErrorType Copy(StructuredDataI &destination) = 0;
 
 /**
  *  Affect path

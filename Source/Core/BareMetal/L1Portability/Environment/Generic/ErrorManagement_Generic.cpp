@@ -87,7 +87,7 @@ void ErrorCodeToStream(const ErrorType &errorCode,
         stream.Write("NoError", size);
     }
 }
-
+ 
 void ReportError(const ErrorType &code,
                  CCString const errorDescription,
                  CCString const fileName,
@@ -111,13 +111,17 @@ void ReportError(const ErrorType &code,
 
 void ReportErrorFullContext(const ErrorType &code,
                             CCString const errorDescription,
+							CCString const className,
+							CCString const objectName,
+	                        const void * const objectPointer,
                             CCString const fileName,
                             const int16 lineNumber,
                             CCString const functionName) {
     ErrorInformation errorInfo;
 //    errorInfo.threadId = InvalidThreadIdentifier;
-    errorInfo.objectPointer = static_cast<void*>(NULL);
-    errorInfo.className = static_cast<const char8 *>(NULL);
+    errorInfo.objectPointer = objectPointer;
+    errorInfo.className = className;
+    errorInfo.objectName = objectName;
     errorInfo.header.errorType = code;
     errorInfo.header.lineNumber = lineNumber;
     errorInfo.fileName = fileName.GetList();

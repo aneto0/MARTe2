@@ -133,7 +133,7 @@ bool StreamMemoryReference::RelativeSeek(const int64 deltaPos) {
     return ret;
 }
 
-uint64 StreamMemoryReference::Position() const  {
+uint64 StreamMemoryReference::Position() const { 
     return buffer.Position();
 }
 

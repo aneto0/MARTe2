@@ -55,10 +55,23 @@ uint32 RealTimeApplication::index = 1u;
 /*---------------------------------------------------------------------------*/
 
 RealTimeApplication::RealTimeApplication() :
-        ReferenceContainer() {
+        ReferenceContainer(), MessageI() {
+    filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter->SetDestination(this);
+    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
+    }
+    defaultDataSourceName = "";
+
 }
 
+/*lint -e{1551} Guarantess that the execution is stopped upon destrucion of the RealTimeApplication*/
 RealTimeApplication::~RealTimeApplication() {
+    ErrorManagement::ErrorType ret = StopCurrentStateExecution();
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the RealTimeApplication. Was it ever started?");
+    }
 
 }
 bool RealTimeApplication::Initialise(StructuredDataI & data) {
@@ -88,7 +101,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR(ErrorManagement::InitialisationError, "No States block found in RealTimeApplication %s", GetName());
         }
         if (ret) {
             ret = false;
@@ -103,7 +116,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR(ErrorManagement::InitialisationError, "No Data block found in RealTimeApplication %s", GetName());
         }
         if (ret) {
             ret = false;
@@ -118,7 +131,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
             }
         }
         if (!ret) {
-            REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName())
+            REPORT_ERROR(ErrorManagement::InitialisationError, "No Functions block found in RealTimeApplication %s", GetName());
         }
         if (ret) {
             numberOfContainers = Size();
@@ -169,7 +182,7 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
                     }
                 }
                 if (!ret) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName())
+                    REPORT_ERROR(ErrorManagement::InitialisationError, "No Scheduler block in RealTimeApplication %s", GetName());
                 }
             }
         }
@@ -179,77 +192,150 @@ bool RealTimeApplication::Initialise(StructuredDataI & data) {
 }
 
 bool RealTimeApplication::ConfigureApplication() {
-    RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, "DDB1");
+    RealTimeApplicationConfigurationBuilder rtAppBuilder(*this, defaultDataSourceName.Buffer());
+    REPORT_ERROR(ErrorManagement::Information, "Going to rtAppBuilder.ConfigureAfterInitialisation()");
     bool ret = rtAppBuilder.ConfigureAfterInitialisation();
-
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::ParametersError, "Failed to rtAppBuilder.ConfigureAfterInitialisation()");
+    }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to rtAppBuilder.PostConfigureDataSources()");
         ret = rtAppBuilder.PostConfigureDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to rtAppBuilder.PostConfigureDataSources()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to rtAppBuilder.PostConfigureFunctions()");
         ret = rtAppBuilder.PostConfigureFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to rtAppBuilder.PostConfigureFunctions()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to rtAppBuilder.Copy()");
         ret = rtAppBuilder.Copy(functionsDatabase, dataSourcesDatabase);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to rtAppBuilder.Copy()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AllocateGAMMemory");
         ret = AllocateGAMMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AllocateGAMMemory");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AllocateDataSourceMemory()");
         ret = AllocateDataSourceMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AllocateDataSourceMemory()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AddBrokersToFunctions");
         ret = AddBrokersToFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AddBrokersToFunctions");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to FindStatefulDataSources");
         ret = FindStatefulDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to FindStatefulDataSources");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
             ret = scheduler->ConfigureScheduler();
+        }
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
         }
     }
 
     return ret;
 }
 
-bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn,
-                                               ConfigurationDatabase &dataDatabaseIn) {
+bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsDatabaseIn, ConfigurationDatabase &dataDatabaseIn) {
 
     RealTimeApplicationConfigurationBuilder configuration(*this, "DDB1");
     bool ret = configuration.Set(functionsDatabaseIn, dataDatabaseIn);
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configuration.AssignBrokersToFunctions()");
         ret = configuration.AssignBrokersToFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configuration.AssignBrokersToFunctions()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configuration.Copy()");
         ret = configuration.Copy(functionsDatabase, dataSourcesDatabase);
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configuration.Copy()");
+        }
     }
-
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configuration.PostConfigureDataSources()");
         ret = configuration.PostConfigureDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configuration.PostConfigureDataSources()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configuration.PostConfigureFunctions()");
         ret = configuration.PostConfigureFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configuration.PostConfigureFunctions()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to configuration.ConfigureThreads()");
         ret = configuration.ConfigureThreads();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configuration.ConfigureThreads()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AllocateGAMMemory()");
         ret = AllocateGAMMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AllocateGAMMemory()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AllocateDataSourceMemory()");
         ret = AllocateDataSourceMemory();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AllocateDataSourceMemory()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to AddBrokersToFunctions()");
         ret = AddBrokersToFunctions();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to AddBrokersToFunctions()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to FindStatefulDataSources()");
         ret = FindStatefulDataSources();
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to FindStatefulDataSources()");
+        }
     }
     if (ret) {
+        REPORT_ERROR(ErrorManagement::Information, "Going to check configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
             ret = scheduler->ConfigureScheduler();
+        }
+        if (!ret) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
         }
     }
     return ret;
@@ -276,6 +362,9 @@ bool RealTimeApplication::AllocateGAMMemory() {
                     }
                     if (ret) {
                         ret = gam->Setup();
+                        if (!ret) {
+                            REPORT_ERROR(ErrorManagement::ParametersError, "GAM %s Setup failed", fullGAMName.Buffer());
+                        }
                     }
                 }
             }
@@ -301,6 +390,9 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
                 ret = ds.IsValid();
                 if (ret) {
                     ret = ds->AllocateMemory();
+                    if (!ret) {
+                        REPORT_ERROR(ErrorManagement::ParametersError, "GAM %s AllocateMemory failed", fullDsName.Buffer());
+                    }
                 }
             }
         }
@@ -344,17 +436,19 @@ bool RealTimeApplication::AddBrokersToFunctions() {
     return ret;
 }
 
-bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
-
-    bool ret = statesContainer.IsValid();
+ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString nextStateName) {
+    bool ret = nextStateName.Seek(0LLU);
+    if (ret) {
+        ret = statesContainer.IsValid();
+    }
     if (ret) {
         uint32 numberOfStates = statesContainer->Size();
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> state = statesContainer->Get(i);
             ret = state.IsValid();
             if (ret) {
-                if (StringHelper::Compare(state->GetName(), nextStateName) == 0) {
-                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+                if (StringHelper::Compare(state->GetName(), nextStateName.Buffer()) == 0) {
+                    ret = state->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
                     break;
                 }
             }
@@ -366,14 +460,14 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
         ReferenceT<StatefulI> statefulInData = statefulsInData.Get(i);
         ret = statefulInData.IsValid();
         if (ret) {
-            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = statefulInData->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
 
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName);
+            ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
         }
     }
     uint32 nextIndex = (index + 1u) % 2u;
@@ -382,13 +476,23 @@ bool RealTimeApplication::PrepareNextState(const char8 * const nextStateName) {
 
 }
 
-void RealTimeApplication::StartExecution() {
+ErrorManagement::ErrorType RealTimeApplication::StartNextStateExecution() {
     index = (index + 1u) % 2u;
-    scheduler->StartExecution();
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StartNextStateExecution();
+    }
+    return ret;
+    /*lint -e{1762} Member function cannot be made const as it is registered as an RPC in CLASS_METHOD_REGISTER*/
 }
 
-void RealTimeApplication::StopExecution() {
-    scheduler->StopExecution();
+ErrorManagement::ErrorType RealTimeApplication::StopCurrentStateExecution() {
+    ErrorManagement::ErrorType ret = scheduler.IsValid();
+    if (ret.ErrorsCleared()) {
+        ret = scheduler->StopCurrentStateExecution();
+    }
+    return ret;
+    /*lint -e{1762} Member function cannot be made const as it is registered as an RPC in CLASS_METHOD_REGISTER*/
 }
 
 bool RealTimeApplication::FindStatefulDataSources() {
@@ -402,7 +506,7 @@ bool RealTimeApplication::FindStatefulDataSources() {
     return ret;
 }
 
-bool RealTimeApplication::GetStates(ReferenceContainer &states) {
+bool RealTimeApplication::GetStates(ReferenceContainer &states) const {
     bool ret = statesContainer.IsValid();
 
     if (ret) {
@@ -423,5 +527,10 @@ uint32 RealTimeApplication::GetIndex() {
     return index;
 }
 
-CLASS_REGISTER(RealTimeApplication, "1.0");
+CLASS_REGISTER(RealTimeApplication, "1.0")
+
+CLASS_METHOD_REGISTER(RealTimeApplication, PrepareNextState)
+CLASS_METHOD_REGISTER(RealTimeApplication, StartNextStateExecution)
+CLASS_METHOD_REGISTER(RealTimeApplication, StopCurrentStateExecution)
+
 }

@@ -44,7 +44,7 @@ namespace MARTe {
 
 /**
  * @brief Memory allocated area that behaves similarly to a StaticList with variable elements size.
- * @detail The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
+ * @details The MemoryArea class facilitates the automatic management (allocation and freeing) of chunks of memory.
  */
 class DLL_API MemoryArea {
 
@@ -69,13 +69,13 @@ public:
      * @brief Initialises the memory area with a specific pre-allocated memory in input.
      * @param[in] initialMemory is the pointer a pre-allocated memory to be set
      * @param[in] initialSize is the size of \a initialMemory
-     * @warning The memory pointed by \a initialMemory is not copied but only wrapped. Functions like
-     * MemoryArea::Add(*) and MemoryArea::Free(*) can deallocate \a initialMemory. As a consequence
-     * make sure that \a initialMemory is not used outside the scope of MemoryArea.
      * @return true if the memory area is empty, false if it is already initialised.
      * @pre
      *   GetMemoryStart() == NULL &&
      *   GetMemorySize() == 0
+     * @warning The memory pointed by \a initialMemory is not copied but only wrapped. Functions like
+     * MemoryArea::Add(*) and MemoryArea::Free(*) can deallocate \a initialMemory. As a consequence
+     * make sure that \a initialMemory is not used outside the scope of MemoryArea.
      */
     bool InitMemory(void * const initialMemory, const uint32 initialSize);
 
@@ -87,7 +87,7 @@ public:
 
     /**
      * @brief Sets the heap name.
-     * @param[in] heapName is the name of the heap where the memory has to be
+     * @param[in] name is the name of the heap where the memory has to be
      * allocated.
      */
     void SetHeapName(CCString const name);
