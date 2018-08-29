@@ -217,7 +217,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
         maxCommandCompletionHRT = HighResolutionTimer::Counter32() + static_cast<uint32>(timeoutHRT);
 
         while (GetStatus() == StoppingState) {
-            Sleep::MSec(1);
+            Sleep::MSec(1u);
         }
 
         err.timeout = (GetStatus() != OffState);
@@ -234,7 +234,7 @@ ErrorManagement::ErrorType EmbeddedThreadI::Stop() {
         if (err.ErrorsCleared()) {
 
             while (GetStatus() == KillingState) {
-                Sleep::MSec(1);
+                Sleep::MSec(1u);
             }
 
         }

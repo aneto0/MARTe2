@@ -134,7 +134,7 @@ ErrorManagement::ErrorType LoggerService::Execute(ExecutionInfo & info) {
             }
         }
     }
-    Sleep::Sec(1e-3);
+    Sleep::Sec(1e-3F);
     return ErrorManagement::NoError;
 }
 

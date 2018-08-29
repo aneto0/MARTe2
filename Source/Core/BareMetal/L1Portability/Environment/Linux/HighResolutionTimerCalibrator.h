@@ -75,6 +75,8 @@ public:
      */
     float64 GetPeriod() const;
 
+
+
 private:
 
     /**
@@ -101,6 +103,7 @@ private:
      * Number of elapsed ticks at the time at which a framework instance was executed.
      */
     uint64 initialTicks;
+
 };
 
 }

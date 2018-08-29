@@ -293,7 +293,7 @@ protected:
     /**
      * How much time to sleep in lock.
      */
-    float64 sleepInMutexSec;
+    float32 sleepInMutexSec;
 
     /**
      * The ratio between the signal size (NOfElements * TypeSize) / Size of the packet will define how many times the packet structure is repeated inside the memory. This is the content that will be transformed from interleaved to flat.

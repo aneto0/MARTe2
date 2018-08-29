@@ -46,10 +46,10 @@ using namespace MARTe;
 bool SleepTest::TestGetDateSeconds() {
     return Sleep::GetDateSeconds() == time(NULL);
 }
-
+/*
 bool SleepTest::TestAtLeast(float64 sec) {
     bool testResult = false;
-    float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * sec;
     int initialTime = clock();
 
     Sleep::AtLeast(sec);
@@ -58,7 +58,7 @@ bool SleepTest::TestAtLeast(float64 sec) {
 
     return testResult;
 }
-
+*/
 bool SleepTest::TestNoMore(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */

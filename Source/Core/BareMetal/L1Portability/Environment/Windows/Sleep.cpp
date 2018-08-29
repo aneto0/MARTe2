@@ -47,51 +47,22 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Sleep {
 
 static const uint32 winSleepFreq = 1000;
 
-void AtLeast(float64 sec) {
-    int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
-    if (ticks < 0) {
-        return;
-    }
-
-    ::Sleep(ticks);
-}
-
-void NoMore(float64 sec) {
-    int ticks = (int) (winSleepFreq * sec);
-    if (ticks < 0){
-        return;
-    }
-    ::Sleep(ticks);
-}
-
-void Sec(float64 sec) {
-    if (sec < 0){
-        return;
-    }
-
-    ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
-}
-
-void MSec(int32 msec) {
-    if (msec < 0){
-        return;
-    }
-    ::Sleep(msec);
-}
-
-void SemiBusy(float64 totalSleepSec,
-              float64 nonBusySleepSec) {
-    NoMore(totalSleepSec);
-}
-
-int32 GetDateSeconds() {
+int32 Sleep::GetDateSeconds() {
     return (int32) time((time_t *) NULL);
 }
 
+
+
+void Sleep::OsUsleep(const uint32 usecTime) {
+    if (usecTime > 0u) {
+        ::Sleep((unsigned long) (usecTime/1000));
+    }
+    //(void)usleep(usecTime);
 }
+
+
 
 }

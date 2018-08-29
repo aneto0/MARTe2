@@ -46,7 +46,7 @@ CircularBufferThreadInputDataSource::CircularBufferThreadInputDataSource() :
         MemoryDataSourceI(), EmbeddedServiceMethodBinderI(), executor(*this) {
     mutex.Create();
     currentBuffer = NULL_PTR(uint32 *);
-    sleepInMutexSec = 1e-6;
+    sleepInMutexSec = 1e-6F;
 
     isRefreshed = NULL_PTR(uint8 *);
     lastReadBuffer = NULL_PTR(uint32 *);
@@ -160,7 +160,7 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
 
     if (ret) {
         if (!data.Read("SleepInMutexSec", sleepInMutexSec)) {
-            sleepInMutexSec = 1e-6;
+            sleepInMutexSec = 1e-6F;
         }
     }
 

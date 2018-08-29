@@ -92,7 +92,7 @@ public:
      * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
     ErrorManagement::ErrorType FastLock(const TimeoutType &timeout = TTInfiniteWait,
-                                        float64 sleepTime = 1e-3);
+                                        float32 sleepTime = 1e-3);
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.

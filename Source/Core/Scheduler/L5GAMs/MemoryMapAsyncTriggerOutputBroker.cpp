@@ -422,7 +422,7 @@ bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
         ret = (fastSem.FastLock() == ErrorManagement::NoError);
         waitForBufferLoop = bufferLoopExecuting;
         fastSem.FastUnLock();
-        Sleep::Sec(1e-3);
+        Sleep::Sec(1e-3F);
     }
     if (ret) {
         ret = (fastSem.FastLock() == ErrorManagement::NoError);

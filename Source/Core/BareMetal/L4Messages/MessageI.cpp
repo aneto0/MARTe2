@@ -176,7 +176,7 @@ ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &mes
         isReply = message->IsReply();
     }
     while ((err.ErrorsCleared()) && (!isReply)) {
-        Sleep::NoMore(static_cast<float64>(pollingTime));
+        Sleep::NoMore(pollingTime);
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
             err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;

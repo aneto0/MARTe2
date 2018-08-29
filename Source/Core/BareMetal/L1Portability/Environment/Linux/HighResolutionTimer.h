@@ -67,6 +67,7 @@ inline bool GetTimeStamp(TimeStamp &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
 }
 
+
 }
 
 }

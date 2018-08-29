@@ -67,14 +67,14 @@ bool FastPollingMutexSem::Locked() const {
 }
 
 ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &timeout,
-                                                         float64 sleepTime ) {
+                                                         float32 sleepTime ) {
     uint64 ticksStop = timeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
 
     // sets the default if it is negative
-    if (sleepTime < 0.0) {
-        sleepTime = 1e-3;
+    if (sleepTime < 0.0F) {
+        sleepTime = 1e-3F;
     }
     bool noSleep = IsEqual(sleepTime, 0.0);
 

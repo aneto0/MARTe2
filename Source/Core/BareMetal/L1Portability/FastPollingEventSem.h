@@ -79,7 +79,7 @@ public:
      * @pre Reset is called to lower the barrier.
      */
     ErrorManagement::ErrorType FastWait(const TimeoutType &timeout = TTInfiniteWait,
-                                        float64 sleepTime = 1e-3) const;
+                                        float32 sleepTime = 1e-3F) const;
 
     /**
      * @brief Posts the semaphore raising the spin-lock barrier.
@@ -100,7 +100,7 @@ public:
      * the timeout expires before the FastPost().
      */
     ErrorManagement::ErrorType FastResetWait(const TimeoutType &timeout = TTInfiniteWait,
-                                             const float64 &sleepTime = 1e-3);
+                                             const float32 &sleepTime = 1e-3F);
 
 private:
 

@@ -101,6 +101,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     else {
         REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
     }
+
 }
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
@@ -140,5 +141,6 @@ uint64 HighResolutionTimerCalibrator::GetFrequency() const {
 float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
 }
+
 
 }

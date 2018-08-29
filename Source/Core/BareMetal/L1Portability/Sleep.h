@@ -41,72 +41,118 @@
 
 namespace MARTe {
 
-namespace Sleep {
+class DLL_API Sleep {
+public:
+    /**
+     * @brief Retrieve the time as seconds from the start of time.
+     * @return the seconds elapsed from 00:00 of Jan 1, 1970.
+     */
+    static int32 GetDateSeconds(void);
 
-/**
- * @brief Retrieve the time as seconds from the start of time.
- * @return the seconds elapsed from 00:00 of Jan 1, 1970.
- */
-DLL_API int32 GetDateSeconds(void);
+    /**
+     * @brief Sleeps no more than the requested time.
+     * @details This function uses HighResolutionTimer functions.
+     * @param[in] sec is the time in seconds to sleep (no more).
+     */
+    static inline void NoMore(const float32 sec);
 
-/**
- * @brief Sleeps for the time requested or more.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] sec is the time in seconds to sleep (at least).
- * TODO float64 is absolutely excessive!!! Change to float32
- * TODO this will cause unnecessary burden for small embedded systems
- */
-DLL_API void AtLeast(const float64 sec);
+    /**
+     * @brief Sleeps for sec seconds (float64 value).
+     * @param[in] sec is the time to sleep.
+     */
+    static inline void Sec(const float32 sec);
 
-/**
- * @brief Sleeps no more than the requested time.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] sec is the time in seconds to sleep (no more).
- */
-DLL_API void NoMore(const float64 sec);
+    /**
+     * @brief Sleeps for msec milliseconds.
+     * @param[in] msec is the number of milliseconds to sleep.
+     */
+    static inline void MSec(const uint32 msec);
 
-/**
- * @brief Sleeps for sec seconds (float64 value).
- * @param[in] sec is the time to sleep.
- */
-DLL_API void Sec(const float64 sec);
+    /**
+     * @brief Sleep without yield cpu.
+     * @details This function uses HighResolutionTimer functions.
+     * @param[in] sec is the seconds to sleep.
+     */
+    static inline void Busy(float32 sec);
 
-/**
- * @brief Sleeps for msec milliseconds.
- * @param[in] msec is the number of milliseconds to sleep.
- */
-DLL_API void MSec(const int32 msec);
+    /**
+     * @brief Sleep yielding cpu for nonBusySleepSec.
+     * @details This function uses HighResolutionTimer functions.
+     * @param[in] totalSleepSec is the total time in seconds to sleep.
+     * @param[in] nonBusySleepSec is the time to sleep without use cpu.
+     */
+    static inline void SemiBusy(const float32 totalSleepSec,
+            const float32 nonBusySleepSec);
 
-/**
- * @brief Sleep without yield cpu.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] sec is the seconds to sleep.
- */
-inline void Busy(float64 sec);
+private:
 
-/**
- * @brief Sleep yielding cpu for nonBusySleepSec.
- * @details This function uses HighResolutionTimer functions.
- * @param[in] totalSleepSec is the total time in seconds to sleep.
- * @param[in] nonBusySleepSec is the time to sleep without use cpu.
- */
-DLL_API void SemiBusy(const float64 totalSleepSec,
-                      const float64 nonBusySleepSec);
-}
+    /**
+     * @brief Function to be used by all the other methods
+     * @param[in] totalUsecTime is the total time in micro-seconds to sleep.
+     * @param[in[ nonBusyUsecTime is the time to sleep busy
+     */
+    static inline void MicroSeconds(uint32 totalUsecTime, uint32 nonBusyUsecTime);
+
+    /**
+     * @brief Wraps the operating system sleep call
+     * @param[in] usecTime is the time to sleep in micro-seconds
+     */
+    static void OsUsleep(uint32 usecTime);
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-void Sleep::Busy(const float64 sec) {
+void Sleep::NoMore(const float32 sec) {
+
+    uint32 uSec=static_cast<uint32>(sec*1e6);
+
+    uint32 toGrow=SCHED_GRANULARITY_US;
+    while(toGrow<uSec){
+        toGrow+=SCHED_GRANULARITY_US;
+    }
+    toGrow-=SCHED_GRANULARITY_US;
+
+    MicroSeconds(uSec, toGrow);
+
+}
+
+
+void Sleep::Sec(const float32 sec) {
+    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+    MicroSeconds(usecTime, usecTime);
+}
+
+void Sleep::MSec(const uint32 msec) {
+    uint32 usec = (msec * 1000u);
+    MicroSeconds(usec, usec);
+}
+
+void Sleep::Busy(float32 sec){
+    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+    MicroSeconds(usecTime, 0u);
+}
+
+void Sleep::SemiBusy(const float32 totalSleepSec,
+        const float32 nonBusySleepSec){
+    uint32 usecTotalTime = static_cast<uint32>(totalSleepSec * 1e6);
+    uint32 nonBusyTime = static_cast<uint32>(nonBusySleepSec * 1e6);
+    MicroSeconds(usecTotalTime, nonBusyTime);
+}
+
+
+void Sleep::MicroSeconds(uint32 totalUsecTime,
+                  uint32 nonBusyUsecTime) {
     uint64 startCounter = HighResolutionTimer::Counter();
-    float64 frequencyF = static_cast<float64>(HighResolutionTimer::Frequency());
-    float64 endCounterF = (sec * frequencyF);
-    uint64 endCounter = static_cast<uint64>(endCounterF);
-    uint64 sleepUntilCounter = startCounter + endCounter;
-    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
+    uint64 deltaTicks = totalUsecTime * static_cast<uint64>(static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
+
+    OsUsleep(nonBusyUsecTime);
+
+    while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
     }
 }
+
 
 }
 #endif /* SLEEP_H_ */

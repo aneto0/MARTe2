@@ -96,6 +96,7 @@ public:
      */
     bool TestGetTimeStamp(uint32 millisecs);
 
+
 public: //Other tests
 
     /**
