@@ -106,21 +106,20 @@ private:
 
 void Sleep::NoMore(const float32 sec) {
 
-    uint32 uSec=static_cast<uint32>(sec*1e6);
+    uint32 uSec = static_cast<uint32>((sec * 1e6) + 0.5);
 
-    uint32 toGrow=SCHED_GRANULARITY_US;
-    while(toGrow<uSec){
-        toGrow+=SCHED_GRANULARITY_US;
+    uint32 toGrow = SCHED_GRANULARITY_US;
+    while (toGrow < uSec) {
+        toGrow += SCHED_GRANULARITY_US;
     }
-    toGrow-=SCHED_GRANULARITY_US;
+    toGrow -= SCHED_GRANULARITY_US;
 
     MicroSeconds(uSec, toGrow);
 
 }
 
-
 void Sleep::Sec(const float32 sec) {
-    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+    uint32 usecTime = static_cast<uint32>((sec * 1e6) + 0.5);
     MicroSeconds(usecTime, usecTime);
 }
 
@@ -129,21 +128,20 @@ void Sleep::MSec(const uint32 msec) {
     MicroSeconds(usec, usec);
 }
 
-void Sleep::Busy(float32 sec){
-    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+void Sleep::Busy(float32 sec) {
+    uint32 usecTime = static_cast<uint32>((sec * 1e6) + 0.5);
     MicroSeconds(usecTime, 0u);
 }
 
 void Sleep::SemiBusy(const float32 totalSleepSec,
-        const float32 nonBusySleepSec){
-    uint32 usecTotalTime = static_cast<uint32>(totalSleepSec * 1e6);
-    uint32 nonBusyTime = static_cast<uint32>(nonBusySleepSec * 1e6);
+                     const float32 nonBusySleepSec) {
+    uint32 usecTotalTime = static_cast<uint32>((totalSleepSec * 1e6) + 0.5);
+    uint32 nonBusyTime = static_cast<uint32>((nonBusySleepSec * 1e6) + 0.5);
     MicroSeconds(usecTotalTime, nonBusyTime);
 }
 
-
 void Sleep::MicroSeconds(uint32 totalUsecTime,
-                  uint32 nonBusyUsecTime) {
+                         uint32 nonBusyUsecTime) {
     uint64 startCounter = HighResolutionTimer::Counter();
     uint64 deltaTicks = totalUsecTime * static_cast<uint64>(static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
 
@@ -152,7 +150,6 @@ void Sleep::MicroSeconds(uint32 totalUsecTime,
     while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
     }
 }
-
 
 }
 #endif /* SLEEP_H_ */
