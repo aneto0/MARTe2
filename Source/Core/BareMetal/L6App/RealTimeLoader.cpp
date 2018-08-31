@@ -52,8 +52,7 @@ RealTimeLoader::~RealTimeLoader() {
 
 }
 
-ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data,
-                                                     StreamI &configuration) {
+ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data, StreamI &configuration) {
     ErrorManagement::ErrorType ret = Loader::Configure(data, configuration);
 
     ObjectRegistryDatabase *objDb = ObjectRegistryDatabase::Instance();
@@ -61,12 +60,14 @@ ErrorManagement::ErrorType RealTimeLoader::Configure(StructuredDataI& data,
     uint32 found = 0u;
     //start all the rtapp
     for (uint32 n = 0u; (ret) && (n < nOfObjs); n++) {
-        ReferenceT < RealTimeApplication > rtApp = objDb->Get(n);
+        ReferenceT<RealTimeApplication> rtApp = objDb->Get(n);
         if (rtApp.IsValid()) {
-            rtApps.Insert(rtApp);
-            ret.initialisationError = !rtApp->ConfigureApplication();
-            if (!ret) {
-                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
+            ret.initialisationError = !rtApps.Insert(rtApp);
+            if (ret.ErrorsCleared()) {
+                ret.initialisationError = !rtApp->ConfigureApplication();
+                if (!ret) {
+                    REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to Configure RealTimeApplication");
+                }
             }
             found++;
         }
@@ -87,16 +88,16 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
     ErrorManagement::ErrorType err;
 
     uint32 nApps = rtApps.Size();
-    firstState.Seek(0ull);
-    for (uint32 i = 0u; (i < nApps) && (err.ErrorsCleared()); i++) {
-        ReferenceT < RealTimeApplication > rtApp = rtApps.Get(i);
-        if (firstState.Size() > 0) {
+    (void) firstState.Seek(0ull);
+    for (uint32 i = 0u; (err.ErrorsCleared()) && (i < nApps); i++) {
+        ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
+        if (firstState.Size() > 0u) {
             StreamString destination;
             char8 term;
             (void) firstState.GetToken(destination, ":", term);
             err.fatalError = !(rtApp->PrepareNextState(destination.Buffer()));
             if (err.ErrorsCleared()) {
-                rtApp->StartNextStateExecution();
+                err = rtApp->StartNextStateExecution();
             }
             if (err.ErrorsCleared()) {
                 err.fatalError = (destination.Size() == 0u);
@@ -119,7 +120,8 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
                 }
             }
             else {
-                REPORT_ERROR_STATIC(err, "Failed to get the first state for the application %d ", i);
+                const uint32 ii = i;
+                REPORT_ERROR_STATIC(err, "Failed to get the first state for the application %d ", ii);
             }
         }
         else {
@@ -134,8 +136,8 @@ ErrorManagement::ErrorType RealTimeLoader::Stop() {
     uint32 nApps = rtApps.Size();
 
     if (ret.ErrorsCleared()) {
-        for (uint32 i = 0u; (i < nApps) && (ret); i++) {
-            ReferenceT < RealTimeApplication > rtApp = rtApps.Get(i);
+        for (uint32 i = 0u; (ret.ErrorsCleared()) && (i < nApps); i++) {
+            ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
             ret = rtApp->StopCurrentStateExecution();
             if (ret.ErrorsCleared()) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to StopCurrentStateExecution");
