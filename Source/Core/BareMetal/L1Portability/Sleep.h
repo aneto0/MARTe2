@@ -81,7 +81,8 @@ public:
      * @param[in] totalSleepSec is the total time in seconds to sleep.
      * @param[in] nonBusySleepSec is the time to sleep without use cpu.
      */
-    static inline void SemiBusy(const float32 totalSleepSec, const float32 nonBusySleepSec);
+    static inline void SemiBusy(const float32 totalSleepSec,
+            const float32 nonBusySleepSec);
 
 private:
 
@@ -105,7 +106,7 @@ private:
 
 void Sleep::NoMore(const float32 sec) {
 
-    uint32 uSec = static_cast<uint32>(sec * 1e6);
+    uint32 uSec = static_cast<uint32>((sec * 1e6) + 0.5);
 
     uint32 toGrow = SCHED_GRANULARITY_US;
     while (toGrow < uSec) {
@@ -118,7 +119,7 @@ void Sleep::NoMore(const float32 sec) {
 }
 
 void Sleep::Sec(const float32 sec) {
-    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+    uint32 usecTime = static_cast<uint32>((sec * 1e6) + 0.5);
     MicroSeconds(usecTime, usecTime);
 }
 
@@ -128,17 +129,19 @@ void Sleep::MSec(const uint32 msec) {
 }
 
 void Sleep::Busy(float32 sec) {
-    uint32 usecTime = static_cast<uint32>(sec * 1e6);
+    uint32 usecTime = static_cast<uint32>((sec * 1e6) + 0.5);
     MicroSeconds(usecTime, 0u);
 }
 
-void Sleep::SemiBusy(const float32 totalSleepSec, const float32 nonBusySleepSec) {
-    uint32 usecTotalTime = static_cast<uint32>(totalSleepSec * 1e6);
-    uint32 nonBusyTime = static_cast<uint32>(nonBusySleepSec * 1e6);
+void Sleep::SemiBusy(const float32 totalSleepSec,
+                     const float32 nonBusySleepSec) {
+    uint32 usecTotalTime = static_cast<uint32>((totalSleepSec * 1e6) + 0.5);
+    uint32 nonBusyTime = static_cast<uint32>((nonBusySleepSec * 1e6) + 0.5);
     MicroSeconds(usecTotalTime, nonBusyTime);
 }
 
-void Sleep::MicroSeconds(uint32 totalUsecTime, uint32 nonBusyUsecTime) {
+void Sleep::MicroSeconds(uint32 totalUsecTime,
+                         uint32 nonBusyUsecTime) {
     uint64 startCounter = HighResolutionTimer::Counter();
     uint64 deltaTicks = totalUsecTime * static_cast<uint64>(static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
 
