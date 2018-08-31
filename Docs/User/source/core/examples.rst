@@ -20,14 +20,14 @@ To run the examples follow theses instructions:
    
    export MARTe2_DIR=FOLDER_WHERE_MARTe2_IS_INSTALLED
    cd $MARTe2_DIR/Docs/User/source/_static/examples/Core
-   make -f Makefile.linux
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/linux/Core/
+   make -f Makefile.x86-linux
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/x86-linux/Core/
    
 Standalone examples are run with:
 
 .. code-block:: bash
 
-   ../../../../../../Build/linux/Examples/Core/EXAMPLE_TO_RUN.ex
+   ../../../../../../Build/x86-linux/Examples/Core/EXAMPLE_TO_RUN.ex
    
 Examples which are related to the real-time execution of a configuration file and which are provided with a given start-up **State** are launched :
 

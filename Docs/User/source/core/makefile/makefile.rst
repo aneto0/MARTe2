@@ -162,7 +162,7 @@ To try the example execute:
    
    export MARTe2_DIR=FOLDER_WHERE_MARTe2_IS_INSTALLED
    cd $MARTe2_DIR/Docs/User/source/_static/examples/Makefiles
-   make -f Makefile.linux
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/linux/Core/
-   ../../../../../../Build/linux/Examples/Makefiles/ExFile1.ex
+   make -f Makefile.x86-linux
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/x86-linux/Core/
+   ../../../../../../Build/x86-linux/Examples/Makefiles/ExFile1.ex
    
