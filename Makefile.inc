@@ -24,17 +24,24 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core.x Source/App.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
-
+SPB=
+SPBC=Source/Core.x Source/App.x
+SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
+SUBPROJCORE = $(SPBC:%.x=%.spb)
+SUBPROJTEST = $(SPBT:%.x=%.spb)
 
 MAKEDEFAULTDIR=MakeDefaults
 
 ROOT_DIR=.
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ) 
+all: $(OBJS) core test
 	echo  $(OBJS)
 
+core: $(SUBPROJCORE)
+	echo  $(SUBPROJCORE)
 
+test: $(SUBPROJTEST)
+	echo  $(SUBPROJTEST)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
