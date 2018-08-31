@@ -89,7 +89,7 @@ private:
     /**
      * @brief Function to be used by all the other methods
      * @param[in] totalUsecTime is the total time in micro-seconds to sleep.
-     * @param[in[ nonBusyUsecTime is the time to sleep busy
+     * @param[in[ nonBusyUsecTime is the time to sleep using the operating system sleep function.
      */
     static inline void MicroSeconds(uint32 totalUsecTime, uint32 nonBusyUsecTime);
 
