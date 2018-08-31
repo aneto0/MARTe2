@@ -40,6 +40,8 @@
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StandardParser.h"
+#include "Threads.h"
+#include "ThreadInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -371,8 +373,17 @@ static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config)
 CircularBufferThreadInputDataSourceTest::CircularBufferThreadInputDataSourceTest() {
 
 }
-
+#include <stdio.h>
 CircularBufferThreadInputDataSourceTest::~CircularBufferThreadInputDataSourceTest() {
+    uint32 nThreads = Threads::NumberOfThreads();
+    printf("Killing threads\n");
+    while (nThreads > 0u) {
+        printf("Thread killed\n");
+        ThreadInformation tinfo;
+        Threads::GetThreadInfoCopy(tinfo, 0u);
+        ThreadIdentifier tid = tinfo.GetThreadIdentifier();
+        Threads::Kill(tid);
+    }
 
 }
 
@@ -794,7 +805,6 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise() {
         ret = dataSource.IsValid();
     }
     if (ret) {
-
         ret = dataSource->PrepareNextState("State1", "State1");
 
     }
