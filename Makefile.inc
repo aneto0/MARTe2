@@ -29,6 +29,8 @@ SPBC=Source/Core.x Source/App.x
 SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
 SUBPROJCORE = $(SPBC:%.x=%.spb)
 SUBPROJTEST = $(SPBT:%.x=%.spb)
+SUBPROJCOREC = $(SPBC:%.x=%.spc)
+SUBPROJTESTC = $(SPBT:%.x=%.spc)
 
 MAKEDEFAULTDIR=MakeDefaults
 
@@ -43,5 +45,7 @@ core: $(SUBPROJCORE)
 
 test: $(SUBPROJTEST)
 	echo  $(SUBPROJTEST)
+
+clean: $(SUBPROJCOREC) $(SUBPROJTESTC)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
