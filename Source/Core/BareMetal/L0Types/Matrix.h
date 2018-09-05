@@ -694,11 +694,6 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     return ret;
 }
 
-/*
- * @brief float64 implementation of the Inverse.
- * @param[out] inverse see Matrix<T>::Inverse.
- * @return see Matrix<T>::Inverse.
- */
 template<> inline
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);

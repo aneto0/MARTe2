@@ -41,6 +41,9 @@
 
 namespace MARTe {
 
+/**
+ * @brief MARTe Sleep functions.
+ */
 class DLL_API Sleep {
 public:
     /**
