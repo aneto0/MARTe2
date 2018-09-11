@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,EndianityA.h)
 
 /*---------------------------------------------------------------------------*/

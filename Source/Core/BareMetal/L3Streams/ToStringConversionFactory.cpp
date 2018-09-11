@@ -25,6 +25,7 @@
 #include "IOBuffer.h"
 #include "IOBufferPrivate.h"
 #include "StreamString.h"
+#include "Memory.h"
 
 namespace MARTe{
 
@@ -416,7 +417,7 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
             }
             // write
             else {
-            	if (MemoryOperationsHelper::Compare(Buffer(),currentString.GetList(),writeSize)==0){
+            	if (Memory::Compare(Buffer(),currentString.GetList(),writeSize)){
                     retval = true;
                     Empty();
                 } else {

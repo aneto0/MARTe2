@@ -94,6 +94,7 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 		macrofun(NotAnErrorCode,        notAnErrorCode,        31)
 
 
+
 /**
  * to be kept up to date with the highest value of the error bits
  */
@@ -233,6 +234,18 @@ public:
     inline void SetError(const ErrorType &input);
 
     /**
+     * @brief Gets the code associated with a not-error message
+     * @return the non error code (once removed the non-error bit)
+     */
+    inline ErrorIntegerFormat GetNonErrorCode();
+
+    /**
+     * @brief Sets the non error bit and writes the user code.
+     * @param[in] userCode to be written. userCode must be unsigned of size 1 bit less than that of ErrorIntegerFormat
+     */
+    inline void SetNonErrorCode(ErrorIntegerFormat userCode);
+
+    /**
      * @brief Checks if the current error bits contains the provided \a errorBitSet.
      * @param[in] errorBitSet Error bits to verify.
      * @return true if the current error bits contains the provided \a errorBitSet.
@@ -249,11 +262,6 @@ public:
 
         // generates all bits
         ERROR_CONSTANT_MACRO(GENERATE_ERROR_BITRANGE)
-
-        /**
-         * unmapped bits
-         */
-//        BitRange<ErrorIntegerFormat, lastErrorBit+1, errorIntegerFormatBitSize - lastErrorBit -1 > unmapped;
 
     };
 
@@ -329,6 +337,14 @@ inline void ErrorType::ClearError(const ErrorIntegerFormat errorBitSet) {
 
 inline bool ErrorType::Contains(const ErrorIntegerFormat errorBitSet) const {
     return ((format_as_integer & errorBitSet) == errorBitSet);
+}
+
+inline ErrorIntegerFormat ErrorType::GetNonErrorCode(){
+    return (format_as_integer & ~NotAnErrorCode);
+}
+
+inline void ErrorType::SetNonErrorCode(ErrorIntegerFormat userCode){
+	format_as_integer = NotAnErrorCode | userCode;
 }
 
 }

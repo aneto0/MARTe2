@@ -20,11 +20,14 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
+#include "Memory.h"
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
-#include "MemoryOperationsHelper.h"
+
 
 namespace MARTe{
+
+
 
 class SameTypeConversionFactory: TypeConversionFactoryI{
 
@@ -132,11 +135,11 @@ ErrorManagement::ErrorType CopyTCO::Convert(uint8 *dest, const uint8 *source,uin
 	ErrorManagement::ErrorType  ok;
 	uint32 toCopySize = dataSize * numberOfElements;
 	if (!compare){
-		MemoryOperationsHelper::Copy(dest,source,toCopySize);
+		ok = Memory::Copy(dest,source,toCopySize);
 	} else {
-		if (MemoryOperationsHelper::Compare(dest,source,toCopySize)!= 0){
-			ok.comparisonFailure = true;
-		}
+		// compare returns true if the same or comparisonFailure if different
+		ok = Memory::Compare(dest,source,toCopySize);
+
 	}
 	return ok;
 }

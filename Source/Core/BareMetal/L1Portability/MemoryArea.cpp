@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryArea.h"
-#include "MemoryOperationsHelper.h"
+#include "Memory.h"
 #include "StringHelper.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -113,7 +113,7 @@ bool MemoryArea::Add(const void * const source,
                      uint32 &offset) {
     bool ret = Add(memorySize, offset);
     if (ret) {
-        MemoryOperationsHelper::Copy(&reinterpret_cast<char8*>(memory)[offset], source, memorySize);
+        ret = Memory::Copy(&reinterpret_cast<char8*>(memory)[offset], source, memorySize);
     }
     return ret;
 }

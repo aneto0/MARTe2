@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "DynamicZeroTerminatedArray.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,7 +49,7 @@ bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest
 
     dest = HeapManager::Malloc(necessarySize*sizeOfT);
     if (dest != NULL) {
-        MemoryOperationsHelper::Copy(dest,src,(1 + sizeOfData)*sizeOfT);
+        Memory::Copy(dest,src,(1 + sizeOfData)*sizeOfT);
     } else {
         REPORT_ERROR(ErrorManagement::FatalError, "DZTInitCopy: Error: zero term array duplicated creation failed");
         ret = false;
@@ -99,7 +100,7 @@ bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCop
 
     if (ret)  {
         void *destOff      = static_cast<void *>(static_cast<char *>(dest)+size*sizeOfT);
-        MemoryOperationsHelper::Copy(destOff,src,size2*sizeOfT);
+        Memory::Copy(destOff,src,size2*sizeOfT);
     }
     return ret;
 }

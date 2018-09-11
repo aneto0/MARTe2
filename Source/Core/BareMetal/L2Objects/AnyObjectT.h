@@ -34,6 +34,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
+#include "Memory.h"
 #include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
@@ -118,7 +119,7 @@ void AnyObjectT<objectSize>::Setup(uint32 sizeToCopy,const void *pointer,const V
 	if (sizeToCopy > objectSize){
 		sizeToCopy = objectSize;
 	}
-	MemoryOperationsHelper::Copy(data,pointer,sizeToCopy);
+	Memory::Copy(data,pointer,sizeToCopy);
 }
 
 

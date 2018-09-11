@@ -35,7 +35,7 @@
 #include "ErrorManagement.h"
 #include "ErrorType.h"
 #include "FlagsType.h"
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include "HandleI.h"
 #include "StreamI.h"
 #include "StringHelper.h"

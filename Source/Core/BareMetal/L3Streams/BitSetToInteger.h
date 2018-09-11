@@ -37,6 +37,7 @@
 #include "IOBuffer.h"
 #include "Shift.h"
 #include "DoubleInteger.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -202,11 +203,7 @@ static inline void BSToBS(T * const & destination,
     T sourceCopy = static_cast<T>(0);
     uint32 sourceByteSize = ((static_cast<uint32>(sourceBitSize) + static_cast<uint32>(sourceBitShift)) + 7u) / 8u;
 
-    // copy
-    if (!MemoryOperationsHelper::Copy(&sourceCopy, source, sourceByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
-
+    Memory::Copy(&sourceCopy, source, sourceByteSize);
 
     // shift number so LSB at bit 0
     // removes lower bits
@@ -279,17 +276,13 @@ static inline void BSToBS(T * const & destination,
 
 
     // copy
-    if (!MemoryOperationsHelper::Copy(&destinationCopy, destination, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
+    Memory::Copy(&destinationCopy, destination, destinationByteSize);
     destinationMask &= destinationCopy;
 
     // merge into sourceCopy
     sourceCopy |= destinationMask;
 
-    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, destinationByteSize)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
-    }
+    Memory::Copy(destination, &sourceCopy, destinationByteSize);
 
 }
 

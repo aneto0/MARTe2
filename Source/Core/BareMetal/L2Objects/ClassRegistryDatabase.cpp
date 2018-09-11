@@ -36,7 +36,6 @@
 #include "Object.h"
 #include "DynamicCString.h"
 #include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
 #include "LoadableLibrary.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"

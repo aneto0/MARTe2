@@ -31,6 +31,7 @@
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
+#include "Memory.h"
 
 namespace MARTe {
 
@@ -203,7 +204,7 @@ bool IOBuffer::Write(const char8 * const buffer,uint32 &size) {
 
         // fill the buffer with the remainder
         if (size > 0u) {
-            if (!MemoryOperationsHelper::Copy(positionPtr, buffer, size)) {
+            if (!Memory::Copy(positionPtr, buffer, size)) {
                 REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
                 retval = false;
             }
@@ -270,7 +271,7 @@ bool IOBuffer::Read(char8 * const buffer,
 
     // fill the buffer with the remainder
     if (size > 0u) {
-        if (!MemoryOperationsHelper::Copy(buffer, positionPtr, size)) {
+        if (!Memory::Copy(buffer, positionPtr, size)) {
             retval = false;
             REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
         }

@@ -37,7 +37,7 @@
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "ReferenceContainer.h"
-#include "MemoryOperationsHelper.h"
+#include "Memory.h"
 #include "Atomic.h"
 #include "ClassMethodCaller.h"
 #include "ClassRegistryDatabase.h"

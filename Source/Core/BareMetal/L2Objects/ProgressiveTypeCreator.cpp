@@ -27,6 +27,7 @@
 #include "ProgressiveTypeCreator.h"
 #include "TypeConversionManager.h"
 #include "GlobalObjectsDatabase.h"
+#include "Memory.h"
 #include "MemoryPageObject.h"
 #include "AnyObject.h"
 
@@ -178,7 +179,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 			CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 
 			if (ret){
-				MemoryOperationsHelper::Copy(pointer,typeStringRepresentation.GetList(),neededSize);
+				Memory::Copy(pointer,typeStringRepresentation.GetList(),neededSize);
 			}
 
 		} else {

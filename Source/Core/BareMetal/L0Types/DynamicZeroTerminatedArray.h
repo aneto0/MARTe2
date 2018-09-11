@@ -36,7 +36,7 @@
 #include "CompilerTypes.h"
 #include "ZeroTerminatedArray.h"
 #include "HeapManager.h"
-#include "MemoryOperationsHelper.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

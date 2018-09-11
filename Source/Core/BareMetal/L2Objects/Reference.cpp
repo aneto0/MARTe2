@@ -37,7 +37,6 @@
 #include "CompositeErrorManagement.h"
 #include "ObjectBuilder.h"
 #include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "DynamicCString.h"
 #include "GlobalObjectsDatabase.h"

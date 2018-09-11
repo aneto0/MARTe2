@@ -69,8 +69,7 @@ ObjectRegistryDatabase::~ObjectRegistryDatabase() {
     Purge();
 }
 
-Reference ObjectRegistryDatabase::Find(const char8 * const path,
-                                       const Reference current) {
+Reference ObjectRegistryDatabase::Find(const CCString path,const Reference current) {
     ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;
@@ -114,7 +113,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
     // now search from the domain forward
     Reference ret;
     if (ok) {
-        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::SHALLOW, &path[backSteps]);
+        ReferenceContainerFilterObjectName filterName(1, ReferenceContainerFilterMode::SHALLOW, &(path.GetList()[backSteps]));
         ReferenceContainer resultSingle;
 
         if (isSearchDomain) {

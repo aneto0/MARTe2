@@ -143,38 +143,34 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &message,
                                                   const TimeoutType &maxWait,
                                                   const uint32 pollingTimeUsec) {
-    ErrorManagement::ErrorType err(true);
+    ErrorManagement::ErrorType ok;
 
-    if (!message.IsValid()) {
-        err.parametersError = true;
-        REPORT_ERROR(ErrorManagement::ParametersError, "Invalid message.");
-    }
+    ok.parametersError = !message.IsValid();
+    CONDITIONAL_REPORT_ERROR(ok, "Invalid message.");
 
-    if (err.ErrorsCleared()) {
+    if (ok) {
         // no reply expected. why am I here?
-        if (!message->ExpectsReply()) {
-            REPORT_ERROR_FULL(ErrorManagement::CommunicationError, "No reply expected as it should.");
-            err.communicationError = true;
-        }
+        ok.communicationError = !message->ExpectsReply();
+        CONDITIONAL_REPORT_ERROR(ok, "No reply expected as it should.");
     }
 
     uint64 start = HighResolutionTimer::Counter();
     float32 pollingTime = static_cast<float32>(pollingTimeUsec);
     pollingTime *= static_cast<float32>(1.0e-6);
     bool isReply = false;
-    if(err.ErrorsCleared()){
+    if(ok){
         isReply = message->IsReply();
     }
-    while ((err.ErrorsCleared()) && (!isReply)) {
+    while (ok && (!isReply)) {
         Sleep::NoMore(static_cast<float64>(pollingTime));
         if (maxWait != TTInfiniteWait) {
             uint64 deltaT = HighResolutionTimer::Counter() - start;
-            err.timeout = maxWait.HighResolutionTimerTicks() > deltaT;
+            ok.timeout = (maxWait.HighResolutionTimerTicks() > deltaT);
         }
         isReply = message->IsReply();
     }
 
-    return err;
+    return ok;
 }
 
 ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,

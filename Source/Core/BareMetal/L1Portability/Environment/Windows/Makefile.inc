@@ -34,13 +34,9 @@ OBJSX=  BasicConsole.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
 		MemoryCheck.x \
-		MemoryOperationsHelper_CLIB_Gen.x \
 		Sleep.x \
 		StandardHeap_Gen.x \
 		TimeStamp.x        
-
-#		StringHelperExtras_Gen.x \
-#		StringHelper_CLIB_Gen.x \
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

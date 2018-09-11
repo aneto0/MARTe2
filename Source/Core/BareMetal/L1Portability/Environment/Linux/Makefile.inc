@@ -34,7 +34,6 @@ OBJSX=  BasicConsole.x \
 		HighResolutionTimerCalibrator.x \
 		LoadableLibrary.x  \
 		MemoryCheck.x  \
-		MemoryOperationsHelper_CLIB_Gen.x \
 		Sleep.x \
 		StandardHeap_Gen.x \
 		TimeStamp.x

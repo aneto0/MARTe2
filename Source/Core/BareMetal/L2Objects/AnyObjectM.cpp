@@ -22,6 +22,7 @@
 */
 
 #include "AnyObjectM.h"
+#include "Memory.h"
 #include "GlobalObjectsDatabase.h"
 
 
@@ -46,7 +47,7 @@ void AnyObjectM::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescr
 		REPORT_ERROR(ErrorManagement::OutOfMemory,"Malloc failed");
 		vd = VariableDescriptor();
 	} else {
-		MemoryOperationsHelper::Copy(data,pointer,sizeToCopy);
+		Memory::Copy(data,pointer,sizeToCopy);
 	}
 }
 

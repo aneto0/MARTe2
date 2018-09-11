@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ParserI.h"
-#include "TypeConversion.h"
+//#include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/

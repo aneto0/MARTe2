@@ -31,10 +31,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
+#include "Memory.h"
 #include "DynamicCString.h"
 #include "MemoryCheck.h"
-#include "MemoryOperationsHelper.h"
 #include "TypeConversionManager.h"
 #include "VariableDescriptor.h"
 #include "MemoryPageFile.h"
@@ -923,13 +922,13 @@ ErrorManagement::ErrorType VDCloner::DoCreateR(
 
 					        if (ret){
 								pointerArray[i] = ptr;
-								MemoryOperationsHelper::Copy(ptr,string.GetList(),stringSize);
+								Memory::Copy(ptr,string.GetList(),stringSize);
 					        }
 						}
 					}
 
         		} else { // not a string
-					MemoryOperationsHelper::Copy(addressOfOutput,inputPointer,totalSize);
+					Memory::Copy(addressOfOutput,inputPointer,totalSize);
 		        }
 			}
         // not the final layer
