@@ -96,7 +96,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
         ok = (StringHelper::Length(name) > 0u);
         if (ok) {
             AnyType existentType = GetType(name);
-            if (existentType.GetTypeDescriptor().type != VoidType.type) {
+            if (existentType.GetTypeDescriptor() != voidAnyType.GetTypeDescriptor()) {
                 ok = Delete(name);
             }
         }
