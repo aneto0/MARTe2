@@ -47,6 +47,7 @@ class MemoryMapAsyncTriggerOutputBrokerGAMTestHelper: public MARTe::GAM {
 public:
     CLASS_REGISTER_DECLARATION()MemoryMapAsyncTriggerOutputBrokerGAMTestHelper() {
         counter = 0;
+        triggerIdx = 0;
         numberOfExecutes = 0;
         signalToGenerate = NULL;
         triggerToGenerate = NULL;
@@ -82,27 +83,36 @@ public:
 
     virtual bool Setup() {
         using namespace MARTe;
-        elements = new uint32[GetNumberOfOutputSignals() - 1];
+        elements = new uint32[GetNumberOfOutputSignals()];
         uint32 n;
-        for (n=0; n<GetNumberOfOutputSignals() - 1; n++) {
-            uint32 el;
-            GetSignalNumberOfElements(OutputSignals, n+1, el);
-            elements[n] = el;
+        for (n=0; n<GetNumberOfOutputSignals(); n++) {
+            TypeDescriptor td = GetSignalType(OutputSignals, n);
+            if (td == UnsignedInteger8Bit) {
+                triggerIdx = n;
+                elements[n] = 1;
+            }
+            else {
+                uint32 el;
+                GetSignalNumberOfElements(OutputSignals, n, el);
+                elements[n] = el;
+            }
         }
         return true;
     }
 
     virtual bool Execute() {
         using namespace MARTe;
-        uint8 *triggerOut = reinterpret_cast<uint8*>(GetOutputSignalMemory(0));
+        uint8 *triggerOut = reinterpret_cast<uint8*>(GetOutputSignalMemory(triggerIdx));
         if (counter < numberOfExecutes) {
             *triggerOut = triggerToGenerate[counter];
             uint32 n;
-            for (n=0; n<GetNumberOfOutputSignals() - 1; n++) {
-                uint32 *signalOut = reinterpret_cast<uint32*>(GetOutputSignalMemory(n+1));
-                uint32 e;
-                for (e=0; e<elements[n]; e++) {
-                    signalOut[e] = signalToGenerate[counter];
+            for (n=0; n<GetNumberOfOutputSignals(); n++) {
+                if (n != triggerIdx) {
+                    uint32 *signalOut = reinterpret_cast<uint32*>(GetOutputSignalMemory(n));
+                    uint32 e;
+                    for (e=0; e<elements[n]; e++) {
+                        signalOut[e] = signalToGenerate[counter];
+                    }
                 }
             }
 
@@ -111,6 +121,7 @@ public:
         return true;
     }
 
+    MARTe::uint32 triggerIdx;
     MARTe::uint8 *triggerToGenerate;
     MARTe::uint32 *signalToGenerate;
     MARTe::uint32 *elements;
@@ -162,6 +173,7 @@ public:
 
     virtual bool Initialise(MARTe::StructuredDataI & data) {
         using namespace MARTe;
+        DataSourceI::Initialise(data);
         data.Read("NumberOfBuffers", numberOfBuffers);
         data.Read("PreTriggerBuffers", preTriggerBuffers);
         data.Read("PostTriggerBuffers", postTriggerBuffers);
@@ -324,13 +336,14 @@ MemoryMapAsyncTriggerOutputBrokerSchedulerTestHelper    () : MARTe::GAMScheduler
 
     void ExecuteThreadCycle(MARTe::uint32 threadId) {
         using namespace MARTe;
-        ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+        ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
+        ExecuteSingleCycle(scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].executables,
+                scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].numberOfExecutables);
     }
 
-    virtual bool ConfigureScheduler() {
+    virtual bool ConfigureScheduler(MARTe::Reference realTimeApp) {
 
-        bool ret = GAMSchedulerI::ConfigureScheduler();
+        bool ret = GAMSchedulerI::ConfigureScheduler(realTimeApp);
         if (ret) {
             scheduledStates = GetSchedulableStates();
         }
@@ -488,7 +501,7 @@ static bool TestExecute_PreTriggerBuffers_PostTriggerBuffers(const MARTe::char8 
 }
 
 //1 PreTrigger
-static const MARTe::char8 * const config1 = ""
+static const MARTe::char8 * const config0 = ""
         "$Test = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -498,13 +511,13 @@ static const MARTe::char8 * const config1 = ""
         "            Trigger = {0 0 1 0 0 1 0 0 0 1 0 1 1 0}"
         "            Signal =  {0 1 2 3 4 5 6 7 8 9 8 7 6 5}"
         "            OutputSignals = {"
-        "               Trigger = {"
-        "                   DataSource = Drv1"
-        "                   Type = uint8"
-        "               }"
         "               Signal1 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
+        "               }"
+        "               Trigger = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
         "               }"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -532,6 +545,88 @@ static const MARTe::char8 * const config1 = ""
         "            CPUMask = 15"
         "            ExpectedTrigger = {0 1 0 1 0 1 0 1 1}"
         "            ExpectedSignal =  {1 2 4 5 8 9 8 7 6}"
+        "            Signals = {"
+        "                Trigger = {"
+        "                    Type = uint8"
+        "                }"
+        "                Signal1 = {"
+        "                   Type = uint32"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +States = {"
+        "        Class = ReferenceContainer"
+        "        +State1 = {"
+        "            Class = RealTimeState"
+        "            +Threads = {"
+        "                Class = ReferenceContainer"
+        "                +Thread1 = {"
+        "                    Class = RealTimeThread"
+        "                    Functions = {GAM1}"
+        "                }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Scheduler = {"
+        "        Class = MemoryMapAsyncTriggerOutputBrokerSchedulerTestHelper"
+        "        TimingDataSource = Timings"
+        "    }"
+        "}";
+
+//1 PreTrigger
+static const MARTe::char8 * const config1 = ""
+        "$Test = {"
+        "    Class = RealTimeApplication"
+        "    +Functions = {"
+        "        Class = ReferenceContainer"
+        "        +GAM1 = {"
+        "            Class = MemoryMapAsyncTriggerOutputBrokerGAMTestHelper"
+        "            Trigger = {0 0 1 0 0 1 0 0 0 1 0 1 1 0}"
+        "            Signal =  {0 1 2 3 4 5 6 7 8 9 8 7 6 5}"
+        "            OutputSignals = {"
+        "               Signal1 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "               Trigger = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint8"
+        "               }"
+        "               Signal2 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "                   NumberOfElements = 10"
+        "               }"
+        "               Signal3 = {"
+        "                   DataSource = Drv1"
+        "                   Type = uint32"
+        "               }"
+        "            }"
+        "        }"
+        "    }"
+        "    +Data = {"
+        "        Class = ReferenceContainer"
+        "        DefaultDataSource = DDB1"
+        "        +Timings = {"
+        "            Class = TimingDataSource"
+        "        }"
+        "        +Drv1 = {"
+        "            Class = MemoryMapAsyncTriggerOutputBrokerDataSourceTestHelper"
+        "            NumberOfBuffers = 10"
+        "            PreTriggerBuffers = 1"
+        "            PostTriggerBuffers = 0"
+        "            CPUMask = 15"
+        "            ExpectedTrigger = {0 1 0 1 0 1 0 1 1}"
+        "            ExpectedSignal =  {1 2 4 5 8 9 8 7 6}"
+        "            Signals = {"
+        "                Trigger = {"
+        "                    Type = uint8"
+        "                }"
+        "                Signal1 = {"
+        "                   Type = uint32"
+        "                }"
+        "            }"
         "        }"
         "    }"
         "    +States = {"
@@ -925,7 +1020,7 @@ static const MARTe::char8 * const config7 = ""
         "               Signal1 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
-        "                   Samples = 2"
+        "                   Samples = 0"
         "               }"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -1219,7 +1314,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestInitWithTriggerParameters_False_
     return !TestIntegratedInApplication(config6, true);
 }
 
-bool MemoryMapAsyncTriggerOutputBrokerTest::TestInitWithTriggerParameters_False_SamplesGreaterThanOne() {
+bool MemoryMapAsyncTriggerOutputBrokerTest::TestInitWithTriggerParameters_False_Samples() {
     using namespace MARTe;
     return !TestIntegratedInApplication(config7, true);
 }
@@ -1286,6 +1381,16 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_0_Po
     uint32 expectedSignal[] = { 1, 2, 4, 5, 8, 9, 8, 7, 6 };
 
     return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config1, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 0, 10);
+}
+
+bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal() {
+    using namespace MARTe;
+    uint8 triggerToGenerate[] = { 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0 };
+    uint32 signalToGenerate[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5 };
+    uint8 expectedTrigger[] = { 0, 1, 0, 1, 0, 1, 0, 1, 1 };
+    uint32 expectedSignal[] = { 1, 2, 4, 5, 8, 9, 8, 7, 6 };
+
+    return TestExecute_PreTriggerBuffers_PostTriggerBuffers(config0, triggerToGenerate, signalToGenerate, sizeof(triggerToGenerate) / sizeof(uint8), expectedTrigger, expectedSignal, sizeof(expectedTrigger) / sizeof(uint8), 1, 0, 10);
 }
 
 bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers() {

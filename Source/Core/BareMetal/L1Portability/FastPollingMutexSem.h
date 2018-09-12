@@ -100,7 +100,7 @@ public:
      * already locked.
      */
     bool FastTryLock();
-
+ 
     /**
      * @brief Unlocks the semaphore.
      * @details A thread could unlock the semaphore locked by another thread.

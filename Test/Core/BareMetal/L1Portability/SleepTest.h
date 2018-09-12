@@ -54,13 +54,6 @@ public:
     bool TestGetDateSeconds();
 
     /**
-     * @brief Tests the Sleep::AtLeast function.
-     * @param[in] sec is the minimum time to sleep.
-     * @return true if it sleeps less than the double of sec.
-     */
-    bool TestAtLeast(float64 sec);
-
-    /**
      * @brief Tests the Sleep::NoMore function
      * @param[in] sec is the maximum time to sleep.
      * @return true if it sleeps less than the double of sec.

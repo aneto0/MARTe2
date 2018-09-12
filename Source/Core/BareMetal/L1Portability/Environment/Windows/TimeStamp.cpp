@@ -51,6 +51,32 @@ TimeStamp::TimeStamp() {
     year = 1900u;
 }
 
+bool TimeStamp::GetTime() {
+
+    uint64 ticks = HighResolutionTimer::Counter() - OSInitializer::initialTicks;
+
+    //Use HRT
+    uint32 secHRT = static_cast<uint32>(ticks * OSInitializer::period);
+    uint32 uSecHRT = static_cast<uint32>((ticks * OSInitializer::period - secHRT) * 1e6);
+
+    //Add HRT to the the initial time saved in the calibration.
+    time_t sec = static_cast<time_t>(OSInitializer::initialSecs + secHRT);
+    SetMicroseconds(OSInitializer::initialUSecs + uSecHRT);
+
+    //Check the overflow
+    if (GetMicroseconds() >= 1e6) {
+        SetMicroseconds(GetMicroseconds() - 1e6);
+        sec++;
+    }
+
+    time_t secondsFromEpoch32 = static_cast<time_t>(sec);
+
+    bool ret = ConvertFromEpoch(secondsFromEpoch32);
+
+    return ret;
+}
+
+
 bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
     //fill the time structure
     struct tm tValues;

@@ -1,8 +1,8 @@
 /**
  * @file StreamStringTest.h
  * @brief Header file for class StreamStringTest
- * @date 26/ott/2015
- * @author pc
+ * @date 26/10/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

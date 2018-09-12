@@ -77,3 +77,4 @@ TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
     ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
 }
 
+

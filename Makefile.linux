@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -19,12 +20,12 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.linux 3 2015-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=linux
+
+# Note that this should in the future be replaced by Makefile.x86-linux or removed (and define the TARGET as an environment variable)
+
+export TARGET=x86-linux
 
 include Makefile.inc
-
-LIBRARIES += -lm
-

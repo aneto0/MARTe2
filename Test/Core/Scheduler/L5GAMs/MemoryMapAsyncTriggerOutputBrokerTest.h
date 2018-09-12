@@ -83,7 +83,7 @@ public:
     /**
      * @brief Tests the InitWithTriggerParameters method signals that have Samples > 1.
      */
-    bool TestInitWithTriggerParameters_False_SamplesGreaterThanOne();
+    bool TestInitWithTriggerParameters_False_Samples();
 
     /**
      * @brief Tests the InitWithTriggerParameters method with a wrong signal type for the trigger.
@@ -109,6 +109,11 @@ public:
      * @brief Tests the Execute method with 1 PreTriggerBuffers and 0 PostTriggerBuffers.
      */
     bool TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers();
+
+    /**
+     * @brief Tests the Execute method with 1 PreTriggerBuffers and 0 PostTriggerBuffers and the where the first signal of the GAM is not Trigger.
+     */
+    bool TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal();
 
     /**
      * @brief Tests the Execute method with 1 PreTriggerBuffers and 1 PostTriggerBuffers.

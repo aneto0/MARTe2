@@ -31,14 +31,17 @@ OBJSX=BrokerI.x \
     GAMGroup.x \
     GAMSchedulerI.x \
     GAMDataSource.x \
+    MemoryDataSourceI.x \
     MemoryMapBroker.x \
     MemoryMapInterpolatedInputBroker.x \
+    MemoryMapMultiBufferBroker.x \
+    MemoryMapMultiBufferInputBroker.x \
+    MemoryMapMultiBufferOutputBroker.x \
     MemoryMapInputBroker.x \
     MemoryMapOutputBroker.x \
-    MemoryMapStatefulBroker.x \
-    MemoryMapStatefulInputBroker.x \
-    MemoryMapStatefulOutputBroker.x \
     MemoryMapSynchronisedInputBroker.x \
+    MemoryMapSynchronisedMultiBufferInputBroker.x \
+    MemoryMapSynchronisedMultiBufferOutputBroker.x \
     MemoryMapSynchronisedOutputBroker.x \
     RealTimeApplication.x \
     RealTimeApplicationConfigurationBuilder.x \

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="RTApp-SignalResolution-3.svg"
+   inkscape:export-filename="/home/aneto/Projects/MARTe2-dev/Docs/User/source/core/gams/RTApp-SignalResolution-3.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2874"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3672"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3702"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3794"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="193.81426"
+     inkscape:cy="700.15403"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1004"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2816" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="-68.690376"
+       y="157.36703"
+       id="text2856"><tspan
+         sodipodi:role="line"
+         id="tspan2858"
+         x="-68.690376"
+         y="157.36703" /></text>
+    <rect
+       style="fill:#ececec;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2860"
+       width="213.08122"
+       height="345"
+       x="0"
+       y="-2.6378174" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="5"
+       y="12.362183"
+       id="text2818"><tspan
+         sodipodi:role="line"
+         id="tspan2820"
+         x="5"
+         y="12.362183"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">A = +GAM1 = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="27.362183"
+         id="tspan2822"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  ...</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="42.362183"
+         id="tspan2824"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  InputSignals = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="57.362183"
+         id="tspan2826"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">    A1 = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="72.362183"
+         id="tspan2828"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">      DataSource = <tspan
+   style="fill:#0000ff"
+   id="tspan2890">DS1</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="87.362183"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace"
+         id="tspan4443">      Type = uint32</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="102.36218"
+         id="tspan2830"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">      NumberOfElements = 2</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="117.36218"
+         id="tspan2832"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">    }</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="132.36218"
+         id="tspan2834"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  }</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="147.36218"
+         id="tspan2836"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">    ...</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="162.36218"
+         id="tspan2838"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">}</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="177.36218"
+         id="tspan2840"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">+<tspan
+   style="fill:#0000ff"
+   id="tspan2888">DS1</tspan> = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="192.36218"
+         id="tspan2842"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  ...</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="207.36218"
+         id="tspan2844"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  Signals = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="222.36218"
+         id="tspan2846"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">    A1 = {</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="237.36218"
+         id="tspan2848"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">      NumberOfElements = 4</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="252.36218"
+         id="tspan2850"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">    }</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="267.36218"
+         id="tspan2852"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">  }</tspan><tspan
+         sodipodi:role="line"
+         x="5"
+         y="282.36218"
+         id="tspan2854"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Monospace;-inkscape-font-specification:Monospace">}</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2864"
+       sodipodi:cx="-107.5"
+       sodipodi:cy="49.862183"
+       sodipodi:rx="12.5"
+       sodipodi:ry="12.5"
+       d="m -95,49.862183 a 12.5,12.5 0 1 1 -25,0 12.5,12.5 0 1 1 25,0 z"
+       transform="translate(149.1415,3.4847712)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2864-2"
+       sodipodi:cx="-107.5"
+       sodipodi:cy="49.862183"
+       sodipodi:rx="12.5"
+       sodipodi:ry="12.5"
+       d="m -95,49.862183 a 12.5,12.5 0 1 1 -25,0 12.5,12.5 0 1 1 25,0 z"
+       transform="translate(149.1415,153.46679)" />
+    <g
+       id="g3690"
+       transform="matrix(4.1627636,0,0,7.7638435,1696.7578,-1901.0841)"
+       style="fill:#ff0000">
+      <text
+         id="text3686"
+         y="270.50412"
+         x="-355.5737"
+         style="font-size:12px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="270.50412"
+           x="-355.5737"
+           id="tspan3688"
+           sodipodi:role="line">=&gt;</tspan></text>
+    </g>
+    <rect
+       style="fill:#ececec;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2860-7"
+       width="213.08122"
+       height="345"
+       x="303.80646"
+       y="-2.6378174" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="310"
+       y="152.15515"
+       id="text2818-8"><tspan
+         sodipodi:role="line"
+         x="310"
+         y="152.15515"
+         id="tspan2854-2"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ff0000;font-family:Monospace;-inkscape-font-specification:Monospace">Fails</tspan><tspan
+         sodipodi:role="line"
+         x="310"
+         y="167.15515"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ff0000;font-family:Monospace;-inkscape-font-specification:Monospace"
+         id="tspan4420" /><tspan
+         sodipodi:role="line"
+         x="310"
+         y="182.15515"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ff0000;font-family:Monospace;-inkscape-font-specification:Monospace"
+         id="tspan4418">The definition of the signal</tspan><tspan
+         sodipodi:role="line"
+         x="310"
+         y="197.15515"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ff0000;font-family:Monospace;-inkscape-font-specification:Monospace"
+         id="tspan4445">is not consistent!</tspan></text>
+  </g>
+</svg>

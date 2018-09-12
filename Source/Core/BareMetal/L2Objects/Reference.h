@@ -202,7 +202,7 @@ private:
                          HeapI* const heap) const;
 };
 
-}
+} 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

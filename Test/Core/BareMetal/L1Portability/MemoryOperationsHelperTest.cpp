@@ -292,3 +292,124 @@ bool MemoryOperationsHelperTest::TestSearchZeroSize() {
     return (MemoryOperationsHelper::Search(buffPointer, myFavouriteChar, size) == NULL);
 
 }
+
+bool MemoryOperationsHelperTest::TestInterleavedToFlat() {
+
+    const uint32 memSize = 150;
+    const uint32 nSamples = 10;
+
+    uint8 mem[memSize];
+
+    uint8 dest[memSize];
+
+    uint8 *ptr = &mem[0];
+
+    uint32 cnt = 0u;
+    for (uint32 i = 0u; i < nSamples; i++) {
+        *ptr = cnt;
+        ptr++;
+        cnt++;
+        *(uint16*) ptr = cnt;
+        ptr += 2;
+        cnt++;
+        *(uint32*) ptr = cnt;
+        ptr += 4;
+        cnt++;
+        *(uint64*) ptr = cnt;
+        ptr += 8;
+        cnt++;
+    }
+
+    uint32 packetInputChunkSize[] = { 1, 2, 4, 8 };
+    uint32 inputByteSize = 15;
+    uint32 numberOfInputPacketChunks = 4;
+    uint32 numberOfInputSamples = nSamples;
+
+    MemoryOperationsHelper::InterleavedToFlat(&mem[0], &dest[0], 0, &packetInputChunkSize[0], inputByteSize, numberOfInputPacketChunks, numberOfInputSamples);
+
+    bool ret = true;
+
+    ptr = &dest[0];
+    for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+        ret = (ptr[i] == 4 * i);
+    }
+
+    uint16 *ptr16 = (uint16*) &dest[nSamples];
+    for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+        ret = (ptr16[i] == 4 * i + 1);
+    }
+
+    uint32 *ptr32 = (uint32*) &dest[3 * nSamples];
+    for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+        ret = (ptr32[i] == 4 * i + 2);
+    }
+
+    uint64 *ptr64 = (uint64*) &dest[7 * nSamples];
+    for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+        ret = (ptr64[i] == 4 * i + 3);
+    }
+
+    return ret;
+
+}
+
+bool MemoryOperationsHelperTest::TestFlatToInterleaved() {
+    /*    void
+     */
+
+    const uint32 memSize = 150;
+    const uint32 nSamples = 10;
+
+    uint8 mem[memSize];
+
+    uint8 dest[memSize];
+
+    uint8 *ptr = &mem[0];
+    uint32 cnt = 0u;
+
+    for (uint32 i = 0u; (i < nSamples); i++) {
+        ptr[i] = cnt;
+        cnt++;
+    }
+
+    uint16 *ptr16 = (uint16*) &mem[nSamples];
+    for (uint32 i = 0u; (i < nSamples); i++) {
+        ptr16[i] = cnt;
+        cnt++;
+    }
+
+    uint32 *ptr32 = (uint32*) &mem[3 * nSamples];
+    for (uint32 i = 0u; (i < nSamples); i++) {
+        ptr32[i] = cnt;
+        cnt++;
+    }
+
+    uint64 *ptr64 = (uint64*) &mem[7 * nSamples];
+    for (uint32 i = 0u; (i < nSamples); i++) {
+        ptr64[i] = cnt;
+        cnt++;
+    }
+
+    uint32 packetOutputChunkSize[] = { 1, 2, 4, 8 };
+    uint32 outputByteSize = 15;
+    uint32 numberOfOutputPacketChunks = 4;
+    uint32 numberOfOutputSamples = nSamples;
+
+    MemoryOperationsHelper::FlatToInterleaved(&mem[0], &dest[0], 0, &packetOutputChunkSize[0], outputByteSize, numberOfOutputPacketChunks, numberOfOutputSamples);
+
+    bool ret = true;
+
+    ptr = &dest[0];
+    for (uint32 i = 0u; (i < nSamples) && (ret); i++) {
+        ret&=(*ptr==(i));
+        ptr++;
+        ret&=(*ptr==(10+i));
+        ptr += 2;
+        ret&=(*ptr==(20+i));
+        ptr += 4;
+        ret&=(*ptr==(30+i));
+        ptr += 8;
+    }
+    return ret;
+
+}

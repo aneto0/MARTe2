@@ -24,21 +24,20 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerTest.h"
-
-#include <ReferenceContainerFilterObjectName.h>
-#include "ReferenceContainerFilterReferences.h"
-#include "ReferenceContainerFilter.h"
-#include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
 #include "ConfigurationDatabase.h"
+#include "MemoryOperationsHelper.h"
+#include "ObjectRegistryDatabase.h"
 #include "ObjectTestHelper.h"
+#include "ReferenceContainerFilter.h"
+#include "ReferenceContainerFilterObjectName.h"
+#include "ReferenceContainerFilterReferences.h"
+#include "ReferenceContainerTest.h"
+#include "StringHelper.h"
 #include "Threads.h"
-#include "stdio.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
@@ -411,8 +410,7 @@ bool ReferenceContainerTest::TestFindRelativePathObjectNameFilter() {
     return ok;
 }
 
-float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
-                                                  ReferenceContainerFilter &filter) {
+float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter) {
     uint64 start = HighResolutionTimer::Counter();
     TestFindFilter(largeTree, filter, "U3");
     return (HighResolutionTimer::Counter() - start) * HighResolutionTimer::Period();
@@ -420,7 +418,9 @@ float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer>
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(
+            ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH
+                    | ReferenceContainerFilterMode::REMOVE);
     //Remove node "C"
     bool ok = TestFindFilter(tree, filter, "C");
     filter.Reset();
@@ -437,8 +437,8 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFil
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
     filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH
-                    | ReferenceContainerFilterMode::REMOVE);
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
+                    | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
     //Remove node "D.C"
     bool ok = TestFindFilter(tree, filter, "D.C");
     filter.Reset();
@@ -446,7 +446,9 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceConta
     //Should no longer find D.C but still find C
     ok &= !TestFindFilter(tree, filter, "D.C");
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
+                    | ReferenceContainerFilterMode::PATH);
     ok &= TestFindFilter(tree, filter, "C");
 
     return ok;
@@ -471,16 +473,22 @@ bool ReferenceContainerTest::TestFindRemoveSecondOccurrence(ReferenceContainerFi
 
 bool ReferenceContainerTest::TestFindRemoveSecondOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
+                    | ReferenceContainerFilterMode::REMOVE);
     //Remove node "C"
     bool ok = TestFindFilter(tree, filter, "C");
     filter.SetOriginalSetOccurrence(1);
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
+                    | ReferenceContainerFilterMode::PATH);
     //Should no longer find C but still find D.C
     ok &= TestFindFilter(tree, filter, "D.C");
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
+                    | ReferenceContainerFilterMode::PATH);
     ok &= !TestFindFilter(tree, filter, "C");
 
     return ok;
@@ -526,9 +534,7 @@ bool ReferenceContainerTest::TestFindRemoveAllOfMultipleInstance(ReferenceContai
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
-                                            ReferenceContainerFilter &filter,
-                                            const char8 * const expectedResult) {
+bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree, ReferenceContainerFilter &filter, const char8 * const expectedResult) {
     ReferenceContainer expectedResultContainer;
     ReferenceContainer result;
     bool ok = false;
@@ -958,8 +964,7 @@ ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTreeLarge(uin
     return containerRoot;
 }
 
-bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
-                                                  ReferenceContainer &test) {
+bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source, ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
     if (ok) {
         uint32 i;
@@ -971,8 +976,7 @@ bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
     return ok;
 }
 
-bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer &source,
-                                                              ReferenceContainer &test) {
+bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer &source, ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
     if (ok) {
         uint32 i;
@@ -984,9 +988,7 @@ bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer
     return ok;
 }
 
-bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
-                                                                                     ReferenceContainer &result,
-                                                                                     const char8 * const str) {
+bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source, ReferenceContainer &result, const char8 * const str) {
     bool ok = true;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
@@ -1024,8 +1026,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
     return ok;
 }
 
-bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result,
-                                                              const char8 * const str) {
+bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result, const char8 * const str) {
     bool ok = true;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
@@ -1061,6 +1062,147 @@ bool ReferenceContainerTest::TestIsReferenceContainer() {
     ReferenceContainer rc;
     return rc.IsReferenceContainer();
 }
+
+bool ReferenceContainerTest::TestIsBuildToken() {
+    ReferenceContainer container;
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('%');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("_B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("*C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("%D");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+
+    ord->Purge();
+    simpleCDB.MoveToRoot();
+    bool ok = ord->Initialise(simpleCDB);
+    if (ok) {
+        ok = (ord->Size() == 4u);
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddBuildToken('#');
+    }
+    if (ok) {
+        //No more space...
+        ok = !ReferenceContainer::AddBuildToken('@');
+    }
+    if (ok) {
+        ReferenceContainer::RemoveBuildToken('*');
+        ok = ReferenceContainer::AddBuildToken('@');
+    }
+    ReferenceContainer::RemoveBuildToken('@');
+    ReferenceContainer::RemoveBuildToken('_');
+    ReferenceContainer::RemoveBuildToken('#');
+    ReferenceContainer::RemoveBuildToken('%');
+
+    ord->Purge();
+    return ok;
+}
+
+bool ReferenceContainerTest::TestAddBuildToken() {
+    return TestIsBuildToken();
+}
+
+bool ReferenceContainerTest::TestRemoveBuildToken() {
+    return TestIsBuildToken();
+}
+
+bool ReferenceContainerTest::TestIsDomainToken() {
+    ReferenceContainer container;
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('*');
+    ReferenceContainer::AddDomainToken('%');
+    ReferenceContainer::AddDomainToken('*');
+    ReferenceContainer::AddDomainToken('*');
+
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("$B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("_C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("%D");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("*E");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+
+    ord->Purge();
+    simpleCDB.MoveToRoot();
+    bool ok = ord->Initialise(simpleCDB);
+    if (ok) {
+        ok = (ord->Size() == 5u);
+    }
+    if (ok) {
+        ok = !(ord->Get(0u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(1u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(2u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(3u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(4u)->IsDomain());
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('#');
+    }
+    if (ok) {
+        //No more space...
+        ok = !ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ReferenceContainer::RemoveDomainToken('*');
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    ReferenceContainer::RemoveDomainToken('@');
+    ReferenceContainer::RemoveDomainToken('_');
+    ReferenceContainer::RemoveDomainToken('#');
+    ReferenceContainer::RemoveDomainToken('%');
+
+    ord->Purge();
+    return ok;
+}
+
+bool ReferenceContainerTest::TestAddDomainToken() {
+    return TestIsDomainToken();
+}
+
+bool ReferenceContainerTest::TestRemoveDomainToken() {
+    return TestIsDomainToken();
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -79,7 +79,7 @@ public:
      *   By default, the sender will not wait for a message reply.
      *   !!!!! IMPORTANT !!!! a reply is always contained in the same Message object used to send
      *   a    direct reply is performed by transforming the Message object into a reply
-     *   an indirect reply is performed by transforming the Message object into a reply and by sending to the sender
+     *   an indirect reply is performed by transforming the Message object into a reply and by sending it back to the sender (i.e. by calling SendMessage as it was a message)
      * @see ReferenceContainer::Initialise(*)
      */
     virtual bool Initialise(StructuredDataI &data);
@@ -111,8 +111,8 @@ public:
     bool ExpectsReply() const;
 
     /**
-     * @brief Checks if this message requires an immediate reply.
-     * @return true if this message requires an immediate reply, false otherwise.
+     * @brief Checks if this message requires an indirect reply.
+     * @return true if this message requires an indirect reply, false otherwise.
      */
     bool ExpectsIndirectReply() const;
 
@@ -129,18 +129,18 @@ public:
     CCString GetDestination();
 
     /**
-     * @brief Retrieved the address of the sender Object in the ObjectRegistryDatabase.
+     * @brief Gets the address of the sender Object.
      * @details After that the destination received a message expecting a reply, it will call this function to get the
      * destination of the reply (namely the address of the sender Object).
-     * @return the address of the sender Object in the ObjectRegistryDatabase.
+     * @return the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
-    CCString GetSender();
+    const Object * const GetSender() const;
 
     /**
-     * @brief Sets the sender Object address in the ObjectRegistryDatabase.
-     * @param[in] senderName is the address of the sender Object in the ObjectRegistryDatabase.
+     * @brief Sets the sender Object address.
+     * @param[in] senderIn is the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
-    void SetSender(CCString senderName);
+    void SetSender(const Object * const senderIn);
 
     /**
      * @brief Retrieves the name of the registered class method of the destination Object which has to be called.
@@ -229,7 +229,7 @@ private:
      * The originator of the message
      * empty means anonymous
      * */
-    StreamString sender;
+    const Object * sender;
 
     /**
      * The destination of the message

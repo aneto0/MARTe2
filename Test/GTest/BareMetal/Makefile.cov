@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -35,3 +36,4 @@ LIBRARIES_STATIC+= L4Configuration/cov/L4ConfigurationBGTest$(LIBEXT)
 LIBRARIES_STATIC+= L4Logger/cov/L4LoggerBGTest$(LIBEXT)
 LIBRARIES_STATIC+= L4Messages/cov/L4MessagesBGTest$(LIBEXT)
 LIBRARIES_STATIC+= L5GAMs/cov/L5GAMsBGTest$(LIBEXT)
+LIBRARIES_STATIC+= L6App/cov/L6AppBGTest$(LIBEXT)

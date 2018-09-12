@@ -95,7 +95,8 @@ ErrorManagement::ErrorType QueuedMessageI::Stop() {
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(const ExecutionInfo &info) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) {
     ErrorManagement::ErrorType err;
     ReferenceT<Message> message;
     const TimeoutType timeout = 1000;

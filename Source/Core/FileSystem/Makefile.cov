@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -29,5 +30,6 @@ include Makefile.inc
 LIBRARIES_STATIC=L1Portability/cov/L1PortabilityF$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsF$(LIBEXT)
 LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceF$(LIBEXT)
+LIBRARIES_STATIC+=L6App/cov/L6AppF$(LIBEXT)
 
 LIBRARIES += -lm

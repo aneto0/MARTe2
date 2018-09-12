@@ -116,3 +116,17 @@ bool ExecutionInfoTest::TestReset() {
     ok &= (info.GetStageSpecific() == ExecutionInfo::NullStageSpecific);
     return ok;
 }
+
+bool ExecutionInfoTest::TestSetThreadSpecificContext() {
+    using namespace MARTe;
+    ExecutionInfo info;
+    void *ptr = (void *)0xAABBCCDD;
+    info.SetThreadSpecificContext(ptr);
+    void *ptr2 = info.GetThreadSpecificContext();
+    bool ok = (ptr == ptr2);
+    return ok;
+}
+
+bool ExecutionInfoTest::TestGetThreadSpecificContext() {
+    return TestSetThreadSpecificContext();
+}

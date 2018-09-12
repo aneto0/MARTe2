@@ -54,6 +54,7 @@ class RealTimeApplication;
  * another for the DataSources.
  *
  * The schema used below to define the pre and post condition is
+ * <pre>
  * &NAME = VALUE
  * Where VALUE can be a node {} or can be a string representing a property
  * The & can be replaced by:
@@ -63,6 +64,7 @@ class RealTimeApplication;
  *   +*, i.e. NAME+* = VALUE, the NAME may exist. If it exists the * rules apply.
  *   |, i.e NAME|NAME = VALUE, one and only one of the specified NAME shall exist.
  *   +|, i.e NAME|NAME = VALUE, the NAME may exist. If it exists the | rules apply.
+ * </pre>
  */
 class DLL_API RealTimeApplicationConfigurationBuilder {
 public:
@@ -100,6 +102,7 @@ public:
      *   functionsDatabase = ""
      *   dataSourcesDatabase = ""
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -152,6 +155,7 @@ public:
      *              }
      *           }
      *       }
+     * </pre>
      */
     bool InitialiseSignalsDatabase();
 
@@ -164,6 +168,7 @@ public:
      * @pre
      *   InitialiseSignalsDatabase()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -208,6 +213,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool FlattenSignalsDatabases();
 
@@ -221,6 +227,7 @@ public:
      * @pre
      *   FlattenSignalsDatabases()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -265,6 +272,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveDataSources();
 
@@ -275,6 +283,7 @@ public:
      * @pre
      *   ResolveDataSources()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -321,6 +330,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool VerifyDataSourcesSignals();
 
@@ -335,6 +345,7 @@ public:
      * @pre
      *   VerifyDataSourcesSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -380,6 +391,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionSignals();
 
@@ -389,6 +401,7 @@ public:
      * @pre
      *   ResolveFunctionSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -434,6 +447,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool VerifyFunctionSignals();
 
@@ -444,6 +458,7 @@ public:
      * @pre
      *   VerifyFunctionSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -492,6 +507,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveStates();
 
@@ -513,6 +529,7 @@ public:
      * @pre
      *   ResolveStates()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -564,6 +581,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveConsumersAndProducers();
 
@@ -582,6 +600,7 @@ public:
      * @pre
      *   VerifyConsumersAndProducers()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -635,6 +654,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionSignalsMemorySize();
 
@@ -645,6 +665,7 @@ public:
      * @pre
      *   ResolveFunctionSignalsMemorySize()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -716,6 +737,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionsMemory();
 
@@ -726,6 +748,7 @@ public:
      * @pre
      *   CalculateFunctionsMemory()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -812,6 +835,7 @@ public:
      *          }
      *        }
      *     }
+     * </pre>
      */
     bool AssignFunctionsMemoryToDataSource();
 
@@ -821,6 +845,7 @@ public:
      * @pre
      *   AssignFunctionsMemoryToDataSource()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -908,6 +933,7 @@ public:
      *          }
      *        }
      *     }
+     * </pre>
      */
     bool AssignBrokersToFunctions();
 

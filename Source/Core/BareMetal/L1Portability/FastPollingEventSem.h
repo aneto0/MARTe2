@@ -101,7 +101,7 @@ public:
      */
     ErrorManagement::ErrorType FastResetWait(const TimeoutType &timeout = TTInfiniteWait,
                                              const uint32 sleepTimeUsec = 1000);
-
+ 
 private:
 
     /**

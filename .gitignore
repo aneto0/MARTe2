@@ -6,3 +6,7 @@
 /MARTe2 linting/
 /TargetFile_Test.txt
 /_Test.txt
+/.README.md.html
+*.dia~
+depends*.gcc
+depends*.x86-linux

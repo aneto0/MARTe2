@@ -1,0 +1,33 @@
+
+/**
+ * @brief Adds the special leaf containing the class name.
+ */
+virtual void CreateClassLeaf();
+
+void ParserI::CreateClassLeaf() {
+    // add an element to the memory
+    bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
+    if (ret) {
+        uint32 dimSizes[3] = { 1u, 1u, 1u };
+        AnyType element = memory.Create(0u, &dimSizes[0]);
+        ret = (element.GetDataPointer() != NULL);
+        if (ret) {
+            ret = database->Write("ClassName", element);
+            if (!ret) {
+                PrintErrorOnStream("\nFailed adding the class name leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken),
+                                   errorStream);
+                isError = true;
+            }
+        }
+        else {
+            PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+            isError = true;
+        }
+    }
+    else {
+        PrintErrorOnStream("\nFailed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
+
+    memory.CleanUp(1u);
+}

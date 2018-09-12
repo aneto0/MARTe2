@@ -92,7 +92,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &time
 bool FastPollingMutexSem::FastTryLock() {
     return (Atomic::TestAndSet(flag));
 }
-
+ 
 void FastPollingMutexSem::FastUnLock() {
     *flag = 0;
 }

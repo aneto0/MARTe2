@@ -39,12 +39,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+/*
 TEST(SleepGTest,TestSleepAtLeast) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestAtLeast(1.2));
 }
-
+*/
 TEST(SleepGTest,TestSleepNoMore) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestNoMore(0.8));

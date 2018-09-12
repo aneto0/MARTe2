@@ -29,14 +29,17 @@ OBJSX=  BrokerIGTest.x\
         GAMGroupGTest.x\
         GAMGTest.x\
         GAMSchedulerIGTest.x\
+        MemoryDataSourceIGTest.x\
         MemoryMapBrokerGTest.x\
         MemoryMapInputBrokerGTest.x\
         MemoryMapInterpolatedInputBrokerGTest.x\
+        MemoryMapMultiBufferBrokerGTest.x\
+        MemoryMapMultiBufferInputBrokerGTest.x\
+        MemoryMapMultiBufferOutputBrokerGTest.x\
         MemoryMapOutputBrokerGTest.x\
-        MemoryMapStatefulBrokerGTest.x\
-        MemoryMapStatefulInputBrokerGTest.x\
-        MemoryMapStatefulOutputBrokerGTest.x\
         MemoryMapSynchronisedInputBrokerGTest.x\
+        MemoryMapSynchronisedMultiBufferInputBrokerGTest.x\
+        MemoryMapSynchronisedMultiBufferOutputBrokerGTest.x\
         MemoryMapSynchronisedOutputBrokerGTest.x\
         RealTimeApplicationGTest.x\
         RealTimeApplicationConfigurationBuilderGTest.x\

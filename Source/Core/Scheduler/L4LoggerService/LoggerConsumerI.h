@@ -109,6 +109,9 @@ protected:
      */
     bool IsPrintKeys() const;
 
+    /**
+     * @brief Describes what information about the logging message is to be made available.
+     */
     /*lint ++flb*/
     union FormatPreferences {
         /**

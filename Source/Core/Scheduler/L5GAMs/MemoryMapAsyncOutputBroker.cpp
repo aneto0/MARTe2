@@ -138,10 +138,10 @@ bool MemoryMapAsyncOutputBroker::InitWithBufferParameters(const SignalDirection 
             uint32 samples;
             ok = dataSourceIn.GetFunctionSignalSamples(OutputSignals, 0u, s, samples);
             if (ok) {
-                ok = (samples == 1u);
+                ok = (samples > 0u);
             }
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be == 1.");
+                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be positivedd.");
             }
         }
     }
@@ -189,11 +189,13 @@ bool MemoryMapAsyncOutputBroker::Execute() {
     bool ret = true;
 
     if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncOutputBrokerBufferEntry *)) {
-        if (bufferMemoryMap[writeIdx].toConsume) {
-            //Buffer overrun...
-            const uint32 idx = writeIdx;
-            REPORT_ERROR(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx);
-            ret = false;
+        if (!ignoreBufferOverrun) {
+            if (bufferMemoryMap[writeIdx].toConsume) {
+                //Buffer overrun...
+                const uint32 idx = writeIdx;
+                REPORT_ERROR(ErrorManagement::FatalError, "Buffer overrun for index %d ", idx);
+                ret = false;
+            }
         }
         uint32 n;
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
@@ -220,7 +222,8 @@ bool MemoryMapAsyncOutputBroker::Execute() {
     return ret;
 }
 
-ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(const ExecutionInfo & info) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     if (info.GetStage() == ExecutionInfo::MainStage) {
         int32 synchStopIdx = 0;
@@ -285,6 +288,14 @@ ErrorManagement::ErrorType MemoryMapAsyncOutputBroker::BufferLoop(const Executio
         }
     }
     return err;
+}
+
+void MemoryMapAsyncOutputBroker::SetIgnoreBufferOverrun(const bool ignoreBufferOverrunIn) {
+    ignoreBufferOverrun = ignoreBufferOverrunIn;
+}
+
+bool MemoryMapAsyncOutputBroker::IsIgnoringBufferOverrun() const {
+    return ignoreBufferOverrun;
 }
 
 CLASS_REGISTER(MemoryMapAsyncOutputBroker, "1.0")

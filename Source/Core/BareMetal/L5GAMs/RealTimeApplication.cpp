@@ -31,24 +31,22 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "GAM.h"
+#include "GAMSchedulerI.h"
+#include "Matrix.h"
 #include "RealTimeApplication.h"
+#include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeState.h"
+#include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
-#include "GAM.h"
-#include "GAMSchedulerI.h"
-#include "AdvancedErrorManagement.h"
-#include "Matrix.h"
-#include "RealTimeApplicationConfigurationBuilder.h"
-#include "RealTimeThread.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-uint32 RealTimeApplication::index = 1u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -63,6 +61,7 @@ RealTimeApplication::RealTimeApplication() :
         REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
     }
     defaultDataSourceName = "";
+    index=1u;
 
 }
 
@@ -251,7 +250,7 @@ bool RealTimeApplication::ConfigureApplication() {
         REPORT_ERROR(ErrorManagement::Information, "Going to configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->ConfigureScheduler();
+            ret = scheduler->ConfigureScheduler(this);
         }
         if (!ret) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
@@ -332,7 +331,7 @@ bool RealTimeApplication::ConfigureApplication(ConfigurationDatabase &functionsD
         REPORT_ERROR(ErrorManagement::Information, "Going to check configure scheduler");
         ret = scheduler.IsValid();
         if (ret) {
-            ret = scheduler->ConfigureScheduler();
+            ret = scheduler->ConfigureScheduler(this);
         }
         if (!ret) {
             REPORT_ERROR(ErrorManagement::ParametersError, "Failed to configure scheduler");
@@ -391,7 +390,7 @@ bool RealTimeApplication::AllocateDataSourceMemory() {
                 if (ret) {
                     ret = ds->AllocateMemory();
                     if (!ret) {
-                        REPORT_ERROR(ErrorManagement::ParametersError, "GAM %s AllocateMemory failed", fullDsName.Buffer());
+                        REPORT_ERROR(ErrorManagement::ParametersError, "DataSource %s AllocateMemory failed", fullDsName.Buffer());
                     }
                 }
             }
@@ -523,8 +522,31 @@ bool RealTimeApplication::GetStates(ReferenceContainer &states) const {
     return ret;
 }
 
-uint32 RealTimeApplication::GetIndex() {
+uint32 RealTimeApplication::GetIndex() const {
     return index;
+}
+
+void RealTimeApplication::Purge(ReferenceContainer &purgeList) {
+    if (statesContainer.IsValid()) {
+        statesContainer->Purge(purgeList);
+        statesContainer.RemoveReference();
+    }
+    if (functionsContainer.IsValid()) {
+        functionsContainer->Purge(purgeList);
+        functionsContainer.RemoveReference();
+    }
+    if (scheduler.IsValid()) {
+        scheduler->Purge(purgeList);
+        scheduler.RemoveReference();
+    }
+    if (dataSourceContainer.IsValid()) {
+        dataSourceContainer->Purge(purgeList);
+        dataSourceContainer.RemoveReference();
+    }
+    statefulsInData.Purge(purgeList);
+    functionsDatabase.Purge(purgeList);
+    dataSourcesDatabase.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
 }
 
 CLASS_REGISTER(RealTimeApplication, "1.0")

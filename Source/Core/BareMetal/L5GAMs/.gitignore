@@ -2,3 +2,7 @@
 /dependsRaw.linux
 /depends.cov
 /dependsRaw.cov
+/MemoryMapStatefulInputBroker.cpp
+/MemoryMapStatefulInputBroker.h
+/MemoryMapStatefulOutputBroker.cpp
+/MemoryMapStatefulOutputBroker.h

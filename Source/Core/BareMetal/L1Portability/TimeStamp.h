@@ -59,6 +59,11 @@ public:
     TimeStamp();
 
     /**
+     * TODO Initializes  with current time
+     */
+    bool GetTime();
+
+    /**
      * @brief Converts the seconds from epoch in input to the time stamp.
      * @param[in] secondsFromEpoch The seconds elapsed from epoch (January 1, 1970).
      * @return false in case of errors, true otherwise.

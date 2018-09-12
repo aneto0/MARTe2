@@ -66,9 +66,9 @@ public:
     bool TestInitWithBufferParameters_False_MoreThanOneGAM();
 
     /**
-     * @brief Tests the InitWithBufferParameters method signals that have Samples > 1.
+     * @brief Tests the InitWithBufferParameters method signals that have Samples =  0.
      */
-    bool TestInitWithBufferParameters_False_SamplesGreaterThanOne();
+    bool TestInitWithBufferParameters_False_Samples();
 
     /**
      * @brief Tests the Execute method with many buffers.
@@ -99,6 +99,16 @@ public:
      * @brief Tests the GetNumberOfBuffers method.
      */
     bool TestGetNumberOfBuffers();
+
+    /**
+     * @brief Tests the IsIgnoringBufferOverrun method.
+     */
+    bool TestIsIgnoringBufferOverrun();
+
+    /**
+     * @brief Tests the TestSetIgnoreBufferOverrun method.
+     */
+    bool TestSetIgnoreBufferOverrun();
 
 };
 

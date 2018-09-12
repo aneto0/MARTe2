@@ -44,7 +44,7 @@ public:
         internalStateThread2 = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetThreadNumber() == 0u) {
             internalStateThread0++;
         }
@@ -70,7 +70,7 @@ public:
         internalState = 0u;
     }
 
-    MARTe::ErrorManagement::ErrorType CallbackFunction(const MARTe::ExecutionInfo &information) {
+    MARTe::ErrorManagement::ErrorType CallbackFunction(MARTe::ExecutionInfo &information) {
         if (information.GetStage() == MARTe::ExecutionInfo::MainStage) {
             internalState++;
             while (1) {

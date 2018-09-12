@@ -1,8 +1,8 @@
 /**
  * @file AnyTypeCreatorGTest.cpp
  * @brief Source file for class AnyTypeCreatorGTest
- * @date 11/dic/2015
- * @author pc
+ * @date 11/12/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

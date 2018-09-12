@@ -47,62 +47,19 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Sleep {
 
-void PreciseUsec(uint32 usec, uint32 margin) {
-    uint64 start = HighResolutionTimer::Counter();
-    // if frequency is >4G and usec is max there is the risk of overflow
-    // this reduces resolution but allows up to 16G of clock!!
-    uint64 sleepTicks = (usec * (HighResolutionTimer::Frequency() >> 2)) / 250000LLu;
-    uint64 end  = start + sleepTicks;
-    uint64 minYieldTicks = HighResolutionTimer::GetOsSleepGranularityTicks();
-    uint32 minYieldUsec  = HighResolutionTimer::GetOsSleepGranularityUsec();
-    uint32 minYieldMsec  = minYieldUsec/1000;
-
-    bool done = false;
-    while (!done) {
-    	// this works even on a numeric overflow.
-    	uint64 missingTicks = (end - HighResolutionTimer::Counter());
-
-    	uint32 counts = missingTicks / minYieldTicks;
-
-    	if ( counts > (margin+1)){
-    		::Sleep( minYieldMsec * (counts-margin));
-    	} else {
-    		done = true;
-    	}
-    }
-
-    // this will overflow - but it is ok
-    uint64 toSleepLeft = (HighResolutionTimer::Counter() - end);
-    while (toSleepLeft < sleepTicks) {
-        toSleepLeft = (HighResolutionTimer::Counter() - end);
-    }
-}
-
-
-void PreciseSeconds(const float32 seconds, uint32 margin){
-    if (seconds > 0){
-        if (seconds > 4000.0){
-        	unsigned long msecs = 0;
-            if (seconds > 4.0E6){
-            	msecs = 4000000000u;
-            } else {
-            	msecs = (unsigned long)(seconds * 1000u);
-            }
-        	::Sleep(msecs);
-        } else {
-        	uint32 usec = seconds * 1000000u;
-    		PreciseUsec(usec,margin);
-    	}
-    }
-}
-
-
-int32 GetDateSeconds() {
+int32 Sleep::GetDateSeconds() {
     return (int32) time((time_t *) NULL);
 }
 
+
+
+void Sleep::OsUsleep(const uint32 usecTime) {
+    if (usecTime > 0u) {
+        ::Sleep((unsigned long) (usecTime/1000));
+    }
 }
+
+
 
 }

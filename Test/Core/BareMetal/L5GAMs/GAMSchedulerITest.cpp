@@ -50,7 +50,7 @@ DummyScheduler    ();
 
     void ExecuteThreadCycle(uint32 threadId);
 
-    virtual bool ConfigureScheduler();
+    virtual bool ConfigureScheduler(Reference realTimeApp);
 
     virtual void CustomPrepareNextState();
 
@@ -67,8 +67,8 @@ MARTe::ErrorManagement::ErrorType  DummyScheduler::StartNextStateExecution() {
     return MARTe::ErrorManagement::NoError;
 }
 
-bool DummyScheduler::ConfigureScheduler() {
-    bool ret = GAMSchedulerI::ConfigureScheduler();
+bool DummyScheduler::ConfigureScheduler(Reference realTimeApp) {
+    bool ret = GAMSchedulerI::ConfigureScheduler(realTimeApp);
     if (ret) {
         scheduledStates = GetSchedulableStates();
     }
@@ -76,9 +76,9 @@ bool DummyScheduler::ConfigureScheduler() {
 }
 
 void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
-
-    ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                       scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+    ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
+    ExecuteSingleCycle(scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].executables,
+                       scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
 MARTe::ErrorManagement::ErrorType DummyScheduler::StopCurrentStateExecution() {
@@ -379,7 +379,7 @@ bool GAMSchedulerITest::TestConfigureScheduler() {
         return false;
     }
 
-    if (!scheduler->ConfigureScheduler()) {
+    if (!scheduler->ConfigureScheduler(app)) {
         return false;
     }
 
@@ -526,7 +526,7 @@ bool GAMSchedulerITest::TestConfigureSchedulerFalse_InvalidState() {
         return false;
     }
 
-    return (!scheduler->ConfigureScheduler());
+    return (!scheduler->ConfigureScheduler(app));
 }
 
 bool GAMSchedulerITest::TestGetNumberOfExecutables() {
@@ -549,7 +549,7 @@ bool GAMSchedulerITest::TestPrepareNextState() {
         return false;
     }
 
-    if (!scheduler->ConfigureScheduler()) {
+    if (!scheduler->ConfigureScheduler(app)) {
         return false;
     }
 

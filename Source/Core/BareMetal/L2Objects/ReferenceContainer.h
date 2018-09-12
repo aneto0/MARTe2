@@ -229,7 +229,80 @@ public:
      * @return true.
      */
     virtual bool IsReferenceContainer() const;
+
+    /**
+     * @brief Checks if the input token is one of the tokens that force the creation of a new Object.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens that force the creation of a new Object.
+     */
+    static bool IsBuildToken(char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens that force the creation of a new Object.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddBuildToken(char8 token);
+
+    /**
+     * @brief Removes an existent token from the list of tokens that force the creation of a new Object.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveBuildToken(char8 token);
+
+    /**
+     * @brief Checks if the input token is one of the tokens that set an Object as a domain object.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens that set an Object as a domain object.
+     */
+    static bool IsDomainToken(char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens that set a given Object as a domain object.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddDomainToken(char8 token);
+
+    /**
+     * @brief Removes an existent token from the list of tokens that set an Object as a domain object.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveDomainToken(char8 token);
+
 private:
+    /**
+     * @brief The tokens that identify in the first character of an Object name, that a new object is to be built.
+     */
+    static char8 buildTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS];
+
+    /**
+     * @brief The tokens that identify in the first character of an Object name, that a new object is to be set as a Domain object.
+     */
+    static char8 domainTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS];
+
+    /**
+     * @brief Checks if the input token is one of the tokens in the input token list.
+     * @param[in] tokenList the token list to verify.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens in the token list.
+     */
+    static bool IsToken(const char8 * const tokenList, char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens in the token list.
+     * @param[in] tokenList the token list to be modified.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddToken(char8 * const tokenList, char8 token);
+
+    /**
+     * @brief Removes an existent token from the token list.
+     * @param[in] tokenList the token list to be modified.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveToken(char8 * const tokenList, char8 token);
 
     /**
      * The list of references

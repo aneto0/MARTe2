@@ -49,6 +49,10 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+char8 ReferenceContainer::buildTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS] = { '+', '\0', '\0', '\0', '\0' };
+char8 ReferenceContainer::domainTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS] = { '$', '\0', '\0', '\0', '\0' };
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -216,6 +220,13 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
             if (ok) {
                 ok = created;
             }
+
+            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
+
+            }
+            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
+
+            }
         }
     }
     return ok;
@@ -382,14 +393,15 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
         ok = (!childName.IsNullPtr());
         if (ok) {
             // case object
-            if ((childName[0] == '+') || (childName[0] == '$')) {
+            //lint -e{9007} there are no side-effects on IsBuildToken or IsDomainToken, but these cannot be declared const.
+            if ((IsBuildToken(childName[0])) || (IsDomainToken(childName[0]))) {
                 if (data.MoveRelative(childName)) {
                     Reference newObject;
                     ok = newObject.Initialise(data, false);
                     if (ok) {
                         ok = (newObject.IsValid());
                         if (ok) {
-                            if (childName[0] == '$') {
+                            if (IsDomainToken(childName[0])) {
                                 newObject->SetDomain(true);
                             }
                             ok = ReferenceContainer::Insert(newObject);
@@ -418,62 +430,6 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     }
     return ok;
 }
-#if 0
-bool ReferenceContainer::ExportData(StructuredDataI & data) {
-
-    // no need to lock
-    CCString objName = GetName();
-
-    bool ret = true;
-    {
-        DynamicCString objNameToCreate;
-
-        if (IsDomain()){
-            ret = objNameToCreate.Append('$');
-        } else {
-            ret = objNameToCreate.Append('+');
-        }
-
-        if (ret){
-            ret = objNameToCreate.AppendN(objName);
-        }
-
-        if (ret) {
-            // moves to the node
-            ret = data.CreateRelative(objNameToCreate.GetList());
-        }
-    }
-
-
-    if (ret) {
-        ClassRegistryItem *cri;
-
-        cri = this->GetClassRegistryItem();
-        ret = (cri != NULL);
-
-        if (ret) {
-            CCString cn = cri->GetClassName();
-            ret = data.Write("Class", cn);
-
-            uint32 numberOfChildren = Size();
-            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                Reference child = Get(i);
-                ret = child.IsValid();
-                if (ret) {
-                    ret = child->ExportData(data);
-                }
-            }
-        }
-    }
-
-    if (ret){
-        ret = data.MoveToAncestor(1u);
-    }
-
-
-    return ret;
-}
-#endif
 
 bool ReferenceContainer::Lock() {
     return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
@@ -518,6 +474,69 @@ void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
 
 bool ReferenceContainer::IsReferenceContainer() const {
     return true;
+}
+
+bool ReferenceContainer::AddToken(char8 * const tokenList, const char8 token) {
+    uint32 i = 0u;
+    bool exists = false;
+    while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+        exists = (tokenList[i] == token);
+        i++;
+    }
+    bool ok = exists;
+    if (!ok) {
+        ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
+        if (ok) {
+            tokenList[i] = token;
+        }
+    }
+    return ok;
+}
+
+void ReferenceContainer::RemoveToken(char8 * const tokenList, const char8 token) {
+    uint32 i = 0u;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
+        i++;
+    }
+    while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
+        tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
+        i++;
+    }
+    tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
+}
+
+bool ReferenceContainer::IsToken(const char8 * const tokenList, const char8 token) {
+    uint32 i = 0u;
+    bool ok = false;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
+        ok = (tokenList[i] == token);
+        i++;
+    }
+    return ok;
+}
+
+bool ReferenceContainer::AddBuildToken(const char8 token) {
+    return AddToken(&buildTokensList[0], token);
+}
+
+void ReferenceContainer::RemoveBuildToken(const char8 token) {
+    return RemoveToken(&buildTokensList[0], token);
+}
+
+bool ReferenceContainer::IsBuildToken(const char8 token) {
+    return IsToken(&buildTokensList[0], token);
+}
+
+bool ReferenceContainer::AddDomainToken(const char8 token) {
+    return AddToken(&domainTokensList[0], token);
+}
+
+void ReferenceContainer::RemoveDomainToken(const char8 token) {
+    return RemoveToken(&domainTokensList[0], token);
+}
+
+bool ReferenceContainer::IsDomainToken(const char8 token) {
+    return IsToken(&domainTokensList[0], token);
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

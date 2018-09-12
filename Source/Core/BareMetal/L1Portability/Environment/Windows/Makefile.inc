@@ -31,7 +31,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=  BasicConsole.x \
 		ErrorManagement_Gen.x \
 		ErrorManagementConsoleFunction_Gen.x \
-		HighResolutionTimerCalibrator.x \
+		OSInitializer.x \
 		LoadableLibrary.x  \
 		MemoryCheck.x \
 		Sleep.x \

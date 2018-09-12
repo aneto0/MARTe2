@@ -36,6 +36,7 @@
 #include "DataSourceI.h"
 #include "GAM.h"
 #include "GAMSchedulerI.h"
+#include "RealTimeApplication.h"
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 
@@ -84,18 +85,10 @@ bool GAMSchedulerI::Initialise(StructuredDataI & data) {
     return ret;
 }
 
-bool GAMSchedulerI::ConfigureScheduler() {
-    ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
-    ReferenceContainer path;
-    ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
-    uint32 numberOfNodes = path.Size();
-    ReferenceT<RealTimeApplication> rtApp;
-    bool isRtAppValid = false;
-    for (uint32 i = 0u; (i < numberOfNodes) && (!isRtAppValid); i++) {
-        rtApp = path.Get(i);
-        isRtAppValid = rtApp.IsValid();
-    }
-    bool ret = isRtAppValid;
+bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
+    realTimeApp = realTimeAppIn;
+    ReferenceT<RealTimeApplication> rtApp = realTimeApp;
+    bool ret = rtApp.IsValid();
 
     ReferenceT<ReferenceContainer> statesContainer;
     if (ret) {
@@ -350,7 +343,10 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
 
     uint32 nextBuffer = 0u;
     if (ret) {
-        nextBuffer = (RealTimeApplication::GetIndex() + 1u) % 2u;
+        ReferenceT<RealTimeApplication> rtApp = realTimeApp;
+        if (rtApp.IsValid()) {
+            nextBuffer = (rtApp->GetIndex() + 1u) % 2u;
+        }
     }
 
     bool found = false;
@@ -425,6 +421,13 @@ uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
 ScheduledState * const * GAMSchedulerI::GetSchedulableStates() {
     return scheduledStates;
 
+}
+
+void GAMSchedulerI::Purge(ReferenceContainer &purgeList) {
+    if (timingDataSource.IsValid()) {
+        timingDataSource->Purge(purgeList);
+    }
+    ReferenceContainer::Purge(purgeList);
 }
 
 }

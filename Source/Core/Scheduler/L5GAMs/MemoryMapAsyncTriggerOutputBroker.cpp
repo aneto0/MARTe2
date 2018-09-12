@@ -63,6 +63,7 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
     fastSem.Create();
     posted = false;
     destroying = false;
+    triggerIndexInGAMMemory = 0u;
 }
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
@@ -105,12 +106,15 @@ MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
-bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress) {
+bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+                                             void * const gamMemoryAddress) {
     return false;
 }
 
-bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName, void * const gamMemoryAddress, const uint32 numberOfBuffersIn,
-                                                                  const uint32 preTriggerBuffersIn, const uint32 postTriggerBuffersIn, const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
+bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
+                                                                  void * const gamMemoryAddress, const uint32 numberOfBuffersIn,
+                                                                  const uint32 preTriggerBuffersIn, const uint32 postTriggerBuffersIn,
+                                                                  const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     numberOfBuffers = numberOfBuffersIn;
     preTriggerBuffers = preTriggerBuffersIn;
@@ -120,39 +124,39 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
 
     if (ok) {
         ok = (numberOfBuffers > 0u);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfMemoryBuffers() shall be > 0");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfMemoryBuffers() shall be > 0");
+        }
     }
     if (ok) {
         ok = (preTriggerBuffers < numberOfBuffers);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "preTriggerBuffers shall be < numberOfBuffers");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "preTriggerBuffers shall be < numberOfBuffers");
+        }
     }
     if (ok) {
         ok = (postTriggerBuffers < numberOfBuffers);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "postTriggerBuffers shall be < numberOfBuffers");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "postTriggerBuffers shall be < numberOfBuffers");
+        }
     }
     if (ok) {
         ok = ((preTriggerBuffers + postTriggerBuffers) < numberOfBuffers);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "preTriggerBuffers + postTriggerBuffers shall be < numberOfBuffers");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "preTriggerBuffers + postTriggerBuffers shall be < numberOfBuffers");
+        }
     }
     if (ok) {
         ok = (dataSourceIn.GetNumberOfFunctions() == 1u);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfFunctions() shall be == 1");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfFunctions() shall be == 1");
+        }
     }
     if (ok) {
         ok = (dataSourceIn.GetNumberOfMemoryBuffers() == 1u);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfMemoryBuffers() shall be == 1");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "GetNumberOfMemoryBuffers() shall be == 1");
+        }
     }
     uint32 functionNumberOfSignals = 0u;
     if (ok) {
@@ -164,19 +168,19 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
             uint32 samples;
             ok = dataSourceIn.GetFunctionSignalSamples(OutputSignals, 0u, s, samples);
             if (ok) {
-                ok = (samples == 1u);
+                ok = (samples > 0u);
             }
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be == 1.");
+                REPORT_ERROR(ErrorManagement::ParametersError, "The number of samples on each signal shall be positive.");
             }
         }
     }
     //The trigger signal shall be the first signal in the DataSource and shall have type uint8
     if (ok) {
         ok = (dataSourceIn.GetSignalType(0u) == UnsignedInteger8Bit);
-    }
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::ParametersError, "The first signal (trigger) shall be of type uint8");
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "The first signal (trigger) shall be of type uint8");
+        }
     }
     if (ok) {
         dataSourceRef = Reference(&dataSourceIn);
@@ -192,6 +196,38 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
             for (c = 0u; (c < numberOfCopies) && (ok); c++) {
                 bufferMemoryMap[i].mem[c] = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(copyTable[c].copySize);
                 ok = MemoryOperationsHelper::Set(bufferMemoryMap[i].mem[c], '\0', copyTable[c].copySize);
+            }
+        }
+    }
+    //Have to discover where is the trigger signal in the GAM memory. I only know that it is for sure index zero in the DataSource signal list (i.e. signalIdx == 0u).
+    if (ok) {
+        uint32 n;
+        uint32 c = 0u;
+        bool done = false;
+        for (n = 0u; (n < functionNumberOfSignals) && (ok) && (!done); n++) {
+            if (dataSource->IsSupportedBroker(OutputSignals, 0u, n, "MemoryMapAsyncTriggerOutputBroker")) {
+                uint32 numberOfByteOffsets = 0u;
+                ok = dataSource->GetFunctionSignalNumberOfByteOffsets(OutputSignals, 0u, n, numberOfByteOffsets);
+
+                StreamString functionSignalName;
+                if (ok) {
+                    ok = dataSource->GetFunctionSignalAlias(OutputSignals, 0u, n, functionSignalName);
+                }
+                uint32 signalIdx = 0u;
+                if (ok) {
+                    ok = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                }
+                if (ok) {
+                    if (signalIdx == 0u) {
+                        done = true;
+                        triggerIndexInGAMMemory = c;
+                        REPORT_ERROR(ErrorManagement::Information, "Trigger is at copy index %d", triggerIndexInGAMMemory);
+                    }
+                    else {
+                        //Take into account different ranges for the same signal
+                        c += numberOfByteOffsets;
+                    }
+                }
             }
         }
     }
@@ -249,7 +285,7 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
             }
         }
         //Check if the trigger is set to 1
-        bufferMemoryMap[writeIdx].triggered = (*static_cast<uint8*>(bufferMemoryMap[writeIdx].mem[0u]) > 0u);
+        bufferMemoryMap[writeIdx].triggered = (*static_cast<uint8*>(bufferMemoryMap[writeIdx].mem[triggerIndexInGAMMemory]) > 0u);
         if (bufferMemoryMap[writeIdx].triggered) {
             //If it wasn't already triggered mark the pre-trigger samples to be stored by the BufferLoop
             if (!wasTriggered) {
@@ -298,7 +334,8 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
     return ret;
 }
 
-ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(const ExecutionInfo & info) {
+/*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
+ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(ExecutionInfo & info) {
     ErrorManagement::ErrorType err;
     bool ret = true;
     if (info.GetStage() == ExecutionInfo::MainStage) {
@@ -385,7 +422,7 @@ bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
         ret = (fastSem.FastLock() == ErrorManagement::NoError);
         waitForBufferLoop = bufferLoopExecuting;
         fastSem.FastUnLock();
-        Sleep::Sec(1e-3);
+        Sleep::Sec(1e-3F);
     }
     if (ret) {
         ret = (fastSem.FastLock() == ErrorManagement::NoError);

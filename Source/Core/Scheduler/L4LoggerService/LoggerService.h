@@ -46,6 +46,8 @@ namespace MARTe {
  * @brief The LoggerService registers itself as a callback for the logging messages and
  * asynchronously offer these messages to all the registered LoggerConsumerI.
  * @details The configuration syntax is (names are only given as an example):
+ *
+ * <pre>
  * +LoggerService = {
  *     Class = LoggerService
  *     CPUs = 0x1 //Compulsory. The CPU mask where the asynchronous thread will run.
@@ -60,6 +62,7 @@ namespace MARTe {
  *         ...
  *     }
  * }
+ * </pre>
  */
 class LoggerService: public ReferenceContainer, public EmbeddedServiceMethodBinderI {
 public:
@@ -89,7 +92,7 @@ LoggerService    ();
      * @param[in] info see EmbeddedServiceMethodBinderI
      * @return ErrorManagement::NoError.
      */
-    virtual ErrorManagement::ErrorType Execute(const ExecutionInfo & info);
+    virtual ErrorManagement::ErrorType Execute(ExecutionInfo & info);
 
     /**
      * @brief Gets the configured number of log pages.

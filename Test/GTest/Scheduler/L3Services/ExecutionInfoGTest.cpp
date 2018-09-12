@@ -84,3 +84,14 @@ TEST(ExecutionInfoGTest,TestReset) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestReset());
 }
+
+TEST(ExecutionInfoGTest,TestSetThreadSpecificContext) {
+    ExecutionInfoTest target;
+    ASSERT_TRUE(target.TestSetThreadSpecificContext());
+}
+
+TEST(ExecutionInfoGTest,TestGetThreadSpecificContext) {
+    ExecutionInfoTest target;
+    ASSERT_TRUE(target.TestGetThreadSpecificContext());
+}
+

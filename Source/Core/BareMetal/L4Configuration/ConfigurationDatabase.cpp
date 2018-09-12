@@ -44,7 +44,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+ 
 namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() : Object() {
@@ -147,26 +147,6 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyT
 	return ret;
 }
 
-/*
-AnyType ConfigurationDatabase::GetType(CCString name) {
-    bool found = false;
-    Reference foundReference;
-    uint32 i;
-    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-        foundReference = currentNode->Get(i);
-        found = name.isSameAs(foundReference->GetName().GetList());
-    }
-
-    AnyType retType;
-    if (found) {
-        if (foundReference.IsValid()) {
-            foundReference->ToAnyType(retType);
-        }
-    }
-
-    return retType;
-}
-*/
 
 ErrorManagement::ErrorType  ConfigurationDatabase::Copy(StructuredDataI &destination) {
 	ErrorManagement::ErrorType ret;
@@ -291,8 +271,6 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor(const uint32 ge
     }
     return ret;
 }
-
-
 
 ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
 	ErrorManagement::ErrorType ret;

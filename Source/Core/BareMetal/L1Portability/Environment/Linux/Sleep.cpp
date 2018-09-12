@@ -39,8 +39,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimer.h"
-#include "Sleep.h"
-#include "ErrorManagement.h"
+#include "../../Sleep.h"
+//#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -50,61 +50,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-namespace Sleep {
 
-
-void PreciseUsec(uint32 usec, uint32 margin) {
-    uint64 start = HighResolutionTimer::Counter();
-    // if frequency is >4G and usec is max there is the risk of overflow
-    // this reduces resolution but allows up to 16G of clock!!
-    uint64 sleepTicks = (usec * (HighResolutionTimer::Frequency() >> 2)) / 250000LLu;
-    uint64 end  = start + sleepTicks;
-    uint64 minYieldTicks = HighResolutionTimer::GetOsSleepGranularityTicks();
-    uint32 minYieldUsec  = HighResolutionTimer::GetOsSleepGranularityUsec();
-
-     bool done = false;
-    while (!done) {
-    	// this works even on a numeric overflow.
-    	uint64 missingTicks = (end - HighResolutionTimer::Counter());
-
-    	uint32 counts = missingTicks / minYieldTicks;
-
-    	if ( counts > (margin+1)){
-    		usleep( minYieldUsec * (counts-margin));
-    	} else {
-    		done = true;
-    	}
+void Sleep::OsUsleep(const uint32 usecTime) {
+    if (usecTime > 0u) {
+        (void) usleep(usecTime);
     }
 
-    // this will overflow - but it is ok
-    uint64 toSleepLeft = (HighResolutionTimer::Counter() - end);
-    while (toSleepLeft < sleepTicks) {
-        toSleepLeft = (HighResolutionTimer::Counter() - end);
-    }
 }
 
-
-void PreciseSeconds(const float32 seconds, uint32 margin){
-    if (seconds > 0){
-        if (seconds > 4000.0){
-        	uint32 iseconds = 0;
-            if (seconds > 4.0E6){
-            	iseconds = 4000000u;
-            } else {
-            	iseconds = seconds;
-            }
-        	sleep(iseconds);
-        } else {
-        	uint32 usec = seconds * 1000000u;
-    		PreciseUsec(usec,margin);
-    	}
-    }
-}
-
-int32 GetDateSeconds() {
+int32 Sleep::GetDateSeconds() {
     return static_cast<int32>(time(static_cast<time_t *>(NULL)));
 }
 
-}
+
 
 }

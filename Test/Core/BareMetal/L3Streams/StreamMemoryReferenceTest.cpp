@@ -1,8 +1,8 @@
 /**
  * @file StreamMemoryReferenceTest.cpp
  * @brief Source file for class StreamMemoryReferenceTest
- * @date 19/ott/2015
- * @author pc
+ * @date 19/10/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

@@ -195,6 +195,11 @@ public:
         return currentNode;
     }
 
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
 private:
 
     /**

@@ -150,7 +150,7 @@ bool RegisteredMethodsMessageFilterTest::TestConsumeMessage_IndirectReply() {
     data.Write("Function", "MethodWithVoidParameters");
     data.Write("Mode", "ExpectsIndirectReply");
     msg->Initialise(data);
-    msg->SetSender("TestConsumeMessage_IndirectReplyDestination");
+    msg->SetSender(destination.operator ->());
 
     RegisteredMethodsMessageFilter filter;
     filter.SetDestination(destination.operator->());

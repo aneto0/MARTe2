@@ -165,6 +165,7 @@ public:
      */
     T& operator()(const uint32 row, const uint32 col);
 
+	
     /**
      * @brief Performs the matrix product.
      * @param[in] factor is the matrix to be multiplied with.
@@ -177,8 +178,34 @@ public:
      * @post
      *   result holds the product matrix between *this and factor
      */
-    bool Product(Matrix<T> &factor,
-                 Matrix<T> &result) const;
+    bool Product(Matrix<T> &factor, Matrix<T> &result) const;
+
+    /**
+     * @brief Performs the matrix sum.
+     * @param[in] addend is the matrix to be summed with.
+     * @param[out] result is the matrix sum result.
+     * @return true if the matrix dimensions are consistent
+     * @pre
+     *   GetNumberOfColumns() == addend.GetNumberOfRows() &&
+     *   GetNumberOfRows() == addend.GetNumberOfRows() &&
+     *   GetNumberOfColumns() == result.GetNumberOfRows() &&
+     *   GetNumberOfRows() == result.GetNumberOfRows() &&
+     * @post
+     *   result holds the matrix sum between *this and addend.
+     */
+    bool Sum(Matrix<T> &addend, Matrix<T> &result) const;
+
+    /**
+     * @brief Performs the matrix copy.
+     * @param[in] matrixToCopy is the matrix to be copied.
+     * @return true if the matrix dimensions are consistent
+     * @pre
+     *   GetNumberOfColumns() == matrixToCopy.GetNumberOfRows() &&
+     *   GetNumberOfRows() == matrixToCopy.GetNumberOfRows() &&
+     * @post
+     *   *this[i][j] = matrixToCopy[i][j]
+     */
+    bool Copy(Matrix<T> &matrixToCopy);
 
     /**
      * @brief Retrieves the sub matrix between the row and columns ranges ==23886==    at 0x4BF05E: MARTe::Matrix<int>::Product(MARTe::Matrix<int>&, MARTe::Matrix<int>&) const (Matrix.h:398)
@@ -220,6 +247,7 @@ public:
     /**
      * @brief Calculates the matrix determinant.
      * @details This operation is allowed only for float matrices.
+     * @tparam T the matrix type.
      * @param[out] det is the calculated determinant in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
@@ -388,14 +416,12 @@ bool Matrix<T>::Product(Matrix<T> &factor,
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
     bool ret = ((cond1) && (cond2) && (cond3));
     if (ret) {
-        Matrix<T> &temp = *this;
-//        temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
 
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < factor.numberOfColumns; j++) {
                 result[i][j] = static_cast<T>(0);
                 for (uint32 k = 0u; k < numberOfColumns; k++) {
-                    result[i][j] += temp[i][k] * factor[k][j];
+                    result[i][j] += (*this)[i][k] * factor[k][j];
                 }
             }
         }
@@ -404,11 +430,38 @@ bool Matrix<T>::Product(Matrix<T> &factor,
 }
 
 template<typename T>
-bool Matrix<T>::SubMatrix(const uint32 beginRow,
-                          const uint32 endRow,
-                          const uint32 beginColumn,
-                          const uint32 endColumn,
-                          Matrix<T> &subMatrix) const {
+bool Matrix<T>::Sum(Matrix<T> & addend, Matrix<T> &result) const {
+    bool cond1 = (addend.numberOfRows == numberOfRows) && (result.numberOfRows == numberOfRows);
+    bool cond2 = (addend.numberOfColumns == numberOfColumns) && (result.numberOfColumns == numberOfColumns);
+    bool ret = (cond1 && cond2);
+    if (ret) {
+
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                result[i][j] = (*this)[i][j] + addend[i][j];
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::Copy(Matrix<T> &matrixToCopy) {
+    bool cond1 = (matrixToCopy.numberOfRows == numberOfRows);
+    bool cond2 = (matrixToCopy.numberOfColumns == numberOfColumns);
+    bool ret = cond1 && cond2;
+    if (ret) {
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                (*this)[i][j] = matrixToCopy[i][j];
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::SubMatrix(const uint32 beginRow, const uint32 endRow, const uint32 beginColumn, const uint32 endColumn, Matrix<T> &subMatrix) const {
     bool cond1 = (endRow >= beginRow);
     bool cond2 = (endColumn >= beginColumn);
     bool cond3 = (endRow < numberOfRows);
@@ -424,13 +477,11 @@ bool Matrix<T>::SubMatrix(const uint32 beginRow,
         ret = ((cond5) && (cond6));
 
         if (ret) {
-            Matrix<T> &temp = *this;
-//            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
             for (uint32 i = 0u; i < outputNRows; i++) {
                 for (uint32 j = 0u; j < outputNCols; j++) {
                     uint32 rowIndex = (beginRow + i);
                     uint32 columnIndex = (beginColumn + j);
-                    subMatrix[i][j] = temp[rowIndex][columnIndex];
+                    subMatrix[i][j] = (*this)[rowIndex][columnIndex];
                 }
             }
         }
@@ -448,11 +499,9 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
     bool ret = ((cond1) && (cond2));
 
     if (ret) {
-        Matrix<T> &temp = *this;
-//            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
-                transpose[j][i] = temp[i][j];
+                transpose[j][i] = (*this)[i][j];
             }
         }
     }

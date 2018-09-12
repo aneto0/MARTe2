@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-//#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
+#include "OSInitializer.h"
 #include "TimeStamp.h"
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
@@ -88,26 +88,29 @@ namespace MARTe {
          */
         inline bool GetTimeStamp(TimeStamp &date);
 
-        /**
-         * @brief Returns as ticks the worst case OS sleep granularity
-         * @see TimeValues.
-         * @return the minimum number of ticks the OS will sleep in the worst case on a thread with priority.
-         */
-        inline uint64 GetOsSleepGranularityTicks();
-
-        /**
-         * @brief Returns as usecs the worst case OS sleep granularity
-         * @see TimeValues.
-         * @return the minimum number of usecs the OS will sleep in the worst case on a thread with priority.
-         */
-        inline uint32 GetOsSleepGranularityUsec();
-
-
-    }
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+        inline uint64 Frequency() {
+            return OSInitializer::frequency;
+        }
+
+        inline float64 Period() {
+            return OSInitializer::period;
+         }
+
+        inline float64 TicksToTime(const uint64 tStop,
+                                   const uint64 tStart) {
+            uint64 dT = (tStop - tStart);
+            return static_cast<float64>(dT) * Period();
+        }
+
+        inline bool GetTimeStamp(TimeStamp &date) {
+            return TimeStamp::GetTimeStamp(date);
+        }
+
+
+    }
+}
 #endif /* HIGHRESOLUTIONTIME_H_ */

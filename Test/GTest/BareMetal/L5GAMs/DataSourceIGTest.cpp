@@ -214,3 +214,57 @@ TEST(DataSourceIGTest,TestIsSupportedBroker) {
     ASSERT_TRUE(test.TestIsSupportedBroker());
 }
 
+TEST(DataSourceIGTest,TestGetCurrentStateBuffer) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetCurrentStateBuffer());
+}
+
+TEST(DataSourceIGTest,TestGetNumberOfStatefulMemoryBuffers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfStatefulMemoryBuffers());
+}
+
+TEST(DataSourceIGTest,TestPrepareInputOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestPrepareInputOffsets());
+}
+
+TEST(DataSourceIGTest,TestPrepareOutputOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestPrepareOutputOffsets());
+}
+
+TEST(DataSourceIGTest,TestGetInputOffset) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetInputOffset());
+}
+
+TEST(DataSourceIGTest,TestGetOutputOffset) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetOutputOffset());
+}
+
+TEST(DataSourceIGTest,TestTerminateInputCopy) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestTerminateInputCopy());
+}
+
+TEST(DataSourceIGTest,TestTerminateOutputCopy) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestTerminateOutputCopy());
+}
+
+TEST(DataSourceIGTest,TestGetNumberOfMemoryBuffers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
+}
+
+TEST(DataSourceIGTest,TestGetInputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetInputBrokers());
+}
+
+TEST(DataSourceIGTest,TestGetOutputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetOutputBrokers());
+}

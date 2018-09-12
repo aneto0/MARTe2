@@ -1,8 +1,8 @@
 /**
  * @file InternetHost.cpp
  * @brief Source file for class InternetHost
- * @date 28/ott/2015
- * @author pc
+ * @date 28/10/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

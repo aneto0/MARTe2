@@ -556,6 +556,16 @@ TEST(MatrixGTest,TestProduct) {
     ASSERT_TRUE(matrixTest.TestProduct());
 }
 
+TEST(MatrixGTest,TestSum) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestSum());
+}
+
+TEST(MatrixGTest,TestCopy) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopy());
+}
+
 TEST(MatrixGTest,TestSubMatrix) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestSubMatrix());
@@ -586,13 +596,20 @@ TEST(MatrixGTest,TestInverse_NullDeterminant) {
     ASSERT_TRUE(matrixTest.TestInverse_NullDeterminant());
 }
 
-
-
 TEST(MatrixGTest,TestProduct_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestProduct_Heap());
 }
 
+TEST(MatrixGTest,TestSum_Heap) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestSum_Heap());
+}
+
+TEST(MatrixGTest,TestCopy_Heap) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestCopy_Heap());
+}
 
 TEST(MatrixGTest,TestSubMatrix_Heap) {
     MatrixTest matrixTest;

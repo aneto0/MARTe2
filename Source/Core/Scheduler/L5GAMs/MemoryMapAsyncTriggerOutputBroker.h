@@ -187,7 +187,7 @@ private:
      * @return ErrorManagement::NoError if the synchronisation semaphore with the Execute method returns no errors. At the end of the application, i.e.
      *  after the destructor has been called, it returns ErrorManagement::Completed.
      */
-    ErrorManagement::ErrorType BufferLoop(const ExecutionInfo & info);
+    ErrorManagement::ErrorType BufferLoop(ExecutionInfo & info);
 
     /**
      * The SingleThreadService responsible for flushing the Buffer into the DataSourceI.
@@ -284,6 +284,11 @@ private:
      * Do not store pre-trigger of empty buffers that were never acquired
      */
     int32 numberOfPreBuffersWritten;
+
+    /**
+     * The index of the trigger on the GAM signal (it is for sure zero in the DataSource, but it is not necessarily zero in the GAM memory).
+     */
+    uint32 triggerIndexInGAMMemory;
 };
 }
 

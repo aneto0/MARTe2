@@ -59,7 +59,7 @@ inline float64 Period() {
 
 inline float64 TicksToTime(const uint64 tStop,
                            const uint64 tStart) {
-    uint64 dT = (tStop - tStart);
+    uint64 dT = (tStop - tStart); 
     return static_cast<float64>(dT) * Period();
 }
 

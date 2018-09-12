@@ -22,7 +22,7 @@
 #
 #############################################################
 
-OBJSX=MainGTest.x
+OBJSX=
 SPB = BareMetal.x Scheduler.x FileSystem.x
 
 PACKAGE=

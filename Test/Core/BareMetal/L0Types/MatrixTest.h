@@ -123,6 +123,16 @@ public:
     bool TestProduct();
 
     /**
+     * @brief Tests if the sum between two static matrices returns the correct result.
+     */
+    bool TestSum();
+
+    /**
+     * @brief Tests if the copy of a static matrix returns the correct result.
+     */
+    bool TestCopy();
+
+    /**
      * @brief Tests if the function returns the correct sub matrix requested.
      */
     bool TestSubMatrix();
@@ -156,6 +166,16 @@ public:
      * @see TestProduct allocating the matrix on heap.
      */
     bool TestProduct_Heap();
+
+    /**
+     * @see TestSum allocating the matrix on heap.
+     */
+    bool TestSum_Heap();
+
+    /**
+     * @see TestCopy allocating the matrix on heap.
+     */
+    bool TestCopy_Heap();
 
     /**
      * @see TestSubMatrix allocating the matrix on heap.

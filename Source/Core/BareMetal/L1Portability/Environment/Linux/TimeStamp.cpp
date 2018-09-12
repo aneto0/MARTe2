@@ -30,8 +30,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "TimeStamp.h"
+#include "../../TimeStamp.h"
 #include "ErrorManagement.h"
+#include "../../OSInitializer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -51,6 +53,37 @@ TimeStamp::TimeStamp() {
     month = 0u;
     year = 1900u;
 }
+
+bool TimeStamp::GetTime() {
+
+    uint64 ticksFromStart = HighResolutionTimer::Counter() - OSInitializer::initialTicks;
+
+    //Use HRT
+    float64 secondsFromStart = static_cast<float64>(ticksFromStart) * OSInitializer::period;
+    float64 uSecondsFromStart = (secondsFromStart - floor(secondsFromStart)) * 1e6;
+
+    //Add HRT to the the initial time saved in the calibration.
+    float64 secondsFromEpoch = static_cast<float64>(OSInitializer::initialSecs) + secondsFromStart;
+    float64 uSecondsFromEpoch = static_cast<float64>(OSInitializer::initialUSecs) + uSecondsFromStart;
+
+    uint32 microseconds = static_cast<uint32>(uSecondsFromEpoch);
+
+    //Check the overflow
+    if (microseconds >= 1000000u) {
+        microseconds -= 1000000u;
+        secondsFromEpoch++;
+    }
+
+    SetMicroseconds(microseconds);
+
+    //fill the time structure
+    time_t secondsFromEpoch32 = static_cast<time_t>(secondsFromEpoch);
+
+    bool ret = ConvertFromEpoch(secondsFromEpoch32);
+
+    return ret;
+}
+
 
 bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
 

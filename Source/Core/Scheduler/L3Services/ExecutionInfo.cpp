@@ -75,6 +75,16 @@ void ExecutionInfo::Reset() {
     threadNumber = 0xFFFFu;
     stage = StartupStage;
     stageSpecific = NullStageSpecific;
-
+    context = NULL_PTR(void *);
 }
+
+void *ExecutionInfo::GetThreadSpecificContext() {
+    return context;
+}
+
+
+void ExecutionInfo::SetThreadSpecificContext(void * const & contextIn) {
+    context = contextIn;
+}
+
 }

@@ -1,0 +1,68 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+
+#The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
+
+TARGET_PARENT=gcc
+ENVIRONMENT=Linux
+ARCHITECTURE=x86_gcc
+
+EXEEXT=.ex
+DLLEXT=.so
+LIBEXT=.a
+OBJEXT=.o
+ASMEXT=.s
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+GCOVEXT=.gcov
+DEFEXT=.def
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
+
+SUBPROJ = $(SPB:%.x=%.spb)
+SUBPROJC = $(SPB:%.x=%.spc)
+SUBPROJ2 = $(SPB2:%.x=%.spb)
+SUBPROJC += $(SPB2:%.x=%.spc)
+
+COMPILER = g++
+CCOMPILER = gcc
+MAKE = make
+
+DEBUG = -g -ggdb
+OPTIM = 
+INCLUDE =
+LFLAGS = -Wl,--no-as-needed -fPIC
+CFLAGS = -fPIC -Wall -Wall -std=c++98 -Werror -Wno-invalid-offsetof
+CPPFLAGS = -fPIC -frtti -Wall -std=c++98 -Werror -Wno-invalid-offsetof
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
+LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
+.SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam

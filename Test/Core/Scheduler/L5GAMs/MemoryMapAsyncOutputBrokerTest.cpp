@@ -288,13 +288,14 @@ MemoryMapAsyncOutputBrokerSchedulerTestHelper    () : MARTe::GAMSchedulerI() {
 
     void ExecuteThreadCycle(MARTe::uint32 threadId) {
         using namespace MARTe;
-        ExecuteSingleCycle(scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].executables,
-                scheduledStates[RealTimeApplication::GetIndex()]->threads[threadId].numberOfExecutables);
+        ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
+        ExecuteSingleCycle(scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].executables,
+                scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].numberOfExecutables);
     }
 
-    virtual bool ConfigureScheduler() {
+    virtual bool ConfigureScheduler(MARTe::Reference realTimeApp) {
 
-        bool ret = GAMSchedulerI::ConfigureScheduler();
+        bool ret = GAMSchedulerI::ConfigureScheduler(realTimeApp);
         if (ret) {
             scheduledStates = GetSchedulableStates();
         }
@@ -645,7 +646,7 @@ static const MARTe::char8 * const config7 = ""
         "               Signal1 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
-        "                   Samples = 2"
+        "                   Samples = 0"
         "               }"
         "               Signal2 = {"
         "                   DataSource = Drv1"
@@ -838,7 +839,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_MoreThan
     return !TestIntegratedInApplication(config6, true);
 }
 
-bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_SamplesGreaterThanOne() {
+bool MemoryMapAsyncOutputBrokerTest::TestInitWithBufferParameters_False_Samples() {
     using namespace MARTe;
     return !TestIntegratedInApplication(config7, true);
 }
@@ -1095,4 +1096,24 @@ bool MemoryMapAsyncOutputBrokerTest::TestExecute_Buffer_Overrun() {
 
     godb->Purge();
     return ok;
+}
+
+bool MemoryMapAsyncOutputBrokerTest::TestIsIgnoringBufferOverrun() {
+    using namespace MARTe;
+    MemoryMapAsyncOutputBroker broker;
+
+    bool ok = !broker.IsIgnoringBufferOverrun();
+    if (ok) {
+        broker.SetIgnoreBufferOverrun(true);
+        ok = broker.IsIgnoringBufferOverrun();
+    }
+    if (ok) {
+        broker.SetIgnoreBufferOverrun(false);
+        ok = !broker.IsIgnoringBufferOverrun();
+    }
+    return ok;
+}
+
+bool MemoryMapAsyncOutputBrokerTest::TestSetIgnoreBufferOverrun() {
+    return TestIsIgnoringBufferOverrun();
 }

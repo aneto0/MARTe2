@@ -79,9 +79,9 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_SamplesGreaterThanOne) {
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_Samples) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
-    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_SamplesGreaterThanOne());
+    ASSERT_TRUE(test.TestInitWithTriggerParameters_False_Samples());
 }
 
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_WrongTriggerSignalType) {
@@ -97,6 +97,11 @@ TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_Po
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers());
+}
+
+TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal) {
+    MemoryMapAsyncTriggerOutputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal());
 }
 
 TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers) {

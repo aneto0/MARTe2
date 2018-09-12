@@ -1,8 +1,8 @@
 /**
  * @file GAMScheduler.h
  * @brief Header file for class GAMScheduler
- * @date 09/ago/2016
- * @author pc
+ * @date 09/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -35,6 +35,7 @@
 #include "GAMSchedulerI.h"
 #include "Message.h"
 #include "MultiThreadService.h"
+#include "RealTimeApplication.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -123,7 +124,7 @@ public:
      * @param[in] information (see EmbeddedThread)
      * @return ErrorManagement::NoError iff every ExecutableI did not return any error.
      */
-    ErrorManagement::ErrorType Execute(const ExecutionInfo &information);
+    ErrorManagement::ErrorType Execute(ExecutionInfo &information);
 
     /**
      * @brief Stops the active MultiThreadService running services and calls ReferenceContainer::Purge
@@ -137,9 +138,6 @@ protected:
      * @brief Starts the threads for the next state
      */
     virtual void CustomPrepareNextState();
-
-
-private:
 
     /**
      * The array of identifiers of the thread in execution.
@@ -165,6 +163,11 @@ private:
      * Message to be fired in case of execution error
      */
     ReferenceT<Message> errorMessage;
+
+    /**
+     * Specialised real-time application reference.
+     */
+    ReferenceT<RealTimeApplication> realTimeApplicationT;
 };
 
 }

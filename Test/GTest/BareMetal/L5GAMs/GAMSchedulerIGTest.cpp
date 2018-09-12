@@ -1,8 +1,8 @@
 /**
  * @file GAMSchedulerIGTest.cpp
  * @brief Source file for class GAMSchedulerIGTest
- * @date 02/ago/2016
- * @author pc
+ * @date 02/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

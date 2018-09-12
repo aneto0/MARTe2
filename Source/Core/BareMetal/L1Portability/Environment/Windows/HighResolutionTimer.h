@@ -77,9 +77,6 @@ inline uint32 GetOsSleepGranularityUsec() {
     return calibratedHighResolutionTimer.GetOsSleepUsec();
 }
 
-
-
-
 }
 
 }

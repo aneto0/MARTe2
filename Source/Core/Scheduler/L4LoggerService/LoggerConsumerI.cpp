@@ -93,7 +93,7 @@ void LoggerConsumerI::PrintToStream(LoggerPage * const logPage, BufferedStreamI 
         else {
             key = "|";
         }
-        if (errorInfo.objectPointer != NULL_PTR(const void *)) {
+        if (errorInfo.objectName != NULL_PTR(const void *)) {
             (void) err.Printf("%s%s", key, errorInfo.objectName);
         }
         else {
