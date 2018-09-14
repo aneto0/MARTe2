@@ -138,7 +138,7 @@ public:
 
     /**
      * @brief Sets the sender Object address.
-     * @param[in] senderName is the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
+     * @param[in] senderIn is the address of the sender Object (which shall exist in the ObjectRegistryDatabase).
      */
     void SetSender(const Object * const senderIn);
 

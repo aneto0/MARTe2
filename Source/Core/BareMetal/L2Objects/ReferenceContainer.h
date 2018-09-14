@@ -46,7 +46,10 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*lint -esym(551, MARTe::REFERENCE_CONTAINER_NUMBER_OF_TOKENS) the symbol is used to define the size of the token arrays*/
+/**
+ * Number of tokens that identify in the first character of an Object name if a new object is to be built.
+ * lint -esym(551, MARTe::REFERENCE_CONTAINER_NUMBER_OF_TOKENS) the symbol is used to define the size of the token arrays
+ */
 const uint32 REFERENCE_CONTAINER_NUMBER_OF_TOKENS = 5u;
 /**
  * @brief Container of references.
