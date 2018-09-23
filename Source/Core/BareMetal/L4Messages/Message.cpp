@@ -31,7 +31,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "ClassRegistryItemT.h"
 #include "Message.h"
 
 /*---------------------------------------------------------------------------*/
@@ -82,38 +81,33 @@ bool Message::IsReply() const {
 }
 
 CCString Message::GetDestination() {
-    return destination.Buffer();
+	return destination;
+//    return destination.Buffer();
 }
 
 bool Message::Initialise(StructuredDataI &data) {
     bool ret = (ReferenceContainer::Initialise(data));
     if (ret) {
         ret = data.Read("Destination", destination);
-        if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Destination not set");
-        }
+        CONDITIONAL_REPORT_ERROR(ret, "Destination not set");
 
         if (ret) {
             ret = data.Read("Function", function);
-        }
-        if (!ret) {
-            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Function not set");
+            CONDITIONAL_REPORT_ERROR(ret, "Function not set");
         }
         if (ret) {
+            maxWait = MilliSeconds::Infinite;
             uint32 msecWait;
             if (data.Read("ReplyTimeout", msecWait)) {
-                maxWait = msecWait;
-            }
-            else {
-                maxWait = TTInfiniteWait;
+                maxWait = MilliSeconds(msecWait,Units::ms);
             }
 
-            StreamString messageFlags;
+            DynamicCString messageFlags;
+//            StreamString messageFlags;
             if (data.Read("Mode", messageFlags)) {
-                flags = MessageFlags(messageFlags.Buffer());
+                flags = MessageFlags(messageFlags.GetList());
             }
         }
-
     }
 
     return ret;
@@ -126,8 +120,10 @@ Message::MessageFlags::MessageFlags() {
 }
 
 Message::MessageFlags::MessageFlags(CCString asString) {
-    expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
-    expectsIndirectReply = (StringHelper::Compare(asString.GetList(), "ExpectsIndirectReply") == 0);
+    expectsReply 		 = (asString == CCString("ExpectsReply"));
+    expectsIndirectReply = (asString == CCString("ExpectsIndirectReply"));
+//    expectsReply = (StringHelper::Compare(asString.GetList(), "ExpectsReply") == 0);
+//    expectsIndirectReply = (StringHelper::Compare(asString.GetList(), "ExpectsIndirectReply") == 0);
     if (bool(expectsIndirectReply)) {
         expectsReply = true;
     }
@@ -143,14 +139,15 @@ void Message::SetSender(const Object * const senderIn) {
 }
 
 CCString Message::GetFunction() {
-    return function.Buffer();
+//    return function.Buffer();
+	return function;
 }
 
-void Message::SetReplyTimeout(const TimeoutType &maxWaitIn) {
+void Message::SetReplyTimeout(const MilliSeconds &maxWaitIn) {
     maxWait = maxWaitIn;
 }
 
-TimeoutType Message::GetReplyTimeout() const {
+MilliSeconds Message::GetReplyTimeout() const {
     return maxWait;
 }
 

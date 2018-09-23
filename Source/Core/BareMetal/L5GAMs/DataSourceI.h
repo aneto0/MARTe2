@@ -167,7 +167,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalIndex(uint32 &signalIdx, const char8* const signalName);
+    bool GetSignalIndex(uint32 &signalIdx, CCString signalName);
 
     /**
      * @brief Gets the name of the signal at position \a signalIdx.
@@ -177,7 +177,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalName(const uint32 signalIdx, StreamString &signalName);
+    bool GetSignalName(const uint32 signalIdx, DynamicCString &signalName);
 
     /**
      * @brief Gets the type of the signal at position \a signalIdx.
@@ -239,7 +239,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalStateName(const uint32 signalIdx, const uint32 stateIdx, StreamString &stateName);
+    bool GetSignalStateName(const uint32 signalIdx, const uint32 stateIdx, DynamicCString &stateName);
 
     /**
      * @brief Gets the number of functions consuming the signal at position \a signalIdx in the state with name \a stateName.
@@ -250,7 +250,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfConsumers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfConsumers);
+    bool GetSignalNumberOfConsumers(const uint32 signalIdx, CCString stateName, uint32 &numberOfConsumers);
 
     /**
      * @brief Gets the number of functions producing the signal at position \a signalIdx in the state with name \a stateName.
@@ -261,7 +261,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfProducers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfProducers);
+    bool GetSignalNumberOfProducers(const uint32 signalIdx, CCString stateName, uint32 &numberOfProducers);
     /**
      * @brief Gets the name of function with index \a consumerIdx and which is consuming the signal at position \a signalIdx in the state with name \a stateName.
      * @param[in] signalIdx the index of the signal.
@@ -272,7 +272,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalConsumerName(const uint32 signalIdx, const char8 * const stateName, const uint32 consumerIdx, StreamString &consumerName);
+    bool GetSignalConsumerName(const uint32 signalIdx, CCString stateName, const uint32 consumerIdx, DynamicCString &consumerName);
     /**
      * @brief Gets the name of function with index \a producerIdx and which is producing the signal at position \a signalIdx in the state with name \a stateName.
      * @param[in] signalIdx the index of the signal.
@@ -283,7 +283,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalProducerName(const uint32 signalIdx, const char8 * const stateName, const uint32 producerIdx, StreamString &producerName);
+    bool GetSignalProducerName(const uint32 signalIdx, CCString stateName, const uint32 producerIdx, DynamicCString &producerName);
 
     /**
      * @brief Gets the default of the signal with index \a signalIdx.
@@ -321,7 +321,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionName(const uint32 functionIdx, StreamString &functionName);
+    bool GetFunctionName(const uint32 functionIdx, DynamicCString &functionName);
 
     /**
      * @brief Gets the index of the function with name \a functionName.
@@ -331,7 +331,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionIndex(uint32 &functionIdx, const char8* const functionName);
+    bool GetFunctionIndex(uint32 &functionIdx, CCString functionName);
 
     /**
      * @brief Gets the number of signals, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
@@ -365,7 +365,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalName(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalName);
+    bool GetFunctionSignalName(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, DynamicCString &functionSignalName);
 
     /**
      * @brief Gets the alias of the signal from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
@@ -377,7 +377,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalAlias(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalAlias);
+    bool GetFunctionSignalAlias(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, DynamicCString &functionSignalAlias);
 
     /**
      * @brief Gets the index of the signal with the name \a functionSignalName, from the function with index \a functionIdx, which interacts with this DataSourceI (in the specified \a direction).
@@ -389,7 +389,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, uint32 &functionSignalIdx, const char8* const functionSignalName);
+    bool GetFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, uint32 &functionSignalIdx, CCString functionSignalName);
 
     /**
      * @brief Gets the number of different byte offsets (one for each different Range) that were set for the signal with index \a functionSignalIdx.
@@ -482,7 +482,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool IsSupportedBroker(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const char8* const brokerClassName);
+    bool IsSupportedBroker(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, CCString brokerClassName);
 
     /**
      * @brief For every signal in the provided direction assign a Broker that knows how to copy from the DataSourceI memory to the GAM memory.
@@ -542,7 +542,7 @@ public:
      * @param[in] gamMemPtr the GAM memory where the signals will be read from.
      * @return true if a list of BrokerI instances can be successfully added to the inputBrokers list.
      */
-    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr);
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers, CCString functionName, void * const gamMemPtr);
 
     /**
      * @brief Adds to the \a outputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.
@@ -553,7 +553,7 @@ public:
      * @param[in] gamMemPtr the GAM memory where the signals will be written to.
      * @return true if a list of BrokerI instances can be successfully added to the outputBrokers list.
      */
-    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr);
+    virtual bool GetOutputBrokers(ReferenceContainer &outputBrokers, CCString functionName, void * const gamMemPtr);
 
     /**
      * @brief Gets the number of stateful memory buffers (i.e. number of buffers for any given state) that is supported by this DataSourceI.

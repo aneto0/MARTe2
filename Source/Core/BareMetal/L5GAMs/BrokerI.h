@@ -73,7 +73,7 @@ public:
      */
     virtual bool Init(SignalDirection direction,
                       DataSourceI &dataSourceIn,
-                      const char8 * const functionName,
+                      CCString functionName,
                       void *gamMemoryAddress) = 0;
 
     /**
@@ -125,7 +125,7 @@ protected:
      */
     bool InitFunctionPointers(const SignalDirection direction,
                               DataSourceI &dataSource,
-                              const char8 * const functionName,
+                              CCString functionName,
                               void * const gamMemoryAddress);
 
     /**

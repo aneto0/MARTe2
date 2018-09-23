@@ -1,7 +1,7 @@
 /**
- * @file CString.h
- * @brief Header file for class CString
- * @date 05/04/2016
+ * @file Ticks.h
+ * @brief Header file for class AnyType
+ * @date 17 Sep 2018
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class CString
+ * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
- */
+*/
 
-#ifndef CSTRING_H_
-#define CSTRING_H_
+#ifndef TICKS_H_
+#define TICKS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,93 +32,53 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ZeroTerminatedArray.h"
-#include "CCString.h"
+#include "OSInitializer.h"
+#include "TimeType.h"
 
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
 /**
-* TODO
-* @brief Wrapper for writable char buffers
-* */
-class CString: public ZeroTerminatedArray<char8>{
+ * A collection of classes used to specify and characterize units
+ * They all have the same interface but are not virtual as they are used in templates
+ */
+namespace Units{
 
-public:
-    /**
-     *TODO
-     */
-    inline CString ();
-
-    /**
-     *TODO
-     */
-    inline CString (CString const &s);
-
-    /**
-     * TODO
-     */
-    inline CString (char8 * const &s);
-
-    /**
-     * TODO
-     */
-    inline operator CCString() const;
-
-    /**
-     * TODO
-     */
-    inline char8 & operator[](uint32 index) const;
-
-    /**
-     * @Brief compare content
-     */
-    inline bool operator==(const CCString &s) const;
+	/**
+	 * The CPU tick
+	 */
+    static class ticksClass{
+    	public:
+    	/**
+    	 * The value of one unit in seconds
+    	 */
+    	inline double GetScale() const{ return OSInitializer::period; }
+    	/**
+    	 * How many units to make a second
+    	 */
+    	inline double GetScaleInv() const{ return OSInitializer::frequency; }
+    } ticks;
 
 };
 
-
+/**
+ * Definition of the ticks time type.
+ * Usable range depends on CPU clock
+ * Resolution  depends on CPU clock
+ */
+typedef TimeType<uint64,Units::ticksClass> Ticks;
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool CString::operator==(const CCString &s) const{
-	return ZeroTerminatedArray<char8>::isSameAs(s.GetList());
-}
+} // MARTe
 
-
-
-CString::CString (){
-}
-
-CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
-
-}
-
-CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
-
-}
-
-//CString::operator const char8*() const{
-//    return ZeroTerminatedArray<char8>::array;
-//}
-
-char8 &
-CString::operator[](uint32 index) const{
-    return ZeroTerminatedArray<char8>::operator[](index);
-}
-
-inline CString::operator CCString() const{
-	return CCString(GetList());
-}
-
-
-};
-
-#endif /* CSTRING_H_ */
-	
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_TICKS_H_ */

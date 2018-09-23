@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "TimeoutType.h"
+
 #include "IOBuffer.h"
 #include "AnyType.h"
 #include "StreamI.h"
@@ -76,7 +76,7 @@ public:
      *   GetTimeout() == timeoutIn &&
      *   GetInputBuffer()->GetBufferSize() == 32u
      */
-    SingleBufferedStream(const TimeoutType & timeoutIn);
+    SingleBufferedStream(const MilliSeconds & timeoutIn);
 
     /** 
      * @brief Default destructor. 
@@ -112,7 +112,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &timeout);
+                      const MilliSeconds &timeout);
 
     /**
      * @see StreamI::Write
@@ -125,7 +125,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &timeout);
+                       const MilliSeconds &timeout);
 
     /**
      * @see StreamI::Size
@@ -162,7 +162,7 @@ public:
      * @brief Gets the timeout value for read/write operations.
      * @return the timeout value for read/write operations.
      */
-    TimeoutType GetTimeout() const;
+    MilliSeconds GetTimeout() const;
 
     /**
      * @brief Sets the read/write timeout value.
@@ -170,7 +170,7 @@ public:
      * @pre true
      * @post GetTimeout() == timeout
      */
-    void SetTimeout(const TimeoutType &timeoutIn);
+    void SetTimeout(const MilliSeconds &timeoutIn);
 
 protected:
     /**

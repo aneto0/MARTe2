@@ -74,7 +74,7 @@ public:
      * @return ErrorManagement::NoError if the message was caught or ErrorManagement::Timeout if the time specified in \a maxWait has expired.
      */
     /*lint -e(1735) [MISRA C++ Rule 8-3-1] the derived classes shall use this default parameter or no default parameter at all*/
-    virtual ErrorManagement::ErrorType Wait(const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+    virtual ErrorManagement::ErrorType Wait(const Ticks &maxWait = Ticks::Infinite, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief Verifies if the \a messageToTest is the message to be caught (see SetMessageToCatch).

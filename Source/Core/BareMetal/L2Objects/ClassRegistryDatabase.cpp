@@ -77,7 +77,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidNa
 		while ((index < numberOfRegisteredClasses) && (cri == NULL_PTR(ClassRegistryItem *))){
 			ClassRegistryItem *critest = classDatabase->GetClassRegistryItem(index);
 			if (critest != NULL_PTR(ClassRegistryItem *)){
-				if (StringHelper::Compare(critest->GetTypeidName(),typeidName)==0){
+				if (critest->GetTypeidName() == typeidName){
 					cri = critest;
 				}
 			}
@@ -97,7 +97,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindClassName(CCString const className
 		while ((index < numberOfRegisteredClasses) && (cri == NULL_PTR(ClassRegistryItem *))){
 			ClassRegistryItem *critest = classDatabase->GetClassRegistryItem(index);
 			if (critest != NULL_PTR(ClassRegistryItem *)){
-				if (StringHelper::Compare(critest->GetClassName(),className)==0){
+				if (critest->GetClassName() == className){
 					cri = critest;
 				}
 			}

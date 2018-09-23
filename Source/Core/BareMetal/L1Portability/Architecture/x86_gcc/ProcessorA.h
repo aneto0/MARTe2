@@ -100,7 +100,7 @@ inline uint32 Model() {
     return model;
 }
 
-inline const char8 *VendorId() {
+inline CCString VendorId() {
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
     processorVendorId[12] = 0;

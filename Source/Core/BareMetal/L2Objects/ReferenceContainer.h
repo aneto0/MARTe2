@@ -34,12 +34,13 @@
 
 #include "LinkedListHolderT.h"
 #include "FastPollingMutexSem.h"
-#include "TimeoutType.h"
 #include "Object.h"
 #include "Reference.h"
 #include "LinkedListable.h"
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainerNode.h"
+#include "MilliSeconds.h"
+#include "Ticks.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,6 +48,11 @@
 
 namespace MARTe {
 
+/**
+ * Number of tokens that identify in the first character of an Object name if a new object is to be built.
+ * lint -esym(551, MARTe::REFERENCE_CONTAINER_NUMBER_OF_TOKENS) the symbol is used to define the size of the token arrays
+ */
+const uint32 REFERENCE_CONTAINER_NUMBER_OF_TOKENS = 5u;
 /**
  * @brief Container of references.
  * @details One of the basilar classes of the framework. Linear container of references which may also
@@ -165,13 +171,13 @@ public:
      * @brief Returns the semaphore timeout time.
      * @return the semaphore timeout time.
      */
-    TimeoutType GetTimeout() const;
+    MilliSeconds GetTimeout() const;
 
     /**
      * @brief Updates the semaphore timeout time.
      * @param[in] timeout the timeout to be set.
      */
-    void SetTimeout(const TimeoutType &timeout);
+    void SetTimeout(const MilliSeconds &timeout);
 
     /**
      * @brief Explores the StructuredDataI in input and builds Objects storing
@@ -317,7 +323,7 @@ private:
     /**
      * Timeout
      */
-    TimeoutType muxTimeout;
+    Ticks muxTimeout;
 
 };
 

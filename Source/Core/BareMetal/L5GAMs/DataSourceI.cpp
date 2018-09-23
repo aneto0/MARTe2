@@ -100,7 +100,7 @@ uint32 DataSourceI::GetNumberOfSignals() const {
     return numberOfSignals;
 }
 
-bool DataSourceI::GetSignalName(const uint32 signalIdx, StreamString &signalName) {
+bool DataSourceI::GetSignalName(const uint32 signalIdx, DynamicCString &signalName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", signalName);
@@ -108,17 +108,17 @@ bool DataSourceI::GetSignalName(const uint32 signalIdx, StreamString &signalName
     return ret;
 }
 
-bool DataSourceI::GetSignalIndex(uint32 &signalIdx, const char8* const signalName) {
+bool DataSourceI::GetSignalIndex(uint32 &signalIdx, CCString signalName) {
 
     const uint32 numSignals = GetNumberOfSignals();
     bool ret = true;
     bool found = false;
     uint32 i;
     for (i = 0u; (i < numSignals) && (ret) && (!found); i++) {
-        StreamString searchName;
+        DynamicCString searchName;
         ret = GetSignalName(i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
+            found = (signalName == searchName);
             signalIdx = i;
         }
     }
@@ -131,12 +131,12 @@ bool DataSourceI::GetSignalIndex(uint32 &signalIdx, const char8* const signalNam
 TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
     TypeDescriptor signalTypeDescriptor = InvalidType(0);
     bool ret = MoveToSignalIndex(signalIdx);
-    StreamString signalType;
+    DynamicCString signalType;
     if (ret) {
         ret = configuredDatabase.Read("Type", signalType);
     }
     if (ret) {
-        signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
+        signalTypeDescriptor = TypeDescriptor(signalType);
     }
     return signalTypeDescriptor;
 }
@@ -178,7 +178,7 @@ bool DataSourceI::GetSignalNumberOfStates(const uint32 signalIdx, uint32 &number
     return ret;
 }
 
-bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateIdx, StreamString &stateName) {
+bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateIdx, DynamicCString &stateName) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -197,13 +197,33 @@ bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateI
         ret = configuredDatabase.MoveRelative("States");
     }
     if (ret) {
+        ret = (stateIdx < numberOfStates);
+    }
+    if (ret) {
+        ret = MoveToSignalIndex(signalIdx);
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
+        ret = (stateIdx < numberOfStates);
+    }
+    if (ret) {
+        ret = MoveToSignalIndex(signalIdx);
+    }
+    if (ret) {
+        ret = configuredDatabase.MoveRelative("States");
+    }
+    if (ret) {
         stateName = configuredDatabase.GetChildName(stateIdx);
     }
 
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfConsumers) {
+
+
+bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, CCString stateName, uint32 &numberOfConsumers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -223,7 +243,7 @@ bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, const char8
     return ret;
 }
 
-bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, const char8 * const stateName, uint32 &numberOfProducers) {
+bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, CCString stateName, uint32 &numberOfProducers) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
         ret = configuredDatabase.MoveRelative("States");
@@ -243,7 +263,7 @@ bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, const char8
     return ret;
 }
 
-bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, const char8 * const stateName, const uint32 consumerIdx, StreamString &consumerName) {
+bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, CCString stateName, const uint32 consumerIdx, DynamicCString &consumerName) {
     bool ret = MoveToSignalIndex(signalIdx);
     uint32 numberOfConsumers = 0u;
     if (ret) {
@@ -264,8 +284,8 @@ bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, const char8 * co
                 ret = configuredDatabase.MoveRelative(stateName);
             }
             if (ret) {
-                StreamString *consumerArray = new StreamString[numberOfConsumers];
-                Vector<StreamString> consumerVector(consumerArray, numberOfConsumers);
+                DynamicCString *consumerArray = new DynamicCString[numberOfConsumers];
+                Vector<DynamicCString> consumerVector(consumerArray, numberOfConsumers);
                 ret = configuredDatabase.Read("GAMNamesConsumers", consumerVector);
                 if (ret) {
                     consumerName = consumerVector[consumerIdx];
@@ -283,7 +303,7 @@ bool DataSourceI::GetSignalConsumerName(const uint32 signalIdx, const char8 * co
     return ret;
 }
 
-bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, const char8 * const stateName, const uint32 producerIdx, StreamString &producerName) {
+bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, CCString stateName, const uint32 producerIdx, DynamicCString &producerName) {
     bool ret = MoveToSignalIndex(signalIdx);
     uint32 numberOfProducers = 0u;
     if (ret) {
@@ -304,8 +324,8 @@ bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, const char8 * co
                 ret = configuredDatabase.MoveRelative(stateName);
             }
             if (ret) {
-                StreamString *producerArray = new StreamString[numberOfProducers];
-                Vector<StreamString> producerVector(producerArray, numberOfProducers);
+                DynamicCString *producerArray = new DynamicCString[numberOfProducers];
+                Vector<DynamicCString> producerVector(producerArray, numberOfProducers);
                 ret = configuredDatabase.Read("GAMNamesProducers", producerVector);
                 if (ret) {
                     producerName = producerVector[producerIdx];
@@ -346,7 +366,7 @@ uint32 DataSourceI::GetNumberOfFunctions() {
     return configuredDatabase.GetNumberOfChildren();
 }
 
-bool DataSourceI::GetFunctionName(const uint32 functionIdx, StreamString &functionName) {
+bool DataSourceI::GetFunctionName(const uint32 functionIdx, DynamicCString &functionName) {
     bool ret = MoveToFunctionIndex(functionIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", functionName);
@@ -354,17 +374,17 @@ bool DataSourceI::GetFunctionName(const uint32 functionIdx, StreamString &functi
     return ret;
 }
 
-bool DataSourceI::GetFunctionIndex(uint32 &functionIdx, const char8* const functionName) {
+bool DataSourceI::GetFunctionIndex(uint32 &functionIdx, CCString functionName) {
 
     uint32 numberOfFunctions = GetNumberOfFunctions();
     bool ret = true;
     bool found = false;
     uint32 i;
     for (i = 0u; (i < numberOfFunctions) && (ret) && (!found); i++) {
-        StreamString searchName;
+        DynamicCString searchName;
         ret = GetFunctionName(i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(functionName, searchName.Buffer()) == 0);
+            found = (functionName == searchName) ;
             functionIdx = i;
         }
     }
@@ -409,7 +429,7 @@ bool DataSourceI::GetFunctionSignalsByteSize(const SignalDirection direction, co
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalName(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalName) {
+bool DataSourceI::GetFunctionSignalName(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, DynamicCString &functionSignalName) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -418,7 +438,7 @@ bool DataSourceI::GetFunctionSignalName(const SignalDirection direction, const u
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, StreamString &functionSignalAlias) {
+bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, DynamicCString &functionSignalAlias) {
 
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
@@ -429,16 +449,16 @@ bool DataSourceI::GetFunctionSignalAlias(const SignalDirection direction, const 
     return ret;
 }
 
-bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, uint32 &functionSignalIdx, const char8* const functionSignalName) {
+bool DataSourceI::GetFunctionSignalIndex(const SignalDirection direction, const uint32 functionIdx, uint32 &functionSignalIdx, CCString functionSignalName) {
     uint32 numberOfFunctionSignals = 0u;
     bool ret = GetFunctionNumberOfSignals(direction, functionIdx, numberOfFunctionSignals);
     bool found = false;
     uint32 i;
     for (i = 0u; (i < numberOfFunctionSignals) && (ret) && (!found); i++) {
-        StreamString searchName;
+        DynamicCString searchName;
         ret = GetFunctionSignalName(direction, functionIdx, i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(functionSignalName, searchName.Buffer()) == 0);
+            found = (functionSignalName == searchName);
             functionSignalIdx = i;
         }
     }
@@ -520,10 +540,10 @@ bool DataSourceI::GetFunctionSignalGAMMemoryOffset(const SignalDirection directi
     return ret;
 }
 
-bool DataSourceI::IsSupportedBroker(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, const char8* const brokerClassName) {
+bool DataSourceI::IsSupportedBroker(const SignalDirection direction, const uint32 functionIdx, const uint32 functionSignalIdx, CCString brokerClassName) {
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     if (ret) {
-        StreamString broker;
+        DynamicCString broker;
         ret = configuredDatabase.Read("Broker", broker);
         if (ret) {
             ret = (broker == brokerClassName);
@@ -582,15 +602,15 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
         for (uint32 i = 0u; (i < numberOfFunctions) && (ret); i++) {
             configuredDatabase = functionsDatabaseNode;
             ret = configuredDatabase.MoveToChild(i);
-            StreamString functionName;
+            DynamicCString functionName;
             if (ret) {
                 ret = configuredDatabase.Read("QualifiedName", functionName);
             }
             if (ret) {
-                StreamString fullFunctionName = "Functions.";
-                fullFunctionName += functionName;
+                DynamicCString fullFunctionName = "Functions.";
+                fullFunctionName.Append(functionName);
 
-                ReferenceT<GAM> gam = application->Find(fullFunctionName.Buffer());
+                ReferenceT<GAM> gam = application->Find(fullFunctionName);
                 ret = gam.IsValid();
                 void *gamMemoryAddress = NULL_PTR(void *);
 
@@ -621,14 +641,14 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
                         if (configuredDatabase.MoveRelative(dirStr)) {
                             if (direction == InputSignals) {
                                 ReferenceContainer inputBrokers;
-                                ret = GetInputBrokers(inputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                ret = GetInputBrokers(inputBrokers, functionName, gamMemoryAddress);
                                 if (ret) {
                                     ret = gam->AddInputBrokers(inputBrokers);
                                 }
                             }
                             else {
                                 ReferenceContainer outputBrokers;
-                                ret = GetOutputBrokers(outputBrokers, functionName.Buffer(), gamMemoryAddress);
+                                ret = GetOutputBrokers(outputBrokers, functionName, gamMemoryAddress);
                                 if (ret) {
                                     ret = gam->AddOutputBrokers(outputBrokers);
                                 }
@@ -647,7 +667,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
 }
 
 bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                                     const char8* const functionName,
+                                                     CCString functionName,
                                                      void * const gamMemPtr) {
 
     uint32 functionIdx = 0u;
@@ -661,7 +681,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
     for (uint32 i = 0u; (i < numSignals) && (ret); i++) {
         //search the GAM in the configured database
         ret = MoveToFunctionSignalIndex(InputSignals, functionIdx, i);
-        StreamString suggestedBrokerNameIn;
+        DynamicCString suggestedBrokerNameIn;
         if (ret) {
             //This was returned by GetBrokerName
             ret = configuredDatabase.Read("Broker", suggestedBrokerNameIn);
@@ -685,11 +705,11 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
             }
         }
         if (ret) {
-            StreamString signalName;
+            DynamicCString signalName;
             ret = GetFunctionSignalAlias(InputSignals, functionIdx, i, signalName);
             uint32 signalIdx = 0u;
             if (ret) {
-                ret = GetSignalIndex(signalIdx, signalName.Buffer());
+                ret = GetSignalIndex(signalIdx, signalName);
             }
             if (ret) {
                 bool createBroker = true;
@@ -697,20 +717,20 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                 for (uint32 j = 0u; (j < nBrokers) && (ret) && (createBroker); j++) {
                     Reference brokerRef = inputBrokers.Get(j);
                     if (brokerRef.IsValid()) {
-                        if (suggestedBrokerNameIn == brokerRef->GetClassProperties()->GetName()) {
+                        if (suggestedBrokerNameIn == brokerRef->GetClassRegistryItem()->GetClassName()) {
                             createBroker = false;
                         }
                     }
                 }
                 if (createBroker) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn.Buffer(),
-                                            functionName, signalName.Buffer(), signalIdx);
+                	FORMATTED_REPORT_ERROR(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn,
+                                            functionName, signalName, signalIdx);
 
-                    ReferenceT<BrokerI> broker(suggestedBrokerNameIn.Buffer());
+                    ReferenceT<BrokerI> broker(suggestedBrokerNameIn);
 
                     ret = broker.IsValid();
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                    	FORMATTED_REPORT_ERROR(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn);
                     }
                     if (ret) {
                         ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
@@ -724,7 +744,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                             }
                         }
                         else {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed broker %s Init", suggestedBrokerNameIn.Buffer());
+                        	FORMATTED_REPORT_ERROR(ErrorManagement::FatalError, "Failed broker %s Init", suggestedBrokerNameIn);
                         }
 
                     }
@@ -737,7 +757,7 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
 
 
 bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                                      const char8* const functionName,
+                                                      CCString functionName,
                                                       void * const gamMemPtr) {
     uint32 functionIdx = 0u;
     bool ret = GetFunctionIndex(functionIdx, functionName);
@@ -750,7 +770,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
     for (uint32 i = 0u; (i < numSignals) && (ret); i++) {
         //search the gam in the configured database
         ret = MoveToFunctionSignalIndex(OutputSignals, functionIdx, i);
-        StreamString suggestedBrokerNameIn;
+        DynamicCString suggestedBrokerNameIn;
         if (ret) {
             //lets try...
             ret = configuredDatabase.Read("Broker", suggestedBrokerNameIn);
@@ -774,11 +794,11 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
             }
         }
         if (ret) {
-            StreamString signalName;
+            DynamicCString signalName;
             ret = GetFunctionSignalAlias(OutputSignals, functionIdx, i, signalName);
             uint32 signalIdx = 0u;
             if (ret) {
-                ret = GetSignalIndex(signalIdx, signalName.Buffer());
+                ret = GetSignalIndex(signalIdx, signalName);
             }
             if (ret) {
                 bool createBroker = true;
@@ -786,21 +806,21 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                 for (uint32 j = 0u; (j < nBrokers) && (ret) && (createBroker); j++) {
                     Reference brokerRef = outputBrokers.Get(j);
                     if (brokerRef.IsValid()) {
-                        if (suggestedBrokerNameIn == brokerRef->GetClassProperties()->GetName()) {
+                        if (suggestedBrokerNameIn == brokerRef->GetClassRegistryItem()->GetClassName()) {
                             createBroker = false;
                         }
                     }
                 }
 
                 if (createBroker) {
-                    REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn.Buffer(),
-                                            functionName, signalName.Buffer(), signalIdx);
+                	FORMATTED_REPORT_ERROR(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn,
+                                            functionName, signalName, signalIdx);
 
-                    ReferenceT<BrokerI> broker(suggestedBrokerNameIn.Buffer());
+                    ReferenceT<BrokerI> broker(suggestedBrokerNameIn);
 
                     ret = broker.IsValid();
                     if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                    	FORMATTED_REPORT_ERROR(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn);
                     }
                     if (ret) {
                         ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
@@ -814,7 +834,7 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                             }
                         }
                         else {
-                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Failed broker %s Init", suggestedBrokerNameIn.Buffer());
+                        	FORMATTED_REPORT_ERROR(ErrorManagement::FatalError, "Failed broker %s Init", suggestedBrokerNameIn);
                         }
                     }
                 }

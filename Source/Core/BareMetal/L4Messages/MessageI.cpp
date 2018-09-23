@@ -36,6 +36,8 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReplyMessageCatcherMessageFilter.h"
+#include "Ticks.h"
+#include "MicroSeconds.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,7 +49,7 @@
 namespace MARTe {
 
 MessageI::MessageI() {
-    messageFilters.SetTimeout(TTInfiniteWait);
+    messageFilters.SetTimeout(MilliSeconds::Infinite);
 
 }
 
@@ -150,9 +152,14 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
 }
 
 ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &message,
-                                                  const TimeoutType &maxWait,
+                                                  const Ticks &maxWaitT,
                                                   const uint32 pollingTimeUsec) {
     ErrorManagement::ErrorType ok;
+
+    uint64 endT = HighResolutionTimer::Counter();
+    if (maxWaitT.IsValid() ) {
+        endT += maxWaitT.GetTimeRaw();
+    }
 
     ok.parametersError = !message.IsValid();
     CONDITIONAL_REPORT_ERROR(ok, "Invalid message.");
@@ -163,18 +170,16 @@ ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &mes
         CONDITIONAL_REPORT_ERROR(ok, "No reply expected as it should.");
     }
 
-    uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = static_cast<float32>(pollingTimeUsec);
-    pollingTime *= static_cast<float32>(1.0e-6);
     bool isReply = false;
-    if(ok){
+    if (ok){
         isReply = message->IsReply();
     }
+
+    MicroSeconds pollingTime(pollingTimeUsec,Units::us);
     while (ok && (!isReply)) {
-        Sleep::NoMore(static_cast<float64>(pollingTime));
-        if (maxWait != TTInfiniteWait) {
-            uint64 deltaT = HighResolutionTimer::Counter() - start;
-            ok.timeout = (maxWait.HighResolutionTimerTicks() > deltaT);
+        Sleep::NoMore(pollingTime);
+        if (maxWaitT.IsValid() ) {
+            ok.timeout = (HighResolutionTimer::Counter() > endT);
         }
         isReply = message->IsReply();
     }
@@ -184,7 +189,7 @@ ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &mes
 
 ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message> &message,
                                                              const Object * const sender,
-                                                             const TimeoutType &maxWait,
+                                                             const Ticks &maxWaitT,
                                                              const uint32 pollingTimeUsec) {
     ErrorManagement::ErrorType ret(true);
 
@@ -209,7 +214,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitReply(ReferenceT<Message>
 
     if (ret.ErrorsCleared()) {
 
-        ret = WaitForReply(message, maxWait, pollingTimeUsec);
+        ret = WaitForReply(message, maxWaitT, pollingTimeUsec);
 
     }
 
@@ -228,7 +233,7 @@ ErrorManagement::ErrorType MessageI::RemoveMessageFilter(ReferenceT<MessageFilte
 }
 
 ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,
-                                                                     const TimeoutType &maxWait,
+                                                                     const MilliSeconds &maxWait,
                                                                      const uint32 pollingTimeUsec) {
 
     ErrorManagement::ErrorType ret(true);
@@ -247,7 +252,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
     ReferenceT<MessageFilter> messageCatcher;
     if (ret.ErrorsCleared()) {
         //Install message catcher
-        ReferenceT<ReplyMessageCatcherMessageFilter> rmc(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<ReplyMessageCatcherMessageFilter> rmc(buildNow);
         replyMessageCatcher = rmc;
 
         ret.fatalError = !replyMessageCatcher.IsValid();

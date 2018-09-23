@@ -118,7 +118,7 @@ public:
      * @brief Returns the name of the heap
      * @return The name of the heap
      */
-    virtual const char8 *Name() const;
+    virtual CCString Name() const;
 
 };
 

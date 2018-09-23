@@ -62,6 +62,14 @@ void ConfigurationDatabase::Purge() {
     rootNode->Purge();
 }
 
+void ConfigurationDatabase::Purge(ReferenceContainer &purgeList) {
+    if (currentNode.IsValid()) {
+        currentNode->Purge(purgeList);
+    }
+    if (rootNode.IsValid()) {
+        rootNode->Purge(purgeList);
+    }
+}
 
 //TODO clarify if object is copied or the reference is copied.
 ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
@@ -84,9 +92,10 @@ ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
 ErrorManagement::ErrorType ConfigurationDatabase::Write(CCString name, const AnyType &value) {
 	ErrorManagement::ErrorType ret;
 
-	Reference ref = Reference(value);
+	Reference ref(value);
 
 	ret.fatalError = !ref.IsValid();
+	CONDITIONAL_REPORT_ERROR(ret,"cannot create reference");
 
 	if (ret){
 		ref->SetName(name);
@@ -223,7 +232,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveAbsolute(CCString path) {
 ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
 	ErrorManagement::ErrorType ret;
 
-    ReferenceContainerFilterObjectName filter(1, 0u, path);
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 
@@ -242,6 +251,17 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
 
     return ret;
 }
+
+ErrorManagement::ErrorType  ConfigurationDatabase::MoveToChild(const uint32 childIdx) {
+	ErrorManagement::ErrorType ret;
+
+	ret.outOfRange = (childIdx >= currentNode->Size());
+    if (ret) {
+        currentNode = currentNode->Get(childIdx);
+    }
+    return ret;
+}
+
 
 ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
 	ErrorManagement::ErrorType ret;
@@ -345,7 +365,7 @@ ErrorManagement::ErrorType  ConfigurationDatabase::Delete(CCString name) {
     bool found = false;
     for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
         foundReference = currentNode->Get(i);
-        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+        found = (name == foundReference->GetName());
     }
 
     if (found) {
@@ -384,6 +404,10 @@ CCString ConfigurationDatabase::GetChildName(const uint32 index) {
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {
     return currentNode->Size();
+}
+
+void ConfigurationDatabase::SetCurrentNodeAsRootNode() {
+    rootNode = currentNode;
 }
 
 CLASS_REGISTER(ConfigurationDatabase, "1.0")

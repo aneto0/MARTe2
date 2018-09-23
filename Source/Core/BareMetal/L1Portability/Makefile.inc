@@ -36,13 +36,13 @@ OBJSX=  FastPollingEventSem.x \
 	GlobalObjectsDatabase.x \
 	HeapManager.x \
 	MemoryArea.x \
-	MemoryOperationsHelper.x \
 	ProcessorType.x \
 	StaticListHolder.x \
 	StringHelper.x \
 	ClassRegistryIndex.x \
 	TypeDescriptor.x \
 	DynamicZeroTerminatedArray.x\
+	OSInitializer.x\
         Matrix.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

@@ -52,53 +52,54 @@ ObjectRegistryDatabaseMessageFilter::~ObjectRegistryDatabaseMessageFilter() {
 
 }
 
+
+
 ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
-    ErrorManagement::ErrorType err;
-    err.parametersError = !messageToTest.IsValid();
+    ErrorManagement::ErrorType ret;
+    ret.parametersError = !messageToTest.IsValid();
+    CONDITIONAL_REPORT_ERROR(ret, "Invalid messageToTest");
 
     ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
-    StreamString function;
     ReferenceT<StructuredDataI> params;
-    StreamString rootNodeStr;
+
     //Do not do this rootNode = ReferenceT<ReferenceContainer>(ord) as otherwise the smart pointer implementation would destroy the ObjectRegistryDatabase!
     Object *rootNode = NULL_PTR(Object *);
 
-    if (err.ErrorsCleared()) {
-        CCString functionStr = messageToTest->GetFunction();
-        function = functionStr.GetList();
+    CCString function = messageToTest->GetFunction();
+    DynamicCString rootNodeStr;
+
+    if (ret) {
         params = messageToTest->Get(0u);
         if (params.IsValid()) {
             if (params->Read("Root", rootNodeStr)) {
-                REPORT_ERROR(ErrorManagement::Information, "Going to act on %s", rootNodeStr.Buffer());
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::Information, "Going to act on ", rootNodeStr);
             }
         }
-        if (rootNodeStr.Size() == 0u) {
+        if (rootNodeStr.GetSize() == 0u) {
             rootNode = ord;
             rootNodeStr = "root";
         }
         else {
-            ReferenceT<Object> foundNode = ord->Find(rootNodeStr.Buffer());
-            err.parametersError = !foundNode.IsValid();
-            if (err.ErrorsCleared()) {
+            ReferenceT<Object> foundNode = ord->Find(rootNodeStr);
+            ret.parametersError = !foundNode.IsValid();
+        	COMPOSITE_REPORT_ERROR(ret, "Could not find the node with name ", rootNodeStr);
+            if (ret) {
                 rootNode = foundNode.operator ->();
-            }
-            else {
-                REPORT_ERROR(err, "Could not find the node with name %s", rootNodeStr.Buffer());
             }
         }
     }
     //lint -e{613} the rootNode cannot be NULL as otherwise err.ErrorsCleared() would be false.
-    if (err.ErrorsCleared()) {
+    if (ret) {
         if (function == "purge") {
             if (rootNode == ord) {
                 ord->Purge();
             }
             else {
-                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr.Buffer());
+                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr);
                 if (rcNode.IsValid()) {
                     rcNode->Purge();
                 }
-                err.fatalError = !ord->Delete(rootNodeStr.Buffer());
+                ret.fatalError = !ord->Delete(rootNodeStr);
             }
         }
         else if (function == "load") {
@@ -107,37 +108,33 @@ ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(R
                 rootNodePtr = ord;
             }
             else {
-                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr.Buffer());
-                err.parametersError = !rcNode.IsValid();
-                if (err.ErrorsCleared()) {
+                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr);
+                ret.fatalError = !rcNode.IsValid();
+                CONDITIONAL_REPORT_ERROR(ret, "The configuration shall be applied to a ReferenceContainer");
+                if (ret) {
                     rootNodePtr = rcNode.operator ->();
                 }
-                else {
-                    REPORT_ERROR(err, "The configuration shall be applied to a ReferenceContainer");
-                }
             }
-            if (err.ErrorsCleared()) {
-                err.parametersError = !params.IsValid();
-                if (!err.ErrorsCleared()) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "No configuration data found in the message");
-                }
+            if (ret) {
+                ret.parametersError = !params.IsValid();
+                CONDITIONAL_REPORT_ERROR(ret, "No configuration data found in the message");
             }
-            if (err.ErrorsCleared()) {
-                ReferenceT<ReferenceContainer> rc(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                err.parametersError = !rc->Initialise(*params.operator ->());
+            if (ret) {
+                ReferenceT<ReferenceContainer> rc(buildNow);
+                ret.fatalError = !rc->Initialise(*params.operator ->());
                 uint32 i;
                 uint32 nElements = rc->Size();
-                for (i = 0u; (err.ErrorsCleared()) && (i < nElements); i++) {
-                    err.parametersError = !rootNodePtr->Insert(rc->Get(i));
+                for (i = 0u; (ret) && (i < nElements); i++) {
+                    ret.fatalError = !rootNodePtr->Insert(rc->Get(i));
                 }
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Unsupported function", function.Buffer());
-            err.parametersError = true;
+            ret.unsupportedFeature = true;
+            COMPOSITE_REPORT_ERROR(ret, "Unsupported function ", function);
         }
     }
-    return err;
+    return ret;
 
 }
 

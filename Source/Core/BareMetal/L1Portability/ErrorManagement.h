@@ -35,7 +35,6 @@
 #include "ErrorInformation.h"
 #include "GeneralDefinitions.h"
 #include "TimeStamp.h"
-#include "TimeoutType.h"
 #include "StreamI.h"
 #include "CCString.h"
 

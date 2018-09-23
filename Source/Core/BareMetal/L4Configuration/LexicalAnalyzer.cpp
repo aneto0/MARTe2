@@ -96,7 +96,7 @@ static void ReadCommentMultipleLines(StreamI &stream,
     }
     buffer[size] = '\0';
 
-    while (StringHelper::Compare(&buffer[0], multipleLineEnd) != 0) {
+    while (  !(multipleLineEnd == CCString(&buffer[0]))) {
 
         if (!GetC(stream, c)) {
             break;

@@ -61,35 +61,28 @@ void FastPollingEventSem::Create(const bool wait) {
     }
 }
 
-ErrorManagement::ErrorType FastPollingEventSem::FastWait(const TimeoutType &timeout,
-                                                         const uint32 sleepTimeUsec) const {
+ErrorManagement::ErrorType FastPollingEventSem::FastWait(const Ticks &timeout,const MicroSeconds &sleepTimeUsec) const {
     // default initialisation is without error
-	ErrorManagement::ErrorType err;
+	ErrorManagement::ErrorType ret;
 
-    uint64 ticksSleep = timeout.HighResolutionTimerTicks();
+	ret.parametersError = !timeout.IsPositive();
+	CONDITIONAL_REPORT_ERROR(ret,"Invalid timeout")
+
+    uint64 ticksSleep = timeout.GetTimeRaw();
     uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
 
+    while ((*flag == 0) && (ret)) {
 
-    while (*flag == 0) {
-        if (timeout != TTInfiniteWait) {
-
-        	/*
-        	 * to proper handle saturation the best approach is to first calculate missing time as unsigned
-        	 * This calculation works even if tickStop is result of an overflow.
-        	 * When the time is passed the result would be negative and thus overflows as a very large int
-        	 */
-        	uint64 toWait = HighResolutionTimer::Counter() - ticksStop;
-            if (toWait > ticksSleep) {
-                err = ErrorManagement::Timeout;
-                break;
-            }
+        if (timeout.IsValid()) {
+            ret.timeout = (HighResolutionTimer::Counter() > ticksStop);
         }
-        if (sleepTimeUsec > 0) {
-            Sleep::PreciseUsec(sleepTimeUsec,0);
+
+        if (sleepTimeUsec.GetTimeRaw() > 0) {
+            Sleep::Short(sleepTimeUsec);
         }
     }
 
-    return err;
+    return ret;
 }
 
 void FastPollingEventSem::FastPost() {
@@ -100,8 +93,7 @@ void FastPollingEventSem::Reset() {
     *flag = 0;
 }
 
-ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const TimeoutType &timeout,
-                                                              const uint32 sleepTimeUsec) {
+ErrorManagement::ErrorType FastPollingEventSem::FastResetWait(const Ticks &timeout,const MicroSeconds &sleepTimeUsec) {
     Reset();
     return FastWait(timeout, sleepTimeUsec);
 }

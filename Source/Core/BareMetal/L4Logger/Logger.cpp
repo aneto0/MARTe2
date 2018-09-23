@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "Logger.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,18 +46,19 @@ namespace MARTe {
  */
 /*lint -estring(459, "*LoggerErrorProcessFunction*") this function is supposed to have access to the Logger singleton and to the error information.*/
 void LoggerErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo,
-                                       const char8 * const errorDescription) {
+                                       CCString const errorDescription) {
     Logger *loggerService = Logger::Instance();
     if (loggerService != NULL_PTR(Logger *)) {
         LoggerPage *page = loggerService->GetPage();
         if (page != NULL_PTR(LoggerPage *)) {
             page->errorInfo = errorInfo;
-            (void)MemoryOperationsHelper::Copy(&page->errorStrBuffer[0u], errorDescription, MAX_ERROR_MESSAGE_SIZE);
+            (void)Memory::Copy(&page->errorStrBuffer[0u], errorDescription.GetList(), MAX_ERROR_MESSAGE_SIZE);
             loggerService->AddLogEntry(page);
         }
     }
 }
 }
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

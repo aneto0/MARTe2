@@ -48,7 +48,9 @@ static void PrintErrorOnStream(CCString const format,
         if (!err->Printf(format, lineNumber)) {
             REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
-        REPORT_ERROR(ErrorManagement::FatalError, format, lineNumber);
+
+//TODO FIX THIS
+//        REPORT_ERROR(ErrorManagement::FatalError, format, lineNumber);
     }
 }
 
@@ -105,7 +107,7 @@ uint32 ParserI::GetNextTokenType() {
     }
     // return the slk token number
     for (uint32 i = 0u; i < endTokendId; i++) {
-        if (StringHelper::Compare(toCompare, GetSymbolName(i)) == 0) {
+        if (toCompare == GetSymbolName(i)) {
             ret = i;
         }
     }
@@ -126,7 +128,7 @@ uint32 ParserI::PeekNextTokenType(const uint32 position) {
         toCompare = tok->GetDescription();
     }
     for (uint32 i = 0u; i < endTokendId; i++) {
-        if (StringHelper::Compare(toCompare, GetSymbolName(i)) == 0) {
+        if (toCompare == GetSymbolName(i)) {
             ret = i;
         }
     }

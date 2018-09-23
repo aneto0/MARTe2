@@ -99,18 +99,21 @@ void *BrokerI::GetFunctionPointer(const uint32 copyIdx) const {
     return ret;
 }
 
-bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI &dataSource, const char8 * const functionName, void * const gamMemoryAddress) {
+bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI &dataSource, CCString functionName, void * const gamMemoryAddress) {
+
+	ClassRegistryItem *cri = GetClassRegistryItem();
+    bool ret = false;
 
     //Need to check the broker class name. This function loops through all the signals of the
     //functionName and should only react to the signals which are related to this BrokerI instance.
     //Get the class name from the ClassProperties
-    const ClassProperties * properties = GetClassProperties();
-    bool ret = (properties != NULL);
-    const char8* brokerClassName = NULL_PTR(const char8*);
-    if (ret) {
-        brokerClassName = properties->GetName();
-        ret = (brokerClassName != NULL);
-    }
+    CCString brokerClassName;
+
+    if (cri != NULL_PTR(ClassRegistryItem *)){
+		brokerClassName = cri->GetClassName();
+        ret = (!brokerClassName.IsNullPtr());
+	}
+
     //Find the function
     uint32 functionIdx = 0u;
     if (ret) {
@@ -165,13 +168,13 @@ bool BrokerI::InitFunctionPointers(const SignalDirection direction, DataSourceI 
                 if (ret) {
                     ret = dataSource.GetFunctionSignalGAMMemoryOffset(direction, functionIdx, i, memoryOffset);
                 }
-                StreamString functionSignalName;
+                DynamicCString functionSignalName;
                 if (ret) {
                     ret = dataSource.GetFunctionSignalAlias(direction, functionIdx, i, functionSignalName);
                 }
                 uint32 signalIdx = 0u;
                 if (ret) {
-                    ret = dataSource.GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                    ret = dataSource.GetSignalIndex(signalIdx, functionSignalName);
                 }
                 if (ret) {
                     ret = dataSource.GetSignalByteSize(signalIdx, byteSize);

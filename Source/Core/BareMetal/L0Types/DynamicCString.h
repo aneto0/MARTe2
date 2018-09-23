@@ -81,10 +81,6 @@ public:
      */
     inline void  operator=(const DynamicCString &s) ;
 
-    /**
-     * @brief append a number at the end of the string
-     */
-//    inline bool Append(uint64 num,int32 fill0=0);
 
     /**
      * @brief append a number at the end of the string

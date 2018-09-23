@@ -117,23 +117,22 @@ public:
     /**
      * @brief Writes an AnyType against the provided \a name and adds it to the current node.
      * @details If the name already exists the value will be overridden.
-     * @param[in] path the relative path to the leaf used to store the AnyType \a value.
+     * @param[in] name the name of the leaf against which the AnyType will be stored.
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
      * @pre
      *   name != NULL &&
      *   StringHelper::Length(name) > 0
      */
-    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value) = 0;
+    virtual ErrorManagement::ErrorType Write(CCString name, const AnyType &value) = 0;
 
     /**
      * @brief Writes an object into the current node of the database.
      * @details The implementation shall assume that the object does not need to be copied but can be referenced to.
      * @param[in] object the object to be added to the database. object->GetName() provides the name.
-     * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
      * @return true if object is valid
      */
-    virtual ErrorManagement::ErrorType Write(Reference object,bool borrow = true) = 0;
+    virtual ErrorManagement::ErrorType Write(Reference object) = 0;
 
     /**
      * @brief Copies the content of the current node to the provided destination.
@@ -178,6 +177,14 @@ public:
      * is not changed.
      */
     virtual ErrorManagement::ErrorType MoveRelative(CCString path) = 0;
+
+    /**
+     * @brief Moves the current node the child with idx \a childIdx.
+     * @param[in] childIdx the index of the child where to move to.
+     * @return true if the move was successful and the current node is the node at index \a .childIdx If unsuccessful the current node
+     * is not changed.
+     */
+    virtual ErrorManagement::ErrorType MoveToChild(const uint32 childIdx) = 0;
 
     /**
      * Read path information

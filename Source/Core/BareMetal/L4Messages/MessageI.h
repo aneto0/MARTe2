@@ -34,7 +34,7 @@
 
 #include "Message.h"
 #include "MessageFilterPool.h"
-#include "TimeoutType.h"
+#include "Ticks.h"
 #include "ReferenceT.h"
 #include "ErrorType.h"
 
@@ -96,7 +96,7 @@ public:
      *   ErrorManagement::Timeout if a wait for reply times out
      *   ErrorManagement::communicationError if no reply expected
      */
-    static ErrorManagement::ErrorType WaitForReply(const ReferenceT<Message> &message, const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+    static ErrorManagement::ErrorType WaitForReply(const ReferenceT<Message> &message, const Ticks &maxWaitT = Ticks::Infinite, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief sends a message expecting direct reply and waits for it
@@ -113,7 +113,7 @@ public:
      *   ErrorManagement::communicationError if no reply expected
      */
     static ErrorManagement::ErrorType SendMessageAndWaitReply(ReferenceT<Message> &message,const Object * const sender = NULL_PTR(Object *),
-                                                              const TimeoutType &maxWait = TTInfiniteWait, const uint32 pollingTimeUsec = 1000u);
+                                                              const Ticks &maxWaitT = Ticks::Infinite, const uint32 pollingTimeUsec = 1000u);
 
     /**
      * @brief Installs a message filter that is capable of handling messages addressed to this MessageI.
@@ -142,7 +142,7 @@ public:
      * @param[in] maxWait is the maximum time allowed waiting for the message reply.
      * @param[in] pollingTimeUsec is the period between check of the arrival as us
      */
-    ErrorManagement::ErrorType SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,const TimeoutType &maxWait = TTInfiniteWait,
+    ErrorManagement::ErrorType SendMessageAndWaitIndirectReply(ReferenceT<Message> &message,const MilliSeconds &maxWait = MilliSeconds::Infinite,
                                                                   const uint32 pollingTimeUsec = 1000u);
 
 protected:

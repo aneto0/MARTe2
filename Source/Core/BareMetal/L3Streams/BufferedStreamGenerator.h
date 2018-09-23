@@ -97,7 +97,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 &size,
-                      const TimeoutType &msecTimeout);
+					  const MilliSeconds &timeout);
 
     /**
      * @brief Wraps bufferedStream::Write(*)
@@ -117,7 +117,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 &size,
-                       const TimeoutType &msecTimeout);
+					   const MilliSeconds &timeout);
 
     /**
      * @brief Wraps bufferedStream::Size(*)
@@ -238,8 +238,8 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const ou
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
                                                                 uint32 &size,
-                                                                TimeoutType msecTimeout) {
-    return bufferedStream::Read(output, size, msecTimeout);
+                                                                const MilliSeconds &timeout) {
+    return bufferedStream::Read(output, size, timeout);
 
 }
 
@@ -252,8 +252,8 @@ bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * c
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
                                                                  uint32 &size,
-                                                                 TimeoutType msecTimeout) {
-    return bufferedStream::Write(input, size, msecTimeout);
+																 const MilliSeconds &timeout) {
+    return bufferedStream::Write(input, size, timeout);
 
 }
 

@@ -78,7 +78,7 @@ public:
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
      */
-    inline ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
+    inline ErrorManagement::ErrorType Lock(const MilliSeconds &timeout);
 
     /**
      * @brief Unlocks the shared semaphore.
@@ -115,13 +115,13 @@ public:
      * if it is introspectable and registered into
      * the ConfigurationDatabase.
      */
-    virtual ErrorManagement::ErrorType Write(CCString path, const AnyType &value);
+    virtual ErrorManagement::ErrorType Write(CCString name, const AnyType &value);
 
     /**
-     * TODO
-     * Same as write but inserts an object without copying it
-     * Removes any object with the same name
-     * object name must not include '.'
+     * @brief Writes an object into the current node of the database.
+     * @details The implementation shall assume that the object does not need to be copied but can be referenced to.
+     * @param[in] object the object to be added to the database. object->GetName() provides the name.
+     * @return true if object is valid
      */
     virtual ErrorManagement::ErrorType Write(Reference object);
 
@@ -151,6 +151,11 @@ public:
     virtual ErrorManagement::ErrorType MoveRelative(CCString path);
 
     /**
+     * @see StructuredDataI::MoveToChild
+     */
+    virtual ErrorManagement::ErrorType MoveToChild(const uint32 childIdx);
+
+    /**
      * @see StructuredDataI::CreateAbsolute
      */
     virtual ErrorManagement::ErrorType CreateAbsolute(CCString path);
@@ -169,6 +174,11 @@ public:
      * @see StructuredDataI::Delete
      */
     virtual ErrorManagement::ErrorType Delete(CCString name);
+
+    /**
+     * @brief Sets the current node as the root node.
+     */
+    void SetCurrentNodeAsRootNode();
 
     /**
      * @brief StructuredDataI::GetName
@@ -234,7 +244,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-ErrorManagement::ErrorType ConfigurationDatabase::Lock(const TimeoutType &timeout) {
+ErrorManagement::ErrorType ConfigurationDatabase::Lock(const MilliSeconds &timeout) {
     return mux.FastLock(timeout);
 }
 

@@ -37,8 +37,11 @@
 #include "ErrorType.h"
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
-#include "TimeoutType.h"
 #include "Sleep.h"
+#include "MicroSeconds.h"
+#include "Ticks.h"
+#include "OSInitializer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -91,8 +94,8 @@ public:
      * @return ErrorManagement::Timeout if the semaphore is locked for a period which is greater than the
      * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
-    ErrorManagement::ErrorType FastLock(const TimeoutType &timeout = TTInfiniteWait,
-    									const uint32 sleepTimeUsec = 1000);
+    ErrorManagement::ErrorType FastLock(const Ticks &timeout = Ticks::Infinite,
+            							const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us)) ;
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.

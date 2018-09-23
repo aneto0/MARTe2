@@ -109,5 +109,42 @@ OSInitializer::OSInitializer(){
 }
 
 
+uint64 OSInitializer::frequency = 0;
+
+/**
+ * Time between two ticks in seconds
+ */
+float64 OSInitializer::period;
+
+/**
+ * Stores the seconds (counting from the epoch) at which a framework instance was executed.
+ */
+oslong OSInitializer::initialSecs;
+
+/**
+ * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
+ */
+oslong OSInitializer::initialUSecs;
+
+/**
+ * Number of elapsed ticks at the time at which a framework instance was executed.
+ */
+uint64 OSInitializer::initialTicks;
+
+/**
+ * typical worst case number of ticks the OS will consume during a sleep if CPU not used.
+ */
+uint64 OSInitializer::osSleepTicks;
+
+/**
+ * typical worst case number of usec the OS will consume during a sleep if CPU not used.
+ */
+uint32 OSInitializer::osSleepUsec;
+
+/**
+ * minimum value o be used in a sleep call to guarantee some sleep is actually performed.
+ */
+uint32 OSInitializer::osMinSleepUsec;
+
 
 }

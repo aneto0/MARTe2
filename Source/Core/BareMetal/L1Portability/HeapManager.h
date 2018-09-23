@@ -56,7 +56,7 @@ DLL_API HeapI *FindHeap(const void * const address);
  * @return a pointer to the HeapI with the specified name or
  * NULL if the name is not found in the HeapI objects' database.
  */
-DLL_API HeapI *FindHeap(const char8 * const name);
+DLL_API HeapI *FindHeap(CCString name);
 
 /**
  * @brief Registers a HeapI object in the database.
@@ -96,7 +96,7 @@ DLL_API bool Free(void *&data);
  * @return The pointer to the allocated memory. NULL if allocation failed.
  */
 DLL_API void *Malloc(uint32 size,
-                     const char8 * const heapName = NULL_PTR(char8 *));
+                     CCString heapName = emptyString);
 
 /**
  * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
@@ -123,7 +123,7 @@ DLL_API void *Realloc(void *&data,
  */
 DLL_API void *Duplicate(const void * const data,
                         const uint32 size = 0U,
-                        const char8 * const heapName = NULL_PTR(char8 *));
+                        CCString heapName = emptyString);
 
 }
 

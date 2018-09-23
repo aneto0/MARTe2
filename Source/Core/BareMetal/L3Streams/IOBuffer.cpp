@@ -205,7 +205,7 @@ bool IOBuffer::Write(const char8 * const buffer,uint32 &size) {
         // fill the buffer with the remainder
         if (size > 0u) {
             if (!Memory::Copy(positionPtr, buffer, size)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed MemoryOperationsHelper::Copy()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBuffer: Failed Memory::Copy()");
                 retval = false;
             }
 

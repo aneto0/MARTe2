@@ -39,7 +39,7 @@
 #include "HandleI.h"
 #include "StreamI.h"
 #include "StringHelper.h"
-#include "TimeoutType.h"
+#include "HighResolutionTimer.h"
 
 namespace MARTe {
 
@@ -378,7 +378,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &timeout);
+                       const MilliSeconds &timeout);
 
     /**
      * @brief Reads from the console.
@@ -394,7 +394,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &timeout);
+                      const MilliSeconds &timeout);
 
     /**
      * @brief Unsupported feature.
@@ -453,7 +453,7 @@ private:
      */
     inline bool PagedWrite(const char8* const buffer,
                            const uint32 &size,
-                           const TimeoutType &timeout);
+                           const MilliSeconds &timeout);
 
     /**
      * @copybrief BasicConsole::Write
@@ -470,7 +470,7 @@ private:
      */
     bool OSWrite(const char8 * const buffer,
                  uint32 & size,
-                 const TimeoutType &timeout);
+                 const MilliSeconds &timeout);
 
     /**
      * Operating system specific properties to be used by the operating system specific implementation
@@ -494,7 +494,7 @@ private:
 
 bool BasicConsole::PagedWrite(const char8 * const buffer,
                               const uint32 &size,
-                              const TimeoutType &timeout) {
+                              const MilliSeconds &timeout) {
 
     uint32 numberOfColumnsTmp = 0u;
     uint32 numberOfRowsTmp = 0u;

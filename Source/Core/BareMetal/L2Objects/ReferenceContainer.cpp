@@ -62,7 +62,7 @@ namespace MARTe {
 ReferenceContainer::ReferenceContainer() :
         Object() {
     mux.Create();
-    muxTimeout = TTInfiniteWait;
+    muxTimeout = MilliSeconds::Infinite;
 }
 
 ReferenceContainer::ReferenceContainer(ReferenceContainer &copy) :
@@ -109,13 +109,6 @@ Reference ReferenceContainer::Get(const uint32 idx) {
     return ref;
 }
 
-TimeoutType ReferenceContainer::GetTimeout() const {
-    return muxTimeout;
-}
-
-void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
-    muxTimeout = timeout;
-}
 
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
  * the sole owner of the list (LinkedListHolder)*/
@@ -181,7 +174,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     uint32 i;
                     for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
                         foundReference = currentNode->Get(i);
-                        found = (StringHelper::Compare(foundReference->GetName(), token.GetList()) == 0);
+                        found = (foundReference->GetName().isSameAs(token.GetList()));
                     }
                     // take the next token
 
@@ -514,6 +507,15 @@ bool ReferenceContainer::IsToken(const char8 * const tokenList, const char8 toke
     }
     return ok;
 }
+
+MilliSeconds ReferenceContainer::GetTimeout() const {
+    return muxTimeout;
+}
+
+void ReferenceContainer::SetTimeout(const MilliSeconds &timeout) {
+    muxTimeout = timeout;
+}
+
 
 bool ReferenceContainer::AddBuildToken(const char8 token) {
     return AddToken(&buildTokensList[0], token);

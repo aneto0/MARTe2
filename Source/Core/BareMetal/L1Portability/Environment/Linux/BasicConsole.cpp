@@ -198,9 +198,9 @@ bool BasicConsole::Close() {
 
 bool BasicConsole::Read(char8 * const output,
                         uint32 & size,
-                        const TimeoutType &timeout) {
+                        const MilliSeconds &timeout) {
     bool ret = false;
-    if (!timeout.IsFinite()) {
+    if (timeout.IsValid())) {
         ret = Read(output, size);
     }
     else {
@@ -212,10 +212,10 @@ bool BasicConsole::Read(char8 * const output,
 
 bool BasicConsole::Write(const char8 * const input,
                          uint32 & size,
-                         const TimeoutType &timeout) {
+                         const MilliSeconds &timeout) {
 
     bool ret = false;
-    if (!timeout.IsFinite()) {
+    if (timeout.IsValid()) {
         ret = Write(input, size);
     }
     else {
@@ -240,7 +240,7 @@ bool BasicConsole::Write(const char8 * const input,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Write with timeout not implemented. */
 bool BasicConsole::OSWrite(const char8* const buffer,
                            uint32 &size,
-                           const TimeoutType &timeout) {
+                           const MilliSeconds &timeout) {
     const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 

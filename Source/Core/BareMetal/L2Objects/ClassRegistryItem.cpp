@@ -148,7 +148,7 @@ ClassMethodCaller *ClassRegistryItem::FindMethod(CCString methodName) {
         ClassMethodInterfaceMapper *cmim = classMethods.ListPeek(i);
         if (cmim != NULL) {
             CCString mapperMethodName = cmim->GetMethodName();
-            if (StringHelper::Compare(mapperMethodName, methodName) == 0) {
+            if (mapperMethodName == methodName) {
                 caller = cmim->GetMethodCaller();
             }
         }
@@ -174,7 +174,7 @@ public:
 	    bool ret = (data != NULL);
 	    if (ret){
 	    	CCString name = data->GetName();
-	    	ret =  (StringHelper::Compare(name, memberName) == 0) ;
+	    	ret =  (name == memberName) ;
 	    }
 	    return ret;
 	}

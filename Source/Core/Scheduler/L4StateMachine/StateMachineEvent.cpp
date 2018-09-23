@@ -113,7 +113,7 @@ ErrorManagement::ErrorType StateMachineEvent::ConsumeMessage(ReferenceT<Message>
     if (err.ErrorsCleared()) {
         CCString function = messageToTest->GetFunction();
         if (function.GetList() != NULL_PTR(const char8 *)) {
-            found = (StringHelper::Compare(function, GetName()) == 0);
+            found = (function == GetName());
         }
 
     }

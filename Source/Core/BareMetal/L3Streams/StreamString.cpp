@@ -118,13 +118,13 @@ bool StreamString::Write(const char8* const input, uint32 & size) {
  * used by other buffered streams. */
 bool StreamString::Read(char8 * const output,
                         uint32 & size,
-                        const TimeoutType &timeout) {
+                        const MilliSeconds &timeout) {
     return Read(output, size);
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
-bool StreamString::Write(const char8 * const input,uint32 & size,const TimeoutType &timeout) {
+bool StreamString::Write(const char8 * const input,uint32 & size,const MilliSeconds &timeout) {
     return Write(input, size);
 }
 

@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "StreamI.h"
 #include "OperatingSystemCallbacksI.h"
@@ -126,12 +125,12 @@ public:
     /**
      * Gets the timeout for read and write operations.
      */
-    inline TimeoutType GetTimeout() const;
+    inline MilliSeconds GetTimeout() const;
 
     /**
      * Sets the timeout for read and write operations.
      */
-    inline void SetTimeout(const TimeoutType &msecTimeout);
+    inline void SetTimeout(const MilliSeconds &timeoutIn);
 
     /**
      * Gets the stream pointer
@@ -165,7 +164,7 @@ private:
     /**
      * The timeout for read and write operations.
      */
-    TimeoutType timeout;
+    MilliSeconds timeout;
 
 };
 
@@ -181,7 +180,7 @@ bool BufferedStreamIOBuffer::Flush() {
     return NoMoreSpaceToWrite();
 }
 
-TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
+MilliSeconds BufferedStreamIOBuffer::GetTimeout() const {
     return timeout;
 }
 
@@ -189,8 +188,8 @@ const OperatingSystemCallbacksI* BufferedStreamIOBuffer::GetStream() const {
     return stream;
 }
 
-void BufferedStreamIOBuffer::SetTimeout(const TimeoutType &msecTimeout) {
-    timeout = msecTimeout;
+void BufferedStreamIOBuffer::SetTimeout(const MilliSeconds &timeoutIn) {
+    timeout = timeoutIn;
 }
 
 }

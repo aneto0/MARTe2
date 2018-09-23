@@ -196,7 +196,7 @@ uintp StandardHeap::LastAddress() const {
     return lastAddress;
 }
 
-const char8 *StandardHeap::Name() const {
+CCString StandardHeap::Name() const {
     return "StandardHeap";
 }
 

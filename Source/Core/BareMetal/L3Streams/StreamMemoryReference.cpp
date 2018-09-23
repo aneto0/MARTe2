@@ -145,7 +145,7 @@ bool StreamMemoryReference::CanSeek() const {
  * used by other buffered streams. */
 bool StreamMemoryReference::Read(char8 * const output,
                                  uint32 & size,
-                                 const TimeoutType &timeout) {
+                                 const MilliSeconds &timeout) {
     return Read(output, size);
 }
 
@@ -153,7 +153,7 @@ bool StreamMemoryReference::Read(char8 * const output,
  * used by other buffered streams. */
 bool StreamMemoryReference::Write(const char8 * const input,
                                   uint32 & size,
-                                  const TimeoutType &timeout) {
+                                  const MilliSeconds &timeout) {
     return Write(input, size);
 }
 

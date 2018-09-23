@@ -152,12 +152,12 @@ public:
      * @brief Sets the time to wait for a reply.
      * @param[in] maxWaitIn is the timeout time in milliseconds.
      */
-    void SetReplyTimeout(const TimeoutType &maxWaitIn);
+    void SetReplyTimeout(const MilliSeconds &maxWaitIn);
 
     /**
      * @brief Gets the timeout for the reply
      */
-    TimeoutType GetReplyTimeout() const;
+    MilliSeconds GetReplyTimeout() const;
 
 private:
 
@@ -235,17 +235,19 @@ private:
      * The destination of the message
      * addressed from ObjectRegistryDatabase forward
      * */
-    StreamString destination;
+//    StreamString destination;
+    DynamicCString destination;
 
     /**
      * The function to be called
      * */
-    StreamString function;
+//    StreamString function;
+    DynamicCString function;
 
     /**
      * In case of synchronous communication, how long to wait
      * */
-    TimeoutType maxWait;
+    MilliSeconds maxWait;
 
     /**
      * @brief Defines the Message types.

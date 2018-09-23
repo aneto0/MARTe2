@@ -285,9 +285,10 @@ bool BasicConsole::ShowBuffer() {
 
 bool BasicConsole::Write(const char8* buffer,
                          uint32 &size,
-                         const TimeoutType &timeout) {
+                         const MilliSeconds &timeout) {
 
     bool ret = true;
+
 
     if (handle->openingMode & BasicConsoleMode::EnablePaging) {
         ret = PagedWrite(buffer, size, timeout);
@@ -302,67 +303,54 @@ bool BasicConsole::Write(const char8* buffer,
 
 bool BasicConsole::OSWrite(const char8* const buffer,
                            uint32 &size,
-                           const TimeoutType &timeout) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+                           const MilliSeconds &timeout) {
+    ErrorManagement::ErrorType ret;
 
     if ((size > 0) && (buffer != NULL)) {
 
-        if (!WriteConsole(handle->outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
+        ret.OSError = !WriteConsole(handle->outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
 
-            error = ErrorManagement::OSError;
-        }
-
-    }
-    else {
-        error = ErrorManagement::Warning;
+    } else {
+        ret.warning = true;
     }
 
-    return (error == ErrorManagement::NoError);
+    return ret.ErrorsCleared();
 
 }
 
 bool BasicConsole::Read(char8* const buffer,
                         uint32 &size) {
-    return Read(buffer, size, TTInfiniteWait);
+    return Read(buffer, size, MilliSeconds::Infinite);
 }
 
 bool BasicConsole::Write(const char8* const buffer,
                          uint32 &size) {
-    return Write(buffer, size, TTInfiniteWait);
+    return Write(buffer, size, MilliSeconds::Infinite);
 }
 
 bool BasicConsole::Read(char8* const buffer,
                         uint32 &size,
-                        const TimeoutType &timeout) {
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
-    DWORD ret = 0;
+                        const MilliSeconds &timeout) {
+    ErrorManagement::ErrorType ret;
 
-    if (timeout.IsFinite()) {
+    if (timeout.IsValid()) {
 
         FlushConsoleInputBuffer(handle->inputConsoleHandle);
-        ret = WaitForSingleObject(handle->inputConsoleHandle, (DWORD) timeout.GetTimeoutMSec());
-        if (ret != 0) {
+        DWORD rc = WaitForSingleObject(handle->inputConsoleHandle, (DWORD) timeout.GetTimeRaw());
+        if (rc != 0) {
             size = 0;
-            error = ErrorManagement::Timeout;
+            ret.timeout = true;
         }
     }
 
-    if (error == ErrorManagement::NoError) {
+    if (ret) {
         if (handle->openingMode & BasicConsoleMode::PerformCharacterInput) {
             size = 1;
-            if (!ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
-                error = ErrorManagement::OSError;
-            }
         }
-        else {
-            if (!ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
-                error = ErrorManagement::OSError;
-            }
-
-        }
+        ret.OSError = !ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
 
     }
-    return (error == ErrorManagement::NoError);
+    return ret.ErrorsCleared();
 
 }
 

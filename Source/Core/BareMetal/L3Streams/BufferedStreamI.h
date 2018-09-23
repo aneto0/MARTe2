@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "TimeoutType.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"

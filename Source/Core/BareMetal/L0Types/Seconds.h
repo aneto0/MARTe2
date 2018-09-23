@@ -1,8 +1,8 @@
 /**
- * @file ObjectRegistryDatabaseMessageI.cpp
- * @brief Source file for class ObjectRegistryDatabaseMessageI
- * @date 19/06/2018
- * @author Andre' Neto
+ * @file MicroSeconds.h
+ * @brief Header file for class AnyType
+ * @date 17 Sep 2018
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,40 +16,47 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ObjectRegistryDatabaseMessageI (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class AnyType
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+*/
+
+#ifndef SECONDS_H_
+#define SECONDS_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
+#include "TimeType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
+/**
+ * Definition of the millisecond time type.
+ * Usable range is 0 to 4E9 seconds
+ * Resolution 1 second
  */
+typedef TimeType<uint32,Units::sClass> Seconds;
+
+
 
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-#include "AdvancedErrorManagement.h"
-#include "ObjectRegistryDatabaseMessageFilter.h"
-#include "ObjectRegistryDatabaseMessageI.h"
+} // MARTe
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-ObjectRegistryDatabaseMessageI::ObjectRegistryDatabaseMessageI() : MessageI(), Object() {
-    ReferenceT<ObjectRegistryDatabaseMessageFilter> filter = ReferenceT<ObjectRegistryDatabaseMessageFilter>(buildNow);
-    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
-    CONDITIONAL_REPORT_ERROR(ret, "Failed to install message filters");
-}
-
-ObjectRegistryDatabaseMessageI::~ObjectRegistryDatabaseMessageI() {
-
-}
-
-CLASS_REGISTER(ObjectRegistryDatabaseMessageI, "1.0")
-}
+#endif /* SECONDS_H_ */

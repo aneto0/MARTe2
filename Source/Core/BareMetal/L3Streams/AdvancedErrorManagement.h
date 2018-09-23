@@ -40,26 +40,208 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
- 
-#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
-{                                                                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                              \
-    if(smr.Printf(message,__VA_ARGS__)) {                                                      \
-        buffer[smr.Size()]='\0';                                                               \
-        ErrorManagement::ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-    else{                                                                                   \
-        ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-    \
+
+namespace ErrorManagement {
+
+template <class T1>
+inline void FormattedReportError(		     const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+								 	 	 	 CCString const format,
+                         	 	 	 	 	 T1 part1
+											 );
+
+template <class T1,class T2>
+inline void FormattedReportError(		     const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+								 	 	 	 CCString const format,
+                         	 	 	 	 	 T1 part1,
+                         	 	 	 	 	 T2 part2
+											 );
+
+template <class T1,class T2,class T3>
+inline void FormattedReportError(			 const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+                         	 	 	 	 	 T1 part1,
+                         	 	 	 	 	 T2 part2,
+                         	 	 	 	 	 T3 part3
+											 );
+
+template <class T1,class T2,class T3,class T4>
+inline void FormattedReportError(			 const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4
+											 );
+
+template <class T1,class T2,class T3,class T4,class T5>
+inline void FormattedReportError(			 const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5
+											 );
+
+template <class T1,class T2,class T3,class T4,class T5,class T6>
+inline void FormattedReportError(			 const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6
+											 );
 }
- 
-}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
+
+template <class T1>
+void ErrorManagement::FormattedReportError(const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+template <class T1,class T2>
+void ErrorManagement::FormattedReportError(  const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+	 	 	 	 	 	 	 	 	 	 	 T2 part2
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1,part2);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+
+template <class T1,class T2,class T3>
+void ErrorManagement::FormattedReportError(const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+										     CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1,part2,part3);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+template <class T1,class T2,class T3, class T4>
+void ErrorManagement::FormattedReportError(const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+											 T4 part4
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1,part2,part3,part4);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+template <class T1,class T2,class T3, class T4, class T5>
+void ErrorManagement::FormattedReportError(const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+											 T4 part4,
+											 T5 part5
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1,part2,part3,part4,part5);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+template <class T1,class T2,class T3, class T4, class T5, class T6>
+void ErrorManagement::FormattedReportError(const ErrorType &code,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName,
+											 CCString const format,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+											 T4 part4,
+											 T5 part5,
+											 T6 part6
+											 ){
+	if (!code) {
+	    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];
+	    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);
+	    smr.Printf(format,part1,part2,part3,part4,part5,part6);
+	    buffer[smr.Size()]='\0';
+	    ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+	}
+}
+
+ 
+#define FORMATTED_REPORT_ERROR(code, format,...)                                           \
+ErrorManagement::FormattedReportError(code,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__,format,__VA_ARGS__);
+ 
+}
 
 #endif /* ADVANCEDERRORMANAGEMENT_H_ */
 

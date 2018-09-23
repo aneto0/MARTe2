@@ -182,7 +182,7 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
         if (previouslyFound.Get(ui).IsValid()) {
         	CCString name = previouslyFound.Get(ui)->GetName();
             if (!name.IsNullPtr()) {
-                found = (StringHelper::Compare(name, addressToSearchArray[i]) == 0);
+                found = (name == addressToSearchArray[i]) ;
             }
         }
     }
@@ -204,7 +204,7 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
         if ( !name.IsNullPtr()) {
             /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
              * and its size cannot be modified in runtime*/
-            found = (StringHelper::Compare(name, addressToSearchArray[addressNumberNodes - 1u]) == 0);
+            found = (name ==addressToSearchArray[addressNumberNodes - 1u]);
         }
         else {
             found = false;

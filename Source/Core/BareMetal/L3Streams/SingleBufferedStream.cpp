@@ -55,7 +55,7 @@ SingleBufferedStream::SingleBufferedStream() :
     }
 }
 
-SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
+SingleBufferedStream::SingleBufferedStream(const MilliSeconds &timeoutIn) :
         BufferedStreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
@@ -177,8 +177,8 @@ bool SingleBufferedStream::Read(char8 * const output,
 
 bool SingleBufferedStream::Read(char8 * const output,
                                 uint32 & size,
-                                const TimeoutType &timeout) {
-    TimeoutType prevTimeout = GetTimeout();
+                                const MilliSeconds &timeout) {
+    MilliSeconds prevTimeout = GetTimeout();
     SetTimeout(timeout);
     bool ret = Read(output, size);
     SetTimeout(prevTimeout);
@@ -249,8 +249,8 @@ bool SingleBufferedStream::Write(const char8 * const input,
 
 bool SingleBufferedStream::Write(const char8 * const input,
                                  uint32 & size,
-                                 const TimeoutType &timeout) {
-    TimeoutType prevTimeout = GetTimeout();
+                                 const MilliSeconds &timeout) {
+    MilliSeconds prevTimeout = GetTimeout();
     SetTimeout(timeout);
     bool ret = Write(input, size);
     SetTimeout(prevTimeout);
@@ -424,11 +424,11 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
     return ret;
 }
 
-TimeoutType SingleBufferedStream::GetTimeout() const {
+MilliSeconds SingleBufferedStream::GetTimeout() const {
     return internalBuffer.GetTimeout();
 }
 
-void SingleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+void SingleBufferedStream::SetTimeout(const MilliSeconds &timeoutIn) {
     internalBuffer.SetTimeout(timeoutIn);
 }
  

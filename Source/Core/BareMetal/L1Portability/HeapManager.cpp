@@ -34,7 +34,6 @@
 #include "FastPollingMutexSem.h"
 #include "GeneralDefinitions.h"
 #include "HeapI.h"
-#include "StringHelper.h"
 #include "GlobalObjectI.h"
 #include "GlobalObjectsDatabase.h"
 
@@ -283,9 +282,9 @@ HeapI *FindHeap(const void * const address) {
     return foundHeap;
 }
 
-HeapI *FindHeap(const char8 * const name) {
+HeapI *FindHeap(CCString name) {
 
-    bool ok = (name != NULL);
+    bool ok = !name.IsNullPtr();
 
     /*
      * found heap
@@ -311,7 +310,7 @@ HeapI *FindHeap(const char8 * const name) {
                 if (heap != NULL_PTR(HeapI *)) {
 
                     /* check address compatibility */
-                    if (StringHelper::Compare(heap->Name(), name) == 0) {
+                    if (name == heap->Name() ) {
 
                         found = true;
 
@@ -349,12 +348,12 @@ bool Free(void *&data) {
 }
 
 void *Malloc(uint32 const size,
-             const char8 * const heapName) {
+             CCString heapName) {
 
     void *address = NULL_PTR(void *);
 
     /* Standard behavior */
-    if (heapName == NULL) {
+    if (heapName.IsNullPtr()) {
         address = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(size);
     }
     else {
@@ -392,13 +391,13 @@ void *Realloc(void *&data,
 
 void *Duplicate(const void * const data,
                 const uint32 size,
-                const char8 * const heapName) {
+                CCString heapName) {
     void *newAddress = NULL_PTR(void *);
 
     HeapI *chosenHeap = NULL_PTR(HeapI *);
 
     //if the heapName is not null searches the heap by name
-    if (heapName != NULL) {
+    if (!heapName.IsNullPtr()) {
         chosenHeap = FindHeap(heapName);
     }
 

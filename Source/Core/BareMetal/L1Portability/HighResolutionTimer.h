@@ -37,7 +37,7 @@
 #include "TimeStamp.h"
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
+//#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -71,7 +71,7 @@ namespace MARTe {
          * @return the current frequency of the cpu.
          */
         inline uint64 Frequency();
-
+#if 0
         /**
          * @brief Converts HighResolutionTimer ticks to time in seconds.
          * @param[in] tStop is the final ticks number.
@@ -79,15 +79,7 @@ namespace MARTe {
          * @return the time elapsed in seconds
          */
         inline float64 TicksToTime(uint64 tStop, uint64 tStart = 0);
-
-        /**
-         * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
-         * @see TimeValues.
-         * @param[out] date is a TimeValues structure which must be filled by this method.
-         * @return true if the operating system calls returns with no errors.
-         */
-        inline bool GetTimeStamp(TimeStamp &date);
-
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -99,18 +91,13 @@ namespace MARTe {
         inline float64 Period() {
             return OSInitializer::period;
          }
-
+#if 0
         inline float64 TicksToTime(const uint64 tStop,
                                    const uint64 tStart) {
             uint64 dT = (tStop - tStart);
             return static_cast<float64>(dT) * Period();
         }
-
-        inline bool GetTimeStamp(TimeStamp &date) {
-            return TimeStamp::GetTimeStamp(date);
-        }
-
-
+#endif
     }
 }
 #endif /* HIGHRESOLUTIONTIME_H_ */

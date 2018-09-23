@@ -35,7 +35,9 @@
 #include "ErrorType.h"
 #include "HighResolutionTimer.h"
 #include "Sleep.h"
-#include "TimeoutType.h"
+#include "MicroSeconds.h"
+#include "Ticks.h"
+#include "OSInitializer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -78,8 +80,8 @@ public:
      * the timeout expires before the FastPost().
      * @pre Reset is called to lower the barrier.
      */
-    ErrorManagement::ErrorType FastWait(const TimeoutType &timeout = TTInfiniteWait,
-                                        const uint32 sleepTimeUsec = 1000) const;
+    ErrorManagement::ErrorType FastWait(const Ticks &timeout = Ticks::Infinite,
+                                        const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us)) const;
 
     /**
      * @brief Posts the semaphore raising the spin-lock barrier.
@@ -99,8 +101,8 @@ public:
      * @return ErrorManagement::NoError if the spin-lock is set by a FastPost(), ErrorManagement::Timeout if
      * the timeout expires before the FastPost().
      */
-    ErrorManagement::ErrorType FastResetWait(const TimeoutType &timeout = TTInfiniteWait,
-                                             const uint32 sleepTimeUsec = 1000);
+    ErrorManagement::ErrorType FastResetWait(const Ticks &timeout = Ticks::Infinite,
+    		                                 const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us));
  
 private:
 

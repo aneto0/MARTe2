@@ -58,7 +58,7 @@ DoubleBufferedStream::DoubleBufferedStream() :
     }
 }
 
-DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
+DoubleBufferedStream::DoubleBufferedStream(const MilliSeconds &timeoutIn) :
         BufferedStreamI(),
         readBuffer(this),
         writeBuffer(this) {
@@ -166,8 +166,8 @@ bool DoubleBufferedStream::Read(char8 * const output,
 
 bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size,
-                                const TimeoutType &timeout){
-    TimeoutType prevTimeout=GetTimeout();
+                                const MilliSeconds &timeout){
+    MilliSeconds prevTimeout=GetTimeout();
     SetTimeout(timeout);
     bool ret=Read(output, size);
     SetTimeout(prevTimeout);
@@ -235,8 +235,8 @@ bool DoubleBufferedStream::Write(const char8 * const input,
 
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size,
-                                 const TimeoutType &timeout) {
-    TimeoutType prevTimeout = GetTimeout();
+                                 const MilliSeconds &timeout) {
+    MilliSeconds prevTimeout = GetTimeout();
     SetTimeout(timeout);
     bool ret = Write(input, size);
     SetTimeout(prevTimeout);
@@ -271,11 +271,11 @@ uint32 DoubleBufferedStream::GetWriteBufferSize() const {
     return writeBuffer.GetBufferSize();
 }
 
-TimeoutType DoubleBufferedStream::GetTimeout() const {
+MilliSeconds DoubleBufferedStream::GetTimeout() const {
     return readBuffer.GetTimeout();
 }
 
-void DoubleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+void DoubleBufferedStream::SetTimeout(const MilliSeconds &timeoutIn) {
     readBuffer.SetTimeout(timeoutIn);
     writeBuffer.SetTimeout(timeoutIn);
 }

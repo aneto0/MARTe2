@@ -62,7 +62,7 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
 
         //check reply flag
         if (!messageToTest->IsReply()) {
-            REPORT_ERROR_STATIC(ErrorManagement::Warning, "The message caught is not a reply %s", messageToTest.operator ->()->GetName());
+            COMPOSITE_REPORT_ERROR(ErrorManagement::Warning, "The message caught is not a reply ", messageToTest.operator ->()->GetName());
             ret.warning = true;
         }
         HandleReplyMessage(messageToTest);
@@ -76,23 +76,21 @@ ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::ConsumeMessage(Refe
 
 }
 
-ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const TimeoutType &maxWait,
+ErrorManagement::ErrorType ReplyMessageCatcherMessageFilter::Wait(const Ticks &maxWait,
                                                                   const uint32 pollingTimeUsec) {
-    ErrorManagement::ErrorType err(true);
+    ErrorManagement::ErrorType ret;
+    uint64 endT = HighResolutionTimer::Counter() + maxWait.GetTimeRaw();
 
-    uint64 start = HighResolutionTimer::Counter();
-    float32 pollingTime = static_cast<float32>(pollingTimeUsec);
-    pollingTime *= static_cast<float32>(1.0e-6);
+    MicroSeconds pollingTime(pollingTimeUsec,Units::us);
 
-    while ((err.ErrorsCleared()) && (!caught)) {
+    while ((ret) && (!caught)) {
         Sleep::NoMore(pollingTime);
-        if (maxWait != TTInfiniteWait) {
-            uint64 deltaT = HighResolutionTimer::Counter() - start;
-            err.timeout = (deltaT > maxWait.HighResolutionTimerTicks());
+        if (maxWait.IsValid()) {
+            ret.timeout = (HighResolutionTimer::Counter() > endT);
         }
     }
 
-    return err;
+    return ret;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12] symbol available to classes that specialise this method*/

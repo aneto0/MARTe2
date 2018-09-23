@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TimeoutType.h"
+#include "MilliSeconds.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -170,7 +170,7 @@ public:
      */
     virtual bool Read(char8 * const output,
             uint32 & size,
-            const TimeoutType &timeout) = 0;
+            const MilliSeconds &timeout) = 0;
 
     /**
      * @brief Writes from a const char8* buffer to the stream.
@@ -191,7 +191,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
             uint32 & size,
-            const TimeoutType &timeout) = 0;
+            const MilliSeconds &timeout) = 0;
 
     /**
      * @brief Gets the size of the stream.

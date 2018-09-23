@@ -36,7 +36,6 @@
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "BufferedStreamI.h"
-#include "TimeoutType.h"
 #include "StringHelper.h"
 #include "AnyType.h"
 #include "StreamStringIOBuffer.h"
@@ -127,14 +126,14 @@ public:
      * with infinite timeout.
      * @see StreamI::Read(*).
      */
-    virtual bool Read(char8 * const output, uint32 & size, const TimeoutType &timeout);
+    virtual bool Read(char8 * const output, uint32 & size, const MilliSeconds &timeout);
 
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Write(*)
      * with infinite timeout.
      * @see StreamI::Write(*)
      */
-    virtual bool Write(const char8 * const input, uint32 & size, const TimeoutType &timeout);
+    virtual bool Write(const char8 * const input, uint32 & size, const MilliSeconds &timeout);
 
     /**
      * @brief Queries if the stream is writable.

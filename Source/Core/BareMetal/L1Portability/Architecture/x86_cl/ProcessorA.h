@@ -104,7 +104,7 @@ uint32 Model() {
     return model;
 }
 
-const char8 *VendorId() {
+CCString VendorId() {
 
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
