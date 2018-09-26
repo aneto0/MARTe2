@@ -34,7 +34,6 @@
 #include "ClassRegistryDatabase.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorLoggerExample.h"
-#include "JsonParser.h"
 #include "Matrix.h"
 #include "Object.h"
 #include "ObjectRegistryDatabase.h"
@@ -43,7 +42,6 @@
 #include "StandardParser.h"
 #include "StreamString.h"
 #include "Vector.h"
-#include "XMLParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

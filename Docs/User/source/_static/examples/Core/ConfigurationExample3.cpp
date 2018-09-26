@@ -158,7 +158,7 @@ ControllerEx1	() {
 		if (ok) {
 			ok = data.Read("Gain2", lowGains.gain2);
 			if (ok) {
-				REPORT_ERROR(ErrorManagement::Information, "Gains.Low.Gain1 = %f", lowGains.gain2);
+				REPORT_ERROR(ErrorManagement::Information, "Gains.Low.Gain2 = %f", lowGains.gain2);
 			}
 			else {
 			}
@@ -187,7 +187,7 @@ ControllerEx1	() {
 		if (ok) {
 			ok = data.Read("Gain2", highGains.gain2);
 			if (ok) {
-				REPORT_ERROR(ErrorManagement::Information, "Gains.High.Gain1 = %f", highGains.gain2);
+				REPORT_ERROR(ErrorManagement::Information, "Gains.High.Gain2 = %f", highGains.gain2);
 			}
 			else {
 				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gain2");
@@ -359,7 +359,7 @@ void LoadXml() {
 	using namespace MARTe;
 	using namespace MARTe2Tutorial;
 
-	//Parse the configuration using the standard parser
+	//Parse the configuration using the XML parser
 	StreamString configurationXml = ""
 			"<Gains>\n"
 			"    <Low>\n"
@@ -409,7 +409,7 @@ void LoadJson() {
 	using namespace MARTe;
 	using namespace MARTe2Tutorial;
 
-	//Parse the configuration using the standard parser
+	//Parse the configuration using the JSON parser
 	StreamString configurationJson = ""
 			"\"Gains\": {\n"
 			"   \"Low\": {\n"
