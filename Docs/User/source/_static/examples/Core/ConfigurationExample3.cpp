@@ -161,6 +161,7 @@ ControllerEx1	() {
 				REPORT_ERROR(ErrorManagement::Information, "Gains.Low.Gain2 = %f", lowGains.gain2);
 			}
 			else {
+				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gains.Low.Gain2");
 			}
 		}
 		if (ok) {
