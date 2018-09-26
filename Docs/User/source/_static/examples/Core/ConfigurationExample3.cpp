@@ -152,7 +152,7 @@ ControllerEx1	() {
 				REPORT_ERROR(ErrorManagement::Information, "Gains.Low.Gain1 = %f", lowGains.gain1);
 			}
 			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gain1");
+				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gains.Low.Gain1");
 			}
 		}
 		if (ok) {
@@ -181,7 +181,7 @@ ControllerEx1	() {
 				REPORT_ERROR(ErrorManagement::Information, "Gains.High.Gain1 = %f", highGains.gain1);
 			}
 			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gain1");
+				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gains.High.Gain1");
 			}
 		}
 		if (ok) {
@@ -190,7 +190,7 @@ ControllerEx1	() {
 				REPORT_ERROR(ErrorManagement::Information, "Gains.High.Gain2 = %f", highGains.gain2);
 			}
 			else {
-				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gain2");
+				REPORT_ERROR(ErrorManagement::ParametersError, "Could not read the Gains.High.Gain2");
 			}
 		}
 		if (ok) {
