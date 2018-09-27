@@ -245,9 +245,16 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
                     }
                     if (ret) {
                         ret = (thisSignalNumberOfDimensions == defaultValueType.GetNumberOfDimensions());
+                        if (!ret) {
+                            if (thisSignalNumberOfDimensions == 1u) {
+                                if (defaultValueType.GetNumberOfDimensions() == 0u) {
+                                    ret = (defaultValueType.GetNumberOfElements(0u) == 1u);
+                                }
+                            }
+                        }
                     }
                     if (ret) {
-                        thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
+                        thisSignal.SetNumberOfDimensions(defaultValueType.GetNumberOfDimensions());
                     }
                     else {
                         REPORT_ERROR(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal %s", signalName);

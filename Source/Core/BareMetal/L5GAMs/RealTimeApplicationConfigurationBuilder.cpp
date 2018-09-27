@@ -1380,6 +1380,10 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                                     if (ret) {
                                         ret = (defVal.GetNumberOfElements(0u) == numberOfElements);
                                     }
+                                    else if (numberOfElements == 1u){
+                                        //To avoid the problem of 0 dimensions with 1 element vs 1 dimension with 1 element
+                                        ret = (defVal.GetNumberOfElements(0u) == 1u);
+                                    }
                                 }
                                 else {
                                     REPORT_ERROR_STATIC(ErrorManagement::InitialisationError, "Default value of signal %s in %s must be defined as a vector for multi-dimensional variables",
@@ -1391,7 +1395,7 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                                     if (ret) {
                                         AnyType at = AnyType(signalTypeDescriptor, 0u, ptr);
 
-                                        at.SetNumberOfDimensions(usedDimensions);
+                                        at.SetNumberOfDimensions(defValDims);
                                         at.SetNumberOfElements(0u, numberOfElements);
 
                                         ret = parser.Parse();
