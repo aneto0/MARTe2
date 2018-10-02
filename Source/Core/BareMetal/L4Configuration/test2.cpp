@@ -344,8 +344,6 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
             errM.Append(vd2.GetModifiers());
             errM.Append('}');
 			REPORT_ERROR(err,errM.GetList());
-
-
         }
     }
 
@@ -401,9 +399,11 @@ ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
 }
 
 ErrorManagement::ErrorType Check1(AnyType at,CCString expression, CCString typeCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
-    ErrorManagement::ErrorType ok;
+
+	ErrorManagement::ErrorType ok;
 	ok = at.MultipleDereference(expression);
 	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
+//printf ("<<%s>>\n",at.GetFullVariableDescriptor().GetModifiers());
 
 	// creates a clone
 	Reference atc;
@@ -516,6 +516,7 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 
 	ok = at.MultipleDereference(expression);
 	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
+//printf ("<<%s>>\n",at.GetFullVariableDescriptor().GetModifiers());
 
 	Reference atc;
 	if (ok && clone){
@@ -523,6 +524,8 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 
 		if (atc.IsValid()){
 			atc.ToAnyType(at);
+//printf ("<<%s>>\n",at.GetFullVariableDescriptor().GetModifiers());
+
 		} else {
 			ok.fatalError = true;
 			REPORT_ERROR(ok,"Cloning of variable failed");
@@ -557,11 +560,11 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 
 
     if (!ok){
-    	DynamicCString errM;
-    	errM.Append(expression.GetList());
-    	errM.Append(" --> ");
-		contentCheck.ToString(errM);
-		REPORT_ERROR(ok,errM.GetList());
+    	DynamicCString resultS;
+		at.ToString(resultS);
+    	DynamicCString referenceS;
+    	contentCheck.ToString(referenceS);
+		COMPOSITE_REPORT_ERROR(ok,referenceS.GetList()," != ","clone:",resultS.GetList());
 
 		if (expectFail){
 	    	printf("OK! Failed as expected - see log");
@@ -885,6 +888,7 @@ void Test(){
     CHECK2(at,".CStringZTAVar[0]","CCString","uno",12,8,true);
     CHECK2(at,".CStringZTAVar[2]","CCString","tre",12,8,true);
     CHECK2(at,".CStringZTAVar[2][2]","const char8","e",1,0,true);
+//return;
     CHECK1(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712,false/* cloning changes type*/);
     CHECK1(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656,true/* cloning changes to const Vector*/);
     CHECK1(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144,false);
@@ -983,6 +987,28 @@ void Test(){
     zz = ao8;
     xx = zz;
 	PrintType(xx);printf("\n");
+
+	printf("test of GetSummaryTypeDescriptor\n");
+	{
+
+		int pippo[8]= {1,2,3,4,5,6,7,8};
+		AnyType pippoAT(pippo);
+		VariableDescriptor pippoVD = pippoAT.GetFullVariableDescriptor();
+		uint32 pippoSZ;
+		pippoVD.GetSummaryTypeDescriptor(&pippoSZ);
+
+		printf("pippo size = %i\n",pippoSZ);
+
+		Vector<int32> pippa(32);
+		AnyType pippaAT(pippa);
+		VariableDescriptor pippaVD = pippaAT.GetFullVariableDescriptor();
+		uint32 pippaSZ;
+		pippaVD.GetSummaryTypeDescriptor(&pippaSZ);
+
+		printf("pippa size = %i\n",pippaSZ);
+
+	}
+
 
 }
 }

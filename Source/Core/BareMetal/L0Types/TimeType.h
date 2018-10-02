@@ -87,7 +87,7 @@ public:
 	inline baseType 	GetTimeRaw() const ;
 
 	/**
-	 *  @return  the max value of the raw time
+	 *  @return  the max value of the raw time (before special codes)
 	 */
 	static inline baseType 	GetMaxRawValue() ;
 
@@ -170,13 +170,13 @@ public:
 	 * constant negative
 	 */
 	static const TimeType<baseType,unitType> Negative;
-private:
 
 	/**
 	 * Returns 0 for a valid number or infiniteCodeOffset,negativeCodeOffset
 	 */
 	inline uint8 GetCode() const;
 
+private:
 
 	/**
 	 * Contains the time information expressed in the units specified
@@ -207,6 +207,8 @@ private:
 	static const uint8 TTSubtractionCodeMap[5][5];
 	static const uint8 TTAdditionCodeMap[5][5];
 
+	static const baseType maxRawValue;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -214,10 +216,14 @@ private:
 /*---------------------------------------------------------------------------*/
 
 template<typename baseType,class unitType>
-const TimeType<baseType,unitType> TimeType<baseType,unitType>::Infinite(GetMaxRawValue() + infinite,Units::raw);
+const baseType TimeType<baseType,unitType>::maxRawValue = TypeCharacteristics<baseType>::MaxValue()-spareCodes;
 
 template<typename baseType,class unitType>
-const TimeType<baseType,unitType> TimeType<baseType,unitType>::Negative(GetMaxRawValue() + negative,Units::raw);
+const TimeType<baseType,unitType> TimeType<baseType,unitType>::Infinite(maxRawValue + infinite,Units::raw);
+
+template<typename baseType,class unitType>
+const TimeType<baseType,unitType> TimeType<baseType,unitType>::Negative(maxRawValue+ negative,Units::raw);
+
 
 /*
  *  Maps Code combination to code
@@ -251,14 +257,16 @@ baseType TimeType<baseType,unitType>::GetTimeRaw() const {
 
 template<typename baseType,class unitType>
 uint8 TimeType<baseType,unitType>::GetCode() const {
-	uint8 ret = 0;
-	if (time > GetMaxRawValue()){}
-	return time-spareCodes;
+	uint8 ret = valid;
+	if (time >= maxRawValue){
+		ret = time - maxRawValue;
+	}
+	return ret;
 }
 
 template<typename baseType,class unitType>
 baseType TimeType<baseType,unitType>::GetMaxRawValue()  {
-	return TypeCharacteristics<baseType>::MaxValue()-spareCodes;
+	return maxRawValue;
 }
 
 template<typename baseType,class unitType>
@@ -301,7 +309,7 @@ TimeType<baseType,unitType>::TimeType(bT time,const uT &units){
 		if (temp < 0.0){
 	        *this = Negative;
 	    } else
-		if (temp > static_cast<double>(GetMaxRawValue())){
+		if (temp >= static_cast<double>(maxRawValue+1)){
 	        *this = Infinite;
 	    } else {
 	        this->time = static_cast<baseType>(temp);
@@ -315,8 +323,7 @@ template<typename bT, class uT>
 	if (tt.IsValid()){
 		*this = TimeType<baseType,unitType>(tt.GetTimeRaw(),tt.GetUnits());
 	} else {
-		uint8 delta =  (TimeType<bT,uT>::GetMaxRawValue() - tt.GetTimeRaw());
-		time = TimeType<baseType,unitType>::GetMaxRawValue() - delta;
+		time = maxRawValue + tt.GetCode();
 	}
 }
 
@@ -330,7 +337,7 @@ template<typename bT, class uT>
 TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator+=(const TimeType<bT,uT> &tt){
 	TimeType<baseType,unitType> t(tt);
 	if (!IsValid() || !tt.IsValid()){
-		time = GetMaxRawValue() +  TTAdditionCodeMap[GetCode()][tt.GetCode()];
+		time = maxRawValue +  TTAdditionCodeMap[GetCode()][tt.GetCode()];
 	} else {
 		baseType ts = time + t.time;
 		if ((ts < time ) && (ts < t.time)){
@@ -347,7 +354,7 @@ template<typename bT, class uT>
 TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator-=(const TimeType<bT,uT> &tt){
 	TimeType<baseType,unitType> t(tt);
 	if (!IsValid() || !tt.IsValid()){
-		time = GetMaxRawValue() +  TTSubtractionCodeMap[GetCode()][tt.GetCode()];
+		time = maxRawValue +  TTSubtractionCodeMap[GetCode()][tt.GetCode()];
 	} else
 		if (time >= t.time){
 			time -= t.time;

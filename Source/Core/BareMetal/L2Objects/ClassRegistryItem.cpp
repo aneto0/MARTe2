@@ -229,8 +229,6 @@ ClassMember const *ClassRegistryItem::FindMember(CCString memberName) {
 		}
 	}
 	return found;
-
-
 }
 
 ClassMember const *ClassRegistryItem::FindMember(uint32 index) {

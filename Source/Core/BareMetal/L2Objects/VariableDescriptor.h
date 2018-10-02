@@ -58,6 +58,9 @@ class Reference;
 
 namespace MARTe {
 
+// TODO implement COMPRESS_MODIFIERS
+// TODO fix ToString & ToStringPrivate
+ #define COMPRESS_MODIFIERS
 
 /**
  * @brief full description of the type of a variable including modifiers
@@ -187,12 +190,27 @@ public:
 
     /**
      * @brief provides a typeDescriptor for the overall variable.
-     * @details only simple variables are detailed here.
+     * @details only provides a shallow description of a variable as limited by the TypeDescriptor.
      * Including all variants of CStrings that are detailed as CCString.
      * T*,Vector<>,Array<> are all seen as GenericPointers
+     * @param[out] dimensionSize if the layer has an associated dimension it is returned in dimensionSize
      * @return the summary type descriptor
      */
-    TypeDescriptor GetSummaryTypeDescriptor() const;
+    TypeDescriptor GetSummaryTypeDescriptor(uint32 *dimensionSize = NULL_PTR(uint32 *)) const;
+
+    /**
+     * @brief returns the number of dimensions of a variable
+     * @details delves into a variable counting the number of dimensions. It also returns the size of each dimensions
+     * it delves as deep as specified by depth. T*,Vector<>,Array<> are all seen as GenericPointers
+     * @param[in] ptr is the pointer to the variable
+     * @param[in] sizes is the pointer to a vector of uint32 larger than the value of depth. Upon return will contain
+     * the size of each dimensions. If a dimensions has a variable size its size is reported as zero. For instance
+     * Vector<int> a[N] will be reported as {N,0} as the size of each Vector may be different
+     * @param[in,out] depth specifies the max number of dimensions to examine. Upon return will contain the number of
+     * dimensions encountered if not more than originally specified in depth
+     * @return the summary type descriptor of the last level that has not been explored.
+     */
+    TypeDescriptor GetVariableDimensions(const uint8 *ptr,uint32 &depth,uint32 *sizes) const;
 
     /**
      * @brief getter for modifiers
@@ -552,7 +570,9 @@ void VariableDescriptor::Match(Matrix<T> * mat) {
 
 template<typename T>
 void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
-	AddModifiersLayerConst('P', 0);
+//#ifndef COMPRESS_MODIFIERS
+//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
+//#endif
 	AddModifiersLayerConst('Z', 0);
 
     T *pp = NULL;
@@ -561,7 +581,9 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
 
 template<typename T >
 void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
-	AddModifiersLayerConst('P', 0);
+//#ifndef COMPRESS_MODIFIERS
+//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
+//#endif
 	AddModifiersLayerConst('D', 0);
 
     T *pp = NULL;
@@ -570,7 +592,9 @@ void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
 
 template<typename T, uint32 sz >
 void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
-	AddModifiersLayerConst('P', 0);
+//#ifndef COMPRESS_MODIFIERS
+//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
+//#endif
 	AddModifiersLayerConst('S', sz);
 
     T *pp = NULL;

@@ -44,6 +44,13 @@ namespace MARTe {
 
 namespace ErrorManagement {
 
+template <class T1>
+inline void CompositeReportError(const ErrorType &code,
+                         	 	 	 	 	 T1 part1,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
 template <class T1,class T2>
 inline void CompositeReportError(const ErrorType &code,
                          	 	 	 	 	 T1 part1,
@@ -98,6 +105,19 @@ inline void CompositeReportError(const ErrorType &code,
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template <class T1>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
 
 template <class T1,class T2>
 void ErrorManagement::CompositeReportError(const ErrorType &code,
@@ -196,8 +216,8 @@ void ErrorManagement::CompositeReportError(const ErrorType &code,
 
 
 
-#define COMPOSITE_REPORT_ERROR(code,part1,...)															  \
-MARTe::ErrorManagement::CompositeReportError(code,part1, __VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+#define COMPOSITE_REPORT_ERROR(code,...)															  \
+MARTe::ErrorManagement::CompositeReportError(code,__VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
 
 

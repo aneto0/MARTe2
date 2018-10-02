@@ -484,7 +484,11 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 			if (ret){
 				mods.Append('A');
 				mods.Append(matrixRowSize);
-				mods.Append("PA");
+//#if defined( COMPRESS_MODIFIERS)
+				mods.Append("F");
+//#else
+//				mods.Append("PA");
+//#endif
 				mods.Append(vectorSize);
 				dataPtr = auxPtr;
 			}

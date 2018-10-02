@@ -60,7 +60,6 @@ namespace MARTe{
  */
 const uint32 defaultAllocationSize = 256*256;
 
-
 void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 	if (modifier != '\0'){
 		switch (modifier){
@@ -82,12 +81,29 @@ void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 			}
 			typeDescriptor.dataIsConstant = false;
 		}break;
-
 		default:{
 
 		}
 		}
-		modifiers.Append(modifier);
+
+//#if defined (COMPRESS_MODIFIERS)
+		if (modifier == 'A'){
+			uint32 sz = modifiers.GetSize();
+			if (( sz > 0 ) && (modifiers.GetList()[sz-1] == 'P')){
+				modifiers.GetList()[sz-1] = 'F';
+			} else
+			if (( sz > 0 ) && (modifiers.GetList()[sz-1] == 'p')){
+				modifiers.GetList()[sz-1] = 'f';
+			} else {
+				modifiers.Append(modifier);
+			}
+		} else {
+			modifiers.Append(modifier);
+		}
+//#else
+//		modifiers.Append(modifier);
+//#endif
+
 		if (size > 0) modifiers.Append(size);
 	}
 }
@@ -190,6 +206,8 @@ static inline ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowN
 	return ret;
 }
 
+
+
 /**
  * extracts information about a layer
  * updates the layer string pointer
@@ -209,9 +227,222 @@ static inline void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 
 		}
 	}
 }
+//#if 1
+TypeDescriptor VariableDescriptor::GetVariableDimensions(const uint8 *ptr,uint32 &depth,uint32 *sizes) const {
+    uint32 maxDepth = depth;
+    depth = 0;
+	CCString modifiersCopy = modifiers;
+    char8 modifier  = '\0';
+    uint32 size = 0;
+    TypeDescriptor td;
 
+    bool finished = false;
+
+    while ((depth < maxDepth) && (!finished)){
+        GetLayerInfo(modifiersCopy,modifier,size );
+
+    	switch (modifier){
+    	case '\0':{
+    		finished = true;
+    	}break;
+    	case 'P':
+    	case 'p':{
+   			finished = true;
+   			td = GenericPointer;
+    	}break;
+    	case 'M':
+    	case 'm':{
+
+    		// only at first level we read the size from memory.
+    		// this is because the size is unique only at this level
+			if (depth == 0){
+				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
+				sizes[depth++] = pm->GetNumberOfRows();
+	    		if (depth < maxDepth){
+    	    		sizes[depth++] = pm->GetNumberOfColumns();
+	    		}
+			} else {
+	    		sizes[depth++] = 0;
+	    		if (depth < maxDepth){
+		    		// size = 0 means undertermined
+    	    		sizes[depth++] = 0;
+	    		}
+			}
+    	}break;
+    	case 'V':
+    	case 'v':{
+    		// only at first level we read the size from memory.
+    		// this is because the size is unique only at this level
+			if (depth == 0){
+				const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
+				sizes[depth++] = pv->GetNumberOfElements();
+			} else {
+	    		// size = 0 means undertermined
+	    		sizes[depth++] = 0;
+			}
+    	}break;
+    	case 'A':{
+       		sizes[depth++] = size;
+    	}break;
+    	case 'd':
+    	case 'D':
+    	case 'z':
+    	case 'Z':
+    	case 's':
+    	case 'S':{
+    		// only at first level we read the size from memory.
+    		// this is because the size is unique only at this level
+			if (depth == 0){
+				ErrorManagement::ErrorType ret = RedirectP(ptr);
+				CONDITIONAL_REPORT_ERROR(ret," redirection failed");
+
+				// TODO get size from next layer
+				//sizes[depth++] = ZeroTerminatedArrayGetSize(ptr, n);
+
+				// get the size
+			} else {
+	    		// size = 0 means undertermined
+	    		sizes[depth++] = 0;
+			}
+    	}break;
+
+    	default:{
+    		td = InvalidType(0);
+    		COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ",modifier);
+    	}
+    	}
+    }
+
+    return td;
+}
+/*
+#else
+TypeDescriptor VariableDescriptor::GetVariableDimensions(const uint8 *ptr,uint32 &depth,uint32 *sizes) const {
+    uint32 maxDepth = depth;
+    depth = 0;
+	CCString modifiersCopy = modifiers;
+    char8 modifier  = '\0';
+    uint32 size = 0;
+    TypeDescriptor td;
+
+    bool isPointer = false;
+    bool finished = false;
+
+    while ((depth < maxDepth) && (!finished)){
+        GetLayerInfo(modifiersCopy,modifier,size );
+
+    	switch (modifier){
+    	case '\0':{
+    		finished = true;
+    	}break;
+    	case 'P':
+    	case 'p':{
+    		if (isPointer){
+    			finished = true;
+    			td = GenericPointer;
+    		} else {
+        		isPointer = true;
+    		}
+    	}break;
+    	case 'M':
+    	case 'm':{
+    		if (isPointer){
+    			finished = true;
+    			td = GenericPointer;
+    		} else {
+    			if (depth == 0){
+    				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(ptr);
+    				sizes[depth++] = pm->GetNumberOfRows();
+    	    		if (depth < maxDepth){
+        	    		sizes[depth++] = pm->GetNumberOfColumns();
+    	    		}
+    			} else {
+    	    		sizes[depth++] = 0;
+    	    		if (depth < maxDepth){
+        	    		sizes[depth++] = 0;
+    	    		}
+    			}
+    		}
+    	}break;
+    	case 'V':
+    	case 'v':{
+    		if (isPointer){
+    			finished = true;
+    			td = GenericPointer;
+    		} else {
+    			if (depth == 0){
+    				const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
+    				sizes[depth++] = pv->GetNumberOfElements();
+    			} else {
+    	    		sizes[depth++] = 0;
+    			}
+    		}
+    	}break;
+    	case 'A':{
+#if defined (COMPRESS_MODIFIERS)
+    		if (isPointer){
+    			finished = true;
+    			td = GenericPointer;
+    		} else {
+        		sizes[depth++] = size;
+    		}
+#else
+    		sizes[depth++] = size;
+#endif
+    	}break;
+    	case 'd':
+    	case 'D':
+    	case 'z':
+    	case 'Z':
+    	case 's':
+    	case 'S':{
+#if defined (COMPRESS_MODIFIERS)
+    		if (isPointer){
+    			finished = true;
+    			td = GenericPointer;
+    		} else {
+#else
+    		if (!isPointer){
+        		td = InvalidType(0);
+    			finished = true;
+    		} else {
+#endif
+    			if (depth == 0){
+    				ErrorManagement::ErrorType ret = RedirectP(ptr);
+    				CONDITIONAL_REPORT_ERROR(ret," redirection failed");
+
+    				// todo get size from next layer
+    				//sizes[depth++] = ZeroTerminatedArrayGetSize(ptr, n);
+
+
+    				// get the size
+    			} else {
+    	    		sizes[depth++] = 0;
+    			}
+    		}
+
+    	}break;
+
+    	default:{
+    		td = InvalidType(0);
+            REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
+    	}
+    	}
+    }
+
+    return td;
+}
+#endif
+*/
+/*
+ * Array --> type + size
+ * Vector --> type + size
+ * pointer to array --> type + size
+ * ZTA --> type + size
+ *
+ */
 // used externally 4 times
-TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
+TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor(uint32 *dimensionSize) const {
     CCString modifiersCopy = modifiers;
     char8 firstModifier  = '\0';
     char8 nextModifier  = '\0';
@@ -230,17 +461,24 @@ TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const {
     		td = GenericPointer;
 
     		if (nextModifier == 0){
+    			// TODO Do we really need to distinguish this?
     			td = PointerType;
     		}
+
+    		// TODO get dimensions for PA PZ PD etc...
     	}break;
     	case 'V':
     	case 'v':
     	case 'M':
     	case 'm':{
     		td = GenericPointer;
+    		// TODO get dimensions
     	}break;
     	case 'A':{
     		td = GenericArray;
+    		if (dimensionSize != NULL_PTR(uint32 *)){
+    			*dimensionSize = size;
+    		}
     	}break;
 
     	default:{
@@ -372,78 +610,112 @@ inline  DimensionInfoElement &DimensionHandler::Access(uint32 index) {
 	return StaticList<DimensionInfoElement>::Access(index);
 }
 
-static const CCString terminals = "VMvm";
-static const CCString zTerminals = "ZDSzds";
+// supports both expanded and compressed representation
+// pA and PA are converted in f and F and at the same time f and F are handled correctly
+//#if defined (COMPRESS_MODIFIERS)
+static const CCString terminals = "VMvmZDSzds";
+static const CCString ATerminals = "AFf";
+//#else
+//static const CCString terminals = "VMvm";
+//static const CCString zTerminals = "ZDSzds";
+//#endif
 
 DimensionHandler::DimensionHandler(CCString modifiers,TypeDescriptor tdIn,bool stopAtFirstTerminal){
 	td = tdIn;
 	char8 modifier;
 	uint32 size;
 	GetLayerInfo(modifiers,modifier,size);
-	char8 pointer = '\0';
+//#if !defined (COMPRESS_MODIFIERS)
+//	char8 pointer = '\0';
+//#endif
 	bool finished = false;
 	while (!finished){
 		if (modifier == '\0'){
-			if (pointer != '\0') {
-				td = PointerType;
-				if (!IsUpperCase(pointer)){
-					td.dataIsConstant = true;
-				}
-			}
+//#if !defined (COMPRESS_MODIFIERS)
+//			if (pointer != '\0') {
+//				td = PointerType;
+//				if (!IsUpperCase(pointer)){
+//					td.dataIsConstant = true;
+//				}
+//			}
+//#endif
 			this->Add(DimensionInfoElement('\0',1));
 			finished = true;
 		} else
-		if (modifier == 'A'){
-			if (pointer == 'P'){
-				this->Add(DimensionInfoElement('F',size));
-			} else
-			if (pointer == 'p'){
-				this->Add(DimensionInfoElement('f',size));
-			} else {
-				this->Add(DimensionInfoElement('A',size));
-			}
-			pointer = '\0';
-		} else {
+//#if defined (COMPRESS_MODIFIERS)
+		if (ATerminals.In(modifier)){
+			this->Add(DimensionInfoElement(modifier,size));
+		}
+//#else
+//		if (modifier == 'A'){
+//			if (pointer == 'P'){
+//				this->Add(DimensionInfoElement('F',size));
+//			} else
+//			if (pointer == 'p'){
+//				this->Add(DimensionInfoElement('f',size));
+//			} else {
+//				this->Add(DimensionInfoElement('A',size));
+//			}
+//			pointer = '\0';
+//		} else
+//#endif
+		{
 			// !!! Actual pointers are not processed here! --> transform into a modified Td
 			if ((modifier == 'P') || (modifier == 'p')){
-				// PP double indirection is a terminal case
-				if (pointer != '\0') {
-					td = PointerType;
-					if (!IsUpperCase(pointer)){
-						td.dataIsConstant = true;
-					}
-					this->Add(DimensionInfoElement('\0',1));
-					finished = true;
-				} else {
-					pointer = modifier;
+//#if defined (COMPRESS_MODIFIERS)
+				td = PointerType;
+				if (!IsUpperCase(modifier)){
+					td.dataIsConstant = true;
 				}
+				this->Add(DimensionInfoElement('\0',1));
+				finished = true;
+//#else
+//				// PP double indirection is a terminal case
+//				if (pointer != '\0') {
+//					td = PointerType;
+//					if (!IsUpperCase(pointer)){
+//						td.dataIsConstant = true;
+//					}
+//					this->Add(DimensionInfoElement('\0',1));
+//					finished = true;
+//				} else {
+//					pointer = modifier;
+//				}
+//#endif
 			} else
 			if (terminals.In(modifier)){
-				// PV PM double indirection is a terminal case
-				if ((pointer != '\0')|| stopAtFirstTerminal) {
-					td = PointerType;
-					this->Add(DimensionInfoElement('\0',1));
-					finished = true;
-				} else {
-					this->Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
-				}
-			} else
-			if (zTerminals.In(modifier)){
-				// only PZ PD PS are allowed and required
-				if (pointer != '\0') {
-					pointer = '\0';
-					if (stopAtFirstTerminal) {
-						td = PointerType;
-						this->Add(DimensionInfoElement('\0',1));
-						finished = true;
-					} else {
-						this->Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
-					}
-				} else {
-					td = InvalidType(0);
-				}
-			}
 
+//#if defined (COMPRESS_MODIFIERS)
+				this->Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
+//#else
+//				// PV PM double indirection is a terminal case
+//				if ((pointer != '\0')|| stopAtFirstTerminal) {
+//					td = PointerType;
+//					this->Add(DimensionInfoElement('\0',1));
+//					finished = true;
+//				} else {
+//					this->Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
+//				}
+//#endif
+			}
+//#if !defined (COMPRESS_MODIFIERS)
+//			else
+//			if (zTerminals.In(modifier)){
+//				// only PZ PD PS are allowed and required
+//				if (pointer != '\0') {
+//					pointer = '\0';
+//					if (stopAtFirstTerminal) {
+//						td = PointerType;
+//						this->Add(DimensionInfoElement('\0',1));
+//						finished = true;
+//					} else {
+//						this->Add(DimensionInfoElement(modifier,SaturatedInteger<uint32>::Indeterminate()));
+//					}
+//				} else {
+//					td = InvalidType(0);
+//				}
+//			}
+//#endif
 		}
 		if (!finished){
 			GetLayerInfo(modifiers,modifier,size);
@@ -1161,8 +1433,13 @@ void VDCloner::GetOutputModifiers(DynamicCString &dc) const {
 		}break;
 		case 'F':
 		case 'f':{
-			dc.Append("pA");
+//#if defined (COMPRESS_MODIFIERS)
+			dc.Append("f");
+//#else
+//			dc.Append("pA");
+//#endif
 			dc.Append(size);
+
 		}break;
 		default:{
 			if (variableVectors.In(type)){
@@ -1272,6 +1549,8 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 /*      uses GetLayerInfo                                                                         */
 /**************************************************************************************************/
 
+
+static const CCString zeroTerMods="zZsSdD";
 /**
  * This function does a double recursion in order to process the pre-pending(*) and post-pending([]) modifiers
  */
@@ -1285,59 +1564,37 @@ static ErrorManagement::ErrorType ToStringPrivate(CCString modifiers,const TypeD
 	uint32 size;
 	GetLayerInfo(modifierString,modifier,size );
 
-	if ((modifier == 'P') || (modifier == 'p')){
-		// skip P/p layer if followed by one of ZDSzds
-		const CCString zeroTerMods="zZsSdD";
-		char8 nextModifier = modifierString[0];
-		if ( zeroTerMods.In(nextModifier)){
-			GetLayerInfo(modifierString,modifier,size );
-			if (modifierString[0] == '\0'){
-				if ((modifier == 'Z')||(modifier == 'z')){
-					if (typeDescriptor.SameAs(Character8Bit)){
-						if (modifier == 'z'){
-							string.Append("const ");
-						}
-						string.Append("CString");
-						return ret;
-					} else
-					if (typeDescriptor.SameAs(ConstCharacter8Bit)){
-						if (modifier == 'z'){
-							string.Append("const ");
-						}
-						string.Append("CCString");
-						return ret;
-					}
-				}
-				if ((modifier == 'D')||(modifier == 'd')){
-					if (typeDescriptor.SameAs(Character8Bit) ){
-						if (modifier == 'd'){
-							string.Append("const ");
-						}
-						string.Append("DynamicCString");
-						return ret;
-					}
-				}
-				if ((modifier == 'S')||(modifier == 's')){
-					if (typeDescriptor.SameAs(Character8Bit)){
-						if (modifier == 'd'){
-							string.Append("const ");
-						}
-						string.Append("StaticCString<");
-						string.Append(size);
-						string.Append('>');
-						return ret;
-					}
-				}
-			}
-		}
-	}
+//#if !defined (COMPRESS_MODIFIERS)
+//	if ((modifier == 'P') || (modifier == 'p')){
+//		// skip P/p layer if followed by one of ZDSzds
+//		char8 nextModifier = modifierString[0];
+//
+//		if ( zeroTerMods.In(nextModifier)){
+//			GetLayerInfo(modifierString,modifier,size );
+//		}
+//	}
+//#endif
+
 
 	// go ahead and process in reverse pointers and arrays
-	if ((modifier=='A') || (modifier=='P')|| (modifier=='p')){
+	if ((modifier=='A') || (modifier=='P') || (modifier=='p') || (modifier=='F') || (modifier=='f')){
 		ret = ToStringPrivate(modifiers,typeDescriptor,string,modifierString,false,priority);
 
 		// process A and P in reverse
 		if (ret){
+#if 1
+			if (modifier == 'P'){
+				string.Append(" *");
+			} else
+			if (modifier == 'F'){
+				string.Append("( *");
+			} else
+			if (modifier == 'f'){
+				string.Append("( * const");
+			}
+
+#else
+
 			if (modifier == 'A'){
 				priority = 1;
 			} else
@@ -1354,8 +1611,14 @@ static ErrorManagement::ErrorType ToStringPrivate(CCString modifiers,const TypeD
 					string.Append('(');
 				}
 				string.Append(" * const");
+			} else
+			if (modifier == 'F'){
+				string.Append("( *");
+			} else
+			if (modifier == 'f'){
+				string.Append("( * const");
 			}
-
+#endif
 			// if this was the start of the sequence now do the forward section to add the vectors[]
 			if (start){
 				priority = 1;
@@ -1364,18 +1627,29 @@ static ErrorManagement::ErrorType ToStringPrivate(CCString modifiers,const TypeD
 				while (!end  && ret){
 
 					switch (modifier){
+					case 'f':
+					case 'F':{
+						string.Append(')');
+						string.Append('[');
+						string.Append(size);
+						string.Append(']');
+					}break;
 					case 'A':{
+#if 0
 						if (priority == 0){
 							priority = 1;
 							string.Append(')');
 						}
+#endif
 						string.Append('[');
 						string.Append(size);
 						string.Append(']');
 					}break;
 					case 'p':
 					case 'P':{
+#if 0
 						priority = 0;
+#endif
 					}break;
 					case '\0':
 					case 'm':
@@ -1463,6 +1737,8 @@ static ErrorManagement::ErrorType ToStringPrivate(CCString modifiers,const TypeD
 	return ret;
 }
 
+
+
 ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
 	ErrorManagement::ErrorType  ret;
 	if (rawFormat){
@@ -1520,9 +1796,56 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	if (ret){
 		GetLayerInfo(modifierString,modifier,size);
 
+//#if defined (COMPRESS_MODIFIERS)
+		const CCString redirSet = "pPsSzZdDfF";
+		if (redirSet.In(modifier)){
+			const uint8 **pp = (const uint8 **)(pointer);
+			const uint8 *p = *pp;
+			ret.exception = !MemoryCheck::Check(p);
+		    CONDITIONAL_REPORT_ERROR(ret, "bad pointer");
+		    if (ret){
+				pointer = p;
+		    }
+		}
+//#endif
+		if (ret){
 	 	switch (modifier){
+//#if defined (COMPRESS_MODIFIERS)
+		case 'f':
+	 	case 'F':{
+			ret.outOfRange = (index >= size);
+	        CONDITIONAL_REPORT_ERROR(ret, "index >= size");
+
+	 		// need fulllayerSize of the remaining full layer
+	 		// note that next layer cannot be ZzDdSs but only A or a terminator like PpVvMm and 0
+	 		if (ret){
+
+				DimensionSize layerSize = LayerSize(modifierString,typeDescriptor);
+				DimensionSize step = layerSize * index;
+
+				// check saturation
+				uint32 step32;
+				ret = step.ToNumber(step32);
+		        CONDITIONAL_REPORT_ERROR(ret, "step >= 32bit");
+
+				if (ret){
+					pointer = pointer + step32;
+					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+				}
+	 		}
+	 	}break;
+//#endif
 	 	case 'p':
 	 	case 'P':{
+//#if defined (COMPRESS_MODIFIERS)
+ 			ret.outOfRange = (index != 0);
+	        CONDITIONAL_REPORT_ERROR(ret, "index!=0 for pointer to var");
+
+			if (ret){
+				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+			}
+/*
+			#else
 			const uint8 **pp = (const uint8 **)(pointer);
 			const uint8 *p = *pp;
 			ret.exception = !MemoryCheck::Check(p);
@@ -1548,9 +1871,11 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 					if (ret){
 						modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 					}
-	 			}
+	 			}// default case
 	 			}// end switch
 			} // ret is not false
+#endif
+*/
 	 	}break; // end Pp case
 	 	case 'A':{
 			ret.outOfRange = (index >= size);
@@ -1567,14 +1892,11 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				uint32 step32;
 				ret = step.ToNumber(step32);
 		        CONDITIONAL_REPORT_ERROR(ret, "step >= 32bit");
-//COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "LayerSize = ",layerSize.GetData());
-//COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Step = ",step.GetData(),"Step32 = ",step32,"Index = ",index);
 
 				if (ret){
 					pointer = pointer + step32;
 					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 				}
-
 			}
 	 	}break;
 	 	case 's':
@@ -1718,8 +2040,8 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	 		ret.internalSetupError = true;
 	        REPORT_ERROR(ret, "unmapped modifier");
 	 	}
-	 	}
-
+	 	}// end case
+		}// end if
 	}
 
 	return ret;
