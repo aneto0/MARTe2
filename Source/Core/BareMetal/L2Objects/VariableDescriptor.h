@@ -60,7 +60,7 @@ namespace MARTe {
 
 // TODO implement COMPRESS_MODIFIERS
 // TODO fix ToString & ToStringPrivate
- #define COMPRESS_MODIFIERS
+//#define COMPRESS_MODIFIERS
 
 /**
  * @brief full description of the type of a variable including modifiers
