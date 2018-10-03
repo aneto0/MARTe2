@@ -57,7 +57,7 @@ ObjectRegistryDatabaseMessageFilter::~ObjectRegistryDatabaseMessageFilter() {
 ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
     ErrorManagement::ErrorType ret;
     ret.parametersError = !messageToTest.IsValid();
-    CONDITIONAL_REPORT_ERROR(ret, "Invalid messageToTest");
+    REPORT_ERROR(ret, "Invalid messageToTest");
 
     ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
     ReferenceT<StructuredDataI> params;
@@ -110,14 +110,14 @@ ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(R
             else {
                 ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr);
                 ret.fatalError = !rcNode.IsValid();
-                CONDITIONAL_REPORT_ERROR(ret, "The configuration shall be applied to a ReferenceContainer");
+                REPORT_ERROR(ret, "The configuration shall be applied to a ReferenceContainer");
                 if (ret) {
                     rootNodePtr = rcNode.operator ->();
                 }
             }
             if (ret) {
                 ret.parametersError = !params.IsValid();
-                CONDITIONAL_REPORT_ERROR(ret, "No configuration data found in the message");
+                REPORT_ERROR(ret, "No configuration data found in the message");
             }
             if (ret) {
                 ReferenceT<ReferenceContainer> rc(buildNow);

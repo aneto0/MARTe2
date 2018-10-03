@@ -32,11 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+//#include "ErrorManagement.h"
 #include "CompilerTypes.h"
 #include "ZeroTerminatedArray.h"
 #include "HeapManager.h"
-#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,13 +44,14 @@
 namespace MARTe {
 
 
-
 /**
  * @brief Describes a zero-terminated TArray().
  *
  * @warning This class is only a wrapper of a pointer. The implementation assumes that the pointer
  * in input is a zero-terminated TArray() and does not check if it is not zero-terminated or NULL.
  * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
+ *
+ * @warning Try not use any other class in this header to avoid loop inclusions.
  */
 template<typename T,uint32 granularity>
 class DynamicZeroTerminatedArray: protected ZeroTerminatedArray<T> {
@@ -154,7 +154,8 @@ bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest
 bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest);
 bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCopy,
 		        /*uint32 maxAppendSize,*/void *&dest, void const  *src);
-
+void DZTFree(void *&dest);
+//void *DZTMalloc(uint32 size);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -177,7 +178,8 @@ T *&DynamicZeroTerminatedArray<T,granularity>::TArray(){
 #include <stdio.h>
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
-    const uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
+	const uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
+//	VoidArray() = DZTMalloc(necessarySize*sizeof(T));
     VoidArray() = HeapManager::Malloc(necessarySize*sizeof(T));
     // if ok write the terminator
     if (TArray() != NULL_PTR(T *)) {
@@ -199,13 +201,9 @@ inline void DynamicZeroTerminatedArray<T,granularity>::operator= (const DynamicZ
 	DZTInitCopy(data.GetSize(),sizeof(T),granularity,VoidArray(),src);
 }
 
-
 template<typename T,uint32 granularity>
 DynamicZeroTerminatedArray<T,granularity>::~DynamicZeroTerminatedArray(){
-	bool ok = HeapManager::Free(VoidArray());
-    if (!ok) {
-        REPORT_ERROR(ErrorManagement::FatalError, "DynamicZeroTerminatedArray: Failed HeapManager::Free()");
-    }
+	DZTFree(VoidArray());
 }
 
 template<typename T,uint32 granularity>

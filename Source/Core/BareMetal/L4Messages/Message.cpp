@@ -89,11 +89,11 @@ bool Message::Initialise(StructuredDataI &data) {
     bool ret = (ReferenceContainer::Initialise(data));
     if (ret) {
         ret = data.Read("Destination", destination);
-        CONDITIONAL_REPORT_ERROR(ret, "Destination not set");
+        REPORT_ERROR(ret, "Destination not set");
 
         if (ret) {
             ret = data.Read("Function", function);
-            CONDITIONAL_REPORT_ERROR(ret, "Function not set");
+            REPORT_ERROR(ret, "Function not set");
         }
         if (ret) {
             maxWait = MilliSeconds::Infinite;

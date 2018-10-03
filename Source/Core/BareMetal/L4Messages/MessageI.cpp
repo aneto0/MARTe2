@@ -162,12 +162,12 @@ ErrorManagement::ErrorType MessageI::WaitForReply(const ReferenceT<Message> &mes
     }
 
     ok.parametersError = !message.IsValid();
-    CONDITIONAL_REPORT_ERROR(ok, "Invalid message.");
+    REPORT_ERROR(ok, "Invalid message.");
 
     if (ok) {
         // no reply expected. why am I here?
         ok.communicationError = !message->ExpectsReply();
-        CONDITIONAL_REPORT_ERROR(ok, "No reply expected as it should.");
+        REPORT_ERROR(ok, "No reply expected as it should.");
     }
 
     bool isReply = false;

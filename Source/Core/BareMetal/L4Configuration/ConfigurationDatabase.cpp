@@ -75,7 +75,7 @@ void ConfigurationDatabase::Purge(ReferenceContainer &purgeList) {
 ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
 	ErrorManagement::ErrorType ret;
 	ret.parametersError = !object.IsValid();
-	CONDITIONAL_REPORT_ERROR(ret,"parameter is an invalid reference");
+	REPORT_ERROR(ret,"parameter is an invalid reference");
 
 	if (ret){
 		// result is not needed
@@ -95,7 +95,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::Write(CCString name, const Any
 	Reference ref(value);
 
 	ret.fatalError = !ref.IsValid();
-	CONDITIONAL_REPORT_ERROR(ret,"cannot create reference");
+	REPORT_ERROR(ret,"cannot create reference");
 
 	if (ret){
 		ref->SetName(name);
@@ -119,7 +119,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path,Reference &
 	SAVE_NODE_POSITION()
 
 	ret = MoveRelative(path);
-	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path )
+	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 
     if (ret) {
     	if (borrow){
@@ -143,7 +143,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyT
 	SAVE_NODE_POSITION()
 
 	ret = MoveRelative(path);
-	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path )
+	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 	AnyType at;
 
     if (ret) {
@@ -166,27 +166,27 @@ ErrorManagement::ErrorType  ConfigurationDatabase::Copy(StructuredDataI &destina
     	foundNode = currentNode->Get(i);
         if (foundNode.IsValid()) {
         	ret = destination.CreateRelative(foundNode->GetName());
-        	COMPOSITE_REPORT_ERROR(ret,"Failed to Create node ",foundNode->GetName())
+        	COMPOSITE_REPORT_ERROR(ret,"Failed to Create node ",foundNode->GetName());
 
         	if (ret){
         		ret = MoveRelative(foundNode->GetName());
-            	COMPOSITE_REPORT_ERROR(ret,"Failed to Move to ",foundNode->GetName())
+        		COMPOSITE_REPORT_ERROR(ret,"Failed to Move to ",foundNode->GetName());
         	}
 
         	if (ret) {
                 // go recursively !
                 ret = Copy(destination);
-            	CONDITIONAL_REPORT_ERROR(ret,"Failed to Copy recursively")
+            	REPORT_ERROR(ret,"Failed to Copy recursively");
             }
 
         	if (ret){
         		ret = MoveToAncestor(1u);
-            	CONDITIONAL_REPORT_ERROR(ret,"Failed to move back one level")
+            	REPORT_ERROR(ret,"Failed to move back one level");
         	}
 
         	if (ret){
         		ret = destination.MoveToAncestor(1u);
-            	CONDITIONAL_REPORT_ERROR(ret,"Failed to move back one level destination")
+            	REPORT_ERROR(ret,"Failed to move back one level destination");
         	}
         }
         else {
@@ -214,13 +214,13 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveAbsolute(CCString path) {
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
     ret.invalidOperation = (resultSingle.Size() == 0u);
-    COMPOSITE_REPORT_ERROR(ret,"Cannot find absolute path ",path)
+    COMPOSITE_REPORT_ERROR(ret,"Cannot find absolute path ",path);
 
     if (ret) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
         ret = !container.IsValid();
-        COMPOSITE_REPORT_ERROR(ret,"Absolute path ",path," not found or not a node")
+        COMPOSITE_REPORT_ERROR(ret,"Absolute path ",path," not found or not a node");
         if (ret) {
             currentNode = container;
         }
@@ -237,13 +237,13 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
     currentNode->Find(resultSingle, filter);
 
     ret.invalidOperation = (resultSingle.Size() == 0u);
-    COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path)
+    COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path);
 
     if (ret) {
         //Invalidate move to leafs
         ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
         ret = !container.IsValid();
-        COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node")
+        COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node");
         if (ret) {
             currentNode = container;
         }
@@ -272,12 +272,12 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor(const uint32 ge
         rootNode->Find(resultPath, filter);
 
         ret.invalidOperation = (resultPath.Size() == 0u);
-        CONDITIONAL_REPORT_ERROR(ret,"Cannot find myself from root")
+        REPORT_ERROR(ret,"Cannot find myself from root");
 
         if (ret) {
             int32 newPositionIdx = (static_cast<int32>(resultPath.Size()) - 1) - static_cast<int32>(generations);
             ret.fatalError= !(newPositionIdx >= -1);
-            COMPOSITE_REPORT_ERROR(ret,"Moving back too many steps: ",generations)
+            COMPOSITE_REPORT_ERROR(ret,"Moving back too many steps: ",generations);
 
             if (ret) {
                 if (newPositionIdx == -1) {
@@ -315,12 +315,12 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         } else {
         	ReferenceT < ReferenceContainer > container(buildNow);
         	ret.fatalError = !container.IsValid();
-            CONDITIONAL_REPORT_ERROR(ret,"container(buildNow) failed")
+            REPORT_ERROR(ret,"container(buildNow) failed");
 
         	if (ret){
                 container->SetName(token);
                 ret.fatalError = !currentNode->Insert(container);
-                CONDITIONAL_REPORT_ERROR(ret,"Node->Insert() failed")
+                REPORT_ERROR(ret,"Node->Insert() failed");
         	}
 
             if (ret) {
@@ -370,7 +370,7 @@ ErrorManagement::ErrorType  ConfigurationDatabase::Delete(CCString name) {
 
     if (found) {
         ret.fatalError = !currentNode->Delete(foundReference);
-        CONDITIONAL_REPORT_ERROR(ret,"Node.Delete() failed")
+        REPORT_ERROR(ret,"Node.Delete() failed");
     }
     // not really an error. Not reporting
     ret.notCompleted = !found;
@@ -384,11 +384,11 @@ ErrorManagement::ErrorType  ConfigurationDatabase::AddToCurrentNode(Reference no
 	ReferenceT < ReferenceContainer > nodeToAdd = node;
 
 	ret.parametersError = !nodeToAdd.IsValid();
-    CONDITIONAL_REPORT_ERROR(ret,"node is not a valid ReferenceContainer")
+    REPORT_ERROR(ret,"node is not a valid ReferenceContainer");
 
     if (ret) {
         ret.fatalError = !currentNode->Insert(nodeToAdd);
-        CONDITIONAL_REPORT_ERROR(ret,"Node->Insert failed")
+        REPORT_ERROR(ret,"Node->Insert failed");
     }
     return ret;
 }

@@ -31,6 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 #include "StandardHeap.h"
 #ifndef LINT
 #include <string.h>
@@ -135,8 +136,7 @@ void *StandardHeap::Realloc(void *&data,
 }
 
 /*lint -e{925} cast pointer to pointer required */
-void *StandardHeap::Duplicate(const void * const data,
-                              uint32 size) {
+void *StandardHeap::Duplicate(const void * const data,uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
 

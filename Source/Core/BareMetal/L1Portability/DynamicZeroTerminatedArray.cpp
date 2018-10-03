@@ -33,6 +33,7 @@
 
 #include "DynamicZeroTerminatedArray.h"
 #include "Memory.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,6 +43,15 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
+
+
+void DZTFree(void *&dest){
+
+	bool ok = HeapManager::Free(dest);
+    if (!ok) {
+        REPORT_ERROR(ErrorManagement::FatalError, "DynamicZeroTerminatedArray: Failed HeapManager::Free()");
+    }
+}
 
 bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest,void const *src){
     bool ret = true;

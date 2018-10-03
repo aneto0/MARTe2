@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 #include "ClassRegistryIndex.h"
 #include "GlobalObjectsDatabase.h"
 

@@ -99,7 +99,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	objectSize 			= typeIn.StorageSize();
 	isString 			= typeIn.IsCharString();
 	ret.parametersError = (objectSize == 0);
-	CONDITIONAL_REPORT_ERROR(ret,"Type with 0 size");
+	REPORT_ERROR(ret,"Type with 0 size");
 
 	if (!(isString || typeIn.IsBasicType())){
 		ret.parametersError = !(isString || typeIn.IsBasicType());
@@ -108,7 +108,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	if (ret && !isString){
 		converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
 		ret.unsupportedFeature = (converter == NULL);
-		CONDITIONAL_REPORT_ERROR(ret,"Cannot find type converter");
+		REPORT_ERROR(ret,"Cannot find type converter");
 	}
 
 	if (ret){
@@ -126,7 +126,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 	ErrorManagement::ErrorType ret;
 
 	ret.internalStateError = (!Started());
-	CONDITIONAL_REPORT_ERROR(ret,"AddElement and status not started");
+	REPORT_ERROR(ret,"AddElement and status not started");
 
 	bool newRow = false;
 	if (ret){
@@ -176,7 +176,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 
 			uint8 *pointer;
 			ret = pageFile.WriteReserveAtomic(pointer,neededSize);
-			CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
+			REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 
 			if (ret){
 				Memory::Copy(pointer,typeStringRepresentation.GetList(),neededSize);
@@ -194,25 +194,25 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 				// in case of new vector check if there is space for one based on the size of the previous
 				// close page otherwise
 				ret = pageFile.CheckAndTrimPage(estimatedSizeNeeded);
-				CONDITIONAL_REPORT_ERROR(ret,"CheckAndTrimPage Failed");
+				REPORT_ERROR(ret,"CheckAndTrimPage Failed");
 
 				if (ret){
 //printf("CheckAndNewPage()\n"); //TODO
 					ret = pageFile.CheckAndNewPage();
-					CONDITIONAL_REPORT_ERROR(ret,"CheckAndNewPage Failed");
+					REPORT_ERROR(ret,"CheckAndNewPage Failed");
 				}
 
 			}
 			uint8 *pointer;
 			if (ret ){
 				ret = pageFile.WriteReserveExtended(pointer,neededSize);
-				CONDITIONAL_REPORT_ERROR(ret,"WriteReserveExtended Failed");
+				REPORT_ERROR(ret,"WriteReserveExtended Failed");
 			}
 
 			if (ret){
 				// queue type to memory
 				ret = converter->Convert(pointer,reinterpret_cast<const uint8 *>(&typeStringRepresentation),1);
-				CONDITIONAL_REPORT_ERROR(ret,"converter->Convert Failed");
+				REPORT_ERROR(ret,"converter->Convert Failed");
 				//					ret = converter->Convert(	reinterpret_cast<uint8 *>(page.Address(pageWritePos)),reinterpret_cast<const uint8 *>(&typeStringRepresentation),1);
 			}
 		}
@@ -332,12 +332,12 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteFixedSizeEl(uint8 *&d
 	if (auxSize > 0){
 
 		ret = pageFile.WriteReserveAtomic(auxPtr,auxSize);
-		CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
+		REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 	}
 
 	if (ret){
 		ret = pageFile.CheckAndTrimPage();
-		CONDITIONAL_REPORT_ERROR(ret,"CheckAndTrimPage Failed");
+		REPORT_ERROR(ret,"CheckAndTrimPage Failed");
 	}
 
 
@@ -362,20 +362,20 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 
 	if (ret){
 		ret = pageFile.WriteReserveAtomic(dataPtr,CCStringTableSize);
-		CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
+		REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 		strings = reinterpret_cast<CCString *>(dataPtr);
 //printf ("dataPtr=%p\n",dataPtr); //TODO
 	}
 
 	if (ret  && (auxSize > 0)){
 		ret = pageFile.WriteReserveAtomic(auxPtr,auxSize);
-		CONDITIONAL_REPORT_ERROR(ret,"WriteReserveAtomic Failed");
+		REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 //printf ("auxPtr=%p\n",dataPtr); //TODO
 	}
 
 	if (ret){
 		ret = pageFile.CheckAndTrimPage();
-		CONDITIONAL_REPORT_ERROR(ret,"CheckAndTrimPage Failed");
+		REPORT_ERROR(ret,"CheckAndTrimPage Failed");
 	}
 
 	if (ret){
@@ -409,7 +409,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 	ErrorManagement::ErrorType  ret;
 
 	ret.fatalError = (!Finished());
-	CONDITIONAL_REPORT_ERROR(ret,"Not Finished");
+	REPORT_ERROR(ret,"Not Finished");
 
 	// points to data or to pointers to data (CCString)
 	uint8 *dataPtr = NULL;
@@ -423,13 +423,13 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 			// prepares pointers to actual strings - returns that as main data
 			// allocate Vector<> array in case of sparse matrices
 			ret = CompleteStringEl(dataPtr,auxSize,auxPtr);
-			CONDITIONAL_REPORT_ERROR(ret,"CompleteStringEl Failed");
+			REPORT_ERROR(ret,"CompleteStringEl Failed");
 		} else {
 			// Flip multi page data
 			// allocate Vector<> array in case of sparse matrices
 			// allocate array of pointers in case of multipage data
 			ret = CompleteFixedSizeEl(dataPtr,auxSize,auxPtr);
-			CONDITIONAL_REPORT_ERROR(ret,"CompleteFixedSizeEl Failed");
+			REPORT_ERROR(ret,"CompleteFixedSizeEl Failed");
 		}
 	}
 
@@ -438,7 +438,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReference(Reference &x){
 		// fills aux Data
 		// creates Object
 		ret = GetReferencePrivate(x, dataPtr, auxPtr,auxSize);
-		CONDITIONAL_REPORT_ERROR(ret,"GetReferencePrivate Failed");
+		REPORT_ERROR(ret,"GetReferencePrivate Failed");
 	}
 
 	if (!ret) {
@@ -466,7 +466,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 		// auxPtr not NULL means fragmented
 		if (auxPtr != NULL){
 			ret.internalSetupError = (auxSize != sizeof (void *) * matrixRowSize);
-			CONDITIONAL_REPORT_ERROR(ret,"auxSize is not adequate");
+			REPORT_ERROR(ret,"auxSize is not adequate");
 
 			// reorder the pages correctly to allow access to data
 			if (ret){
@@ -477,18 +477,14 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 					addressMap[i] = pageFile.CurrentReadPointer();
 
 					ret = pageFile.ConsumeReadAtomic(vectorByteSize);
-					CONDITIONAL_REPORT_ERROR(ret,"ConsumeReadAtomic failed");
+					REPORT_ERROR(ret,"ConsumeReadAtomic failed");
 				}
 			}
 
 			if (ret){
 				mods.Append('A');
 				mods.Append(matrixRowSize);
-//#if defined( COMPRESS_MODIFIERS)
 				mods.Append("F");
-//#else
-//				mods.Append("PA");
-//#endif
 				mods.Append(vectorSize);
 				dataPtr = auxPtr;
 			}
@@ -525,7 +521,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 				addressMap[i].InitVector(pageFile.CurrentReadPointer(),size);
 
 				ret = pageFile.ConsumeReadAtomic(vectorByteSize);
-				CONDITIONAL_REPORT_ERROR(ret,"ConsumeReadAtomic failed");
+				REPORT_ERROR(ret,"ConsumeReadAtomic failed");
 
 			}
 		}
@@ -562,7 +558,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 
 			mpor = ReferenceT<MemoryPageObject> (buildNow);
 			ret.outOfMemory = (!mpor.IsValid());
-			CONDITIONAL_REPORT_ERROR(ret,"MemoryPageObject construction failed");
+			REPORT_ERROR(ret,"MemoryPageObject construction failed");
 
 			if (ret){
 				mpor->Setup(type,mods,dataPtr,pageFile);

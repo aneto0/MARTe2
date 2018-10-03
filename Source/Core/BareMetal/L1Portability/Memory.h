@@ -118,7 +118,7 @@ inline ErrorManagement::ErrorType Memory::Copy(void* const destination, const vo
 
 	ret.parametersError = ((source == NULL) || (destination == NULL));
 
-	CONDITIONAL_REPORT_ERROR(ret,"Memory::Copy NULL parameters")
+	REPORT_ERROR(ret,"Memory::Copy NULL parameters");
 
 	if (ret){
         memcpy(destination, source, static_cast<size_t>(size));
@@ -132,7 +132,7 @@ inline ErrorManagement::ErrorType Memory::Compare(const void * const mem1,const 
 
 	ret.parametersError = ((mem1 == NULL) || (mem2 == NULL));
 
-	CONDITIONAL_REPORT_ERROR(ret,"Memory::Compare NULL parameters")
+	REPORT_ERROR(ret,"Memory::Compare NULL parameters");
 
 	if (ret){
         int32 temp = memcmp(mem1, mem2, static_cast<size_t>(size));
@@ -149,7 +149,7 @@ inline ErrorManagement::ErrorType Memory::GetOrder(const void * const mem1,const
 
 	ret.parametersError = ((mem1 == NULL) || (mem2 == NULL));
 
-	CONDITIONAL_REPORT_ERROR(ret,"Memory::Compare NULL parameters")
+	REPORT_ERROR(ret,"Memory::Compare NULL parameters");
 
 	if (ret){
         int32 temp = memcmp(mem1, mem2, static_cast<size_t>(size));
@@ -190,7 +190,7 @@ inline ErrorManagement::ErrorType Memory::Move(void * const destination, const v
 
 	ret.parametersError = ((destination == NULL) || (source == NULL));
 
-	CONDITIONAL_REPORT_ERROR(ret,"Memory::Move NULL parameters")
+	REPORT_ERROR(ret,"Memory::Move NULL parameters");
 
     if (ret) {
         ret = memmove(destination, source, static_cast<size_t>(size)) != NULL;
@@ -205,7 +205,7 @@ inline ErrorManagement::ErrorType Memory::Set(void * const mem,const char8 c,con
 
 	ret.parametersError = (mem == NULL);
 
-	CONDITIONAL_REPORT_ERROR(ret,"Memory::Set NULL parameters")
+	REPORT_ERROR(ret,"Memory::Set NULL parameters");
 
     if (ret) {
 

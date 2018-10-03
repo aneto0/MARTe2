@@ -72,13 +72,13 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const Ticks &timeout,co
 
     ErrorManagement::ErrorType ret;
 	ret.parametersError = !timeout.IsPositive();
-	CONDITIONAL_REPORT_ERROR(ret,"Invalid timeout")
+	REPORT_ERROR(ret,"Invalid timeout");
 
     while ((!Atomic::TestAndSet(flag))&& (ret)) {
         if (timeout.IsValid()) {
             uint64 ticks = HighResolutionTimer::Counter();
             ret.timeout = (ticks > ticksStop);
-            CONDITIONAL_REPORT_ERROR(ret, "FastPollingMutexSem: Timeout expired");
+            REPORT_ERROR(ret, "FastPollingMutexSem: Timeout expired");
         }
 
         if ((sleepTimeUsec.GetTimeRaw() > 0) && (ret)) {

@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 #include "TypeDescriptor.h"
 #include "FormatDescriptor.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */

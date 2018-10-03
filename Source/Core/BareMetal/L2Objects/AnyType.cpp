@@ -34,7 +34,7 @@
 #include "VariableDescriptor.h"
 #include "MemoryCheck.h"
 #include "ClassMember.h"
-#include "CompositeErrorManagement.h"
+#include "../L1Portability/CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -66,19 +66,19 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 
 	// check field
 	ret.invalidOperation = (field.GetSize()==0);
-	CONDITIONAL_REPORT_ERROR(ret,"empty field")
+	REPORT_ERROR(ret,"empty field");
 
 	// check pointer to object
 	if (ret){
 		ret.exception = !MemoryCheck::Check(pointer2Variable);
-		CONDITIONAL_REPORT_ERROR(ret,"variable pointer invalid")
+		REPORT_ERROR(ret,"variable pointer invalid");
 	}
 
 	// check if type is a structure
 	TypeDescriptor td = variableDescriptor.GetSummaryTypeDescriptor();
 	if (ret){
 		ret.invalidOperation = !td.isStructuredData;
-		COMPOSITE_REPORT_ERROR(ret,"cannot switch to ",field," in a non structured variable")
+		COMPOSITE_REPORT_ERROR(ret,"cannot switch to ",field," in a non structured variable");
 	}
 
 	// find structure documentation
@@ -86,14 +86,14 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	if (ret){
 		crd = ClassRegistryDatabase::Instance();
 		ret.internalSetupError = (crd == NULL_PTR(ClassRegistryDatabase *));
-		CONDITIONAL_REPORT_ERROR(ret,"Cannot access ClassRegistryDatabase")
+		REPORT_ERROR(ret,"Cannot access ClassRegistryDatabase");
 	}
 
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	if (ret){
 		cri = crd->Find(td);
 		ret.unsupportedFeature = (cri == NULL_PTR(ClassRegistryItem *));
-		CONDITIONAL_REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class")
+		REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class");
 	}
 
 	ClassMember const *cm = NULL_PTR(ClassMember const *);

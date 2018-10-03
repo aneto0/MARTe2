@@ -26,7 +26,6 @@
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
 
-#include "../L2Objects/ProgressiveTypeCreator.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -43,6 +42,7 @@
 #include "CLASSMEMBERREGISTER.h"
 #include "AnyObjectT.h"
 #include "SaturatedInteger.h"
+#include "ProgressiveTypeCreator.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -359,7 +359,7 @@ ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 stor
     if (ok){
         const VariableDescriptor &vd =  at.GetFullVariableDescriptor();
         ok = vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-    	CONDITIONAL_REPORT_ERROR(ok,"GetSize error");
+    	REPORT_ERROR(ok,"GetSize error");
     }
 
     if (ok){
@@ -394,7 +394,7 @@ ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
    	}
 
 	ok.comparisonFailure = !destinationString.isSameAs(contentCheck.GetList());
-	COMPOSITE_REPORT_ERROR(ok,"Values (",destinationString.GetList(),"!=",contentCheck.GetList())															  \
+	COMPOSITE_REPORT_ERROR(ok,"Values (",destinationString.GetList(),"!=",contentCheck.GetList());
     return ok;
 }
 
@@ -402,7 +402,7 @@ ErrorManagement::ErrorType Check1(AnyType at,CCString expression, CCString typeC
 
 	ErrorManagement::ErrorType ok;
 	ok = at.MultipleDereference(expression);
-	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
+	REPORT_ERROR(ok,"MultipleDereference error");
 //printf ("<<%s>>\n",at.GetFullVariableDescriptor().GetModifiers());
 
 	// creates a clone
@@ -428,12 +428,12 @@ ErrorManagement::ErrorType Check1(AnyType at,CCString expression, CCString typeC
 
         ErrorManagement::ErrorType ok2;
         ok2 = CheckType(at,typeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+    	REPORT_ERROR(ok2,"CheckType error");
 
     	ok.SetError(ok2);
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+    	REPORT_ERROR(ok2,"CheckSize error");
 
     	ok.SetError(ok2);
     }
@@ -456,7 +456,7 @@ ErrorManagement::ErrorType Check2(AnyType at,CCString expression,CCString typeCh
     ErrorManagement::ErrorType ok;
 
 	ok = at.MultipleDereference(expression);
-	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
+	REPORT_ERROR(ok,"MultipleDereference error");
 
 	Reference atc;
 	if (ok && clone){
@@ -481,17 +481,17 @@ ErrorManagement::ErrorType Check2(AnyType at,CCString expression,CCString typeCh
 	    ErrorManagement::ErrorType ok2;
 
 	    ok2 = CheckType(at,typeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+    	REPORT_ERROR(ok2,"CheckType error");
 
     	ok.SetError(ok2);
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+    	REPORT_ERROR(ok2,"CheckSize error");
 
     	ok.SetError(ok2);
 
     	ok2 = CheckContent(at,contentCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckContent error");
+    	REPORT_ERROR(ok2,"CheckContent error");
 
     	ok.SetError(ok2);
 	}
@@ -515,7 +515,7 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 	ErrorManagement::ErrorType ok;
 
 	ok = at.MultipleDereference(expression);
-	CONDITIONAL_REPORT_ERROR(ok,"MultipleDereference error");
+	REPORT_ERROR(ok,"MultipleDereference error");
 //printf ("<<%s>>\n",at.GetFullVariableDescriptor().GetModifiers());
 
 	Reference atc;
@@ -543,17 +543,17 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 	    ErrorManagement::ErrorType ok2;
 
 	    ok2 = CheckType(at,typeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckType error");
+    	REPORT_ERROR(ok2,"CheckType error");
 
     	ok.SetError(ok2);
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CheckSize error");
+    	REPORT_ERROR(ok2,"CheckSize error");
 
     	ok.SetError(ok2);
 
     	ok2=at.CompareWith(contentCheck);
-    	CONDITIONAL_REPORT_ERROR(ok2,"CompareWith error");
+    	REPORT_ERROR(ok2,"CompareWith error");
 
     	ok.SetError(ok2);
     }
@@ -564,7 +564,7 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 		at.ToString(resultS);
     	DynamicCString referenceS;
     	contentCheck.ToString(referenceS);
-		COMPOSITE_REPORT_ERROR(ok,referenceS.GetList()," != ","clone:",resultS.GetList());
+    	COMPOSITE_REPORT_ERROR(ok,referenceS.GetList()," != ","clone:",resultS.GetList());
 
 		if (expectFail){
 	    	printf("OK! Failed as expected - see log");
@@ -654,7 +654,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
-	CONDITIONAL_REPORT_ERROR(ret,"pfstc.Start failed");
+	REPORT_ERROR(ret,"pfstc.Start failed");
 
 	if (ret){
 		for (int j=0;(j<size1) && ret ;j++){
@@ -681,7 +681,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
 			if (ret){
 				ret = pfstc.EndVector();
-				CONDITIONAL_REPORT_ERROR(ret,"pfstc.EndVector failed");
+				REPORT_ERROR(ret,"pfstc.EndVector failed");
 			}
 		}
 	}
@@ -689,13 +689,13 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 	Reference aoi;
 	if (ret){
 		ret = pfstc.End();
-		CONDITIONAL_REPORT_ERROR(ret,"pfstc.End failed");
+		REPORT_ERROR(ret,"pfstc.End failed");
 	}
 
 	if (ret){
 		ret = pfstc.GetReference(aoi);
 		ret.fatalError = !aoi.IsValid();
-		CONDITIONAL_REPORT_ERROR(ret,"pfstc.GetReference failed");
+		REPORT_ERROR(ret,"pfstc.GetReference failed");
 
 		if (ret){
 			message.Append(aoi->GetClassRegistryItem()->GetClassName());
@@ -718,7 +718,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 		AnyType x;
 		aoi.ToAnyType(x);
 	    ret = x.CompareWith(at);
-		CONDITIONAL_REPORT_ERROR(ret,"Compare content fault");
+		REPORT_ERROR(ret,"Compare content fault");
 	}
 
 	if (!ret){
@@ -799,31 +799,31 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
 
 #define CHECK1(at,mod,type,size,store,clone)\
 ok = Check1(at,mod,type,size,store,clone);   \
-CONDITIONAL_REPORT_ERROR(ok,"*****Check1("  mod  ")Failed");
+REPORT_ERROR(ok,"*****Check1("  mod  ")Failed");
 
 #define CHECK2(at,mod,type,val,size,store,clone)\
 ok = Check2(at,mod,type,val,size,store,clone);   \
-CONDITIONAL_REPORT_ERROR(ok,"*****Check2(" mod ")Failed");
+REPORT_ERROR(ok,"*****Check2(" mod ")Failed");
 
 #define CHECK3(at,mod,type,val,size,store,clone)\
 ok = Check3(at,mod,type,val,size,store,clone);   \
-CONDITIONAL_REPORT_ERROR(ok,"*****Check3(" mod ")Failed");
+REPORT_ERROR(ok,"*****Check3(" mod ")Failed");
 
 #define CHECK3N(at,mod,type,val,size,store,clone)\
 ok = Check3(at,mod,type,val,size,store,clone,true);   \
-CONDITIONAL_REPORT_ERROR(ok,"......Check3N(" mod ")Failed as expected");
+REPORT_ERROR(ok,"......Check3N(" mod ")Failed as expected");
 
 #define CHECK4(type1, size1, size2,minSize2,type2,typeId)\
 ok = Check4<type1,size1,size2,minSize2,type2> (pfstc,typeId);\
-CONDITIONAL_REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
 
 #define CHECK4S(type1, size1, size2,typeId)\
 ok = Check4<type1,size1,size2> (pfstc,typeId);\
-CONDITIONAL_REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
 
 #define CHECK4R(type1, size1, size2,minSize2,typeId)\
 ok = Check4<type1,size1,size2,minSize2> (pfstc,typeId);\
-CONDITIONAL_REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
 
 
 //ok = Check4<type1, size1, size2,minSize2,type2,typeId> (pfstc,typeId);   \

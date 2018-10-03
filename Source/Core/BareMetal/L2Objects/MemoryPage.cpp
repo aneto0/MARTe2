@@ -21,7 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "CompositeErrorManagement.h"
+#include "../L1Portability/CompositeErrorManagement.h"
 #include "DynamicCString.h"
 #include "MemoryPageFile.h"
 
@@ -242,14 +242,7 @@ ErrorManagement::ErrorType MemoryPageFile::CheckAndNewPage(uint32 newPageSize){
 		ret = Allocate(newPageSize);
 	}
 //printf("CheckAndNewPage2 CPSZ=%i NPSZ=%i DPSZ=%i \n",CurrentPageSize(),newPageSize,defaultPageSize); // TODO
-	if (!ret){
-		COMPOSITE_REPORT_ERROR(ret,"CheckAndNewPage(",newPageSize,')')
-//		DynamicCString errs;
-//		errs.Append("CheckAndNewPage(");
-//		errs.Append(newPageSize);
-//		errs.Append(')');
-//		REPORT_ERROR(ret,errs.GetList());
-	}
+	COMPOSITE_REPORT_ERROR(ret,"CheckAndNewPage(",newPageSize,')');
 	return ret;
 }
 
@@ -268,7 +261,7 @@ ErrorManagement::ErrorType MemoryPageFile::PageGrow(uint32 amount){
 		ret = ReSize(newPageSize);
 	}
 
-	CONDITIONAL_REPORT_ERROR(ret,"PageGrow failed");
+	REPORT_ERROR(ret,"PageGrow failed");
 	return ret;
 }
 
@@ -282,7 +275,7 @@ ErrorManagement::ErrorType MemoryPageFile::WriteReserveAtomic( uint8 *&reservedB
 		}
 		if (pageWritePos > 0){
 			ret = ReSize(pageWritePos);
-			CONDITIONAL_REPORT_ERROR(ret,"Shrink Failed");
+			REPORT_ERROR(ret,"Shrink Failed");
 		}
 		if (ret){
 			ret = Allocate(defaultPageSize);
@@ -294,7 +287,7 @@ ErrorManagement::ErrorType MemoryPageFile::WriteReserveAtomic( uint8 *&reservedB
 		pageWritePos += numberOfBytes;
 	}
 
-	CONDITIONAL_REPORT_ERROR(ret,"ReserveAtomic failed");
+	REPORT_ERROR(ret,"ReserveAtomic failed");
 	return ret;
 }
 
@@ -315,7 +308,7 @@ ErrorManagement::ErrorType  MemoryPageFile::WriteReserveExtended(uint8 *&reserve
 			} else {
 //printf("CPSZ=%i NPSZ=%i DPSZ=%i NOB=%o\n",CurrentPageSize(),newPageSize,defaultPageSize,numberOfBytes); // TODO
 				ret = ReSize(newPageSize);
-				CONDITIONAL_REPORT_ERROR(ret,"Page Growth Failed");
+				REPORT_ERROR(ret,"Page Growth Failed");
 			}
 		}
 	}
@@ -387,7 +380,7 @@ ErrorManagement::ErrorType  MemoryPageFile::ConsumeReadAtomic(uint32 numberOfByt
 		}
 	}
 
-	CONDITIONAL_REPORT_ERROR(ret,"ConsumeReadAtomic failed");
+	REPORT_ERROR(ret,"ConsumeReadAtomic failed");
 	return ret;
 }
 

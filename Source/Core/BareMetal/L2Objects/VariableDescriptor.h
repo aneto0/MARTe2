@@ -58,9 +58,6 @@ class Reference;
 
 namespace MARTe {
 
-// TODO implement COMPRESS_MODIFIERS
-// TODO fix ToString & ToStringPrivate
-//#define COMPRESS_MODIFIERS
 
 /**
  * @brief full description of the type of a variable including modifiers
@@ -570,9 +567,6 @@ void VariableDescriptor::Match(Matrix<T> * mat) {
 
 template<typename T>
 void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
-//#ifndef COMPRESS_MODIFIERS
-//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
-//#endif
 	AddModifiersLayerConst('Z', 0);
 
     T *pp = NULL;
@@ -581,9 +575,6 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
 
 template<typename T >
 void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
-//#ifndef COMPRESS_MODIFIERS
-//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
-//#endif
 	AddModifiersLayerConst('D', 0);
 
     T *pp = NULL;
@@ -592,9 +583,6 @@ void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
 
 template<typename T, uint32 sz >
 void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
-//#ifndef COMPRESS_MODIFIERS
-//	AddModifiersLayerConst('P', 0);  // TODO propose eliminate
-//#endif
 	AddModifiersLayerConst('S', sz);
 
     T *pp = NULL;

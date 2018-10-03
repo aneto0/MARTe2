@@ -66,7 +66,7 @@ ErrorManagement::ErrorType FastPollingEventSem::FastWait(const Ticks &timeout,co
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = !timeout.IsPositive();
-	CONDITIONAL_REPORT_ERROR(ret,"Invalid timeout")
+	REPORT_ERROR(ret,"Invalid timeout");
 
     uint64 ticksSleep = timeout.GetTimeRaw();
     uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
