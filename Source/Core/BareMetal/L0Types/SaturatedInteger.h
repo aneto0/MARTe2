@@ -57,19 +57,19 @@ public:
 	 * @brief constructor.
 	 * @param special if 'I' the number is loaded with infinite, if 'i' with -infinite, with '\0' with zero, otherwise undeterminate
 	 */
-	SaturatedInteger(char8 special='\0');
+	inline SaturatedInteger(char8 special='\0');
 
 	/**
 	 * constructor
 	 */
 	template <typename T2>
-	SaturatedInteger(const T2 & in);
+	inline SaturatedInteger(const T2 & in);
 
 	/**
 	 * constructor
 	 */
 	template <typename T2>
-	SaturatedInteger(const SaturatedInteger<T2> & in);
+	inline SaturatedInteger(const SaturatedInteger<T2> & in);
 
 	/**
 	 * @brief true if the number is larger than maxint
@@ -140,22 +140,22 @@ public:
 	/**
 	 * @brief generates a +infinite
 	 */
-	static SaturatedInteger<T> PlusInfinite();
+	static inline SaturatedInteger<T> PlusInfinite();
 
 	/**
 	 * @brief generates a -infinite
 	 */
-	static SaturatedInteger<T> MinusInfinite();
+	static inline SaturatedInteger<T> MinusInfinite();
 
 	/**
 	 * @brief generates a not determinate
 	 */
-	static SaturatedInteger<T> Indeterminate();
+	static inline SaturatedInteger<T> Indeterminate();
 
 	/**
 	 * @brief generates a zero
 	 */
-	static SaturatedInteger<T> Zero();
+	static inline SaturatedInteger<T> Zero();
 private:
 	/**
 	 * The maximum value allowed for this number

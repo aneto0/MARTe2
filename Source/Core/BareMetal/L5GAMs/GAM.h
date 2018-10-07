@@ -165,7 +165,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetQualifiedName(StreamString &qualifiedName);
+    bool GetQualifiedName(DynamicCString &qualifiedName);
 
     /**
      * @brief Gets the name of the signal at position \a signalIdx.
@@ -176,7 +176,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalName(const SignalDirection direction, const uint32 signalIdx, StreamString &signalName);
+    bool GetSignalName(const SignalDirection direction, const uint32 signalIdx, DynamicCString &signalName);
 
     /**
      * @brief Gets the index of the signal with name \a signalIdx.
@@ -187,7 +187,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, const char8* const signalName);
+    bool GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, CCString signalName);
 
     /**
      * @brief Gets the DataSourceI name of the signal with name \a signalIdx.
@@ -198,7 +198,7 @@ public:
      * @pre
      *   The ConfiguredDatabase must be set
      */
-    bool GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, StreamString &dataSourceName);
+    bool GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, DynamicCString &dataSourceName);
 
     /**
      * @brief Gets the type of the signal at position \a signalIdx.

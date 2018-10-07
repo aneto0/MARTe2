@@ -26,15 +26,18 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+SPB=VariableDescriptorLib.x
+
+
 OBJSX=  TypeConversionManager.x \
 		SameTypeConversionFactory.x\
 		ClassRegistryDatabase.x \
 		VariableDescriptor.x\
-        AnyType.x \
-		Reference.x \
+                AnyType.x \
+ 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
-        StructuredDataI.x \
+                StructuredDataI.x \
 		Object.x \
 		IntrospectionTools.x \
 		ClassMethodInterfaceMapper.x\
@@ -50,13 +53,16 @@ OBJSX=  TypeConversionManager.x \
 		AnyObjectM.x \
 		ProgressiveTypeCreator.x
 
+#		VariableDescriptorHelper.x\
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../L1Portability -I../L0Types
+INCLUDES+=-I../L1Portability -I../L0Types -IVariableDescriptorLib
 
 LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
 
 
 all: $(OBJS) $(SUBPROJ)   \

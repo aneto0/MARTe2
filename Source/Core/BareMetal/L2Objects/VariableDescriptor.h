@@ -187,27 +187,41 @@ public:
 
     /**
      * @brief provides a typeDescriptor for the overall variable.
-     * @details only provides a shallow description of a variable as limited by the TypeDescriptor.
-     * Including all variants of CStrings that are detailed as CCString.
-     * T*,Vector<>,Array<> are all seen as GenericPointers
-     * @param[out] dimensionSize if the layer has an associated dimension it is returned in dimensionSize
+     * @details uses GetVariableDimensions with nOfDimensions= 0
+     * @see GetVariableDimensions
      * @return the summary type descriptor
      */
-    TypeDescriptor GetSummaryTypeDescriptor(uint32 *dimensionSize = NULL_PTR(uint32 *)) const;
+    inline TypeDescriptor GetSummaryTypeDescriptor() const;
 
     /**
-     * @brief returns the number of dimensions of a variable
+     * @brief measure the size of each dimensions of a variable
      * @details delves into a variable counting the number of dimensions. It also returns the size of each dimensions
-     * it delves as deep as specified by depth. T*,Vector<>,Array<> are all seen as GenericPointers
-     * @param[in] ptr is the pointer to the variable
-     * @param[in] sizes is the pointer to a vector of uint32 larger than the value of depth. Upon return will contain
+     * it delves as deep as specified by nOfDiemsions.
+     * simple variable are considered 0 dimension variables
+     * Vector<type> or type[] have 1 dimensions array<type> or type[][] have 2 dimensions
+     * combinations like Vector<type[]> are processed
+     * td describes the actual type of the variable only if all the dimensions have been parsed. otherwise returns GenericArray
+     * For instance a zero dim variable will be described correctly if nOfDimensions is >=0
+     * For instance a vector will be described completely if nOfDimensions is >=1.
+     * If nOfDimensions= 0 will be reported as a GenericArray and no size will be returned
+     * in case of a variable that a combination of array and pointers, the dimension scan will stop at the occurrence of the first pointer
+     * for Matrix, Vector, ZeroTerminatedArray, as their dimensions is not predetermined they will reported as size 0 unless
+     * they occur as the first dimension.
+     * @param[in] variablePtr is the pointer to the variable
+     * @param[in] dimensionSizes is the pointer to a vector of uint32 larger than the value of depth. Upon return will contain
      * the size of each dimensions. If a dimensions has a variable size its size is reported as zero. For instance
      * Vector<int> a[N] will be reported as {N,0} as the size of each Vector may be different
-     * @param[in,out] depth specifies the max number of dimensions to examine. Upon return will contain the number of
+     * @param[in,out] nOfDimensions specifies the max number of dimensions to examine. Upon return will contain the number of
      * dimensions encountered if not more than originally specified in depth
-     * @return the summary type descriptor of the last level that has not been explored.
+     * @param[in,out] td will be the actual variable type as seen at the last dimension explored
+     * @return parametersError if variablePtr or dimensionSizes are NULL; internalStateError if a
+     * ZeroTerminatedArray of elements that are too large is encountered
      */
-    TypeDescriptor GetVariableDimensions(const uint8 *ptr,uint32 &depth,uint32 *sizes) const;
+    ErrorManagement::ErrorType GetVariableDimensions(
+    		const void *		variablePtr,
+    		TypeDescriptor &	td,
+			uint32 &			nOfDimensions,
+			uint32 *			dimensionSizes) const;
 
     /**
      * @brief getter for modifiers
@@ -786,6 +800,12 @@ const char8 *VariableDescriptor::GetModifiers() const{
 	return modifiers.GetList();
 }
 
+inline TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const{
+    TypeDescriptor td =InvalidType(0);
+    uint32 nOfDimensions  = 0;
+    GetVariableDimensions(NULL,td,nOfDimensions,NULL);
+    return td;
+}
 
 
 

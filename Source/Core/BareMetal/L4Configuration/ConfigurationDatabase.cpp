@@ -116,23 +116,26 @@ ErrorManagement::ErrorType ConfigurationDatabase::Write(CCString name, const Any
 ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path,Reference &object,bool borrow){
 	ErrorManagement::ErrorType ret;
 
-	SAVE_NODE_POSITION()
+//	SAVE_NODE_POSITION()
 
-	ret = MoveRelative(path);
+//	ret = MoveRelative(path);
+
+	ReferenceT<ReferenceContainer> newNode;
+	ret = FindRelative(path,newNode);
 	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 
     if (ret) {
     	if (borrow){
-    		object = currentNode;
+    		object = newNode;
     	} else {
     		AnyType at;
-    		currentNode->ToAnyType(at);
+    		newNode->ToAnyType(at);
 
     		ret = at.Clone(object);
     	}
     }
 
-	RESTORE_NODE_POSITION()
+//	RESTORE_NODE_POSITION()
 
 	return ret;
 }
@@ -140,9 +143,12 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path,Reference &
 ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyType &value) {
 	ErrorManagement::ErrorType ret;
 
-	SAVE_NODE_POSITION()
+//	SAVE_NODE_POSITION()
 
-	ret = MoveRelative(path);
+//	ret = MoveRelative(path);
+
+	ReferenceT<ReferenceContainer> newNode;
+	ret = FindRelative(path,newNode);
 	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 	AnyType at;
 
@@ -151,10 +157,31 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyT
    		ret = at.CopyTo(value);
     }
 
-	RESTORE_NODE_POSITION()
+//	RESTORE_NODE_POSITION()
 
 	return ret;
 }
+
+ErrorManagement::ErrorType ConfigurationDatabase::GetVariableInformation(
+		CCString 			path,
+		TypeDescriptor &	td,
+		uint32 &			nOfDimensions,
+		uint32 *			dimensionSizes) const{
+
+	ErrorManagement::ErrorType ret;
+
+	ReferenceT<ReferenceContainer> newNode;
+	ret = FindRelative(path,newNode);
+	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
+
+	AnyType at;
+    if (ret) {
+    	newNode->ToAnyType(at);
+    	ret = at.GetVariableInformation(td,nOfDimensions,dimensionSizes);
+    }
+	return ret;
+}
+
 
 
 ErrorManagement::ErrorType  ConfigurationDatabase::Copy(StructuredDataI &destination) {
@@ -229,9 +256,38 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveAbsolute(CCString path) {
     return ret;
 }
 
+ErrorManagement::ErrorType ConfigurationDatabase::FindRelative(CCString path,ReferenceT<ReferenceContainer> &node)const {
+	ErrorManagement::ErrorType ret;
+
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
+    ReferenceContainer resultSingle;
+    currentNode->Find(resultSingle, filter);
+
+    ret.invalidOperation = (resultSingle.Size() == 0u);
+    COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path);
+
+    if (ret) {
+        //Invalidate move to leafs
+        ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
+        ret = !container.IsValid();
+        COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node");
+        if (ret) {
+            node = container;
+        }
+    }
+
+    return ret;
+}
+
 ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
 	ErrorManagement::ErrorType ret;
 
+	ReferenceT<ReferenceContainer> newNode;
+	ret = FindRelative(path,newNode);
+    if (ret) {
+        currentNode = newNode;
+    }
+#if 0
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
@@ -248,7 +304,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
             currentNode = container;
         }
     }
-
+#endif
     return ret;
 }
 

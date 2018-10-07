@@ -35,6 +35,7 @@
 
 #include "CCString.h"
 #include "ErrorManagement.h"
+#include "TypeDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -105,6 +106,21 @@ public:
      *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true) = 0;
+
+    /**
+     * @brief returns information of the variable stored at the specified path
+     * @see VariableDescriptor::GetVariableDimensions
+     * @param[in] path the path to the node\a value.
+     * @param[out] td see VariableDescriptor::GetVariableDimensions
+     * @param[in,out] nOfDimensions see VariableDescriptor::GetVariableDimensions
+     * @param[in] dimensionSizes see VariableDescriptor::GetVariableDimensions
+     * @return see VariableDescriptor::GetVariableDimensions
+     */
+    virtual ErrorManagement::ErrorType GetVariableInformation(
+    		CCString 			path,
+    		TypeDescriptor &	td,
+			uint32 &			nOfDimensions,
+			uint32 *			dimensionSizes) const = 0;
 
     /**
      * @brief Automatic cast to AnyType.

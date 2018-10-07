@@ -321,7 +321,6 @@ private:
      */
     static void *operator new(osulong size) throw ();
 
-
     /**
      * The number of references to this object.
      */

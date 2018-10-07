@@ -44,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -215,13 +216,11 @@ bool DataSourceI::GetSignalStateName(const uint32 signalIdx, const uint32 stateI
         ret = configuredDatabase.MoveRelative("States");
     }
     if (ret) {
-        stateName = configuredDatabase.GetChildName(stateIdx);
+        stateName = configuredDatabase.GetChildName(stateIdx).GetList();
     }
 
     return ret;
 }
-
-
 
 bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, CCString stateName, uint32 &numberOfConsumers) {
     bool ret = MoveToSignalIndex(signalIdx);
@@ -231,14 +230,13 @@ bool DataSourceI::GetSignalNumberOfConsumers(const uint32 signalIdx, CCString st
     if (ret) {
         ret = configuredDatabase.MoveRelative(stateName);
     }
-    AnyType consumers;
-    if (ret) {
-        consumers = configuredDatabase.GetType("GAMConsumers");
-        ret = (consumers.GetDataPointer() != NULL_PTR(void *));
-    }
-    numberOfConsumers = 0u;
-    if (ret) {
-        numberOfConsumers = consumers.GetNumberOfElements(0u);
+    if (ret){
+    	uint32 maxDim = 1;
+    	TypeDescriptor td;
+    	ret = configuredDatabase.GetVariableInformation("GAMConsumers",td,maxDim,&numberOfConsumers).ErrorsCleared();
+    	if (maxDim == 0){
+    		numberOfConsumers = 1;
+    	}
     }
     return ret;
 }
@@ -251,14 +249,13 @@ bool DataSourceI::GetSignalNumberOfProducers(const uint32 signalIdx, CCString st
     if (ret) {
         ret = configuredDatabase.MoveRelative(stateName);
     }
-    AnyType producers;
-    if (ret) {
-        producers = configuredDatabase.GetType("GAMProducers");
-        ret = (producers.GetDataPointer() != NULL_PTR(void *));
-    }
-    numberOfProducers = 0u;
-    if (ret) {
-        numberOfProducers = producers.GetNumberOfElements(0u);
+    if (ret){
+    	uint32 maxDim = 1;
+    	TypeDescriptor td;
+    	ret = configuredDatabase.GetVariableInformation("GAMProducers",td,maxDim,&numberOfProducers).ErrorsCleared();
+    	if (maxDim == 0){
+    		numberOfProducers = 1;
+    	}
     }
     return ret;
 }
@@ -348,6 +345,7 @@ bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx, const AnyType &d
     return ret;
 }
 
+#if 0
 AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
     AnyType retType = voidAnyType;
     if (MoveToSignalIndex(signalIdx)) {
@@ -355,6 +353,8 @@ AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
     }
     return retType;
 }
+
+#endif
 
 bool DataSourceI::MoveToSignalIndex(const uint32 signalIdx) {
     configuredDatabase = signalsDatabaseNode;
@@ -472,11 +472,14 @@ bool DataSourceI::GetFunctionSignalNumberOfByteOffsets(const SignalDirection dir
     bool ret = MoveToFunctionSignalIndex(direction, functionIdx, functionSignalIdx);
     AnyType byteOffset;
     numberOfByteOffsets = 0u;
-    if (ret) {
-        byteOffset = configuredDatabase.GetType("ByteOffset");
-        if (byteOffset.GetDataPointer() != NULL_PTR(void *)) {
-            numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
-        }
+
+    if (ret){
+    	uint32 maxDim = 1;
+    	TypeDescriptor td;
+    	ret = configuredDatabase.GetVariableInformation("ByteOffset",td,maxDim,&numberOfByteOffsets).ErrorsCleared();
+    	if (maxDim == 0){
+    		numberOfByteOffsets = 1;
+    	}
     }
     return ret;
 }

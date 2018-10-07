@@ -988,28 +988,25 @@ void Test(){
     xx = zz;
 	PrintType(xx);printf("\n");
 
-	printf("test of GetSummaryTypeDescriptor\n");
+	printf("test of GetVariableInformation\n");
 	{
 
 		int pippo[8]= {1,2,3,4,5,6,7,8};
 		AnyType pippoAT(pippo);
-		VariableDescriptor pippoVD = pippoAT.GetFullVariableDescriptor();
-		uint32 pippoSZ;
-		pippoVD.GetSummaryTypeDescriptor(&pippoSZ);
 
-		printf("pippo size = %i\n",pippoSZ);
+		TypeDescriptor td;
+		uint32 maxDim = 1;
+		uint32 dimension;
+		pippoAT.GetVariableInformation(td,maxDim,&dimension);
+		printf("int[8] ==> [>%i] size = %i\n",maxDim,dimension);
 
 		Vector<int32> pippa(32);
 		AnyType pippaAT(pippa);
-		VariableDescriptor pippaVD = pippaAT.GetFullVariableDescriptor();
-		uint32 pippaSZ;
-		pippaVD.GetSummaryTypeDescriptor(&pippaSZ);
-
-		printf("pippa size = %i\n",pippaSZ);
+		maxDim = 1;
+		pippoAT.GetVariableInformation(td,maxDim,&dimension);
+		printf("Vector<int>(32) ==> [>%i] size = %i\n",maxDim,dimension);
 
 	}
-
-
 }
 }
 

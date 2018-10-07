@@ -53,7 +53,7 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-    gamHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    gamHeap = GlobalObjectsDatabase::Instance().GetStandardHeap();
 }
 
 /*lint -e{1551} no exception should be thrown*/
@@ -113,7 +113,7 @@ bool GAM::AllocateInputSignalsMemory() {
         if (ret) {
             inputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (inputSignalsMemory != NULL_PTR(void*)) {
-                ret = MemoryOperationsHelper::Set(inputSignalsMemory, '\0', totalByteSize);
+                ret = Memory::Set(inputSignalsMemory, '\0', totalByteSize);
             }
             else {
                 ret = false;
@@ -162,7 +162,7 @@ bool GAM::AllocateOutputSignalsMemory() {
         if (ret) {
             outputSignalsMemory = gamHeap->Malloc(totalByteSize);
             if (outputSignalsMemory != NULL_PTR(void*)) {
-                ret = MemoryOperationsHelper::Set(outputSignalsMemory, '\0', totalByteSize);
+                ret = Memory::Set(outputSignalsMemory, '\0', totalByteSize);
             }
             else {
                 ret = false;
@@ -274,7 +274,7 @@ uint32 GAM::GetNumberOfOutputSignals() const {
     return numberOfOutputSignals;
 }
 
-bool GAM::GetQualifiedName(StreamString &qualifiedName) {
+bool GAM::GetQualifiedName(DynamicCString &qualifiedName) {
     bool ret = configuredDatabase.MoveToRoot();
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", qualifiedName);
@@ -282,7 +282,7 @@ bool GAM::GetQualifiedName(StreamString &qualifiedName) {
     return ret;
 }
 
-bool GAM::GetSignalName(const SignalDirection direction, const uint32 signalIdx, StreamString &signalName) {
+bool GAM::GetSignalName(const SignalDirection direction, const uint32 signalIdx, DynamicCString &signalName) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {
         ret = configuredDatabase.Read("QualifiedName", signalName);
@@ -290,7 +290,7 @@ bool GAM::GetSignalName(const SignalDirection direction, const uint32 signalIdx,
     return ret;
 }
 
-bool GAM::GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, const char8* const signalName) {
+bool GAM::GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, CCString signalName) {
     uint32 numberOfSignals = 0u;
     if (direction == InputSignals) {
         numberOfSignals = GetNumberOfInputSignals();
@@ -315,7 +315,7 @@ bool GAM::GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, con
     return ret;
 }
 
-bool GAM::GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, StreamString &dataSourceName) {
+bool GAM::GetSignalDataSourceName(const SignalDirection direction, const uint32 signalIdx, DynamicCString &dataSourceName) {
 
     bool ret = MoveToSignalIndex(direction, signalIdx);
     if (ret) {

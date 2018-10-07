@@ -295,6 +295,7 @@ public:
      */
     bool GetSignalDefaultValue(const uint32 signalIdx, const AnyType &defaultValue);
 
+#if 0
     /**
      * @brief Gets the type of the default value for the signal with index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
@@ -304,6 +305,8 @@ public:
      * @remark Note that this does not return the value of the default. It only returns the type meta-data.! (see GetSignalDefaultValue)
      */
     AnyType GetSignalDefaultValueType(const uint32 signalIdx);
+#endif
+
 
     /**
      * @brief Gets the number of functions that interact with this DataSourceI.

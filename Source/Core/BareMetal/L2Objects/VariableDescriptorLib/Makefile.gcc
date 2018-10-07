@@ -20,29 +20,10 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.gcc 3 2015-01-15 16:26:07Z aneto $
 #
 #############################################################
 
-TARGET=msc
 
 include Makefile.inc
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/L0TypesB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/L2ObjectsB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/AnyType.obj 
-#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
-
-
-IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB.def
-IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/L2ObjectsB.def
-
-
-
-
-
-
-
-
-
 

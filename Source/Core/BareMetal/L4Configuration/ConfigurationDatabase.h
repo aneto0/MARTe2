@@ -110,6 +110,22 @@ public:
     virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true);
 
     /**
+     * @brief ShortCut to ConfigurationDatabase::Read(path,false)
+     * @see ConfigurationDatabase::Read()
+     */
+    inline ErrorManagement::ErrorType Borrow(CCString path,Reference &object);
+
+    /**
+     * @see StructuredDataI::GetVariableInformation
+     * @see VariableDescriptor::GetVariableDimensions
+     */
+    virtual ErrorManagement::ErrorType GetVariableInformation(
+    		CCString 			path,
+    		TypeDescriptor &	td,
+			uint32 &			nOfDimensions,
+			uint32 *			dimensionSizes) const;
+
+    /**
      * @see StructuredDataI::Write
      * @details It is possible write directly a structure or a class
      * if it is introspectable and registered into
@@ -212,6 +228,8 @@ public:
 
 private:
 
+    ErrorManagement::ErrorType FindRelative(CCString path,ReferenceT<ReferenceContainer> &node) const;
+
     /**
      * @brief Create nodes relative to the currentNode.
      * @param[in] path the path to be created.
@@ -251,6 +269,11 @@ ErrorManagement::ErrorType ConfigurationDatabase::Lock(const MilliSeconds &timeo
 void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
+
+inline ErrorManagement::ErrorType ConfigurationDatabase::Borrow(CCString path,Reference &object){
+	return Read(path,object,true);
+}
+
 
 }
 

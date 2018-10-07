@@ -219,7 +219,7 @@ private:
     /**
      * The name of the TimingDataSource where the execution times are to be stored.
      */
-    StreamString timingDataSourceAddress;
+    DynamicCString timingDataSourceAddress;
 
     /**
      * The TimingDataSource where the execution times are to be stored.

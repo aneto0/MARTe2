@@ -248,6 +248,15 @@ public:
     inline const VariableDescriptor &GetFullVariableDescriptor() const;
 
     /**
+     * @see VariableDescriptor::GetVariableDimensions
+     */
+    inline ErrorManagement::ErrorType GetVariableInformation(
+    		TypeDescriptor &	td,
+			uint32 &			nOfDimensions,
+			uint32 *			dimensionSizes) const;
+
+
+    /**
      * @brief Converts type descriptor to C/c++ equivalent
      * @return true if all ok
      */
@@ -335,6 +344,13 @@ const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
 
 ErrorManagement::ErrorType AnyType::ToString(DynamicCString &string,bool rawFormat) const{
 	return variableDescriptor.ToString(string,rawFormat);
+}
+
+ErrorManagement::ErrorType AnyType::GetVariableInformation(
+		TypeDescriptor &	td,
+		uint32 &			nOfDimensions,
+		uint32 *			dimensionSizes) const{
+	return variableDescriptor.GetVariableDimensions(pointer2Variable,td,nOfDimensions,dimensionSizes);
 }
 
 

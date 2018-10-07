@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,29 +20,28 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-TARGET=msc
-
-include Makefile.inc
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/L0TypesB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/L2ObjectsB$(LIBEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/AnyType.obj 
-#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
+PACKAGE=Core/BareMetal/L2Objects
+ROOT_DIR=../../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/L1PortabilityB.def
-IMPDEFS += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/L2ObjectsB.def
+OBJSX=  	VariableDescriptorLib.x VariableCloner.x VD_Variable.x
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES+=-I.. -I../../L1Portability -I../../L0Types
+
+#LIBRARIES_STATIC=$(BUILD_DIR)/../../L0Types/L0TypesB$(LIBEXT)
+#LIBRARIES_STATIC+=$(BUILD_DIR)/../../L1Portability/L1PortabilityB$(LIBEXT)
+
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L2VDLib$(LIBEXT) 
+	echo  $(OBJS)
 
 
+include depends.$(TARGET)
 
-
-
-
-
-
-
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
