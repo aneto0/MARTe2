@@ -33,6 +33,7 @@ CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
 ConsoleLogger.cpp
+CRC.h
 CString.h
 DataSourceI.cpp
 Directory.cpp
