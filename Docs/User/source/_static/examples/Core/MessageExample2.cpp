@@ -117,7 +117,8 @@ MessageEx1    () : MARTe::Object(), MARTe::MessageI() {
      */
     MARTe::ErrorManagement::ErrorType CheckMessage(MARTe::ReferenceT<MARTe::Message> &messageToTest) {
         using namespace MARTe;
-        CCString sender = messageToTest->GetSender();
+        const Object *senderObj = messageToTest->GetSender();
+        CCString sender = senderObj ? senderObj->GetName() : "anonymous";
         CCString destination = messageToTest->GetDestination();
         CCString function = messageToTest->GetFunction();
         bool expectsReply = messageToTest->ExpectsReply();
