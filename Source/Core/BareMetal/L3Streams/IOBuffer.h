@@ -415,7 +415,19 @@ public:
      */
     bool SkipTokens(uint32 count,
             const char8 * terminator);
-protected:
+
+    /**
+     * @brief User friendly function which simply calls NoMoreDataToRead.
+     * @return whatever NoMoreDataToRead returns.
+     */
+    virtual bool Refill();
+
+    /**
+     * @brief User friendly function which simply calls NoMoreSpaceToWrite.
+     * @return whatever NoMoreSpaceToWrite returns.
+     */
+    /*lint -e{1735} this function has the same default parameter of its father.*/
+    virtual bool Flush(const uint32 neededSize=0u);
 
     /**
      * @see NoMoreSpaceToWrite(const uint32)

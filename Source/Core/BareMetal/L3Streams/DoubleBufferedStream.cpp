@@ -130,7 +130,32 @@ bool DoubleBufferedStream::Read(char8 * const output,
             toRead -= size;
 
             // decide whether to use the buffer again or just to read directly
-            if ((toRead * 4u) < readBuffer.MaxUsableAmount()) {
+            if ((toRead * calibReadParam) < readBuffer.MaxUsableAmount()) {
+                if (!Refill()) {
+                    ret = false;
+                }
+
+                uint32 readBytes=size;
+                while((toRead>0u) && (ret)){
+                    uint32 nReads=toRead;
+                    if (!readBuffer.Read(&output[readBytes], nReads)) {
+                        ret = false;
+                    }
+                    if(nReads!=toRead){
+                        if (!Refill()) {
+                            ret = false;
+                        }
+
+                    }
+                    if(ret){
+                        toRead-=nReads;
+                        readBytes+=nReads;
+                    }
+
+                }
+
+                size=readBytes;
+#if 0
                 if (!readBuffer.Refill()) {
                     ret = false;
                 }
@@ -145,6 +170,7 @@ bool DoubleBufferedStream::Read(char8 * const output,
                     // should have completed
                     // as our buffer is at least 4x the need
                 }
+#endif
 
             }
             else {
@@ -163,17 +189,15 @@ bool DoubleBufferedStream::Read(char8 * const output,
     return ret;
 }
 
-
 bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size,
-                                const TimeoutType &timeout){
-    TimeoutType prevTimeout=GetTimeout();
+                                const TimeoutType &timeout) {
+    TimeoutType prevTimeout = GetTimeout();
     SetTimeout(timeout);
-    bool ret=Read(output, size);
+    bool ret = Read(output, size);
     SetTimeout(prevTimeout);
     return ret;
 }
-
 
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
@@ -186,8 +210,29 @@ bool DoubleBufferedStream::Write(const char8 * const input,
         // check available buffer size versus write size
         // if size is comparable to buffer size there
         // is no reason to use the buffering mechanism
-        if (writeBuffer.MaxUsableAmount() > (4u * size)) {
+        if (writeBuffer.MaxUsableAmount() > (calibWriteParam * size)) {
+            uint32 writed = 0u;
+            //put a while here
+            while ((toWrite > 0u) && (ret)) {
+                uint32 nWrites = toWrite;
+                // try writing the buffer
+                if (!writeBuffer.Write(&input[writed], nWrites)) {
+                    ret = false;
+                }
+                if (nWrites != toWrite) {
+                    // make space
+                    if (!Flush()) {
+                        ret = false;
+                    }
+                }
+                if (ret) {
+                    writed += nWrites;
+                    toWrite -= nWrites;
+                }
+            }
 
+            size = writed;
+#if 0
             // try writing the buffer
             if (!writeBuffer.Write(&input[0], size)) {
                 ret = false;
@@ -216,10 +261,11 @@ bool DoubleBufferedStream::Write(const char8 * const input,
                     }
                 }
             }
+#endif
         }
         else {
             // write the buffer so far
-            if (!writeBuffer.Flush()) {
+            if (!Flush()) {
                 ret = false;
             }
             else {
@@ -231,7 +277,6 @@ bool DoubleBufferedStream::Write(const char8 * const input,
     return ret;
 
 }
-
 
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size,

@@ -336,7 +336,48 @@ public:
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9, const AnyType& par10);
+    inline bool Printf(const char8 * const format,
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4,
+                       const AnyType& par5,
+                       const AnyType& par6,
+                       const AnyType& par7,
+                       const AnyType& par8,
+                       const AnyType& par9,
+                       const AnyType& par10);
+
+    /**
+     * @brief Flushes the internal buffer on the stream.
+     * @return true if the flush to the stream returns without errors, false otherwise.
+     */
+    virtual bool Flush();
+
+    /**
+     * @brief Fills the internal buffers with the data from the stream.
+     * @return true if the refill from the stream returns without errors, false otherwise.
+     */
+    virtual bool Refill();
+
+    /**
+     * @brief Allows to adjust the calibration read parameter.
+     * @details By default this parameter is set to 4. The read operation from a stream will use
+     * the internal buffer if ([read buffer size]>4*[size to read]*[calib read param])
+     * @details Setting this parameter to zero means that the buffer is used at each read operation.
+     * @param[in] calibReadIn the new read calibration parameter to set.
+     */
+    inline void SetCalibReadParam(const uint32 calibReadIn);
+
+    /**
+     * @brief Allows to adjust the calibration write parameter.
+     * @details By default this parameter is set to 4. The write operation to a stream will use
+     * the internal buffer if ([write buffer size]>4*[size to write]*[calib write param])
+     * @details Setting this parameter to zero means that the buffer is used at each write operation.
+     * @param[in] calibWriteIn the new write calibration parameter to set.
+     */
+    inline void SetCalibWriteParam(const uint32 calibWriteIn);
+
 
 protected:
 
@@ -351,6 +392,12 @@ protected:
      * @return a pointer to the write buffer.
      */
     virtual IOBuffer *GetWriteBuffer() = 0;
+
+    /*lint -e{9150} I want this parameter to be protected and non virtual to be modified by the children*/
+    uint32 calibReadParam;
+
+    /*lint -e{9150} I want this parameter to be protected and non virtual to be modified by the children*/
+    uint32 calibWriteParam;
 
 };
 }
@@ -417,6 +464,13 @@ bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, co
     return PrintFormatted(format, &pars[0]);
 }
 
+void BufferedStreamI::SetCalibReadParam(const uint32 calibReadIn) {
+    calibReadParam = calibReadIn;
+}
+
+void BufferedStreamI::SetCalibWriteParam(const uint32 calibWriteIn) {
+    calibWriteParam = calibWriteIn;
+}
 }
 #endif /* BUFFEREDSTREAMI_H_ */
 
