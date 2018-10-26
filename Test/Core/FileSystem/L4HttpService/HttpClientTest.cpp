@@ -29,35 +29,34 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "HttpClientTest.h"
-#include "StringHelper.h"
+#include "Base64Encoder.h"
 #include "ConfigurationDatabase.h"
+
+#include "DataExportI.h"
+#include "HttpClient.h"
+#include "HttpClientTest.h"
+#include "HttpService.h"
+#include "Md5Encrypt.h"
+#include "MemoryDataSourceI.h"
+
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
+#include "MemoryMapSynchronisedInputBroker.h"
+#include "MemoryMapSynchronisedOutputBroker.h"
 
 #include "MemoryOperationsHelper.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StandardParser.h"
 #include "StringHelper.h"
-#include "MemoryDataSourceI.h"
-
-#include "MemoryMapInputBroker.h"
-#include "MemoryMapSynchronisedInputBroker.h"
-#include "MemoryMapOutputBroker.h"
-#include "MemoryMapSynchronisedOutputBroker.h"
-
-#include "DataExportI.h"
-#include "HttpService.h"
-#include "Base64Encoder.h"
-#include "Md5Encrypt.h"
+#include "StringHelper.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static bool SearchKey(const char8 * const key,
-                      const char8 * const name,
-                      StreamString &value) {
+static bool SearchKey(const char8 * const key, const char8 * const name, StreamString &value) {
     bool ret = value.SetSize(0ULL);
     if (ret) {
         ret = (key != NULL_PTR(const char8 * const));
@@ -85,9 +84,7 @@ static bool SearchKey(const char8 * const key,
     return ret;
 }
 
-static bool SearchKey1(const char8 * const key,
-                       const char8 * const name,
-                       StreamString &value) {
+static bool SearchKey1(const char8 * const key, const char8 * const name, StreamString &value) {
     bool ret = value.SetSize(0ULL);
     if (ret) {
         ret = (key != NULL_PTR(const char8 * const));
@@ -174,8 +171,7 @@ HttpClientTestClassTest1::~HttpClientTestClassTest1() {
 
 }
 
-bool HttpClientTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data,
-                                                   ProtocolI &protocol) {
+bool HttpClientTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -189,8 +185,7 @@ bool HttpClientTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpClientTestClassTest1::GetAsText(StreamI &stream,
-                                         ProtocolI &protocol) {
+bool HttpClientTestClassTest1::GetAsText(StreamI &stream, ProtocolI &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 
@@ -252,8 +247,7 @@ HttpClientTestClassTest2::~HttpClientTestClassTest2() {
 
 }
 
-bool HttpClientTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data,
-                                                   ProtocolI &protocol) {
+bool HttpClientTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -267,8 +261,7 @@ bool HttpClientTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpClientTestClassTest2::GetAsText(StreamI &stream,
-                                         ProtocolI &protocol) {
+bool HttpClientTestClassTest2::GetAsText(StreamI &stream, ProtocolI &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 
@@ -297,9 +290,7 @@ int32 HttpClientTestClassTest2::GetReplyCode(ProtocolI &data) {
     return HttpDefinition::HSHCReplyOK;
 }
 
-bool HttpClientTestClassTest2::Validate(const char8 * const key,
-                                        const int32 command,
-                                        const uint32 ipNumber) {
+bool HttpClientTestClassTest2::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
 
     printf("HEREEE %s\n", key);
 
@@ -404,8 +395,7 @@ HttpClientTestClassTest3::~HttpClientTestClassTest3() {
 
 }
 
-bool HttpClientTestClassTest3::GetAsStructuredData(StreamStructuredDataI &data,
-                                                   ProtocolI &protocol) {
+bool HttpClientTestClassTest3::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -419,8 +409,7 @@ bool HttpClientTestClassTest3::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpClientTestClassTest3::GetAsText(StreamI &stream,
-                                         ProtocolI &protocol) {
+bool HttpClientTestClassTest3::GetAsText(StreamI &stream, ProtocolI &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 
@@ -449,9 +438,7 @@ int32 HttpClientTestClassTest3::GetReplyCode(ProtocolI &data) {
     return HttpDefinition::HSHCReplyOK;
 }
 
-bool HttpClientTestClassTest3::Validate(const char8 * const key,
-                                        const int32 command,
-                                        const uint32 ipNumber) {
+bool HttpClientTestClassTest3::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
 
     StreamString keyStr = key;
     StreamString auth;
@@ -509,8 +496,7 @@ HttpClientTestClassTest4::~HttpClientTestClassTest4() {
 
 }
 
-bool HttpClientTestClassTest4::GetAsStructuredData(StreamStructuredDataI &data,
-                                                   ProtocolI &protocol) {
+bool HttpClientTestClassTest4::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -524,8 +510,7 @@ bool HttpClientTestClassTest4::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpClientTestClassTest4::GetAsText(StreamI &stream,
-                                         ProtocolI &protocol) {
+bool HttpClientTestClassTest4::GetAsText(StreamI &stream, ProtocolI &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 
@@ -554,9 +539,7 @@ int32 HttpClientTestClassTest4::GetReplyCode(ProtocolI &data) {
     return HttpDefinition::HSHCReplyOK;
 }
 
-bool HttpClientTestClassTest4::Validate(const char8 * const key,
-                                        const int32 command,
-                                        const uint32 ipNumber) {
+bool HttpClientTestClassTest4::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
 
     StreamString keyStr = key;
     StreamString auth;
@@ -623,6 +606,7 @@ HttpClientTest::HttpClientTest() {
 }
 
 HttpClientTest::~HttpClientTest() {
+    ObjectRegistryDatabase::Instance()->Purge();
 }
 
 bool HttpClientTest::TestConstructor() {
@@ -1358,13 +1342,11 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
     StreamString encodedUserPass;
     Base64Encoder::Encode(userPass, encodedUserPass);
     test.SetAuthorisation(encodedUserPass.Buffer());
-
     bool ret = InitialiseMemoryMapInputBrokerEnviroment(config);
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     ReferenceT<HttpService> service = god->Find("Application.HttpServerTest");
     ret = service.IsValid();
-
     if (ret) {
         ret = service->Start();
     }
@@ -1375,7 +1357,6 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
         ret = !test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1u);
 
     }
-
     if (ret) {
         ret = service->Stop();
     }

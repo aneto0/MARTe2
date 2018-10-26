@@ -41,7 +41,7 @@
  * @brief Tests the HttpClient public methods.
  */
 class HttpClientTest {
-
+public:
     /**
      * @brief Constructor. NOOP.
      */

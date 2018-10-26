@@ -41,6 +41,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/*lint -e{9158} -e{9159} -e{9021} allow to use #define and #undef for this implementation, but this should be revisited (TODO)*/
 namespace Md5Encrypt {
 
 /*
@@ -279,10 +280,8 @@ void Md5Context::Md5Process(const uint8 data[64]) {
     P(C, D, A, B, 14, 17u, 0xA679438Eu)
     P(B, C, D, A, 15, 22u, 0x49B40821u)
 
-    /*lint -e{9021} -e{9159} use of undef allowed*/
 #undef F
 
-    /*lint -e{9158} allowed define within a block*/
 #define F(x,y,z) (y ^ (z & (x ^ y)))
 
     P(A, B, C, D, 1, 5u, 0xF61E2562u)
@@ -302,10 +301,8 @@ void Md5Context::Md5Process(const uint8 data[64]) {
     P(C, D, A, B, 7, 14u, 0x676F02D9u)
     P(B, C, D, A, 12, 20u, 0x8D2A4C8Au)
 
-    /*lint -e{9021} -e{9159} use of undef allowed*/
 #undef F
 
-    /*lint -e{9158} allowed define within a block*/
 #define F(x,y,z) (x ^ y ^ z)
 
     P(A, B, C, D, 5, 4u, 0xFFFA3942u)
@@ -325,10 +322,8 @@ void Md5Context::Md5Process(const uint8 data[64]) {
     P(C, D, A, B, 15, 16u, 0x1FA27CF8u)
     P(B, C, D, A, 2, 23u, 0xC4AC5665u)
 
-    /*lint -e{9021} -e{9159} use of undef allowed*/
 #undef F
 
-    /*lint -e{9158} allowed define within a block*/
 #define F(x,y,z) (y ^ (x | ~z))
 
     P(A, B, C, D, 0, 6u, 0xF4292244u)

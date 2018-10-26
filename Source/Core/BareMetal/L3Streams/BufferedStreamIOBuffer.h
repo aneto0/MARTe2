@@ -126,8 +126,6 @@ public:
      */
     inline const OperatingSystemCallbacksI* GetStream() const;
 
-protected:
-
     /**
      * @see IOBuffer::Flush
      * @details If the stream is not NULL it calls stream->Flush, otherwise it calls IOBuffer::NoMoreSpaceToWrite.

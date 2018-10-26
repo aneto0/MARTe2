@@ -26,7 +26,7 @@
 OBJSX=
 SPB=
 SPBC=Source/Core.x Source/App.x
-SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
+SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x Docs/User/source/_static/examples/Core.x
 SUBPROJCORE = $(SPBC:%.x=%.spb)
 SUBPROJTEST = $(SPBT:%.x=%.spb)
 SUBPROJCOREC = $(SPBC:%.x=%.spc)

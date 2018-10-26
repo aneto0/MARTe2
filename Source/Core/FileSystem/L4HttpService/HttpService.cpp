@@ -29,16 +29,17 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "HttpService.h"
-#include "ObjectRegistryDatabase.h"
-#include "HttpProtocol.h"
-#include "Select.h"
-#include "HttpRealmI.h"
-#include "DataExportI.h"
-#include "ReferenceContainerFilterNameAndType.h"
 #include "AdvancedErrorManagement.h"
-#include "StreamStructuredData.h"
+#include "CLASSMETHODREGISTER.h"
+#include "DataExportI.h"
+#include "HttpProtocol.h"
+#include "HttpRealmI.h"
+#include "HttpService.h"
 #include "JsonPrinter.h"
+#include "ObjectRegistryDatabase.h"
+#include "ReferenceContainerFilterNameAndType.h"
+#include "Select.h"
+#include "StreamStructuredData.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -57,11 +58,21 @@ HttpService::HttpService() :
     textMode = 1u;
     chunkSize = 0u;
     closeOnAuthFail = 1u;
+    filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    filter->SetDestination(this);
+    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
+    if (!ret.ErrorsCleared()) {
+        REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
+    }
 }
 
 /*lint -e{1551} no exception will be thrown by the destructor*/
 HttpService::~HttpService() {
     (void) server.Close();
+    if (Stop() != ErrorManagement::NoError) {
+        REPORT_ERROR(ErrorManagement::Warning, "Could not Stop. Going to kill the service");
+        (void) Stop();
+    }
 }
 
 bool HttpService::Initialise(StructuredDataI &data) {
@@ -120,7 +131,7 @@ ErrorManagement::ErrorType HttpService::Start() {
         webRoot = ObjectRegistryDatabase::Instance()->Find(webRootPath.Buffer());
         err = !(webRoot.IsValid());
         if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::Information, "Invalid WebRoot path %s", webRootPath.Buffer());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Invalid WebRoot path %s", webRootPath.Buffer());
         }
     }
 
@@ -352,5 +363,5 @@ ErrorManagement::ErrorType HttpService::ServerCycle(MARTe::ExecutionInfo &inform
 }
 
 CLASS_REGISTER(HttpService, "1.0")
-
+CLASS_METHOD_REGISTER(HttpService, Start)
 }

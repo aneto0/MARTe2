@@ -28,6 +28,7 @@ OBJSX=ErrorLoggerExample.x \
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
+MARTe2_DIR ?= $(ROOT_DIR)
 MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
@@ -37,10 +38,12 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L3Streams
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Configuration
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4HttpService
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L5GAMs
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
+INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L4HttpService
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L1Portability
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
@@ -60,6 +63,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/HighResolutionTimerExample1$(EXEEXT) \
+        $(BUILD_DIR)/HttpExample1$(EXEEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample2$(EXEEXT) \

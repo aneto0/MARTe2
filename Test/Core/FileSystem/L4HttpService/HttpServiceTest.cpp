@@ -1238,6 +1238,7 @@ bool HttpServiceTest::TestClientService_Text_Interactive() {
 
     while (1)
         ;
+    return ret;
 }
 
 bool HttpServiceTest::TestClientService_Text() {

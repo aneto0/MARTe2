@@ -37,6 +37,7 @@
 #include "MessageI.h"
 #include "MultiClientService.h"
 #include "ReferenceT.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -180,6 +181,11 @@ protected:
      * failure the connection has to be closed or not
      */
     uint8 closeOnAuthFail;
+
+    /**
+     * Filter to receive the RPC
+     */
+    ReferenceT<RegisteredMethodsMessageFilter> filter;
 };
 
 }

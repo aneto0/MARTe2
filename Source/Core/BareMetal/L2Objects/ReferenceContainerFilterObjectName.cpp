@@ -60,6 +60,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 
     addressNumberNodes = 0u;
     addressToSearch = static_cast<char8 **>(NULL);
+    /*lint -e{1506} the caller must know that the address pointer shall be valid while the class is to be used*/
     SetAddress(address);
 }
 

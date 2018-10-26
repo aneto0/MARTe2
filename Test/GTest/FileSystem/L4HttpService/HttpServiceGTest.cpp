@@ -75,12 +75,11 @@ TEST(HttpServiceGTest, TestInitialise_DefaultPort) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_DefaultPort());
 }
-/*
+
 TEST(HttpServiceGTest, TestClientService_Text_Interactive) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Text_Interactive());
 }
-*/
 
 TEST(HttpServiceGTest, TestStart) {
     HttpServiceTest test;

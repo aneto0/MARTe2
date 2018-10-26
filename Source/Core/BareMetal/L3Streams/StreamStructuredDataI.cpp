@@ -53,7 +53,7 @@ void StreamStructuredDataI::SetStream(BufferedStreamI &streamIn) {
     stream = &streamIn;
 }
 
-BufferedStreamI *StreamStructuredDataI::GetStream() const {
+BufferedStreamI *StreamStructuredDataI::GetStream() {
     return stream;
 }
 

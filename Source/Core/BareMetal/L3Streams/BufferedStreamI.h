@@ -326,27 +326,20 @@ public:
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8);
+    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7,
+                       const AnyType& par8);
 
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9);
+    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7,
+                       const AnyType& par8, const AnyType& par9);
 
     /**
      * @see PrintFormatted.
      */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1,
-                       const AnyType& par2,
-                       const AnyType& par3,
-                       const AnyType& par4,
-                       const AnyType& par5,
-                       const AnyType& par6,
-                       const AnyType& par7,
-                       const AnyType& par8,
-                       const AnyType& par9,
-                       const AnyType& par10);
+    inline bool Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7,
+                       const AnyType& par8, const AnyType& par9, const AnyType& par10);
 
     /**
      * @brief Flushes the internal buffer on the stream.
@@ -378,7 +371,6 @@ public:
      */
     inline void SetCalibWriteParam(const uint32 calibWriteIn);
 
-
 protected:
 
     /**
@@ -393,12 +385,17 @@ protected:
      */
     virtual IOBuffer *GetWriteBuffer() = 0;
 
-    /*lint -e{9150} I want this parameter to be protected and non virtual to be modified by the children*/
+    /**
+     * Read calibration parameter. See SetCalibReadParam
+     */
     uint32 calibReadParam;
 
-    /*lint -e{9150} I want this parameter to be protected and non virtual to be modified by the children*/
+    /**
+     * Write calibration parameter. See SetCalibWriteParam
+     */
     uint32 calibWriteParam;
 
+    /*lint -e{9150} Allow the calibration parameters to be protected and non virtual to be modified by the children*/
 };
 }
 /*---------------------------------------------------------------------------*/
@@ -444,22 +441,26 @@ bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, co
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7) {
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6,
+                             const AnyType& par7) {
     AnyType pars[8] = { par1, par2, par3, par4, par5, par6, par7, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8) {
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6,
+                             const AnyType& par7, const AnyType& par8) {
     AnyType pars[9] = { par1, par2, par3, par4, par5, par6, par7, par8, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9) {
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6,
+                             const AnyType& par7, const AnyType& par8, const AnyType& par9) {
     AnyType pars[10] = { par1, par2, par3, par4, par5, par6, par7, par8, par9, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6, const AnyType& par7, const AnyType& par8, const AnyType& par9, const AnyType& par10) {
+bool BufferedStreamI::Printf(const char8 * const format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4, const AnyType& par5, const AnyType& par6,
+                             const AnyType& par7, const AnyType& par8, const AnyType& par9, const AnyType& par10) {
     AnyType pars[11] = { par1, par2, par3, par4, par5, par6, par7, par8, par9, par10, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }

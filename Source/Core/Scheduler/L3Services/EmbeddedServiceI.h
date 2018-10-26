@@ -36,7 +36,7 @@
 #include "EmbeddedServiceMethodBinderT.h"
 #include "EmbeddedThreadI.h"
 #include "ErrorType.h"
-#include "Object.h"
+#include "ReferenceContainer.h"
 #include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -48,7 +48,7 @@ namespace MARTe {
  * @brief Family of objects that enable the interfacing of a class method to a thread or to a pool of threads.
  * @details The method callback interface is specified in EmbeddedServiceMethodBinderT<class>::MethodPointer.
  */
-class EmbeddedServiceI: public Object {
+class EmbeddedServiceI: public ReferenceContainer {
 public:
     /**
      * @brief Constructor. NOOP.
@@ -150,7 +150,7 @@ public:
      */
     TimeoutType GetTimeout() const;
 
-private:
+protected:
 
     /**
      * The maximum time to execute a state change.

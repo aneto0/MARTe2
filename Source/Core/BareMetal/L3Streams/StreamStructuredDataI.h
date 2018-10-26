@@ -65,7 +65,7 @@ public:
      * @brief Retrieves the internal stream.
      * @return the internal stream.
      */
-    virtual BufferedStreamI *GetStream() const;
+    virtual BufferedStreamI *GetStream();
 
 protected:
 

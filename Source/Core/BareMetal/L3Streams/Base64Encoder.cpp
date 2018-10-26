@@ -54,7 +54,7 @@ public:
     uint8 decodingTable[256];
 
     static const char8 * const base64Alphabet;
-
+/*lint -e{9150} allow the Base64Codec to be used as a live POD*/
 } base64Codec;
 
 const char8 * const Base64Codec::base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";

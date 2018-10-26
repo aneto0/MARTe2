@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 EmbeddedServiceI::EmbeddedServiceI() :
-        Object() {
+        ReferenceContainer() {
     priorityLevel = 0u;
     priorityClass = Threads::NormalPriorityClass;
     msecTimeout = TTInfiniteWait;
@@ -55,7 +55,7 @@ EmbeddedServiceI::~EmbeddedServiceI() {
 
 bool EmbeddedServiceI::Initialise(StructuredDataI &data) {
     uint32 msecTimeoutRead = 0u;
-    ErrorManagement::ErrorType err = Object::Initialise(data);
+    ErrorManagement::ErrorType err = ReferenceContainer::Initialise(data);
     if (err.ErrorsCleared()) {
         err.parametersError = !data.Read("Timeout", msecTimeoutRead);
     }

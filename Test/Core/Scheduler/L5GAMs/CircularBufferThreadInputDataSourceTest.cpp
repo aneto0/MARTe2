@@ -101,11 +101,16 @@ CircularBufferThreadInputDataSourceTestDS    ();
 
     uint32 GetStackSize();
 
+    void Stop() {
+        stopped = true;
+    }
+
 private:
     uint32 decrementOnSignal;
     uint32 signalDriverFalse;
     uint32 signalNoRead;
     uint32 counter;
+    bool stopped;
     volatile int32 continueRead;
 
 };
@@ -116,6 +121,7 @@ CircularBufferThreadInputDataSourceTestDS::CircularBufferThreadInputDataSourceTe
     decrementOnSignal = 0;
     signalDriverFalse = 10;
     signalNoRead = 10;
+    stopped = false;
 }
 
 CircularBufferThreadInputDataSourceTestDS::~CircularBufferThreadInputDataSourceTestDS() {
@@ -185,6 +191,9 @@ const char8 *CircularBufferThreadInputDataSourceTestDS::GetBrokerName(Structured
 }
 
 bool CircularBufferThreadInputDataSourceTestDS::DriverRead(char8 * const bufferToFill, uint32 &sizeToRead, const uint32 signalIdx) {
+    if (stopped) {
+        return true;
+    }
     //give time to sync
     if (signalIdx == 0u) {
         while (continueRead == 0) {
@@ -375,6 +384,7 @@ CircularBufferThreadInputDataSourceTest::CircularBufferThreadInputDataSourceTest
 }
 #include <stdio.h>
 CircularBufferThreadInputDataSourceTest::~CircularBufferThreadInputDataSourceTest() {
+    ObjectRegistryDatabase::Instance()->Purge();
     uint32 nThreads = Threads::NumberOfThreads();
     printf("Killing threads\n");
     while (nThreads > 0u) {
@@ -433,6 +443,7 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise() {
     if (ret) {
         ret = (dataSource.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
     }
+    dataSource.Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -508,6 +519,7 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_CpuMask() {
     if (ret) {
         ret = (dataSource.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
     }
+    dataSource.Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -583,6 +595,7 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_PriorityLevel() {
     if (ret) {
         ret = (dataSource.GetStackSize() == THREADS_DEFAULT_STACKSIZE);
     }
+    dataSource.Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -658,6 +671,7 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_StackSize() {
     if (ret) {
         ret = (dataSource.GetStackSize() == 300000);
     }
+    dataSource.Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -734,6 +748,7 @@ bool CircularBufferThreadInputDataSourceTest::TestInitialise_SignalDefinitionInt
     if (ret) {
         ret = (dataSource.GetStackSize() == 300000);
     }
+    dataSource.Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -835,6 +850,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise() {
             ret = (offset == 200);
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -944,6 +960,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise_FullRolling() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
@@ -1065,6 +1082,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSynchronise_GetLatest() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
@@ -1093,6 +1111,7 @@ bool CircularBufferThreadInputDataSourceTest::TestGetBrokerName() {
             ret = StringHelper::Compare(brokerName, "MemoryMapMultiBufferInputBroker") == 0;
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1124,7 +1143,7 @@ bool CircularBufferThreadInputDataSourceTest::TestGetInputBrokers() {
             ret &= broker.IsValid();
         }
     }
-
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1236,6 +1255,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase() {
     if (ret) {
         ret = (dataSource->GetNumberOfChannels() == 3);
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1387,6 +1407,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_PacketMe
             ret = (testPacketInputChunkSize[i] == packetInputChunkSize[i]);
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1549,6 +1570,7 @@ bool CircularBufferThreadInputDataSourceTest::TestSetConfiguredDatabase_SignalDe
             ret = (testPacketInputChunkSize[i] == packetInputChunkSize[i]);
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1760,6 +1782,7 @@ bool CircularBufferThreadInputDataSourceTest::TestPrepareNextState() {
             Sleep::MSec(5);
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return true;
@@ -1792,6 +1815,7 @@ bool CircularBufferThreadInputDataSourceTest::TestGetInputOffset() {
 
         ret = (offset == (372 + 12 * i) % 400);
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -1856,6 +1880,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute() {
         ret &= mem[10] == 35;
 
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2034,6 +2059,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_SameSignalDifferentMod
         }
         offsetRead += 50;
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2146,6 +2172,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2268,6 +2295,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Overwrite()
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2405,6 +2433,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_DriverRead(
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2546,6 +2575,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_ErrorCheck_Both() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
 
     return ret;
@@ -2950,6 +2980,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -3107,6 +3138,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp_NoRead() {
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -3264,6 +3296,7 @@ bool CircularBufferThreadInputDataSourceTest::TestExecute_TimeStamp_FalseDriverR
             }
         }
     }
+    dataSource->Stop();
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
