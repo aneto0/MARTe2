@@ -432,6 +432,13 @@ bool BasicTCPSocket::Read(char8* const output,
         }
 
         else {
+            struct timeval timeoutVal;
+
+            timeoutVal.tv_sec = 0;
+            timeoutVal.tv_usec = 0;
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeout");
+            }
             if (BasicTCPSocket::Read(output, sizeToRead)) {
                 size = sizeToRead;
             }

@@ -817,3 +817,24 @@ TEST(BufferedStreamIGTest, TestPrintf) {
     BufferedStreamITest streamtest;
     ASSERT_TRUE(streamtest.TestPrintf());
 }
+
+TEST(BufferedStreamIGTest, TestFlush) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestFlush());
+}
+
+TEST(BufferedStreamIGTest, TestRefill) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestRefill());
+}
+
+TEST(BufferedStreamIGTest, TestSetCalibReadParam) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestSetCalibReadParam());
+}
+
+TEST(BufferedStreamIGTest, TestSetCalibWriteParam) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestSetCalibWriteParam());
+}
+

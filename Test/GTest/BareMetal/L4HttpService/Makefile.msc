@@ -10,7 +10,7 @@
 # Licence. 
 # You may obtain a copy of the Licence at: 
 #  
-# http://ec.europa.eu/idabc/eupl
+# http:\\ec.europa.eu\idabc\eupl
 #
 # Unless required by applicable law or agreed to in 
 # writing, software distributed under the Licence is 
@@ -20,17 +20,12 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=cov
+TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES_STATIC=L1Portability/cov/L1PortabilityF$(LIBEXT)
-LIBRARIES_STATIC+=L3Streams/cov/L3StreamsF$(LIBEXT)
-LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceF$(LIBEXT)
-LIBRARIES_STATIC+=L4HttpService/cov/L4HttpServiceF$(LIBEXT)
-LIBRARIES_STATIC+=L6App/cov/L6AppF$(LIBEXT)
-
-LIBRARIES += -lm
+CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
+INCLUDES += -I../../../../Lib/gtest-1.7.0/include

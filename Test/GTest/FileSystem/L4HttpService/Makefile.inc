@@ -20,38 +20,17 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-
-OBJSX=  AnyTypeGTest.x \
-		ClassMethodCallerGTest.x \
-		ClassMethodCallerTGTest.x \
-		ClassMethodInterfaceMapperGTest.x \
-		ClassMethodsRegistryItemGTest.x \
-		ClassPropertiesGTest.x \
-		ClassRegistryDatabaseGTest.x \
-		ClassRegistryItemGTest.x \
-		IntrospectionEntryGTest.x\
-		IntrospectionGTest.x\
-		ObjectBuilderGTest.x \
-		ObjectBuilderTGTest.x \
-		ObjectGTest.x \
-		ObjectRegistryDatabaseGTest.x \
-		ReferenceContainerFilterNameAndTypeGTest.x \
-		ReferenceContainerFilterObjectNameGTest.x \
-		ReferenceContainerFilterReferencesGTest.x \
-		ReferenceContainerGTest.x \
-		ReferenceContainerNodeGTest.x \
-		ReferenceGTest.x \
-		ReferenceTGTest.x 
-
-PACKAGE=GTest/BareMetal
+OBJSX=  HttpServiceGTest.x HttpProtocolGTest.x HttpChunkedStreamGTest.x HttpClientGTest.x
+		
+PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -59,19 +38,31 @@ INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects
 INCLUDES += -I../../../Core/BareMetal/L3Streams
 INCLUDES += -I../../../Core/BareMetal/L4Configuration
+INCLUDES += -I../../../Core/BareMetal/L4Messages
 INCLUDES += -I../../../Core/Scheduler/L1Portability
+INCLUDES += -I../../../Core/Scheduler/L3Services
 INCLUDES += -I../../../Core/FileSystem/L1Portability
+INCLUDES += -I../../../Core/FileSystem/L3Streams
+INCLUDES += -I../../../Core/FileSystem/L4HttpService
+INCLUDES += -I../../../Core/FileSystem/L4LoggerService
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L4HttpService
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../../../Source/Core/FileSystem/L3Streams
+INCLUDES += -I../../../../Source/Core/FileSystem/L4LoggerService
+INCLUDES += -I../../../../Source/Core/FileSystem/L4HttpService
 
 
-all: $(OBJS)    \
-        $(BUILD_DIR)/L2ObjectsBGTest$(LIBEXT) 
+
+all: $(OBJS) \
+                $(BUILD_DIR)/L4HttpServiceFGTest$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

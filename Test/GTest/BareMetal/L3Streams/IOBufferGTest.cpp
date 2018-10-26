@@ -656,4 +656,28 @@ TEST(IOBufferGTest, TestPrintPointerMatrix) {
     ASSERT_TRUE(myIOBufferTest.TestPrintPointerMatrix());
 }
 
+TEST(IOBufferGTest, TestRefill) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRefill());
+}
+
+TEST(IOBufferGTest, TestFlush) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestFlush());
+}
+
+TEST(IOBufferGTest, TestNoMoreSpaceToWriteArg) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWriteArg());
+}
+
+TEST(IOBufferGTest, TestNoMoreSpaceToWrite) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWrite());
+}
+
+TEST(IOBufferGTest, TestNoMoreDataToRead) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreDataToRead());
+}
 
