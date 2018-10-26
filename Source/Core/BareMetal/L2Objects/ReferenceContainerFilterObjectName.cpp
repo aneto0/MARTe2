@@ -63,7 +63,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
     SetAddress(address);
 }
 
-/*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
+/*lint -e{929} -e{925} -e{9007} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address) {
     const char8 *lastOccurrence = address;
     addressToSearch = static_cast<char8 **>(NULL);
