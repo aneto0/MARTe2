@@ -185,8 +185,6 @@ protected:
      */
     virtual IOBuffer *GetWriteBuffer();
 
-private:
-
     /**
      * Stream is exclusive read mode.
      */

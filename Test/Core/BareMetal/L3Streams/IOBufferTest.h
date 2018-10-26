@@ -398,6 +398,30 @@ public:
      */
     bool TestPrintStructuredDataInterface();
 
+    /**
+     * @brief Tests the Refill method.
+     */
+    bool TestRefill();
+
+    /**
+     * @brief Tests the Flush method.
+     */
+    bool TestFlush();
+
+    /**
+     * @brief Tests the NoMoreSpaceToWrite method with size as argument.
+     */
+    bool TestNoMoreSpaceToWriteArg();
+
+    /**
+     * @brief Tests the NoMoreSpaceToWrite method.
+     */
+    bool TestNoMoreSpaceToWrite();
+
+    /**
+     * @brief Tests the NoMoreDataToRead method.
+     */
+    bool TestNoMoreDataToRead();
 private:
 
     /**
@@ -519,7 +543,7 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     char8 bufferInfo[32];
     AnyType at(bufferInfo);
     ioBuffer.PrintFormatted("%?", &at);
-    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array")==0;
+    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array") == 0;
 }
 
 template<uint32 nRows, uint32 nCols>

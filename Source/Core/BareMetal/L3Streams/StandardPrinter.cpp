@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBuffer.cpp
- * @brief Source file for class StreamStringIOBuffer
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @file StandardPrinter.cpp
+ * @brief Source file for class StandardPrinter
+ * @date 07/09/2018
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,11 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringIOBuffer (public, protected, and private). Be aware that some 
+ * the class StandardPrinter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -30,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <StreamStringIOBuffer.h>
+#include "StandardPrinter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,84 +39,74 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
-StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(64u, 0u) {
+StandardPrinter::StandardPrinter(BufferedStreamI & streamIn): PrinterI(streamIn) {
+    // Auto-generated constructor stub for StandardPrinter
+    // TODO Verify if manual additions are needed
+}
+
+StandardPrinter::StandardPrinter():PrinterI(){
 
 }
 
-StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
-        IOBuffer(granularity, 0u) {
-
+StandardPrinter::~StandardPrinter() {
+    // Auto-generated destructor stub for StandardPrinter
+    // TODO Verify if manual additions are needed
 }
 
-StreamStringIOBuffer::~StreamStringIOBuffer() {
 
+bool StandardPrinter::PrintOpenMatrix(){
+    return stream->Printf("%s", "{");
 }
 
-bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
-
-    bool ret;
-
-    //add one to desired size for the terminator character.
-    ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
-
-    if (ret) {
-        if (desiredSize < UsedSize()) {
-            SetUsedSize(desiredSize);
-        }
-
-        Terminate();
-    }
-
-    return ret;
+bool StandardPrinter::PrintCloseMatrix(){
+    return stream->Printf("%s", "}");
 }
 
-bool StreamStringIOBuffer::Write(const char8 * const buffer,
-                                 uint32 &size) {
-
-    bool ret = true;
-
-    if (size > AmountLeft()) {
-        ret = SetBufferAllocationSize(Position() + size);
-    }
-
-    if (ret) {
-        ret = IOBuffer::Write(buffer, size);
-    }
-
-    return ret;
+bool StandardPrinter::PrintScalarSeparator(){
+    return stream->Printf("%s", " ");
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + 1u);
-
-    return ret;
+bool StandardPrinter::PrintVectorSeparator(){
+    return true;
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + neededSize);
-
-    return ret;
+bool StandardPrinter::PrintVariableSeparator(){
+    return true;
 }
 
-void StreamStringIOBuffer::Terminate() {
-    if (BufferReference() != NULL) {
-        BufferReference()[UsedSize()] = '\0';
-    }
+bool StandardPrinter::PrintBlockSeparator(){
+    return true;
 }
 
+bool StandardPrinter::PrintOpenVector(){
+    return stream->Printf("%s", "{");
+}
+
+bool StandardPrinter::PrintCloseVector(){
+    return stream->Printf("%s", "}");
+}
+
+bool StandardPrinter::PrintOpenBlock(const char8 *const blockName){
+    return stream->Printf("%s = {", blockName);
+}
+
+/*lint -e{715} parameter not used in this function*/
+bool StandardPrinter::PrintCloseBlock(const char8 *const blockName){
+    return stream->Printf("%s", "}");
+}
+
+bool StandardPrinter::PrintOpenAssignment(const char8 *const varName){
+    return stream->Printf("%s =", varName);
+}
+
+/*lint -e{715} parameter not used in this function*/
+bool StandardPrinter::PrintCloseAssignment(const char8 *const varName){
+    return true;
+}
+
+bool StandardPrinter::PrintVariable(const AnyType &var){
+    return stream->Printf("%#!", var);
+}
 }

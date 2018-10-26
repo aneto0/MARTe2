@@ -196,7 +196,7 @@ uint64 StreamString::Position() {
 }
 
 bool StreamString::SetSize(const uint64 size) {
-    return buffer.SetBufferAllocationSize(static_cast<uint32>(size) + 1u);
+    return buffer.SetBufferAllocationSize(static_cast<uint32>(size));
 }
 
 bool StreamString::CanSeek() const {

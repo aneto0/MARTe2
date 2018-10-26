@@ -121,6 +121,22 @@ struct GrammarInfo {
 
 };
 
+/**
+ * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
+ */
+static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
+
+
+/**
+ * The lexical elements for MARTe configuration streams encoded in JSON language.
+ */
+static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
+
+
+/**
+ * The lexical elements for MARTe configuration streams encoded in XML language.
+ */
+static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
 
 }
 

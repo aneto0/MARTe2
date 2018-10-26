@@ -25,16 +25,26 @@
 #############################################################
 
 OBJSX=	BufferedStreamI.x \
-		BufferedStreamIOBuffer.x \
+                Base64Encoder.x\
+                BufferedStreamIOBuffer.x \
 		CharBuffer.x \
 		DoubleBufferedStream.x \
 		IOBuffer.x \
 		IOBufferFloatPrint.x \
 		IOBufferIntegerPrint.x \
+		IOBufferStandardPrint.x \
+		IOBufferJsonPrint.x \
+		IOBufferXMLPrint.x \
+		JsonPrinter.x\
+		PrinterI.x\
 		SingleBufferedStream.x \
+		StandardPrinter.x\
 		StreamMemoryReference.x \
+		StreamStructuredDataI.x\
+		StreamStructuredData.x\
 		StreamString.x \
-		StreamStringIOBuffer.x
+		StreamStringIOBuffer.x\
+		XMLPrinter.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

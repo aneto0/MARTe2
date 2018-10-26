@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBuffer.cpp
- * @brief Source file for class StreamStringIOBuffer
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @file JsonPrinter.cpp
+ * @brief Source file for class JsonPrinter
+ * @date 07/09/2018
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,11 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringIOBuffer (public, protected, and private). Be aware that some 
+ * the class JsonPrinter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -30,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <StreamStringIOBuffer.h>
+#include "JsonPrinter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,82 +41,69 @@
 
 namespace MARTe {
 
-StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(64u, 0u) {
+JsonPrinter::JsonPrinter(BufferedStreamI & streamIn) :
+        PrinterI(streamIn) {
+}
+
+JsonPrinter::JsonPrinter() :
+        PrinterI() {
+}
+
+JsonPrinter::~JsonPrinter() {
 
 }
 
-StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
-        IOBuffer(granularity, 0u) {
-
+bool JsonPrinter::PrintOpenMatrix() {
+    return stream->Printf("%s", "[");
 }
 
-StreamStringIOBuffer::~StreamStringIOBuffer() {
-
+bool JsonPrinter::PrintCloseMatrix() {
+    return stream->Printf("%s", "]");
 }
 
-bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
-
-    bool ret;
-
-    //add one to desired size for the terminator character.
-    ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
-
-    if (ret) {
-        if (desiredSize < UsedSize()) {
-            SetUsedSize(desiredSize);
-        }
-
-        Terminate();
-    }
-
-    return ret;
+bool JsonPrinter::PrintScalarSeparator() {
+    return stream->Printf("%s", ",");
 }
 
-bool StreamStringIOBuffer::Write(const char8 * const buffer,
-                                 uint32 &size) {
-
-    bool ret = true;
-
-    if (size > AmountLeft()) {
-        ret = SetBufferAllocationSize(Position() + size);
-    }
-
-    if (ret) {
-        ret = IOBuffer::Write(buffer, size);
-    }
-
-    return ret;
+bool JsonPrinter::PrintVectorSeparator() {
+    return stream->Printf("%s", ",");
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + 1u);
-
-    return ret;
+bool JsonPrinter::PrintVariableSeparator() {
+    return stream->Printf("%s", ",");
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + neededSize);
-
-    return ret;
+bool JsonPrinter::PrintBlockSeparator() {
+    return stream->Printf("%s", ",");
 }
 
-void StreamStringIOBuffer::Terminate() {
-    if (BufferReference() != NULL) {
-        BufferReference()[UsedSize()] = '\0';
-    }
+bool JsonPrinter::PrintOpenVector() {
+    return stream->Printf("%s", "[");
 }
 
+bool JsonPrinter::PrintCloseVector() {
+    return stream->Printf("%s", "]");
+}
+
+bool JsonPrinter::PrintOpenBlock(const char8 *const blockName) {
+    return stream->Printf("\"%s\": {", blockName);
+}
+
+/*lint -e{715} parameter not used in this function*/
+bool JsonPrinter::PrintCloseBlock(const char8 *const blockName) {
+    return stream->Printf("%s", "}");
+}
+
+bool JsonPrinter::PrintOpenAssignment(const char8 *const varName) {
+    return stream->Printf("\"%s\": ", varName);
+}
+
+/*lint -e{715} parameter not used in this function*/
+bool JsonPrinter::PrintCloseAssignment(const char8 *const varName) {
+    return true;
+}
+
+bool JsonPrinter::PrintVariable(const AnyType &var) {
+    return stream->Printf("%#J!", var);
+}
 }
