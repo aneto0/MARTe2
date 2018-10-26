@@ -65,7 +65,6 @@ public:
      */
     bool TestFlush();
 
-
     /**
      * @brief Tests the FinalChunk method
      */

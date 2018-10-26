@@ -37,6 +37,7 @@ ConsoleLogger.cpp
 CRC.h
 CString.h
 DataSourceI.cpp
+DataExportI.cpp
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
@@ -80,6 +81,7 @@ HighResolutionTimerCalibrator.cpp
 HttpClient.cpp
 HttpDefinition.cpp
 HttpProtocol.cpp
+HttpRealmI.cpp
 HttpService.cpp
 HttpChunkedStream.cpp
 IOBuffer.cpp
@@ -150,6 +152,7 @@ OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
+ProtocolI.cpp
 PrinterI.cpp
 QueuedMessageI.cpp
 QueueingMessageFilter.cpp
@@ -194,7 +197,8 @@ StreamI.h
 StreamMemoryReference.cpp
 StreamString.cpp
 StreamStringIOBuffer.cpp
-StreamStructuredData.h
+StreamStructuredData.cpp
+StreamStructuredDataI.cpp
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 StringHelper_CLIB_Generic.cpp
@@ -220,4 +224,5 @@ UDPLogger.cpp
 ValidateBasicType.cpp
 Vector.h
 XMLParser.cpp
+XMLPrinter.cpp
 ZeroTerminatedArray.h
