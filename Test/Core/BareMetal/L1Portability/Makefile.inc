@@ -37,6 +37,7 @@ OBJSX=  AtomicTest.x \
 	GlobalObjectsDatabaseTest.x \
 	HeapManagerTest.x \
 	HighResolutionTimerTest.x \
+	Md5EncryptTest.x\
 	LoadableLibraryTest.x \
 	MemoryAreaTest.x \
 	MemoryCheckTest.x \

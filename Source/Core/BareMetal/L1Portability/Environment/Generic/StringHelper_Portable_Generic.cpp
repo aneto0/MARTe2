@@ -128,6 +128,50 @@ int32 CompareN(const char8* const string1,
     return ret;
 }
 
+int32 CompareNoCaseSensN(const char8* const string1,
+                         const char8* const string2,
+                         const uint32 size) {
+
+    int32 ret = -1;
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end = false;
+        ret = 0;
+
+        uint32 i = 0u;
+        while ((!end) && (i < size)) {
+            uint8 c1=static_cast<uint8>(string1[i]);
+            uint8 c2=static_cast<uint8>(string2[i]);
+            if((c1>=static_cast<uint8>('A')) && (c1<=static_cast<uint8>('Z'))) {
+                c1+=32u;
+            }
+            if((c2>=static_cast<uint8>('A')) && (c2<=static_cast<uint8>('Z'))) {
+                c2+=32u;
+            }
+            if (c1 > c2) {
+                ret = 2;
+                end = true;
+            }
+            if (c1 < c2) {
+                ret = 1;
+                end = true;
+            }
+            if ((string1[i] == '\0') && (string2[i] == '\0')) {
+                end = true;
+
+            }
+
+            i++;
+        }
+
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+    }
+
+    return ret;
+}
+
 bool Concatenate(char8* const destination,
                  const char8* const source) {
 

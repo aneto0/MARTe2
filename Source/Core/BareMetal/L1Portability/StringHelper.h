@@ -109,6 +109,18 @@ DLL_API int32 CompareN(const char8* const string1,
                        const uint32 size);
 
 /**
+ * @brief Compares two strings for a maximum of 'size' characters without case sensitive.
+ * @param[in] string1 is the first string.
+ * @param[in] string2 is the second string.
+ * @param[in] size is the maximum number of characters to compare.
+ * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
+ * @pre size <= largest length of the string1 or string2.
+ */
+DLL_API int32 CompareNoCaseSensN(const char8* const string1,
+                                 const char8* const string2,
+                                 const uint32 size);
+
+/**
  * @brief Copies the source into the destination.
  * @param[out] destination the destination string.
  * @param[in] source the string to copy into the destination.

@@ -55,6 +55,11 @@ TEST(StringHelperGTest,TestCompareN) {
     ASSERT_TRUE(mystringhelper.TestCompareN());
 }
 
+TEST(StringHelperGTest,TestCompareNoCaseSensN) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestCompareNoCaseSensN());
+}
+
 TEST(StringHelperGTest,TestCopy) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopy("Hello"));

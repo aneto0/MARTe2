@@ -57,6 +57,11 @@ TEST(StringPortableGTest,TestCompareN) {
     ASSERT_TRUE(mystringportable.TestCompareN());
 }
 
+TEST(StringPortableGTest,TestCompareNoCaseSensN) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestCompareNoCaseSensN());
+}
+
 TEST(StringPortableGTest,TestCopy) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCopy("Hello"));

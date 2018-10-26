@@ -133,6 +133,44 @@ bool StringPortableTest::TestCompareN() {
 
 }
 
+
+bool StringPortableTest::TestCompareNoCaseSensN(){
+    const char8 *string1 = "HelloWorld";
+    const char8 *string2 = "heLlOD";
+    const char8 *string3 = "HeLLoWoRLd";
+
+    uint32 size = 5;
+
+    //Check the equality until size chars.
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size) != 0) {
+        return false;
+    }
+
+    //Check if it returns 2 since string1 is greater than string2.
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size + 1) != 2) {
+        return false;
+    }
+
+    //Check if it returns 1 since string2 is greater than string1.
+    if (StringHelper::CompareNoCaseSensN(string2, string1, size + 1) != 1) {
+        return false;
+    }
+
+    size = 0;
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size) != 0) {
+        return false;
+    }
+    size = 10 + 1;
+    if (StringHelper::CompareNoCaseSensN(string1, string3, size) != 0) {
+        return false;
+    }
+    //Check the return value in case of NULL arguments.
+    size = 1;
+    return (StringHelper::CompareNoCaseSensN(NULL, NULL, size) == -1 && StringHelper::CompareNoCaseSensN(string1, NULL, size) == -1
+            && StringHelper::CompareNoCaseSensN(NULL, string2, size) == -1);
+
+}
+
 bool StringPortableTest::TestConcatenateWithResult() {
 
     const char8 *string1 = "Hello ";

@@ -36,6 +36,7 @@ OBJSX=  FastPollingEventSem.x \
 	GlobalObjectsDatabase.x \
 	HeapManager.x \
 	MemoryArea.x \
+	Md5Encrypt.x\
 	MemoryOperationsHelper.x \
 	ProcessorType.x \
 	StaticListHolder.x \

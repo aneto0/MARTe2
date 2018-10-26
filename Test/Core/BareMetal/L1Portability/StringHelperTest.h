@@ -75,6 +75,11 @@ public:
     bool TestCompareN();
 
     /**
+     * @brief Tests the StringHelper::CompareNoCaseSensN() function.
+     */
+    bool TestCompareNoCaseSensN();
+
+    /**
      * @brief Tests the StringHelper::Copy() function.
      * @details Checks if the copied string is equal to the original, then checks the return value of the function with NULL arguments.
      * @param[in] string is the string to copy.

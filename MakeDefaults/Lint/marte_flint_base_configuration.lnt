@@ -12,6 +12,7 @@
 -i./Source/Core/BareMetal/L4Configuration/
 -i./Source/Core/BareMetal/L4Logger/
 -i./Source/Core/BareMetal/L4Messages/
+-i./Source/Core/BareMetal/L4HttpService/
 -i./Source/Core/BareMetal/L5GAMs/
 -i./Source/Core/BareMetal/L6App/
 
@@ -27,6 +28,7 @@
 -i./Source/Core/FileSystem/L1Portability/
 -i./Source/Core/FileSystem/L1Portability/Environment/Linux
 -i./Source/Core/FileSystem/L3Streams/
+-i./Source/Core/FileSystem/L4HttpService/
 -i./Source/Core/FileSystem/L4LoggerService/
 -i./Source/Core/FileSystem/L6App/
 

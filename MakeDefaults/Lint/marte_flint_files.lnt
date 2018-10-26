@@ -3,6 +3,7 @@ AnyObject.cpp
 AnyType.cpp
 AnyTypeCreator.cpp
 Atomic.h
+Base64Encoder.cpp
 BasicConsole.cpp
 BasicFile.cpp
 BasicFileProperties.h
@@ -76,9 +77,17 @@ HeapI.h
 HeapManager.cpp
 HighResolutionTimer.h
 HighResolutionTimerCalibrator.cpp
+HttpClient.cpp
+HttpDefinition.cpp
+HttpProtocol.cpp
+HttpService.cpp
+HttpChunkedStream.cpp
 IOBuffer.cpp
 IOBufferFloatPrint.cpp
 IOBufferIntegerPrint.cpp
+IOBufferStandardPrint.cpp
+IOBufferJsonPrint.cpp
+IOBufferXMLPrint.cpp
 IntegerToFloat.cpp
 InternetHost.cpp
 InternetHostCore.h
@@ -90,6 +99,7 @@ IntrospectionT.h
 Iterator.h
 IteratorT.h
 JsonParser.cpp
+JsonPrinter.cpp
 LexicalAnalyzer.cpp
 LinkedListHolder.cpp
 LinkedListHolderT.h
@@ -100,6 +110,7 @@ Logger.cpp
 LoggerConsumerI.cpp
 LoggerService.cpp
 Matrix.h
+Md5Encrypt.cpp
 MemoryArea.cpp
 MemoryCheck.h
 MemoryCheck_Generic.cpp
@@ -139,6 +150,7 @@ OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
+PrinterI.cpp
 QueuedMessageI.cpp
 QueueingMessageFilter.cpp
 QueuedReplyMessageCatcherFilter.cpp
@@ -151,6 +163,7 @@ Reference.cpp
 Reference.h
 ReferenceContainer.cpp
 ReferenceContainerFilter.cpp
+ReferenceContainerFilterNameAndType.h
 ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerNode.cpp
@@ -172,6 +185,7 @@ SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
 StandardParser.cpp
+StandardPrinter.cpp
 StateMachine.cpp
 StateMachineEvent.cpp
 StaticList.h
@@ -180,6 +194,7 @@ StreamI.h
 StreamMemoryReference.cpp
 StreamString.cpp
 StreamStringIOBuffer.cpp
+StreamStructuredData.h
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 StringHelper_CLIB_Generic.cpp

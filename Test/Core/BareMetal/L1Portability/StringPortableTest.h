@@ -87,6 +87,11 @@ public:
     bool TestCompareN();
 
     /**
+     * @brief Tests the StringPortable::CompareNoCaseSensN() function.
+     */
+    bool TestCompareNoCaseSensN();
+
+    /**
      * @brief Tests the StringPortable::Concatenate() function passing also the result parameter.
      * @details Checks if the result of the concatenation is correct, then checks the return value
      * passing NULL arguments.
