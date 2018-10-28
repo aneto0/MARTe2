@@ -81,18 +81,20 @@ public:
 
     /**
      * @brief initialises Vector to point to the given memory area.
-     * Use only as first initialisation as it will not check the allocation flag and try deallocating what the pointer addresses
+     * !!!! Use only as first initialisation as it will not check the allocation flag and try deallocating what the pointer addresses
      * Can be used to initialise Vectors created in memory.
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfElements The number of elements of the vector
+     * @param[in] allocated if true means that the memory can/shall be deallocated.
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray
      */
-    void InitVector(T *existingArray,uint32 nOfElements);
+    void InitVector(T *existingArray,uint32 nOfElements,bool allocated=false);
 
     /**
      * @brief Frees any existing memory and allocate enough to store nOfElements
+     * if nOfElements is zero, memory is freed and pointer set to NULL
      * @param[in] nOfElements The number of elements of the vector
      * @post
      *    GetNumberOfElements() == nOfElements &&
@@ -197,18 +199,23 @@ Vector<T>::Vector(T *existingArray,uint32 nOfElements):Pointer(existingArray) {
 }
 
 template<typename T>
-void Vector<T>::InitVector(T *existingArray,uint32 nOfElements) {
+void Vector<T>::InitVector(T *existingArray,uint32 nOfElements,bool allocated) {
 // does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
-    canDestroy = false;
+    canDestroy = allocated;
     numberOfElements = nOfElements;
 }
 
 template<typename T>
 void Vector<T>::SetSize(uint32 nOfElements) {
 	FreeMemory();
-	Pointer::Set(new T[nOfElements]);
-    canDestroy = true;
+	if (nOfElements > 0){
+		Pointer::Set(new T[nOfElements]);
+	    canDestroy = true;
+	} else {
+		Pointer::Set(NULL_PTR(T*));
+	    canDestroy = false;
+	}
     numberOfElements = nOfElements;
 }
 

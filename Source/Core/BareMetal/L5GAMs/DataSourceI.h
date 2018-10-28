@@ -108,12 +108,12 @@ public:
      * @details This method is called by the RealTimeApplicationConfigurationBuilder once all
      *  the information has been validated and negotiated. The structure of this information is (the syntax is described in RealTimeApplicationConfigurationBuilder):
      *  QualifiedName = "x.y.DATASOURCENAME"
-     *    Signals = {
+     *    Signals = {NumberOfElements
      *      *NUMBER={
      *        QualifiedName = "QualifiedName of the signal"
      *        Type = BasicType
-     *        NumberOfDimensions = 0|1|2
-     *        NumberOfElements = NUMBER>0
+     *        NumberOfDimensions = 0|1|2   <--- REDUNDANT!!! ELIMINATE
+     *        NumberOfElements = 1 | NUMBER>1 | { NUMBER>1 NUMBER>1 }
      *        +Frequency = -1|NUMBER>0
      *        +Trigger = 0|1
      *        +States = {
@@ -188,6 +188,7 @@ public:
      */
     TypeDescriptor GetSignalType(const uint32 signalIdx);
 
+#if 0
     /**
      * @brief Gets the number of dimensions of the signal at position \a signalIdx.
      * @details The default number of dimensions of a signal is 0.
@@ -198,6 +199,7 @@ public:
      *   SetConfiguredDatabase
      */
     bool GetSignalNumberOfDimensions(const uint32 signalIdx, uint8 &numberOfDimensions);
+#endif
 
     /**
      * @brief Gets the number of elements of the signal at position \a signalIdx.
@@ -208,7 +210,7 @@ public:
      * @pre
      *   SetConfiguredDatabase
      */
-    bool GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numberOfElements);
+    ErrorManagement::ErrorType GetSignalNumberOfElements(const uint32 signalIdx, uint32 (&numberOfElements)[2]);
 
     /**
      * @brief Gets the number of bytes required to represent the signal at position \a signalIdx.
@@ -287,6 +289,16 @@ public:
 
     /**
      * @brief Gets the default of the signal with index \a signalIdx.
+     *
+     */
+    Reference GetSignalDefaultValue(const uint32 signalIdx);
+
+    TypeDescriptor GetSignalDefaultInfo(const uint32 signalIdx,uint32 nOfDimensions,uint32 *dimensionSizes);
+
+#if 0
+
+    /**
+     * @brief Gets the default of the signal with index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
      * @param[out] defaultValue the default value of the signal.
      * @return true if the signalIdx exists and if a default value was set for this signal.
@@ -295,7 +307,7 @@ public:
      */
     bool GetSignalDefaultValue(const uint32 signalIdx, const AnyType &defaultValue);
 
-#if 0
+
     /**
      * @brief Gets the type of the default value for the signal with index \a signalIdx.
      * @param[in] signalIdx the index of the signal.
@@ -306,7 +318,6 @@ public:
      */
     AnyType GetSignalDefaultValueType(const uint32 signalIdx);
 #endif
-
 
     /**
      * @brief Gets the number of functions that interact with this DataSourceI.
@@ -518,7 +529,12 @@ public:
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < GetNumberOfMemoryBuffers()
      */
-    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) = 0;
+    virtual ErrorManagement::ErrorType GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) = 0;
+
+    /**
+     * @brief acess to the memory of the signal using the correct type
+     * */
+    ErrorManagement::ErrorType GetSignal(AnyType &signal,const uint32 signalIdx);
 
     /**
      * @brief Gets the name of the broker for the signal information available in the input \a data.

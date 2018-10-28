@@ -64,7 +64,7 @@ namespace MARTe{
 const uint32 defaultAllocationSize = 256*256;
 
 void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
-	if (modifier != '\0'){
+	if (modifier != 'O'){
 		switch (modifier){
 		case 'V':{
 			if (typeDescriptor.dataIsConstant){
@@ -137,67 +137,6 @@ VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     return *this;
 }
 
-#if 0
-
-/*
- * Array --> type + size
- * Vector --> type + size
- * pointer to array --> type + size
- * ZTA --> type + size
- *
- */
-// used externally 4 times
-TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor(uint32 *dimensionSize) const {
-    CCString modifiersCopy = modifiers;
-    char8 firstModifier  = '\0';
-    char8 nextModifier  = '\0';
-    uint32 size = 0;
-    VariableDescriptorLib::GetLayerInfo(modifiersCopy,firstModifier,size );
-    nextModifier= modifiersCopy[0];
-
-    TypeDescriptor td;
-
-    if (firstModifier == '\0'){
-    	td = typeDescriptor;
-    } else {
-    	switch (firstModifier){
-    	case 'P':
-    	case 'p':{
-    		td = GenericPointer;
-
-    		if (nextModifier == 0){
-    			// TODO Do we really need to distinguish this?
-    			td = PointerType;
-    		}
-
-    		// TODO get dimensions for PA PZ PD etc...
-    	}break;
-    	case 'V':
-    	case 'v':
-    	case 'M':
-    	case 'm':{
-    		td = GenericPointer;
-    		// TODO get dimensions
-    	}break;
-    	case 'A':{
-    		td = GenericArray;
-    		if (dimensionSize != NULL_PTR(uint32 *)){
-    			*dimensionSize = size;
-    		}
-    	}break;
-
-    	default:{
-    		td = InvalidType(0);
-            REPORT_ERROR(ErrorManagement::FatalError, "Incorrect modifier: ZDS not prepended by P ");
-    	}
-    	}
-    }
-
-	return td;
-}
-#endif
-
-
 ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
 		const void *		varPtr,
 		TypeDescriptor &	td,
@@ -220,15 +159,16 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
 	nOfDimensions = 0U;
 	// unless it is not and will be updated
     td = GenericArray;
+//TODO - assign type using VariableDescriptorLib::Type2TypeDescriptor()
 
     bool finished = false;
-    while ((nOfDimensions <= maxDepth)&& (!finished) && (!ret)){
-    uint32 		size = 0;
-    char8 		modifier  = '\0';
-   	VariableDescriptorLib::GetLayerInfo(modifiersCopy,modifier,size );
+    while ((nOfDimensions <= maxDepth)&& (!finished) && ret){
+    	uint32 		size = 0;
+    	char8 		modifier  = 'O';
+    	VariableDescriptorLib::GetLayerInfo(modifiersCopy,modifier,size );
 
    	   	switch (modifier){
-    	case '\0':{
+    	case 'O':{
     		finished = true;
     		//depth = 0;
     		//sizes[] unmodified
@@ -255,11 +195,13 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(varPtr);
     				dimensionSizes[nOfDimensions] = pm->GetNumberOfRows();
     	    		if (nOfDimensions < maxDepth){
+    	    			nOfDimensions++;
     	    			dimensionSizes[nOfDimensions] = pm->GetNumberOfColumns();
     	    		}
     			} else {
     				dimensionSizes[nOfDimensions] = 0;
     	    		if (nOfDimensions < maxDepth){
+    	    			nOfDimensions++;
     		    		// size = 0 means undetermined
     	    			dimensionSizes[nOfDimensions] = 0;
     	    		}
@@ -285,6 +227,8 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     			}
     		}
     	}break;
+    	case 'f':
+    	case 'F':
     	case 'A':{
     		//depth > 0;
     		//sizes[*] set to actual value
@@ -363,28 +307,69 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 		) const {
 
 	ErrorManagement::ErrorType ret;
-	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
+	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 	VariableDescriptorLib::Variable sourceHandler(this->modifiers,this->typeDescriptor);
 	VariableDescriptorLib::Variable destHandler(destVd.modifiers,destVd.typeDescriptor);
+	uint32 nDim = sourceHandler.NDimensions();
 
-	ret.internalSetupError = (!HasSameDimensionsAs(destHandler,sourceHandler));
-	REPORT_ERROR(ret, "Dimension mismatch");
+	ret.parametersError = ((destPtr == NULL) || (sourcePtr == NULL));
+	REPORT_ERROR(ret, "NULL inputs");
 
 	if (ret){
-		tco = TypeConversionManager::Instance().GetOperator(destHandler.GetTypeDescriptor(),sourceHandler.GetTypeDescriptor(),isCompare);
+		tco = TypeConversionManager::Instance().GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
     	ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
     	REPORT_ERROR(ret, "Conversion Operator not found");
 	}
 
-    if (ret){
-    	ret = VariableDescriptorLib::CopyToRecursive(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
-    	REPORT_ERROR(ret, "CopyToRecursive failed");
-    }
+	if (ret){
+#if 0
+		// TODO make it part of CopyToRecursive so that it can handle arrays of vectors
+		// special case of destination Vector<type>
+		if ((destVd.modifiers == "M") && (destVd.typeDescriptor.IsBasicType()) && !isCompare){
+			ret.unsupportedFeature = (nDim != 3);
+			COMPOSITE_REPORT_ERROR(ret, "Dimension mismatch expecting 3 and found ",nDim);
 
-    if (tco != NULL_PTR(TypeConversionOperatorI *)){
-    	delete tco;
-    }
+			if (ret){
+		    	ret = VariableDescriptorLib::MatrixCopy(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
+		    	REPORT_ERROR(ret, "MatrixCopy failed");
+		    }
+
+		} else
+
+		// TODO make it part of CopyToRecursive so that it can handle arrays of vectors
+		// special case of destination Vector<type>
+		if ((destVd.modifiers == "V") && (destVd.typeDescriptor.IsBasicType())&& !isCompare){
+
+			ret.unsupportedFeature = (nDim > 2);
+			COMPOSITE_REPORT_ERROR(ret, "Dimension mismatch expecting 1 or 2 and found ",nDim);
+
+		    if (ret){
+		    	ret = VariableDescriptorLib::VectorCopy(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
+		    	REPORT_ERROR(ret, "VectorCopy failed");
+		    }
+
+		} else {
+
+//			ret.internalSetupError = (!HasSameDimensionsAs(destHandler,sourceHandler));
+//			REPORT_ERROR(ret, "Dimension mismatch");
+
+		    if (ret){
+		    	ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco);
+		    	REPORT_ERROR(ret, "CopyToRecursive failed");
+		    }
+		}
+#else
+    	ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco,!isCompare);
+    	REPORT_ERROR(ret, "CopyToRecursive failed");
+#endif
+	    if (tco != NULL_PTR(TypeConversionOperatorI *)){
+	    	delete tco;
+	    }
+
+	}
+
+
 
     return ret;
 }
@@ -402,7 +387,8 @@ ErrorManagement::ErrorType VariableDescriptor::GetSize(const uint8 *pointer,uint
 
 	VariableDescriptorLib::Variable handler(this->modifiers,this->typeDescriptor);
 
-	ret = VariableDescriptorLib::GetSizeRecursive(0,handler,pointer,dataSize,overHeadSz);
+	const VariableDescriptorLib::Dimension *start = &handler[0];
+	ret = VariableDescriptorLib::GetSizeRecursive(start,pointer,dataSize,overHeadSz);
 	REPORT_ERROR(ret,"GetSizeRecursive failed");
 
 	if (overHeadSize != NULL){
@@ -426,11 +412,19 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 
 	// analyse VariableDescriptor
 	// if it can be copied directly without pointers...
-	VariableDescriptorLib::Variable handler(modifiers,typeDescriptor);
+	VariableDescriptorLib::Variable variables(modifiers,typeDescriptor);
+	const VariableDescriptorLib::Dimension *dimensions = &variables[0];
 
-	bool isString = handler.GetTypeDescriptor().IsCharString();
-	bool isFixedData = (handler.GetTypeDescriptor().IsStructuredData() || handler.GetTypeDescriptor().IsBasicType());
-	bool hasOneLayer = (handler[0].endType == '\0');
+	// a composition of strings
+	bool isString = typeDescriptor.IsCharString();
+
+	// means that the data at the end has a fixed size
+	bool isFixedData = (typeDescriptor.IsStructuredData() || typeDescriptor.IsBasicType());
+
+	// means that the variable data can be accessed directly without redirection
+	// this means simple arrays.
+//	bool hasOneLayer = (handler[0].endType == 'O');
+	bool hasOneStack = dimensions->GetNextBreak()->IsFinal();
 
 	if (!isString && !isFixedData){
 		ret.unsupportedFeature = true;
@@ -438,10 +432,10 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 	}
 
 	if (ret){
-		if ((hasOneLayer) && (!isString)){
+		// simple multidimensional array of fixed size stuff
+		if ((hasOneStack) && (!isString)){
 			uint32 sizeToCopy = 0;
-			VariableDescriptorLib::DimensionSize ds = handler[0].elementSize;
-			ds = ds * handler[0].numberOfElements;
+			VariableDescriptorLib::DimensionSize ds = dimensions->GetLayerCombinedElementSize();
 
 			ret = ds.ToNumber(sizeToCopy);
 			REPORT_ERROR(ret, "Size of object > uint32 or undefined");
@@ -450,9 +444,12 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 				reference = AnyObject::Clone(sizeToCopy,reinterpret_cast<const void *>(pointer),*this);
 			}
 
+		// variable size - memory will be allocated progressively
 		} else {
 			MemoryPageFile pageFile(defaultAllocationSize);
-			VariableDescriptorLib::VariableCloner cloner(handler,pageFile);
+
+			// prepare the worker
+			VariableDescriptorLib::VariableCloner cloner(variables,pageFile);
 
 			// force allocation of first page
 			ret = pageFile.CheckAndNewPage();
@@ -463,6 +460,8 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 				// move it down one level
 				uint8 *addressOfOutput = NULL;
 				VariableDescriptorLib::DimensionSize ds(1);
+
+				// all the work is done here / recursive function
 				ret = cloner.DoCreateR(0,pointer,addressOfOutput,ds);
 				REPORT_ERROR(ret,"cloner.DoCreateR() failed ");
 			}
@@ -483,7 +482,8 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 				DynamicCString mods;
 
 				cloner.GetOutputModifiers(mods);
-				TypeDescriptor type = cloner.handler.GetTypeDescriptor();
+//				TypeDescriptor type = cloner.handler.GetTypeDescriptor();
+				TypeDescriptor type = typeDescriptor;
 
 				ReferenceT<MemoryPageObject> mpor;
 				mpor = ReferenceT<MemoryPageObject> (buildNow);
@@ -711,6 +711,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
 				}
 
+				// add missing dimension
 				DynamicCString modifiersTemp;
 				modifiersTemp.Append(modifierString);
 				modifiers.Truncate(0);
@@ -720,7 +721,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 			}
 
 	 	}break;
-	 	case '\0':{
+	 	case 'O':{
 	 		if (typeDescriptor.IsCharStreamType()){
 	 			TD_FullType fullType = typeDescriptor.fullType;
 	 			switch (fullType){

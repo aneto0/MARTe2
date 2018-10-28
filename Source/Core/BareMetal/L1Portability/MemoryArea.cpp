@@ -47,7 +47,6 @@ namespace MARTe {
 MemoryArea::MemoryArea() {
     memory = NULL_PTR(void*);
     size = 0u;
-    heapName = NULL_PTR(char8*);
 }
 
 /*lint -e{1579} the pointer "memory" is freed by the function Free() */

@@ -39,6 +39,7 @@
 #include "RealTimeApplication.h"
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -97,10 +98,10 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
     }
 
     if (ret) {
-        timingDataSource = rtApp->Find(timingDataSourceAddress.Buffer());
+        timingDataSource = rtApp->Find(timingDataSourceAddress);
         ret = timingDataSource.IsValid();
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::InitialisationError, "TimingDataSource %s not found", timingDataSourceAddress.Buffer());
+            COMPOSITE_REPORT_ERROR(ErrorManagement::InitialisationError, "TimingDataSource", timingDataSourceAddress," %s not found");
         }
     }
 
@@ -118,10 +119,9 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
 
                     states[i].numberOfThreads = numberOfThreads;
                     states[i].name = stateElement->GetName();
-
                     states[i].threads = new ScheduledThread[numberOfThreads];
 
-                    for (uint32 j = 0u; (j < numberOfThreads) && (ret); j++) {
+                    for (uint32 j =	 0u; (j < numberOfThreads) && (ret); j++) {
                         ReferenceT<RealTimeThread> threadElement = threadContainer->Get(j);
                         ret = threadElement.IsValid();
                         if (ret) {
@@ -161,15 +161,15 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
                             uint32 c = 0u;
                             for (uint32 k = 0u; (k < numberOfGams) && (ret); k++) {
                                 //add input brokers
-                                StreamString gamFullName;
+                                DynamicCString gamFullName;
                                 ReferenceT<GAM> gam = gams.Get(k);
                                 ret = gam->GetQualifiedName(gamFullName);
                                 if (ret) {
-                                    ret = InsertInputBrokers(gam, gamFullName.Buffer(), i, j, c);
+                                    ret = InsertInputBrokers(gam, gamFullName, i, j, c);
                                 }
                                 //add gam
                                 if (ret) {
-                                    ret = InsertGAM(gam, gamFullName.Buffer(), i, j, c);
+                                    ret = InsertGAM(gam, gamFullName, i, j, c);
                                     if (ret) {
                                         c++;
                                     }
@@ -177,7 +177,7 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
 
                                 //add output brokers
                                 if (ret) {
-                                    ret = InsertOutputBrokers(gam, gamFullName.Buffer(), i, j, c);
+                                    ret = InsertOutputBrokers(gam, gamFullName, i, j, c);
                                 }
                             }
 
@@ -207,7 +207,7 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
 }
 
 bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
-                                       const char8 * const gamFullName,
+                                       CCString gamFullName,
                                        const uint32 stateIdx,
                                        const uint32 threadIdx,
                                        uint32 &executableIdx) const{
@@ -255,7 +255,7 @@ bool GAMSchedulerI::InsertInputBrokers(ReferenceT<GAM> gam,
 }
 
 bool GAMSchedulerI::InsertGAM(ReferenceT<GAM> gam,
-                              const char8 * const gamFullName,
+                              CCString gamFullName,
                               const uint32 stateIdx,
                               const uint32 threadIdx,
                               const uint32 executableIdx) const {
@@ -289,7 +289,7 @@ bool GAMSchedulerI::InsertGAM(ReferenceT<GAM> gam,
 }
 
 bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
-                                        const char8 * const gamFullName,
+                                        CCString gamFullName,
                                         const uint32 stateIdx,
                                         const uint32 threadIdx,
                                         uint32 &executableIdx) const {
@@ -335,8 +335,8 @@ bool GAMSchedulerI::InsertOutputBrokers(ReferenceT<GAM> gam,
 
 /*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: The GAMSchedulerI implementation does not need
  to know the currentStateName (but other implementations of the GAMSchedulerI might need to know).*/
-bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
-                                     const char8 * const nextStateName) {
+bool GAMSchedulerI::PrepareNextState(CCString currentStateName,
+                                     CCString nextStateName) {
 
     // Find the next state and prepare the pointer to
     bool ret = (states != NULL_PTR(ScheduledState *));
@@ -385,15 +385,15 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         uint32 absTime = static_cast<uint32>(ticksToTime);  //us
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
-            MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
+            Memory::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
         }
     }
 
     return ret;
 }
 
-uint32 GAMSchedulerI::GetNumberOfExecutables(const char8 * const stateName,
-                                             const char8 * const threadName) const {
+uint32 GAMSchedulerI::GetNumberOfExecutables(CCString stateName,
+                                             CCString threadName) const {
     uint32 numberOfExecutables = 0u;
     if (states != NULL) {
         bool foundState = false;

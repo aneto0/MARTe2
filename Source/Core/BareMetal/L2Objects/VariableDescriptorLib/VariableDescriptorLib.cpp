@@ -82,17 +82,52 @@ uint32 ReadNumber(CCString &buffer){
 
 void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size ){
 	if (modifierString.IsNullPtr()){
-		modifier = '\0';
+		modifier = 'O';
 		size = 0;
 	} else {
 		modifier = modifierString[0];
 		if (modifier == '\0'){
 			size = 0;
+			modifier = 'O';
 		} else {
 			modifierString++;
 			size = ReadNumber(modifierString);
 		}
 	}
+}
+
+
+TypeDescriptor Type2TypeDescriptor(char8 c, const TypeDescriptor &tdIn){
+	TypeDescriptor td = GenericArray;
+
+   	switch (c){
+	case 'O':{
+		td = tdIn;
+	}break;
+	case 'P':
+	case 'p':{
+		td = GenericPointer;
+	}break;
+	case 'M':
+	case 'm':
+	case 'V':
+	case 'v':
+	case 'f':
+	case 'F':
+	case 'A':
+	case 'd':
+	case 'D':
+	case 'z':
+	case 'Z':
+	case 's':
+	case 'S':{
+	}break;
+
+	default:{
+		td = InvalidType(0);
+	}
+	}
+   	return td;
 }
 
 uint32 VariableDescriptorLib::Type2Size(char8 c,const TypeDescriptor &tdIn) {
@@ -155,6 +190,13 @@ ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
 	return ret;
 }
 
+#if 0
+/**
+ * used internally only
+ * moves pointers forward
+ * finds out size of next layer, numberOfElements, and overHead
+ *
+ */
 static ErrorManagement::ErrorType UpdatePointerAndSize(
 			VariableDescriptorLib::Variable &dh,
 			uint32 			layerIndex,
@@ -165,7 +207,7 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 	ErrorManagement::ErrorType ok;
 
 	const VariableDescriptorLib::Dimension &diNext = dh[layerIndex+1];
-	VariableDescriptorLib::Dimension &di = dh.Access(layerIndex);
+	VariableDescriptorLib::Dimension       &di     = dh.Access(layerIndex);
 
 	uint8 type = di.type;
 	bool isZta = false;
@@ -176,12 +218,15 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 	VariableDescriptorLib::DimensionSize numberOfElements(0);
 	VariableDescriptorLib::DimensionSize nextElementSizeD(0);
 
+	// size of the element in next level
 	nextElementSizeD = diNext.elementSize;
 
 	switch (type){
 
-	case '\0':{
+	case 'O':{
+		// next level does not exist
 		numberOfElements = 1;
+		// mimic A case / a single number is like A1
 		type = 'A';
 		nextElementSizeD = di.elementSize;
 	} break;
@@ -203,14 +248,18 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 	case 'Z':{
 		isZta = true;
 		updateNumberOfElements = true;
+		// overhead is the pointer and the terminator
 		overHead = sizeof (void *) + diNext.elementSize.GetData();
 	}break;
 	case 'v':
 	case 'V':{
+		// overhead is the structure itself
 		overHead = sizeof (Vector<char8>);
+		// get size from structure
 		const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(ptr);
 		numberOfElements = pv->GetNumberOfElements();
 		if (numberOfElements == VariableDescriptorLib::DimensionSize(0U)){
+			// if 0 element the Vector will probably have NULL PTR
 			allowNULL = true;
 		}
 		updateNumberOfElements = true;
@@ -232,7 +281,10 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 
 	}
 
+	// handle all but array and terminals
 	if ((type != 'A') && ok){
+
+		// all need to redirect
 		// it works as vector is descendant of Pointer class
 		ok = VariableDescriptorLib::RedirectP(ptr,allowNULL);
 		COMPOSITE_REPORT_ERROR(ok, "type ",type," redirection failed ");
@@ -247,6 +299,7 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 		}
 	}
 
+	// note ZTA do not allow null so NULL is trapped by RedirectP
 	// calculate actual size of each ZTA
 	if (isZta && ok){
 		uint32 n;
@@ -270,39 +323,17 @@ static ErrorManagement::ErrorType UpdatePointerAndSize(
 	return ok;
 }
 
+
 ErrorManagement::ErrorType HasSameDimensionsAs(const VariableDescriptorLib::Variable &first,const VariableDescriptorLib::Variable &second){
 	ErrorManagement::ErrorType ok = true;
-	uint32 nDim = first.NDimensions();
-	uint32 nDimO = second.NDimensions();
-	ok.internalSetupError=(nDim == 0);
+	uint32 nDim1 = first.NDimensions();
+	uint32 nDim2 = second.NDimensions();
+	ok.internalSetupError=(nDim1 == 0);
 	REPORT_ERROR(ok, "NDimensions == 0");
 
-	if (ok){
-		ok.invalidOperation=(nDim != nDimO);
-
-		if (!ok){
-			DynamicCString errM;
-			errM.Append("N of dim[");
-			for (int i = 0;i < nDim;i++){
-				char8 type = first[i].type;
-				if (type != '\0') errM.Append(type);
-				else errM.Append('0');
-			}
-			errM.Append( "]= ");
-			errM.Append(nDimO);
-			errM.Append(" != [");
-			for (int i = 0;i < nDim;i++){
-				char8 type = second[i].type;
-				if (type != '\0') errM.Append(type);
-				else errM.Append('0');
-			}
-			errM.Append(']');
-			errM.Append(nDimO);
-	        REPORT_ERROR(ok, errM.GetList());
-		}
-	}
-
-	for (int i = 0;ok && (i < nDim); i++){
+	uint32 nDimMin = min (nDim1,nDim2);
+	uint32 nDimMax = max (nDim1,nDim2);
+	for (int i = 0;ok && (i < nDimMin); i++){
 		VariableDescriptorLib::DimensionSize d1 = first[i].numberOfElements;
 		VariableDescriptorLib::DimensionSize d2 = second[i].numberOfElements;
 
@@ -312,51 +343,261 @@ ErrorManagement::ErrorType HasSameDimensionsAs(const VariableDescriptorLib::Vari
 		}
 	}
 
+	if (ok){
+		ok.invalidOperation =  ((nDimMax - nDimMin)> 1);
+		REPORT_ERROR(ok,"dimensions too disparate");
+	}
+
+	if (!ok){
+		DynamicCString errM;
+		errM.Append("[");
+		for (int i = 0;i < nDim1;i++){
+			char8 type = first[i].type;
+			if (type != 'O') errM.Append(type);
+			else errM.Append('0');
+		}
+		errM.Append( "] incompatible with [");
+		for (int i = 0;i < nDim2;i++){
+			char8 type = second[i].type;
+			if (type != 'O') errM.Append(type);
+			else errM.Append('0');
+		}
+		errM.Append(']');
+        REPORT_ERROR(ok, errM.GetList());
+	}
+
 	return ok;
 }
+#endif
 
-/**
- * Recursive Operation
- */
-ErrorManagement::ErrorType CopyToRecursive(
-		uint32 							level,
-		VariableDescriptorLib::Variable &sourceDimensions,
+static ErrorManagement::ErrorType DimensionJoin(
+							const Dimension *&		dim,
+							const uint8 *&			ptr,
+							uint32 &				numberOfColumns){
+	ErrorManagement::ErrorType ret;
+
+	const Dimension *joinedDimension = dim->Next();
+	ret.unsupportedFeature = (joinedDimension == NULL_PTR(Dimension *));
+	REPORT_ERROR(ret, "no more destinations available to join");
+
+	if (ret){
+		ret.unsupportedFeature = (joinedDimension->IsBreak() || joinedDimension->NOfDimensions()>1);
+		COMPOSITE_REPORT_ERROR(ret, "Cannot join a dimension of type ",joinedDimension->TypeChar());
+	}
+
+	uint32 numberOfRows;
+	if (ret){
+		ret = joinedDimension->UpdatePointerAndSizeEx((const uint8 *&)ptr,numberOfColumns,numberOfRows);
+		REPORT_ERROR(ret, "destination pointer handling failed");
+	}
+	if (ret){
+		dim = joinedDimension;
+	}
+	return ret;
+}
+
+ErrorManagement::ErrorType VectorCopy(
+		Dimension *						sourceDimensions,
 		const uint8* 					sourcePtr,
-		VariableDescriptorLib::Variable &destDimensions,
+		Dimension *						destDimensions,
+		uint8* 							destPtr,
+		const TypeConversionOperatorI &	op
+		){
+	ErrorManagement::ErrorType ret = sourceDimensions->NOfDimensions()==1;
+
+
+	// must redirect pointer	uint32 sourceNumberOfColumns = 1;
+	uint32 sourceNumberOfRows = 1;
+	uint32 sourceNumberOfColumns = 1;
+
+	if (ret){
+		ret = sourceDimensions->UpdatePointerAndSizeEx(sourcePtr,sourceNumberOfColumns,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "source pointer handling failed");
+	}
+
+	if (ret){
+		destDimensions->ReSize(destPtr,sourceNumberOfRows,sourceNumberOfColumns);
+	}
+
+	if (ret){
+		ret = destDimensions->UpdatePointerAndSizeEx((const uint8 *&)destPtr,sourceNumberOfColumns,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "source pointer handling failed");
+	}
+
+	if (ret){
+		ret = op.Convert(destPtr,sourcePtr,sourceNumberOfColumns);
+	    REPORT_ERROR(ret, "convert failed");
+	}
+
+	return ret;
+}
+
+ErrorManagement::ErrorType MatrixCopy(
+		uint32 							level,
+		const Dimension *				sourceDimensions,
+		const uint8* 					sourcePtr,
+		const Dimension *				destDimensions,
 		uint8* 							destPtr,
 		const TypeConversionOperatorI &	op
 		){
 	ErrorManagement::ErrorType ret;
 
-	uint32 sourceNumberOfElements = 1;
-	uint32 sourceElementSize = 1;
-	uint32 destNumberOfElements = 1;
-	uint32 destElementSize = 1;
-	uint32 overHead;
-
-	ret = UpdatePointerAndSize(sourceDimensions,level,sourcePtr,sourceNumberOfElements,sourceElementSize,overHead);
-    REPORT_ERROR(ret, "source pointer handling failed");
+	uint32 sourceNumberOfColumns = 1;
+	uint32 sourceNumberOfRows = 1;
 
 	if (ret){
-		ret = UpdatePointerAndSize(destDimensions,level,(const uint8 *&)destPtr,destNumberOfElements,destElementSize,overHead);
+		ret = sourceDimensions->UpdatePointerAndSizeEx(sourcePtr,sourceNumberOfColumns,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "source pointer handling failed");
+	}
+
+	if (ret && sourceDimensions->NOfDimensions()<2){
+		sourceNumberOfRows = sourceNumberOfColumns;
+
+		ret = DimensionJoin(sourceDimensions,sourcePtr,sourceNumberOfColumns);
+	    REPORT_ERROR(ret, "Dimension Join failed");
+	}
+
+	if (ret){
+		destDimensions->ReSize(destPtr,sourceNumberOfRows,sourceNumberOfColumns);
+	}
+
+	if (ret){
+		ret = destDimensions->UpdatePointerAndSizeEx((const uint8 *&)destPtr,sourceNumberOfColumns,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "source pointer handling failed");
+	}
+
+	if (ret){
+		ret = op.Convert(destPtr,sourcePtr,sourceNumberOfColumns*sourceNumberOfRows);
+	    REPORT_ERROR(ret, "convert failed");
+	}
+
+	return ret;
+}
+
+ErrorManagement::ErrorType CopyToRecursive(
+		const Dimension *				 sourceDimensions,
+		const uint8* 					 sourcePtr,
+		const Dimension *				 destDimensions,
+		uint8* 							 destPtr,
+		const TypeConversionOperatorI &	 op,
+		bool 							 isCopy
+		){
+	ErrorManagement::ErrorType ret;
+
+	if (ret){
+		ret.fatalError = (sourceDimensions == NULL_PTR(Dimension *));
+		REPORT_ERROR(ret, "sourceDimensions = NULL");
+	}
+
+	if (ret){
+		ret.fatalError = (destDimensions == NULL_PTR(Dimension *));
+		REPORT_ERROR(ret, "destDimensions = NULL");
+	}
+
+	uint32 slnd = 0;
+	uint32 dlnd = 0;
+	if (ret){
+		slnd = sourceDimensions->NOfDimensions();
+		dlnd = destDimensions->NOfDimensions();
+	}
+
+	// unused here
+	uint32 overHead;
+
+/**
+ * PROCESS SOURCE DIMENSIONS
+ */
+
+	uint32 sourceNumberOfColumns = 1;
+	uint32 sourceNumberOfRows = 1;
+
+	if (ret){
+		ret = sourceDimensions->UpdatePointerAndSizeEx(sourcePtr,sourceNumberOfColumns,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "source pointer handling failed");
+	}
+
+	/* will only succeed if next dimension is 'A' */
+	if (ret && (dlnd > slnd)){
+//		sourceNumberOfRows = sourceNumberOfColumns;
+		ret =  DimensionJoin(sourceDimensions,sourcePtr,sourceNumberOfRows);
+	    REPORT_ERROR(ret, "Dimension Join failed");
+	}
+
+	/** total n of elements */
+	uint32 numberOfElements = sourceNumberOfColumns * sourceNumberOfRows;
+
+/**
+* * PROCESS DESTINATION DIMENSIONS
+*/
+
+	uint32 destNumberOfColumns = 1;
+	uint32 destNumberOfRows = 1;
+	uint8 *redirectedDestPtr = destPtr;
+	if (ret){
+		ret = destDimensions->UpdatePointerAndSizeEx((const uint8 *&)redirectedDestPtr,destNumberOfColumns,destNumberOfRows);
 		REPORT_ERROR(ret, "destination pointer handling failed");
 	}
 
-	if (ret){
-		ret.unsupportedFeature = (sourceNumberOfElements != destNumberOfElements);
-		REPORT_ERROR(ret, "mismatch in dimensions");
+	/* will only succeed if next dimension is 'A' */
+	if (ret && (slnd > dlnd)){
+//		destNumberOfRows = destNumberOfColumns;
+		ret =  DimensionJoin(destDimensions,(const uint8 *&)redirectedDestPtr,destNumberOfRows);
+	    REPORT_ERROR(ret, "Dimension Join failed");
 	}
 
+/**
+* * CHECK COMPATIBILITY
+*/
 	if (ret){
+		bool sizeMismatch = (destNumberOfColumns != sourceNumberOfColumns)  || (destNumberOfRows != sourceNumberOfRows);
+
+		/*
+		 * in case of copy, if size is mismatched, and if destination is monolithic, dynamic and not constant
+		 * try to resize destination
+		 */
+		if (sizeMismatch && isCopy && (dlnd >= slnd) && destDimensions->IsDynamic()){
+			redirectedDestPtr = destPtr;
+			ret = destDimensions->ReSize(redirectedDestPtr,sourceNumberOfColumns,sourceNumberOfRows);
+		    REPORT_ERROR(ret, "Destination Dimension Resize failed");
+
+		    if (ret){
+		    	sizeMismatch = false;
+		    }
+		}
+
+		ret.unsupportedFeature = sizeMismatch;
+		COMPOSITE_REPORT_ERROR(ret, "mismatch in dimensions sizes D(",destNumberOfColumns,",",destNumberOfRows,")!=S(",sourceNumberOfColumns,",",sourceNumberOfRows,")");
+	}
+
+
+
+/**
+* * FINISH = COPY or LOOP RECURSIVELY
+*/
+
+	if (ret){
+
 		// the last dimension is always the scalar typed
-		if (destDimensions.NDimensions() <= (level+2)){
-			ret = op.Convert(destPtr,sourcePtr,destNumberOfElements);
+		if (destDimensions->IsFinalLayer() && sourceDimensions->IsFinalLayer()){
+			ret = op.Convert(redirectedDestPtr,sourcePtr,numberOfElements);
 	        REPORT_ERROR(ret, "conversion failed");
+
 		} else {
+			uint32 sourceElementSize;
+			ret = sourceDimensions->GetNextLayerElementSize(sourceElementSize);
+	        REPORT_ERROR(ret, "source dimensions overflow");
+
+			uint32 destElementSize;
+	        if (ret){
+	        	ret = destDimensions->GetNextLayerElementSize(destElementSize);
+		        REPORT_ERROR(ret, "dest dimensions overflow");
+	        }
+
 			// skip forward
 			uint32 ix = 0;
-			for (ix = 0; (ix < sourceNumberOfElements) && ret; ix++){
-				ret = CopyToRecursive(level+1,sourceDimensions,sourcePtr,destDimensions,destPtr,op);
+			for (ix = 0; (ix < numberOfElements) && ret; ix++){
+				ret = CopyToRecursive(sourceDimensions->Next(),sourcePtr,destDimensions->Next(),destPtr,op,isCopy);
+
 				sourcePtr+= sourceElementSize;
 				destPtr+= destElementSize;
 				COMPOSITE_REPORT_ERROR(ret,"Failed at row (",ix,")");
@@ -367,70 +608,128 @@ ErrorManagement::ErrorType CopyToRecursive(
 }
 
 
+
 /**
  * Operates recursively
  */
 ErrorManagement::ErrorType GetSizeRecursive(
-		uint32 							level,
-		Variable 						&handler,
+		const Dimension					*dimension,
 		const uint8* 					pointer,
 		uint64 							&dataSize,
 		uint64 							&auxSize
 		){
 	ErrorManagement::ErrorType ret;
 
-	uint32 nextElSize;
-	uint32 overHead;
-	uint32 multiplier;
-	ret = UpdatePointerAndSize(handler,level, pointer,multiplier,nextElSize,overHead);
-	REPORT_ERROR(ret,"UpdatePointerAndSize failed");
+	DimensionSize auxSizeD(0);
+	DimensionSize dataSizeD(0);
+	uint32 multiplier = 1;
+	DimensionSize multiplierD(1);
 
-	if (ret){
-	 	dataSize 			= overHead;
-		auxSize 			= overHead;
+	if (!dimension->IsFinal()){
+		uint32 numberOfColumns = 1;
+		uint32 numberOfRows = 1;
 
-		// not the last level therefore could be 'A's
-		if (handler.NDimensions() > (level+1)){
-			VariableDescriptorLib::DimensionSize multiplierD(multiplier);
-			level++;
-			char8 type = handler[level].type;
-			while ((type=='A')&& ret){
-				multiplierD 	= multiplierD * handler[level].numberOfElements;
-				level++;
-				ret = handler[level].elementSize.ToNumber(nextElSize);
-				type 		= handler[level].type;
+		ret = dimension->UpdatePointerAndSizeEx(pointer,numberOfRows,numberOfColumns);
+		REPORT_ERROR(ret,"UpdatePointerAndSize failed");
+
+		if (ret){
+			multiplierD = multiplierD * numberOfRows;
+			multiplierD = multiplierD * numberOfColumns;
+
+			auxSizeD = auxSizeD + dimension->GetOverHead();
+			dataSizeD = dataSizeD + dimension->GetOverHead();
+
+			const Dimension	*nextDimension = dimension->Next();
+			ret.fatalError = (nextDimension == NULL_PTR(Dimension *));
+			COMPOSITE_REPORT_ERROR(ret, "next dimension to a non Break dimension: ",dimension->TypeChar()," is NULL");
+
+			if (ret){
+				dimension = nextDimension;
+
+				// Join all non-break dimensions (Ann) they have no overhead
+				while ((!dimension->IsBreak())&& (ret)){
+
+					ret = dimension->UpdatePointerAndSizeEx(pointer,numberOfRows,numberOfColumns);
+					REPORT_ERROR(ret,"UpdatePointerAndSize failed");
+
+					if (ret){
+						multiplierD = multiplierD * numberOfRows;
+						multiplierD = multiplierD * numberOfColumns;
+
+						nextDimension = dimension->Next();
+						ret.fatalError = (nextDimension == NULL_PTR(Dimension *));
+						REPORT_ERROR(ret, "next dimension to a non Break dimension is NULL");
+					}
+					dimension = nextDimension;
+
+				}
+
 			}
-			ret = multiplierD.ToNumber(multiplier);
 		}
 
-		// either was the last level or we are looking at one more levels below
-		// either way if we find a '0' here we can act accordingly
-		if (handler[level].type == '\0'){
-			TypeDescriptor td = handler.GetTypeDescriptor();
-			uint32 storageSize = nextElSize;
-			bool hasVariableSize = td.IsCharStreamType();
-			if (hasVariableSize){
-				auxSize += multiplier * storageSize;
-				for (uint32 i = 0;i < multiplier;i++){
-					dataSize += td.FullSize(pointer);
-					pointer += storageSize;
-				}
-			} else {
-				dataSize += multiplier * storageSize;
-			}
-		// not a '0' so not last level so we are at least one level below
-		} else {
-			for (uint64 i = 0;(i < multiplier) && ret;i++){
-				uint64 dataSize2;
-				uint64 auxSize2;
-				ret = GetSizeRecursive(level,handler,pointer,dataSize2,auxSize2);
-				dataSize 			+= dataSize2;
-				auxSize 			+= auxSize2;
-				pointer 			+= nextElSize;
-			}
+		if (ret){
+			ret = multiplierD.ToNumber(multiplier);
+			REPORT_ERROR(ret,"too many elements Multiplier Overflow!");
 		}
 	}
 
+
+	if (ret){
+		uint32 storageSize = dimension->TypeSize();
+		// 'O'
+		if (dimension->IsFinal()){
+			TypeDescriptor td = dimension->GetTypeDescriptor();
+
+			// calculate the size of the pointer storage for this type
+			DimensionSize  fullStorageSizeD(storageSize);
+			fullStorageSizeD = fullStorageSizeD * multiplierD;
+			uint32 fullStorageSize;
+			ret = fullStorageSizeD.ToNumber(fullStorageSize);
+			REPORT_ERROR(ret,"too many elements StorageSize Overflow!");
+
+			if (ret){
+				bool hasVariableSize = td.IsCharStreamType();
+				if (hasVariableSize){
+
+					auxSizeD = auxSizeD + fullStorageSizeD;
+
+					// now calculate the size of the actual payload
+					for (uint32 i = 0;i < multiplier;i++){
+						dataSizeD = dataSizeD + td.FullSize(pointer);
+						pointer += storageSize;
+					}
+
+				} else {
+					dataSizeD = dataSizeD + fullStorageSizeD;
+				}
+			}
+		} else
+			//non final break dimension
+		{
+//			auxSizeD = auxSizeD + dimension->GetOverHead() * multiplier;
+//			dataSizeD = dataSizeD + dimension->GetOverHead() * multiplier;
+
+			for (uint64 i = 0;(i < multiplier) && ret;i++){
+				uint64 dataSize2;
+				uint64 auxSize2;
+				ret = GetSizeRecursive(dimension,pointer,dataSize2,auxSize2);
+				dataSizeD = dataSizeD + dataSize2;
+				auxSizeD  = auxSizeD + auxSize2;
+				pointer 			+= storageSize;
+			}
+		}
+
+		if (ret){
+			ret = dataSizeD.ToNumber(dataSize);
+			REPORT_ERROR(ret,"too many elements DataSize Overflow!");
+		}
+
+		if (ret){
+			ret = auxSizeD.ToNumber(auxSize);
+			REPORT_ERROR(ret,"too many elements AuxSize Overflow!");
+		}
+
+	}
 	return ret;
 }
 
@@ -487,7 +786,7 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 					case 'p':
 					case 'P':{
 					}break;
-					case '\0':
+					case 'O':
 					case 'm':
 					case 'M':
 					case 'v':
@@ -512,7 +811,7 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 		}
 	} else {
 		// when encountering 0 or a template MVZSDmvzsd start new sequence for goes inside the template
-		if (modifier == '\0'){
+		if (modifier == 'O'){
 			typeDescriptor.ToString(string);
 		} else {
 			CCString templateName;

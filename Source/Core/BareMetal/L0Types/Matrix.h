@@ -79,6 +79,7 @@ public:
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfRows The number of rows
      * @param[in] nOfColumns The number of columns
+     * @param[in] allocated if true means that the memory can/shall be deallocated.
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
@@ -86,7 +87,20 @@ public:
      */
     void InitMatrix(T *existingArray,
            uint32 nOfRows,
-           uint32 nOfColumns);
+           uint32 nOfColumns,
+		   bool allocated = false);
+
+    /**
+     * @brief Frees any existing memory and allocate enough to store nOfElements
+     * if nOfElements is zero, memory is freed and pointer set to NULL
+     * @param[in] nOfRows The number of rows
+     * @param[in] nOfColumns The number of columns
+     * @post
+     *    GetNumberOfElements() == nOfElements &&
+     *    GetDataPointer() == new allocated array
+     */
+    void SetSize(uint32 nOfRows,uint32 nOfColumns);
+
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
@@ -324,13 +338,29 @@ Matrix<T>::Matrix(uint32 nOfRows,
 template<typename T>
 void Matrix<T>::InitMatrix(T *existingArray,
                   uint32 nOfRows,
-                  uint32 nOfColumns) {
+                  uint32 nOfColumns,
+				  bool allocated) {
 	// does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
-    canDestroy = false;
+    canDestroy = allocated;
 }
+
+template<typename T>
+void Matrix<T>::SetSize(uint32 nOfRows,uint32 nOfColumns) {
+	FreeMemory();
+	if ((nOfRows > 0) && (nOfColumns > 0)){
+		Pointer::Set(new T[nOfRows*nOfColumns]);
+	    canDestroy = true;
+	} else {
+		Pointer::Set(NULL_PTR(T*));
+	    canDestroy = false;
+	}
+    numberOfColumns = nOfColumns;
+    numberOfRows = nOfRows;
+}
+
 
 template<typename T>
 Matrix<T>::Matrix(T *existingArray,

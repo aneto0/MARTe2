@@ -142,6 +142,7 @@ TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
     return signalTypeDescriptor;
 }
 
+/*
 bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx, uint8 &numberOfDimensions) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -149,12 +150,34 @@ bool DataSourceI::GetSignalNumberOfDimensions(const uint32 signalIdx, uint8 &num
     }
     return ret;
 }
+*/
 
-bool DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx, uint32 &numberOfElements) {
-    bool ret = MoveToSignalIndex(signalIdx);
+ErrorManagement::ErrorType DataSourceI::GetSignalNumberOfElements(const uint32 signalIdx, uint32 (&numberOfElements)[2]) {
+    ErrorManagement::ErrorType ret;
+	ret.fatalError = !MoveToSignalIndex(signalIdx);
+	Vector<uint32> nEl;
     if (ret) {
-        ret = configuredDatabase.Read("NumberOfElements", numberOfElements);
+        ret = configuredDatabase.Read("NumberOfElements", nEl);
+        COMPOSITE_REPORT_ERROR(ret,"Failed reading ", signalIdx,".NumberOfElements");
     }
+
+	uint32 nnEl;
+	if (ret){
+    	nnEl = nEl.GetNumberOfElements();
+    	ret.initialisationError = ((nnEl == 0) || (nnEl > 2));
+        COMPOSITE_REPORT_ERROR(ret, signalIdx,".NumberOfElements has",nnEl, "elements");
+    }
+
+    if (ret){
+    	int i;
+    	for (i = 0;i < nnEl;i++){
+    		numberOfElements[i] = nEl[i];
+    	}
+    	for (;i < 2;i++){
+    		numberOfElements[i] = 1;
+    	}
+    }
+
     return ret;
 }
 
@@ -337,6 +360,35 @@ bool DataSourceI::GetSignalProducerName(const uint32 signalIdx, CCString stateNa
     return ret;
 }
 
+TypeDescriptor DataSourceI::GetSignalDefaultInfo(const uint32 signalIdx,uint32 nOfDimensions,uint32 *dimensionSizes){
+	TypeDescriptor td = InvalidType(0);
+
+	ErrorManagement::ErrorType ret;
+	ret.invalidOperation = MoveToSignalIndex(signalIdx);
+	COMPOSITE_REPORT_ERROR(ret,"Cannot move to signal ",signalIdx);
+    if (ret) {
+    	ret = configuredDatabase.GetVariableInformation("Default",td,nOfDimensions,dimensionSizes);
+    	REPORT_ERROR(ret,"Cannot Borrow Default");
+    }
+
+	return td;
+}
+
+Reference DataSourceI::GetSignalDefaultValue(const uint32 signalIdx){
+	Reference ref;
+	ErrorManagement::ErrorType ret;
+	ret.invalidOperation = MoveToSignalIndex(signalIdx);
+	COMPOSITE_REPORT_ERROR(ret,"Cannot move to signal ",signalIdx);
+    if (ret) {
+        ret = configuredDatabase.Borrow("Default", ref);
+        // TODO remove next error as it will happen too often
+    	REPORT_ERROR(ret,"Cannot Borrow Default");
+    }
+	return ref;
+}
+
+#if 0
+
 bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx, const AnyType &defaultValue) {
     bool ret = MoveToSignalIndex(signalIdx);
     if (ret) {
@@ -345,7 +397,7 @@ bool DataSourceI::GetSignalDefaultValue(const uint32 signalIdx, const AnyType &d
     return ret;
 }
 
-#if 0
+
 AnyType DataSourceI::GetSignalDefaultValueType(const uint32 signalIdx) {
     AnyType retType = voidAnyType;
     if (MoveToSignalIndex(signalIdx)) {
@@ -891,5 +943,48 @@ bool DataSourceI::TerminateInputCopy(const uint32 signalIdx, const uint32 offset
 bool DataSourceI::TerminateOutputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
     return true;
 }
+
+ErrorManagement::ErrorType DataSourceI::GetSignal(AnyType &signal,const uint32 signalIdx){
+    uint32 thisSignalNumberOfElements = 0u;
+    uint8 thisSignalNumberOfDimensions = 0u;
+    ErrorManagement::ErrorType ret;
+    void *thisSignalMemory = NULL_PTR(void *);
+
+    TypeDescriptor td = GetSignalType(signalIdx);
+    uint32 dimensions[2];
+    ret = GetSignalNumberOfElements(signalIdx, dimensions);
+    REPORT_ERROR(ret,"GetSignalNumberOfElements failed");
+
+    if (ret){
+    	ret = GetSignalMemoryBuffer(signalIdx, 0u, thisSignalMemory);
+        REPORT_ERROR(ret,"GetSignalMemoryBuffer failed");
+    }
+
+    if (ret){
+    	if (dimensions[1]==1){
+        	if (dimensions[0]==1){
+        		signal = AnyType(td,thisSignalMemory);
+        	} else {
+        		DynamicCString modifiers;
+       			modifiers.Append('A');
+       			modifiers.Append(dimensions[0]);
+       			VariableDescriptor vd(td,modifiers);
+        		signal = AnyType(vd,thisSignalMemory);
+        	}
+    	} else {
+    		DynamicCString modifiers;
+   			modifiers.Append('A');
+   			modifiers.Append(dimensions[0]);
+   			modifiers.Append('A');
+   			modifiers.Append(dimensions[1]);
+   			VariableDescriptor vd(td,modifiers);
+    		signal = AnyType(vd,thisSignalMemory);
+    	}
+    } else {
+    	signal = AnyType();
+    }
+    return ret;
+}
+
 
 }

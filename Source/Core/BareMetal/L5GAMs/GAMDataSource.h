@@ -95,7 +95,7 @@ public:
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < GetNumberOfMemoryBuffers() < 1
      */
-    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
+    virtual ErrorManagement::ErrorType GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
 
     /**
      * @brief Allocates the memory required to hold all the signal data allocated to this GAMDataSource.

@@ -66,11 +66,11 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 		ErrorManagement::ErrorType ret;
 
 
-		char8 inputType = handler[level].type;
+		char8 inputType = handler[level].TypeChar();
 
 		// handle the simple scalar type
 		// consider the numberOfElements to be copied
-		if (inputType == '\0'){
+		if (inputType == 'O'){
 			// calculate total Size needed to store final layer
 			// multiply the numberOfElements by each size
 			VariableDescriptorLib::DimensionSize totalSizeD = numberOfElementsD * handler.GetTypeDescriptor().StorageSize();
@@ -125,9 +125,16 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 			 * no pointer table allocated here
 			 */
 			if (inputType == 'A'){
+				uint32 numberOfColumns = 1;
+				uint32 numberOfRows = 1;
+
+				if (ret){
+					ret = handler[level].UpdatePointerAndSizeEx(inputPointer,numberOfColumns,numberOfRows);
+				    REPORT_ERROR(ret, "pointer handling failed");
+				}
 
 				// increase multiplier
-				numberOfElementsD = numberOfElementsD * handler[level].numberOfElements;//multiplier;
+				numberOfElementsD = numberOfElementsD * numberOfColumns;
 				// navigate one side of the tree
 				// at the end (case above) consume the whole size of this subtree
 				ret = DoCreateR(level+1,inputPointer,addressOfOutput,numberOfElementsD);
@@ -200,7 +207,14 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 						ret = RedirectP(newInputPointer,true);
 		    			REPORT_ERROR(ret, "RedirectP failed");
 		    			if (newInputPointer != NULL){
-							uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].elementSize.GetData());
+		    				uint32 nextLayerSize;
+
+//		    				ret = handler[level].GetNextLayerElementSize(nextLayerSize);
+//			    			REPORT_ERROR(ret, "GetNextLayerElementSize failed");
+//		    				uint32 numberOfElements= ZeroTerminatedArrayGetSize(newInputPointer, nextLayerSize);
+
+		    				uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].GetLayerCombinedElementSize().GetData());
+//							uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].elementSize.GetData());
 							if (ret){
 								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,VariableDescriptorLib::DimensionSize(numberOfElements));
 				    			REPORT_ERROR(ret, "DoCreateR failed");
@@ -308,7 +322,8 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 	    			REPORT_ERROR(ret, "RedirectP failed");
 	    			if (newInputPointer != NULL){
 						if (ret){
-							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,handler[level].elementSize);
+							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,handler[level].GetLayerCombinedElementSize());
+//							ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,handler[level].elementSize);
 			    			REPORT_ERROR(ret, "DoCreateR failed");
 						}
 						if (ret){
@@ -335,20 +350,22 @@ void VariableCloner::GetOutputModifiers(DynamicCString &dc) const {
 	ErrorManagement::ErrorType ret;
 
 	for (int i = 0; i < handler.NDimensions();i++){
-		char8 type = handler[i].type;
-		uint32 size = handler[i].numberOfElements.GetData();
+		char8 type = handler[i].TypeChar();
 		switch (type){
-		case '\0':{
+		case 'O':{
 		} break;
 		case 'A':{
+			uint32 size;
+			ret = handler[i].GetNumberOfElements(size);
 			dc.Append('A');
 			dc.Append(size);
 		}break;
 		case 'F':
 		case 'f':{
+			uint32 size;
+			ret = handler[i].GetNumberOfElements(size);
 			dc.Append("f");
 			dc.Append(size);
-
 		}break;
 		default:{
 			if (variableVectors.In(type)){
@@ -359,7 +376,7 @@ void VariableCloner::GetOutputModifiers(DynamicCString &dc) const {
 			}
 			dc.Append(type);
 		}
-		};
+		}
 	}
 }
 

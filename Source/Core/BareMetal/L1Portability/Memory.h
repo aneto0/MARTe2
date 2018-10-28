@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  * */
 
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#ifndef L1_MEMORY_H_
+#define L1_MEMORY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

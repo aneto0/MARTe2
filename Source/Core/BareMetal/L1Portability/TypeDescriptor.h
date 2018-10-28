@@ -93,7 +93,7 @@ const TD_FullType TDF_CharStreamType= 0x10u;
  * @details SyntheticType types are special modifications of basic types
  * In general they cannot be simply copied. Special treatment is required
  */
-const TD_FullType TDF_SpecialType = 0x20u;
+const TD_FullType TDF_SpecialType   = 0x20u;
 
 /**
  * @brief const to mark a summary/incomplete Type.
@@ -334,7 +334,6 @@ public:
      */
     TypeDescriptor(CCString typeName);
 
-
     /**
      * @brief whether it is an basic type
      */
@@ -369,6 +368,11 @@ public:
      * @brief whether the type is float or signed int
      */
     inline bool IsSigned() const;
+
+    /**
+     * @brief whether the type is invalid
+     */
+    inline bool IsInvalid() const ;
 
     /**
      * @brief matches all details
@@ -455,6 +459,7 @@ private:
 #define  UnsignedInteger32Bit        TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(basicTypeSize,Size32bit)   )
 #define  UnsignedInteger64Bit        TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger)  | TDRANGE(basicTypeSize,Size64bit)   )
 #define  PointerType                 TypeDescriptor(TDRANGE(fullType,TDF_Pointer)          | TDRANGE(basicTypeSize,SizePointer) )
+#define  ConstPointerType            TypeDescriptor(TDRANGE(fullType,TDF_Pointer)          | TDRANGE(basicTypeSize,SizePointer) | TDRANGE(dataIsConstant,1))
 #define  GenericPointer              TypeDescriptor(TDRANGE(fullType,TDF_GenericPointer)   | TDRANGE(basicTypeSize,SizePointer) )
 
 
@@ -521,6 +526,10 @@ bool TypeDescriptor::IsSpecialType() const {
 
 bool TypeDescriptor::IsSigned() const {
 	return !isStructuredData && ((fullType == TDF_SignedInteger)||(fullType == TDF_Float));
+};
+
+bool TypeDescriptor::IsInvalid() const {
+	return !isStructuredData && (fullType == TDF_Invalid);
 };
 
 TypeDescriptor::TypeDescriptor(const uint32 x) {

@@ -64,6 +64,11 @@ public:
     inline DynamicCString (char8 const * const &s);
 
     /**
+     * @briefs allocates memory and copies the content
+     */
+    inline DynamicCString (const CCString &s);
+
+    /**
      * @brief returns a CCString containing the same pointer.
      * Note that after any operation affecting the size of this
      * string the pointer may change
@@ -81,6 +86,17 @@ public:
      */
     inline void  operator=(const DynamicCString &s) ;
 
+    /**
+     * @Brief copies one string to another.
+     * Necessary to avoid default copy operator use!
+     */
+    inline void  operator=(const CCString &s) ;
+
+    /**
+     * @Brief copies one string to another.
+     * Necessary to avoid default copy operator use!
+     */
+    inline void  operator=(char8 const * const &s) ;
 
     /**
      * @brief append a number at the end of the string
@@ -178,6 +194,9 @@ DynamicCString::DynamicCString(DynamicCString const &s):DynamicZeroTerminatedArr
 DynamicCString::DynamicCString (char8 const * const &s):DynamicZeroTerminatedArray<char8,16>(CCString(s)){
 }
 
+DynamicCString::DynamicCString (const CCString &s):DynamicZeroTerminatedArray<char8,16>(s){
+}
+
 DynamicCString::operator CCString() const{
     return CCString(DynamicZeroTerminatedArray<char8,16>::GetList());
 }
@@ -187,6 +206,16 @@ bool DynamicCString::operator==(const CCString &s) const{
 }
 
 void DynamicCString::operator=(const DynamicCString &s) {
+	Truncate(0U);
+	DynamicZeroTerminatedArray<char8,16>::AppendN(s);
+}
+
+void DynamicCString::operator=(const CCString &s) {
+	Truncate(0U);
+	DynamicZeroTerminatedArray<char8,16>::AppendN(s);
+}
+
+void  DynamicCString::operator=(char8 const * const &s){
 	Truncate(0U);
 	DynamicZeroTerminatedArray<char8,16>::AppendN(s);
 }

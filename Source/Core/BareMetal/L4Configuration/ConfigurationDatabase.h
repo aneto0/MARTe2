@@ -124,6 +124,15 @@ public:
     		TypeDescriptor &	td,
 			uint32 &			nOfDimensions,
 			uint32 *			dimensionSizes) const;
+#if 0
+    /**
+     * @see StructuredDataI::GetVariableInformation
+     * @see VariableDescriptor::GetVariableDimensions
+     */
+    virtual ErrorManagement::ErrorType GetVariableDescriptor(
+    		CCString 			path,
+    		VariableDescriptor &vd) const;
+#endif
 
     /**
      * @see StructuredDataI::Write

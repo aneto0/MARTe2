@@ -40,6 +40,7 @@
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "CLASSREGISTER.h"
+#include "Memory.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -73,16 +74,16 @@ GAMDataSource::~GAMDataSource() {
 bool GAMDataSource::Initialise(StructuredDataI & data) {
     bool ret = DataSourceI::Initialise(data);
     if (ret) {
-        StreamString heapName;
+        DynamicCString heapName;
         if (data.Read("HeapName", heapName)) {
-            memoryHeap = HeapManager::FindHeap(heapName.Buffer());
+            memoryHeap = HeapManager::FindHeap(heapName);
             if (memoryHeap == NULL_PTR(HeapI *)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer());
+                COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name:", heapName);
                 ret = false;
             }
         }
         else {
-            memoryHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+            memoryHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
         }
     }
     return ret;
@@ -92,11 +93,14 @@ uint32 GAMDataSource::GetNumberOfMemoryBuffers() {
     return 1u;
 }
 
-bool GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
-    bool ret = (bufferIdx < 1u);
+ErrorManagement::ErrorType GAMDataSource::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+	ErrorManagement::ErrorType ret;
+	ret.parametersError = (bufferIdx >= 1u);
+	REPORT_ERROR(ret,"bufferIdx not zero");
     uint32 nOfSignals = GetNumberOfSignals();
     if (ret) {
-        ret = (signalIdx < nOfSignals);
+        ret.parametersError = (signalIdx >= nOfSignals);
+    	COMPOSITE_REPORT_ERROR(ret,"signalIdx=", signalIdx ," larger than nOfSignals=",nOfSignals);
     }
 
     if (ret) {
@@ -121,7 +125,7 @@ bool GAMDataSource::AllocateMemory() {
         ret = (signalMemory == NULL_PTR(void *));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "No signals defined for DataSource with name %s", GetName());
+        COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "No signals defined for DataSource with name", GetName());
     }
     if (ret) {
         signalOffsets = new uint32[nOfSignals];
@@ -147,7 +151,7 @@ bool GAMDataSource::AllocateMemory() {
         if (memoryHeap != NULL_PTR(HeapI *)) {
             signalMemory = memoryHeap->Malloc(memorySize);
         }
-        MemoryOperationsHelper::Set(signalMemory, '\0', memorySize);
+        Memory::Set(signalMemory, '\0', memorySize);
     }
     return ret;
 }
@@ -186,11 +190,11 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
         uint32 numberOfFunctionInputSignals;
         ret = GetFunctionNumberOfSignals(InputSignals, n, numberOfFunctionInputSignals);
         for (uint32 i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
-            StreamString functionSignalAlias;
+        	DynamicCString functionSignalAlias;
             ret = GetFunctionSignalAlias(InputSignals, n, i, functionSignalAlias);
             uint32 signalIdx = 0u;
             if (ret) {
-                ret = GetSignalIndex(signalIdx, functionSignalAlias.Buffer());
+                ret = GetSignalIndex(signalIdx, functionSignalAlias);
             }
             bool update = false;
             //Variable used in the current state?
@@ -206,12 +210,69 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
             if (update) {
                 if (ret) {
                     typeDesc = GetSignalType(signalIdx);
-                    ret = (typeDesc != InvalidType(0));
+                    ret = (!typeDesc.IsInvalid() );
                 }
             }
-            if (update) {
+            if (update && ret) {
                 //if the default value is declared use it to initialise
                 //otherwise null the memory
+
+                void *thisSignalMemory = NULL_PTR(void *);
+            	ret = GetSignalMemoryBuffer(signalIdx, 0u, thisSignalMemory);
+
+            	Reference defaultValue;
+            	if (ret){
+                    uint32 defaultValueDimensionElements[3] = {0,0,0};
+                    uint32 defaultValueNumberOfDimensions = 3u;
+        			TypeDescriptor td = GetSignalDefaultInfo(signalIdx,defaultValueNumberOfDimensions,&defaultValueDimensionElements[0]);
+
+        			// calculate total number of elements
+                    uint32 defaultValueNumberOfElements = 1u;
+        			uint32 d;
+                    for (d = 0u; d < defaultValueNumberOfDimensions; d++) {
+                    	defaultValueNumberOfElements *= defaultValueDimensionElements[d];
+                    }
+
+            		// no default values specified
+            		if (td.IsInvalid()){
+                        uint32 size = 0u;
+                        ret = GetSignalByteSize(signalIdx, size);
+                        if (ret) {
+                            Memory::Set(thisSignalMemory, '\0', size);
+                        }
+            		} else
+            		// default value found. check compatibility
+            		{
+                        uint32 thisSignalNumberOfElements = 0u;
+                        uint8 thisSignalNumberOfDimensions = 0u;
+                        DynamicCString signalName;
+                        ret = GetSignalName(signalIdx, signalName);
+                        if (ret) {
+                            ret = GetSignalNumberOfElements(signalIdx, thisSignalNumberOfElements);
+                            ret = ret && GetSignalNumberOfDimensions(signalIdx, thisSignalNumberOfDimensions);
+                        }
+                        if (ret) {
+                            ret = (thisSignalNumberOfDimensions == defaultValueNumberOfDimensions);
+                            ret = ret && (thisSignalNumberOfElements == defaultValueNumberOfElements);
+                        }
+                        if (ret) {
+                            thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
+                        }
+                        for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
+                            uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
+                            thisSignal.SetNumberOfElements(d, elementsInDimensionN);
+                        }
+                        if (!GetSignalDefaultValue(signalIdx, thisSignal)) {
+                            ret = false;
+                            COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Could not read existent Default value for signal ", signalName);
+                        }
+
+
+
+            		}
+            	} //ret
+
+#if 0
                 AnyType defaultValueType = GetSignalDefaultValueType(signalIdx);
                 void *thisSignalMemory = NULL_PTR(void *);
                 if (ret) {
@@ -223,19 +284,16 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
                         ret = GetSignalByteSize(signalIdx, size);
                     }
                     if (ret) {
-                        MemoryOperationsHelper::Set(thisSignalMemory, '\0', size);
+                        Memory::Set(thisSignalMemory, '\0', size);
                     }
                 }
                 else {
                     AnyType thisSignal(typeDesc, 0u, thisSignalMemory);
                     uint32 thisSignalNumberOfElements = 0u;
                     uint8 thisSignalNumberOfDimensions = 0u;
-                    StreamString signalName;
+                    DynamicCString signalName;
                     if (ret) {
                         ret = GetSignalName(signalIdx, signalName);
-                    }
-                    if (ret) {
-                        ret = signalName.Seek(0LLU);
                     }
                     if (ret) {
                         ret = GetSignalNumberOfElements(signalIdx, thisSignalNumberOfElements);
@@ -250,7 +308,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
                         thisSignal.SetNumberOfDimensions(thisSignalNumberOfDimensions);
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal %s", signalName);
+                        COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Default value has different number of dimensions w.r.t. to the signal ", signalName);
                     }
 
                     uint32 defaultValueNumberOfElements = 1u;
@@ -263,7 +321,7 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
                         ret = (thisSignalNumberOfElements == defaultValueNumberOfElements);
                     }
                     else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal %s", signalName);
+                        COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Default value has different number of elements w.r.t. to the signal ", signalName);
                     }
                     for (d = 0u; (d < thisSignalNumberOfDimensions) && (ret); d++) {
                         uint32 elementsInDimensionN = defaultValueType.GetNumberOfElements(d);
@@ -271,11 +329,13 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
                     }
                     if (!GetSignalDefaultValue(signalIdx, thisSignal)) {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "Could not read existent Default value for signal %s", signalName);
+                        COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Could not read existent Default value for signal ", signalName);
                     }
 
                 }
-            }
+
+#endif
+            } // update
         }
     }
     return ret;
@@ -316,32 +376,37 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
     uint32 nStates = 0u;
     uint32 n;
     for (n = 0u; (n < nSignals) && (ret); n++) {
-        StreamString signalName;
+    	DynamicCString signalName;
         ret = GetSignalName(n, signalName);
         if (ret) {
             if (!GetSignalNumberOfStates(n, nStates)) {
                 nStates = 0u;
             }
             if (nStates == 0u) {
-                REPORT_ERROR(ErrorManagement::Information,
-                                            "In GAMDataSource %s, signal %s will never be produced nor consumed because there is no GAM with this signal being executed in any state.", GetName(),
-                                            signalName.Buffer());
+                COMPOSITE_REPORT_ERROR(ErrorManagement::Information,
+                "In GAMDataSource ",GetName(),
+				", signal ",signalName,
+				" will never be produced nor consumed because there is no GAM with this signal being executed in any state." );
             }
         }
         uint32 s;
         for (s = 0u; (s < nStates) && (ret); s++) {
             uint32 nProducers = 0u;
-            StreamString stateName;
+            DynamicCString stateName;
             ret = GetSignalStateName(n, s, stateName);
             if (ret) {
-                ret = GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+                ret = GetSignalNumberOfProducers(n, stateName, nProducers);
             }
             if (ret) {
                 ret = (nProducers > 0u);
             }
             if (!ret) {
-                REPORT_ERROR(ErrorManagement::FatalError, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
-                                            stateName.Buffer(), signalName.Buffer(), nProducers);
+                COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,
+                		"In GAMDataSource ",GetName(),
+						", state ",stateName,
+						", signal ",signalName,
+						" has an invalid number of producers. Should be > 0 but is ",
+						nProducers);
             }
         }
     }

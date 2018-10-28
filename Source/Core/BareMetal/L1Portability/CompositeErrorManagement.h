@@ -99,6 +99,66 @@ inline void CompositeReportError(const ErrorType &code,
 											 CCString const fileName,
 											 const int16 lineNumber,
 											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6,
+											 T7 part7,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6,
+											 T7 part7,
+											 T8 part8,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6,
+											 T7 part7,
+											 T8 part8,
+											 T9 part9,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10>
+inline void CompositeReportError(const ErrorType &code,
+	 	 	 	 	 	 	 	 	 	 	 T1 part1,
+											 T2 part2,
+											 T3 part3,
+                         	 	 	 	 	 T4 part4,
+                         	 	 	 	 	 T5 part5,
+                         	 	 	 	 	 T6 part6,
+											 T7 part7,
+											 T8 part8,
+											 T9 part9,
+											 T10 part10,
+											 CCString const fileName,
+											 const int16 lineNumber,
+											 CCString const functionName);
+
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -189,7 +249,6 @@ void ErrorManagement::CompositeReportError(const ErrorType &code,
 	}
 }
 
-
 template <class T1,class T2,class T3,class T4,class T5,class T6>
 void ErrorManagement::CompositeReportError(const ErrorType &code,
 											T1 part1,
@@ -213,6 +272,117 @@ void ErrorManagement::CompositeReportError(const ErrorType &code,
 	}
 }
 
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											T6 part6,
+											T7 part7,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		err.Append(part6);
+		err.Append(part7);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											T6 part6,
+											T7 part7,
+											T8 part8,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		err.Append(part6);
+		err.Append(part7);
+		err.Append(part8);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											T6 part6,
+											T7 part7,
+											T8 part8,
+											T9 part9,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		err.Append(part6);
+		err.Append(part7);
+		err.Append(part8);
+		err.Append(part9);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10>
+void ErrorManagement::CompositeReportError(const ErrorType &code,
+											T1 part1,
+											T2 part2,
+											T3 part3,
+											T4 part4,
+											T5 part5,
+											T6 part6,
+											T7 part7,
+											T8 part8,
+											T9 part9,
+											T10 part10,
+											CCString const fileName,
+											const int16 lineNumber,
+											CCString const functionName){
+	if (!code) {
+		DynamicCString err;
+		err.Append(part1);
+		err.Append(part2);
+		err.Append(part3);
+		err.Append(part4);
+		err.Append(part5);
+		err.Append(part6);
+		err.Append(part7);
+		err.Append(part8);
+		err.Append(part9);
+		err.Append(part10);
+		ConditionalReportError(code,err,fileName,lineNumber,functionName);
+	}
+}
 
 
 #define COMPOSITE_REPORT_ERROR(code,...)															  \

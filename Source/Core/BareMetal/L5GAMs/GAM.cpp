@@ -31,9 +31,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AnyType.h"
 #include "BrokerI.h"
 #include "GAM.h"
 #include "Reference.h"
+#include "Memory.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -53,7 +56,7 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-    gamHeap = GlobalObjectsDatabase::Instance().GetStandardHeap();
+    gamHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
 }
 
 /*lint -e{1551} no exception should be thrown*/
@@ -78,7 +81,8 @@ bool GAM::Initialise(StructuredDataI & data) {
 
     bool ret = ReferenceContainer::Initialise(data);
     if (data.MoveRelative("InputSignals")) {
-        ret = signalsDatabase.Write("InputSignals", data);
+    	AnyType at(data);
+    	ret = signalsDatabase.Write(CCString("InputSignals"), at);
         if (ret) {
             ret = data.MoveToAncestor(1u);
         }
@@ -302,10 +306,11 @@ bool GAM::GetSignalIndex(const SignalDirection direction, uint32 &signalIdx, CCS
     bool found = false;
     uint32 i;
     for (i = 0u; (i < numberOfSignals) && (ret) && (!found); i++) {
-        StreamString searchName;
+        DynamicCString searchName;
         ret = GetSignalName(direction, i, searchName);
         if (ret) {
-            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
+        	found = (searchName == signalName);
+//            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
             signalIdx = i;
         }
     }
@@ -325,14 +330,18 @@ bool GAM::GetSignalDataSourceName(const SignalDirection direction, const uint32 
 }
 
 TypeDescriptor GAM::GetSignalType(const SignalDirection direction, const uint32 signalIdx) {
-    TypeDescriptor signalTypeDescriptor = InvalidType;
+    TypeDescriptor signalTypeDescriptor = InvalidType(0);
     bool ret = MoveToSignalIndex(direction, signalIdx);
-    StreamString signalType;
+    DynamicCString signalType;
     if (ret) {
         ret = configuredDatabase.Read("Type", signalType);
     }
     if (ret) {
-        signalTypeDescriptor = TypeDescriptor::GetTypeDescriptorFromTypeName(signalType.Buffer());
+        signalTypeDescriptor = TypeDescriptor(signalType);
+    }
+    if (signalTypeDescriptor.IsInvalid()){
+    	REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Unsupported type");
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Unsupported type",signalType);
     }
     return signalTypeDescriptor;
 }
@@ -376,13 +385,14 @@ bool GAM::GetSignalByteSize(const SignalDirection direction, const uint32 signal
 
 bool GAM::GetSignalNumberOfByteOffsets(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfByteOffsets) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
-    AnyType byteOffset;
-    numberOfByteOffsets = 0u;
-    if (ret) {
-        byteOffset = configuredDatabase.GetType("ByteOffset");
-    }
-    if (byteOffset.GetDataPointer() != NULL_PTR(void *)) {
-        numberOfByteOffsets = byteOffset.GetNumberOfElements(1u);
+
+    if (ret){
+    	uint32 maxDim = 1;
+    	TypeDescriptor td;
+    	ret = configuredDatabase.GetVariableInformation("ByteOffset",td,maxDim,&numberOfByteOffsets).ErrorsCleared();
+    	if (maxDim == 0){
+    		numberOfByteOffsets = 1;
+    	}
     }
     return ret;
 }
@@ -415,13 +425,13 @@ bool GAM::GetSignalByteOffsetInfo(const SignalDirection direction, const uint32 
 
 bool GAM::GetSignalNumberOfRanges(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfRanges) {
     bool ret = MoveToSignalIndex(direction, signalIdx);
-    AnyType ranges;
-    numberOfRanges = 0u;
-    if (ret) {
-        ranges = configuredDatabase.GetType("Ranges");
-    }
-    if (ranges.GetDataPointer() != NULL_PTR(void *)) {
-        numberOfRanges = ranges.GetNumberOfElements(1u);
+    if (ret){
+    	uint32 maxDim = 1;
+    	TypeDescriptor td;
+    	ret = configuredDatabase.GetVariableInformation("Ranges",td,maxDim,&numberOfRanges).ErrorsCleared();
+    	if (maxDim == 0){
+    		numberOfRanges = 1;
+    	}
     }
     return ret;
 }
@@ -452,7 +462,7 @@ bool GAM::GetSignalRangesInfo(const SignalDirection direction, const uint32 sign
 }
 
 bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32 signalIdx, uint32 &numberOfSamples) {
-    StreamString dataSourceName;
+    DynamicCString dataSourceName;
 
     bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
 
@@ -475,7 +485,7 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32
     for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
         //Move to the next DataSource
         ret = configuredDatabase.MoveToChild(n);
-        StreamString thisDataSourceName;
+        DynamicCString thisDataSourceName;
         if (ret) {
             ret = configuredDatabase.Read("DataSource", thisDataSourceName);
         }
@@ -484,11 +494,10 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32
             if (found) {
                 ret = configuredDatabase.MoveRelative("Signals");
                 if (ret) {
-                    StreamString signalIdxStr;
-                    ret = signalIdxStr.Printf("%d", signalIdx);
-                    if (ret) {
-                        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
-                    }
+
+                	DynamicCString signalIdxStr;
+                	signalIdxStr.Append(signalIdx);
+                    ret = configuredDatabase.MoveRelative(signalIdxStr.GetList());
                 }
                 if (ret) {
                     ret = configuredDatabase.Read("Samples", numberOfSamples);
@@ -503,7 +512,7 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32
 }
 
 bool GAM::GetSignalFrequency(const SignalDirection direction, const uint32 signalIdx, float32 &frequency) {
-    StreamString dataSourceName;
+    DynamicCString dataSourceName;
 
     bool ret = GetSignalDataSourceName(direction, signalIdx, dataSourceName);
 
@@ -525,7 +534,7 @@ bool GAM::GetSignalFrequency(const SignalDirection direction, const uint32 signa
     ConfigurationDatabase configuredDatabaseBeforeMove = configuredDatabase;
     for (n = 0u; (n < numberOfDataSources) && (!found) && (ret); n++) {
         //Move to the next DataSource
-        StreamString thisDataSourceName;
+        DynamicCString thisDataSourceName;
         ret = configuredDatabase.MoveToChild(n);
         if (ret) {
             ret = configuredDatabase.Read("DataSource", thisDataSourceName);
@@ -535,11 +544,9 @@ bool GAM::GetSignalFrequency(const SignalDirection direction, const uint32 signa
             if (found) {
                 ret = configuredDatabase.MoveRelative("Signals");
                 if (ret) {
-                    StreamString signalIdxStr;
-                    ret = signalIdxStr.Printf("%d", signalIdx);
-                    if (ret) {
-                        ret = configuredDatabase.MoveRelative(signalIdxStr.Buffer());
-                    }
+                	DynamicCString signalIdxStr;
+                	signalIdxStr.Append(signalIdx);
+                    ret = configuredDatabase.MoveRelative(signalIdxStr);
                 }
                 if (ret) {
                     ret = configuredDatabase.Read("Frequency", frequency);

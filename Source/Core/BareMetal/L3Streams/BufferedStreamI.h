@@ -294,6 +294,11 @@ public:
     /**
      * @see PrintFormatted.
      */
+    inline bool Printf(CCString const format);
+
+    /**
+     * @see PrintFormatted.
+     */
     inline bool Printf(CCString const format, const AnyType& par1);
 
     /**
@@ -392,6 +397,11 @@ namespace MARTe {
 
 //    return AnyType(StreamType, dataPointer);
 //}
+
+bool BufferedStreamI::Printf(CCString format) {
+    AnyType pars[1] = { voidAnyType };
+    return PrintFormatted(format, &pars[0]);
+}
 
 bool BufferedStreamI::Printf(CCString format, const AnyType& par1) {
     AnyType pars[2] = { par1, voidAnyType };

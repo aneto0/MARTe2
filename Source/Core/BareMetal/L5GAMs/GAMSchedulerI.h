@@ -77,7 +77,7 @@ struct ScheduledThread {
     /**
      * This thread name.
      */
-    const char8 * name;
+    DynamicCString name;
 };
 
 /**
@@ -97,7 +97,7 @@ struct ScheduledState {
     /**
      * The name of this state.
      */
-    const char8 * name;
+    DynamicCString name;
 };
 
 /**
@@ -151,7 +151,7 @@ public:
      * @param[in] nextStateName is the name of the next state
      * @return true if the next state name is found, false otherwise.
      */
-    virtual bool PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName);
+    virtual bool PrepareNextState(CCString currentStateName, CCString const nextStateName);
 
     /**
      * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
@@ -166,7 +166,7 @@ public:
      * @param[in] threadName the name of the thread.
      * @return the number of ExecutableI components for this \a threadName in this \a stateName.
      */
-    uint32 GetNumberOfExecutables(const char8 * const stateName, const char8 * const threadName) const;
+    uint32 GetNumberOfExecutables(CCString stateName, CCString threadName) const;
 
     /**
      * @brief Starts the execution of the next state threads.
@@ -244,7 +244,7 @@ private:
      * @param[out] executableIdx the index number of the executable (it will be incremented by the number of input brokers that were added).
      * @return true if the GAM input brokers could be successfully added.
      */
-    bool InsertInputBrokers(ReferenceT<GAM> gam, const char8 * const gamFullName, const uint32 stateIdx, const uint32 threadIdx, uint32 &executableIdx) const;
+    bool InsertInputBrokers(ReferenceT<GAM> gam, CCString gamFullName, const uint32 stateIdx, const uint32 threadIdx, uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add the output brokers of the \a gam to the table of states to be executed.
@@ -254,7 +254,7 @@ private:
      * @param[out] executableIdx the index number of the executable (it will be incremented by the number of output brokers that were added).
      * @return true if the GAM output brokers could be successfully added.
      */
-    bool InsertOutputBrokers(ReferenceT<GAM> gam, const char8 * const gamFullName, const uint32 stateIdx, const uint32 threadIdx, uint32 &executableIdx) const;
+    bool InsertOutputBrokers(ReferenceT<GAM> gam, CCString gamFullName, const uint32 stateIdx, const uint32 threadIdx, uint32 &executableIdx) const;
 
     /**
      * @brief Helper function to add this \a gam to the table of states to be executed.
@@ -264,7 +264,7 @@ private:
      * @param[in] executableIdx the index number of the executable.
      * @return true if the GAM could be successfully added.
      */
-    bool InsertGAM(ReferenceT<GAM> gam, const char8 * const gamFullName, const uint32 stateIdx, const uint32 threadIdx, const uint32 executableIdx) const;
+    bool InsertGAM(ReferenceT<GAM> gam, CCString gamFullName, const uint32 stateIdx, const uint32 threadIdx, const uint32 executableIdx) const;
 
 };
 

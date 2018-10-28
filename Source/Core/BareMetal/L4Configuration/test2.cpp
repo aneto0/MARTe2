@@ -398,7 +398,7 @@ ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
     return ok;
 }
 
-ErrorManagement::ErrorType Check1(AnyType at,CCString expression, CCString typeCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
+ErrorManagement::ErrorType DereferenceAndCheckTypeAndSize(AnyType at,CCString expression, CCString typeCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
 
 	ErrorManagement::ErrorType ok;
 	ok = at.MultipleDereference(expression);
@@ -452,7 +452,7 @@ ErrorManagement::ErrorType Check1(AnyType at,CCString expression, CCString typeC
 
 
 
-ErrorManagement::ErrorType Check2(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
+ErrorManagement::ErrorType DereferenceAndCheckTypeSizeAndContent(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
     ErrorManagement::ErrorType ok;
 
 	ok = at.MultipleDereference(expression);
@@ -482,17 +482,14 @@ ErrorManagement::ErrorType Check2(AnyType at,CCString expression,CCString typeCh
 
 	    ok2 = CheckType(at,typeCheck);
     	REPORT_ERROR(ok2,"CheckType error");
-
     	ok.SetError(ok2);
 
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
     	REPORT_ERROR(ok2,"CheckSize error");
-
     	ok.SetError(ok2);
 
     	ok2 = CheckContent(at,contentCheck);
     	REPORT_ERROR(ok2,"CheckContent error");
-
     	ok.SetError(ok2);
 	}
 
@@ -797,36 +794,101 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
 
 }
 
-#define CHECK1(at,mod,type,size,store,clone)\
-ok = Check1(at,mod,type,size,store,clone);   \
-REPORT_ERROR(ok,"*****Check1("  mod  ")Failed");
 
-#define CHECK2(at,mod,type,val,size,store,clone)\
-ok = Check2(at,mod,type,val,size,store,clone);   \
-REPORT_ERROR(ok,"*****Check2(" mod ")Failed");
+template <typename type1,typename type2>
+ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCString type2S){
+	ErrorManagement::ErrorType ret;
+	type1 data;
+	type2 dataCopy;
+
+	{
+		uint8 *p = reinterpret_cast<uint8 *> (&data);
+		for (int i = 0; i< sizeof(data);i++){
+			p[i] = i*i+1;
+		}
+	}
+
+	AnyType dataAT(data);
+	AnyType dataCopyAT(dataCopy);
+	ret = dataAT.CopyTo(dataCopy);
+	REPORT_ERROR(ret,"CopyTo failed");
+
+	DynamicCString dataCS,dataCopyCS;
+    dataAT.ToString(dataCS);
+    dataCopyAT.ToString(dataCopyCS);
+
+    if (ret){
+    	ret = dataCopyAT.CompareWith(dataAT);
+    	REPORT_ERROR(ret,"Compare failed");
+    }
+
+    StreamString ss;
+
+	if (!ret.ErrorsCleared()){
+		if (expectSuccess){
+		    ss.Printf(" NO = FAILED ! see log");
+		} else {
+		    ss.Printf(" OK = FAILED as expected");
+		}
+	} else {
+		if (expectSuccess){
+			ss.Printf(" OK");
+		} else {
+			ss.Printf(" NO = Sucess but should have FAILED - see LOG");
+		}
+	}
+
+	ss.Printf(" (%s)x copy to (%s)y and compare y to x:",dataCS,dataCopyCS);
+
+    printf("%s\n",ss.Buffer());
+    return ret;
+}
+
+
+#define DEREF_CHECK(at,mod,type,size,store)\
+ok = DereferenceAndCheckTypeAndSize(at,mod,type,size,store,false);   \
+REPORT_ERROR(ok,"*****Check1("  mod  ")Failed\n");
+
+#define DEREF_CLONE_CHECK(at,mod,type,size,store)\
+ok = DereferenceAndCheckTypeAndSize(at,mod,type,size,store,true);   \
+REPORT_ERROR(ok,"*****Check1("  mod  ")Failed\n");
+
+#define DEREF_CHECKCONTENT(at,mod,type,val,size,store)\
+ok = DereferenceAndCheckTypeSizeAndContent(at,mod,type,val,size,store,false);   \
+REPORT_ERROR(ok,"*****Check2(" mod ")Failed\n");
+
+#define DEREF_CLONE_CHECKCONTENT(at,mod,type,val,size,store)\
+ok = DereferenceAndCheckTypeSizeAndContent(at,mod,type,val,size,store,true);   \
+REPORT_ERROR(ok,"*****Check2(" mod ")Failed\n");
 
 #define CHECK3(at,mod,type,val,size,store,clone)\
 ok = Check3(at,mod,type,val,size,store,clone);   \
-REPORT_ERROR(ok,"*****Check3(" mod ")Failed");
+REPORT_ERROR(ok,"*****Check3(" mod ")Failed\n");
 
 #define CHECK3N(at,mod,type,val,size,store,clone)\
 ok = Check3(at,mod,type,val,size,store,clone,true);   \
-REPORT_ERROR(ok,"......Check3N(" mod ")Failed as expected");
+REPORT_ERROR(ok,"......Check3N(" mod ")Failed as expected\n");
 
 #define CHECK4(type1, size1, size2,minSize2,type2,typeId)\
 ok = Check4<type1,size1,size2,minSize2,type2> (pfstc,typeId);\
-REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4S(type1, size1, size2,typeId)\
 ok = Check4<type1,size1,size2> (pfstc,typeId);\
-REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4R(type1, size1, size2,minSize2,typeId)\
 ok = Check4<type1,size1,size2,minSize2> (pfstc,typeId);\
-REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed");
+REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
+#define COPY_CHECK_OK(type1, type2)\
+ok = CopyCheck<type1,type2> (true,#type1 , #type2);\
+REPORT_ERROR(ok,"*****CopyCheck<>(" #type1 "," #type2 ")Failed\n");
 
-//ok = Check4<type1, size1, size2,minSize2,type2,typeId> (pfstc,typeId);   \
+#define COPY_CHECK_NOK(type1, type2)\
+ok = CopyCheck<type1,type2> (false,#type1 , #type2);\
+REPORT_ERROR(ok,"......CopyCheck<>(" #type1 "," #type2 ")Failed as expected\n");
+
 
 void xx(){
     ErrorManagement::ErrorType ok;
@@ -839,84 +901,122 @@ void Test(){
     ErrorManagement::ErrorType ok;
     AnyType at(test1Class);
 
-    CHECK2(at,".int8Var","int8","18",sizeof(int8),0,true);
-    CHECK2(at,".char8Var","char8","c",sizeof(char8),0,true);
-    CHECK2(at,".int16Var","int16","116",sizeof(int16),0,true);
-    CHECK2(at,".int32Var","int32","132",sizeof(int32),0,true);
-    CHECK2(at,".uint32Var","uint32","132",sizeof(uint32),0,true);
-    CHECK2(at,".int64Var","int64","164",sizeof(int64),0,true);
-    CHECK2(at,".floatVar","float","10.100001",sizeof(float),0,true);
-    CHECK2(at,".doubleVar","double","11100000000.000000",sizeof(double),0,true);
-    CHECK2(at,".test2.char8Var","char8","c",sizeof(char8),0,true);
-    CHECK2(at,".test2.int8Var","int8","8",sizeof(int8),0,true);
-    CHECK2(at,".test2.int16Var","int16","16",sizeof(int16),0,true);
-    CHECK2(at,".test2.int32Var","int32","32",sizeof(int32),0,true);
-    CHECK2(at,".test2.uint32Var","uint32","32",sizeof(uint32),0,true);
-    CHECK2(at,".test2.int64Var","int64","64",sizeof(int64),0,true);
-    CHECK2(at,".test2.floatVar","float","0.100000",sizeof(float),0,true);
-    CHECK2(at,".test2.doubleVar","double","1100000000.000000",sizeof(double),0,true);
-    CHECK1(at,".test2","class MARTe::Test2Class",sizeof(Test2Class),0,true);
-    CHECK1(at,".test3","union MARTe::Test3Class",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset1","BitRange<uint32,1,0>","1",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset2","BitRange<uint32,2,1>","2",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset3","BitRange<uint32,3,3>","3",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset4","BitRange<uint32,4,6>","4",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset5","BitRange<uint32,5,10>","5",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset6","BitRange<uint32,6,15>","6",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset7","BitRange<uint32,7,21>","7",sizeof(uint32),0,true);
-    CHECK2(at,".test3.bitset8","BitRange<uint32,4,28>","8",sizeof(uint32),0,true);
-    CHECK1(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0,true);
-    CHECK2(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0,true);
-    CHECK1(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0,true);
-    CHECK1(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr),false/* cannot clone pointers*/);
-    CHECK1(at,".int64PArr[4]","int64( *)[21]",176,8,false); // cannot clone pointers
-    CHECK2(at,".int64PArr[4][5]","int64","6",8,0,true);
-    CHECK1(at,".int32PVar","int32 *",8,0,false);  // cannot clone pointers
-    CHECK1(at,".int32PVar*","int32",4,0,true);
-    CHECK2(at,".CCStringVar","CCString","pippo",14,8,true);
-    CHECK2(at,".CCStringVar[0]","const char8","p",1,0,true);
-    CHECK2(at,".CStringVar","CString","mizzega",16,8,true);
-    CHECK2(at,".CStringVar[2]","char8","z",1,0,true);
-    CHECK2(at,".DCStringVar","DynamicCString","paperino",17,8,true);
-    CHECK2(at,".DCStringVar[3]","char8","e",1,0,true);
-    CHECK1(at,".VCharVar","Vector<char8>",16,16,false/* clone creates only const structures*/);
-    CHECK1(at,".VCharVar","const Vector<char8>",16,16,true/* clone creates only const structures*/);
-    CHECK1(at,".MFloatVar","Matrix<float>",24,24,false/* clone creates only const structures*/);
-    CHECK1(at,".MFloatVar","const Matrix<float>",24,24,true);
-    CHECK1(at,".CStringZTAVar","const Vector<CCString>",83,56,true/* clone converts ZTA to vector */);
-    CHECK1(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56,false/* clone converts ZTA to vector */);
-    CHECK2(at,".CStringZTAVar[0]","CCString","uno",12,8,true);
-    CHECK2(at,".CStringZTAVar[2]","CCString","tre",12,8,true);
-    CHECK2(at,".CStringZTAVar[2][2]","const char8","e",1,0,true);
+#if 1
+    /*
+     * starts with test1Class introspectable anyType
+     * then dereference on the base of the first string
+     * then clones the variable
+     * then checks the resulting type against the second string
+     * then converts value to string and checks against third string
+     * then checks data size against fourth string
+     * then checks overhead storage size against 5th string
+     */
+
+    /// note all these tests operate on simple 1D variables after redirection.
+    DEREF_CLONE_CHECKCONTENT(at,".int8Var","int8","18",sizeof(int8),0);
+    DEREF_CLONE_CHECKCONTENT(at,".char8Var","char8","c",sizeof(char8),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int16Var","int16","116",sizeof(int16),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int32Var","int32","132",sizeof(int32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".uint32Var","uint32","132",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int64Var","int64","164",sizeof(int64),0);
+    DEREF_CLONE_CHECKCONTENT(at,".floatVar","float","10.100001",sizeof(float),0);
+    DEREF_CLONE_CHECKCONTENT(at,".doubleVar","double","11100000000.000000",sizeof(double),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.char8Var","char8","c",sizeof(char8),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.int8Var","int8","8",sizeof(int8),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.int16Var","int16","16",sizeof(int16),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.int32Var","int32","32",sizeof(int32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.uint32Var","uint32","32",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.int64Var","int64","64",sizeof(int64),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.floatVar","float","0.100000",sizeof(float),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.doubleVar","double","1100000000.000000",sizeof(double),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset1","BitRange<uint32,1,0>","1",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset2","BitRange<uint32,2,1>","2",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset3","BitRange<uint32,3,3>","3",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset4","BitRange<uint32,4,6>","4",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset5","BitRange<uint32,5,10>","5",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset6","BitRange<uint32,6,15>","6",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset7","BitRange<uint32,7,21>","7",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test3.bitset8","BitRange<uint32,4,28>","8",sizeof(uint32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int64PArr[4][5]","int64","6",8,0);
+    DEREF_CLONE_CHECKCONTENT(at,".CCStringVar","CCString","pippo",14,8);
+    DEREF_CLONE_CHECKCONTENT(at,".CCStringVar[0]","const char8","p",1,0);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringVar","CString","mizzega",16,8);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringVar[2]","char8","z",1,0);
+    DEREF_CLONE_CHECKCONTENT(at,".DCStringVar","DynamicCString","paperino",17,8);
+    DEREF_CLONE_CHECKCONTENT(at,".DCStringVar[3]","char8","e",1,0);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringZTAVar[0]","CCString","uno",12,8);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringZTAVar[2]","CCString","tre",12,8);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringZTAVar[2][2]","const char8","e",1,0);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringVAZTAVar[1][2][0]","CCString","agii",13,8);
+    DEREF_CLONE_CHECKCONTENT(at,".CStringVAZTAVar[1][2][0][3]","const char8","i",1,0);
+
+    /*
+     * starts with test1Class introspectable anyType
+     * then dereference on the base of the first string
+     * then checks the resulting type against the second string
+     * then converts value to string and checks against third string
+     * then checks data size against fourth string
+     * then checks overhead storage size against 5th string
+     */
+    DEREF_CHECKCONTENT(at,".pStreamI*","StreamI","riello",22,8);
+    test1Class.pStreamI->Seek(3);
+    DEREF_CHECKCONTENT(at,".pStreamI*","StreamI","chiarriello",22,8);
+    DEREF_CHECKCONTENT(at,".SString","StreamString","succhiarriello",78,64);
+
+    /// these tests operate on more complex variables
+    /*
+     * starts with test1Class introspectable anyType
+     * then dereference on the base of the first string
+     * then checks the resulting type against the second string
+     * then checks data size against fourth string
+     * then checks overhead storage size against 5th string
+     */
+    DEREF_CHECK(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr)/* cannot clone pointers*/);
+	DEREF_CHECK(at,".int64PArr[4]","int64( *)[21]",176,8); // cannot clone pointers
+    DEREF_CHECK(at,".int32PVar","int32 *",8,0);  // cannot clone pointers
+    DEREF_CHECK(at,".VCharVar","Vector<char8>",16,16/* clone creates only const structures*/);
+    DEREF_CHECK(at,".MFloatVar","Matrix<float>",24,24/* clone creates only const structures*/);
+    DEREF_CHECK(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56/* clone converts ZTA to vector */);
+    DEREF_CHECK(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712/* cloning changes type*/);
+    DEREF_CHECK(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
+    DEREF_CHECK(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24);
+    DEREF_CHECK(at,".MFloat10","Matrix<float( *)[10]>",864,824);
+    DEREF_CHECK(at,".pStreamI","StreamI *",8,0/* pointers not supporte by clone */); // treat as a pointer
+    DEREF_CHECK(at,".myStream","StreamI",72,72);
+
+    /*
+     * starts with test1Class introspectable anyType
+     * then dereference on the base of the first string
+     * then clones the variable
+     * then checks the resulting type against the second string
+     * then checks data size against fourth string
+     * then checks overhead storage size against 5th string
+     */
+    DEREF_CLONE_CHECK(at,".test2","class MARTe::Test2Class",sizeof(Test2Class),0);
+	DEREF_CLONE_CHECK(at,".test3","union MARTe::Test3Class",sizeof(uint32),0);
+    DEREF_CLONE_CHECK(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
+    DEREF_CLONE_CHECK(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
+    DEREF_CLONE_CHECK(at,".int32PVar*","int32",4,0);
+    DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",16,16/* clone creates only const structures*/);
+    DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float>",24,24);
+    DEREF_CLONE_CHECK(at,".CStringZTAVar","const Vector<CCString>",83,56/* clone converts ZTA to vector */);
+    DEREF_CLONE_CHECK(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656/* cloning changes to const Vector*/);
+    DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144/* cloning changes to const Vector*/);
+    DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24);
+    DEREF_CLONE_CHECK(at,".MFloat10","const Matrix<float( * const)[10]>",864,824);
+
+
 //return;
-    CHECK1(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712,false/* cloning changes type*/);
-    CHECK1(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656,true/* cloning changes to const Vector*/);
-    CHECK1(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144,false);
-    CHECK1(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144,true/* cloning changes to const Vector*/);
-    CHECK1(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24,false);
-    CHECK1(at,".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24,true);
-    CHECK2(at,".CStringVAZTAVar[1][2][0]","CCString","agii",13,8,true);
-    CHECK2(at,".CStringVAZTAVar[1][2][0][3]","const char8","i",1,0,true);
     CCString testPatt[3] = {CCString("grande"),CCString("spazio"),CCString("aperto")};
     CHECK3(at,".CStringVAZTAVar[1][1]","Vector<CCString>",testPatt,61,40,false/* cloning creates const structs*/);
     CHECK3(at,".CStringVAZTAVar[1][1]","const Vector<CCString>",testPatt,61,40,true/* cloning creates const structs*/);
     CHECK3(at,".int16AAPAA","int16( *[3][5])[7][11]",int16AAPAA,2430,120,false/* cloning creates const structs*/);
     CHECK3(at,".int16AAPAA","int16( * const[3][5])[7][11]",int16AAPAA,2430,120,true/* cloning creates const structs*/);
-    CHECK1(at,".MFloat10","Matrix<float( *)[10]>",864,824,false);
-    CHECK1(at,".MFloat10","const Matrix<float( * const)[10]>",864,824,true);
-    CHECK1(at,".pStreamI","StreamI *",8,0,false/* pointers not supporte by clone */); // treat as a pointer
-    CHECK2(at,".pStreamI*","StreamI","riello",22,8,false);
-    test1Class.pStreamI->Seek(3);
-    CHECK2(at,".pStreamI*","StreamI","chiarriello",22,8,false);
-//    CHECK2(at,".pStreamI","StreamI *","chiarriello",30,16);  // this we do not support anymore
-    CHECK2(at,".SString","StreamString","succhiarriello",78,64,false);
     CHECK3N(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,false); // expect to fail as char8* is not considered a string
     CHECK3(at,".SString","StreamString",CCString("succhiarriello"),78,64,false);
-    CHECK1(at,".myStream","StreamI",72,72,false);
 
 	ProgressiveTypeCreator pfstc(1024);
-
-
 
 	CHECK4S(int8,1,1,SignedInteger8Bit);
 	CHECK4S(int8,1,2,SignedInteger8Bit);
@@ -945,6 +1045,28 @@ void Test(){
 	CHECK4(DynamicCString ,5,5,5,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,10,35,5,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,515,235,5,CCString,ConstCharString(sizeof(CCString)));
+#endif
+
+    typedef uint32 uint32_4[4];
+    typedef uint32 uint32_1[1];
+    typedef uint32 uint32_4_8[4][8];
+
+#if 1
+    COPY_CHECK_OK(uint32, uint32);
+    COPY_CHECK_OK(uint32, Vector<uint32>);
+    COPY_CHECK_OK(uint32, Vector<uint64>);
+    COPY_CHECK_NOK(uint32, uint8);
+    COPY_CHECK_OK(uint32_1, uint32);
+    COPY_CHECK_NOK(uint32_4, uint32);
+    COPY_CHECK_OK(uint32_4, Vector<uint32>);
+    COPY_CHECK_NOK(uint32_4, Vector<uint8>);
+#endif
+    COPY_CHECK_OK(uint32_4_8, Matrix<uint32>);
+    COPY_CHECK_NOK(uint32_4_8, Matrix<uint8>);
+    COPY_CHECK_OK(uint32_4_8, Matrix<uint64>);
+    COPY_CHECK_NOK(uint32_4_8, Vector<uint32>);
+    COPY_CHECK_OK(uint32_4_8, uint32_4_8);
+    COPY_CHECK_NOK(uint32_4_8, uint32);
 
 
 	TestSafeN2N<float,int20>(1e6);
@@ -967,6 +1089,7 @@ void Test(){
     printf ("%i %i %le \n",TypeCharacteristics<double>::UsableBitSize(),DBL_MAX_EXP,TypeCharacteristics<double>::MaxValue());
     printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
+
 
     int32 temp;
 	AnyType xx;
@@ -991,20 +1114,42 @@ void Test(){
 	printf("test of GetVariableInformation\n");
 	{
 
-		int pippo[8]= {1,2,3,4,5,6,7,8};
+		int pippo[5]= {1,2,3,4,5};
 		AnyType pippoAT(pippo);
 
 		TypeDescriptor td;
 		uint32 maxDim = 1;
-		uint32 dimension;
-		pippoAT.GetVariableInformation(td,maxDim,&dimension);
-		printf("int[8] ==> [>%i] size = %i\n",maxDim,dimension);
+		uint32 dimension[3] = {0,0,0};
+		pippoAT.GetVariableInformation(td,maxDim,&dimension[0]);
+		printf("int[5] ==> nDim=%i size = %i\n",maxDim,dimension[0]);
 
 		Vector<int32> pippa(32);
 		AnyType pippaAT(pippa);
 		maxDim = 1;
-		pippoAT.GetVariableInformation(td,maxDim,&dimension);
-		printf("Vector<int>(32) ==> [>%i] size = %i\n",maxDim,dimension);
+		dimension[0] = 0;
+		pippaAT.GetVariableInformation(td,maxDim,&dimension[0]);
+		printf("Vector<int>(32) ==> nDim=%i size = %i\n",maxDim,dimension[0]);
+
+		DynamicCString pippu;
+		AnyType pippuAT(pippu);
+		maxDim = 1;
+		dimension[0] = 0;
+		pippuAT.GetVariableInformation(td,maxDim,&dimension[0]);
+		printf("DynamicCString ==> nDim=%i size = %i\n",maxDim,dimension[0]);
+
+		float (*pippx[5])[6];
+		AnyType pippxAT(pippx);
+		maxDim = 3;
+		dimension[0] = 0;
+		pippxAT.GetVariableInformation(td,maxDim,dimension);
+		printf("float (*[5])[6] ==> nDim=%i size = %i,%i,%i\n",maxDim,dimension[0],dimension[1],dimension[2]);
+
+		ZeroTerminatedArray<int [5]> pippy[7];
+		AnyType pippyAT(pippy);
+		maxDim = 3;
+		dimension[0] = 0;
+		pippyAT.GetVariableInformation(td,maxDim,dimension);
+		printf("ZeroTerminatedArray<int [5]> [7] ==> nDim=%i size = %i,%i,%i\n",maxDim,dimension[0],dimension[1],dimension[2]);
 
 	}
 }
@@ -1014,5 +1159,10 @@ void Test(){
 int main(int argc, char **argv){
     MARTe::PrepareTestObject();
     MARTe::Test();
+
+//    MARTe::CCString xx;
+//    MARTe::StructuredDataI *sdi;
+//    sdi->Read("ARGC",xx);
+
     return 0;
 }

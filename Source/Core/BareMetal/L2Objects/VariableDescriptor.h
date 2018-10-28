@@ -539,8 +539,8 @@ private:
     inline void Match(CString *s);
 
     /**
-     * @brief Constructor from 8 bit character.
-     * @param[in] i is the 8 bit character input.
+     * @brief Constructor from CString.
+     * @param[in] s is the CString.
      */
     inline void Match(CCString *s);
     /**
@@ -550,6 +550,13 @@ private:
      */
     template <class T>
     inline void Match(StreamString *obj);
+
+    /**
+     * @brief Constructor from structured data.
+     * @param[in] s is a structured data.
+     */
+    inline void Match(StructuredDataI *s);
+
 
 };
 
@@ -775,6 +782,11 @@ void VariableDescriptor::Match(void * * p) {
 	FinaliseCode(PointerType);
 }
 
+void VariableDescriptor::Match(StructuredDataI *s){
+	FinaliseCode(StructuredDataType(0));
+}
+
+
 template<typename baseType, uint8 bitOffset>
 void VariableDescriptor::Match(BitBoolean<baseType, bitOffset> * bitBool) {
 	FinaliseCode( BitSetBoolean(baseType,bitOffset));
@@ -800,6 +812,7 @@ const char8 *VariableDescriptor::GetModifiers() const{
 	return modifiers.GetList();
 }
 
+// TODO use VariableDescriptorLib::Type2TypeDescriptor()
 inline TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const{
     TypeDescriptor td =InvalidType(0);
     uint32 nOfDimensions  = 0;

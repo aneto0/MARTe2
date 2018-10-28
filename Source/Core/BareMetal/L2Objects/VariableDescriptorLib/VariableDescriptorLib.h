@@ -55,6 +55,7 @@ namespace VariableDescriptorLib{
 /**
  * @brief parses a modifierString extracting the top modifier and associated number,
  * modifierString is modified to point to the next modifier
+ * at the end of the string it returns 'O' to indicate the termination
  */
 DLL_API void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size );
 
@@ -63,6 +64,12 @@ DLL_API void GetLayerInfo(CCString &modifierString,char8 &modifier,uint32 &size 
  *  if c is 0 then the size of the type described by tdIn is returned
  */
 DLL_API uint32 Type2Size(char8 c,const TypeDescriptor &tdIn);
+
+/**
+ * returns the TypeDescriptor of a given type
+ * returns tidIn if c == 'O'
+ */
+DLL_API TypeDescriptor Type2TypeDescriptor(char8 c, const TypeDescriptor &tdIn);
 
 /**
  * @brief takes a modifierString and calculates the size of the top layer.
@@ -77,6 +84,7 @@ DLL_API DimensionSize LayerSize(CCString modifierString,TypeDescriptor td);
 DLL_API ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL= false);
 
 
+#if 0
 /**
  * Compares the two variable descriptors first and second to see whether they have compatible dimensions
  * 1) The number of dimensions must be the same
@@ -85,25 +93,51 @@ DLL_API ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL= f
  * 4) and no overflow
  */
 DLL_API ErrorManagement::ErrorType HasSameDimensionsAs(const Variable &first,const Variable &second);
-
+#endif
 /**
  *
  */
 DLL_API ErrorManagement::ErrorType CopyToRecursive(
-		uint32 							level,
-		Variable 						&sourceDimensions,
+		const Dimension 				*sourceDimensions,
 		const uint8* 					sourcePtr,
-		Variable 						&destDimensions,
+		const Dimension 				*destDimensions,
 		uint8* 							destPtr,
-		const TypeConversionOperatorI 	&	op
+		const TypeConversionOperatorI 	&	op,
+		bool                            isCopy
 		);
 
+#if 0
+/**
+ * copy something to a non const Vector<BasicType>
+ * Vector will be resized to match
+ */
+DLL_API ErrorManagement::ErrorType VectorCopy(
+		uint32 							level,
+		VariableDescriptorLib::Variable &sourceDimensions,
+		const uint8* 					sourcePtr,
+		VariableDescriptorLib::Variable &destDimensions,
+		uint8* 							destPtr,
+		const TypeConversionOperatorI &	op
+		);
+
+/**
+ * copy something to a non const Matrix<BasicType>
+ * Vector will be resized to match
+ */
+DLL_API ErrorManagement::ErrorType MatrixCopy(
+		uint32 							level,
+		VariableDescriptorLib::Variable &sourceDimensions,
+		const uint8* 					sourcePtr,
+		VariableDescriptorLib::Variable &destDimensions,
+		uint8* 							destPtr,
+		const TypeConversionOperatorI &	op
+		);
+#endif
 /**
  * Operates recursively
  */
 DLL_API ErrorManagement::ErrorType GetSizeRecursive(
-		uint32 							level,
-		Variable 	                    &handler,
+		const Dimension 	            *dimension,
 		const uint8* 					pointer,
 		uint64 							&dataSize,
 		uint64 							&auxSize

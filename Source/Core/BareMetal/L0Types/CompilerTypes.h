@@ -337,6 +337,30 @@ namespace MARTe {
       typedef T type;
     };
 
+    /**
+     * @brief return the maximum between two values
+     */
+    template <typename T>
+    inline T max(const T &v1, const T &v2){
+    	T ret = v1;
+    	if (ret < v2) {
+    		ret = v2;
+    	}
+    	return ret;
+    }
+
+    /**
+     * @brief return the minimum between two values
+     */
+    template <typename T>
+    inline T min(const T &v1, const T &v2){
+    	T ret = v1;
+    	if (ret > v2) {
+    		ret = v2;
+    	}
+    	return ret;
+    }
+
 }
 
 #endif /* COMPILERTYPES */

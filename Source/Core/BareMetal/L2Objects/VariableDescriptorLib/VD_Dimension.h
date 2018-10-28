@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "SaturatedInteger.h"
+#include "ErrorManagement.h"
+#include "TypeDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -50,38 +52,542 @@ namespace VariableDescriptorLib{
  */
 typedef  SaturatedInteger<uint32> DimensionSize;
 
+
 /**
  * @brief description of a dimension.
  */
-struct DLL_API Dimension{
+class DLL_API Dimension{
+
+public:
 	/**
-	 * @brief A for arrays F/f for pointers to arrays, ZSDzsd for pointers to ZTA, MVmv for matrix & vectors /0 final
+	 * constructor
 	 */
-	char8  type;
+	Dimension();
 
 	/**
-	 * @brief the type that ends this layer. A layer is made of a sequence of As AAP  AAZ etc...
+	 * virtual destructor
 	 */
-	char8  endType;
+	virtual ~Dimension();
 
 	/**
-	 * @brief number of elements in this dimension
-	 * NonDet for pointers, Vectors, Arrays,ZTAs etc..
+	 *
 	 */
-	DimensionSize numberOfElements;
+	static const uint8 isConstant = 0x1;
 
 	/**
-	 * @brief product of all the underlying dimensions up to a terminal dimension.
-	 * include size of terminating type (void *), vector<>,matrix<> or sizeof(T)
-	 * exclude the actual multiplier of the Vector/Matrix/ZTA
+	 * memory can be reallocated
 	 */
-	DimensionSize elementSize;
+	static const uint8 isDynamic = 0x2;
 
 	/**
-	 * @brief constructor
+	 *  this is a layer that ends all the stacks
 	 */
-	inline Dimension(char8 typeIn,const DimensionSize &numberOfElementsIn);
+	static const uint8 is2D = 0x4;
 
+	/**
+	 *  this is a layer that ends the current stack
+	 *  a stack is made of layers that can occupy contiguous memory
+	 */
+	static const uint8 isBreak = 0x40;
+
+	/**
+	 *  this is a layer that ends all the stacks
+	 *  isFinal layers are also iSBreak
+	 */
+	static const uint8 isFinal = 0x80;
+
+	/**
+	 * @brief returns the size of the typeChar.
+	 * Works also for 'O' final type.
+	 */
+	virtual uint32 TypeSize() const =0;
+
+	/**
+	 * converts to a TypeDescriptor
+	 */
+	virtual TypeDescriptor GetTypeDescriptor() const ;
+
+	/**
+	 * @brief gets the char corresponding to the type
+	 */
+	virtual char8 TypeChar() const = 0;
+
+	/**
+	 * @brief 1 for all but 2 for Matrix
+	 */
+	inline uint8 NOfDimensions() const;
+
+	/**
+	 * @brief is it a layer with redirection or a straight dimension?
+	 */
+	inline bool IsBreak() const;
+
+	/**
+	 * @brief has the next layer a modifiable size?
+	 */
+	inline bool IsDynamic() const;
+	/**
+	 * @brief indicates that this is either the last layer (the type) or one above.
+	 * So equivalent to a vector<T> or matrix<T> or T  or T[]
+	 */
+	bool IsFinalLayer() const;
+
+	/**
+	 * @browses the layers looking for next break;
+	 * if this is a break returns this
+	 */
+	inline const Dimension* GetNextBreak() const;
+
+	/**
+	 * @brief indicates that this is the last stack end.
+	 * So equivalent to T
+	 */
+	inline bool IsFinal() const;
+
+	/**
+	 * @brief access the next dimension
+	 */
+	inline Dimension *Next() const;
+
+	/**
+	 * @brief allows adding an element to the end
+	 */
+	static void AddToEnd(Dimension *&rootPtr,Dimension *newDimension);
+
+	/**
+	 * @brief process a dimension
+	 * dereference pointer if necessary
+	 * calculates dimensions
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const = 0;
+
+	/**
+	 * @brief returns the elements in a dimension
+	 * only valid for F and A dimensions
+	 */
+	virtual ErrorManagement::ErrorType GetNumberOfElements(uint32 &numberOfElements) const;
+
+	/**
+	 * @brief process a dimension
+	 * dereference pointer if necessary
+	 * try to set the dimensions.
+	 * On success returns the pointer to the actual data as in UpdatePointerAndSizeEx
+	 */
+	virtual ErrorManagement::ErrorType ReSize(
+				uint8 *&		ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @brief initialises the current layer stack
+	 * it will recurse through all the 'A' levels and compute the total n of elements
+	 * it will stop at the first stack break which will initialise the whole memory
+	 * if the stack break is 'P','F' the memory will be all NULL. V and M will be handled similarly
+	 * for the final level 'O' it will depend on the actual type. Basic Types and structures are set to 0
+	 *
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const = 0;
+
+	/**
+	 * loops through layers stopping at a stack break.
+	 * calculates combined size of all elements on this stack
+	 * size of stack end * nOfEl each layer
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const =0;
+
+	/**
+	 * takes the size of the element multiplied by this dimension
+	 * multiplies the dimension sizes of all dimensions from the next
+	 * until a break is encountered. the size of the dimension break element is last multiplied
+	 */
+	inline ErrorManagement::ErrorType GetNextLayerElementSize(uint32 &destElementSize) const ;
+	inline ErrorManagement::ErrorType GetNextLayerElementSize(DimensionSize &destElementSize) const;
+
+	/*
+	 * how much is wasted in pointers and or terminators.
+	 * 0 for arrays
+	 * sizeof(Vector)
+	 * for ZTA is the pointer and the data terminator
+	 */
+	virtual uint32 GetOverHead() const ;
+
+protected:
+	/*
+	 *
+	 */
+	uint8 flags;
+
+	/**
+	 * points to next dimension in the variable
+	 */
+	Dimension *next;
+
+	/**
+	 * points to next dimension in the variable
+	 */
+	Dimension *endStack;
+
+	/**
+	 * recursively called
+	 * add to end
+	 * fixes endStack
+	 */
+	void Add(Dimension *newDimension);
+
+};
+
+
+
+
+/**
+ * 'O'
+ */
+class DataDimension: public Dimension{
+
+public:
+
+	/**
+	 *
+	 */
+	DataDimension(const TypeDescriptor &td);
+
+	/**
+	 *
+	 */
+	virtual ~DataDimension();
+
+	/**
+	 * @see Dimension::GetLayerCombinedElementSize
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const ;
+
+	/**
+	 * @see Dimension::UpdatePointerAndSizeEx
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+	/**
+	 * @see Dimension::GetTypeDescriptor().
+	 */
+	virtual TypeDescriptor GetTypeDescriptor() const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+private:
+	/**
+	 * number of elements in this layer
+	 */
+	TypeDescriptor td;
+};
+
+
+
+/**
+ * 'A'
+ */
+class ArrayDimension: public Dimension{
+
+public:
+
+	/**
+	 *
+	 */
+	ArrayDimension(uint32 numberOfElementsIn);
+
+	/**
+	 *
+	 */
+	virtual ~ArrayDimension();
+
+	/**
+	 * loops through layers stopping at a stack break.
+	 * calculates combined size of all elements on this stack
+	 * size of stack end * nOfEl each layer
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const ;
+
+
+	/**
+	 * @see Dimension::UpdatePointerAndSizeEx().
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+
+	/**
+	 * @see Dimension::NumberOfElements().
+	 */
+	virtual ErrorManagement::ErrorType GetNumberOfElements(uint32 &numberOfElements) const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+protected:
+	/**
+	 * number of elements in this layer
+	 */
+	uint32 			numberOfElements;
+};
+
+
+/**
+ * 'F'
+ */
+class PointerToArrayDimension: public ArrayDimension{
+public:
+
+	/**
+	 *
+	 */
+	PointerToArrayDimension(uint32 numberOfElementsIn,bool constant);
+
+	/**
+	 *
+	 */
+	virtual ~PointerToArrayDimension();
+
+	/**
+	 * @see  Dimension::GetLayerCombinedElementSize
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const ;
+
+	/**
+	 * @see  Dimension::UpdatePointerAndSizeEx
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+};
+
+/**
+ * 'V'
+ */
+class VectorDimension: public Dimension{
+public:
+
+	/**
+	 *
+	 */
+	VectorDimension(bool constant);
+
+	/**
+	 *
+	 */
+	virtual ~VectorDimension();
+
+	/**
+	 * @see Dimension::GetLayerCombinedElementSize()
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const;
+
+	/**
+	 * @see Dimension::UpdatePointerAndSizeEx().
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::ReSize().
+	 */
+	virtual ErrorManagement::ErrorType ReSize(
+				uint8 *&		ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+};
+
+
+
+/**
+ * 'M'
+ */
+class MatrixDimension: public Dimension{
+public:
+
+	/**
+	 *
+	 */
+	MatrixDimension(bool constant);
+
+	/**
+	 *
+	 */
+	virtual ~MatrixDimension();
+
+	/**
+	 * @see Dimension::GetLayerCombinedElementSize().
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const ;
+
+	/**
+	 * @see Dimension::UpdatePointerAndSizeEx().
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::ReSize().
+	 */
+	virtual ErrorManagement::ErrorType ReSize(
+				uint8 *&		ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+	/**
+	 * @see Dimension::NOfDimensions().
+	 */
+	virtual uint8 NOfDimensions() const;
+};
+
+/**
+ * 'Z'
+ */
+class ZTADimension: public Dimension{
+public:
+
+	/**
+	 *
+	 */
+	ZTADimension(bool dynamic=false,bool constant=true);
+
+	/**
+	 *
+	 */
+	virtual ~ZTADimension();
+
+	/**
+	 * loops through layers stopping at a stack break.
+	 * calculates combined size of all elements on this stack
+	 * size of stack end * nOfEl each layer
+	 */
+	virtual DimensionSize GetLayerCombinedElementSize() const;
+
+	/**
+	 * @brief process a dimension
+	 */
+	virtual ErrorManagement::ErrorType UpdatePointerAndSizeEx(
+				const uint8 *&	ptr,
+				uint32 &		numberOfColumns,
+				uint32 &		numberOfRows) const;
+
+	/**
+	 * @see Dimension::InitStack().
+	 */
+	virtual ErrorManagement::ErrorType InitStack(
+				uint8 * 		ptr,
+				DimensionSize	numberOfElements) const;
+
+	/**
+	 * @see Dimension::TypeSize().
+	 */
+	virtual uint32 TypeSize() const ;
+
+	/**
+	 * @see Dimension::TypeChar().
+	 */
+	virtual char8 TypeChar() const;
+
+	/**
+	 * @see Dimension
+	 */
+	virtual uint32 GetOverHead() const;
 };
 
 
@@ -89,11 +595,66 @@ struct DLL_API Dimension{
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-Dimension::Dimension(char8 typeIn,const DimensionSize &numberOfElementsIn){
-	type = typeIn;
-	endType = typeIn;
-	numberOfElements = numberOfElementsIn;
-	elementSize = 0;
+
+Dimension *Dimension::Next() const{
+	return next;
+}
+
+uint8 Dimension::NOfDimensions() const{
+	uint8 ret = 1;
+	if (flags & is2D){
+		ret = 2;
+	}
+	return ret;
+}
+
+bool Dimension::IsBreak() const{
+	return ((flags & isBreak)!=0);
+}
+
+bool Dimension::IsDynamic() const{
+	return (((flags & isDynamic)!=0) && ((flags & isConstant)==0));
+}
+
+bool Dimension::IsFinal() const{
+	return ((flags & isFinal) != 0);
+}
+
+
+ErrorManagement::ErrorType Dimension::GetNextLayerElementSize(DimensionSize &destElementSize) const {
+	ErrorManagement::ErrorType ret;
+
+	if ((flags & isFinal)==0){
+		ret.internalSetupError = (next == NULL_PTR(Dimension *));
+		REPORT_ERROR(ret,"next is NULL ");
+
+		if (ret){
+			destElementSize = next->GetLayerCombinedElementSize();
+		}
+	} else {
+		destElementSize = DimensionSize(this->TypeSize());
+	}
+	return ret;
+}
+
+ErrorManagement::ErrorType Dimension::GetNextLayerElementSize(uint32 &destElementSize) const{
+	ErrorManagement::ErrorType ret;
+	DimensionSize di;
+	ret = GetNextLayerElementSize(di);
+
+	if (ret){
+		ret = di.ToNumber(destElementSize);
+		REPORT_ERROR(ret,"overflow in dimensions");
+	}
+	return ret;
+}
+
+const Dimension* Dimension::GetNextBreak() const{
+	const Dimension* d = this;
+	while ((!d->IsBreak()) && (d != NULL_PTR(Dimension *))){
+		d = d->Next();
+	}
+	return d;
 }
 
 

@@ -34,6 +34,8 @@
 #include "VD_Variable.h"
 #include "VariableDescriptorLib.h"
 #include "MemoryCheck.h"
+#include "CompositeErrorManagement.h"
+#include "VD_Dimension.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,59 +60,130 @@ bool IsUpperCase(char8 c){
 	return ret;
 }
 
+static DataDimension dummyDim(InvalidType(0));
+
+const Dimension &Variable::operator[](uint32 index) const{
+	const Dimension *p = firstDimension;
+	while ((p != NULL) && (index > 0)){
+		p = p->Next();
+		index--;
+	}
+
+	if (p == NULL){
+		REPORT_ERROR(ErrorManagement::FatalError,"access out of range");
+		p = &dummyDim;
+	}
+
+	return *p;
+}
+
+Dimension &Variable::Access(uint32 index) {
+	Dimension *p = firstDimension;
+	while ((p != NULL) && (index > 0)){
+		p = p->Next();
+		index--;
+	}
+
+	if (p == NULL){
+		REPORT_ERROR(ErrorManagement::FatalError,"access out of range");
+		p = &dummyDim;
+	}
+
+	return *p;
+}
+
+void Variable::Add(Dimension *dimension){
+	Dimension::AddToEnd(firstDimension,dimension);
+}
+
 // supports both expanded and compressed representation
 // pA and PA are converted in f and F and at the same time f and F are handled correctly
-static const CCString terminals = "VMvmZDSzds";
-static const CCString ATerminals = "AFf";
+//static const CCString terminals = "VMvmZDSzds";
+//static const CCString ATerminals = "AFf";
 
-Variable::Variable(CCString modifiers,TypeDescriptor tdIn,bool stopAtFirstTerminal){
+
+static inline bool isLowerCase(char8 c){
+	return (c >= 'a');
+}
+
+Variable::Variable(CCString modifiers,TypeDescriptor tdIn){
+//printf("%s = ",modifiers.GetList());
+
+	firstDimension = NULL;
 	td = tdIn;
 	char8 modifier;
 	uint32 size;
 	GetLayerInfo(modifiers,modifier,size);
 	bool finished = false;
 	while (!finished){
-		if (modifier == '\0'){
-			this->Add(Dimension('\0',1));
+		bool isConstant = isLowerCase(modifier);
+		switch(modifier){
+		case 'O':{
+			Add(new DataDimension(tdIn));
 			finished = true;
-		} else
-		if (ATerminals.In(modifier)){
-			this->Add(Dimension(modifier,size));
-		}
-		{
-			// !!! Actual pointers are not processed here! --> transform into a modified Td
-			if ((modifier == 'P') || (modifier == 'p')){
-				td = PointerType;
-				if (!IsUpperCase(modifier)){
-					td.dataIsConstant = true;
-				}
-				this->Add(Dimension('\0',1));
-				finished = true;
-			} else
-			if (terminals.In(modifier)){
-
-				this->Add(Dimension(modifier,SaturatedInteger<uint32>::Indeterminate()));
-			}
+		} break;
+		case 'A':{
+			Add(new ArrayDimension(size));
+		}break;
+		case 'f':
+		case 'F':{
+			Add(new PointerToArrayDimension(size,isConstant));
+		}break;
+		case 'v':
+		case 'V':{
+			Add(new VectorDimension(isConstant));
+		}break;
+		case 'm':
+		case 'M':{
+			Add(new MatrixDimension(isConstant));
+		}break;
+		case 's':
+		case 'S':
+		case 'z':
+		case 'Z':{
+			Add(new ZTADimension(false,isConstant));
+		}break;
+		case 'd':
+		case 'D':{
+			Add(new ZTADimension(true,isConstant));
+		}break;
+		case 'p':{
+			Add(new DataDimension(ConstPointerType));
+		}break;
+		case 'P':{
+			Add(new DataDimension(PointerType));
+		}break;
+		default:{
+			COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Unexpected type char ",modifier);
+			finished = true;
+		}break;
 		}
 		if (!finished){
 			GetLayerInfo(modifiers,modifier,size);
 		}
 	}
-
+#if 0
 	char8 endType = '0';
 	DimensionSize elementSize = 1;
 	for (int i = (NDimensions()-1); i >= 0; i--){
-
-		char8 type = (*this)[i].type;
+		char8 type = (*this)[i].TypeChar();
 		if (type != 'A'){
-			elementSize = Type2Size((*this)[i].type,td);
+			elementSize = (*this)[i].TypeSize();
 			endType = type;
 		} else {
-			elementSize = elementSize * (*this)[i].numberOfElements ;
+			elementSize = elementSize * (*this)[i].NumberOfArrayElements() ;
 		}
-		this->Access(i).endType = endType;
-		this->Access(i).elementSize = elementSize;
+		this->Access(i).UpdateStackInfo(endType,elementSize);
 	}
+/*
+Dimension *p = firstDimension;
+while (p != NULL){
+	printf("(%c,%i,%c,%i)",filter(p->type),p->numberOfElements.GetData(),filter(p->endType),p->elementSize.GetData());
+	p = p->next;
+}
+printf("\n");
+*/
+#endif
 }
 
 }
