@@ -46,7 +46,6 @@ namespace MARTe {
 
 const uint32 COPY_BUF_LEN = 1024u;
 
-
 HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
         ProtocolI() {
     httpCommand = HttpDefinition::HSHCNone;
@@ -65,8 +64,7 @@ HttpProtocol::~HttpProtocol() {
     outputStream = NULL_PTR(DoubleBufferedStream*);
 }
 
-bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout,
-                                         TimeoutType msecTimeout) {
+bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout) {
 
     bool ret = true;
     //This way we can change the falsely undefined content-length when this is called from Write Header
@@ -78,7 +76,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout,
         uint64 startCounter = HighResolutionTimer::Counter();
 
         // convert the stop time
-        uint64 maxTicks = startCounter + ((static_cast<uint64>(msecTimeout.GetTimeoutMSec())* HighResolutionTimer::Frequency())/1000ULL);
+        uint64 maxTicks = startCounter + ((static_cast<uint64>(msecTimeout.GetTimeoutMSec()) * HighResolutionTimer::Frequency()) / 1000ULL);
 
         uint32 bufferSize = COPY_BUF_LEN;
         char8 *buffer = new char8[bufferSize];
@@ -97,12 +95,12 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout,
 
             ret = outputStream->Read(buffer, sizeToRead, msecTimeout);
 
-            if ((ret) || (sizeToRead>0u)) {
+            if ((ret) || (sizeToRead > 0u)) {
                 readSize = sizeToRead;
-                if (streamout!=NULL_PTR(BufferedStreamI *)) {
+                if (streamout != NULL_PTR(BufferedStreamI *)) {
                     uint32 sizeToWrite = readSize;
                     //complete write?
-                    (void)streamout->Write(buffer, sizeToWrite, msecTimeout);
+                    (void) streamout->Write(buffer, sizeToWrite, msecTimeout);
                 }
                 sizeToRead = bufferSize;
 
@@ -310,10 +308,7 @@ bool HttpProtocol::ReadHeader() {
     return ret;
 }
 
-bool HttpProtocol::WriteHeader(const bool isMessageCompleted,
-                               const int32 command,
-                               BufferedStreamI * const payload,
-                               const char8 * const id) {
+bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id) {
 
     //if sending something with bodyCompleted=false
     //remember to write Transfer-Encoding: chunked in options
@@ -340,7 +335,7 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted,
 
     const char8* urlToUse = id;
     if (urlToUse == NULL) {
-        urlToUse="/";
+        urlToUse = "/";
     }
 
     if (isReply) {
@@ -448,8 +443,7 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted,
 
 }
 
-bool HttpProtocol::RetrieveHttpCommand(StreamString &command,
-                                       StreamString &line) {
+bool HttpProtocol::RetrieveHttpCommand(StreamString &command, StreamString &line) {
     char8 terminator;
 
     bool ret = true;
@@ -529,17 +523,20 @@ char8 HttpProtocol::BuildUrl(StreamString &line) {
                     urlPart = "";
                     ok = decoded.GetToken(urlPart, "\\/", saveTerm);
                     if (ok) {
-                        url += urlPart.Buffer();
+                        //url += urlPart.Buffer();
                         path += urlPart.Buffer();
                         if (saveTerm != '\0') {
-                            url += saveTerm;
-                            path += '.';
+                            if (urlPart.Size() > 0LLU) {
+                                //url += saveTerm;
+                                path += '.';
+                            }
                         }
                     }
                 }
             }
         }
-        unMatchedUrl = url;
+        url = path;
+        unMatchedUrl = path;
     }
     return terminator;
 }
@@ -651,10 +648,7 @@ bool HttpProtocol::StoreInputOptions() {
     return ret;
 }
 
-bool HttpProtocol::HandlePostHeader(StreamString &line,
-                                    StreamString &content,
-                                    StreamString &name,
-                                    StreamString &filename) {
+bool HttpProtocol::HandlePostHeader(StreamString &line, StreamString &content, StreamString &name, StreamString &filename) {
     const char8 *temp = NULL_PTR(const char8 *);
 
     bool ret = true;
@@ -686,7 +680,7 @@ bool HttpProtocol::HandlePostHeader(StreamString &line,
             while (temp[count] != '\"') {
                 count++;
             }
-            ret=filename.SetSize(static_cast<uint64>(count));
+            ret = filename.SetSize(static_cast<uint64>(count));
         }
         if (ret) {
             if (filename.Size() > 0ull) {
@@ -716,12 +710,7 @@ bool HttpProtocol::HandlePostHeader(StreamString &line,
     return ret;
 }
 
-bool HttpProtocol::HandlePostContent(StreamString &line,
-                                     StreamString &boundary,
-                                     StreamString &name,
-                                     StreamString &filename,
-                                     StreamString &value,
-                                     bool &headerHandled) {
+bool HttpProtocol::HandlePostContent(StreamString &line, StreamString &boundary, StreamString &name, StreamString &filename, StreamString &value, bool &headerHandled) {
 
     bool ret = true;
     //search for the boundary end
@@ -755,8 +744,7 @@ bool HttpProtocol::HandlePostContent(StreamString &line,
     return ret;
 }
 
-bool HttpProtocol::HandlePostMultipartFormData(StreamString &contentType,
-                                               StreamString &content) {
+bool HttpProtocol::HandlePostMultipartFormData(StreamString &contentType, StreamString &content) {
 
     const char8* parsedBoundaryTemp = StringHelper::SearchString(contentType.Buffer(), "boundary=");
     bool ret = (parsedBoundaryTemp != NULL);
@@ -875,8 +863,7 @@ bool HttpProtocol::HandlePostApplicationForm(StreamString &content) {
     return ret;
 }
 
-bool HttpProtocol::HandlePost(StreamString &contentType,
-                              StreamString &content) {
+bool HttpProtocol::HandlePost(StreamString &contentType, StreamString &content) {
     //Write the raw content
     bool ret = content.Seek(0ull);
     if (ret) {
@@ -962,8 +949,7 @@ int8 HttpProtocol::TextMode() const {
     return textMode;
 }
 
-bool HttpProtocol::GetInputCommand(const char8 * const commandName,
-                                   const AnyType &commandValue) {
+bool HttpProtocol::GetInputCommand(const char8 * const commandName, const AnyType &commandValue) {
 
     bool ret = MoveAbsolute("InputCommands");
     if (ret) {
@@ -973,8 +959,7 @@ bool HttpProtocol::GetInputCommand(const char8 * const commandName,
 }
 
 /*lint -e{715} parameters are not referenced in this implementation*/
-bool HttpProtocol::SetOutputCommand(const char8 * const commandName,
-                                    const AnyType &commandValue) {
+bool HttpProtocol::SetOutputCommand(const char8 * const commandName, const AnyType &commandValue) {
     return false;
 }
 

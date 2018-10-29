@@ -160,7 +160,6 @@ HttpClientTestClassTest1    ();
 
     virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
 
-    virtual int32 GetReplyCode(ProtocolI &data);
 };
 
 HttpClientTestClassTest1::HttpClientTestClassTest1() {
@@ -210,10 +209,6 @@ bool HttpClientTestClassTest1::GetAsText(StreamI &stream, ProtocolI &protocol) {
     return true;
 }
 
-int32 HttpClientTestClassTest1::GetReplyCode(ProtocolI &data) {
-    return HttpDefinition::HSHCReplyOK;
-}
-
 CLASS_REGISTER(HttpClientTestClassTest1, "1.0")
 
 class HttpClientTestClassTest2: public ReferenceContainer, public DataExportI, public HttpRealmI {
@@ -227,8 +222,6 @@ HttpClientTestClassTest2    ();
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
 
     virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
-
-    virtual int32 GetReplyCode(ProtocolI &data);
 
     virtual bool Validate(const char8 * const key,
             const int32 command,
@@ -284,10 +277,6 @@ bool HttpClientTestClassTest2::GetAsText(StreamI &stream, ProtocolI &protocol) {
 
     //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, hStream, NULL);
     return true;
-}
-
-int32 HttpClientTestClassTest2::GetReplyCode(ProtocolI &data) {
-    return HttpDefinition::HSHCReplyOK;
 }
 
 bool HttpClientTestClassTest2::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
@@ -376,8 +365,6 @@ HttpClientTestClassTest3    ();
 
     virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
 
-    virtual int32 GetReplyCode(ProtocolI &data);
-
     virtual bool Validate(const char8 * const key,
             const int32 command,
             const uint32 ipNumber);
@@ -434,10 +421,6 @@ bool HttpClientTestClassTest3::GetAsText(StreamI &stream, ProtocolI &protocol) {
     return true;
 }
 
-int32 HttpClientTestClassTest3::GetReplyCode(ProtocolI &data) {
-    return HttpDefinition::HSHCReplyOK;
-}
-
 bool HttpClientTestClassTest3::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
 
     StreamString keyStr = key;
@@ -476,8 +459,6 @@ HttpClientTestClassTest4    ();
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
 
     virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
-
-    virtual int32 GetReplyCode(ProtocolI &data);
 
     virtual bool Validate(const char8 * const key,
             const int32 command,
@@ -533,10 +514,6 @@ bool HttpClientTestClassTest4::GetAsText(StreamI &stream, ProtocolI &protocol) {
 
     //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, hStream, NULL);
     return true;
-}
-
-int32 HttpClientTestClassTest4::GetReplyCode(ProtocolI &data) {
-    return HttpDefinition::HSHCReplyOK;
 }
 
 bool HttpClientTestClassTest4::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {

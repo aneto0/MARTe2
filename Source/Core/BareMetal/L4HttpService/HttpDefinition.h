@@ -84,7 +84,12 @@ static const int32 HSHCReply = 0x10000000;
 static const int32 HSHCReplyOK = (HSHCReply + 200);
 
 /**
- * HTTP REPLY AUTH REQUIURED command
+ * HTTP REPLY AUTH NOT FOUND command
+ */
+static const int32 HSHCReplyNotFound = (HSHCReply + 400);
+
+/**
+ * HTTP REPLY AUTH REQUIERED command
  */
 static const int32 HSHCReplyAUTH = (HSHCReply + 401);
 

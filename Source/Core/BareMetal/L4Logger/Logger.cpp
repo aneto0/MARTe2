@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "Logger.h"
+#include "../../BareMetal/L4Logger/Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

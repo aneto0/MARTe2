@@ -65,15 +65,24 @@ public:
     bool TestInitialise();
 
     /**
-     * @brief Tests the Initialise method with the default WebRoot parameter.
+     * @brief Tests the Initialise method with a WebRoot reference
      */
-    bool TestInitialise_DefaultWebRoot();
+    bool TestInitialise_WebRoot();
 
     /**
-     * @brief Tests the Initialise method that fails if WebRoot is not
-     * specified and the object does not contain the default web root.
+     * @brief Tests the Initialise method fails if WebRoot is not specified.
      */
-    bool TestInitialise_FalseNoDefaultWebRoot();
+    bool TestInitialise_FalseNoWebRoot();
+
+    /**
+     * @brief Tests the Initialise method that fails if an invalid WebRoot is specified.
+     */
+    bool TestInitialise_FalseBadWebRoot();
+
+    /**
+     * @brief Tests the Initialise method that fails if an invalid WebRoot is specified.
+     */
+    bool TestInitialise_FalseBadWebRootRef();
 
     /**
      * @brief Tests the Initialise method with default ListenMaxConnections parameter.
@@ -118,12 +127,6 @@ public:
      * Connection: close
      */
     bool TestClientService_CloseConnection();
-
-    /**
-     * @brief Tests the ClientService method that use the default root
-     * if the path sent by the client is incorrect
-     */
-    bool TestClientService_InvalidInterface();
 
     /**
      * @brief Tests the ClientService method that fails

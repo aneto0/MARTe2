@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "DataExportI.h"
 #include "EmbeddedServiceMethodBinderT.h"
 #include "FastPollingMutexSem.h"
 #include "HttpChunkedStream.h"
@@ -149,7 +150,7 @@ protected:
      * Where the web pages are contained.
      * It will use the URL to search in the container
      */
-    ReferenceT<ReferenceContainer> webRoot;
+    ReferenceT<DataExportI> webRoot;
 
     /**
      * The ServerCycle method to be executed in the thread loop.
@@ -175,12 +176,6 @@ protected:
      * The HTTP reply body chunk size.
      */
     uint32 chunkSize;
-
-    /**
-     * Specifies if after an authentication
-     * failure the connection has to be closed or not
-     */
-    uint8 closeOnAuthFail;
 
     /**
      * Filter to receive the RPC

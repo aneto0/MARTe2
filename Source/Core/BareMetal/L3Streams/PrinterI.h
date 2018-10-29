@@ -38,8 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
+namespace MARTe {
 
 /**
  * @brief Interface to declare the prototype to write on a stream using
@@ -72,7 +71,7 @@ public:
 
     /**
      * @brief Prints the open matrix separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -80,7 +79,7 @@ public:
 
     /**
      * @brief Prints the close matrix separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -88,7 +87,7 @@ public:
 
     /**
      * @brief Prints the scalar separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -96,7 +95,7 @@ public:
 
     /**
      * @brief Prints the vector separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -104,7 +103,7 @@ public:
 
     /**
      * @brief Prints the variable separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -112,7 +111,7 @@ public:
 
     /**
      * @brief Prints the block separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -120,7 +119,7 @@ public:
 
     /**
      * @brief Prints the open vector separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -128,7 +127,7 @@ public:
 
     /**
      * @brief Prints the close vector separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @pre
      *   stream != NULL
      */
@@ -136,7 +135,7 @@ public:
 
     /**
      * @brief Prints the open matrix separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @param[in] blockName the name of the block
      * @pre
      *   stream != NULL
@@ -145,39 +144,55 @@ public:
 
     /**
      * @brief Prints the close block separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @param[in] blockName the name of the block
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseBlock(const char8 *const blockName)=0;
+    virtual bool PrintCloseBlock(const char8 * const blockName)=0;
 
     /**
      * @brief Prints the open assignment separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @param[in] varName the name of the variable
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintOpenAssignment(const char8 *const varName)=0;
+    virtual bool PrintOpenAssignment(const char8 * const varName)=0;
 
     /**
      * @brief Prints the close assignment separator on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @param[in] varName the name of the variable
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseAssignment(const char8 *const varName)=0;
+    virtual bool PrintCloseAssignment(const char8 * const varName)=0;
 
     /**
      * @brief Prints the variable on the stream
-     * @return true if the print succeed, false otherwise.
+     * @return true if the print succeeds, false otherwise.
      * @param[in] var the variable to be printed.
      * @pre
      *   stream != NULL
      */
     virtual bool PrintVariable(const AnyType &var)=0;
+
+    /**
+     * @brief Very first print to be performed.
+     * @return true if the print succeeds, false otherwise.
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintBegin();
+
+    /**
+     * @brief Very last print to be performed.
+     * @return true if the print succeeds, false otherwise.
+     * @pre
+     *   stream != NULL
+     */
+    virtual bool PrintEnd();
 
 protected:
 

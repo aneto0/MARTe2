@@ -49,7 +49,7 @@ public:
     ProtocolI();
 
     /**
-     * @brief Destrucotr
+     * @brief Destructor
      */
     virtual ~ProtocolI();
 

@@ -57,7 +57,6 @@ HttpService::HttpService() :
     listenMaxConnections = 0;
     textMode = 1u;
     chunkSize = 0u;
-    closeOnAuthFail = 1u;
     filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     filter->SetDestination(this);
     ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
@@ -89,36 +88,32 @@ bool HttpService::Initialise(StructuredDataI &data) {
             port = 80u;
             REPORT_ERROR(ErrorManagement::Information, "Port not specified: using default %d", port);
         }
-
         if (!data.Read("ListenMaxConnections", listenMaxConnections)) {
             listenMaxConnections = 255;
             REPORT_ERROR(ErrorManagement::Information, "ListenMaxConnections not specified: using default %d", listenMaxConnections);
-        }
-        if (!data.Read("WebRoot", webRootPath)) {
-            webRoot = this->Find("WebRoot");
-            ret = webRoot.IsValid();
-            if (ret) {
-                REPORT_ERROR(ErrorManagement::Information, "WebRoot not specified: using default this.WebRoot");
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::InitialisationError, "Please define a valid WebRoot path or add a WebRoot node in this container");
-            }
         }
         if (!data.Read("IsTextMode", textMode)) {
             textMode = 1u;
             REPORT_ERROR(ErrorManagement::Information, "IsTextMode unspecified: using default %d", textMode);
         }
-
         if (!data.Read("ChunkSize", chunkSize)) {
             chunkSize = 32u;
             REPORT_ERROR(ErrorManagement::Information, "ChunkSize not specified: using default %d", chunkSize);
-
         }
-
-        if (!data.Read("CloseOnAuthFail", closeOnAuthFail)) {
-            closeOnAuthFail = 1u;
+        Reference ref = this->Find("WebRoot");
+        if (ref.IsValid()) {
+            webRoot = ref;
+            ret = webRoot.IsValid();
+            if (!ret) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "The WebRoot is not a DataExportI");
+            }
         }
-
+        else {
+            ret = data.Read("WebRoot", webRootPath);
+            if (!ret) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "WebRoot path shall be specified or added to the container");
+            }
+        }
     }
 
     return ret;
@@ -126,15 +121,13 @@ bool HttpService::Initialise(StructuredDataI &data) {
 
 ErrorManagement::ErrorType HttpService::Start() {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-
     if (!webRoot.IsValid()) {
         webRoot = ObjectRegistryDatabase::Instance()->Find(webRootPath.Buffer());
-        err = !(webRoot.IsValid());
+        err.parametersError = !(webRoot.IsValid());
         if (!err.ErrorsCleared()) {
-            REPORT_ERROR(ErrorManagement::ParametersError, "Invalid WebRoot path %s", webRootPath.Buffer());
+            REPORT_ERROR(ErrorManagement::ParametersError, "Invalid WebRoot path %s or WebRoot is not a DataExportI", webRootPath.Buffer());
         }
     }
-
     if (err.ErrorsCleared()) {
         err = !(server.Open());
 
@@ -164,139 +157,53 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
             if (err.ErrorsCleared()) {
 
                 if (sel.WaitUntil(1000u) > 0) {
-
                     //todo from here is possible to understand if
                     //you want plain text or data
                     if (!hprotocol.ReadHeader()) {
                         err = ErrorManagement::CommunicationError;
                         REPORT_ERROR(ErrorManagement::CommunicationError, "Error while reading HTTP header");
                     }
-                    ReferenceT<DataExportI> hi = webRoot;
+                    //Reference hi = webRoot;
                     bool pagePrepared = false;
 
                     if (err.ErrorsCleared()) {
                         if (hprotocol.TextMode() >= 0) {
                             textMode = static_cast<uint8>(hprotocol.TextMode());
                         }
-                        StreamString path;
-                        hprotocol.GetPath(path);
-                        if (path.Size() > 0ull) {
-                            // search for destination
-                            int32 occurrences = 1;
-                            uint32 mode = ReferenceContainerFilterMode::PATH;
-                            ReferenceContainerFilterNameAndType<DataExportI> filter(occurrences, mode, path.Buffer());
-                            ReferenceContainer results;
-                            webRoot->Find(results, filter);
-                            if (results.Size() > 0ull) {
-                                uint32 last = static_cast<uint32>(results.Size()) - 1u;
-                                hi = results.Get(last);
-                            }
-                            // save remainder of address
-                            uint32 remAddrIndex = filter.GetRemainedAddrIndex();
-                            StreamString urlTemp;
-                            hprotocol.GetId(urlTemp);
-                            StreamString unmatchedUrl = &urlTemp.Buffer()[remAddrIndex];
-                            if (unmatchedUrl.Size() > 0ull) {
-                                uint32 newUrlLastCharIdx = (static_cast<uint32>(unmatchedUrl.Size()) - 1u);
-                                if (unmatchedUrl.Buffer()[newUrlLastCharIdx] == '/') {
-                                    err = !(unmatchedUrl.SetSize(static_cast<uint64>(newUrlLastCharIdx)));
-                                }
-                            }
-
-                            hprotocol.SetUnmatchedId(unmatchedUrl.BufferReference());
+                        if (!hprotocol.MoveAbsolute("OutputOptions")) {
+                            err = !(hprotocol.CreateAbsolute("OutputOptions"));
                         }
-
                         if (err.ErrorsCleared()) {
-                            ReferenceT<HttpRealmI> hiRealm = hi;
-                            if (hiRealm.IsValid()) {
-                                //check security
-                                //GCRTemplate<HttpRealm> realm = searchFilter.GetRealm();
-                                //TODO security stuff
-                                if (!hprotocol.SecurityCheck(hiRealm)) {
-                                    if (!hprotocol.MoveAbsolute("OutputOptions")) {
-                                        err = !(hprotocol.CreateAbsolute("OutputOptions"));
-                                    }
-                                    if (err.ErrorsCleared()) {
-                                        StreamString contentType = "text/html";
-                                        err = !hprotocol.Write("Content-Type", contentType.Buffer());
-                                        if (err.ErrorsCleared()) {
-                                            StreamString realmMsg;
-                                            err = !(hiRealm->GetAuthenticationRequest(realmMsg));
-                                            if (err.ErrorsCleared()) {
-                                                err = !hprotocol.Write("WWW-Authenticate", realmMsg.Buffer());
-                                            }
-                                            StreamString hstream;
-                                            if (err.ErrorsCleared()) {
-                                                err = !hstream.Printf("%s", "<HTML><HEAD>\n"
-                                                                      "<TITLE>401 Authorization Required</TITLE>\n"
-                                                                      "</HEAD><BODY>\n"
-                                                                      "<H1>Authorization Required</H1>\n"
-                                                                      "This server could not verify that you\n"
-                                                                      "are authorized to access the document you\n"
-                                                                      "requested.  Either you supplied the wrong\n"
-                                                                      "credentials (e.g., bad password), or your\n"
-                                                                      "browser doesn't understand how to supply\n"
-                                                                      "the credentials required.<P>\n"
-                                                                      "</BODY></HTML>\n");
-                                                if (err.ErrorsCleared()) {
-                                                    err = !hstream.Seek(0ULL);
-                                                }
-                                            }
-                                            if (err.ErrorsCleared()) {
-                                                if (closeOnAuthFail > 0u) {
-                                                    // force reissuing of a new thread
-                                                    hprotocol.SetKeepAlive(false);
-                                                }
-                                                err = !hprotocol.WriteHeader(true, HttpDefinition::HSHCReplyAUTH, &hstream, NULL_PTR(const char8*));
-                                                pagePrepared = err.ErrorsCleared();
-                                            }
-
-                                        }
-                                    }
+                            err = !(hprotocol.Write("Transfer-Encoding", "chunked"));
+                        }
+                        if (err.ErrorsCleared()) {
+                            err = !(hprotocol.Write("Content-Type", "text/html"));
+                        }
+                        if (err.ErrorsCleared()) {
+                            //empty string... go in chunked mode
+                            StreamString hstream;
+                            err = !(hprotocol.WriteHeader(false, HttpDefinition::HSHCReplyOK, &hstream, NULL_PTR(const char8*)));
+                            commClient->SetChunkMode(true);
+                            if (textMode > 0u) {
+                                pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
+                            }
+                            else {
+                                StreamStructuredData<JsonPrinter> sdata;
+                                sdata.SetStream(*commClient);
+                                bool ok = sdata.GetPrinter()->PrintBegin();
+                                if (ok) {
+                                    pagePrepared = webRoot->GetAsStructuredData(sdata, hprotocol);
+                                    ok = sdata.GetPrinter()->PrintEnd();
                                 }
                             }
-
                             if (err.ErrorsCleared()) {
-                                if (!pagePrepared) {
-
-                                    int32 replyCode = hi->GetReplyCode(hprotocol);
-
-                                    if (!hprotocol.MoveAbsolute("OutputOptions")) {
-                                        err = !(hprotocol.CreateAbsolute("OutputOptions"));
-                                    }
-                                    if (err.ErrorsCleared()) {
-                                        err = !(hprotocol.Write("Transfer-Encoding", "chunked"));
-                                    }
-                                    if (err.ErrorsCleared()) {
-                                        err = !(hprotocol.Write("Content-Type", "text/html"));
-                                    }
-                                    if (err.ErrorsCleared()) {
-
-                                        //empty string... go in chunked mode
-                                        StreamString hstream;
-                                        err = !(hprotocol.WriteHeader(false, replyCode, &hstream, NULL_PTR(const char8*)));
-                                        if (err.ErrorsCleared()) {
-
-                                            commClient->SetChunkMode(true);
-                                            if (textMode > 0u) {
-                                                pagePrepared = hi->GetAsText(*commClient, hprotocol);
-                                            }
-                                            else {
-                                                StreamStructuredData<JsonPrinter> sdata;
-                                                sdata.SetStream(*commClient);
-                                                pagePrepared = hi->GetAsStructuredData(sdata, hprotocol);
-                                            }
-
-                                            err = !(commClient->Flush());
-                                            if (err.ErrorsCleared()) {
-
-                                                err = !(commClient->FinalChunk());
-                                            }
-                                            //hprotocol.SetKeepAlive(false);
-                                        }
-                                    }
-                                }
+                                err = !(commClient->Flush());
                             }
+                            if (err.ErrorsCleared()) {
+                                err = !(commClient->FinalChunk());
+                            }
+                            //hprotocol.SetKeepAlive(false);
+
                         }
                     }
                     if (err.ErrorsCleared()) {

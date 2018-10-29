@@ -80,6 +80,7 @@ HighResolutionTimer.h
 HighResolutionTimerCalibrator.cpp
 HttpClient.cpp
 HttpDefinition.cpp
+HttpObjectBrowser.cpp
 HttpProtocol.cpp
 HttpRealmI.cpp
 HttpService.cpp
@@ -143,6 +144,7 @@ MultiClientService.cpp
 MultiThreadService.cpp
 MutexSem.cpp
 Object.cpp
+ObjectBrowser.cpp
 ObjectBuilder.h
 ObjectBuilderT.h
 ObjectRegistryDatabase.cpp
@@ -198,7 +200,9 @@ StreamMemoryReference.cpp
 StreamString.cpp
 StreamStringIOBuffer.cpp
 StreamStructuredData.cpp
+StreamStructuredData.h
 StreamStructuredDataI.cpp
+StreamStructuredDataI.h
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 StringHelper_CLIB_Generic.cpp

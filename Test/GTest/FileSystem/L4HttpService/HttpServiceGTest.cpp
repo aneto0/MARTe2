@@ -55,14 +55,24 @@ TEST(HttpServiceGTest, TestInitialise) {
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(HttpServiceGTest, TestInitialise_DefaultWebRoot) {
+TEST(HttpServiceGTest, TestInitialise_WebRoot) {
     HttpServiceTest test;
-    ASSERT_TRUE(test.TestInitialise_DefaultWebRoot());
+    ASSERT_TRUE(test.TestInitialise_WebRoot());
 }
 
-TEST(HttpServiceGTest, TestInitialise_FalseNoDefaultWebRoot) {
+TEST(HttpServiceGTest, TestInitialise_FalseNoWebRoot) {
     HttpServiceTest test;
-    ASSERT_TRUE(test.TestInitialise_FalseNoDefaultWebRoot());
+    ASSERT_TRUE(test.TestInitialise_FalseNoWebRoot());
+}
+
+TEST(HttpServiceGTest, TestInitialise_FalseBadWebRoot) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestInitialise_FalseBadWebRoot());
+}
+
+TEST(HttpServiceGTest, TestInitialise_FalseBadWebRootRef) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestInitialise_FalseBadWebRootRef());
 }
 
 
@@ -75,11 +85,11 @@ TEST(HttpServiceGTest, TestInitialise_DefaultPort) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_DefaultPort());
 }
-
+/*
 TEST(HttpServiceGTest, TestClientService_Text_Interactive) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Text_Interactive());
-}
+}*/
 
 TEST(HttpServiceGTest, TestStart) {
     HttpServiceTest test;
@@ -104,11 +114,6 @@ TEST(HttpServiceGTest, TestClientService_Structured) {
 TEST(HttpServiceGTest, TestClientService_CloseConnection) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_CloseConnection());
-}
-
-TEST(HttpServiceGTest, TestClientService_InvalidInterface) {
-    HttpServiceTest test;
-    ASSERT_TRUE(test.TestClientService_InvalidInterface());
 }
 
 TEST(HttpServiceGTest, TestClientService_FailReadHeader) {

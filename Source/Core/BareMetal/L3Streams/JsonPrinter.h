@@ -125,7 +125,15 @@ public:
      */
     virtual bool PrintVariable(const AnyType &var);
 
+    /**
+     * @brief Prints the { character.
+     */
+    virtual bool PrintBegin();
 
+    /**
+     * @brief Prints the } character.
+     */
+    virtual bool PrintEnd();
 };
 
 }

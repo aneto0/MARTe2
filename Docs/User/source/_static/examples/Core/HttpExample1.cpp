@@ -82,9 +82,6 @@ HttpObjectEx1    () : Object() {
         return true;
     }
 
-    virtual MARTe::int32 GetReplyCode(MARTe::ProtocolI &data) {
-        return MARTe::HttpDefinition::HSHCReplyOK;
-    }
 };
 CLASS_REGISTER(HttpObjectEx1, "1.0")
 }
@@ -95,16 +92,30 @@ int main(int argc, char **argv) {
     SetErrorProcessFunction(&ErrorProcessExampleFunction);
 
     StreamString config = ""
-            "+TheWebRootToDELETE = {"
-            "    Class = ReferenceContainer"
-            "    +ARootObj = {"
+            "+WebRoot = {"
+            "    Class = ObjectBrowser"
+            "    Root = \".\""
+            "    +ARootObj1 = {"
+            "        Class = ObjectBrowser"
+            "        Root = \".\""
+            "        +AChildObj1 = {"
+            "            Class = HttpObjectEx1"
+            "        }"
+            "        +AChildObj2 = {"
+            "            Class = HttpObjectEx1"
+            "        }"
+            "    }"
+            "    +ARootObj2 = {"
+            "        Class = HttpObjectEx1"
+            "    }"
+            "    +ARootObj3 = {"
             "        Class = HttpObjectEx1"
             "    }"
             "}"
             "+WebServer = {"
             "    Class = HttpService"
-            "    Port = 4444"
-            "    WebRoot = TheWebRootToDELETE"
+            "    Port = 8084"
+            "    WebRoot = WebRoot"
             "    Timeout = 0"
             "    ListenMaxConnections = 255"
             "    AcceptTimeout = 1000"

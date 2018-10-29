@@ -106,4 +106,13 @@ bool JsonPrinter::PrintCloseAssignment(const char8 *const varName) {
 bool JsonPrinter::PrintVariable(const AnyType &var) {
     return stream->Printf("%#J!", var);
 }
+
+bool JsonPrinter::PrintBegin() {
+    return stream->Printf("%s", "{");
+}
+
+bool JsonPrinter::PrintEnd() {
+    return stream->Printf("%s", "}");
+}
+
 }

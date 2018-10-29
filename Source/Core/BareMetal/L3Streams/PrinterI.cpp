@@ -57,4 +57,12 @@ void PrinterI::SetStream(BufferedStreamI & streamIn) {
     stream = &streamIn;
 }
 
+bool PrinterI::PrintBegin() {
+    return true;
+}
+
+bool PrinterI::PrintEnd() {
+    return true;
+}
+
 }

@@ -206,6 +206,11 @@ public:
      */
     virtual uint32 GetNumberOfChildren();
 
+    /**
+     * @return the Printer
+     */
+    Printer *GetPrinter();
+
 protected:
 
     /**
@@ -381,7 +386,7 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
         treeDescriptor->Find(path, filter);
 
         uint32 pathSize = path.Size();
-        ret = (pathSize > generations);
+        ret = (pathSize >= generations);
 
         uint32 goodOnes = (pathSize - generations);
         StreamString currentPathTmp = "";
@@ -413,7 +418,12 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
             }
         }
         if (ret) {
-            currentNode = path.Get(goodOnes - 1u);
+            if (goodOnes > 0u) {
+                currentNode = path.Get(goodOnes - 1u);
+            }
+            else {
+                currentNode = treeDescriptor;
+            }
             currentPath = currentPathTmp;
         }
         if (ret) {
@@ -646,6 +656,11 @@ const char8 *StreamStructuredData<Printer>::GetChildName(const uint32 index) {
 template<class Printer>
 uint32 StreamStructuredData<Printer>::GetNumberOfChildren() {
     return currentNode->Size();
+}
+
+template<class Printer>
+Printer *StreamStructuredData<Printer>::GetPrinter() {
+    return &printer;
 }
 
 }

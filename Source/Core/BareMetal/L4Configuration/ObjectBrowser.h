@@ -1,8 +1,8 @@
 /**
- * @file DataExportI.h
- * @brief Header file for class DataExportI
- * @date 14/09/2018
- * @author Giuseppe Ferro
+ * @file ObjectBrowser.h
+ * @brief Header file for class ObjectBrowser
+ * @date 29/10/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataExportI
+ * @details This header file contains the declaration of the class ObjectBrowser
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATAEXPORTI_H_
-#define DATAEXPORTI_H_
+#ifndef L4CONFIGURATION_OBJECTBROWSER_H_
+#define L4CONFIGURATION_OBJECTBROWSER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,57 +31,73 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ProtocolI.h"
-#include "StreamI.h"
-#include "StreamStructuredDataI.h"
+#include "DataExportI.h"
+#include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-
 /**
- * @brief Interface to export relevant user-defined data using a given protocol (e.g. HTTP).
- * @details The data to be exported can be expressed either as a structure of as free text.
+ * @brief TODO
  */
-class DataExportI {
+class ObjectBrowser: public ReferenceContainer, public DataExportI {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief Default constructor.
+     * @brief TODO
      */
-    DataExportI();
+ObjectBrowser    ();
 
     /**
-     * @brief Destructor.
+     * @brief TODO
      */
-    virtual ~DataExportI();
+    virtual ~ObjectBrowser();
 
     /**
-     * @brief Exports data to the StreamStructuredDataI passed in input.
-     * @param[out] data contains the exported data in output.
-     * @param[in] protocol the protocol used to exchange data.
-     * @return true if the operation succeeds, false otherwise.
+     * @brief TODO
      */
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol)=0;
+    virtual void Purge(ReferenceContainer &purgeList);
 
     /**
-     * @brief Exports data as text writing on the stream in input.
-     * @param[out] stream the stream where to write.
-     * @param[in] protocol the protocol used to exchange data.
-     * @return true if the operation succeeds, false otherwise.
+     * @brief TODO
      */
-    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol) = 0;
+    virtual bool Initialise(StructuredDataI &data);
 
+    /**
+     * @brief TODO
+     */
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
+
+    /**
+     * @brief TODO
+     */
+    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
+
+
+private:
+    /**
+     * @brief TODO
+     */
+    bool GetTargetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference &target);
+
+    /**
+     * @brief TODO
+     */
+    Reference FindTarget(ProtocolI &protocol);
+
+    /**
+     * TODO
+     */
+    Reference root;
 
 };
-
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATAEXPORTI_H_ */
+#endif /* L4CONFIGURATION_OBJECTBROWSER_H_ */
 
