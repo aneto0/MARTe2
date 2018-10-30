@@ -43,16 +43,53 @@
 namespace MARTe {
 
 HttpObjectBrowser::HttpObjectBrowser() :
-        ObjectBrowser() {
+        DataExportI() {
     closeOnAuthFail = 1u;
 }
 
 HttpObjectBrowser::~HttpObjectBrowser() {
+    root = Reference();
 
 }
 
+void HttpObjectBrowser::Purge(ReferenceContainer &purgeList) {
+    root = Reference();
+    ReferenceContainer::Purge(purgeList);
+}
+
 bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
-    bool ok = ObjectBrowser::Initialise(data);
+    bool ok = ReferenceContainer::Initialise(data);
+
+    StreamString rootName;
+    if (ok) {
+        ok = data.Read("Root", rootName);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::ParametersError, "A Root shall be specified");
+        }
+    }
+    if (ok) {
+        if (rootName.Size() == 1u) {
+            if (rootName[0] == '/') {
+                root = ObjectRegistryDatabase::Instance();
+            }
+            else if (rootName[0] == '.') {
+                root = this;
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Unknown Root [%c]", rootName[0]);
+            }
+        }
+        else {
+            root = ObjectRegistryDatabase::Instance()->Find(rootName.Buffer());
+            ok = root.IsValid();
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::ParametersError, "Invalid Root [%s]", rootName.Buffer());
+            }
+        }
+
+    }
+
+    return ok;
     if (ok) {
         StreamString realmStr;
         if (data.Read("Realm", realmStr)) {
@@ -140,7 +177,11 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, Protoco
     bool ok = true;
     bool securityOK = CheckSecurity(protocol);
     if (securityOK) {
-        ok = ObjectBrowser::GetAsStructuredData(data, protocol);
+        Reference target = FindReference(protocol, root);
+        bool ok = target.IsValid();
+        if (ok) {
+            ok = GetReferenceAsStructuredData(data, protocol, target);
+        }
     }
     return ok;
 }
@@ -149,8 +190,13 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, ProtocolI &protocol) {
     bool ok = true;
     bool securityOK = CheckSecurity(protocol);
     if (securityOK) {
-        ok = ObjectBrowser::GetAsText(stream, protocol);
+        ReferenceT<DataExportI> target = FindReference(protocol, root);
+        ok = target.IsValid();
+        if (ok) {
+            ok = target->GetAsText(stream, protocol);
+        }
     }
+
     return ok;
 }
 

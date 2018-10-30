@@ -64,7 +64,7 @@ public:
      * @param[in] protocol the protocol used to exchange data.
      * @return true if the operation succeeds, false otherwise.
      */
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol)=0;
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
 
     /**
      * @brief Exports data as text writing on the stream in input.
@@ -74,7 +74,22 @@ public:
      */
     virtual bool GetAsText(StreamI &stream, ProtocolI &protocol) = 0;
 
+protected:
+    /**
+     * @brief TODO
+     */
+    bool GetReferenceAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference ref);
 
+    /**
+     * @brief TODO
+     */
+    Reference FindReference(ProtocolI &protocol, Reference root);
+
+private:
+    /**
+     * @brief TODO
+     */
+    bool GetObjectPropertiesAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference ref);
 };
 
 }

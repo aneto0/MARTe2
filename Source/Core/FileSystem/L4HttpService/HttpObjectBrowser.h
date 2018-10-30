@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "DataExportI.h"
 #include "HttpRealmI.h"
-#include "ObjectBrowser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief TODO
  */
-class HttpObjectBrowser: public ObjectBrowser {
+class HttpObjectBrowser: public ReferenceContainer, public DataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -54,6 +54,11 @@ HttpObjectBrowser    ();
      * @brief TODO
      */
     virtual ~HttpObjectBrowser();
+
+    /**
+     * @brief TODO
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
     /**
      * @brief TODO
@@ -87,6 +92,11 @@ private:
      * failure the connection has to be closed or not
      */
     uint8 closeOnAuthFail;
+
+    /**
+     * TODO
+     */
+    Reference root;
 };
 }
 

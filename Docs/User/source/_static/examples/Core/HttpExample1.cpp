@@ -56,7 +56,7 @@ namespace MARTe2Tutorial {
 /**
  * @brief A MARTe::Object class that will expose its properties using the DataExportI interface.
  */
-class HttpObjectEx1: public MARTe::Object, public MARTe::DataExportI {
+class HttpObjectEx1: public MARTe::Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -74,14 +74,6 @@ HttpObjectEx1    () : Object() {
         }
     }
 
-    virtual bool GetAsStructuredData(MARTe::StreamStructuredDataI &data, MARTe::ProtocolI &protocol) {
-        return true;
-    }
-
-    virtual bool GetAsText(MARTe::StreamI &stream, MARTe::ProtocolI &protocol) {
-        return true;
-    }
-
 };
 CLASS_REGISTER(HttpObjectEx1, "1.0")
 }
@@ -93,15 +85,15 @@ int main(int argc, char **argv) {
 
     StreamString config = ""
             "+WebRoot = {"
-            "    Class = ObjectBrowser"
+            "    Class = HttpObjectBrowser"
             "    Root = \".\""
             "    +ARootObj1 = {"
-            "        Class = ObjectBrowser"
+            "        Class = HttpObjectBrowser"
             "        Root = \".\""
             "        +AChildObj1 = {"
             "            Class = HttpObjectEx1"
             "        }"
-            "        +AChildObj2 = {"
+            "        +Obj2 = {"
             "            Class = HttpObjectEx1"
             "        }"
             "    }"
