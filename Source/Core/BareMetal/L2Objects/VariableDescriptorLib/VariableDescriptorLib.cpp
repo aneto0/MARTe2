@@ -596,10 +596,10 @@ ErrorManagement::ErrorType CopyToRecursive(
 			// skip forward
 			uint32 ix = 0;
 			for (ix = 0; (ix < numberOfElements) && ret; ix++){
-				ret = CopyToRecursive(sourceDimensions->Next(),sourcePtr,destDimensions->Next(),destPtr,op,isCopy);
+				ret = CopyToRecursive(sourceDimensions->Next(),sourcePtr,destDimensions->Next(),redirectedDestPtr,op,isCopy);
 
 				sourcePtr+= sourceElementSize;
-				destPtr+= destElementSize;
+				redirectedDestPtr += destElementSize;
 				COMPOSITE_REPORT_ERROR(ret,"Failed at row (",ix,")");
 			}
 		}

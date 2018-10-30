@@ -436,7 +436,7 @@ ErrorManagement::ErrorType VectorDimension::ReSize(
 	if (ret){
 		// resize vector
 		pVec->SetSize(0);
-		pVec->InitVector(newMemory,numberOfColumns,true);// true means allocated
+		pVec->InitVector(newMemory,numberOfColumns,heapMalloc);// true means allocated
 
 		ret.internalSetupError = (next == NULL_PTR(Dimension *));
 		REPORT_ERROR(ret,"next layer to a Vector is NULL");
@@ -446,6 +446,7 @@ ErrorManagement::ErrorType VectorDimension::ReSize(
 			REPORT_ERROR(ret,"memory init failed");
 		}
 
+		//redirect to data
 		if (ret){
 			ptr = newMemory;
 		}
@@ -466,7 +467,7 @@ ErrorManagement::ErrorType VectorDimension::InitStack(
 	if (ret){
 		Vector<char8 >* vptr = reinterpret_cast<Vector<char8 >* >(ptr);
 		for (int i = 0; i< n;i++){
-			vptr->InitVector(NULL,0,false);
+			vptr->InitVector(NULL,0);
 			vptr++;
 		}
 	}
@@ -578,7 +579,7 @@ ErrorManagement::ErrorType MatrixDimension::ReSize(
 	if (ret){
 		// resize vector
 		pMat->SetSize(0,0);
-		pMat->InitMatrix(newMemory,numberOfRows,numberOfColumns,true);// true means allocated
+		pMat->InitMatrix(newMemory,numberOfRows,numberOfColumns,heapMalloc);// true means allocated
 
 		ret.internalSetupError = (next == NULL_PTR(Dimension *));
 		REPORT_ERROR(ret,"next layer to a Matrix is NULL");
@@ -588,10 +589,10 @@ ErrorManagement::ErrorType MatrixDimension::ReSize(
 			REPORT_ERROR(ret,"memory init failed");
 		}
 
+		//redirect to data
 		if (ret){
 			ptr = newMemory;
 		}
-
 	}
 
 	return ret;
@@ -609,13 +610,17 @@ ErrorManagement::ErrorType MatrixDimension::InitStack(
 	if (ret){
 		Matrix<char8 >* mptr = reinterpret_cast<Matrix<char8 >* >(ptr);
 		for (int i = 0; i< n;i++){
-			mptr->InitMatrix(NULL,0,0,false);
+			mptr->InitMatrix(NULL,0,0);
 			mptr++;
 		}
 	}
 
 	return ret;
 }
+
+
+
+
 
 
 

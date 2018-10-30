@@ -40,6 +40,21 @@
 
 namespace MARTe {
 
+enum AllocationMode{
+	/**
+	 * allocated in static heap memory or NULL - cannot be deleted
+	 */
+	heapStatic = 0,
+	/**
+	 * allocated using new[]
+	 */
+	heapNew = 1,
+	/**
+	 * allocated using malloc
+	 */
+	heapMalloc=2
+};
+
 /**
  * @brief Fixed size array of values.
  * @details The Vector can allocate and manage its own memory or it can be
@@ -85,12 +100,12 @@ public:
      * Can be used to initialise Vectors created in memory.
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfElements The number of elements of the vector
-     * @param[in] allocated if true means that the memory can/shall be deallocated.
+     * @param[in] allocationModeIn how was the memory obtained?.
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray
      */
-    void InitVector(T *existingArray,uint32 nOfElements,bool allocated=false);
+    void InitVector(T *existingArray,uint32 nOfElements,AllocationMode allocationModeIn=heapStatic);
 
     /**
      * @brief Frees any existing memory and allocate enough to store nOfElements
@@ -167,9 +182,9 @@ private:
     uint32 numberOfElements;
 
     /**
-     * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
+     * is the vector from malloc new[] or static?.
      */
-    bool canDestroy;
+    AllocationMode allocationMode;
 
 };
 }
@@ -183,26 +198,26 @@ namespace MARTe {
 template<typename T>
 Vector<T>::Vector(): Pointer() {
     numberOfElements = 0u;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
 Vector<T>::Vector(uint32 nOfElements):Pointer(new T[nOfElements]) {
     numberOfElements = nOfElements;
-    canDestroy = true;
+    allocationMode = heapNew;
 }
 
 template<typename T>
 Vector<T>::Vector(T *existingArray,uint32 nOfElements):Pointer(existingArray) {
     numberOfElements = nOfElements;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
-void Vector<T>::InitVector(T *existingArray,uint32 nOfElements,bool allocated) {
+void Vector<T>::InitVector(T *existingArray,uint32 nOfElements,AllocationMode allocationModeIn) {
 // does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
-    canDestroy = allocated;
+    allocationMode = allocationModeIn;
     numberOfElements = nOfElements;
 }
 
@@ -211,10 +226,10 @@ void Vector<T>::SetSize(uint32 nOfElements) {
 	FreeMemory();
 	if (nOfElements > 0){
 		Pointer::Set(new T[nOfElements]);
-	    canDestroy = true;
+	    allocationMode = heapNew;
 	} else {
 		Pointer::Set(NULL_PTR(T*));
-	    canDestroy = false;
+	    allocationMode = heapStatic;
 	}
     numberOfElements = nOfElements;
 }
@@ -223,17 +238,26 @@ template<typename T>
 template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]):Pointer(&source[0]) {
     numberOfElements = nOfElementsStatic;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
 void Vector<T>::FreeMemory(){
-    if (canDestroy) {
+    if (allocationMode == heapNew) {
         delete[] reinterpret_cast<T*>(dataPointer);
+    }
+    if (allocationMode == heapMalloc) {
+    	char8 *p8 = reinterpret_cast<char8 *>(dataPointer);
+    	for (int i = 0;i < numberOfElements;i++){
+    		T* pT = reinterpret_cast<T *>(p8);
+    		pT->~T();
+    		p8 += sizeof(T);
+    	}
+        delete(dataPointer);
     }
     Pointer::Set(NULL);
     dataPointer = NULL;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>

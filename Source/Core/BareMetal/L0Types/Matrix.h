@@ -79,7 +79,7 @@ public:
      * @param[in] existingArray The pointer to the existing array
      * @param[in] nOfRows The number of rows
      * @param[in] nOfColumns The number of columns
-     * @param[in] allocated if true means that the memory can/shall be deallocated.
+     * @param[in] allocationModeIn hows was the memory produced? malloc, new or static?
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
@@ -88,7 +88,7 @@ public:
     void InitMatrix(T *existingArray,
            uint32 nOfRows,
            uint32 nOfColumns,
-		   bool allocated = false);
+		   AllocationMode allocationModeIn=heapStatic);
 
     /**
      * @brief Frees any existing memory and allocate enough to store nOfElements
@@ -309,7 +309,7 @@ private:
     /**
      * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
      */
-    bool canDestroy;
+    AllocationMode allocationMode;
 
 };
 }
@@ -324,7 +324,7 @@ template<typename T>
 Matrix<T>::Matrix(): Pointer() {
     numberOfRows = 0u;
     numberOfColumns = 0u;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
@@ -332,19 +332,19 @@ Matrix<T>::Matrix(uint32 nOfRows,
                   uint32 nOfColumns): Pointer(new T[nOfRows*nOfColumns]) {
     numberOfColumns = nOfColumns;
     numberOfRows    = nOfRows;
-    canDestroy = true;
+    allocationMode = heapNew;
 }
 
 template<typename T>
 void Matrix<T>::InitMatrix(T *existingArray,
                   uint32 nOfRows,
                   uint32 nOfColumns,
-				  bool allocated) {
+				  AllocationMode allocationModeIn) {
 	// does not check and deallocate (FreeMemory) as this is called to perform first initialisation and memory holds random values
 	Pointer::Set(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
-    canDestroy = allocated;
+    allocationMode = allocationModeIn;
 }
 
 template<typename T>
@@ -352,10 +352,10 @@ void Matrix<T>::SetSize(uint32 nOfRows,uint32 nOfColumns) {
 	FreeMemory();
 	if ((nOfRows > 0) && (nOfColumns > 0)){
 		Pointer::Set(new T[nOfRows*nOfColumns]);
-	    canDestroy = true;
+	    allocationMode = heapNew;
 	} else {
 		Pointer::Set(NULL_PTR(T*));
-	    canDestroy = false;
+	    allocationMode = heapStatic;
 	}
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
@@ -368,7 +368,7 @@ Matrix<T>::Matrix(T *existingArray,
                   uint32 nOfColumns):Pointer(existingArray) {
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
@@ -376,19 +376,30 @@ template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]):Pointer(&(source[0][0])) {
     numberOfColumns = nOfColumnsStatic;
     numberOfRows 	= nOfRowsStatic;
-    canDestroy 		= false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>
 void Matrix<T>::FreeMemory() {
-    if (canDestroy) {
-        T* pointerToDestroy = reinterpret_cast<T*>(dataPointer);
-        delete[] pointerToDestroy;
-    }
+	if (dataPointer != NULL_PTR(T*)){
+	    if (allocationMode == heapNew) {
+	        delete[] reinterpret_cast<T*>(dataPointer);
+	    }
+	    if (allocationMode == heapMalloc) {
+	    	char8 *p8 = reinterpret_cast<char8 *>(dataPointer);
+	    	for (int i = 0;i < numberOfColumns*numberOfRows;i++){
+	    		T* pT = reinterpret_cast<T *>(p8);
+	    		pT->~T();
+	    		p8 += sizeof(T);
+	    	}
+
+	        delete(dataPointer);
+	    }
+	}
     Pointer::Set(NULL);
     numberOfColumns = 0u;
     numberOfRows = 0u;
-    canDestroy = false;
+    allocationMode = heapStatic;
 }
 
 template<typename T>

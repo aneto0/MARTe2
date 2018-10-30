@@ -1050,6 +1050,8 @@ void Test(){
     typedef uint32 uint32_4[4];
     typedef uint32 uint32_1[1];
     typedef uint32 uint32_4_8[4][8];
+    typedef uint32 uint32_4_8_6[4][8][6];
+    typedef uint32 uint32_4_8_6_5[4][8][6][5];
 
 #if 1
     COPY_CHECK_OK(uint32, uint32);
@@ -1057,16 +1059,35 @@ void Test(){
     COPY_CHECK_OK(uint32, Vector<uint64>);
     COPY_CHECK_NOK(uint32, uint8);
     COPY_CHECK_OK(uint32_1, uint32);
+
+    COPY_CHECK_NOK(uint32_4, uint8);
     COPY_CHECK_NOK(uint32_4, uint32);
     COPY_CHECK_OK(uint32_4, Vector<uint32>);
     COPY_CHECK_NOK(uint32_4, Vector<uint8>);
-#endif
-    COPY_CHECK_OK(uint32_4_8, Matrix<uint32>);
-    COPY_CHECK_NOK(uint32_4_8, Matrix<uint8>);
-    COPY_CHECK_OK(uint32_4_8, Matrix<uint64>);
-    COPY_CHECK_NOK(uint32_4_8, Vector<uint32>);
-    COPY_CHECK_OK(uint32_4_8, uint32_4_8);
+    COPY_CHECK_NOK(uint32_4, Matrix<uint32>);
+
     COPY_CHECK_NOK(uint32_4_8, uint32);
+    COPY_CHECK_NOK(uint32_4_8, Vector<uint32>);
+    COPY_CHECK_NOK(uint32_4_8, Matrix<uint8>);
+    COPY_CHECK_OK(uint32_4_8, uint32_4_8);
+    COPY_CHECK_OK(uint32_4_8, Matrix<uint32>);
+    COPY_CHECK_OK(uint32_4_8, Matrix<uint64>);
+    COPY_CHECK_NOK(uint32_4_8, Vector<Matrix<uint64>>);
+
+    COPY_CHECK_NOK(uint32_4_8_6, uint32);
+    COPY_CHECK_NOK(uint32_4_8_6, uint32_4_8);
+    COPY_CHECK_NOK(uint32_4_8_6, Vector<uint32>);
+    COPY_CHECK_NOK(uint32_4_8_6, Matrix<uint32>);
+    COPY_CHECK_OK(uint32_4_8_6, uint32_4_8_6);
+#endif
+    COPY_CHECK_OK(uint32_4_8_6, Vector<Matrix<uint32>>);
+    COPY_CHECK_OK(uint32_4_8_6, Matrix<Vector<uint32>>);
+
+    COPY_CHECK_NOK(uint32_4_8_6_5, Vector<Matrix<uint32>>);
+    COPY_CHECK_NOK(uint32_4_8_6_5, Matrix<Vector<uint32>>);
+    COPY_CHECK_OK(uint32_4_8_6_5, Matrix<Matrix<uint32>>);
+    COPY_CHECK_OK(uint32_4_8_6_5, Vector<Vector<Matrix<uint32>>>);
+
 
 
 	TestSafeN2N<float,int20>(1e6);
@@ -1155,10 +1176,16 @@ void Test(){
 }
 }
 
-
 int main(int argc, char **argv){
     MARTe::PrepareTestObject();
     MARTe::Test();
+
+    MARTe::Vector<float> *p = new MARTe::Vector<float>[4];
+    void *q = malloc(sizeof(MARTe::Vector<float>)*4);
+	((MARTe::Vector<float> *)q)[0].InitVector(NULL,0);
+	((MARTe::Vector<float> *)q)[1].InitVector(NULL,0);
+	((MARTe::Vector<float> *)q)[2].InitVector(NULL,0);
+	((MARTe::Vector<float> *)q)[3].InitVector(NULL,0);
 
 //    MARTe::CCString xx;
 //    MARTe::StructuredDataI *sdi;
