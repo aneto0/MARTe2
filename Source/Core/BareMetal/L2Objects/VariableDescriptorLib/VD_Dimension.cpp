@@ -31,7 +31,7 @@
 
 #define DLL_API
 
-#include "VD_Dimension.h"
+#include "VD_Dimensions.h"
 #include "MemoryCheck.h"
 #include "Vector.h"
 #include "Matrix.h"

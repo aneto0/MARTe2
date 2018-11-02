@@ -27,7 +27,10 @@ ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-OBJSX=  	VariableDescriptorLib.x VD_Variable.x VD_Dimension.x VariableCloner.x
+OBJSX=  	VariableDescriptorLib.x VD_Variable.x Dimension.x \
+                DataDimension.x ArrayDimension.x PointerToArrayDimension.x \
+                VectorDimension.x MatrixDimension.x ZTADimension.x \
+                VariableCloner.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

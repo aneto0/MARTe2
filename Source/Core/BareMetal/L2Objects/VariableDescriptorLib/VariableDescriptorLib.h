@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 //#include "VariableDescriptor.h"
-#include "VD_Dimension.h"
+#include "VD_Dimensions.h"
 #include "VD_Variable.h"
 //#include "TypeConversionOperatorI.h"
 //class Marte::TypeConversionOperatorI;
@@ -83,17 +83,6 @@ DLL_API DimensionSize LayerSize(CCString modifierString,TypeDescriptor td);
  */
 DLL_API ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL= false);
 
-
-#if 0
-/**
- * Compares the two variable descriptors first and second to see whether they have compatible dimensions
- * 1) The number of dimensions must be the same
- * 2) each dimension must have equal size
- * 3) or one of them is indeterminate
- * 4) and no overflow
- */
-DLL_API ErrorManagement::ErrorType HasSameDimensionsAs(const Variable &first,const Variable &second);
-#endif
 /**
  *
  */
@@ -106,33 +95,7 @@ DLL_API ErrorManagement::ErrorType CopyToRecursive(
 		bool                            isCopy
 		);
 
-#if 0
-/**
- * copy something to a non const Vector<BasicType>
- * Vector will be resized to match
- */
-DLL_API ErrorManagement::ErrorType VectorCopy(
-		uint32 							level,
-		VariableDescriptorLib::Variable &sourceDimensions,
-		const uint8* 					sourcePtr,
-		VariableDescriptorLib::Variable &destDimensions,
-		uint8* 							destPtr,
-		const TypeConversionOperatorI &	op
-		);
 
-/**
- * copy something to a non const Matrix<BasicType>
- * Vector will be resized to match
- */
-DLL_API ErrorManagement::ErrorType MatrixCopy(
-		uint32 							level,
-		VariableDescriptorLib::Variable &sourceDimensions,
-		const uint8* 					sourcePtr,
-		VariableDescriptorLib::Variable &destDimensions,
-		uint8* 							destPtr,
-		const TypeConversionOperatorI &	op
-		);
-#endif
 /**
  * Operates recursively
  */

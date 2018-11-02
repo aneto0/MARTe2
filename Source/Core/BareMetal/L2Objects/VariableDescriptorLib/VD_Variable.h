@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "VD_Dimension.h"
 #include "StaticList.h"
 #include "TypeDescriptor.h"
+#include "VD_Dimensions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -80,17 +80,7 @@ public:
 	 * This is either the original tdIn or a synthetic pointer type
 	 */
 	inline TypeDescriptor 		GetTypeDescriptor() const ;
-#if 0
-	/**
-	 *
-	 */
-	inline ErrorManagement::ErrorType UpdatePointerAndSize(
-				uint32 			layerIndex,
-				const uint8 *&	ptr,
-				uint32 &		numberOfElementsIO,
-				uint32 &		nextElementSize,
-				uint32 &		overHead);
-#endif
+
 private:
 
 	/**

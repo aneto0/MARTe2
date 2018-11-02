@@ -323,46 +323,9 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	}
 
 	if (ret){
-#if 0
-		// TODO make it part of CopyToRecursive so that it can handle arrays of vectors
-		// special case of destination Vector<type>
-		if ((destVd.modifiers == "M") && (destVd.typeDescriptor.IsBasicType()) && !isCompare){
-			ret.unsupportedFeature = (nDim != 3);
-			COMPOSITE_REPORT_ERROR(ret, "Dimension mismatch expecting 3 and found ",nDim);
 
-			if (ret){
-		    	ret = VariableDescriptorLib::MatrixCopy(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
-		    	REPORT_ERROR(ret, "MatrixCopy failed");
-		    }
-
-		} else
-
-		// TODO make it part of CopyToRecursive so that it can handle arrays of vectors
-		// special case of destination Vector<type>
-		if ((destVd.modifiers == "V") && (destVd.typeDescriptor.IsBasicType())&& !isCompare){
-
-			ret.unsupportedFeature = (nDim > 2);
-			COMPOSITE_REPORT_ERROR(ret, "Dimension mismatch expecting 1 or 2 and found ",nDim);
-
-		    if (ret){
-		    	ret = VariableDescriptorLib::VectorCopy(0,sourceHandler,sourcePtr,destHandler,destPtr,*tco);
-		    	REPORT_ERROR(ret, "VectorCopy failed");
-		    }
-
-		} else {
-
-//			ret.internalSetupError = (!HasSameDimensionsAs(destHandler,sourceHandler));
-//			REPORT_ERROR(ret, "Dimension mismatch");
-
-		    if (ret){
-		    	ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco);
-		    	REPORT_ERROR(ret, "CopyToRecursive failed");
-		    }
-		}
-#else
     	ret = VariableDescriptorLib::CopyToRecursive(&sourceHandler[0],sourcePtr,&destHandler[0],destPtr,*tco,!isCompare);
     	REPORT_ERROR(ret, "CopyToRecursive failed");
-#endif
 	    if (tco != NULL_PTR(TypeConversionOperatorI *)){
 	    	delete tco;
 	    }

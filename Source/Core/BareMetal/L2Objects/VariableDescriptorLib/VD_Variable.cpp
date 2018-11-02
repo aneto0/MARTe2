@@ -35,7 +35,7 @@
 #include "VariableDescriptorLib.h"
 #include "MemoryCheck.h"
 #include "CompositeErrorManagement.h"
-#include "VD_Dimension.h"
+#include "VD_Dimensions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -162,28 +162,7 @@ Variable::Variable(CCString modifiers,TypeDescriptor tdIn){
 			GetLayerInfo(modifiers,modifier,size);
 		}
 	}
-#if 0
-	char8 endType = '0';
-	DimensionSize elementSize = 1;
-	for (int i = (NDimensions()-1); i >= 0; i--){
-		char8 type = (*this)[i].TypeChar();
-		if (type != 'A'){
-			elementSize = (*this)[i].TypeSize();
-			endType = type;
-		} else {
-			elementSize = elementSize * (*this)[i].NumberOfArrayElements() ;
-		}
-		this->Access(i).UpdateStackInfo(endType,elementSize);
-	}
-/*
-Dimension *p = firstDimension;
-while (p != NULL){
-	printf("(%c,%i,%c,%i)",filter(p->type),p->numberOfElements.GetData(),filter(p->endType),p->elementSize.GetData());
-	p = p->next;
-}
-printf("\n");
-*/
-#endif
+
 }
 
 }

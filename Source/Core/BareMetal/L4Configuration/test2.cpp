@@ -1052,6 +1052,7 @@ void Test(){
     typedef uint32 uint32_4_8[4][8];
     typedef uint32 uint32_4_8_6[4][8][6];
     typedef uint32 uint32_4_8_6_5[4][8][6][5];
+    typedef uint32 uint32_4_8_6_5_3[4][8][6][5][3];
 
 #if 1
     COPY_CHECK_OK(uint32, uint32);
@@ -1088,7 +1089,8 @@ void Test(){
     COPY_CHECK_OK(uint32_4_8_6_5, Matrix<Matrix<uint32>>);
     COPY_CHECK_OK(uint32_4_8_6_5, Vector<Vector<Matrix<uint32>>>);
 
-
+    COPY_CHECK_NOK(uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32>>>);
+    COPY_CHECK_OK(uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32>>>);
 
 	TestSafeN2N<float,int20>(1e6);
     TestSafeN2N<float,int21>(1e6);
