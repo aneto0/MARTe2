@@ -1,8 +1,8 @@
 /**
- * @file DataExportI.cpp
- * @brief Source file for class DataExportI
- * @date 14/09/2018
- * @author Giuseppe Ferro
+ * @file HttpDataExportI.cpp
+ * @brief Source file for class HttpDataExportI
+ * @date Oct 31, 2018
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class DataExportI (public, protected, and private). Be aware that some 
+ * the class HttpDataExportI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,8 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
-#include "DataExportI.h"
-#include "ReferenceContainerFilterObjectName.h"
+#include "HttpChunkedStream.h"
+#include "HttpDataExportI.h"
+#include "HttpDefinition.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,87 +40,66 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
-DataExportI::DataExportI() {
+HttpDataExportI::HttpDataExportI() {
+
 }
 
-DataExportI::~DataExportI() {
+HttpDataExportI::~HttpDataExportI() {
+
 }
 
-bool DataExportI::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
-    ReferenceT<DataExportI> ref = this;
-    return GetReferenceAsStructuredData(data, protocol, ref);
-}
-
-bool DataExportI::GetReferenceAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference ref) {
-    ReferenceT<DataExportI> targetDataExportI = ref;
-    bool ok = true;
-    ReferenceT<DataExportI> thisRef = this;
-    bool isSelf = (ref == thisRef);
-    if ((targetDataExportI.IsValid()) && (!isSelf)) {
-        ok = targetDataExportI->GetAsStructuredData(data, protocol);
+bool HttpDataExportI::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
+    bool ok = protocol.MoveAbsolute("OutputOptions");
+    if (ok) {
+        ok = protocol.Write("Transfer-Encoding", "chunked");
     }
-    //Not a DataExportI
-    else {
-        ReferenceT<ReferenceContainer> targetReferenceContainer = ref;
-        if (targetReferenceContainer.IsValid()) {
-            ok = GetObjectPropertiesAsStructuredData(data, protocol, targetReferenceContainer);
-            //List all the objects
-            uint32 n;
-            uint32 nObjs = targetReferenceContainer->Size();
-            for (n = 0u; (n < nObjs) && (ok); n++) {
-                StreamString id;
-                (void) id.Printf("%d", n);
-                ReferenceT<Object> obj = targetReferenceContainer->Get(n);
-                ok = data.CreateRelative(id.Buffer());
-                if (ok) {
-                    ok = GetObjectPropertiesAsStructuredData(data, protocol, obj);
-                }
-                if (ok) {
-                    ok = data.MoveToAncestor(1u);
-                }
-            }
-        }
-        else {
-            //Just dump the object properties
-            ok = GetObjectPropertiesAsStructuredData(data, protocol, ref);
-        }
+    if (ok) {
+        ok = protocol.Write("Content-Type", "text/json");
+    }
+    if (ok) {
+        //empty string... go in chunked mode
+        StreamString hstream;
+        ok = protocol.WriteHeader(false, HttpDefinition::HSHCReplyOK, &hstream, NULL_PTR(const char8*));
+    }
+    HttpChunkedStream *sstream = NULL_PTR(HttpChunkedStream *);
+    if (ok) {
+        sstream = dynamic_cast<HttpChunkedStream *>(data.GetStream());
+        ok = (sstream != NULL_PTR(HttpChunkedStream *));
+    }
+    if (ok) {
+        sstream->SetChunkMode(true);
     }
     return ok;
 }
 
-bool DataExportI::GetObjectPropertiesAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference targetObject) {
-    bool ok = data.CreateRelative("props");
+bool HttpDataExportI::GetAsText(StreamI &stream, HttpProtocol &protocol) {
+    bool ok = protocol.MoveAbsolute("OutputOptions");
     if (ok) {
-        data.Write("name", targetObject->GetName());
+        ok = protocol.Write("Transfer-Encoding", "chunked");
     }
     if (ok) {
-        ok = data.Write("class", targetObject->GetClassProperties()->GetName());
+        ok = protocol.Write("Content-Type", "text/html");
     }
     if (ok) {
-        ok = data.Write("version", targetObject->GetClassProperties()->GetVersion());
+        //empty string... go in chunked mode
+        StreamString hstream;
+        ok = protocol.WriteHeader(false, HttpDefinition::HSHCReplyOK, &hstream, NULL_PTR(const char8*));
+    }
+    HttpChunkedStream *sstream = NULL_PTR(HttpChunkedStream *);
+    if (ok) {
+        sstream = dynamic_cast<HttpChunkedStream *>(&stream);
+        ok = (sstream != NULL_PTR(HttpChunkedStream *));
     }
     if (ok) {
-        ok = data.Write("size", targetObject->GetClassProperties()->GetSize());
-    }
-    if (ok) {
-        ok = data.Write("refcounter", targetObject->NumberOfReferences());
-    }
-    if (ok) {
-        StreamString path;
-        protocol.GetPath(path);
-        ok = data.Write("path", path.Buffer());
-    }
-    if (ok) {
-        ok = data.MoveToAncestor(1u);
+        sstream->SetChunkMode(true);
     }
     return ok;
-
 }
 
-Reference DataExportI::FindReference(ProtocolI &protocol, Reference root) {
+
+Reference HttpDataExportI::FindReference(HttpProtocol &protocol, Reference root) {
     StreamString unmatchedPath;
     protocol.GetUnmatchedId(unmatchedPath);
     Reference target;
@@ -154,5 +134,6 @@ Reference DataExportI::FindReference(ProtocolI &protocol, Reference root) {
     }
     return target;
 }
+
 
 }

@@ -1,8 +1,8 @@
 /**
- * @file HttpObjectBrowser.h
- * @brief Header file for class HttpObjectBrowser
- * @date 29/10/2018
- * @author Andre Neto
+ * @file HttpDirectoryResource.h
+ * @brief Header file for class HttpDirectoryResource
+ * @date Oct 31, 2018
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpObjectBrowser
+ * @details This header file contains the declaration of the class HttpDirectoryResource
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4HTTPSERVICE_HTTPOBJECTBROWSER_H_
-#define L4HTTPSERVICE_HTTPOBJECTBROWSER_H_
+#ifndef L4HTTPSERVICE_HTTPDIRECTORYRESOURCE_H_
+#define L4HTTPSERVICE_HTTPDIRECTORYRESOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "HttpDataExportI.h"
-#include "HttpRealmI.h"
+#include "File.h"
+#include "Object.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,68 +42,59 @@ namespace MARTe {
 /**
  * @brief TODO
  */
-class HttpObjectBrowser: public ReferenceContainer, public HttpDataExportI {
+class HttpDirectoryResource : public Object, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief TODO
+     * @brief Constructor. NOOP.
      */
-HttpObjectBrowser    ();
+    HttpDirectoryResource();
 
     /**
-     * @brief TODO
+     * @brief Destructor. NOOP.
      */
-    virtual ~HttpObjectBrowser();
+    virtual ~HttpDirectoryResource();
 
     /**
-     * @brief TODO
-     */
-    virtual void Purge(ReferenceContainer &purgeList);
-
-    /**
-     * @brief TODO
+     * @brief TODO.
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief TODO
+     * @brief TODO.
      */
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief TODO
+     * @brief TODO.
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 private:
 
     /**
-     * @brief TODO
+     * TODO
      */
-    virtual bool CheckSecurity(HttpProtocol &protocol);
+    bool CheckExtension(StreamString &fname, const char8 * const ext);
 
     /**
      * TODO
      */
-    ReferenceT<HttpRealmI> realm;
-
-    /**
-     * Specifies if after an authentication
-     * failure the connection has to be closed or not
-     */
-    uint8 closeOnAuthFail;
+    bool ServeFile(StreamString &fname, StreamI &stream, HttpProtocol &protocol);
 
     /**
      * TODO
      */
-    Reference root;
+    StreamString baseDir;
 };
 }
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4HTTPSERVICE_HTTPOBJECTBROWSER_H_ */
-
+#endif /* L4HTTPSERVICE_HTTPDIRECTORYRESOURCE_H_ */
+	

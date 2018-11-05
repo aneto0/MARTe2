@@ -31,7 +31,6 @@
 
 #include "AdvancedErrorManagement.h"
 #include "CLASSMETHODREGISTER.h"
-#include "DataExportI.h"
 #include "HttpProtocol.h"
 #include "HttpRealmI.h"
 #include "HttpService.h"
@@ -170,37 +169,25 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
                         if (hprotocol.TextMode() >= 0) {
                             textMode = static_cast<uint8>(hprotocol.TextMode());
                         }
-                        if (!hprotocol.MoveAbsolute("OutputOptions")) {
-                            err = !(hprotocol.CreateAbsolute("OutputOptions"));
-                        }
                         if (err.ErrorsCleared()) {
-                            err = !(hprotocol.Write("Transfer-Encoding", "chunked"));
-                        }
-                        if (err.ErrorsCleared()) {
-                            err = !(hprotocol.Write("Content-Type", "text/html"));
-                        }
-                        if (err.ErrorsCleared()) {
-                            //empty string... go in chunked mode
-                            StreamString hstream;
-                            err = !(hprotocol.WriteHeader(false, HttpDefinition::HSHCReplyOK, &hstream, NULL_PTR(const char8*)));
-                            commClient->SetChunkMode(true);
+                            if (!hprotocol.MoveAbsolute("OutputOptions")) {
+                                err = !(hprotocol.CreateAbsolute("OutputOptions"));
+                            }
                             if (textMode > 0u) {
                                 pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
                             }
                             else {
                                 StreamStructuredData<JsonPrinter> sdata;
                                 sdata.SetStream(*commClient);
-                                bool ok = sdata.GetPrinter()->PrintBegin();
-                                if (ok) {
-                                    pagePrepared = webRoot->GetAsStructuredData(sdata, hprotocol);
-                                    ok = sdata.GetPrinter()->PrintEnd();
-                                }
+                                pagePrepared = webRoot->GetAsStructuredData(sdata, hprotocol);
                             }
                             if (err.ErrorsCleared()) {
                                 err = !(commClient->Flush());
                             }
                             if (err.ErrorsCleared()) {
-                                err = !(commClient->FinalChunk());
+                                if (commClient->IsChunkMode()) {
+                                    err = !(commClient->FinalChunk());
+                                }
                             }
                             //hprotocol.SetKeepAlive(false);
 

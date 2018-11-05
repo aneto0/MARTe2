@@ -42,6 +42,7 @@ namespace MARTe{
 StreamStructuredDataNodeDes::StreamStructuredDataNodeDes() : ReferenceContainer() {
     isClosed = 0u;
     numberOfVariables = 0u;
+    needsSeparatorBeforeNextBlock = false;
 }
 
 StreamStructuredDataNodeDes::~StreamStructuredDataNodeDes() {

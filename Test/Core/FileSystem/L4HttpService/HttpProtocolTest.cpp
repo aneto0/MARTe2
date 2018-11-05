@@ -2929,12 +2929,3 @@ bool HttpProtocolTest::TestGetInputCommand() {
 
 }
 
-bool HttpProtocolTest::TestSetOutputCommand() {
-    TCPSocket newSocket;
-
-    HttpProtocol test(newSocket);
-    uint32 var1 = 10u;
-    return !test.SetOutputCommand("var1", var1);
-
-}
-

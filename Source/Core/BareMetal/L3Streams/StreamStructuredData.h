@@ -76,6 +76,11 @@ public:
      * within a node.
      */
     uint32 numberOfVariables;
+
+    /**
+     * TODO
+     */
+    bool needsSeparatorBeforeNextBlock;
 };
 
 /**
@@ -301,6 +306,7 @@ bool StreamStructuredData<Printer>::Write(const char8 * const name,
         ret = printer.PrintVariableSeparator();
     }
     if (ret) {
+        currentNode->needsSeparatorBeforeNextBlock = true;
         ret = stream->Printf("%s", "\n\r");
     }
     if (ret) {
@@ -503,7 +509,15 @@ bool StreamStructuredData<Printer>::MoveAbsolute(const char8 * const path) {
                             ret = printer.PrintBlockSeparator();
                         }
                     }
-                    ret = stream->Printf("%s", "\n\r");
+                    if (ret) {
+                        ret = stream->Printf("%s", "\n\r");
+                    }
+                    if (ret) {
+                        if (currentNode->needsSeparatorBeforeNextBlock) {
+                            ret = printer.PrintBlockSeparator();
+                            currentNode->needsSeparatorBeforeNextBlock = false;
+                        }
+                    }
                     if (ret) {
                         ret = printer.PrintOpenBlock(ref->GetName());
                         blockCloseState = false;

@@ -298,8 +298,3 @@ TEST(HttpProtocolGTest, TestGetInputCommand) {
     ASSERT_TRUE(test.TestGetInputCommand());
 }
 
-TEST(HttpProtocolGTest, TestSetOutputCommand) {
-    HttpProtocolTest test;
-    ASSERT_TRUE(test.TestSetOutputCommand());
-}
-

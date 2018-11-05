@@ -44,10 +44,8 @@
 
 namespace MARTe {
 
-const uint32 COPY_BUF_LEN = 1024u;
-
 HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
-        ProtocolI() {
+        ConfigurationDatabase() {
     httpCommand = HttpDefinition::HSHCNone;
     httpVersion = 1000u;
     httpErrorCode = 200;
@@ -64,7 +62,7 @@ HttpProtocol::~HttpProtocol() {
     outputStream = NULL_PTR(DoubleBufferedStream*);
 }
 
-bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout) {
+bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout, uint32 bufferReadSize) {
 
     bool ret = true;
     //This way we can change the falsely undefined content-length when this is called from Write Header
@@ -78,7 +76,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
         // convert the stop time
         uint64 maxTicks = startCounter + ((static_cast<uint64>(msecTimeout.GetTimeoutMSec()) * HighResolutionTimer::Frequency()) / 1000ULL);
 
-        uint32 bufferSize = COPY_BUF_LEN;
+        uint32 bufferSize = bufferReadSize;
         char8 *buffer = new char8[bufferSize];
         uint32 readSize = 1u;
         uint32 sizeToRead = bufferSize;
@@ -129,7 +127,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
 
 }
 
-bool HttpProtocol::ReadHeader() {
+bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
     /** unknown information length */
     unreadInput = -1;
     lastUpdateTime = HighResolutionTimer::Counter();
@@ -275,22 +273,22 @@ bool HttpProtocol::ReadHeader() {
 
                 if (ret) {
                     StreamString postContent;
-                    char8 buffer[COPY_BUF_LEN];
+                    char8 *buffer = new char8[bufferReadSize];
                     while ((unreadInput > 0) && (ret)) {
-                        uint32 bufferReadSize = COPY_BUF_LEN;
-                        ret = outputStream->Read(&buffer[0], bufferReadSize);
+                        uint32 readSize = bufferReadSize;
+                        ret = outputStream->Read(&buffer[0], readSize);
                         if (!ret) {
                             REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "Failed reading from socket in POST section");
                         }
 
                         if (ret) {
                             if (bufferReadSize > 0u) {
-                                ret = (postContent.Write(&buffer[0], bufferReadSize));
+                                ret = (postContent.Write(&buffer[0], readSize));
                                 if (!ret) {
                                     REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "Failed updating content buffer in POST section");
                                 }
                             }
-                            unreadInput -= static_cast<int32>(bufferReadSize);
+                            unreadInput -= static_cast<int32>(readSize);
                         }
                     }
                     if (ret) {
@@ -299,6 +297,7 @@ bool HttpProtocol::ReadHeader() {
                     if (ret) {
                         ret = MoveToRoot();
                     }
+                    delete[] buffer;
                 }
             }
         }
@@ -308,7 +307,7 @@ bool HttpProtocol::ReadHeader() {
     return ret;
 }
 
-bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id) {
+bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id, uint32 bufferWriteSize) {
 
     //if sending something with bodyCompleted=false
     //remember to write Transfer-Encoding: chunked in options
@@ -334,7 +333,7 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
     uint32 minorVersion = ((httpVersion % 1000u) / 100u);
 
     const char8* urlToUse = id;
-    if (urlToUse == NULL) {
+    if (urlToUse == NULL_PTR(const char8 *)) {
         urlToUse = "/";
     }
 
@@ -416,11 +415,11 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
                 if (ret) {
                     if (payload != NULL_PTR(BufferedStreamI*)) {
                         uint32 toWrite = static_cast<uint32>(payload->Size());
-                        char8 buff[COPY_BUF_LEN];
+                        char8 *buff = new char8[bufferWriteSize];
                         while (toWrite > 0u) {
                             uint32 wSize = toWrite;
-                            if (wSize > COPY_BUF_LEN) {
-                                wSize = COPY_BUF_LEN;
+                            if (wSize > bufferWriteSize) {
+                                wSize = bufferWriteSize;
                             }
 
                             ret = payload->Read(&buff[0], wSize);
@@ -429,6 +428,7 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
                             }
                             toWrite -= wSize;
                         }
+                        delete[] buff;
                     }
                 }
             }
@@ -956,11 +956,6 @@ bool HttpProtocol::GetInputCommand(const char8 * const commandName, const AnyTyp
         ret = Read(commandName, commandValue);
     }
     return ret;
-}
-
-/*lint -e{715} parameters are not referenced in this implementation*/
-bool HttpProtocol::SetOutputCommand(const char8 * const commandName, const AnyType &commandValue) {
-    return false;
 }
 
 }

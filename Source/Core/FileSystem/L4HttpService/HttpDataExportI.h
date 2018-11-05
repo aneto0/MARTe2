@@ -1,8 +1,8 @@
 /**
- * @file DataExportI.h
- * @brief Header file for class DataExportI
- * @date 14/09/2018
- * @author Giuseppe Ferro
+ * @file HttpDataExportI.h
+ * @brief Header file for class HttpDataExportI
+ * @date 31/10/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DataExportI
+ * @details This header file contains the declaration of the class HttpDataExportI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DATAEXPORTI_H_
-#define DATAEXPORTI_H_
+#ifndef L4HTTPSERVICE_HTTPDATAEXPORTI_H_
+#define L4HTTPSERVICE_HTTPDATAEXPORTI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,65 +31,42 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ProtocolI.h"
-#include "StreamI.h"
+#include "HttpProtocol.h"
 #include "StreamStructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
-
-/**
- * @brief Interface to export relevant user-defined data using a given protocol (e.g. HTTP).
- * @details The data to be exported can be expressed either as a structure of as free text.
- */
-class DataExportI {
+class HttpDataExportI {
 public:
+    /**
+     * @brief TODO.
+     */
+    HttpDataExportI();
 
     /**
-     * @brief Default constructor.
+     * @brief TODO.
      */
-    DataExportI();
+    virtual ~HttpDataExportI();
 
     /**
-     * @brief Destructor.
+     * @brief TODO.
      */
-    virtual ~DataExportI();
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief Exports data to the StreamStructuredDataI passed in input.
-     * @param[out] data contains the exported data in output.
-     * @param[in] protocol the protocol used to exchange data.
-     * @return true if the operation succeeds, false otherwise.
+     * @brief TODO.
      */
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
-
-    /**
-     * @brief Exports data as text writing on the stream in input.
-     * @param[out] stream the stream where to write.
-     * @param[in] protocol the protocol used to exchange data.
-     * @return true if the operation succeeds, false otherwise.
-     */
-    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol) = 0;
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 protected:
     /**
      * @brief TODO
      */
-    bool GetReferenceAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference ref);
+    Reference FindReference(HttpProtocol &protocol, Reference root);
 
-    /**
-     * @brief TODO
-     */
-    Reference FindReference(ProtocolI &protocol, Reference root);
 
-private:
-    /**
-     * @brief TODO
-     */
-    bool GetObjectPropertiesAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol, Reference ref);
 };
 
 }
@@ -98,5 +75,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DATAEXPORTI_H_ */
+#endif /* L4HTTPSERVICE_HTTPDATAEXPORTI_H_ */
 

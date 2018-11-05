@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
-#include "ProtocolI.h"
 #include "DoubleBufferedStream.h"
 #include "HttpDefinition.h"
 #include "HttpRealmI.h"
@@ -46,7 +45,7 @@ namespace MARTe {
  * @brief Implementation of the HTTP protocol.
  * @details This implementation allows to send and receive HTTP messages.
  */
-class HttpProtocol: public ProtocolI {
+class HttpProtocol : public ConfigurationDatabase {
 public:
 
     /**
@@ -70,11 +69,12 @@ public:
      *   GetInputCommand method.\n
      *   If the content type is application/x-www-form-urlencoded the url in the body is decoded
      *   and also in this case the variables are saved in the InputOptions block.
+     * @param[in] bufferReadSize the size of the buffer to be used in the read operations.
      * @details Use the CompleteReadOperation method to get the unread data of the HTTP message after a
      * ReadHeader call.
      * @return true if the read operation succeeds, false otherwise.
      */
-    virtual bool ReadHeader();
+    bool ReadHeader(uint32 bufferReadSize = 1024u);
 
 
     /**
@@ -85,21 +85,25 @@ public:
      * @param[in] command the HTTP command and can be one of HTTP, GET, PUT, POST, HEAD.
      * @param[in] payload contains the body to be appended to the header. If NULL or empty, only the header will be sent.
      * @param[in] id the url to write in the header if command is not a reply (!=HTTP).
+     * @param[in] bufferWriteSize the size of the buffer to be used in the write operations.
      * @return true if the write operation succeeds, false otherwise.
      */
-    virtual bool WriteHeader(const bool isMessageCompleted,
+    bool WriteHeader(const bool isMessageCompleted,
                              const int32 command,
                              BufferedStreamI * const payload,
-                             const char8 * const id);
+                             const char8 * const id,
+                             uint32 bufferWriteSize = 1024u);
 
     /**
      * @brief Reads the unread data after a ReadHeader call.
      * @param[out] streamout the stream where the unread data will be written.
      * @param[in] msecTimeout the maximum time allowed for this operation.
+     * @param[in] bufferReadSize the number of bytes to read on each operation.
      * @return true if the read operation succeeds, false otherwise.
      */
     bool CompleteReadOperation(BufferedStreamI * const streamout,
-                               TimeoutType msecTimeout = TTInfiniteWait);
+                               TimeoutType msecTimeout = TTInfiniteWait,
+                               uint32 bufferReadSize = 1024);
 
     /**
      * @brief Performs a security check using the realm passed in input.
@@ -130,25 +134,25 @@ public:
      * @brief Sets the unmatched url.
      * @param[in] unMatchedIdIn the unmatched url.
      */
-    virtual void SetUnmatchedId(const char8 * const unMatchedIdIn);
+    void SetUnmatchedId(const char8 * const unMatchedIdIn);
 
     /**
      * @brief Returns the unmatched url.
      * @param[out] unmatchedIdOut contains the unmatched url in output.
      */
-    virtual void GetUnmatchedId(StreamString& unmatchedIdOut);
+    void GetUnmatchedId(StreamString& unmatchedIdOut);
 
     /**
      * @brief Retrieves the path that has been built from the received url.
      * @param[out] pathOut contains the path in output.
      */
-    virtual void GetPath(StreamString& pathOut);
+    void GetPath(StreamString& pathOut);
 
     /**
      * @brief Retrieves the received url.
      * @param[out] idOut contains the url in output.
      */
-    virtual void GetId(StreamString& idOut);
+    void GetId(StreamString& idOut);
 
     /**
      * @brief Read the input command specified in \a commandName.
@@ -158,13 +162,7 @@ public:
      * @param[out] commandValue the command value in output.
      * @return true if the operation succeeds, false otherwise.
      */
-    virtual bool GetInputCommand(const char8 * const commandName, const AnyType &commandValue);
-
-    /**
-     * @brief Returns false.
-     * @see ProtocolI::SetOutputCommand.
-     */
-    virtual bool SetOutputCommand(const char8 * const commandName, const AnyType &commandValue);
+    bool GetInputCommand(const char8 * const commandName, const AnyType &commandValue);
 
     /**
      * @brief Retrieves the text mode status.

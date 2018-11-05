@@ -44,7 +44,7 @@
 #include "MemoryMapOutputBroker.h"
 #include "MemoryMapSynchronisedOutputBroker.h"
 
-#include "DataExportI.h"
+#include "HttpDataExportI.h"
 #include "HttpDefinition.h"
 #include "HttpProtocol.h"
 #include "HttpRealmI.h"
@@ -210,7 +210,7 @@ bool HttpServiceTestDS::Synchronise() {
 
 CLASS_REGISTER(HttpServiceTestDS, "1.0")
 
-class HttpServiceTestClassLister: public ReferenceContainer, public DataExportI {
+class HttpServiceTestClassLister: public ReferenceContainer, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -218,9 +218,9 @@ HttpServiceTestClassLister    ();
 
     virtual ~HttpServiceTestClassLister();
 
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
-    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 };
 
@@ -232,12 +232,12 @@ HttpServiceTestClassLister::~HttpServiceTestClassLister() {
 
 }
 
-bool HttpServiceTestClassLister::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
+bool HttpServiceTestClassLister::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     printf("\nCall Struct\n");
     return false;
 }
 
-bool HttpServiceTestClassLister::GetAsText(StreamI &stream, ProtocolI &protocol) {
+bool HttpServiceTestClassLister::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     printf("\nCall Text\n");
     StreamString hString;
     StreamString *hStream = (&hString);
@@ -410,7 +410,7 @@ bool HttpServiceTestClassLister::GetAsText(StreamI &stream, ProtocolI &protocol)
 
 CLASS_REGISTER(HttpServiceTestClassLister, "1.0")
 
-class HttpServiceTestClassTest1: public ReferenceContainer, public DataExportI {
+class HttpServiceTestClassTest1: public ReferenceContainer, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -418,9 +418,9 @@ HttpServiceTestClassTest1    ();
 
     virtual ~HttpServiceTestClassTest1();
 
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
-    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 };
 
@@ -432,7 +432,7 @@ HttpServiceTestClassTest1::~HttpServiceTestClassTest1() {
 
 }
 
-bool HttpServiceTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
+bool HttpServiceTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -446,7 +446,7 @@ bool HttpServiceTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpServiceTestClassTest1::GetAsText(StreamI &stream, ProtocolI &protocol) {
+bool HttpServiceTestClassTest1::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 
@@ -473,7 +473,7 @@ bool HttpServiceTestClassTest1::GetAsText(StreamI &stream, ProtocolI &protocol) 
 
 CLASS_REGISTER(HttpServiceTestClassTest1, "1.0")
 
-class HttpServiceTestClassTest2: public ReferenceContainer, public DataExportI, public HttpRealmI {
+class HttpServiceTestClassTest2: public ReferenceContainer, public HttpDataExportI, public HttpRealmI {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -481,9 +481,9 @@ HttpServiceTestClassTest2    ();
 
     virtual ~HttpServiceTestClassTest2();
 
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol);
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
-    virtual bool GetAsText(StreamI &stream, ProtocolI &protocol);
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
     virtual bool Validate(const char8 * const key,
             const int32 command,
@@ -502,7 +502,7 @@ HttpServiceTestClassTest2::~HttpServiceTestClassTest2() {
 
 }
 
-bool HttpServiceTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
+bool HttpServiceTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
 
     protocol.Write("Content-Type", "text/html");
     data.CreateAbsolute("NodeA.NodeB");
@@ -516,7 +516,7 @@ bool HttpServiceTestClassTest2::GetAsStructuredData(StreamStructuredDataI &data,
     return true;
 }
 
-bool HttpServiceTestClassTest2::GetAsText(StreamI &stream, ProtocolI &protocol) {
+bool HttpServiceTestClassTest2::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
 

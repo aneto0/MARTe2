@@ -29,9 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "HttpDirectoryResource.h"
 #include "HttpObjectBrowser.h"
 #include "HttpProtocol.h"
+#include "JsonPrinter.h"
 #include "ObjectRegistryDatabase.h"
+#include "StreamStructuredData.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,7 +46,7 @@
 namespace MARTe {
 
 HttpObjectBrowser::HttpObjectBrowser() :
-        DataExportI() {
+        HttpDataExportI() {
     closeOnAuthFail = 1u;
 }
 
@@ -88,8 +91,6 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
         }
 
     }
-
-    return ok;
     if (ok) {
         StreamString realmStr;
         if (data.Read("Realm", realmStr)) {
@@ -101,15 +102,15 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
                     ok = realm.IsValid();
                 }
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::ParametersError, "The specified Realm reference is not valid");
+                    REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "The specified Realm reference is not valid");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::ParametersError, "A reference to a Realm object shall be specified");
+                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "A reference to a Realm object shall be specified");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::Information, "No Realm specified");
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "No Realm specified");
 
         }
     }
@@ -121,7 +122,7 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-bool HttpObjectBrowser::CheckSecurity(ProtocolI &protocol) {
+bool HttpObjectBrowser::CheckSecurity(HttpProtocol &protocol) {
     bool securityOK = true;
     if (realm.IsValid()) {
         HttpProtocol *hprotocol = dynamic_cast<HttpProtocol *>(&protocol);
@@ -173,30 +174,84 @@ bool HttpObjectBrowser::CheckSecurity(ProtocolI &protocol) {
     return securityOK;
 }
 
-bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, ProtocolI &protocol) {
-    bool ok = true;
-    bool securityOK = CheckSecurity(protocol);
-    if (securityOK) {
+bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
+    bool ok = CheckSecurity(protocol);
+    if (ok) {
         Reference target = FindReference(protocol, root);
-        bool ok = target.IsValid();
+        ok = target.IsValid();
         if (ok) {
-            ok = GetReferenceAsStructuredData(data, protocol, target);
+            bool isThis = (target == this);
+            ReferenceT<HttpDataExportI> httpDataExportI = target;
+            if ((httpDataExportI.IsValid()) && (!isThis)) {
+                httpDataExportI->GetAsStructuredData(data, protocol);
+            }
+            else {
+                ok = HttpDataExportI::GetAsStructuredData(data, protocol);
+                if (ok) {
+                    StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+                    ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
+                    if (ok) {
+                        sdata->GetPrinter()->PrintBegin();
+                    }
+                    if (ok) {
+                        //ok = GetReferenceAsStructuredData(data, protocol, target);
+                        target->ExportData(data);
+                    }
+                    if (ok) {
+                        ok = sdata->GetPrinter()->PrintEnd();
+                    }
+                }
+            }
         }
+        //TODO Handle 404
     }
     return ok;
 }
 
-bool HttpObjectBrowser::GetAsText(StreamI &stream, ProtocolI &protocol) {
-    bool ok = true;
-    bool securityOK = CheckSecurity(protocol);
-    if (securityOK) {
-        ReferenceT<DataExportI> target = FindReference(protocol, root);
+bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
+    bool ok = CheckSecurity(protocol);
+    if (ok) {
+        Reference target = FindReference(protocol, root);
         ok = target.IsValid();
         if (ok) {
-            ok = target->GetAsText(stream, protocol);
+            bool isThis = (target == this);
+            if (isThis) {
+                //Check if there are any HttpDirectoryResources that could handle the request
+                uint32 n;
+                uint32 nObjs = Size();
+                bool handled = false;
+                for (n = 0u; (n < nObjs) && (!handled); n++) {
+                    ReferenceT<HttpDirectoryResource> httpDirectoryResource = Get(n);
+                    handled = httpDirectoryResource.IsValid();
+                    if (handled) {
+                        handled = httpDirectoryResource->GetAsText(stream, protocol);
+                    }
+                }
+                if (!handled) {
+                    ok = HttpDataExportI::GetAsText(stream, protocol);
+                    if (ok) {
+                        StreamString msg = "Resource not found.";
+                        uint32 size = msg.Size();
+                        ok = stream.Write(msg.Buffer(), size);
+                    }
+                }
+            }
+            else {
+                ReferenceT<HttpDataExportI> httpDataExportI = target;
+                if (httpDataExportI.IsValid()) {
+                    httpDataExportI->GetAsText(stream, protocol);
+                }
+                else {
+                    ok = HttpDataExportI::GetAsText(stream, protocol);
+                    if (ok) {
+                        StreamString msg = "Text mode not supported for this object - or object not found.";
+                        uint32 size = msg.Size();
+                        ok = stream.Write(msg.Buffer(), size);
+                    }
+                }
+            }
         }
     }
-
     return ok;
 }
 

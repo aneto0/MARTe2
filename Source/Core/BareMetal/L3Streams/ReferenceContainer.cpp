@@ -1,8 +1,8 @@
 /**
- * @file ProtocolI.cpp
- * @brief Source file for class ProtocolI
- * @date 14/09/2018
- * @author Giuseppe Ferro
+ * @file ReferenceContainer.cpp
+ * @brief Source file for class ReferenceContainer
+ * @date 03/11/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ProtocolI (public, protected, and private). Be aware that some 
+ * the class ReferenceContainer (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "ProtocolI.h"
+#include "ReferenceContainer.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,16 +40,29 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-ProtocolI::ProtocolI() :
-        ConfigurationDatabase() {
-    // Auto-generated constructor stub for ProtocolI
-    // TODO Verify if manual additions are needed
+bool ReferenceContainer::ExportData(StructuredDataI & data) {
+    bool ret = Object::ExportData(data);
+    if (ret) {
+        uint32 numberOfChildren = Size();
+        for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+            StreamString nname;
+            ret = nname.Printf("%d", i);
+            if (ret) {
+                ret = data.CreateRelative(nname.Buffer());
+            }
+            Reference child;
+            if (ret) {
+                child = Get(i);
+                ret = child.IsValid();
+            }
+            if (ret) {
+                ret = child->ExportData(data);
+            }
+            if (ret) {
+                ret = data.MoveToAncestor(1u);
+            }
+        }
+    }
+    return ret;
 }
-
-ProtocolI::~ProtocolI() {
-    // Auto-generated destructor stub for ProtocolI
-    // TODO Verify if manual additions are needed
-}
-
 }

@@ -159,10 +159,8 @@ bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -263,9 +261,7 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
 
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished())
-                    && ((filter.IsReverse() && (index > -1))
-                            || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
                 Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
@@ -286,14 +282,12 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                          "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                  "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -330,8 +324,7 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                              "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
@@ -434,150 +427,112 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     return ok;
 }
 
-bool ReferenceContainer::ExportData(StructuredDataI & data) {
-
-    // no need to lock
-    const char8 * objName = GetName();
-    uint32 objNameLength = StringHelper::Length(objName);
-    //To include $ or +
-    objNameLength += 1u;
-    char8 *objNameToCreate = reinterpret_cast<char8 *>(HeapManager::Malloc(objNameLength));
-    objNameToCreate[0] = (IsDomain()) ? (domainTokensList[0u]) : (buildTokensList[0u]);
-    bool ret = StringHelper::Copy(&objNameToCreate[1], objName);
-
-    if (ret) {
-        ret = data.CreateRelative(objNameToCreate);
-        if (ret) {
-            ret = HeapManager::Free(reinterpret_cast<void*&>(objNameToCreate));
-            if (ret) {
-                const ClassProperties *properties = GetClassProperties();
-                ret = (properties != NULL);
-                if (ret) {
-                    ret = data.Write("Class", properties->GetName());
-                    uint32 numberOfChildren = Size();
-                    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                        Reference child = Get(i);
-                        ret = child.IsValid();
-                        if (ret) {
-                            ret = child->ExportData(data);
-                        }
-                    }
-                }
-                if (!data.MoveToAncestor(1u)) {
-                    ret = false;
-                }
-            }
-        }
-    }
-    return ret;
-}
-
 bool ReferenceContainer::Lock() {
-    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
 }
 
 void ReferenceContainer::UnLock() {
-    mux.FastUnLock();
+mux.FastUnLock();
 }
 
 void ReferenceContainer::Purge() {
-    ReferenceContainer purgeList;
-    Purge(purgeList);
+ReferenceContainer purgeList;
+Purge(purgeList);
 }
 
 void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
-    uint32 purgeStart = purgeList.Size();
-    uint32 purgeEnd = purgeStart;
-    uint32 numberOfElements = Size();
+uint32 purgeStart = purgeList.Size();
+uint32 purgeEnd = purgeStart;
+uint32 numberOfElements = Size();
 
-    bool ok = true;
-    //flat recursion to avoid stack waste
-    for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
-        //extract the element from the list
-        Reference node = Get(0u);
-        if (node.IsValid()) {
-            ok = purgeList.Insert(node);
-            if (ok) {
-                ok = Delete(node);
-            }
-            purgeEnd++;
+bool ok = true;
+//flat recursion to avoid stack waste
+for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
+    //extract the element from the list
+    Reference node = Get(0u);
+    if (node.IsValid()) {
+        ok = purgeList.Insert(node);
+        if (ok) {
+            ok = Delete(node);
         }
+        purgeEnd++;
     }
+}
 
-    //Recurse on all the sub nodes
-    for (uint32 i = purgeStart; i < purgeEnd; i++) {
-        Reference nodeObj = purgeList.Get(i);
-        if (nodeObj.IsValid()) {
-            nodeObj->Purge(purgeList);
-        }
+//Recurse on all the sub nodes
+for (uint32 i = purgeStart; i < purgeEnd; i++) {
+    Reference nodeObj = purgeList.Get(i);
+    if (nodeObj.IsValid()) {
+        nodeObj->Purge(purgeList);
     }
+}
 }
 
 bool ReferenceContainer::IsReferenceContainer() const {
-    return true;
+return true;
 }
 
 bool ReferenceContainer::AddToken(char8 * const tokenList, const char8 token) {
-    uint32 i = 0u;
-    bool exists = false;
-    while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
-        exists = (tokenList[i] == token);
-        i++;
+uint32 i = 0u;
+bool exists = false;
+while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+    exists = (tokenList[i] == token);
+    i++;
+}
+bool ok = exists;
+if (!ok) {
+    ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
+    if (ok) {
+        tokenList[i] = token;
     }
-    bool ok = exists;
-    if (!ok) {
-        ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
-        if (ok) {
-            tokenList[i] = token;
-        }
-    }
-    return ok;
+}
+return ok;
 }
 
 void ReferenceContainer::RemoveToken(char8 * const tokenList, const char8 token) {
-    uint32 i = 0u;
-    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
-        i++;
-    }
-    while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
-        tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
-        i++;
-    }
-    tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
+uint32 i = 0u;
+while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
+    i++;
+}
+while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
+    tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
+    i++;
+}
+tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
 }
 
 bool ReferenceContainer::IsToken(const char8 * const tokenList, const char8 token) {
-    uint32 i = 0u;
-    bool ok = false;
-    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
-        ok = (tokenList[i] == token);
-        i++;
-    }
-    return ok;
+uint32 i = 0u;
+bool ok = false;
+while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
+    ok = (tokenList[i] == token);
+    i++;
+}
+return ok;
 }
 
 bool ReferenceContainer::AddBuildToken(const char8 token) {
-    return AddToken(&buildTokensList[0], token);
+return AddToken(&buildTokensList[0], token);
 }
 
 void ReferenceContainer::RemoveBuildToken(const char8 token) {
-    return RemoveToken(&buildTokensList[0], token);
+return RemoveToken(&buildTokensList[0], token);
 }
 
 bool ReferenceContainer::IsBuildToken(const char8 token) {
-    return IsToken(&buildTokensList[0], token);
+return IsToken(&buildTokensList[0], token);
 }
 
 bool ReferenceContainer::AddDomainToken(const char8 token) {
-    return AddToken(&domainTokensList[0], token);
+return AddToken(&domainTokensList[0], token);
 }
 
 void ReferenceContainer::RemoveDomainToken(const char8 token) {
-    return RemoveToken(&domainTokensList[0], token);
+return RemoveToken(&domainTokensList[0], token);
 }
 
 bool ReferenceContainer::IsDomainToken(const char8 token) {
-    return IsToken(&domainTokensList[0], token);
+return IsToken(&domainTokensList[0], token);
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

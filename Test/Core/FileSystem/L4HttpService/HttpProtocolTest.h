@@ -310,11 +310,6 @@ public:
      */
     bool TestGetInputCommand();
 
-    /**
-     * @brief tests the SetOutputCommand method.
-     */
-    bool TestSetOutputCommand();
-
     EventSem eventSem;
 
     bool retVal;

@@ -31,10 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "DataExportI.h"
 #include "EmbeddedServiceMethodBinderT.h"
 #include "FastPollingMutexSem.h"
 #include "HttpChunkedStream.h"
+#include "HttpDataExportI.h"
 #include "MessageI.h"
 #include "MultiClientService.h"
 #include "ReferenceT.h"
@@ -150,7 +150,7 @@ protected:
      * Where the web pages are contained.
      * It will use the URL to search in the container
      */
-    ReferenceT<DataExportI> webRoot;
+    ReferenceT<HttpDataExportI> webRoot;
 
     /**
      * The ServerCycle method to be executed in the thread loop.
