@@ -43,6 +43,7 @@ StreamStructuredDataNodeDes::StreamStructuredDataNodeDes() : ReferenceContainer(
     isClosed = 0u;
     numberOfVariables = 0u;
     needsSeparatorBeforeNextBlock = false;
+    needsSeparatorBeforeNextWrite = false;
 }
 
 StreamStructuredDataNodeDes::~StreamStructuredDataNodeDes() {

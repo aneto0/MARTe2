@@ -81,6 +81,11 @@ public:
      * TODO
      */
     bool needsSeparatorBeforeNextBlock;
+
+    /**
+     * TODO
+     */
+    bool needsSeparatorBeforeNextWrite;
 };
 
 /**
@@ -130,8 +135,7 @@ public:
      * @see StructuredDataI::Read.
      * @details Not implemented. It returns false.
      */
-    virtual bool Read(const char8 * const name,
-                      const AnyType &value);
+    virtual bool Read(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType.
@@ -142,8 +146,7 @@ public:
     /**
      * @see StructuredDataI::Write.
      */
-    virtual bool Write(const char8 * const name,
-                       const AnyType &value);
+    virtual bool Write(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType.
@@ -254,8 +257,7 @@ namespace MARTe {
 
 template<class Printer>
 StreamStructuredData<Printer>::StreamStructuredData(BufferedStreamI &streamIn) :
-        treeDescriptor(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
-        printer(streamIn) {
+        treeDescriptor(GlobalObjectsDatabase::Instance()->GetStandardHeap()), printer(streamIn) {
     stream = &streamIn;
 
     currentNode = treeDescriptor;
@@ -265,8 +267,7 @@ StreamStructuredData<Printer>::StreamStructuredData(BufferedStreamI &streamIn) :
 
 template<class Printer>
 StreamStructuredData<Printer>::StreamStructuredData() :
-        treeDescriptor(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
-        printer() {
+        treeDescriptor(GlobalObjectsDatabase::Instance()->GetStandardHeap()), printer() {
 
     stream = NULL;
 
@@ -287,8 +288,7 @@ StreamStructuredData<Printer>::~StreamStructuredData() {
 }
 
 template<class Printer>
-bool StreamStructuredData<Printer>::Read(const char8 * const name,
-                                         const AnyType &value) {
+bool StreamStructuredData<Printer>::Read(const char8 * const name, const AnyType &value) {
     return false;
 }
 
@@ -298,12 +298,17 @@ AnyType StreamStructuredData<Printer>::GetType(const char8 * const name) {
 }
 
 template<class Printer>
-bool StreamStructuredData<Printer>::Write(const char8 * const name,
-                                          const AnyType &value) {
+bool StreamStructuredData<Printer>::Write(const char8 * const name, const AnyType &value) {
 
     bool ret = true;
     if (currentNode->numberOfVariables > 0u) {
         ret = printer.PrintVariableSeparator();
+    }
+    if (ret) {
+        if (currentNode->needsSeparatorBeforeNextWrite) {
+            ret = printer.PrintBlockSeparator();
+            currentNode->needsSeparatorBeforeNextWrite = false;
+        }
     }
     if (ret) {
         currentNode->needsSeparatorBeforeNextBlock = true;
@@ -442,7 +447,7 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
 template<class Printer>
 bool StreamStructuredData<Printer>::MoveAbsolute(const char8 * const path) {
 
-    ReferenceContainerFilterObjectName filterDest(1, ReferenceContainerFilterMode::PATH, path);
+    ReferenceContainerFilterObjectName filterDest(1, ReferenceContainerFilterMode::SHALLOW, path);
     ReferenceContainer resultDest;
     treeDescriptor->Find(resultDest, filterDest);
 
@@ -520,6 +525,7 @@ bool StreamStructuredData<Printer>::MoveAbsolute(const char8 * const path) {
                     }
                     if (ret) {
                         ret = printer.PrintOpenBlock(ref->GetName());
+                        currentNode->needsSeparatorBeforeNextWrite = true;
                         blockCloseState = false;
                     }
                 }
@@ -575,6 +581,7 @@ bool StreamStructuredData<Printer>::MoveToChild(const uint32 childIdx) {
         ret = stream->Printf("%s", "\n\r");
         if (ret) {
             ret = printer.PrintOpenBlock(child->GetName());
+            currentNode->needsSeparatorBeforeNextWrite = true;
             blockCloseState = false;
         }
         if (ret) {
