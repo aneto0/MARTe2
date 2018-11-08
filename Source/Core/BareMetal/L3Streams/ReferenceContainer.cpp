@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
+#include "ReferenceT.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -56,7 +57,14 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
                 ret = child.IsValid();
             }
             if (ret) {
-                ret = child->ExportData(data);
+                ReferenceT<ReferenceContainer> childRC = child;
+                //Do not go recursive
+                if (childRC.IsValid()) {
+                    ret = child->Object::ExportData(data);
+                }
+                else {
+                    ret = child->ExportData(data);
+                }
             }
             if (ret) {
                 ret = data.MoveToAncestor(1u);

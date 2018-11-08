@@ -166,14 +166,15 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
                     bool pagePrepared = false;
 
                     if (err.ErrorsCleared()) {
+                        int8 requestedTextMode = textMode;
                         if (hprotocol.TextMode() >= 0) {
-                            textMode = static_cast<uint8>(hprotocol.TextMode());
+                            requestedTextMode = static_cast<uint8>(hprotocol.TextMode());
                         }
                         if (err.ErrorsCleared()) {
                             if (!hprotocol.MoveAbsolute("OutputOptions")) {
                                 err = !(hprotocol.CreateAbsolute("OutputOptions"));
                             }
-                            if (textMode > 0u) {
+                            if (requestedTextMode > 0) {
                                 pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
                             }
                             else {

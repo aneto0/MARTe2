@@ -109,7 +109,7 @@ Reference HttpDataExportI::FindReference(HttpProtocol &protocol, Reference root)
         if (ok) {
             // search for destination
             int32 occurrences = 1;
-            uint32 mode = ReferenceContainerFilterMode::PATH;
+            uint32 mode = ReferenceContainerFilterMode::SHALLOW;
             ReferenceContainerFilterObjectName filter(occurrences, mode, unmatchedPath.Buffer());
             ReferenceContainer results;
             rootReferenceContainer->Find(results, filter);
