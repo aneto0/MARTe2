@@ -29,6 +29,7 @@ OBJSX=	AnyObjectTest.x \
 	AnyTypeCreatorTest.x \
 	ConfigurationDatabaseTest.x \
 	IntrospectionTestHelper.x \
+	IntrospectionStructureTest.x \
 	JsonParserTest.x \
 	LexicalAnalyzerTest.x \
 	StandardParserTest.x \
