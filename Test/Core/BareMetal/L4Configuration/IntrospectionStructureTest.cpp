@@ -153,6 +153,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
             StreamString exmods = "[3]";
             ok = (exmods == entry.GetMemberModifiers());
         }
+        if (ok) {
+            uint32 exmsize = sizeof(float32);
+            ok = (exmsize == entry.GetMemberSize());
+        }
     }
     if (ok) {
         IntrospectionEntry entry = intro->operator [](2u);
@@ -167,6 +171,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
         if (ok) {
             StreamString exmods = "";
             ok = (exmods == entry.GetMemberModifiers());
+        }
+        if (ok) {
+            uint32 exmsize = sizeof(float64);
+            ok = (exmsize == entry.GetMemberSize());
         }
     }
     if (ok) {
@@ -183,6 +191,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
             StreamString exmods = "";
             ok = (exmods == entry.GetMemberModifiers());
         }
+        if (ok) {
+            uint32 exmsize = sizeof(float64);
+            ok = (exmsize == entry.GetMemberSize());
+        }
     }
     if (ok) {
         IntrospectionEntry entry = intro->operator [](4u);
@@ -198,6 +210,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
             StreamString exmods = "[2]";
             ok = (exmods == entry.GetMemberModifiers());
         }
+        if (ok) {
+            uint32 exmsize = sizeof(float64);
+            ok = (exmsize == entry.GetMemberSize());
+        }
     }
     if (ok) {
         IntrospectionEntry entry = intro->operator [](5u);
@@ -212,6 +228,10 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
         if (ok) {
             StreamString exmods = "[2]";
             ok = (exmods == entry.GetMemberModifiers());
+        }
+        if (ok) {
+            uint32 exmsize = sizeof(float64);
+            ok = (exmsize == entry.GetMemberSize());
         }
     }
     return ok;

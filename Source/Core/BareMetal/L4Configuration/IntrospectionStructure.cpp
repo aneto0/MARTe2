@@ -193,17 +193,24 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                     newMemberInfo[z]->memberName = memberName.Buffer();
                     newMemberInfo[z]->memberType = typeNameStr.Buffer();
                     newMemberInfo[z]->memberModifier = modifiers.Buffer();
+
+                    uint32 totalElements = 0u;
+                    for (nd = 0u; nd < numberOfDimensions; nd++) {
+                        totalElements += numberOfElements[nd]; //[1][1][1] has size 3x
+                    }
+                    if (totalElements == 0u) {
+                        totalElements = numberOfElements[0U];
+                    }
+                    if (totalElements == 0u) {
+                        totalElements = 1u;
+                    }
                     IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(),
                                                                        newMemberInfo[z]->memberType.Buffer(),
                                                                        newMemberInfo[z]->memberModifier.Buffer(), "", memberSize,
                                                                        totalSize);
-                    uint32 totalElements = 1u;
-                    for (nd = 0u; nd < numberOfDimensions; nd++) {
-                        totalElements += numberOfElements[nd]; //[1][1][1] has size 3x
-                    }
                     entries[z] = entry;
                     entries[z + 1] = NULL_PTR(IntrospectionEntry *);
-                    totalSize += (totalElements * memberSize);
+                    totalSize += (memberSize * totalElements);
                     numberOfMembers++;
                 }
                 if (ok) {
