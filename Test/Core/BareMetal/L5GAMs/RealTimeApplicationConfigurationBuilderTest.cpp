@@ -87,7 +87,8 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                             for (uint32 j = 0u; j < numberOfColumns && ok; j++) {
                                 ok = (valueInDb1[i][j] == valueInDb2[i][j]);
                                 if (!ok) {
-                                    printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i][j].Buffer(), valueInDb2[i][j].Buffer());
+                                    printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName,
+                                           valueInDb1[i][j].Buffer(), valueInDb2[i][j].Buffer());
                                 }
                             }
                         }
@@ -113,7 +114,8 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                         for (uint32 i = 0u; i < numberOfElements && ok; i++) {
                             ok = (valueInDb1[i] == valueInDb2[i]);
                             if (!ok) {
-                                printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i].Buffer(), valueInDb2[i].Buffer());
+                                printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i].Buffer(),
+                                       valueInDb2[i].Buffer());
                             }
                         }
                         delete[] valueInDb1;
@@ -135,7 +137,8 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                             ok = (valueInDb1 == valueInDb2);
                         }
                         if (!ok) {
-                            printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1.Buffer(), valueInDb2.Buffer());
+                            printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1.Buffer(),
+                                   valueInDb2.Buffer());
                         }
                     }
                 }
@@ -165,8 +168,9 @@ enum RealTimeApplicationConfigurationBuilderFunctions {
     ConfigureInitialisation = 17
 };
 
-static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, ConfigurationDatabase &expectedFunctionsDatabase, ConfigurationDatabase &expectedDataDatabase,
-                         RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure, bool fromConfiguration) {
+static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, ConfigurationDatabase &expectedFunctionsDatabase,
+                         ConfigurationDatabase &expectedDataDatabase, RealTimeApplicationConfigurationBuilderFunctions functionToCall,
+                         bool expectCallFailure, bool fromConfiguration) {
 
     bool ret = false;
     if (functionToCall >= ConfigureInitialisation) {
@@ -341,8 +345,10 @@ static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, 
     return ret;
 }
 
-static bool TestBuilder(const char8 * const config, const char8 * const appName, const char8 * const ddbName, const char8 * const expectedFunctionsConfig, const char8 * const expectedDataConfig,
-                        RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure = false, bool fromConfiguration = false) {
+static bool TestBuilder(const char8 * const config, const char8 * const appName, const char8 * const ddbName,
+                        const char8 * const expectedFunctionsConfig, const char8 * const expectedDataConfig,
+                        RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure = false,
+                        bool fromConfiguration = false) {
 
     ConfigurationDatabase cdb;
     StreamString configStream = config;
@@ -379,7 +385,8 @@ static bool TestBuilder(const char8 * const config, const char8 * const appName,
     if (fromConfiguration) {
         ret = cdb.MoveAbsolute(appName);
         RealTimeApplicationConfigurationBuilder rtAppBuilder(cdb, ddbName);
-        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure, fromConfiguration);
+        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure,
+                           fromConfiguration);
     }
     else {
         ObjectRegistryDatabase::Instance()->Purge();
@@ -392,7 +399,8 @@ static bool TestBuilder(const char8 * const config, const char8 * const appName,
             return false;
         }
         RealTimeApplicationConfigurationBuilder rtAppBuilder(*application.operator->(), ddbName);
-        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure, fromConfiguration);
+        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure,
+                           fromConfiguration);
     }
 
     return ret;
@@ -581,7 +589,8 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "}";
 
     if (fromConfig) {
-        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false, true);
+        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false,
+                           true);
     }
     else {
         return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase);
@@ -760,7 +769,8 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "}";
 
     if (fromConfig) {
-        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false, true);
+        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false,
+                           true);
     }
     else {
         return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase);
@@ -4144,7 +4154,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_Fa
             "                       Alias = DACs1234"
             "                       DataSource = \"Drv1\""
             "                       Type = TestStructB"
-            "                       NumberOfDimensions = 0"
+            "                       NumberOfDimensions = 2"
             "                       NumberOfElements = 2"
             "                   }"
             "               }"
@@ -4253,7 +4263,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "                       Alias = DACs1234"
             "                       DataSource = \"Drv1\""
             "                       Type = TestStructB"
-            "                       NumberOfDimensions = 0"
+            "                       NumberOfDimensions = 2"
             "                       NumberOfElements = 2"
             "                   }"
             "               }"
@@ -4333,7 +4343,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "                       Type = TestStructC"
             "                       Samples = 2"
             "                       Ranges = \"{{0 0}}\""
-            "                       NumberOfDimensions = 0"
+            "                       NumberOfDimensions = 2"
             "                       NumberOfElements = 2"
             "                   }"
             "               }"
@@ -4349,7 +4359,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_In
             "                       Alias = DACs1234"
             "                       DataSource = \"Drv1\""
             "                       Type = TestStructB"
-            "                       NumberOfDimensions = 0"
+            "                       NumberOfDimensions = 2"
             "                       NumberOfElements = 2"
             "                   }"
             "               }"
@@ -4445,7 +4455,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestFlattenSignalsDatabases_On
             "                       DataSource = \"Drv1\""
             "                       Type = TestStructB"
             "                       NumberOfDimensions = 0"
-            "                       NumberOfElements = 2"
+            "                       NumberOfElements = 1"
             "                   }"
             "               }"
             "            }"
@@ -6075,6 +6085,250 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "                   NumberOfDimensions = 0"
             "                   NumberOfElements = 1"
             "                   FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = ADCs.Signal3.c1.b2"
+            "                   Alias = ADCs1234.c1.b2"
+            "                   Ranges = \"{{0 0}}\""
+            "                   Samples = 2"
+            "                   Frequency = 2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "               \"2\" = {"
+            "                   QualifiedName = ADCs.Signal3.c2"
+            "                   Alias = ADCs1234.c2"
+            "                   Ranges = \"{{0 0}}\""
+            "                   Samples = 2"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   FullType = TestStructC.float32"
+            "                   MemberSize = 12"
+            "               }"
+            "               \"3\" = {"
+            "                   QualifiedName = ADCs.Signal3.c3"
+            "                   Alias = ADCs1234.c3"
+            "                   Ranges = \"{{0 0}}\""
+            "                   Samples = 2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   FullType = TestStructC.int32"
+            "                   MemberSize = 32"
+            "               }"
+            "           }"
+            "           OutputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = ProcessedSignals.Signal2.c1.b1"
+            "                   Alias = ADCs1234.c1.b1"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "               \"1\" = {"
+            "                   QualifiedName = ProcessedSignals.Signal2.c1.b2"
+            "                   Alias = ADCs1234.c1.b2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "               \"2\" = {"
+            "                   QualifiedName = ProcessedSignals.Signal2.c2"
+            "                   Alias = ADCs1234.c2"
+            "                   DataSource = Drv1"
+            "                   Type = float32"
+            "                   NumberOfDimensions = 1"
+            "                   NumberOfElements = 3"
+            "                   FullType = TestStructC.float32"
+            "                   MemberSize = 12"
+            "               }"
+            "               \"3\" = {"
+            "                   QualifiedName = ProcessedSignals.Signal2.c3"
+            "                   Alias = ADCs1234.c3"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 2"
+            "                   NumberOfElements = 8"
+            "                   FullType = TestStructC.int32"
+            "                   MemberSize = 32"
+            "               }"
+            "               \"4\" = {"
+            "                   QualifiedName = DACs.Signal4.b1"
+            "                   Alias = ADCs1234.c1.b1"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = Node.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "               \"5\" = {"
+            "                   QualifiedName = DACs.Signal4.b2"
+            "                   Alias = ADCs1234.c1.b2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = Node.TestStructB.int32"
+            "                   MemberSize = 4"
+            "               }"
+            "           }"
+            "       }"
+            "   }"
+            "}";
+
+    const char8 * const expectedDataConfig = ""
+            "Data = {"
+            "   \"0\" = {"
+            "       QualifiedName = Drv1"
+            "       Signals = {"
+            "           \"0\" = {"
+            "               QualifiedName = ADCs1234.c1.b1"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "           }"
+            "           \"1\" = {"
+            "               QualifiedName = ADCs1234.c1.b2"
+            "               Type = int32"
+            "               NumberOfDimensions = 0"
+            "               NumberOfElements = 1"
+            "               FullType = TestStructC.TestStructB.int32"
+            "                   MemberSize = 4"
+            "           }"
+            "           \"2\" = {"
+            "               QualifiedName = ADCs1234.c2"
+            "               Type = float32"
+            "               NumberOfDimensions = 1"
+            "               NumberOfElements = 3"
+            "               FullType = TestStructC.float32"
+            "                   MemberSize = 12"
+            "           }"
+            "           \"3\" = {"
+            "               QualifiedName = ADCs1234.c3"
+            "               Type = int32"
+            "               NumberOfDimensions = 2"
+            "               NumberOfElements = 8"
+            "               FullType = TestStructC.int32"
+            "                   MemberSize = 32"
+            "           }"
+            "       }"
+            "   }"
+            "   \"1\" = {"
+            "       QualifiedName = Timings"
+            "       IsTimingDataSource = 1"
+            "       Signals = {"
+            "          IgnoreEmptyNode = 1"
+            "       }"
+            "   }"
+            "}";
+
+    return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, ResolveDataSources);
+}
+
+bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructMap2() {
+    const char8 * const config = ""
+            "$Application1 = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "               ADCs = {"
+            "                   Signal3 = {"
+            "                       Alias = ADCs1234"
+            "                       DataSource = Drv1"
+            "                       Type = TestStructEE"
+            "                   }"
+            "               }"
+            "            }"
+            "            OutputSignals = {"
+            "               ProcessedSignals = {"
+            "                   Signal2 = {"
+            "                       Type = TestStructC"
+            "                       Alias = ADCs1234.ee1[0].e1"
+            "                       DataSource = Drv1"
+            "                       NumberofDimensions = 1"
+            "                       NumberOfElements = 3"
+            "                   }"
+            "                   Signal3 = {"
+            "                       Type = TestStructB"
+            "                       Alias = ADCs1234.ee1[0].e1[0].c1"
+            "                       DataSource = Drv1"
+            "                       NumberofDimensions = 0"
+            "                       NumberOfElements = 1"
+            "                   }"
+            "               }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = Drv1"
+            "        +Drv1 = {"
+            "            Class = Driver1"
+            "            Signals = {"
+            "               ADCs1234 = { "
+            "                   Type = TestStructEE"
+            "               }"
+            "            }"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA }"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DefaultSchedulerForTests"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    const char8 * const expectedFunctionsConfig = ""
+            "Functions = {"
+            "   \"0\" = {"
+            "       QualifiedName = GAMA"
+            "       Signals = {"
+            "           InputSignals = {"
+            "               \"0\" = {"
+            "                   QualifiedName = ADCs.Signal3.ee1[0].e1[0].c1.b1"
+            "                   Alias = ADCs1234.ee1[0].e1[0].c1.b1"
+            "                   Ranges = \"{{0 0}}\""
+            "                   Samples = 2"
+            "                   DataSource = Drv1"
+            "                   Type = int32"
+            "                   NumberOfDimensions = 0"
+            "                   NumberOfElements = 1"
+            "                   FullType = TestStructEE.TestStructE.TestStructC.TestStructB.int32"
             "                   MemberSize = 4"
             "               }"
             "               \"1\" = {"
