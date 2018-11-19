@@ -302,6 +302,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructM
     ASSERT_TRUE(test.TestResolveDataSources_StructMap());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap2());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMapNamespaces) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSources_StructMapNamespaces());

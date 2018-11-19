@@ -123,11 +123,12 @@ AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     bool found = false;
     Reference foundReference;
     uint32 i;
-    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-        foundReference = currentNode->Get(i);
-        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+    if (currentNode.IsValid()) {
+        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+            foundReference = currentNode->Get(i);
+            found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+        }
     }
-
     AnyType retType;
     if (found) {
         ReferenceT<AnyObject> objToRead = foundReference;
@@ -203,23 +204,25 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
         currentNode = storeCurrentNode;
     }
     else {
-
-        //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
-        bool found = false;
-        Reference foundReference;
-        uint32 i;
-        for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
-            foundReference = currentNode->Get(i);
-            found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
-        }
-
-        ok = found;
+        ok = currentNode.IsValid();
         if (ok) {
+            //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
+            bool found = false;
+            Reference foundReference;
+            uint32 i;
+            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                foundReference = currentNode->Get(i);
+                found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+            }
 
-            ReferenceT<AnyObject> objToRead = foundReference;
-            ok = objToRead.IsValid();
+            ok = found;
             if (ok) {
-                ok = TypeConvert(value, objToRead->GetType());
+
+                ReferenceT<AnyObject> objToRead = foundReference;
+                ok = objToRead.IsValid();
+                if (ok) {
+                    ok = TypeConvert(value, objToRead->GetType());
+                }
             }
         }
     }
@@ -276,7 +279,8 @@ bool ConfigurationDatabase::MoveToChild(const uint32 childIdx) {
 bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
     bool ok = (generations != 0u);
     if (ok) {
-        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
+        ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH,
+                                                  currentNode);
         ReferenceContainer resultPath;
         rootNode->Find(resultPath, filter);
         ok = (resultPath.Size() > 0u);
@@ -394,7 +398,11 @@ const char8 *ConfigurationDatabase::GetChildName(const uint32 index) {
 }
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {
-    return currentNode->Size();
+    uint32 size = 0u;
+    if (currentNode.IsValid()) {
+        size = currentNode->Size();
+    }
+    return size;
 }
 
 bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {

@@ -256,6 +256,22 @@ struct TestStructCC {
     float32 c2[3];
     int32 c3[2][4];
 };
+
+
+struct TestStructE {
+    TestStructC e1[2][1][2];
+    int32 e2;
+};
+
+struct TestStructF {
+    TestStructE f1[2];
+    int32 f2;
+};
+
+struct TestStructG {
+    TestStructF g1[2][2];
+    int32 g2;
+};
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

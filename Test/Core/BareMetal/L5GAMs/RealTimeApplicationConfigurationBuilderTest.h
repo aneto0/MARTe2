@@ -215,6 +215,11 @@ public:
     bool TestResolveDataSources_StructMap();
 
     /**
+     * @brief Tests the ResolveDataSources method with structures remapping with arrays of structures.
+     */
+    bool TestResolveDataSources_StructMap2();
+
+    /**
      * @brief Tests the ResolveDataSources method with structures remapping with DataSourceI namespaces.
      */
     bool TestResolveDataSources_StructMapNamespaces();
