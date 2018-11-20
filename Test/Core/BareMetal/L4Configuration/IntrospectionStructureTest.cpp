@@ -237,25 +237,26 @@ bool IntrospectionStructureTest::TestStructureRegistration() {
     return ok;
 }
 
-bool IntrospectionStructureTest::TestStructureRegistration_False_TypeAlreadyRegistered() {
+bool IntrospectionStructureTest::TestStructureRegistration_TypeAlreadyRegistered() {
     using namespace MARTe;
-    const char8 * const config = ""
-            "+Types = {"
-            "  Class = ReferenceContainer"
-            "  +IntrospectionStructureTestEx3 = {"
-            "     Class = IntrospectionStructure"
-            "     Field1 = {"
-            "       Type = uint32"
-            "       NumberOfElements = {1, 1}"
-            "     }"
-            "     Field2 = {"
-            "       Type = float32"
-            "       NumberOfElements = {3, 2}"
-            "     }"
-            "   }"
-            "}";
+
     bool ok = true;
     {
+        const char8 * const config = ""
+                "+Types = {"
+                "  Class = ReferenceContainer"
+                "  +IntrospectionStructureTestEx3 = {"
+                "     Class = IntrospectionStructure"
+                "     Field1 = {"
+                "       Type = uint32"
+                "       NumberOfElements = {1, 1}"
+                "     }"
+                "     Field2 = {"
+                "       Type = float32"
+                "       NumberOfElements = {3, 2}"
+                "     }"
+                "   }"
+                "}";
         ConfigurationDatabase cdb;
         StreamString configStr = config;
         configStr.Seek(0);
@@ -268,6 +269,21 @@ bool IntrospectionStructureTest::TestStructureRegistration_False_TypeAlreadyRegi
         }
     }
     {
+        const char8 * const config = ""
+                "+Types = {"
+                "  Class = ReferenceContainer"
+                "  +IntrospectionStructureTestEx3 = {"
+                "     Class = IntrospectionStructure"
+                "     Field1 = {"
+                "       Type = uint64"
+                "       NumberOfElements = {2, 3}"
+                "     }"
+                "     Field2 = {"
+                "       Type = float64"
+                "       NumberOfElements = {1, 2}"
+                "     }"
+                "   }"
+                "}";
         ConfigurationDatabase cdb;
         StreamString configStr = config;
         configStr.Seek(0);
@@ -275,7 +291,36 @@ bool IntrospectionStructureTest::TestStructureRegistration_False_TypeAlreadyRegi
         ok = parser.Parse();
         if (ok) {
             cdb.MoveToRoot();
-            ok = !ObjectRegistryDatabase::Instance()->Initialise(cdb);
+            ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+        }
+        if (ok) {
+            const Introspection *intro = ClassRegistryDatabase::Instance()->Find("IntrospectionStructureTestEx3")->GetIntrospection();
+            IntrospectionEntry entry0 = intro->operator [](0u);
+            StreamString extype = "uint64";
+            StreamString exname = "Field1";
+            if (ok) {
+                ok = (exname == entry0.GetMemberName());
+            }
+            if (ok) {
+                ok = (extype == entry0.GetMemberTypeName());
+            }
+            if (ok) {
+                StreamString exmods = "[2][3]";
+                ok = (exmods == entry0.GetMemberModifiers());
+            }
+            IntrospectionEntry entry1 = intro->operator [](1u);
+            extype = "float64";
+            exname = "Field2";
+            if (ok) {
+                ok = (exname == entry1.GetMemberName());
+            }
+            if (ok) {
+                ok = (extype == entry1.GetMemberTypeName());
+            }
+            if (ok) {
+                StreamString exmods = "[1][2]";
+                ok = (exmods == entry1.GetMemberModifiers());
+            }
         }
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -303,5 +348,40 @@ bool IntrospectionStructureTest::TestStructureRegistration_False_TypeNoParameter
         ObjectRegistryDatabase::Instance()->Purge();
         ok = !ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
+    return ok;
+}
+
+bool IntrospectionStructureTest::TestStructureRegistration_False_TypeAlreadyRegistered_Class() {
+    using namespace MARTe;
+
+    bool ok = true;
+    {
+        const char8 * const config = ""
+                "+Types = {"
+                "  Class = ReferenceContainer"
+                "  +Object = {"
+                "     Class = IntrospectionStructure"
+                "     Field1 = {"
+                "       Type = uint32"
+                "       NumberOfElements = {1, 1}"
+                "     }"
+                "     Field2 = {"
+                "       Type = float32"
+                "       NumberOfElements = {3, 2}"
+                "     }"
+                "   }"
+                "}";
+        ConfigurationDatabase cdb;
+        StreamString configStr = config;
+        configStr.Seek(0);
+        StandardParser parser(configStr, cdb);
+        ok = parser.Parse();
+
+        if (ok) {
+            cdb.MoveToRoot();
+            ok = !ObjectRegistryDatabase::Instance()->Initialise(cdb);
+        }
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }

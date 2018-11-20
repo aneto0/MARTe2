@@ -100,27 +100,34 @@ private:
         /**
          * @brief See ClassRegistryItem::ClassRegistryItem(ClassProperties)
          */
-        ClassRegistryItemConfigurationStructureLoader(ClassProperties &cp);
+        ClassRegistryItemConfigurationStructureLoader(StreamString typeNameIn, uint32 totalSizeIn);
         /**
          * @brief See ClassRegistryItem::~ClassRegistryItem()
          */
         virtual ~ClassRegistryItemConfigurationStructureLoader();
+        /**
+         * @briefs Updates the class properties.
+         */
+        void Update(StreamString typeNameIn, uint32 totalSizeIn);
+    private:
+        /**
+         * The name of the type
+         */
+        StreamString typeName;
+        /**
+         * The class size
+         */
+        uint32 totalSize;
+        /**
+         * The class properties
+         */
+        ClassProperties cp;
     };
-
-    /**
-     * Class properties associated to this structure definition.
-     */
-    ClassProperties *cp;
 
     /**
      * The introspection entries for the structure
      */
     IntrospectionEntry **entries;
-
-    /**
-     * The helper class that wraps the structure to be loaded.
-     */
-    ClassRegistryItemConfigurationStructureLoader *criLoader;
 
     /**
      * The structure members.
@@ -156,12 +163,6 @@ private:
      * Information about the members
      */
     MemberInfo **memberInfo;
-
-    /**
-     * The name of the structure being declared.
-     */
-    StreamString typeName;
-
 };
 }
 

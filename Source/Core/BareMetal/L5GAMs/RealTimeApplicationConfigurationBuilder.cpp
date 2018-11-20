@@ -756,14 +756,14 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 uint32 nOfCols = numberOfElements;
                 uint32 nOfZ = 1u; //TODO change when the NumberOfElements will be read as an array...
                 /*if (nOfRows == 0u) { //TODO enable when the NumberOfElements will be read as an array...
-                    nOfRows = 1u;
-                }*/
+                 nOfRows = 1u;
+                 }*/
                 if (nOfCols == 0u) {
                     nOfCols = 1u;
                 }
                 /*if (nOfZ == 0u) { //TODO enable when the NumberOfElements will be read as an array...
-                    nOfZ = 1u;
-                }*/
+                 nOfZ = 1u;
+                 }*/
                 for (nr = 0u; (nr < nOfRows) && (ret); nr++) {
                     for (nc = 0u; (nc < nOfCols) && (ret); nc++) {
                         for (nz = 0u; (nz < nOfZ) && (ret); nz++) {
@@ -771,20 +771,28 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                             fsignalName = "";
                             fAlias = "";
                             if (numberOfDimensions <= 1u) {
-                                fsignalName = signalName;
-                                fAlias = alias;
                                 if (numberOfElements > 1u) {
                                     (void) fsignalName.Printf("%s[%d]", signalName, nr);
-                                    (void) fAlias.Printf("%s[%d]", alias.Buffer(), nr);
+                                    if (alias.Size() > 0u) {
+                                        (void) fAlias.Printf("%s[%d]", alias.Buffer(), nr);
+                                    }
+                                }
+                                else {
+                                    fsignalName = signalName;
+                                    fAlias = alias;
                                 }
                             }
                             else if (numberOfDimensions == 2u) {
                                 (void) fsignalName.Printf("%s[%d][%d]", signalName, nr, nc);
-                                (void) fAlias.Printf("%s[%d][%d]", alias.Buffer(), nr, nc);
+                                if (alias.Size() > 0u) {
+                                    (void) fAlias.Printf("%s[%d][%d]", alias.Buffer(), nr, nc);
+                                }
                             }
                             else if (numberOfDimensions == 3u) {
                                 (void) fsignalName.Printf("%s[%d][%d][%d]", signalName, nr, nc, nz);
-                                (void) fAlias.Printf("%s[%d][%d][%d]", alias.Buffer(), nr, nc, nz);
+                                if (alias.Size() > 0u) {
+                                    (void) fAlias.Printf("%s[%d][%d][%d]", alias.Buffer(), nr, nc, nz);
+                                }
                             }
 
                             AnyType ranges = signalDatabase.GetType("Ranges");
@@ -3855,19 +3863,21 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                             }
                             if (tempAlias.Size() > 0u) {
                                 fullAliasName = "";
-                                if (nOfDimensions <= 1u) {
-                                    if (nOfRows > 1u) {
-                                        (void) fullAliasName.Printf("%s[%d]", tempAlias.Buffer(), nr);
+                                if (tempAlias.Size() > 0u) {
+                                    if (nOfDimensions <= 1u) {
+                                        if (nOfRows > 1u) {
+                                            (void) fullAliasName.Printf("%s[%d]", tempAlias.Buffer(), nr);
+                                        }
+                                        else {
+                                            fullAliasName = tempAlias;
+                                        }
                                     }
-                                    else {
-                                        fullAliasName = tempAlias;
+                                    else if (nOfDimensions == 2u) {
+                                        (void) fullAliasName.Printf("%s[%d][%d]", tempAlias.Buffer(), nr, nc);
                                     }
-                                }
-                                else if (nOfDimensions == 2u) {
-                                    (void) fullAliasName.Printf("%s[%d][%d]", tempAlias.Buffer(), nr, nc);
-                                }
-                                else if (nOfDimensions == 3u) {
-                                    (void) fullAliasName.Printf("%s[%d][%d][%d]", tempAlias.Buffer(), nr, nc, nz);
+                                    else if (nOfDimensions == 3u) {
+                                        (void) fullAliasName.Printf("%s[%d][%d][%d]", tempAlias.Buffer(), nr, nc, nz);
+                                    }
                                 }
                             }
                             REPORT_ERROR_STATIC(ErrorManagement::Debug, "Calling SignalIntrospectionToStructuredData for %s Alias: %s",

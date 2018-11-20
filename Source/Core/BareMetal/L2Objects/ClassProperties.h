@@ -62,10 +62,7 @@ public:
      * @param[in] cVersion the version of the class.
      * @param[in] cSize the class size (number of bytes).
      */
-    ClassProperties(const char8 * const cName,
-                    const char8 * const typeidName,
-                    const char8 * const cVersion,
-                    const uint32 cSize = 0u);
+    ClassProperties(const char8 * const cName, const char8 * const typeidName, const char8 * const cVersion, const uint32 cSize = 0u);
 
     /**
      * @brief Returns the name of the class.
@@ -102,6 +99,15 @@ public:
      * @return the class size (number of bytes).
      */
     uint32 GetSize() const;
+
+    /**
+     * @brief Allows to reset the members described by this ClassProperties.
+     * @param[in] cName the name of the class.
+     * @param[in] typeidName the name of the class as returned by typeid.
+     * @param[in] cVersion the version of the class.
+     * @param[in] cSize the class size (number of bytes).
+     */
+    void Reset(const char8 * const cName, const char8 * const typeidName, const char8 * const cVersion, const uint32 cSize = 0u);
 
 private:
     /**

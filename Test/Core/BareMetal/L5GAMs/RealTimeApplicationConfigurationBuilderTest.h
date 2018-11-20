@@ -215,9 +215,14 @@ public:
     bool TestResolveDataSources_StructMap();
 
     /**
-     * @brief Tests the ResolveDataSources method with structures remapping with arrays of structures.
+     * @brief Tests the ResolveDataSources method with structures remapping with structures that contain arrays.
      */
     bool TestResolveDataSources_StructMap2();
+
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping with arrays of structures.
+     */
+    bool TestResolveDataSources_StructMap3();
 
     /**
      * @brief Tests the ResolveDataSources method with structures remapping with DataSourceI namespaces.
@@ -713,6 +718,16 @@ public:
      * @brief Tests the ConfigureThreads method (tested implicitly).
      */
     bool TestConfigureThreads();
+
+    /**
+     * @brief Tests that the application is successfully built with structures that contain arrays of types
+     */
+    bool TestArraysOfStructures1();
+
+    /**
+     * @brief Tests that the application is successfully built with structures that contain arrays of types
+     */
+    bool TestArraysOfStructures2();
 
 };
 

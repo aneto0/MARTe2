@@ -46,14 +46,19 @@ public:
     bool TestStructureRegistration();
 
     /**
-     * Tests that the registration of a complex structure fails if the type is already registered.
+     * Tests that the registration of a complex structure updates if the type is already registered.
      */
-    bool TestStructureRegistration_False_TypeAlreadyRegistered();
+    bool TestStructureRegistration_TypeAlreadyRegistered();
 
     /**
      * Tests that the registration of a complex structure fails if the type has no parameters.
      */
     bool TestStructureRegistration_False_TypeNoParameters();
+
+    /**
+     * Tests that the registration of a complex structure fails to update if the type is from a class.
+     */
+    bool TestStructureRegistration_False_TypeAlreadyRegistered_Class();
 
 };
 

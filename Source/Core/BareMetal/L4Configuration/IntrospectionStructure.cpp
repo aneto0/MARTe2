@@ -28,11 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../L4Configuration/IntrospectionStructure.h"
-
 #include "AdvancedErrorManagement.h"
 #include "ClassRegistryItem.h"
 #include "Introspection.h"
+#include "IntrospectionStructure.h"
 #include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -40,14 +39,23 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(ClassProperties &cp) :
+IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(
+        StreamString typeNameIn, uint32 totalSizeIn) :
         ClassRegistryItem(cp) {
+    typeName = typeNameIn.Buffer();
+    totalSize = totalSizeIn;
+    cp.Reset(typeName.Buffer(), typeName.Buffer(), "", totalSize);
 }
 
 IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::~ClassRegistryItemConfigurationStructureLoader() {
 
 }
 
+void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Update(StreamString typeNameIn, uint32 totalSizeIn) {
+    typeName = typeNameIn.Buffer();
+    totalSize = totalSizeIn;
+    cp.Reset(typeName.Buffer(), typeName.Buffer(), "", totalSize);
+}
 }
 
 /*---------------------------------------------------------------------------*/
@@ -57,9 +65,7 @@ IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::~ClassReg
 namespace MARTe {
 IntrospectionStructure::IntrospectionStructure() {
     entries = NULL_PTR(IntrospectionEntry **);
-    criLoader = NULL_PTR(ClassRegistryItemConfigurationStructureLoader *);
     introMembers = NULL_PTR(Introspection *);
-    cp = NULL_PTR(ClassProperties *);
     numberOfMembers = 0u;
     memberInfo = NULL_PTR(MemberInfo **);
 }
@@ -79,26 +85,14 @@ IntrospectionStructure::~IntrospectionStructure() {
         }
         delete[] memberInfo;
     }
-    //Deleted by the IntrospectionStructure!
-    /*if (criLoader != NULL_PTR(ClassRegistryItemConfigurationStructureLoader *)) {
-     delete criLoader;
-     }*/
     if (introMembers != NULL_PTR(Introspection *)) {
         delete[] introMembers;
-    }
-    if (cp != NULL_PTR(ClassProperties *)) {
-        delete cp;
     }
 }
 
 bool IntrospectionStructure::Initialise(StructuredDataI &data) {
     bool ok = Object::Initialise(data);
     uint32 totalSize = 0u;
-    const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(GetName());
-
-    if (ok) {
-        ok = (item == NULL_PTR(const ClassRegistryItem *));
-    }
     if (ok) {
         uint32 n;
         uint32 nOfChildren = data.GetNumberOfChildren();
@@ -222,9 +216,6 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
             }
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::ParametersError, "Type %s is already registered", GetName());
-    }
     if (ok) {
         ok = (totalSize > 0u);
         if (!ok) {
@@ -232,13 +223,33 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
         }
     }
     if (ok) {
+        StreamString typeName;
         typeName.Printf("%s", GetName());
-        cp = new ClassProperties(typeName.Buffer(), typeName.Buffer(), "", totalSize);
-        criLoader = new ClassRegistryItemConfigurationStructureLoader(*cp);
         introMembers = new Introspection(const_cast<const IntrospectionEntry **>(entries), totalSize);
-        criLoader->SetIntrospection(introMembers);
-        ClassRegistryDatabase::Instance()->Add(criLoader);
-        REPORT_ERROR(ErrorManagement::ParametersError, "Registering type %s ", typeName.Buffer());
+        const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(GetName());
+        bool exists = (item != NULL_PTR(const ClassRegistryItem *));
+        //Deleted by the IntrospectionStructure!
+        ClassRegistryItemConfigurationStructureLoader * criLoader = NULL_PTR(ClassRegistryItemConfigurationStructureLoader *);
+
+        if (!exists) {
+            criLoader = new ClassRegistryItemConfigurationStructureLoader(typeName, totalSize);
+            criLoader->SetIntrospection(introMembers);
+            ClassRegistryDatabase::Instance()->Add(criLoader);
+            REPORT_ERROR(ErrorManagement::ParametersError, "Registering type %s ", typeName.Buffer());
+        }
+        else {
+            criLoader = dynamic_cast<ClassRegistryItemConfigurationStructureLoader *>(const_cast<ClassRegistryItem *>(item));
+            ok = (criLoader != NULL_PTR(ClassRegistryItemConfigurationStructureLoader *));
+            if (ok) {
+                criLoader->Update(typeName, totalSize);
+                criLoader->SetIntrospection(introMembers);
+                REPORT_ERROR(ErrorManagement::ParametersError, "Updating type %s ", typeName.Buffer());
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::FatalError,
+                             "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader", typeName.Buffer());
+            }
+        }
     }
 
     return ok;

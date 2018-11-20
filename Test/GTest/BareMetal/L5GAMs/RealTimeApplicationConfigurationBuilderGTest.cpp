@@ -307,6 +307,11 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructM
     ASSERT_TRUE(test.TestResolveDataSources_StructMap2());
 }
 
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap3());
+}
+
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMapNamespaces) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSources_StructMapNamespaces());
@@ -775,4 +780,14 @@ TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisat
 TEST(RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_False_NoData) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation_False_NoData());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestArraysOfStructures1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestArraysOfStructures1());
+}
+
+TEST(RealTimeApplicationConfigurationBuilderGTest,TestArraysOfStructures2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestArraysOfStructures2());
 }

@@ -55,10 +55,17 @@ ClassProperties::ClassProperties(const char8 * const cName,
                                  const char8 * const typeidName,
                                  const char8 * const cVersion,
                                  const uint32 cSize) {
+    uniqueIdentifier = 0u;
+    Reset(cName, typeidName, cVersion, cSize);
+}
+
+void ClassProperties::Reset(const char8 * const cName,
+                                 const char8 * const typeidName,
+                                 const char8 * const cVersion,
+                                 const uint32 cSize) {
     className = cName;
     typeidClassName = typeidName;
     classVersion = cVersion;
-    uniqueIdentifier = 0u;
     size = cSize;
 }
 

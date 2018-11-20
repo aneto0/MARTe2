@@ -323,7 +323,7 @@ uint32 Driver1::GetNumberOfMemoryBuffers() {
 }
 
 bool Driver1::AllocateMemory() {
-    return false;
+    return true;
 }
 
 bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
