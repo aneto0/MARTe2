@@ -752,15 +752,15 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 uint32 nr = 0u;
                 uint32 nc = 0u;
                 uint32 nz = 0u;
-                uint32 nOfRows = 1u; //TODO change when the NumberOfElements will be read as an array...
-                uint32 nOfCols = numberOfElements;
+                uint32 nOfRows = numberOfElements;
+                uint32 nOfCols = 1u;            //TODO change when the NumberOfElements will be read as an array...
                 uint32 nOfZ = 1u; //TODO change when the NumberOfElements will be read as an array...
-                /*if (nOfRows == 0u) { //TODO enable when the NumberOfElements will be read as an array...
-                 nOfRows = 1u;
-                 }*/
-                if (nOfCols == 0u) {
-                    nOfCols = 1u;
+                if (nOfRows == 0u) {
+                    nOfRows = 1u;
                 }
+                /*if (nOfCols == 0u) { //TODO enable when the NumberOfElements will be read as an array...
+                    nOfCols = 1u;
+                }*/
                 /*if (nOfZ == 0u) { //TODO enable when the NumberOfElements will be read as an array...
                  nOfZ = 1u;
                  }*/
@@ -1355,18 +1355,9 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                     if (signalFound) {
                         ret = !typeDef;
                         if (ret) {
-                            ret = dataSourcesDatabase.Delete(signalId.Buffer());
-                            //resume
-                            if (ret) {
-                                numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
-                                s--;
-                                validSignalFound = true;
-                            }
-                        }
-                        else {
-                            // This error is trapped in the Resolve
-                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "The name %s in %s is defined as a node", signalName.Buffer(),
-                                                dataSourceName.Buffer());
+                            numberOfSignals = dataSourcesDatabase.GetNumberOfChildren();
+                            s--;
+                            validSignalFound = true;
                         }
                     }
                     else {
