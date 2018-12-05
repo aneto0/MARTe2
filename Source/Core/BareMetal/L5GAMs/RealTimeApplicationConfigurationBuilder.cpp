@@ -1001,6 +1001,9 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources(const SignalDir
                         //Add the signal to the Data.dataSourceName node (if the Type is defined)
                         ret = AddSignalToDataSource(functionName, dataSourceName);
                     }
+                    if (!ret) {
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to resolve for data source %s and function %s", dataSourceName.Buffer(), functionName.Buffer());
+                    }
                 }
             }
         }

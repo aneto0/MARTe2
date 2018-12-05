@@ -55,6 +55,7 @@ GAMDataSource::GAMDataSource() :
     signalMemory = NULL_PTR(void *);
     signalOffsets = NULL_PTR(uint32 *);
     memoryHeap = NULL_PTR(HeapI *);
+    allowNoProducers = false;
 }
 
 GAMDataSource::~GAMDataSource() {
@@ -84,6 +85,11 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
         else {
             memoryHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
         }
+    }
+    if (ret) {
+        uint32 allowNoProducersUInt32 = 0u;
+        (void) (data.Read("AllowNoProducers", allowNoProducersUInt32));
+        allowNoProducers = (allowNoProducersUInt32 == 1u);
     }
     return ret;
 }
@@ -347,7 +353,12 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 ret = (nProducers > 0u);
             }
             if (!ret) {
-                REPORT_ERROR(ErrorManagement::FatalError, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
+                ErrorManagement::ErrorType errLog = ErrorManagement::FatalError;
+                if (allowNoProducers)  {
+                    ret = true;
+                    errLog = ErrorManagement::Warning;
+                }
+                REPORT_ERROR(errLog, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
                                             stateName.Buffer(), signalName.Buffer(), nProducers);
             }
         }

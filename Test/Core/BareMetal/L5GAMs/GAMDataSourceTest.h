@@ -138,6 +138,12 @@ public:
      * @brief Tests the SetConfiguredDatabase method and verifies that an error is NOT issued if a GAM is not executed in any of the states.
      */
     bool TestSetConfiguredDatabase_GAM_Never_Executed();
+
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that no error is issued if a signal has no producers in one state and AllowNoProducers is set.
+     */
+    bool TestSetConfiguredDatabase_NoProducer_State_1_AllowNoProducers();
+
 };
 
 /*---------------------------------------------------------------------------*/

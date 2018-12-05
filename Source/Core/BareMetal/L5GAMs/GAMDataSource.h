@@ -54,6 +54,7 @@ namespace MARTe {
  * +GAMDataSource_Name= {\n
  *    Class = GAMDataSource
  *    HeapName = "The name of the Heap to use" If not specified GlobalObjectsDatabase::GetStandardHeap() will be used.
+ *    AllowNoProducers = 0 //Optional. If 1 the GAMDataSource will allow for signals not to be connected (only issuing a warning).
  * }
  */
 class DLL_API GAMDataSource: public DataSourceI {
@@ -177,6 +178,11 @@ protected:
      * The HeapI to allocate the signal memory.
      */
     HeapI *memoryHeap;
+
+    /**
+     * Allow no producers
+     */
+    bool allowNoProducers;
 };
 
 }
