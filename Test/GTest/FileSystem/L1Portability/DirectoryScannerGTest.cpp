@@ -38,67 +38,67 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(DirectoryScannerGTest, CreateDirectoryFolder) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, CreateDirectoryFolder) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.CreateDirectoryFolder());
 }
 
-TEST(DirectoryScannerGTest, TestDirectorySize) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestDirectorySize) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestDirectorySize());
 }
 
-TEST(DirectoryScannerGTest, TestScan) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan("TestScan"));
 }
 
-TEST(DirectoryScannerGTest, TestScan2) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan2) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan("TestScan1",NULL));
 }
 
-TEST(DirectoryScannerGTest, TestScan_NULL) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_NULL) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,NULL));
 }
 
-TEST(DirectoryScannerGTest, TestScan_Empy) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_Empy) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL("",""));
 }
 
-TEST(DirectoryScannerGTest, TestScan_FailMix) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_FailMix) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,""));
 }
 
-TEST(DirectoryScannerGTest, TestScan_FailMix2) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_FailMix2) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL("",NULL));
 }
 
-TEST(DirectoryScannerGTest, TestScan_FailMix3) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_FailMix3) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NoExist("abc",NULL));
 }
 
-TEST(DirectoryScannerGTest, TestScan_Mask) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_Mask) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_Mask());
 }
 
-TEST(DirectoryScannerGTest, TestScan_Filter) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestScan_Filter) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_Filter());
 }
 
-TEST(DirectoryScannerGTest, TestBasePath) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestBasePath) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestBasePath("TestBasePath"));
 }
 
-TEST(DirectoryScannerGTest, TestCleanUp) {
+TEST(FileSystem_L1Portability_DirectoryScannerGTest, TestCleanUp) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestCleanUp());
 }

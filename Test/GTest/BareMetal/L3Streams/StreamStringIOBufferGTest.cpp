@@ -42,110 +42,110 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(StreamStringIOBufferGTest, TestDefaultConstructor) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestDefaultConstructor) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestDefaultConstructor());
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_1) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_1) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(1, 1));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_2) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_2) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(2, 2));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_3) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_3) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(3, 2));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_5) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_5) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(5, 4));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_10) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_10) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(10, 8));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_16) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_16) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(16, 16));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_20) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_20) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(20, 16));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_33) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_33) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(33, 32));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_127) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_127) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(127, 64));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_0) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_0) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(0, 1));
 }
 
-TEST(StreamStringIOBufferGTest, TestGranularityConstructor_MAX) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestGranularityConstructor_MAX) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(0xffffffff, 0x80000000));
 }
 
 
-TEST(StreamStringIOBufferGTest, TestSetBufferAllocationSize_size_in_granularity) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestSetBufferAllocationSize_size_in_granularity) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(10, 32));
 }
 
-TEST(StreamStringIOBufferGTest, TestSetBufferAllocationSize_granularity_in_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestSetBufferAllocationSize_granularity_in_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(10, 16));
 }
 
-TEST(StreamStringIOBufferGTest, TestSetBufferAllocationSize_zero_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestSetBufferAllocationSize_zero_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(0, 16));
 }
 
 
-TEST(StreamStringIOBufferGTest, TestWrite_minor_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestWrite_minor_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestWrite(5, "HelloWorld"));
 }
 
-TEST(StreamStringIOBufferGTest, TestWrite_equal_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestWrite_equal_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestWrite(11, "HelloWorld"));
 }
 
-TEST(StreamStringIOBufferGTest, TestTerminate_minor_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestTerminate_minor_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestTerminate(3, "HelloWorld"));
 }
 
-TEST(StreamStringIOBufferGTest, TestTerminate_equal_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestTerminate_equal_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestTerminate(11, "HelloWorld"));
 }
 
 
-TEST(StreamStringIOBufferGTest, TestWriteAll_minor_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestWriteAll_minor_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestWriteAll(5, "HelloWorld"));
 }
 
-TEST(StreamStringIOBufferGTest, TestWriteAll_equal_size) {
+TEST(BareMetal_L3Streams_StreamStringIOBufferGTest, TestWriteAll_equal_size) {
     StreamStringIOBufferTest myStreamStringIOBufferTest;
     ASSERT_TRUE(myStreamStringIOBufferTest.TestWriteAll(11, "HelloWorld"));
 }

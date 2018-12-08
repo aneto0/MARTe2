@@ -42,174 +42,174 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReferenceTGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestDefaultConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestDefaultConstructor());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReference) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReference) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReference());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReferenceParentToChild) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReferenceParentToChild) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReferenceParentToChild());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReferenceChildToParent) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReferenceChildToParent) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReferenceChildToParent());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReferenceT) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReferenceT) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReferenceT());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReferenceTParentToChild) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReferenceTParentToChild) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReferenceTParentToChild());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorReferenceTChildToParent) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorReferenceTChildToParent) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorReferenceTChildToParent());
 }
 
-TEST(ReferenceTGTest,TestCopyConstructorNullPtr) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyConstructorNullPtr) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyConstructorNullPtr());
 }
 
-TEST(ReferenceTGTest,TestCreateConstructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCreateConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCreateConstructor());
 }
 
-TEST(ReferenceTGTest,TestBuildObjectConstructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestBuildObjectConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestBuildObjectConstructor());
 }
 
-TEST(ReferenceTGTest,TestBuildFakeObjectConstructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestBuildFakeObjectConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestBuildFakeObjectConstructor());
 }
 
 
-TEST(ReferenceTGTest,TestCopyFromObjPtrConstructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyFromObjPtrConstructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyFromObjPtrConstructor());
 }
 
-TEST(ReferenceTGTest,TestCopyFromObjPtrConstructorNullPtr) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyFromObjPtrConstructorNullPtr) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyFromObjPtrConstructorNullPtr());
 }
 
-TEST(ReferenceTGTest,TestDestructor) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestDestructor) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestDestructor());
 }
 
-TEST(ReferenceTGTest,TestInitialiseCreation) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInitialiseCreation) {
     ReferenceTTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialiseCreation());
 }
 
-TEST(ReferenceTGTest,TestInitialiseNoCreation) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInitialiseNoCreation) {
     ReferenceTTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialiseNoCreation());
 }
 
 
-TEST(ReferenceTGTest,TestInitialiseNoObject) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInitialiseNoObject) {
     ReferenceTTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialiseNoObject());
 }
 
-TEST(ReferenceTGTest,TestInitialiseIncompatibleCast) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInitialiseIncompatibleCast) {
     ReferenceTTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialiseNoObject());
 }
 
-TEST(ReferenceTGTest,TestInitialiseNoClassName) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInitialiseNoClassName) {
     ReferenceTTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialiseNoClassName());
 }
 
-TEST(ReferenceTGTest,TestRemoveReference) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestRemoveReference) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestRemoveReference());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorReference) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorReference) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorReference());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorReferenceNull) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorReferenceNull) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorReferenceNull());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorReferenceT) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorReferenceT) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorReferenceT());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorReferenceTNull) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorReferenceTNull) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorReferenceTNull());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorObject) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorObject) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorObject());
 }
 
-TEST(ReferenceTGTest,TestCopyOperatorObjectNull) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestCopyOperatorObjectNull) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestCopyOperatorObjectNull());
 }
 
-TEST(ReferenceTGTest,TestIsValid) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestIsValid) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestIsValid());
 }
 
-TEST(ReferenceTGTest,TestEqualOperator) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestEqualOperator) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestEqualOperator());
 }
 
-TEST(ReferenceTGTest,TestDifferentOperator) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestDifferentOperator) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestDifferentOperator());
 }
 
-TEST(ReferenceTGTest,TestNumberOfReferences) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestNumberOfReferences) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestNumberOfReferences());
 }
 
-TEST(ReferenceTGTest,TestInFunctionOnStack) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInFunctionOnStack) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestInFunctionOnStack());
 }
 
-TEST(ReferenceTGTest,TestInFunctionOnHeap) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestInFunctionOnHeap) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestInFunctionOnHeap(32));
 }
 
-TEST(ReferenceTGTest,TestRightInherithance) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestRightInherithance) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestRightInherithance());
 }
 
-TEST(ReferenceTGTest,TestWrongInherithance) {
+TEST(BareMetal_L2Objects_ReferenceTGTest,TestWrongInherithance) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestWrongInherithance());
 }

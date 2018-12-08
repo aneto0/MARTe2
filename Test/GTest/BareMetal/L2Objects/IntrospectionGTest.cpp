@@ -44,37 +44,37 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(IntrospectionGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestConstructor) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestConstructor());
 }
 
-TEST(IntrospectionGTest,TestPositionOperator) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestPositionOperator) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestPositionOperator());
 }
 
-TEST(IntrospectionGTest,TestMacroToAddBasicInClassRegistryDatabase) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestMacroToAddBasicInClassRegistryDatabase) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestMacroToAddBasicInClassRegistryDatabase());
 }
 
-TEST(IntrospectionGTest,TestMacroToAddStructuredInClassRegistryDatabase) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestMacroToAddStructuredInClassRegistryDatabase) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestMacroToAddStructuredInClassRegistryDatabase());
 }
 
-TEST(IntrospectionGTest,TestGetNumberOfMembers) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestGetNumberOfMembers) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestGetNumberOfMembers());
 }
 
-TEST(IntrospectionGTest,TestGetClassSize) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestGetClassSize) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestGetClassSize());
 }
 
-TEST(IntrospectionGTest,TestMacroToAddObjectClassRegistryDatabase) {
+TEST(BareMetal_L2Objects_IntrospectionGTest,TestMacroToAddObjectClassRegistryDatabase) {
     IntrospectionTest IntrospectionTest;
     ASSERT_TRUE(IntrospectionTest.TestMacroToAddObjectClassRegistryDatabase());
 }

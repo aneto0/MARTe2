@@ -39,72 +39,72 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeThreadGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestConstructor) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeThreadGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestInitialise) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(RealTimeThreadGTest,TestInitialiseFalse_NoFunctions) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestInitialiseFalse_NoFunctions) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestInitialiseFalse_NoFunctions());
 }
 
-TEST(RealTimeThreadGTest,TestConfigureArchitecture) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestConfigureArchitecture) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestConfigureArchitecture());
 }
 
-TEST(RealTimeThreadGTest,TestConfigureArchitecture_OrphanGAM) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestConfigureArchitecture_OrphanGAM) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestConfigureArchitecture_OrphanGAM());
 }
 
-TEST(RealTimeThreadGTest,TestConfigureArchitecture_InvalidGAMType) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestConfigureArchitecture_InvalidGAMType) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestConfigureArchitecture_InvalidGAMType());
 }
 
-TEST(RealTimeThreadGTest,TestConfigureArchitecture_InvalidGAMPath) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestConfigureArchitecture_InvalidGAMPath) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestConfigureArchitecture_InvalidGAMPath());
 }
 
-TEST(RealTimeThreadGTest,TestGetNumberOfFunctions) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetNumberOfFunctions) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetNumberOfFunctions());
 }
 
-TEST(RealTimeThreadGTest,TestGetFunctions) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetFunctions) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetFunctions());
 }
 
-TEST(RealTimeThreadGTest,TestGetNumberOfGAMs) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetNumberOfGAMs) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetNumberOfGAMs());
 }
 
-TEST(RealTimeThreadGTest,TestGetGAMs) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetGAMs) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetGAMs());
 }
 
-TEST(RealTimeThreadGTest,TestGetStackSize) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetStackSize) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetStackSize());
 }
 
-TEST(RealTimeThreadGTest,TestGetCPU) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestGetCPU) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestGetCPU());
 }
 
-TEST(RealTimeThreadGTest,TestToStructuredData) {
+TEST(BareMetal_L5GAMs_RealTimeThreadGTest,TestToStructuredData) {
     RealTimeThreadTest test;
     ASSERT_TRUE(test.TestToStructuredData());
 }

@@ -39,22 +39,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(AdvancedErrorManagementGTest,TestREPORT_ERROR_STATIC_NoParameters) {
+TEST(BareMetal_L3Streams_AdvancedErrorManagementGTest,TestREPORT_ERROR_STATIC_NoParameters) {
     AdvancedErrorManagementTest test;
     ASSERT_TRUE(test.TestREPORT_ERROR_STATIC_NoParameters());
 }
 
-TEST(AdvancedErrorManagementGTest,TestREPORT_ERROR_STATIC_Parameters) {
+TEST(BareMetal_L3Streams_AdvancedErrorManagementGTest,TestREPORT_ERROR_STATIC_Parameters) {
     AdvancedErrorManagementTest test;
     ASSERT_TRUE(test.TestREPORT_ERROR_STATIC_Parameters());
 }
 
-TEST(AdvancedErrorManagementGTest,TestREPORT_ERROR_NoParameters) {
+TEST(BareMetal_L3Streams_AdvancedErrorManagementGTest,TestREPORT_ERROR_NoParameters) {
     AdvancedErrorManagementTest test;
     ASSERT_TRUE(test.TestREPORT_ERROR_NoParameters());
 }
 
-TEST(AdvancedErrorManagementGTest,TestREPORT_ERROR_Parameters) {
+TEST(BareMetal_L3Streams_AdvancedErrorManagementGTest,TestREPORT_ERROR_Parameters) {
     AdvancedErrorManagementTest test;
     ASSERT_TRUE(test.TestREPORT_ERROR_Parameters());
 }

@@ -40,17 +40,17 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(TimingDataSourceGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestConstructor) {
     TimingDataSourceTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(TimingDataSourceGTest,TestSetConfiguredDatabase) {
+TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestSetConfiguredDatabase) {
     TimingDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase());
 }
 
-TEST(TimingDataSourceGTest,TestSetConfiguredDatabase_False_Producers) {
+TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestSetConfiguredDatabase_False_Producers) {
     TimingDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_Producers());
 }

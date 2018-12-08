@@ -42,12 +42,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectBuilderTGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_ObjectBuilderTGTest,TestConstructor) {
     ObjectBuilderTTest test;
     ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
-TEST(ObjectBuilderTGTest,TestBuild) {
+TEST(BareMetal_L2Objects_ObjectBuilderTGTest,TestBuild) {
     ObjectBuilderTTest test;
     ASSERT_TRUE(test.TestBuild());
 }

@@ -40,132 +40,132 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(EmbeddedThreadIGTest, TestConstructor) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestConstructor) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(EmbeddedThreadIGTest, TestConstructorThreadNumber) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestConstructorThreadNumber) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestConstructorThreadNumber());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetThreadNumber) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetThreadNumber) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetThreadNumber());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetThreadId) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetThreadId) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetThreadId());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetCommands) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetCommands) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetCommands());
 }
 
-TEST(EmbeddedThreadIGTest, TestSetCommands) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestSetCommands) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetCommands());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetPriorityClass) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetPriorityClass) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetPriorityClass());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetPriorityLevel) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetPriorityLevel) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetPriorityLevel());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetStackSize) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetStackSize) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetStackSize());
 }
 
-TEST(EmbeddedThreadIGTest, TestGetCPUMask) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestGetCPUMask) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetCPUMask());
 }
 
-TEST(EmbeddedThreadIGTest, TestSetPriorityClass) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestSetPriorityClass) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetPriorityClass());
 }
 
-TEST(EmbeddedThreadIGTest, TestSetPriorityLevel) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestSetPriorityLevel) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetPriorityLevel());
 }
 
-TEST(EmbeddedThreadIGTest, TestSetStackSize) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestSetStackSize) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetStackSize());
 }
 
-TEST(EmbeddedThreadIGTest, TestSetCPUMask) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestSetCPUMask) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetCPUMask());
 }
 
-TEST(EmbeddedThreadIGTest, TestResetThreadId) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestResetThreadId) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestResetThreadId());
 }
 
-TEST(EmbeddedThreadIGTest, TestExecute) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest, TestExecute) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestExecute());
 }
 
-TEST(EmbeddedThreadIGTest,TestGetStatus) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestGetStatus) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetStatus());
 }
 
-TEST(EmbeddedThreadIGTest,TestStart) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStart) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart());
 }
 
-TEST(EmbeddedThreadIGTest,TestStart_False) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStart_False) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart_False());
 }
 
-TEST(EmbeddedThreadIGTest,TestStart_Restart) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStart_Restart) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
-TEST(EmbeddedThreadIGTest,TestStop) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStop) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStop());
 }
 
-TEST(EmbeddedThreadIGTest,TestStop_Kill) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStop_Kill) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
-TEST(EmbeddedThreadIGTest,TestStart_StartCommand) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStart_StartCommand) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart_StartCommand());
 }
 
-TEST(EmbeddedThreadIGTest,TestStart_StartCommandTimeout) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestStart_StartCommandTimeout) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestStart_StartCommandTimeout());
 }
 
-TEST(EmbeddedThreadIGTest,TestGetTimeout) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestGetTimeout) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestGetTimeout());
 }
 
-TEST(EmbeddedThreadIGTest,TestSetTimeout) {
+TEST(Scheduler_L3Services_EmbeddedThreadIGTest,TestSetTimeout) {
     EmbeddedThreadITest target;
     ASSERT_TRUE(target.TestSetTimeout());
 }

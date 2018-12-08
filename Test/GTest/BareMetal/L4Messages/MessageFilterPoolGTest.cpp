@@ -41,32 +41,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MessageFilterPoolGTest,TestConstructor) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestConstructor) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(MessageFilterPoolGTest,TestReceiveMessage) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestReceiveMessage) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestReceiveMessage());
 }
 
-TEST(MessageFilterPoolGTest,TestReceiveMessage_ErrorInFilter) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestReceiveMessage_ErrorInFilter) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestReceiveMessage_ErrorInFilter());
 }
 
-TEST(MessageFilterPoolGTest,TestReceiveMessage_MessageNotFound) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestReceiveMessage_MessageNotFound) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestReceiveMessage_MessageNotFound());
 }
 
-TEST(MessageFilterPoolGTest,TestReceiveMessage_NotPermanentRemoved) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestReceiveMessage_NotPermanentRemoved) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestReceiveMessage_NotPermanentRemoved());
 }
 
-TEST(MessageFilterPoolGTest,TestReceiveMessage_PermanentNotRemoved) {
+TEST(BareMetal_L4Messages_MessageFilterPoolGTest,TestReceiveMessage_PermanentNotRemoved) {
     MessageFilterPoolTest target;
     ASSERT_TRUE(target.TestReceiveMessage_PermanentNotRemoved());
 }

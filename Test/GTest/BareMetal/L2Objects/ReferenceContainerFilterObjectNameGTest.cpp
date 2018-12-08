@@ -45,47 +45,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestDefaultConstructor) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestDefaultConstructor());
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorOneNode) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestFullConstructorOneNode) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(5, "Hello"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorMoreNodes) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestFullConstructorMoreNodes) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(5, "Hello.World"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorMoreNodesSearchAll) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestFullConstructorMoreNodesSearchAll) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(-1, "Hello.World"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorFakeNodeSearchAll) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestFullConstructorFakeNodeSearchAll) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(-1, ".Hello."));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestFullConstructorInvalidNodeSearchAll) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestFullConstructorInvalidNodeSearchAll) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestFullConstructor(-1, "He..llo"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestCopyConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestCopyConstructor) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestCopyConstructor(20, "Hello"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestCopyConstructorSearchAll) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestCopyConstructorSearchAll) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestCopyConstructor(-1, "Hello"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestFullPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestTestFullPath) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Reference element1("Object");
@@ -99,7 +99,7 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestFullPath) {
 }
 /*
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestTestWrongPath) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Reference element1("Object");
@@ -108,10 +108,10 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath) {
     element2->SetName("B");
     previouslyFound.Insert(element1);
     previouslyFound.Insert(element2);
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "A.C", false));
+    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTEST(BareMetal_L2Objects_previouslyFound, "A.C", false));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestPathNoRoot) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestTestPathNoRoot) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Reference element1("Object");
@@ -120,33 +120,33 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestPathNoRoot) {
     element2->SetName("B");
     previouslyFound.Insert(element1);
     previouslyFound.Insert(element2);
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "B.C", false));
+    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTEST(BareMetal_L2Objects_previouslyFound, "B.C", false));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestNoPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestTestNoPath) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Reference element1("Object");
     element1->SetName("A");
     previouslyFound.Insert(element1);
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "B", true));
+    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTEST(BareMetal_L2Objects_previouslyFound, "B", true));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath2) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestTestWrongPath2) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Reference element1("Object");
     element1->SetName("A");
     previouslyFound.Insert(element1);
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "B.C", false));
+    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTEST(BareMetal_L2Objects_previouslyFound, "B.C", false));
 }
 */
-TEST(ReferenceContainerFilterObjectNameGTest,TestAssignOperator) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestAssignOperator) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestAssignOperator(20, "Hello"));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestAssignOperatorSearchAll) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterObjectNameGTest,TestAssignOperatorSearchAll) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestAssignOperator(-1, "Hello"));
 }

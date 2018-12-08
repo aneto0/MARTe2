@@ -42,57 +42,57 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TimeoutTypeGTest,TestConstructorDefault) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorDefault) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestConstructorDefault());
 }
 
-TEST(TimeoutTypeGTest,TestConstructorNotDefault) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestConstructorNotDefault) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestConstructorNotDefault(10));
 }
 
-TEST(TimeoutTypeGTest,TestSetTimeoutSec) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestSetTimeoutSec) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestSetTimeoutSec(1));
 }
 
-TEST(TimeoutTypeGTest,TestSetTimeoutHighResolutionTimerTicks) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestSetTimeoutHighResolutionTimerTicks) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestSetTimeoutHighResolutionTimerTicks());
 }
 
-TEST(TimeoutTypeGTest,TestHighResolutionTimerTicks) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestHighResolutionTimerTicks) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestHighResolutionTimerTicks());
 }
 
-TEST(TimeoutTypeGTest,TestAutoSubstractOPerator) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestAutoSubstractOPerator) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestSubstractAssignOperator());
 }
 
-TEST(TimeoutTypeGTest,TestEqualComparison) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestEqualComparison) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestEqualComparison());
 }
 
-TEST(TimeoutTypeGTest,TestDiffComparison) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestDiffComparison) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestDiffComparison());
 }
 
-TEST(TimeoutTypeGTest,TestAssingOperator) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestAssingOperator) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestAssignOperator());
 }
 
-TEST(TimeoutTypeGTest,TestIsFinite) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestIsFinite) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestIsFinite());
 }
 
-TEST(TimeoutTypeGTest,TestGetTimeoutMSec) {
+TEST(BareMetal_L1Portability_TimeoutTypeGTest,TestGetTimeoutMSec) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestGetTimeoutMSec());
 }

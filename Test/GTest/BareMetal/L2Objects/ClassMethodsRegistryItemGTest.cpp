@@ -44,17 +44,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassMethodsRegistryItemGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_ClassMethodsRegistryItemGTest,TestConstructor) {
     ClassMethodsRegistryItemTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
-TEST(ClassMethodsRegistryItemGTest,TestCallFunction) {
+TEST(BareMetal_L2Objects_ClassMethodsRegistryItemGTest,TestCallFunction) {
     ClassMethodsRegistryItemTest target;
     ASSERT_TRUE(target.TestCallFunction());
 }
 
-TEST(ClassMethodsRegistryItemGTest,TestCallFunction_WithMacroSupport) {
+TEST(BareMetal_L2Objects_ClassMethodsRegistryItemGTest,TestCallFunction_WithMacroSupport) {
     ClassMethodsRegistryItemTest target;
     ASSERT_TRUE(target.TestCallFunction_WithMacroSupport());
 }

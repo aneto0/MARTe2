@@ -41,64 +41,64 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_64) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToBitSet_64) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint64>());
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int64>());
 }
 
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_32) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToBitSet_32) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint32>());
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int32>());
 }
 
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_16) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToBitSet_16) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint16>());
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int16>());}
 
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_8) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToBitSet_8) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint8>());
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int8>());}
 
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_8) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToInteger_8) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToInteger_8());
 }
 
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_16) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToInteger_16) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToInteger_16());
 }
 
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_32) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToInteger_32) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToInteger_32());
 }
 
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_64) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestBitSetToInteger_64) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToInteger_64());
 }
 
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_8) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestIntegerToBitSet_8) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet_8());
 }
 
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_16) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestIntegerToBitSet_16) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet_16());
 }
 
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_32) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestIntegerToBitSet_32) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet_32());
 }
 
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_64) {
+TEST(BareMetal_L3Streams_BitSetToIntegerGTest,TestIntegerToBitSet_64) {
     BitSetToIntegerTest bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet_64());
 }

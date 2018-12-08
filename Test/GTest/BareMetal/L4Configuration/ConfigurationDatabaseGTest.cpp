@@ -39,331 +39,331 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(ConfigurationDatabaseGTest,TestConstructor) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestConstructor) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestDefaultConstructor());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCreateAbsolute_ValidPath) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCreateAbsolute_ValidPath) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCreateAbsolute_ValidPath());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCreateAbsolute_InvalidPath) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCreateAbsolute_InvalidPath) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCreateAbsolute_InvalidPath());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCreateRelative_ValidPath) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCreateRelative_ValidPath) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCreateRelative_ValidPath());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCreateRelative_InvalidPath) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCreateRelative_InvalidPath) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCreateRelative_InvalidPath());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveToRoot) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveToRoot) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveToRoot());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveToAncestor_ValidNumberOfGenerations) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveToAncestor_ValidNumberOfGenerations) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveToAncestor_ValidNumberOfGenerations());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveToAncestor_InvalidNumberOfGenerations) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveToAncestor_InvalidNumberOfGenerations) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveToAncestor_InvalidNumberOfGenerations());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveAbsolute_ValidPaths) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveAbsolute_ValidPaths) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveAbsolute_ValidPaths());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveAbsolute_InvalidPaths) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveAbsolute_InvalidPaths) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveAbsolute_InvalidPaths());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveRelative_ValidPaths) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveRelative_ValidPaths) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveRelative_ValidPaths());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveRelative_InvalidPaths) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveRelative_InvalidPaths) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveRelative_InvalidPaths());
 }
 
-TEST(ConfigurationDatabaseGTest,TestDelete) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestDelete) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestDelete());
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_UInt8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Int8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_UInt16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Int16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_UInt32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Int32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_UInt64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Int64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Float32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Float32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::float32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid_Float64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Valid_Float64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::float64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Invalid) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Invalid());
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_StructuredData) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_StructuredData) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_StructuredData());
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Object) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestRead_Object) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestRead_Object());
 }
 
-TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestAddToCurrentNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestAddToCurrentNode());
 }
 
-TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode_InvalidReference) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestAddToCurrentNode_InvalidReference) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestAddToCurrentNode_InvalidReference());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_UInt8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Int8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_UInt16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Int16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_UInt32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Int32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_UInt64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Int64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Float32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Float32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::float32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Float64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Valid_Float64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::float64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Overwrite) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Overwrite) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Overwrite());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Invalid) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Invalid());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_StructuredData) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_StructuredData) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_StructuredData());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Object) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestWrite_Object) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Object());
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Invalid) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Invalid());
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_UInt8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int8) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int8) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int8(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_UInt16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int16) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int16) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int16(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_UInt32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_UInt64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Int64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float32) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Float32) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float32(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float64) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetType_Valid_Float64) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float64(7)));
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetChildName) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetChildName) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetChildName());
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetName) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetName) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetName());
 }
-TEST(ConfigurationDatabaseGTest,TestGetNumberOfChildren) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetNumberOfChildren) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetNumberOfChildren());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCopy) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCopy) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCopy());
 }
 
-TEST(ConfigurationDatabaseGTest,TestLock) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestLock) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestLock());
 }
 
-TEST(ConfigurationDatabaseGTest,TestUnlock) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestUnlock) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestUnlock());
 }
 
-TEST(ConfigurationDatabaseGTest,TestInitialise) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestInitialise) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestInitialise());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCleanUp) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCleanUp) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCleanUp());
 }
 
-TEST(ConfigurationDatabaseGTest,TestGetCurrentNode) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestGetCurrentNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestGetCurrentNode());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCopyConstructor) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCopyConstructor) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCopyConstructor());
 }
 
-TEST(ConfigurationDatabaseGTest,TestCopyOperatorEqual) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestCopyOperatorEqual) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestCopyOperatorEqual());
 }
 
-TEST(ConfigurationDatabaseGTest,TestMoveToChild) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestMoveToChild) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestMoveToChild());
 }
 
-TEST(ConfigurationDatabaseGTest,TestSetCurrentNodeAsRootNode) {
+TEST(BareMetal_L4Configuration_ConfigurationDatabaseGTest,TestSetCurrentNodeAsRootNode) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestSetCurrentNodeAsRootNode());
 }

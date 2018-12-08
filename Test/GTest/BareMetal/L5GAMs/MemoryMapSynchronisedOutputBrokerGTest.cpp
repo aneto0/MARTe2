@@ -41,17 +41,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryMapSynchronisedOutputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedOutputBrokerGTest,TestConstructor) {
     MemoryMapSynchronisedOutputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapSynchronisedOutputBrokerGTest,TestExecute) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedOutputBrokerGTest,TestExecute) {
     MemoryMapSynchronisedOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }
 
-TEST(MemoryMapSynchronisedOutputBrokerGTest,TestExecute_False) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedOutputBrokerGTest,TestExecute_False) {
     MemoryMapSynchronisedOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_False());
 }

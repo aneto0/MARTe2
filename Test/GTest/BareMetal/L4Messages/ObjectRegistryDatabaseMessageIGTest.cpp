@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectRegistryDatabaseMessageIGTest,TestDefaultConstructor) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageIGTest,TestDefaultConstructor) {
     ObjectRegistryDatabaseMessageITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }

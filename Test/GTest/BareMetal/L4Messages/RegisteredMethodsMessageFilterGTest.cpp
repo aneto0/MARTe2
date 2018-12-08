@@ -41,32 +41,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(RegisteredMethodsMessageFilterGTest,TestConstructor) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestConstructor) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(RegisteredMethodsMessageFilterGTest,TestSetDestinationObject) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestSetDestinationObject) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestSetDestinationObject());
 }
 
-TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestConsumeMessage) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage_Reply) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestConsumeMessage_Reply) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Reply());
 }
 
-TEST(RegisteredMethodsMessageFilterGTest,TestConsumeMessage_IndirectReply) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestConsumeMessage_IndirectReply) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_IndirectReply());
 }
 
-TEST(RegisteredMethodsMessageFilterGTest,TestIsPermanentFilter) {
+TEST(BareMetal_L4Messages_RegisteredMethodsMessageFilterGTest,TestIsPermanentFilter) {
     RegisteredMethodsMessageFilterTest target;
     ASSERT_TRUE(target.TestIsPermanentFilter());
 }

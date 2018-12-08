@@ -39,17 +39,17 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(ConsoleLoggerGTest,TestConstructor) {
+TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestConstructor) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
-TEST(ConsoleLoggerGTest,TestInitialise) {
+TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestInitialise) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(ConsoleLoggerGTest,TestConsumeLogMessage) {
+TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestConsumeLogMessage) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestConsumeLogMessage());
 }

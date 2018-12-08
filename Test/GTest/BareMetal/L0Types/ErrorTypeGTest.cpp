@@ -42,62 +42,62 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ErrorTypeGTest,TestConstructor_Default) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestConstructor_Default) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestConstructor_Default());
 }
 
-TEST(ErrorTypeGTest,TestConstructor_False) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestConstructor_False) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestConstructor_False());
 }
 
-TEST(ErrorTypeGTest,TestConstructor_BitSet) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestConstructor_BitSet) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestConstructor_BitSet());
 }
 
-TEST(ErrorTypeGTest,TestErrorsCleared) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestErrorsCleared) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestErrorsCleared());
 }
 
-TEST(ErrorTypeGTest,TestOperatorBool) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestOperatorBool) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestOperatorBool());
 }
 
-TEST(ErrorTypeGTest,TestOperatorErrorIntegerFormat) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestOperatorErrorIntegerFormat) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestOperatorErrorIntegerFormat());
 }
 
-TEST(ErrorTypeGTest,TestOperatorEquals) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestOperatorEquals) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestOperatorEquals());
 }
 
-TEST(ErrorTypeGTest,TestOperatorNotEqual) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestOperatorNotEqual) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestOperatorNotEqual());
 }
 
-TEST(ErrorTypeGTest,TestOperatorAssignment) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestOperatorAssignment) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestOperatorAssignment());
 }
 
-TEST(ErrorTypeGTest,TestSetError) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestSetError) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestSetError());
 }
 
-TEST(ErrorTypeGTest,TestClearError) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestClearError) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestClearError());
 }
 
-TEST(ErrorTypeGTest,TestContains) {
+TEST(BareMetal_L0Types_ErrorTypeGTest,TestContains) {
     ErrorTypeTest target;
     ASSERT_TRUE(target.TestContains());
 }

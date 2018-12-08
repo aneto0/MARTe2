@@ -45,66 +45,66 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(VectorGTest,TestDefaultConstructor) {
+TEST(BareMetal_L0Types_VectorGTest,TestDefaultConstructor) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestDefaultConstructor());
 }
 
-TEST(VectorGTest,TestConstructorCreateOnHeap) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorCreateOnHeap) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestConstructorCreateOnHeap(32));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_Int8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Int8) {
     VectorTest vectorTest;
 
     int8 array[] = { -1, 2, -3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_UInt8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_UInt8) {
     VectorTest vectorTest;
 
     uint8 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_Int16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Int16) {
     VectorTest vectorTest;
 
     int16 array[] = { -1, 2, -3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_UInt16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_UInt16) {
     VectorTest vectorTest;
 
     uint16 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_Int32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Int32) {
     VectorTest vectorTest;
 
     int32 array[] = { 1, -2, 3, -4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_UInt32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_UInt32) {
     VectorTest vectorTest;
 
     uint32 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_Int64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Int64) {
     VectorTest vectorTest;
 
     int64 array[] = { 1, -2, 3, -4 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_UInt64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_UInt64) {
     VectorTest vectorTest;
 
     uint64 array[] = { 1, 2, 3, 4 };
@@ -112,7 +112,7 @@ TEST(VectorGTest,TestConstructorByPointerStatic_UInt64) {
 }
 
 /*
-TEST(VectorGTest,TestConstructorByPointerStatic_Float32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Float32) {
     VectorTest vectorTest;
 
     float32 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
@@ -120,21 +120,21 @@ TEST(VectorGTest,TestConstructorByPointerStatic_Float32) {
 }
 */
 
-TEST(VectorGTest,TestConstructorByPointerStatic_Float64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_Float64) {
     VectorTest vectorTest;
 
     float64 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerStatic_CCString) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerStatic_CCString) {
     VectorTest vectorTest;
 
     const char8 *array[] = { "Hello", "abcdefghilmnopq", "Hola", "1234567890" };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Int8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Int8) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -148,7 +148,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Int8) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_UInt8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_UInt8) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -162,7 +162,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_UInt8) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Int16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Int16) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -176,7 +176,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Int16) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_UInt16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_UInt16) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -190,7 +190,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_UInt16) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Int32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Int32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -204,7 +204,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Int32) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_UInt32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_UInt32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -218,7 +218,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_UInt32) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Int64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Int64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -232,7 +232,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Int64) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_UInt64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_UInt64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -246,7 +246,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_UInt64) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Float32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Float32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -262,7 +262,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Float32) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByPointerHeap_Float64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByPointerHeap_Float64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
@@ -278,56 +278,56 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Float64) {
     HeapManager::Free((void*&) array);
 }
 
-TEST(VectorGTest,TestConstructorByTable_Int8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Int8) {
     VectorTest vectorTest;
 
     int8 array[] = { -1, 2, -3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_UInt8) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_UInt8) {
     VectorTest vectorTest;
 
     uint8 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_Int16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Int16) {
     VectorTest vectorTest;
 
     int16 array[] = { -1, 2, -3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_UInt16) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_UInt16) {
     VectorTest vectorTest;
 
     uint16 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_Int32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Int32) {
     VectorTest vectorTest;
 
     int32 array[] = { 1, -2, 3, -4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_UInt32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_UInt32) {
     VectorTest vectorTest;
 
     uint32 array[] = { 1, 2, 3, 4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_Int64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Int64) {
     VectorTest vectorTest;
 
     int64 array[] = { 1, -2, 3, -4 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_UInt64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_UInt64) {
     VectorTest vectorTest;
 
     uint64 array[] = { 1, 2, 3, 4 };
@@ -335,48 +335,48 @@ TEST(VectorGTest,TestConstructorByTable_UInt64) {
 }
 
 /*
-TEST(VectorGTest,TestConstructorByTable_Float32) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Float32) {
     VectorTest vectorTest;
 
     float32 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 */
-TEST(VectorGTest,TestConstructorByTable_Float64) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_Float64) {
     VectorTest vectorTest;
 
     float64 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestConstructorByTable_CCString) {
+TEST(BareMetal_L0Types_VectorGTest,TestConstructorByTable_CCString) {
     VectorTest vectorTest;
 
     const char8 *array[] = { "Hello", "abcdefghilmnopq", "Hola", "1234567890" };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestGetNumberOfElements) {
+TEST(BareMetal_L0Types_VectorGTest,TestGetNumberOfElements) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestGetNumberOfElements());
 }
 
-TEST(VectorGTest,TestGetDataPointer) {
+TEST(BareMetal_L0Types_VectorGTest,TestGetDataPointer) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestGetDataPointer());
 }
 
-TEST(VectorGTest,TestVectorOperator_Static) {
+TEST(BareMetal_L0Types_VectorGTest,TestVectorOperator_Static) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestVectorOperator_Static());
 }
 
-TEST(VectorGTest,TestVectorOperator_Heap) {
+TEST(BareMetal_L0Types_VectorGTest,TestVectorOperator_Heap) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestVectorOperator_Heap());
 }
 
-TEST(VectorGTest,TestProduct) {
+TEST(BareMetal_L0Types_VectorGTest,TestProduct) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestProduct());
 }

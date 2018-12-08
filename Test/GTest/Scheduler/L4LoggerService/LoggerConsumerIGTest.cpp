@@ -38,32 +38,32 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(LoggerConsumerIGTest,TestLoadPrintPreferences) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestLoadPrintPreferences) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestLoadPrintPreferences());
 }
 
-TEST(LoggerConsumerIGTest,TestLoadPrintPreferences_SomeKeys) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestLoadPrintPreferences_SomeKeys) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestLoadPrintPreferences_SomeKeys());
 }
 
-TEST(LoggerConsumerIGTest,TestLoadPrintPreferences_False_InvalidKey) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestLoadPrintPreferences_False_InvalidKey) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestLoadPrintPreferences_False_InvalidKey());
 }
 
-TEST(LoggerConsumerIGTest,TestLoadPrintPreferences_False_TooLarge) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestLoadPrintPreferences_False_TooLarge) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestLoadPrintPreferences_False_TooLarge());
 }
 
-TEST(LoggerConsumerIGTest,TestPrintToStream) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestPrintToStream) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestPrintToStream());
 }
 
-TEST(LoggerConsumerIGTest,TestPrintToStream_WithKeys) {
+TEST(Scheduler_L3Services_LoggerConsumerIGTest,TestPrintToStream_WithKeys) {
     LoggerConsumerITest target;
     ASSERT_TRUE(target.TestPrintToStream_WithKeys());
 }

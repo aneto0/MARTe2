@@ -44,14 +44,14 @@
 
 
 
-TEST(InternetServiceGTest,TesDefaultConstructor) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TesDefaultConstructor) {
     InternetServiceTest internetServiceTest;
     ASSERT_TRUE(internetServiceTest.TestDefaultConstructor());
 }
 
 
 
-TEST(InternetServiceGTest,TestSearchByName) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TestSearchByName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
             {NULL, NULL, 0, "tcp", false},
@@ -68,7 +68,7 @@ TEST(InternetServiceGTest,TestSearchByName) {
 
 
 
-TEST(InternetServiceGTest,TestSearchByPort) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TestSearchByPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
             {"ftp", NULL, 21, "tcp", true},
@@ -83,7 +83,7 @@ TEST(InternetServiceGTest,TestSearchByPort) {
 }
 
 
-TEST(InternetServiceGTest,TestPort) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TestPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
             {"ftp", NULL, 21, "tcp", true},
@@ -98,7 +98,7 @@ TEST(InternetServiceGTest,TestPort) {
 }
 
 
-TEST(InternetServiceGTest,TestName) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TestName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
             {"ftp", NULL, 21, "tcp", true},
@@ -114,7 +114,7 @@ TEST(InternetServiceGTest,TestName) {
 
 
 
-TEST(InternetServiceGTest,TestProtocol) {
+TEST(FileSystem_L1Portability_InternetServiceGTest,TestProtocol) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
             {"ftp", NULL, 21, "tcp", true},

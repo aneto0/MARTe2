@@ -41,118 +41,118 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(SingleThreadServiceGTest,TestConstructor) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestConstructor) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(SingleThreadServiceGTest,TestDefaultConstructor_Template) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestDefaultConstructor_Template) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestDefaultConstructor_Template());
 }
 
-TEST(SingleThreadServiceGTest,TestInitialise) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestInitialise) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(SingleThreadServiceGTest,TestInitialise_False) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestInitialise_False) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestInitialise_False());
 }
 
-TEST(SingleThreadServiceGTest,TestStart) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestStart) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart());
 }
 
-TEST(SingleThreadServiceGTest,TestStart_False) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestStart_False) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart_False());
 }
 
-TEST(SingleThreadServiceGTest,TestStart_Restart) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestStart_Restart) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStart_Restart());
 }
 
-TEST(SingleThreadServiceGTest,TestStop) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestStop) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStop());
 }
 
-TEST(SingleThreadServiceGTest,TestStop_Kill) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestStop_Kill) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestStop_Kill());
 }
 
 
-TEST(SingleThreadServiceGTest,TestSetTimeout) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestSetTimeout) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetTimeout());
 }
 
-TEST(SingleThreadServiceGTest,TestGetTimeout) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest,TestGetTimeout) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetTimeout());
 }
 
-TEST(SingleThreadServiceGTest, TestGetPriorityClass) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestGetPriorityClass) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetPriorityClass());
 }
 
-TEST(SingleThreadServiceGTest, TestGetPriorityLevel) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestGetPriorityLevel) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetPriorityLevel());
 }
 
-TEST(SingleThreadServiceGTest, TestGetStackSize) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestGetStackSize) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetStackSize());
 }
 
-TEST(SingleThreadServiceGTest, TestGetCPUMask) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestGetCPUMask) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestGetCPUMask());
 }
 
-TEST(SingleThreadServiceGTest, TestSetPriorityClass) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetPriorityClass) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityClass());
 }
 
-TEST(SingleThreadServiceGTest, TestSetPriorityLevel) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetPriorityLevel) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel());
 }
 
-TEST(SingleThreadServiceGTest, TestSetStackSize) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetStackSize) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetStackSize());
 }
 
-TEST(SingleThreadServiceGTest, TestSetCPUMask) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetCPUMask) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask());
 }
 
-TEST(SingleThreadServiceGTest, TestSetPriorityClass_Start) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetPriorityClass_Start) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityClass_Start());
 }
 
-TEST(SingleThreadServiceGTest, TestSetPriorityLevel_Start) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetPriorityLevel_Start) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetPriorityLevel_Start());
 }
 
-TEST(SingleThreadServiceGTest, TestSetStackSize_Start) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetStackSize_Start) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetStackSize_Start());
 }
 
-TEST(SingleThreadServiceGTest, TestSetCPUMask_Start) {
+TEST(Scheduler_L3Services_SingleThreadServiceGTest, TestSetCPUMask_Start) {
     SingleThreadServiceTest target;
     ASSERT_TRUE(target.TestSetCPUMask_Start());
 }

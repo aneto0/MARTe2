@@ -41,42 +41,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConstructor) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConstructor) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestSetMessageToCatch) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestSetMessageToCatch) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestSetMessageToCatch());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestWait) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestWait) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestWait());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestWait_Timeout) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestWait_Timeout) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestWait_Timeout());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_NotReply) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_NotReply) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_NotReply());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_DifferentMessage) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_DifferentMessage) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_DifferentMessage());
 }
 
-TEST(ReplyMessageCatcherMessageFilterGTest,TestIsPermanentFilter) {
+TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestIsPermanentFilter) {
     ReplyMessageCatcherMessageFilterTest target;
     ASSERT_TRUE(target.TestIsPermanentFilter());
 }

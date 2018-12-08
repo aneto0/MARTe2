@@ -45,17 +45,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReferenceContainerNodeGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerNodeGTest,TestConstructor) {
     ReferenceContainerNodeTest referenceContainerNodeTest;
     ASSERT_TRUE(referenceContainerNodeTest.TestConstructor());
 }
 
-TEST(ReferenceContainerNodeGTest,TestDestructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerNodeGTest,TestDestructor) {
     ReferenceContainerNodeTest referenceContainerNodeTest;
     ASSERT_TRUE(referenceContainerNodeTest.TestDestructor());
 }
 
-TEST(ReferenceContainerNodeGTest,TestSetGetReference) {
+TEST(BareMetal_L2Objects_ReferenceContainerNodeGTest,TestSetGetReference) {
     ReferenceContainerNodeTest referenceContainerNodeTest;
     ASSERT_TRUE(referenceContainerNodeTest.TestSetGetReference());
 }

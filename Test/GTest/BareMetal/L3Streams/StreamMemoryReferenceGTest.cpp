@@ -40,224 +40,224 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StreamMemoryReferenceGTest,TestDefaultConstructor) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestDefaultConstructor) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestDefaultConstructor());
 }
 
-TEST(StreamMemoryReferenceGTest,TestConstructor_CharPointer) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestConstructor_CharPointer) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestConstructor_CharPointer());
 }
 
-TEST(StreamMemoryReferenceGTest,TestConstructor_ConstCharPointer) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestConstructor_ConstCharPointer) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestConstructor_ConstCharPointer());
 }
 
-TEST(StreamMemoryReferenceGTest,TestAnyTypeOperator) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestAnyTypeOperator) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestAnyTypeOperator("HelloWorld"));
 }
 
-TEST(StreamMemoryReferenceGTest,TestDestructor) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestDestructor) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestDestructor());
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_Same_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_Same_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestRead("HelloWorld", bufferSize, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestRead("HelloWorld", 10, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestRead("HelloWorld", 5, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_Same_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_Same_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", bufferSize, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", 10, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", 5, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_Same_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_Same_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWrite("HelloWorld", bufferSize, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_greater_than_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_greater_than_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWrite("HelloWorld", 10, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWrite("HelloWorld", 5, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_Same_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_Same_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", bufferSize, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_greater_than_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_greater_than_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", 10, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize_timeout) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize_timeout) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", 5, bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestWrite_RO) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestWrite_RO) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestWrite_RO());
 }
 
-TEST(StreamMemoryReferenceGTest,TestSize_Const) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSize_Const) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestSize_Const("HelloWorld", bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSize_size_in_bufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSize_size_in_bufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestSize("HelloWorld", bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSize_bufferSize_in_size) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSize_bufferSize_in_size) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestSize("HelloWorld", bufferSize));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSeek_pos_in_bufferSize_in_size) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSeek_pos_in_bufferSize_in_size) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestSeek(bufferSize, 10, 5, true));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSeek_pos_in_size_in_bufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSeek_pos_in_size_in_bufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestSeek(bufferSize, 10, 5, true));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSeek_size_in_pos_in_bufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSeek_size_in_pos_in_bufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestSeek(bufferSize, 5, 6, false));
 }
 
-TEST(StreamMemoryReferenceGTest,TestSeek_size_in_bufferSize_in_pos) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest,TestSeek_size_in_bufferSize_in_pos) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestSeek(bufferSize, 5, 16, false));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_pos_in_size_in_bufferSize) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestRelativeSeek_pos_in_size_in_bufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 32;
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, 7, true));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_pos_in_bufferSize_in_size) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestRelativeSeek_pos_in_bufferSize_in_size) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, 2, true));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_pos_in_size) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_pos_in_size) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, 5, false));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_size_in_pos) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_size_in_pos) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, 28, false));
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, -15, false));
 }
 
-TEST(StreamMemoryReferenceGTest, TestRelativeSeek_OutOfInt32Range) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestRelativeSeek_OutOfInt32Range) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestRelativeSeek_OutOfInt32Range());
 }
 
-TEST(StreamMemoryReferenceGTest, TestPosition_in_range) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestPosition_in_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestPosition(bufferSize, 15));
 }
 
-TEST(StreamMemoryReferenceGTest, TestPosition_out_range) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestPosition_out_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestPosition(bufferSize, 17));
 }
 
-TEST(StreamMemoryReferenceGTest, TestSetSize_in_range) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestSetSize_in_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestSetSize(bufferSize, 15, true));
 }
 
-TEST(StreamMemoryReferenceGTest, TestSetSize_out_range) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestSetSize_out_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestSetSize(bufferSize, 17, false));
 }
 
-TEST(StreamMemoryReferenceGTest, TestCanSeek) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestCanSeek) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestCanSeek());
 }
 
-TEST(StreamMemoryReferenceGTest, TestCanWrite) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestCanWrite) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestCanWrite());
 }
-TEST(StreamMemoryReferenceGTest, TestCanRead) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestCanRead) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestCanRead());
 }
 
-TEST(StreamMemoryReferenceGTest, TestPrintFormatted) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestPrintFormatted) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestPrintFormatted(32, GeneratePrintFormattedGenericTable()));
 }
 
-TEST(StreamMemoryReferenceGTest, TestGetToken) {
+TEST(BareMetal_L3Streams_StreamMemoryReferenceGTest, TestGetToken) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestGetToken(32, TokenTestTableTerminators));
 }

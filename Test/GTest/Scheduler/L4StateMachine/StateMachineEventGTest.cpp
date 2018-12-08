@@ -41,57 +41,57 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StateMachineEventGTest,TestConstructor) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestConstructor) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(StateMachineEventGTest,TestConsumeMessage) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestConsumeMessage) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(StateMachineEventGTest,TestGetNextState) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestGetNextState) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestGetNextState());
 }
 
-TEST(StateMachineEventGTest,TestGetNextStateError) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestGetNextStateError) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestGetNextStateError());
 }
 
-TEST(StateMachineEventGTest,TestGetTransitionTimeout) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestGetTransitionTimeout) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestGetTransitionTimeout());
 }
 
-TEST(StateMachineEventGTest,TestInitialise) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestInitialise) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(StateMachineEventGTest,TestInitialise_False_NoNextState) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestInitialise_False_NoNextState) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestInitialise_False_NoNextState());
 }
 
-TEST(StateMachineEventGTest,TestInitialise_NoZeroTimeout) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestInitialise_NoZeroTimeout) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestInitialise_NoZeroTimeout());
 }
 
-TEST(StateMachineEventGTest,TestInitialise_True_NoNextStateError) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestInitialise_True_NoNextStateError) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestInitialise_True_NoNextStateError());
 }
 
-TEST(StateMachineEventGTest,TestInitialise_True_NoTimeout) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestInitialise_True_NoTimeout) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestInitialise_True_NoTimeout());
 }
 
-TEST(StateMachineEventGTest,TestSetStateMachine) {
+TEST(Scheduler_L4StateMachine_StateMachineEventGTest,TestSetStateMachine) {
     StateMachineEventTest target;
     ASSERT_TRUE(target.TestSetStateMachine());
 }

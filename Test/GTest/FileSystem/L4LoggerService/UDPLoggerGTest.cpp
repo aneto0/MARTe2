@@ -39,32 +39,32 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(UDPLoggerGTest, TestConstructor) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestConstructor) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(UDPLoggerGTest, TestInitialise) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestInitialise) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(UDPLoggerGTest, TestInitialise_False_Address) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestInitialise_False_Address) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestInitialise_False_Address());
 }
 
-TEST(UDPLoggerGTest, TestInitialise_False_Port) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestInitialise_False_Port) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestInitialise_False_Port());
 }
 
-TEST(UDPLoggerGTest, TestInitialise_False_Address_Port) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestInitialise_False_Address_Port) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestInitialise_False_Address_Port());
 }
 
-TEST(UDPLoggerGTest, TestConsumeLogMessage) {
+TEST(FileSystem_L4LoggerService_UDPLoggerGTest, TestConsumeLogMessage) {
     UDPLoggerTest test;
     ASSERT_TRUE(test.TestConsumeLogMessage());
 }

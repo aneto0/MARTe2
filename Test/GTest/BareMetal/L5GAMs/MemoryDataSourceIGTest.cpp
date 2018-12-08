@@ -39,37 +39,37 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(MemoryDataSourceIGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestConstructor) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryDataSourceIGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestInitialise) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(MemoryDataSourceIGTest,TestInitialise_NumberOfBuffers) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestInitialise_NumberOfBuffers) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestInitialise_NumberOfBuffers());
 }
 
-TEST(MemoryDataSourceIGTest,TestInitialise_BadHeapName) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestInitialise_BadHeapName) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestInitialise_BadHeapName());
 }
 
-TEST(MemoryDataSourceIGTest,TestAllocateMemory) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestAllocateMemory) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestAllocateMemory());
 }
 
-TEST(MemoryDataSourceIGTest,TestGetNumberOfMemoryBuffers) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestGetNumberOfMemoryBuffers) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
 }
 
-TEST(MemoryDataSourceIGTest,TestGetSignalMemoryBuffer) {
+TEST(BareMetal_L5GAMs_MemoryDataSourceIGTest,TestGetSignalMemoryBuffer) {
     MemoryDataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalMemoryBuffer());
 }

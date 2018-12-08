@@ -42,67 +42,67 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BasicSocketGTest,TesDefaultConstructor) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TesDefaultConstructor) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestDefaultConstructor());
 }
 
-TEST(BasicSocketGTest,TestSetBlocking_block) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetBlocking_block) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking(true));
 }
 
-TEST(BasicSocketGTest,TestSetBlocking_nonblock) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetBlocking_nonblock) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking(false));
 }
 
-TEST(BasicSocketGTest,TestSetBlocking_false_block) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetBlocking_false_block) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking_false(true));
 }
 
-TEST(BasicSocketGTest,TestSetBlocking_false_nonblock) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetBlocking_false_nonblock) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking_false(false));
 }
 
-TEST(BasicSocketGTest,TestClose) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestClose) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestClose());
 }
 
-TEST(BasicSocketGTest,TestClose_false) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestClose_false) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestClose_false());
 }
 
-TEST(BasicSocketGTest,TestGetSource) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestGetSource) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestGetSource());
 }
 
-TEST(BasicSocketGTest,TestGetDestination) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestGetDestination) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestGetDestination());
 }
 
-TEST(BasicSocketGTest,TestSetSource) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetSource) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestGetSource());
 }
 
-TEST(BasicSocketGTest,TestSetDestination) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestSetDestination) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestGetDestination());
 }
 
-TEST(BasicSocketGTest,TestIsBlocking_block) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestIsBlocking_block) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestIsBlocking(true));
 }
 
-TEST(BasicSocketGTest,TestIsBlocking_nonblock) {
+TEST(FileSystem_L1Portability_BasicSocketGTest,TestIsBlocking_nonblock) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestIsBlocking(false));
 }
