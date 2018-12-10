@@ -65,6 +65,11 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                 ok = !at.IsVoid();
                 if (ok) {
                     uint32 dims = at.GetNumberOfDimensions();
+                    if (at.GetTypeDescriptor() == Character8Bit) {
+                        if (dims > 0u) {
+                            dims -= 1u;
+                        }
+                    }
                     if (dims == 2u) {
                         uint32 numberOfColumns = at.GetNumberOfElements(0u);
                         uint32 numberOfRows = at.GetNumberOfElements(1u);
@@ -87,8 +92,7 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                             for (uint32 j = 0u; j < numberOfColumns && ok; j++) {
                                 ok = (valueInDb1[i][j] == valueInDb2[i][j]);
                                 if (!ok) {
-                                    printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName,
-                                           valueInDb1[i][j].Buffer(), valueInDb2[i][j].Buffer());
+                                    printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i][j].Buffer(), valueInDb2[i][j].Buffer());
                                 }
                             }
                         }
@@ -114,8 +118,7 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                         for (uint32 i = 0u; i < numberOfElements && ok; i++) {
                             ok = (valueInDb1[i] == valueInDb2[i]);
                             if (!ok) {
-                                printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i].Buffer(),
-                                       valueInDb2[i].Buffer());
+                                printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1[i].Buffer(), valueInDb2[i].Buffer());
                             }
                         }
                         delete[] valueInDb1;
@@ -137,8 +140,7 @@ static bool CompareConfigurationDatabases(ConfigurationDatabase &db1, Configurat
                             ok = (valueInDb1 == valueInDb2);
                         }
                         if (!ok) {
-                            printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1.Buffer(),
-                                   valueInDb2.Buffer());
+                            printf("Found mismatch @ key [%s.%s] [%s]vs[%s]\n", currentNodeName, childName, valueInDb1.Buffer(), valueInDb2.Buffer());
                         }
                     }
                 }
@@ -168,9 +170,8 @@ enum RealTimeApplicationConfigurationBuilderFunctions {
     ConfigureInitialisation = 17
 };
 
-static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, ConfigurationDatabase &expectedFunctionsDatabase,
-                         ConfigurationDatabase &expectedDataDatabase, RealTimeApplicationConfigurationBuilderFunctions functionToCall,
-                         bool expectCallFailure, bool fromConfiguration) {
+static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, ConfigurationDatabase &expectedFunctionsDatabase, ConfigurationDatabase &expectedDataDatabase,
+                         RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure, bool fromConfiguration) {
 
     bool ret = false;
     if (functionToCall >= ConfigureInitialisation) {
@@ -345,10 +346,8 @@ static bool TestLauncher(RealTimeApplicationConfigurationBuilder &rtAppBuilder, 
     return ret;
 }
 
-static bool TestBuilder(const char8 * const config, const char8 * const appName, const char8 * const ddbName,
-                        const char8 * const expectedFunctionsConfig, const char8 * const expectedDataConfig,
-                        RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure = false,
-                        bool fromConfiguration = false) {
+static bool TestBuilder(const char8 * const config, const char8 * const appName, const char8 * const ddbName, const char8 * const expectedFunctionsConfig, const char8 * const expectedDataConfig,
+                        RealTimeApplicationConfigurationBuilderFunctions functionToCall, bool expectCallFailure = false, bool fromConfiguration = false) {
 
     ConfigurationDatabase cdb;
     StreamString configStream = config;
@@ -385,8 +384,7 @@ static bool TestBuilder(const char8 * const config, const char8 * const appName,
     if (fromConfiguration) {
         ret = cdb.MoveAbsolute(appName);
         RealTimeApplicationConfigurationBuilder rtAppBuilder(cdb, ddbName);
-        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure,
-                           fromConfiguration);
+        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure, fromConfiguration);
     }
     else {
         ObjectRegistryDatabase::Instance()->Purge();
@@ -399,8 +397,7 @@ static bool TestBuilder(const char8 * const config, const char8 * const appName,
             return false;
         }
         RealTimeApplicationConfigurationBuilder rtAppBuilder(*application.operator->(), ddbName);
-        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure,
-                           fromConfiguration);
+        ret = TestLauncher(rtAppBuilder, expectedFunctionsDatabase, expectedDataDatabase, functionToCall, expectCallFailure, fromConfiguration);
     }
 
     return ret;
@@ -589,8 +586,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase1
             "}";
 
     if (fromConfig) {
-        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false,
-                           true);
+        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false, true);
     }
     else {
         return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase);
@@ -769,8 +765,7 @@ bool RealTimeApplicationConfigurationBuilderTest::TestInitialiseSignalsDatabase2
             "}";
 
     if (fromConfig) {
-        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false,
-                           true);
+        return TestBuilder(config, "$Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase, false, true);
     }
     else {
         return TestBuilder(config, "Application1", "DDB1", expectedFunctionsConfig, expectedDataConfig, InitialiseSignalsDatabase);
@@ -9175,34 +9170,34 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "                    Alias = \"ADCs1234[0].a2\""
             "                }"
             "                \"3\" = {"
-            "                    QualifiedName = \"ADCs.Signal3[0].a1.b1\""
+            "                    QualifiedName = \"ADCs.Signal3[1].a1.b1\""
             "                    Type = \"int32\""
             "                    NumberOfDimensions = 0"
             "                    NumberOfElements = 1"
             "                    FullType = \"TestStructA.TestStructB.int32\""
             "                    MemberSize = 4"
             "                    DataSource = \"Drv1\""
-            "                    Alias = \"ADCs1234[0].a1.b1\""
+            "                    Alias = \"ADCs1234[1].a1.b1\""
             "                }"
             "                \"4\" = {"
-            "                    QualifiedName = \"ADCs.Signal3[0].a1.b2\""
+            "                    QualifiedName = \"ADCs.Signal3[1].a1.b2\""
             "                    Type = \"int32\""
             "                    NumberOfDimensions = 0"
             "                    NumberOfElements = 1"
             "                    FullType = \"TestStructA.TestStructB.int32\""
             "                    MemberSize = 4"
             "                    DataSource = \"Drv1\""
-            "                    Alias = \"ADCs1234[0].a1.b2\""
+            "                    Alias = \"ADCs1234[1].a1.b2\""
             "                }"
             "                \"5\" = {"
-            "                    QualifiedName = \"ADCs.Signal3[0].a2\""
+            "                    QualifiedName = \"ADCs.Signal3[1].a2\""
             "                    Type = \"float32\""
             "                    NumberOfDimensions = 0"
             "                    NumberOfElements = 1"
             "                    FullType = \"TestStructA.float32\""
             "                    MemberSize = 4"
             "                    DataSource = \"Drv1\""
-            "                    Alias = \"ADCs1234[0].a2\""
+            "                    Alias = \"ADCs1234[1].a2\""
             "                }"
             "            }"
             "            OutputSignals = {"
@@ -9278,6 +9273,30 @@ bool RealTimeApplicationConfigurationBuilderTest::TestResolveDataSources_StructM
             "            }"
             "            \"5\" = {"
             "                QualifiedName = \"ADCs1234[0].a2\""
+            "                Type = \"float32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                MemberSize = 4"
+            "                FullType = \"TestStructA.float32\""
+            "            }"
+            "            \"6\" = {"
+            "                QualifiedName = \"ADCs1234[1].a1.b1\""
+            "                Type = \"int32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                MemberSize = 4"
+            "                FullType = \"TestStructA.TestStructB.int32\""
+            "            }"
+            "            \"7\" = {"
+            "                QualifiedName = \"ADCs1234[1].a1.b2\""
+            "                Type = \"int32\""
+            "                NumberOfDimensions = 0"
+            "                NumberOfElements = 1"
+            "                MemberSize = 4"
+            "                FullType = \"TestStructA.TestStructB.int32\""
+            "            }"
+            "            \"8\" = {"
+            "                QualifiedName = \"ADCs1234[1].a2\""
             "                Type = \"float32\""
             "                NumberOfDimensions = 0"
             "                NumberOfElements = 1"

@@ -44,53 +44,28 @@ namespace MARTe {
 /*lint -e526 . Justification: The following functions are not defined here. */
 
 // These functions are implemented in IOBufferIntegerPrint.cpp
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint8 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, uint8 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int8 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, int8 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint16 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, uint16 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int16 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, int16 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint32 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, uint32 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int32 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, int32 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            uint64 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, uint64 number, const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &ioBuffer,
-                            int64 number,
-                            const FormatDescriptor &format);
+extern bool IntegerToStream(IOBuffer &ioBuffer, int64 number, const FormatDescriptor &format);
 
-extern bool BitSetToStream(IOBuffer &ioBuffer,
-                           uint32 * const numberAddress,
-                           const uint8 numberBitShift,
-                           const uint8 numberBitSize,
-                           const bool numberIsSigned,
-                           const FormatDescriptor &format);
+extern bool BitSetToStream(IOBuffer &ioBuffer, uint32 * const numberAddress, const uint8 numberBitShift, const uint8 numberBitSize, const bool numberIsSigned, const FormatDescriptor &format);
 
 // These functions are implemented in IOBufferFloatPrint.cpp
-extern bool FloatToStream(IOBuffer &buffer,
-                          float32 number,
-                          const FormatDescriptor &format);
+extern bool FloatToStream(IOBuffer &buffer, float32 number, const FormatDescriptor &format);
 
-extern bool FloatToStream(IOBuffer &buffer,
-                          float64 number,
-                          const FormatDescriptor &format);
+extern bool FloatToStream(IOBuffer &buffer, float64 number, const FormatDescriptor &format);
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -103,10 +78,7 @@ extern bool FloatToStream(IOBuffer &buffer,
  * @param[in] fd specifies the desired format for the string.
  * @return true if the string is printed correctly.
  */
-static bool PrintCCString(IOBuffer & iobuff,
-                          const char8 * const string,
-                          const FormatDescriptor &fd,
-                          bool addQuotesOnString = false) {
+static bool PrintCCString(IOBuffer & iobuff, const char8 * const string, const FormatDescriptor &fd, bool addQuotesOnString = false) {
 
     bool ret = (string != NULL);
 
@@ -203,10 +175,7 @@ static bool PrintCCString(IOBuffer & iobuff,
  * @param[in] fd specifies the desired printing format.
  * @return false in case of errors in read and write operations.
  */
-static bool PrintStream(IOBuffer & iobuff,
-                        StreamI &stream,
-                        const FormatDescriptor &fd,
-                        bool addQuotesOnString = false) {
+static bool PrintStream(IOBuffer & iobuff, StreamI &stream, const FormatDescriptor &fd, bool addQuotesOnString = false) {
 
     bool ret = true;
     //print NULL pointer if the input stream is null.
@@ -314,8 +283,7 @@ static bool PrintStream(IOBuffer & iobuff,
  * @pre
  *   The object represented by \a parIn must be introspectable
  */
-static bool PrintObjectIntrospection(IOBuffer & iobuff,
-                                     const AnyType & parIn) {
+static bool PrintObjectIntrospection(IOBuffer & iobuff, const AnyType & parIn) {
 
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
     const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Peek(descriptor.structuredDataIdCode);
@@ -328,7 +296,7 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
         // print the class name
         if (properties != NULL) {
             data = properties->GetName();
-            AnyType printClassName[] = {data, "= {", voidAnyType};
+            AnyType printClassName[] = { data, "= {", voidAnyType };
             if (iobuff.PrintFormatted("\r\n%s %s\r\n", &printClassName[0])) {
                 const Introspection *introspection = item->GetIntrospection();
                 if (introspection != NULL) {
@@ -337,33 +305,33 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
                     for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
                         IntrospectionEntry memberIntrospection = (*introspection)[i];
                         data = memberIntrospection.GetMemberName();
-                        AnyType printMemberName[] = {data, "= {", voidAnyType};
+                        AnyType printMemberName[] = { data, "= {", voidAnyType };
                         if (!iobuff.PrintFormatted("    %s %s\r\n", &printMemberName[0])) {
                             ret = false;
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberTypeName();
-                            AnyType printType[] = {"type =", data, voidAnyType};
+                            AnyType printType[] = { "type =", data, voidAnyType };
                             if (!iobuff.PrintFormatted("        %s %s\r\n", &printType[0])) {
                                 ret = false;
                             }
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberModifiers();
-                            AnyType printModifiers[] = {"modifiers =", data, voidAnyType};
+                            AnyType printModifiers[] = { "modifiers =", data, voidAnyType };
                             if (!iobuff.PrintFormatted("        %s \"%s\"\r\n", &printModifiers[0])) {
                                 ret = false;
                             }
                         }
                         if (ret) {
                             data = memberIntrospection.GetMemberAttributes();
-                            AnyType printAttributes[] = {"attributes =", data, voidAnyType};
+                            AnyType printAttributes[] = { "attributes =", data, voidAnyType };
                             if (!iobuff.PrintFormatted("        %s \"%s\"\r\n    }\r\n", &printAttributes[0])) {
                                 ret = false;
                             }
                         }
                     }
-                    AnyType printClose[] = {"}", voidAnyType};
+                    AnyType printClose[] = { "}", voidAnyType };
                     if (!iobuff.PrintFormatted("%s\r\n", &printClose[0])) {
                         ret = false;
                     }
@@ -388,9 +356,7 @@ static bool PrintObjectIntrospection(IOBuffer & iobuff,
  * @return false in case of error in the StructuredDataI functions, true otherwise.
  */
 
-static bool PrintStructuredDataInterface(IOBuffer &iobuff,
-                                         StructuredDataI * const structuredData,
-                                         uint32 nodeLevel = 0u) {
+static bool PrintStructuredDataInterface(IOBuffer &iobuff, StructuredDataI * const structuredData, uint32 nodeLevel = 0u) {
     bool ret = true;
     uint32 numberOfChildren = structuredData->GetNumberOfChildren();
     for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
@@ -403,10 +369,10 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                 AnyType noneType = voidAnyType;
                 ret = (iobuff.PrintFormatted("    ", &noneType));
             }
-            AnyType printLeftSide[] = {childName, "= ", voidAnyType};
+            AnyType printLeftSide[] = { childName, "= ", voidAnyType };
             ret = (iobuff.PrintFormatted("%s %s", &printLeftSide[0]));
             if (ret) {
-                AnyType printLeaf[] = {toPrint, voidAnyType};
+                AnyType printLeaf[] = { toPrint, voidAnyType };
                 ret = (iobuff.PrintFormatted("%#!\r\n", &printLeaf[0]));
             }
         }
@@ -418,7 +384,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                     AnyType noneType = voidAnyType;
                     ret = (iobuff.PrintFormatted("    ", &noneType));
                 }
-                AnyType printLeftSide[] = {childName, "= {", voidAnyType};
+                AnyType printLeftSide[] = { childName, "= {", voidAnyType };
                 ret = (iobuff.PrintFormatted("%s %s\r\n", &printLeftSide[0]));
                 if (ret) {
                     nodeLevel++;
@@ -433,7 +399,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
                         AnyType noneType = voidAnyType;
                         ret = (iobuff.PrintFormatted("    ", &noneType));
                     }
-                    AnyType printClose[] = {"}", voidAnyType};
+                    AnyType printClose[] = { "}", voidAnyType };
                     ret = (iobuff.PrintFormatted("%s\r\n", &printClose[0]));
                 }
             }
@@ -451,8 +417,7 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
  * @pre
  *   The object represented by parIn must be introspectable.
  */
-static bool PrintObject(IOBuffer & iobuff,
-                        const AnyType & parIn) {
+static bool PrintObject(IOBuffer & iobuff, const AnyType & parIn) {
 
     char8* dataPointer = reinterpret_cast<char8 *>(parIn.GetDataPointer());
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
@@ -466,7 +431,7 @@ static bool PrintObject(IOBuffer & iobuff,
         // print the class name
         if (properties != NULL) {
             data = properties->GetName();
-            AnyType printClassName[] = {"Class =", data, voidAnyType};
+            AnyType printClassName[] = { "Class =", data, voidAnyType };
             if (iobuff.PrintFormatted("\r\n%s %s\r\n", &printClassName[0])) {
                 const Introspection *introspection = item->GetIntrospection();
                 if (introspection != NULL) {
@@ -477,7 +442,7 @@ static bool PrintObject(IOBuffer & iobuff,
                         // the member name
                         data = memberIntrospection.GetMemberName();
 
-                        AnyType printMemberName[] = {data, "= ", voidAnyType};
+                        AnyType printMemberName[] = { data, "= ", voidAnyType };
                         if (!iobuff.PrintFormatted("%s %s", &printMemberName[0])) {
                             ret = false;
                         }
@@ -486,7 +451,7 @@ static bool PrintObject(IOBuffer & iobuff,
                             TypeDescriptor memberDescriptor = memberIntrospection.GetMemberTypeDescriptor();
                             bool isMemberStructured = memberDescriptor.isStructuredData;
                             if (isMemberStructured) {
-                                AnyType printOpen[] = {"{", voidAnyType};
+                                AnyType printOpen[] = { "{", voidAnyType };
                                 if (!iobuff.PrintFormatted("%s\r\n", &printOpen[0])) {
                                     ret = false;
                                 }
@@ -513,7 +478,7 @@ static bool PrintObject(IOBuffer & iobuff,
                                 ret = iobuff.PrintFormatted("%!\r\n", &member);
                             }
                             if (isMemberStructured) {
-                                AnyType printClose[] = {"}", voidAnyType};
+                                AnyType printClose[] = { "}", voidAnyType };
                                 if (!iobuff.PrintFormatted("%s\r\n", &printClose[0])) {
                                     ret = false;
                                 }
@@ -542,9 +507,7 @@ static bool PrintObject(IOBuffer & iobuff,
  * @param[in] parIn is the generic object to be printed.
  * @param[in] fd specifies the desired printing format.
  */
-static bool PrintToStreamScalar(IOBuffer & iobuff,
-                                const AnyType & parIn,
-                                const FormatDescriptor &fd) {
+static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const FormatDescriptor &fd) {
 
     bool ret = true;
     // void anytype
@@ -584,33 +547,33 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     //native unsigned integer types.
                     if (par.GetBitAddress() == 0u) {
                         switch ((par.GetTypeDescriptor()).numberOfBits) {
-                            case 8u: {
-                                uint8 *data = static_cast<uint8 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 8u: {
+                            uint8 *data = static_cast<uint8 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 16u: {
-                                uint16 *data = static_cast<uint16 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 16u: {
+                            uint16 *data = static_cast<uint16 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 32u: {
-                                uint32 *data = static_cast<uint32 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 32u: {
+                            uint32 *data = static_cast<uint32 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 64u: {
-                                uint64 *data = static_cast<uint64 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 64u: {
+                            uint64 *data = static_cast<uint64 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            default: {
-                                // use native standard integer
-                                uint32 *number = static_cast<uint32 *>(dataPointer);
-                                // all the remaining cases here
-                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
-                            }
+                        default: {
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *>(dataPointer);
+                            // all the remaining cases here
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                        }
                         }
                     }
                     else {
@@ -623,7 +586,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 }
             }
 
-            if (((par.GetTypeDescriptor()).type) == SignedInteger) {
+            else if (((par.GetTypeDescriptor()).type) == SignedInteger) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Signed Integer";
                     AnyType info = infoName;
@@ -640,33 +603,33 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     //native signed integer types.
                     if (par.GetBitAddress() == 0u) {
                         switch ((par.GetTypeDescriptor()).numberOfBits) {
-                            case 8u: {
-                                int8 *data = static_cast<int8 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 8u: {
+                            int8 *data = static_cast<int8 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 16u: {
-                                int16 *data = static_cast<int16 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 16u: {
+                            int16 *data = static_cast<int16 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 32u: {
-                                int32 *data = static_cast<int32 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 32u: {
+                            int32 *data = static_cast<int32 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            case 64u: {
-                                int64 *data = static_cast<int64 *>(dataPointer);
-                                ret = IntegerToStream(iobuff, *data, fd);
-                            }
+                        case 64u: {
+                            int64 *data = static_cast<int64 *>(dataPointer);
+                            ret = IntegerToStream(iobuff, *data, fd);
+                        }
                             break;
-                            default: {
-                                // use native standard integer
-                                uint32 *number = static_cast<uint32 *>(dataPointer);
-                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                                // all the remaining cases here
-                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
-                            }
+                        default: {
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *>(dataPointer);
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            // all the remaining cases here
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
+                        }
                         }
                     }
                     else {
@@ -678,7 +641,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     }
                 }
             }
-            if (((par.GetTypeDescriptor()).type) == Float) {
+            else if (((par.GetTypeDescriptor()).type) == Float) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Float";
                     AnyType info = infoName;
@@ -694,31 +657,31 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                     }
                     //native float32 types. Float 128 bit is not supported.
                     switch ((par.GetTypeDescriptor()).numberOfBits) {
-                        case 32u: {
-                            float32 *data = static_cast<float32 *>(dataPointer);
-                            ret = FloatToStream(iobuff, *data, fd);
-                        }
+                    case 32u: {
+                        float32 *data = static_cast<float32 *>(dataPointer);
+                        ret = FloatToStream(iobuff, *data, fd);
+                    }
                         break;
-                        case 64u: {
-                            float64 *data = static_cast<float64 *>(dataPointer);
-                            ret = FloatToStream(iobuff, *data, fd);
-                        }
+                    case 64u: {
+                        float64 *data = static_cast<float64 *>(dataPointer);
+                        ret = FloatToStream(iobuff, *data, fd);
+                    }
                         break;
-                        case 128u: {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::UnsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
-                            ret = false;
-                        }
+                    case 128u: {
+                        REPORT_ERROR_STATIC_0(ErrorManagement::UnsupportedFeature, "IOBuffer: Unsupported 128 bit floats");
+                        ret = false;
+                    }
                         break;
-                        default: {
-                            //REPORT_ERROR_STATIC_0(ParametersError,"non standard float32 size")
-                            ret = false;
-                        }
+                    default: {
+                        //REPORT_ERROR_STATIC_0(ParametersError,"non standard float32 size")
+                        ret = false;
+                    }
                     }
                 }
             }
 
             //pointer type.
-            if (((par.GetTypeDescriptor()).type) == Pointer) {
+            else if (((par.GetTypeDescriptor()).type) == Pointer) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Pointer";
                     AnyType info = infoName;
@@ -743,7 +706,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
             //const char8* string type.
             //if in the format descriptor is specified the hex notation (%p or %x)
             //print the value of the pointer.
-            if (((par.GetTypeDescriptor()).type) == BT_CCString) {
+            else if (((par.GetTypeDescriptor()).type) == BT_CCString) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Char String";
                     AnyType info = infoName;
@@ -771,7 +734,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 }
             }
 
-            if (((par.GetTypeDescriptor()).type) == CArray) {
+            else if (((par.GetTypeDescriptor()).type) == CArray) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Char Array";
                     AnyType info = infoName;
@@ -791,8 +754,8 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
                 }
             }
             //general stream type.
-            bool isStream=(((par.GetTypeDescriptor()).type) == Stream);
-            bool isSString=(((par.GetTypeDescriptor()).type) == SString);
+            bool isStream = (((par.GetTypeDescriptor()).type) == Stream);
+            bool isSString = (((par.GetTypeDescriptor()).type) == SString);
             if ((isStream) || (isSString)) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Stream";
@@ -834,9 +797,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff,
  * @param[in] fd specifies the print format.
  * @return true if the print of all elements succeeds, false otherwise.
  */
-static bool PrintToStreamVector(IOBuffer & iobuff,
-                                const AnyType & parIn,
-                                const FormatDescriptor &fd) {
+static bool PrintToStreamVector(IOBuffer & iobuff, const AnyType & parIn, const FormatDescriptor &fd) {
 
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
     char8* dataPointer = static_cast<char8*>(parIn.GetDataPointer());
@@ -845,6 +806,11 @@ static bool PrintToStreamVector(IOBuffer & iobuff,
     FormatDescriptor newFD;
     bool ret = PrintCCString(iobuff, "{ ", newFD);
 
+    //Treat the special char8[] where the number of elements for an array is @ char8[][here] and the elementSize @ char8[here][]
+    if (descriptor == Character8Bit) {
+        numberOfElements = parIn.GetNumberOfElements(1u);
+        elementSize *= parIn.GetNumberOfElements(0u);
+    }
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         uint32 index = i * elementSize;
         char8* scalarPointer = &dataPointer[index];
@@ -887,15 +853,19 @@ static bool PrintToStreamVector(IOBuffer & iobuff,
  * @param[in] fd specifies the print format.
  * @return true if the print of all elements succeeds, false otherwise.
  */
-static bool PrintToStreamMatrix(IOBuffer & iobuff,
-                                const AnyType & parIn,
-                                const FormatDescriptor &fd) {
+static bool PrintToStreamMatrix(IOBuffer & iobuff, const AnyType & parIn, const FormatDescriptor &fd) {
 
     TypeDescriptor descriptor = parIn.GetTypeDescriptor();
     char8* dataPointer = static_cast<char8*>(parIn.GetDataPointer());
     uint32 numberOfRows = parIn.GetNumberOfElements(1u);
     uint32 numberOfColumns = parIn.GetNumberOfElements(0u);
     uint32 elementSize = parIn.GetByteSize();
+    //Treat the special char8[][] where the number of rows for a matrix is @ char8[][here][], the number of columns @ char8[here][][] and the elementSize @ char8[][][here]
+    if (descriptor == Character8Bit) {
+        elementSize *= parIn.GetNumberOfElements(2u);
+        numberOfRows = parIn.GetNumberOfElements(1u);
+        numberOfColumns = parIn.GetNumberOfElements(0u);
+    }
     bool isStaticDeclared = parIn.IsStaticDeclared();
     FormatDescriptor newFD;
     bool ret = PrintCCString(iobuff, "{ ", newFD);
@@ -912,8 +882,15 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff,
             }
             if (vectorPointer != NULL) {
                 AnyType vector(descriptor, parIn.GetBitAddress(), vectorPointer);
-                vector.SetNumberOfDimensions(1u);
-                vector.SetNumberOfElements(0u, numberOfColumns);
+                if (descriptor == Character8Bit) {
+                    vector.SetNumberOfDimensions(2u);
+                    vector.SetNumberOfElements(0u, elementSize);
+                    vector.SetNumberOfElements(1u, numberOfColumns);
+                }
+                else {
+                    vector.SetNumberOfDimensions(1u);
+                    vector.SetNumberOfElements(0u, numberOfColumns);
+                }
                 vector.SetStaticDeclared(parIn.IsStaticDeclared());
                 ret = PrintToStreamVector(iobuff, vector, fd);
             }
@@ -930,21 +907,25 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff,
  * @param[in] parIn is the generic object to be printed.
  * @param[in] fd specifies the desired printing format.
  */
-static bool PrintToStream(IOBuffer & iobuff,
-                          const AnyType & parIn,
-                          const FormatDescriptor &fd) {
+static bool PrintToStream(IOBuffer & iobuff, const AnyType & parIn, const FormatDescriptor &fd) {
 
     bool ret = false;
     AnyType par = parIn;
     void* dataPointer = par.GetDataPointer();
+    //Special case of CArray
+    uint8 numberOfDimensions = parIn.GetNumberOfDimensions();
+    if (parIn.GetTypeDescriptor() == Character8Bit) {
+        numberOfDimensions -= 1u;
+    }
+
     if (dataPointer != NULL) {
-        if (parIn.GetNumberOfDimensions() == 2u) {
+        if (numberOfDimensions == 2u) {
             ret = PrintToStreamMatrix(iobuff, parIn, fd);
         }
-        else if (parIn.GetNumberOfDimensions() == 1u) {
+        else if (numberOfDimensions == 1u) {
             ret = PrintToStreamVector(iobuff, parIn, fd);
         }
-        else if (parIn.GetNumberOfDimensions() == 0u) {
+        else if (numberOfDimensions == 0u) {
             ret = PrintToStreamScalar(iobuff, parIn, fd);
         }
         else {
@@ -957,11 +938,7 @@ static bool PrintToStream(IOBuffer & iobuff,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool IOBuffer::GetToken(char8 * const outputBuffer,
-                        const char8 * const terminator,
-                        uint32 outputBufferSize,
-                        char8 &saveTerminator,
-                        const char8 * skipCharacters) {
+bool IOBuffer::GetToken(char8 * const outputBuffer, const char8 * const terminator, uint32 outputBufferSize, char8 &saveTerminator, const char8 * skipCharacters) {
 
     bool ret = true;
     bool quit = false;
@@ -1029,10 +1006,7 @@ bool IOBuffer::GetToken(char8 * const outputBuffer,
     return ret;
 }
 
-bool IOBuffer::GetToken(IOBuffer & outputBuffer,
-                        const char8 * const terminator,
-                        char8 &saveTerminator,
-                        const char8 * skipCharacters) {
+bool IOBuffer::GetToken(IOBuffer & outputBuffer, const char8 * const terminator, char8 &saveTerminator, const char8 * skipCharacters) {
 
     if (skipCharacters == NULL) {
         skipCharacters = terminator;
@@ -1084,8 +1058,7 @@ bool IOBuffer::GetToken(IOBuffer & outputBuffer,
     return ret;
 }
 
-bool IOBuffer::SkipTokens(uint32 count,
-                          const char8 * const terminator) {
+bool IOBuffer::SkipTokens(uint32 count, const char8 * const terminator) {
 
     bool ret = true;
     uint32 tokenSize = 0u;
@@ -1114,8 +1087,7 @@ bool IOBuffer::SkipTokens(uint32 count,
     return ret;
 }
 
-bool IOBuffer::PrintFormatted(const char8 * format,
-                              const AnyType pars[]) {
+bool IOBuffer::PrintFormatted(const char8 * format, const AnyType pars[]) {
 
     bool ret = true;
     bool quit = false;
@@ -1239,8 +1211,7 @@ IOBuffer::~IOBuffer() {
     positionPtr = static_cast<char8 *>(NULL);
 }
 
-bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
-                                   const uint32 reservedSpaceAtEnd) {
+bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize, const uint32 reservedSpaceAtEnd) {
     // save position
     uint32 position = Position();
     uint32 usedSize = UsedSize();
@@ -1288,18 +1259,14 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
     return ret;
 }
 
-void IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
-                                         const uint32 bufferSize,
-                                         const uint32 reservedSpaceAtEnd) {
+void IOBuffer::SetBufferReferencedMemory(char8 * const buffer, const uint32 bufferSize, const uint32 reservedSpaceAtEnd) {
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = BufferReference();
     maxUsableAmount = GetBufferSize() - reservedSpaceAtEnd;
     Empty();
 }
 
-void IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
-                                                 const uint32 bufferSize,
-                                                 const uint32 reservedSpaceAtEnd) {
+void IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer, const uint32 bufferSize, const uint32 reservedSpaceAtEnd) {
 
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = const_cast<char8*>(Buffer());
@@ -1324,8 +1291,7 @@ bool IOBuffer::Resync() {
     return false;
 }
 
-bool IOBuffer::Write(const char8 * const buffer,
-                     uint32 &size) {
+bool IOBuffer::Write(const char8 * const buffer, uint32 &size) {
     bool retval = internalBuffer.CanWrite();
     if (retval) {
 
@@ -1357,8 +1323,7 @@ bool IOBuffer::Write(const char8 * const buffer,
     return retval;
 }
 
-bool IOBuffer::WriteAll(const char8 * buffer,
-                        const uint32 &size) {
+bool IOBuffer::WriteAll(const char8 * buffer, const uint32 &size) {
 
     bool retval = true;
     //size to be copied.
@@ -1391,8 +1356,7 @@ bool IOBuffer::WriteAll(const char8 * buffer,
     return retval;
 }
 
-bool IOBuffer::Read(char8 * const buffer,
-                    uint32 &size) {
+bool IOBuffer::Read(char8 * const buffer, uint32 &size) {
 
     bool retval = true;
     uint32 maxSize = UsedAmountLeft();
