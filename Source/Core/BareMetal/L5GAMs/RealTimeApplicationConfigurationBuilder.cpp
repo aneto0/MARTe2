@@ -737,9 +737,9 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 }
                 StreamString fsignalName = "";
                 StreamString fAlias = "";
-                uint32 nr = 0u;
-                uint32 nc = 0u;
-                uint32 nz = 0u;
+                uint32 nr;
+                uint32 nc;
+                uint32 nz;
                 uint32 nOfRows = numberOfElements;
                 uint32 nOfCols = 1u;            //TODO change when the NumberOfElements will be read as an array...
                 uint32 nOfZ = 1u; //TODO change when the NumberOfElements will be read as an array...
@@ -752,6 +752,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                 /*if (nOfZ == 0u) { //TODO enable when the NumberOfElements will be read as an array...
                  nOfZ = 1u;
                  }*/
+                /*lint -e{850} nr, nc and nz are not modified by the Print*/
                 for (nr = 0u; (nr < nOfRows) && (ret); nr++) {
                     for (nc = 0u; (nc < nOfCols) && (ret); nc++) {
                         for (nz = 0u; (nz < nOfZ) && (ret); nz++) {
@@ -782,7 +783,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                                     (void) fAlias.Printf("%s[%d][%d][%d]", alias.Buffer(), nr, nc, nz);
                                 }
                             }
-
+                            else {//NOOP
+                            }
                             AnyType ranges = signalDatabase.GetType("Ranges");
                             AnyType samples = signalDatabase.GetType("Samples");
                             AnyType frequency = signalDatabase.GetType("Frequency");
@@ -3739,9 +3741,9 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 }
                 StreamString tempName = fullSignalName;
                 StreamString tempAlias = fullAliasName;
-                uint32 nr = 0u;
-                uint32 nc = 0u;
-                uint32 nz = 0u;
+                uint32 nr;
+                uint32 nc;
+                uint32 nz;
                 uint32 nOfRows = entry.GetNumberOfElements(0u);
                 uint32 nOfCols = entry.GetNumberOfElements(1u);
                 uint32 nOfZ = entry.GetNumberOfElements(2u);
@@ -3754,6 +3756,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                 if (nOfZ == 0u) {
                     nOfZ = 1u;
                 }
+                /*lint -e{850} nr, nc and nz are not modified by the Print*/
                 for (nr = 0u; (nr < nOfRows) && (ret); nr++) {
                     for (nc = 0u; (nc < nOfCols) && (ret); nc++) {
                         for (nz = 0u; (nz < nOfZ) && (ret); nz++) {
@@ -3772,6 +3775,8 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                             else if (nOfDimensions == 3u) {
                                 (void) fullSignalName.Printf("%s[%d][%d][%d]", tempName.Buffer(), nr, nc, nz);
                             }
+                            else {//NOOP
+                            }
                             if (tempAlias.Size() > 0u) {
                                 fullAliasName = "";
                                 if (tempAlias.Size() > 0u) {
@@ -3788,6 +3793,8 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                                     }
                                     else if (nOfDimensions == 3u) {
                                         (void) fullAliasName.Printf("%s[%d][%d][%d]", tempAlias.Buffer(), nr, nc, nz);
+                                    }
+                                    else {//NOOP
                                     }
                                 }
                             }

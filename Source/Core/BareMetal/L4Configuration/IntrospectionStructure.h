@@ -95,6 +95,7 @@ private:
     /**
      * Helper class which wraps the structure declared @ Initialise.
      */
+    /*lint -e{1790} ClassRegistryItem is not a true virtual parent. This is just a private wrapper.*/
     class ClassRegistryItemConfigurationStructureLoader : public ClassRegistryItem {
     public:
         /**
@@ -104,7 +105,7 @@ private:
         /**
          * @brief See ClassRegistryItem::~ClassRegistryItem()
          */
-        virtual ~ClassRegistryItemConfigurationStructureLoader();
+        ~ClassRegistryItemConfigurationStructureLoader();
         /**
          * @briefs Updates the class properties.
          */
@@ -157,12 +158,14 @@ private:
          * Member modifier (see IntrospectionEntry.h)
          */
         StreamString memberModifier;
+        /*lint -e{9150} the struct MemberInfo is effectively a POD*/
     };
 
     /**
      * Information about the members
      */
     MemberInfo **memberInfo;
+/*lint -e{1712} default constructor not required ClassRegistryItemConfigurationStructureLoaderas as it is just a wrapper*/
 };
 }
 

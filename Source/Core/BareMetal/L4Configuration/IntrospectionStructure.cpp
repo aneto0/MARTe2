@@ -39,8 +39,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(
-        StreamString typeNameIn, uint32 totalSizeIn) :
+IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::ClassRegistryItemConfigurationStructureLoader(StreamString typeNameIn, const uint32 totalSizeIn) :
         ClassRegistryItem(cp) {
     typeName = typeNameIn.Buffer();
     totalSize = totalSizeIn;
@@ -51,7 +50,7 @@ IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::~ClassReg
 
 }
 
-void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Update(StreamString typeNameIn, uint32 totalSizeIn) {
+void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Update(StreamString typeNameIn, const uint32 totalSizeIn) {
     typeName = typeNameIn.Buffer();
     totalSize = totalSizeIn;
     cp.Reset(typeName.Buffer(), typeName.Buffer(), "", totalSize);
@@ -63,13 +62,15 @@ void IntrospectionStructure::ClassRegistryItemConfigurationStructureLoader::Upda
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-IntrospectionStructure::IntrospectionStructure() {
+IntrospectionStructure::IntrospectionStructure() :
+        Object() {
     entries = NULL_PTR(IntrospectionEntry **);
     introMembers = NULL_PTR(Introspection *);
     numberOfMembers = 0u;
     memberInfo = NULL_PTR(MemberInfo **);
 }
 
+/*lint -e{1551} should not throw exception as the memory is checked. By the design memory if freed in the destructor.*/
 IntrospectionStructure::~IntrospectionStructure() {
     if (entries != NULL_PTR(IntrospectionEntry **)) {
         uint32 n;
@@ -98,13 +99,12 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
         uint32 nOfChildren = data.GetNumberOfChildren();
         for (n = 0u; (n < nOfChildren) && (ok); n++) {
             StreamString memberName = data.GetChildName(n);
+            /*lint -e {613} numberOfElements is always allocated if ok = true*/
             if (data.MoveRelative(memberName.Buffer())) {
                 StreamString typeNameStr;
-                if (ok) {
-                    ok = data.Read("Type", typeNameStr);
-                    if (!ok) {
-                        REPORT_ERROR(ErrorManagement::ParametersError, "Member %s has no Type defined", memberName.Buffer());
-                    }
+                ok = data.Read("Type", typeNameStr);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::ParametersError, "Member %s has no Type defined", memberName.Buffer());
                 }
                 uint32 numberOfDimensions = 0u;
                 uint32 *numberOfElements = NULL_PTR(uint32 *);
@@ -144,15 +144,18 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                         }
                     }
                 }
+                /*lint -e{661} entries is a zero terminated array and as such the last index must be set to zero*/
                 if (ok) {
                     StreamString modifiers;
                     for (nd = 0u; nd < numberOfDimensions; nd++) {
-                        modifiers.Printf("[%d]", numberOfElements[nd]);
+                        (void) modifiers.Printf("[%d]", numberOfElements[nd]);
                     }
                     uint32 z;
                     //entries is a zero terminated array
-                    IntrospectionEntry **newEntries = new IntrospectionEntry *[numberOfMembers + 2u];
-                    MemberInfo** newMemberInfo = new MemberInfo *[numberOfMembers + 1u];
+                    uint32 numberOfEntries = numberOfMembers + 2u;
+                    IntrospectionEntry **newEntries = new IntrospectionEntry *[numberOfEntries];
+                    numberOfEntries = numberOfMembers + 1u;
+                    MemberInfo** newMemberInfo = new MemberInfo *[numberOfEntries];
                     for (z = 0u; z < numberOfMembers; z++) {
                         newEntries[z] = entries[z];
                         newMemberInfo[z] = memberInfo[z];
@@ -169,7 +172,7 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                     uint32 memberSize = 0u;
                     TypeDescriptor td = TypeDescriptor::GetTypeDescriptorFromTypeName(typeNameStr.Buffer());
                     if (td != voidAnyType.GetTypeDescriptor()) {
-                        memberSize = td.numberOfBits / 8u;
+                        memberSize = static_cast<uint32>(td.numberOfBits) / 8u;
                     }
                     else {
                         const ClassRegistryItem *registeredMember = ClassRegistryDatabase::Instance()->Find(typeNameStr.Buffer());
@@ -198,12 +201,11 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
                     if (totalElements == 0u) {
                         totalElements = 1u;
                     }
-                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(),
-                                                                       newMemberInfo[z]->memberType.Buffer(),
-                                                                       newMemberInfo[z]->memberModifier.Buffer(), "", memberSize,
-                                                                       totalSize);
+                    IntrospectionEntry *entry = new IntrospectionEntry(newMemberInfo[z]->memberName.Buffer(), newMemberInfo[z]->memberType.Buffer(), newMemberInfo[z]->memberModifier.Buffer(), "",
+                                                                       memberSize, totalSize);
                     entries[z] = entry;
-                    entries[z + 1] = NULL_PTR(IntrospectionEntry *);
+                    /*lint -e{679} entries is a zero terminated array*/
+                    entries[z + 1u] = NULL_PTR(IntrospectionEntry *);
                     totalSize += (memberSize * totalElements);
                     numberOfMembers++;
                 }
@@ -224,11 +226,10 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
     }
     if (ok) {
         StreamString typeName;
-        typeName.Printf("%s", GetName());
+        (void) typeName.Printf("%s", GetName());
         introMembers = new Introspection(const_cast<const IntrospectionEntry **>(entries), totalSize);
         const ClassRegistryItem *item = ClassRegistryDatabase::Instance()->Find(GetName());
         bool exists = (item != NULL_PTR(const ClassRegistryItem *));
-        //Deleted by the IntrospectionStructure!
         ClassRegistryItemConfigurationStructureLoader * criLoader = NULL_PTR(ClassRegistryItemConfigurationStructureLoader *);
 
         if (!exists) {
@@ -240,16 +241,17 @@ bool IntrospectionStructure::Initialise(StructuredDataI &data) {
         else {
             criLoader = dynamic_cast<ClassRegistryItemConfigurationStructureLoader *>(const_cast<ClassRegistryItem *>(item));
             ok = (criLoader != NULL_PTR(ClassRegistryItemConfigurationStructureLoader *));
+            /*lint -e{613} crioLoader is != NULL*/
             if (ok) {
                 criLoader->Update(typeName, totalSize);
                 criLoader->SetIntrospection(introMembers);
                 REPORT_ERROR(ErrorManagement::ParametersError, "Updating type %s ", typeName.Buffer());
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,
-                             "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader", typeName.Buffer());
+                REPORT_ERROR(ErrorManagement::FatalError, "Tried to update a type %s which is not a ClassRegistryItemConfigurationStructureLoader", typeName.Buffer());
             }
         }
+        /*lint -e{429} criLoader pointer deleted by the IntrospectionStructure*/
     }
 
     return ok;

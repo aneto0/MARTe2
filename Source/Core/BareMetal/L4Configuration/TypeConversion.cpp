@@ -215,13 +215,15 @@ static bool IntegerToType(const AnyType &destination, const AnyType &source) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), true);
             }
-            if (sourceDescriptor.type == UnsignedInteger) {
+            else if (sourceDescriptor.type == UnsignedInteger) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
-            if (sourceDescriptor.type == Pointer) {
+            else if (sourceDescriptor.type == Pointer) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+            else {//NOOP
             }
         }
         else if (destinationDescriptor.type == Float) {
@@ -230,12 +232,16 @@ static bool IntegerToType(const AnyType &destination, const AnyType &source) {
             if ((sourceDescriptor.type == SignedInteger)) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), true);
             }
-            if (sourceDescriptor.type == UnsignedInteger) {
+            else if (sourceDescriptor.type == UnsignedInteger) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
-            if (sourceDescriptor.type == Pointer) {
+            else if (sourceDescriptor.type == Pointer) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
+            else {//NOOP
+            }
+        }
+        else {//NOOP
         }
     }
     return ret;
@@ -381,6 +387,8 @@ static bool StringToType(const AnyType &destination, const AnyType &source) {
         }
         else if (destinationDescriptor.type == Float) {
             ret = StringToFloatGeneric(token, (reinterpret_cast<float32*>(destinationPointer)), destination.GetBitSize());
+        }
+        else {//NOOP
         }
     }
     return ret;
@@ -840,10 +848,13 @@ static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &so
             elementSource = AnyType(*reinterpret_cast<void**>(newSourcePointer));
         }
         else if (source.GetTypeDescriptor() == Character8Bit) {
-            newSourcePointer = &sourceArray[sourceIndex * source.GetNumberOfElements(0u)];
+            uint32 srcArrayIdx = sourceIndex * source.GetNumberOfElements(0u);
+            newSourcePointer = &sourceArray[srcArrayIdx];
             elementSource = AnyType(Character8Bit, 0u, newSourcePointer);
             elementSource.SetNumberOfDimensions(1u);
             elementSource.SetNumberOfElements(0u, source.GetNumberOfElements(0u));
+        }
+        else {//NOOP
         }
 
         char8 *newDestinationPointer = &destinationArray[destinationIndex];
@@ -853,10 +864,13 @@ static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &so
             elementDestination = AnyType(*reinterpret_cast<char8**>(newDestinationPointer));
         }
         else if (destination.GetTypeDescriptor() == Character8Bit) {
-            newDestinationPointer = &destinationArray[destinationIndex * destination.GetNumberOfElements(0u)];
+            uint32 destinationArrayIdx = destinationIndex * destination.GetNumberOfElements(0u);
+            newDestinationPointer = &destinationArray[destinationArrayIdx];
             elementDestination = AnyType(Character8Bit, 0u, newDestinationPointer);
             elementDestination.SetNumberOfDimensions(1u);
             elementDestination.SetNumberOfElements(0u, destination.GetNumberOfElements(0u));
+        }
+        else {//NOOP
         }
 
         if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
@@ -1139,7 +1153,8 @@ static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &so
     else if ((!isSourceStatic) && (!isDestinationStatic)) {
         ok = HeapToHeapMatrix(destination, source);
     }
-
+    else {//NOOP
+    }
     return ok;
 }
 
@@ -1227,6 +1242,8 @@ bool TypeConvert(const AnyType &destination, const AnyType &source) {
             }
             else if (sourceNumberOfDimensions == 2u) {
                 ok = MatrixBasicTypeConvert(destination, source);
+            }
+            else {//NOOP
             }
         }
     }

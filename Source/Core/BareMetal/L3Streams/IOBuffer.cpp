@@ -753,6 +753,8 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     ret = PrintCCString(iobuff, string, fd, addQuotesOnString);
                 }
             }
+            else {//NOOP
+            }
             //general stream type.
             bool isStream = (((par.GetTypeDescriptor()).type) == Stream);
             bool isSString = (((par.GetTypeDescriptor()).type) == SString);
@@ -775,7 +777,6 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     ret = PrintStream(iobuff, *stream, fd, addQuotesOnString);
                 }
             }
-
             //StructuredDataInterface.
             if (((par.GetTypeDescriptor()).type) == StructuredDataNode) {
                 StructuredDataI * structuredData = static_cast<StructuredDataI *>(dataPointer);
