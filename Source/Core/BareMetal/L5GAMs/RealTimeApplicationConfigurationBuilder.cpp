@@ -783,7 +783,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
                                     (void) fAlias.Printf("%s[%d][%d][%d]", alias.Buffer(), nr, nc, nz);
                                 }
                             }
-                            else {//NOOP
+                            else { //NOOP
                             }
                             AnyType ranges = signalDatabase.GetType("Ranges");
                             AnyType samples = signalDatabase.GetType("Samples");
@@ -1412,20 +1412,32 @@ bool RealTimeApplicationConfigurationBuilder::VerifyDataSourcesSignals() {
                             }
                             if (ret) {
                                 AnyType defVal = cdb.GetType("Default");
+                                bool isString = (signalTypeDescriptor == Character8Bit);
+                                if (!isString) {
+                                    isString = (signalTypeDescriptor == CharString);
+                                }
                                 uint32 defValDims = defVal.GetNumberOfDimensions();
                                 ret = (defValDims <= 1u);
                                 uint8 usedDimensions = (numberOfDimensions > 0u) ? (1u) : (0u);
                                 if (ret) {
-                                    ret = (defValDims == usedDimensions);
-                                    if (ret) {
-                                        ret = (defVal.GetNumberOfElements(0u) == numberOfElements);
-                                    }
-                                    else if (numberOfElements == 1u) {
-                                        //To avoid the problem of 0 dimensions with 1 element vs 1 dimension with 1 element
-                                        ret = (defVal.GetNumberOfElements(0u) == 1u);
+                                    uint32 elements0 = defVal.GetNumberOfElements(0u);
+                                    //Another exception for the char8[]
+                                    if (isString && (elements0 <= 1u)) {
+                                        StreamString ss = reinterpret_cast<const char8 *>(defVal.GetDataPointer());
+                                        ret = (ss.Size() <= numberOfElements);
                                     }
                                     else {
-                                        //NOOP
+                                        ret = (defValDims == usedDimensions);
+                                        if (ret) {
+                                            ret = (elements0 == numberOfElements);
+                                        }
+                                        else if (numberOfElements == 1u) {
+                                            //To avoid the problem of 0 dimensions with 1 element vs 1 dimension with 1 element
+                                            ret = (elements0 == 1u);
+                                        }
+                                        else {
+                                            //NOOP
+                                        }
                                     }
                                 }
                                 else {
@@ -3775,7 +3787,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                             else if (nOfDimensions == 3u) {
                                 (void) fullSignalName.Printf("%s[%d][%d][%d]", tempName.Buffer(), nr, nc, nz);
                             }
-                            else {//NOOP
+                            else {    //NOOP
                             }
                             if (tempAlias.Size() > 0u) {
                                 fullAliasName = "";
@@ -3794,7 +3806,7 @@ bool RealTimeApplicationConfigurationBuilder::SignalIntrospectionToStructuredDat
                                     else if (nOfDimensions == 3u) {
                                         (void) fullAliasName.Printf("%s[%d][%d][%d]", tempAlias.Buffer(), nr, nc, nz);
                                     }
-                                    else {//NOOP
+                                    else {    //NOOP
                                     }
                                 }
                             }
