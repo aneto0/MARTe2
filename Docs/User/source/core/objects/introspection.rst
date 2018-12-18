@@ -20,7 +20,12 @@ This allows to develop components that query and adapt in runtime to the propert
 
 Class/struct register
 ---------------------
-   
+
+.. note::
+
+   See :doc:`the following link </core/configuration/objectregistrydatabase>` for a full data-driven alternative on how to create and register structures.
+    
+
 In order to automatically register a MARTe Object or a ``C struct`` into the :vcisdoxygencl:`ClassRegistryDatabase`, the following macros must be used:  
 
 - ``DECLARE_CLASS_MEMBER(className, memberName, type, modifierString, attributeString )``, where:
