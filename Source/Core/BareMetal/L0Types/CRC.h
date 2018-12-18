@@ -69,7 +69,7 @@ public:
      * @brief Computes the CRC for \a size bytes in \a data.
      * @param[in] data the bytes against which the CRC will be computed.
      * @param[in] size the number of bytes in \a data.
-     * @param[in] initCRCIn the initial CRC value.
+     * @param[in] initCRC the initial CRC value.
      * @param[in] inputInverted if true, the order of the bytes to compute the CRC will be data[0], data[-1], data[-2] ... data[-size + 1].
      * This implies that, when using inputInverted, the data must be pointing at the last byte (since negative indexes will be used)
      * @return the CRC value.
