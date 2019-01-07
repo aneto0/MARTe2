@@ -39,8 +39,7 @@
 /*---------------------------------------------------------------------------*/
 class LoaderTestMessageObject1: public MARTe::Object, public MARTe::MessageI {
 public:
-    CLASS_REGISTER_DECLARATION()
-    LoaderTestMessageObject1() {
+    CLASS_REGISTER_DECLARATION()LoaderTestMessageObject1() {
         using namespace MARTe;
         ReferenceT<RegisteredMethodsMessageFilter> registeredMethodsMessageFilter(GlobalObjectsDatabase::Instance()->GetStandardHeap());
         registeredMethodsMessageFilter->SetDestination(this);
@@ -186,6 +185,91 @@ bool LoaderTest::TestConfigure_False_FailedMessageFunction() {
     return ok;
 }
 
+bool LoaderTest::TestConfigure_BuildTokens() {
+    using namespace MARTe;
+    Loader l;
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("BuildTokens", "_=");
+    bool ok = l.Configure(params, config);
+    ok = ReferenceContainer::IsBuildToken('_');
+    ok &= ReferenceContainer::IsBuildToken('=');
+    ok &= ReferenceContainer::IsBuildToken('+');
+    ReferenceContainer::RemoveBuildToken('_');
+    ReferenceContainer::RemoveBuildToken('=');
+    return ok;
+}
+
+bool LoaderTest::TestConfigure_BuildTokens_False() {
+    using namespace MARTe;
+    Loader l;
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("BuildTokens", "_=!@#$%^&*()");
+    bool ok = !l.Configure(params, config);
+    ReferenceContainer::RemoveBuildToken('_');
+    ReferenceContainer::RemoveBuildToken('=');
+    ReferenceContainer::RemoveBuildToken('!');
+    ReferenceContainer::RemoveBuildToken('@');
+    ReferenceContainer::RemoveBuildToken('#');
+    ReferenceContainer::RemoveBuildToken('$');
+    ReferenceContainer::RemoveBuildToken('%');
+    ReferenceContainer::RemoveBuildToken('^');
+    ReferenceContainer::RemoveBuildToken('&');
+    ReferenceContainer::RemoveBuildToken('*');
+    ReferenceContainer::RemoveBuildToken('(');
+    ReferenceContainer::RemoveBuildToken(')');
+    return ok;
+}
+
+bool LoaderTest::TestConfigure_DomainTokens() {
+    using namespace MARTe;
+    Loader l;
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("DomainTokens", "_=");
+    bool ok = l.Configure(params, config);
+    ok = ReferenceContainer::IsDomainToken('_');
+    ok &= ReferenceContainer::IsDomainToken('=');
+    ok &= ReferenceContainer::IsDomainToken('$');
+    ReferenceContainer::RemoveDomainToken('_');
+    ReferenceContainer::RemoveDomainToken('=');
+    return ok;
+}
+
+bool LoaderTest::TestConfigure_DomainTokens_False() {
+    using namespace MARTe;
+    Loader l;
+    StreamString config = "+A={"
+            "   Class = ReferenceContainer"
+            "}";
+    ConfigurationDatabase params;
+    params.Write("Parser", "cdb");
+    params.Write("DomainTokens", "_=!@#$%^&*()");
+    bool ok = !l.Configure(params, config);
+    ReferenceContainer::RemoveDomainToken('_');
+    ReferenceContainer::RemoveDomainToken('=');
+    ReferenceContainer::RemoveDomainToken('!');
+    ReferenceContainer::RemoveDomainToken('@');
+    ReferenceContainer::RemoveDomainToken('#');
+    ReferenceContainer::RemoveDomainToken('$');
+    ReferenceContainer::RemoveDomainToken('%');
+    ReferenceContainer::RemoveDomainToken('^');
+    ReferenceContainer::RemoveDomainToken('&');
+    ReferenceContainer::RemoveDomainToken('*');
+    ReferenceContainer::RemoveDomainToken('(');
+    ReferenceContainer::RemoveDomainToken(')');
+    return ok;
+}
 bool LoaderTest::TestStart() {
     using namespace MARTe;
     Loader l;

@@ -47,7 +47,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-Loader::Loader() : Object() {
+Loader::Loader() :
+        Object() {
 }
 
 Loader::~Loader() {
@@ -61,6 +62,37 @@ ErrorManagement::ErrorType Loader::Configure(StructuredDataI &data, StreamI &con
     }
     REPORT_ERROR_STATIC(ErrorManagement::Information, "DefaultCPUs set to %d", defaultCPUs);
     ProcessorType::SetDefaultCPUs(defaultCPUs);
+
+    StreamString buildTokens;
+    if (data.Read("BuildTokens", buildTokens)) {
+        uint32 i;
+        uint32 nTokens = static_cast<uint32>(buildTokens.Size());
+        for (i = 0u; (ret.ErrorsCleared()) && (i < nTokens); i++) {
+            char8 token = buildTokens[i];
+            ret.initialisationError = !ReferenceContainer::AddBuildToken(token);
+        }
+        if (ret.ErrorsCleared()) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Added build tokens %s", buildTokens.Buffer());
+        }
+        else {
+            REPORT_ERROR_STATIC(ret, "Failed to add build token %s", buildTokens.Buffer());
+        }
+    }
+    StreamString domainTokens;
+    if (data.Read("DomainTokens", domainTokens)) {
+        uint32 i;
+        uint32 nTokens = static_cast<uint32>(domainTokens.Size());
+        for (i = 0u; (ret.ErrorsCleared()) && (i < nTokens); i++) {
+            char8 token = domainTokens[i];
+            ret.initialisationError = !ReferenceContainer::AddDomainToken(token);
+        }
+        if (ret.ErrorsCleared()) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Added domain tokens %s", domainTokens.Buffer());
+        }
+        else {
+            REPORT_ERROR_STATIC(ret, "Failed to add domain tokens %s", domainTokens.Buffer());
+        }
+    }
 
     StreamString parserType;
     StreamString parserError;

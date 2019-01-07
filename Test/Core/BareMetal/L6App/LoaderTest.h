@@ -93,6 +93,26 @@ public:
     bool TestConfigure_False_FailedMessageFunction();
 
     /**
+     * @brief Tests the Configure method with non default build tokens
+     */
+    bool TestConfigure_BuildTokens();
+
+    /**
+     * @brief Tests that the Configure method with too many non default build tokens
+     */
+    bool TestConfigure_BuildTokens_False();
+
+    /**
+     * @brief Tests the Configure method with non default domain tokens
+     */
+    bool TestConfigure_DomainTokens();
+
+    /**
+     * @brief Tests that the Configure method with too many non default domain tokens
+     */
+    bool TestConfigure_DomainTokens_False();
+
+    /**
      * @brief Tests the Start method.
      */
     bool TestStart();

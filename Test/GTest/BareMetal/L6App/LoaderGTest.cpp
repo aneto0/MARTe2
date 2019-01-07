@@ -89,6 +89,26 @@ TEST(BareMetal_L6App_LoaderGTest,TestConfigure_False_FailedMessageFunction) {
     ASSERT_TRUE(test.TestConfigure_False_FailedMessageFunction());
 }
 
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_BuildTokens) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_BuildTokens());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_BuildTokens_False) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_BuildTokens_False());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_DomainTokens) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_DomainTokens());
+}
+
+TEST(BareMetal_L6App_LoaderGTest,TestConfigure_DomainTokens_False) {
+    LoaderTest test;
+    ASSERT_TRUE(test.TestConfigure_DomainTokens_False());
+}
+
 TEST(BareMetal_L6App_LoaderGTest,TestStart) {
     LoaderTest test;
     ASSERT_TRUE(test.TestStart());
