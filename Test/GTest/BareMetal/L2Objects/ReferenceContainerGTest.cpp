@@ -47,47 +47,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReferenceContainerGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestConstructor) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
-TEST(ReferenceContainerGTest,TestCopyConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestCopyConstructor) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestCopyConstructor());
 }
 
-TEST(ReferenceContainerGTest,TestOperatorEqual) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestOperatorEqual) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestOperatorEqual());
 }
 
-//TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+//TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGetClassPropertiesCopy) {
 //    ReferenceContainerTest referenceContainerTest;
 //    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
 //}
 
-TEST(ReferenceContainerGTest,TestGetClassProperties) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGetClassProperties) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetClassProperties());
 }
 
-TEST(ReferenceContainerGTest,TestGetTimeoutInfinite) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGetTimeoutInfinite) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetTimeout(TTInfiniteWait));
 }
 
-TEST(ReferenceContainerGTest,TestGetTimeoutFinite) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGetTimeoutFinite) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetTimeout(1));
 }
 
-TEST(ReferenceContainerGTest,TestSetTimeoutInfinite) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestSetTimeoutInfinite) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetTimeout(TTInfiniteWait));
 }
 
-TEST(ReferenceContainerGTest,TestSetTimeoutFinite) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestSetTimeoutFinite) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestSetTimeout(1));
 }
@@ -95,13 +95,13 @@ TEST(ReferenceContainerGTest,TestSetTimeoutFinite) {
 /***********************************
  * TestFindFirstOccurrenceAlways   *
  ***********************************/
-/*TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
+/*TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
 }*/
 
-TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, 0u, "B");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
@@ -110,13 +110,13 @@ TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObje
 /*****************************************
  * TestFindFirstOccurrenceBranchAlways   *
  *****************************************/
-TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
@@ -127,20 +127,20 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject)
  * TestFind  *
  *****************************/
 
-TEST(ReferenceContainerGTest,TestFind) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFind) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFind());
 }
 /*****************************
  * TestFindFirstOccurrence   *
  *****************************/
-TEST(ReferenceContainerGTest,TestFindFirstOccurrenceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindFirstOccurrenceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.containerE);
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindFirstOccurrenceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindFirstOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, 0u, "E");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrence(filter));
@@ -149,13 +149,13 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceObjectNameFilter) {
 /*****************************
  * TestFindSecondOccurrence  *
  *****************************/
-TEST(ReferenceContainerGTest,TestFindSecondOccurrenceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindSecondOccurrenceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(2, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindSecondOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindSecondOccurrenceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindSecondOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(2, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindSecondOccurrence(filter));
@@ -164,13 +164,13 @@ TEST(ReferenceContainerGTest,TestFindSecondOccurrenceObjectNameFilter) {
 /****************************
  * TestFindThirdOccurrence  *
  ****************************/
-TEST(ReferenceContainerGTest,TestFindThirdOccurrenceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindThirdOccurrenceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(3, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindThirdOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindThirdOccurrenceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindThirdOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(3, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindThirdOccurrence(filter));
@@ -179,13 +179,13 @@ TEST(ReferenceContainerGTest,TestFindThirdOccurrenceObjectNameFilter) {
 /********************************
  * TestFindAllOfASingleInstance *
  ********************************/
-TEST(ReferenceContainerGTest,TestFindAllOfASingleInstanceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindAllOfASingleInstanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(-1, 0u, referenceContainerTest.leafG);
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfASingleInstance(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindAllOfASingleInstanceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindAllOfASingleInstanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(-1, 0u, "G");
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfASingleInstance(filter));
@@ -194,13 +194,13 @@ TEST(ReferenceContainerGTest,TestFindAllOfASingleInstanceObjectNameFilter) {
 /*********************************
  * TestFindAllOfMultipleInstance *
  *********************************/
-TEST(ReferenceContainerGTest,TestFindAllOfMultipleInstanceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindAllOfMultipleInstanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(-1, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfMultipleInstance(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindAllOfMultipleInstanceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindAllOfMultipleInstanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(-1, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfMultipleInstance(filter));
@@ -209,13 +209,13 @@ TEST(ReferenceContainerGTest,TestFindAllOfMultipleInstanceObjectNameFilter) {
 /*****************************************
  * TestFindReferenceNonExistent *
  *****************************************/
-TEST(ReferenceContainerGTest,TestFindNonExistentReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindNonExistentReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(-1, 0u, referenceContainerTest.leafNoExist);
     ASSERT_TRUE(referenceContainerTest.TestFindNonExistent(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindNonExistentObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindNonExistentObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(-1, 0u, "NoExist");
     ASSERT_TRUE(referenceContainerTest.TestFindNonExistent(filter));
@@ -224,25 +224,25 @@ TEST(ReferenceContainerGTest,TestFindNonExistentObjectNameFilter) {
 /*********************************************
  * TestFindReferenceOutOfBoundsOccurrence    *
  *********************************************/
-TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceReferenceFilterNegative) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceReferenceFilterNegative) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(-2, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceReferenceFilterPositive) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceReferenceFilterPositive) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(4, 0u, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterNegative) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterNegative) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(-2, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterPositive) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterPositive) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(4, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
@@ -251,13 +251,13 @@ TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterPositi
 /***********************
  * TestFindEmptyTree   *
  ***********************/
-TEST(ReferenceContainerGTest,TestFindEmptyTreeReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindEmptyTreeReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, 0u, referenceContainerTest.leafB);
     ASSERT_TRUE(referenceContainerTest.TestFindEmptyTree(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindEmptyTreeObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindEmptyTreeObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, 0u, "B");
     ASSERT_TRUE(referenceContainerTest.TestFindEmptyTree(filter));
@@ -267,32 +267,32 @@ TEST(ReferenceContainerGTest,TestFindEmptyTreeObjectNameFilter) {
 /***********************************************
  * TestFindObjectPath                          *
  ***********************************************/
-TEST(ReferenceContainerGTest,TestFindPathLegalObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPathLegalObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindPathLegalObjectNameFilter());
 }
 
-TEST(ReferenceContainerGTest,TestFindPathLegalObjectNameFilterStartDot) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPathLegalObjectNameFilterStartDot) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindPathLegalObjectNameFilterStartDot());
 }
 
-TEST(ReferenceContainerGTest,TestFindPathLegalObjectNameFilterEndDot) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPathLegalObjectNameFilterEndDot) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindPathLegalObjectNameFilterEndDot());
 }
 
-TEST(ReferenceContainerGTest,TestFindPathIllegalObjectNameFilterTwoDots) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPathIllegalObjectNameFilterTwoDots) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindPathIllegalObjectNameFilterTwoDots());
 }
 
-TEST(ReferenceContainerGTest,TestFindWrongPathObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindWrongPathObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindWrongPathObjectNameFilter());
 }
 
-TEST(ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindRelativePathObjectNameFilter());
 }
@@ -307,7 +307,7 @@ TEST(ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
 #define FreeRTOS 3
 #if (ENVIRONMENT == Windows) || (ENVIRONMENT == Linux)
 
-TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterReferences filter(3, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.leafU3);
@@ -316,7 +316,7 @@ TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
     ASSERT_TRUE(totalTime < 1.0);
 }
 
-TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterObjectName filter(3, ReferenceContainerFilterMode::RECURSIVE, "U3");
@@ -329,13 +329,13 @@ TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
 /*********************************
  * TestFindRemoveFirstOccurrence *
  *********************************/
-TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFirstOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrence(filter));
@@ -344,13 +344,13 @@ TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceObjectNameFilter) {
 /****************************************
  * TestFindRemoveFirstOccurrenceReverse *
  ****************************************/
-TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrenceReverse(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrence(filter));
@@ -359,13 +359,13 @@ TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseObjectNameFilte
 /*********************************
  * TestFindRemoveSecondOccurrence *
  *********************************/
-TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(2, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrence(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveSecondOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(2, ReferenceContainerFilterMode::RECURSIVE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrence(filter));
@@ -374,13 +374,13 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceObjectNameFilter) {
 /****************************************
  * TestFindRemoveSecondOccurrenceReverse *
  ****************************************/
-TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, referenceContainerTest.containerC);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrenceReverse(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrenceReverse(filter));
@@ -389,13 +389,13 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseObjectNameFilt
 /****************************************
  * TestFindRemoveSecondOccurrenceReverse *
  ****************************************/
-TEST(ReferenceContainerGTest,TestFindRemoveFromSubcontainerReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFromSubcontainerReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.containerE);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFromSubcontainer(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveFromSubcontainerObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveFromSubcontainerObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFromSubcontainer(filter));
@@ -404,19 +404,19 @@ TEST(ReferenceContainerGTest,TestFindRemoveFromSubcontainerObjectNameFilter) {
 /****************************************
  * TestFindRemoveAllOfMultipleInstance  *
  ****************************************/
-TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceReferenceFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterReferences filter(-1, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.leafH);
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjectName filter(-1, ReferenceContainerFilterMode::RECURSIVE, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
 }
 
-TEST(ReferenceContainerGTest,TestFindWithPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestFindWithPath) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestFindWithPath());
 }
@@ -426,27 +426,27 @@ TEST(ReferenceContainerGTest,TestFindWithPath) {
  * TestInsert  *
  ***************/
 
-TEST(ReferenceContainerGTest,TestInsertWithPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertWithPath) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertWithPath());
 }
 
-TEST(ReferenceContainerGTest,TestInsertAtEnd) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertAtEnd) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());
 }
 
-TEST(ReferenceContainerGTest,TestInsertAtBeginning) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertAtBeginning) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtBeginning());
 }
 
-TEST(ReferenceContainerGTest,TestInsertAtMiddle) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertAtMiddle) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtMiddle());
 }
 
-TEST(ReferenceContainerGTest,TestInsertInvalid) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInsertInvalid) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertInvalid());
 }
@@ -454,12 +454,12 @@ TEST(ReferenceContainerGTest,TestInsertInvalid) {
 /*************
  * TestSize  *
  *************/
-TEST(ReferenceContainerGTest,TestSize) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestSize) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestSize());
 }
 
-TEST(ReferenceContainerGTest,TestSizeZero) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestSizeZero) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestSizeZero());
 }
@@ -467,12 +467,12 @@ TEST(ReferenceContainerGTest,TestSizeZero) {
 /*************
  * TestGet   *
  *************/
-TEST(ReferenceContainerGTest,TestGet) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGet) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGet());
 }
 
-TEST(ReferenceContainerGTest,TestGetInvalid) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestGetInvalid) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetInvalid());
 }
@@ -480,7 +480,7 @@ TEST(ReferenceContainerGTest,TestGetInvalid) {
 /*******************
  * TestIsContainer *
  *******************/
-TEST(ReferenceContainerGTest,TestIsContainer) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestIsContainer) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestIsContainer());
 }
@@ -488,12 +488,12 @@ TEST(ReferenceContainerGTest,TestIsContainer) {
 /*******************
  * TestDelete *
  *******************/
-TEST(ReferenceContainerGTest,TestDelete) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestDelete) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDelete());
 }
 
-TEST(ReferenceContainerGTest,TestDeleteWithPath) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestDeleteWithPath) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestDeleteWithPath());
 }
@@ -502,7 +502,7 @@ TEST(ReferenceContainerGTest,TestDeleteWithPath) {
  * TestInitialise *
  *******************/
 
-TEST(ReferenceContainerGTest,TestInitialise) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestInitialise) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInitialise());
 }
@@ -511,52 +511,52 @@ TEST(ReferenceContainerGTest,TestInitialise) {
  * TestPurge *
  *******************/
 
-TEST(ReferenceContainerGTest,TestPurge) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestPurge) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestPurge());
 }
 
-TEST(ReferenceContainerGTest,TestPurge_Shared) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestPurge_Shared) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestPurge_Shared());
 }
 
-TEST(ReferenceContainerGTest,TestExportData) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestExportData) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestExportData());
 }
 
-TEST(ReferenceContainerGTest,TestIsReferenceContainer) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestIsReferenceContainer) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestIsReferenceContainer());
 }
 
-TEST(ReferenceContainerGTest,TestAddBuildToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestAddBuildToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestAddBuildToken());
 }
 
-TEST(ReferenceContainerGTest,TestIsBuildToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestIsBuildToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestIsBuildToken());
 }
 
-TEST(ReferenceContainerGTest,TestRemoveBuildToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestRemoveBuildToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestRemoveBuildToken());
 }
 
-TEST(ReferenceContainerGTest,TestAddDomainToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestAddDomainToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestAddDomainToken());
 }
 
-TEST(ReferenceContainerGTest,TestIsDomainToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestIsDomainToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestIsDomainToken());
 }
 
-TEST(ReferenceContainerGTest,TestRemoveDomainToken) {
+TEST(BareMetal_L2Objects_ReferenceContainerGTest,TestRemoveDomainToken) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestRemoveDomainToken());
 }

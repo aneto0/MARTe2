@@ -41,42 +41,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestConstructor) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_1) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestExecute_1) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_2) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestExecute_2) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_2());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_3) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestExecute_3) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_3());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestExecute_False) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestExecute_False) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_False());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestInit) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestInit) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestReset) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestReset) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestReset());
 }
 
-TEST(MemoryMapInterpolatedInputBrokerGTest,TestSetIndependentVariable) {
+TEST(BareMetal_L5GAMs_MemoryMapInterpolatedInputBrokerGTest,TestSetIndependentVariable) {
     MemoryMapInterpolatedInputBrokerTest test;
     ASSERT_TRUE(test.TestSetIndependentVariable());
 }

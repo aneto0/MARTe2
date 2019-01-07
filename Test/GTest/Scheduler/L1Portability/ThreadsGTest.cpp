@@ -42,98 +42,98 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(ThreadsGTest,TestBeginThread) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestBeginThread) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestBeginThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
 }
 
-TEST(ThreadsGTest,TestEndThread) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestEndThread) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestEndThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
 }
 
-TEST(ThreadsGTest,TestBeginThreadStacksize0) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestBeginThreadStacksize0) {
     ThreadsTest myUnitTest;
     ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 32));
 }
 
-TEST(ThreadsGTest,TestBeginThreadNullFunction) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestBeginThreadNullFunction) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestBeginThreadNullFunction("hello"));
 }
 
-TEST(ThreadsGTest,TestIsAlive) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestIsAlive) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestIsAlive(32));
 }
 
-TEST(ThreadsGTest,TestIsAliveAfterkill) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestIsAliveAfterkill) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestIsAlive(32));
 }
 
-TEST(ThreadsGTest,TestKillInvalidID) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestKillInvalidID) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestKillInvalidID());
 }
 
-TEST(ThreadsGTest,TestKill) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestKill) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestKill(32));
 }
 
 // Failure where the thread state is supported!
-TEST(ThreadsGTest,TestGetState) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestGetState) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetState());
 }
 
-TEST(ThreadsGTest,TestId) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestId) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestId(32));
 }
 
-TEST(ThreadsGTest,TestGetCPUs) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestGetCPUs) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetCPUs());
 }
 
-TEST(ThreadsGTest,TestName) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestName) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestName("Hello", 10));
 }
 
-TEST(ThreadsGTest,TestNameNull) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestNameNull) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestNameNull());
 }
 
-TEST(ThreadsGTest,TestNumberOfThreads) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestNumberOfThreads) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestNumberOfThreads(32));
 }
 
-TEST(ThreadsGTest,TestFindByIndex) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestFindByIndex) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestFindByIndex(32));
 }
 
-TEST(ThreadsGTest,TestGetThreadInfoCopy) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestGetThreadInfoCopy) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(32, "Hello"));
 }
 
-TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopyInvalidID());
 }
 
-TEST(ThreadsGTest,TestFindByName) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestFindByName) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestFindByName(10, "Hello", 2));
 }
 
-TEST(ThreadsGTest,TestPriority) {
+TEST(Scheduler_L1Portability_ThreadsGTest,TestPriority) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestPriority());
 }

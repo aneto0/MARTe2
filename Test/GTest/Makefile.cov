@@ -27,7 +27,6 @@
 TARGET=cov
 
 include Makefile.inc
-INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 LIBRARIES   += ../../Source/Core/BareMetal/$(TARGET)/MARTeCoreB$(LIBEXT) 
 LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT) 

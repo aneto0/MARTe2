@@ -40,17 +40,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
-TEST(GlobalObjectsDatabaseGTest,TestInstance) {
+TEST(BareMetal_L1Portability_GlobalObjectsDatabaseGTest,TestInstance) {
     GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
     ASSERT_TRUE(globalObjectsDatabaseTest.TestInstance());
 }
 
-TEST(GlobalObjectsDatabaseGTest,TestPeek) {
+TEST(BareMetal_L1Portability_GlobalObjectsDatabaseGTest,TestPeek) {
     GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
     ASSERT_TRUE(globalObjectsDatabaseTest.TestPeek());
 }
 
-TEST(GlobalObjectsDatabaseGTest,TestGetStandardHeap) {
+TEST(BareMetal_L1Portability_GlobalObjectsDatabaseGTest,TestGetStandardHeap) {
     GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
     ASSERT_TRUE(globalObjectsDatabaseTest.TestGetStandardHeap());
 }

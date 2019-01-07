@@ -221,7 +221,7 @@ static bool SerializeVector(const AnyType &typeIn,
             }
             if (isCArrayOnHeap) {
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
-                tokenLength = typeIn.GetByteSize();
+                tokenLength = typeIn.GetByteSize() * numberOfElements;
             }
             if (isString) {
                 token = (reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();

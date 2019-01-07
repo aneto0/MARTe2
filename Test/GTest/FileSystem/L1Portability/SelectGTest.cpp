@@ -42,137 +42,137 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(SelectGTest, TestDefaultConstructor) {
+TEST(FileSystem_L1Portability_SelectGTest, TestDefaultConstructor) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestDefaultConstructor());
 }
 
-TEST(SelectGTest, TestAddReadHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddReadHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddReadHandle());
 }
 
-TEST(SelectGTest, TestAddReadHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddReadHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddReadHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestAddReadHandle_InvalidHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddReadHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddReadHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TestAddWriteHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddWriteHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddWriteHandle());
 }
 
-TEST(SelectGTest, TestAddWritedHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddWritedHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddWritedHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestAddWritedHandle_InvalidHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddWritedHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddWritedHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TestAddExceptionHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddExceptionHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddExceptionHandle());
 }
 
-TEST(SelectGTest, TestAddExceptionHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddExceptionHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddExceptionHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestAddExceptionHandle_Invalidle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestAddExceptionHandle_Invalidle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestAddExceptionHandle_Invalidle());
 }
 
-TEST(SelectGTest, TestRemoveReadHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveReadHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveReadHandle());
 }
 
-TEST(SelectGTest, TestRemoveReadHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveReadHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveReadHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestRemoveReadHandle_InvalidHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveReadHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveReadHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TestRemoveWriteHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveWriteHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveWriteHandle());
 }
 
-TEST(SelectGTest, TestRemoveWriteHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveWriteHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveWriteHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestRemoveWriteHandle_InvalidHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveWriteHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveWriteHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TestRemoveExceptionHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveExceptionHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveExceptionHandle());
 }
 
-TEST(SelectGTest, TestRemoveExceptionHandle_SameHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveExceptionHandle_SameHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveExceptionHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestRemoveExceptionHandle_InvalidHandle) {
+TEST(FileSystem_L1Portability_SelectGTest, TestRemoveExceptionHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveExceptionHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TestClearAllHandles) {
+TEST(FileSystem_L1Portability_SelectGTest, TestClearAllHandles) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestClearAllHandles());
 }
 
-TEST(SelectGTest, TestIsSet) {
+TEST(FileSystem_L1Portability_SelectGTest, TestIsSet) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestIsSet());
 }
 
-TEST(SelectGTest, TestWaitUntil_waitTimeout) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_waitTimeout) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_waitTimeout());
 }
 
-TEST(SelectGTest, TestWaitUntil_waitRead) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_waitRead) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_waitRead(2000));
 }
 
-TEST(SelectGTest, TestWaitUntil_waitRead_Infinite) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_waitRead_Infinite) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_waitRead(TTInfiniteWait));
 }
 
-TEST(SelectGTest, TestWaitUntil_severaDifferentWaitRead) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_severaDifferentWaitRead) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_severaDifferentWaitRead());
 }
 
-TEST(SelectGTest, TestWaitUntil_removeSomeWaitRead) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_removeSomeWaitRead) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_removeSomeWaitRead());
 }
 
-TEST(SelectGTest, TestWaitUntil_emptyList) {
+TEST(FileSystem_L1Portability_SelectGTest, TestWaitUntil_emptyList) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestWaitUntil_emptyList());
 }

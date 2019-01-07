@@ -43,113 +43,113 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(HeapManagerGTest,TestMallocDefaultName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestMallocDefaultName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestMallocDefaultName());
 }
 
-TEST(HeapManagerGTest,TestMallocSpecificName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestMallocSpecificName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestMallocSpecificName());
 }
 
-TEST(HeapManagerGTest,TestMallocInvalidName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestMallocInvalidName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestMallocInvalidName());
 }
 	
-TEST(HeapManagerGTest,TestFree) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFree) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFree());
 }
 
-TEST(HeapManagerGTest,TestFreeInvalidPointer) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFreeInvalidPointer) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFreeInvalidPointer());
 }
 
-TEST(HeapManagerGTest,TestRealloc) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestRealloc) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestRealloc());
 }
 
-TEST(HeapManagerGTest,TestReallocInvalidPointer) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestReallocInvalidPointer) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestReallocInvalidPointer());
 }
 
-TEST(HeapManagerGTest,TestAddHeap) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestAddHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeap());
 }
 
-TEST(HeapManagerGTest,TestAddHeapNULL) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestAddHeapNULL) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeapNULL());
 }
 
-TEST(HeapManagerGTest,TestAddHeapRepetedHeap) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestAddHeapRepetedHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeapRepetedHeap());
 }
 
-TEST(HeapManagerGTest,TestAddHeapTooMuch) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestAddHeapTooMuch) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeapTooMuch());
 }
 
-TEST(HeapManagerGTest,TestFindHeapByName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFindHeapByName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByName());
 }
 
-TEST(HeapManagerGTest,TestFindHeapByNameInvalidName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFindHeapByNameInvalidName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByNameInvalidName());
 }
 
-TEST(HeapManagerGTest,TestFindHeapByAddress) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFindHeapByAddress) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddress());
 }
 
-TEST(HeapManagerGTest,TestFindHeapByAddressInvalidAddress) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFindHeapByAddressInvalidAddress) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddressInvalidAddress());
 }
 
 
-TEST(HeapManagerGTest,TestFindHeapByAddress2Heaps) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestFindHeapByAddress2Heaps) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddress2Heaps());
 }
 
-TEST(HeapManagerGTest,TestGetStandardHeap) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestGetStandardHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestGetStandardHeap());
 }
 
-TEST(HeapManagerGTest,TestRemoveHeap) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestRemoveHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestRemoveHeap());
 }
 
-TEST(HeapManagerGTest,TestDuplicateDefault) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestDuplicateDefault) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateDefault());
 }
 
-TEST(HeapManagerGTest,TestDuplicateSpecificName) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestDuplicateSpecificName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateSpecificName());
 }
 
-TEST(HeapManagerGTest,TestDuplicateString) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestDuplicateString) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateString());
 }
 
-TEST(HeapManagerGTest,TestDuplicateNoAllocationMemory) {
+TEST(BareMetal_L1Portability_HeapManagerGTest,TestDuplicateNoAllocationMemory) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateNoAllocationMemory());
 }

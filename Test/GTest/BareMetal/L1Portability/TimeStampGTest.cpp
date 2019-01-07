@@ -42,99 +42,99 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(TimeStampGTest, TestConstructor) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestConstructor) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestConstructor());
 }
 
-TEST(TimeStampGTest, TestSetMicroSeconds) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetMicroSeconds) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetMicroSeconds(123456));
     ASSERT_TRUE(myTimeStampTest.TestSetMicroSeconds(5000));
 }
 
-TEST(TimeStampGTest, TestGetMicroSeconds) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetMicroSeconds) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetMicroSeconds(123456));
     ASSERT_TRUE(myTimeStampTest.TestGetMicroSeconds(5000));
 }
 
 
-TEST(TimeStampGTest, TestSetSeconds) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetSeconds) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetSeconds(32));
     ASSERT_TRUE(myTimeStampTest.TestSetMicroSeconds(61));
 }
 
 
-TEST(TimeStampGTest, TestGetSeconds) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetSeconds) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetSeconds(32));
     ASSERT_TRUE(myTimeStampTest.TestGetMicroSeconds(61));
 }
 
-TEST(TimeStampGTest, TestSetMinutes) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetMinutes) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetMinutes(32));
     ASSERT_TRUE(myTimeStampTest.TestSetMinutes(61));
 }
 
-TEST(TimeStampGTest, TestGetMinutes) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetMinutes) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetMinutes(32));
     ASSERT_TRUE(myTimeStampTest.TestGetMinutes(61));
 }
 
-TEST(TimeStampGTest, TestSetHour) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetHour) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetHour(11));
     ASSERT_TRUE(myTimeStampTest.TestSetHour(25));
 }
 
-TEST(TimeStampGTest, TestGetHour) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetHour) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetHour(11));
     ASSERT_TRUE(myTimeStampTest.TestGetHour(25));
 }
 
-TEST(TimeStampGTest, TestSetDay) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetDay) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetDay(11));
     ASSERT_TRUE(myTimeStampTest.TestSetDay(34));
 }
 
-TEST(TimeStampGTest, TestGetDay) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetDay) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetDay(11));
     ASSERT_TRUE(myTimeStampTest.TestGetDay(34));
 }
 
-TEST(TimeStampGTest, TestSetMonth) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetMonth) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetMonth(10));
     ASSERT_TRUE(myTimeStampTest.TestSetMonth(13));
 }
 
 
-TEST(TimeStampGTest, TestGetMonth) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetMonth) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetMonth(10));
     ASSERT_TRUE(myTimeStampTest.TestGetMonth(13));
 }
 
-TEST(TimeStampGTest, TestSetYear) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestSetYear) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestSetYear(1901));
     ASSERT_TRUE(myTimeStampTest.TestSetYear(1899));
 }
 
-TEST(TimeStampGTest, TestGetYear) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestGetYear) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestGetYear(1901));
     ASSERT_TRUE(myTimeStampTest.TestGetYear(1899));
 }
 
-TEST(TimeStampGTest, TestConvertFromEpoch) {
+TEST(BareMetal_L1Portability_TimeStampGTest, TestConvertFromEpoch) {
     TimeStampTest myTimeStampTest;
     ASSERT_TRUE(myTimeStampTest.TestConvertFromEpoch());
 }

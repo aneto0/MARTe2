@@ -42,32 +42,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(FormatDescriptorGTest,TestInitialiseFromString) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestInitialiseFromString) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestInitialiseFromString());
 }
 
-TEST(FormatDescriptorGTest,TestInitialiseFromString2) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestInitialiseFromString2) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestInitialiseFromString2());
 }
 
-TEST(FormatDescriptorGTest,TestDefaultConstructor) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestDefaultConstructor) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestDefaultConstructor());
 }
 
-TEST(FormatDescriptorGTest,TestIntConstructor) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestIntConstructor) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestIntConstructor());
 }
 
-TEST(FormatDescriptorGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestConstructor) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestConstructor());
 }
 
-TEST(FormatDescriptorGTest,TestAssignOperator) {
+TEST(BareMetal_L1Portability_FormatDescriptorGTest,TestAssignOperator) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestAssignOperator());
 }

@@ -41,37 +41,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConstructor) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestConstructor) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestSetMessagesToCatch) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestSetMessagesToCatch) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestSetMessagesToCatch());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestSetEventSemaphore) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestSetEventSemaphore) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestSetEventSemaphore());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MissingMessage) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MissingMessage) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_MissingMessage());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_InvalidMessage) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_InvalidMessage) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_InvalidMessage());
 }
 
-TEST(QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MessageNoEventSem) {
+TEST(Scheduler_L4Messages_QueuedReplyMessageCatcherFilterGTest,TestConsumeMessage_MessageNoEventSem) {
     QueuedReplyMessageCatcherFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_MessageNoEventSem());
 }

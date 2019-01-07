@@ -491,7 +491,6 @@ static bool PrintStream(IOBuffer & iobuff, StreamI &stream, const FormatDescript
                 if (streamSizeL < desSize) {
                     paddingSize = desSize - streamSizeL;
                 }
-
             }
         }
         else {
@@ -1065,7 +1064,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                 }
             }
 
-            if (((par.GetTypeDescriptor()).type) == SignedInteger) {
+            else if (((par.GetTypeDescriptor()).type) == SignedInteger) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Signed Integer";
                     AnyType info = infoName;
@@ -1120,7 +1119,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     }
                 }
             }
-            if (((par.GetTypeDescriptor()).type) == Float) {
+            else if (((par.GetTypeDescriptor()).type) == Float) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Float";
                     AnyType info = infoName;
@@ -1160,7 +1159,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
             }
 
             //pointer type.
-            if (((par.GetTypeDescriptor()).type) == Pointer) {
+            else if (((par.GetTypeDescriptor()).type) == Pointer) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Pointer";
                     AnyType info = infoName;
@@ -1185,7 +1184,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
             //const char8* string type.
             //if in the format descriptor is specified the hex notation (%p or %x)
             //print the value of the pointer.
-            if (((par.GetTypeDescriptor()).type) == BT_CCString) {
+            else if (((par.GetTypeDescriptor()).type) == BT_CCString) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Char String";
                     AnyType info = infoName;
@@ -1213,7 +1212,7 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                 }
             }
 
-            if (((par.GetTypeDescriptor()).type) == CArray) {
+            else if (((par.GetTypeDescriptor()).type) == CArray) {
                 if (fd.desiredAction == PrintInfo) {
                     const char8* infoName = "Char Array";
                     AnyType info = infoName;
@@ -1231,6 +1230,8 @@ static bool PrintToStreamScalar(IOBuffer & iobuff, const AnyType & parIn, const 
                     bool addQuotesOnString = fd.fullNotation;
                     ret = PrintCCString(iobuff, string, fd, addQuotesOnString);
                 }
+            }
+            else {//NOOP
             }
             //general stream type.
             bool isStream = (((par.GetTypeDescriptor()).type) == Stream);
@@ -1285,6 +1286,11 @@ static bool PrintToStreamVector(IOBuffer & iobuff, const AnyType & parIn, const 
     bool ret = PrintOpenVector(iobuff, fd);
     if (ret) {
         ret = iobuff.PutC(' ');
+    }
+    //Treat the special char8[] where the number of elements for an array is @ char8[][here] and the elementSize @ char8[here][]
+    if (descriptor == Character8Bit) {
+        numberOfElements = parIn.GetNumberOfElements(1u);
+        elementSize *= parIn.GetNumberOfElements(0u);
     }
     for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
         uint32 index = i * elementSize;
@@ -1344,6 +1350,12 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff, const AnyType & parIn, const 
     uint32 numberOfRows = parIn.GetNumberOfElements(1u);
     uint32 numberOfColumns = parIn.GetNumberOfElements(0u);
     uint32 elementSize = parIn.GetByteSize();
+    //Treat the special char8[][] where the number of rows for a matrix is @ char8[][here][], the number of columns @ char8[here][][] and the elementSize @ char8[][][here]
+    if (descriptor == Character8Bit) {
+        elementSize *= parIn.GetNumberOfElements(2u);
+        numberOfRows = parIn.GetNumberOfElements(1u);
+        numberOfColumns = parIn.GetNumberOfElements(0u);
+    }
     bool isStaticDeclared = parIn.IsStaticDeclared();
 
     //search the printer by the format descriptor
@@ -1366,8 +1378,15 @@ static bool PrintToStreamMatrix(IOBuffer & iobuff, const AnyType & parIn, const 
             }
             if (vectorPointer != NULL) {
                 AnyType vector(descriptor, parIn.GetBitAddress(), vectorPointer);
-                vector.SetNumberOfDimensions(1u);
-                vector.SetNumberOfElements(0u, numberOfColumns);
+                if (descriptor == Character8Bit) {
+                    vector.SetNumberOfDimensions(2u);
+                    vector.SetNumberOfElements(0u, elementSize);
+                    vector.SetNumberOfElements(1u, numberOfColumns);
+                }
+                else {
+                    vector.SetNumberOfDimensions(1u);
+                    vector.SetNumberOfElements(0u, numberOfColumns);
+                }
                 vector.SetStaticDeclared(parIn.IsStaticDeclared());
                 ret = PrintToStreamVector(iobuff, vector, fd);
                 if (ret) {
@@ -1399,14 +1418,20 @@ static bool PrintToStream(IOBuffer & iobuff, const AnyType & parIn, const Format
     bool ret = false;
     AnyType par = parIn;
     void* dataPointer = par.GetDataPointer();
+    //Special case of CArray
+    uint8 numberOfDimensions = parIn.GetNumberOfDimensions();
+    if (parIn.GetTypeDescriptor() == Character8Bit) {
+        numberOfDimensions -= 1u;
+    }
+
     if (dataPointer != NULL) {
-        if (parIn.GetNumberOfDimensions() == 2u) {
+        if (numberOfDimensions == 2u) {
             ret = PrintToStreamMatrix(iobuff, parIn, fd);
         }
-        else if (parIn.GetNumberOfDimensions() == 1u) {
+        else if (numberOfDimensions == 1u) {
             ret = PrintToStreamVector(iobuff, parIn, fd);
         }
-        else if (parIn.GetNumberOfDimensions() == 0u) {
+        else if (numberOfDimensions == 0u) {
             ret = PrintToStreamScalar(iobuff, parIn, fd);
         }
         else {

@@ -41,27 +41,27 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryMapSynchronisedInputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedInputBrokerGTest,TestConstructor) {
     MemoryMapSynchronisedInputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedInputBrokerGTest,TestExecute) {
     MemoryMapSynchronisedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }
 
-TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_FailSynchronisation) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedInputBrokerGTest,TestExecute_FailSynchronisation) {
     MemoryMapSynchronisedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_FailSynchronisation());
 }
 
-TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_Ranges) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedInputBrokerGTest,TestExecute_Ranges) {
     MemoryMapSynchronisedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Ranges());
 }
 
-TEST(MemoryMapSynchronisedInputBrokerGTest,TestExecute_Samples) {
+TEST(BareMetal_L5GAMs_MemoryMapSynchronisedInputBrokerGTest,TestExecute_Samples) {
     MemoryMapSynchronisedInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Samples());
 }

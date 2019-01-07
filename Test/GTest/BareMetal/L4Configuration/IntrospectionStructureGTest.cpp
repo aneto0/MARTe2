@@ -1,7 +1,7 @@
 /**
- * @file ReplyMessageCatcherMessageFilterGTest.cpp
- * @brief Source file for class ReplyMessageCatcherMessageFilterGTest
- * @date 09/09/2016
+ * @file ConfigurationDatabaseGTest.cpp
+ * @brief Source file for class ConfigurationDatabaseGTest
+ * @date 19/11/2018
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,21 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MessageGTest (public, protected, and private). Be aware that some 
+ * the class ConfigurationDatabaseGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-
-#include "gtest/gtest.h"
-#include "ReplyMessageCatcherMessageFilterTest.h"
+#include "IntrospectionStructureTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,43 +39,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConstructor) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestDefaultConstructor());
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestStructureRegistration());
 }
 
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestSetMessageToCatch) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestSetMessageToCatch());
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_TypeAlreadyRegistered) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestStructureRegistration_TypeAlreadyRegistered());
 }
 
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestWait) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestWait());
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_False_TypeAlreadyRegistered_Class) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestStructureRegistration_False_TypeAlreadyRegistered_Class());
 }
 
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestWait_Timeout) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestWait_Timeout());
-}
-
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage());
-}
-
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_NotReply) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_NotReply());
-}
-
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestConsumeMessage_DifferentMessage) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestConsumeMessage_DifferentMessage());
-}
-
-TEST(BareMetal_L4Messages_ReplyMessageCatcherMessageFilterGTest,TestIsPermanentFilter) {
-    ReplyMessageCatcherMessageFilterTest target;
-    ASSERT_TRUE(target.TestIsPermanentFilter());
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_False_TypeNoParameters) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestStructureRegistration_False_TypeNoParameters());
 }

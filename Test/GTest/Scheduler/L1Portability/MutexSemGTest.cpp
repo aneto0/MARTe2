@@ -42,87 +42,87 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MutexSemGTest,TestDefaultConstructor) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestDefaultConstructor) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestDefaultConstructor());
 }
 
-TEST(MutexSemGTest,TestCreateNoRecursive) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestCreateNoRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(false));
 }
 
-TEST(MutexSemGTest,TestCreateRecursive) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestCreateRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(true));
 }
 
-TEST(MutexSemGTest,TestCloseNoRecursive) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestCloseNoRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestClose(false));
 }
 
-TEST(MutexSemGTest,TestCloseRecursive) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestCloseRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestClose(true));
 }
 
-TEST(MutexSemGTest,TestLock) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestLock) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestLock(16, TTInfiniteWait));
 }
 
-TEST(MutexSemGTest,TestLockWithFiniteTimeout) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestLockWithFiniteTimeout) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestLock(1, 10000000));
 }
 
-TEST(MutexSemGTest,TestUnLock) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestUnLock) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestUnLock(50, TTInfiniteWait));
 }
 
-TEST(MutexSemGTest,TestUnLockWithFiniteTimeout) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestUnLockWithFiniteTimeout) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestUnLock(50, 10000000));
 }
 
-TEST(MutexSemGTest,TestLockWithSmallFiniteTimeoutToFail) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestLock(50, 1));
 }
 
-TEST(MutexSemGTest,TestUnLockWithSmallFiniteTimeoutToFail) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestUnLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestUnLock(50, 1));
 }
 
-TEST(MutexSemGTest,TestLockErrorCode) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestLockErrorCode) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestLockErrorCode());
 }
 
-TEST(MutexSemGTest,TestIsClosed) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestIsClosed) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestIsClosed());
 }
 
-TEST(MutexSemGTest,TestIsRecursive) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestIsRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestIsRecursive());
 }
 
-TEST(MutexSemGTest,TestRecursiveOn) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestRecursiveOn) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestRecursive(true));
 }
 
-TEST(MutexSemGTest,TestRecursiveOff) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestRecursiveOff) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestRecursive(false));
 }
 
-TEST(MutexSemGTest,TestCopyConstructor) {
+TEST(Scheduler_L1Portability_MutexSemGTest,TestCopyConstructor) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCopyConstructor());
 }

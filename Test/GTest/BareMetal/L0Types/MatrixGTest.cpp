@@ -46,17 +46,17 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(MatrixGTest,TestDefaultConstructor) {
+TEST(BareMetal_L0Types_MatrixGTest,TestDefaultConstructor) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestDefaultConstructor());
 }
 
-TEST(MatrixGTest,TestConstructorOnHeap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorOnHeap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestConstructorOnHeap());
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Int8) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -76,7 +76,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int8) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_UInt8) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -96,7 +96,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt8) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Int16) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -116,7 +116,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int16) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_UInt16) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -136,7 +136,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt16) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Int32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -156,7 +156,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int32) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_UInt32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -176,7 +176,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt32) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Int64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -196,7 +196,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Int64) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_UInt64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -217,7 +217,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_UInt64) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Float32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Float32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -237,7 +237,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Float32) {
     delete [] matrix;
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Float64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerHeap_Float64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -261,7 +261,7 @@ TEST(MatrixGTest,TestConstructorByPointerHeap_Float64) {
 
 
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Int8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int8) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -277,7 +277,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int8) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_UInt8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt8) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -293,7 +293,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt8) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Int16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int16) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -309,7 +309,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int16) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_UInt16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt16) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -325,7 +325,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt16) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Int32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -340,7 +340,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int32) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_UInt32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -354,7 +354,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt32) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Int64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Int64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -368,7 +368,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_UInt64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_UInt64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -382,7 +382,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Float32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float32) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -396,7 +396,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Float32) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByPointerStatic_Float64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByPointerStatic_Float64) {
     MatrixTest matrixTest;
 
     const int32 nRows = 2;
@@ -411,7 +411,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Float64) {
     ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Int8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Int8) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -420,7 +420,7 @@ TEST(MatrixGTest,TestConstructorByTable_Int8) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_UInt8) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_UInt8) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -429,7 +429,7 @@ TEST(MatrixGTest,TestConstructorByTable_UInt8) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Int16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Int16) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -438,7 +438,7 @@ TEST(MatrixGTest,TestConstructorByTable_Int16) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_UInt16) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_UInt16) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -447,7 +447,7 @@ TEST(MatrixGTest,TestConstructorByTable_UInt16) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Int32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Int32) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -456,7 +456,7 @@ TEST(MatrixGTest,TestConstructorByTable_Int32) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_UInt32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_UInt32) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -465,7 +465,7 @@ TEST(MatrixGTest,TestConstructorByTable_UInt32) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Int64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Int64) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -474,7 +474,7 @@ TEST(MatrixGTest,TestConstructorByTable_Int64) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_UInt64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_UInt64) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -483,7 +483,7 @@ TEST(MatrixGTest,TestConstructorByTable_UInt64) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Float32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Float32) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -492,7 +492,7 @@ TEST(MatrixGTest,TestConstructorByTable_Float32) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestConstructorByTable_Float64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestConstructorByTable_Float64) {
     MatrixTest matrixTest;
 
     const uint32 nCols = 2;
@@ -501,137 +501,137 @@ TEST(MatrixGTest,TestConstructorByTable_Float64) {
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
 
-TEST(MatrixGTest,TestGetNumberOfColumns_32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestGetNumberOfColumns_32) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetNumberOfColumns(32));
 }
 
-TEST(MatrixGTest,TestGetNumberOfColumns_0) {
+TEST(BareMetal_L0Types_MatrixGTest,TestGetNumberOfColumns_0) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetNumberOfColumns(0));
 }
 
-TEST(MatrixGTest,TestGetNumberOfRows_32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestGetNumberOfRows_32) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetNumberOfRows(32));
 }
 
-TEST(MatrixGTest,TestGetNumberOfRows_0) {
+TEST(BareMetal_L0Types_MatrixGTest,TestGetNumberOfRows_0) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetNumberOfRows(0));
 }
 
-TEST(MatrixGTest,TestMatrixOperator_Static) {
+TEST(BareMetal_L0Types_MatrixGTest,TestMatrixOperator_Static) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestMatrixOperator_Static());
 }
 
-TEST(MatrixGTest,TestMatrixOperator_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestMatrixOperator_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestMatrixOperator_Heap());
 }
 
-TEST(MatrixGTest,TestMatrixFunctionCallOperator_Static) {
+TEST(BareMetal_L0Types_MatrixGTest,TestMatrixFunctionCallOperator_Static) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestMatrixFunctionCallOperator_Static());
 }
 
-TEST(MatrixGTest,TestMatrixFunctionCallOperator_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestMatrixFunctionCallOperator_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestMatrixFunctionCallOperator_Heap());
 }
 
-TEST(MatrixGTest,TestGetDataPointer) {
+TEST(BareMetal_L0Types_MatrixGTest,TestGetDataPointer) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetDataPointer());
 }
 
-TEST(MatrixGTest,TestIsStaticDeclared) {
+TEST(BareMetal_L0Types_MatrixGTest,TestIsStaticDeclared) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestIsStaticDeclared());
 }
 
-TEST(MatrixGTest,TestProduct) {
+TEST(BareMetal_L0Types_MatrixGTest,TestProduct) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestProduct());
 }
 
-TEST(MatrixGTest,TestSum) {
+TEST(BareMetal_L0Types_MatrixGTest,TestSum) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestSum());
 }
 
-TEST(MatrixGTest,TestCopy) {
+TEST(BareMetal_L0Types_MatrixGTest,TestCopy) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestCopy());
 }
 
-TEST(MatrixGTest,TestSubMatrix) {
+TEST(BareMetal_L0Types_MatrixGTest,TestSubMatrix) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestSubMatrix());
 }
 
-TEST(MatrixGTest,TestDeterminant) {
+TEST(BareMetal_L0Types_MatrixGTest,TestDeterminant) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestDeterminant());
 }
 
-TEST(MatrixGTest,TestTranspose) {
+TEST(BareMetal_L0Types_MatrixGTest,TestTranspose) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestTranspose());
 }
 
-TEST(MatrixGTest,TestInverse_float32) {
+TEST(BareMetal_L0Types_MatrixGTest,TestInverse_float32) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestInverse_float32());
 }
 
-TEST(MatrixGTest,TestInverse_float64) {
+TEST(BareMetal_L0Types_MatrixGTest,TestInverse_float64) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestInverse_float64());
 }
 
-TEST(MatrixGTest,TestInverse_NullDeterminant) {
+TEST(BareMetal_L0Types_MatrixGTest,TestInverse_NullDeterminant) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestInverse_NullDeterminant());
 }
 
-TEST(MatrixGTest,TestProduct_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestProduct_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestProduct_Heap());
 }
 
-TEST(MatrixGTest,TestSum_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestSum_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestSum_Heap());
 }
 
-TEST(MatrixGTest,TestCopy_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestCopy_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestCopy_Heap());
 }
 
-TEST(MatrixGTest,TestSubMatrix_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestSubMatrix_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestSubMatrix_Heap());
 }
 
-TEST(MatrixGTest,TestDeterminant_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestDeterminant_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestDeterminant_Heap());
 }
 
-TEST(MatrixGTest,TestTranspose_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestTranspose_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestTranspose_Heap());
 }
 
-TEST(MatrixGTest,TestInverse_float32_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestInverse_float32_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestInverse_float32_Heap());
 }
 
-TEST(MatrixGTest,TestInverse_float64_Heap) {
+TEST(BareMetal_L0Types_MatrixGTest,TestInverse_float64_Heap) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestInverse_float64_Heap());
 }

@@ -259,13 +259,18 @@ struct TestStructCC {
 
 
 struct TestStructE {
-    TestStructC e1[3];
+    TestStructC e1[2][1][2];
     int32 e2;
 };
 
-struct TestStructEE {
-    TestStructE ee1[4];
-    int32 ee2;
+struct TestStructF {
+    TestStructE f1[2];
+    int32 f2;
+};
+
+struct TestStructG {
+    TestStructF g1[2][2];
+    int32 g2;
 };
 ///////////////////////////////////////////
 ///////////////////////////////////////////

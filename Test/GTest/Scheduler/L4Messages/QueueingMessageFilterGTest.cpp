@@ -41,32 +41,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(QueueingMessageFilterGTest,TestConstructor) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestConstructor) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(QueueingMessageFilterGTest,TestConsumeMessage) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestConsumeMessage) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage());
 }
 
-TEST(QueueingMessageFilterGTest,TestGetMessage) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestGetMessage) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestGetMessage());
 }
 
-TEST(QueueingMessageFilterGTest,TestGetMessage_Wait) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestGetMessage_Wait) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestGetMessage_Wait());
 }
 
-TEST(QueueingMessageFilterGTest,TestGetMessage_Wait_Timeout) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestGetMessage_Wait_Timeout) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestGetMessage_Wait_Timeout());
 }
 
-TEST(QueueingMessageFilterGTest,TestIsPermanentFilter) {
+TEST(Scheduler_L4Messages_QueueingMessageFilterGTest,TestIsPermanentFilter) {
     QueueingMessageFilterTest target;
     ASSERT_TRUE(target.TestIsPermanentFilter());
 }

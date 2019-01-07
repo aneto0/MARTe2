@@ -45,238 +45,238 @@
 
 using namespace MARTe;
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftPositiveInt8) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftPositiveInt8) {
     ShiftTest myShift;
     int8 number = 8;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftNegativeInt8) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftNegativeInt8) {
     ShiftTest myShift;
     int8 number = -8;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftUint8) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftUint8) {
     ShiftTest myShift;
     uint8 number = 8;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftUint16) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftUint16) {
     ShiftTest myShift;
     uint16 number = 12345;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftInt16) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftInt16) {
     ShiftTest myShift;
     int16 number = 12345;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftUint32) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftUint32) {
     ShiftTest myShift;
     uint32 number = 12345;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftInt32) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftInt32) {
     ShiftTest myShift;
     int32 number = 12345;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftUint64) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftUint64) {
     ShiftTest myShift;
     uint64 number = 1234567;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftInt64) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftInt64) {
     ShiftTest myShift;
     int64 number = 1234567;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftPositiveInt64) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftPositiveInt64) {
     ShiftTest myShift;
     int64 number = 123;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftNegativeInt64) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftNegativeInt64) {
     ShiftTest myShift;
     int64 number = -123;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftDoubleInteger_Unsigned) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftDoubleInteger_Unsigned) {
     ShiftTest myShift;
     DoubleInteger<uint64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftDoubleInteger_Signed) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftDoubleInteger_Signed) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftPositive_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftPositive_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 123123123;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalRightSaveShiftNegative_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalRightSaveShiftNegative_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = -123123123;
     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
-TEST(ShiftGTest,TestLogicalLeftSaveShiftPositiveInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestLogicalLeftSaveShiftPositiveInt8) {
     ShiftTest myShift;
     int8 number = 15;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestLogicalLeftSaveShiftNegativeInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestLogicalLeftSaveShiftNegativeInt8) {
     ShiftTest myShift;
     int8 number = -15;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestLogicalLeftSaveShiftPositiveInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestLogicalLeftSaveShiftPositiveInt64) {
     ShiftTest myShift;
     int64 number = 23489123;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestLogicalLeftSaveShiftNegativeInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestLogicalLeftSaveShiftNegativeInt64) {
     ShiftTest myShift;
     int64 number = -23489123;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalLeftSaveShiftDoubleInteger_Unsigned) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalLeftSaveShiftDoubleInteger_Unsigned) {
     ShiftTest myShift;
     DoubleInteger<uint64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalLeftSaveShiftDoubleInteger_Signed) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalLeftSaveShiftDoubleInteger_Signed) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalLeftSaveShiftPositive_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalLeftSaveShiftPositive_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 123123123;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestLogicalLeftSaveShiftNegative_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestLogicalLeftSaveShiftNegative_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = -123123123;
     ASSERT_TRUE(myShift.TestLogicalLeftSaveShift(number));
 }
 
 
-TEST(ShiftGTest,TestMathematicRightSafeShiftPositiveInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicRightSafeShiftPositiveInt8) {
     ShiftTest myShift;
     int8 number = 123;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicRightSafeShiftNegativeInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicRightSafeShiftNegativeInt8) {
     ShiftTest myShift;
     int8 number = -123;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicRightSafeShiftPositiveInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicRightSafeShiftPositiveInt64) {
     ShiftTest myShift;
     int64 number = 123456;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicRightSafeShiftNegativeInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicRightSafeShiftNegativeInt64) {
     ShiftTest myShift;
     int64 number = -123456;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
 
-TEST(ShiftGTest, TestMathematicRightSafeShiftDoubleInteger_Unsigned) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicRightSafeShiftDoubleInteger_Unsigned) {
     ShiftTest myShift;
     DoubleInteger<uint64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicRightSafeShiftDoubleInteger_Signed) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicRightSafeShiftDoubleInteger_Signed) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicRightSafeShiftPositive_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicRightSafeShiftPositive_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 123123123;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicRightSafeShiftNegative_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicRightSafeShiftNegative_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = -123123123;
     ASSERT_TRUE(myShift.TestMathematicRightSafeShift(number));
 }
 
 
-TEST(ShiftGTest,TestMathematicLeftSafeShiftNegativeInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicLeftSafeShiftNegativeInt8) {
     ShiftTest myShift;
     int8 number = -56;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicLeftSafeShiftPositiveInt8) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicLeftSafeShiftPositiveInt8) {
     ShiftTest myShift;
     int8 number = 56;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicLeftSafeShiftPositiveInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicLeftSafeShiftPositiveInt64) {
     ShiftTest myShift;
     int64 number = 52453456;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest,TestMathematicLeftSafeShiftNegativeInt64) {
+TEST(BareMetal_L0Types_ShiftGTest,TestMathematicLeftSafeShiftNegativeInt64) {
     ShiftTest myShift;
     int64 number = -52453456;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicLeftSafeShiftDoubleInteger_Unsigned) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicLeftSafeShiftDoubleInteger_Unsigned) {
     ShiftTest myShift;
     DoubleInteger<uint64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicLeftSafeShiftDoubleInteger_Signed) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicLeftSafeShiftDoubleInteger_Signed) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 12345671234567;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicLeftSafeShiftPositive_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicLeftSafeShiftPositive_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = 123123123;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));
 }
 
-TEST(ShiftGTest, TestMathematicLeftSafeShiftNegative_DoubleInteger) {
+TEST(BareMetal_L0Types_ShiftGTest, TestMathematicLeftSafeShiftNegative_DoubleInteger) {
     ShiftTest myShift;
     DoubleInteger<int64> number = -123123123;
     ASSERT_TRUE(myShift.TestMathematicLeftSaveShift(number));

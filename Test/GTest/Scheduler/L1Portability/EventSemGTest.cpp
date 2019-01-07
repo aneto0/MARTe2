@@ -40,82 +40,82 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(EventSemGTest,TestConstructor) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestConstructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestConstructor());
 }
 
-TEST(EventSemGTest,TestDestructor) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestDestructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestDestructor());
 }
 
-TEST(EventSemGTest,TestCreate) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestCreate) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCreate());
 }
 
-TEST(EventSemGTest,TestClose) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestClose) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestClose());
 }
 
-TEST(EventSemGTest,TestCopyConstructor) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestCopyConstructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCopyConstructor());
 }
 
-TEST(EventSemGTest,TestIsClosed) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestIsClosed) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestIsClosed());
 }
 
-TEST(EventSemGTest,TestCopyConstructor2Sem) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestCopyConstructor2Sem) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCopyConstructor2Sem());
 }
 
-TEST(EventSemGTest,TestWait) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait());
 }
 
-TEST(EventSemGTest,TestResetWait) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestResetWait) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestResetWait());
 }
 
-TEST(EventSemGTest,TestPost) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestPost) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestPost());
 }
 
-TEST(EventSemGTest,TestReset) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestReset) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestReset());
 }
 
-TEST(EventSemGTest,TestWaitTimeout) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait(500));
 }
 /*
-TEST(EventSemGTest,TestWaitTimeoutNoTimeout) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutNoTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutNoTimeout(32));
 }
 
-TEST(EventSemGTest,TestWaitTimeoutSuccess) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutSuccess) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutSuccess(32));
 }
 
-TEST(EventSemGTest,TestWaitTimeoutFailure) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutFailure) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailure(32));
 }
 
-TEST(EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
+TEST(Scheduler_L1Portability_EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailureFollowedBySuccess(32));
 }

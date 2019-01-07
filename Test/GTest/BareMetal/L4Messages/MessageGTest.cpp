@@ -41,69 +41,69 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MessageGTest,TestConstructor) {
+TEST(BareMetal_L4Messages_MessageGTest,TestConstructor) {
     MessageTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
 
-TEST(MessageGTest,TestInitialise) {
+TEST(BareMetal_L4Messages_MessageGTest,TestInitialise) {
     MessageTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
 
-TEST(MessageGTest,TestSetAsReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestSetAsReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestSetAsReply());
 }
 
-TEST(MessageGTest,TestIsReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestIsReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestIsReply());
 }
 
-TEST(MessageGTest,TestSetExpectsReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestSetExpectsReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestSetExpectsReply());
 }
 
-TEST(MessageGTest,TestSetExpectsIndirectReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestSetExpectsIndirectReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestSetExpectsIndirectReply());
 }
 
-TEST(MessageGTest,TestExpectsReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestExpectsReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestExpectsReply());
 }
 
-TEST(MessageGTest,TestExpectsIndirectReply) {
+TEST(BareMetal_L4Messages_MessageGTest,TestExpectsIndirectReply) {
     MessageTest target;
     ASSERT_TRUE(target.TestExpectsIndirectReply());
 }
 
-TEST(MessageGTest,TestGetDestination) {
+TEST(BareMetal_L4Messages_MessageGTest,TestGetDestination) {
     MessageTest target;
     ASSERT_TRUE(target.TestGetDestination());
 }
 
-TEST(MessageGTest,TestGetSender) {
+TEST(BareMetal_L4Messages_MessageGTest,TestGetSender) {
     MessageTest target;
     ASSERT_TRUE(target.TestGetSender());
 }
 
-TEST(MessageGTest,TestSetSender) {
+TEST(BareMetal_L4Messages_MessageGTest,TestSetSender) {
     MessageTest target;
     ASSERT_TRUE(target.TestSetSender());
 }
 
-TEST(MessageGTest,TestGetFunction) {
+TEST(BareMetal_L4Messages_MessageGTest,TestGetFunction) {
     MessageTest target;
     ASSERT_TRUE(target.TestGetFunction());
 }
 
-TEST(MessageGTest,TestSetReplyTimeout) {
+TEST(BareMetal_L4Messages_MessageGTest,TestSetReplyTimeout) {
     MessageTest target;
     ASSERT_TRUE(target.TestSetReplyTimeout());
 }

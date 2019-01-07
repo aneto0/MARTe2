@@ -44,187 +44,187 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(CircularBufferThreadInputDataSourceGTest,TestConstructor) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestConstructor) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_CpuMask) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_CpuMask) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise_CpuMask());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_PriorityLevel) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise_PriorityLevel());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_StackSize) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_StackSize) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise_StackSize());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestInitialise_SignalDefinitionInterleaved) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestInitialise_SignalDefinitionInterleaved) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestInitialise_SignalDefinitionInterleaved());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSynchronise) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSynchronise());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSynchronise_FullRolling) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise_FullRolling) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSynchronise_FullRolling());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSynchronise_GetLatest) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSynchronise_GetLatest) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSynchronise_GetLatest());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestGetBrokerName) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetBrokerName) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetBrokerName());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestGetInputBrokers) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetInputBrokers) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetInputBrokers());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestGetOutputBrokers) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetOutputBrokers) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetOutputBrokers());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_WrittenSignal) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_WrittenSignal) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_WrittenSignal());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_PacketMemberSizes) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_PacketMemberSizes) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_PacketMemberSizes());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_SignalDefinitionInterleaved) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_SignalDefinitionInterleaved) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_SignalDefinitionInterleaved());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_InvalidPacketMemberSize) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_InvalidPacketMemberSize) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_InvalidPacketMemberSize());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_PacketMemberSizeGreater) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_PacketMemberSizeGreater) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_PacketMemberSizeGreater());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestPrepareNextState) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestPrepareNextState) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestGetInputOffset) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetInputOffset) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetInputOffset());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestGetOutputOffset) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestGetOutputOffset) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestGetOutputOffset());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_SameSignalDifferentModes) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_SameSignalDifferentModes) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_SameSignalDifferentModes());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_ErrorCheck());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_Overwrite) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_Overwrite) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_ErrorCheck_Overwrite());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_DriverRead) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_DriverRead) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_ErrorCheck_DriverRead());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_Both) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_ErrorCheck_Both) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_ErrorCheck_Both());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_ErrorCheck_False_BadType) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_ErrorCheck_False_BadType) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_ErrorCheck_False_BadType());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_ErrorCheck_False_BadSize) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_ErrorCheck_False_BadSize) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_ErrorCheck_False_BadSize());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_TimeStamp());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp_NoRead) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp_NoRead) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_TimeStamp_NoRead());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp_FalseDriverRead) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestExecute_TimeStamp_FalseDriverRead) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestExecute_TimeStamp_FalseDriverRead());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_TimeStamp_False_BadSize) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_TimeStamp_False_BadSize) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_TimeStamp_False_BadSize());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_TimeStamp_False_BadType) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_TimeStamp_False_BadType) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_TimeStamp_False_BadType());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestPurge) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestPurge) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestPurge());
 }
 
-TEST(CircularBufferThreadInputDataSourceGTest,TestTerminateInputCopy) {
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestTerminateInputCopy) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestTerminateInputCopy());
 }

@@ -39,52 +39,52 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeLoaderGTest,TestConstructor) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestConstructor) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeLoaderGTest,TestConfigure) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestConfigure) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConfigure());
 }
 
-TEST(RealTimeLoaderGTest,TestConfigure_MoreApplications) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestConfigure_MoreApplications) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConfigure_MoreApplications());
 }
 
-TEST(RealTimeLoaderGTest,TestConfigure_False_FailedConfiguration) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestConfigure_False_FailedConfiguration) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedConfiguration());
 }
 
-TEST(RealTimeLoaderGTest,TestConfigure_False_FailedRealTimeApplicationConfiguration) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestConfigure_False_FailedRealTimeApplicationConfiguration) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestConfigure_False_FailedRealTimeApplicationConfiguration());
 }
 
-TEST(RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStart_False_FailedRealTimeApplicationStartNextStateExecutionConfiguration());
 }
 
-TEST(RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStart_False_FailedRealTimeApplicationPrepareNextStateConfiguration());
 }
 
-TEST(RealTimeLoaderGTest,TestStart_FirstState) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestStart_FirstState) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStart_FirstState());
 }
 
-TEST(RealTimeLoaderGTest,TestStart_Message) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestStart_Message) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStart_Message());
 }
 
-TEST(RealTimeLoaderGTest,TestStop) {
+TEST(BareMetal_L6App_RealTimeLoaderGTest,TestStop) {
     RealTimeLoaderTest test;
     ASSERT_TRUE(test.TestStop());
 }

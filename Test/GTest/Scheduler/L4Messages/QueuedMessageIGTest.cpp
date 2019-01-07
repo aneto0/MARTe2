@@ -41,33 +41,33 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(QueuedMessageIGTest,TestConstructor) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestConstructor) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(QueuedMessageIGTest,TestInstallMessageFilter) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestInstallMessageFilter) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestInstallMessageFilter());
 }
 
-TEST(QueuedMessageIGTest,TestRemoveMessageFilter) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestRemoveMessageFilter) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestRemoveMessageFilter());
 }
 
-TEST(QueuedMessageIGTest,TestStart) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestStart) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestStart());
 }
 
-TEST(QueuedMessageIGTest,TestStop) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestStop) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestStop());
 }
 
 
-TEST(QueuedMessageIGTest,TestStart2) {
+TEST(Scheduler_L4Messages_QueuedMessageIGTest,TestStart2) {
     QueuedMessageITest target;
     ASSERT_TRUE(target.TestStart2());
 }

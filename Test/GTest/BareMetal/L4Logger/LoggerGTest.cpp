@@ -41,42 +41,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(LoggerGTest,TestConstructor) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestConstructor) {
     LoggerTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
-TEST(LoggerGTest,TestAddLogEntry) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestAddLogEntry) {
     LoggerTest target;
     ASSERT_TRUE(target.TestAddLogEntry());
 }
 
-TEST(LoggerGTest,TestGetLogEntry) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestGetLogEntry) {
     LoggerTest target;
     ASSERT_TRUE(target.TestGetLogEntry());
 }
 
-TEST(LoggerGTest,TestGetPage) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestGetPage) {
     LoggerTest target;
     ASSERT_TRUE(target.TestGetPage());
 }
 
-TEST(LoggerGTest,TestReturnPage) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestReturnPage) {
     LoggerTest target;
     ASSERT_TRUE(target.TestReturnPage());
 }
 
-TEST(LoggerGTest,TestGetNumberOfPages) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestGetNumberOfPages) {
     LoggerTest target;
     ASSERT_TRUE(target.TestGetNumberOfPages());
 }
 
-TEST(LoggerGTest,TestGetNumberOfLogs) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestGetNumberOfLogs) {
     LoggerTest target;
     ASSERT_TRUE(target.TestGetNumberOfLogs());
 }
 
-TEST(LoggerGTest,TestLoggerErrorProcessFunction) {
+TEST(BareMetal_L4Logger_LoggerGTest,TestLoggerErrorProcessFunction) {
     LoggerTest target;
     ASSERT_TRUE(target.TestLoggerErrorProcessFunction());
 }

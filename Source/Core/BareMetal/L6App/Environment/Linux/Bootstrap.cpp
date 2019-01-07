@@ -45,8 +45,7 @@ namespace MARTe {
 /**
  * The list of linux MARTe applications.
  */
-static const char8 * const arguments =
-        "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS]";
+static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS]";
 
 }
 
@@ -114,6 +113,20 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         (void) argsConfiguration.Read("-s", firstState);
         if (firstState.Size() > 0u) {
             ret.parametersError = !loaderParameters.Write("FirstState", firstState.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString buildTokens;
+        (void) argsConfiguration.Read("-t", buildTokens);
+        if (buildTokens.Size() > 0u) {
+            ret.parametersError = !loaderParameters.Write("BuildTokens", buildTokens.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString domainTokens;
+        (void) argsConfiguration.Read("-d", domainTokens);
+        if (domainTokens.Size() > 0u) {
+            ret.parametersError = !loaderParameters.Write("DomainTokens", domainTokens.Buffer());
         }
     }
     if (ret) {

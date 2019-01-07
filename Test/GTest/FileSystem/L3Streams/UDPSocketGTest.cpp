@@ -42,77 +42,77 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(UDPSocketGTest, TestConstructor) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestConstructor) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(UDPSocketGTest, TestConstructor_Stream) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestConstructor_Stream) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestConstructor_Stream());
 }
 
-TEST(UDPSocketGTest, TestConstructor_BasicUDPSocket) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestConstructor_BasicUDPSocket) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestConstructor_BasicUDPSocket());
 }
 
-TEST(UDPSocketGTest, TestRead) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestRead) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestRead());
 }
 
-TEST(UDPSocketGTest, TestRead_Timeout) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestRead_Timeout) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestRead_Timeout());
 }
 
-TEST(UDPSocketGTest, TestWrite) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestWrite) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestWrite());
 }
 
-TEST(UDPSocketGTest, TestWrite_Timeout) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestWrite_Timeout) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestWrite_Timeout());
 }
 
-TEST(UDPSocketGTest, TestSize) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestSize) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestSize());
 }
 
-TEST(UDPSocketGTest, TestSeek) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestSeek) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestSeek());
 }
 
-TEST(UDPSocketGTest, TestRelativeSeek) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestRelativeSeek) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestRelativeSeek());
 }
 
-TEST(UDPSocketGTest, TestPosition) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestPosition) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestPosition());
 }
 
-TEST(UDPSocketGTest, TestSetSize) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestSetSize) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestSetSize());
 }
 
-TEST(UDPSocketGTest, TestCanWrite) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestCanWrite) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestCanWrite());
 }
 
-TEST(UDPSocketGTest, TestCanSeek) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestCanSeek) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestCanSeek());
 }
 
-TEST(UDPSocketGTest, TestCanRead) {
+TEST(FileSystem_L3Streams_UDPSocketGTest, TestCanRead) {
     UDPSocketTest test;
     ASSERT_TRUE(test.TestCanRead());
 }

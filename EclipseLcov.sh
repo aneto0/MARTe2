@@ -8,9 +8,12 @@ make -f Makefile.cov
 #Run baseline coverage
 lcov --capture --initial --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.initial
 
-#Execute the tests (in individual processes to decrease likelihood of coupling)
-all_tests=`Test/GTest/cov/MainGTest.ex --gtest_list_tests | grep "\."`
-for test in $all_tests; do Test/GTest/cov/MainGTest.ex --gtest_filter="$test*"; done
+#Execute the tests
+Test/GTest/cov/MainGTest.ex --gtest_filter=BareMetal*
+Test/GTest/cov/MainGTest.ex --gtest_filter=FileSystem*
+Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*:-Scheduler*L5GAMs*
+Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*L5GAMs*:-Scheduler*CircularBufferThreadInputDataSourceGTest*
+Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*CircularBufferThreadInputDataSourceGTest*
 
 #Create test coverage data file
 lcov --capture --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.tests

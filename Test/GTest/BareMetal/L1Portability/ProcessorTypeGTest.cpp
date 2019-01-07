@@ -41,54 +41,54 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ProcessorTypeGTest,TestAssignmentOperator) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestAssignmentOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestAssignmentOperator());
 }
 
-TEST(ProcessorTypeGTest,TestOROperator) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestOROperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestOROperator());
 }
 
-TEST(ProcessorTypeGTest,TestEqualityOperator) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestEqualityOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestEqualityOperator());
 }
 
-TEST(ProcessorTypeGTest,TestInequalityOperator) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestInequalityOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestInequalityOperator());
 }
 
-TEST(ProcessorTypeGTest,TestSetGetDefaultCPUs) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestSetGetDefaultCPUs) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestSetGetDefaultCPUs());
 }
 
 
-TEST(ProcessorTypeGTest,TestDefaultConstructor) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestDefaultConstructor) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestDefaultConstructor());
 }
 
-TEST(ProcessorTypeGTest,TestConstructorFromMask) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestConstructorFromMask) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestConstructorFromMask());
 }
 
-TEST(ProcessorTypeGTest,TestConstructorFromProcessorType) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestConstructorFromProcessorType) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestConstructorFromProcessorType());
 }
 
 
-TEST(ProcessorTypeGTest,TestSetMask) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestSetMask) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestSetMask(0xff));
 }
 
-TEST(ProcessorTypeGTest,TestAddCPU) {
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestAddCPU) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestAddCPU(3,9));
 }

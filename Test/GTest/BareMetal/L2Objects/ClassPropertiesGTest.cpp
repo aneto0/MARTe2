@@ -39,32 +39,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassPropertiesGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestDefaultConstructor) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestDefaultConstructor());
 }
 
-TEST(ClassPropertiesGTest,TestFullConstructor) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestFullConstructor) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello", "Hello", "World"));
 }
 
-TEST(ClassPropertiesGTest,TestGetName) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestReset) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestReset());
+}
+
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestGetName) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestGetName("Hello"));
 }
 
-TEST(ClassPropertiesGTest,TestGetVersion) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestGetVersion) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestGetVersion("World"));
 }
 
-TEST(ClassPropertiesGTest,TestGetUniqueIdentifier) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestGetUniqueIdentifier) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestGetUniqueIdentifier(0xff2));
 }
 
-TEST(ClassPropertiesGTest,TestSetUniqueIdentifier) {
+TEST(BareMetal_L2Objects_ClassPropertiesGTest,TestSetUniqueIdentifier) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestSetUniqueIdentifier(0xff3));
 }

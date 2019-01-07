@@ -40,12 +40,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(EmbeddedThreadGTest, TestConstructor) {
+TEST(Scheduler_L3Services_EmbeddedThreadGTest, TestConstructor) {
     EmbeddedThreadTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(EmbeddedThreadGTest,TestThreadLoop) {
+TEST(Scheduler_L3Services_EmbeddedThreadGTest,TestThreadLoop) {
     EmbeddedThreadTest target;
     ASSERT_TRUE(target.TestThreadLoop());
 }

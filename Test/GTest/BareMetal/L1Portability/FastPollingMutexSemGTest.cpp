@@ -42,117 +42,117 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(FastPollingMutexSemGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestConstructor) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestConstructor());
 }
 
-TEST(FastPollingMutexSemGTest,TestConstructorFromExternal) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestConstructorFromExternal) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestConstructorFromExternal());
 }
 
-TEST(FastPollingMutexSemGTest,TestCreateNoLock) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestCreateNoLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(false));
 }
 
-TEST(FastPollingMutexSemGTest,TestCreateLock) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestCreateLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate(true));
 }
 
-TEST(FastPollingMutexSemGTest,TestCreateNoLock_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestCreateNoLock_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreateExternal(false));
 }
 
-TEST(FastPollingMutexSemGTest,TestCreateLock_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestCreateLock_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreateExternal(true));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLock) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastLock(32, TTInfiniteWait));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastLock(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLock_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLock_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastLockExternal(32, TTInfiniteWait));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastLockExternal(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLock) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastUnLock(32, TTInfiniteWait));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLock_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLock_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, TTInfiniteWait));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastUnLock(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, 10000000));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastLock(32, 1));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastLockExternal(32, 1));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastUnLock(32, 1));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_FALSE(mutextest.TestFastUnLockExternal(32, 1));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastLockErrorCode) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastLockErrorCode) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastLockErrorCode());
 }
 
-TEST(FastPollingMutexSemGTest,TestFastTryLock) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastTryLock) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastTryLock(32));
 }
 
-TEST(FastPollingMutexSemGTest,TestFastTryLock_External) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestFastTryLock_External) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestFastTryLockExternal(32));
 }
 
-TEST(FastPollingMutexSemGTest,TestLocked) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestLocked) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestLocked());
 }
 
-TEST(FastPollingMutexSemGTest,TestRecursive) {
+TEST(BareMetal_L1Portability_FastPollingMutexSemGTest,TestRecursive) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestRecursive());
 }

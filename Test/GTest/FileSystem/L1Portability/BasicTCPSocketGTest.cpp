@@ -42,47 +42,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BasicTCPSocketGTest,TesDefaultConstructor) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TesDefaultConstructor) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestDefaultConstructor());
 }
 
-TEST(BasicTCPSocketGTest,TestSeek) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestSeek) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestSeek());
 }
 
-TEST(BasicTCPSocketGTest,TestSize) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestSize) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestSize());
 }
 
-TEST(BasicTCPSocketGTest,TestRelativeSeek) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestRelativeSeek) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestRelativeSeek());
 }
 
-TEST(BasicTCPSocketGTest,TestPosition) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestPosition) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestPosition());
 }
 
-TEST(BasicTCPSocketGTest,TestSetSize) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestSetSize) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestSetSize());
 }
 
-TEST(BasicTCPSocketGTest,TestCanWrite) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestCanWrite) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestCanWrite());
 }
 
-TEST(BasicTCPSocketGTest,TestCanRead) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestCanRead) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestCanRead());
 }
 
-TEST(BasicTCPSocketGTest,TestCanSeek) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestCanSeek) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestCanSeek());
 }
@@ -112,18 +112,18 @@ const ConnectListenTestTable tableListenConnect[]={
 };
 
 
-TEST(BasicTCPSocketGTest,TestListen) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestListen) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestListen(tableListenConnect));
 }
 
 
-TEST(BasicTCPSocketGTest,TestConnect) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestConnect) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestConnect(tableListenConnect));
 }
 
-TEST(BasicTCPSocketGTest,TestRead) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestRead) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
@@ -146,7 +146,7 @@ TEST(BasicTCPSocketGTest,TestRead) {
 }
 
 
-TEST(BasicTCPSocketGTest,TestPeek) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestPeek) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
@@ -168,7 +168,7 @@ TEST(BasicTCPSocketGTest,TestPeek) {
 
 
 
-TEST(BasicTCPSocketGTest,TestWrite) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestWrite) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
@@ -193,7 +193,7 @@ TEST(BasicTCPSocketGTest,TestWrite) {
 
 
 
-TEST(BasicTCPSocketGTest,TestWaitConnection) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestWaitConnection) {
     BasicTCPSocketTest basicTCPSocketTest;
     const WaitConnectionTestTable table[]={
             {10, true, TTInfiniteWait,true, true, true},
@@ -209,12 +209,12 @@ TEST(BasicTCPSocketGTest,TestWaitConnection) {
 }
 
 
-TEST(BasicTCPSocketGTest,TestIsValid) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestIsValid) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestIsValid());
 }
 
-TEST(BasicTCPSocketGTest,TestIsConnected) {
+TEST(FileSystem_L1Portability_BasicTCPSocketGTest,TestIsConnected) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestIsConnected(true, true));
     ASSERT_TRUE(basicTCPSocketTest.TestIsConnected(false, false));

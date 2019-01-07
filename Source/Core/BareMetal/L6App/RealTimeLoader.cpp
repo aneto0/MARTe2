@@ -94,16 +94,8 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
         if (firstState.Size() > 0u) {
             StreamString destination;
             char8 term;
-            (void) firstState.GetToken(destination, ":", term);
-            err.fatalError = !(rtApp->PrepareNextState(destination.Buffer()));
+            err.fatalError = !firstState.GetToken(destination, ":", term);
             if (err.ErrorsCleared()) {
-                err = rtApp->StartNextStateExecution();
-            }
-            if (err.ErrorsCleared()) {
-                err.fatalError = (destination.Size() == 0u);
-            }
-            if (err.ErrorsCleared()) {
-
                 REPORT_ERROR_STATIC(ErrorManagement::Information, "Preparing state %s ", destination.Buffer());
                 err.initialisationError = !rtApp->PrepareNextState(destination.Buffer());
                 if (err.ErrorsCleared()) {

@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
 ClassProperties::ClassProperties() {
@@ -55,11 +54,19 @@ ClassProperties::ClassProperties(const char8 * const cName,
                                  const char8 * const typeidName,
                                  const char8 * const cVersion,
                                  const uint32 cSize) {
+    uniqueIdentifier = 0u;
+    Reset(cName, typeidName, cVersion, cSize);
+}
+
+void ClassProperties::Reset(const char8 * const cName,
+                                 const char8 * const typeidName,
+                                 const char8 * const cVersion,
+                                 const uint32 cSize) {
     className = cName;
     typeidClassName = typeidName;
     classVersion = cVersion;
-    uniqueIdentifier = 0u;
     size = cSize;
+/*lint -e{1565} the reset is not supposed to reset the uniqueIdentifier*/
 }
 
 const char8* ClassProperties::GetName() const {

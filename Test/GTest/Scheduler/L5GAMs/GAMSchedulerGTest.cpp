@@ -44,57 +44,57 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(GAMSchedulerGTest,TestConstructor) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestConstructor) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMSchedulerGTest,TestStartNextStateExecution) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStartNextStateExecution) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
-TEST(GAMSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStartNextStateExecution_False_PrepareNextState) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestStartNextStateExecution_False_PrepareNextState());
 }
 
-TEST(GAMSchedulerGTest,TestStopCurrentStateExecution) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestStopCurrentStateExecution) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestStopCurrentStateExecution());
 }
 
-TEST(GAMSchedulerGTest,TestIntegrated) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestIntegrated) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestIntegrated());
 }
 
-TEST(GAMSchedulerGTest,TestIntegrated_TriggerErrorMessage) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestIntegrated_TriggerErrorMessage) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestIntegrated_TriggerErrorMessage());
 }
 
-TEST(GAMSchedulerGTest,TestPurge) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestPurge) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestPurge());
 }
 
-TEST(GAMSchedulerGTest,TestInitialise) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(GAMSchedulerGTest,TestInitialise_ErrorMessage) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_ErrorMessage) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_ErrorMessage());
 }
 
-TEST(GAMSchedulerGTest,TestInitialise_False_InvalidMessage) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_False_InvalidMessage) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_False_InvalidMessage());
 }
 
-TEST(GAMSchedulerGTest,TestInitialise_False_MoreThanOneErrorMessage) {
+TEST(Scheduler_L5GAMs_GAMSchedulerGTest,TestInitialise_False_MoreThanOneErrorMessage) {
     GAMSchedulerTest test;
     ASSERT_TRUE(test.TestInitialise_False_MoreThanOneErrorMessage());
 }

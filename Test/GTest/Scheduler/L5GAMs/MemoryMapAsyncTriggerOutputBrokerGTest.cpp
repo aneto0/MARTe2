@@ -39,162 +39,162 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestConstructor) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestConstructor) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInit) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInit) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInit());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_0_NumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_0_NumberOfBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_0_NumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_MoreThanOneGAM) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_MoreThanOneGAM) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_MoreThanOneGAM());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PostTriggerGreaterThanNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PrePlusPostTriggerGreaterThanNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_PreTriggerGreaterThanNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_Samples) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_Samples) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_Samples());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_WrongTriggerSignalType) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestInitWithTriggerParameters_False_WrongTriggerSignalType) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestInitWithTriggerParameters_False_WrongTriggerSignalType());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_ManyCycles());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_0_PostTriggerBuffers_TriggerNotGAMFirstSignal());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_1_PostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_PreTriggerBuffers_1_PostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers());
 }
 	
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_0_PostTriggerBuffers_AlwaysTriggering());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_AlwaysTriggering());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_0_PostTriggerBuffers_OverwritingPreTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_0_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_OverwritingPreAndPostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_Buffer_AlwaysTriggering) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_1_Buffer_AlwaysTriggering) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_1_Buffer_AlwaysTriggering());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_Buffer_Overrun) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_Buffer_Overrun) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Buffer_Overrun());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetCPUMask) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestGetCPUMask) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetCPUMask());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetNumberOfBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestGetNumberOfBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetNumberOfBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetPreTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestGetPreTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetPreTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetPostTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestGetPostTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetPostTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestGetStackSize) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestGetStackSize) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestGetStackSize());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestResetPreTriggerBuffers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestResetPreTriggerBuffers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestResetPreTriggerBuffers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestFlushAllTriggers) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestFlushAllTriggers) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestFlushAllTriggers());
 }
 
-TEST(MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero) {
+TEST(Scheduler_L5GAMs_MemoryMapAsyncTriggerOutputBrokerGTest,TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero) {
     MemoryMapAsyncTriggerOutputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_N_PreTriggerBuffers_N_PostTriggerBuffers_PreTriggerIncludesBeforeZero());
 }

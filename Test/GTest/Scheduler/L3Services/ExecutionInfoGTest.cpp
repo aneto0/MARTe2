@@ -40,57 +40,57 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ExecutionInfoGTest,TestConstructor) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestConstructor) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ExecutionInfoGTest,TestSetThreadNumber) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestSetThreadNumber) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestSetThreadNumber());
 }
 
-TEST(ExecutionInfoGTest,TestSetThreadNumber_StageNotStartup) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestSetThreadNumber_StageNotStartup) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestSetThreadNumber_StageNotStartup());
 }
 
-TEST(ExecutionInfoGTest,TestSetStage) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestSetStage) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestSetStage());
 }
 
-TEST(ExecutionInfoGTest,TestSetStageSpecific) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestSetStageSpecific) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestSetStageSpecific());
 }
 
-TEST(ExecutionInfoGTest,TestGetThreadNumber) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestGetThreadNumber) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestGetThreadNumber());
 }
 
-TEST(ExecutionInfoGTest,TestGetStage) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestGetStage) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestGetStage());
 }
 
-TEST(ExecutionInfoGTest,TestGetStageSpecific) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestGetStageSpecific) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestGetStageSpecific());
 }
 
-TEST(ExecutionInfoGTest,TestReset) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestReset) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestReset());
 }
 
-TEST(ExecutionInfoGTest,TestSetThreadSpecificContext) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestSetThreadSpecificContext) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestSetThreadSpecificContext());
 }
 
-TEST(ExecutionInfoGTest,TestGetThreadSpecificContext) {
+TEST(Scheduler_L3Services_ExecutionInfoGTest,TestGetThreadSpecificContext) {
     ExecutionInfoTest target;
     ASSERT_TRUE(target.TestGetThreadSpecificContext());
 }

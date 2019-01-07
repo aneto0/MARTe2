@@ -45,50 +45,50 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TokenInfoGTest,TestDefaultConstructor) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestDefaultConstructor) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestDefaultConstructor());
 }
 
-TEST(TokenInfoGTest,TestSet) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestSet) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestSet("Hello",1));
 }
 
-TEST(TokenInfoGTest,TestSet_0) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestSet_0) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestSet("Hello",0));
 }
 
-TEST(TokenInfoGTest,TestSet_NULL) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestSet_NULL) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestSet(NULL,1));
 }
 
 
 
-TEST(TokenInfoGTest,TestSet_0_NULL) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestSet_0_NULL) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestSet(NULL,0));
 }
 
-TEST(TokenInfoGTest,TestGetTokenId) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestGetTokenId) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestGetTokenId(1));
 }
 
-TEST(TokenInfoGTest,TestGetTokenId_0) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestGetTokenId_0) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestGetTokenId(0));
 }
 
 
-TEST(TokenInfoGTest,TestGetDescription) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestGetDescription) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestGetDescription("Hello"));
 }
 
-TEST(TokenInfoGTest,TestGetDescription_NULL) {
+TEST(BareMetal_L4Configuration_TokenInfoGTest,TestGetDescription_NULL) {
     TokenInfoTest tokenInfo;
     ASSERT_TRUE(tokenInfo.TestGetDescription(NULL));
 }

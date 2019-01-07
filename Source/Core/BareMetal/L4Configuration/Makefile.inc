@@ -29,6 +29,7 @@ OBJSX=	AnyObject.x \
 		ConfigurationDatabase.x\
 		FloatToInteger.x \
 		IntegerToFloat.x \
+		IntrospectionStructure.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
 		StringToFloat.x \

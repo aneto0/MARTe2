@@ -1,8 +1,8 @@
 /**
- * @file LexicalAnalyzerGTest.cpp
- * @brief Source file for class LexicalAnalyzerGTest
- * @date 26/11/2015
- * @author Giuseppe Ferrò
+ * @file IntrospectionStructureTest.h
+ * @brief Header file for class IntrospectionStructureTest
+ * @date 19/11/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,57 +16,56 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class LexicalAnalyzerGTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class IntrospectionStructureTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
+#ifndef L4CONFIGURATION_INTROSPECTIONSTRUCTURETEST_H_
+#define L4CONFIGURATION_INTROSPECTIONSTRUCTURETEST_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
-#include "LexicalAnalyzerTest.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief Tests the IntrospectionStructure public methods.
+ */
+class IntrospectionStructureTest {
+public:
+    /**
+     * Tests the registration of a complex structure.
+     */
+    bool TestStructureRegistration();
+
+    /**
+     * Tests that the registration of a complex structure updates if the type is already registered.
+     */
+    bool TestStructureRegistration_TypeAlreadyRegistered();
+
+    /**
+     * Tests that the registration of a complex structure fails if the type has no parameters.
+     */
+    bool TestStructureRegistration_False_TypeNoParameters();
+
+    /**
+     * Tests that the registration of a complex structure fails to update if the type is from a class.
+     */
+    bool TestStructureRegistration_False_TypeAlreadyRegistered_Class();
+
+};
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestDefaultConstructor) {
-    LexicalAnalyzerTest laTest;
-    ASSERT_TRUE(laTest.TestConstructor());
-}
-
-TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestGetToken) {
-    LexicalAnalyzerTest laTest;
-    ASSERT_TRUE(laTest.TestGetToken());
-}
-
-TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestPeekToken) {
-    LexicalAnalyzerTest laTest;
-    ASSERT_TRUE(laTest.TestPeekToken());
-}
-
-TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestEscape) {
-    LexicalAnalyzerTest laTest;
-    ASSERT_TRUE(laTest.TestEscape());
-}
-
-TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestComments) {
-    LexicalAnalyzerTest laTest;
-    ASSERT_TRUE(laTest.TestComments());
-}
+#endif /* L4CONFIGURATION_INTROSPECTIONSTRUCTURETEST_H_ */

@@ -40,47 +40,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestDefaultConstructor) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestDefaultConstructor) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Purge) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Purge) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Purge());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_PurgeAll) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_PurgeAll) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_PurgeAll());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Load());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_LoadSubTree) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_LoadSubTree) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_LoadSubTree());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidNode) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidNode) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_False_InvalidNode());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidFunction) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_False_InvalidFunction) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_False_InvalidFunction());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_EmptyConfiguration) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_EmptyConfiguration) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Load_False_EmptyConfiguration());
 }
 
-TEST(ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_Not_ReferenceContainer) {
+TEST(BareMetal_L4Messages_ObjectRegistryDatabaseMessageFilterGTest,TestConsumeMessage_Load_False_Not_ReferenceContainer) {
     ObjectRegistryDatabaseMessageFilterTest target;
     ASSERT_TRUE(target.TestConsumeMessage_Load_False_Not_ReferenceContainer());
 }

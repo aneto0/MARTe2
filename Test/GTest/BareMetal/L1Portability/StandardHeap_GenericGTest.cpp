@@ -42,32 +42,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StandardHeap_GenericGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestConstructor) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestConstructor());
 }
 
-TEST(StandardHeap_GenericGTest,TestMalloc) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestMalloc) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestMalloc());
 }
 
-TEST(StandardHeap_GenericGTest,TestMallocFirstAdress) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestMallocFirstAdress) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestMallocFirstAdress());
 }
 
-TEST(StandardHeap_GenericGTest,TestMallocLastAdress) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestMallocLastAdress) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestMallocLastAdress());
 }
 
-TEST(StandardHeap_GenericGTest,TestMallocReadWrite) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestMallocReadWrite) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestMallocReadWrite());
 }
 
-TEST(StandardHeap_GenericGTest,TestFree) {
+TEST(BareMetal_L1Portability_StandardHeap_GenericGTest,TestFree) {
     StandardHeap_GenericTest standardHeap_GenericGTest;
     ASSERT_TRUE(standardHeap_GenericGTest.TestFree());
 }

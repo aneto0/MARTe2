@@ -47,29 +47,16 @@
 namespace MARTe {
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToFloatGeneric(const char8 * const input,
-                                 float32 * const number,
-                                 const uint32 destBitSize);
+extern bool StringToFloatGeneric(const char8 * const input, float32 * const number, const uint32 destBitSize);
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToIntegerGeneric(const char8* const source,
-                                   uint8 * const dest,
-                                   const uint32 destBitSize,
-                                   const bool isSigned);
+extern bool StringToIntegerGeneric(const char8* const source, uint8 * const dest, const uint32 destBitSize, const bool isSigned);
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool IntegerToFloatGeneric(const uint8 * const source,
-                                  const uint32 sourceBitSize,
-                                  float32 * const dest,
-                                  const uint32 destBitSize,
-                                  const bool isSigned);
+extern bool IntegerToFloatGeneric(const uint8 * const source, const uint32 sourceBitSize, float32 * const dest, const uint32 destBitSize, const bool isSigned);
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool FloatToIntegerGeneric(const float32 * const source,
-                                  const uint32 sourceBitSize,
-                                  uint8 * const dest,
-                                  const uint32 destBitSize,
-                                  const bool isSigned);
+extern bool FloatToIntegerGeneric(const float32 * const source, const uint32 sourceBitSize, uint8 * const dest, const uint32 destBitSize, const bool isSigned);
 
 /**
  * @brief Saturate the number in input to the maximum or minimum 32-bit float number.
@@ -78,8 +65,7 @@ extern bool FloatToIntegerGeneric(const float32 * const source,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType>
-static bool MinMaxFloat(const bool isPositive,
-                        FloatType &number) {
+static bool MinMaxFloat(const bool isPositive, FloatType &number) {
 
     bool ret = false;
     if (isPositive) {
@@ -111,8 +97,7 @@ static bool MinMaxFloat(const bool isPositive,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType1, typename FloatType2>
-static bool FloatToFloat(const FloatType1 source,
-                         FloatType2 &destination) {
+static bool FloatToFloat(const FloatType1 source, FloatType2 &destination) {
 
     destination = static_cast<FloatType2>(0.0);
 
@@ -151,8 +136,7 @@ static bool FloatToFloat(const FloatType1 source,
  *   source.GetTypeDescriptor() == UnsignedInteger;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool IntegerToType(const AnyType &destination,
-                          const AnyType &source) {
+static bool IntegerToType(const AnyType &destination, const AnyType &source) {
 
     void* destinationPointer = destination.GetDataPointer();
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
@@ -177,12 +161,12 @@ static bool IntegerToType(const AnyType &destination,
                 ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
             }
         }
-        if (destinationDescriptor.type == CArray) {
+        else if (destinationDescriptor.type == CArray) {
             StreamString tempString;
             ret = tempString.PrintFormatted(format, &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
-                uint32 arraySize = destination.GetByteSize();
+                uint32 arraySize = (destination.GetByteSize() * destination.GetNumberOfElements(0u));
                 if (stringLength >= arraySize) {
                     REPORT_ERROR_STATIC(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
@@ -196,14 +180,14 @@ static bool IntegerToType(const AnyType &destination,
                 }
             }
         }
-        if (destinationDescriptor.type == BT_CCString) {
+        else if (destinationDescriptor.type == BT_CCString) {
             StreamString tempString;
             ret = tempString.PrintFormatted(format, &source);
             if (ret) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
             }
         }
-        if (destinationDescriptor.type == SignedInteger) {
+        else if (destinationDescriptor.type == SignedInteger) {
 
             uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
             uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
@@ -222,7 +206,7 @@ static bool IntegerToType(const AnyType &destination,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
         }
-        if (destinationDescriptor.type == UnsignedInteger) {
+        else if (destinationDescriptor.type == UnsignedInteger) {
             uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
             uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
             uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
@@ -231,28 +215,33 @@ static bool IntegerToType(const AnyType &destination,
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), true);
             }
-            if (sourceDescriptor.type == UnsignedInteger) {
+            else if (sourceDescriptor.type == UnsignedInteger) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
-            if (sourceDescriptor.type == Pointer) {
+            else if (sourceDescriptor.type == Pointer) {
                 ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
                                      static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+            else {//NOOP
             }
         }
-
-        if (destinationDescriptor.type == Float) {
+        else if (destinationDescriptor.type == Float) {
             uint8* sourceInput = (sourceDescriptor.type == Pointer) ? (reinterpret_cast<uint8*>(&sourcePointer)) : (reinterpret_cast<uint8*>(sourcePointer));
             float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
             if ((sourceDescriptor.type == SignedInteger)) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), true);
             }
-            if (sourceDescriptor.type == UnsignedInteger) {
+            else if (sourceDescriptor.type == UnsignedInteger) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
-            if (sourceDescriptor.type == Pointer) {
+            else if (sourceDescriptor.type == Pointer) {
                 ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
+            else {//NOOP
+            }
+        }
+        else {//NOOP
         }
     }
     return ret;
@@ -267,8 +256,7 @@ static bool IntegerToType(const AnyType &destination,
  *   source.GetTypeDescriptor() == Float;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool FloatToType(const AnyType &destination,
-                        const AnyType &source) {
+static bool FloatToType(const AnyType &destination, const AnyType &source) {
 
     void* destinationPointer = destination.GetDataPointer();
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
@@ -292,7 +280,7 @@ static bool FloatToType(const AnyType &destination,
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
-                uint32 arraySize = destination.GetByteSize();
+                uint32 arraySize = (destination.GetByteSize() * destination.GetNumberOfElements(0u));
                 if (stringLength >= arraySize) {
                     REPORT_ERROR_STATIC(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
@@ -314,12 +302,12 @@ static bool FloatToType(const AnyType &destination,
             }
         }
         if (destinationDescriptor.type == SignedInteger) {
-            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                        reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), true);
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits), reinterpret_cast<uint8*>(destinationPointer),
+                                        destination.GetBitSize(), true);
         }
         if (destinationDescriptor.type == UnsignedInteger) {
-            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                        reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits), reinterpret_cast<uint8*>(destinationPointer),
+                                        destination.GetBitSize(), false);
         }
         if (destinationDescriptor.type == Float) {
             if (destination.GetBitSize() == 32u) {
@@ -347,8 +335,7 @@ static bool FloatToType(const AnyType &destination,
  *   source.GetTypeDescriptor() == CArray;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool StringToType(const AnyType &destination,
-                         const AnyType &source) {
+static bool StringToType(const AnyType &destination, const AnyType &source) {
 
     void* destinationPointer = destination.GetDataPointer();
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
@@ -374,13 +361,13 @@ static bool StringToType(const AnyType &destination,
             StreamString* tempString = reinterpret_cast<StreamString*>(destinationPointer);
             ret = tempString->Write(token, tokenLength);
         }
-        if (destinationDescriptor.type == CArray) {
-            uint32 arraySize = destination.GetByteSize();
+        else if (destinationDescriptor.type == CArray) {
+            uint32 arraySize = destination.GetByteSize() * destination.GetNumberOfElements(0u);
             // case char
             if (tokenLength >= arraySize) {
                 REPORT_ERROR_STATIC(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                if(arraySize>1u) {
+                if (arraySize > 1u) {
                     uint32 lastCharIndex = arraySize - 1u;
                     reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
                 }
@@ -389,19 +376,19 @@ static bool StringToType(const AnyType &destination,
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
             }
         }
-        if (destinationDescriptor.type == BT_CCString) {
+        else if (destinationDescriptor.type == BT_CCString) {
             ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
-
         }
-        if (destinationDescriptor.type == SignedInteger) {
+        else if (destinationDescriptor.type == SignedInteger) {
             ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), true);
-
         }
-        if (destinationDescriptor.type == UnsignedInteger) {
+        else if (destinationDescriptor.type == UnsignedInteger) {
             ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
         }
-        if (destinationDescriptor.type == Float) {
+        else if (destinationDescriptor.type == Float) {
             ret = StringToFloatGeneric(token, (reinterpret_cast<float32*>(destinationPointer)), destination.GetBitSize());
+        }
+        else {//NOOP
         }
     }
     return ret;
@@ -415,8 +402,7 @@ static bool StringToType(const AnyType &destination,
  * @pre
  *   The objects represented by \a source and \a destination must be introspectable and registered into ClassRegistryDatabase.
  */
-static bool ObjectToObject(const AnyType &destination,
-                           const AnyType &source) {
+static bool ObjectToObject(const AnyType &destination, const AnyType &source) {
 
     bool ret = false;
     const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
@@ -424,75 +410,75 @@ static bool ObjectToObject(const AnyType &destination,
     const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Peek(sourceDescriptor.structuredDataIdCode);
     const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
     if ((sourceItem != NULL) && (destinationItem != NULL)) {
-        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
-        const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
+        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
+        const Introspection *destinationIntrospection = destinationItem->GetIntrospection();
         if ((sourceIntrospection != NULL) && (destinationIntrospection != NULL)) {
-            if(sourceIntrospection->GetNumberOfMembers()==destinationIntrospection->GetNumberOfMembers()) {
-                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
-                ret=true;
-                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
-                    IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+            if (sourceIntrospection->GetNumberOfMembers() == destinationIntrospection->GetNumberOfMembers()) {
+                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
+                ret = true;
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
+                    IntrospectionEntry destinationMemberIntrospection = (*destinationIntrospection)[i];
 
-                    TypeDescriptor sourceMemberDescriptor=sourceMemberIntrospection.GetMemberTypeDescriptor();
-                    TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor sourceMemberDescriptor = sourceMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor destinationMemberDescriptor = destinationMemberIntrospection.GetMemberTypeDescriptor();
 
-                    TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
+                    TypeDescriptor newSourceDescriptor = sourceMemberDescriptor;
                     // source is a pointer!
-                    if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    if (sourceMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                        newSourceDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
                     }
 
-                    TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
+                    TypeDescriptor newDestinationDescriptor = destinationMemberDescriptor;
                     // destination is a pointer!
-                    if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger,static_cast<uint8>(sizeof(void*))*8u);
+                    if (destinationMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                        newDestinationDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
                     }
 
-                    char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
+                    char8* sourceMemberDataPointer = &(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
 
                     AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
                     // special case char* string because is a pointer
-                    if(newSourceDescriptor==CharString) {
-                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
-                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                    if (newSourceDescriptor == CharString) {
+                        if (sourceMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                            newSource = AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
                         }
                     }
 
-                    char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                    char8* destinationMemberDataPointer = &(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
                     AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
 
                     // special case char* string because is a pointer
-                    if(newDestinationDescriptor==CharString) {
-                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
-                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                    if (newDestinationDescriptor == CharString) {
+                        if (destinationMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                            newDestination = AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
                         }
                     }
 
-                    for(uint32 j=0u; j<3u; j++) {
+                    for (uint32 j = 0u; j < 3u; j++) {
                         newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
                         newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
                     }
                     newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
                     newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
                     // call the conversion recursively !
-                    ret= TypeConvert(newDestination, newSource);
-                    if(ret) {
+                    ret = TypeConvert(newDestination, newSource);
+                    if (ret) {
                         // validate the output
-                        ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                        ret = ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                     }
                 }
             }
             else {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: The classes does not have the same number of members");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ObjectToObject: The classes does not have the same number of members");
             }
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: Introspection not found for the specified classes");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ObjectToObject: Introspection not found for the specified classes");
         }
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToObject: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ObjectToObject: Class not registered");
     }
     return ret;
 }
@@ -507,8 +493,7 @@ static bool ObjectToObject(const AnyType &destination,
  * @pre
  *   At least the object represented by \a destination must be introspectable.
  */
-static bool StructuredDataToObject(const AnyType &destination,
-                                   const AnyType &source) {
+static bool StructuredDataToObject(const AnyType &destination, const AnyType &source) {
 
     bool ret = false;
     StructuredDataI* sourcePointer = reinterpret_cast<StructuredDataI*>(source.GetDataPointer());
@@ -530,96 +515,96 @@ static bool StructuredDataToObject(const AnyType &destination,
     const ClassRegistryItem *destinationItem = ClassRegistryDatabase::Instance()->Peek(destinationDescriptor.structuredDataIdCode);
 
     if (destinationItem != NULL) {
-        const Introspection *sourceIntrospection=NULL_PTR(const Introspection *);
-        if(isSourceIntrospection) {
-            sourceIntrospection=sourceItem->GetIntrospection();
-            isSourceIntrospection=(sourceIntrospection != NULL);
+        const Introspection *sourceIntrospection = NULL_PTR(const Introspection *);
+        if (isSourceIntrospection) {
+            sourceIntrospection = sourceItem->GetIntrospection();
+            isSourceIntrospection = (sourceIntrospection != NULL);
         }
-        const Introspection *destinationIntrospection=destinationItem->GetIntrospection();
+        const Introspection *destinationIntrospection = destinationItem->GetIntrospection();
         if (destinationIntrospection != NULL) {
             uint32 numberOfFields = sourcePointer->GetNumberOfChildren();
 
-            if(isSourceIntrospection) {
+            if (isSourceIntrospection) {
                 // if there is the introspection get the number of members
-                numberOfFields=sourceIntrospection->GetNumberOfMembers();
-                beginIndex=0u;
+                numberOfFields = sourceIntrospection->GetNumberOfMembers();
+                beginIndex = 0u;
             }
-            uint32 numberOfMembers=(numberOfFields-beginIndex);
-            if(numberOfMembers==destinationIntrospection->GetNumberOfMembers()) {
+            uint32 numberOfMembers = (numberOfFields - beginIndex);
+            if (numberOfMembers == destinationIntrospection->GetNumberOfMembers()) {
 
-                ret=true;
-                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry destinationMemberIntrospection=(*destinationIntrospection)[i];
+                ret = true;
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry destinationMemberIntrospection = (*destinationIntrospection)[i];
 
-                    TypeDescriptor destinationMemberDescriptor=destinationMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor destinationMemberDescriptor = destinationMemberIntrospection.GetMemberTypeDescriptor();
 
-                    TypeDescriptor newDestinationDescriptor=destinationMemberDescriptor;
+                    TypeDescriptor newDestinationDescriptor = destinationMemberDescriptor;
                     // destination is a pointer!
-                    if(destinationMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newDestinationDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    if (destinationMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                        newDestinationDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
                     }
 
-                    char8* destinationMemberDataPointer=&(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
+                    char8* destinationMemberDataPointer = &(static_cast<char8*>(destination.GetDataPointer())[destinationMemberIntrospection.GetMemberByteOffset()]);
                     AnyType newDestination(newDestinationDescriptor, 0u, destinationMemberDataPointer);
 
                     // special case char* string because is a pointer
-                    if(newDestinationDescriptor==CharString) {
-                        if(destinationMemberIntrospection.GetNumberOfDimensions()==0u) {
-                            newDestination=AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
+                    if (newDestinationDescriptor == CharString) {
+                        if (destinationMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                            newDestination = AnyType(*reinterpret_cast<char8**>(destinationMemberDataPointer));
                         }
                     }
 
-                    for(uint32 j=0u; j<3u; j++) {
+                    for (uint32 j = 0u; j < 3u; j++) {
                         newDestination.SetNumberOfElements(j, destinationMemberIntrospection.GetNumberOfElements(j));
                     }
                     newDestination.SetNumberOfDimensions(destinationMemberIntrospection.GetNumberOfDimensions());
 
                     AnyType newSource;
-                    const char8* childName=NULL_PTR(const char8*);
+                    const char8* childName = NULL_PTR(const char8*);
                     // get the member AnyType from the database if the member is a basic type!
-                    if(isSourceIntrospection) {
+                    if (isSourceIntrospection) {
                         // if the introspection for the source class exists find the member name
-                        IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
-                        childName=sourceMemberIntrospection.GetMemberName();
-                        newSource=sourcePointer->GetType(childName);
+                        IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
+                        childName = sourceMemberIntrospection.GetMemberName();
+                        newSource = sourcePointer->GetType(childName);
                     }
                     else {
-                        childName=sourcePointer->GetChildName(i+beginIndex);
-                        newSource=sourcePointer->GetType(childName);
+                        childName = sourcePointer->GetChildName(i + beginIndex);
+                        newSource = sourcePointer->GetType(childName);
                     }
 
-                    if(newSource.GetDataPointer()==NULL) {
+                    if (newSource.GetDataPointer() == NULL) {
                         // could be a structured node!
-                        ret=sourcePointer->MoveRelative(childName);
-                        if(ret) {
+                        ret = sourcePointer->MoveRelative(childName);
+                        if (ret) {
                             // call the conversion recursively !
-                            ret= TypeConvert(newDestination, source);
-                            if(!sourcePointer->MoveToAncestor(1u)) {
-                                ret=false;
+                            ret = TypeConvert(newDestination, source);
+                            if (!sourcePointer->MoveToAncestor(1u)) {
+                                ret = false;
                             }
                         }
                     }
                     // could be a leaf!
                     else {
                         // call the conversion recursively !
-                        ret= TypeConvert(newDestination, newSource);
-                        if(ret) {
+                        ret = TypeConvert(newDestination, newSource);
+                        if (ret) {
                             // validate the output
-                            ret=ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
+                            ret = ValidateBasicType(newDestination, destinationMemberIntrospection.GetMemberAttributes());
                         }
                     }
                 }
             }
             else {
-                REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: The classes does not have the same number of members");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StructuredDataToObject: The classes do not have the same number of members");
             }
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: Introspection not found for the specified classes");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StructuredDataToObject: Introspection not found for the specified classes");
         }
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"StructuredDataToObject: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StructuredDataToObject: Class not registered");
     }
 
     return ret;
@@ -633,8 +618,7 @@ static bool StructuredDataToObject(const AnyType &destination,
  * @pre
  *   The object represented by source must be introspectable.
  */
-static bool ObjectToStructuredData(const AnyType &destination,
-                                   const AnyType &source) {
+static bool ObjectToStructuredData(const AnyType &destination, const AnyType &source) {
 
     bool ret = false;
     const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
@@ -643,59 +627,59 @@ static bool ObjectToStructuredData(const AnyType &destination,
     StructuredDataI* destinationPointer = reinterpret_cast<StructuredDataI*>(destination.GetDataPointer());
 
     if (sourceItem != NULL) {
-        const Introspection *sourceIntrospection=sourceItem->GetIntrospection();
+        const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
         if (sourceIntrospection != NULL) {
-            if(destinationPointer->Write("Class", sourceItem->GetClassProperties()->GetName())) {
-                uint32 numberOfMembers=sourceIntrospection->GetNumberOfMembers();
-                ret=true;
-                for(uint32 i=0u; (i<numberOfMembers) && (ret); i++) {
-                    IntrospectionEntry sourceMemberIntrospection=(*sourceIntrospection)[i];
+            if (destinationPointer->Write("Class", sourceItem->GetClassProperties()->GetName())) {
+                uint32 numberOfMembers = sourceIntrospection->GetNumberOfMembers();
+                ret = true;
+                for (uint32 i = 0u; (i < numberOfMembers) && (ret); i++) {
+                    IntrospectionEntry sourceMemberIntrospection = (*sourceIntrospection)[i];
 
-                    TypeDescriptor sourceMemberDescriptor=sourceMemberIntrospection.GetMemberTypeDescriptor();
+                    TypeDescriptor sourceMemberDescriptor = sourceMemberIntrospection.GetMemberTypeDescriptor();
 
-                    TypeDescriptor newSourceDescriptor=sourceMemberDescriptor;
+                    TypeDescriptor newSourceDescriptor = sourceMemberDescriptor;
                     // source is a pointer!
-                    if(sourceMemberIntrospection.GetMemberPointerLevel()>0u) {
-                        newSourceDescriptor=TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*))*8u);
+                    if (sourceMemberIntrospection.GetMemberPointerLevel() > 0u) {
+                        newSourceDescriptor = TypeDescriptor(false, UnsignedInteger, static_cast<uint8>(sizeof(void*)) * 8u);
                     }
 
-                    char8* sourceMemberDataPointer=&(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
+                    char8* sourceMemberDataPointer = &(static_cast<char8*>(source.GetDataPointer())[sourceMemberIntrospection.GetMemberByteOffset()]);
                     AnyType newSource(newSourceDescriptor, 0u, sourceMemberDataPointer);
                     // special case char* string because is a pointer
-                    if(newSourceDescriptor==CharString) {
-                        if(sourceMemberIntrospection.GetNumberOfDimensions()==0u) {
-                            newSource=AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
+                    if (newSourceDescriptor == CharString) {
+                        if (sourceMemberIntrospection.GetNumberOfDimensions() == 0u) {
+                            newSource = AnyType(*reinterpret_cast<char8**>(sourceMemberDataPointer));
                         }
                     }
-                    for(uint32 j=0u; j<3u; j++) {
+                    for (uint32 j = 0u; j < 3u; j++) {
                         newSource.SetNumberOfElements(j, sourceMemberIntrospection.GetNumberOfElements(j));
                     }
                     newSource.SetNumberOfDimensions(sourceMemberIntrospection.GetNumberOfDimensions());
 
-                    bool isNewSourceStructured=newSourceDescriptor.isStructuredData;
-                    if(isNewSourceStructured) {
+                    bool isNewSourceStructured = newSourceDescriptor.isStructuredData;
+                    if (isNewSourceStructured) {
                         // structured data again! Create a node and go recursively
-                        ret=destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName());
-                        if(ret) {
-                            ret=TypeConvert(destination, newSource);
-                            if(!destinationPointer->MoveToAncestor(1u)) {
-                                ret=false;
+                        ret = destinationPointer->CreateRelative(sourceMemberIntrospection.GetMemberName());
+                        if (ret) {
+                            ret = TypeConvert(destination, newSource);
+                            if (!destinationPointer->MoveToAncestor(1u)) {
+                                ret = false;
                             }
                         }
                     }
                     else {
                         // in this case only write
-                        ret=destinationPointer->Write(sourceMemberIntrospection.GetMemberName(), newSource);
+                        ret = destinationPointer->Write(sourceMemberIntrospection.GetMemberName(), newSource);
                     }
                 }
             }
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ObjectToStructuredData: Introspection not found for the specified class");
         }
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError,"ObjectToStructuredData: Class not registered");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ObjectToStructuredData: Class not registered");
     }
 
     return ret;
@@ -707,8 +691,7 @@ static bool ObjectToStructuredData(const AnyType &destination,
  * @param[in] source is the input.
  * @return true if the conversion succeeds, false otherwise.
  */
-static bool StructuredDataToStructuredData(const AnyType &destination,
-                                           const AnyType &source) {
+static bool StructuredDataToStructuredData(const AnyType &destination, const AnyType &source) {
     StructuredDataI* sourcePointer = reinterpret_cast<StructuredDataI*>(source.GetDataPointer());
     StructuredDataI* destinationPointer = reinterpret_cast<StructuredDataI*>(destination.GetDataPointer());
 
@@ -722,8 +705,7 @@ static bool StructuredDataToStructuredData(const AnyType &destination,
  * @return true if the conversion succeeds, false otherwise.
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool ScalarBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
+static bool ScalarBasicTypeConvert(const AnyType &destination, const AnyType &source) {
 
     void* destinationPointer = destination.GetDataPointer();
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
@@ -745,8 +727,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             ret = StructuredDataToStructuredData(destination, source);
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                         "ScalarBasicTypeConvert: No known conversion StructuredDataI to basic type. Use StructuredDataI::Read(*)");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion StructuredDataI to basic type. Use StructuredDataI::Read(*)");
         }
     }
 
@@ -757,8 +738,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             ret = ObjectToStructuredData(destination, source);
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                         "ScalarBasicTypeConvert: No known conversion from basic type to StructuredDataI. Use StructuredDataI::Write(*)");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ScalarBasicTypeConvert: No known conversion from basic type to StructuredDataI. Use StructuredDataI::Write(*)");
         }
     }
     else if ((isSourceStructured) && (isDestinationStructured)) {
@@ -779,8 +759,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
             else if (sourceDescriptor.type == Pointer) {
-                REPORT_ERROR_STATIC(ErrorManagement::UnsupportedFeature,
-                             "ScalarBasicTypeConvert: Conversion to pointer unsupported. Try to cast the pointer to uintp");
+                REPORT_ERROR_STATIC(ErrorManagement::UnsupportedFeature, "ScalarBasicTypeConvert: Conversion to pointer unsupported. Try to cast the pointer to uintp");
             }
             else {
                 uint32 copySize = source.GetByteSize();
@@ -822,13 +801,14 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool VectorBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
-    uint32 numberOfElements = source.GetNumberOfElements(0u);
-
-// Assume that the number of dimensions is equal
+static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &source) {
     bool ok = true;
-
+    uint32 numberOfElements = source.GetNumberOfElements(0u);
+    //special case of char8[]
+    if (source.GetTypeDescriptor() == Character8Bit) {
+        numberOfElements = source.GetNumberOfElements(1u);
+    }
+    // Assume that the number of dimensions is equal
     for (uint32 idx = 0u; (idx < numberOfElements); idx++) {
         uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
         uint32 sourceIndex = idx * sourceElementByteSize;
@@ -863,10 +843,18 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
         if (source.GetTypeDescriptor() == CharString) {
             elementSource = AnyType(*reinterpret_cast<char8**>(newSourcePointer));
         }
-
         // special case of pointer
-        if (source.GetTypeDescriptor().type == Pointer) {
+        else if (source.GetTypeDescriptor().type == Pointer) {
             elementSource = AnyType(*reinterpret_cast<void**>(newSourcePointer));
+        }
+        else if (source.GetTypeDescriptor() == Character8Bit) {
+            uint32 srcArrayIdx = sourceIndex * source.GetNumberOfElements(0u);
+            newSourcePointer = &sourceArray[srcArrayIdx];
+            elementSource = AnyType(Character8Bit, 0u, newSourcePointer);
+            elementSource.SetNumberOfDimensions(1u);
+            elementSource.SetNumberOfElements(0u, source.GetNumberOfElements(0u));
+        }
+        else {//NOOP
         }
 
         char8 *newDestinationPointer = &destinationArray[destinationIndex];
@@ -875,12 +863,22 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
         if (destination.GetTypeDescriptor() == CharString) {
             elementDestination = AnyType(*reinterpret_cast<char8**>(newDestinationPointer));
         }
+        else if (destination.GetTypeDescriptor() == Character8Bit) {
+            uint32 destinationArrayIdx = destinationIndex * destination.GetNumberOfElements(0u);
+            newDestinationPointer = &destinationArray[destinationArrayIdx];
+            elementDestination = AnyType(Character8Bit, 0u, newDestinationPointer);
+            elementDestination.SetNumberOfDimensions(1u);
+            elementDestination.SetNumberOfElements(0u, destination.GetNumberOfElements(0u));
+        }
+        else {//NOOP
+        }
 
         if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
             ok = false;
         }
 
     }
+
     return ok;
 }
 
@@ -895,8 +893,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool StaticToStaticMatrix(const AnyType &destination,
-                                 const AnyType &source) {
+static bool StaticToStaticMatrix(const AnyType &destination, const AnyType &source) {
 
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
     uint32 numberOfColumns = destination.GetNumberOfElements(0u);
@@ -912,18 +909,41 @@ static bool StaticToStaticMatrix(const AnyType &destination,
         char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
 
         uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceElementByteSize *= source.GetNumberOfElements(2u);
+        }
+
         uint32 destinationElementByteSize = static_cast<uint32>(destination.GetByteSize());
+        //Treat the char8[] differently
+        if (destination.GetTypeDescriptor() == Character8Bit) {
+            destinationElementByteSize *= destination.GetNumberOfElements(2u);
+        }
 
         uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
         sourceRow.SetNumberOfDimensions(1u);
-        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceRow.SetNumberOfElements(0u, source.GetNumberOfElements(2u));
+            sourceRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         sourceRow.SetStaticDeclared(true);
 
         uint32 destinationRowIndex = ((r * numberOfColumns) * destinationElementByteSize);
         AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), &destinationArray[destinationRowIndex]);
         destinationRow.SetNumberOfDimensions(1u);
-        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (destination.GetTypeDescriptor() == Character8Bit) {
+            destinationRow.SetNumberOfElements(0u, destination.GetNumberOfElements(2u));
+            destinationRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         destinationRow.SetStaticDeclared(true);
 
         if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
@@ -944,8 +964,7 @@ static bool StaticToStaticMatrix(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool StaticToHeapMatrix(const AnyType &destination,
-                               const AnyType &source) {
+static bool StaticToHeapMatrix(const AnyType &destination, const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
     uint32 numberOfColumns = destination.GetNumberOfElements(0u);
     TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
@@ -960,16 +979,33 @@ static bool StaticToHeapMatrix(const AnyType &destination,
         char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
 
         uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceElementByteSize *= source.GetNumberOfElements(2u);
+        }
 
         uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
-        sourceRow.SetNumberOfDimensions(1u);
-        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceRow.SetNumberOfElements(0u, source.GetNumberOfElements(2u));
+            sourceRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         sourceRow.SetStaticDeclared(true);
 
         AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), destinationArray);
         destinationRow.SetNumberOfDimensions(1u);
-        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (destination.GetTypeDescriptor() == Character8Bit) {
+            destinationRow.SetNumberOfElements(0u, destination.GetNumberOfElements(2u));
+            destinationRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         destinationRow.SetStaticDeclared(false);
 
         if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
@@ -990,8 +1026,7 @@ static bool StaticToHeapMatrix(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool HeapToStaticMatrix(const AnyType &destination,
-                               const AnyType &source) {
+static bool HeapToStaticMatrix(const AnyType &destination, const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
     uint32 numberOfColumns = destination.GetNumberOfElements(0u);
     TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
@@ -1006,7 +1041,14 @@ static bool HeapToStaticMatrix(const AnyType &destination,
 
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), sourceArray);
         sourceRow.SetNumberOfDimensions(1u);
-        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceRow.SetNumberOfElements(0u, source.GetNumberOfElements(2u));
+            sourceRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         sourceRow.SetStaticDeclared(false);
 
         uint32 destinationElementByteSize = static_cast<uint32>(destination.GetByteSize());
@@ -1034,8 +1076,7 @@ static bool HeapToStaticMatrix(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool HeapToHeapMatrix(const AnyType &destination,
-                             const AnyType &source) {
+static bool HeapToHeapMatrix(const AnyType &destination, const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
     uint32 numberOfColumns = destination.GetNumberOfElements(0u);
     TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
@@ -1050,12 +1091,26 @@ static bool HeapToHeapMatrix(const AnyType &destination,
 
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), sourceArray);
         sourceRow.SetNumberOfDimensions(1u);
-        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (source.GetTypeDescriptor() == Character8Bit) {
+            sourceRow.SetNumberOfElements(0u, source.GetNumberOfElements(2u));
+            sourceRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         sourceRow.SetStaticDeclared(false);
 
         AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), destinationArray);
         destinationRow.SetNumberOfDimensions(1u);
-        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        //Treat the char8[] differently
+        if (destination.GetTypeDescriptor() == Character8Bit) {
+            destinationRow.SetNumberOfElements(0u, destination.GetNumberOfElements(2u));
+            destinationRow.SetNumberOfElements(1u, numberOfColumns);
+        }
+        else {
+            destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        }
         destinationRow.SetStaticDeclared(false);
 
         if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
@@ -1076,8 +1131,7 @@ static bool HeapToHeapMatrix(const AnyType &destination,
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-static bool MatrixBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
+static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &source) {
 
     bool isSourceStatic = source.IsStaticDeclared();
     bool isDestinationStatic = destination.IsStaticDeclared();
@@ -1088,18 +1142,19 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
         ok = StaticToStaticMatrix(destination, source);
     }
 
-    if ((isSourceStatic) && (!isDestinationStatic)) {
+    else if ((isSourceStatic) && (!isDestinationStatic)) {
         ok = StaticToHeapMatrix(destination, source);
     }
 
-    if ((!isSourceStatic) && (isDestinationStatic)) {
+    else if ((!isSourceStatic) && (isDestinationStatic)) {
         ok = HeapToStaticMatrix(destination, source);
     }
 
-    if ((!isSourceStatic) && (!isDestinationStatic)) {
+    else if ((!isSourceStatic) && (!isDestinationStatic)) {
         ok = HeapToHeapMatrix(destination, source);
     }
-
+    else {//NOOP
+    }
     return ok;
 }
 
@@ -1110,8 +1165,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
 
 namespace MARTe {
 
-bool TypeConvert(const AnyType &destination,
-                 const AnyType &source) {
+bool TypeConvert(const AnyType &destination, const AnyType &source) {
 
     bool ok = true;
     if (static_cast<bool>(destination.GetTypeDescriptor().isConstant)) {
@@ -1120,26 +1174,79 @@ bool TypeConvert(const AnyType &destination,
     if (ok) {
 
         //Source and destination dimensions must be the same
-        ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-        //The number of elements in all dimensions must be the same
-        for (uint32 i = 0u; ok && (i < 3u); i++) {
-            ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
-        }
+        uint8 destinationNumberOfDimensions = destination.GetNumberOfDimensions();
+        uint8 sourceNumberOfDimensions = source.GetNumberOfDimensions();
+        bool destinationIsCArray = (destination.GetTypeDescriptor() == Character8Bit);
+        bool sourceIsCArray = (source.GetTypeDescriptor() == Character8Bit);
 
+        //Give the char8 strings a special treatment
+        if (destinationIsCArray) {
+            if (destination.GetNumberOfDimensions() > 0u) {
+                destinationNumberOfDimensions -= 1u;
+            }
+        }
+        if (sourceIsCArray) {
+            if (source.GetNumberOfDimensions() > 0u) {
+                sourceNumberOfDimensions -= 1u;
+            }
+        }
+        ok = (destinationNumberOfDimensions == sourceNumberOfDimensions);
+        //The number of elements in all dimensions must be the same
+        //Again, give the char8 strings a special treatment
+        if (destinationIsCArray) {
+            for (uint32 i = 0u; ok && (i < destinationNumberOfDimensions); i++) {
+                uint32 destinationNumberOfElements = 0u;
+                uint32 sourceNumberOfElements = 0u;
+                //Horrible asymmetry between the way matrices and vectors of char8 are handled in the AnyType
+                if (destinationNumberOfDimensions == 1u) {
+                    destinationNumberOfElements = destination.GetNumberOfElements(i + 1u);
+                }
+                else {
+                    destinationNumberOfElements = destination.GetNumberOfElements(i);
+                }
+                if ((sourceIsCArray) && (destinationNumberOfDimensions == 1u)) {
+                    sourceNumberOfElements = source.GetNumberOfElements(i + 1u);
+                }
+                else {
+                    sourceNumberOfElements = source.GetNumberOfElements(i);
+                }
+                ok = (destinationNumberOfElements == sourceNumberOfElements);
+            }
+        }
+        else if (sourceIsCArray) {
+            for (uint32 i = 0u; ok && (i < destinationNumberOfDimensions); i++) {
+                uint32 destinationNumberOfElements = destination.GetNumberOfElements(i);
+                uint32 sourceNumberOfElements = 0u;
+                if (sourceNumberOfDimensions == 1u) {
+                    sourceNumberOfElements = source.GetNumberOfElements(i + 1u);
+                }
+                else {
+                    sourceNumberOfElements = source.GetNumberOfElements(i);
+                }
+                ok = (destinationNumberOfElements == sourceNumberOfElements);
+            }
+        }
+        else {
+            for (uint32 i = 0u; ok && (i < destinationNumberOfDimensions); i++) {
+                uint32 destinationNumberOfElements = destination.GetNumberOfElements(i);
+                uint32 sourceNumberOfElements = source.GetNumberOfElements(i);
+                ok = (destinationNumberOfElements == sourceNumberOfElements);
+            }
+        }
         if (ok) {
-            if (source.GetNumberOfDimensions() == 0u) {
+            if (sourceNumberOfDimensions == 0u) {
                 ok = ScalarBasicTypeConvert(destination, source);
             }
-            if (source.GetNumberOfDimensions() == 1u) {
+            else if (sourceNumberOfDimensions == 1u) {
                 ok = VectorBasicTypeConvert(destination, source);
             }
-            if (source.GetNumberOfDimensions() == 2u) {
+            else if (sourceNumberOfDimensions == 2u) {
                 ok = MatrixBasicTypeConvert(destination, source);
+            }
+            else {//NOOP
             }
         }
     }
-
     return ok;
 }
-
 }

@@ -41,17 +41,17 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(EmbeddedServiceMethodBinderTGTest,TestConstructor) {
+TEST(Scheduler_L3Services_EmbeddedServiceMethodBinderTGTest,TestConstructor) {
     EmbeddedServiceMethodBinderTTest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(EmbeddedServiceMethodBinderTGTest,TestExecute) {
+TEST(Scheduler_L3Services_EmbeddedServiceMethodBinderTGTest,TestExecute) {
     EmbeddedServiceMethodBinderTTest target;
     ASSERT_TRUE(target.TestExecute());
 }
 
-TEST(EmbeddedServiceMethodBinderTGTest,TestExecute_WithError) {
+TEST(Scheduler_L3Services_EmbeddedServiceMethodBinderTGTest,TestExecute_WithError) {
     EmbeddedServiceMethodBinderTTest target;
     ASSERT_TRUE(target.TestExecute_WithError());
 }

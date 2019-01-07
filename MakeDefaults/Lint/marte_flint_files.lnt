@@ -98,6 +98,7 @@ InternetService.cpp
 InternetServiceCore.h
 Introspection.cpp
 IntrospectionEntry.cpp
+IntrospectionStructure.cpp
 IntrospectionT.h
 Iterator.h
 IteratorT.h

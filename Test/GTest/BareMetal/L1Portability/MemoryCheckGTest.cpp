@@ -42,7 +42,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryCheckGTest,TestCheck) {
+TEST(BareMetal_L1Portability_MemoryCheckGTest,TestCheck) {
     MemoryCheckTest MyMemoryCheckTest;
     ASSERT_TRUE(MyMemoryCheckTest.TestCheck());
 }

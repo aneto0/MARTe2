@@ -99,7 +99,7 @@ static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_intr
 
 DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
 
-DECLARE_CLASS_MEMBER(TestStructE, e1, TestStructC, "[3]", "");
+DECLARE_CLASS_MEMBER(TestStructE, e1, TestStructC, "[2][1][2]", "");
 
 DECLARE_CLASS_MEMBER(TestStructE, e2, int32, "", "");
 
@@ -107,13 +107,21 @@ static const IntrospectionEntry* TestStructEEntries[] = { &TestStructE_e1_intros
 
 DECLARE_STRUCT_INTROSPECTION(TestStructE, TestStructEEntries);
 
-DECLARE_CLASS_MEMBER(TestStructEE, ee1, TestStructE, "[4]", "");
+DECLARE_CLASS_MEMBER(TestStructF, f1, TestStructE, "[2]", "");
 
-DECLARE_CLASS_MEMBER(TestStructEE, ee2, int32, "", "");
+DECLARE_CLASS_MEMBER(TestStructF, f2, int32, "", "");
 
-static const IntrospectionEntry* TestStructEEEntries[] = { &TestStructEE_ee1_introspectionEntry, &TestStructEE_ee2_introspectionEntry, 0 };
+static const IntrospectionEntry* TestStructFEntries[] = { &TestStructF_f1_introspectionEntry, &TestStructF_f2_introspectionEntry, 0 };
 
-DECLARE_STRUCT_INTROSPECTION(TestStructEE, TestStructEEEntries);
+DECLARE_STRUCT_INTROSPECTION(TestStructF, TestStructFEntries);
+
+DECLARE_CLASS_MEMBER(TestStructG, g1, TestStructF, "[2][2]", "");
+
+DECLARE_CLASS_MEMBER(TestStructG, g2, int32, "", "");
+
+static const IntrospectionEntry* TestStructGEntries[] = { &TestStructG_g1_introspectionEntry, &TestStructG_g2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructG, TestStructGEntries);
 
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -315,7 +323,7 @@ uint32 Driver1::GetNumberOfMemoryBuffers() {
 }
 
 bool Driver1::AllocateMemory() {
-    return false;
+    return true;
 }
 
 bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
