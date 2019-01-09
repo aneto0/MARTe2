@@ -60,13 +60,6 @@ public:
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
-protected:
-    /**
-     * @brief TODO
-     */
-    Reference FindReference(HttpProtocol &protocol, Reference root);
-
-
 };
 
 }

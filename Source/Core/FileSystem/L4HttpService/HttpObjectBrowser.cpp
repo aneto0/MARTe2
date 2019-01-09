@@ -48,6 +48,8 @@ namespace MARTe {
 HttpObjectBrowser::HttpObjectBrowser() :
         HttpDataExportI() {
     closeOnAuthFail = 1u;
+    pathInitialised = false;
+    fullPathToThisInstance = "";
 }
 
 HttpObjectBrowser::~HttpObjectBrowser() {
@@ -73,10 +75,10 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
     if (ok) {
         if (rootName.Size() == 1u) {
             if (rootName[0] == '/') {
-                root = ObjectRegistryDatabase::Instance();
+                root = Reference(ObjectRegistryDatabase::Instance());
             }
             else if (rootName[0] == '.') {
-                root = this;
+                root = Reference(this);
             }
             else {
                 REPORT_ERROR(ErrorManagement::ParametersError, "Unknown Root [%c]", rootName[0]);
@@ -124,6 +126,23 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
 
 bool HttpObjectBrowser::CheckSecurity(HttpProtocol &protocol) {
     bool securityOK = true;
+    if (!pathInitialised) {
+        int32 occurrences = 1;
+        uint32 mode = ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH;
+        ReferenceContainerFilterReferences filter(occurrences, mode, this);
+        ReferenceContainer results;
+        dynamic_cast<ReferenceContainer *>(ObjectRegistryDatabase::Instance())->Find(results, filter);
+        uint32 i;
+        for (i = 0u; i < results.Size(); i++) {
+            if (i != 0u) {
+                fullPathToThisInstance += ".";
+            }
+            fullPathToThisInstance += results.Get(i)->GetName();
+        }
+        pathInitialised = true;
+        REPORT_ERROR(ErrorManagement::Debug, "%s full path is %s", GetName(), fullPathToThisInstance.Buffer());
+    }
+
     if (realm.IsValid()) {
         HttpProtocol *hprotocol = dynamic_cast<HttpProtocol *>(&protocol);
         if (hprotocol != NULL_PTR(HttpProtocol *)) {
@@ -174,10 +193,54 @@ bool HttpObjectBrowser::CheckSecurity(HttpProtocol &protocol) {
     return securityOK;
 }
 
+Reference HttpObjectBrowser::FindTarget(HttpProtocol &protocol) {
+    StreamString unmatchedPath;
+    protocol.GetUnmatchedId(unmatchedPath);
+    StreamString reparsedPath;
+
+    Reference target;
+    bool tryAgain = true;
+    while (tryAgain) {
+        target = FindReference(unmatchedPath.Buffer());
+        tryAgain = !target.IsValid();
+        if (!target.IsValid()) {
+            //Could not find. Try to remote the last part and try again.
+            const char8 * lastDotToken = StringHelper::SearchLastChar(unmatchedPath.Buffer(), '.');
+            if (lastDotToken == NULL_PTR(const char8 * const)) {
+                tryAgain = false;
+            }
+            else {
+                StreamString toAppend;
+                lastDotToken = reinterpret_cast<const char8 *>(&lastDotToken[1]);
+                if (reparsedPath.Size() == 0u) {
+                    toAppend = lastDotToken;
+                }
+                else {
+                    toAppend = lastDotToken;
+                    toAppend += ".";
+                    toAppend += +reparsedPath.Buffer();
+                }
+                reparsedPath = toAppend;
+                uint32 pathMatchSize = (lastDotToken - unmatchedPath.Buffer());
+                //Remove the .
+                pathMatchSize -= 1u;
+                (void) unmatchedPath.SetSize(pathMatchSize);
+            }
+        }
+    }
+    if (reparsedPath.Size() > 0u) {
+        protocol.SetUnmatchedId(reparsedPath.Buffer());
+    }
+    else {
+        protocol.SetUnmatchedId("");
+    }
+    return target;
+}
+
 bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     bool ok = CheckSecurity(protocol);
     if (ok) {
-        Reference target = FindReference(protocol, root);
+        Reference target = FindTarget(protocol);
         ok = target.IsValid();
         if (ok) {
             bool isThis = (target == this);
@@ -194,7 +257,6 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                         sdata->GetPrinter()->PrintBegin();
                     }
                     if (ok) {
-                        //ok = GetReferenceAsStructuredData(data, protocol, target);
                         target->ExportData(data);
                     }
                     if (ok) {
@@ -203,7 +265,15 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                 }
             }
         }
-        //TODO Handle 404
+        else {
+            BufferedStreamI *stream = data.GetStream();
+            ok = HttpDataExportI::GetAsText(*stream, protocol);
+            if (ok) {
+                StreamString msg = "Object not found.";
+                uint32 size = msg.Size();
+                ok = stream->Write(msg.Buffer(), size);
+            }
+        }
     }
     return ok;
 }
@@ -211,7 +281,7 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
 bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     bool ok = CheckSecurity(protocol);
     if (ok) {
-        Reference target = FindReference(protocol, root);
+        Reference target = FindTarget(protocol);
         ok = target.IsValid();
         if (ok) {
             bool isThis = (target == this);
@@ -251,8 +321,36 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                 }
             }
         }
+        else {
+            ok = HttpDataExportI::GetAsText(stream, protocol);
+            if (ok) {
+                StreamString msg = "Object not found.";
+                uint32 size = msg.Size();
+                ok = stream.Write(msg.Buffer(), size);
+            }
+        }
     }
     return ok;
+}
+
+Reference HttpObjectBrowser::FindReference(const char8 * const unmatchedPath) {
+    Reference target;
+    if (StringHelper::Length(unmatchedPath) > 0u) {
+        // search for destination
+        int32 occurrences = 1;
+        uint32 mode = ReferenceContainerFilterMode::SHALLOW;
+        ReferenceContainerFilterObjectName filter(occurrences, mode, unmatchedPath);
+        ReferenceContainer results;
+        root->Find(results, filter);
+        if (results.Size() > 0ull) {
+            uint32 last = static_cast<uint32>(results.Size()) - 1u;
+            target = results.Get(last);
+        }
+    }
+    else {
+        target = root;
+    }
+    return target;
 }
 
 CLASS_REGISTER(HttpObjectBrowser, "1.0")

@@ -83,6 +83,16 @@ private:
     virtual bool CheckSecurity(HttpProtocol &protocol);
 
     /**
+     * @brief TODO
+     */
+    Reference FindReference(const char8 * const unmatchedPath);
+
+    /**
+     * @brief TODO
+     */
+    Reference FindTarget(HttpProtocol &protocol);
+
+    /**
      * TODO
      */
     ReferenceT<HttpRealmI> realm;
@@ -96,7 +106,17 @@ private:
     /**
      * TODO
      */
-    Reference root;
+    ReferenceT<ReferenceContainer> root;
+
+    /**
+     * TODO
+     */
+    StreamString fullPathToThisInstance;
+
+    /**
+     * TODO
+     */
+    bool pathInitialised;
 };
 }
 

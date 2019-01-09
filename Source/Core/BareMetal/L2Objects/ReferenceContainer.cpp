@@ -428,111 +428,111 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
 }
 
 bool ReferenceContainer::Lock() {
-return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
+    return (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
 }
 
 void ReferenceContainer::UnLock() {
-mux.FastUnLock();
+    mux.FastUnLock();
 }
 
 void ReferenceContainer::Purge() {
-ReferenceContainer purgeList;
-Purge(purgeList);
+    ReferenceContainer purgeList;
+    Purge(purgeList);
 }
 
 void ReferenceContainer::Purge(ReferenceContainer &purgeList) {
-uint32 purgeStart = purgeList.Size();
-uint32 purgeEnd = purgeStart;
-uint32 numberOfElements = Size();
+    uint32 purgeStart = purgeList.Size();
+    uint32 purgeEnd = purgeStart;
+    uint32 numberOfElements = Size();
 
-bool ok = true;
+    bool ok = true;
 //flat recursion to avoid stack waste
-for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
-    //extract the element from the list
-    Reference node = Get(0u);
-    if (node.IsValid()) {
-        ok = purgeList.Insert(node);
-        if (ok) {
-            ok = Delete(node);
+    for (uint32 i = 0u; (i < numberOfElements) && (ok); i++) {
+        //extract the element from the list
+        Reference node = Get(0u);
+        if (node.IsValid()) {
+            ok = purgeList.Insert(node);
+            if (ok) {
+                ok = Delete(node);
+            }
+            purgeEnd++;
         }
-        purgeEnd++;
     }
-}
 
 //Recurse on all the sub nodes
-for (uint32 i = purgeStart; i < purgeEnd; i++) {
-    Reference nodeObj = purgeList.Get(i);
-    if (nodeObj.IsValid()) {
-        nodeObj->Purge(purgeList);
+    for (uint32 i = purgeStart; i < purgeEnd; i++) {
+        Reference nodeObj = purgeList.Get(i);
+        if (nodeObj.IsValid()) {
+            nodeObj->Purge(purgeList);
+        }
     }
-}
 }
 
 bool ReferenceContainer::IsReferenceContainer() const {
-return true;
+    return true;
 }
 
 bool ReferenceContainer::AddToken(char8 * const tokenList, const char8 token) {
-uint32 i = 0u;
-bool exists = false;
-while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
-    exists = (tokenList[i] == token);
-    i++;
-}
-bool ok = exists;
-if (!ok) {
-    ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
-    if (ok) {
-        tokenList[i] = token;
+    uint32 i = 0u;
+    bool exists = false;
+    while ((!exists) && (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != '\0')) {
+        exists = (tokenList[i] == token);
+        i++;
     }
-}
-return ok;
+    bool ok = exists;
+    if (!ok) {
+        ok = (i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS);
+        if (ok) {
+            tokenList[i] = token;
+        }
+    }
+    return ok;
 }
 
 void ReferenceContainer::RemoveToken(char8 * const tokenList, const char8 token) {
-uint32 i = 0u;
-while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
-    i++;
-}
-while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
-    tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
-    i++;
-}
-tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
+    uint32 i = 0u;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (tokenList[i] != token)) {
+        i++;
+    }
+    while (i < (REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u)) {
+        tokenList[i] = tokenList[static_cast<uint8>(i + 1u)];
+        i++;
+    }
+    tokenList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS - 1u] = '\0';
 }
 
 bool ReferenceContainer::IsToken(const char8 * const tokenList, const char8 token) {
-uint32 i = 0u;
-bool ok = false;
-while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
-    ok = (tokenList[i] == token);
-    i++;
-}
-return ok;
+    uint32 i = 0u;
+    bool ok = false;
+    while ((i < REFERENCE_CONTAINER_NUMBER_OF_TOKENS) && (!ok) && (tokenList[i] != '\0')) {
+        ok = (tokenList[i] == token);
+        i++;
+    }
+    return ok;
 }
 
 bool ReferenceContainer::AddBuildToken(const char8 token) {
-return AddToken(&buildTokensList[0], token);
+    return AddToken(&buildTokensList[0], token);
 }
 
 void ReferenceContainer::RemoveBuildToken(const char8 token) {
-return RemoveToken(&buildTokensList[0], token);
+    return RemoveToken(&buildTokensList[0], token);
 }
 
 bool ReferenceContainer::IsBuildToken(const char8 token) {
-return IsToken(&buildTokensList[0], token);
+    return IsToken(&buildTokensList[0], token);
 }
 
 bool ReferenceContainer::AddDomainToken(const char8 token) {
-return AddToken(&domainTokensList[0], token);
+    return AddToken(&domainTokensList[0], token);
 }
 
 void ReferenceContainer::RemoveDomainToken(const char8 token) {
-return RemoveToken(&domainTokensList[0], token);
+    return RemoveToken(&domainTokensList[0], token);
 }
 
 bool ReferenceContainer::IsDomainToken(const char8 token) {
-return IsToken(&domainTokensList[0], token);
+    return IsToken(&domainTokensList[0], token);
 }
 
 CLASS_REGISTER(ReferenceContainer, "1.0")

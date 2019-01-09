@@ -61,6 +61,9 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
                 //Do not go recursive
                 if (childRC.IsValid()) {
                     ret = child->Object::ExportData(data);
+                    if (ret) {
+                        ret = data.Write("IsContainer", "1");
+                    }
                 }
                 else {
                     ret = child->ExportData(data);

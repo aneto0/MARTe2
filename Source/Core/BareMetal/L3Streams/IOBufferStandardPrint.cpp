@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Prints the Standard open matrix separator
@@ -49,7 +49,6 @@ namespace MARTe{
 bool PrintStandardOpenMatrix(IOBuffer &iobuff) {
     return iobuff.PutC('{');
 }
-
 
 /**
  * @brief Prints the Standard close matrix separator
@@ -76,13 +75,12 @@ bool PrintStandardCloseVector(IOBuffer &iobuff) {
     return iobuff.PutC('}');
 }
 
-
 /**
  * @brief Prints the Standard open block separator
  * @param[in] iobuff the IOBuffer where to print to
  */
 bool PrintStandardOpenBlock(IOBuffer &iobuff, const char8 * const blockName) {
-    AnyType at[]={blockName, voidAnyType};
+    AnyType at[] = { blockName, voidAnyType };
     return iobuff.PrintFormatted("%s = {", &at[0]);
 }
 
@@ -98,16 +96,15 @@ bool PrintStandardCloseBlock(IOBuffer &iobuff) {
  * @brief Prints the Standard open assignment separator
  * @param[in] iobuff the IOBuffer where to print to
  */
-bool PrintStandardOpenAssignment(IOBuffer &iobuff, const char8 * const varName){
-    uint32 size=StringHelper::Length(varName);
-    bool ret=iobuff.Write(varName, size);
-    if(ret){
-        size=2u;
-        ret=iobuff.Write(" =", size);
+bool PrintStandardOpenAssignment(IOBuffer &iobuff, const char8 * const varName) {
+    uint32 size = StringHelper::Length(varName);
+    bool ret = iobuff.WriteAll(varName, size);
+    if (ret) {
+        size = 2u;
+        ret = iobuff.WriteAll(" =", size);
     }
     return ret;
 }
 
 }
-
 

@@ -98,42 +98,4 @@ bool HttpDataExportI::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     return ok;
 }
 
-
-Reference HttpDataExportI::FindReference(HttpProtocol &protocol, Reference root) {
-    StreamString unmatchedPath;
-    protocol.GetUnmatchedId(unmatchedPath);
-    Reference target;
-    if (unmatchedPath.Size() > 0LLU) {
-        ReferenceT<ReferenceContainer> rootReferenceContainer = root;
-        bool ok = rootReferenceContainer.IsValid();
-        if (ok) {
-            // search for destination
-            int32 occurrences = 1;
-            uint32 mode = ReferenceContainerFilterMode::SHALLOW;
-            ReferenceContainerFilterObjectName filter(occurrences, mode, unmatchedPath.Buffer());
-            ReferenceContainer results;
-            rootReferenceContainer->Find(results, filter);
-            if (results.Size() > 0ull) {
-                uint32 last = static_cast<uint32>(results.Size()) - 1u;
-                target = results.Get(last);
-            }
-            ok = target.IsValid();
-            if (ok) {
-                protocol.SetUnmatchedId("");
-            }
-            else {
-                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Target object [%s] not found", unmatchedPath.Buffer());
-            }
-        }
-        else {
-            REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Object browsing not supported (it is not a reference container)");
-        }
-    }
-    else {
-        target = root;
-    }
-    return target;
-}
-
-
 }

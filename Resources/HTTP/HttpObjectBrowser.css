@@ -9,23 +9,14 @@ ul, #myUL {
   padding: 0;
 }
 
-/* Style the caret/arrow */
-.caret {
-  cursor: pointer; 
-  user-select: none; /* Prevent text selection */
+li {
+	font-size: 18px;
 }
 
-/* Create the caret/arrow with a unicode, and style it */
-.caret::before {
-  content: "\25B6";
-  color: black;
-  display: inline-block;
-  margin-right: 6px;
-}
-
-/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
-.caret-down::before {
-  transform: rotate(90deg); 
+button {
+	font-size: 18px;
+	width: 30px;
+	height: 30px;
 }
 
 /* Hide the nested list */

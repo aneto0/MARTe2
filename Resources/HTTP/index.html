@@ -4,10 +4,32 @@
         </script>
         <script src="/?path=MARTeObject.js&TextMode=1">
         </script>
+        <style>			
+			.mainrow {
+  				display: flex;
+			}
+			/* Defines the two main container panes properties*/
+			.maincolumn1, .maincolumn2 {
+  				flex: 30%;
+				padding: 2px;
+				height: 100%;
+  				border-style: solid;
+  				border-width: 1px;
+  				border-color: rgb(211, 215, 207);  				
+  				overflow: auto;
+  			}
+  			.maincolumn2 {
+  				flex: 70%;
+  			}
+        </style>
     </head>
-    <body onload="MARTeLoader.instance().load()">
-        <div id="container">
-            <p>Hello MARTe2!</p>
-        </div>
+    <body onload="MARTeLoader.instance().load('', '', 'leftPaneContainer')">
+    	<div class="mainrow">
+        	<div id="leftPaneContainer" class="maincolumn1">            	
+        	</div>
+        	<div id="rightPaneContainer" class="maincolumn2">
+            	<p>Hello MARTe2!</p>
+        	</div>
+    	</div>
     </body>
 </html>

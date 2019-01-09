@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Prints the Json open matrix separator
@@ -112,7 +112,7 @@ bool PrintJsonCloseVector(IOBuffer &iobuff) {
  * @param[in] iobuff the IOBuffer where to print to
  */
 bool PrintJsonOpenBlock(IOBuffer &iobuff, const char8 * const blockName) {
-    AnyType at[]={blockName, voidAnyType};
+    AnyType at[] = { blockName, voidAnyType };
     return iobuff.PrintFormatted("\"%s\": {", &at[0]);
 }
 
@@ -128,12 +128,11 @@ bool PrintJsonCloseBlock(IOBuffer &iobuff) {
  * @brief Prints the Json open assignment separator
  * @param[in] iobuff the IOBuffer where to print to
  */
-bool PrintJsonOpenAssignment(IOBuffer &iobuff,
-                                const char8 * const varName) {
+bool PrintJsonOpenAssignment(IOBuffer &iobuff, const char8 * const varName) {
     uint32 size = StringHelper::Length(varName);
     bool ret = iobuff.PutC('"');
     if (ret) {
-        ret = iobuff.Write(varName, size);
+        ret = iobuff.WriteAll(varName, size);
     }
     if (ret) {
         ret = iobuff.PutC('"');
