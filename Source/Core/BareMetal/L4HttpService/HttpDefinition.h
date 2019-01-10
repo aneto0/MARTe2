@@ -84,14 +84,19 @@ static const int32 HSHCReply = 0x10000000;
 static const int32 HSHCReplyOK = (HSHCReply + 200);
 
 /**
- * HTTP REPLY AUTH NOT FOUND command
+ * HTTP REPLY BAD REQUEST
  */
-static const int32 HSHCReplyNotFound = (HSHCReply + 400);
+static const int32 HSHCReplyBadRequest = (HSHCReply + 400);
 
 /**
- * HTTP REPLY AUTH REQUIERED command
+ * HTTP REPLY AUTH REQUIRED command
  */
 static const int32 HSHCReplyAUTH = (HSHCReply + 401);
+
+/**
+ * HTTP REPLY NOT FOUND
+ */
+static const int32 HSHCReplyNotFound = (HSHCReply + 404);
 
 /**
  * @brief Creates a HSHttpCommand relative to reply with a specific ErrorCode

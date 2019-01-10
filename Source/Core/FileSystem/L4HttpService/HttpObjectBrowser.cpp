@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "HttpChunkedStream.h"
+
 #include "HttpDirectoryResource.h"
 #include "HttpObjectBrowser.h"
 #include "HttpProtocol.h"
@@ -48,8 +50,6 @@ namespace MARTe {
 HttpObjectBrowser::HttpObjectBrowser() :
         HttpDataExportI() {
     closeOnAuthFail = 1u;
-    pathInitialised = false;
-    fullPathToThisInstance = "";
 }
 
 HttpObjectBrowser::~HttpObjectBrowser() {
@@ -126,23 +126,6 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
 
 bool HttpObjectBrowser::CheckSecurity(HttpProtocol &protocol) {
     bool securityOK = true;
-    if (!pathInitialised) {
-        int32 occurrences = 1;
-        uint32 mode = ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH;
-        ReferenceContainerFilterReferences filter(occurrences, mode, this);
-        ReferenceContainer results;
-        dynamic_cast<ReferenceContainer *>(ObjectRegistryDatabase::Instance())->Find(results, filter);
-        uint32 i;
-        for (i = 0u; i < results.Size(); i++) {
-            if (i != 0u) {
-                fullPathToThisInstance += ".";
-            }
-            fullPathToThisInstance += results.Get(i)->GetName();
-        }
-        pathInitialised = true;
-        REPORT_ERROR(ErrorManagement::Debug, "%s full path is %s", GetName(), fullPathToThisInstance.Buffer());
-    }
-
     if (realm.IsValid()) {
         HttpProtocol *hprotocol = dynamic_cast<HttpProtocol *>(&protocol);
         if (hprotocol != NULL_PTR(HttpProtocol *)) {
@@ -266,13 +249,7 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
             }
         }
         else {
-            BufferedStreamI *stream = data.GetStream();
-            ok = HttpDataExportI::GetAsText(*stream, protocol);
-            if (ok) {
-                StreamString msg = "Object not found.";
-                uint32 size = msg.Size();
-                ok = stream->Write(msg.Buffer(), size);
-            }
+            ok = HttpDataExportI::ReplyNotFound(protocol);
         }
     }
     return ok;
@@ -298,12 +275,7 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                     }
                 }
                 if (!handled) {
-                    ok = HttpDataExportI::GetAsText(stream, protocol);
-                    if (ok) {
-                        StreamString msg = "Resource not found.";
-                        uint32 size = msg.Size();
-                        ok = stream.Write(msg.Buffer(), size);
-                    }
+                    ok = HttpDataExportI::ReplyNotFound(protocol);
                 }
             }
             else {
@@ -312,22 +284,12 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                     httpDataExportI->GetAsText(stream, protocol);
                 }
                 else {
-                    ok = HttpDataExportI::GetAsText(stream, protocol);
-                    if (ok) {
-                        StreamString msg = "Text mode not supported for this object - or object not found.";
-                        uint32 size = msg.Size();
-                        ok = stream.Write(msg.Buffer(), size);
-                    }
+                    ok = HttpDataExportI::ReplyNotFound(protocol);
                 }
             }
         }
         else {
-            ok = HttpDataExportI::GetAsText(stream, protocol);
-            if (ok) {
-                StreamString msg = "Object not found.";
-                uint32 size = msg.Size();
-                ok = stream.Write(msg.Buffer(), size);
-            }
+            ok = HttpDataExportI::ReplyNotFound(protocol);
         }
     }
     return ok;

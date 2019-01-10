@@ -60,6 +60,12 @@ public:
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
+protected:
+    /**
+     * @brief TODO.
+     */
+    bool ReplyNotFound(HttpProtocol &protocol);
+
 };
 
 }

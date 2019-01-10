@@ -29,8 +29,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
+#include "Directory.h"
+#include "DirectoryScanner.h"
 #include "HttpDirectoryResource.h"
 #include "HttpDefinition.h"
+#include "JsonPrinter.h"
+#include "StreamStructuredData.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +68,81 @@ bool HttpDirectoryResource::Initialise(StructuredDataI &data) {
 }
 
 bool HttpDirectoryResource::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
-    return GetAsText(*data.GetStream(), protocol);
+    bool ok = HttpDataExportI::GetAsStructuredData(data, protocol);
+    if (ok) {
+        StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+        ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
+        if (ok) {
+            sdata->GetPrinter()->PrintBegin();
+        }
+        if (ok) {
+            ok = Object::ExportData(data);
+        }
+        if (ok) {
+            StreamString path;
+            (void) protocol.GetInputCommand("path", path);
+            StreamString fullPath = baseDir;
+            fullPath += DIRECTORY_SEPARATOR;
+            fullPath += path.Buffer();
+            File f;
+            Directory d(fullPath.Buffer());
+            ok = data.CreateRelative("Files");
+            if (ok) {
+                if (d.IsDirectory()) {
+                    DirectoryScanner ds;
+                    ok = ds.Scan(fullPath.Buffer());
+                    uint32 i = 0;
+                    while ((ds.ListPeek(i) != NULL) && (ok)) {
+                        Directory *dt = static_cast<Directory *>(ds.ListPeek(i));
+                        if (dt != NULL_PTR(Directory *)) {
+                            StreamString idx;
+                            idx.Printf("%d", i);
+                            ok = data.CreateRelative(idx.Buffer());
+                            if (ok) {
+                                ok = data.Write("Name", dt->GetName());
+                            }
+                            if (ok) {
+                                ok = data.Write("IsDirectory", dt->IsDirectory() ? "1" : "0");
+                            }
+                            if (ok) {
+                                StreamString ss;
+                                (void) ss.Printf("%d", dt->GetSize());
+                                ok = data.Write("Size", ss.Buffer());
+                            }
+                            if (ok) {
+                                ok = data.MoveToAncestor(1u);
+                            }
+                        }
+                        i++;
+                    }
+                }
+                else {
+                    ok = data.CreateRelative("0");
+                    if (ok) {
+                        ok = data.Write("Name", d.GetName());
+                    }
+                    if (ok) {
+                        ok = data.Write("IsDirectory", "0");
+                    }
+                    if (ok) {
+                        StreamString ss;
+                        (void) ss.Printf("%d", d.GetSize());
+                        ok = data.Write("Size", ss.Buffer());
+                    }
+                    if (ok) {
+                        ok = data.MoveToAncestor(1u);
+                    }
+                }
+            }
+            if (ok) {
+                ok = data.MoveToAncestor(1u);
+            }
+        }
+        if (ok) {
+            ok = sdata->GetPrinter()->PrintEnd();
+        }
+    }
+    return ok;
 }
 
 bool HttpDirectoryResource::GetAsText(StreamI &stream, HttpProtocol &protocol) {
@@ -131,7 +210,15 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, StreamI &stream, Http
         ok = protocol.Write("Content-Type", mime.Buffer());
     }
     if (ok) {
-        ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &f, NULL_PTR(const char8*));
+        //With the HEAD just inform that the file exists
+        if (protocol.GetHttpCommand() == HttpDefinition::HSHCHead) {
+            StreamString s;
+            s.SetSize(0LLU);
+            ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &s, NULL_PTR(const char8*));
+        }
+        else {
+            ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &f, NULL_PTR(const char8*));
+        }
     }
     /*if (ok) {
      ok = f.Size()Seek(0LLU);

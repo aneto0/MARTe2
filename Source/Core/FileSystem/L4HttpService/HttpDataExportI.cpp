@@ -98,4 +98,19 @@ bool HttpDataExportI::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     return ok;
 }
 
+bool HttpDataExportI::ReplyNotFound(HttpProtocol &protocol) {
+    bool ok = protocol.MoveAbsolute("OutputOptions");
+    if (ok) {
+        ok = protocol.Write("Connection", "close");
+    }
+    StreamString s;
+    if (ok) {
+        ok = s.SetSize(0LLU);
+    }
+    if (ok) {
+        ok = protocol.WriteHeader(false, HttpDefinition::HSHCReplyNotFound, &s, NULL_PTR(const char8*));
+    }
+    return ok;
+}
+
 }

@@ -108,15 +108,6 @@ private:
      */
     ReferenceT<ReferenceContainer> root;
 
-    /**
-     * TODO
-     */
-    StreamString fullPathToThisInstance;
-
-    /**
-     * TODO
-     */
-    bool pathInitialised;
 };
 }
 
