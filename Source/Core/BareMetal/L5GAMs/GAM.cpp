@@ -614,4 +614,57 @@ bool GAM::GetOutputBrokers(ReferenceContainer &brokers) {
     return ret;
 }
 
+bool GAM::ExportData(StructuredDataI & data) {
+    bool ok = ReferenceContainer::ExportData(data);
+    if (numberOfInputSignals > 0u) {
+        ok = data.CreateRelative("InputSignals");
+        uint32 i;
+        for (i = 0u; (i < numberOfInputSignals) && (ok); i++) {
+            StreamString signalName;
+            ok = GetSignalName(InputSignals, i, signalName);
+            if (ok) {
+                TypeDescriptor td = GetSignalType(InputSignals, i);
+                AnyType at(td, 0u, GetInputSignalMemory(i));
+                uint32 j;
+                uint32 numberOfDimensions = 0u;
+                ok = GetSignalNumberOfDimensions(InputSignals, i, numberOfDimensions);
+                if (ok) {
+                    for (j = 0u; j < numberOfDimensions; j++) {
+                        at.SetNumberOfElements(j, at.GetNumberOfElements(j));
+                    }
+                    ok = data.Write(signalName.Buffer(), at);
+                }
+            }
+            if (ok) {
+                ok = data.MoveToAncestor(1u);
+            }
+        }
+    }
+    if (numberOfOutputSignals > 0u) {
+        ok = data.CreateRelative("OutputSignals");
+        uint32 i;
+        for (i = 0u; (i < numberOfOutputSignals) && (ok); i++) {
+            StreamString signalName;
+            ok = GetSignalName(OutputSignals, i, signalName);
+            if (ok) {
+                TypeDescriptor td = GetSignalType(OutputSignals, i);
+                AnyType at(td, 0u, GetOutputSignalMemory(i));
+                uint32 j;
+                uint32 numberOfDimensions = 0u;
+                ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
+                if (ok) {
+                    for (j = 0u; j < numberOfDimensions; j++) {
+                        at.SetNumberOfElements(j, at.GetNumberOfElements(j));
+                    }
+                    ok = data.Write(signalName.Buffer(), at);
+                }
+            }
+            if (ok) {
+                ok = data.MoveToAncestor(1u);
+            }
+        }
+    }
+    return ok;
+}
+
 }

@@ -62,7 +62,7 @@ bool ReferenceContainer::ExportData(StructuredDataI & data) {
                 if (childRC.IsValid()) {
                     ret = child->Object::ExportData(data);
                     if (ret) {
-                        ret = data.Write("IsContainer", "1");
+                        ret = data.Write("IsContainer", 1);
                     }
                 }
                 else {

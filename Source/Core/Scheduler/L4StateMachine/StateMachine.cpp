@@ -76,6 +76,19 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
     ReferenceContainer::Purge(purgeList);
 }
 
+bool StateMachine::ExportData(StructuredDataI & data) {
+    bool ok = ReferenceContainer::ExportData(data);
+    if (ok) {
+        StreamString currentStateName = "";
+        if (currentState.IsValid()) {
+            currentStateName = currentState->GetName();
+        }
+        ok = data.Write("CurrentState", currentStateName.Buffer());
+    }
+    return ok;
+}
+
+
 bool StateMachine::Initialise(StructuredDataI &data) {
     ErrorManagement::ErrorType err;
     err.parametersError = !ReferenceContainer::Initialise(data);

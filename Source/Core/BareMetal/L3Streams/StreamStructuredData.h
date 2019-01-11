@@ -303,6 +303,7 @@ bool StreamStructuredData<Printer>::Write(const char8 * const name, const AnyTyp
     bool ret = true;
     if (currentNode->numberOfVariables > 0u) {
         ret = printer.PrintVariableSeparator();
+        currentNode->needsSeparatorBeforeNextWrite = false;
     }
     if (ret) {
         if (currentNode->needsSeparatorBeforeNextWrite) {

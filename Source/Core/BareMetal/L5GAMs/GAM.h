@@ -397,7 +397,6 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
-
     /**
      * @see ReferenceContainer::Purge()
      */
@@ -410,6 +409,14 @@ public:
      * @return true if the GAM is successfully configured.
      */
     virtual bool Setup()=0;
+
+
+    /**
+     * @see ReferenceContainer::ExportData(*)
+     * @detail Also exports the current value of all the input and output signals.
+     */
+    virtual bool ExportData(StructuredDataI & data);
+
 
 protected:
 

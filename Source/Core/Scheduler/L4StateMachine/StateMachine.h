@@ -188,6 +188,14 @@ StateMachine    ();
     virtual void Purge(ReferenceContainer &purgeList);
 
     /**
+     * @brief See ReferenceContainer::ExportData
+     * @details Exports as ReferenceContainer::ExportData together with the current state.
+     * @param[in] data see ReferenceContainer::ExportData.
+     * @return see ReferenceContainer::ExportData
+     */
+    virtual bool ExportData(StructuredDataI & data);
+
+    /**
      * @brief To be called by a StateMachineEvent which has received a relevant event and wishes to change state.
      * @details The current state will be updated to the StateMachineEvent::GetNextState. All the messages associated
      * to the event will be triggered and the state machine will wait for all the relevant replies.

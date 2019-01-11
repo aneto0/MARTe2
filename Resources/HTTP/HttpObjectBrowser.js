@@ -3,12 +3,20 @@ class HttpObjectBrowser extends MARTeObject {
 		super();
 	}
 
+
     /**
      * TODO
      */
-	displayData(target, jsonData) {
-		target.innerHTML = "";
-		this.createTreeNodes(jsonData, "", target);
+    prepareDisplay(target) {
+        target.innerHTML = "";
+        this.target = target;
+    }
+
+    /**
+     * TODO
+     */
+	displayData(jsonData) {		
+		this.createTreeNodes(jsonData, "", this.target);
 		this.registerTreeLinks(jsonData, "");
 	}
 
@@ -120,7 +128,7 @@ class HttpObjectBrowser extends MARTeObject {
 
 			var isContainer = child["IsContainer"];
 			if (isContainer !== undefined) {
-				isContainer = (isContainer === "1");
+				isContainer = (isContainer === 1);
 			}
 			else {
 				isContainer = false;

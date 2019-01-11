@@ -85,26 +85,41 @@ bool JsonPrinter::PrintCloseVector() {
     return stream->Printf("%s", "]");
 }
 
-bool JsonPrinter::PrintOpenBlock(const char8 *const blockName) {
+bool JsonPrinter::PrintOpenBlock(const char8 * const blockName) {
     return stream->Printf("\"%s\": {", blockName);
 }
 
 /*lint -e{715} parameter not used in this function*/
-bool JsonPrinter::PrintCloseBlock(const char8 *const blockName) {
+bool JsonPrinter::PrintCloseBlock(const char8 * const blockName) {
     return stream->Printf("%s", "}");
 }
 
-bool JsonPrinter::PrintOpenAssignment(const char8 *const varName) {
+bool JsonPrinter::PrintOpenAssignment(const char8 * const varName) {
     return stream->Printf("\"%s\": ", varName);
 }
 
 /*lint -e{715} parameter not used in this function*/
-bool JsonPrinter::PrintCloseAssignment(const char8 *const varName) {
+bool JsonPrinter::PrintCloseAssignment(const char8 * const varName) {
     return true;
 }
 
 bool JsonPrinter::PrintVariable(const AnyType &var) {
-    return stream->Printf("%#J!", var);
+    bool ok = true;
+    TypeDescriptor td = var.GetTypeDescriptor();
+    bool isNumber = (td.type == SignedInteger);
+    if (!isNumber) {
+        isNumber = (td.type == UnsignedInteger);
+    }
+    if (!isNumber) {
+        isNumber = (td.type == Float);
+    }
+    if (isNumber) {
+        ok = stream->Printf("%J!", var);
+    }
+    else {
+        ok = stream->Printf("%#J!", var);
+    }
+    return ok;
 }
 
 bool JsonPrinter::PrintBegin() {

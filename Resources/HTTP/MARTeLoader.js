@@ -1,5 +1,9 @@
 class MARTeLoader {
 
+	/**
+	 * @brief Singleton access to the Loader class.
+	 * @return the singleton of the MARTeLoader.
+	 */
 	static instance() {
 		if (this.ml == undefined) {
 			this.ml = new MARTeLoader();
@@ -75,11 +79,11 @@ class MARTeLoader {
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				var containerHtmlElem = document.getElementById(containerId);
-				var jsonStruct;
+				var jsonData;
 				try {
-					jsonStruct = JSON.parse(this.responseText);
+					jsonData = JSON.parse(this.responseText);
 					if (className.length === 0) {
-						className = jsonStruct["Class"];
+						className = jsonData["Class"];
 					}
 					if (className !== undefined) {
 						//Check if the url for the plugin exists
@@ -88,15 +92,16 @@ class MARTeLoader {
 						that.executeIffUrlExists(jsUrl,
 							//If there is a javascript try to load it.
 							function() {
-								that.loadJS(className, jsonStruct, containerId);
+								that.loadJS(className, fullPath, jsonData, containerId);
 							}.bind(this),
 							//Otherwise just show the raw data.
 							function() {
-								var textarea = document.createElement('textarea');
-								textarea.setAttribute("disabled", true);
-								textarea.innerHTML = JSON.stringify(jsonStruct, null, '\t');
-								containerHtmlElem.innerHTML = "";
-								containerHtmlElem.appendChild(textarea);
+								if (this.standardDisplay === undefined) {
+									this.standardDisplay = new MARTeObject();
+									this.standardDisplay.setPath(fullPath);
+									this.standardDisplay.prepareDisplay(containerHtmlElem);
+									this.standardDisplay.displayData(jsonData);									
+								}
 							}.bind(this),
 						);
 						that.executeIffUrlExists(cssUrl, function() {
@@ -126,7 +131,7 @@ class MARTeLoader {
 		xhttp.send();
 	}
 
-	loadJS(className, jsonStruct, containerId) {
+	loadJS(className, fullPath, jsonData, containerId) {
 		var head = document.getElementsByTagName('head')[0];
 		//Check if the script already exists
 		var scriptAlreadyExists = false;
@@ -149,7 +154,7 @@ class MARTeLoader {
 			var jsLoader = function() {
 				if (!loaded) {
 					loaded = true;
-					this.jsLoaded(className, jsonStruct, containerId);
+					this.jsLoaded(className, fullPath, jsonData, containerId);
 				}
 			}.bind(this);
 			script.onreadystatechange = jsLoader;
@@ -158,16 +163,18 @@ class MARTeLoader {
 		}
 		//Otherwise just load it
 		else {
-			this.jsLoaded(className, jsonStruct, containerId);
+			this.jsLoaded(className, jsonData, containerId);
 		}
 	}
 
-	jsLoaded(className, jsonStruct, containerId) {
+	jsLoaded(className, fullPath, jsonData, containerId) {
 		var objExists = eval("typeof(" + className + ");");
 		if (objExists !== "undefined") {
 			var obj = eval("new " + className + "();");
 			var htmlElem = document.getElementById(containerId);
-			obj.displayData(htmlElem, jsonStruct);
+			obj.setPath(fullPath);
+			obj.prepareDisplay(htmlElem);
+			obj.displayData(jsonData);
 		}
 	}
 
