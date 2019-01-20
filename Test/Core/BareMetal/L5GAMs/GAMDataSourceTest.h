@@ -144,6 +144,12 @@ public:
      */
     bool TestSetConfiguredDatabase_NoProducer_State_1_AllowNoProducers();
 
+    /**
+     * @brief Tests the PrepareNextState method without reseting the default values at state transition.
+     */
+    bool TestPrepareNextState_NoResetUnusedVariables();
+
+
 };
 
 /*---------------------------------------------------------------------------*/
