@@ -121,6 +121,37 @@ To read/write a registered structure an AnyType which describes the registered t
 
    Only the types and structure of the configuration tree must match with the types and structure of the ``C struct``, i.e. the names are ignored. 
 
+Reading data-driven C structures
+--------------------------------
+
+The :vcisdoxygencl:`IntrospectionStructure` class can also be used to dynamically create and register structures using a standard configuration file.
+
+.. code-block:: C++
+   
+   +Types = {
+       Class = ReferenceContainer
+       +GainFromIntroStructure = {
+           Class = IntrospectionStructure
+           gain1 = {
+               Type = float32
+               NumberOfElements = {1}
+           }
+           gain2 = {
+               Type = float32
+               NumberOfElements = {1}
+           }
+           gain3 = {
+               Type = float32
+               NumberOfElements = {6}
+           }
+       }
+       +GainsFromIntroStructure = {
+            Class = IntrospectionStructure
+            lowGains = {
+            Type = GainFromIntroStructure
+       }
+       ...
+
 Examples
 --------
 
@@ -149,5 +180,13 @@ This example shows how to read and write directly from a registered ``C struct``
    :caption: Reading registered structures (ConfigurationExample6)
    :linenos:  
    :emphasize-lines: 73,80,149,152,280-281
+   
+Similar to the example below but the structures are registered using the configuration file:
+
+.. literalinclude:: /_static/examples/Core/ConfigurationExample7.cpp
+   :language: c++   
+   :caption: Reading registered structures (ConfigurationExample7)
+   :linenos:  
+   :emphasize-lines: 190-203,206-212
    
 Instructions on how to compile and execute the example can be found :doc:`here </core/examples>`.

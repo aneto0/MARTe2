@@ -253,7 +253,7 @@ public:
     /**
      * @brief Retrieves the inverse of this matrix.
      * @details This operations is allowed only for float matrices.
-     * @param[out] inverse is the calculated inverse matrix in output.
+     * @param[in, out] inverse is the calculated inverse matrix in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
      *   GetNumberOfRows() == GetNumberOfColumns() &&
@@ -694,6 +694,11 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     return ret;
 }
 
+/**
+ * @brief float64 implementation of the Inverse.
+ * @param[out] inverse see Matrix<T>::Inverse.
+ * @return see Matrix<T>::Inverse.
+ */
 template<> inline
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
