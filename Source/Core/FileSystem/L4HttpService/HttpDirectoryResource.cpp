@@ -206,6 +206,9 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, StreamI &stream, Http
             ok = protocol.MoveAbsolute("OutputOptions");
         }
     }
+    else {
+        (void) HttpDataExportI::ReplyNotFound(protocol);
+    }
     if (ok) {
         ok = protocol.Write("Content-Type", mime.Buffer());
     }

@@ -274,9 +274,6 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                         handled = httpDirectoryResource->GetAsText(stream, protocol);
                     }
                 }
-                if (!handled) {
-                    ok = HttpDataExportI::ReplyNotFound(protocol);
-                }
             }
             else {
                 ReferenceT<HttpDataExportI> httpDataExportI = target;

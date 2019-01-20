@@ -621,23 +621,28 @@ bool GAM::ExportData(StructuredDataI & data) {
         uint32 i;
         for (i = 0u; (i < numberOfInputSignals) && (ok); i++) {
             StreamString signalName;
+            uint32 numberOfDimensions = 0u;
+            TypeDescriptor td = GetSignalType(InputSignals, i);
+            AnyType at(td, 0u, GetInputSignalMemory(i));
             ok = GetSignalName(InputSignals, i, signalName);
             if (ok) {
-                TypeDescriptor td = GetSignalType(InputSignals, i);
-                AnyType at(td, 0u, GetInputSignalMemory(i));
-                uint32 j;
-                uint32 numberOfDimensions = 0u;
                 ok = GetSignalNumberOfDimensions(InputSignals, i, numberOfDimensions);
-                if (ok) {
-                    for (j = 0u; j < numberOfDimensions; j++) {
-                        at.SetNumberOfElements(j, at.GetNumberOfElements(j));
-                    }
-                    ok = data.Write(signalName.Buffer(), at);
-                }
             }
             if (ok) {
-                ok = data.MoveToAncestor(1u);
+                at.SetNumberOfDimensions(numberOfDimensions);
+                uint32 numberOfElements = 0u;
+                if (ok) {
+                    ok = GetSignalNumberOfElements(InputSignals, i, numberOfElements);
+                }
+                if (ok) {
+                    at.SetNumberOfElements(0u, numberOfElements);
+                }
+                ok = data.Write(signalName.Buffer(), at);
             }
+
+        }
+        if (ok) {
+            ok = data.MoveToAncestor(1u);
         }
     }
     if (numberOfOutputSignals > 0u) {
@@ -649,19 +654,23 @@ bool GAM::ExportData(StructuredDataI & data) {
             if (ok) {
                 TypeDescriptor td = GetSignalType(OutputSignals, i);
                 AnyType at(td, 0u, GetOutputSignalMemory(i));
-                uint32 j;
                 uint32 numberOfDimensions = 0u;
                 ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
                 if (ok) {
-                    for (j = 0u; j < numberOfDimensions; j++) {
-                        at.SetNumberOfElements(j, at.GetNumberOfElements(j));
+                    at.SetNumberOfDimensions(numberOfDimensions);
+                    uint32 numberOfElements = 0u;
+                    if (ok) {
+                        ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);
+                    }
+                    if (ok) {
+                        at.SetNumberOfElements(0u, numberOfElements);
                     }
                     ok = data.Write(signalName.Buffer(), at);
                 }
             }
-            if (ok) {
-                ok = data.MoveToAncestor(1u);
-            }
+        }
+        if (ok) {
+            ok = data.MoveToAncestor(1u);
         }
     }
     return ok;

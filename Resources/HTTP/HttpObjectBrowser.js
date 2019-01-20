@@ -54,14 +54,8 @@ class HttpObjectBrowser extends MARTeObject {
 					}
 				};
 				//Get the URL and add all the extra parameters
-				var pname = window.location.pathname;
-				if (!pname.endsWith("/")) {
-					pname += "/";
-				}
-				pname += path;
-				var getparams = window.location.search;
-				getparams = getparams.replace("TextMode=1", "TextMode=0");
-				xhttp.open("GET", pname + getparams, true);
+				var fullURL = MARTeLoader.instance().getDataUrl(path);
+				xhttp.open("GET", fullURL, true);
 				xhttp.send();
 				btn.innerHTML = "-";
 			}
@@ -87,10 +81,10 @@ class HttpObjectBrowser extends MARTeObject {
 	/**
 	 * TODO
 	 */
-	showTreeNode(path, btn, obj) {
+	showTreeNode(path, obj, rightPaneContainerId) {
 		var marteClassName = obj.getAttribute("marteClassName");
 		if (marteClassName !== null) {
-			MARTeLoader.instance().load(path, marteClassName, 'rightPaneContainer');
+			MARTeLoader.instance().load(path, marteClassName, rightPaneContainerId);
 		}		
 	}
 
@@ -106,6 +100,7 @@ class HttpObjectBrowser extends MARTeObject {
 	 */
 	createTreeNodes(jsonData, fullpath, parent) {
 		var i = 0;
+		var panelConfig = MARTeLoader.instance().getPanelConfig();
 		var nodeName = "" + i;
 		var hasMoreNodes = (jsonData[nodeName] !== undefined);
 		if (fullpath.length > 0) {
@@ -147,8 +142,9 @@ class HttpObjectBrowser extends MARTeObject {
 
 			var showObjectBtn = document.createElement("button");
 			var showObjectBtnTxt = document.createTextNode(">");
-			var showObjectBndId = "sbtn_" + pathid;
-			showObjectBtn.setAttribute("id", showObjectBndId);
+			var showObjectBtnId = "sbtn_" + pathid;
+			showObjectBtn.setAttribute("id", showObjectBtnId);
+			showObjectBtn.setAttribute("class", "dropbtn");
 			showObjectBtn.appendChild(showObjectBtnTxt);
 
 			var li = document.createElement("li");
@@ -158,8 +154,29 @@ class HttpObjectBrowser extends MARTeObject {
 			li.appendChild(expandBtn);
 			var litxt = document.createTextNode(" " + txt + " ");
 			li.appendChild(litxt);
-			li.appendChild(showObjectBtn);
+			
+			var divParentContainer = document.createElement("div");
+			divParentContainer.setAttribute("class", "dropdown");			
+			
+			divParentContainer.appendChild(showObjectBtn);
 
+			var dropdownDivContainers = document.createElement("div");
+			dropdownDivContainers.setAttribute("class", "dropdown-content");
+			var nrows = panelConfig.length;
+			for (var r=0; r<nrows; r++) {
+				var ncols = panelConfig[r].length;
+				for (var c=0; c<ncols; c++) {
+					var divContainerLink = document.createElement("a");
+					var rightPaneContainerId = MARTeLoader.instance().getRightPaneContainerId(r, c);
+					var divContainerLinkId = showObjectBtnId + rightPaneContainerId;					
+					divContainerLink.setAttribute("id", divContainerLinkId);
+					var divContainerLinkTxt = document.createTextNode(r + "x" + c);
+					divContainerLink.appendChild(divContainerLinkTxt);
+					dropdownDivContainers.appendChild(divContainerLink);
+				}
+			}
+			divParentContainer.appendChild(dropdownDivContainers);								
+			li.appendChild(divParentContainer);
 			parent.appendChild(li);
 
 			i++;
@@ -174,6 +191,8 @@ class HttpObjectBrowser extends MARTeObject {
 	registerTreeLinks(jsonData, fullpath) {
 		var i = 0;
 		var nodeName = "" + i;
+		var panelConfig = MARTeLoader.instance().getPanelConfig();
+		
 		var hasMoreNodes = (jsonData[nodeName] !== undefined);
 		if (fullpath.length > 0) {
 			if (!fullpath.endsWith("/")) {
@@ -186,7 +205,6 @@ class HttpObjectBrowser extends MARTeObject {
 			var objpath = fullpath + objName;
 			var pathid = this.generateId(objpath);
 			var expandObjectBtnId = "ebtn_" + pathid;
-			var showObjectBtnId = "sbtn_" + pathid;
 			var liid = "li_" + pathid;
 			var li = document.getElementById(liid);
 			var expandObjectBtn = document.getElementById(expandObjectBtnId);
@@ -201,13 +219,24 @@ class HttpObjectBrowser extends MARTeObject {
 					false);
 			}
 
-			var showObjectBtn = document.getElementById(showObjectBtnId);
-			showObjectBtn.addEventListener("click",
-				function(ev, objpath, showObjectBtn, li) {
-					this.showTreeNode(objpath, showObjectBtn, li);
-					//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
-				}.bind(this, null, objpath, showObjectBtn, li),
-				false);
+	
+			var showObjectBtnId = "sbtn_" + pathid;
+			
+			var nrows = panelConfig.length;
+			for (var r=0; r<nrows; r++) {
+				var ncols = panelConfig[r].length;
+				for (var c=0; c<ncols; c++) {	
+					var rightPaneContainerId = MARTeLoader.instance().getRightPaneContainerId(r, c);
+					var divContainerLinkId = showObjectBtnId + rightPaneContainerId;			
+					var divContainerLink = document.getElementById(divContainerLinkId);
+					divContainerLink.addEventListener("click",
+						function(ev, objpath, li, rightPaneContainerId) {
+							this.showTreeNode(objpath, li, rightPaneContainerId);
+							//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
+					}.bind(this, null, objpath, li, rightPaneContainerId),
+					false);
+				}
+			}
 
 			i++;
 			nodeName = "" + i;

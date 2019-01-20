@@ -10,7 +10,7 @@ class MARTeObject {
     prepareDisplay(target) {
         this.textarea = document.createElement('textarea');
         this.inputRefresh = document.createElement('input');
-        this.inputRefresh.value = "1000";
+        this.inputRefresh.value = "100";
 		this.textarea.setAttribute("disabled", true);
 		var textRefreshRate = document.createTextNode("Refresh rate (ms)");
 		target.innerHTML = "";

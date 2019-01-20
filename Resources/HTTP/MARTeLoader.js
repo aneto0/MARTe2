@@ -7,11 +7,66 @@ class MARTeLoader {
 	static instance() {
 		if (this.ml == undefined) {
 			this.ml = new MARTeLoader();
+			this.ml.urlCache = {};
+			this.ml.head = document.getElementsByTagName('head')[0];
+			this.ml.mainTargetContainer = document.getElementById("rightPaneContainer");
 		}
 		return this.ml;
 
 	}
 
+	/**
+	 * TODO
+	 */
+	loadPanelConfig() { 
+		this.createTargetPanels(this.getPanelConfig());
+	}
+	
+	/**
+	 * TODO
+	 */
+	getPanelConfig() {
+		return [[50, 50], [30, 30, 40]];
+	}
+	
+	/**
+	 * TODO
+ 	 */
+ 	createTargetPanels(config) {
+ 		var target = this.mainTargetContainer;
+ 		var nrows = config.length;
+ 		var rheight = 100 / nrows; 
+ 		
+ 		for (var r=0; r<nrows; r++) {
+ 			var ncols = config[r].length;
+ 			//Add the row
+ 			var rowd = document.createElement("div"); 
+ 			var rid = this.getRightPaneContainerId(r); 
+ 			rowd.setAttribute("class", "mainrowtargetitem");
+ 			rowd.setAttribute("id", rid);
+ 			rowd.style.height = rheight + "%";
+ 			
+ 			target.appendChild(rowd); 			
+ 			for (var c=0; c<ncols; c++) {
+ 				//Add the columns
+ 				var cold = document.createElement("div"); 
+ 				var cid = this.getRightPaneContainerId(r, c);
+ 				var cwidth = config[r][c]; 				 
+ 				cold.setAttribute("class", "maincolumntargetitem");
+ 				cold.setAttribute("id", cid);
+				cold.style.width = cwidth + "%";
+ 				if (c == (ncols - 1)) {
+					cold.style.resize = 'none';
+				}
+				 				
+ 				var logo = document.getElementById("martelogo").cloneNode(true);
+ 				logo.removeAttribute("hidden");
+ 				cold.appendChild(logo);
+ 				rowd.appendChild(cold);
+ 			}
+ 		}
+ 	}
+	
 	/**
 	 * @brief Only executes the callback if the url exists in the server. 
 	 * @param[in] url the url to be checked.
@@ -19,19 +74,34 @@ class MARTeLoader {
 	 * @param[out] callbackFailed the function callback to be called if the resource does NOT exist in the server.
 	 */
 	executeIffUrlExists(url, callbackOK, callbackFailed) {
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
+		if (this.urlCache[url] === undefined) {
+			var xhttp = new XMLHttpRequest();
+			var that = this;
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					callbackOK();
+					that.urlCache[url] = true;
+				}
+				else if (this.status == 400 || this.status == 404) {
+					if (callbackFailed !== undefined) {
+						callbackFailed();						
+					}
+					that.urlCache[url] = false;
+				}
+			};
+			xhttp.open("HEAD", url, true);
+			xhttp.send();
+		}
+		else {
+			if (this.urlCache[url]) {
 				callbackOK();
 			}
-			else if (this.status == 400 || this.status == 404) {
+			else {
 				if (callbackFailed !== undefined) {
 					callbackFailed();
 				}
 			}
-		};
-		xhttp.open("HEAD", url, true);
-		xhttp.send();
+		}
 	}
 
 	/**
@@ -61,7 +131,18 @@ class MARTeLoader {
 		//Get the URL and add all the extra parameters
 		var pname = window.location.pathname;
 		var getparams = window.location.search;
-		getparams = getparams.replace("TextMode=1", "TextMode=0");
+		if (getparams.includes("TextMode=")) {
+			getparams = getparams.replace("TextMode=1", "TextMode=0");
+		}
+		else {
+			if (getparams.length === 0) {
+				getparams += "?";
+			}
+			else {
+				getparams += "&";
+			}
+			getparams += "TextMode=0";
+		}
 		var fullUrl = pname;
 		if (fullPath.length > 0) {
 			if (!fullUrl.endsWith("/")) {
@@ -73,6 +154,17 @@ class MARTeLoader {
 		return fullUrl;
 	}
 
+	getRightPaneContainerId(row, col) {
+		var rcid;
+		if (col == undefined) {
+			rcid = "rightPaneContainerR" + row; 
+		}
+		else {
+			rcid = "rightPaneContainerR" + row + "C" + col;
+		}
+		return rcid;
+	}
+	
 	load(fullPath, className, containerId) {
 		var xhttp = new XMLHttpRequest();
 		var that = this;
@@ -100,7 +192,7 @@ class MARTeLoader {
 									this.standardDisplay = new MARTeObject();
 									this.standardDisplay.setPath(fullPath);
 									this.standardDisplay.prepareDisplay(containerHtmlElem);
-									this.standardDisplay.displayData(jsonData);									
+									this.standardDisplay.displayData(jsonData);
 								}
 							}.bind(this),
 						);
@@ -131,23 +223,30 @@ class MARTeLoader {
 		xhttp.send();
 	}
 
-	loadJS(className, fullPath, jsonData, containerId) {
-		var head = document.getElementsByTagName('head')[0];
-		//Check if the script already exists
+	/**
+	 * @brief Checks if the resource was already added to the <head>
+	 * @param[in] marteClassName the class name that identifies the resource.
+	 * @return true if the resource already exists.
+	 */
+	resourceAlreadyExists(marteClassName) {		
 		var scriptAlreadyExists = false;
-		var fullClassName = className + ".js";
-		var url = "/?path=" + fullClassName + "&TextMode=1";
-		var nChildren = head.children.length;
+		var nChildren = this.head.children.length;
 		for (var c = 0; (c < nChildren) && (!scriptAlreadyExists); c++) {
-			var src = head.children[c].getAttribute("src");
+			var src = this.head.children[c].getAttribute("src");
 			if (src !== null) {
-				scriptAlreadyExists = src.includes(fullClassName);
+				scriptAlreadyExists = src.includes(marteClassName);
 			}
 		}
+		return scriptAlreadyExists;
+	}
 
+
+	loadJS(className, fullPath, jsonData, containerId) {
+		var fullClassName = className + ".js";
 		//If the script is not in the <head>, add it
-		if (!scriptAlreadyExists) {
+		if (!this.resourceAlreadyExists(fullClassName)) {
 			var script = document.createElement('script');
+			var url = "/?path=" + fullClassName + "&TextMode=1";
 			script.type = 'text/javascript';
 			script.src = url;
 			var loaded = false;
@@ -159,11 +258,25 @@ class MARTeLoader {
 			}.bind(this);
 			script.onreadystatechange = jsLoader;
 			script.onload = jsLoader;
-			head.appendChild(script);
+			this.head.appendChild(script);
 		}
 		//Otherwise just load it
 		else {
-			this.jsLoaded(className, jsonData, containerId);
+			this.jsLoaded(className, fullPath, jsonData, containerId);
+		}
+	}
+
+	loadCSS(className) {
+		var fullClassName = className + ".css";
+		//If the css is not in the <head>, add it
+		if (!this.resourceAlreadyExists(fullClassName)) {
+			var url = "/?path=" + fullClassName + "&TextMode=1";
+			//But first check that the URL is valid
+			var link = document.createElement("link");
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			link.href = url;
+			this.head.appendChild(link);
 		}
 	}
 
@@ -177,28 +290,5 @@ class MARTeLoader {
 			obj.displayData(jsonData);
 		}
 	}
-
-	loadCSS(className) {
-		var head = document.getElementsByTagName('head')[0];
-		//Check if the css already exists
-		var cssAlreadyExists = false;
-		var fullClassName = className + ".css";
-		var nChildren = head.children.length;
-		for (var c = 0; (c < nChildren) && (!cssAlreadyExists); c++) {
-			var src = head.children[c].getAttribute("src");
-			if (src !== null) {
-				cssAlreadyExists = src.includes(fullClassName);
-			}
-		}
-		//If the css is not in the <head>, add it
-		if (!cssAlreadyExists) {
-			var url = "/?path=" + fullClassName + "&TextMode=1";
-			//But first check that the URL is valid
-			var link = document.createElement("link");
-			link.type = "text/css";
-			link.rel = "stylesheet";
-			link.href = url;
-			head.appendChild(link);
-		}
-	}
+	
 }

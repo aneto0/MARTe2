@@ -156,13 +156,12 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
             if (err.ErrorsCleared()) {
 
                 if (sel.WaitUntil(1000u) > 0) {
-                    //todo from here is possible to understand if
+                    //todo from here it is possible to understand if
                     //you want plain text or data
                     if (!hprotocol.ReadHeader()) {
                         err = ErrorManagement::CommunicationError;
                         REPORT_ERROR(ErrorManagement::CommunicationError, "Error while reading HTTP header");
                     }
-                    //Reference hi = webRoot;
                     bool pagePrepared = false;
 
                     if (err.ErrorsCleared()) {
@@ -190,8 +189,6 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
                                     err = !(commClient->FinalChunk());
                                 }
                             }
-                            //hprotocol.SetKeepAlive(false);
-
                         }
                     }
                     if (err.ErrorsCleared()) {

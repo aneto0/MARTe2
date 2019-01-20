@@ -4,36 +4,51 @@
         </script>
         <script src="/?path=MARTeObject.js&TextMode=1">
         </script>
-        <style>			
-			.mainrow {
-  				display: flex;
-			}
-			/* Defines the two main container panes properties*/
-			.maincolumn1, .maincolumn2 {
-  				flex: 30%;
-				padding: 2px;
-				height: 100%;
-  				border-style: solid;
-  				border-width: 1px;
-  				border-color: rgb(211, 215, 207);  				
-  				overflow: auto;
-  			}
-  			.maincolumn2 {
-  				flex: 70%;
-  			}
-  			textarea{
-			    width:100%;
-			    height:100%;
-			}
-        </style>
+        <link type="text/css" rel="stylesheet" href="/?path=MARTe.css&TextMode=1"/>
     </head>
-    <body onload="MARTeLoader.instance().load('', '', 'leftPaneContainer')">
+    <body onload="MARTeLoader.instance().loadPanelConfig();MARTeLoader.instance().load('', '', 'leftPaneContainer');">
     	<div class="mainrow">
-        	<div id="leftPaneContainer" class="maincolumn1">            	
+        	<div id="leftPaneContainerHolder" class="maincolumnnav">            	
+        		<div id="leftPaneContainerHolderRow" class="mainrow">
+        			<div id="leftPaneContainer" class="maincolumnnav">            	        	
+	        		</div>
+	        	</div>
         	</div>
-        	<div id="rightPaneContainer" class="maincolumn2">
-            	<p>Hello MARTe2!</p>
-        	</div>
+        	<div id="rightPaneContainer" class="maincolumntarget" width="70%" >        	
+        		<!--<div id="rightPaneContainerR1" class="mainrow" > 
+        			<div id="rightPaneContainerR1C1" class="maincolumntargetitem" height="50%" >       			
+            			<a href="https://vcis.f4e.europa.eu/marte2-docs/master/html/" target="_blank">About...</a>
+					</div>
+        		</div>
+        		<div id="rightPaneContainerR2" class="mainrow" >
+        			<div id="rightPaneContainerR2C1" class="maincolumntargetitem" height="50%">       			
+					</div>
+        		</div>-->
+			</div>
+    	</div>
+    	
+    	
+    	
+    	<div id="martelogo" hidden>
+    		<pre>                                                                                                                                                 
+	MMMMMMMM               MMMMMMMM               AAA               RRRRRRRRRRRRRRRRR   TTTTTTTTTTTTTTTTTTTTTTT                      222222222222222    
+	M:::::::M             M:::::::M              A:::A              R::::::::::::::::R  T:::::::::::::::::::::T                     2:::::::::::::::22  
+	M::::::::M           M::::::::M             A:::::A             R::::::RRRRRR:::::R T:::::::::::::::::::::T                     2::::::222222:::::2 
+	M:::::::::M         M:::::::::M            A:::::::A            RR:::::R     R:::::RT:::::TT:::::::TT:::::T                     2222222     2:::::2 
+	M::::::::::M       M::::::::::M           A:::::::::A             R::::R     R:::::RTTTTTT  T:::::T  TTTTTTeeeeeeeeeeee                     2:::::2 
+	M:::::::::::M     M:::::::::::M          A:::::A:::::A            R::::R     R:::::R        T:::::T      ee::::::::::::ee                   2:::::2 
+	M:::::::M::::M   M::::M:::::::M         A:::::A A:::::A           R::::RRRRRR:::::R         T:::::T     e::::::eeeee:::::ee              2222::::2  
+	M::::::M M::::M M::::M M::::::M        A:::::A   A:::::A          R:::::::::::::RR          T:::::T    e::::::e     e:::::e         22222::::::22   
+	M::::::M  M::::M::::M  M::::::M       A:::::A     A:::::A         R::::RRRRRR:::::R         T:::::T    e:::::::eeeee::::::e       22::::::::222     
+	M::::::M   M:::::::M   M::::::M      A:::::AAAAAAAAA:::::A        R::::R     R:::::R        T:::::T    e:::::::::::::::::e       2:::::22222        
+	M::::::M    M:::::M    M::::::M     A:::::::::::::::::::::A       R::::R     R:::::R        T:::::T    e::::::eeeeeeeeeee       2:::::2             
+	M::::::M     MMMMM     M::::::M    A:::::AAAAAAAAAAAAA:::::A      R::::R     R:::::R        T:::::T    e:::::::e                2:::::2             
+	M::::::M               M::::::M   A:::::A             A:::::A   RR:::::R     R:::::R      TT:::::::TT  e::::::::e               2:::::2       222222
+	M::::::M               M::::::M  A:::::A               A:::::A  R::::::R     R:::::R      T:::::::::T   e::::::::eeeeeeee       2::::::2222222:::::2
+	M::::::M               M::::::M A:::::A                 A:::::A R::::::R     R:::::R      T:::::::::T    ee:::::::::::::e       2::::::::::::::::::2
+	MMMMMMMM               MMMMMMMMAAAAAAA                   AAAAAAARRRRRRRR     RRRRRRR      TTTTTTTTTTT      eeeeeeeeeeeeee       22222222222222222222                     
+            </pre>
+            <a href="https://vcis.f4e.europa.eu/marte2-docs/master/html/" target="_blank">About...</a>
     	</div>
     </body>
 </html>
