@@ -91,8 +91,6 @@ public:
      * @param[in] path the path to the node\a value.
      * @param[out] value the variable where the value is to be stored to. The variable shall be of a type compatible with AnyType.
      * @return true if the value is read and converted successfully.
-     * @pre
-     *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value) = 0;
 
@@ -102,8 +100,6 @@ public:
      * @param[in] borrow if false the object created can be freely used, otherwise it shall not be modified
      * @param[out] object is a NULL reference which will be set to point an Object whose AnyType is a correct representation of the data
      * @return true if the value is read and converted successfully.
-     * @pre
-     *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual ErrorManagement::ErrorType Read(CCString path,Reference &object,bool borrow=true) = 0;
 

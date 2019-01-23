@@ -37,7 +37,7 @@
 #include "StringHelper.h"
 #include "HeapI.h"
 #include "ReferenceContainer.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "Atomic.h"
 #include "ClassMethodCaller.h"
 #include "ClassRegistryDatabase.h"
@@ -145,7 +145,6 @@ ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodNa
 
 Object::Object() {
     referenceCounter = 0;
-    objectName = NULL_PTR(char8 *);
     isDomain = false;
 }
 
@@ -159,13 +158,6 @@ Object::Object(const Object &copy) {
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
 Object::~Object() {
-    if (!objectName.IsNullPtr()) {
-        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free() in destructor");
-        }
-    }
 }
 
 uint32 Object::DecrementReferences() {
@@ -214,6 +206,8 @@ static inline char8 toHex(uint8 value){
     return static_cast<char8>(hexValue);
 }
 
+
+
 bool Object::GetUniqueName(StreamI &nameStream) const {
 
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
@@ -256,20 +250,9 @@ bool Object::GetUniqueName(StreamI &nameStream) const {
 }
 
 void Object::SetName(CCString const newName) {
-    if (!objectName.IsNullPtr()) {
-        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(objectName));
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
-        }
-    }
-
-    uint32 size = newName.GetSize()+1;
-    if (size > 0){
-        objectName = reinterpret_cast<char8 *>(HeapManager::Duplicate(newName.GetList(),size));
-    }
-
+	objectName = newName;
 }
+
 #if 0
 bool Object::ExportData(StructuredDataI & data) {
     return ConvertObjectToStructuredData(*this,data);

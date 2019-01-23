@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 #include "ErrorType.h"
 #include "ErrorManagement.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 
 using namespace MARTe;
 

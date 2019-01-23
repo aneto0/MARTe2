@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticListTest.h"
-#include "GeneralDefinitions.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

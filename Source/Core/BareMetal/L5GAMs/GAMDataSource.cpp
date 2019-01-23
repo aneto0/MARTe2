@@ -40,7 +40,7 @@
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "CLASSREGISTER.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -55,20 +55,17 @@ GAMDataSource::GAMDataSource() :
         DataSourceI() {
     signalMemory = NULL_PTR(void *);
     signalOffsets = NULL_PTR(uint32 *);
-    memoryHeap = NULL_PTR(HeapI *);
+    heapId = HeapManager::standardHeapId;
 }
 
 GAMDataSource::~GAMDataSource() {
-    if (memoryHeap != NULL_PTR(HeapI *)) {
-        if (signalMemory != NULL_PTR(void *)) {
-            /*lint -e{1551} HeapManager::Free is expected to be exception free*/
-            memoryHeap->Free(signalMemory);
-        }
-        if (signalOffsets != NULL_PTR(uint32 *)) {
-            delete[] signalOffsets;
-        }
+    if (signalMemory != NULL_PTR(void *)) {
+        /*lint -e{1551} HeapManager::Free is expected to be exception free*/
+    	HeapManager::Free(signalMemory);
     }
-    /*lint -e{1740} memoryHeap+ was zero or it is freed and zeroed by HeapManager::Free*/
+    if (signalOffsets != NULL_PTR(uint32 *)) {
+        delete[] signalOffsets;
+    }
 }
 
 bool GAMDataSource::Initialise(StructuredDataI & data) {
@@ -76,14 +73,10 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
     if (ret) {
         DynamicCString heapName;
         if (data.Read("HeapName", heapName)) {
-            memoryHeap = HeapManager::FindHeap(heapName);
-            if (memoryHeap == NULL_PTR(HeapI *)) {
-                COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Could not instantiate an memoryHeap with the name:", heapName);
-                ret = false;
-            }
+        	heapId = HeapManager::HeapIdFromName(heapName);
         }
         else {
-            memoryHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
+            heapId = HeapManager::standardHeapId;
         }
     }
     return ret;
@@ -148,9 +141,7 @@ bool GAMDataSource::AllocateMemory() {
         }
     }
     if (ret) {
-        if (memoryHeap != NULL_PTR(HeapI *)) {
-            signalMemory = memoryHeap->Malloc(memorySize);
-        }
+        signalMemory = HeapManager::Malloc(memorySize,heapId);
         Memory::Set(signalMemory, '\0', memorySize);
     }
     return ret;

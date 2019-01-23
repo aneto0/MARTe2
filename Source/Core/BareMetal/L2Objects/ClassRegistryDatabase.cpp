@@ -39,7 +39,6 @@
 #include "LoadableLibrary.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
-#include "GlobalObjectsDatabase.h"
 
  
 /*---------------------------------------------------------------------------*/
@@ -51,25 +50,13 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+namespace ClassRegistryDatabase {
 
-ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
-    static ClassRegistryDatabase *instance = NULL_PTR(ClassRegistryDatabase *);
-    if (instance == NULL_PTR(ClassRegistryDatabase *)) {
-        instance = new ClassRegistryDatabase();
-        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
-    }
-    return instance;
-}
 
-ClassRegistryDatabase::ClassRegistryDatabase():classDatabase(ClassRegistryIndex::Instance()) {
-}
-
-ClassRegistryDatabase::~ClassRegistryDatabase() {
-
-}
-
-ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidName) {
+ClassRegistryItem *FindTypeIdName(CCString const typeidName) {
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+
+	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
 
 		uint32 numberOfRegisteredClasses = classDatabase->NumberOfRegisteredClasses();
@@ -88,8 +75,10 @@ ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(CCString const typeidNa
 	return cri;
 }
 
-ClassRegistryItem *ClassRegistryDatabase::FindClassName(CCString const className){
+ClassRegistryItem *FindClassName(CCString const className){
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+
+	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
 
 		uint32 numberOfRegisteredClasses = classDatabase->NumberOfRegisteredClasses();
@@ -109,7 +98,7 @@ ClassRegistryItem *ClassRegistryDatabase::FindClassName(CCString const className
 }
 
 
-ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
+ClassRegistryItem *Find(CCString className) {
 
 	// search full name
 	ClassRegistryItem *cri = FindClassName(className);
@@ -125,7 +114,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 				// extract the first part up to ::
 				DynamicCString dllName;
 				uint32 dllNameBaseSize = className.GetSize() - classOnlyPartName.GetSize();
-				dllName.Append(className.GetList(),dllNameBaseSize);
+				dllName().Append(className.GetList(),dllNameBaseSize);
 
 				// try open a dll with this name
 	            LoadableLibrary *loader = new LoadableLibrary();
@@ -133,8 +122,8 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 	            uint32 osExtIndex = 0;
 	            //Check for all known operating system extensions.
 	            while ((operatingSystemDLLExtensions[osExtIndex] != 0) && (!dllOpened)) {
-	                dllName.Truncate(dllNameBaseSize);
-					dllName.Append(operatingSystemDLLExtensions[osExtIndex]);
+	                dllName().Truncate(dllNameBaseSize);
+					dllName().Append(operatingSystemDLLExtensions[osExtIndex]);
 					osExtIndex++;
 	                dllOpened = loader->Open(dllName.GetList());
 	            }
@@ -163,16 +152,18 @@ ClassRegistryItem *ClassRegistryDatabase::Find(CCString className) {
 }
 
 
-uint32 ClassRegistryDatabase::GetSize() {
+uint32 GetSize() {
 	uint32 size = 0;
+	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
 		size = classDatabase->NumberOfRegisteredClasses();
 	}
 	return size;
 }
 
-const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
+const ClassRegistryItem *Peek(const uint32 &idx) {
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (classDatabase != NULL_PTR(ClassRegistryIndex *)){
 		cri = classDatabase->GetClassRegistryItem(idx);
 	}
@@ -181,15 +172,11 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
 
 ClassRegistryItem *ClassRegistryDatabase::Find(const TypeDescriptor &targetTd) {
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
+	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (targetTd.isStructuredData && (classDatabase != NULL_PTR(ClassRegistryIndex *))){
 		cri = classDatabase->GetClassRegistryItem(targetTd.structuredDataIdCode);
 	}
     return cri;
-}
-
-
-CCString  ClassRegistryDatabase::GetClassName() const {
-    return "ClassRegistryDatabase";
 }
 
 /**
@@ -199,7 +186,8 @@ CCString  ClassRegistryDatabase::GetClassName() const {
  */
 CCString GetNameOfClassFromId(TypeDescriptor td){
 	CCString ret = "";
-	ClassRegistryItem * cri = ClassRegistryDatabase::Instance()->Find(td);
+
+	ClassRegistryItem * cri = Find(td);
     if (cri != NULL) {
     	ret = cri->GetClassName();
     }
@@ -216,4 +204,5 @@ public:
 
 } CRDTD_RegisterInstance;
 
+}
 }

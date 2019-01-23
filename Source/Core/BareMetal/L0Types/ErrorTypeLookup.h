@@ -1,8 +1,8 @@
 /**
- * @file ObjectRegistryDatabase.h
- * @brief Header file for class ObjectRegistryDatabase
- * @date 18/02/2016
- * @author Giuseppe Ferrò
+ * @file ErrorTypeLookup.h
+ * @brief Header file for class AnyType
+ * @date 12 Dec 2018
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,14 +15,16 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class ObjectRegistryDatabase
+
+ * @details This header file contains the declaration of the class ErrorTypeLookup
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
- */
+*/
 
-#ifndef OS_INITIALIZER_H_
-#define OS_INITIALIZER_H_
+#ifndef ERRORTYPELOOKUP_H_
+#define ERRORTYPELOOKUP_H_
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,80 +34,52 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "CCString.h"
+#include "ErrorType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
 /**
- * @brief Object built automatically. Construction initialises static variables containing generally usable variables.
+ * To generate a field in the table of error lookup
+ * depends from the ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
  */
-extern class DLL_API OSInitializer {
+#define GENERATE_ERROR_LOOKUP(ErrorName,errorName,bit)    \
+        { #ErrorName, ErrorName},
 
-public:
 
-    /**
-     * Number of cpu ticks in a second
-     */
-    static uint64 frequency;
+namespace ErrorManagement {
 
-    /**
-     * Time between two ticks in seconds
-     */
-    static float64 period;
-
-    /**
-     * Stores the seconds (counting from the epoch) at which a framework instance was executed.
-     */
-    static oslong initialSecs;
+/**
+ * Allow converting errors to strings
+ */
+struct ErrorTypeLookup{
+	/**
+	 * The name of the error field
+	 */
+    CCString 			name;
 
     /**
-     * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
+     * The corresponding bit
      */
-    static oslong initialUSecs;
+    ErrorIntegerFormat 	errorBitSet;
+};
 
-    /**
-     * Number of elapsed ticks at the time at which a framework instance was executed.
-     */
-    static uint64 initialTicks;
+extern DLL_API ErrorTypeLookup errorTypeLookup[];
 
-    /**
-     * typical worst case number of ticks the OS will consume during a sleep if CPU not used.
-     */
-    static uint64 osSleepTicks;
-
-    /**
-     * typical worst case number of usec the OS will consume during a sleep if CPU not used.
-     */
-    static uint32 osSleepUsec;
-
-    /**
-     * minimum value o be used in a sleep call to guarantee some sleep is actually performed.
-     */
-    static uint32 osMinSleepUsec;
-
-    /**
-     * @brief Default constructor.
-     */
-    OSInitializer();
-
-    /**
-     * @brief Destructor.
-     */
-    ~OSInitializer();
-
-private:
-
-} OSInit;
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* OS_INITIALIZER_H_ */
+} // MARTe
 
+#endif /* SOURCE_CORE_BAREMETAL_L0TYPES_ERRORTYPELOOKUP_H_ */

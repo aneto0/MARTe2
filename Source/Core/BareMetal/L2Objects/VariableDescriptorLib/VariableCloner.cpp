@@ -32,7 +32,7 @@
 
 #include "VariableDescriptorLib.h"
 #include "VariableCloner.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "MemoryPageFile.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -213,8 +213,8 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 //			    			REPORT_ERROR(ret, "GetNextLayerElementSize failed");
 //		    				uint32 numberOfElements= ZeroTerminatedArrayGetSize(newInputPointer, nextLayerSize);
 
-		    				uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].GetLayerCombinedElementSize().GetData());
-//							uint32 numberOfElements= ZeroTerminatedArrayGetSize(/* *zip*/newInputPointer, handler[level+1].elementSize.GetData());
+		    				uint32 numberOfElements= ZeroTerminatedArrayStaticTools::ZTAGetSize(/* *zip*/newInputPointer, handler[level+1].GetLayerCombinedElementSize().GetData());
+//							uint32 numberOfElements= ZeroTerminatedArrayStaticTools::ZTAGetSize(/* *zip*/newInputPointer, handler[level+1].elementSize.GetData());
 							if (ret){
 								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,VariableDescriptorLib::DimensionSize(numberOfElements));
 				    			REPORT_ERROR(ret, "DoCreateR failed");
@@ -349,7 +349,7 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 void VariableCloner::GetOutputModifiers(DynamicCString &dc) const {
 	ErrorManagement::ErrorType ret;
 
-	for (int i = 0; i < handler.NDimensions();i++){
+	for (uint32 i = 0; i < handler.NDimensions();i++){
 		char8 type = handler[i].TypeChar();
 		switch (type){
 		case 'O':{
@@ -357,15 +357,13 @@ void VariableCloner::GetOutputModifiers(DynamicCString &dc) const {
 		case 'A':{
 			uint32 size;
 			ret = handler[i].GetNumberOfElements(size);
-			dc.Append('A');
-			dc.Append(size);
+			dc().Append('A').Append(size);
 		}break;
 		case 'F':
 		case 'f':{
 			uint32 size;
 			ret = handler[i].GetNumberOfElements(size);
-			dc.Append("f");
-			dc.Append(size);
+			dc().Append("f").Append(size);
 		}break;
 		default:{
 			if (variableVectors.In(type)){
@@ -374,7 +372,7 @@ void VariableCloner::GetOutputModifiers(DynamicCString &dc) const {
 			if (variableMatrices.In(type)){
 				type = 'm';
 			}
-			dc.Append(type);
+			dc().Append(type);
 		}
 		}
 	}

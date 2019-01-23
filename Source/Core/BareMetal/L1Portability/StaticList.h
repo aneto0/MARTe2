@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticListHolder.h"
 #include "GeneralDefinitions.h"
+#include "StaticListHolder.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

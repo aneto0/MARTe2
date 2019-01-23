@@ -36,9 +36,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeDescriptor.h"
-#include "GlobalObjectI.h"
 #include "SimpleStaticListT.h"
 #include "CCString.h"
+#include "ClassRegistryItemI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,117 +46,14 @@
 
 namespace MARTe {
 
-/**
- * declared and implemented in level2
- * Here only to allow defining pointers to it
- * To access its content
- * */
 class ClassRegistryItem;
-
-/**
- * Interface requirement for ClassRegistryItem
- */
-class ClassRegistryItemI{
-
-public:
-
-	/**
-	 *
-	 */
-	virtual ~ClassRegistryItemI(){}
-
-    /**
-     * @brief Sets the type descriptor for the class described by this ClassRegistryItem.
-     * @return the TypeDescriptor.
-     */
-    virtual const TypeDescriptor &  GetTypeDescriptor() const = 0;
-
-    /**
-     * @brief  Get the name of the class (by default the same as returned by typeid.
-     */
-    virtual CCString                GetClassName() const 	= 0;
-
-    /**
-     * @brief  The name of the class as returned by typeid.
-     */
-    virtual CCString                GetTypeidName() const = 0;
-
-    /**
-     * @brief  The version of the class.
-     */
-    virtual CCString                GetClassVersion() const = 0;
-
-    /**
-     * @brief  The size of the class.
-     */
-    virtual uint32                  GetSizeOfClass() const	= 0;
-
-    /**
-     * @brief  allows recovering the base pointer to ClassRegistryItem from this interface
-     * without using dynamic_cast which might not works as this class is not known here
-     */
-    virtual ClassRegistryItem* 		GetBasePtr() = 0;
-
-};
-
-
-/**
- * Just to provide the information of size at level 1!
- * information duplicated in *cri
- */
-struct ClassRegistryBrief{
-
-	/**
-	 * TODO
-	 * pointer to ClassRegistryItem
-	 */
-	class ClassRegistryItemI  *crii;
-
-	/**
-	 * TODO
-	 * sizeof ()
-	 */
-	uint32 GetSizeOfClass(){
-		uint32 size = 0;
-		if (crii != NULL_PTR(ClassRegistryItemI *)){
-			size = crii->GetSizeOfClass();
-		}
-		return size;
-	}
-
-	/**
-	 * TODO
-	 * sizeof ()
-	 */
-	CCString GetClassName(){
-		CCString name;
-		if (crii != NULL_PTR(ClassRegistryItemI *)){
-			name = crii->GetClassName();
-		}
-		return name;
-	}
-
-	/**
-	 * sizeof ()
-	 */
-//    uint32                    sizeOfClass;
-
-    /**
-     *
-     */
-    ClassRegistryBrief(){
-    	crii = NULL_PTR(ClassRegistryItemI *);
-//    	sizeOfClass = 0;
-    }
-};
-
 
 /**
  * @brief ordered array of pointers to class information records
  * @details Used inside Level2 ClassRegistryDatabase. Singleton use.
  * Implemented actually in level2 as part of the ClassRegistryDatabase.
  */
-class DLL_API ClassRegistryIndex: public GlobalObjectI {
+class DLL_API ClassRegistryIndex {
 
 public:
 
@@ -193,19 +90,13 @@ public:
 	/**
 	 * rename a template class
 	 */
-	typedef SimpleStaticListT<ClassRegistryBrief,IndexCellSize> ClassRegistryIndexCell;
+	typedef SimpleStaticListT<ClassRegistryItemI *,IndexCellSize> ClassRegistryIndexCell;
 
     /**
      * @brief Singleton access to the database.
      * @return a reference to the database.
      */
     static ClassRegistryIndex *Instance();
-
-    /**
-     * @brief Returns "ClassRegistryIndex"
-     * @return "ClassRegistryIndex".
-     */
-    virtual CCString GetClassName() const;
 
 
     /**
@@ -218,7 +109,7 @@ public:
      * @return NULL if index is outside range
      *
      */
-    ClassRegistryBrief *operator[] (uint32 classRegistrationNo);
+    ClassRegistryItemI *operator[] (uint32 classRegistrationNo);
 
     /**
      * @brief Access to basic information of a class
@@ -239,7 +130,7 @@ public:
      * @return NULL if index is outside range
      *
      */
-    ClassRegistryItem * GetClassRegistryItem (uint32 classRegistrationNo);
+    inline ClassRegistryItem * GetClassRegistryItem (uint32 classRegistrationNo);
 
     /**
      * @brief Adds one new ClassRegistryItem to the database.
@@ -267,9 +158,14 @@ private:
     ClassRegistryIndex();
 
     /**
+     * @brief disable copy constructor;
+     */
+    inline ClassRegistryIndex(const ClassRegistryIndex &);
+
+    /**
      * @brief Returns free slots at the current index. If zero adds a new
      * ClassRegistryIndexCell and returns its size
-     * @retun zero if no new slot could be created or no existing one were available
+     * @return zero if no new slot could be created or no existing one were available
      */
     uint32 AllocateFreeSlots();
 
@@ -279,11 +175,16 @@ private:
     SimpleStaticListT<ClassRegistryIndexCell*,IndexSize> index;
 };
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+ClassRegistryIndex::ClassRegistryIndex(const ClassRegistryIndex &){}
+
+ClassRegistryItem *  ClassRegistryIndex::GetClassRegistryItem (uint32 classRegistrationNo){
+	ClassRegistryItemI *crii =  (*this)[classRegistrationNo];
+	return crii->GetBasePtr();
+}
 
 
 }

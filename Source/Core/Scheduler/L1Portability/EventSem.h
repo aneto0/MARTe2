@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
 #include "ErrorType.h"
 #include "TimeoutType.h"
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/

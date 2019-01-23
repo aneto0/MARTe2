@@ -29,14 +29,13 @@ ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicConsole.x \
-		ErrorManagement_Gen.x \
-		ErrorManagementConsoleFunction_Gen.x \
-		OSInitializer.x \
-		LoadableLibrary.x  \
-		MemoryCheck.x  \
-		Sleep.x \
-		StandardHeap_Gen.x \
-		TimeStamp.x
+	ErrorManagementConsoleFunction_Gen.x \
+	OSInitializer.x \
+	LoadableLibrary.x  \
+	MemoryCheck.x  \
+	Sleep.x \
+	StandardHeap_Gen.x \
+	TimeStamp.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

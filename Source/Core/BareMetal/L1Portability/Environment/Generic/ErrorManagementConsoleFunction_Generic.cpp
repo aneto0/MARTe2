@@ -34,7 +34,8 @@
 
 #include "ErrorManagement.h"
 #include "HighResolutionTimer.h"
-#include "ErrorInformation.h"
+#include "../../../L0Types/ErrorInformation.h"
+#include "ErrorTypeLookup.h"
 #include "StringHelper.h"
 #include "CString.h"
 

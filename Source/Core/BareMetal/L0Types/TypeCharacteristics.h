@@ -54,13 +54,14 @@ namespace MARTe {
  */
 template<typename T>
 class  TypeCharacteristics {
+
 public:
 /**
  *  @brief Returns true if the type is a float, false otherwise.
  *  @tparam T a float/integer type
  *  @return true if the type is a float, false otherwise.
  */
-static bool IsFloat() {
+static inline bool IsFloat() {
     /*lint -e{???}   Operator '!=' always evaluates to True\False. Justification: it depends by the template instance. */
     return ((static_cast<T>(0.1F)) != static_cast<T>(0));
 }
@@ -69,7 +70,7 @@ static bool IsFloat() {
  *  @tparam T An integer type
  *  @return true if the type is signed, false otherwise.
  */
-static bool IsSigned() {
+static inline bool IsSigned() {
     /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
     return IsFloat() || ((static_cast<T>(-1)) < 0);
 }
@@ -79,7 +80,7 @@ static bool IsSigned() {
  * @tparam T An integer/float type
  * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
  */
-static const T MaxValue() {
+static inline const T MaxValue() {
 	return std::numeric_limits<T>::max();
 }
 
@@ -88,11 +89,8 @@ static const T MaxValue() {
  * @tparam T An integer/float type
  * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
  */
-static const T MinValue() {
+static inline const T MinValue() {
 	T ret = std::numeric_limits<T>::min();
-	if (IsFloat()){
-		ret = -std::numeric_limits<T>::max();
-	}
 	return ret;
 }
 
@@ -102,10 +100,10 @@ static const T MinValue() {
  * @tparam T An integer type
  * @return the type usable bit size.
  */
-static const uint16 UsableBitSize() {
+static inline const uint16 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
-    const uint16 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
-    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u));
+    const uint16 nOfBits = (IsFloat()) ? static_cast<uint16>((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
+    		((IsSigned()) ? static_cast<uint16>(sizeof(T) * 8u - 1u) : static_cast<uint16>(sizeof(T) * 8u));
     return nOfBits;
 }
 
@@ -115,14 +113,24 @@ static const uint16 UsableBitSize() {
  * @tparam T An integer type
  * @return the type usable bit size.
  */
-static const uint16 UsableNegativeBitSize() {
+static inline const uint16 UsableNegativeBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const uint16 nOfBits = (IsFloat()) ? ((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
-    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0);
+    		((IsSigned()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : 0u);
     return nOfBits;
 }
 
 };
+
+template <>
+static const float TypeCharacteristics<float>::MinValue(){
+	return -std::numeric_limits<float>::max();
+}
+
+template <>
+static const double TypeCharacteristics<double>::MinValue(){
+	return -std::numeric_limits<double>::max();
+}
 
 /**
  * @briefs converts any number to any other number saturating the conversion
@@ -167,8 +175,8 @@ outputType SaturateInteger(const inputType input) {
 
     const bool isSigned = TypeCharacteristics<outputType>::IsSigned();
 
-	const outputType minValue = (isSigned)?(std::numeric_limits<outputType>::min()>>(sizeof(outputType)*8 - bitSize)):0;
-	const outputType maxValue = std::numeric_limits<outputType>::max()>>(sizeof(outputType)*8 - bitSize);
+	const outputType minValue = (isSigned)?static_cast<outputType>(std::numeric_limits<outputType>::min()>>(sizeof(outputType)*8u - bitSize)):static_cast<outputType>(0);
+	const outputType maxValue = static_cast<outputType>(std::numeric_limits<outputType>::max()>>(sizeof(outputType)*8u - bitSize));
 
     //default assignment
     outputType value = static_cast<outputType>(input);

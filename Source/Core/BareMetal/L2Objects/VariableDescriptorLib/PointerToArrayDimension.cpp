@@ -30,7 +30,7 @@
 
 #include "PointerToArrayDimension.h"
 #include "MemoryCheck.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "CompositeErrorManagement.h"
 #include "VariableDescriptorLib.h"
 

@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "../../../../../../Source/Core/BareMetal/L0Types/ErrorInformation.h"
 #include "AdvancedErrorManagement.h"
-#include "ErrorInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

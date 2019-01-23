@@ -26,34 +26,9 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=VariableDescriptorLib.x
+SPB    = VariableDescriptorLib.x  LocalTest.x
 
-
-OBJSX=  TypeConversionManager.x \
-		SameTypeConversionFactory.x\
-		ClassRegistryDatabase.x \
-		VariableDescriptor.x\
-                AnyType.x \
- 		Reference.x \
-		ReferenceContainer.x \
-		ReferenceContainerNode.x \
-                StructuredDataI.x \
-		Object.x \
-		IntrospectionTools.x \
-		ClassMethodInterfaceMapper.x\
-		ClassMethodCaller.x\
-		ClassRegistryItem.x \
-		ObjectRegistryDatabase.x \
-		ReferenceContainerFilter.x \
-		ReferenceContainerFilterReferences.x \
-		ReferenceContainerFilterObjectName.x \
-		MemoryPage.x  \
-		MemoryPageObject.x  \
-		AnyObject.x \
-		AnyObjectM.x \
-		ProgressiveTypeCreator.x
-
-#		VariableDescriptorHelper.x\
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
@@ -65,11 +40,8 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
 
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
-                $(BUILD_DIR)/test$(EXEEXT) \
-		$(BUILD_DIR)/L2ObjectsB.def
-	echo  $(OBJS)
+all: $(OBJS) $(SUBPROJ)
+	echo  $(OBJSX)
 
 
 include depends.$(TARGET)

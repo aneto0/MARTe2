@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+//#include "../L1Portability/GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
 #include "Units.h"
 
@@ -259,7 +259,8 @@ template<typename baseType,class unitType>
 uint8 TimeType<baseType,unitType>::GetCode() const {
 	uint8 ret = valid;
 	if (time >= maxRawValue){
-		ret = time - maxRawValue;
+		// valid because there are only a few possible values above maxRawValue
+		ret = static_cast<uint8>(time - maxRawValue);
 	}
 	return ret;
 }

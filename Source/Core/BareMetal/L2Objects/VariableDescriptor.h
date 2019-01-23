@@ -50,6 +50,7 @@ class StreamString;
 class StructuredDataI;
 class testStruct;
 class Reference;
+template <uint32 sz>  class StaticCString;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -292,7 +293,7 @@ private:
      * @post Adds a V to the modifiers
      */
     template<typename T >
-    void Match(DynamicZeroTerminatedArray<T,16u> * vec);
+    void Match(DynamicZeroTerminatedArray<T> * vec);
 
     /**
      * @brief Matches a zero terminated array statically allocated T[N]
@@ -595,7 +596,7 @@ void VariableDescriptor::Match(ZeroTerminatedArray<T> * vec){
 }
 
 template<typename T >
-void VariableDescriptor::Match(DynamicZeroTerminatedArray<T,16u> * vec){
+void VariableDescriptor::Match(DynamicZeroTerminatedArray<T> * vec){
 	AddModifiersLayerConst('D', 0);
 
     T *pp = NULL;

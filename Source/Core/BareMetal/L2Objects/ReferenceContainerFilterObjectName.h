@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_
+#ifndef REFERENCECONTAINERFILTEROBJECTNAME_H_
+#define REFERENCECONTAINERFILTEROBJECTNAME_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -110,14 +110,14 @@ public:
 private:
 
     /**
-     * copy of the whole address to search with \0 instaed of .
+     * copy of the whole address to search with \0 instead of .
      */
     DynamicCString addressToSearchWhole;
 
     /**
      * Broken-down list of the address to search.
      */
-    DynamicZeroTerminatedArray<CCString,16> addressToSearchArray;
+    DynamicZeroTerminatedArray<CCString> addressToSearchArray;
 
     /**
      * Number of nodes in the address.

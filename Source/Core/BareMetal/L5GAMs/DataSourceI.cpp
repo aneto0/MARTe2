@@ -164,16 +164,16 @@ ErrorManagement::ErrorType DataSourceI::GetSignalNumberOfElements(const uint32 s
 	uint32 nnEl;
 	if (ret){
     	nnEl = nEl.GetNumberOfElements();
-    	ret.initialisationError = ((nnEl == 0) || (nnEl > 2));
+    	ret.initialisationError = ((nnEl == 0u) || (nnEl > 2u));
         COMPOSITE_REPORT_ERROR(ret, signalIdx,".NumberOfElements has",nnEl, "elements");
     }
 
     if (ret){
-    	int i;
-    	for (i = 0;i < nnEl;i++){
+    	uint32 i;
+    	for (i = 0u;i < nnEl;i++){
     		numberOfElements[i] = nEl[i];
     	}
-    	for (;i < 2;i++){
+    	for (;i < 2u;i++){
     		numberOfElements[i] = 1;
     	}
     }
@@ -640,7 +640,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     //Find the application name
     ReferenceContainer result;
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::PATH, this);
-    ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(result, filter);
+    ObjectRegistryDatabase::Access()->Find(result, filter);
     ReferenceT<RealTimeApplication> application;
     uint32 c;
     bool found = false;
@@ -663,7 +663,7 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
             }
             if (ret) {
                 DynamicCString fullFunctionName = "Functions.";
-                fullFunctionName.Append(functionName);
+                fullFunctionName().Append(functionName);
 
                 ReferenceT<GAM> gam = application->Find(fullFunctionName);
                 ret = gam.IsValid();
@@ -966,17 +966,13 @@ ErrorManagement::ErrorType DataSourceI::GetSignal(AnyType &signal,const uint32 s
         		signal = AnyType(td,thisSignalMemory);
         	} else {
         		DynamicCString modifiers;
-       			modifiers.Append('A');
-       			modifiers.Append(dimensions[0]);
+       			modifiers().Append('A').Append(dimensions[0]);
        			VariableDescriptor vd(td,modifiers);
         		signal = AnyType(vd,thisSignalMemory);
         	}
     	} else {
     		DynamicCString modifiers;
-   			modifiers.Append('A');
-   			modifiers.Append(dimensions[0]);
-   			modifiers.Append('A');
-   			modifiers.Append(dimensions[1]);
+   			modifiers().Append('A').Append(dimensions[0]).Append('A').Append(dimensions[1]);
    			VariableDescriptor vd(td,modifiers);
     		signal = AnyType(vd,thisSignalMemory);
     	}

@@ -178,12 +178,8 @@ ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
 	if ((p == NULL) || (!MemoryCheck::Check(p))){
 		ret.exception = true;
 		DynamicCString errM;
-		errM.Append("bad pointer (");
-		errM.AppendHex(reinterpret_cast<uint64>(p));
-		errM.Append(") at (");
-		errM.AppendHex(reinterpret_cast<uint64>(pp));
-		errM.Append(')');
-        REPORT_ERROR(ret, errM.GetList());
+		errM().Append("bad pointer (").AppendHex(reinterpret_cast<uint64>(p)).Append(") at (").AppendHex(reinterpret_cast<uint64>(pp)).Append(')');
+        COMPOSITE_REPORT_ERROR(ret, errM.GetList());
 	} else {
 		ptr = p;
 	}
@@ -324,7 +320,7 @@ ErrorManagement::ErrorType CopyToRecursive(
 	}
 
 	// unused here
-	uint32 overHead;
+//	uint32 overHead;
 
 /**
  * PROCESS SOURCE DIMENSIONS
@@ -576,13 +572,13 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 		// process A and P in reverse
 		if (ret){
 			if (modifier == 'P'){
-				string.Append(" *");
+				string().Append(" *");
 			} else
 			if (modifier == 'F'){
-				string.Append("( *");
+				string().Append("( *");
 			} else
 			if (modifier == 'f'){
-				string.Append("( * const");
+				string().Append("( * const");
 			}
 
 			// if this was the start of the sequence now do the forward section to add the vectors[]
@@ -595,15 +591,10 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 					switch (modifier){
 					case 'f':
 					case 'F':{
-						string.Append(')');
-						string.Append('[');
-						string.Append(size);
-						string.Append(']');
+						string().Append(')').Append('[').Append(size).Append(']');
 					}break;
 					case 'A':{
-						string.Append('[');
-						string.Append(size);
-						string.Append(']');
+						string().Append('[').Append(size).Append(']');
 					}break;
 					case 'p':
 					case 'P':{
@@ -677,16 +668,15 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 			}
 
 			if (ret){
-				string.Append(templateName);
+				string().Append(templateName);
 				// insert the type of what follows
 				int8 localPriority=0;
 				ret = ToString(modifiers,typeDescriptor,string,modifierString,true,localPriority);
 				if (hasSize){
-					string.Append(',');
-					string.Append(size);
+					string().Append(',').Append(size);
 				}
 				// close the template
-				string.Append('>');
+				string().Append('>');
 			}
 		}
 	} // end of reverse action

@@ -32,7 +32,7 @@
 
 #include "StaticListHolder.h"
 #include "HeapManager.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/

@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringHelper.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "DynamicCString.h"
 #include "MemoryCheck.h"
 #include "TypeConversionManager.h"
@@ -97,13 +97,13 @@ void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 			if (( sz > 0 ) && (modifiers.GetList()[sz-1] == 'p')){
 				modifiers.GetList()[sz-1] = 'f';
 			} else {
-				modifiers.Append(modifier);
+				modifiers().Append(modifier);
 			}
 		} else {
-			modifiers.Append(modifier);
+			modifiers().Append(modifier);
 		}
 
-		if (size > 0) modifiers.Append(size);
+		if (size > 0) modifiers().Append(size);
 	}
 }
 
@@ -117,23 +117,23 @@ VariableDescriptor::~VariableDescriptor(){
 
 VariableDescriptor::VariableDescriptor(const TypeDescriptor &td, CCString modifierString){
     typeDescriptor = td;
-    modifiers.Append(modifierString.GetList());
+    modifiers().Append(modifierString.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-    modifiers.Append(x.modifiers.GetList());
+    modifiers().Append(x.modifiers.GetList());
 }
 
 VariableDescriptor::VariableDescriptor( const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-    modifiers.Append(x.modifiers.GetList());
+    modifiers().Append(x.modifiers.GetList());
 }
 
 VariableDescriptor &VariableDescriptor::operator=(const VariableDescriptor &x ){
     typeDescriptor = x.typeDescriptor;
-    modifiers.Truncate(0);
-    modifiers.Append(x.modifiers.GetList());
+    modifiers().Truncate(0);
+    modifiers().Append(x.modifiers.GetList());
     return *this;
 }
 
@@ -264,7 +264,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     				}
 
     				if (ret){
-    					dimensionSizes[nOfDimensions] = ZeroTerminatedArrayGetSize(ptr, layerSize);
+    					dimensionSizes[nOfDimensions] = ZeroTerminatedArrayStaticTools::ZTAGetSize(ptr, layerSize);
     				}
     			} else {
     	    		// size = 0 means undetermined
@@ -311,13 +311,13 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	const TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 	VariableDescriptorLib::Variable sourceHandler(this->modifiers,this->typeDescriptor);
 	VariableDescriptorLib::Variable destHandler(destVd.modifiers,destVd.typeDescriptor);
-	uint32 nDim = sourceHandler.NDimensions();
+//	uint32 nDim = sourceHandler.NDimensions();
 
 	ret.parametersError = ((destPtr == NULL) || (sourcePtr == NULL));
 	REPORT_ERROR(ret, "NULL inputs");
 
 	if (ret){
-		tco = TypeConversionManager::Instance().GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
+		tco = TypeConversionManager::GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
     	ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
     	REPORT_ERROR(ret, "Conversion Operator not found");
 	}
@@ -402,7 +402,6 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 
 			ret = ds.ToNumber(sizeToCopy);
 			REPORT_ERROR(ret, "Size of object > uint32 or undefined");
-
 			if (ret){
 				reference = AnyObject::Clone(sizeToCopy,reinterpret_cast<const void *>(pointer),*this);
 			}
@@ -449,7 +448,7 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 				TypeDescriptor type = typeDescriptor;
 
 				ReferenceT<MemoryPageObject> mpor;
-				mpor = ReferenceT<MemoryPageObject> (buildNow);
+				mpor = ReferenceT<MemoryPageObject> (HeapManager::standardHeapId);
 				ret.outOfMemory = (!mpor.IsValid());
 				REPORT_ERROR(ret,"MemoryPageObject construction failed");
 
@@ -475,8 +474,8 @@ ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,b
 	ErrorManagement::ErrorType  ret;
 	if (rawFormat){
 		bool retbool = true;
-		retbool = string.Append(modifiers);
-		string.Append(' ');
+		ErrorManagement::ErrorType ret = string().Append(modifiers).Append(' ');
+		retbool = ret.ErrorsCleared();
 		retbool = retbool && typeDescriptor.ToString(string);
 		ret.fatalError = !retbool;
 	} else {
@@ -542,7 +541,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 				if (ret){
 					pointer = pointer + step32;
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					modifiers().Remove(static_cast<uint32>(static_cast<uint32>(modifierString.GetList()-modifiers.GetList())));
 				}
 	 		}
 	 	}break;
@@ -552,7 +551,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	        REPORT_ERROR(ret, "index!=0 for pointer to var");
 
 			if (ret){
-				modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+				modifiers().Remove(static_cast<uint32>(static_cast<uint32>(modifierString.GetList()-modifiers.GetList())));
 			}
 	 	}break; // end Pp case
 	 	case 'A':{
@@ -573,7 +572,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 				if (ret){
 					pointer = pointer + step32;
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					modifiers().Remove(static_cast<uint32>(modifierString.GetList()-modifiers.GetList()));
 				}
 			}
 	 	}break;
@@ -593,7 +592,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 	        uint32 maxIndex  = 0;
 	        if (ret){
-	        	maxIndex  = ZeroTerminatedArrayGetSize(pointer, layerSize32);
+	        	maxIndex  = ZeroTerminatedArrayTool::ZTAGetSize(pointer, layerSize32);
 	        	ret.outOfRange = (index >= maxIndex);
 	        	REPORT_ERROR(ret, "index >= maxIndex");
 	 		}
@@ -608,7 +607,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 
 		        if (ret){
 			        pointer = pointer + step32;
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					modifiers().Remove(static_cast<uint32>(static_cast<uint32>(modifierString.GetList()-modifiers.GetList())));
 		        }
 			}
 
@@ -642,7 +641,7 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				if (ret){
 					pointer = p;
 					pointer = pointer + step32;
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					modifiers().Remove(static_cast<uint32>(modifierString.GetList()-modifiers.GetList()));
 				}
 			}
 	 	}break;
@@ -671,22 +670,22 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 				if (ret){
 					pointer = p;
 					pointer = pointer + step32;
-					modifiers.Remove(modifierString.GetList()-modifiers.GetList());
+					modifiers().Remove(static_cast<uint32>(modifierString.GetList()-modifiers.GetList()));
 				}
 
 				// add missing dimension
 				DynamicCString modifiersTemp;
-				modifiersTemp.Append(modifierString);
-				modifiers.Truncate(0);
-				modifiers.Append('A');
-				modifiers.Append(pm[0].GetNumberOfColumns());
-				modifiers.Append(modifiersTemp);
+				modifiersTemp().Append(modifierString);
+				modifiers().Truncate(0);
+				modifiers().Append('A');
+				modifiers().Append(pm[0].GetNumberOfColumns());
+				modifiers().Append(modifiersTemp);
 			}
 
 	 	}break;
 	 	case 'O':{
 	 		if (typeDescriptor.IsCharStreamType()){
-	 			TD_FullType fullType = typeDescriptor.fullType;
+	 			TD_FullType fullType = static_cast<TD_FullType>(typeDescriptor.fullType);
 	 			switch (fullType){
 	 			case TDF_DynamicCString:
 	 			case TDF_CString:

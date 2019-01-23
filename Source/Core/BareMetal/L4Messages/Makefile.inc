@@ -24,8 +24,9 @@
 #
 #############################################################
 
-OBJSX=	MessageI.x Message.x MessageFilter.x MessageFilterPool.x ObjectRegistryDatabaseMessageFilter.x ObjectRegistryDatabaseMessageI.x RegisteredMethodsMessageFilter.x ReplyMessageCatcherMessageFilter.x
-        
+
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+  
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -37,9 +38,7 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4MessagesB$(LIBEXT) \
-	        $(BUILD_DIR)/L4MessagesB.def
+all: $(OBJS) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

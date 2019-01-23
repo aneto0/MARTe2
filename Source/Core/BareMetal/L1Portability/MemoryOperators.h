@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  * */
 
-#ifndef L1_MEMORY_H_
-#define L1_MEMORY_H_
+#ifndef L1_MARTE_MEMORY_H_
+#define L1_MARTE_MEMORY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                       Forward declarations                                */
@@ -111,6 +111,7 @@ inline ErrorManagement::ErrorType Set(void * const mem,const char8 c, const uint
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 }
+
 
 inline ErrorManagement::ErrorType Memory::Copy(void* const destination, const void * const source, const uint32 size) {
 
@@ -215,6 +216,9 @@ inline ErrorManagement::ErrorType Memory::Set(void * const mem,const char8 c,con
     return ret;
 }
 
+
 } // MARTe
+
+
 
 #endif /* MEMORY_H_ */

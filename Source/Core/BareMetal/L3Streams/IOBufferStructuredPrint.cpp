@@ -26,6 +26,7 @@
 
 namespace MARTe{
 
+#if 0
 /**
  * @brief Prints a StructuredDataInterface.
  * @param[out] iobuff is the output stream buffer.
@@ -88,5 +89,6 @@ static bool PrintStructuredDataInterface(IOBuffer &iobuff,
     return ret;
 }
 
+#endif
 
 } //MARTe

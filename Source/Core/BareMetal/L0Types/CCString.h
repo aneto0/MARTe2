@@ -44,9 +44,10 @@ namespace MARTe {
  * TODO
  * @brief Wrapper for constant char buffers
  * */
-class CCString: public ZeroTerminatedArray<const char8>{
+class CCString: protected ZeroTerminatedArray<const char8>{
 
 public:
+
     /**
      * @brief generates a null value for CCString
      */
@@ -69,7 +70,9 @@ public:
     inline CCString (char8 const * const &s);
 
     /**
-     * TODO
+     * @brief Returns the element in the specified position.
+     * @param[in] index is the element position in the TArray().
+     * @return the element in the \a index position.
      */
     inline char8 operator[](uint32 index) const;
 
@@ -78,6 +81,56 @@ public:
      */
     inline bool operator==(const CCString &s) const;
 
+    /**
+     * TODO
+     */
+    inline bool operator==(const char8 *s) const;
+
+    /**
+     * @brief Retrieves the size of the array().
+     * @return the number of elements in the array() (excluding the terminator Zero).
+     */
+    inline uint32 GetSize() const;
+
+    /**
+     * @brief Returns the pointer to the beginning of the TArray().
+     * @return the pointer to the beginning of the TArray().
+     */
+    inline const char8* GetList() const ;
+
+    /**
+     * @brief Returns the pointer to the beginning of the array().
+     * @return the pointer to the beginning of the array().
+     */
+    inline operator const char8*() const;
+
+    /**
+     * @brief Checks if the ptr is valid
+     * @return true if \a array is NULL.
+     */
+    inline bool IsNullPtr() const;
+
+    /**
+     * move pointer ahead of one element. Does not checks limits
+     * note that the parameter int is only to specify postpending
+     */
+    inline void operator++(int);
+
+    /**
+     * @brief Checks if the input \a arrayIn has the same content as the array
+     * @details This function allows implementing operator==
+     * @param[in] arrayIn is the array to be compared
+     * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
+     * @return true if \a arrayIn is the same.
+     */
+    inline bool isSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
+
+    /**
+     * @brief Checks if data is in this array
+     * @param[in] data is the element to be found.
+     * @return true if found
+     */
+    inline bool In(const char8& data) const;
 
 };
 
@@ -96,8 +149,7 @@ CCString::CCString (char8 const (&vector) [size]):ZeroTerminatedArray<const char
 
 CCString::CCString (char8 const * const &s):ZeroTerminatedArray<const char8>(s){}
 
-char8 
-CCString::operator[](uint32 index) const{
+char8 CCString::operator[](uint32 index) const{
     return ZeroTerminatedArray<const char8>::operator[](index);
 }
 
@@ -105,10 +157,39 @@ bool CCString::operator==(const CCString &s) const{
 	return ZeroTerminatedArray<const char8>::isSameAs(s.GetList());
 }
 
-/**
- * TODO
- */
+bool CCString::operator==(const char8 *s) const{
+	return ZeroTerminatedArray<const char8>::isSameAs(s);
+}
+
 static const CCString emptyString(static_cast<uint32>(0));
+
+uint32 CCString::GetSize() const{
+	return ZeroTerminatedArray<const char8>::GetSize();
+}
+
+const char8* CCString::GetList() const {
+	return ZeroTerminatedArray<const char8>::GetList();
+}
+
+CCString::operator const char8*() const {
+	return ZeroTerminatedArray<const char8>::GetList();
+}
+
+bool CCString::IsNullPtr() const{
+	return ZeroTerminatedArray<const char8>::IsNullPtr();
+}
+
+void CCString::operator++(int) {//int is for postfix operator!
+	ZeroTerminatedArray<const char8>::SetList(GetList()+1);
+}
+
+bool CCString::isSameAs(const char8 *arrayIn,uint32 limit) const{
+	return ZeroTerminatedArray<const char8>::isSameAs(arrayIn,limit);
+}
+
+bool CCString::In(const char8& data) const{
+	return ZeroTerminatedArray<const char8>::In(data);
+}
 }
 #endif /* L0TYPES_CCSTRING_H_ */
 	

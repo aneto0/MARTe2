@@ -164,7 +164,7 @@ public:
      * @param[in] pos is the desired cursor position.
      * @return false in case of cursor out of ranges or other errors.
      */
-    virtual bool Seek(const uint64 pos);
+    virtual bool Seek(uint64 pos);
 
     /**
      * @brief Moves within the stream relative to current location.
@@ -191,7 +191,7 @@ public:
      * @param[in] size The desired size of the buffer.
      * @return true if successful. false otherwise.
      */
-    virtual bool SetSize(const uint64 size);
+    virtual bool SetSize(uint64 size);
 
     /*---------------------------------------------------------------------------*/
 
@@ -395,7 +395,7 @@ CCString StreamString::Buffer() {
 
 CString StreamString::BufferReference() {
     buffer.Terminate();
-    return buffer.BufferReference();
+    return CString(buffer.BufferReference());
 }
 
 CCString StreamString::Tail(const uint32 ix) const {

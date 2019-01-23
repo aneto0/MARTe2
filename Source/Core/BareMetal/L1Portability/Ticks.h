@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "OSInitializer.h"
+#include "TimeCalibration.h"
 #include "TimeType.h"
 
 /*---------------------------------------------------------------------------*/
@@ -59,11 +59,11 @@ namespace Units{
     	/**
     	 * The value of one unit in seconds
     	 */
-    	inline double GetScale() const{ return OSInitializer::period; }
+    	inline double GetScale() const{ return TimeCalibration::period; }
     	/**
     	 * How many units to make a second
     	 */
-    	inline double GetScaleInv() const{ return OSInitializer::frequency; }
+    	inline double GetScaleInv() const{ return static_cast<double>(TimeCalibration::frequency); }
     } ticks;
 
 };

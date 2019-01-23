@@ -215,8 +215,19 @@ BalancedTreeNode *BalancedTreeNode::RelativeSeek(const BalancedTreeNodeKey &key,
 	BalancedTreeNode *node = Search(key,index);
 
 	if (node != NULL){
-		int32 localIndex = node->SmallerSize() + offset;
-		if (localIndex >= 0){
+		uint32 localIndex = node->SmallerSize();
+		if (offset >= 0) {
+			localIndex = localIndex + static_cast<uint32>(offset);
+		} else {
+			uint32 offsetU = static_cast<uint32>(-1 * offset);
+			if (localIndex > offsetU){
+				localIndex = localIndex - offsetU;
+			} else {
+				localIndex = 0xFFFFFFFF;
+			}
+		}
+
+		if (localIndex != 0xFFFFFFFFu){
 			node = node->Seek(localIndex);
 		} else {
 			node = NULL_PTR(BalancedTreeNode *);
@@ -224,9 +235,18 @@ BalancedTreeNode *BalancedTreeNode::RelativeSeek(const BalancedTreeNodeKey &key,
 
 		// out of local subtree range
 		if (node == NULL_PTR(BalancedTreeNode *)){
-			int32 sIndex = index;
-			sIndex += offset;
-			if (sIndex >= 0){
+			uint32 sIndex = index;
+			if (offset >= 0) {
+				sIndex += static_cast<uint32>(offset);
+			} else {
+				uint32 offsetU = static_cast<uint32>(-1 * offset);
+				if (localIndex > offsetU){
+					sIndex = sIndex - offsetU;
+				} else {
+					sIndex = 0xFFFFFFFF;
+				}
+			}
+			if (sIndex != 0xFFFFFFFFu){
 				node = Seek(sIndex);
 			} else {
 				node = NULL_PTR(BalancedTreeNode *);

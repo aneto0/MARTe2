@@ -21,7 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "../L1Portability/CompositeErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "DynamicCString.h"
 #include "MemoryPageFile.h"
 
@@ -112,14 +112,8 @@ ErrorManagement::ErrorType  MemoryPageFile::Allocate(uint32 size){
 	MemoryPageHeader *newPage;
 	newPage = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
 
-	if (newPage == NULL_PTR(MemoryPageHeader *)){
-		ret.outOfMemory = true;
-		DynamicCString errs;
-		errs.Append("Allocate(");
-		errs.Append(size);
-		errs.Append(") failed");
-		REPORT_ERROR(ret,errs.GetList());
-	}
+	ret.outOfMemory = (newPage == NULL_PTR(MemoryPageHeader *));
+	COMPOSITE_REPORT_ERROR(ret,"Allocate(",size,") failed");
 
 	if (ret){
 		numberOfPages++;
@@ -143,10 +137,8 @@ ErrorManagement::ErrorType  MemoryPageFile::ReSize(uint32 newSize){
 	ErrorManagement::ErrorType ret;
 	MemoryPageHeader *newPage = NULL;
 
-	if (currentWritePage == NULL){
-		ret.invalidOperation = true;
-		REPORT_ERROR(ret,"Cannot ReSize an empty page");
-	}
+	ret.invalidOperation = (currentWritePage == NULL);
+	REPORT_ERROR(ret,"Cannot ReSize an empty page");
 
 	uint32 actualSize = newSize + sizeof (MemoryPageHeader);
 
@@ -157,14 +149,11 @@ ErrorManagement::ErrorType  MemoryPageFile::ReSize(uint32 newSize){
 
 	if (ret){
 		newPage = reinterpret_cast<MemoryPageHeader *>(realloc(reinterpret_cast<MemoryPageHeader *>(currentWritePage),actualSize));
-		if (newPage == NULL_PTR(MemoryPageHeader *)){
-			ret.outOfMemory = true;
-			DynamicCString errs;
-			errs.Append("Realloc(");
-			errs.Append(actualSize);
-			errs.Append(") failed");
-			REPORT_ERROR(ret,errs.GetList());
-		} else {
+
+		ret.outOfMemory = (newPage == NULL_PTR(MemoryPageHeader *));
+		COMPOSITE_REPORT_ERROR(ret,"Realloc(",actualSize,") failed");
+
+		if (ret){
 			newPage->pageSize = newSize;
 		}
 	}
@@ -191,10 +180,8 @@ ErrorManagement::ErrorType  MemoryPageFile::ReSize(uint32 newSize){
 						page = page->next;
 					}
 				}
-				if (newPage != NULL){
-					ret.internalSetupError = true;
-					REPORT_ERROR(ret,"currentPage was not linked to firstPage");
-				}
+				ret.internalSetupError = (newPage != NULL);
+				REPORT_ERROR(ret,"currentPage was not linked to firstPage");
 			}
 		}
 	}
@@ -216,13 +203,8 @@ ErrorManagement::ErrorType MemoryPageFile::CheckAndTrimPage(uint32 neededSize){
 			ret = ReSize(pageWritePos);
 		}
 	}
-	if (!ret){
-		DynamicCString errs;
-		errs.Append("CheckAndClosePage(");
-		errs.Append(neededSize);
-		errs.Append(')');
-		REPORT_ERROR(ret,errs.GetList());
-	}
+	COMPOSITE_REPORT_ERROR(ret,"CheckAndClosePage(",neededSize,") failed");
+
 	return ret;
 }
 
@@ -252,16 +234,14 @@ ErrorManagement::ErrorType MemoryPageFile::PageGrow(uint32 amount){
 
 	// check math overflow!
 	uint32 newPageSize = CurrentPageSize() + amount;
-	if (newPageSize < CurrentPageSize()){
-		ret.fatalError = true;
-		REPORT_ERROR(ret,"Math Overflow");
-	}
+	ret.fatalError =  (newPageSize < CurrentPageSize());
+	REPORT_ERROR(ret,"Math Overflow");
 
 	if (ret){
 		ret = ReSize(newPageSize);
+		REPORT_ERROR(ret,"PageGrow failed");
 	}
 
-	REPORT_ERROR(ret,"PageGrow failed");
 	return ret;
 }
 
@@ -387,7 +367,7 @@ ErrorManagement::ErrorType  MemoryPageFile::ConsumeReadAtomic(uint32 numberOfByt
 uint8 *MemoryPageFile::Address(uint64 index){
 	MemoryPageHeader *mphp = firstPage;
 
-	uint32 localIndex = 0;
+	uint64 localIndex = 0;
 	while ((index > 0) && (mphp != NULL_PTR(MemoryPageHeader *))){
 		if (index >= mphp->pageSize) {
 			index -= mphp->pageSize;

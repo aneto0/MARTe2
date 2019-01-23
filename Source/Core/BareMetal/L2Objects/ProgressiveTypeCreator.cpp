@@ -26,8 +26,7 @@
 #include <new.h>
 #include "ProgressiveTypeCreator.h"
 #include "TypeConversionManager.h"
-#include "GlobalObjectsDatabase.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "MemoryPageObject.h"
 #include "AnyObject.h"
 
@@ -106,7 +105,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 		REPORT_ERROR(ret,"Unsupported type. Must be CString or BasicType");
 	}
 	if (ret && !isString){
-		converter 			= TypeConversionManager::Instance().GetOperator(type,ConstCharString(sizeof(CString)),false);
+		converter 			= TypeConversionManager::GetOperator(type,ConstCharString(sizeof(CString)),false);
 		ret.unsupportedFeature = (converter == NULL);
 		REPORT_ERROR(ret,"Cannot find type converter");
 	}
@@ -174,7 +173,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 		if (isString){
 			neededSize = typeStringRepresentation.GetSize()+1;
 
-			uint8 *pointer;
+			uint8 *pointer = NULL_PTR(uint8*);
 			ret = pageFile.WriteReserveAtomic(pointer,neededSize);
 			REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 
@@ -189,7 +188,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 			// otherwise opens a new page
 			if (newRow){
 				uint32 estimatedSizeNeeded = vectorSize * objectSize;
-//printf("CheckAndTrimPage(%i)\n",estimatedSizeNeeded); //TODO
 
 				// in case of new vector check if there is space for one based on the size of the previous
 				// close page otherwise
@@ -197,13 +195,12 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::AddElement(CCString typeStrin
 				REPORT_ERROR(ret,"CheckAndTrimPage Failed");
 
 				if (ret){
-//printf("CheckAndNewPage()\n"); //TODO
 					ret = pageFile.CheckAndNewPage();
 					REPORT_ERROR(ret,"CheckAndNewPage Failed");
 				}
 
 			}
-			uint8 *pointer;
+			uint8 *pointer = NULL_PTR(uint8*);
 			if (ret ){
 				ret = pageFile.WriteReserveExtended(pointer,neededSize);
 				REPORT_ERROR(ret,"WriteReserveExtended Failed");
@@ -248,8 +245,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 	case matrixRow:{
 		if (currentVectorSize != vectorSize){
 			status = sparseMatrixRE;
-			int i;
-			for (i=0;i<(matrixRowSize-1);i++){
+			int32 i;
+			for (i=0;i<(static_cast<int32>(matrixRowSize)-1);i++){
 				sizeStack.Push(vectorSize);
 			}
 			sizeStack.Push(currentVectorSize);
@@ -263,7 +260,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::EndVector(){
 	}break;
 	case sparseMatrixRow:
 	case sparseMatrixRE:{
-//printf("nEl = %i\n",currentVectorSize); TODO
 		sizeStack.Push(currentVectorSize);
 		currentVectorSize = 0;
 		status = sparseMatrixRE;
@@ -347,15 +343,16 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteFixedSizeEl(uint8 *&d
 ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&dataPtr,uint32 &auxSize,uint8 *&auxPtr){
 	ErrorManagement::ErrorType  ret;
 	// table of CCString (pointers)
-	uint32 CCStringTableSize = numberOfElements * sizeof(CCString);
-
-//printf("Strings Pointer Table size= %i\n",CCStringTableSize); // TODO
-//printf ("numberOfElements=%i\n",numberOfElements); //TODO
+	uint64 CCStringTableSize64 = numberOfElements * sizeof(CCString);
+	uint32 CCStringTableSize = 0;
+	ret.outOfRange = (CCStringTableSize64 > 0xFFFFFFFFu);
+	if (ret){
+		CCStringTableSize = static_cast<uint32>(CCStringTableSize64);
+	}
 
 	// table of Vector<CCString>
 	if (status == finishedSM){
 		auxSize = sizeof (Vector<uint8>) * matrixRowSize;
-//printf ("matrixRowSize=%i\n",matrixRowSize); //TODO
 	}
 
 	CCString *strings = NULL;
@@ -364,7 +361,6 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 		ret = pageFile.WriteReserveAtomic(dataPtr,CCStringTableSize);
 		REPORT_ERROR(ret,"WriteReserveAtomic Failed");
 		strings = reinterpret_cast<CCString *>(dataPtr);
-//printf ("dataPtr=%p\n",dataPtr); //TODO
 	}
 
 	if (ret  && (auxSize > 0)){
@@ -380,11 +376,9 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::CompleteStringEl(uint8 *&data
 
 	if (ret){
 
-		uint64 pageDepth=0;
 		// prepare table of string addresses
-		for (int i = 0;(i<numberOfElements) && ret;i++){
+		for (uint32 i = 0;(i<numberOfElements) && ret;i++){
 			// consecutiveSpan as input is how many character we need
-			uint32 consecutiveSpan=1;
 
 			if (ret){
 				CCString s = reinterpret_cast<char8 *> (pageFile.CurrentReadPointer());
@@ -458,8 +452,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 	}break;
 	case finishedV:{
 		if (vectorSize > 1){
-			mods.Append('A');
-			mods.Append(vectorSize);
+			mods().Append('A').Append(vectorSize);
 		}
 	}break;
 	case finishedM:{
@@ -473,7 +466,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 				uint8**addressMap = reinterpret_cast<uint8**>(auxPtr);
 				uint32 vectorByteSize = vectorSize * objectSize;
 
-				for (int i = 0;(i<matrixRowSize) && ret;i++){
+				for (uint32 i = 0;(i<matrixRowSize) && ret;i++){
 					addressMap[i] = pageFile.CurrentReadPointer();
 
 					ret = pageFile.ConsumeReadAtomic(vectorByteSize);
@@ -482,21 +475,16 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 			}
 
 			if (ret){
-				mods.Append('A');
-				mods.Append(matrixRowSize);
-				mods.Append("F");
-				mods.Append(vectorSize);
+				mods().Append('A').Append(matrixRowSize).Append("F").Append(vectorSize);
 				dataPtr = auxPtr;
 			}
 
 		} else {
 			if (matrixRowSize > 1){
-				mods.Append('A');
-				mods.Append(matrixRowSize);
+				mods().Append('A').Append(matrixRowSize);
 			}
 			if (vectorSize > 1){
-				mods.Append('A');
-				mods.Append(vectorSize);
+				mods().Append('A').Append(vectorSize);
 			}
 		}
 	}break;
@@ -514,7 +502,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 		if (ret){
 			Vector<uint8> *addressMap = reinterpret_cast<Vector<uint8>*>(auxPtr);
 
-			for (int i = 0;(i<matrixRowSize) && ret;i++){
+			for (uint32 i = 0;(i<matrixRowSize) && ret;i++){
 				uint32 size  = sizeStack[i];
 				uint32 vectorByteSize = size * objectSize;
 
@@ -527,9 +515,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 		}
 
 		if (ret){
-			mods.Append('A');
-			mods.Append(matrixRowSize);
-			mods.Append('V');
+			mods().Append('A').Append(matrixRowSize).Append('V');
 			dataPtr = auxPtr;
 		}
 
@@ -556,7 +542,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::GetReferencePrivate(Reference
 		else {
 			ReferenceT<MemoryPageObject> mpor;
 
-			mpor = ReferenceT<MemoryPageObject> (buildNow);
+			mpor = ReferenceT<MemoryPageObject> (HeapManager::standardHeapId);
 			ret.outOfMemory = (!mpor.IsValid());
 			REPORT_ERROR(ret,"MemoryPageObject construction failed");
 

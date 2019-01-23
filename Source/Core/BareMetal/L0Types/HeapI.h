@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+//#include "GeneralDefinitions.h"
 #include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
@@ -40,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+namespace HeapManager {
 
 /**
  * @brief Abstract class for a heap.
@@ -73,61 +74,19 @@ public:
 
     /**
      * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
-     * @details If there is no space available for the new size specified, the system could allocate the new portion
+     * @details If there is no space available for the modified size specified, the system could allocate the new portion
      * in a different location and in this case the pointer changes its value.
      * @param[in,out] data The pointer to the new memory block.
      * @param[in] newSize The size of the new memory block.
      * @return The pointer to the new data block. NULL if reallocation failed.
      */
-    virtual void *Realloc(void *&data,
-                          const uint32 newSize) = 0;
+    virtual void *Realloc(void *&data,const uint32 newSize) = 0;
 
-    /**
-     * @brief Duplicates a memory section into a new area from the specified heap.
-     * @param[in] data The pointer to the memory which must be copied.
-     * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
-     * @return The pointer to the new allocated memory which contains a copy of s.
-     */
-    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
-    virtual void *Duplicate(const void * const data,
-                            uint32 size = 0U) = 0;
-
-    /**
-     * @brief Returns the start of range of memory addresses served by this heap.
-     * @return The start of range of memory addresses served by this heap.
-     */
-    virtual uintp FirstAddress() const = 0;
-
-    /**
-     * @brief Return the end (inclusive) of range of memory addresses served by this heap.
-     * @return The end (inclusive) of range of memory addresses served by this heap.
-     */
-    virtual uintp LastAddress() const = 0;
-
-    /**
-     * @brief Checks if memory is part of the heap managed area
-     * @param[in] data is the pointer to be checked.
-     * @return true if \a data is in the heap range of addresses, false otherwise.
-     */
-    virtual bool Owns(void const * const data) const {
-        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-         * in order to be able to compare the address with a range of addresses
-         * uintp is an integer type that has by design the same span as a pointer in all systems*/
-        uintp address = reinterpret_cast<uintp>(data);
-        bool check1 = (address >= FirstAddress());
-        bool check2 = (address <= LastAddress());
-        return check1 && check2;
-    }
-
-    /**
-     * @brief Returns the name of the heap
-     * @return The name of the heap
-     */
-    virtual CCString Name() const =0;
 
 };
 
-}
+} // HeapManager
+} // MARTe
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

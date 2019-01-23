@@ -39,7 +39,7 @@
 #include "RealTimeApplication.h"
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

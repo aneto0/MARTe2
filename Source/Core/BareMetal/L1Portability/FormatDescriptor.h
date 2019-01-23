@@ -32,11 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
 #include "CCString.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

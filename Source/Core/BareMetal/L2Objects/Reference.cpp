@@ -34,12 +34,11 @@
 #include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
-#include "../L1Portability/CompositeErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "ObjectBuilder.h"
 #include "StringHelper.h"
 #include "AnyType.h"
 #include "DynamicCString.h"
-#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -61,7 +60,7 @@ Reference::Reference(const Reference& sourceReference) {
     (*this) = sourceReference;
 }
 
-Reference::Reference(CCString const typeName,HeapI* const heap) {
+Reference::Reference(CCString const typeName,HeapManager::HeapId heap) {
 
     objectPointer = NULL_PTR(Object*);
     Object *objPtr = CreateByName(typeName, heap);
@@ -109,7 +108,7 @@ bool Reference::Initialise(StructuredDataI &data, const bool &initOnly) {
             bool ok;
             ok = data.Read("Class", className);
             if (ok) {
-                Object *objPtr = CreateByName(className.GetList(), &GlobalObjectsDatabase::Instance().GetStandardHeap());
+                Object *objPtr = CreateByName(className.GetList(), HeapManager::standardHeapId);
                 ok = (objPtr != NULL_PTR(Object*));
                 if (ok) {
                     objectPointer = objPtr;
@@ -185,11 +184,11 @@ bool Reference::operator!=(const Reference& sourceReference) const {
     return (objectPointer != sourceReference.objectPointer);
 }
 
-Object *Reference::CreateByName(CCString const className,HeapI* const heap) const {
+Object *Reference::CreateByName(CCString const className,HeapManager::HeapId heap) const {
 
     Object *obj = NULL_PTR(Object *);
 
-    const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
+    const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Find(className);
     if ((classRegistryItem != NULL)) {
         const ObjectBuilder *builder = classRegistryItem->GetObjectBuilder();
         if (builder != NULL) {
@@ -200,7 +199,7 @@ Object *Reference::CreateByName(CCString const className,HeapI* const heap) cons
     return obj;
 } 
 
-void Reference::ToAnyType(AnyType &at){
+void Reference::ToAnyType(AnyType &at) const{
 	if (objectPointer != NULL){
 	    objectPointer->ToAnyType(at);
 	} else {

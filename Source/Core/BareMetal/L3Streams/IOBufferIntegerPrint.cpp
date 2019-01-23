@@ -58,7 +58,7 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
     // check whether exponent greater than 10
     if (sizeof(T) >= 8u) { // max 19
         /*lint -e{734} */
-        T temp = tenToExponent * static_cast<T>(10000000000); // 10 zeros
+        T temp = tenToExponent * static_cast<T>(10000000000u); // 10 zeros
         if (positiveNumber >= temp) {
             tenToExponent = temp;
             nDigits += 10u;
@@ -68,7 +68,7 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
     // check whether exponent greater than 5
     if (sizeof(T) >= 4u) { // max 9
         /*lint -e{734} */
-        T temp = tenToExponent * static_cast<T>(100000); // 5 zeros
+        T temp = tenToExponent * static_cast<T>(100000u); // 5 zeros
         if (positiveNumber >= temp) {
             tenToExponent = temp;
             nDigits += 5u;
@@ -78,7 +78,7 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
     // check whether exponent greater than 2
     if (sizeof(T) >= 2u) { // max 4 zeros
         /*lint -e{734} */
-        T temp = tenToExponent * static_cast<T>(100); // 2 zeros
+        T temp = tenToExponent * static_cast<T>(100u); // 2 zeros
         if (positiveNumber >= temp) {
             tenToExponent = temp;
             nDigits += 2u;
@@ -87,7 +87,7 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
 
     // check whether exponent greater than 1
     /*lint -e{734} */
-    T temp = tenToExponent * static_cast<T>(10); // 1
+    T temp = tenToExponent * static_cast<T>(10u); // 1
     if (positiveNumber >= temp) {
         tenToExponent = temp;
         nDigits++;
@@ -95,7 +95,7 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
 
     // check whether exponent greater than 1
     /*lint -e{734} */
-    temp = tenToExponent * static_cast<T>(10);  // 1
+    temp = tenToExponent * static_cast<T>(10u);  // 1
     // avoid overflowing in case of signed number
     if (temp > tenToExponent) {
         if (positiveNumber >= temp) {

@@ -31,7 +31,7 @@
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 
 namespace MARTe {
 

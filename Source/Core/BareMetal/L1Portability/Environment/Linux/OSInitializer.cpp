@@ -41,7 +41,7 @@
 //#include "HighResolutionTimerCalibrator.h"
 //#include "HighResolutionTimer.h"
 #include "StringHelper.h"
-#include "../../OSInitializer.h"
+#include "../../TimerAndTimeStartup.h"
 #include "../../ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

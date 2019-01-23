@@ -64,14 +64,14 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
 
 	// cleanup
-	addressToSearchArray.Truncate(0);
+	addressToSearchArray().Truncate(0);
 
     if (!address.IsNullPtr()) {
         //Count the number of dots found. The first and last dot are ignored. Two consecutive dots result
         //in addressNumberNodes = 0
 
     	// copy address
-    	addressToSearchWhole.Append(address);
+    	addressToSearchWhole().Append(address);
 
     	// count dots
     	char8 *p = addressToSearchWhole.GetList();
@@ -90,13 +90,13 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
         			// consecutive .. --> reset
         			if (justFound){
         				addressNumberNodes= 0u;
-        				addressToSearchArray.Truncate(0u);
+        				addressToSearchArray().Truncate(0u);
         			} else {
         				addressNumberNodes++;
         				// next must not be the end
         				// deals with trailing .
         				if (p[1]!= '\0'){
-        					addressToSearchArray.Append(CCString(p));
+        					addressToSearchArray().Append(CCString(p));
         				}
         				justFound = true;
         			}
@@ -121,14 +121,14 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
 }
 
 void ReferenceContainerFilterObjectName::GetPath(DynamicCString &path) const{
-	path.Truncate(0);
+	path().Truncate(0);
 	CCString *pList = addressToSearchArray.GetList();
 	bool start = true;
 	while (pList != NULL_PTR(CCString *)){
 		if (!start){
-			path.Append('.');
+			path().Append('.');
 		}
-		path.Append(*pList);
+		path().Append(*pList);
 		start = false;
 		pList++;
 	}
@@ -182,7 +182,7 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
         if (previouslyFound.Get(ui).IsValid()) {
         	CCString name = previouslyFound.Get(ui)->GetName();
             if (!name.IsNullPtr()) {
-                found = (name == addressToSearchArray[i]) ;
+                found = (name == addressToSearchArray[static_cast<uint32>(i)]) ;
             }
         }
     }

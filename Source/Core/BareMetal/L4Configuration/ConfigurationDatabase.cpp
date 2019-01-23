@@ -34,7 +34,6 @@
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "GlobalObjectsDatabase.h"
 #include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
@@ -49,7 +48,7 @@ namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() : Object() {
     mux.Create();
-    ReferenceT < ReferenceContainer > rootContainer(buildNow);
+    ReferenceT < ReferenceContainer > rootContainer(HeapManager::standardHeapId);
     rootNode = rootContainer;
     currentNode = rootNode;
 }
@@ -319,7 +318,7 @@ ErrorManagement::ErrorType  ConfigurationDatabase::MoveToChild(const uint32 chil
 }
 
 
-ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
+ErrorManagement::ErrorType ConfigurationDatabase::MoveToAncestor( uint32 generations) {
 	ErrorManagement::ErrorType ret;
 
     if (generations > 0u) {
@@ -369,7 +368,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         if (found) {
             currentNode = foundReference;
         } else {
-        	ReferenceT < ReferenceContainer > container(buildNow);
+        	ReferenceT < ReferenceContainer > container(HeapManager::standardHeapId);
         	ret.fatalError = !container.IsValid();
             REPORT_ERROR(ret,"container(buildNow) failed");
 

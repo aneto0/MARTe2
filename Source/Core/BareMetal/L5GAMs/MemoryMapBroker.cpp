@@ -61,15 +61,11 @@ bool MemoryMapBroker::Init(const SignalDirection direction, DataSourceI &dataSou
     dataSource = &dataSourceIn;
 
     bool ret = InitFunctionPointers(direction, dataSourceIn, functionName, gamMemoryAddress);
-
-    const ClassProperties * properties = GetClassProperties();
-    if (ret) {
-        ret = (properties != NULL);
-    }
     const char8* brokerClassName = NULL_PTR(const char8*);
-    if (ret) {
-        brokerClassName = properties->GetName();
-        ret = (brokerClassName != NULL);
+
+    ClassRegistryItem *cri = this->GetClassRegistryItem();
+    if (cri != NULL_PTR(ClassRegistryItem *)){
+    	brokerClassName = cri->GetClassName();
     }
 
     if (ret) {
@@ -99,7 +95,7 @@ bool MemoryMapBroker::Init(const SignalDirection direction, DataSourceI &dataSou
                 uint32 numberOfByteOffsets = 0u;
                 ret = dataSource->GetFunctionSignalNumberOfByteOffsets(direction, functionIdx, n, numberOfByteOffsets);
 
-                StreamString functionSignalName;
+                DynamicCString functionSignalName;
                 TypeDescriptor signalType;
                 if (ret) {
                     ret = dataSource->GetFunctionSignalAlias(direction, functionIdx, n, functionSignalName);
@@ -110,7 +106,7 @@ bool MemoryMapBroker::Init(const SignalDirection direction, DataSourceI &dataSou
                 }
                 uint32 signalIdx = 0u;
                 if (ret) {
-                    ret = dataSource->GetSignalIndex(signalIdx, functionSignalName.Buffer());
+                    ret = dataSource->GetSignalIndex(signalIdx, functionSignalName);
                     signalType = dataSource->GetSignalType(signalIdx);
                 }
                 uint32 byteSize = 0u;

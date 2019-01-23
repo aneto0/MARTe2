@@ -79,8 +79,7 @@ public:
 
     /**
      * @brief Destructor.
-     * @details If canDestroy, then it frees the memory pointed
-     * by \a GetDataPointer().
+     * @details clears the pointer
      */
     inline ~Pointer();
 
@@ -97,8 +96,6 @@ protected:
      * The data pointer to the raw data.
      */
     void *dataPointer;
-
-
 
 };
 

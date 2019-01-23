@@ -232,7 +232,7 @@ void ParserI::End() {
 }
 
 void ParserI::ParseStatus::Init(){
-	nodeName.Truncate(0);
+	nodeName().Truncate(0);
 	ok = true;
 	parseElStatus = ParseStatus::parseElFinished;
 	td = ConstCharString(sizeof(CCString));

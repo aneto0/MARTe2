@@ -24,7 +24,10 @@
 #
 #############################################################
 
-OBJSX=BrokerI.x \
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+  
+
+_OBJSX=BrokerI.x \
     DataSourceI.x \
     ExecutableI.x \
     GAM.x \

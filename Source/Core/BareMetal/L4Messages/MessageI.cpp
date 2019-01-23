@@ -59,14 +59,11 @@ MessageI::~MessageI() {
 
 ReferenceT<MessageI> MessageI::FindDestination(CCString destination) {
     ReferenceT<MessageI> destinationObject_MessageI;
-    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
 
     // simple search for named object
-    if (ord != NULL_PTR(ObjectRegistryDatabase *)) {
-        Reference destinationObject = ord->Find(destination);
-        if (destinationObject.IsValid()) {
-            destinationObject_MessageI = destinationObject;
-        }
+    Reference destinationObject = ObjectRegistryDatabase::Find(destination);
+    if (destinationObject.IsValid()) {
+        destinationObject_MessageI = destinationObject;
     }
 
     // if (!destinationObject_MessageI.IsValid())
@@ -105,13 +102,24 @@ ErrorManagement::ErrorType MessageI::SendMessage(ReferenceT<Message> &message,
                 Reference ref(const_cast<Object *>(message->GetSender()));
                 ReferenceContainer result;
                 ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, ref);
-                ReferenceContainer *ord = dynamic_cast<ReferenceContainer*>(ObjectRegistryDatabase::Instance());
+
+
+                ReferenceT<ReferenceContainer> ord = ObjectRegistryDatabase::Access();
+                if (ord.IsValid()){
+                    ord->Find(result, filter);
+                    if (result.Size() > 0u) {
+                        destination = result.Get(0u);
+                    }
+                }
+/*
+                ReferenceContainer *ord = dynamic_cast<ReferenceContainer*>(ObjectRegistryDatabase::Access());
                 if (ord != NULL_PTR(ReferenceContainer *)) {
                     ord->Find(result, filter);
                 }
                 if (result.Size() > 0u) {
                     destination = result.Get(0u);
                 }
+*/
             }
 
         }
@@ -252,7 +260,7 @@ ErrorManagement::ErrorType MessageI::SendMessageAndWaitIndirectReply(ReferenceT<
     ReferenceT<MessageFilter> messageCatcher;
     if (ret.ErrorsCleared()) {
         //Install message catcher
-        ReferenceT<ReplyMessageCatcherMessageFilter> rmc(buildNow);
+        ReferenceT<ReplyMessageCatcherMessageFilter> rmc(HeapManager::standardHeapId);
         replyMessageCatcher = rmc;
 
         ret.fatalError = !replyMessageCatcher.IsValid();

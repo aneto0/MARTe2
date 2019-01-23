@@ -24,8 +24,9 @@
 #
 #############################################################
 
-OBJSX=	Logger.x
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
         
+
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -37,10 +38,8 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4LoggerB$(LIBEXT) \
-	        $(BUILD_DIR)/L4LoggerB.def
-	echo  $(OBJS)
+all: $(OBJS)    
+	echo  $(OBJSX)
 
 include depends.$(TARGET)
 

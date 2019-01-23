@@ -483,7 +483,7 @@ private:
 /**
  * @return returns the byte size from the TDBasicTypeSize
  */
-#define SizeFromTDBasicTypeSize(x)	(x==0?0:(1 << (x-1)))
+#define SizeFromTDBasicTypeSize(x)	(x==0?0u:(1u << (x-1)))
 
 
 #define  UnsignedBitSet_number(base,bits,offset) \

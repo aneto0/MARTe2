@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+//#include "../L1Portability/GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/

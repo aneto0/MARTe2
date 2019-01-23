@@ -27,22 +27,15 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  CompilerTypes.x  \
-        ListNode.x \
-        LinkedListable.x \
-        LinkedListHolder.x \
-        BalancedTreeNode.x \
-        ZeroTerminatedArray.x \
-        ErrorType.x 
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp))
+
         
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L0TypesB$(LIBEXT) \
-		$(BUILD_DIR)/L0TypesB.def
-		
-	echo  $(OBJS)
+all: $(OBJS) $(SUBPROJ)   
+	echo  $(OBJSX)
+
 
 include depends.$(TARGET)
 

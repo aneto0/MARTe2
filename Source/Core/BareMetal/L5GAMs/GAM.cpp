@@ -35,7 +35,7 @@
 #include "BrokerI.h"
 #include "GAM.h"
 #include "Reference.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
@@ -56,16 +56,16 @@ GAM::GAM() :
     outputSignalsMemory = NULL_PTR(void *);
     inputSignalsMemoryIndexer = NULL_PTR(void **);
     outputSignalsMemoryIndexer = NULL_PTR(void **);
-    gamHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
+    gamHeap = HeapManager::standardHeapId;
 }
 
 /*lint -e{1551} no exception should be thrown*/
 GAM::~GAM() {
     if (inputSignalsMemory != NULL_PTR(void *)) {
-        gamHeap->Free(inputSignalsMemory);
+        HeapManager::Free(inputSignalsMemory);
     }
     if (outputSignalsMemory != NULL_PTR(void *)) {
-        gamHeap->Free(outputSignalsMemory);
+    	HeapManager::Free(outputSignalsMemory);
     }
     if (inputSignalsMemoryIndexer != NULL_PTR(void **)) {
         delete[] inputSignalsMemoryIndexer;
@@ -115,7 +115,7 @@ bool GAM::AllocateInputSignalsMemory() {
         uint32 totalByteSize = 0u;
         ret = configuredDatabase.Read("ByteSize", totalByteSize);
         if (ret) {
-            inputSignalsMemory = gamHeap->Malloc(totalByteSize);
+            inputSignalsMemory = HeapManager::Malloc(totalByteSize,gamHeap);
             if (inputSignalsMemory != NULL_PTR(void*)) {
                 ret = Memory::Set(inputSignalsMemory, '\0', totalByteSize);
             }
@@ -164,7 +164,7 @@ bool GAM::AllocateOutputSignalsMemory() {
         ret = configuredDatabase.Read("ByteSize", totalByteSize);
 
         if (ret) {
-            outputSignalsMemory = gamHeap->Malloc(totalByteSize);
+            outputSignalsMemory = HeapManager::Malloc(totalByteSize,gamHeap);
             if (outputSignalsMemory != NULL_PTR(void*)) {
                 ret = Memory::Set(outputSignalsMemory, '\0', totalByteSize);
             }
@@ -496,7 +496,7 @@ bool GAM::GetSignalNumberOfSamples(const SignalDirection direction, const uint32
                 if (ret) {
 
                 	DynamicCString signalIdxStr;
-                	signalIdxStr.Append(signalIdx);
+                	signalIdxStr().Append(signalIdx);
                     ret = configuredDatabase.MoveRelative(signalIdxStr.GetList());
                 }
                 if (ret) {
@@ -545,7 +545,7 @@ bool GAM::GetSignalFrequency(const SignalDirection direction, const uint32 signa
                 ret = configuredDatabase.MoveRelative("Signals");
                 if (ret) {
                 	DynamicCString signalIdxStr;
-                	signalIdxStr.Append(signalIdx);
+                	signalIdxStr().Append(signalIdx);
                     ret = configuredDatabase.MoveRelative(signalIdxStr);
                 }
                 if (ret) {

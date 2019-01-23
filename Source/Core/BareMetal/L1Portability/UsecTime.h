@@ -34,7 +34,7 @@
 
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
-#include "OSInitializer.h"
+#include "TimerAndTimeStartup.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

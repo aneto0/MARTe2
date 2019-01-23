@@ -105,6 +105,8 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
     bool ret=true;
     SHORT windowColumns = 0;
     SHORT windowRows = 0;
+    SHORT _numberOfColumns = static_cast<SHORT>(numberOfColumns);
+    SHORT _numberOfRows = static_cast<SHORT>(numberOfRows);
 
     //aligns the buffer and window sizes as much as possible to the specified parameters.
 
@@ -125,13 +127,13 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
 
         //enlarge the coordinates if they are minor than the desired size
         //now i can only enlarge them!
-        if (stage1BufferSize.X < numberOfColumns) {
-            stage1BufferSize.X = numberOfColumns;
+        if (stage1BufferSize.X < _numberOfColumns) {
+            stage1BufferSize.X = _numberOfColumns;
         }
 
         stage1BufferSize.Y = info.dwSize.Y;
-        if (stage1BufferSize.Y < numberOfRows) {
-            stage1BufferSize.Y = numberOfRows;
+        if (stage1BufferSize.Y < _numberOfRows) {
+            stage1BufferSize.Y = _numberOfRows;
         }
 
         //set the buffer size
@@ -154,12 +156,12 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
     }
 
     if (ret) {
-        if (windowColumns > numberOfColumns) {
-            windowColumns = numberOfColumns;
+        if (windowColumns > _numberOfColumns) {
+            windowColumns = _numberOfColumns;
 
         }
-        if (windowRows > numberOfRows) {
-            windowRows = numberOfRows;
+        if (windowRows > _numberOfRows) {
+            windowRows = _numberOfRows;
         }
 
         SMALL_RECT srect;
@@ -180,8 +182,8 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
     if (ret) {
         //now if buffersize is greater than windows size they become aligned.
         COORD stage2BufferSize;
-        stage2BufferSize.X = numberOfColumns;
-        stage2BufferSize.Y = numberOfRows;
+        stage2BufferSize.X = _numberOfColumns;
+        stage2BufferSize.Y = _numberOfRows;
 
         if (!SetConsoleScreenBufferSize(handle->outputConsoleHandle, stage2BufferSize)) {
             ret=false;
@@ -196,7 +198,6 @@ bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
 bool BasicConsole::Open(const FlagsType &mode) {
 
 //    con.selectedStream      = NormalStreamMode;
-    int32 shortMask = 0xffff;
 
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
     handle->openingMode = mode;
@@ -225,22 +226,20 @@ bool BasicConsole::Open(const FlagsType &mode) {
     }
 
     if (error == ErrorManagement::NoError) {
-        CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &(handle->initialInfo)) == 0) {
             error = ErrorManagement::OSError;
         }
     }
 
     if (error == ErrorManagement::NoError) {
-        int stdConsoleColumns;
-        int stdConsoleRows;
+        SHORT stdConsoleColumns;
+        SHORT stdConsoleRows;
         stdConsoleColumns = handle->initialInfo.dwSize.X;
 
         stdConsoleRows = handle->initialInfo.dwSize.Y;
 
-        handle->nOfColumns = stdConsoleColumns;
-
-        handle->nOfRows = stdConsoleRows;
+        handle->nOfColumns = static_cast<uint32>(stdConsoleColumns);
+        handle->nOfRows    = static_cast<uint32>(stdConsoleRows);
 
         //set the console mode
         DWORD consoleMode = 0;
@@ -385,8 +384,8 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
 
     COORD max = GetLargestConsoleWindowSize(handle->outputConsoleHandle);
 
-    uint32 numberOfColumnsUsed = numberOfColumns;
-    uint32 numberOfRowsUsed = numberOfRows;
+    SHORT numberOfColumnsUsed = static_cast<SHORT>(numberOfColumns);
+    SHORT numberOfRowsUsed    = static_cast<SHORT>(numberOfRows);
 
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
@@ -439,8 +438,8 @@ bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
 
-    numberOfColumns = info.srWindow.Right - info.srWindow.Left + 1;
-    numberOfRows = info.srWindow.Bottom - info.srWindow.Top + 1;
+    numberOfColumns = static_cast<uint32>(info.srWindow.Right - info.srWindow.Left + 1);
+    numberOfRows 	= static_cast<uint32>(info.srWindow.Bottom - info.srWindow.Top + 1);
     return (error == ErrorManagement::NoError);
 }
 
@@ -455,8 +454,8 @@ bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
     }
 
     if (error == ErrorManagement::NoError) {
-        numberOfColumns = info.dwSize.X;
-        numberOfRows = info.dwSize.Y;
+        numberOfColumns = static_cast<uint32>(info.dwSize.X);
+        numberOfRows 	= static_cast<uint32>(info.dwSize.Y);
     }
     return (error == ErrorManagement::NoError);
 }
@@ -464,7 +463,7 @@ bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
 bool BasicConsole::SetCursorPosition(const uint32 &column,
                                      const uint32 &row) {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
-    COORD c = { column, row };
+    COORD c = { static_cast<SHORT>(column), static_cast<SHORT>(row) };
     if (SetConsoleCursorPosition(handle->outputConsoleHandle, c) == FALSE) {
         error = ErrorManagement::OSError;
     }
@@ -482,8 +481,8 @@ bool BasicConsole::GetCursorPosition(uint32 &column,
     }
 
     if (error == ErrorManagement::NoError) {
-        column = info.dwCursorPosition.X;
-        row = info.dwCursorPosition.Y;
+        column 	= static_cast<uint32>(info.dwCursorPosition.X);
+        row 	= static_cast<uint32>(info.dwCursorPosition.Y);
     }
 
     return (error == ErrorManagement::NoError);
@@ -495,8 +494,8 @@ bool BasicConsole::SetColour(const Colours &foregroundColour,
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     WORD attribute;
-    attribute = (int) foregroundColour & 0xF;
-    attribute |= (((int) backgroundColour & 0xF) << 4);
+    attribute = static_cast<WORD>(foregroundColour & 0xF);
+    attribute |= (static_cast<WORD>(backgroundColour & 0xF) << 4);
 
     if (!SetConsoleTextAttribute(handle->outputConsoleHandle, attribute)) {
         error = ErrorManagement::OSError;
@@ -516,7 +515,7 @@ bool BasicConsole::Clear() {
 
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
-    int nOfChars = info.dwSize.Y * info.dwSize.X;
+    DWORD nOfChars = static_cast<DWORD>(info.dwSize.Y * info.dwSize.X);
     DWORD NumberOfCharsWritten;
     FillConsoleOutputAttribute(handle->outputConsoleHandle, info.wAttributes, nOfChars, c, &NumberOfCharsWritten);
     if (!FillConsoleOutputCharacter(handle->outputConsoleHandle, ' ', nOfChars, c, &NumberOfCharsWritten)) {
@@ -543,18 +542,18 @@ bool BasicConsole::PlotChar(const char8 &c,
     bufferSize.Y = 1;
 
     WORD attribute;
-    attribute = (int) foregroundColour & 0xF;
-    attribute |= ((int) backgroundColour & 0xF) << 4;
+    attribute = static_cast<WORD>(foregroundColour & 0xF);
+    attribute |= static_cast<WORD>(backgroundColour & 0xF) << 4;
 
     CHAR_INFO cInfo;
     cInfo.Char.AsciiChar = c;
     cInfo.Attributes = attribute;
 
     SMALL_RECT writeRegion;
-    writeRegion.Left = row;
-    writeRegion.Right = row;
-    writeRegion.Top = column;
-    writeRegion.Bottom = column;
+    writeRegion.Left 	= static_cast<SHORT>(row);
+    writeRegion.Right 	= static_cast<SHORT>(row);
+    writeRegion.Top 	= static_cast<SHORT>(column);
+    writeRegion.Bottom 	= static_cast<SHORT>(column);
 
     if (WriteConsoleOutput(handle->outputConsoleHandle, &cInfo, bufferSize, coord, &writeRegion) == FALSE) {
         error = ErrorManagement::OSError;
@@ -573,8 +572,8 @@ bool BasicConsole::Close() {
     }
     else {
         //reset the initial conditions of the console.
-        int nCol = handle->initialInfo.dwSize.X;
-        int nRow = handle->initialInfo.dwSize.Y;
+        uint32 nCol = static_cast<uint32>(handle->initialInfo.dwSize.X);
+        uint32 nRow = static_cast<uint32>(handle->initialInfo.dwSize.Y);
         SetSceneSize(nCol, nRow);
         SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &(handle->initialInfo.srWindow));
         SetConsoleMode(handle->outputConsoleHandle, consoleMode);

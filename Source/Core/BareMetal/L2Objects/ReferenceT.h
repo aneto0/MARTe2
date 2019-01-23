@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Reference.h"
-#include "GlobalObjectsDatabase.h"
+#include "HeapI.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -47,12 +47,6 @@ namespace MARTe {
  */
 #define ConstReferenceT(x) ReferenceT<const x>
 
-/**
- * used to select the constructor ReferenceT(BuildCode code);
- */
-enum ReferenceTBuildCode {
-	buildNow   = 1
-};
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
@@ -69,16 +63,10 @@ public:
     ReferenceT();
 
     /**
-     * @brief Allows creating a reference loaded with an instance of T constructed on the standard heap.
-     * @param[in] code has to be set to buildNow
-     */
-    ReferenceT(ReferenceTBuildCode code);
-
-    /**
      * @brief Creates an empty reference or a reference to base type T.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(HeapI * const heap);
+    ReferenceT(HeapManager::HeapId heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -108,8 +96,7 @@ public:
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(CCString typeName,
-               HeapI* const heap = static_cast<HeapI *>(NULL));
+    ReferenceT(CCString typeName,HeapManager::HeapId = HeapManager::standardHeapId);
 
     /**
      * @brief Removes the reference to the underlying object (see RemoveReference).
@@ -212,16 +199,11 @@ ReferenceT<T>::ReferenceT():
     Init();
 }
 
-template<typename T>
-ReferenceT<T>::ReferenceT(ReferenceTBuildCode code): ReferenceT<T>::ReferenceT(&GlobalObjectsDatabase::Instance().GetStandardHeap())
-{}
-
 /*lint -e{1566} Init function initializes members */
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
  * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(HeapI* const heap) :
-        Reference() {
+ReferenceT<T>::ReferenceT(HeapManager::HeapId heap) :Reference() {
     Init();
     T *p = new (heap) T;
     if (p != NULL) {
@@ -231,9 +213,9 @@ ReferenceT<T>::ReferenceT(HeapI* const heap) :
             Reference::operator=(obj);
             typeTObjectPointer = p;
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
-        }
+        ErrorManagement::ErrorType ret;
+        ret.fatalError = (obj == NULL);
+        REPORT_ERROR(ret, "ReferenceT: Dynamic cast failed.");
     }
 }
 
@@ -284,19 +266,19 @@ ReferenceT<T>* ReferenceT<T>::operator&() {
 template<typename T>
 bool ReferenceT<T>::Initialise(StructuredDataI &data,
                                const bool &initOnly) {
-    bool ok = true;
-    if (Reference::Initialise(data, initOnly)) {
+    ErrorManagement::ErrorType ret;
+    ret.fatalError = !Reference::Initialise(data, initOnly);
+
+    if (ret){
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Failed Reference::Initialise()");
-        ok = false;
-    }
-    return ok;
+
+    REPORT_ERROR(ret, "ReferenceT: Failed Reference::Initialise()");
+    return ret.ErrorsCleared();
 }
 
 /*lint -e{1566} Init function initializes members */
@@ -325,9 +307,7 @@ ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) :
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
  * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(CCString typeName,
-                          HeapI* const heap) :
-        Reference(typeName, heap) {
+ReferenceT<T>::ReferenceT(CCString typeName,HeapManager::HeapId heap) : Reference(typeName, heap) {
     typeTObjectPointer = static_cast<T *>(NULL);
     if (Reference::IsValid()) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);

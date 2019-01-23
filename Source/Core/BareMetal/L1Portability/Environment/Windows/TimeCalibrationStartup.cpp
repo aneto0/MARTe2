@@ -44,8 +44,9 @@
 //#include "HighResolutionTimerCalibrator.h"
 #include "HighResolutionTimer.h"
 #include "StringHelper.h"
-#include "../../OSInitializer.h"
-#include "../../ErrorManagement.h"
+#include "../../TimeCalibration.h"
+#include "ErrorManagement.h"
+#include "StartupManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,8 +56,14 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+namespace TimeCalibration {
 
-OSInitializer::OSInitializer(){
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(TimeCalibration,("TimeCalibrated",emptyString),(emptyString))
+
+
+ErrorManagement::ErrorType TimeCalibrationStartup::Init(){
+	ErrorManagement::ErrorType ret;
+
     struct timeval initialTime;
     time((time_t *) &initialTime.tv_sec);
 
@@ -73,20 +80,20 @@ OSInitializer::OSInitializer(){
     dTa = 0;
     dTb = 0;
     for (int i = 0; i < 50; i++) {
-        tt2.QuadPart = HighResolutionTimer::Counter();
+        tt2.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
         QueryPerformanceCounter(&tt0);
-        tt3.QuadPart = HighResolutionTimer::Counter();
+        tt3.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
         tt4 = tt3;
         while ((tt4.QuadPart - tt3.QuadPart) < 100000)
-            tt4.QuadPart = HighResolutionTimer::Counter(); // .5 ms at 200 Mhz
+            tt4.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter()); // .5 ms at 200 Mhz
 
         QueryPerformanceCounter(&tt1);
-        tt5.QuadPart = HighResolutionTimer::Counter();
+        tt5.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
         dTa += (tt1.QuadPart - tt0.QuadPart);
         dTb += ((tt5.QuadPart + tt4.QuadPart) - (tt3.QuadPart + tt2.QuadPart)) / 2;
     }
     QueryPerformanceFrequency(&tt0);
-    frequency = tt0.QuadPart;
+    frequency = static_cast<uint64>(tt0.QuadPart);
     frequency *= dTb;
     frequency /= dTa;
 
@@ -103,46 +110,15 @@ OSInitializer::OSInitializer(){
     osSleepUsec    = 10000;
     osSleepTicks   = frequency / (1000000 / osSleepUsec);
 
+	return ret;
+}
+
+ErrorManagement::ErrorType TimeCalibrationStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	return ret;
 }
 
 
-uint64 OSInitializer::frequency ;
-
-/**
- * Time between two ticks in seconds
- */
-float64 OSInitializer::period;
-
-/**
- * Stores the seconds (counting from the epoch) at which a framework instance was executed.
- */
-oslong OSInitializer::initialSecs;
-
-/**
- * Stores the microseconds (counting from the epoch) at which a framework instance was executed.
- */
-oslong OSInitializer::initialUSecs;
-
-/**
- * Number of elapsed ticks at the time at which a framework instance was executed.
- */
-uint64 OSInitializer::initialTicks;
-
-/**
- * typical worst case number of ticks the OS will consume during a sleep if CPU not used.
- */
-uint64 OSInitializer::osSleepTicks;
-
-/**
- * typical worst case number of usec the OS will consume during a sleep if CPU not used.
- */
-uint32 OSInitializer::osSleepUsec;
-
-/**
- * minimum value o be used in a sleep call to guarantee some sleep is actually performed.
- */
-uint32 OSInitializer::osMinSleepUsec;
-
-
-
+}
 }

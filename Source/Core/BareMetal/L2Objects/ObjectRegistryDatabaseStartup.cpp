@@ -35,7 +35,6 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,30 +45,38 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+namespace ObjectRegistryDatabase {
 
-ObjectRegistryDatabase *ObjectRegistryDatabase::Instance() {
+ReferenceT<ReferenceContainer> objectRegistryDatabase;
 
-    static ObjectRegistryDatabase *instance = NULL_PTR(ObjectRegistryDatabase *);
-    if (instance == NULL) {
-        instance = new ObjectRegistryDatabase(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
-//        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 3u);
-        uint32 dexOrd = NUMBER_OF_GLOBAL_OBJECTS - 3u;
-        GlobalObjectsDatabase::Instance().Add(instance, dexOrd);
-
-    }
-    return instance;
+ReferenceT<ReferenceContainer> Access(){
+	return objectRegistryDatabase;
 }
 
-ObjectRegistryDatabase::ObjectRegistryDatabase() :
-        ReferenceContainer() {
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(ObjectRegistryDatabase,("ObjectRegistryDatabase",emptyString),("HeapManager",emptyString))
+
+/**
+	Singleton based startup and memory allocation
+	Managed shutdown
+*/
+ErrorManagement::ErrorType ObjectRegistryDatabaseStartup::Init(){
+	ErrorManagement::ErrorType ret;
+
+	ReferenceT<ReferenceContainer> ordb(HeapManager::internalsHeapId);
+	objectRegistryDatabase = ordb;
+
+	return ret;
 }
 
-/*lint -e{1551} Guarantees that all the nodes are cleared before destroying the application.*/
-ObjectRegistryDatabase::~ObjectRegistryDatabase() {
-    Purge();
+ErrorManagement::ErrorType ObjectRegistryDatabaseStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	objectRegistryDatabase->Purge();
+	objectRegistryDatabase.RemoveReference();
+	return ret;
 }
 
-Reference ObjectRegistryDatabase::Find(const CCString path,const Reference current) {
+Reference Find(const CCString path,const Reference current) {
     ReferenceT<ReferenceContainer> domain = current;
     bool isSearchDomain = current.IsValid();
     uint32 backSteps = 0u;
@@ -84,14 +91,14 @@ Reference ObjectRegistryDatabase::Find(const CCString path,const Reference curre
             // search the current remembering the path
             ReferenceContainerFilterReferences filterRef(1, ReferenceContainerFilterMode::PATH, current);
             ReferenceContainer resultPath;
-            ReferenceContainer::Find(resultPath, filterRef);
+            objectRegistryDatabase->Find(resultPath, filterRef);
             for (uint32 i = 0u; i < resultPath.Size(); i++) {
                 Reference test = resultPath.Get((resultPath.Size() - i) - 1u);
                 if (stepsCounter == 0u) {
                     break;
                 }
                 if (test.IsValid()) {
-                    ok = Lock();
+                    ok = objectRegistryDatabase->Lock();
                     if (ok) {
                         /*lint -e{613} cheking of NULL pointer done before entering here. */
                         if (test->IsDomain()) {
@@ -99,7 +106,7 @@ Reference ObjectRegistryDatabase::Find(const CCString path,const Reference curre
                             stepsCounter--;
                         }
                     }
-                    UnLock();
+                    objectRegistryDatabase->UnLock();
                 }
             }
 
@@ -127,7 +134,7 @@ Reference ObjectRegistryDatabase::Find(const CCString path,const Reference curre
         }
         else {
             // search from the beginning
-            ReferenceContainer::Find(resultSingle, filterName);
+        	objectRegistryDatabase->Find(resultSingle, filterName);
         }
 
         ok = (resultSingle.Size() > 0u);
@@ -139,18 +146,6 @@ Reference ObjectRegistryDatabase::Find(const CCString path,const Reference curre
     return ret;
 }
 
-CCString  ObjectRegistryDatabase::GetClassName() const {
-    return "ObjectRegistryDatabase";
-}
-
-/*lint -e{1550} */
-void *ObjectRegistryDatabase::operator new(const osulong size) throw () {
-    return GlobalObjectI::operator new(size);
-}
-
-/*lint -e{1550} */
-void ObjectRegistryDatabase::operator delete(void * const p) {
-    return GlobalObjectI::operator delete(p);
 }
 
 }

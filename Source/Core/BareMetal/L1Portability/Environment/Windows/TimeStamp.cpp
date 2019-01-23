@@ -32,6 +32,7 @@
 #include "TimeStamp.h"
 #include "ErrorManagement.h"
 #include "HighResolutionTimer.h"
+#include "../../TimeCalibration.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -54,25 +55,25 @@ TimeStamp::TimeStamp() {
 
 bool TimeStamp::GetTime() {
 
-    uint64 ticks = HighResolutionTimer::Counter() - OSInitializer::initialTicks;
+    uint64 ticks = HighResolutionTimer::Counter() - TimeCalibration::initialTicks;
 
     //Use HRT
-    uint32 secHRT = static_cast<uint32>(ticks * OSInitializer::period);
-    uint32 uSecHRT = static_cast<uint32>((ticks * OSInitializer::period - secHRT) * 1e6);
+    uint32 secHRT = static_cast<uint32>(ticks * TimeCalibration::period);
+    uint32 uSecHRT = static_cast<uint32>((ticks * TimeCalibration::period - secHRT) * 1e6);
 
     //Add HRT to the the initial time saved in the calibration.
-    time_t sec = static_cast<time_t>(OSInitializer::initialSecs + secHRT);
-    SetMicroseconds(OSInitializer::initialUSecs + uSecHRT);
+    time_t sec = static_cast<time_t>(TimeCalibration::initialSecs + secHRT);
+    SetMicroseconds(TimeCalibration::initialUSecs + uSecHRT);
 
     //Check the overflow
-    if (GetMicroseconds() >= 1e6) {
-        SetMicroseconds(GetMicroseconds() - 1e6);
+    if (GetMicroseconds() >= 1000000u) {
+        SetMicroseconds(GetMicroseconds() - 1000000u);
         sec++;
     }
 
     time_t secondsFromEpoch32 = static_cast<time_t>(sec);
 
-    bool ret = ConvertFromEpoch(secondsFromEpoch32);
+    bool ret = ConvertFromEpoch(static_cast<oslong>(secondsFromEpoch32));
 
     return ret;
 }
@@ -85,12 +86,12 @@ bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
     if (localtime_s(&tValues, static_cast<const time_t*>(&secondsFromEpochTimeT)) != 0) {
         return false;
     }
-    seconds = tValues.tm_sec;
-    minutes = tValues.tm_min;
-    hours = tValues.tm_hour;
-    days = tValues.tm_mday - 1u;
-    month = tValues.tm_mon;
-    year = tValues.tm_year + 1900u;
+    seconds = static_cast<uint32>(tValues.tm_sec);
+    minutes = static_cast<uint32>(tValues.tm_min);
+    hours = static_cast<uint32>(tValues.tm_hour);
+    days = static_cast<uint32>(tValues.tm_mday - 1u);
+    month = static_cast<uint32>(tValues.tm_mon);
+    year = static_cast<uint32>(tValues.tm_year + 1900u);
 
     return true;
 }

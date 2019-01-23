@@ -29,8 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "StringHelperTest.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 #include "StringTestHelper.h"
 
 /*---------------------------------------------------------------------------*/

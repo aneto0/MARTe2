@@ -31,9 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 #include "StreamTestHelper.h"
 #include "DoubleBufferedStream.h"
+#include "../../../../Source/Core/BareMetal/L0Types/GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

@@ -511,7 +511,7 @@ protected:
     /**
      * The gamHeap that is used to malloc the input and output signals.
      */
-    HeapI *gamHeap;
+    HeapManager::HeapId gamHeap;
 
     /**
      * Accelerator reference for the inputSignalsDatabaseNode.

@@ -40,8 +40,6 @@
 #include "LinkedListHolderT.h"
 #include "ClassRegistryIndex.h"
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -259,7 +257,7 @@ private:
 
 template <class T>
  ClassRegistryItem *ClassRegistryItem::Instance(){
-	bool generic = !isSameOrBaseOf(Object,T);
+//	bool generic = !isSameOrBaseOf(Object,T);
 //TODO handle generic
     /**
      * static variable. not automatic! persistent across calls
@@ -270,7 +268,7 @@ template <class T>
     /// first time will go inside here
     if (instance == NULL_PTR(ClassRegistryItem *)) {
 
-    	T *dummy;
+//    	T *dummy;
         /// all common code here
         instance = new ClassRegistryItem(typeid(T).name(),sizeof(T) );
 

@@ -105,7 +105,7 @@ int32 Compare(CCString  const string1,CCString  const string2) {
 
     if ((!string1.IsNullPtr()) && (!string2.IsNullPtr())) {
         bool end = false;
-        int32 i = 0;
+        uint32 i = 0;
         while (!end) {
             char8 c1 = string1[i];
             char8 c2 = string2[i];
@@ -183,16 +183,22 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
 
         // next character to be processed;
         char8 c = string[0];
+        // prepare tool to speed up appending to DynamicCString
+        CStringTool tokenST = token();
 
         while ((c!=0) && (SearchChar(delimiters,c).IsNullPtr()) ){
-        	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
+        	if (SearchChar(skip,c).IsNullPtr())	{
+        		tokenST.Append(c);
+        	}
             inputIndex++;
             c = string[inputIndex];
         }
 
         // skip separator - to save time avoid calling CompareN - check other reason to have terminated previous loop
         if (c!=0 && (!keepTerm || (token.GetSize()==0))) {
-        	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
+        	if (SearchChar(skip,c).IsNullPtr())	{
+        		tokenST.Append(c);
+        	}
             inputIndex++;
         }
 
@@ -207,8 +213,8 @@ CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const
 static int32 Match(CCString const string, ZeroTerminatedArray<const CCString> const matches){
 	int32 index = 0;
 	bool found = false;
-	while (!matches[index].IsNullPtr()  && ! found){
-		found = (CompareN(matches[index],string,matches[index].GetSize())==0);
+	while (!matches[static_cast<uint32>(index)].IsNullPtr()  && ! found){
+		found = (CompareN(matches[static_cast<uint32>(index)],string,matches[static_cast<uint32>(index)].GetSize())==0);
 		index++;
 	}
 	if (!found){
@@ -231,11 +237,14 @@ CCString  Tokenize( CCString  const string,
     const char8 *stringP = string.GetList();
     if ((stringP != NULL_PTR(char8 *)) && (!delimiters.IsNullPtr()) ) {
 
+    	// prepare tool to speed up appending to DynamicCString
+        CStringTool tokenST = token();
+
         // next character to be processed;
         char8 c = *stringP;
         limit = Match(stringP,delimiters);
         while ((c!=0) && (limit < 0) ){
-        	if (SearchChar(skip,c).IsNullPtr())	token.Append(c);
+        	if (SearchChar(skip,c).IsNullPtr())	tokenST.Append(c);
         	stringP++;
             c = *stringP;
             if (c!= 0) {
@@ -244,7 +253,7 @@ CCString  Tokenize( CCString  const string,
         }
         // consume terminator
         if (limit >= 0) {
-        	CCString matchS = delimiters[limit];
+        	CCString matchS = delimiters[static_cast<uint32>(limit)];
         	stringP += matchS.GetSize();
         }
 
@@ -265,16 +274,16 @@ int32 SearchIndex(CCString  const string1, CCString  const string2) {
     if ((!string1.IsNullPtr()) && (!string2.IsNullPtr())) {
         bool end1 = false;
         bool end2 = false;
-        int32 i = 0;
+        uint32 i = 0;
         while (!end1) {
-            int32 j = 0;
+            uint32 j = 0;
             end2 = false;
             while (!end2) {
 
                 if ((string1[i] == string2[j]) || (string1[i] == '\0')) {
                     end1 = true;
                     end2 = true;
-                    ret = i;
+                    ret = static_cast<int32>(i);
                 }
                 if (string2[j] == '\0') {
                     end2 = true;

@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "Logger.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -20,11 +20,15 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
+
+#define DLL_API
+
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
 #include "StreamString.h"
 #include "BitSetToInteger.h"
 #include "StringToNumber.h"
+#include "CompositeErrorManagement.h"
 
 namespace MARTe{
 
@@ -52,7 +56,7 @@ public:
 		 bool outOfRange = false;
 		 const Tsource *sourcet = reinterpret_cast<const Tsource *>(source);
 		 Tdest *destt = reinterpret_cast<Tdest *>(dest);
-		 for (int i = 0;(i<numberOfElements)&&ret;i++){
+		 for (uint32 i = 0u;(i < numberOfElements)&&ret;i++){
 			 Tsource src = sourcet[i];
 			 // more bits in the input format. Might need to saturate
 			 if (TypeCharacteristics<Tsource>::UsableBitSize()>TypeCharacteristics<Tdest>::UsableBitSize()){
@@ -74,15 +78,7 @@ public:
 				 if (compare){
 					 if (destt[i] != dst){
 						 ret.comparisonFailure = true;
-						 DynamicCString errM;
-						 errM.Append('@');
-						 errM.Append(i);
-						 errM.Append('(');
-						 errM.Append(destt[i]);
-						 errM.Append(',');
-						 errM.Append(dst);
-						 errM.Append(')');
-						 REPORT_ERROR(ret,errM);
+						 COMPOSITE_REPORT_ERROR(ret,'@',i,'(',destt[i],',',dst,')');
 					 }
 				 } else {
 					 destt[i] = dst;
@@ -100,6 +96,7 @@ protected:
 	 */
 	bool compare;
 
+private:
 };
 
 template <typename Tsource,typename Tdest>
@@ -110,11 +107,11 @@ public:
 	 * @brief constructor
 	 */
 	BitSet2BitSetTCO(TypeDescriptor sourceTd,TypeDescriptor destTd,bool isCompare): compare(isCompare){
-		srcNumberBitSize  = sourceTd.numberOfBits;
-		srcNumberBitShift = sourceTd.bitOffset;
+		srcNumberBitSize  = static_cast<uint8>(sourceTd.numberOfBits);
+		srcNumberBitShift = static_cast<uint8>(sourceTd.bitOffset);
 		srcIsSigned       = sourceTd.IsSigned();
-		dstNumberBitSize  = destTd.numberOfBits;
-		dstNumberBitShift = destTd.bitOffset;
+		dstNumberBitSize  = static_cast<uint8>(destTd.numberOfBits);
+		dstNumberBitShift = static_cast<uint8>(destTd.bitOffset);
 		dstIsSigned       = destTd.IsSigned();
 	}
 
@@ -128,16 +125,16 @@ public:
 		 bool outOfRange = false;
 		 const Tsource *sourcet = reinterpret_cast<const Tsource *>(source);
 		 Tdest *destt = reinterpret_cast<Tdest *>(dest);
-		 for (int i = 0;(i<numberOfElements)&&ret;i++){
+		 for (uint32 i = 0u;(i < numberOfElements)&&ret;i++){
 			 // saturation is already performed by BStoBS
 			 // choosing larger integer should suffice
 			 // signedness does not matter as dealt by BStoBS anyway
 			 if (sizeof(Tsource)>sizeof(Tdest)){
 				 Tsource tmp;
 				 BSToBS(&tmp,dstNumberBitShift,dstNumberBitSize,dstIsSigned,sourcet+i,srcNumberBitShift,srcNumberBitSize,srcIsSigned);
-				 destt[i] = tmp;
+				 destt[i] = static_cast<Tdest>(tmp);
 			 } else {
-				 Tdest tmp = sourcet[i];
+				 Tdest tmp = static_cast<Tdest>(sourcet[i]);
 				 BSToBS(destt+i,dstNumberBitShift,dstNumberBitSize,dstIsSigned,&tmp,srcNumberBitShift,srcNumberBitSize,srcIsSigned);
 			 }
 // TODO Add Compare function
@@ -190,8 +187,8 @@ public:
 	 * @brief constructor
 	 */
 	BitSet2NumberTCO(TypeDescriptor td,bool isCompare): compare(isCompare){
-		numberBitSize  = td.numberOfBits;
-		numberBitShift = td.bitOffset;
+		numberBitSize  = static_cast<uint8>(td.numberOfBits);
+		numberBitShift = static_cast<uint8>(td.bitOffset);
 		isSigned = td.IsSigned();
 	}
 
@@ -206,11 +203,11 @@ public:
 		 bool outOfRange = false;
 		 const Tsource *sourcet = reinterpret_cast<const Tsource *>(source);
 		 Tdest *destt = reinterpret_cast<Tdest *>(dest);
-		 for (int i = 0;(i<numberOfElements)&&ret;i++){
+		 for (uint32 i = 0u;(i < numberOfElements)&&ret;i++){
 			 Tsource src;
 			 BSToBS(&src,0,sizeof(Tsource)*8,isSigned,sourcet+i,numberBitShift,numberBitSize,isSigned);
-			 const uint8 usableBitSize = isSigned ? numberBitSize-1 :numberBitSize;
-			 const uint8 usableNegativeBitSize = isSigned ? numberBitSize-1 :0;
+			 const uint8 usableBitSize = isSigned ? static_cast<uint8>(numberBitSize-1u) :numberBitSize;
+			 const uint8 usableNegativeBitSize = isSigned ? static_cast<uint8>(numberBitSize-1u) :0u;
 
 			 // more bits in the input format. Might need to saturate
 			 if (usableBitSize > TypeCharacteristics<Tdest>::UsableBitSize()){
@@ -232,15 +229,8 @@ public:
 				 if (compare){
 					 if (destt[i] != dst){
 						 ret.comparisonFailure = true;
-						 DynamicCString errM;
-						 errM.Append('@');
-						 errM.Append(i);
-						 errM.Append('(');
-						 errM.Append(destt[i]);
-						 errM.Append(',');
-						 errM.Append(dst);
-						 errM.Append(')');
-						 REPORT_ERROR(ret,errM);
+						 COMPOSITE_REPORT_ERROR(ret,'@',i,'(',destt[i],',',dst,')');
+
 					 }
 
 				 } else {
@@ -282,8 +272,8 @@ public:
 	 * @brief constructor
 	 */
 	Number2BitSetTCO(TypeDescriptor td,bool isCompare): compare(isCompare){
-		numberBitSize  = td.numberOfBits;
-		numberBitShift = td.bitOffset;
+		numberBitSize  = static_cast<uint8>(td.numberOfBits);
+		numberBitShift = static_cast<uint8>(td.bitOffset);
 		isSigned = td.IsSigned();
 	}
 
@@ -298,7 +288,7 @@ public:
 		 bool outOfRange = false;
 		 const Tsource *sourcet = reinterpret_cast<const Tsource *>(source);
 		 Tdest *destt = reinterpret_cast<Tdest *>(dest);
-		 for (int i = 0;(i<numberOfElements)&&ret;i++){
+		 for (uint32 i = 0u;(i < numberOfElements)&&ret;i++){
 			 Tsource src = sourcet[i];
 
 			 // more bits in the input format. Might need to saturate
@@ -324,15 +314,7 @@ public:
 					 BSToBS(&tmp,0,sizeof(Tdest)*8,isSigned,destt+i,numberBitShift,numberBitSize,isSigned);
 					 if (tmp != dst){
 						 ret.comparisonFailure = true;
-						 DynamicCString errM;
-						 errM.Append('@');
-						 errM.Append(i);
-						 errM.Append('(');
-						 errM.Append(destt[i]);
-						 errM.Append(',');
-						 errM.Append(dst);
-						 errM.Append(')');
-						 REPORT_ERROR(ret,errM);
+						 COMPOSITE_REPORT_ERROR(ret,'@',i,'(',destt[i],',',dst,')');
 					 }
 				 } else {
 					 BSToBS(destt+i,numberBitShift,numberBitSize,isSigned,&dst,0,sizeof(Tdest)*8,isSigned);
@@ -365,7 +347,7 @@ protected:
 
 };
 
-class NumericConversionFactory: TypeConversionFactoryI{
+class NumericConversionFactory: public TypeConversionFactoryI{
 
 public:
 
@@ -388,10 +370,9 @@ public:
 
 private:
 
-} sameTypeConversionFactory;
+} numericConversionFactory;
 
 NumericConversionFactory::NumericConversionFactory(){
-	TypeConversionManager::Instance().Register(this);
 }
 
 NumericConversionFactory::~NumericConversionFactory(){
@@ -607,6 +588,23 @@ TypeConversionOperatorI *NumericConversionFactory::GetOperator(const TypeDescrip
 	return tco;
 }
 
+
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(NumericConversionFactory,("TCMService",emptyString),("TCMDataBase",emptyString))
+
+ErrorManagement::ErrorType NumericConversionFactoryStartup::Init(){
+	ErrorManagement::ErrorType ret;
+	ret.initialisationError = !TypeConversionManager::Register(&numericConversionFactory);
+
+	return ret;
+}
+
+ErrorManagement::ErrorType NumericConversionFactoryStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	TypeConversionManager::Clean();
+
+	return ret;
+}
 
 
 } //MARTe

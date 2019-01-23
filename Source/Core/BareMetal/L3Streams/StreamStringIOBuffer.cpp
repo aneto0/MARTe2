@@ -98,7 +98,7 @@ bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
     return ret;
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
+bool StreamStringIOBuffer::NoMoreSpaceToWrite(uint32 neededSize) {
 
     bool ret;
 

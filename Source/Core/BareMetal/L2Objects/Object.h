@@ -329,7 +329,7 @@ private:
     /**
      * The name of this object.
      */
-    CString objectName;
+    DynamicCString objectName;
 
     /**
      * Specifies if the object is a domain

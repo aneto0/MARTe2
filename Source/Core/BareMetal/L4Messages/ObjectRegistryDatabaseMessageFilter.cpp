@@ -52,21 +52,21 @@ ObjectRegistryDatabaseMessageFilter::~ObjectRegistryDatabaseMessageFilter() {
 
 }
 
-
-
 ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(ReferenceT<Message> &messageToTest) {
     ErrorManagement::ErrorType ret;
     ret.parametersError = !messageToTest.IsValid();
     REPORT_ERROR(ret, "Invalid messageToTest");
 
-    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+    ReferenceT<ReferenceContainer> ord = ObjectRegistryDatabase::Access();
+    ReferenceT<ReferenceContainer> rootNode;
     ReferenceT<StructuredDataI> params;
 
     //Do not do this rootNode = ReferenceT<ReferenceContainer>(ord) as otherwise the smart pointer implementation would destroy the ObjectRegistryDatabase!
-    Object *rootNode = NULL_PTR(Object *);
+    //Object *rootNode = NULL_PTR(Object *);
 
     CCString function = messageToTest->GetFunction();
     DynamicCString rootNodeStr;
+    bool operatesOnRoot = true;
 
     if (ret) {
         params = messageToTest->Get(0u);
@@ -80,52 +80,33 @@ ErrorManagement::ErrorType ObjectRegistryDatabaseMessageFilter::ConsumeMessage(R
             rootNodeStr = "root";
         }
         else {
-            ReferenceT<Object> foundNode = ord->Find(rootNodeStr);
-            ret.parametersError = !foundNode.IsValid();
+            rootNode = ObjectRegistryDatabase::Find(rootNodeStr);
+            ret.parametersError = !rootNode.IsValid();
         	COMPOSITE_REPORT_ERROR(ret, "Could not find the node with name ", rootNodeStr);
-            if (ret) {
-                rootNode = foundNode.operator ->();
-            }
+        	operatesOnRoot = false;
         }
     }
+
     //lint -e{613} the rootNode cannot be NULL as otherwise err.ErrorsCleared() would be false.
     if (ret) {
         if (function == "purge") {
-            if (rootNode == ord) {
-                ord->Purge();
-            }
-            else {
-                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr);
-                if (rcNode.IsValid()) {
-                    rcNode->Purge();
-                }
+            rootNode->Purge();
+            if (!operatesOnRoot) {
                 ret.fatalError = !ord->Delete(rootNodeStr);
             }
         }
         else if (function == "load") {
-            ReferenceContainer *rootNodePtr = ord;
-            if (rootNode == ord) {
-                rootNodePtr = ord;
-            }
-            else {
-                ReferenceT<ReferenceContainer> rcNode = ord->Find(rootNodeStr);
-                ret.fatalError = !rcNode.IsValid();
-                REPORT_ERROR(ret, "The configuration shall be applied to a ReferenceContainer");
-                if (ret) {
-                    rootNodePtr = rcNode.operator ->();
-                }
-            }
             if (ret) {
                 ret.parametersError = !params.IsValid();
                 REPORT_ERROR(ret, "No configuration data found in the message");
             }
             if (ret) {
-                ReferenceT<ReferenceContainer> rc(buildNow);
-                ret.fatalError = !rc->Initialise(*params.operator ->());
+                ReferenceT<ReferenceContainer> container(HeapManager::standardHeapId);
+                ret.fatalError = !container->Initialise(*params.operator ->());
                 uint32 i;
-                uint32 nElements = rc->Size();
+                uint32 nElements = container->Size();
                 for (i = 0u; (ret) && (i < nElements); i++) {
-                    ret.fatalError = !rootNodePtr->Insert(rc->Get(i));
+                    ret.fatalError = !rootNode->Insert(container->Get(i));
                 }
             }
         }

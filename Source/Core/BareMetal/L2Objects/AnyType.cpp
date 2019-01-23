@@ -61,7 +61,6 @@ ErrorManagement::ErrorType AnyType::Dereference (uint32 index){
 
 ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 
-
 	ErrorManagement::ErrorType ret;
 
 	// check field
@@ -81,17 +80,10 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 		COMPOSITE_REPORT_ERROR(ret,"cannot switch to ",field," in a non structured variable");
 	}
 
-	// find structure documentation
-	ClassRegistryDatabase *crd= NULL_PTR(ClassRegistryDatabase *);
-	if (ret){
-		crd = ClassRegistryDatabase::Instance();
-		ret.internalSetupError = (crd == NULL_PTR(ClassRegistryDatabase *));
-		REPORT_ERROR(ret,"Cannot access ClassRegistryDatabase");
-	}
 
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	if (ret){
-		cri = crd->Find(td);
+		cri = ClassRegistryDatabase::Find(td);
 		ret.unsupportedFeature = (cri == NULL_PTR(ClassRegistryItem *));
 		REPORT_ERROR(ret,"Cannot access ClassRegistryitem for class");
 	}

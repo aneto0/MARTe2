@@ -35,6 +35,8 @@
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
 #include "StringToNumber.h"
+#include "StaticCString.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

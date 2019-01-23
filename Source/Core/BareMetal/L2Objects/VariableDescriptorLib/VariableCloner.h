@@ -51,7 +51,7 @@ namespace VariableDescriptorLib{
 /**
  * Internal class to support Clone function
  */
-DLL_API class VariableCloner{
+class DLL_API VariableCloner{
 public:
 	/**
 	 * @brief constructor: only initialises handler
@@ -93,6 +93,8 @@ public:
 	 * Data is finally encoded as zero term strings
 	 */
 	bool							isString;
+
+	void operator=(VariableCloner &data){}
 };
 
 

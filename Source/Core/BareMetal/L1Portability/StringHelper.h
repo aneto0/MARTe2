@@ -32,12 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
 #include "CString.h"
 #include "CCString.h"
-#include "StaticCString.h"
 #include "DynamicCString.h"
+#include "GeneralDefinitions.h"
 
 
 /*---------------------------------------------------------------------------*/

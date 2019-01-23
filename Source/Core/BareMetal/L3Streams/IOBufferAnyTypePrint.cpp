@@ -198,10 +198,9 @@ DLL_API bool IOBuffer::PrintAnyType(IOBuffer &iobuff, FormatDescriptor fd, const
 				// print this as default
 				if (printAsACast){
 					DynamicCString line;
-					line.Append('(');
+					line().Append('(');
 					ret = vd.ToString(line);
-					line.Append(')');
-					line.Append('?');
+					line().Append(")?");
 
 					if (ret){
 						ret = PrintCCStringFit(iobuff,line,fd);

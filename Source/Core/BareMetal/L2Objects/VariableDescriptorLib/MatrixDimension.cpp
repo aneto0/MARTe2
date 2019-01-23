@@ -31,9 +31,10 @@
 #include "MatrixDimension.h"
 #include "MemoryCheck.h"
 #include "Matrix.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "CompositeErrorManagement.h"
 #include "VariableDescriptorLib.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -130,7 +131,7 @@ ErrorManagement::ErrorType MatrixDimension::ReSize(
         COMPOSITE_REPORT_ERROR(ret, "total size overflow: NCol = ",numberOfColumns,"NRows = ",numberOfRows);
     }
 
-    uint8 *newMemory;
+    uint8 *newMemory = NULL_PTR(uint8 *);
 	if (ret){
 		// allocate memory
 		newMemory = reinterpret_cast<uint8 *>(HeapManager::Malloc(totalAllocationSize));
@@ -172,7 +173,7 @@ ErrorManagement::ErrorType MatrixDimension::InitStack(
 
 	if (ret){
 		Matrix<char8 >* mptr = reinterpret_cast<Matrix<char8 >* >(ptr);
-		for (int i = 0; i< n;i++){
+		for (uint32 i = 0; i< n;i++){
 			mptr->InitMatrix(NULL,0,0);
 			mptr++;
 		}

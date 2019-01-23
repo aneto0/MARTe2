@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "../../../../Source/Core/BareMetal/L0Types/GeneralDefinitions.h"
 
 using namespace MARTe;
 

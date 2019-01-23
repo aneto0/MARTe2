@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STATICZEROTERMINATEDARRAY_H_
-#define STATICZEROTERMINATEDARRAY_H_
+#ifndef STATIC_ZEROTERMINATEDARRAY_H_
+#define STATIC_ZEROTERMINATEDARRAY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,6 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
 /**
  * @brief Describes a zero-terminated TArray().
@@ -101,13 +102,11 @@ public:
      */
     inline bool Append(const ZeroTerminatedArray<const T> &data);
 
-
     /**
      * @brief shrinks the TArray() size to the minimum between newSize and the current size
      * @return false if realloc fails
      */
     inline bool Truncate(uint32 newSize);
-
 
 protected:
     /**
@@ -125,7 +124,6 @@ template<typename T,uint32 size>
 void const *&StaticZeroTerminatedArray<T,size>::VoidArray(){
     return ZeroTerminatedArray<T>::VoidArray();
 }
-
 
 template<typename T,uint32 size>
 StaticZeroTerminatedArray<T,size>::StaticZeroTerminatedArray(T (& vector) [size]) :ZeroTerminatedArray<T>(){

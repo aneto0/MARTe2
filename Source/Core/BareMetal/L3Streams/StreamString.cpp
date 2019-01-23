@@ -140,7 +140,7 @@ uint64 StreamString::Size() const {
     return buffer.UsedSize();
 }
 
-bool StreamString::Seek(const uint64 pos) {
+bool StreamString::Seek(uint64 pos) {
     bool retval = true;
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
@@ -171,7 +171,8 @@ uint64 StreamString::Position() const {
     return buffer.Position();
 }
 
-bool StreamString::SetSize(const uint64 size) {
+bool StreamString::SetSize(uint64 size) {
+// TODO check limits
     return buffer.SetBufferAllocationSize(static_cast<uint32>(size) + 1u);
 }
 

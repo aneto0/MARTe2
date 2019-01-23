@@ -134,6 +134,10 @@ private:
 		 */
 		inline void Clean();
 
+	private:
+
+		void operator=(const SizeStack&){}
+
 	};
 
 	/**
@@ -224,7 +228,7 @@ private:
 	/**
 	 * vectorSize*matrixRowSize or something less for sparse matrices
 	 */
-	uint64 numberOfElements;
+	uint32 numberOfElements;
 
 	/**
 	 * The object containing the memory
@@ -257,6 +261,10 @@ private:
 	 * As set by the user. Different from defaultPageSize that has potentially grown
 	 */
 	uint32 originalPageSize;
+
+private:
+
+	void operator=(const ProgressiveTypeCreator&){}
 
 };
 

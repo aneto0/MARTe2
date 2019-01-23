@@ -175,7 +175,7 @@ BalancedTreeNode::BalancedTreeNode(){
  * positive if greater tree is bigger
  */
 int32 BalancedTreeNode::TreeSizeImbalance()const{
-	return GreaterSize() - SmallerSize();
+	return static_cast<int32>(GreaterSize()) - static_cast<int32>(SmallerSize());
 }
 
 /*
@@ -183,7 +183,7 @@ int32 BalancedTreeNode::TreeSizeImbalance()const{
  * positive if greater tree is taller
  */
 int32 BalancedTreeNode::TreeDepthImbalance()const{
-	return GreaterDepth() - SmallerDepth();
+	return static_cast<int32>(GreaterDepth()) - static_cast<int32>(SmallerDepth());
 }
 
 /**

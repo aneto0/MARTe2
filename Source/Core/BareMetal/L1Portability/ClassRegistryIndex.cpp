@@ -31,7 +31,7 @@
 
 #include "ErrorManagement.h"
 #include "ClassRegistryIndex.h"
-#include "GlobalObjectsDatabase.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,31 +43,22 @@
 
 namespace MARTe {
 
-ClassRegistryIndex::ClassRegistryIndex(){
 
-}
+ClassRegistryIndex::ClassRegistryIndex(){}
 
-ClassRegistryIndex::~ClassRegistryIndex(){
+ClassRegistryIndex::~ClassRegistryIndex(){}
 
-}
 
 ClassRegistryIndex *ClassRegistryIndex::Instance() {
     static ClassRegistryIndex *instance = NULL_PTR(ClassRegistryIndex *);
     if (instance == NULL_PTR(ClassRegistryIndex *)) {
-        instance = new ClassRegistryIndex();
-        uint32 order = NUMBER_OF_GLOBAL_OBJECTS - 4u;
-        GlobalObjectsDatabase::Instance().Add(instance, order);
+        instance = new(HeapManager::singletonHeapId) ClassRegistryIndex();
     }
     return instance;
 }
 
-CCString ClassRegistryIndex::GetClassName() const{
-	return "ClassRegistryIndex";
 
-}
-
-
-ClassRegistryBrief * ClassRegistryIndex::operator[] (uint32 classRegistrationNo){
+ClassRegistryItemI * ClassRegistryIndex::operator[] (uint32 classRegistrationNo){
 	uint32 ix1 = classRegistrationNo >> IndexBits;
 	uint32 ix2 = classRegistrationNo &  IndexCellMask;
 
@@ -80,52 +71,37 @@ ClassRegistryBrief * ClassRegistryIndex::operator[] (uint32 classRegistrationNo)
 	if (ret){
 		ret = (ix2 < table->NumberOfUsedElements());
 	}
-	ClassRegistryBrief * crb = NULL_PTR(ClassRegistryBrief *);
+	ClassRegistryItemI * cri = NULL_PTR(ClassRegistryItemI *);
 	if (ret){
-		crb = &(*table)[ix2];
+		cri = (*table)[ix2];
 	}
 
-	return crb;
+	return cri;
 }
 
 uint32 ClassRegistryIndex::GetClassSize (uint32 classRegistrationNo){
-	ClassRegistryBrief *crb =  (*this)[classRegistrationNo];
+	ClassRegistryItemI *crii =  (*this)[classRegistrationNo];
 	uint32 size = 0;
-	if (crb != NULL){
-		size = crb->GetSizeOfClass();
+	if (crii != NULL){
+		size = crii->GetSizeOfClass();
 	}
 	return size;
 }
 
 TypeDescriptor ClassRegistryIndex::GetTypeDescriptor(CCString name){
 	TypeDescriptor td = InvalidType(0);
-	for (int i = 0; (i < NumberOfRegisteredClasses()) && (td.all == InvalidType(0).all); i++){
-		ClassRegistryBrief *crb =  (*this)[i];
-		if (crb != NULL){
-			if (crb->crii != NULL){
-				CCString className = crb->crii->GetClassName();
-				if (name.isSameAs(className.GetList())){
-					td = crb->crii->GetTypeDescriptor();
-				}
+	for (uint32 i = 0u; (i < NumberOfRegisteredClasses()) && (td.all == InvalidType(0).all); i++){
+		ClassRegistryItemI *crii =  (*this)[i];
+		if (crii != NULL){
+			CCString className = crii->GetClassName();
+			if (name.isSameAs(className.GetList())){
+				td = crii->GetTypeDescriptor();
 			}
 		}
 	}
 	return td;
 }
 
-ClassRegistryItem *  ClassRegistryIndex::GetClassRegistryItem (uint32 classRegistrationNo){
-	ClassRegistryBrief *crb =  (*this)[classRegistrationNo];
-	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
-	if (crb != NULL){
-//		// works only if ClassRegistryItemI is the sole ancestor of ClassRegistryItem
-//		cri = reinterpret_cast<ClassRegistryItem *>(crb->crii);
-		if (crb->crii != NULL){
-			cri = crb->crii->GetBasePtr();
-		}
-	}
-	return cri;
-
-}
 
 uint32 ClassRegistryIndex::NumberOfRegisteredClasses(){
 	uint32 no = 0;
@@ -167,17 +143,13 @@ uint32 ClassRegistryIndex::AllocateFreeSlots(){
 	return value;
 }
 
-#include <stdio.h>
 uint32 ClassRegistryIndex::Add(ClassRegistryItemI *criIn,uint32 size){
 	uint32 no = 0xFFFFFFFF;
 	uint32 availableSize = AllocateFreeSlots();
 	if (availableSize > 0){
 		ClassRegistryIndexCell *cric = index[index.NumberOfUsedElements() - 1];
 		if (cric != NULL){
-			ClassRegistryBrief crb;
-//			crb.sizeOfClass = size;
-			crb.crii = criIn;
-			cric->Add(crb);
+			cric->Add(criIn);
 			no = (index.NumberOfUsedElements()-1) << IndexBits;
 			no += (cric->NumberOfUsedElements() - 1);
 

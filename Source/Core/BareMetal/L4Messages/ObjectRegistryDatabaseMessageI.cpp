@@ -42,7 +42,7 @@
 
 namespace MARTe {
 ObjectRegistryDatabaseMessageI::ObjectRegistryDatabaseMessageI() : MessageI(), Object() {
-    ReferenceT<ObjectRegistryDatabaseMessageFilter> filter = ReferenceT<ObjectRegistryDatabaseMessageFilter>(buildNow);
+    ReferenceT<ObjectRegistryDatabaseMessageFilter> filter = ReferenceT<ObjectRegistryDatabaseMessageFilter>(HeapManager::standardHeapId);
     ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
     REPORT_ERROR(ret, "Failed to install message filters");
 }

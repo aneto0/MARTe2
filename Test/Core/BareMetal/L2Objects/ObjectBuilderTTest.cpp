@@ -34,7 +34,7 @@
 #include "ObjectBuilderTTest.h"
 
 #include "GlobalObjectsDatabase.h"
-#include "HeapI.h"
+#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
 #include "Object.h"
 #include "ObjectBuilderT.h"
 

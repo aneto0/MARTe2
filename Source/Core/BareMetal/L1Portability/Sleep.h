@@ -34,10 +34,10 @@
 
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
-#include "OSInitializer.h"
 #include "MicroSeconds.h"
 #include "MilliSeconds.h"
 #include "Ticks.h"
+#include "TimeCalibration.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -153,7 +153,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 void Sleep::NoMore(const MicroSeconds &time) {
-	DoSleep(time, OSInitializer::osMinSleepUsec,OSInitializer::osSleepTicks);
+	DoSleep(time, TimeCalibration::osMinSleepUsec,TimeCalibration::osSleepTicks);
 }
 
 template<typename bT, class uT>
@@ -182,7 +182,7 @@ void Sleep::Short(bT time,const uT &units){
 
 void Sleep::Busy(const MicroSeconds &time) {
 	Ticks tTime(time);
-	DoSleep(time, 0.0F,tTime.GetTimeRaw());
+	DoSleep(time, 0u,tTime.GetTimeRaw());
 }
 
 template<typename bT, class uT>
@@ -192,7 +192,7 @@ void Sleep::Busy(bT time,const uT &units){
 
 void Sleep::SemiBusy(const MicroSeconds &totalTime,const MicroSeconds &nonBusyTime) {
 	Ticks nbTime(nonBusyTime);
-	DoSleep(totalTime, OSInitializer::osMinSleepUsec,nbTime.GetTimeRaw());
+	DoSleep(totalTime, TimeCalibration::osMinSleepUsec,nbTime.GetTimeRaw());
 }
 
 void Sleep::DoSleep(const MicroSeconds &totalTime,uint32 atomUsSleep,uint64 minBusyTicks) {

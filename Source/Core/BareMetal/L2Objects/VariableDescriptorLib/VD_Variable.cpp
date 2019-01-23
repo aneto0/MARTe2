@@ -107,7 +107,6 @@ static inline bool isLowerCase(char8 c){
 }
 
 Variable::Variable(CCString modifiers,TypeDescriptor tdIn){
-//printf("%s = ",modifiers.GetList());
 
 	firstDimension = NULL;
 	td = tdIn;

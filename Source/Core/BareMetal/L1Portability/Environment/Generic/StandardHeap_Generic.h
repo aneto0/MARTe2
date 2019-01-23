@@ -28,6 +28,8 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "HeapI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -43,16 +45,8 @@ namespace MARTe{
  * memory dynamically in the heap memory area using the standard C functions
  * (malloc, realloc, free, ...).
  */
-class DLL_API StandardHeap: public HeapI {
+class DLL_API StandardHeap: public HeapManager::HeapI {
 
-    /**
-     * @brief The minor address returned by a Malloc function.
-     */
-    uintp firstAddress;
-    /**
-     * @brief The greater address returned by a Malloc function
-     */
-    uintp lastAddress;
 
 public:
 
@@ -91,34 +85,6 @@ public:
      */
     virtual void *Realloc(void *&data,
                           const uint32 newSize);
-
-    /**
-     * @brief Duplicates a memory section into a new area from the specified heap.
-     * @param[in] data The pointer to the memory which must be copied.
-     * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
-     * @return The pointer to the new allocated memory which contains a copy of s.
-     */
-    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
-    virtual void *Duplicate(const void * const data,
-                            uint32 size = 0U);
-
-    /**
-     * @brief Returns the start of range of memory addresses served by this heap.
-     * @return The start of range of memory addresses served by this heap.
-     */
-    virtual uintp FirstAddress() const;
-
-    /**
-     * @brief Returns the end (inclusive) of range of memory addresses served by this heap.
-     * @return The end (inclusive) of range of memory addresses served by this heap.
-     */
-    virtual uintp LastAddress() const;
-
-    /**
-     * @brief Returns the name of the heap
-     * @return The name of the heap
-     */
-    virtual CCString Name() const;
 
 };
 

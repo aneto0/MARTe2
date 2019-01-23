@@ -176,7 +176,7 @@ protected:
     /**
      * The HeapI to allocate the signal memory.
      */
-    HeapI *memoryHeap;
+    HeapManager::HeapId heapId;
 };
 
 }

@@ -52,8 +52,8 @@ namespace MARTe {
  *
  * The cast operator is overridden so that the class will behave as a basic type for mathematical operations.
  *
- * @tparam baseType the standard type which is used as a base for the new type
- * @tparam numberOfBits the actual size of the new type
+ * @tparam baseType the standard type which is used as a base for the novel type
+ * @tparam numberOfBits the actual size of the novel type
  *
  * @remark numberOfBits must be less than the number of bits of baseType (e.g. less than 64 for a uint64)
  */
@@ -179,7 +179,7 @@ public:
 	 * @return the type usable bit size.
 	 */
 	static const uint8 UsableBitSize() {
-		const uint8 nOfBits = (IsSigned())?numberOfBits-1:numberOfBits;
+		const uint8 nOfBits = (IsSigned())?static_cast<uint8>(numberOfBits-1):numberOfBits;
 	    return nOfBits;
 	}
 
@@ -190,7 +190,7 @@ public:
 	 * @return the type usable bit size.
 	 */
 	static const uint8 UsableNegativeBitSize() {
-		const uint8 nOfBits = (IsSigned())?numberOfBits-1:0;
+		const uint8 nOfBits = (IsSigned())?static_cast<uint8>(numberOfBits-1):0U;
 	    return nOfBits;
 	}
 };

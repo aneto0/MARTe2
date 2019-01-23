@@ -30,7 +30,7 @@
 
 #include "ZTADimension.h"
 #include "MemoryCheck.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "CompositeErrorManagement.h"
 #include "VariableDescriptorLib.h"
 
@@ -139,7 +139,7 @@ ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 	// calculate actual size of each ZTA
 	    REPORT_ERROR(ok, "diNext.elementSize is infinite/indefinite");
 		if (ok){
-			numberOfColumns = ZeroTerminatedArrayGetSize(ptr, nextElementSize);
+			numberOfColumns = ZeroTerminatedArrayStaticTools::ZTAGetSize(ptr, nextElementSize);
 		}
 	}
 

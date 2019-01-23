@@ -163,7 +163,7 @@ public:
     /**
      * @see StructuredDataI::MoveToAncestor
      */
-    virtual ErrorManagement::ErrorType MoveToAncestor(const uint32 generations);
+    virtual ErrorManagement::ErrorType MoveToAncestor(uint32 generations);
 
     /**
      * @see StructuredDataI::MoveAbsolute

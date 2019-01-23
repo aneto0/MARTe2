@@ -34,7 +34,6 @@
 #include "CompilerTypes.h"
 #include "BitBoolean.h"
 #include "BitRange.h"
-#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -67,31 +66,31 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
  * Any other flag represent a specific fatal error
  */
 #define ERROR_CONSTANT_MACRO(macrofun) 						      \
-		macrofun(FatalError,			fatalError,				0)\
-		macrofun(RecoverableError,		recoverableError,		1)\
-		macrofun(InitialisationError,	initialisationError,	2)\
-		macrofun(OSError,				OSError,				3)\
-		macrofun(ParametersError,		parametersError,		4)\
-		macrofun(IllegalOperation,		illegalOperation,		5)\
-		macrofun(ErrorSharing,			errorSharing,			6)\
-		macrofun(ErrorAccessDenied,		errorAccessDenied,		7)\
-		macrofun(Exception,				exception,				8)\
-		macrofun(Timeout,				timeout,				9)\
-		macrofun(CommunicationError,	communicationError,	   10)\
-		macrofun(SyntaxError,			syntaxError,		   11)\
-		macrofun(UnsupportedFeature,	unsupportedFeature,	   12)\
-		macrofun(InternalSetupError,	internalSetupError,	   13)\
-		macrofun(Debug,					debug,	               14)\
-		macrofun(Information,			information,		   15)\
-		macrofun(Warning,				warning,			   16)\
-		macrofun(Completed,             completed,			   17)\
-		macrofun(NotCompleted,          notCompleted,          18)\
-		macrofun(InvalidOperation,      invalidOperation,      19)\
-		macrofun(OutOfRange,            outOfRange,            20)\
-		macrofun(OutOfMemory,           outOfMemory,           21)\
-		macrofun(ComparisonFailure,     comparisonFailure,	   22)\
-		macrofun(InternalStateError,    internalStateError,	   23)\
-		macrofun(NotAnErrorCode,        notAnErrorCode,        31)
+		macrofun(FatalError,			fatalError,				0u)\
+		macrofun(RecoverableError,		recoverableError,		1u)\
+		macrofun(InitialisationError,	initialisationError,	2u)\
+		macrofun(OSError,				OSError,				3u)\
+		macrofun(ParametersError,		parametersError,		4u)\
+		macrofun(IllegalOperation,		illegalOperation,		5u)\
+		macrofun(ErrorSharing,			errorSharing,			6u)\
+		macrofun(ErrorAccessDenied,		errorAccessDenied,		7u)\
+		macrofun(Exception,				exception,				8u)\
+		macrofun(Timeout,				timeout,				9u)\
+		macrofun(CommunicationError,	communicationError,	   10u)\
+		macrofun(SyntaxError,			syntaxError,		   11u)\
+		macrofun(UnsupportedFeature,	unsupportedFeature,	   12u)\
+		macrofun(InternalSetupError,	internalSetupError,	   13u)\
+		macrofun(Debug,					debug,	               14u)\
+		macrofun(Information,			information,		   15u)\
+		macrofun(Warning,				warning,			   16u)\
+		macrofun(Completed,             completed,			   17u)\
+		macrofun(NotCompleted,          notCompleted,          18u)\
+		macrofun(InvalidOperation,      invalidOperation,      19u)\
+		macrofun(OutOfRange,            outOfRange,            20u)\
+		macrofun(OutOfMemory,           outOfMemory,           21u)\
+		macrofun(ComparisonFailure,     comparisonFailure,	   22u)\
+		macrofun(InternalStateError,    internalStateError,	   23u)\
+		macrofun(NotAnErrorCode,        notAnErrorCode,        31u)
 
 
 
@@ -104,7 +103,7 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
  *  macro function to be used with ERROR_CONSTANT_MACRO to generate macro constants
 */
 #define GENERATE_ERROR_CONSTANTS(errorName,dummy,bit)      \
-	static const ErrorIntegerFormat errorName =(1 << bit);
+	static const ErrorIntegerFormat errorName =(1u << bit);
 
 /**
  * the macro to signal no error!
@@ -121,29 +120,6 @@ ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
  */
 #define GENERATE_ERROR_BITRANGE(dummy,errorName,bit)    BitBoolean<ErrorIntegerFormat, bit> errorName;
 
-/**
- * To generate a field in the table of error lookup
- * depends from the ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
- */
-#define GENERATE_ERROR_LOOKUP(ErrorName,errorName,bit)    \
-        { #ErrorName, ErrorName},
-
-/**
- * Allow converting errors to strings
- */
-struct ErrorTypeLookup{
-	/**
-	 * The name of the error field
-	 */
-    CCString 			name;
-
-    /**
-     * The corresponding bit
-     */
-    ErrorIntegerFormat 	errorBitSet;
-};
-
-extern DLL_API ErrorTypeLookup errorTypeLookup[];
 
 
 /**

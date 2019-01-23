@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorManagement.h"
-#include "StandardHeap.h"
+#include "StandardHeap_Generic.h"
 #ifndef LINT
 #include <string.h>
 #endif
@@ -47,14 +47,9 @@
 namespace MARTe {
 
 StandardHeap::StandardHeap() {
-    /* initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
-    firstAddress = 0U;
-    lastAddress = 0U;
 }
 
 StandardHeap::~StandardHeap() {
-    lastAddress = 0U;
-    firstAddress = 0U;
 }
 
 /*lint -e{586} use of malloc function (deprecated) */
@@ -68,24 +63,9 @@ void *StandardHeap::Malloc(const uint32 size) {
         pointer = malloc(static_cast<osulong>(size));
     }
 
-    if (pointer != NULL) {
-
-        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-         * in order to be able to update the range of addresses provided by this heap
-         * uintp is an integer type that has by design the same span as a pointer in all systems*/
-        uintp address = reinterpret_cast<uintp>(pointer);
-        if ((firstAddress > address) || (firstAddress == 0U)) {
-            firstAddress = address;
-        }
-        address += size;
-        if ((lastAddress < address) || (lastAddress == 0U)) {
-            lastAddress = address;
-        }
-
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed Failed malloc()");
-    }
+    ErrorManagement::ErrorType err;
+    err.outOfMemory = (pointer == NULL);
+    REPORT_ERROR(err, "StandardHeap: Failed Failed malloc()");
     return pointer;
 
 }
@@ -95,9 +75,7 @@ void StandardHeap::Free(void *&data) {
     if (data != NULL) {
         free(data);
     }
-//    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
-//    free(data);
 }
 
 /*lint -e{586} use of realloc function (deprecated) */
@@ -113,91 +91,38 @@ void *StandardHeap::Realloc(void *&data,
         }
         else {
             data = realloc(data, static_cast<osulong>(newSize));
-            if (data != NULL) {
-                /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-                 * in order to be able to update the range of addresses provided by this heap
-                 * uintp is an integer type that has by design the same span as a pointer in all systems*/
-                uintp address = reinterpret_cast<uintp>(data);
-                if ((firstAddress > address) || (firstAddress == 0U)) {
-                    firstAddress = address;
-                }
-                address += newSize;
-                if ((lastAddress < address) || (lastAddress == 0U)) {
-                    lastAddress = address;
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed realloc()");
-            }
+            ErrorManagement::ErrorType err;
+            err.outOfMemory = (data == NULL);
+            REPORT_ERROR(err, "StandardHeap: Failed realloc()");
         }
     }
     return data;
 
 }
 
-/*lint -e{925} cast pointer to pointer required */
-void *StandardHeap::Duplicate(const void * const data,uint32 size) {
+namespace HeapManager{
 
-    void *duplicate = NULL_PTR(void *);
-
-    if (data != NULL) {
-        // check if 0 terminated copy to be done
-        if (size == 0U) {
-            const char8* inputData = static_cast<const char8 *>(data);
-            /*lint -e{586} the use of strlen is necessary because
-             * the size of the array is unknown */
-            size = static_cast<uint32>(strlen(inputData));
-            duplicate = strdup(inputData);
-
-            if (duplicate == NULL) {
-                REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed strdup()");
-            }
-        }
-        else { // strdup style
-            duplicate = StandardHeap::Malloc(size);
-            if (duplicate != NULL) {
-                const char8 *source = static_cast<const char8 *>(data);
-                char8 *destination = static_cast<char8 *>(duplicate);
-                uint32 i;
-                for (i = 0u; i < size; i++) {
-                    *destination = *source;
-                    destination++;
-                    source++;
-                } //copy loop
-            } //check Malloc success
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
-            }
-        } // copy bound by size
-
-        if (duplicate != NULL) {
-            /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-             * in order to be able to update the range of addresses provided by this heap
-             * uintp is an integer type that has by design the same span as a pointer in all systems*/
-            uintp address = reinterpret_cast<uintp>(duplicate);
-            if ((firstAddress > address) || (firstAddress == 0U)) {
-                firstAddress = address;
-            }
-            address += size;
-            if ((lastAddress < address) || (lastAddress == 0U)) {
-                lastAddress = address;
-            }
-        }
-    }
-
-    return duplicate;
+/**
+ * these pointers need to be defined and assigned somewhere if malloc or new are used during initialisation
+ */
+void *std_malloc(size_t size){
+	return malloc(size);
 }
 
-uintp StandardHeap::FirstAddress() const {
-    return firstAddress;
+/**
+ * these pointers need to be defined and assigned somewhere if free or delete are used
+ */
+void std_free(void *p){
+	free(p);
 }
 
-uintp StandardHeap::LastAddress() const {
-    return lastAddress;
+/**
+ * these pointers need to be defined and assigned somewhere if realloc is used
+ */
+void *std_realloc(void *p, size_t size){
+	return realloc(p,size);
 }
 
-CCString StandardHeap::Name() const {
-    return "StandardHeap";
 }
 
 }

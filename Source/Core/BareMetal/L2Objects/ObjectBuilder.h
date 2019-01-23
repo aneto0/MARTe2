@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HeapI.h"
+#include "../L0Types/HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -85,7 +85,7 @@ public:
      * be allocated.
      * @return a NULL pointer to MARTe::Object.
      */
-    virtual Object *Build(HeapI* const heap) const;
+    virtual Object *Build(HeapManager::HeapId heap) const;
 
 };
 
@@ -103,7 +103,7 @@ inline ObjectBuilder::ObjectBuilder() {
 inline ObjectBuilder::~ObjectBuilder() {
 }
 
-inline Object *ObjectBuilder::Build(HeapI* const heap) const {
+inline Object *ObjectBuilder::Build(HeapManager::HeapId heap) const {
     return NULL_PTR(Object *);
 }
 

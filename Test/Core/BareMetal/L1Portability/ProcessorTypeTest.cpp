@@ -30,8 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ProcessorTypeTest.h"
-#include "GeneralDefinitions.h"
 #include "stdio.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

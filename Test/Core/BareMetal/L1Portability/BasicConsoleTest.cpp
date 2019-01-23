@@ -29,10 +29,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "BasicConsoleTest.h"
 #include "StringTestHelper.h"
 #include "stdio.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/

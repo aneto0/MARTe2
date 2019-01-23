@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 #include "../../TimeStamp.h"
 #include "ErrorManagement.h"
-#include "../../OSInitializer.h"
+#include "../../TimerAndTime.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

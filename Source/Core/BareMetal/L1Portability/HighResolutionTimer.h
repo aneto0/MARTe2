@@ -32,11 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "OSInitializer.h"
 #include "TimeStamp.h"
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
+#include "GeneralDefinitions.h"
+#include "TimeCalibration.h"
 //#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
 
 /*---------------------------------------------------------------------------*/
@@ -85,11 +85,11 @@ namespace MARTe {
 /*---------------------------------------------------------------------------*/
 
         inline uint64 Frequency() {
-            return OSInitializer::frequency;
+            return TimeCalibration::frequency;
         }
 
         inline float64 Period() {
-            return OSInitializer::period;
+            return TimeCalibration::period;
          }
 #if 0
         inline float64 TicksToTime(const uint64 tStop,

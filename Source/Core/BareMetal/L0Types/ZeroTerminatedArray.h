@@ -33,54 +33,14 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CompilerTypes.h"
-
+#include "ZeroTerminatedArrayStaticTools.h"
+#include "ZeroTerminatedArrayToolT.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/**
- * @brief calculate the number of elements of any ZeroTermArray whose elements have size elSize
- * @param[in] pointer is the pointer to the data array
- * @param[in] elSize is the size of each element in the array
- * @return the number of elements until one with all zeroes is found
- */
-uint32 ZeroTerminatedArrayGetSize(const uint8 *pointer, uint32 elSize);
-
-/**
- * @brief checks if an element at a given position is all zeroes
- * @param[in] pointer is the pointer to the data array
- * @param[in] elSize is the size of each element in the array
- * @return true if all elements are zero
- */
-bool ZeroTerminatedArrayIsZero(const uint8 *pointer, uint32 elSize);
-
-
-/**
- * @brief Sets an element at a given location to zero
- * @param[in] pointer is the pointer to the data array
- * @param[in] elSize is the size of each element in the array
- */
-void ZeroTerminatedArrayZero(uint8 *pointer, uint32 elSize);
-
-/**
- * @brief searches for an element
- * @param[in] pointer is the pointer to the data array
- * @param[in] data is the pointer to the searched element
- * @param[in] elSize is the size of each element in the array
- * @return the location of the element or 0xFFFFFFFF if not found
- */
-uint32 ZeroTerminatedArrayFind(const uint8 *pointer,const uint8 *data, uint32 elSize);
-
-/**
- * @brief compares elements
- * @param[in] pointer is the pointer to the data array
- * @param[in] data is the pointer to the searched element
- * @param[in] elSize is the size of each element in the array
- * @return true if have same memory
- */
-bool ZeroTerminatedArrayIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize);
 
 /**
  * @brief Describes a zero-terminated array.
@@ -90,7 +50,7 @@ bool ZeroTerminatedArrayIsSame(const uint8 *pointer,const uint8 *data, uint32 el
  * If this pre-condition is not accomplished, a segmentation fault in runtime could happen.
  */
 template<typename T>
-class ZeroTerminatedArray {
+class ZeroTerminatedArray: public ZeroTerminatedArrayStaticTools {
 public:
 
     /**
@@ -169,12 +129,42 @@ public:
 
     /**
      * @brief Checks if the input \a arrayIn has the same content as the array
-     * @details This function allows implementing operator==
+     * @details This function allows implementing operator==. The class T must have a defined operator ==
      * @param[in] arrayIn is the array to be compared
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
     inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
+
+    /**
+     * @brief Allows obtaining a tool to perform efficient editing operations on the string
+     */
+    inline ZeroTerminatedArrayToolT<T>& operator()();
+
+    /**
+     * @brief Adds one element to the TArray()
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>  Append(const T &data);
+
+    /**
+     * @brief Adds one TArray() of elements to the TArray()
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>  AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief shrinks the TArray() size to the minimum between newSize and the current size
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>   Truncate(uint32 newSize);
+
+    /**
+     * @brief removes elements from the top of the ZTA
+     * moves the string content and then truncates
+     * @return false if not enough characters TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>    Remove(uint32 elements);
 
 
 protected:
@@ -222,13 +212,13 @@ inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
 
 template<typename T>
 uint32 ZeroTerminatedArray<T>::GetSize() const {
-	return ZeroTerminatedArrayGetSize((const uint8 *)array,sizeof(T));
+	return ZTAGetSize((const uint8 *)array,sizeof(T));
 }
 
 
 template<typename T>
 uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
-	return ZeroTerminatedArrayFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
+	return ZTAFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
 }
 
 template<typename T>
@@ -243,7 +233,7 @@ void ZeroTerminatedArray<T>::SetList(T *arrayIn) {
 
 template<typename T>
 bool ZeroTerminatedArray<T>::IsZero(const T & data) const {
-	return ZeroTerminatedArrayIsZero((const uint8 *)&data,sizeof(T));
+	return ZTAIsZero((const uint8 *)&data,sizeof(T));
 }
 
 template<typename T>
@@ -266,31 +256,75 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
     array++;
 }
 
-
 template<typename T>
 bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
-
     bool same = true;
     if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
         const T * list2P = arrayIn;
-        while (!IsZero(*listP) && same && limit > 0) {
+        while (!IsZero(*listP) && same && (limit > 0)) {
             same = (*listP == *list2P);
             listP++;
             list2P++;
             limit--;
         }
-        if (same){
-        	same = ZeroTerminatedArrayIsZero((const uint8 *)list2P,sizeof(T));
+        // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
+        if (same && (limit > 0)){
+        	same = ZTAIsZero((const uint8 *)list2P,sizeof(T));
         }
     }
     return same;
-
 }
+
+template<>
+bool ZeroTerminatedArray<const char8>::isSameAs(const char8 *arrayIn,uint32 limit) const {
+    bool same = true;
+    if ((array != NULL_PTR(char8*))&&(arrayIn != NULL_PTR(char8*))) {
+        const char8 * listP = array;
+        const char8 * list2P = arrayIn;
+        while ((*listP!='\0') && same && (limit > 0)) {
+            same = (*listP == *list2P);
+            listP++;
+            list2P++;
+            limit--;
+        }
+        // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
+        if (same && (limit > 0)){
+        	same = (*list2P=='\0');
+        }
+    }
+    return same;
+}
+
 
 template<typename T>
 bool ZeroTerminatedArray<T>::In(const T& data) const{
 	return (Find(data)!= 0xFFFFFFFF);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T>& ZeroTerminatedArray<T>::operator()(){
+	return ZeroTerminatedArrayToolT<T>(NULL,array,GetSize()+1);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> ZeroTerminatedArray<T>::Append(const T &data) {
+	return operator ()().Append(data);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> ZeroTerminatedArray<T>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
+	return operator ()().AppendN(data,maxAppendSize);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> ZeroTerminatedArray<T>::Truncate(uint32 newSize) {
+	return operator ()().Truncate(newSize);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> ZeroTerminatedArray<T>::Remove(uint32 elements){
+	return operator ()().Remove(elements);
 }
 
 

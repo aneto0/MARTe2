@@ -34,31 +34,18 @@
 
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
-#include "GlobalObjectI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+namespace ObjectRegistryDatabase {
 
-/**
- * @brief Singleton database of References to MARTe Objects.
- */
-class DLL_API ObjectRegistryDatabase: public ReferenceContainer, public GlobalObjectI {
-
-public:
-
-    /**
-     * @brief Singleton access to the database.
-     * @return a pointer to the database.
-     */
-    static ObjectRegistryDatabase *Instance();
-
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ObjectRegistryDatabase();
+	/**
+     * @brief Retrieves the Reference of the root database.
+	 */
+	ReferenceT<ReferenceContainer> Access();
 
     /**
      * @brief Retrieves the Reference at the given address.
@@ -72,35 +59,7 @@ public:
     /*lint -e{1511} [MISRA C++ Rule 2-10-2].*/
     Reference Find(const CCString path,const Reference current = Reference());
 
-    /**
-     * @see Object::GetClassName
-     * @return "ObjectRegistryDatabase".
-     */
-    virtual CCString  GetClassName() const;
-
-private:
-    /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::new(*) */
-    static void *operator new(const osulong size) throw ();
-
-    /**
-     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
-     * @param[in] p is the pointer to be freed.
-     */ 
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::delete(*) */
-    static void operator delete(void * const p);
-
-    /**
-     * @brief Default constructor.
-     */
-    /*lint -e{1704} private constructor for singleton implementation*/
-    ObjectRegistryDatabase();
-
-};
-
+}
 }
 
 /*---------------------------------------------------------------------------*/

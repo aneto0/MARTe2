@@ -126,7 +126,7 @@ protected:
     /**
      * @see IOBuffer::NoMoreSpaceToWrite(const uint32)
      */
-    virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize);
 
 };
 

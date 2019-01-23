@@ -101,13 +101,13 @@ uint64 StreamMemoryReference::Size() const{
     return buffer.UsedSize();
 }
 
-bool StreamMemoryReference::SetSize(const uint64 size) {
+bool StreamMemoryReference::SetSize(uint64 size) {
 
     buffer.SetUsedSize(static_cast<uint32>(size));
     return (buffer.UsedSize() == static_cast<uint32>(size));
 }
 
-bool StreamMemoryReference::Seek(const uint64 pos) {
+bool StreamMemoryReference::Seek(uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
     bool ret = true;
     if (pos > usedSize) {

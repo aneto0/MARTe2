@@ -1,7 +1,7 @@
 /**
  * @file HeapManager.cpp
- * @brief Source file for module HeapManager
- * @date 07/08/2015
+ * @brief Header file for class AnyType
+ * @date 9 Dec 2018
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,482 +16,295 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the module HeapManager (public, protected, and private). Be aware that some
- * methods, such as those inline could be defined on the header file, instead.
- */
-#define DLL_API
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
+ * @details This header file contains the declaration of the class HeapManager
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
-#include "HeapManager.h"
-#include "FastPollingMutexSem.h"
-#include "GeneralDefinitions.h"
+#include <stdlib.h>
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "HeapI.h"
-#include "GlobalObjectI.h"
-#include "GlobalObjectsDatabase.h"
+#include "HeapManager.h"
+#include "AllocationPointer.h"
+#include "Atomic.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Local Module declaration                        */
+/*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
-namespace HeapManager /*Internals*/{
 
-/**
- * @brief The heap database size.
- */
-static const int32 MaximumNumberOfHeaps = 16;
+void * operator new(size_t size){
+	MARTe::HeapManager::AllocationPointer ap;
+    ap.Malloc(static_cast<MARTe::uint32>(size));
 
-/**
- * @brief Class to store HeapI pointers.
- * @details This class allows to store and recover pointers to HeapI objects,
- * which are addressable by a numeric index. It also offers methods for
- * locking the access to the database. It is intended to be created following
- * the singleton pattern by means of the Instance method.
- */ 
-class HeapDatabase: public GlobalObjectI {
+    void *ptr = ap;
+    return ptr;
+}
 
-public:
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     */
-    static HeapDatabase *Instance();
+void * operator new(size_t size,MARTe::HeapManager::HeapId heapId){
+	MARTe::HeapManager::AllocationPointer ap;
+    ap.Malloc(static_cast<MARTe::uint32>(size),heapId);
 
-    /**
-     * @brief Destructor NOOP.
-     */
-    virtual ~HeapDatabase();
+    void *ptr = ap;
+    return ptr;
+}
 
-    /**
-     * @brief gets the HeapI contained in a given slot of the database
-     * @param[in] index indicates the slots of the database
-     * @return NULL index out of range or if empty slot
-     * */
-    HeapI *GetHeap(int32 index) const;
+void operator delete(void * p){
+	MARTe::HeapManager::AllocationPointer ap(p);
+	ap.Free();
+}
 
-    /**
-     * @brief sets the HeapI in a given slot of the database
-     * @param[in] index indicates the slots of the database
-     * @param[in] heap  is the desired heap to store
-     * @return true if index is within range; specified slot is free; and heap is not NULL
-     * */
-    bool SetHeap(int32 index,
-                 HeapI * const heap);
+void * operator new[](size_t size){
+	MARTe::HeapManager::AllocationPointer ap;
+    ap.Malloc(static_cast<MARTe::uint32>(size));
 
-    /**
-     * @brief sets to NULL a given slot of the database
-     * @param[in] index indicates the slots of the database
-     * @param[in] heap must contain the same value as in the database
-     * @return true if index is within range; specified slot contains heapl heap is not NULL
-     * */
-    bool UnsetHeap(int32 index,
-                   const HeapI *heap);
+    void *ptr = ap;
+    return ptr;
+}
 
-    /**
-     * @brief locks access to database
-     * @return true if locking successful
-     * */
-    bool Lock();
+void * operator new[](size_t size,MARTe::HeapManager::HeapId heapId){
+	MARTe::HeapManager::AllocationPointer ap;
+    ap.Malloc(static_cast<MARTe::uint32>(size),heapId);
 
-    /**
-     * @brief unlocks access to database
-     * */
-    void UnLock();
+    void *ptr = ap;
+    return ptr;
+}
 
-    /**
-     * @brief Returns "HeapDatabase".
-     * @return "HeapDatabase".
-     */
-    virtual CCString GetClassName() const;
+void operator delete[](void * p){
+	MARTe::HeapManager::AllocationPointer ap(p);
+	ap.Free();
+}
 
-private:
 
-    /**
-     * @brief Lists all heaps
-     * all unused heaps have a NULL pointer.
-     */
-    HeapI * heaps[MaximumNumberOfHeaps];
+namespace MARTe{
 
-    /**
-     * @brief Internal mutex semaphore.
-     */
-    FastPollingMutexSem mux;
+namespace HeapManager{
 
-    /**
-     * @brief constructor
-     * */
-    HeapDatabase();
+void *Malloc(uint32 byteSize,HeapManager::HeapId id){
+	MARTe::HeapManager::AllocationPointer ap;
+    ap.Malloc(byteSize,id);
+
+    void *ptr = ap;
+    return ptr;
+
+}
+void Free(void *ptr){
+	MARTe::HeapManager::AllocationPointer ap(ptr);
+	ap.Free();
+}
+void *Realloc(void *ptr,uint32 byteSize){
+	MARTe::HeapManager::AllocationPointer ap(ptr);
+	ap.Realloc(byteSize);
+    ptr = ap;
+    return ptr;
+}
+
+//for convenience
+#define nullHeap NULL_PTR(HeapI*)
+
+
+HeapI *heapList[MAX_HEAPS]= {
+    nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap,
+    nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap,
+    nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap,
+    nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap, nullHeap
 };
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
+uint32 allocatedBlocks[MAX_HEAPS]={
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0
+};
 
-HeapDatabase *HeapDatabase::Instance() {
-    static HeapDatabase *instance = NULL_PTR(HeapDatabase *);
-    if (instance == NULL_PTR(HeapDatabase *)) {
-        instance = new HeapDatabase();
-        GlobalObjectsDatabase::Instance().Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 1u);
-    }
-    return instance;
+uint32 allocatedBytes[MAX_HEAPS]={
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0
+};
+
+CCString heapNames[MAX_HEAPS]= {
+	"singletonHeap", "standardHeap", "internals", "strings", "customHeap0", "customHeap1", "customHeap2", "customHeap3",
+	"customHeap4", "customHeap5", "customHeap6", "customHeap7","customHeap8", "customHeap9", "customHeap10", "customHeap11",
+	"customHeap12", "customHeap13", "customHeap14", "customHeap15","customHeap16", "customHeap17", "customHeap18", "customHeap19",
+	"customHeap20", "customHeap21", "customHeap22", "customHeap23", "customHeap24", "customHeap25", "customHeap26", "customHeap27"
+};
+
+
+HeapManager::HeapId HeapIdFromName(CCString name){
+	bool found = false;
+	HeapManager::HeapId index = 0u;
+	for (index = 0u;(index < MAX_HEAPS) && !found;index++){
+		found = (name == heapNames[index]);
+	}
+
+	if (!found) {
+        COMPOSITE_REPORT_ERROR(ErrorManagement::Warning, "Could not instantiate an memoryHeap with the name: ", name);
+		index = standardHeapId;
+	}
+	return index;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+ErrorManagement::ErrorType InstallAllocator(HeapI *heapi,HeapId id){
+	ErrorManagement::ErrorType ret;
+	// cannot be changed using this interface
+	ret.unsupportedFeature = (id == singletonHeapId);
+	ret.outOfRange = (id >= MAX_HEAPS);
+	ret.parametersError = (heapi == NULL_PTR(HeapI*));
 
-HeapI *HeapDatabase::GetHeap(const int32 index) const {
-    HeapI *returnValue = NULL_PTR(HeapI *);
-    if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
-        returnValue = heaps[index];
-    }
+	if (ret){
+		ret.initialisationError = (heapList[id] != NULL);
+	}
 
-    return returnValue;
+	if (ret){
+		heapList[id] = heapi;
+	}
+
+	return ret;
 }
 
-bool HeapDatabase::SetHeap(const int32 index,
-                           HeapI * const heap) {
-    bool ok = false;
-    if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
+ErrorManagement::ErrorType RemoveAllocator(HeapId id){
+	ErrorManagement::ErrorType ret;
+	// cannot be changed using this interface
+	ret.unsupportedFeature = (id == singletonHeapId);
+	ret.outOfRange = (id >= MAX_HEAPS);
+	ret.invalidOperation = (heapList[id] == NULL);
 
-        if ((heaps[index] == NULL) && (heap != NULL)) {
-            heaps[index] = heap;
-            ok = true;
-        }
+	if (ret){
+		heapList[id] = NULL;
+	}
 
-    }
-    return ok;
+	return ret;
 }
 
-bool HeapDatabase::UnsetHeap(const int32 index,
-                             const HeapI * const heap) {
-    bool ok = false;
-    if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
-        if (heaps[index] == heap) {
-            heaps[index] = NULL_PTR(HeapI *);
-            ok = true;
-        }
-    }
 
-    return ok;
+ErrorManagement::ErrorType AllocationPointer::Malloc(uint32 byteSize,HeapManager::HeapId id){
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (id >= MAX_HEAPS);
+	uint32 size = byteSize + sizeof (AllocationHeader);
+	HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);
+
+	if (ret){
+		// check for overflow
+		ret.outOfRange = (size < byteSize);
+	}
+
+	if (ret){
+
+		h = heapList[id];
+		if (h == NULL_PTR(HeapManager::HeapI *)){
+			/**
+			 * no allocator present
+			 * use the singletonHeapId
+			 */
+			id = singletonHeapId;
+			memory = static_cast<AllocationHeader *> (std_malloc(size));
+		} else {
+			memory = static_cast<AllocationHeader *> (h->Malloc(size));
+		}
+		ret.outOfMemory = (memory == NULL_PTR(AllocationHeader *));
+	}
+
+	if (ret){
+		memory->byteSize = byteSize;
+		memory->heapId = id;
+		Atomic::Increment((int32 *)&allocatedBlocks[id]);
+		Atomic::Add((int32 *)&allocatedBytes[id],static_cast<int32>(byteSize));
+	}
+
+	return ret;
 }
 
-HeapDatabase::HeapDatabase() {
-    int32 i;
-    for (i = 0; i < MaximumNumberOfHeaps; i++) {
-        heaps[i] = NULL_PTR(HeapI *);
-    }
+ErrorManagement::ErrorType AllocationPointer::Realloc(uint32 byteSize){
+	ErrorManagement::ErrorType ret;
+
+	if (memory == NULL_PTR(AllocationHeader *)){
+		ret = Malloc(byteSize);
+	} else {
+		HeapManager::HeapId id = HeapManager::standardHeapId;
+
+		uint32 size = byteSize + sizeof (AllocationHeader);
+		ret.outOfRange = (size < byteSize);
+
+		uint32 oldSize = 0;
+		if (ret){
+			id = memory->heapId;
+			ret.internalSetupError = (id >= MAX_HEAPS);
+			oldSize = memory->byteSize;
+		}
+
+		HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);
+		if (ret){
+			h = heapList[id];
+			ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
+		}
+
+		if (ret){
+			Atomic::Decrement((int32 *)&allocatedBlocks[id]);
+			Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
+
+			void *ptr = static_cast<void *>(memory);
+			memory = static_cast<AllocationHeader *> (h->Realloc(ptr,size));
+
+			ret.outOfMemory = (memory == NULL_PTR(AllocationHeader *));
+		}
+
+		if (ret){
+			memory->byteSize = byteSize;
+			memory->heapId = id;
+			Atomic::Increment((int32 *)&allocatedBlocks[id]);
+			Atomic::Add((int32 *)&allocatedBytes[id],static_cast<int32>(byteSize));
+		}
+	}
+
+	return ret;
 }
 
-HeapDatabase::~HeapDatabase() {
-}
-
-bool HeapDatabase::Lock() {
-    return (mux.FastLock() == ErrorManagement::NoError);
-}
-
-void HeapDatabase::UnLock() {
-    mux.FastUnLock();
-}
-
-CCString  HeapDatabase::GetClassName() const {
-    return "HeapDatabase";
-}
-
-HeapI *FindHeap(const void * const address) {
-
-    /*
-     address range of currently found heap
-     */
-    uintp foundSpan = 0U;
-
-    /*
-     * the search will set this pointer to point to the heap found
-     * by default return the standard heap
-     */
-    HeapI *foundHeap = NULL_PTR(HeapI *);
-
-    /* controls access to database */
-    if (HeapDatabase::Instance()->Lock()) {
-
-        int32 i;
-        for (i = 0; (i < MaximumNumberOfHeaps); i++) {
-
-            /* retrieve heap information in current slot */
-            HeapI *heap = HeapDatabase::Instance()->GetHeap(i);
-            /* if slot used */
-            if (heap != NULL_PTR(HeapI *)) {
-                /* check address compatibility */
-                if (heap->Owns(address)) {
-                    /* check if first occurrence or */
-                    if (foundHeap == NULL_PTR(HeapI *)) {
-                        /* size of memory space */
-                        foundSpan = heap->LastAddress() - heap->FirstAddress();
-                        /* save heap */
-                        foundHeap = heap;
-                    }
-                    else { /* further occurrences */
-
-                        /* size of memory space */
-                        uintp newFoundSpan = heap->LastAddress() - heap->FirstAddress();
-
-                        /*
-                         * smaller memory span and intersecting memory address space
-                         * it can only mean that this heap is a sub-heap of the previously found heap
-                         */
-                        if (newFoundSpan < foundSpan) {
-                            /* save size of memory space */
-                            foundSpan = newFoundSpan;
-                            /* save heap */
-                            foundHeap = heap;
-                        } // end if (newFoundSpan < foundSpan)
-
-                    } /* end of check first occurrence */
-
-                } /* end check address compatibility */
-
-            } /* end if heap != NULL */
-
-        } /* end i loop */
-
-        HeapDatabase::Instance()->UnLock();
-    }
-
-    /* assign to heap the found heap or the default one */
-    if ((foundHeap == NULL_PTR(HeapI *))) {
-
-        /* try default heap */
-        foundHeap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
-
-        /* check ownership of default heap */
-        if (!foundHeap->Owns(address)) {
-            foundHeap = NULL_PTR(HeapI *);
-        }
-
-    }
-
-    return foundHeap;
-}
-
-HeapI *FindHeap(CCString name) {
-
-    bool ok = !name.IsNullPtr();
-
-    /*
-     * found heap
-     */
-    bool found = false;
-
-    /*
-     * the search will set this pointer to point to the heap found
-     */
-    HeapI *foundHeap = NULL_PTR(HeapI *);
-
-    if (ok) {
-
-        /* controls access to database */
-        if (HeapDatabase::Instance()->Lock()) {
-            int32 i;
-            for (i = 0; (i < MaximumNumberOfHeaps) && (!found); i++) {
-
-                /* retrieve heap information in current slot */
-                HeapI *heap = HeapDatabase::Instance()->GetHeap(i);
-
-                /* if slot used */
-                if (heap != NULL_PTR(HeapI *)) {
-
-                    /* check address compatibility */
-                    if (name == heap->Name() ) {
-
-                        found = true;
-
-                        foundHeap = heap;
-
-                    } /* end check name */
-
-                } /* end if heap != NULL */
-
-            } /* end i loop */
-            HeapDatabase::Instance()->UnLock();
-        }
-    }
-
-    return foundHeap;
-}
-
-bool Free(void *&data) {
-    HeapI *heap = FindHeap(data);
-
-    bool ok = false;
-    /* Does not belong to any heap?*/
-    if ((heap != NULL_PTR(HeapI *))) {
-        heap->Free(data);
-        ok = true;
-
-    }
-    else {
-
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap");
-
-    }
-
-    return ok;
-}
-
-void *Malloc(uint32 const size,
-             CCString heapName) {
-
-    void *address = NULL_PTR(void *);
-
-    /* Standard behavior */
-    if (heapName.IsNullPtr()) {
-        address = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(size);
-    }
-    else {
-
-        HeapI *heap = FindHeap(heapName);
-
-        if (heap != NULL) {
-            address = heap->Malloc(size);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: no heaps with the specified name found");
-        }
-
-    }
-
-    return address;
-}
-
-void *Realloc(void *&data,
-              const uint32 newSize) {
-    void *newAddress = NULL_PTR(void *);
-
-    HeapI *chosenHeap = FindHeap(data);
-
-    if (chosenHeap != NULL) {
-        newAddress = chosenHeap->Realloc(data, newSize);
-    }
-    //if the heap is not found (the data is null) allocates it on the standard heap (C malloc).
-    else {
-        newAddress = GlobalObjectsDatabase::Instance().GetStandardHeap().Realloc(data, newSize);
-    }
-
-    return newAddress;
-}
-
-void *Duplicate(const void * const data,
-                const uint32 size,
-                CCString heapName) {
-    void *newAddress = NULL_PTR(void *);
-
-    HeapI *chosenHeap = NULL_PTR(HeapI *);
-
-    //if the heapName is not null searches the heap by name
-    if (!heapName.IsNullPtr()) {
-        chosenHeap = FindHeap(heapName);
-    }
-
-    //if the heap with that name is not found calls the find by address
-    if (chosenHeap == NULL) {
-        chosenHeap = FindHeap(data);
-    }
-
-    // if found calls the correct heap duplicate
-    if (chosenHeap != NULL) {
-        newAddress = chosenHeap->Duplicate(data, size);
-    }
-    // if the address is not found considers the memory as a static
-    else {
-        //REPORT_ERROR(ErrorManagement::Warning, "ErrorManagement::Warning: the input address does not belong to any heap. It will be considered as a static memory address");
-        newAddress = GlobalObjectsDatabase::Instance().GetStandardHeap().Duplicate(data, size);
-    }
-    return newAddress;
-
-}
-
-bool AddHeap(HeapI * const newHeap) {
-
-    bool ok = true;
-
-    /* check value of heap not to be NULL */
-    if (newHeap == NULL_PTR(HeapI *)) {
-        ok = false;
-    }
-
-    /* controls access to database */
-    if (HeapDatabase::Instance()->Lock()) {
-        int32 i;
-        /* check if not registered already */
-        for (i = 0; (i < MaximumNumberOfHeaps) && ok; i++) {
-            /* retrieve heap information in current slot */
-            HeapI *heap = HeapDatabase::Instance()->GetHeap(i);
-
-            /* already found */
-            if (heap == newHeap) {
-                ok = false;
-
-                //Do not uncomment this line. The HeapManager cannot use the REPORT_ERROR since the HeapDatabase::Instance() is locked and
-                // the user callback function could use the HeapDatabase, e.g. by using a StreamString
-                //REPORT_ERROR(ErrorManagement::FatalError, "Error: heap already registered in the database");
-
-            }
-        }
-
-        /* check if space available and if so register it  */
-        if (ok) {
-
-            bool found = false;
-            /* for each slot  */
-            for (i = 0; (i < MaximumNumberOfHeaps) && (!found); i++) {
-                /* try to set each slot */
-                found = HeapDatabase::Instance()->SetHeap(i, newHeap);
-            }
-
-            /* no more space */
-            if (!found) {
-                ok = false;
-                //Do not uncomment this line. The HeapManager cannot use the REPORT_ERROR since the HeapDatabase::Instance() is locked and
-                // the user callback function could use the HeapDatabase, e.g. by using a StreamString
-                //REPORT_ERROR(ErrorManagement::FatalError, "Error: not enough space in the database for new records");
-
-            }
-
-        }
-        /* controls access to database */
-        HeapDatabase::Instance()->UnLock();
-    }
-    return ok;
-}
-
-bool RemoveHeap(const HeapI * const heap) {
-
-    bool found = false;
-
-    /* controls access to database */
-    if (HeapDatabase::Instance()->Lock()) {
-        int32 i;
-        /* check if not registered already */
-        for (i = 0; (i < MaximumNumberOfHeaps) && (!found); i++) {
-            /* retrieve heap information in current slot */
-            found = HeapDatabase::Instance()->UnsetHeap(i, heap);
-        }
-        /* controls access to database */
-        HeapDatabase::Instance()->UnLock();
-    }
-
-    return found;
-}
+ErrorManagement::ErrorType AllocationPointer::Free(){
+	ErrorManagement::ErrorType ret;
+
+	ret.invalidOperation = (memory == NULL_PTR(AllocationHeader *));
+
+	uint32 oldSize = 0;
+	HeapManager::HeapId id = HeapManager::standardHeapId;
+	if (ret){
+		id = memory->heapId;
+		ret.internalSetupError = (id >= MAX_HEAPS);
+		oldSize = memory->byteSize;
+	}
+
+	HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);
+	if (ret){
+		h = heapList[id];
+		ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
+	}
+
+	if (ret){
+		void *ptr = static_cast<void *>(memory);
+		h->Free(ptr);
+		memory = NULL_PTR(AllocationHeader *);
+
+		Atomic::Decrement((int32 *)&allocatedBlocks[id]);
+		Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
+	}
+
+	return ret;
 
 }
 
 }
+} //MARTe

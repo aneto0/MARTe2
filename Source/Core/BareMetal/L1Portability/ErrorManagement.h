@@ -33,18 +33,17 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorInformation.h"
-#include "GeneralDefinitions.h"
+#include "ErrorType.h"
 #include "TimeStamp.h"
 #include "StreamI.h"
 #include "CCString.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-
 namespace ErrorManagement {
 
 /**
@@ -57,20 +56,6 @@ typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo, CCSt
  * @brief A pointer to the function that will process the errors.
  */
 extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
-
-/**
- * @brief A null ErrorProcessing function
- * @details This function is compatible with the function prototype defined
- * as LogMessageProcessFunctionType. Its purpose is to do nothing.
- */
-DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription);
-
-/**
- * @brief Converts ErrorType to stream.
- * @param[in] errorCode is the error code.
- * @param[out] stream the full error description will be streamed into.
- */
-DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -109,6 +94,22 @@ DLL_API void ReportErrorFullContext(const ErrorType &code,
                          const int16 lineNumber,
                          CCString const functionName
                          );
+
+
+/**
+ * @brief A null ErrorProcessing function
+ * @details This function is compatible with the function prototype defined
+ * as LogMessageProcessFunctionType. Its purpose is to do nothing.
+ */
+DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription);
+
+/**
+ * @brief Converts ErrorType to stream.
+ * @param[in] errorCode is the error code.
+ * @param[out] stream the full error description will be streamed into.
+ */
+DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
+
 
 /**
  * @brief Sets the routine for error managing.

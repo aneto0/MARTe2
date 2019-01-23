@@ -24,10 +24,11 @@
 #include "AnyObject.h"
 #include "AnyObjectT.h"
 #include "AnyObjectM.h"
+#include "HeapManager.h"
 
 #define CHECKANDMAKE(size)									\
 		if (sizeToCopy <= size){							\
-			ReferenceT<AnyObjectT<size>> ao(buildNow);		\
+			ReferenceT<AnyObjectT<size>> ao(HeapManager::standardHeapId);\
 			if (ao.IsValid()){								\
 				ao->Setup(sizeToCopy,pointer,descriptor);	\
 				reference = ao;								\
@@ -50,7 +51,7 @@ Reference AnyObject::Clone(uint32 sizeToCopy,const void *pointer,const VariableD
 	CHECKANDMAKE(56)
 	CHECKANDMAKE(64)
 	{
-		ReferenceT<AnyObjectM> ao(buildNow);
+		ReferenceT<AnyObjectM> ao(HeapManager::standardHeapId);
 		if (ao.IsValid()){
 			ao->Setup(sizeToCopy,pointer,descriptor);
 			reference = ao;

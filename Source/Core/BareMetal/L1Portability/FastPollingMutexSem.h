@@ -40,7 +40,7 @@
 #include "Sleep.h"
 #include "MicroSeconds.h"
 #include "Ticks.h"
-#include "OSInitializer.h"
+#include "TimeCalibration.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -95,7 +95,7 @@ public:
      * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
     ErrorManagement::ErrorType FastLock(const Ticks &timeout = Ticks::Infinite,
-            							const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us)) ;
+            							const MicroSeconds &sleepTimeUsec = MicroSeconds(TimeCalibration::osMinSleepUsec,Units::us)) ;
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.

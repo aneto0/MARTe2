@@ -90,9 +90,7 @@ CharBuffer::CharBuffer(const uint32 allocationGranularity) {
 void CharBuffer::Reset() {
     if (allocated) {
         if (buffer != NULL) {
-            if (HeapManager::Free(reinterpret_cast<void *&>(buffer))) {
-                bufferSize = 0u;
-            }
+            HeapManager::Free(reinterpret_cast<void *&>(buffer));
         }
     }
     bufferSize = 0u;

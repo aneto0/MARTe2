@@ -94,7 +94,7 @@ public:
      *   signalIdx < GetNumberOfSignals() &&
      *   bufferIdx < 1
      */
-    virtual bool GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
+    virtual ErrorManagement::ErrorType GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress);
 
     /**
      * @brief See DataSourceI::Initialise. Reads the optional NumberOfBuffers and HeapName parameters.
@@ -127,7 +127,7 @@ protected:
     /**
      * The memory heap that is used to allocate the signal memory.
      */
-    HeapI *memoryHeap;
+    HeapManager::HeapId heapId;
 
     /**
      * The number of buffers

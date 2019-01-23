@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItem.h"
-#include "ClassRegistryIndex.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -52,20 +50,7 @@ namespace MARTe {
  * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
  * database can then be used to retrieve information about the registered classes.
  */
-class DLL_API ClassRegistryDatabase: public GlobalObjectI {
-
-public:
-
-    /**
-     * @brief Singleton access to the database.
-     * @return a reference to the database.
-     */
-    static ClassRegistryDatabase *Instance();
-
-    /**
-     * @brief Destructor. Removes all the elements hold by the database.
-     */
-    virtual                  ~ClassRegistryDatabase();
+namespace ClassRegistryDatabase {
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with name \a className.
@@ -106,42 +91,7 @@ public:
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
 
-    /**
-     * @brief Returns "ClassRegistryDatabase"
-     * @return "ClassRegistryDatabase".
-     */
-    virtual CCString  GetClassName() const;
-
-
-
-protected:
-
-
-    /**
-     * @brief Private Constructor.
-     */
-    /*lint -e{1704} private constructor for singleton implementation*/
-    ClassRegistryDatabase();
-
-private:
-
-    /**
-     * @brief Returns the ClassRegistryItem associated to the class with classname equal to \a className.
-     * @details The returned pointer will be valid as long as it exists in the database.
-     * @param[in] className the classname() of the class to be searched.
-     * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
-     */
-    ClassRegistryItem *FindClassName(CCString const className);
-
-
-    /**
-     * The database is implemented as a two level StaticList.
-     */
-    ClassRegistryIndex *classDatabase;
-
-
-
-};
+}
 
 }
 

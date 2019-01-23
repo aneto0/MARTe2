@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MANAGEDZEROTERMINATEDARRAY_H_
-#define MANAGEDZEROTERMINATEDARRAY_H_
+#ifndef DYNAMICZEROTERMINATEDARRAY_H_
+#define DYNAMICZEROTERMINATEDARRAY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,9 +33,9 @@
 /*---------------------------------------------------------------------------*/
 
 //#include "ErrorManagement.h"
+#include "AllocationPointer.h"
 #include "CompilerTypes.h"
 #include "ZeroTerminatedArray.h"
-#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -53,7 +53,7 @@ namespace MARTe {
  *
  * @warning Try not use any other class in this header to avoid loop inclusions.
  */
-template<typename T,uint32 granularity>
+template<typename T>
 class DynamicZeroTerminatedArray: protected ZeroTerminatedArray<T> {
 public:
 
@@ -94,33 +94,7 @@ public:
     /**
      * @brief copies the content.
      */
-    template<uint32 granularity2>
-    inline void operator= (const DynamicZeroTerminatedArray<const T,granularity2> &data);
-
-    /**
-     * @brief Adds one element to the TArray()
-     * @return false if realloc fails
-     */
-    inline bool Append(const T &data);
-
-    /**
-     * @brief Adds one TArray() of elements to the TArray()
-     * @return false if realloc fails
-     */
-    inline bool AppendN(const ZeroTerminatedArray< const T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
-
-    /**
-     * @brief shrinks the TArray() size to the minimum between newSize and the current size
-     * @return false if realloc fails
-     */
-    inline bool Truncate(uint32 newSize);
-
-    /**
-     * @brief removes characters from the top of the string
-     * moves the string content and then truncates
-     * @return false if not enough characters
-     */
-    inline bool Remove(uint32 characters);
+    inline void operator= (const DynamicZeroTerminatedArray<const T> &data);
 
     /**
      * @brief Checks if the input \a arrayIn has the same content as the array
@@ -130,6 +104,13 @@ public:
      * @return true if \a arrayIn is the same.
      */
     inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
+
+    /**
+     * @brief Allows obtaining a tool to perform efficient editing operations on the string
+     */
+    inline ZeroTerminatedArrayToolT<T> operator()();
+
+
 protected:
 
     /**
@@ -147,170 +128,142 @@ protected:
      */
     inline void Terminate(uint32 position);
 
+    /**
+     * @brief returns the maximum size this string can hold (the terminator is considered (buffersize-1)).
+     * It is obtained thanks to the AllocationPointer
+     */
+    inline uint32 GetMaxIndex();
+
+    /**
+     * @brief Adds one element to the TArray()
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>  Append(const T &data);
+
+    /**
+     * @brief Adds one TArray() of elements to the TArray()
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>  AppendN(const ZeroTerminatedArray< const T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief Adds one TArray() of elements to the TArray()
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>  AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief shrinks the TArray() size to the minimum between newSize and the current size
+     * @return false if realloc fails TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>   Truncate(uint32 newSize);
+
+    /**
+     * @brief removes elements from the top of the ZTA
+     * moves the string content and then truncates
+     * @return false if not enough characters TODO
+     */
+    inline ZeroTerminatedArrayToolT<T>    Remove(uint32 elements);
+
 };
 
-// private functions to implement the templated methods
-bool DZTInitCopy(uint32 sizeOfData,uint32 sizeOfT,uint32 granularity,void *&dest, void const *src);
-bool DZTAppend1(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,void *&dest);
-bool DZTAppendN(uint32 sizeOfT,uint32 granularity,uint32 sizeOfDest,uint32 toCopy,
-		        /*uint32 maxAppendSize,*/void *&dest, void const  *src);
-void DZTFree(void *&dest);
-//void *DZTMalloc(uint32 size);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename T,uint32 granularity>
-void DynamicZeroTerminatedArray<T,granularity>::Terminate(uint32 position){
+template<typename T>
+void DynamicZeroTerminatedArray<T>::Terminate(uint32 position){
 	T *p =  TArray();
-	ZeroTerminatedArrayZero(reinterpret_cast<uint8 *>(p+position),sizeof(T));
+	ZTAZero(reinterpret_cast<uint8 *>(p+position),sizeof(T));
 }
 
-template<typename T,uint32 granularity>
-void  *&DynamicZeroTerminatedArray<T,granularity>::VoidArray(){
+template<typename T>
+void  *&DynamicZeroTerminatedArray<T>::VoidArray(){
     return ZeroTerminatedArray<T>::VoidArray();
 }
 
-template<typename T,uint32 granularity>
-T *&DynamicZeroTerminatedArray<T,granularity>::TArray(){
+template<typename T>
+T *&DynamicZeroTerminatedArray<T>::TArray(){
     return ZeroTerminatedArray<T>::TArray();
 }
-#include <stdio.h>
-template<typename T,uint32 granularity>
-DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
-	const uint32 necessarySize = ((1 + granularity)/ granularity)*granularity;
-//	VoidArray() = DZTMalloc(necessarySize*sizeof(T));
-    VoidArray() = HeapManager::Malloc(necessarySize*sizeof(T));
-    // if ok write the terminator
-    if (TArray() != NULL_PTR(T *)) {
-    	Terminate(0);
-    }
+
+template<typename T>
+DynamicZeroTerminatedArray<T>::DynamicZeroTerminatedArray() :ZeroTerminatedArray<T>(){
 }
 
-template<typename T,uint32 granularity>
-DynamicZeroTerminatedArray<T,granularity>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
-	const void *src = static_cast<const void *>(data.GetList());
-	DZTInitCopy(data.GetSize(),sizeof(T),granularity,VoidArray(),src);
+template<typename T>
+DynamicZeroTerminatedArray<T>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
+	AppendN(data);
 }
 
-template<typename T,uint32 granularity>
-template<uint32 granularity2>
-inline void DynamicZeroTerminatedArray<T,granularity>::operator= (const DynamicZeroTerminatedArray<const T,granularity2> &data){
-	Truncate(0);
-	const void *src = static_cast<const void *>(data.GetList());
-	DZTInitCopy(data.GetSize(),sizeof(T),granularity,VoidArray(),src);
+template<typename T>
+uint32 DynamicZeroTerminatedArray<T>::GetMaxIndex(){
+	HeapManager::AllocationPointer p(TArray());
+
+    return  (p.GetByteSize()/sizeof(T))-1;
 }
 
-template<typename T,uint32 granularity>
-DynamicZeroTerminatedArray<T,granularity>::~DynamicZeroTerminatedArray(){
-	DZTFree(VoidArray());
+template<typename T>
+void DynamicZeroTerminatedArray<T>::operator= (const DynamicZeroTerminatedArray<const T> &data){
+	Terminate(0);
+	AppendN(data);
 }
 
-template<typename T,uint32 granularity>
-inline T &DynamicZeroTerminatedArray<T,granularity>::operator[](const uint32 index) const {
+template<typename T>
+DynamicZeroTerminatedArray<T>::~DynamicZeroTerminatedArray(){
+	HeapManager::AllocationPointer p(TArray());
+	p.Free();
+	VoidArray() = NULL;
+}
+
+template<typename T>
+inline T &DynamicZeroTerminatedArray<T>::operator[](const uint32 index) const {
     return ZeroTerminatedArray<T>::operator[](index);
 }
 
-template<typename T,uint32 granularity>
-uint32 DynamicZeroTerminatedArray<T,granularity>::GetSize() const {
+template<typename T>
+uint32 DynamicZeroTerminatedArray<T>::GetSize() const {
     return ZeroTerminatedArray<T>::GetSize();
 }
 
-template<typename T,uint32 granularity>
-T * DynamicZeroTerminatedArray<T,granularity>::GetList() const{
+template<typename T>
+T * DynamicZeroTerminatedArray<T>::GetList() const{
     return ZeroTerminatedArray<T>::GetList();
 }
 
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::Append(const T &data) {
-	const void *src = static_cast<const void *>(&data);
-	uint32 sizeD = GetSize();
-    bool ret = DZTAppend1(sizeof(T),granularity,GetSize(),VoidArray());
-    if (ret)  {
-        operator[](sizeD) = data;
-    	Terminate(sizeD+1);
-//        static const T term(0u);
-//        operator[](sizeD+1) = term;
-    }
-    return ret;
-}
-
-/*
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
-	const void *src = static_cast<const void *>(data.GetList());
-	uint32 sizeD = GetSize();
-	uint32 sizeS = data.GetSize();
-	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,maxAppendSize,VoidArray(),src);
-    if (ret)  {
-        operator[](sizeS+sizeD) = 0u;
-    }
-
-    return ret;
-}
-*/
-
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::AppendN(const ZeroTerminatedArray<const T> & data,uint32 maxAppendSize) {
-	const void *src = static_cast<const void *>(data.GetList());
-	uint32 sizeD = GetSize();
-	uint32 sizeS = data.GetSize();
-	if (sizeS > maxAppendSize){
-		sizeS = maxAppendSize;
-	}
-	bool ret = DZTAppendN(sizeof(T),granularity,sizeD,sizeS,VoidArray(),src);
-    if (ret)  {
-    	Terminate(sizeS+sizeD);
-    }
-
-    return ret;
-}
-
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::Truncate(uint32 newSize) {
-    bool ret = true;
-    uint32 size = GetSize();
-
-    if (newSize < size){
-        uint32 necessarySize = ((newSize + 1 + granularity) / granularity) * granularity;
-        HeapManager::Realloc(VoidArray(),necessarySize+sizeof(T));
-        ret = (TArray() != NULL_PTR(T *));
-    }
-    if (ret){
-//        TArray()[newSize] = 0u;
-    	Terminate(newSize);
-    }
-    return ret;
-}
-
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::Remove(uint32 characters){
-	T *start = GetList();
-	T *p = start;
-//	static const T term(0u);
-	// go to new start point
-	// avoid stepping through the end
-	while (!IsZero(*p)  && (characters > 0)){
-		p++;
-		characters--;
-	}
-	uint32 newSize = 0;
-	if (characters == 0){
-		while ( !IsZero(*p)){
-			*start = *p;
-			start++;
-			p++;
-			newSize++;
-		}
-		Truncate(newSize);
-	}
-
-	return (characters == 0);
-}
-
-template<typename T,uint32 granularity>
-bool DynamicZeroTerminatedArray<T,granularity>::isSameAs(const T *arrayIn,uint32 limit) const {
+template<typename T>
+bool DynamicZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
     return ZeroTerminatedArray<T>::isSameAs(arrayIn,limit);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::operator()(){
+	return ZeroTerminatedArrayToolT<T>(&array,array,GetSize()+1);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::Append(const T &data) {
+	return operator ()().Append(data);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::AppendN(const ZeroTerminatedArray<const T> & data,uint32 maxAppendSize) {
+	return operator ()().AppendN(data,maxAppendSize);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
+	return operator ()().AppendN(data,maxAppendSize);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::Truncate(uint32 newSize) {
+	return operator ()().Truncate(newSize);
+}
+
+template<typename T>
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::Remove(uint32 elements){
+	return operator ()().Remove(elements);
 }
 
 

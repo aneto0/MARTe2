@@ -266,6 +266,9 @@ private:
      */
     bool InsertGAM(ReferenceT<GAM> gam, CCString gamFullName, const uint32 stateIdx, const uint32 threadIdx, const uint32 executableIdx) const;
 
+private:
+
+    void operator=(const GAMSchedulerI &gsi){}
 };
 
 }

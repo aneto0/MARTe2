@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+//#include "../L1Portability/GeneralDefinitions.h"
 #include "DoubleInteger.h"
 
 /*---------------------------------------------------------------------------*/
@@ -59,8 +59,7 @@ public:
      * @return the number shifted.
      */
     template<typename T>
-    static inline T LogicalRightSafeShift(T number,
-                                          uint8 shift);
+    static inline T LogicalRightSafeShift(T number,uint8 shift);
 
     /**
      * @brief Implementation of a template function for safe logical shifts.
@@ -70,8 +69,7 @@ public:
      * @return the number shifted.
      */
     template<typename T>
-    static inline T LogicalLeftSafeShift(T number,
-                                         uint8 shift);
+    static inline T LogicalLeftSafeShift(T number,uint8 shift);
 
     /**
      * @brief Implementation of a template function for safe mathematical right shifts.
@@ -81,8 +79,7 @@ public:
      * @return the number shifted.
      */
     template<typename T>
-    static inline T MathematicRightSafeShift(T number,
-                                             uint8 shift);
+    static inline T MathematicRightSafeShift(T number,uint8 shift);
 
     /**
      * @brief Implementation of a template function for safe mathematical left shifts.
@@ -92,8 +89,7 @@ public:
      * @return the number shifted.
      */
     template<typename T>
-    static inline T MathematicLeftSafeShift(T number,
-                                            uint8 shift);
+    static inline T MathematicLeftSafeShift(T number,uint8 shift);
 
 private:
 
@@ -209,7 +205,7 @@ T Shift::LogicalLeftSafeShift(T number,
         return (T) 0;
     }
 
-    return number << shift;
+    return static_cast<T>(number << shift);
 }
 
 template<typename T>
@@ -240,12 +236,12 @@ T Shift::MathematicLeftSafeShift(T number,
 
 uint8 Shift::LogicalRightShift(uint8 number,
                                uint8 shift) {
-    return number >> shift;
+    return static_cast<uint8>(number >> shift);
 }
 
 uint16 Shift::LogicalRightShift(uint16 number,
                                 uint8 shift) {
-    return number >> shift;
+    return static_cast<uint16>(number >> shift);
 }
 
 uint32 Shift::LogicalRightShift(uint32 number,
@@ -270,23 +266,25 @@ int16 Shift::LogicalRightShift(int16 number,
 
 int32 Shift::LogicalRightShift(int32 number,
                                uint8 shift) {
-    return ((uint32) number) >> shift;
+    return static_cast<int32>(static_cast<uint32>(number) >> shift);
 }
 
 int64 Shift::LogicalRightShift(int64 number,
                                uint8 shift) {
-    return ((uint64) number) >> shift;
+    return static_cast<int64>(static_cast<uint64>(number) >> shift);
 }
 
 template<typename T2>
 DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
                                            uint8 shift) {
 
+	uint16 shift16 =shift;
+
     if (static_cast<T2>(-1) < 0) {
 
         // shift of sizeof(T)*8 is treated as shift 0
         // for this reason exit here to avoid this pitfall
-        if (shift > 0u) {
+        if (shift16 > 0u) {
             T2 lower = number.GetLower();
             T2 upper = number.GetUpper();
 
@@ -295,18 +293,18 @@ DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
             // shift within one half
             if (shift < bitSize) {
                 // shift lower first
-                lower = lower >> shift;
+                lower = lower >> shift16;
                 // add overflow from upper
                 // this would fail if shift is 0
-                lower |= (upper << (bitSize - shift));
+                lower |= (upper << (bitSize - shift16));
                 // complete the upper
-                upper = upper >> shift;
+                upper = upper >> shift16;
             }
             else { // more than half!
                    // remove half
-                shift -= bitSize;
+            	shift16 -= bitSize;
                 // swap upper -> lower and shift with the remainder
-                lower = upper >> shift;
+                lower = upper >> shift16;
                 // upper is 0
                 if (upper < static_cast<T2>(0)) {
                     upper = static_cast<T2>(-1);
@@ -320,7 +318,7 @@ DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
         }
     }
     else {
-        number >>= shift;
+        number >>= shift16;
     }
     return number;
 }

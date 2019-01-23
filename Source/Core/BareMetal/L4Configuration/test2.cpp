@@ -53,6 +53,44 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+long long allocCount = 0;
+
+void *operator new(std::size_t size){
+	if (size == 0 ) return NULL;
+	++allocCount;
+//	printf("A new %i %lli \n",size,count);
+    void* ptr = malloc( size );
+	printf("[+%08p, %lli]\n",ptr,allocCount);
+    return ptr;
+}
+void *operator new[](std::size_t size){
+	if (size == 0 ) return NULL;
+	++allocCount;
+//	printf("B new %i %lli \n",size,count);
+    void* ptr = malloc( size );
+	printf("[>%08p, %lli]\n",ptr,allocCount);
+    return ptr;
+}
+void operator delete(void *ptr) {
+	if (ptr== NULL ) {
+		printf("[-%08p, %lli]\n",ptr,allocCount);
+	} else {
+		allocCount--;
+		printf("[-%08p, %lli]\n",ptr,allocCount);
+		free(ptr);
+	}
+}
+void operator delete[](void *ptr) {
+	if (ptr== NULL ) {
+		printf("[-%08p, %lli]\n",ptr,allocCount);
+	} else {
+		allocCount--;
+		printf("[-%08p, %lli]\n",ptr,allocCount);
+		free(ptr);
+	}
+}
+
+
 namespace MARTe{
 
 #define varDeclSubTemplate(type,typeName,arrayDims, className)\
@@ -202,7 +240,9 @@ void PrepareTestObject(){
     test1Class.test3.bitset7 = 7;
     test1Class.test3.bitset8 = 8;
 
-    for (int i=0;i<12;i++) test1Class.int16Arr[i] = 16*i;
+    for (int i=0;i<12;i++) {
+    	test1Class.int16Arr[i] = 16*i;
+    }
 
     test1Class.int32PVar = &test1Class.test2.int32Var;
     test1Class.CCStringVar = data[0];
@@ -255,7 +295,10 @@ void PrepareTestObject(){
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
 
     static float (*arrayP10[10][10])[10];
-    for (int i=0;i<10;i++) for (int j=0;j<10;j++) arrayP10[i][j] = NULL;
+    for (int i=0;i<10;i++) for (int j=0;j<10;j++) {
+    	arrayP10[i][j] = NULL;
+    }
+
     static float arrayF[10];
     arrayP10[1][1] = &arrayF;
     test1Class.MFloat10 = arrayP10;
@@ -451,25 +494,29 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeAndSize(AnyType at,CCString ex
 }
 
 
+#define MARK printf("(%i)\n",__LINE__);
 
 ErrorManagement::ErrorType DereferenceAndCheckTypeSizeAndContent(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
     ErrorManagement::ErrorType ok;
 
+MARK
 	ok = at.MultipleDereference(expression);
 	REPORT_ERROR(ok,"MultipleDereference error");
-
+MARK
 	Reference atc;
+MARK
 	if (ok && clone){
 		atc = Reference(at);
-
+MARK
 		if (atc.IsValid()){
 			atc.ToAnyType(at);
 		} else {
 			ok.fatalError = true;
 			REPORT_ERROR(ok,"Cloning of variable failed");
 		}
+printf("refNo = %i atc=%p\n",atc->NumberOfReferences(),atc.operator ->());
 	}
-
+MARK
 	if (ok){
 		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
         if (clone){
@@ -479,20 +526,20 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeSizeAndContent(AnyType at,CCSt
         }
 
 	    ErrorManagement::ErrorType ok2;
-
+MARK
 	    ok2 = CheckType(at,typeCheck);
     	REPORT_ERROR(ok2,"CheckType error");
     	ok.SetError(ok2);
-
+MARK
     	ok2 = CheckSize(at,dataSizeCheck,storageSizeCheck);
     	REPORT_ERROR(ok2,"CheckSize error");
     	ok.SetError(ok2);
-
+MARK
     	ok2 = CheckContent(at,contentCheck);
     	REPORT_ERROR(ok2,"CheckContent error");
     	ok.SetError(ok2);
 	}
-
+MARK
     if (!ok){
 		REPORT_ERROR(ok,expression.GetList());
     	printf("*NO*  -->See error Log ");
@@ -500,7 +547,7 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeSizeAndContent(AnyType at,CCSt
         printf("OK (%s)%s,sz=%lli,stor=%lli",typeCheck.GetList(),contentCheck.GetList(),dataSizeCheck,storageSizeCheck);
     }
 	printf("\n");
-
+MARK
 	return ok;
 }
 
@@ -844,49 +891,75 @@ ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCStrin
     return ret;
 }
 
+#define MEM_SAVE()  { long long saveCount = allocCount; printf("<<%lli>",saveCount);
+
+#define MEM_CHECK()  ErrorManagement::ErrorType ok2; \
+	ok2.notCompleted = (saveCount != allocCount); REPORT_ERROR(ok2,"!!!!!!MEM_BALANCE Failed\n"); printf("<%lli>>",allocCount);}
 
 #define DEREF_CHECK(at,mod,type,size,store)\
+MEM_SAVE()\
 ok = DereferenceAndCheckTypeAndSize(at,mod,type,size,store,false);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check1("  mod  ")Failed\n");
 
 #define DEREF_CLONE_CHECK(at,mod,type,size,store)\
+MEM_SAVE()\
 ok = DereferenceAndCheckTypeAndSize(at,mod,type,size,store,true);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check1("  mod  ")Failed\n");
 
 #define DEREF_CHECKCONTENT(at,mod,type,val,size,store)\
+MEM_SAVE()\
 ok = DereferenceAndCheckTypeSizeAndContent(at,mod,type,val,size,store,false);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check2(" mod ")Failed\n");
 
 #define DEREF_CLONE_CHECKCONTENT(at,mod,type,val,size,store)\
+MEM_SAVE()\
 ok = DereferenceAndCheckTypeSizeAndContent(at,mod,type,val,size,store,true);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check2(" mod ")Failed\n");
 
 #define CHECK3(at,mod,type,val,size,store,clone)\
+MEM_SAVE()\
 ok = Check3(at,mod,type,val,size,store,clone);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check3(" mod ")Failed\n");
 
 #define CHECK3N(at,mod,type,val,size,store,clone)\
+MEM_SAVE()\
 ok = Check3(at,mod,type,val,size,store,clone,true);   \
+MEM_CHECK()\
 REPORT_ERROR(ok,"......Check3N(" mod ")Failed as expected\n");
 
 #define CHECK4(type1, size1, size2,minSize2,type2,typeId)\
+MEM_SAVE()\
 ok = Check4<type1,size1,size2,minSize2,type2> (pfstc,typeId);\
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4S(type1, size1, size2,typeId)\
+MEM_SAVE()\
 ok = Check4<type1,size1,size2> (pfstc,typeId);\
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4R(type1, size1, size2,minSize2,typeId)\
+MEM_SAVE()\
 ok = Check4<type1,size1,size2,minSize2> (pfstc,typeId);\
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define COPY_CHECK_OK(type1, type2)\
+MEM_SAVE()\
 ok = CopyCheck<type1,type2> (true,#type1 , #type2);\
+MEM_CHECK()\
 REPORT_ERROR(ok,"*****CopyCheck<>(" #type1 "," #type2 ")Failed\n");
 
 #define COPY_CHECK_NOK(type1, type2)\
+MEM_SAVE()\
 ok = CopyCheck<type1,type2> (false,#type1 , #type2);\
+MEM_CHECK()\
 REPORT_ERROR(ok,"......CopyCheck<>(" #type1 "," #type2 ")Failed as expected\n");
 
 
@@ -913,12 +986,14 @@ void Test(){
      */
 
     /// note all these tests operate on simple 1D variables after redirection.
-    DEREF_CLONE_CHECKCONTENT(at,".int8Var","int8","18",sizeof(int8),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int8Var","int8","18",sizeof(int8),0); // MC
+
+return;
     DEREF_CLONE_CHECKCONTENT(at,".char8Var","char8","c",sizeof(char8),0);
     DEREF_CLONE_CHECKCONTENT(at,".int16Var","int16","116",sizeof(int16),0);
     DEREF_CLONE_CHECKCONTENT(at,".int32Var","int32","132",sizeof(int32),0);
     DEREF_CLONE_CHECKCONTENT(at,".uint32Var","uint32","132",sizeof(uint32),0);
-    DEREF_CLONE_CHECKCONTENT(at,".int64Var","int64","164",sizeof(int64),0);
+    DEREF_CLONE_CHECKCONTENT(at,".int64Var","int64","164",sizeof(int64),0);  // MC
     DEREF_CLONE_CHECKCONTENT(at,".floatVar","float","10.100001",sizeof(float),0);
     DEREF_CLONE_CHECKCONTENT(at,".doubleVar","double","11100000000.000000",sizeof(double),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.char8Var","char8","c",sizeof(char8),0);
@@ -973,7 +1048,7 @@ void Test(){
      * then checks overhead storage size against 5th string
      */
     DEREF_CHECK(at,".int64PArr","int64( *[11])[21]",424,sizeof(test1Class.int64PArr)/* cannot clone pointers*/);
-	DEREF_CHECK(at,".int64PArr[4]","int64( *)[21]",176,8); // cannot clone pointers
+    DEREF_CHECK(at,".int64PArr[4]","int64( *)[21]",176,8); // cannot clone pointers
     DEREF_CHECK(at,".int32PVar","int32 *",8,0);  // cannot clone pointers
     DEREF_CHECK(at,".VCharVar","Vector<char8>",16,16/* clone creates only const structures*/);
     DEREF_CHECK(at,".MFloatVar","Matrix<float>",24,24/* clone creates only const structures*/);
@@ -993,9 +1068,9 @@ void Test(){
      * then checks data size against fourth string
      * then checks overhead storage size against 5th string
      */
-    DEREF_CLONE_CHECK(at,".test2","class MARTe::Test2Class",sizeof(Test2Class),0);
-	DEREF_CLONE_CHECK(at,".test3","union MARTe::Test3Class",sizeof(uint32),0);
-    DEREF_CLONE_CHECK(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);
+    DEREF_CLONE_CHECK(at,".test2","class MARTe::Test2Class",sizeof(Test2Class),0);   //
+    DEREF_CLONE_CHECK(at,".test3","union MARTe::Test3Class",sizeof(uint32),0);
+    DEREF_CLONE_CHECK(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);     //
     DEREF_CLONE_CHECK(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
     DEREF_CLONE_CHECK(at,".int32PVar*","int32",4,0);
     DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",16,16/* clone creates only const structures*/);
@@ -1080,7 +1155,7 @@ void Test(){
     COPY_CHECK_NOK(uint32_4_8_6, Vector<uint32>);
     COPY_CHECK_NOK(uint32_4_8_6, Matrix<uint32>);
     COPY_CHECK_OK(uint32_4_8_6, uint32_4_8_6);
-#endif
+
     COPY_CHECK_OK(uint32_4_8_6, Vector<Matrix<uint32>>);
     COPY_CHECK_OK(uint32_4_8_6, Matrix<Vector<uint32>>);
 
@@ -1091,7 +1166,7 @@ void Test(){
 
     COPY_CHECK_NOK(uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32>>>);
     COPY_CHECK_OK(uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32>>>);
-
+#endif
 	TestSafeN2N<float,int20>(1e6);
     TestSafeN2N<float,int21>(1e6);
     TestSafeN2N<float,uint19>(1e6);
@@ -1178,8 +1253,13 @@ void Test(){
 }
 }
 
+
+
+
+
 int main(int argc, char **argv){
-    MARTe::PrepareTestObject();
+#if 1
+	MARTe::PrepareTestObject();
     MARTe::Test();
 
     MARTe::Vector<float> *p = new MARTe::Vector<float>[4];
@@ -1189,9 +1269,6 @@ int main(int argc, char **argv){
 	((MARTe::Vector<float> *)q)[2].InitVector(NULL,0);
 	((MARTe::Vector<float> *)q)[3].InitVector(NULL,0);
 
-//    MARTe::CCString xx;
-//    MARTe::StructuredDataI *sdi;
-//    sdi->Read("ARGC",xx);
-
+#endif
     return 0;
 }

@@ -29,12 +29,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 //#include "IOBuffer.h"
 #include "ErrorManagement.h"
 #include "StringToNumber.h"
+
+#include "GeneralDefinitions.h"
 
 
 /*---------------------------------------------------------------------------*/

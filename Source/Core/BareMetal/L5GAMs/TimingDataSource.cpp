@@ -61,17 +61,16 @@ bool TimingDataSource::SetConfiguredDatabase(StructuredDataI & data) {
         uint32 s;
         for (s = 0u; (s < nStates) && (ret); s++) {
             uint32 nProducers = 0u;
-            StreamString stateName;
+            DynamicCString stateName;
             ret = GetSignalStateName(n, s, stateName);
             if (ret) {
-                ret = !GetSignalNumberOfProducers(n, stateName.Buffer(), nProducers);
+                ret = !GetSignalNumberOfProducers(n, stateName, nProducers);
                 if (!ret) {
-                    StreamString signalName;
+                	DynamicCString signalName;
                     if (!GetSignalName(n, signalName)) {
                         signalName = "";
                     }
-                    REPORT_ERROR(ErrorManagement::FatalError, "In TimingDataSource %s, state %s, signal %s has a producer", GetName(),
-                                            stateName.Buffer(), signalName.Buffer());
+                    COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "In TimingDataSource ",GetName()," state ",stateName," signal ",signalName," has a producer");
                 }
 
             }

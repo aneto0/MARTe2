@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "LoadableLibraryTest.h"
-#include "GeneralDefinitions.h"
+
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 
 using namespace MARTe;
 

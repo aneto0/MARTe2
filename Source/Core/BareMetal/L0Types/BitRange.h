@@ -45,9 +45,9 @@ namespace MARTe {
 /**
  *  @brief A number with configurable size and bit offset.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
- *  @tparam baseType the standard type which is used as a base for the new type
- *  @tparam numberOfBits the actual bit size of the new type
- *  @tparam bitOffset the actual bit offset of the new type
+ *  @tparam baseType the standard type which is used as a base for the novel type
+ *  @tparam numberOfBits the actual bit size of the novel type
+ *  @tparam bitOffset the actual bit offset of the novel type
  *  @remark numberOfBits + bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
@@ -56,7 +56,7 @@ namespace MARTe {
  * This strategy is used to guarantee that certain rules about the template are guaranteed at compilation time.
  * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
-class BitRange: public TemplateParametersVerificator<((sizeof(baseType) * 8u) >= (numberOfBits + bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
+class BitRange: public TemplateParametersVerificator<((static_cast<uint16>(sizeof(baseType) * 8u)) >= (numberOfBits + bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
 
 public:
 

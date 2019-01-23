@@ -34,9 +34,10 @@
 #include "VectorDimension.h"
 #include "MemoryCheck.h"
 #include "Vector.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
 #include "CompositeErrorManagement.h"
 #include "VariableDescriptorLib.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -118,7 +119,7 @@ ErrorManagement::ErrorType VectorDimension::ReSize(
 	ret = GetNextLayerElementSize(totalSizeD);
     REPORT_ERROR(ret, "GetNextLayerElementSize failed");
 
-    uint32 totalAllocationSize;
+    uint32 totalAllocationSize = 0;
     if (ret){
     	totalSizeD = totalSizeD * numberOfColumns;
 		totalSizeD = totalSizeD * numberOfRows;
@@ -127,7 +128,7 @@ ErrorManagement::ErrorType VectorDimension::ReSize(
         COMPOSITE_REPORT_ERROR(ret, "total size overflow: NCol = ",numberOfColumns,"NRows = ",numberOfRows);
     }
 
-    uint8 *newMemory;
+    uint8 *newMemory = NULL_PTR(uint8 *);
 	if (ret){
 		// allocate memory
 		newMemory = reinterpret_cast<uint8 *>(HeapManager::Malloc(totalAllocationSize));
@@ -169,7 +170,7 @@ ErrorManagement::ErrorType VectorDimension::InitStack(
 
 	if (ret){
 		Vector<char8 >* vptr = reinterpret_cast<Vector<char8 >* >(ptr);
-		for (int i = 0; i< n;i++){
+		for (uint32 i = 0; i< n;i++){
 			vptr->InitVector(NULL,0);
 			vptr++;
 		}

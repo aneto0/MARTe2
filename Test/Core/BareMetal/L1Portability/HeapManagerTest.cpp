@@ -31,9 +31,9 @@
 
 #include "HeapManagerTest.h"
 #include <GlobalObjectsDatabase.h>
-#include "HeapI.h"
 #include "StringHelper.h"
 #include "HeapManager.h"
+#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

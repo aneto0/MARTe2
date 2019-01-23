@@ -20,39 +20,16 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
-#include "Memory.h"
+#define DLL_API
+
+
+#include "MemoryOperators.h"
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
+#include "StartupManager.h"
 
 
 namespace MARTe{
-
-
-
-class SameTypeConversionFactory: TypeConversionFactoryI{
-
-public:
-
-	/**
- 	 * @brief Default constructor. NOOP.
- 	 */
-	SameTypeConversionFactory();
-
-    /**
-     * @brief Default destructor.
-     */
-    virtual ~SameTypeConversionFactory();
-
-	/**
-     * @brief allow access to optimal functor for data conversion
-	 *
-	 */
-	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
-
-
-private:
-
-} sameTypeConversionFactory;
 
 /**
  * @brief simple copy functor
@@ -88,19 +65,60 @@ private:
 };
 
 
+class SameTypeConversionFactory: public TypeConversionFactoryI{
+
+public:
+
+	/**
+ 	 * @brief Default constructor. NOOP.
+ 	 */
+	SameTypeConversionFactory();
+
+    /**
+     * @brief Default destructor.
+     */
+    virtual ~SameTypeConversionFactory();
+
+	/**
+     * @brief allow access to optimal functor for data conversion
+	 *
+	 */
+	TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare);
+
+private:
+
+} sameTypeConversionFactory;
+
+
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(SameTypeConversionFactory,("TCMService",emptyString),("TCMDataBase",emptyString))
+
+ErrorManagement::ErrorType SameTypeConversionFactoryStartup::Init(){
+	ErrorManagement::ErrorType ret;
+
+	ret.initialisationError = !TypeConversionManager::Register(&sameTypeConversionFactory);
+
+	return ret;
+}
+
+ErrorManagement::ErrorType SameTypeConversionFactoryStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	TypeConversionManager::Clean();
+
+	return ret;
+}
+
+
 /************************************************************************************************/
 /*   IMPLEMENTATION */
 /************************************************************************************************/
 
 
 SameTypeConversionFactory::SameTypeConversionFactory(){
-	TypeConversionManager::Instance().Register(this);
 }
 
 SameTypeConversionFactory::~SameTypeConversionFactory(){
 }
-
-#include <stdio.h>
 
 TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);

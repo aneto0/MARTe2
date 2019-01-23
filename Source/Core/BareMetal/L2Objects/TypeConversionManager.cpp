@@ -24,72 +24,48 @@
 
 #define DLL_API
 
-#include "GlobalObjectsDatabase.h"
 #include "TypeConversionManager.h"
 
 
 namespace MARTe{
 
-TypeConversionManager &TypeConversionManager::Instance() {
+namespace TypeConversionManager{
 
-    static TypeConversionManager *instance = NULL_PTR(TypeConversionManager *);
-    if (instance == NULL) {
-        instance = new TypeConversionManager(); //dynamic_cast<ObjectRegistryDatabase*>(ObjectRegistryDatabase_BuildFn());
-        uint32 dexOrd = NUMBER_OF_GLOBAL_OBJECTS - 6u;
-        GlobalObjectsDatabase::Instance().Add(instance, dexOrd);
+    /**
+     * Allows registering up to 32 factories
+     */
+    SimpleStaticListT<TypeConversionFactoryI*,MaximumNumberOfFactories> factories;
+
+    const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) {
+    	uint32 ix = 0;
+    	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
+    	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
+    		TypeConversionFactoryI *tcf = factories.Get(ix);
+    		tco = tcf->GetOperator(destTd,sourceTd,isCompare);
+    		ix++;
+    	}
+
+    	return tco;
     }
-    return *instance;
-}
 
-#include <stdio.h>
-const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) const {
-	uint32 ix = 0;
-	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-//printf("<NF=%i>",factories.NumberOfUsedElements());
-	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
-		TypeConversionFactoryI *tcf = factories.Get(ix);
-		tco = tcf->GetOperator(destTd,sourceTd,isCompare);
-		ix++;
-//printf("!");
-	}
+    bool TypeConversionManager::Register(TypeConversionFactoryI *factory){
+    	bool ret = false;
+    	uint32 n = factories.NumberOfUsedElements();
+    	if (n < factories.NumberOfElements()){
+    		ret = factories.Add(factory);
+    	}
+    	return ret;
+    }
 
-	return tco;
-}
+    void Clean(){
+    	for (uint32 i = 0; i < factories.NumberOfUsedElements();i++){
+    		factories[i] = NULL_PTR(TypeConversionFactoryI*);
+    	}
+    }
 
 
-bool TypeConversionManager::Register(TypeConversionFactoryI *factory){
-	bool ret = false;
-	uint32 n = factories.NumberOfUsedElements();
-	if (n < factories.NumberOfElements()){
-		ret = factories.Add(factory);
-	}
-	return ret;
-}
-
-TypeConversionManager::TypeConversionManager(){
-
-}
-
-TypeConversionManager::~TypeConversionManager(){
-
-}
-
-CCString  TypeConversionManager::GetClassName() const {
-    return "TypeConversionManager";
-}
-
-/*lint -e{1550} */
-void *TypeConversionManager::operator new(const osulong size) throw () {
-    return GlobalObjectI::operator new(size);
-}
-
-/*lint -e{1550} */
-void TypeConversionManager::operator delete(void * const p) {
-    return GlobalObjectI::operator delete(p);
-}
-
-const FormatDescriptor TypeConversionOperatorI::format;
+//const FormatDescriptor TypeConversionOperatorI::format;
 
 
-
+} //TypeConversionManager
 } //MARTe

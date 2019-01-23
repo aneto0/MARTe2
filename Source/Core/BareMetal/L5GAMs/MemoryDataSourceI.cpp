@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "MemoryDataSourceI.h"
+#include "MemoryOperators.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -49,18 +50,15 @@ MemoryDataSourceI::MemoryDataSourceI() :
     totalMemorySize = 0u;
     memory = NULL_PTR(uint8 *);
     signalOffsets = NULL_PTR(uint32 *);
-    memoryHeap = NULL_PTR(HeapI *);
+    heapId = HeapManager::standardHeapId;
     signalSize = NULL_PTR(uint32 *);
 }
 
 MemoryDataSourceI::~MemoryDataSourceI() {
-    if (memoryHeap != NULL_PTR(HeapI *)) {
-        if (memory != NULL_PTR(uint8 *)) {
-            /*lint -e{1551} HeapManager::Free is expected to be exception free*/
-            memoryHeap->Free(reinterpret_cast<void *&>(memory));
-            memory = NULL_PTR(uint8 *);
-        }
-        memoryHeap = NULL_PTR(HeapI *);
+    if (memory != NULL_PTR(uint8 *)) {
+        /*lint -e{1551} HeapManager::Free is expected to be exception free*/
+        HeapManager::Free(reinterpret_cast<void *&>(memory));
+        memory = NULL_PTR(uint8 *);
     }
     if (signalOffsets != NULL_PTR(uint32 *)) {
         delete[] signalOffsets;
@@ -113,10 +111,8 @@ bool MemoryDataSourceI::AllocateMemory() {
     }
     if (ret) {
         totalMemorySize = stateMemorySize * numberOfStateBuffers;
-        if (memoryHeap != NULL_PTR(HeapI *)) {
-            memory = reinterpret_cast<uint8 *>(memoryHeap->Malloc(totalMemorySize));
-        }
-        ret = MemoryOperationsHelper::Set(memory, '\0', totalMemorySize);
+        memory = reinterpret_cast<uint8 *>(HeapManager::Malloc(totalMemorySize,heapId));
+        ret = Memory::Set(memory, '\0', totalMemorySize);
     }
     return ret;
 
@@ -133,33 +129,31 @@ bool MemoryDataSourceI::Initialise(StructuredDataI & data) {
         if (!ret) {
             ret = true;
             numberOfBuffers = 1u;
-            REPORT_ERROR(ErrorManagement::Warning, "NumberOfBuffers was not specified. Using default: %d", numberOfBuffers);
+            COMPOSITE_REPORT_ERROR(ErrorManagement::Warning, "NumberOfBuffers was not specified. Using default: ", numberOfBuffers);
         }
     }
 
     if (ret) {
-        StreamString heapName;
+        DynamicCString heapName;
         if (data.Read("HeapName", heapName)) {
-            memoryHeap = HeapManager::FindHeap(heapName.Buffer());
-            if (memoryHeap == NULL_PTR(HeapI *)) {
-                ret = false;
-                REPORT_ERROR(ErrorManagement::Warning, "Could not instantiate an memoryHeap with the name: %s", heapName.Buffer());
-            }
+
+        	heapId = HeapManager::HeapIdFromName(heapName);
         }
         else {
             REPORT_ERROR(ErrorManagement::Warning, "Using the standard heap");
-            memoryHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+            heapId = HeapManager::standardHeapId;
         }
     }
     return ret;
 }
 
 /*lint -e{613} a valid Initialise is a pre-condition that guarantees memory to be != NULL*/
-bool MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
-    bool ret = (bufferIdx < GetNumberOfStatefulMemoryBuffers());
+ErrorManagement::ErrorType MemoryDataSourceI::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+	ErrorManagement::ErrorType ret;
+	ret.parametersError = (bufferIdx < GetNumberOfStatefulMemoryBuffers());
     uint32 nOfSignals = GetNumberOfSignals();
     if (ret) {
-        ret = (signalIdx < nOfSignals);
+        ret.parametersError = (signalIdx < nOfSignals);
     }
 
     if (ret) {

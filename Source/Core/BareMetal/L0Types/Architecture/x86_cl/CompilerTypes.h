@@ -24,7 +24,11 @@
 #ifndef COMPILERTYPESA_H_
 #define COMPILERTYPESA_H_
 
+#pragma warning( push )
+#pragma warning( disable : 4820)
+#pragma warning( disable : 4514)
 #include <Windows.h>
+#pragma warning( pop )
 
 namespace MARTe {
 
@@ -55,6 +59,9 @@ typedef double float64;
 /** 8 Bit character */
 typedef char char8;
 
+
+typedef intptr_t  uintp;
+#if 0
 /** Sufficiently large to hold a pointer address in the target architecture*/
 #ifdef __LP64__
 typedef DWORD32 uintp;
@@ -64,6 +71,7 @@ typedef DWORD32 uintp;
 typedef DWORD64 uintp;
 #else
 typedef DWORD32 uintp;
+#endif
 #endif
 
 

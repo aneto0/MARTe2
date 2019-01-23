@@ -27,12 +27,8 @@
 
 #include <limits.h>
 
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
+#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
 #include "StaticListTest.h"
-#include "GeneralDefinitions.h"
 #include "gtest/gtest.h"
 
 using namespace MARTe;

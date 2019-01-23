@@ -71,7 +71,7 @@ bool RealTimeThread::ConfigureArchitecture() {
     if (!configured) {
         ReferenceContainerFilterReferences findme(1, ReferenceContainerFilterMode::PATH, this);
         ReferenceContainer path;
-        ObjectRegistryDatabase::Instance()->ReferenceContainer::Find(path, findme);
+        ObjectRegistryDatabase::Access()->Find(path, findme);
         uint32 numberOfNodes = path.Size();
         StreamString absoluteFunctionPath;
 
@@ -109,7 +109,7 @@ bool RealTimeThread::ConfigureArchitecture() {
 
             // find the functions specified in cdb
             /*lint -e{613} Never enters here if (functions == NULL) because (numberOfFunctions == 0) */
-            ReferenceT<ReferenceContainer> functionGeneric = ObjectRegistryDatabase::Instance()->Find(functionPath.Buffer());
+            ReferenceT<ReferenceContainer> functionGeneric = ObjectRegistryDatabase::Find(functionPath.Buffer());
             ret = functionGeneric.IsValid();
             if (ret) {
                 ReferenceT<GAM> gam = functionGeneric;
@@ -124,12 +124,12 @@ bool RealTimeThread::ConfigureArchitecture() {
                     numberOfGAMs = GAMs.Size();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Insert into GAMs failed", "");
+                	REPORT_ERROR(ErrorManagement::FatalError, "Insert into GAMs failed");
                 }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-                REPORT_ERROR(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer());
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Undefined ", functions[i].Buffer());
             }
             if (ret) {
                 ReferenceContainer statefuls;
@@ -144,16 +144,16 @@ bool RealTimeThread::ConfigureArchitecture() {
                     functionGeneric->Find(statefuls, statefulFilter);
                     ret = state->AddStatefuls(statefuls);
                     if (!ret) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Insert into state failed", "");
+                    	REPORT_ERROR(ErrorManagement::FatalError, "Insert into state failed");
                     }
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Insert into statefuls failed", "");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Insert into statefuls failed");
                 }
             }
             else {
                 /*lint -e{613} Never enter here if (functions == NULL) because (numberOfFunctions == 0) */
-                REPORT_ERROR(ErrorManagement::FatalError, "Undefined %s", functions[i].Buffer());
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "Undefined ", functions[i].Buffer());
             }
 
         }
@@ -163,7 +163,14 @@ bool RealTimeThread::ConfigureArchitecture() {
 }
 
 bool RealTimeThread::Initialise(StructuredDataI & data) {
-    bool ret = ReferenceContainer::Initialise(data);
+	ErrorManagement::ErrorType ret;
+    ret.fatalError = !ReferenceContainer::Initialise(data);
+
+    Vector<DynamicCString> functionVector;
+    if (ret){
+        ret = data.Read("Functions",functionVector);
+    }
+
 
     AnyType functionsArray = data.GetType("Functions");
     if (ret) {
@@ -181,14 +188,14 @@ bool RealTimeThread::Initialise(StructuredDataI & data) {
         ret = (data.Read("Functions", functionVector));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "No functions defined for the RealTimeThread %s", GetName());
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError, "No functions defined for the RealTimeThread ", GetName());
     }
     if (ret) {
         if (!data.Read("CPUs", cpuMask)) {
-            REPORT_ERROR(ErrorManagement::Information, "No CPUs defined for the RealTimeThread %s", GetName());
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::Information, "No CPUs defined for the RealTimeThread ", GetName());
         }
         if (!data.Read("StackSize", stackSize)) {
-            REPORT_ERROR(ErrorManagement::Information, "No StackSize defined for the RealTimeThread %s", GetName());
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::Information, "No StackSize defined for the RealTimeThread ", GetName());
         }
     }
 

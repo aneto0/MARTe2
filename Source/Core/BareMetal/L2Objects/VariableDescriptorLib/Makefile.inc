@@ -27,21 +27,15 @@ ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
-OBJSX=  	VariableDescriptorLib.x VD_Variable.x Dimension.x \
-                DataDimension.x ArrayDimension.x PointerToArrayDimension.x \
-                VectorDimension.x MatrixDimension.x ZTADimension.x \
-                VariableCloner.x
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I.. -I../../L1Portability -I../../L0Types
 
-#LIBRARIES_STATIC=$(BUILD_DIR)/../../L0Types/L0TypesB$(LIBEXT)
-#LIBRARIES_STATIC+=$(BUILD_DIR)/../../L1Portability/L1PortabilityB$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L2VDLib$(LIBEXT) 
-	echo  $(OBJS)
+all: $(OBJS) $(SUBPROJ)   
+	echo  $(OBJSX)
 
 
 include depends.$(TARGET)

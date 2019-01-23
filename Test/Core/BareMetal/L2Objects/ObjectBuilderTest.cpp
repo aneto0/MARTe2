@@ -31,9 +31,9 @@
 
 #include "ObjectBuilderTest.h"
 
-#include "HeapI.h"
 #include "Object.h"
 #include "ObjectBuilder.h"
+#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

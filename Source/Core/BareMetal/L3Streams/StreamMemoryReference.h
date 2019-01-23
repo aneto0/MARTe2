@@ -191,7 +191,7 @@ public:
      * @param[in] pos is the desired absolute position.
      * @return false in case of cursor out of ranges or other errors.
      */
-    virtual bool Seek(const uint64 pos);
+    virtual bool Seek(uint64 pos);
 
     /**
      * @brief Moves within the stream relative to current location.
@@ -218,7 +218,7 @@ public:
      * @param[in] size is the desired stream size.
      * @return true.
      */
-    virtual bool SetSize(const uint64 size);
+    virtual bool SetSize(uint64 size);
 
     /*-----------------------------------------------------------------------*/
 

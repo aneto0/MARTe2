@@ -34,6 +34,7 @@
 
 #include "ZeroTerminatedArray.h"
 #include "CCString.h"
+#include "CStringTool.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -49,25 +50,27 @@ namespace MARTe {
 class CString: public ZeroTerminatedArray<char8>{
 
 public:
-    /**
-     *TODO
-     */
-    inline CString ();
-
-    /**
-     *TODO
-     */
-    inline CString (CString const &s);
-
-    /**
-     * TODO
-     */
-    inline CString (char8 * const &s);
 
     /**
      * TODO
      */
     inline operator CCString() const;
+
+    /**
+     * @brief This allows initialising CString from an existing R/W char8* string.
+     * No other initialisation is possible
+     */
+    inline CString (CString const &s);
+
+    /**
+     *
+     */
+    inline CString (char8 * const &s=NULL_PTR(char8 *));
+
+    /**
+     *
+     */
+    inline CStringTool operator()();
 
     /**
      * TODO
@@ -92,17 +95,14 @@ bool CString::operator==(const CCString &s) const{
 }
 
 
+CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){}
 
-CString::CString (){
+CStringTool CString::operator()(){
+	return CStringTool(NULL,array,GetSize()+1);
 }
 
-CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){
 
-}
-
-CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){
-
-}
+CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){}
 
 //CString::operator const char8*() const{
 //    return ZeroTerminatedArray<char8>::array;

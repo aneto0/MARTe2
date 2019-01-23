@@ -33,6 +33,7 @@
 #include "ErrorManagement.h"
 #include "HighResolutionTimer.h"
 #include "ErrorInformation.h"
+#include "ErrorTypeLookup.h"
 #include "StringHelper.h"
 #include "CString.h"
 
@@ -55,8 +56,7 @@ extern void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString 
 ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
 
 
-void ErrorCodeToStream(const ErrorType &errorCode,
-                       StreamI &stream) {
+void ErrorCodeToStream(const ErrorType &errorCode,StreamI &stream) {
     //Skip the NoError
     uint32 i = 1u;
     bool firstErrorWritten = false;

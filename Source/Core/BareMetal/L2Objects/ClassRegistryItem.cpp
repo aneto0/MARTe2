@@ -178,6 +178,8 @@ public:
 	    }
 	    return ret;
 	}
+private:
+	void operator=(const ClassRegistryItemFindMember &){}
 };
 
 class ClassRegistryItemFindInheritedMember: public SearchFilterT<ClassMember>{
@@ -185,14 +187,11 @@ class ClassRegistryItemFindInheritedMember: public SearchFilterT<ClassMember>{
 	// the search will return the node referring to the inherited class
 	// this will point to the correct node
 	const ClassMember *actualMember;
-
-	ClassRegistryDatabase *crd;
 public:
 
 	ClassRegistryItemFindInheritedMember(CCString const memberNameIn): memberName(memberNameIn){
 		actualMember = NULL_PTR(ClassMember *);
 		// find structure documentation
-		crd = ClassRegistryDatabase::Instance();
 	}
 
 	const ClassMember * GetActualMember(){
@@ -200,11 +199,11 @@ public:
 	}
 
 	bool Test(ClassMember *data){
-	    if ((data != NULL) && (crd != NULL) ){
+	    if (data != NULL) {
 	    	CCString name = data->GetName();
 	    	if (name.GetSize() == 0){
 	    		TypeDescriptor td = data->GetDescriptor().GetSummaryTypeDescriptor();
-	    		ClassRegistryItem *cri = crd->Find(td);
+	    		ClassRegistryItem *cri = ClassRegistryDatabase::Find(td);
 
 	    		if (cri != NULL){
 	    			actualMember = cri->FindMember(memberName);
@@ -214,6 +213,9 @@ public:
 	    }
 	    return (actualMember != NULL_PTR(ClassMember *));
 	}
+
+private:
+	void operator=(const ClassRegistryItemFindInheritedMember &){}
 };
 
 

@@ -229,13 +229,33 @@ SaturatedInteger<T>	SaturatedInteger<T>::Zero(){
 template <typename T>
 template <typename T2>
 SaturatedInteger<T>::SaturatedInteger(const T2 & x){
-	if (x > hiLimitValue){
-		data = positiveInf;
-	} else
-	if (x < loLimitValue){
-		data = negativeInf;
-	} else {
-		data = x;
+	data = static_cast<T>(x);
+	if (x != static_cast<T2>(data)){
+		if (x >= 0){
+			if (sizeof(T)>= sizeof(T2)){
+				if (static_cast<T>(x) > hiLimitValue){
+					data = positiveInf;
+				}
+			} else {
+				if (x > static_cast<T2>(hiLimitValue)){
+					data = positiveInf;
+				}
+			}
+		} else {
+			if (loLimitValue >= 0){
+				data = negativeInf;
+			} else {
+				if (sizeof(T)>= sizeof(T2)){
+					if (static_cast<T>(x) < loLimitValue){
+						data = negativeInf;
+					}
+				} else {
+					if (x < static_cast<T2>(loLimitValue)){
+						data = negativeInf;
+					}
+				}
+			}
+		}
 	}
 }
 

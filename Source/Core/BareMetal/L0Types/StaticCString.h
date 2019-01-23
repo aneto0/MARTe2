@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticZeroTerminatedArray.h"
+#include "CCString.h"
+#include "CStringTool.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,6 +50,10 @@ template<uint32 size>
 class StaticCString: public StaticZeroTerminatedArray<char8,size>{
 
 public:
+    /*
+     * TODO
+     */
+    inline operator CCString() const;
 
     /**
      * @briefs uses the memory provided by s
@@ -55,10 +61,90 @@ public:
     */
     inline StaticCString (char8  (&s)[size]);
 
-    /*
-     * TODO
+    /**
+     *
      */
-    operator const char8*() const;
+    inline CStringTool operator()();
+
+#if 0
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool AppendHex(uint64 num);
+
+    /**
+     * @brief append a char at the end of the string
+     */
+    inline bool Append(const char8 c);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const char8 *s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const CCString &s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a string at the end of the string
+     */
+    inline bool Append(const StaticCString &s,uint32 maxAppendSize=0xFFFFFFFF);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint64 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint32 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint16 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const uint8 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int64 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int32 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int16 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const int8 num);
+
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const double num);
+    /**
+     * @brief append a number at the end of the string
+     */
+    inline bool Append(const float num);
+
+private:
+    template <typename T>
+    inline bool AppendT(T num);
+#endif
 
 };
 
@@ -75,10 +161,123 @@ StaticCString<size>::StaticCString (char8  (&s)[size]):StaticZeroTerminatedArray
 }
 
 template <uint32 size>
+CStringTool StaticCString<size>::operator()(){
+	return CStringTool(NULL_PTR(char8 **),array ,size);
+}
+
+template <uint32 size>
+StaticCString<size>::operator CCString() const{
+	return CCString(ZeroTerminatedArray<char8>::array);
+}
+
+#if 0
+template <uint32 size>
 StaticCString<size>::operator const char8*() const{
     return ZeroTerminatedArray<char8>::array;
 }
 
+template <uint32 size>
+bool StaticCString<size>::Append(const uint64 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const uint32 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const uint16 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const uint8 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const int64 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const int32 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const int16 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const int8 num){
+	return AppendT(num);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const float num){
+	int64 numI = num;
+	return AppendT(numI);
+}
+
+template<uint32 size>
+bool StaticCString<size>::Append(const double num){
+	int64 numI = num;
+	return AppendT(numI);
+}
+
+template<uint32 size>
+template <typename T>
+bool StaticCString<size>::AppendT(T num){
+	bool ret = true;
+	if (num < 0){
+		ret = ret && Append('-');
+		num = -num;
+	}
+
+	T tester = 1;
+	T tested = num/10;
+	while (tester <= tested){
+		tester *= 10;
+	}
+	while (tester > 0){
+		uint8 digit = num/tester;
+		ret = ret && Append(static_cast<char8>(static_cast<uint8>('0')+digit));
+		num     = num%tester;
+		tester /= 10;
+	}
+	return ret;
+}
+
+template<uint32 size>
+bool StaticCString<size>::AppendHex(uint64 num){
+	bool ret = true;
+	for (int i = 60;(i>=0) && ret;i-=4){
+		uint8 n = (num >> i) & 0xF;
+		if (n >= 10) ret = ret && Append(static_cast<char8>(static_cast<uint8>('A')+n-10));
+		else         ret = ret && Append(static_cast<char8>(static_cast<uint8>('0')+n));
+	}
+	return ret;
+}
+
+template<uint32 size> bool StaticCString<size>::Append(const char8 c){
+	return StaticZeroTerminatedArray<char8,size>::Append(c);
+}
+
+template<uint32 size> bool StaticCString<size>::Append(const char8 *s,uint32 maxAppendSize){
+	return StaticZeroTerminatedArray<char8,size>::AppendN(s,maxAppendSize);
+}
+template<uint32 size> bool StaticCString<size>::Append(const StaticCString &s,uint32 maxAppendSize){
+	return StaticZeroTerminatedArray<char8,size>::AppendN(s.GetList(),maxAppendSize);
+}
+
+template<uint32 size> bool StaticCString<size>::Append(const CCString &s,uint32 maxAppendSize){
+	return StaticZeroTerminatedArray<char8,size>::AppendN(s.GetList(),maxAppendSize);
+}
+
+#endif
 
 }
 #endif /* L0TYPES_STATICCSTRING_H_ */

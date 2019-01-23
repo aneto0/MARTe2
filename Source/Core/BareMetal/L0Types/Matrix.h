@@ -387,7 +387,7 @@ void Matrix<T>::FreeMemory() {
 	    }
 	    if (allocationMode == heapMalloc) {
 	    	char8 *p8 = reinterpret_cast<char8 *>(dataPointer);
-	    	for (int i = 0;i < numberOfColumns*numberOfRows;i++){
+	    	for (uint32 i = 0;i < numberOfColumns*numberOfRows;i++){
 	    		T* pT = reinterpret_cast<T *>(p8);
 	    		pT->~T();
 	    		p8 += sizeof(T);

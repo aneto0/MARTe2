@@ -505,7 +505,7 @@ bool BasicConsole::PagedWrite(const char8 * const buffer,
         uint32 numberOfRows = numberOfRowsTmp;
 
         int64 t0 = lastPagingCounter;
-        int64 t1 = HighResolutionTimer::Counter();
+        int64 t1 = static_cast<int64>(HighResolutionTimer::Counter());
 
         int64 dTicks = t1 - t0;
         float64 dTime = static_cast<float64>(dTicks) * HighResolutionTimer::Period();

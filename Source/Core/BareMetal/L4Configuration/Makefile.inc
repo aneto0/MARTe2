@@ -24,24 +24,9 @@
 #
 #############################################################
 
-OBJSX=\
-		TokenInfo.x \
-		Token.x \
-		StringToNumber.x \
-		FromStringConversionFactory.x \
-		NumericConversionFactory.x \
-		LexicalAnalyzer.x \
-		ParserI.x \
-		StandardParser.x \
-		XMLParser.x \
-		JsonParser.x \
-		ConfigurationDatabase.x
+SPB    =  LocalTest.x
 
-
-#		TypeConversion.x \
-#		ValidateBasicType.x\
-
-
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -54,11 +39,8 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4ConfigurationB$(LIBEXT) \
-	        $(BUILD_DIR)/L4ConfigurationB.def \
-                $(BUILD_DIR)/test2$(EXEEXT) 
-	echo  $(OBJS)
+all: $(OBJS)  $(SUBPROJ) 
+	echo  $(OBJSX)
 
 include depends.$(TARGET)
 

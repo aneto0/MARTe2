@@ -35,6 +35,7 @@
 #include "Object.h"
 #include "CString.h"
 #include "StructuredDataI.h"
+#include "AllocationHeader.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -79,7 +80,7 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(CCString const typeName,HeapI* const heap = static_cast<HeapI *>(NULL));
+    Reference(CCString const typeName,HeapManager::HeapId = HeapManager::standardHeapId );
 
     /**
      * @brief Creates a reference to an existing \a pointer.
@@ -169,7 +170,7 @@ public:
      * @brief Provides access to the underlying object by mean of his AnyType
      * @return the AnyType of the object
      */
-    void ToAnyType(AnyType &at);
+    void ToAnyType(AnyType &at) const;
 
 protected:
 
@@ -198,8 +199,7 @@ private:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    Object *CreateByName(CCString const className,
-                         HeapI* const heap) const;
+    Object *CreateByName(CCString const className,HeapManager::HeapId) const;
 };
 
 } 

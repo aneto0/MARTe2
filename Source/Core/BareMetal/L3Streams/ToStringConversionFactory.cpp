@@ -20,12 +20,14 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
+#define DLL_API
+
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
 #include "IOBuffer.h"
 #include "IOBufferPrivate.h"
 #include "StreamString.h"
-#include "Memory.h"
+#include "CompositeErrorManagement.h"
 
 namespace MARTe{
 
@@ -245,7 +247,7 @@ private:
 
 
 ErrorManagement::ErrorType  IOBufferWrapper::Next(){
-printf(">>\n");
+//printf(">>\n");
 	ErrorManagement::ErrorType  ret;
 	ret.notCompleted = !NoMoreSpaceToWrite();
 	return ret;
@@ -361,12 +363,15 @@ ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
             }
             // write
             else {
-                if (string->Append(Buffer(), writeSize)) {
+            	ErrorManagement::ErrorType ret;
+            	ret = (*string)().Append(Buffer(), writeSize);
+
+                if (ret) {
                     retval = true;
                     Empty();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferDynStringWrapper: Failed Write");
+                    REPORT_ERROR(ret, "IOBufferDynStringWrapper: Failed Write");
                 }
             }
         }
@@ -417,19 +422,14 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
             }
             // write
             else {
-            	if (Memory::Compare(Buffer(),currentString.GetList(),writeSize)){
+            	if (currentString.isSameAs(Buffer(),writeSize)){
                     retval = true;
                     Empty();
                 } else {
-
-//printf("String @%p = %s\n",currentString.GetList(),currentString.GetList());
-                	DynamicCString errM;
-                	errM.Append("String (");
-                	errM.Append(Buffer(),writeSize);
-                	errM.Append(") != (");
-                	errM.Append(currentString.GetList());
-                	errM.Append(") ");
-        			REPORT_ERROR(ErrorManagement::ComparisonFailure,errM.GetList());
+                	DynamicCString string;
+                	string().Append(Buffer(),writeSize);
+        			COMPOSITE_REPORT_ERROR(ErrorManagement::ComparisonFailure,
+                        	"String (",string,") != (",currentString.GetList(),") ");
                 	isSame = false;
                 }
             }
@@ -776,11 +776,7 @@ ErrorManagement::ErrorType IntegerToStringTCO<integerType>::Convert(uint8 *dest,
 		for (ix = 1;(ix<numberOfElements) && ok;ix++){
 			ok = writer->Next();
 			if (!ok){
-				DynamicCString errM;
-				errM.Append("switch to element ");
-				errM.Append(ix);
-				errM.Append(" failed");
-				REPORT_ERROR(ok,errM.GetList());
+				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 			}
 
 			if (ok){
@@ -824,11 +820,7 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 		for (ix = 1;(ix<numberOfElements) && ok;ix++){
 			ok = writer->Next();
 			if (!ok){
-				DynamicCString errM;
-				errM.Append("switch to element ");
-				errM.Append(ix);
-				errM.Append(" failed");
-				REPORT_ERROR(ok,errM.GetList());
+				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 			}
 
 			if (ok){
@@ -874,11 +866,7 @@ ErrorManagement::ErrorType BitSetToStringTCO::Convert(uint8 *dest, const uint8 *
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
 		if (!ok){
-			DynamicCString errM;
-			errM.Append("switch to element ");
-			errM.Append(ix);
-			errM.Append(" failed");
-			REPORT_ERROR(ok,errM.GetList());
+			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 		}
 
 		source += byteSize;
@@ -918,11 +906,7 @@ ErrorManagement::ErrorType PointerToStringTCO::Convert(uint8 *dest, const uint8 
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
 		if (!ok){
-			DynamicCString errM;
-			errM.Append("switch to element ");
-			errM.Append(ix);
-			errM.Append(" failed");
-			REPORT_ERROR(ok,errM.GetList());
+			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 		}
 		src++;
 		if (ok){
@@ -958,11 +942,7 @@ ErrorManagement::ErrorType FloatToStringTCO<floatType>::Convert(uint8 *dest, con
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
 		if (!ok){
-			DynamicCString errM;
-			errM.Append("switch to element ");
-			errM.Append(ix);
-			errM.Append(" failed");
-			REPORT_ERROR(ok,errM.GetList());
+			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 		}
 		src++;
 		if (ok){
@@ -1011,11 +991,7 @@ ErrorManagement::ErrorType CCStringToStringTCO::Convert(uint8 *dest, const uint8
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
 		if (!ok){
-			DynamicCString errM;
-			errM.Append("switch to element ");
-			errM.Append(ix);
-			errM.Append(" failed");
-			REPORT_ERROR(ok,errM.GetList());
+			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 		}
 		src++;
 		if (ok){
@@ -1060,11 +1036,7 @@ ErrorManagement::ErrorType StreamToStringTCO::Convert(uint8 *dest, const uint8 *
 		for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 			ok = writer->Next();
 			if (!ok){
-				DynamicCString errM;
-				errM.Append("switch to element ");
-				errM.Append(ix);
-				errM.Append(" failed");
-				REPORT_ERROR(ok,errM.GetList());
+				COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 			}
 			src++;
 			if (ok){
@@ -1107,11 +1079,7 @@ ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 
 	for (uint32 ix = 1; (ix < numberOfElements) && ok;ix++){
 		ok = writer->Next();
 		if (!ok){
-			DynamicCString errM;
-			errM.Append("switch to element ");
-			errM.Append(ix);
-			errM.Append(" failed");
-			REPORT_ERROR(ok,errM.GetList());
+			COMPOSITE_REPORT_ERROR(ok,"switch to element ",ix," failed");
 		}
 		ss++;
 		if (ok){
@@ -1141,7 +1109,7 @@ ErrorManagement::ErrorType SStringToStringTCO::Convert(uint8 *dest, const uint8 
 /*********************************************************************************************************/
 
 
-class ToStringConversionFactory: TypeConversionFactoryI{
+class ToStringConversionFactory: public TypeConversionFactoryI{
 
 public:
 
@@ -1163,14 +1131,14 @@ public:
 
 private:
 
-} sameTypeConversionFactory;
+} toStringConversionFactory;
 
 ToStringConversionFactory::ToStringConversionFactory(){
-	TypeConversionManager::Instance().Register(this);
 }
 
 ToStringConversionFactory::~ToStringConversionFactory(){
 }
+
 
 TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
@@ -1292,6 +1260,21 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 	return tco;
 }
 
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(ToStringConversionFactory,("TCMService",emptyString),("TCMDataBase",emptyString))
 
+ErrorManagement::ErrorType ToStringConversionFactoryStartup::Init(){
+	ErrorManagement::ErrorType ret;
+	ret.initialisationError = !TypeConversionManager::Register(&toStringConversionFactory);
+
+	return ret;
+}
+
+ErrorManagement::ErrorType ToStringConversionFactoryStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	TypeConversionManager::Clean();
+
+	return ret;
+}
 
 } //MARTe

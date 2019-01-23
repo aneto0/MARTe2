@@ -37,7 +37,7 @@
 #include "Sleep.h"
 #include "MicroSeconds.h"
 #include "Ticks.h"
-#include "OSInitializer.h"
+#include "TimeCalibration.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -81,7 +81,7 @@ public:
      * @pre Reset is called to lower the barrier.
      */
     ErrorManagement::ErrorType FastWait(const Ticks &timeout = Ticks::Infinite,
-                                        const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us)) const;
+                                        const MicroSeconds &sleepTimeUsec = MicroSeconds(TimeCalibration::osMinSleepUsec,Units::us)) const;
 
     /**
      * @brief Posts the semaphore raising the spin-lock barrier.
@@ -102,7 +102,7 @@ public:
      * the timeout expires before the FastPost().
      */
     ErrorManagement::ErrorType FastResetWait(const Ticks &timeout = Ticks::Infinite,
-    		                                 const MicroSeconds &sleepTimeUsec = MicroSeconds(OSInitializer::osMinSleepUsec,Units::us));
+    		                                 const MicroSeconds &sleepTimeUsec = MicroSeconds(TimeCalibration::osMinSleepUsec,Units::us));
  
 private:
 

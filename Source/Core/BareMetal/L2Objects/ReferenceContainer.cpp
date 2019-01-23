@@ -36,12 +36,10 @@
 #include "ReferenceContainerNode.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
-#include "GlobalObjectsDatabase.h"
 #include "DynamicCString.h"
-#include "StaticCString.h"
 #include "AnyType.h"
 
 
@@ -150,13 +148,13 @@ bool ReferenceContainer::Insert(Reference ref,  const int32 &position) {
 }
 
 bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
-    bool ok = ref.IsValid();
-    if (ok) {
+	ErrorManagement::ErrorType ret;
+    ret.parametersError = !ref.IsValid();
+    if (ret) {
         if (path.GetSize() == 0u) {
-            ok = Insert(ref);
+            ret.fatalError = Insert(ref);
         }
         else {
-            bool created = false;
             ReferenceContainer* currentNode = this;
 
             DynamicCString token;
@@ -165,9 +163,11 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
             CCString toTokenize(path);
             toTokenize = StringHelper::Tokenize(toTokenize, token,CCString("."), CCString("."));
 
-            while ((token[0] != '\0') && (ok)) {
-                ok = (token.GetSize() > 0u);
-                if (ok) {
+            bool created = false;
+            bool done = false;
+            while ((token[0] != '\0') && (ret) && (!done)) {
+            	ret.notCompleted = !(token.GetSize() > 0u);
+                if (ret) {
                     //Check if a node with this name already exists
                     bool found = false;
                     Reference foundReference;
@@ -176,53 +176,42 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                         foundReference = currentNode->Get(i);
                         found = (foundReference->GetName().isSameAs(token.GetList()));
                     }
-                    // take the next token
-
+                    // take the next token : nextToken
                     toTokenize = StringHelper::Tokenize(toTokenize, nextToken,CCString("."), CCString("."));
 
                     if (found) {
+                    	// if found, simply move to it
                         currentNode = dynamic_cast<ReferenceContainer*>(foundReference.operator->());
+
                         // if it is a leaf exit (and return false)
-                        if (currentNode == NULL) {
-                            ok = false;
-                        }
+                        ret.invalidOperation = (currentNode == NULL) ;
                     }
                     else {
                         // insert the reference
-                        if (nextToken[0] == '\0') {
+                        if (nextToken.GetSize()== 0u) {
                             ref->SetName(token.GetList());
                             created = currentNode->Insert(ref);
+                            done = true; // !! LOOP good exit condition
                         }
                         // create a node
                         else {
-                            ReferenceT<ReferenceContainer> container(&GlobalObjectsDatabase::Instance().GetStandardHeap());
+                            ReferenceT<ReferenceContainer> container(HeapManager::standardHeapId);
                             container->SetName(token.GetList());
-                            ok = currentNode->Insert(container);
-                            if (ok) {
+                            ret.fatalError = !currentNode->Insert(container);
+                            if (ret) {
                                 currentNode = container.operator->();
                             }
                         }
-                    }
-                    if (ok) {
-                        token.Truncate(0);
-                        ok = token.Append(CCString (nextToken.GetList()));
+                    } //while
+
+                    if (ret) {
+                    	token = nextToken;
                     }
                 }
             }
-
-            if (ok) {
-                ok = created;
-            }
-
-            if (HeapManager::Free(reinterpret_cast<void*&>(token))) {
-
-            }
-            if (HeapManager::Free(reinterpret_cast<void*&>(nextToken))) {
-
-            }
         }
     }
-    return ok;
+    return ret;
 
 }
 
@@ -379,49 +368,41 @@ bool ReferenceContainer::Initialise(StructuredDataI &data) {
     // only one thread has to initialise.
 
     // Recursive initialization
-    bool ok = true;
+    ErrorManagement::ErrorType ret;
+
     uint32 numberOfChildren = data.GetNumberOfChildren();
-    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
         CCString childName = data.GetChildName(i);
-        ok = (!childName.IsNullPtr());
-        if (ok) {
+
+        ret.internalSetupError = childName.IsNullPtr();
+        if (ret) {
             // case object
             //lint -e{9007} there are no side-effects on IsBuildToken or IsDomainToken, but these cannot be declared const.
             if ((IsBuildToken(childName[0])) || (IsDomainToken(childName[0]))) {
-                if (data.MoveRelative(childName)) {
-                    Reference newObject;
-                    ok = newObject.Initialise(data, false);
-                    if (ok) {
-                        ok = (newObject.IsValid());
-                        if (ok) {
-                            if (IsDomainToken(childName[0])) {
-                                newObject->SetDomain(true);
-                            }
-                            ok = ReferenceContainer::Insert(newObject);
-                        }
-                        if (ok) {
-                            ok = data.MoveToAncestor(1u);
-                        }
+            	ret.internalStateError = !data.MoveRelative(childName);
+                Reference newObject;
+                if (ret) {
+                    ret.fatalError = !newObject.Initialise(data, false);
+                }
+                if (ret) {
+                    ret.fatalError = (!newObject.IsValid());
+                }
+                if (ret) {
+                    if (IsDomainToken(childName[0])) {
+                        newObject->SetDomain(true);
                     }
-                    else {
+                    ret.fatalError = !ReferenceContainer::Insert(newObject);
+                }
+                if (ret) {
+                	ret.fatalError = !data.MoveToAncestor(1u);
+                }
+            } //if
 
-						DynamicCString msg;
-                        ok = msg.Append("Failed to Initialise object with name ");
-                        if (ok){
-                        	msg.Append(childName);
-                        }
-                        if (ok) {
-                            REPORT_ERROR(ErrorManagement::FatalError, msg.GetList());
-                        }
-                    }
-                }
-                else {
-                    ok = false;
-                }
-            }
-        }
-    }
-    return ok;
+        } //if
+    	COMPOSITE_REPORT_ERROR(ret, "Failed to Initialise object with name ",childName);
+
+    } // for
+    return ret;
 }
 
 bool ReferenceContainer::Lock() {
@@ -543,5 +524,9 @@ bool ReferenceContainer::IsDomainToken(const char8 token) {
 
 CLASS_REGISTER(ReferenceContainer, "1.0")
 
-}
+
+} //Marte
+
+
+
 

@@ -26,38 +26,18 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=Environment/$(ENVIRONMENT).x
-
-OBJSX=  FastPollingEventSem.x \
-	FastPollingMutexSem.x \
-	FastResourceContainer.x \
-	FormatDescriptor.x \
-	GlobalObjectI.x \
-	GlobalObjectsDatabase.x \
-	HeapManager.x \
-	MemoryArea.x \
-	ProcessorType.x \
-	StaticListHolder.x \
-	StringHelper.x \
-	ClassRegistryIndex.x \
-	TypeDescriptor.x \
-	DynamicZeroTerminatedArray.x\
-	OSInitializer.x\
-        Matrix.x
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I.
 INCLUDES+=-I../L0Types
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L1PortabilityB$(LIBEXT) \
-		$(BUILD_DIR)/L1PortabilityB.def
-		
-	echo  $(OBJS)
+all: $(OBJS) $(SUBPROJ)   
+	echo  $(OBJSX)
 
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

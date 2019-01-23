@@ -32,12 +32,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
 #include "Shift.h"
 #include "DoubleInteger.h"
-#include "Memory.h"
+#include "MemoryOperators.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -182,14 +182,15 @@ static inline void BSToBS(T * const & destination,
     // calculate mask covering range of input bits (starting from bit 0)
     T sourceMask = static_cast<T>(0);
     // all FFFFF....
-    sourceMask = ~sourceMask;
+    sourceMask = static_cast<T>(~sourceMask);
     // shift FFFF.. to cover just the number bit size
-    sourceMask = Shift::LogicalRightSafeShift(sourceMask, (dataSize - sourceBitSize));
+    // always positive as dataSize is always bigger than sourceBitSize
+    sourceMask = Shift::LogicalRightSafeShift(sourceMask, static_cast<uint8>(dataSize - sourceBitSize));
 
     // calculate mask covering range of output bits (starting from bit 0)
     T destinationMask = static_cast<T>(0);
-    destinationMask = ~destinationMask;
-    destinationMask = Shift::LogicalRightSafeShift(destinationMask, (dataSize - destinationBitSize));
+    destinationMask = static_cast<T>(~destinationMask);
+    destinationMask = Shift::LogicalRightSafeShift(destinationMask, static_cast<uint8>(dataSize - destinationBitSize));
 
     // mask pinpointing sign bit (starting from bit 0)
     T sourceSignMask = static_cast<T>(1);
@@ -212,7 +213,7 @@ static inline void BSToBS(T * const & destination,
     sourceCopy &= sourceMask;
 
     // extract sign bit
-    T signBit = (sourceCopy & sourceSignMask);
+    T signBit = static_cast<T>(sourceCopy & sourceSignMask);
 
     // is negative if it has sign and last bit is 1
     bool sourceIsSignBit = (signBit != static_cast<T>(0));
@@ -232,7 +233,7 @@ static inline void BSToBS(T * const & destination,
                 // the mask contains sourceBitSize-destinationBitSize+1 ones, and
                 // if all of these bits are ones in the source the number can be written in the destination.
                 // ex. 1101 in 3 bits can be written (mask=1100), 1001 not.
-                T mask = sourceMask - (Shift::LogicalRightSafeShift(destinationMask, 1u));
+                T mask = static_cast<T>(sourceMask - (Shift::LogicalRightSafeShift(destinationMask, 1u)));
 
                 // if any of these bits is not 1 then we have a larger negative number
                 if ((sourceCopy & mask) != mask) {
@@ -242,7 +243,7 @@ static inline void BSToBS(T * const & destination,
             }
             else { // smaller to larger sign extension needed
                    // maks has all the bits that will be added
-                T mask = destinationMask - sourceMask;
+                T mask = static_cast<T>(destinationMask - sourceMask);
                 // it already had a sign bit, now we extend it to the full destination size
                 sourceCopy |= mask;
 
@@ -267,7 +268,7 @@ static inline void BSToBS(T * const & destination,
     // shift mask as well
     destinationMask = Shift::LogicalLeftSafeShift(destinationMask, destinationBitShift);
     // complementary mask- to erase all bits in destination range
-    destinationMask = ~destinationMask;
+    destinationMask = static_cast<T>(~destinationMask);
 
     // use destinationMask to hold the current value at destination after masking
     T destinationCopy=static_cast<T>(0);
@@ -330,9 +331,9 @@ static inline bool BitSetToBitSet(T *& destination,
 
     // work out range of bits involved
     // for source
-    uint8 sourceBitEnd = sourceBitShift + sourceBitSize;
+    uint8 sourceBitEnd = static_cast<uint8>(sourceBitShift + sourceBitSize);
     // and for destination
-    uint8 destinationBitEnd = destinationBitShift + destinationBitSize;
+    uint8 destinationBitEnd = static_cast<uint8>(destinationBitShift + destinationBitSize);
 
     // check number able to accommodate in full both input and output numbers
     // and is big than granularity

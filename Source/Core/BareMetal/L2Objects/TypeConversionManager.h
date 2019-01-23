@@ -36,7 +36,6 @@
 
 #include "CompilerTypes.h"
 #include "TypeDescriptor.h"
-#include "GlobalObjectI.h"
 #include "SimpleStaticListT.h"
 #include "TypeConversionFactoryI.h"
 
@@ -58,32 +57,13 @@ static const uint32 MaximumNumberOfFactories = 32;
 /**
  * @brief manager for data conversion functors
  */
-class DLL_API TypeConversionManager: public GlobalObjectI{
-
-public:
+namespace TypeConversionManager{
 
 	/**
      * @brief allow access to optimal functor for data conversion
 	 * The operator must be destroyed at the end of its use
 	 */
-	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) const ;
-
-    /**
-     * @brief Singleton access to the database.
-     * @return a pointer to the database.
-     */
-    static TypeConversionManager &Instance();
-
-    /**
-    * @brief Destructor.
-    */
-    virtual ~TypeConversionManager();
-
-    /**
-     * @see Object::GetClassName
-     * @return "TypeConversionManager".
-     */
-    virtual CCString  GetClassName() const;
+	const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) ;
 
     /**
      * @brief allows registering a factory to the manager
@@ -92,32 +72,11 @@ public:
      */
     bool Register(TypeConversionFactoryI *factory);
 
-private:
-
     /**
-     * Allows registering up to 32 factories
+     * @brief removes all the TypeConversionOperatorI
      */
-    SimpleStaticListT<TypeConversionFactoryI*,MaximumNumberOfFactories> factories;
+    void Clean();
 
-    /**
-     * @brief Default constructor.
-     */
-    /*lint -e{1704} private constructor for singleton implementation*/
-    TypeConversionManager();
-
-    /**
-     * @brief Disallow the usage of new.
-     * @param[in] size the size of the object.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::new(*) */
-    static void *operator new(const osulong size) throw ();
-
-    /**
-     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
-     * @param[in] p is the pointer to be freed.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The new operator must wrap GlobalObjectsI::delete(*) */
-    static void operator delete(void * const p);
 };
 
 

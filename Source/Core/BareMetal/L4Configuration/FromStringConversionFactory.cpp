@@ -20,6 +20,9 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
+
+#define DLL_API
+
 #include "TypeConversionFactoryI.h"
 #include "TypeConversionManager.h"
 #include "StreamString.h"
@@ -71,11 +74,11 @@ public:
 		CCString ret;
 		bool ok = true;
 
-		buffer.Truncate(0);
+		buffer().Truncate(0);
 		if ((index == 0) || (streamSize > 0)) {
 			uint8 *ptr8 = const_cast<uint8 *>(ptr);
 			StreamI *stream = reinterpret_cast<StreamI *>(ptr8+streamSize*index);
-			buffer.Truncate(0);
+			buffer().Truncate(0);
 			if (stream != NULL){
 				char8 c = 0;
 				uint32 size =1 ;
@@ -88,7 +91,7 @@ public:
 					size = 1;
 					ok = stream->Read(&c,size);
 					while ( ok && (size == 1) && (!separators.In(c))){
-						buffer.Append(c);
+						buffer().Append(c);
 						size = 1;
 						ok = stream->Read(&c,size);
 					}
@@ -353,7 +356,7 @@ public:
 };
 
 
-class FromStringConversionFactory: TypeConversionFactoryI{
+class FromStringConversionFactory: public TypeConversionFactoryI{
 
 public:
 
@@ -376,10 +379,9 @@ public:
 
 private:
 
-} sameTypeConversionFactory;
+} fromStringConversionFactory;
 
 FromStringConversionFactory::FromStringConversionFactory(){
-	TypeConversionManager::Instance().Register(this);
 }
 
 FromStringConversionFactory::~FromStringConversionFactory(){
@@ -510,6 +512,22 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDesc
 	return tco;
 }
 
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(FromStringConversionFactory,("TCMService",emptyString),("TCMDataBase",emptyString))
+
+ErrorManagement::ErrorType FromStringConversionFactoryStartup::Init(){
+	ErrorManagement::ErrorType ret;
+	ret.initialisationError = !TypeConversionManager::Register(&fromStringConversionFactory);
+
+	return ret;
+}
+
+ErrorManagement::ErrorType FromStringConversionFactoryStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	TypeConversionManager::Clean();
+
+	return ret;
+}
 
 
 } //MARTe

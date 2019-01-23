@@ -22,8 +22,7 @@
 */
 
 #include "AnyObjectM.h"
-#include "Memory.h"
-#include "GlobalObjectsDatabase.h"
+#include "MemoryOperators.h"
 
 
 namespace MARTe{
@@ -33,7 +32,7 @@ AnyObjectM::AnyObjectM():vd(InvalidType(0),""){
 };
 
 AnyObjectM::~AnyObjectM(){
-	GlobalObjectsDatabase::Instance().GetStandardHeap().Free(data);
+	HeapManager::Free(data);
 };
 
 void AnyObjectM::ToAnyType(AnyType &at){
@@ -42,7 +41,7 @@ void AnyObjectM::ToAnyType(AnyType &at){
 
 void AnyObjectM::Setup(uint32 sizeToCopy,const void *pointer,const VariableDescriptor &descriptor){
 	vd = descriptor;
-	data = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(sizeToCopy);
+	data = HeapManager::Malloc(sizeToCopy);
 	if (data == NULL){
 		REPORT_ERROR(ErrorManagement::OutOfMemory,"Malloc failed");
 		vd = VariableDescriptor();

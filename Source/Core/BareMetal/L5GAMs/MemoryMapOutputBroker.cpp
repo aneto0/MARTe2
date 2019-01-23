@@ -31,6 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "MemoryMapOutputBroker.h"
+#include "MemoryOperators.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,7 +55,7 @@ bool MemoryMapOutputBroker::Execute() {
     bool ret = true;
     for (n = 0u; (n < numberOfCopies) && (ret); n++) {
         if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-            MemoryOperationsHelper::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
+            Memory::Copy(copyTable[n].dataSourcePointer, copyTable[n].gamPointer, copyTable[n].copySize);
         }
     }
     return ret;

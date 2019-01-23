@@ -24,23 +24,25 @@
 #
 #############################################################
 
-OBJSX=	BufferedStreamI.x \
-		BufferedStreamIOBuffer.x \
-		CharBuffer.x \
-		DoubleBufferedStream.x \
-		IOBuffer.x \
-		IOBufferFloatPrint.x \
-		IOBufferIntegerPrint.x \
-		IOBufferStringPrint.x \
-		IOBufferStreamPrint.x \
-		ToStringConversionFactory.x\
-		IOBufferAnyTypeInfo.x \
-		IOBufferAnyTypePrint.x \
-		IOBufferStaticFunctions.x \
-		SingleBufferedStream.x \
-		StreamMemoryReference.x \
-		StreamString.x\
-		StreamStringIOBuffer.x
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+
+OBJSX_=	BufferedStreamI.x \
+	BufferedStreamIOBuffer.x \
+	CharBuffer.x \
+	DoubleBufferedStream.x \
+	IOBuffer.x \
+	IOBufferFloatPrint.x \
+	IOBufferIntegerPrint.x \
+	IOBufferStringPrint.x \
+	IOBufferStreamPrint.x \
+	ToStringConversionFactory.x\
+	IOBufferAnyTypeInfo.x \
+	IOBufferAnyTypePrint.x \
+	IOBufferStaticFunctions.x \
+	SingleBufferedStream.x \
+	StreamMemoryReference.x \
+	StreamString.x\
+	StreamStringIOBuffer.x
 
 # IOBufferStructuredPrint.x \
 
@@ -55,15 +57,9 @@ INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 
-LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/L2ObjectsB$(LIBEXT)
 
-
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
-	        $(BUILD_DIR)/L3StreamsB.def 
-	echo  $(OBJS)
+all: $(OBJS)    
+	echo  $(OBJSX)
 
 include depends.$(TARGET)
 

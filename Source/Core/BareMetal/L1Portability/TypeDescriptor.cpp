@@ -55,14 +55,14 @@ uint32 TypeDescriptor::StorageSize() const{
 		size = 0;
 		ClassRegistryIndex *cri = ClassRegistryIndex::Instance();
 		if (cri != NULL_PTR(ClassRegistryIndex *)){
-			ClassRegistryBrief *crb = (*cri)[structuredDataIdCode];
-			if (crb != NULL_PTR(ClassRegistryBrief *)){
-				size = crb->GetSizeOfClass();
+			ClassRegistryItemI *crii = (*cri)[structuredDataIdCode];
+			if (crii != NULL_PTR(ClassRegistryItemI *)){
+				size = crii->GetSizeOfClass();
 			}
 		}
 	} else {
 	    if (IsBasicType()){
-			size = SizeFromTDBasicTypeSize(basicTypeSize);
+			size = static_cast<uint32>(SizeFromTDBasicTypeSize(basicTypeSize));
 	    } else {
 			size = objectSize;
 	    }
@@ -75,13 +75,14 @@ uint32 TypeDescriptor::FullSize(const uint8 *address)const{
 	uint32 size = StorageSize();
 	if (IsCharStreamType()) {
 		if (address != NULL){
-			TD_FullType fullType = this->fullType;
+			TD_FullType fullType = static_cast<TD_FullType>(this->fullType);
 			switch(fullType){
 			case TDF_Stream:
 				/** only works as StreamString is sole descendant of StreamI */
 			case TDF_SString:{
 				StreamI *s = reinterpret_cast<StreamI *>(const_cast<uint8 *>(address));
-				size += s->Size();
+				size += static_cast<uint32>(s->Size());
+				// TODO handle overflow
 			}break;
 			case TDF_CString:
 			case TDF_CCString:
@@ -161,23 +162,18 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 }
 
 #define TYPENAME_CORE()             			\
-   	string.Append(constString);				\
+	stringt.Append(constString);				\
 	if ((fullType == TDF_Float) && (bits == 32)){\
-		string.Append("float");				\
+		stringt.Append("float");				\
 	} else 										\
 	if ((fullType == TDF_Float) && (bits == 64)){\
-		string.Append("double");				\
+		stringt.Append("double");				\
 	} else {									\
-       	string.Append(typeName);   			\
-       	string.Append(bits);					\
+		stringt.Append(typeName).Append(bits); \
 	}
 
 #define TEMPLATED_TYPENAME_CORE(className)       \
-       	string.Append(#className "<");          \
-       	string.Append(constString);			 \
-       	string.Append(typeName);   			 \
-       	string.Append(bits);                  \
-       	string.Append('>');
+		stringt.Append(#className "<").Append(constString).Append(typeName).Append(bits).Append('>');
 
 
 bool TypeDescriptor::ToString(DynamicCString &string) const{
@@ -189,38 +185,42 @@ bool TypeDescriptor::ToString(DynamicCString &string) const{
     	constString = constString2;
     }
 
+    CStringTool stringt = string();
+
     if (isStructuredData){
-    	string.Append(constString);
+    	stringt.Append(constString);
     	CCString className = GetNameOfClassFromStructureId();
 
     	if (className.GetSize()==0){
-        	string.Append("unknown_struct_code(");
+    		stringt.Append("unknown_struct_code(");
         	uint32 idCode = structuredDataIdCode;
-        	string.Append(idCode);
-        	string.Append(')');
+        	stringt.Append(idCode);
+        	stringt.Append(')');
     	} else {
-           	string.Append(className);
+    		stringt.Append(className);
     	}
     }
     else // !isStructuredData
    	if (!IsBasicType()){  //Stream,StructuredData,..
-   		string.Append(constString);
-   		string.Append(BasicTypeName(fullType));
+   		stringt.Append(constString);
+   		TD_FullType ft = static_cast<TD_FullType>(fullType);
+   		stringt.Append(BasicTypeName(ft));
    	}
    	else { //!IsComplexType()
-   		CCString typeName = BasicTypeName(fullType);
+   		TD_FullType ft = static_cast<TD_FullType>(fullType);
+   		CCString typeName = BasicTypeName(ft);
    		if (IsBitType()){  // uint5 bitranges
-   			string.Append(constString);
-   			string.Append("BitRange<");
+   			stringt.Append(constString);
+   			stringt.Append("BitRange<");
 			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
    			TYPENAME_CORE()
-   			string.Append(',');
-   			uint32 numberOfBitsR = (int)numberOfBits;
-   			uint32 bitOffsetR = (int)bitOffset;
-   			string.Append(numberOfBitsR);
-   			string.Append(',');
-   			string.Append(bitOffsetR);
-   			string.Append('>');
+			stringt.Append(',');
+   			uint32 numberOfBitsR = static_cast<uint32>(numberOfBits);
+   			uint32 bitOffsetR = static_cast<uint32>(bitOffset);
+   			stringt.Append(numberOfBitsR);
+   			stringt.Append(',');
+   			stringt.Append(bitOffsetR);
+   			stringt.Append('>');
    		}
    		else {// not bit type
 			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
@@ -236,12 +236,14 @@ static bool isSep(char8 c){  return (seps.In(c)); }
 static bool isNum(char8 c){  return (nums.In(c)); }
 
 static void GetToken(CCString &string,DynamicCString &token){
-	token.Truncate(0);
+    CStringTool tokent = token();
+
+    tokent.Truncate(0);
 	while (isSep(string[0])){
 		string++;
 	}
 	while (string[0] != '\0'){
-		if (!isSep(string[0])) 	token.Append(string[0]);
+		if (!isSep(string[0])) 	tokent.Append(string[0]);
 		string++;
 	}
 }
@@ -258,8 +260,7 @@ static uint32 ToNumber(char8 *p){
 TypeDescriptor::TypeDescriptor(CCString typeName){
 	*this = InvalidType(0);
 	DynamicCString token;
-	bool constant = false;
-	TD_FullType ft;
+	TD_FullType ft= TDF_UnsignedInteger;
 	char8 *numericPart= NULL;
 
 	GetToken(typeName,token);
@@ -299,35 +300,35 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 
 	if (numericPart != NULL){
 		uint32 num = ToNumber(numericPart);
-		if (num > 64){
+		if (num > 64u){
 			// TODO add error message
 		} else
-		if (num <= 8){
-			if (num == 8){
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size8bit);
+		if (num <= 8u){
+			if (num == 8u){
+				all = static_cast<uint32>(TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size8bit));
 			} else {
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(hasBitSize,1) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
+				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(hasBitSize,1u) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
 			}
 		} else
-		if (num <= 16){
-			if (num == 16){
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size16bit);
+		if (num <= 16u){
+			if (num == 16u){
+				all = static_cast<uint32>(TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size16bit));
 			} else {
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size16bit) | TDRANGE(hasBitSize,1) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
+				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size16bit) | TDRANGE(hasBitSize,1u) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
 			}
 		} else
-		if (num <= 32){
-			if (num == 32){
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size32bit);
+		if (num <= 32u){
+			if (num == 32u){
+				all = static_cast<uint32>(TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size32bit));
 			} else {
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size32bit) | TDRANGE(hasBitSize,1) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
+				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size32bit) | TDRANGE(hasBitSize,1u) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
 			}
 		} else
-		if (num == 64){
-			if (num == 64){
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size64bit);
+		if (num == 64u){
+			if (num == 64u){
+				all = static_cast<uint32>(TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size64bit));
 			} else {
-				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size64bit) | TDRANGE(hasBitSize,1) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
+				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,Size64bit) | TDRANGE(hasBitSize,1u) | TDRANGE(numberOfBits,num) | TDRANGE(bitOffset,0);
 			}
 		}
 	}
