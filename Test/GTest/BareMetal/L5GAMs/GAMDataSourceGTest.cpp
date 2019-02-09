@@ -144,3 +144,8 @@ TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_NoResetUnusedVaria
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestPrepareNextState_NoResetUnusedVariables());
 }
+
+TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestSetConfiguredDatabase_MoreThanOneProducer_Different_States) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_MoreThanOneProducer_Different_States());
+}

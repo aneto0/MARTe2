@@ -149,7 +149,10 @@ public:
      */
     bool TestPrepareNextState_NoResetUnusedVariables();
 
-
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that no error is issued if a the signal is produced by different producers in different states.
+     */
+    bool TestSetConfiguredDatabase_MoreThanOneProducer_Different_States();
 };
 
 /*---------------------------------------------------------------------------*/
