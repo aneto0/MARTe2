@@ -9,63 +9,10 @@ class MARTeLoader {
 			this.ml = new MARTeLoader();
 			this.ml.urlCache = {};
 			this.ml.head = document.getElementsByTagName('head')[0];
-			this.ml.mainTargetContainer = document.getElementById("rightPaneContainer");
 		}
 		return this.ml;
 
 	}
-
-	/**
-	 * TODO
-	 */
-	loadPanelConfig() { 
-		this.createTargetPanels(this.getPanelConfig());
-	}
-	
-	/**
-	 * TODO
-	 */
-	getPanelConfig() {
-		return [[50, 50], [30, 30, 40]];
-	}
-	
-	/**
-	 * TODO
- 	 */
- 	createTargetPanels(config) {
- 		var target = this.mainTargetContainer;
- 		var nrows = config.length;
- 		var rheight = 100 / nrows; 
- 		
- 		for (var r=0; r<nrows; r++) {
- 			var ncols = config[r].length;
- 			//Add the row
- 			var rowd = document.createElement("div"); 
- 			var rid = this.getRightPaneContainerId(r); 
- 			rowd.setAttribute("class", "mainrowtargetitem");
- 			rowd.setAttribute("id", rid);
- 			rowd.style.height = rheight + "%";
- 			
- 			target.appendChild(rowd); 			
- 			for (var c=0; c<ncols; c++) {
- 				//Add the columns
- 				var cold = document.createElement("div"); 
- 				var cid = this.getRightPaneContainerId(r, c);
- 				var cwidth = config[r][c]; 				 
- 				cold.setAttribute("class", "maincolumntargetitem");
- 				cold.setAttribute("id", cid);
-				cold.style.width = cwidth + "%";
- 				if (c == (ncols - 1)) {
-					cold.style.resize = 'none';
-				}
-				 				
- 				var logo = document.getElementById("martelogo").cloneNode(true);
- 				logo.removeAttribute("hidden");
- 				cold.appendChild(logo);
- 				rowd.appendChild(cold);
- 			}
- 		}
- 	}
 	
 	/**
 	 * @brief Only executes the callback if the url exists in the server. 
@@ -152,18 +99,7 @@ class MARTeLoader {
 		}
 		fullUrl += getparams;
 		return fullUrl;
-	}
-
-	getRightPaneContainerId(row, col) {
-		var rcid;
-		if (col == undefined) {
-			rcid = "rightPaneContainerR" + row; 
-		}
-		else {
-			rcid = "rightPaneContainerR" + row + "C" + col;
-		}
-		return rcid;
-	}
+	}	
 	
 	load(fullPath, className, containerId) {
 		var xhttp = new XMLHttpRequest();

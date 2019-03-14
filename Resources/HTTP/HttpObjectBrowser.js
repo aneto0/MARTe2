@@ -7,16 +7,67 @@ class HttpObjectBrowser extends MARTeObject {
     /**
      * TODO
      */
-    prepareDisplay(target) {
+    prepareDisplay(target) {	
+    	this.uniquePanelId = new Date().getTime();	
         target.innerHTML = "";
         this.target = target;
+        this.mainRow = document.createElement("div");
+        this.leftPaneContainer = document.createElement("div");        
+        this.leftPaneTree = document.createElement("div");
+        this.leftPaneConfig = document.createElement("div");
+        this.leftPaneConfigOptions = document.createElement("div");
+        this.rightPaneContainer = document.createElement("div");
+        
+		var showConfigBtn = document.createElement("button");
+		var showConfigBtnTxt = document.createTextNode("*");
+        showConfigBtn.appendChild(showConfigBtnTxt);
+        showConfigBtn.addEventListener("click",
+			function(ev, objpath, expandObjectBtn, li) {			
+				this.toggleConfig();				
+			}.bind(this),
+		false);
+                
+        this.leftPaneConfig.appendChild(showConfigBtn);
+        this.addConfigOptions();
+        this.leftPaneConfig.appendChild(this.leftPaneConfigOptions);
+        
+        this.mainRow.setAttribute("class", "mainrow");
+		this.leftPaneContainer.setAttribute("class", "maincolumnnav");
+		this.leftPaneTree.setAttribute("class", "maincolumntree");
+		this.leftPaneConfig.setAttribute("class", "maincolumnconfig");
+		this.rightPaneContainer.setAttribute("class", "maincolumntarget");
+		
+		
+		this.leftPaneContainer.appendChild(this.leftPaneTree);
+		this.leftPaneContainer.appendChild(this.leftPaneConfig);
+		this.mainRow.appendChild(this.leftPaneContainer);
+		this.mainRow.appendChild(this.rightPaneContainer); 
+		this.target.appendChild(this.mainRow);		 
+        this.loadPanelConfig();        
     }
+    
+    /**
+     * TODO
+     */
+    addConfigOptions() {
+    	this.leftPaneConfigOptions.innerHTML = "<br/>" + 
+    		"<label for=\"panelcfg\">Panel configuration</label>" +
+    		"<input type=\"text\" id=\"panelcfg\" name=\"panelcfg\">"
+    		"";
+    	 
+    }
+    
+    /**
+     * TODO
+     */
+	toggleConfig() {
+	}
 
     /**
      * TODO
      */
-	displayData(jsonData) {		
-		this.createTreeNodes(jsonData, "", this.target);
+	displayData(jsonData) {
+		this.createTreeNodes(jsonData, "", this.leftPaneTree);
 		this.registerTreeLinks(jsonData, "");
 	}
 
@@ -84,7 +135,13 @@ class HttpObjectBrowser extends MARTeObject {
 	showTreeNode(path, obj, rightPaneContainerId) {
 		var marteClassName = obj.getAttribute("marteClassName");
 		if (marteClassName !== null) {
-			MARTeLoader.instance().load(path, marteClassName, rightPaneContainerId);
+			if (rightPaneContainerId.length > 0) {
+				MARTeLoader.instance().load(path, marteClassName, rightPaneContainerId);
+			}
+			else {
+				var url = "?TextMode=1&ObjPath=" + path;
+				window.open(url, '_blank');				
+			}
 		}		
 	}
 
@@ -100,14 +157,18 @@ class HttpObjectBrowser extends MARTeObject {
 	 */
 	createTreeNodes(jsonData, fullpath, parent) {
 		var i = 0;
-		var panelConfig = MARTeLoader.instance().getPanelConfig();
+		var panelConfig = this.getPanelConfig();
 		var nodeName = "" + i;
 		var hasMoreNodes = (jsonData[nodeName] !== undefined);
+		if (fullpath.length === 0)  {
+			fullpath = this.getPath();
+		}
 		if (fullpath.length > 0) {
 			if (!fullpath.endsWith("/")) {
 				fullpath += "/";
 			}
-		}
+		}		
+	
 		var ul = document.createElement("ul");
 		parent.appendChild(ul);
 		ul.setAttribute("class", "nested active");
@@ -167,13 +228,25 @@ class HttpObjectBrowser extends MARTeObject {
 				var ncols = panelConfig[r].length;
 				for (var c=0; c<ncols; c++) {
 					var divContainerLink = document.createElement("a");
-					var rightPaneContainerId = MARTeLoader.instance().getRightPaneContainerId(r, c);
-					var divContainerLinkId = showObjectBtnId + rightPaneContainerId;					
-					divContainerLink.setAttribute("id", divContainerLinkId);
-					var divContainerLinkTxt = document.createTextNode(r + "x" + c);
-					divContainerLink.appendChild(divContainerLinkTxt);
-					dropdownDivContainers.appendChild(divContainerLink);
+					var rightPaneContainerId = this.getRightPaneContainerId(r, c);
+					if (document.getElementById(rightPaneContainerId)) {
+						var divContainerLinkId = showObjectBtnId + rightPaneContainerId;					
+						divContainerLink.setAttribute("id", divContainerLinkId);
+						var divContainerLinkTxt = document.createTextNode(r + "x" + c);
+						divContainerLink.appendChild(divContainerLinkTxt);
+						dropdownDivContainers.appendChild(divContainerLink);
+					}
 				}
+			}
+			{
+				//New link
+				var divContainerLink = document.createElement("a");
+				var rightPaneContainerId = this.getRightPaneContainerId(r, c);
+				var divContainerLinkId = showObjectBtnId + "_New";					
+				divContainerLink.setAttribute("id", divContainerLinkId);
+				var divContainerLinkTxt = document.createTextNode("N");
+				divContainerLink.appendChild(divContainerLinkTxt);
+				dropdownDivContainers.appendChild(divContainerLink);
 			}
 			divParentContainer.appendChild(dropdownDivContainers);								
 			li.appendChild(divParentContainer);
@@ -191,28 +264,31 @@ class HttpObjectBrowser extends MARTeObject {
 	registerTreeLinks(jsonData, fullpath) {
 		var i = 0;
 		var nodeName = "" + i;
-		var panelConfig = MARTeLoader.instance().getPanelConfig();
+		var panelConfig = this.getPanelConfig();
 		
 		var hasMoreNodes = (jsonData[nodeName] !== undefined);
-		if (fullpath.length > 0) {
+		if (fullpath.length === 0)  {
+			fullpath = this.getPath();
+		}
+		if (fullpath.length > 0)  {
 			if (!fullpath.endsWith("/")) {
 				fullpath += "/";
 			}
-		}
+		}		
+
 		while (hasMoreNodes) {
 			var child = jsonData[nodeName];
-			var objName = child["Name"];
+			var objName = child["Name"];			
 			var objpath = fullpath + objName;
-			var pathid = this.generateId(objpath);
+			
+			var pathid = this.generateId(fullpath + objName);
 			var expandObjectBtnId = "ebtn_" + pathid;
 			var liid = "li_" + pathid;
 			var li = document.getElementById(liid);
 			var expandObjectBtn = document.getElementById(expandObjectBtnId);
 			if (expandObjectBtn !== null) {				
 				expandObjectBtn.addEventListener("click",
-					function(ev, objpath, expandObjectBtn, li) {
-						console.log(objpath);
-						console.log(li);
+					function(ev, objpath, expandObjectBtn, li) {						
 						this.expandTreeNode(objpath, expandObjectBtn, li);
 						//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
 					}.bind(this, null, objpath, expandObjectBtn, li),
@@ -226,22 +302,100 @@ class HttpObjectBrowser extends MARTeObject {
 			for (var r=0; r<nrows; r++) {
 				var ncols = panelConfig[r].length;
 				for (var c=0; c<ncols; c++) {	
-					var rightPaneContainerId = MARTeLoader.instance().getRightPaneContainerId(r, c);
-					var divContainerLinkId = showObjectBtnId + rightPaneContainerId;			
-					var divContainerLink = document.getElementById(divContainerLinkId);
-					divContainerLink.addEventListener("click",
-						function(ev, objpath, li, rightPaneContainerId) {
-							this.showTreeNode(objpath, li, rightPaneContainerId);
-							//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
-					}.bind(this, null, objpath, li, rightPaneContainerId),
-					false);
+					var rightPaneContainerId = this.getRightPaneContainerId(r, c);
+					if (document.getElementById(rightPaneContainerId)) {
+						var divContainerLinkId = showObjectBtnId + rightPaneContainerId;			
+						var divContainerLink = document.getElementById(divContainerLinkId);
+						divContainerLink.addEventListener("click",
+							function(ev, objpath, li, rightPaneContainerId) {
+								this.showTreeNode(objpath, li, rightPaneContainerId);
+								//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
+						}.bind(this, null, objpath, li, rightPaneContainerId),
+						false);
+					}
 				}
 			}
-
+			{
+				var divContainerLinkId = showObjectBtnId + "_New";			
+				var divContainerLink = document.getElementById(divContainerLinkId);
+				divContainerLink.addEventListener("click",
+					function(ev, objpath, li) {
+						this.showTreeNode(objpath, li, '');
+						//null is the event that I don't really care about, objpath is to remember the path that was set while doing the loop (otherwise it will always get the last value set for objpath)
+				}.bind(this, null, objpath, li, rightPaneContainerId),
+				false);
+			}
 			i++;
 			nodeName = "" + i;
 			hasMoreNodes = (jsonData[nodeName] !== undefined);
 		}
+	}
+	
+	/**
+	 * TODO
+ 	 */
+	getRightPaneContainerId(row, col) {
+		var rcid;
+		if (col == undefined) {
+			rcid = "_" + this.uniquePanelId + "_rightPaneContainerR" + row; 
+		}
+		else {
+			rcid = "_" + this.uniquePanelId + "_rightPaneContainerR" + row + "C" + col;
+		}
+		return rcid;
+	}
+	
+	
+	/**
+	 * TODO
+ 	 */
+ 	createTargetPanels(config) {
+ 		var target = this.rightPaneContainer;
+ 		var nrows = config.length;
+ 		var rheight = 100 / nrows; 
+ 		
+ 		for (var r=0; r<nrows; r++) {
+ 			var ncols = config[r].length;
+ 			//Add the row
+ 			var rowd = document.createElement("div"); 
+ 			var rid = this.getRightPaneContainerId(r); 
+ 			rowd.setAttribute("class", "mainrowtargetitem");
+ 			rowd.setAttribute("id", rid);
+ 			rowd.style.height = rheight + "%";
+ 			
+ 			target.appendChild(rowd); 			
+ 			for (var c=0; c<ncols; c++) {
+ 				//Add the columns
+ 				var cold = document.createElement("div"); 
+ 				var cid = this.getRightPaneContainerId(r, c);
+ 				var cwidth = config[r][c]; 				 
+ 				cold.setAttribute("class", "maincolumntargetitem");
+ 				cold.setAttribute("id", cid);
+				cold.style.width = cwidth + "%";
+ 				if (c == (ncols - 1)) {
+					cold.style.resize = 'none';
+				}
+				 				
+ 				var logo = document.getElementById("martelogo").cloneNode(true);
+ 				logo.removeAttribute("hidden");
+ 				cold.appendChild(logo);
+ 				rowd.appendChild(cold);
+ 			}
+ 		}
+ 	}
+	
+	/**
+	 * TODO
+	 */
+	loadPanelConfig() { 
+		this.createTargetPanels(this.getPanelConfig());
+	}
+	
+	/**
+	 * TODO
+	 */
+	getPanelConfig() {
+		return [[100], [100]];
 	}
 }
 

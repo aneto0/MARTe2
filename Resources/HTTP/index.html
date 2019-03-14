@@ -6,29 +6,51 @@
         </script>
         <link type="text/css" rel="stylesheet" href="/?path=MARTe.css&TextMode=1"/>
     </head>
-    <body onload="MARTeLoader.instance().loadPanelConfig();MARTeLoader.instance().load('', '', 'leftPaneContainer');">
-    	<div class="mainrow">
-        	<div id="leftPaneContainerHolder" class="maincolumnnav">            	
-        		<div id="leftPaneContainerHolderRow" class="mainrow">
-        			<div id="leftPaneContainer" class="maincolumnnav">            	        	
-	        		</div>
-	        	</div>
-        	</div>
-        	<div id="rightPaneContainer" class="maincolumntarget" width="70%" >        	
-        		<!--<div id="rightPaneContainerR1" class="mainrow" > 
-        			<div id="rightPaneContainerR1C1" class="maincolumntargetitem" height="50%" >       			
-            			<a href="https://vcis.f4e.europa.eu/marte2-docs/master/html/" target="_blank">About...</a>
-					</div>
-        		</div>
-        		<div id="rightPaneContainerR2" class="mainrow" >
-        			<div id="rightPaneContainerR2C1" class="maincolumntargetitem" height="50%">       			
-					</div>
-        		</div>-->
-			</div>
+    <script>
+    	function loadPanels() {    		
+    		/**
+    		 * Parse the GET params
+    		 */
+			var getVars = {};
+    		window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        		getVars[key] = value;
+    		});
+    		
+    		//A path must be encoded in the GET parameters otherwise the index.html will never be retrieved!
+    		var objpath = getVars["ObjPath"];
+    		if (objpath === undefined) {
+    			objpath = "";
+    		}
+    		/*var standalone = false;
+    		if ("Standalone" in getVars) {
+    			standalone = (parseInt(getVars["Standalone"]) == 1);
+    		}
+    		if (!standalone) {
+    			MARTeLoader.instance().loadPanelConfig();
+    			MARTeLoader.instance().load('', '', 'leftPaneContainer');
+			}
+			else {
+				var objPath = getVars["ObjPath"];
+				var objClass = getVars["ObjClass"];
+				var rightPaneContainer = document.getElementById("rightPaneContainer");
+				rightPaneContainer.parentNode.removeChild(rightPaneContainer);
+				var leftPaneContainer = document.getElementById("leftPaneContainer");				
+				MARTeLoader.instance().load(objPath, objClass, 'leftPaneContainer');
+				leftPaneContainer.style.width = "100%";
+			} */  
+			var mainTargetContainer = document.getElementById("mainTarget");
+			mainTargetContainer.style.width = "100%";
+			MARTeLoader.instance().load(objpath, "", "mainTarget"); 		
+    	}
+    </script>    
+    <body onload="loadPanels()">
+    	<div id="mainTarget">
+    	<!--<div class="mainrow">-->
+        	<!--<div id="leftPaneContainer" class="maincolumnnav">            	
+        	</div>-->
+        	<!--<div id="rightPaneContainer" class="maincolumntarget" width="70%" >        		
+			</div>-->
     	</div>
-    	
-    	
-    	
     	<div id="martelogo" hidden>
     		<pre>                                                                                                                                                 
 	MMMMMMMM               MMMMMMMM               AAA               RRRRRRRRRRRRRRRRR   TTTTTTTTTTTTTTTTTTTTTTT                      222222222222222    

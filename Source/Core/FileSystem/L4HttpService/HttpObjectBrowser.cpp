@@ -226,22 +226,81 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
         Reference target = FindTarget(protocol);
         ok = target.IsValid();
         if (ok) {
+            StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+            ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
             bool isThis = (target == this);
-            ReferenceT<HttpDataExportI> httpDataExportI = target;
-            if ((httpDataExportI.IsValid()) && (!isThis)) {
-                httpDataExportI->GetAsStructuredData(data, protocol);
+            //If we are printing ourselves list all the elements belonging to the root (note that the root might be pointing elsewhere).
+            if (isThis) {
+                if (ok) {
+                    ok = HttpDataExportI::GetAsStructuredData(data, protocol);
+                }
+                //Print the opening {
+                if (ok) {
+                    ok = sdata->GetPrinter()->PrintBegin();
+                }
+                if (ok) {
+                    //Export the data. Note that if this also the root then all the objects will also be printed.
+                    ok = ExportData(data);
+                }
+                if (ok) {
+                    //List the elements that belong to the root (cannot point directly to the RC implementation as otherwise it would print the wrong class name).
+                    bool rootIsThis = (root == this);
+                    if (!rootIsThis) {
+                        uint32 numberOfChildren = root->Size();
+                        for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+                            StreamString nname;
+                            ok = nname.Printf("%d", i);
+                            if (ok) {
+                                ok = data.CreateRelative(nname.Buffer());
+                            }
+                            Reference child;
+                            if (ok) {
+                                child = root->Get(i);
+                                ok = child.IsValid();
+                            }
+                            if (ok) {
+                                ReferenceT<ReferenceContainer> childRC = child;
+                                //Do not go recursive
+                                if (childRC.IsValid()) {
+                                    ok = child->Object::ExportData(data);
+                                    if (ok) {
+                                        ok = data.Write("IsContainer", 1);
+                                    }
+                                }
+                                else {
+                                    ok = child->ExportData(data);
+                                }
+                            }
+                            if (ok) {
+                                ok = data.MoveToAncestor(1u);
+                            }
+                        }
+                    }
+                }
+                //Print the closing {
+                if (ok) {
+                    ok = sdata->GetPrinter()->PrintEnd();
+                }
             }
             else {
-                ok = HttpDataExportI::GetAsStructuredData(data, protocol);
-                if (ok) {
-                    StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
-                    ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
+                //Not pointing at ourselves. It can be a HttpDataExportI in which case we forward the work.
+                ReferenceT<HttpDataExportI> httpDataExportI = target;
+                if (httpDataExportI.IsValid()) {
+                    ok = httpDataExportI->GetAsStructuredData(data, protocol);
+                }
+                else {
+                    //Otherwise dump the object values.
                     if (ok) {
-                        sdata->GetPrinter()->PrintBegin();
+                        ok = HttpDataExportI::GetAsStructuredData(data, protocol);
+                    }
+                    //Print the opening {
+                    if (ok) {
+                        ok = sdata->GetPrinter()->PrintBegin();
                     }
                     if (ok) {
-                        target->ExportData(data);
+                        ok = target->ExportData(data);
                     }
+                    //Print the closing {
                     if (ok) {
                         ok = sdata->GetPrinter()->PrintEnd();
                     }
@@ -278,7 +337,7 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
             else {
                 ReferenceT<HttpDataExportI> httpDataExportI = target;
                 if (httpDataExportI.IsValid()) {
-                    httpDataExportI->GetAsText(stream, protocol);
+                    ok = httpDataExportI->GetAsText(stream, protocol);
                 }
                 else {
                     ok = HttpDataExportI::ReplyNotFound(protocol);
@@ -307,7 +366,7 @@ Reference HttpObjectBrowser::FindReference(const char8 * const unmatchedPath) {
         }
     }
     else {
-        target = root;
+        target = this;
     }
     return target;
 }

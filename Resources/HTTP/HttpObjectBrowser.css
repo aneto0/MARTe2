@@ -10,13 +10,13 @@ ul, #myUL {
 }
 
 li {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 button {
-	font-size: 18px;
-	width: 30px;
-	height: 30px;
+  font-size: 18px;
+  width: 30px;
+  height: 30px;
 }
 
 /* Hide the nested list when the - button is clicked */
@@ -53,8 +53,63 @@ button {
   display: block;
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
 
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
-.dropdown:hover .dropbtn {background-color: rgb(46, 52, 54);}
+.dropdown:hover .dropbtn {
+  background-color: rgb(46, 52, 54);
+}
+
+.mainrow, .mainrowtargetitem {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* Defines the two main container panes properties*/
+.maincolumnnav, .maincolumntarget, .maincolumntargetitem {	
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(211, 215, 207);  				
+  overflow: auto;
+  resize: horizontal;
+  min-width: 0px;
+  width: 40%;
+}
+
+.maincolumnnav {
+  padding-right: 10px;
+  height: 100%;
+}	
+
+.maincolumntree {
+  width: 100%;
+}
+
+.maincolumnconfig {
+  width: 100%;
+  display: flex; 
+  align-items: flex-end; 
+}
+
+.maincolumntarget {
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+
+.mainrowtargetitem {
+  height: unset;
+}
+
+.maincolumntargetitem {
+  resize: none;
+  width: 100%;	
+  resize: horizontal;
+  height: unset;
+}
