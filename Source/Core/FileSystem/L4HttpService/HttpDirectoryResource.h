@@ -1,8 +1,8 @@
 /**
  * @file HttpDirectoryResource.h
  * @brief Header file for class HttpDirectoryResource
- * @date Oct 31, 2018
- * @author aneto
+ * @date 31/10/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

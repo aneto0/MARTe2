@@ -1539,3 +1539,93 @@ bool StateMachineTest::TestEventTriggered_SendMessage_PingPong() {
     stateMachineB->Stop();
     return ok;
 }
+
+bool StateMachineTest::TestExportData() {
+    using namespace MARTe;
+    const char8 * const config1 = ""
+            "+StateMachine = {"
+            "    Class = StateMachine"
+            "    +A = {"
+            "        Class = ReferenceContainer"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"B\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver1\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver2\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +B = {"
+            "        Class = ReferenceContainer"
+            "        +ENTER = {"
+            "            Class = ReferenceContainer"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver3\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "            +M2 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "        +E1 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "            +M1 = {"
+            "                Class = Message"
+            "                Destination = \"Receiver4\""
+            "                Function = \"ReceiverMethod\""
+            "            }"
+            "        }"
+            "    }"
+            "    +E = {"
+            "        Class = ReferenceContainer"
+            "        +E2 = {"
+            "            Class = StateMachineEvent"
+            "            NextState = \"A\""
+            "            NextStateError = \"E\""
+            "            Timeout = 0"
+            "        }"
+            "    }"
+            "}";
+
+    StreamString configStream = config1;
+    configStream.Seek(0);
+    ConfigurationDatabase cdb;
+    StreamString parserErr;
+    StandardParser parser(configStream, cdb, &parserErr);
+    bool ok = parser.Parse();
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, parserErr.Buffer());
+        return false;
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    ok &= ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    ReferenceT<StateMachine> stateMachine = ObjectRegistryDatabase::Instance()->Find("StateMachine");
+
+    ConfigurationDatabase cdbe;
+    stateMachine->ExportData(cdbe);
+    cdbe.MoveToRoot();
+    StreamString currentStateName;
+    ok &= cdbe.Read("CurrentState", currentStateName);
+    ok &= (currentStateName == "A");
+
+    stateMachine->Stop();
+    stateMachine->Stop();
+    return ok;
+}
+
