@@ -102,3 +102,13 @@ TEST(JsonPrinterGTest,TestPrintVariable) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariable());
 }
+
+TEST(JsonPrinterGTest,TestPrintBegin) {
+    JsonPrinterTest streamtest;
+    ASSERT_TRUE(streamtest.TestPrintBegin());
+}
+
+TEST(JsonPrinterGTest,TestPrintEnd) {
+    JsonPrinterTest streamtest;
+    ASSERT_TRUE(streamtest.TestPrintEnd());
+}

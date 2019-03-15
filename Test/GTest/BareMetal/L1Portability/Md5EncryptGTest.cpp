@@ -41,13 +41,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(Md5EncryptGTest,TestMd5) {
+TEST(BareMetal_L1Portability_Md5EncryptGTest,TestMd5) {
     Md5EncryptTest test;
     StreamString expected = "8B1A9953C4611296A827ABF8C47804D7";
     ASSERT_TRUE(test.TestMd5("Hello", expected));
 }
 
-TEST(Md5EncryptGTest,TestMd5Hmac) {
+TEST(BareMetal_L1Portability_Md5EncryptGTest,TestMd5Hmac) {
     Md5EncryptTest test;
     StreamString expected = "2FE05E3122FD81A3D0B2E32FC2C4D2BB";
     ASSERT_TRUE(test.TestMd5Hmac("Hello", "1234", expected));

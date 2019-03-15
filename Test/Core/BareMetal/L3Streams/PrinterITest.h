@@ -68,6 +68,16 @@ public:
      * @brief Tests the SetStream method
      */
     bool TestSetStream();
+
+    /**
+     * @brief Tests the PrintBegin method
+     */
+    bool TestPrintBegin();
+
+    /**
+     * @brief Tests the PrintEnd method
+     */
+    bool TestPrintEnd();
 };
 
 /*---------------------------------------------------------------------------*/

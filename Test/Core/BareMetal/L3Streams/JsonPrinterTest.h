@@ -118,6 +118,16 @@ public:
      */
     bool TestPrintVariable();
 
+    /**
+     * @brief Tests the PrintBegin method
+     */
+    bool TestPrintBegin();
+
+    /**
+     * @brief Tests the PrintEnd method
+     */
+    bool TestPrintEnd();
+
 
 
 };

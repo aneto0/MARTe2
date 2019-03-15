@@ -175,3 +175,19 @@ bool JsonPrinterTest::TestPrintVariable() {
     return ret && (stream == "-258");
 
 }
+
+bool JsonPrinterTest::TestPrintBegin() {
+    StreamString stream;
+    JsonPrinter test(stream);
+    bool ret = test.PrintBegin();
+
+    return ret && (stream == "{");
+}
+
+bool JsonPrinterTest::TestPrintEnd() {
+    StreamString stream;
+    JsonPrinter test(stream);
+    bool ret = test.PrintEnd();
+
+    return ret && (stream == "}");
+}

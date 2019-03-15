@@ -75,7 +75,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintOpenMatrix()=0;
+    virtual bool PrintOpenMatrix() = 0;
 
     /**
      * @brief Prints the close matrix separator on the stream
@@ -83,7 +83,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseMatrix()=0;
+    virtual bool PrintCloseMatrix() = 0;
 
     /**
      * @brief Prints the scalar separator on the stream
@@ -91,7 +91,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintScalarSeparator()=0;
+    virtual bool PrintScalarSeparator() = 0;
 
     /**
      * @brief Prints the vector separator on the stream
@@ -99,7 +99,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintVectorSeparator()=0;
+    virtual bool PrintVectorSeparator() = 0;
 
     /**
      * @brief Prints the variable separator on the stream
@@ -107,7 +107,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintVariableSeparator()=0;
+    virtual bool PrintVariableSeparator() = 0;
 
     /**
      * @brief Prints the block separator on the stream
@@ -115,7 +115,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintBlockSeparator()=0;
+    virtual bool PrintBlockSeparator() = 0;
 
     /**
      * @brief Prints the open vector separator on the stream
@@ -123,7 +123,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintOpenVector()=0;
+    virtual bool PrintOpenVector() = 0;
 
     /**
      * @brief Prints the close vector separator on the stream
@@ -131,7 +131,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseVector()=0;
+    virtual bool PrintCloseVector() = 0;
 
     /**
      * @brief Prints the open matrix separator on the stream
@@ -140,7 +140,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintOpenBlock(const char8 * const blockName)=0;
+    virtual bool PrintOpenBlock(const char8 * const blockName) = 0;
 
     /**
      * @brief Prints the close block separator on the stream
@@ -149,7 +149,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseBlock(const char8 * const blockName)=0;
+    virtual bool PrintCloseBlock(const char8 * const blockName) = 0;
 
     /**
      * @brief Prints the open assignment separator on the stream
@@ -158,7 +158,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintOpenAssignment(const char8 * const varName)=0;
+    virtual bool PrintOpenAssignment(const char8 * const varName) = 0;
 
     /**
      * @brief Prints the close assignment separator on the stream
@@ -167,7 +167,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintCloseAssignment(const char8 * const varName)=0;
+    virtual bool PrintCloseAssignment(const char8 * const varName) = 0;
 
     /**
      * @brief Prints the variable on the stream
@@ -176,7 +176,7 @@ public:
      * @pre
      *   stream != NULL
      */
-    virtual bool PrintVariable(const AnyType &var)=0;
+    virtual bool PrintVariable(const AnyType &var) = 0;
 
     /**
      * @brief Very first print to be performed.

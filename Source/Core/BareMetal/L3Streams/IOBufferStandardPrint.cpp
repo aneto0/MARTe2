@@ -29,8 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "IOBuffer.h"
 #include "AnyType.h"
+#include "IOBuffer.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           definitions                              */
@@ -43,24 +43,24 @@
 namespace MARTe {
 
 /**
- * @brief Prints the Standard open matrix separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard open matrix separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardOpenMatrix(IOBuffer &iobuff) {
     return iobuff.PutC('{');
 }
 
 /**
- * @brief Prints the Standard close matrix separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard close matrix separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardCloseMatrix(IOBuffer &iobuff) {
     return iobuff.PutC('}');
 }
 
 /**
- * @brief Prints the Standard open vector separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard open vector separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardOpenVector(IOBuffer &iobuff) {
     return iobuff.PutC('{');
@@ -68,16 +68,16 @@ bool PrintStandardOpenVector(IOBuffer &iobuff) {
 }
 
 /**
- * @brief Prints the Standard close vector separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard close vector separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardCloseVector(IOBuffer &iobuff) {
     return iobuff.PutC('}');
 }
 
 /**
- * @brief Prints the Standard open block separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard open block separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardOpenBlock(IOBuffer &iobuff, const char8 * const blockName) {
     AnyType at[] = { blockName, voidAnyType };
@@ -85,16 +85,17 @@ bool PrintStandardOpenBlock(IOBuffer &iobuff, const char8 * const blockName) {
 }
 
 /**
- * @brief Prints the Standard close block separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard close block separator.
+ * @param[in] iobuff the IOBuffer where to print to.
  */
 bool PrintStandardCloseBlock(IOBuffer &iobuff) {
     return iobuff.PutC('}');
 }
 
 /**
- * @brief Prints the Standard open assignment separator
- * @param[in] iobuff the IOBuffer where to print to
+ * @brief Prints the Standard open assignment separator.
+ * @param[in] iobuff the IOBuffer where to print to.
+ * @param[in] varName the variable name.
  */
 bool PrintStandardOpenAssignment(IOBuffer &iobuff, const char8 * const varName) {
     uint32 size = StringHelper::Length(varName);

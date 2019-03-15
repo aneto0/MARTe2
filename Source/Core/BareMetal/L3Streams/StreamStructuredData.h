@@ -78,12 +78,12 @@ public:
     uint32 numberOfVariables;
 
     /**
-     * TODO
+     * True if a separator is required to be written before starting the next block.
      */
     bool needsSeparatorBeforeNextBlock;
 
     /**
-     * TODO
+     * True if a separator is required to be written before starting the next write.
      */
     bool needsSeparatorBeforeNextWrite;
 };

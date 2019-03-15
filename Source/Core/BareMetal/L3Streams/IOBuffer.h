@@ -583,7 +583,7 @@ bool IOBuffer::PutC(const char8 c) {
     if(retval) {
         // check if buffer needs updating and or saving
         if (amountLeft <= undoLevel) {
-            if (!Flush()) {
+            if (!NoMoreSpaceToWrite()) {
                 retval = false;
             }
 

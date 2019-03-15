@@ -174,5 +174,16 @@ bool PrinterITest::TestSetStream() {
     test.SetStream(stream2);
     ret &= (test.GetStream() == &stream2);
     return ret;
+}
 
+bool PrinterITest::TestPrintBegin() {
+    StreamString stream1;
+    PrinterITestClass test(stream1);
+    return test.PrintBegin();
+}
+
+bool PrinterITest::TestPrintEnd() {
+    StreamString stream1;
+    PrinterITestClass test(stream1);
+    return test.PrintEnd();
 }

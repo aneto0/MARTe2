@@ -61,3 +61,13 @@ TEST(PrinterIGTest, TestSetStream) {
     ASSERT_TRUE(myPrinterITest.TestSetStream());
 }
 
+TEST(PrinterIGTest, TestPrintBegin) {
+    PrinterITest myPrinterITest;
+    ASSERT_TRUE(myPrinterITest.TestPrintBegin());
+}
+
+TEST(PrinterIGTest, TestPrintEnd) {
+    PrinterITest myPrinterITest;
+    ASSERT_TRUE(myPrinterITest.TestPrintEnd());
+}
+

@@ -48,7 +48,7 @@ Base64EncoderTest::~Base64EncoderTest() {
 
 
 bool Base64EncoderTest::TestEncode(const char8 *toEncodeIn, const char8* expected){
-    StreamString toEncode  oEncodeIn;
+    StreamString toEncode;
     StreamString encoded;
     bool ret=Base64Encoder::Encode(toEncode, encoded);
     if(ret){
