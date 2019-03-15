@@ -478,7 +478,7 @@ static bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
     }
 
     if (format.binaryNotation == DecimalNotation) {
-        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
+        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned);
     }
     if (format.binaryNotation == HexNotation) {
         ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
@@ -625,8 +625,6 @@ namespace MARTe {
  * (if maximumSize!=0 & align towards the right or the left).
  * @param[in] leftAligned specifies if the number must be print with left or
  * right alignment (if padded and maximumSize!=0 align towards the left).
- * @param[in] addPositiveSign specifies if we want print the '+' before
- * positive numbers (prepend with + not just with - for negative numbers).
  * @return true.
  */
 /*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
@@ -636,8 +634,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                                     const T number,
                                     uint16 maximumSize = 0u,
                                     bool padded = false,
-                                    const bool leftAligned = false,
-                                    const bool addPositiveSign = false) {
+                                    const bool leftAligned = false) {
 
     bool ret = false;
 
@@ -662,11 +659,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
 
     }
     else {
-        // if positive copy it and account for the '+' in the size if addPositiveSign set
         positiveNumber = number;
-        if (addPositiveSign) {
-            numberSize++;
-        }
     }
 
     bool ok = true;
@@ -753,14 +746,6 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                 if (!ioBuffer.PutC('-')) {
                     REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
-                }
-            }
-            else {
-                if (addPositiveSign) {
-                    if (!ioBuffer.PutC('+')) {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
-                        ok = false;
-                    }
                 }
             }
 

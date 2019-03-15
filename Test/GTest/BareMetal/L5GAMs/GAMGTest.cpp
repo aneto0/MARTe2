@@ -218,3 +218,8 @@ TEST(BareMetal_L5GAMs_GAMGTest,TestGetQualifiedName) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetQualifiedName());
 }
+
+TEST(BareMetal_L5GAMs_GAMGTest,TestExportData) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestExportData());
+}

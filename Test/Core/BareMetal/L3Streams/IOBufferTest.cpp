@@ -1826,7 +1826,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
     ioBuffer.PrintFormatted("%@", &at);
 
     StreamString test = "\r\nClass = \"TestIOBufferIntrospectionStructure\"\r\n"
-            "member1 = +1\r\n"
+            "member1 = 1\r\n"
             "member2 = ";
     test.Printf("%#x\r\n", ((void*) myStruct.member2));
     test +=
@@ -1835,7 +1835,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
                     "member5 = {\r\n\r\n"
 
                     "Class = \"TestIOBufferIntrospectionNestedStructure\"\r\n"
-                    "nestedMember1 = +5\r\n"
+                    "nestedMember1 = 5\r\n"
                     "nestedMember2 = \"Hello\"\r\n"
                     "}\r\n";
 
@@ -1847,7 +1847,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
         ioBuffer.PrintFormatted("%J@", &at);
 
         StreamString test1 = "\r\n\"Class\": \"TestIOBufferIntrospectionStructure\",\r\n"
-                "\"member1\": +1,\r\n"
+                "\"member1\": 1,\r\n"
                 "\"member2\": ";
         test1.Printf("%#x,\r\n", ((void*) myStruct.member2));
         test1 +=
@@ -1856,7 +1856,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
                         "\"member5\": {\r\n\r\n"
 
                         "\"Class\": \"TestIOBufferIntrospectionNestedStructure\",\r\n"
-                        "\"nestedMember1\": +5,\r\n"
+                        "\"nestedMember1\": 5,\r\n"
                         "\"nestedMember2\": \"Hello\"\r\n"
                         "}\r\n";
         printf("\n|%s||%s|\n", ioBuffer.Buffer(), test1.Buffer());
@@ -1870,7 +1870,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
         ioBuffer.PrintFormatted("%X@", &at);
 
         StreamString test2 = "\r\n<Class> \"TestIOBufferIntrospectionStructure\"</Class>\r\n"
-                "<member1> +1</member1>\r\n"
+                "<member1> 1</member1>\r\n"
                 "<member2> ";
         test2.Printf("%#x</member2>\r\n", ((void*) myStruct.member2));
         test2 +=
@@ -1879,7 +1879,7 @@ bool IOBufferTest::TestPrintFormattedObject() {
                         "<member5>\r\n\r\n"
 
                         "<Class> \"TestIOBufferIntrospectionNestedStructure\"</Class>\r\n"
-                        "<nestedMember1> +5</nestedMember1>\r\n"
+                        "<nestedMember1> 5</nestedMember1>\r\n"
                         "<nestedMember2> \"Hello\"</nestedMember2>\r\n"
                         "</member5>\r\n";
         printf("\n|%s||%s|\n", ioBuffer.Buffer(), test2.Buffer());
@@ -1907,11 +1907,11 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
     ioBuffer.PrintFormatted("%s", &toPrint);
     const char8* test = "A = {\r\n"
             "    B = {\r\n"
-            "        x = +1\r\n"
-            "        y = +2\r\n"
+            "        x = 1\r\n"
+            "        y = 2\r\n"
             "    }\r\n"
             "    C = {\r\n"
-            "        z = +3\r\n"
+            "        z = 3\r\n"
             "    }\r\n"
             "}\r\n";
 
@@ -1925,11 +1925,11 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
         ioBuffer.PrintFormatted("%Js", &toPrint);
         const char8* test1 = "\"A\": {\r\n"
                 "    \"B\": {\r\n"
-                "        \"x\": +1,\r\n"
-                "        \"y\": +2\r\n"
+                "        \"x\": 1,\r\n"
+                "        \"y\": 2\r\n"
                 "    },\r\n"
                 "    \"C\": {\r\n"
-                "        \"z\": +3\r\n"
+                "        \"z\": 3\r\n"
                 "    }\r\n"
                 "}\r\n";
 
@@ -1943,11 +1943,11 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
         ioBuffer.PrintFormatted("%Xs", &toPrint);
         const char8* test2 = "<A>\r\n"
                 "    <B>\r\n"
-                "        <x> +1</x>\r\n"
-                "        <y> +2</y>\r\n"
+                "        <x> 1</x>\r\n"
+                "        <y> 2</y>\r\n"
                 "    </B>\r\n"
                 "    <C>\r\n"
-                "        <z> +3</z>\r\n"
+                "        <z> 3</z>\r\n"
                 "    </C>\r\n"
                 "</A>\r\n";
 

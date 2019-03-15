@@ -209,7 +209,7 @@ public:
      *   - ' ': activates padding (fills up to width using spaces);
      *   - '-': left-align (put padding spaces after printing the object);
      *   - '#': activates fullNotation, i.e.:
-     *     - + in front of integers
+     *     - " enclosing strings
      *     - 0x/0b/0o in front of Hex/octal/binary
      *   - '0': prepends zeros for Hex Octal and Binary notations.\n
      *     The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
