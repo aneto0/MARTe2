@@ -261,7 +261,6 @@ bool LoaderTest::TestConfigure_DomainTokens_False() {
     ReferenceContainer::RemoveDomainToken('!');
     ReferenceContainer::RemoveDomainToken('@');
     ReferenceContainer::RemoveDomainToken('#');
-    ReferenceContainer::RemoveDomainToken('$');
     ReferenceContainer::RemoveDomainToken('%');
     ReferenceContainer::RemoveDomainToken('^');
     ReferenceContainer::RemoveDomainToken('&');

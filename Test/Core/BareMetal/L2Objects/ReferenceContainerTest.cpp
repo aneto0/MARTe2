@@ -418,9 +418,7 @@ float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer>
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH
-                    | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
     //Remove node "C"
     bool ok = TestFindFilter(tree, filter, "C");
     filter.Reset();
@@ -436,9 +434,7 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFil
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
-                    | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
     //Remove node "D.C"
     bool ok = TestFindFilter(tree, filter, "D.C");
     filter.Reset();
@@ -446,9 +442,7 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceConta
     //Should no longer find D.C but still find C
     ok &= !TestFindFilter(tree, filter, "D.C");
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
-                    | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
     ok &= TestFindFilter(tree, filter, "C");
 
     return ok;
@@ -473,22 +467,16 @@ bool ReferenceContainerTest::TestFindRemoveSecondOccurrence(ReferenceContainerFi
 
 bool ReferenceContainerTest::TestFindRemoveSecondOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
-                    | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
     //Remove node "C"
     bool ok = TestFindFilter(tree, filter, "C");
     filter.SetOriginalSetOccurrence(1);
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
-                    | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
     //Should no longer find C but still find D.C
     ok &= TestFindFilter(tree, filter, "D.C");
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE
-                    | ReferenceContainerFilterMode::PATH);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
     ok &= !TestFindFilter(tree, filter, "C");
 
     return ok;
@@ -879,23 +867,17 @@ bool ReferenceContainerTest::TestExportData() {
     output.Printf("%!", out);
 
     const char8 *test = ""
-            "+root = {\r\n"
+            "Name = \"root\"\r\n"
+            "Class = \"ReferenceContainer\"\r\n"
+            "0 = {\r\n"
+            "    Name = \"A\"\r\n"
             "    Class = \"ReferenceContainer\"\r\n"
-            "    +A = {\r\n"
-            "        Class = \"ReferenceContainer\"\r\n"
-            "        +B = {\r\n"
-            "            Class = \"ReferenceContainer\"\r\n"
-            "            +C = {\r\n"
-            "                Class = \"ReferenceContainer\"\r\n"
-            "            }\r\n"
-            "        }\r\n"
-            "    }\r\n"
-            "    +B = {\r\n"
-            "        Class = \"ReferenceContainer\"\r\n"
-            "        +C = {\r\n"
-            "            Class = \"ReferenceContainer\"\r\n"
-            "        }\r\n"
-            "    }\r\n"
+            "    IsContainer = 1\r\n"
+            "}\r\n"
+            "1 = {\r\n"
+            "    Name = \"B\"\r\n"
+            "    Class = \"ReferenceContainer\"\r\n"
+            "    IsContainer = 1\r\n"
             "}\r\n";
     return output == test;
 }
