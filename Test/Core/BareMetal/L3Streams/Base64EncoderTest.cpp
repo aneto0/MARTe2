@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -41,35 +41,29 @@
 /*---------------------------------------------------------------------------*/
 
 Base64EncoderTest::Base64EncoderTest() {
-    // Auto-generated constructor stub for Base64EncoderTest
-    // TODO Verify if manual additions are needed
 }
 
 Base64EncoderTest::~Base64EncoderTest() {
-    // Auto-generated destructor stub for Base64EncoderTest
-    // TODO Verify if manual additions are needed
 }
 
 
 bool Base64EncoderTest::TestEncode(const char8 *toEncodeIn, const char8* expected){
-    StreamString toEncode=toEncodeIn;
+    StreamString toEncode  oEncodeIn;
     StreamString encoded;
     bool ret=Base64Encoder::Encode(toEncode, encoded);
     if(ret){
         ret=(StringHelper::Compare(encoded.Buffer(), expected)==0);
     }
-    printf("\n%s\n", encoded.Buffer());
     return ret;
 }
 
 bool Base64EncoderTest::TestDecode(const char8 *toDecodeIn, const char8* expected){
-    StreamString toDecode=toDecodeIn;
+    StreamString toDecode = toDecodeIn;
     StreamString decoded;
     bool ret=Base64Encoder::Decode(toDecode, decoded);
     if(ret){
         ret=(StringHelper::Compare(decoded.Buffer(),expected)==0);
     }
-    printf("\n|%s||%s|\n", decoded.Buffer(), expected);
     return ret;
 
 }

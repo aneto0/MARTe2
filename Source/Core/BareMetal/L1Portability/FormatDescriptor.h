@@ -158,17 +158,17 @@ typedef uint4 DesiredGrammar;
 /**
  * Print in the standard MARTe grammar
  */
-const DesiredGrammar PrintInStandardGrammar=0u;
+const DesiredGrammar PrintInStandardGrammar = 0u;
 
 /**
  * Print using the json grammar
  */
-const DesiredGrammar PrintInJsonGrammar=1u;
+const DesiredGrammar PrintInJsonGrammar = 1u;
 
 /**
  * Print using the XML grammar
  */
-const DesiredGrammar PrintInXMLGrammar=2u;
+const DesiredGrammar PrintInXMLGrammar = 2u;
 
 
 /**

@@ -47,8 +47,14 @@ namespace Base64Encoder {
 static class Base64Codec {
 public:
 
+    /**
+     * @brief Constructs the base64 alphabet.
+     */
     Base64Codec();
 
+    /**
+     * @brief Destructor.
+     */
     ~Base64Codec();
 
     uint8 decodingTable[256];

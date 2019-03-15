@@ -41,40 +41,47 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/*lint -e{9158} -e{9159} -e{9021} allow to use #define and #undef for this implementation, but this should be revisited (TODO)*/
+/*lint -e{9158} -e{9159} -e{9021} allow to use #define for this implementation, but this should be revisited*/
 namespace Md5Encrypt {
 
 /*
  * 32-bit integer manipulation macros (little endian)
  */
-#ifndef GET_UINT32_LE
-#define GET_UINT32_LE(n,b,i)                            \
-{                                                       \
-    (n) = ( static_cast<osulong> ((b)[(i)    ])       )        \
-        | ( static_cast<osulong> ((b)[(i) + 1]) <<  8u )        \
-        | ( static_cast<osulong> ((b)[(i) + 2]) << 16u )        \
-        | ( static_cast<osulong> ((b)[(i) + 3]) << 24u );       \
+#ifndef MDS5_GET_UINT32_LE
+#define MDS5_GET_UINT32_LE(n,b,i)                              \
+{                                                         \
+    (n) = ( static_cast<osulong> ((b)[(i)    ])        )  \
+        | ( static_cast<osulong> ((b)[(i) + 1]) <<  8u )  \
+        | ( static_cast<osulong> ((b)[(i) + 2]) << 16u )  \
+        | ( static_cast<osulong> ((b)[(i) + 3]) << 24u ); \
 }
 #endif
 
-#ifndef PUT_UINT32_LE
-#define PUT_UINT32_LE(n,b,i)                            \
+#ifndef MDS5_PUT_UINT32_LE
+#define MDS5_PUT_UINT32_LE(n,b,i)                            \
 {                                                       \
-    (b)[(i)    ] = static_cast<uint8> ( (n)       );       \
-    (b)[(i) + 1] = static_cast<uint8> ( (n) >>  8u );       \
-    (b)[(i) + 2] = static_cast<uint8> ( (n) >> 16u );       \
-    (b)[(i) + 3] = static_cast<uint8> ( (n) >> 24u );       \
+    (b)[(i)    ] = static_cast<uint8> ( (n)       );    \
+    (b)[(i) + 1] = static_cast<uint8> ( (n) >>  8u );   \
+    (b)[(i) + 2] = static_cast<uint8> ( (n) >> 16u );   \
+    (b)[(i) + 3] = static_cast<uint8> ( (n) >> 24u );   \
 }
 #endif
 
 
 #define S(x,n) ((x << n) | ((x & 0xFFFFFFFFu) >> (32u - n)))
 
-#define P(a,b,c,d,k,s,t)                                \
-{                                                       \
-a += F(b,c,d) + X[k] + t; a = S(a,s) + b;           \
-}
+#define MDS5_F1(x,y,z) (z ^ (x & (y ^ z)))
 
+#define MDS5_F2(x,y,z) (y ^ (z & (x ^ y)))
+
+#define MDS5_F3(x,y,z) (x ^ y ^ z)
+
+#define MDS5_F4(x,y,z) (y ^ (x | ~z))
+
+#define MDS5_P(F,a,b,c,d,k,s,t)                    \
+{                                                  \
+a += F(b,c,d) + X[k] + t; a = S(a,s) + b;          \
+}
 
 static const uint8 md5_padding[64] = { 0x80u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
         0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
@@ -96,31 +103,49 @@ public:
     ~Md5Context();
 
     /*
-     * MD5 context setup
+     * @brief MD5 context setup
      */
     void Starts();
 
+    /**
+     * @brief Udpates the data.
+     * @param[in] input the data.
+     * @param[in] ilen input length.
+     */
     void Update(uint8 *input,
                 uint32 ilen);
 
+    /*
+     * @brief MD5 computation final step.
+     * @param[out] output the computed data.
+     */
     void Finish(uint8 *output);
 
+    /*
+     * @brief MD5 computation.
+     * @param[in] data the data.
+     */
     void Md5Process(const uint8 data[64]);
 
     /*
-     * MD5 HMAC context setup
+     * @brief MD5 HMAC context setup
+     * @param[in] key the key.
+     * @param[in] keylen key length.
      */
     void HmacStarts(const uint8 * const key,
                     const uint32 keylen);
 
     /*
-     * MD5 HMAC process buffer
+     * @brief MD5 HMAC process buffer
+     * @param[in] input the data.
+     * @param[in] ilen input length.
      */
     void HmacUpdate(uint8 * const input,
                     const uint32 ilen);
 
     /*
-     * MD5 HMAC final digest
+     * @brief MD5 HMAC final digest
+     * @param[out] output MD5 output.
      */
     void HmacFinish(uint8 * const output);
 
@@ -214,8 +239,8 @@ void Md5Context::Finish(uint8 * const output) {
     low = (total[0] << 3u);
 
     /*lint -e{835} zero sum allowed*/
-    PUT_UINT32_LE(low, msglen, 0)
-    PUT_UINT32_LE(high, msglen, 4)
+    MDS5_PUT_UINT32_LE(low, msglen, 0)
+    MDS5_PUT_UINT32_LE(high, msglen, 4)
 
     last = total[0] & 0x3Fu;
     padn = (last < 56u) ? (56u - last) : (120u - last);
@@ -224,10 +249,10 @@ void Md5Context::Finish(uint8 * const output) {
     Update(&msglen[0], 8u);
 
     /*lint -e{835} zero sum allowed*/
-    PUT_UINT32_LE(state[0], output, 0)
-    PUT_UINT32_LE(state[1], output, 4)
-    PUT_UINT32_LE(state[2], output, 8)
-    PUT_UINT32_LE(state[3], output, 12)
+    MDS5_PUT_UINT32_LE(state[0], output, 0)
+    MDS5_PUT_UINT32_LE(state[1], output, 4)
+    MDS5_PUT_UINT32_LE(state[2], output, 8)
+    MDS5_PUT_UINT32_LE(state[3], output, 12)
 }
 
 void Md5Context::Md5Process(const uint8 data[64]) {
@@ -238,112 +263,95 @@ void Md5Context::Md5Process(const uint8 data[64]) {
     osulong D;
 
     /*lint -e{835} zero sum allowed*/
-    GET_UINT32_LE(X[0], data, 0)
-    GET_UINT32_LE(X[1], data, 4)
-    GET_UINT32_LE(X[2], data, 8)
-    GET_UINT32_LE(X[3], data, 12)
-    GET_UINT32_LE(X[4], data, 16)
-    GET_UINT32_LE(X[5], data, 20)
-    GET_UINT32_LE(X[6], data, 24)
-    GET_UINT32_LE(X[7], data, 28)
-    GET_UINT32_LE(X[8], data, 32)
-    GET_UINT32_LE(X[9], data, 36)
-    GET_UINT32_LE(X[10], data, 40)
-    GET_UINT32_LE(X[11], data, 44)
-    GET_UINT32_LE(X[12], data, 48)
-    GET_UINT32_LE(X[13], data, 52)
-    GET_UINT32_LE(X[14], data, 56)
-    GET_UINT32_LE(X[15], data, 60)
+    MDS5_GET_UINT32_LE(X[0], data, 0)
+    MDS5_GET_UINT32_LE(X[1], data, 4)
+    MDS5_GET_UINT32_LE(X[2], data, 8)
+    MDS5_GET_UINT32_LE(X[3], data, 12)
+    MDS5_GET_UINT32_LE(X[4], data, 16)
+    MDS5_GET_UINT32_LE(X[5], data, 20)
+    MDS5_GET_UINT32_LE(X[6], data, 24)
+    MDS5_GET_UINT32_LE(X[7], data, 28)
+    MDS5_GET_UINT32_LE(X[8], data, 32)
+    MDS5_GET_UINT32_LE(X[9], data, 36)
+    MDS5_GET_UINT32_LE(X[10], data, 40)
+    MDS5_GET_UINT32_LE(X[11], data, 44)
+    MDS5_GET_UINT32_LE(X[12], data, 48)
+    MDS5_GET_UINT32_LE(X[13], data, 52)
+    MDS5_GET_UINT32_LE(X[14], data, 56)
+    MDS5_GET_UINT32_LE(X[15], data, 60)
 
     A = state[0];
     B = state[1];
     C = state[2];
     D = state[3];
 
-    /*lint -e{9158} allowed define within a block*/
-#define F(x,y,z) (z ^ (x & (y ^ z)))
+    MDS5_P(MDS5_F1, A, B, C, D, 0, 7u, 0xD76AA478u)
+    MDS5_P(MDS5_F1, D, A, B, C, 1, 12u, 0xE8C7B756u)
+    MDS5_P(MDS5_F1, C, D, A, B, 2, 17u, 0x242070DBu)
+    MDS5_P(MDS5_F1, B, C, D, A, 3, 22u, 0xC1BDCEEEu)
+    MDS5_P(MDS5_F1, A, B, C, D, 4, 7u, 0xF57C0FAFu)
+    MDS5_P(MDS5_F1, D, A, B, C, 5, 12u, 0x4787C62Au)
+    MDS5_P(MDS5_F1, C, D, A, B, 6, 17u, 0xA8304613u)
+    MDS5_P(MDS5_F1, B, C, D, A, 7, 22u, 0xFD469501u)
+    MDS5_P(MDS5_F1, A, B, C, D, 8, 7u, 0x698098D8u)
+    MDS5_P(MDS5_F1, D, A, B, C, 9, 12u, 0x8B44F7AFu)
+    MDS5_P(MDS5_F1, C, D, A, B, 10, 17u, 0xFFFF5BB1u)
+    MDS5_P(MDS5_F1, B, C, D, A, 11, 22u, 0x895CD7BEu)
+    MDS5_P(MDS5_F1, A, B, C, D, 12, 7u, 0x6B901122u)
+    MDS5_P(MDS5_F1, D, A, B, C, 13, 12u, 0xFD987193u)
+    MDS5_P(MDS5_F1, C, D, A, B, 14, 17u, 0xA679438Eu)
+    MDS5_P(MDS5_F1, B, C, D, A, 15, 22u, 0x49B40821u)
 
-    P(A, B, C, D, 0, 7u, 0xD76AA478u)
-    P(D, A, B, C, 1, 12u, 0xE8C7B756u)
-    P(C, D, A, B, 2, 17u, 0x242070DBu)
-    P(B, C, D, A, 3, 22u, 0xC1BDCEEEu)
-    P(A, B, C, D, 4, 7u, 0xF57C0FAFu)
-    P(D, A, B, C, 5, 12u, 0x4787C62Au)
-    P(C, D, A, B, 6, 17u, 0xA8304613u)
-    P(B, C, D, A, 7, 22u, 0xFD469501u)
-    P(A, B, C, D, 8, 7u, 0x698098D8u)
-    P(D, A, B, C, 9, 12u, 0x8B44F7AFu)
-    P(C, D, A, B, 10, 17u, 0xFFFF5BB1u)
-    P(B, C, D, A, 11, 22u, 0x895CD7BEu)
-    P(A, B, C, D, 12, 7u, 0x6B901122u)
-    P(D, A, B, C, 13, 12u, 0xFD987193u)
-    P(C, D, A, B, 14, 17u, 0xA679438Eu)
-    P(B, C, D, A, 15, 22u, 0x49B40821u)
+    MDS5_P(MDS5_F2, A, B, C, D, 1, 5u, 0xF61E2562u)
+    MDS5_P(MDS5_F2, D, A, B, C, 6, 9u, 0xC040B340u)
+    MDS5_P(MDS5_F2, C, D, A, B, 11, 14u, 0x265E5A51u)
+    MDS5_P(MDS5_F2, B, C, D, A, 0, 20u, 0xE9B6C7AAu)
+    MDS5_P(MDS5_F2, A, B, C, D, 5, 5u, 0xD62F105Du)
+    MDS5_P(MDS5_F2, D, A, B, C, 10, 9u, 0x02441453u)
+    MDS5_P(MDS5_F2, C, D, A, B, 15, 14u, 0xD8A1E681u)
+    MDS5_P(MDS5_F2, B, C, D, A, 4, 20u, 0xE7D3FBC8u)
+    MDS5_P(MDS5_F2, A, B, C, D, 9, 5u, 0x21E1CDE6u)
+    MDS5_P(MDS5_F2, D, A, B, C, 14, 9u, 0xC33707D6u)
+    MDS5_P(MDS5_F2, C, D, A, B, 3, 14u, 0xF4D50D87u)
+    MDS5_P(MDS5_F2, B, C, D, A, 8, 20u, 0x455A14EDu)
+    MDS5_P(MDS5_F2, A, B, C, D, 13, 5u, 0xA9E3E905u)
+    MDS5_P(MDS5_F2, D, A, B, C, 2, 9u, 0xFCEFA3F8u)
+    MDS5_P(MDS5_F2, C, D, A, B, 7, 14u, 0x676F02D9u)
+    MDS5_P(MDS5_F2, B, C, D, A, 12, 20u, 0x8D2A4C8Au)
 
-#undef F
+    MDS5_P(MDS5_F3, A, B, C, D, 5, 4u, 0xFFFA3942u)
+    MDS5_P(MDS5_F3, D, A, B, C, 8, 11u, 0x8771F681u)
+    MDS5_P(MDS5_F3, C, D, A, B, 11, 16u, 0x6D9D6122u)
+    MDS5_P(MDS5_F3, B, C, D, A, 14, 23u, 0xFDE5380Cu)
+    MDS5_P(MDS5_F3, A, B, C, D, 1, 4u, 0xA4BEEA44u)
+    MDS5_P(MDS5_F3, D, A, B, C, 4, 11u, 0x4BDECFA9u)
+    MDS5_P(MDS5_F3, C, D, A, B, 7, 16u, 0xF6BB4B60u)
+    MDS5_P(MDS5_F3, B, C, D, A, 10, 23u, 0xBEBFBC70u)
+    MDS5_P(MDS5_F3, A, B, C, D, 13, 4u, 0x289B7EC6u)
+    MDS5_P(MDS5_F3, D, A, B, C, 0, 11u, 0xEAA127FAu)
+    MDS5_P(MDS5_F3, C, D, A, B, 3, 16u, 0xD4EF3085u)
+    MDS5_P(MDS5_F3, B, C, D, A, 6, 23u, 0x04881D05u)
+    MDS5_P(MDS5_F3, A, B, C, D, 9, 4u, 0xD9D4D039u)
+    MDS5_P(MDS5_F3, D, A, B, C, 12, 11u, 0xE6DB99E5u)
+    MDS5_P(MDS5_F3, C, D, A, B, 15, 16u, 0x1FA27CF8u)
+    MDS5_P(MDS5_F3, B, C, D, A, 2, 23u, 0xC4AC5665u)
 
-#define F(x,y,z) (y ^ (z & (x ^ y)))
-
-    P(A, B, C, D, 1, 5u, 0xF61E2562u)
-    P(D, A, B, C, 6, 9u, 0xC040B340u)
-    P(C, D, A, B, 11, 14u, 0x265E5A51u)
-    P(B, C, D, A, 0, 20u, 0xE9B6C7AAu)
-    P(A, B, C, D, 5, 5u, 0xD62F105Du)
-    P(D, A, B, C, 10, 9u, 0x02441453u)
-    P(C, D, A, B, 15, 14u, 0xD8A1E681u)
-    P(B, C, D, A, 4, 20u, 0xE7D3FBC8u)
-    P(A, B, C, D, 9, 5u, 0x21E1CDE6u)
-    P(D, A, B, C, 14, 9u, 0xC33707D6u)
-    P(C, D, A, B, 3, 14u, 0xF4D50D87u)
-    P(B, C, D, A, 8, 20u, 0x455A14EDu)
-    P(A, B, C, D, 13, 5u, 0xA9E3E905u)
-    P(D, A, B, C, 2, 9u, 0xFCEFA3F8u)
-    P(C, D, A, B, 7, 14u, 0x676F02D9u)
-    P(B, C, D, A, 12, 20u, 0x8D2A4C8Au)
-
-#undef F
-
-#define F(x,y,z) (x ^ y ^ z)
-
-    P(A, B, C, D, 5, 4u, 0xFFFA3942u)
-    P(D, A, B, C, 8, 11u, 0x8771F681u)
-    P(C, D, A, B, 11, 16u, 0x6D9D6122u)
-    P(B, C, D, A, 14, 23u, 0xFDE5380Cu)
-    P(A, B, C, D, 1, 4u, 0xA4BEEA44u)
-    P(D, A, B, C, 4, 11u, 0x4BDECFA9u)
-    P(C, D, A, B, 7, 16u, 0xF6BB4B60u)
-    P(B, C, D, A, 10, 23u, 0xBEBFBC70u)
-    P(A, B, C, D, 13, 4u, 0x289B7EC6u)
-    P(D, A, B, C, 0, 11u, 0xEAA127FAu)
-    P(C, D, A, B, 3, 16u, 0xD4EF3085u)
-    P(B, C, D, A, 6, 23u, 0x04881D05u)
-    P(A, B, C, D, 9, 4u, 0xD9D4D039u)
-    P(D, A, B, C, 12, 11u, 0xE6DB99E5u)
-    P(C, D, A, B, 15, 16u, 0x1FA27CF8u)
-    P(B, C, D, A, 2, 23u, 0xC4AC5665u)
-
-#undef F
-
-#define F(x,y,z) (y ^ (x | ~z))
-
-    P(A, B, C, D, 0, 6u, 0xF4292244u)
-    P(D, A, B, C, 7, 10u, 0x432AFF97u)
-    P(C, D, A, B, 14, 15u, 0xAB9423A7u)
-    P(B, C, D, A, 5, 21u, 0xFC93A039u)
-    P(A, B, C, D, 12, 6u, 0x655B59C3u)
-    P(D, A, B, C, 3, 10u, 0x8F0CCC92u)
-    P(C, D, A, B, 10, 15u, 0xFFEFF47Du)
-    P(B, C, D, A, 1, 21u, 0x85845DD1u)
-    P(A, B, C, D, 8, 6u, 0x6FA87E4Fu)
-    P(D, A, B, C, 15, 10u, 0xFE2CE6E0u)
-    P(C, D, A, B, 6, 15u, 0xA3014314u)
-    P(B, C, D, A, 13, 21u, 0x4E0811A1u)
-    P(A, B, C, D, 4, 6u, 0xF7537E82u)
-    P(D, A, B, C, 11, 10u, 0xBD3AF235u)
-    P(C, D, A, B, 2, 15u, 0x2AD7D2BBu)
-    P(B, C, D, A, 9, 21u, 0xEB86D391u)
-
-#undef F
+    MDS5_P(MDS5_F4, A, B, C, D, 0, 6u, 0xF4292244u)
+    MDS5_P(MDS5_F4, D, A, B, C, 7, 10u, 0x432AFF97u)
+    MDS5_P(MDS5_F4, C, D, A, B, 14, 15u, 0xAB9423A7u)
+    MDS5_P(MDS5_F4, B, C, D, A, 5, 21u, 0xFC93A039u)
+    MDS5_P(MDS5_F4, A, B, C, D, 12, 6u, 0x655B59C3u)
+    MDS5_P(MDS5_F4, D, A, B, C, 3, 10u, 0x8F0CCC92u)
+    MDS5_P(MDS5_F4, C, D, A, B, 10, 15u, 0xFFEFF47Du)
+    MDS5_P(MDS5_F4, B, C, D, A, 1, 21u, 0x85845DD1u)
+    MDS5_P(MDS5_F4, A, B, C, D, 8, 6u, 0x6FA87E4Fu)
+    MDS5_P(MDS5_F4, D, A, B, C, 15, 10u, 0xFE2CE6E0u)
+    MDS5_P(MDS5_F4, C, D, A, B, 6, 15u, 0xA3014314u)
+    MDS5_P(MDS5_F4, B, C, D, A, 13, 21u, 0x4E0811A1u)
+    MDS5_P(MDS5_F4, A, B, C, D, 4, 6u, 0xF7537E82u)
+    MDS5_P(MDS5_F4, D, A, B, C, 11, 10u, 0xBD3AF235u)
+    MDS5_P(MDS5_F4, C, D, A, B, 2, 15u, 0x2AD7D2BBu)
+    MDS5_P(MDS5_F4, B, C, D, A, 9, 21u, 0xEB86D391u)
 
     state[0] += A;
     state[1] += B;
