@@ -1,7 +1,7 @@
 /**
- * @file UDPLogger.h
- * @brief Header file for class UDPLogger
- * @date 14/03/2017
+ * @file HttpDataExportITest.h
+ * @brief Header file for class HttpDataExportITest
+ * @date 15/03/2019
  * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class UDPLogger
+ * @details This header file contains the declaration of the class HttpDataExportITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef L4LOGGERSERVICE_UDPLOGGER_H_
-#define L4LOGGERSERVICE_UDPLOGGER_H_
+#ifndef L4HTTPSERVICE_HTTPDATAEXPORTITEST_H_
+#define L4HTTPSERVICE_HTTPDATAEXPORTITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,65 +31,31 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LoggerConsumerI.h"
-#include "Object.h"
-#include "UDPSocket.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
+
+
 /**
- * @brief A LoggerConsumerI which outputs the log messages to a UDP socket.
- * @details The configuration syntax is (names are only given as an example):
- * <pre>
- * +UDPLogger = {
- *     Class = UDPLogger
- *     Address = 127.0.0.1 //Compulsory. The address of the destination where the logs are to be sent to.
- *     Port = 44444 //Compulsory. The port of the destination where the logs are to be sent to.
- *     Format = ItOoFm //Compulsory. As described in LoggerConsumerI::LoadPrintPreferences
- *     PrintKeys = 1 //Optional. As described in LoggerConsumerI::LoadPrintPreferences
- * }
- * </pre>
+ * @brief Tests the HttpDataExportI public methods.
  */
-class UDPLogger: public Object, public LoggerConsumerI {
+class HttpDataExportITest {
 public:
-    CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief Tests the GetAsStructuredData method.
+     */
+    bool TestGetAsStructuredData();
 
     /**
-     * @brief Constructor.
+     * @brief Tests the GetAsText method.
      */
-    UDPLogger();
-
-    /**
-     * @brief Destructor. Closes the socket.
-     */
-    virtual ~UDPLogger();
-
-    /**
-     * @brief Prints the logPage in the socket output.
-     * @param logPage the log message to be printed.
-     */
-    virtual void ConsumeLogMessage(LoggerPage *logPage);
-
-    /**
-     * @brief Calls Object::Initialise and reads the Format parameter (see class description) .
-     * @param[in] data see Object::Initialise.
-     * @return true if Object::Initialise returns true.
-     */
-    virtual bool Initialise(StructuredDataI &data);
-private:
-
-    /**
-     *  The UDP socket where the logs are printed to.
-     */
-    UDPSocket udpSocket;
-
+    bool TestGetAsText();
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* L4LOGGERSERVICE_UDPLOGGER_H_ */
+#endif /* TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPDATAEXPORTITEST_H_ */

@@ -154,9 +154,7 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
             err = !(sel.AddReadHandle(*commClient));
             //give the possibility to stop the thread
             if (err.ErrorsCleared()) {
-
                 if (sel.WaitUntil(1000u) > 0) {
-                    //todo from here it is possible to understand if
                     //you want plain text or data
                     if (!hprotocol.ReadHeader()) {
                         err = ErrorManagement::CommunicationError;

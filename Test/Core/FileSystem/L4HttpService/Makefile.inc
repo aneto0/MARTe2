@@ -24,8 +24,11 @@
 #
 #############################################################
 
-OBJSX=	HttpServiceTest.x HttpProtocolTest.x HttpChunkedStreamTest.x HttpClientTest.x
-#HttpStreamTTest.x
+OBJSX=	HttpChunkedStreamTest.x \
+    HttpClientTest.x \
+    HttpDataExportITest.x \
+    HttpProtocolTest.x \
+    HttpServiceTest.x
 
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..

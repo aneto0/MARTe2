@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Implementation of an HttpClient that allows to build and send HTTP requests and to receive replies from the server.
  *
- * @details The request can contain an authorization digest that allows the called object on the server side
+ * @details The request may contain an authorization digest that allows the called object on the server side
  * to check the authenticity of the client caller. This mechanism can be of two types:
  *   Basic: the Authorization field of the HTTP message is filled with the authorisation code set by the client.
  *   Digest: assuming that the authorisation code set by the client is the base64 encoded result of user:passwd,
@@ -80,7 +80,7 @@ public:
 
     /**
      * @see Object::Initialise
-     * @details The user can configure the following parameters.
+     * @details The following parameters can be configured.
      *   ServerAddress: the server ip address
      *   ServerPort: the server port
      *   ServerUri: the server uri that identifies the object that has to be called on the server side.
@@ -90,7 +90,7 @@ public:
 
     /**
      * @brief Retrieves the internal HttpProtocol
-     * @details this function can be used to set other HTTP header fields from outside.
+     * @details this function can be used to set other HTTP header fields from outside this class implementation.
      * @return a pointer to the internal HttpProtocol.
      */
     HttpProtocol *GetHttpProtocol();

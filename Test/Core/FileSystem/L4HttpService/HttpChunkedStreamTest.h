@@ -80,7 +80,10 @@ public:
      */
     bool TestIsChunkMode();
 
-
+private:
+    /**
+     * Internal semaphore was for the tests.
+     */
     EventSem eventSem;
 
 };

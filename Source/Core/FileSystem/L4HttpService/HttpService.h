@@ -50,15 +50,14 @@ namespace MARTe{
  * @brief Implementation of an HTTP server.
  * @see MultiClientService.
  *
- * @details Building on the structure implemented in the MultiClientEmbeddedThread::ThreadLoop method,
- * the ServerCycle function (that is executed by all threads) in the pool performs the following tasks:\n
+ * @details Performs the following tasks:\n
  *   - Waits on the principal socket for a new client connection.\n
  *   - Once a new client is connected, the new socket is created to handle the
  *     specific connection and a new thread is launched with the ServerCycle task to
  *     manage new client connections.\n
  *   -The current thread with the new created socket calls the ClientService function to
  *    manage the client HTTP requests.\n
- *   - Once the client closes the connection (or in case of errors) the thread terminates.\n
+ *   - Once the client closes the connection (or in case of error) the thread terminates.\n
  * @details The client can send a specific HTTP command called TextMode to express that it wants to receive data
  * in text mode (TextMode=1) or in database mode (TextMode=0). If TextMode=1, the HttpService will call the
  * DataExportI::GetAsText of the object found at the path received from the client, or DatExportI::GetAsStructuredData if
@@ -66,10 +65,21 @@ namespace MARTe{
  * in order to send to the client data written in json language.
  *
  * @details The HttpService replies to the client always using the HTTP chunked transfer encoding. This allows to stream out
- * data to the socket without knowing a priori the full length of the HTTP message body. In this way we avoid to store the
+ * data to the socket without knowing a priori the full length of the HTTP message body. This allows to avoid having to store the
  * whole body in memory before sending it.
  *
- * @see The Initialise method for the possible configuration parameters.
+ * @details The configuration syntax is (names are only given as an example):
+ * <pre>
+ * +HttpService1 = {
+ *     Class = HttpService
+ *     AcceptTimeout = 1000 //Optional (default = 1000).  Timeout in the TCPSocket::WaitConnection to wait for new client connections.
+ *     Port = 8084 //Optional (default = 80). The HTTP server port.
+ *     ListenMaxConnections = 255 //Optional (default = 255). The maximum number of connections.
+ *     WebRoot = ARoot //Compulsory. Path in the ObjectConfigurationDatabase of the object that acts as the root for the service. This object shall inherit from HttpDataExportI.
+ *     IsTextMode = 1 //Optional (default = 1). If the GET option TextMode is not set, the reply is either sent as text/html (IsTextMode = 1) or as text/json (IsTextMode = 0). With the former GetAsText is called on the web root object, while with the latter GetAsStructuredData is called instead.
+ *     ChunkSize = 32 //Optional (default = 32). The maximum size of the chunks in which the reply bode is divided to perform the chunked transfer encoding mode.
+ * }
+ * </pre>
  */
 class HttpService: public MultiClientService, public MessageI {
 public:
@@ -98,9 +108,7 @@ public:
      *   IsTextMode: The default data sending mode. A client can change this mode by sending the HTTP command called TextMode=[0(false), 1(true)].
      *     Default=1 (text mode).
      *   ChunkSize: the maximum size of the chunks in which the reply bode is divided to perform the chunked transfer encoding mode. Default = 32
-     *   CloseOnAuthFail: can be 0 (false) or 1 (true). It asserts if after an authentication failure the connection must be closed or not. Default 1 (close
-     *     the connection).
-     *
+     * @return true if all the parameters are set and valid.
      */
     virtual bool Initialise(StructuredDataI &data);
 

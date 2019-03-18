@@ -39,61 +39,100 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * @brief TODO
+ * @brief HTTP browsing of any ReferenceContainer contents.
+ *
+ * @details Given a Root object, retrieves the contents of a target object. The path to the target object (w.r.t. to the Root) is encoded in the HttpProtocol (see HttpProtocol::GetUnmatchedId).
+ *
+ * The Root can be a path to any ReferenceContainer in the ObjectRegistryDatabase (e.g. Root = "A.B.C"), or the ObjectRegistryDatabase itself (Root = "/") or this instance (Root = ".").
+ *
+ * The following interaction possibilities are supported:
+ *  - GetAsStructuredData is called:
+ *    - The target is this instance and the Root is also this instance: calls ReferenceContainer::ExportsData (and thus lists all the child objects).
+ *    - The target is this instance and the Root is another objects: lists all the objects in target object.
+ *    - The target is not this instance and the target implements HttpDataExportI: calls GetAsStructuredData on the target object.
+ *    - The target is not this instance and the target does not implement HttpDataExportI: calls ExportData on the target object.
+ *    - None of the above: reply HttpDataExportI::ReplyNotFound.
+ *  -GetAsText is called:
+ *    - The target is this instance: checks if there is an HttpDirectoryResource capable of handling the request and if so forwards it.
+ *    - The target is not this instance and the target implements HttpDataExportI: calls GetAsText on the target object.
+ *    - None of the above: reply HttpDataExportI::ReplyNotFound.
+ * If GetAsText is called and the path points at any other
+ *
+ * @details The configuration syntax is (names are only given as an example):
+ * <pre>
+ * +HttpObjectBrowser1 = {
+ *     Class = HttpObjectBrowser
+ *     Root = "/" //Compulsory. The Root object. Can be a path to any ReferenceContainer in the ObjectRegistryDatabase (e.g. Root = "A.B.C"), or the ObjectRegistryDatabase itself (Root = "/") or this instance (Root = ".").
+ *     CloseOnAuthFail = 1 //Optional (default = 1). Close the connection in case of an authentication failure?
+ * }
+ * </pre>
  */
 class HttpObjectBrowser: public ReferenceContainer, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * @brief TODO
+     * @brief Constructor. NOOP.
      */
-HttpObjectBrowser    ();
+    HttpObjectBrowser();
 
     /**
-     * @brief TODO
+     * @brief Destructor. NOOP.
      */
     virtual ~HttpObjectBrowser();
 
     /**
-     * @brief TODO
+     * @brief See ReferenceContainer::Purge.
      */
     virtual void Purge(ReferenceContainer &purgeList);
 
     /**
-     * @brief TODO
+     * @brief Calls ReferenceContainer::Initialise and reads the Root and the CloseOnAuthFail parameters (see class description) .
+     * @return true if the parameters are correctly specified and the Root is valid.
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief TODO
+     * @brief See HttpDataExportI::GetAsStructuredData and the class description above.
+     * @param[out] data see HttpDataExportI::GetAsStructuredData and the class description above.
+     * @param[out] protocol see HttpDataExportI::GetAsStructuredData and the class description above.
+     * @return see HttpDataExportI::GetAsStructuredData.
      */
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief TODO
+     * @brief See HttpDataExportI::GetAsText and the class description above.
+     * @param[out] data see HttpDataExportI::GetAsText and the class description above.
+     * @param[out] protocol see HttpDataExportI::GetAsText and the class description above.
+     * @return see HttpDataExportI::GetAsText.
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 private:
 
     /**
-     * @brief TODO
+     * @brief Check if the request can access the resource (see HttpService and HttpRealmI).
+     * @param[in] protocol the HTTP protocol associated to this request.
+     * @return true if the request can access the resource.
      */
     virtual bool CheckSecurity(HttpProtocol &protocol);
 
     /**
-     * @brief TODO
+     * @brief Finds the reference w.r.t. to the root.
+     * @param[in] unmatchedPath the path to be found.
+     * @return the found Reference (or an invalid Reference otherwise).
      */
     Reference FindReference(const char8 * const unmatchedPath);
 
     /**
-     * @brief TODO
+     * @brief Finds the reference w.r.t. to the root.
+     * @param[in] protocol the HTTP request.
+     * @return the found Reference (or an invalid Reference otherwise).
      */
     Reference FindTarget(HttpProtocol &protocol);
 
     /**
-     * TODO
+     * The realm associated to this browser.
      */
     ReferenceT<HttpRealmI> realm;
 
@@ -104,7 +143,7 @@ private:
     uint8 closeOnAuthFail;
 
     /**
-     * TODO
+     * The root object. All requests w.r.t. to the root.
      */
     ReferenceT<ReferenceContainer> root;
 

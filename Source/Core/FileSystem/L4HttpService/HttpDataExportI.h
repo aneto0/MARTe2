@@ -38,31 +38,48 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+/**
+ * @brief Classes that implement this interface know how to handle HTTP requests.
+ * @details Most of the classes are expected to expose their internal data using the ExportData method.
+ * This interface is expected to be used only in cases where the knowledge of the HTTP interface is absolutely required.
+ */
 class HttpDataExportI {
 public:
     /**
-     * @brief TODO.
+     * @brief Constructor. NOOP.
      */
     HttpDataExportI();
 
     /**
-     * @brief TODO.
+     * @brief Destructor. NOOP.
      */
     virtual ~HttpDataExportI();
 
     /**
-     * @brief TODO.
+     * @brief Streams the data as a json structure.
+     * @details This method already implements the setting of the appropriated HTTP header announcing that data will be chunked (see HttpChunkedStream).
+     * Classes specialising this method will typically call it in order to prepare the HTTP header.
+     * @param[out] data holds the tree mapping the json structure to be created and streamed.
+     * @param[out] protocol writes the HTTP header  with the json and chunked options.
+     * @return true if the header was correctly configured.
      */
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief TODO.
+     * @brief Streams the data as text (text/html).
+     * @details This method already implements the setting of the appropriated HTTP header announcing that data will be chunked (see HttpChunkedStream).
+     * Classes specialising this method will typically call it in order to prepare the HTTP header.
+     * @param[out] stream holds the tree mapping the json structure to be created and streamed.
+     * @param[out] protocol writes the HTTP header with the text/html and chunked options.
+     * @return true if the header was correctly configured.
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 protected:
     /**
-     * @brief TODO.
+     * @brief Helper function to be used when a given resource is not available.
+     * @param[out] protocol writes the HTTP protocol header.
+     * @return true if the header is successfully written.
      */
     bool ReplyNotFound(HttpProtocol &protocol);
 
