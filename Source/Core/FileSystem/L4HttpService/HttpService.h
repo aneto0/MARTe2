@@ -74,7 +74,10 @@ namespace MARTe{
  *     Class = HttpService
  *     AcceptTimeout = 1000 //Optional (default = 1000).  Timeout in the TCPSocket::WaitConnection to wait for new client connections.
  *     Port = 8084 //Optional (default = 80). The HTTP server port.
- *     ListenMaxConnections = 255 //Optional (default = 255). The maximum number of connections.
+ *     Timeout = 0 //Compulsory. See MultiClientService::Initialise
+ *     MinNumberOfThreads = 2 //Compulsory. See MultiClientService::Initialise
+ *     MaxNumberOfThreads = 8 //Compulsory. See MultiClientService::Initialise
+ *     ListenMaxConnections = 255 //Compulsory. The maximum number of HTTP connections.
  *     WebRoot = ARoot //Compulsory. Path in the ObjectConfigurationDatabase of the object that acts as the root for the service. This object shall inherit from HttpDataExportI.
  *     IsTextMode = 1 //Optional (default = 1). If the GET option TextMode is not set, the reply is either sent as text/html (IsTextMode = 1) or as text/json (IsTextMode = 0). With the former GetAsText is called on the web root object, while with the latter GetAsStructuredData is called instead.
  *     ChunkSize = 32 //Optional (default = 32). The maximum size of the chunks in which the reply bode is divided to perform the chunked transfer encoding mode.

@@ -63,6 +63,7 @@ namespace MARTe {
  * +HttpObjectBrowser1 = {
  *     Class = HttpObjectBrowser
  *     Root = "/" //Compulsory. The Root object. Can be a path to any ReferenceContainer in the ObjectRegistryDatabase (e.g. Root = "A.B.C"), or the ObjectRegistryDatabase itself (Root = "/") or this instance (Root = ".").
+ *     Realm = ARealmImplementation //Optional. Points at an object that implements the HttpRealmI interface. If it exits every HTTP request will be validated by such object.
  *     CloseOnAuthFail = 1 //Optional (default = 1). Close the connection in case of an authentication failure?
  * }
  * </pre>
@@ -143,9 +144,9 @@ private:
     uint8 closeOnAuthFail;
 
     /**
-     * The root object. All requests w.r.t. to the root.
+     * The root object. All requests w.r.t. to the root. Cannot be ReferenceT<ReferenceContainer> because it gives problems with root = Reference(ObjectRegistryDatabase::Instance()).
      */
-    ReferenceT<ReferenceContainer> root;
+    ReferenceContainer *root;
 
 };
 }

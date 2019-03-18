@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=	HttpChunkedStreamTest.x \
+OBJSX=	HttpObjectBrowserTest.x \
+    HttpChunkedStreamTest.x \
     HttpClientTest.x \
     HttpDataExportITest.x \
     HttpProtocolTest.x \

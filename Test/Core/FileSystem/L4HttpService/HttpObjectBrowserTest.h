@@ -1,8 +1,8 @@
 /**
- * @file HttpChunkedStreamTest.h
- * @brief Header file for class HttpChunkedStreamTest
- * @date 01/10/2018
- * @author Giuseppe Ferro
+ * @file HttpObjectBrowserTest.h
+ * @brief Header file for class HttpObjectBrowserTest
+ * @date 18/03/2019
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpChunkedStreamTest
+ * @details This header file contains the declaration of the class HttpObjectBrowserTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HTTPCHUNKEDSTREAMTEST_H_
-#define HTTPCHUNKEDSTREAMTEST_H_
+#ifndef TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPOBJECTBROWSERTEST_H_
+#define TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPOBJECTBROWSERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,65 +31,72 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "HttpChunkedStream.h"
-#include "EventSem.h"
+
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-
 /**
- * @brief Tests the HttpChunkedStream methods
+ * @brief Tests the HttpObjectBrowser public methods.
  */
-class HttpChunkedStreamTest {
+class HttpObjectBrowserTest {
 public:
+    /**
+     * @brief Tests the Initialise method.
+     */
+    bool TestInitialise();
 
     /**
-     * @brief Constructor.
+     * @brief Tests the Initialise method with the ObjectRegistryDatabase as the Root.
      */
-    HttpChunkedStreamTest();
+    bool TestInitialise_ObjectRegistryDatabase_Root();
 
     /**
-     * @brief Destructor.
+     * @brief Tests the Initialise method with itself as the Root.
      */
-    virtual ~HttpChunkedStreamTest();
+    bool TestInitialise_Self_Root();
 
     /**
-     * @brief Tests the constructor
+     * @brief Tests the Initialise method with another object as the Root.
      */
-    bool TestConstructor();
+    bool TestInitialise_Other_Root();
 
     /**
-     * @brief Tests the Flush method
+     * @brief Tests that the Initialise method fails if no Root is specified.
      */
-    bool TestFlush();
+    bool TestInitialise_False_No_Root();
 
     /**
-     * @brief Tests the FinalChunk method
+     * @brief Tests that the Initialise method fails if an invalid Root is specified and only one character is passed as the root path.
      */
-    bool TestFinalChunk();
+    bool TestInitialise_False_Bad_Root_1();
 
     /**
-     * @brief Tests the SetChunkMode method
+     * @brief Tests that the Initialise method fails if an invalid Root is specified.
      */
-    bool TestSetChunkMode();
+    bool TestInitialise_False_Bad_Root_2();
 
     /**
-     * @brief Tests the IsChunkMode method
+     * @brief Tests the Initialise method with a valid Realm.
      */
-    bool TestIsChunkMode();
+    bool TestInitialise_Realm();
 
     /**
-     * Internal semaphore was for the tests.
+     * @brief Tests that the Initialise method fails with an invalid Realm.
      */
-    EventSem eventSem;
+    bool TestInitialise_False_Realm();
+
+    /**
+     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root also being this HttpObjectBrowser.
+     */
+    bool TestGetAsStructuredData_This_Self();
 
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* HTTPCHUNKEDSTREAMTEST_H_ */
-
+#endif /* TEST_CORE_FILESYSTEM_L4HTTPSERVICE_HTTPOBJECTBROWSERTEST_H_ */

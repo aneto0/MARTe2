@@ -48,17 +48,15 @@
 namespace MARTe {
 
 HttpObjectBrowser::HttpObjectBrowser() :
-        HttpDataExportI() {
+        ReferenceContainer(), HttpDataExportI(){
     closeOnAuthFail = 1u;
+    root = NULL_PTR(ReferenceContainer *);
 }
 
 HttpObjectBrowser::~HttpObjectBrowser() {
-    root = Reference();
-
 }
 
 void HttpObjectBrowser::Purge(ReferenceContainer &purgeList) {
-    root = Reference();
     ReferenceContainer::Purge(purgeList);
 }
 
@@ -75,19 +73,24 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
     if (ok) {
         if (rootName.Size() == 1u) {
             if (rootName[0] == '/') {
-                root = Reference(ObjectRegistryDatabase::Instance());
+                root = ObjectRegistryDatabase::Instance();
             }
             else if (rootName[0] == '.') {
-                root = Reference(this);
+                root = this;
             }
             else {
+                ok = false;
                 REPORT_ERROR(ErrorManagement::ParametersError, "Unknown Root [%c]", rootName[0]);
             }
         }
         else {
-            root = ObjectRegistryDatabase::Instance()->Find(rootName.Buffer());
-            ok = root.IsValid();
-            if (!ok) {
+            ReferenceT<ReferenceContainer> rootT = ObjectRegistryDatabase::Instance()->Find(rootName.Buffer());
+            ok = rootT.IsValid();
+            if (ok) {
+                root = rootT.operator ->();
+            }
+            else {
+                ok = false;
                 REPORT_ERROR(ErrorManagement::ParametersError, "Invalid Root [%s]", rootName.Buffer());
             }
         }
@@ -96,24 +99,18 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
     if (ok) {
         StreamString realmStr;
         if (data.Read("Realm", realmStr)) {
-            if (ok) {
-                realm = Find(realmStr.Buffer());
+            realm = Find(realmStr.Buffer());
+            ok = realm.IsValid();
+            if (!ok) {
+                realm = ObjectRegistryDatabase::Instance()->Find(realmStr.Buffer());
                 ok = realm.IsValid();
-                if (!ok) {
-                    realm = ObjectRegistryDatabase::Instance()->Find(realmStr.Buffer());
-                    ok = realm.IsValid();
-                }
-                if (!ok) {
-                    REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "The specified Realm reference is not valid");
-                }
             }
-            else {
-                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "A reference to a Realm object shall be specified");
+            if (!ok) {
+                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "The specified Realm reference is not valid");
             }
         }
         else {
             REPORT_ERROR_STATIC(ErrorManagement::Information, "No Realm specified");
-
         }
     }
     if (ok) {
