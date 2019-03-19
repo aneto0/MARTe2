@@ -48,7 +48,7 @@ namespace MARTe {
  * The following interaction possibilities are supported:
  *  - GetAsStructuredData is called:
  *    - The target is this instance and the Root is also this instance: calls ReferenceContainer::ExportsData (and thus lists all the child objects).
- *    - The target is this instance and the Root is another objects: lists all the objects in target object.
+ *    - The target is this instance and the Root is another object: lists all the objects in target object.
  *    - The target is not this instance and the target implements HttpDataExportI: calls GetAsStructuredData on the target object.
  *    - The target is not this instance and the target does not implement HttpDataExportI: calls ExportData on the target object.
  *    - None of the above: reply HttpDataExportI::ReplyNotFound.

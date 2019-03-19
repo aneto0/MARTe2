@@ -353,7 +353,7 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
         ret = outputStream->Printf("HEAD %s HTTP/%i.%i\r\n", urlToUse, majorVersion, minorVersion);
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "Command code %i unknown \n", command);
+        REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "Command code %i unknown", command);
         ret = false;
     }
 
@@ -361,84 +361,79 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
         if (!MoveAbsolute("OutputOptions")) {
             ret = CreateAbsolute("OutputOptions");
         }
-        if (ret) {
-            if (isMessageCompleted) {
-                uint32 payloadSize = 0u;
-                if (payload != NULL_PTR(BufferedStreamI*)) {
-                    payloadSize = static_cast<uint32>(payload->Size());
-                }
-                ret = Write("Content-Length", payloadSize);
+    }
+    if (ret) {
+        if (isMessageCompleted) {
+            uint32 payloadSize = 0u;
+            if (payload != NULL_PTR(BufferedStreamI*)) {
+                payloadSize = static_cast<uint32>(payload->Size());
             }
-            //todo else write the other streaming parameter
+            ret = Write("Content-Length", payloadSize);
         }
-        if (ret) {
-            StreamString connection;
-            if (Read("Connection", connection)) {
-                if (StringHelper::CompareNoCaseSensN(connection.Buffer(), "keep-alive", 10u) == 0) {
-                    keepAlive = true;
-                }
-                else if (StringHelper::CompareNoCaseSensN(connection.Buffer(), "close", 5u) == 0) {
-                    keepAlive = false;
-                }
-                else {
-
-                }
+    }
+    if (ret) {
+        StreamString connection;
+        if (Read("Connection", connection)) {
+            if (StringHelper::CompareNoCaseSensN(connection.Buffer(), "keep-alive", 10u) == 0) {
+                keepAlive = true;
+            }
+            else if (StringHelper::CompareNoCaseSensN(connection.Buffer(), "close", 5u) == 0) {
+                keepAlive = false;
             }
             else {
-                if (keepAlive) {
-                    ret = Write("Connection", "keep-alive");
-                }
-                else {
-                    ret = Write("Connection", "close");
-                }
-            }
-            // write all options
-            uint32 numberOfChildren = GetNumberOfChildren();
-            for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
-                StreamString value;
-                StreamString key = GetChildName(i);
-                if (Read(key.Buffer(), value)) {
-                    ret = outputStream->Printf("%s: %s\r\n", key.Buffer(), value.Buffer());
-                    if (!ret) {
-                        REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "write key %s on socket failed\n", key.Buffer());
-                    }
-                }
-            }
-            if (ret) {
-                ret = outputStream->Printf("%s", "\r\n");
-                if (ret) {
-                    // return to root
-                    ret = MoveToRoot();
-                }
 
-                // send out the body
-                if (ret) {
-                    if (payload != NULL_PTR(BufferedStreamI*)) {
-                        uint32 toWrite = static_cast<uint32>(payload->Size());
-                        char8 *buff = new char8[bufferWriteSize];
-                        while (toWrite > 0u) {
-                            uint32 wSize = toWrite;
-                            if (wSize > bufferWriteSize) {
-                                wSize = bufferWriteSize;
-                            }
-
-                            ret = payload->Read(&buff[0], wSize);
-                            if (ret) {
-                                ret = outputStream->Write(&buff[0], wSize);
-                            }
-                            toWrite -= wSize;
-                        }
-                        delete[] buff;
-                    }
-                }
             }
-            if (ret) {
-                //flush the stream
-                ret = outputStream->Flush();
+        }
+        if (keepAlive) {
+            ret = Write("Connection", "keep-alive");
+        }
+        else {
+            ret = Write("Connection", "close");
+        }
+    }
+    // write all options
+    uint32 numberOfChildren = GetNumberOfChildren();
+    for (uint32 i = 0u; (i < numberOfChildren) && (ret); i++) {
+        StreamString value;
+        StreamString key = GetChildName(i);
+        if (Read(key.Buffer(), value)) {
+            ret = outputStream->Printf("%s: %s\r\n", key.Buffer(), value.Buffer());
+            if (!ret) {
+                REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "write key %s on socket failed\n", key.Buffer());
             }
         }
     }
+    if (ret) {
+        ret = outputStream->Printf("%s", "\r\n");
+    }
+    if (ret) {
+        // return to root
+        ret = MoveToRoot();
+    }
+    if (ret) {
+        // send out the body
+        if (payload != NULL_PTR(BufferedStreamI*)) {
+            uint32 toWrite = static_cast<uint32>(payload->Size());
+            char8 *buff = new char8[bufferWriteSize];
+            while (toWrite > 0u) {
+                uint32 wSize = toWrite;
+                if (wSize > bufferWriteSize) {
+                    wSize = bufferWriteSize;
+                }
 
+                ret = payload->Read(&buff[0], wSize);
+                if (ret) {
+                    ret = outputStream->Write(&buff[0], wSize);
+                }
+                toWrite -= wSize;
+            }
+            delete[] buff;
+        }
+    }
+    if (ret) {
+        //flush the stream
+        ret = outputStream->Flush();
+    }
     return ret;
 
 }
@@ -501,7 +496,7 @@ char8 HttpProtocol::BuildUrl(StreamString &line) {
 
     StreamString tempUrl;
     char8 terminator = '\n';
-    //get the url
+//get the url
     (void) line.GetToken(tempUrl, " \r\n?", terminator, " \r\n?");
     bool ret = tempUrl.Seek(0ULL);
     if (ret) {
@@ -652,7 +647,7 @@ bool HttpProtocol::HandlePostHeader(StreamString &line, StreamString &content, S
     const char8 *temp = NULL_PTR(const char8 *);
 
     bool ret = true;
-    //read the name (it is in the form name="_NAME_")
+//read the name (it is in the form name="_NAME_")
     const char8* nameTemp = StringHelper::SearchString(line.Buffer(), "name=\"");
     if (nameTemp != NULL_PTR(const char8*)) {
         name = &nameTemp[StringHelper::Length("name=\"")];
@@ -713,7 +708,7 @@ bool HttpProtocol::HandlePostHeader(StreamString &line, StreamString &content, S
 bool HttpProtocol::HandlePostContent(StreamString &line, StreamString &boundary, StreamString &name, StreamString &filename, StreamString &value, bool &headerHandled) {
 
     bool ret = true;
-    //search for the boundary end
+//search for the boundary end
     if (StringHelper::SearchString(line.Buffer(), boundary.Buffer()) != NULL_PTR(const char8*)) {
 
         //reset...new blank line is new handler
@@ -733,7 +728,7 @@ bool HttpProtocol::HandlePostContent(StreamString &line, StreamString &boundary,
             }
         }
     }
-    //if not boundary store in value
+//if not boundary store in value
     else {
         if (value.Size() > 0u) {
             value += "\n";
@@ -864,7 +859,7 @@ bool HttpProtocol::HandlePostApplicationForm(StreamString &content) {
 }
 
 bool HttpProtocol::HandlePost(StreamString &contentType, StreamString &content) {
-    //Write the raw content
+//Write the raw content
     bool ret = content.Seek(0ull);
     if (ret) {
         StreamString key = "rawPost";
@@ -897,7 +892,7 @@ bool HttpProtocol::HandlePost(StreamString &contentType, StreamString &content) 
 bool HttpProtocol::SecurityCheck(ReferenceT<HttpRealmI> realm) {
     bool ret = false;
 
-    // no valid realm !
+// no valid realm !
     if (realm.IsValid()) {
         // get key. on failure exit
         StreamString authorisationKey;

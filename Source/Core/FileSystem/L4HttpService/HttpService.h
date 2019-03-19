@@ -75,7 +75,6 @@ namespace MARTe{
  *     AcceptTimeout = 1000 //Optional (default = 1000).  Timeout in the TCPSocket::WaitConnection to wait for new client connections.
  *     Port = 8084 //Optional (default = 80). The HTTP server port.
  *     Timeout = 0 //Compulsory. See MultiClientService::Initialise
- *     MinNumberOfThreads = 2 //Compulsory. See MultiClientService::Initialise
  *     MaxNumberOfThreads = 8 //Compulsory. See MultiClientService::Initialise
  *     ListenMaxConnections = 255 //Compulsory. The maximum number of HTTP connections.
  *     WebRoot = ARoot //Compulsory. Path in the ObjectConfigurationDatabase of the object that acts as the root for the service. This object shall inherit from HttpDataExportI.

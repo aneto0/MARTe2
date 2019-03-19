@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -92,8 +91,56 @@ public:
      */
     bool TestGetAsStructuredData_This_Self();
 
-};
+    /**
+     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root being the ObjectRegistryDatabase.
+     */
+    bool TestGetAsStructuredData_This_ObjectRegistryDatabase();
 
+    /**
+     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root being another object.
+     */
+    bool TestGetAsStructuredData_This_Other();
+
+    /**
+     * @brief Tests the GetAsStructuredData with the target not being an HttpObjectBrowser.
+     */
+    bool TestGetAsStructuredData_Other_Not_HttpObjectBrowser();
+
+    /**
+     * @brief Tests the GetAsStructuredData with a target having more information in the path than required.
+     */
+    bool TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path();
+
+    /**
+     * @brief Tests the GetAsStructuredData with a non existent target.
+     */
+    bool TestGetAsStructuredData_InvalidTarget();
+
+    /**
+     * @brief Tests the GetAsText with the target being this HttpObjectBrowser.
+     */
+    bool TestGetAsText_This();
+
+    /**
+     * @brief Tests the GetAsText with the target being this HttpObjectBrowser but with an unknown file.
+     */
+    bool TestGetAsText_This_FileNotFound();
+
+    /**
+     * @brief Tests the GetAsText with the target being another HttpObjectBrowser.
+     */
+    bool TestGetAsText_Other();
+
+    /**
+     * @brief Tests the GetAsText with the target being another Object that is not an HttpObjectBrowser.
+     */
+    bool TestGetAsText_Other_Not_HttpDataExportI();
+
+    /**
+     * @brief Tests the GetAsText with an invalid object.
+     */
+    bool TestGetAsText_InvalidObject();
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

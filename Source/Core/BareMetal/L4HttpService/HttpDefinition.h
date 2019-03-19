@@ -99,6 +99,11 @@ static const int32 HSHCReplyAUTH = (HSHCReply + 401);
 static const int32 HSHCReplyNotFound = (HSHCReply + 404);
 
 /**
+ * HTTP TOO MANY REQUESTS
+ */
+static const int32 HSHCReplyTooManyRequests = (HSHCReply + 429);
+
+/**
  * @brief Creates a HSHttpCommand relative to reply with a specific ErrorCode
  * @param[in] httpErrorCode the received HTTP error code.
  * @return the reply value associated to \a httpErrorCode.

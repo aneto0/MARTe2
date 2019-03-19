@@ -48,7 +48,7 @@
 namespace MARTe {
 
 HttpObjectBrowser::HttpObjectBrowser() :
-        ReferenceContainer(), HttpDataExportI(){
+        ReferenceContainer(), HttpDataExportI() {
     closeOnAuthFail = 1u;
     root = NULL_PTR(ReferenceContainer *);
 }
@@ -184,7 +184,7 @@ Reference HttpObjectBrowser::FindTarget(HttpProtocol &protocol) {
         target = FindReference(unmatchedPath.Buffer());
         tryAgain = !target.IsValid();
         if (!target.IsValid()) {
-            //Could not find. Try to remote the last part and try again.
+            //Could not find. Try to remove the last part and try again.
             const char8 * lastDotToken = StringHelper::SearchLastChar(unmatchedPath.Buffer(), '.');
             if (lastDotToken == NULL_PTR(const char8 * const)) {
                 tryAgain = false;
@@ -236,41 +236,38 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                     ok = sdata->GetPrinter()->PrintBegin();
                 }
                 if (ok) {
-                    //Export the data. Note that if this also the root then all the objects will also be printed.
-                    ok = ExportData(data);
+                    //Export the data.
+                    ok = Object::ExportData(data);
                 }
                 if (ok) {
                     //List the elements that belong to the root (cannot point directly to the RC implementation as otherwise it would print the wrong class name).
-                    bool rootIsThis = (root == this);
-                    if (!rootIsThis) {
-                        uint32 numberOfChildren = root->Size();
-                        for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
-                            StreamString nname;
-                            ok = nname.Printf("%d", i);
-                            if (ok) {
-                                ok = data.CreateRelative(nname.Buffer());
-                            }
-                            Reference child;
-                            if (ok) {
-                                child = root->Get(i);
-                                ok = child.IsValid();
-                            }
-                            if (ok) {
-                                ReferenceT<ReferenceContainer> childRC = child;
-                                //Do not go recursive
-                                if (childRC.IsValid()) {
-                                    ok = child->Object::ExportData(data);
-                                    if (ok) {
-                                        ok = data.Write("IsContainer", 1);
-                                    }
-                                }
-                                else {
-                                    ok = child->ExportData(data);
+                    uint32 numberOfChildren = root->Size();
+                    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+                        StreamString nname;
+                        ok = nname.Printf("%d", i);
+                        if (ok) {
+                            ok = data.CreateRelative(nname.Buffer());
+                        }
+                        Reference child;
+                        if (ok) {
+                            child = root->Get(i);
+                            ok = child.IsValid();
+                        }
+                        if (ok) {
+                            ReferenceT<ReferenceContainer> childRC = child;
+                            //Do not go recursive
+                            if (childRC.IsValid()) {
+                                ok = child->Object::ExportData(data);
+                                if (ok) {
+                                    ok = data.Write("IsContainer", 1);
                                 }
                             }
-                            if (ok) {
-                                ok = data.MoveToAncestor(1u);
+                            else {
+                                ok = child->ExportData(data);
                             }
+                        }
+                        if (ok) {
+                            ok = data.MoveToAncestor(1u);
                         }
                     }
                 }
@@ -329,6 +326,9 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                     if (handled) {
                         handled = httpDirectoryResource->GetAsText(stream, protocol);
                     }
+                }
+                if (!handled) {
+                    ok = HttpDataExportI::ReplyNotFound(protocol);
                 }
             }
             else {

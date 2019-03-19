@@ -93,3 +93,53 @@ TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_Self) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_This_Self());
 }
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_ObjectRegistryDatabase) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_This_ObjectRegistryDatabase());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_Other) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_This_Other());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_InvalidTarget) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_InvalidTarget());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_This) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_This());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_This_FileNotFound) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_This_FileNotFound());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_Other) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_Other());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_Other_Not_HttpDataExportI) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_Other_Not_HttpDataExportI());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_InvalidObject) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_InvalidObject());
+}

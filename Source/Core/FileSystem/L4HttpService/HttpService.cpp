@@ -74,7 +74,11 @@ HttpService::~HttpService() {
 }
 
 bool HttpService::Initialise(StructuredDataI &data) {
-    bool ret = MultiClientService::Initialise(data);
+    //Cannot have more than one thread listening for the request.
+    bool ret = data.Write("MinNumberOfThreads", 1);
+    if (ret) {
+        ret = MultiClientService::Initialise(data);
+    }
     if (ret) {
         uint32 acceptTimeoutTemp;
         if (!data.Read("AcceptTimeout", acceptTimeoutTemp)) {
@@ -238,8 +242,21 @@ ErrorManagement::ErrorType HttpService::ServerCycle(MARTe::ExecutionInfo &inform
                     delete newClient;
                 }
                 else {
-                    information.SetThreadSpecificContext(reinterpret_cast<void*>(newClient));
-                    err = MARTe::ErrorManagement::NoError;
+                    if (GetNumberOfActiveThreads() == GetMaximumNumberOfPoolThreads()) {
+                        err = MARTe::ErrorManagement::Timeout;
+                        HttpProtocol hprotocol(*newClient);
+                        StreamString s;
+                        (void) s.SetSize(0LLU);
+                        if (!hprotocol.WriteHeader(false, HttpDefinition::HSHCReplyTooManyRequests, &s, NULL_PTR(const char8*))) {
+                            REPORT_ERROR(ErrorManagement::FatalError, "Too many connections");
+                        }
+                        (void) newClient->Close();
+                        delete newClient;
+                    }
+                    else {
+                        information.SetThreadSpecificContext(reinterpret_cast<void*>(newClient));
+                        err = MARTe::ErrorManagement::NoError;
+                    }
                 }
             }
         }
