@@ -140,6 +140,26 @@ public:
      * @brief Tests the GetAsText with an invalid object.
      */
     bool TestGetAsText_InvalidObject();
+
+    /**
+     * @brief Test the GetAsStructuredData with a realm which authorises the resource.
+     */
+    bool TestGetAsStructuredData_Realm();
+
+    /**
+     * @brief Test the GetAsText with a realm which authorises the resource.
+     */
+    bool TestGetAsText_Realm();
+
+    /**
+     * @brief Test the GetAsStructuredData with a realm which does not authorise the resource.
+     */
+    bool TestGetAsStructuredData_Realm_False();
+
+    /**
+     * @brief Test the GetAsText with a realm which does not authorise the resource.
+     */
+    bool TestGetAsText_Realm_False();
 };
 
 /*---------------------------------------------------------------------------*/

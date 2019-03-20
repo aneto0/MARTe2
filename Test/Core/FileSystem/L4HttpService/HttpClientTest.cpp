@@ -928,32 +928,27 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
         ret = service->Start();
     }
 
+    StreamString readOut;
     if (ret) {
-        StreamString readOut;
 
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 20000u);
 
-        if (ret) {
-            StreamString readOut;
+        readOut = "";
 
-            ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 2000u);
-            printf("\n%s\n", readOut.Buffer());
-
-            if (ret) {
-                ret = (readOut == "20\r\n"
-                        "<html><head><TITLE>HttpServiceTe\r\n"
-                        "20\r\n"
-                        "stClassTest1</TITLE></head><BODY\r\n"
-                        "20\r\n"
-                        " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
-                        "20\r\n"
-                        "ceTestClassTest1</H1><UL></UL></\r\n"
-                        "C\r\n"
-                        "BODY></html>\r\n"
-                        "0\r\n\r\n");
-            }
-        }
-
+        ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 2000u);
+    }
+    if (ret) {
+        ret = (readOut == "20\r\n"
+                "<html><head><TITLE>HttpServiceTe\r\n"
+                "20\r\n"
+                "stClassTest1</TITLE></head><BODY\r\n"
+                "20\r\n"
+                " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
+                "20\r\n"
+                "ceTestClassTest1</H1><UL></UL></\r\n"
+                "C\r\n"
+                "BODY></html>\r\n"
+                "0\r\n\r\n");
     }
 
     if (ret) {
@@ -1067,38 +1062,33 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
         ret = service->Start();
     }
 
+    StreamString readOut;
     if (ret) {
-        StreamString readOut;
 
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 20000u);
+    }
+    if (ret) {
+        StreamString userPass = "gferro:1234";
+        StreamString encodedUserPass;
+        Base64Encoder::Encode(userPass, encodedUserPass);
+        test.SetAuthorisation(encodedUserPass.Buffer());
 
-        if (ret) {
-            StreamString userPass = "gferro:1234";
-            StreamString encodedUserPass;
-            Base64Encoder::Encode(userPass, encodedUserPass);
-            test.SetAuthorisation(encodedUserPass.Buffer());
+        ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 10000u);
+    }
+    printf("\n%s\n", readOut.Buffer());
 
-            StreamString readOut;
-
-            ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 10000u);
-            printf("\n%s\n", readOut.Buffer());
-
-            if (ret) {
-                ret = (readOut == "20\r\n"
-                        "<html><head><TITLE>HttpServiceTe\r\n"
-                        "20\r\n"
-                        "stClassTest1</TITLE></head><BODY\r\n"
-                        "20\r\n"
-                        " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
-                        "20\r\n"
-                        "ceTestClassTest1</H1><UL></UL></\r\n"
-                        "C\r\n"
-                        "BODY></html>\r\n"
-                        "0\r\n\r\n");
-            }
-
-        }
-
+    if (ret) {
+        ret = (readOut == "20\r\n"
+                "<html><head><TITLE>HttpServiceTe\r\n"
+                "20\r\n"
+                "stClassTest1</TITLE></head><BODY\r\n"
+                "20\r\n"
+                " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
+                "20\r\n"
+                "ceTestClassTest1</H1><UL></UL></\r\n"
+                "C\r\n"
+                "BODY></html>\r\n"
+                "0\r\n\r\n");
     }
 
     if (ret) {

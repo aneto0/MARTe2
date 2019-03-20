@@ -106,9 +106,6 @@ bool HttpDataExportI::ReplyNotFound(HttpProtocol &protocol) {
     if (ok) {
         ok = protocol.WriteHeader(false, HttpDefinition::HSHCReplyNotFound, NULL_PTR(BufferedStreamI *), NULL_PTR(const char8*));
     }
-    if (ok) {
-        ok = protocol.WriteHeader(false, HttpDefinition::HSHCReplyNotFound, NULL_PTR(BufferedStreamI *), NULL_PTR(const char8*));
-    }
     return ok;
 }
 

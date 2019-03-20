@@ -143,3 +143,23 @@ TEST(HttpObjectBrowserGTest, TestGetAsText_InvalidObject) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_InvalidObject());
 }
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Realm) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Realm());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_Realm) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_Realm());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Realm_False) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_Realm_False());
+}
+
+TEST(HttpObjectBrowserGTest, TestGetAsText_Realm_False) {
+    HttpObjectBrowserTest test;
+    ASSERT_TRUE(test.TestGetAsText_Realm_False());
+}

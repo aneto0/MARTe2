@@ -150,73 +150,73 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
 
     if (err.ErrorsCleared()) {
         err = !(commClient->SetBlocking(true));
-        if (err.ErrorsCleared()) {
-            commClient->SetChunkMode(false);
-            HttpProtocol hprotocol(*commClient);
+    }
+    Select sel;
+    if (err.ErrorsCleared()) {
+        commClient->SetChunkMode(false);
+        err = !(sel.AddReadHandle(*commClient));
+    }
+    //give the possibility to stop the thread
+    if (err.ErrorsCleared()) {
+        int8 requestedTextMode = textMode;
+        HttpProtocol hprotocol(*commClient);
+        if (sel.WaitUntil(1000u) > 0) {
+            //you want plain text or data
+            if (!hprotocol.ReadHeader()) {
+                err = ErrorManagement::CommunicationError;
+                REPORT_ERROR(ErrorManagement::CommunicationError, "Error while reading HTTP header");
+            }
+            bool pagePrepared = false;
 
-            Select sel;
-            err = !(sel.AddReadHandle(*commClient));
-            //give the possibility to stop the thread
             if (err.ErrorsCleared()) {
-                if (sel.WaitUntil(1000u) > 0) {
-                    //you want plain text or data
-                    if (!hprotocol.ReadHeader()) {
-                        err = ErrorManagement::CommunicationError;
-                        REPORT_ERROR(ErrorManagement::CommunicationError, "Error while reading HTTP header");
-                    }
-                    bool pagePrepared = false;
-
-                    if (err.ErrorsCleared()) {
-                        int8 requestedTextMode = textMode;
-                        if (hprotocol.TextMode() >= 0) {
-                            requestedTextMode = static_cast<uint8>(hprotocol.TextMode());
-                        }
-                        if (err.ErrorsCleared()) {
-                            if (!hprotocol.MoveAbsolute("OutputOptions")) {
-                                err = !(hprotocol.CreateAbsolute("OutputOptions"));
-                            }
-                            if (requestedTextMode > 0) {
-                                pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
-                            }
-                            else {
-                                StreamStructuredData<JsonPrinter> sdata;
-                                sdata.SetStream(*commClient);
-                                pagePrepared = webRoot->GetAsStructuredData(sdata, hprotocol);
-                            }
-                            if (err.ErrorsCleared()) {
-                                err = !(commClient->Flush());
-                            }
-                            if (err.ErrorsCleared()) {
-                                if (commClient->IsChunkMode()) {
-                                    err = !(commClient->FinalChunk());
-                                }
-                            }
-                        }
-                    }
-                    if (err.ErrorsCleared()) {
-                        if (!pagePrepared) {
-                            //TODO??
-                        }
-                    }
+                if (hprotocol.TextMode() >= 0) {
+                    requestedTextMode = static_cast<uint8>(hprotocol.TextMode());
                 }
-                if (err.ErrorsCleared()) {
-                    if (!hprotocol.KeepAlive()) {
-                        REPORT_ERROR(ErrorManagement::Information, "Connection closed");
-                        err = !(commClient->Close());
-                        if (err.ErrorsCleared()) {
-                            err = ErrorManagement::Completed;
-                        }
-                        delete commClient;
-                    }
-
+            }
+            if (err.ErrorsCleared()) {
+                if (!hprotocol.MoveAbsolute("OutputOptions")) {
+                    err = !(hprotocol.CreateAbsolute("OutputOptions"));
+                }
+                if (requestedTextMode > 0) {
+                    pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
                 }
                 else {
-                    (void) (commClient->Close());
-                    delete commClient;
-                    REPORT_ERROR(ErrorManagement::Information, "client deleted");
+                    StreamStructuredData<JsonPrinter> sdata;
+                    sdata.SetStream(*commClient);
+                    pagePrepared = webRoot->GetAsStructuredData(sdata, hprotocol);
+                }
+                if (err.ErrorsCleared()) {
+                    err = !(commClient->Flush());
+                }
+                if (err.ErrorsCleared()) {
+                    if (commClient->IsChunkMode()) {
+                        err = !(commClient->FinalChunk());
+                    }
+                }
+            }
+            if (err.ErrorsCleared()) {
+                if (!pagePrepared) {
+                    //TODO??
                 }
             }
         }
+        if (err.ErrorsCleared()) {
+            if (!hprotocol.KeepAlive()) {
+                REPORT_ERROR(ErrorManagement::Information, "Connection closed");
+                err = !(commClient->Close());
+                if (err.ErrorsCleared()) {
+                    err = ErrorManagement::Completed;
+                }
+                delete commClient;
+            }
+
+        }
+        else {
+            (void) (commClient->Close());
+            delete commClient;
+            REPORT_ERROR(ErrorManagement::Information, "client deleted");
+        }
+
     }
 
     return err;

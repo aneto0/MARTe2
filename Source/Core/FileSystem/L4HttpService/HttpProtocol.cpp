@@ -141,12 +141,12 @@ bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
     }
     if (ret) {
         ret = line.Seek(0ull);
-        if (ret) {
-            StreamString command;
-            //check the arrived command
-            (void) line.GetToken(command, " \r\n\t", terminator, " \r\n\t");
-            ret = RetrieveHttpCommand(command, line);
-        }
+    }
+    if (ret) {
+        StreamString command;
+        //check the arrived command
+        (void) line.GetToken(command, " \r\n\t", terminator, " \r\n\t");
+        ret = RetrieveHttpCommand(command, line);
     }
 
     // if httpCommand is a HttpDefinition::HSHCReply then the version has already been calculated

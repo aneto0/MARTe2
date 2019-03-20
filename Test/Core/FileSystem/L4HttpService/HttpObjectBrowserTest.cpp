@@ -74,6 +74,8 @@ bool HttpObjectBrowserTestRealm::DigestSecurityNeeded() {
 }
 
 bool HttpObjectBrowserTestRealm::GetAuthenticationRequest(MARTe::StreamString &message) {
+    message = "Basic 12345678";
+    message.Seek(0LLU);
     return true;
 }
 
@@ -773,7 +775,6 @@ bool HttpObjectBrowserTest::TestGetAsText_This() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    printf("[%s]\n", reply.Buffer());
     const char8 * expectedReply = "Test 1";
     if (ok) {
         ok = (reply == expectedReply);
@@ -838,10 +839,8 @@ bool HttpObjectBrowserTest::TestGetAsText_This_FileNotFound() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    printf("[%s]\n", reply.Buffer());
-    const char8 * expectedReply = "HTTP/1.0 404 Not found";
     if (ok) {
-        ok = (StringHelper::CompareN(reply.Buffer(), expectedReply, StringHelper::Length(expectedReply)) == 0);
+        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
     }
     if (ok) {
         ok = service->Stop();
@@ -910,7 +909,6 @@ bool HttpObjectBrowserTest::TestGetAsText_Other() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    printf("[%s]\n", reply.Buffer());
     const char8 * expectedReply = "Test 2";
     if (ok) {
         ok = (reply == expectedReply);
@@ -979,14 +977,14 @@ bool HttpObjectBrowserTest::TestGetAsText_Other_Not_HttpDataExportI() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    printf("[%s]\n", reply.Buffer());
-    const char8 * expectedReply = "HTTP/1.0 404 Not found";
     if (ok) {
-        ok = (StringHelper::CompareN(reply.Buffer(), expectedReply, StringHelper::Length(expectedReply)) == 0);
+        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
     }
     if (ok) {
         ok = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
+
     return ok;
 }
 
@@ -995,7 +993,7 @@ bool HttpObjectBrowserTest::TestGetAsText_InvalidObject() {
     StreamString cfg = ""
             "+HttpService1 = {\n"
             "    Class = HttpService\n"
-            "    Port = 9094\n"
+            "    Port = 9096\n"
             "    Timeout = 0\n"
             "    AcceptTimeout=1000"
             "    MinNumberOfThreads = 1\n"
@@ -1039,19 +1037,332 @@ bool HttpObjectBrowserTest::TestGetAsText_InvalidObject() {
     }
     HttpClient test;
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
+    test.SetServerPort(9096);
     test.SetServerUri("/NotExistent");
     StreamString reply;
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
-    printf("[%s]\n", reply.Buffer());
-    const char8 * expectedReply = "HTTP/1.0 404 Not found";
     if (ok) {
-        ok = (StringHelper::CompareN(reply.Buffer(), expectedReply, StringHelper::Length(expectedReply)) == 0);
+        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
     }
     if (ok) {
         ok = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
+}
+
+bool HttpObjectBrowserTest::TestGetAsStructuredData_Realm() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout=1000"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 0\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+ARealm = {\n"
+            "    Class = HttpObjectBrowserTestRealm\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\"\n"
+            "    Realm = ARealm\n"
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpObjectBrowserTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
+    realm->valid = true;
+
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/");
+    StreamString reply;
+    if (ok) {
+        //Authenticate
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+        reply = "";
+    }
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 * expectedReply = ""
+            "1F\r\n"
+            "{\n\r"
+            "\"Name\": \"HttpObjectBrowser1\"\r\n"
+            "1F\r\n"
+            ",\n\r"
+            "\"Class\": \"HttpObjectBrowser\"\r\n"
+            "9\r\n"
+            "\n\r"
+            ",\"0\": {\r\n"
+            "12\r\n"
+            "\n\r"
+            "\"Name\": \"AChild\"\r\n"
+            "20\r\n"
+            ",\n\r"
+            "\"Class\": \"ReferenceContainer\"\r\n"
+            "13\r\n"
+            ",\n\r"
+            "\"IsContainer\": 1\r\n"
+            "3\r\n"
+            "\n\r"
+            "}\r\n"
+            "1\r\n"
+            "}\r\n"
+            "0\r\n"
+            "\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool HttpObjectBrowserTest::TestGetAsText_Realm() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout=1000"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+ARealm = {\n"
+            "    Class = HttpObjectBrowserTestRealm\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\"\n"
+            "    Realm = ARealm\n"
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \".\""
+            "    }\n"
+            "}\n";
+
+    File f;
+    f.Open("HttpObjectBrowserTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Printf("Test %d", 1);
+    f.Flush();
+    f.Close();
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpObjectBrowserTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
+    realm->valid = true;
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/?path=HttpObjectBrowserTest.txt");
+    StreamString reply;
+    if (ok) {
+        //Authenticate
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+        reply = "";
+    }
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 * expectedReply = "Test 1";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    Directory d("HttpObjectBrowserTest.txt");
+    d.Delete();
+    return ok;
+}
+
+bool HttpObjectBrowserTest::TestGetAsStructuredData_Realm_False() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout=1000"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 0\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+ARealm = {\n"
+            "    Class = HttpObjectBrowserTestRealm\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\"\n"
+            "    Realm = ARealm\n"
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "}\n";
+
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpObjectBrowserTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
+    realm->valid = false;
+
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyAUTH);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
+}
+
+bool HttpObjectBrowserTest::TestGetAsText_Realm_False() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout=1000"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+ARealm = {\n"
+            "    Class = HttpObjectBrowserTestRealm\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\"\n"
+            "    Realm = ARealm\n"
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \".\""
+            "    }\n"
+            "}\n";
+
+    File f;
+    f.Open("HttpObjectBrowserTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Printf("Test %d", 1);
+    f.Flush();
+    f.Close();
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpObjectBrowserTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
+    realm->valid = false;
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/?path=HttpObjectBrowserTest.txt");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ok) {
+        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyAUTH);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    Directory d("HttpObjectBrowserTest.txt");
+    d.Delete();
     return ok;
 }

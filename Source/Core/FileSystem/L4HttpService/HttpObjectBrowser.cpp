@@ -222,9 +222,13 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
     if (ok) {
         Reference target = FindTarget(protocol);
         ok = target.IsValid();
+        StreamStructuredData<JsonPrinter> *sdata;
         if (ok) {
-            StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+            sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+
             ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
+        }
+        if (ok) {
             bool isThis = (target == this);
             //If we are printing ourselves list all the elements belonging to the root (note that the root might be pointing elsewhere).
             if (isThis) {
@@ -239,36 +243,34 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                     //Export the data.
                     ok = Object::ExportData(data);
                 }
-                if (ok) {
-                    //List the elements that belong to the root (cannot point directly to the RC implementation as otherwise it would print the wrong class name).
-                    uint32 numberOfChildren = root->Size();
-                    for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
-                        StreamString nname;
-                        ok = nname.Printf("%d", i);
-                        if (ok) {
-                            ok = data.CreateRelative(nname.Buffer());
-                        }
-                        Reference child;
-                        if (ok) {
-                            child = root->Get(i);
-                            ok = child.IsValid();
-                        }
-                        if (ok) {
-                            ReferenceT<ReferenceContainer> childRC = child;
-                            //Do not go recursive
-                            if (childRC.IsValid()) {
-                                ok = child->Object::ExportData(data);
-                                if (ok) {
-                                    ok = data.Write("IsContainer", 1);
-                                }
-                            }
-                            else {
-                                ok = child->ExportData(data);
+                //List the elements that belong to the root (cannot point directly to the RC implementation as otherwise it would print the wrong class name).
+                uint32 numberOfChildren = root->Size();
+                for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
+                    StreamString nname;
+                    ok = nname.Printf("%d", i);
+                    if (ok) {
+                        ok = data.CreateRelative(nname.Buffer());
+                    }
+                    Reference child;
+                    if (ok) {
+                        child = root->Get(i);
+                        ok = child.IsValid();
+                    }
+                    if (ok) {
+                        ReferenceT<ReferenceContainer> childRC = child;
+                        //Do not go recursive
+                        if (childRC.IsValid()) {
+                            ok = child->Object::ExportData(data);
+                            if (ok) {
+                                ok = data.Write("IsContainer", 1);
                             }
                         }
-                        if (ok) {
-                            ok = data.MoveToAncestor(1u);
+                        else {
+                            ok = child->ExportData(data);
                         }
+                    }
+                    if (ok) {
+                        ok = data.MoveToAncestor(1u);
                     }
                 }
                 //Print the closing {
@@ -294,7 +296,7 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                     if (ok) {
                         ok = target->ExportData(data);
                     }
-                    //Print the closing {
+                    //Print the closing }
                     if (ok) {
                         ok = sdata->GetPrinter()->PrintEnd();
                     }
