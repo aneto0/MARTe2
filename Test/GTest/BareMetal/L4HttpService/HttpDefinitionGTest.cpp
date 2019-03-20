@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HttpDefinitionGTest (public, protected, and private). Be aware that some 
+ * the class HttpDefinitionGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -40,32 +40,32 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(HttpDefinitionGTest,TestHttpEncode) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestHttpEncode) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestHttpEncode());
 }
 
-TEST(HttpDefinitionGTest,TestHexDecode) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestHexDecode) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestHexDecode());
 }
 
-TEST(HttpDefinitionGTest,TestHttpDecode) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestHttpDecode) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestHttpDecode());
 }
 
-TEST(HttpDefinitionGTest,TestIsReplyCode) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestIsReplyCode) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestIsReplyCode());
 }
 
-TEST(HttpDefinitionGTest,TestGenerateReplyCode) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestGenerateReplyCode) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestGenerateReplyCode());
 }
 
-TEST(HttpDefinitionGTest,TestGetErrorCodeString) {
+TEST(BareMetal_L4HttpService_HttpDefinitionGTest,TestGetErrorCodeString) {
     HttpDefinitionTest target;
     ASSERT_TRUE(target.TestGetErrorCodeString());
 }

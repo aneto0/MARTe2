@@ -45,12 +45,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(HttpDataExportIGTest, TestGetAsStructuredData) {
+TEST(FileSystem_L4HttpService_HttpDataExportIGTest, TestGetAsStructuredData) {
     HttpDataExportITest test;
     ASSERT_TRUE(test.TestGetAsStructuredData());
 }
 
-TEST(HttpDataExportIGTest, TestGetAsText) {
+TEST(FileSystem_L4HttpService_HttpDataExportIGTest, TestGetAsText) {
     HttpDataExportITest test;
     ASSERT_TRUE(test.TestGetAsText());
 }

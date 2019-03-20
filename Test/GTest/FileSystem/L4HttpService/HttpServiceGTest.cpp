@@ -45,91 +45,88 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(HttpServiceGTest, TestConstructor) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestConstructor) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(HttpServiceGTest, TestInitialise) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(HttpServiceGTest, TestInitialise_WebRoot) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_WebRoot) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_WebRoot());
 }
 
-TEST(HttpServiceGTest, TestInitialise_FalseNoWebRoot) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_FalseNoWebRoot) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_FalseNoWebRoot());
 }
 
-TEST(HttpServiceGTest, TestInitialise_FalseBadWebRoot) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_FalseBadWebRoot) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_FalseBadWebRoot());
 }
 
-TEST(HttpServiceGTest, TestInitialise_FalseBadWebRootRef) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_FalseBadWebRootRef) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_FalseBadWebRootRef());
 }
 
 
-TEST(HttpServiceGTest, TestInitialise_DefaultNListenConnections) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_DefaultNListenConnections) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_DefaultNListenConnections());
 }
 
-TEST(HttpServiceGTest, TestInitialise_DefaultPort) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestInitialise_DefaultPort) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestInitialise_DefaultPort());
 }
 /*
-TEST(HttpServiceGTest, TestClientService_Text_Interactive) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_Text_Interactive) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Text_Interactive());
 }*/
 
-TEST(HttpServiceGTest, TestStart) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestStart) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestStart());
 }
 
-TEST(HttpServiceGTest, TestStart_InvalidWebRoot) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestStart_InvalidWebRoot) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestStart_InvalidWebRoot());
 }
 
-TEST(HttpServiceGTest, TestClientService_Text) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_Text) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Text());
 }
 
-TEST(HttpServiceGTest, TestClientService_Structured) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_Structured) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Structured());
 }
 
-TEST(HttpServiceGTest, TestClientService_CloseConnection) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_CloseConnection) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_CloseConnection());
 }
 
-TEST(HttpServiceGTest, TestClientService_FailReadHeader) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_FailReadHeader) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_FailReadHeader());
 }
 
-TEST(HttpServiceGTest, TestClientService_Authorisation) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_Authorisation) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestClientService_Authorisation());
 }
 
-TEST(HttpServiceGTest, TestServerCycle) {
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestServerCycle) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestServerCycle());
 }
-
-
-

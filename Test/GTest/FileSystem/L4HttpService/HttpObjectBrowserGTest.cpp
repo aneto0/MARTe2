@@ -44,122 +44,122 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(HttpObjectBrowserGTest, TestInitialise) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_ObjectRegistryDatabase_Root) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_ObjectRegistryDatabase_Root) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_ObjectRegistryDatabase_Root());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_Self_Root) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_Self_Root) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_Self_Root());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_Other_Root) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_Other_Root) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_Other_Root());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_False_No_Root) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_False_No_Root) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_False_No_Root());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_False_Bad_Root_1) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_False_Bad_Root_1) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_False_Bad_Root_1());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_False_Bad_Root_2) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_False_Bad_Root_2) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_False_Bad_Root_2());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_Realm) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_Realm) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_Realm());
 }
 
-TEST(HttpObjectBrowserGTest, TestInitialise_False_Realm) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestInitialise_False_Realm) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestInitialise_False_Realm());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_Self) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_This_Self) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_This_Self());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_ObjectRegistryDatabase) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_This_ObjectRegistryDatabase) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_This_ObjectRegistryDatabase());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_This_Other) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_This_Other) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_This_Other());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_InvalidTarget) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_InvalidTarget) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_InvalidTarget());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_This) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_This) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_This());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_This_FileNotFound) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_This_FileNotFound) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_This_FileNotFound());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_Other) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_Other) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_Other());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_Other_Not_HttpDataExportI) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_Other_Not_HttpDataExportI) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_Other_Not_HttpDataExportI());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_InvalidObject) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_InvalidObject) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_InvalidObject());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Realm) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_Realm) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_Realm());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_Realm) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_Realm) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_Realm());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsStructuredData_Realm_False) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsStructuredData_Realm_False) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsStructuredData_Realm_False());
 }
 
-TEST(HttpObjectBrowserGTest, TestGetAsText_Realm_False) {
+TEST(FileSystem_L4HttpService_HttpObjectBrowserGTest, TestGetAsText_Realm_False) {
     HttpObjectBrowserTest test;
     ASSERT_TRUE(test.TestGetAsText_Realm_False());
 }

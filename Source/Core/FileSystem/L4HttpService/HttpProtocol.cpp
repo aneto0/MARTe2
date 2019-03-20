@@ -55,7 +55,7 @@ HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
     /** unknown information length */
     unreadInput = -1;
     textMode = -1;
-
+    isChunked = false;
 }
 
 HttpProtocol::~HttpProtocol() {
@@ -95,11 +95,22 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
 
             if ((ret) || (sizeToRead > 0u)) {
                 readSize = sizeToRead;
+                uint32 sizeToWrite = readSize;
                 if (streamout != NULL_PTR(BufferedStreamI *)) {
-                    uint32 sizeToWrite = readSize;
                     //complete write?
                     (void) streamout->Write(buffer, sizeToWrite, msecTimeout);
                 }
+                if (isChunked) {
+                    //Check if it finishes with 0\r\n\r\n
+                    if (sizeToWrite > 4u) {
+                        bool done = (StringHelper::Compare(&buffer[sizeToWrite - 5u], "0\r\n\r\n") == 0u);
+                        if (done) {
+                            //break the while
+                            readSize = 0u;
+                        }
+                    }
+                }
+
                 sizeToRead = bufferSize;
 
                 if (unreadInput > 0) {
@@ -218,6 +229,12 @@ bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
 
         if (!Read("Content-Type", contentType)) {
             contentType = "";
+        }
+
+        isChunked = false;
+        StreamString encoding;
+        if (Read("Transfer-Encoding", encoding)) {
+            isChunked = (encoding == "chunked");
         }
 
     }
@@ -639,7 +656,6 @@ bool HttpProtocol::StoreInputOptions() {
             }
         }
     }
-
     return ret;
 }
 
@@ -687,15 +703,15 @@ bool HttpProtocol::HandlePostHeader(StreamString &line, StreamString &content, S
                 if (ret) {
                     //Check the file mime type
                     ret = line.SetSize(0ull);
-                    if (ret) {
-                        if (content.GetLine(line)) {
-                            const char8* fcTypeTemp = StringHelper::SearchString(line.Buffer(), "Content-Type: ");
-                            if (fcTypeTemp != NULL_PTR(const char8*)) {
-                                StreamString fcType = &fcTypeTemp[StringHelper::Length("Content-Type: ")];
-                                key = name;
-                                key += ":Content-Type";
-                                ret = Write(key.Buffer(), fcType.Buffer());
-                            }
+                }
+                if (ret) {
+                    if (content.GetLine(line)) {
+                        const char8* fcTypeTemp = StringHelper::SearchString(line.Buffer(), "Content-Type: ");
+                        if (fcTypeTemp != NULL_PTR(const char8*)) {
+                            StreamString fcType = &fcTypeTemp[StringHelper::Length("Content-Type: ")];
+                            key = name;
+                            key += ":Content-Type";
+                            ret = Write(key.Buffer(), fcType.Buffer());
                         }
                     }
                 }
@@ -826,25 +842,23 @@ bool HttpProtocol::HandlePostApplicationForm(StreamString &content) {
                         if (ret) {
                             (void) command.GetToken(value, ";", terminator);
                             ret = value.Seek(0ull);
-                            if (ret) {
-                                ret = variable.Seek(0ull);
-                            }
-                            if (ret) {
-                                StreamString decodedValue;
-                                StreamString decodedVariable;
-                                if (ret) {
-                                    ret = HttpDefinition::HttpDecode(decodedValue, value);
-                                    if (ret) {
-                                        ret = HttpDefinition::HttpDecode(decodedVariable, variable);
-                                    }
-                                    if (ret) {
-                                        ret = decodedValue.Seek(0ull);
-                                    }
-                                }
-                                if (ret) {
-                                    ret = Write(decodedVariable.Buffer(), decodedValue.Buffer());
-                                }
-                            }
+                        }
+                        if (ret) {
+                            ret = variable.Seek(0ull);
+                        }
+                        StreamString decodedValue;
+                        StreamString decodedVariable;
+                        if (ret) {
+                            ret = HttpDefinition::HttpDecode(decodedValue, value);
+                        }
+                        if (ret) {
+                            ret = HttpDefinition::HttpDecode(decodedVariable, variable);
+                        }
+                        if (ret) {
+                            ret = decodedValue.Seek(0ull);
+                        }
+                        if (ret) {
+                            ret = Write(decodedVariable.Buffer(), decodedValue.Buffer());
                         }
                     }
                 }
@@ -892,11 +906,11 @@ bool HttpProtocol::HandlePost(StreamString &contentType, StreamString &content) 
 bool HttpProtocol::SecurityCheck(ReferenceT<HttpRealmI> realm) {
     bool ret = false;
 
-// no valid realm !
+    // no valid realm !
     if (realm.IsValid()) {
         // get key. on failure exit
         StreamString authorisationKey;
-        if (MoveRelative("InputOptions")) {
+        if (MoveAbsolute("InputOptions")) {
             if (Read("Authorization", authorisationKey)) {
                 BasicSocket* mySocket = dynamic_cast<BasicSocket *>(outputStream);
                 ret = mySocket != NULL_PTR(BasicSocket*);

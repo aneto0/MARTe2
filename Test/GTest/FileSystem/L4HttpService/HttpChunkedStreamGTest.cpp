@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HttpChunkedStreamGTest (public, protected, and private). Be aware that some 
+ * the class HttpChunkedStreamGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -44,27 +44,27 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(HttpChunkedStreamGTest, TestConstructor) {
+TEST(FileSystem_L4HttpService_HttpChunkedStreamGTest, TestConstructor) {
     HttpChunkedStreamTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(HttpChunkedStreamGTest, TestFlush) {
+TEST(FileSystem_L4HttpService_HttpChunkedStreamGTest, TestFlush) {
     HttpChunkedStreamTest test;
     ASSERT_TRUE(test.TestFlush());
 }
 
-TEST(HttpChunkedStreamGTest, TestFinalChunk) {
+TEST(FileSystem_L4HttpService_HttpChunkedStreamGTest, TestFinalChunk) {
     HttpChunkedStreamTest test;
     ASSERT_TRUE(test.TestFinalChunk());
 }
 
-TEST(HttpChunkedStreamGTest, TestSetChunkMode) {
+TEST(FileSystem_L4HttpService_HttpChunkedStreamGTest, TestSetChunkMode) {
     HttpChunkedStreamTest test;
     ASSERT_TRUE(test.TestSetChunkMode());
 }
 
-TEST(HttpChunkedStreamGTest, TestIsChunkMode) {
+TEST(FileSystem_L4HttpService_HttpChunkedStreamGTest, TestIsChunkMode) {
     HttpChunkedStreamTest test;
     ASSERT_TRUE(test.TestIsChunkMode());
 }

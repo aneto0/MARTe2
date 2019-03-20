@@ -171,8 +171,7 @@ HttpClientTestClassTest1::~HttpClientTestClassTest1() {
 }
 
 bool HttpClientTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
-
-    protocol.Write("Content-Type", "text/html");
+    HttpDataExportI::GetAsStructuredData(data, protocol);
     data.CreateAbsolute("NodeA.NodeB");
     uint32 var1 = 1;
     data.Write("var1", var1);
@@ -185,17 +184,10 @@ bool HttpClientTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, 
 }
 
 bool HttpClientTestClassTest1::GetAsText(StreamI &stream, HttpProtocol &protocol) {
+    HttpDataExportI::GetAsText(stream, protocol);
     StreamString hString;
     StreamString *hStream = (&hString);
-
     hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
-
-    hStream->SetSize(0);
-
     hStream->Printf("<html><head><TITLE>%s</TITLE>"
                     "</head><BODY BGCOLOR=\"#ffffff\"><H1>%s</H1><UL>",
                     "HttpServiceTestClassTest1", "HttpServiceTestClassTest1");
@@ -258,11 +250,7 @@ bool HttpClientTestClassTest2::GetAsText(StreamI &stream, HttpProtocol &protocol
     StreamString hString;
     StreamString *hStream = (&hString);
 
-    hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
+    HttpDataExportI::GetAsText(stream, protocol);
 
     hStream->SetSize(0);
 
@@ -271,18 +259,13 @@ bool HttpClientTestClassTest2::GetAsText(StreamI &stream, HttpProtocol &protocol
                     "HttpServiceTestClassTest1", "HttpServiceTestClassTest1");
     hStream->Printf("%s", "</UL></BODY>");
     hStream->Printf("%s", "</html>");
-    hStream->Seek(0);
+    hStream->Seek(0LLU);
     uint32 stringSize = hStream->Size();
     stream.Write(hStream->Buffer(), stringSize);
-
-    //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, hStream, NULL);
     return true;
 }
 
 bool HttpClientTestClassTest2::Validate(const char8 * const key, const int32 command, const uint32 ipNumber) {
-
-    printf("HEREEE %s\n", key);
-
     StreamString user, passwd, realm, nonce, uri, cnonce, response, opaque, nc, qop;
     SearchKey(key, "username", user);
     SearchKey(key, "realm", realm);
@@ -399,12 +382,7 @@ bool HttpClientTestClassTest3::GetAsStructuredData(StreamStructuredDataI &data, 
 bool HttpClientTestClassTest3::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
-
-    hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
+    HttpDataExportI::GetAsText(stream, protocol);
 
     hStream->SetSize(0);
 
@@ -494,12 +472,7 @@ bool HttpClientTestClassTest4::GetAsStructuredData(StreamStructuredDataI &data, 
 bool HttpClientTestClassTest4::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
-
-    hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
+    HttpDataExportI::GetAsText(stream, protocol);
 
     hStream->SetSize(0);
 
@@ -701,7 +674,8 @@ bool HttpClientTest::TestHttpExchange() {
             "$Application = {"
             "   Class = RealTimeApplication"
             "   +WebRoot = {"
-            "       Class = HttpServiceTestWebRoot"
+            "       Class = HttpObjectBrowser"
+            "       Root = \".\""
             "       +ClassLister = {"
             "           Class = HttpServiceTestClassLister"
             "       }"
@@ -820,16 +794,22 @@ bool HttpClientTest::TestHttpExchange() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
 bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
 
     const char8 *config = ""
+            "+Realm1 = {"
+            "   Class = HttpClientTestClassTest2"
+            "}"
             "$Application = {"
             "   Class = RealTimeApplication"
             "       +WebRoot = {"
-            "           Class = HttpServiceTestWebRoot"
+            "           Class = HttpObjectBrowser"
+            "           Root = \".\""
+            "           Realm = Realm1\n"
             "           +ClassLister = {"
             "               Class = HttpServiceTestClassLister"
             "           }"
@@ -930,11 +910,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
 
     StreamString readOut;
     if (ret) {
-
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 20000u);
-
         readOut = "";
-
+    }
+    if (ret) {
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 2000u);
     }
     if (ret) {
@@ -954,16 +933,22 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
 bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
 
     const char8 *config = ""
+            "+Realm1 = {"
+            "   Class = HttpClientTestClassTest3"
+            "}"
             "$Application = {"
             "   Class = RealTimeApplication"
             "   +WebRoot = {"
-            "       Class = HttpServiceTestWebRoot"
+            "       Class = HttpObjectBrowser"
+            "       Root = \".\""
+            "       Realm = Realm1\n"
             "       +ClassLister = {"
             "           Class = HttpServiceTestClassLister"
             "       }"
@@ -1047,7 +1032,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
     test.SetServerPort(2222);
     test.SetServerUri("Test1");
 
-    StreamString userPass = "gferro:4567";
+    StreamString userPass = "gferro:1234";
     StreamString encodedUserPass;
     Base64Encoder::Encode(userPass, encodedUserPass);
     test.SetAuthorisation(encodedUserPass.Buffer());
@@ -1094,6 +1079,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1212,6 +1198,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseInvalidAuthType() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1327,6 +1314,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1445,6 +1433,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseReplyCommand() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1578,6 +1567,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest_KeepAlive() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 

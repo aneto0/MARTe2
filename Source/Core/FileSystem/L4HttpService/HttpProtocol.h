@@ -238,6 +238,11 @@ protected:
      */
     int8 textMode;
 
+    /**
+     * True if the request is chunked
+     */
+    bool isChunked;
+
 private:
 
     /**

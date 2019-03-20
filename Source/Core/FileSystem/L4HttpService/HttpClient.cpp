@@ -40,9 +40,7 @@
 
 namespace MARTe {
 
-static bool SearchKey(const char8 * const key,
-                      const char8 * const name,
-                      StreamString &value) {
+static bool SearchKey(const char8 * const key, const char8 * const name, StreamString &value) {
     bool ret = value.SetSize(0ULL);
     if (ret) {
         ret = (key != NULL_PTR(const char8 * const));
@@ -75,9 +73,7 @@ static bool SearchKey(const char8 * const key,
 /*---------------------------------------------------------------------------*/
 
 HttpClient::HttpClient() :
-        Object(),
-        socket(),
-        protocol(socket) {
+        Object(), socket(), protocol(socket) {
     urlPort = 0u;
     urlHost = "";
     lastOperationId = 0;
@@ -182,9 +178,7 @@ void HttpClient::GetAuthorisation(StreamString &authOut) const {
     authOut = authorisation;
 }
 
-bool HttpClient::AutenticationProcedure(const int32 command,
-                                        const TimeoutType &msecTimeout,
-                                        const int32 operationId) {
+bool HttpClient::AutenticationProcedure(const int32 command, const TimeoutType &msecTimeout, const int32 operationId) {
 
     // discard bodyF
     StreamString nullStream;
@@ -226,11 +220,7 @@ bool HttpClient::AutenticationProcedure(const int32 command,
     return ret;
 }
 
-bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead,
-                              const int32 command,
-                              BufferedStreamI * const payload,
-                              TimeoutType msecTimeout,
-                              int32 operationId) {
+bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead, const int32 command, BufferedStreamI * const payload, TimeoutType msecTimeout, int32 operationId) {
 
     // absolute time for timeout !
     uint64 startCounter = HighResolutionTimer::Counter();
@@ -253,79 +243,79 @@ bool HttpClient::HttpExchange(BufferedStreamI &streamDataRead,
             ret = Connect(msecTimeout);
             reConnect = false;
         }
-
-        if (ret) {
-            /* create and send request */
-            protocol.SetKeepAlive(true);
-            if (authorisationKey.Size() > 0ULL) {
-                //switch and write
-                if (!protocol.MoveAbsolute("OutputOptions")) {
-                    ret = protocol.CreateAbsolute("OutputOptions");
-                }
-
-                if (ret) {
-                    AnyType at = protocol.GetType("Authorization");
-                    if (!at.IsVoid()) {
-                        ret = protocol.Delete("Authorization");
-                    }
-                    if (ret) {
-                        ret = protocol.Write("Authorization", authorisationKey.Buffer());
-                    }
-                }
-            }
-
-            if (ret) {
-                ret = protocol.WriteHeader(true, command, payload, urlUri.Buffer());
-            }
-
-        }
-        if (ret) {
-            /* read reply */
-            ret = protocol.ReadHeader();
-        }
-
-        if (ret) {
-            if (msecTimeout.IsFinite()) {
-                uint64 elapsed = (HighResolutionTimer::Counter() - startCounter);
-                uint64 delta = msecTimeout.HighResolutionTimerTicks();
-                ret = elapsed < delta;
-                if (!ret) {
-                    REPORT_ERROR_STATIC(ErrorManagement::Timeout, "Timeout on completion");
-                }
-                else {
-                    uint64 ticksLeft = (delta - elapsed);
-                    msecTimeout.SetTimeoutHighResolutionTimerTicks(ticksLeft);
-                }
-            }
-        }
-
-        if (ret) {
-            // check reply for 200 (authorisation request)
-            if (protocol.GetHttpCommand() == HttpDefinition::HSHCReplyAUTH) {
-
-                ret = AutenticationProcedure(command, msecTimeout, operationId);
-                if (ret) {
-                    if (protocol.KeepAlive()) {
-                        //try again with new authorization
-                        ret = HttpExchange(streamDataRead, command, payload, msecTimeout, operationId);
-                    }
-                }
-
-            }
-            else {
-                // read body
-                //TODO here we can read the body inside a structured data?
-                ret = protocol.CompleteReadOperation(&streamDataRead, msecTimeout);
-            }
-
-            // close if the server says so...
-            if (!protocol.KeepAlive()) {
-                (void) socket.Close();
-            }
-        }
     }
     else {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError, "The command cannot be a reply code");
+    }
+
+    if (ret) {
+        /* create and send request */
+        protocol.SetKeepAlive(true);
+        if (authorisationKey.Size() > 0ULL) {
+            //switch and write
+            if (!protocol.MoveAbsolute("OutputOptions")) {
+                ret = protocol.CreateAbsolute("OutputOptions");
+            }
+
+            if (ret) {
+                AnyType at = protocol.GetType("Authorization");
+                if (!at.IsVoid()) {
+                    ret = protocol.Delete("Authorization");
+                }
+                if (ret) {
+                    ret = protocol.Write("Authorization", authorisationKey.Buffer());
+                }
+            }
+        }
+
+        if (ret) {
+            ret = protocol.WriteHeader(true, command, payload, urlUri.Buffer());
+        }
+
+    }
+    if (ret) {
+        /* read reply */
+        ret = protocol.ReadHeader();
+    }
+
+    if (ret) {
+        if (msecTimeout.IsFinite()) {
+            uint64 elapsed = (HighResolutionTimer::Counter() - startCounter);
+            uint64 delta = msecTimeout.HighResolutionTimerTicks();
+            ret = elapsed < delta;
+            if (!ret) {
+                REPORT_ERROR_STATIC(ErrorManagement::Timeout, "Timeout on completion");
+            }
+            else {
+                uint64 ticksLeft = (delta - elapsed);
+                msecTimeout.SetTimeoutHighResolutionTimerTicks(ticksLeft);
+            }
+        }
+    }
+
+    if (ret) {
+        // check reply for 200 (authorisation request)
+        if (protocol.GetHttpCommand() == HttpDefinition::HSHCReplyAUTH) {
+
+            ret = AutenticationProcedure(command, msecTimeout, operationId);
+            if (ret) {
+                if (protocol.KeepAlive()) {
+                    //try again with new authorization
+                    ret = HttpExchange(streamDataRead, command, payload, msecTimeout, operationId);
+                }
+            }
+
+        }
+        else {
+            // read body
+            //TODO here we can read the body inside a structured data?
+            ret = protocol.CompleteReadOperation(&streamDataRead, msecTimeout);
+        }
+
+        // close if the server says so...
+        if (!protocol.KeepAlive()) {
+            (void) socket.Close();
+        }
     }
 
     return ret;
@@ -344,10 +334,7 @@ bool HttpClient::Connect(const TimeoutType &msecTimeout) {
     return ret;
 }
 
-bool HttpClient::GenerateDigestKey(StreamString &key,
-                                   const char8 * const data,
-                                   const char8 * const command,
-                                   int32 nc) {
+bool HttpClient::GenerateDigestKey(StreamString &key, const char8 * const data, const char8 * const command, int32 nc) {
     bool ret = key.SetSize(0ULL);
 
     StreamString qop = "auth";
@@ -460,8 +447,7 @@ bool HttpClient::GenerateDigestKey(StreamString &key,
                              "cnonce=\"%s\","
                              "response=\"%s\","
                              "opaque=\"%s\"",
-                             user.Buffer(), realm.Buffer(), nonce.Buffer(), urlUri.Buffer(), qop.Buffer(), ncStr.Buffer(), cnonce.Buffer(), response.Buffer(),
-                             opaque.Buffer());
+                             user.Buffer(), realm.Buffer(), nonce.Buffer(), urlUri.Buffer(), qop.Buffer(), ncStr.Buffer(), cnonce.Buffer(), response.Buffer(), opaque.Buffer());
         }
     }
     return ret;

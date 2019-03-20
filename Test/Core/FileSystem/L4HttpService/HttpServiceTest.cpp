@@ -156,6 +156,92 @@ HttpServiceTestDS::~HttpServiceTestDS() {
 
 }
 
+
+class HttpServiceTestWebRoot: public ReferenceContainer, public HttpDataExportI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+HttpServiceTestWebRoot    ();
+
+    virtual ~HttpServiceTestWebRoot();
+
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
+
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
+
+    virtual int32 GetReplyCode(HttpProtocol &data);
+
+private:
+    void RecCallback(ReferenceT<ReferenceContainer> ref,
+            BufferedStreamI *hStream);
+
+};
+
+HttpServiceTestWebRoot::HttpServiceTestWebRoot() {
+
+}
+
+HttpServiceTestWebRoot::~HttpServiceTestWebRoot() {
+
+}
+
+void HttpServiceTestWebRoot::RecCallback(ReferenceT<ReferenceContainer> ref,
+                                         BufferedStreamI *hStream) {
+
+    if (ref.IsValid()) {
+        const char8* className = ref->GetClassProperties()->GetName();
+        const char8* name = ref->GetName();
+
+        hStream->Printf("%s", "<TR>\n");
+        hStream->Printf("<TD>%s</TD><TD><A HREF=\"%s/\">%s</A></TD>\n", className, name, name);
+        hStream->Printf("%s", "</TR>\n");
+        uint32 numberOfElements = ref->Size();
+        for (uint32 i = 0u; i < numberOfElements; i++) {
+            ReferenceT<ReferenceContainer> child = ref->Get(i);
+            RecCallback(ref, hStream);
+        }
+    }
+
+}
+
+bool HttpServiceTestWebRoot::GetAsStructuredData(StreamStructuredDataI &data,
+                                                 HttpProtocol &protocol) {
+    return false;
+}
+
+bool HttpServiceTestWebRoot::GetAsText(StreamI &stream,
+                                       HttpProtocol &protocol) {
+    HttpDataExportI::GetAsText(stream, protocol);
+    StreamString hString;
+    StreamString *hStream = (&hString);
+    hStream->SetSize(0);
+
+    hStream->Printf("<html><head><TITLE>%s</TITLE>"
+                    "</head><BODY BGCOLOR=\"#ffffff\"><H1>%s</H1><UL>",
+                    "HttpServiceTestWebRoot", "HttpServiceTestWebRoot");
+    hStream->Printf("%s", "<TABLE>\n");
+    uint32 numberOfElements = Size();
+    for (uint32 i = 0u; i < numberOfElements; i++) {
+        ReferenceT<ReferenceContainer> ref = Get(i);
+        RecCallback(ref, hStream);
+    }
+    hStream->Printf("%s", "</TABLE>\n");
+    hStream->Printf("%s", "</UL></BODY>\n");
+    hStream->Printf("%s", "</html>\n");
+    hStream->Seek(0);
+
+    uint32 stringSize = hStream->Size();
+    stream.Write(hStream->Buffer(), stringSize);
+    //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, NULL_PTR(BufferedStreamI * ), NULL_PTR(const char8*));
+
+    return true;
+}
+
+int32 HttpServiceTestWebRoot::GetReplyCode(HttpProtocol &data) {
+    return HttpDefinition::HSHCReplyOK;
+}
+CLASS_REGISTER(HttpServiceTestWebRoot, "1.0")
+
 const char8 *HttpServiceTestDS::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
