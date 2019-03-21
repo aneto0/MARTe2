@@ -103,7 +103,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
                 if (isChunked) {
                     //Check if it finishes with 0\r\n\r\n
                     if (sizeToWrite > 4u) {
-                        bool done = (StringHelper::Compare(&buffer[sizeToWrite - 5u], "0\r\n\r\n") == 0u);
+                        bool done = (StringHelper::CompareN(&buffer[sizeToWrite - 5u], "0\r\n\r\n", 5u) == 0u);
                         if (done) {
                             //break the while
                             readSize = 0u;

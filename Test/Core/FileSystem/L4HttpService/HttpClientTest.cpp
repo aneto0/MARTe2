@@ -394,7 +394,8 @@ bool HttpClientTestClassTest3::GetAsText(StreamI &stream, HttpProtocol &protocol
     hStream->Seek(0);
     uint32 stringSize = hStream->Size();
     stream.Write(hStream->Buffer(), stringSize);
-
+    //For the timeout test
+    Sleep::Sec(0.1);
     //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, hStream, NULL);
     return true;
 }
@@ -405,7 +406,7 @@ bool HttpClientTestClassTest3::Validate(const char8 * const key, const int32 com
     StreamString auth;
     Base64Encoder::Decode(keyStr, auth);
 
-    bool ret = auth == "gferro:1234";
+    bool ret = (auth == "gferro:1234");
     return ret;
 }
 
@@ -686,10 +687,10 @@ bool HttpClientTest::TestHttpExchange() {
             "   +HttpServerTest = {"
             "       Class = HttpService"
             "       WebRoot = \"Application.WebRoot\""
-            "       Port=2222"
+            "       Port=9094"
             "       ListenMaxConnections = 255"
             "       Timeout = 0"
-            "       AcceptTimeout=1000"
+            "       AcceptTimeout = 100"
             "       MaxNumberOfThreads=100"
             "       MinNumberOfThreads=1"
             "   }"
@@ -756,7 +757,7 @@ bool HttpClientTest::TestHttpExchange() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     bool ret = InitialiseMemoryMapInputBrokerEnviroment(config);
@@ -773,8 +774,6 @@ bool HttpClientTest::TestHttpExchange() {
         StreamString readOut;
 
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1000u);
-        printf("\n%s\n", readOut.Buffer());
-
         if (ret) {
             ret = (readOut == "20\r\n"
                     "<html><head><TITLE>HttpServiceTe\r\n"
@@ -820,10 +819,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=2222"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -890,7 +889,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:1234";
@@ -959,10 +958,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
             "   +HttpServerTest = {"
             "       Class = HttpService"
             "       WebRoot = \"Application.WebRoot\""
-            "       Port=2222"
+            "       Port=9094"
             "       ListenMaxConnections = 255"
             "       Timeout = 0"
-            "       AcceptTimeout=1000"
+            "       AcceptTimeout = 100"
             "       MaxNumberOfThreads=100"
             "       MinNumberOfThreads=1"
             "   }"
@@ -1029,7 +1028,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:1234";
@@ -1049,19 +1048,8 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
 
     StreamString readOut;
     if (ret) {
-
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 20000u);
     }
-    if (ret) {
-        StreamString userPass = "gferro:1234";
-        StreamString encodedUserPass;
-        Base64Encoder::Encode(userPass, encodedUserPass);
-        test.SetAuthorisation(encodedUserPass.Buffer());
-
-        ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 10000u);
-    }
-    printf("\n%s\n", readOut.Buffer());
-
     if (ret) {
         ret = (readOut == "20\r\n"
                 "<html><head><TITLE>HttpServiceTe\r\n"
@@ -1086,10 +1074,15 @@ bool HttpClientTest::TestHttpExchange_Authorization_Basic() {
 bool HttpClientTest::TestHttpExchange_Authorization_FalseInvalidAuthType() {
 
     const char8 *config = ""
-            "$Application = {"
+            "+Realm1 = {\n"
+            "   Class = HttpClientTestClassTest4\n"
+            "}\n"
+            "$Application = {\n"
             "   Class = RealTimeApplication"
             "       +WebRoot = {"
-            "           Class = HttpServiceTestWebRoot"
+            "           Class = HttpObjectBrowser"
+            "           Realm = Realm1"
+            "           Root = \".\""
             "           +ClassLister = {"
             "               Class = HttpServiceTestClassLister"
             "           }"
@@ -1100,10 +1093,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseInvalidAuthType() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=2222"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -1170,7 +1163,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseInvalidAuthType() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:4567";
@@ -1205,10 +1198,15 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseInvalidAuthType() {
 bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
 
     const char8 *config = ""
+            "+Realm1 = {\n"
+            "   Class = HttpClientTestClassTest3\n"
+            "}\n"
             "$Application = {"
             "   Class = RealTimeApplication"
             "       +WebRoot = {"
-            "           Class = HttpServiceTestWebRoot"
+            "           Class = HttpObjectBrowser"
+            "           Realm = Realm1"
+            "           Root = \".\""
             "           +ClassLister = {"
             "               Class = HttpServiceTestClassLister"
             "           }"
@@ -1219,10 +1217,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=2222"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -1289,7 +1287,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:4567";
@@ -1307,9 +1305,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
 
     if (ret) {
         StreamString readOut;
-
         ret = !test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1u);
-
     }
     if (ret) {
         ret = service->Stop();
@@ -1321,10 +1317,15 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseTimeout() {
 bool HttpClientTest::TestHttpExchange_Authorization_FalseReplyCommand() {
 
     const char8 *config = ""
+            "+Realm1 = {\n"
+            "   Class = HttpClientTestClassTest3\n"
+            "}\n"
             "$Application = {"
             "   Class = RealTimeApplication"
             "       +WebRoot = {"
-            "           Class = HttpServiceTestWebRoot"
+            "           Class = HttpObjectBrowser"
+            "           Root = \".\""
+            "           Realm = Realm1"
             "           +ClassLister = {"
             "               Class = HttpServiceTestClassLister"
             "           }"
@@ -1335,10 +1336,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseReplyCommand() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=2222"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -1405,7 +1406,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseReplyCommand() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:4567";
@@ -1440,10 +1441,15 @@ bool HttpClientTest::TestHttpExchange_Authorization_FalseReplyCommand() {
 bool HttpClientTest::TestHttpExchange_Authorization_Digest_KeepAlive() {
 
     const char8 *config = ""
+            "+Realm1 = {\n"
+            "   Class = HttpClientTestClassTest2\n"
+            "}\n"
             "$Application = {"
             "   Class = RealTimeApplication"
             "       +WebRoot = {"
-            "           Class = HttpServiceTestWebRoot"
+            "           Class = HttpObjectBrowser"
+            "           Realm = Realm1"
+            "           Root = \".\""
             "           +ClassLister = {"
             "               Class = HttpServiceTestClassLister"
             "           }"
@@ -1454,10 +1460,10 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest_KeepAlive() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=2222"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "           CloseOnAuthFail = 0"
@@ -1525,7 +1531,7 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest_KeepAlive() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(2222);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:1234";
@@ -1542,26 +1548,29 @@ bool HttpClientTest::TestHttpExchange_Authorization_Digest_KeepAlive() {
     if (ret) {
         ret = service->Start();
     }
+    StreamString readOut;
 
     if (ret) {
-        StreamString readOut;
+        ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 20000u);
+        readOut = "";
+    }
+    if (ret) {
 
         ret = test.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 2000u);
-
-        printf("\n%s\n", readOut.Buffer());
-        if (ret) {
-            ret = (readOut == "20\r\n"
-                    "<html><head><TITLE>HttpServiceTe\r\n"
-                    "20\r\n"
-                    "stClassTest1</TITLE></head><BODY\r\n"
-                    "20\r\n"
-                    " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
-                    "20\r\n"
-                    "ceTestClassTest1</H1><UL></UL></\r\n"
-                    "C\r\n"
-                    "BODY></html>\r\n"
-                    "0\r\n\r\n");
-        }
+    }
+    printf("\n%s\n", readOut.Buffer());
+    if (ret) {
+        ret = (readOut == "20\r\n"
+                "<html><head><TITLE>HttpServiceTe\r\n"
+                "20\r\n"
+                "stClassTest1</TITLE></head><BODY\r\n"
+                "20\r\n"
+                " BGCOLOR=\"#ffffff\"><H1>HttpServi\r\n"
+                "20\r\n"
+                "ceTestClassTest1</H1><UL></UL></\r\n"
+                "C\r\n"
+                "BODY></html>\r\n"
+                "0\r\n\r\n");
     }
 
     if (ret) {
