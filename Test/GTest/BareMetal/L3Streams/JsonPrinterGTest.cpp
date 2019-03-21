@@ -38,77 +38,77 @@
 #include "JsonPrinterTest.h"
 #include "gtest/gtest.h"
 
-TEST(JsonPrinterGTest,TestPrintOpenMatrix) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintOpenMatrix) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenMatrix());
 }
 
-TEST(JsonPrinterGTest,TestPrintCloseMatrix) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintCloseMatrix) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseMatrix());
 }
 
-TEST(JsonPrinterGTest,TestPrintScalarSeparator) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintScalarSeparator) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintScalarSeparator());
 }
 
-TEST(JsonPrinterGTest,TestPrintVectorSeparator) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintVectorSeparator) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVectorSeparator());
 }
 
-TEST(JsonPrinterGTest,TestPrintVariableSeparator) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintVariableSeparator) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariableSeparator());
 }
 
-TEST(JsonPrinterGTest,TestPrintBlockSeparator) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintBlockSeparator) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintBlockSeparator());
 }
 
-TEST(JsonPrinterGTest,TestPrintOpenVector) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintOpenVector) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenVector());
 }
 
-TEST(JsonPrinterGTest,TestPrintCloseVector) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintCloseVector) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseVector());
 }
 
-TEST(JsonPrinterGTest,TestPrintOpenBlock) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintOpenBlock) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenBlock());
 }
 
-TEST(JsonPrinterGTest,TestPrintCloseBlock) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintCloseBlock) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseBlock());
 }
 
-TEST(JsonPrinterGTest,TestPrintOpenAssignment) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintOpenAssignment) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenAssignment());
 }
 
-TEST(JsonPrinterGTest,TestPrintCloseAssignment) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintCloseAssignment) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseAssignment());
 }
 
-TEST(JsonPrinterGTest,TestPrintVariable) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintVariable) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariable());
 }
 
-TEST(JsonPrinterGTest,TestPrintBegin) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintBegin) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintBegin());
 }
 
-TEST(JsonPrinterGTest,TestPrintEnd) {
+TEST(BareMetal_L3Streams_JsonPrinterGTest,TestPrintEnd) {
     JsonPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintEnd());
 }

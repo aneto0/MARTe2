@@ -38,67 +38,67 @@
 #include "StandardPrinterTest.h"
 #include "gtest/gtest.h"
 
-TEST(StandardPrinterGTest,TestPrintOpenMatrix) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintOpenMatrix) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenMatrix());
 }
 
-TEST(StandardPrinterGTest,TestPrintCloseMatrix) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintCloseMatrix) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseMatrix());
 }
 
-TEST(StandardPrinterGTest,TestPrintScalarSeparator) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintScalarSeparator) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintScalarSeparator());
 }
 
-TEST(StandardPrinterGTest,TestPrintVectorSeparator) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintVectorSeparator) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVectorSeparator());
 }
 
-TEST(StandardPrinterGTest,TestPrintVariableSeparator) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintVariableSeparator) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariableSeparator());
 }
 
-TEST(StandardPrinterGTest,TestPrintBlockSeparator) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintBlockSeparator) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintBlockSeparator());
 }
 
-TEST(StandardPrinterGTest,TestPrintOpenVector) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintOpenVector) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenVector());
 }
 
-TEST(StandardPrinterGTest,TestPrintCloseVector) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintCloseVector) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseVector());
 }
 
-TEST(StandardPrinterGTest,TestPrintOpenBlock) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintOpenBlock) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenBlock());
 }
 
-TEST(StandardPrinterGTest,TestPrintCloseBlock) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintCloseBlock) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseBlock());
 }
 
-TEST(StandardPrinterGTest,TestPrintOpenAssignment) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintOpenAssignment) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenAssignment());
 }
 
-TEST(StandardPrinterGTest,TestPrintCloseAssignment) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintCloseAssignment) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseAssignment());
 }
 
-TEST(StandardPrinterGTest,TestPrintVariable) {
+TEST(BareMetal_L3Streams_StandardPrinterGTest,TestPrintVariable) {
     StandardPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariable());
 }

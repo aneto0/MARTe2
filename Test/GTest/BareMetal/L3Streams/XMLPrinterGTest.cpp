@@ -39,67 +39,67 @@
 #include "XMLPrinterTest.h"
 #include "gtest/gtest.h"
 
-TEST(XMLPrinterGTest,TestPrintOpenMatrix) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintOpenMatrix) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenMatrix());
 }
 
-TEST(XMLPrinterGTest,TestPrintCloseMatrix) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintCloseMatrix) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseMatrix());
 }
 
-TEST(XMLPrinterGTest,TestPrintScalarSeparator) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintScalarSeparator) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintScalarSeparator());
 }
 
-TEST(XMLPrinterGTest,TestPrintVectorSeparator) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintVectorSeparator) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVectorSeparator());
 }
 
-TEST(XMLPrinterGTest,TestPrintVariableSeparator) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintVariableSeparator) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariableSeparator());
 }
 
-TEST(XMLPrinterGTest,TestPrintBlockSeparator) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintBlockSeparator) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintBlockSeparator());
 }
 
-TEST(XMLPrinterGTest,TestPrintOpenVector) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintOpenVector) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenVector());
 }
 
-TEST(XMLPrinterGTest,TestPrintCloseVector) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintCloseVector) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseVector());
 }
 
-TEST(XMLPrinterGTest,TestPrintOpenBlock) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintOpenBlock) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenBlock());
 }
 
-TEST(XMLPrinterGTest,TestPrintCloseBlock) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintCloseBlock) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseBlock());
 }
 
-TEST(XMLPrinterGTest,TestPrintOpenAssignment) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintOpenAssignment) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintOpenAssignment());
 }
 
-TEST(XMLPrinterGTest,TestPrintCloseAssignment) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintCloseAssignment) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintCloseAssignment());
 }
 
-TEST(XMLPrinterGTest,TestPrintVariable) {
+TEST(BareMetal_L3Streams_XMLPrinterGTest,TestPrintVariable) {
     XMLPrinterTest streamtest;
     ASSERT_TRUE(streamtest.TestPrintVariable());
 }

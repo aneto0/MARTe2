@@ -500,6 +500,7 @@ bool StreamStructuredData<Printer>::MoveAbsolute(const char8 * const path) {
                         if (ret) {
                             ret = printer.PrintCloseBlock(ref->GetName());
                             blockCloseState = true;
+                            currentNode->needsSeparatorBeforeNextBlock = false;
                         }
                     }
                 }

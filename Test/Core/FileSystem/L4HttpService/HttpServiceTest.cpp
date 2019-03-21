@@ -29,27 +29,30 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "HttpServiceTest.h"
+#include "Base64Encoder.h"
 #include "ConfigurationDatabase.h"
-
-#include "MemoryOperationsHelper.h"
-#include "ObjectRegistryDatabase.h"
-#include "RealTimeApplication.h"
-#include "StandardParser.h"
-#include "StringHelper.h"
-#include "MemoryDataSourceI.h"
-
-#include "MemoryMapInputBroker.h"
-#include "MemoryMapSynchronisedInputBroker.h"
-#include "MemoryMapOutputBroker.h"
-#include "MemoryMapSynchronisedOutputBroker.h"
+#include "HttpClient.h"
 
 #include "HttpDataExportI.h"
 #include "HttpDefinition.h"
 #include "HttpProtocol.h"
 #include "HttpRealmI.h"
-#include "HttpClient.h"
-#include "Base64Encoder.h"
+#include "HttpServiceTest.h"
+#include "JsonPrinter.h"
+
+#include "MemoryDataSourceI.h"
+#include "MemoryMapInputBroker.h"
+#include "MemoryMapOutputBroker.h"
+#include "MemoryMapSynchronisedInputBroker.h"
+#include "MemoryMapSynchronisedOutputBroker.h"
+
+#include "MemoryOperationsHelper.h"
+#include "ObjectRegistryDatabase.h"
+#include "RealTimeApplication.h"
+#include "StandardParser.h"
+#include "StreamStructuredData.h"
+#include "StringHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -155,92 +158,6 @@ HttpServiceTestDS::HttpServiceTestDS() {
 HttpServiceTestDS::~HttpServiceTestDS() {
 
 }
-
-
-class HttpServiceTestWebRoot: public ReferenceContainer, public HttpDataExportI {
-public:
-    CLASS_REGISTER_DECLARATION()
-
-HttpServiceTestWebRoot    ();
-
-    virtual ~HttpServiceTestWebRoot();
-
-    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
-
-    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
-
-    virtual int32 GetReplyCode(HttpProtocol &data);
-
-private:
-    void RecCallback(ReferenceT<ReferenceContainer> ref,
-            BufferedStreamI *hStream);
-
-};
-
-HttpServiceTestWebRoot::HttpServiceTestWebRoot() {
-
-}
-
-HttpServiceTestWebRoot::~HttpServiceTestWebRoot() {
-
-}
-
-void HttpServiceTestWebRoot::RecCallback(ReferenceT<ReferenceContainer> ref,
-                                         BufferedStreamI *hStream) {
-
-    if (ref.IsValid()) {
-        const char8* className = ref->GetClassProperties()->GetName();
-        const char8* name = ref->GetName();
-
-        hStream->Printf("%s", "<TR>\n");
-        hStream->Printf("<TD>%s</TD><TD><A HREF=\"%s/\">%s</A></TD>\n", className, name, name);
-        hStream->Printf("%s", "</TR>\n");
-        uint32 numberOfElements = ref->Size();
-        for (uint32 i = 0u; i < numberOfElements; i++) {
-            ReferenceT<ReferenceContainer> child = ref->Get(i);
-            RecCallback(ref, hStream);
-        }
-    }
-
-}
-
-bool HttpServiceTestWebRoot::GetAsStructuredData(StreamStructuredDataI &data,
-                                                 HttpProtocol &protocol) {
-    return false;
-}
-
-bool HttpServiceTestWebRoot::GetAsText(StreamI &stream,
-                                       HttpProtocol &protocol) {
-    HttpDataExportI::GetAsText(stream, protocol);
-    StreamString hString;
-    StreamString *hStream = (&hString);
-    hStream->SetSize(0);
-
-    hStream->Printf("<html><head><TITLE>%s</TITLE>"
-                    "</head><BODY BGCOLOR=\"#ffffff\"><H1>%s</H1><UL>",
-                    "HttpServiceTestWebRoot", "HttpServiceTestWebRoot");
-    hStream->Printf("%s", "<TABLE>\n");
-    uint32 numberOfElements = Size();
-    for (uint32 i = 0u; i < numberOfElements; i++) {
-        ReferenceT<ReferenceContainer> ref = Get(i);
-        RecCallback(ref, hStream);
-    }
-    hStream->Printf("%s", "</TABLE>\n");
-    hStream->Printf("%s", "</UL></BODY>\n");
-    hStream->Printf("%s", "</html>\n");
-    hStream->Seek(0);
-
-    uint32 stringSize = hStream->Size();
-    stream.Write(hStream->Buffer(), stringSize);
-    //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, NULL_PTR(BufferedStreamI * ), NULL_PTR(const char8*));
-
-    return true;
-}
-
-int32 HttpServiceTestWebRoot::GetReplyCode(HttpProtocol &data) {
-    return HttpDefinition::HSHCReplyOK;
-}
-CLASS_REGISTER(HttpServiceTestWebRoot, "1.0")
 
 const char8 *HttpServiceTestDS::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
@@ -519,30 +436,27 @@ HttpServiceTestClassTest1::~HttpServiceTestClassTest1() {
 }
 
 bool HttpServiceTestClassTest1::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
-
-    protocol.Write("Content-Type", "text/html");
-    data.CreateAbsolute("NodeA.NodeB");
-    uint32 var1 = 1;
-    data.Write("var1", var1);
-    data.CreateAbsolute("NodeA.NodeC");
-    int32 var2 = -1;
-    data.Write("var2", var2);
-    data.MoveToRoot();
-
+    HttpDataExportI::GetAsStructuredData(data, protocol);
+    //Print the opening {
+    StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+    if (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *)) {
+        sdata->GetPrinter()->PrintBegin();
+        data.CreateAbsolute("NodeA.NodeB");
+        uint32 var1 = 1;
+        data.Write("var1", var1);
+        data.CreateAbsolute("NodeA.NodeC");
+        int32 var2 = -1;
+        data.Write("var2", var2);
+        data.MoveToRoot();
+        sdata->GetPrinter()->PrintEnd();
+    }
     return true;
 }
 
 bool HttpServiceTestClassTest1::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString hString;
     StreamString *hStream = (&hString);
-
-    hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
-
-    hStream->SetSize(0);
+    HttpDataExportI::GetAsText(stream, protocol);
 
     hStream->Printf("<html><head><TITLE>%s</TITLE>"
                     "</head><BODY BGCOLOR=\"#ffffff\"><H1>%s</H1><UL>",
@@ -553,7 +467,6 @@ bool HttpServiceTestClassTest1::GetAsText(StreamI &stream, HttpProtocol &protoco
     uint32 stringSize = hStream->Size();
     stream.Write(hStream->Buffer(), stringSize);
 
-    //protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, hStream, NULL);
     return true;
 }
 
@@ -606,13 +519,7 @@ bool HttpServiceTestClassTest2::GetAsText(StreamI &stream, HttpProtocol &protoco
     StreamString hString;
     StreamString *hStream = (&hString);
 
-    hStream->SetSize(0);
-    if (!protocol.MoveAbsolute("OutputOptions")) {
-        protocol.CreateAbsolute("OutputOptions");
-    }
-    protocol.Write("Content-Type", "text/html");
-
-    hStream->SetSize(0);
+    HttpDataExportI::GetAsText(stream, protocol);
 
     hStream->Printf("<html><head><TITLE>%s</TITLE>"
                     "</head><BODY BGCOLOR=\"#ffffff\"><H1>%s</H1><UL>",
@@ -704,10 +611,10 @@ const char8 *config = ""
         "       +HttpServerTest = {"
         "           Class = HttpService"
         "           WebRoot = \"Application.WebRoot\""
-        "           Port=4444"
+        "           Port=9094"
         "           ListenMaxConnections = 255"
         "           Timeout = 0"
-        "           AcceptTimeout=1000"
+        "           AcceptTimeout = 100"
         "           MaxNumberOfThreads=100"
         "           MinNumberOfThreads=1"
         "       }"
@@ -798,7 +705,7 @@ bool HttpServiceTest::TestInitialise() {
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
             "  WebRoot=\"WebRoot\"\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -826,7 +733,7 @@ bool HttpServiceTest::TestInitialise() {
         ret = (test->Start() == ErrorManagement::NoError);
     }
     if (ret) {
-        ret = (test->GetPort() == 4444);
+        ret = (test->GetPort() == 9094);
         ret &= (test->GetListenMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
     }
@@ -838,7 +745,7 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -867,7 +774,7 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
         ret = test.IsValid();
     }
     if (ret) {
-        ret = (test->GetPort() == 4444);
+        ret = (test->GetPort() == 9094);
         ret &= (test->GetListenMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
     }
@@ -879,7 +786,7 @@ bool HttpServiceTest::TestInitialise_FalseNoWebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -904,7 +811,7 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -938,7 +845,7 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRootRef() {
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
             "  WebRoot=\"WebRoot\"\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -974,7 +881,7 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
             "+HttpServerTest = {\n"
             "  Class = HttpServiceTestService\n"
             "  WebRoot=\"WebRoot\"\n"
-            "  Port=4444\n"
+            "  Port=9094\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
             "  MaxNumberOfThreads=100\n"
@@ -1002,7 +909,7 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
         ret = test.IsValid();
     }
     if (ret) {
-        ret = (test->GetPort() == 4444);
+        ret = (test->GetPort() == 9094);
         ret &= (test->GetListenMaxConnections() == 255);
         ret &= (test->GetWebRoot().IsValid());
     }
@@ -1068,10 +975,10 @@ bool HttpServiceTest::TestStart() {
             "   +HttpServerTest = {"
             "       Class = HttpServiceTestService"
             "       WebRoot = \"WebRoot\""
-            "       Port=4444"
+            "       Port=9094"
             "       ListenMaxConnections = 255"
             "       Timeout = 0"
-            "       AcceptTimeout=1000"
+            "       AcceptTimeout = 100"
             "       MaxNumberOfThreads=100"
             "       MinNumberOfThreads=1"
             "   }"
@@ -1152,7 +1059,7 @@ bool HttpServiceTest::TestStart() {
     if (ret) {
         ret = test->Stop();
     }
-
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
 }
@@ -1175,10 +1082,10 @@ bool HttpServiceTest::TestStart_InvalidWebRoot() {
             "       +HttpServerTest = {"
             "           Class = HttpServiceTestService"
             "           WebRoot = \"Application.Invalid\""
-            "           Port=4444"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -1255,7 +1162,7 @@ bool HttpServiceTest::TestStart_InvalidWebRoot() {
     if (ret) {
         ret = test->Stop();
     }
-
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1282,27 +1189,31 @@ bool HttpServiceTest::TestClientService_Text() {
     ReferenceT<HttpService> test = god->Find("Application.HttpServerTest");
     if (ret) {
         ret = test.IsValid();
-        if (ret) {
-            ret = test->Start();
-        }
+    }
+    if (ret) {
+        ret = test->Start();
     }
 
-    InternetHost source(4444, "127.0.0.1");
-    InternetHost destination(4444, "127.0.0.1");
+    InternetHost source(9094, "127.0.0.1");
+    InternetHost destination(9094, "127.0.0.1");
 
     TCPSocket socket;
 
     socket.SetSource(source);
     socket.SetDestination(destination);
-    socket.Open();
-    socket.Connect("127.0.0.1", 4444);
+    if (ret) {
+        ret = socket.Open();
+    }
+    if (ret) {
+        ret = socket.Connect("127.0.0.1", 9094);
+    }
 
     HttpProtocol stream(socket);
 
     StreamString payload;
 
     socket.Printf("%s", "GET /Test1/ HTTP/1.1\r\n");
-    socket.Printf("%s", "Host: localhost:4444\r\n");
+    socket.Printf("%s", "Host: localhost:9094\r\n");
     socket.Printf("%s", "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0\r\n");
     socket.Printf("%s", "Accept: text/html\r\n");
     socket.Printf("%s", "Accept-Encoding: gzip, deflate\r\n");
@@ -1333,7 +1244,7 @@ bool HttpServiceTest::TestClientService_Text() {
         ret = test->Stop();
     }
 
-    Sleep::Sec(1);
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
     //return true;
@@ -1349,22 +1260,22 @@ bool HttpServiceTest::TestClientService_Structured() {
             ret = test->Start();
         }
     }
-    InternetHost source(4444, "127.0.0.1");
-    InternetHost destination(4444, "127.0.0.1");
+    InternetHost source(9094, "127.0.0.1");
+    InternetHost destination(9094, "127.0.0.1");
 
     TCPSocket socket;
 
     socket.SetSource(source);
     socket.SetDestination(destination);
     socket.Open();
-    socket.Connect("127.0.0.1", 4444);
+    socket.Connect("127.0.0.1", 9094);
 
     HttpProtocol stream(socket);
 
     StreamString payload;
 
     socket.Printf("%s", "GET /Test1/?TextMode=0 HTTP/1.1\r\n");
-    socket.Printf("%s", "Host: localhost:4444\r\n");
+    socket.Printf("%s", "Host: localhost:9094\r\n");
     socket.Printf("%s", "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0\r\n");
     socket.Printf("%s", "Accept: text/html\r\n");
     socket.Printf("%s", "Accept-Encoding: gzip, deflate\r\n");
@@ -1381,8 +1292,8 @@ bool HttpServiceTest::TestClientService_Structured() {
                 "{\n\r"
                 "\"NodeA\": {\n\r"
                 "\"NodeB\": {\r\n"
-                "C\r\n\n\r"
-                "\"var1\": +1\r\n"
+                "B\r\n\n\r"
+                "\"var1\": 1\r\n"
                 "10\r\n\n\r"
                 "},\n\r"
                 "\"NodeC\": {\r\n"
@@ -1399,7 +1310,7 @@ bool HttpServiceTest::TestClientService_Structured() {
         ret = test->Stop();
     }
 
-    Sleep::Sec(1);
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
 }
@@ -1416,22 +1327,22 @@ bool HttpServiceTest::TestClientService_CloseConnection() {
         }
     }
 
-    InternetHost source(4444, "127.0.0.1");
-    InternetHost destination(4444, "127.0.0.1");
+    InternetHost source(9094, "127.0.0.1");
+    InternetHost destination(9094, "127.0.0.1");
 
     TCPSocket socket;
 
     socket.SetSource(source);
     socket.SetDestination(destination);
     socket.Open();
-    socket.Connect("127.0.0.1", 4444);
+    socket.Connect("127.0.0.1", 9094);
 
     HttpProtocol stream(socket);
 
     StreamString payload;
 
     socket.Printf("%s", "GET /Test1/ HTTP/1.1\r\n");
-    socket.Printf("%s", "Host: localhost:4444\r\n");
+    socket.Printf("%s", "Host: localhost:9094\r\n");
     socket.Printf("%s", "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0\r\n");
     socket.Printf("%s", "Accept: text/html\r\n");
     socket.Printf("%s", "Accept-Encoding: gzip, deflate\r\n");
@@ -1462,7 +1373,7 @@ bool HttpServiceTest::TestClientService_CloseConnection() {
         ret = test->Stop();
     }
 
-    Sleep::Sec(1);
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
 }
@@ -1486,10 +1397,10 @@ bool HttpServiceTest::TestClientService_Authorisation() {
             "       +HttpServerTest = {"
             "           Class = HttpService"
             "           WebRoot = \"Application.WebRoot\""
-            "           Port=4444"
+            "           Port=9094"
             "           ListenMaxConnections = 255"
             "           Timeout = 0"
-            "           AcceptTimeout=1000"
+            "           AcceptTimeout = 100"
             "           MaxNumberOfThreads=100"
             "           MinNumberOfThreads=1"
             "       }"
@@ -1556,7 +1467,7 @@ bool HttpServiceTest::TestClientService_Authorisation() {
     HttpClient test;
 
     test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(4444);
+    test.SetServerPort(9094);
     test.SetServerUri("Test1");
 
     StreamString userPass = "gferro:4567";
@@ -1608,6 +1519,7 @@ bool HttpServiceTest::TestClientService_Authorisation() {
     if (ret) {
         ret = service->Stop();
     }
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1623,22 +1535,22 @@ bool HttpServiceTest::TestClientService_FailReadHeader() {
         }
     }
 
-    InternetHost source(4444, "127.0.0.1");
-    InternetHost destination(4444, "127.0.0.1");
+    InternetHost source(9094, "127.0.0.1");
+    InternetHost destination(9094, "127.0.0.1");
 
     TCPSocket socket;
 
     socket.SetSource(source);
     socket.SetDestination(destination);
     socket.Open();
-    socket.Connect("127.0.0.1", 4444);
+    socket.Connect("127.0.0.1", 9094);
 
     HttpProtocol stream(socket);
 
     StreamString payload;
 
     socket.Printf("%s", "GOT /TestFake HTTP/1.1\r\n");
-    socket.Printf("%s", "Host: localhost:4444\r\n");
+    socket.Printf("%s", "Host: localhost:9094\r\n");
     socket.Printf("%s", "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0\r\n");
     socket.Printf("%s", "Accept: text/html\r\n");
     socket.Printf("%s", "Accept-Encoding: gzip, deflate\r\n");
@@ -1649,7 +1561,7 @@ bool HttpServiceTest::TestClientService_FailReadHeader() {
         ret = test->Stop();
     }
 
-    Sleep::Sec(1);
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
 
@@ -1669,31 +1581,38 @@ bool HttpServiceTest::TestServerCycle() {
 
     for (uint32 i = 0u; (i < numberOfClients) && (ret); i++) {
 
-        InternetHost source(4444 + i, "127.0.0.1");
-        InternetHost destination(4444, "127.0.0.1");
+        InternetHost source(9094 + i, "127.0.0.1");
+        InternetHost destination(9094, "127.0.0.1");
 
         TCPSocket socket;
 
         socket.SetSource(source);
         socket.SetDestination(destination);
-        socket.Open();
-        socket.Connect("127.0.0.1", 4444);
+        ret = socket.Open();
+        if (ret) {
+            ret = socket.Connect("127.0.0.1", 9094);
+        }
 
         HttpProtocol stream(socket);
 
         StreamString payload;
 
         socket.Printf("%s", "GET /Test1/ HTTP/1.1\r\n");
-        socket.Printf("%s", "Host: localhost:4444\r\n");
+        socket.Printf("%s", "Host: localhost:9094\r\n");
         socket.Printf("%s", "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0\r\n");
         socket.Printf("%s", "Accept: text/html\r\n");
         socket.Printf("%s", "Accept-Encoding: gzip, deflate\r\n");
         socket.Printf("%s", "Connection: close\r\n\r\n");
-        socket.Flush();
-
-        stream.ReadHeader();
+        if (ret) {
+            ret = socket.Flush();
+        }
+        if (ret) {
+            ret = stream.ReadHeader();
+        }
         StreamString respBody;
-        stream.CompleteReadOperation(&respBody, 1000);
+        if (ret) {
+            ret = stream.CompleteReadOperation(&respBody, 1000);
+        }
 
         printf("\n%s\n", respBody.Buffer());
 
@@ -1717,8 +1636,6 @@ bool HttpServiceTest::TestServerCycle() {
         ret = test->Stop();
     }
 
-    Sleep::Sec(1);
+    ObjectRegistryDatabase::Instance()->Purge();
     return ret;
-
-    return true;
 }

@@ -46,27 +46,27 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(PrinterIGTest, TestConstructor) {
+TEST(BareMetal_L3Streams_PrinterIGTest, TestConstructor) {
     PrinterITest myPrinterITest;
     ASSERT_TRUE(myPrinterITest.TestConstructor());
 }
 
-TEST(PrinterIGTest, TestFullConstructor) {
+TEST(BareMetal_L3Streams_PrinterIGTest, TestFullConstructor) {
     PrinterITest myPrinterITest;
     ASSERT_TRUE(myPrinterITest.TestFullConstructor());
 }
 
-TEST(PrinterIGTest, TestSetStream) {
+TEST(BareMetal_L3Streams_PrinterIGTest, TestSetStream) {
     PrinterITest myPrinterITest;
     ASSERT_TRUE(myPrinterITest.TestSetStream());
 }
 
-TEST(PrinterIGTest, TestPrintBegin) {
+TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintBegin) {
     PrinterITest myPrinterITest;
     ASSERT_TRUE(myPrinterITest.TestPrintBegin());
 }
 
-TEST(PrinterIGTest, TestPrintEnd) {
+TEST(BareMetal_L3Streams_PrinterIGTest, TestPrintEnd) {
     PrinterITest myPrinterITest;
     ASSERT_TRUE(myPrinterITest.TestPrintEnd());
 }

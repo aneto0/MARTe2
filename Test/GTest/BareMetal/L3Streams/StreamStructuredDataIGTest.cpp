@@ -46,17 +46,17 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(StreamStructuredDataIGTest, TestConstructor) {
+TEST(BareMetal_L3Streams_StreamStructuredDataIGTest, TestConstructor) {
     StreamStructuredDataITest myStreamStructuredDataITest;
     ASSERT_TRUE(myStreamStructuredDataITest.TestConstructor());
 }
 
-TEST(StreamStructuredDataIGTest, TestSetStream) {
+TEST(BareMetal_L3Streams_StreamStructuredDataIGTest, TestSetStream) {
     StreamStructuredDataITest myStreamStructuredDataITest;
     ASSERT_TRUE(myStreamStructuredDataITest.TestSetStream());
 }
 
-TEST(StreamStructuredDataIGTest, TestGetStream) {
+TEST(BareMetal_L3Streams_StreamStructuredDataIGTest, TestGetStream) {
     StreamStructuredDataITest myStreamStructuredDataITest;
     ASSERT_TRUE(myStreamStructuredDataITest.TestGetStream());
 }

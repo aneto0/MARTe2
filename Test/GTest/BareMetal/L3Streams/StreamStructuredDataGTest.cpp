@@ -46,17 +46,17 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(StreamStructuredDataGTest, TestRead) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestRead) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
     ASSERT_TRUE(myStreamStructuredDataTest.TestRead());
 }
 
-TEST(StreamStructuredDataGTest, TestGetType) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestGetType) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
     ASSERT_TRUE(myStreamStructuredDataTest.TestGetType());
 }
 
-TEST(StreamStructuredDataGTest, TestWriteStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestWriteStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
     uint32 x = 1;
     int32 y = -1;
@@ -73,7 +73,7 @@ TEST(StreamStructuredDataGTest, TestWriteStandard) {
     StreamStructuredDataTestWriteStruct table;
     table.toWrite = at;
     table.varnames = names;
-    table.desResult = "\n\rx =+1\n\r"
+    table.desResult = "\n\rx =1\n\r"
             "y =-1\n\r"
             "z =\"hello\"\n\r"
             "floatArr ={ -1.500000 3.250000 55.400004 } \n\r"
@@ -81,7 +81,7 @@ TEST(StreamStructuredDataGTest, TestWriteStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestWrite(&table));
 }
 
-TEST(StreamStructuredDataGTest, TestWriteJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestWriteJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
     uint32 x = 1;
     int32 y = -1;
@@ -98,7 +98,7 @@ TEST(StreamStructuredDataGTest, TestWriteJson) {
     StreamStructuredDataTestWriteStruct table;
     table.toWrite = at;
     table.varnames = names;
-    table.desResult = "\n\r\"x\": +1,\n\r"
+    table.desResult = "\n\r\"x\": 1,\n\r"
             "\"y\": -1,\n\r"
             "\"z\": \"hello\",\n\r"
             "\"floatArr\": [ -1.500000, 3.250000, 55.400004 ] ,\n\r"
@@ -106,7 +106,7 @@ TEST(StreamStructuredDataGTest, TestWriteJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestWrite(&table));
 }
 
-TEST(StreamStructuredDataGTest, TestWriteXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestWriteXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
     uint32 x = 1;
     int32 y = -1;
@@ -123,7 +123,7 @@ TEST(StreamStructuredDataGTest, TestWriteXML) {
     StreamStructuredDataTestWriteStruct table;
     table.toWrite = at;
     table.varnames = names;
-    table.desResult = "\n\r<x>+1</x>\n\r"
+    table.desResult = "\n\r<x>1</x>\n\r"
             "<y>-1</y>\n\r"
             "<z>\"hello\"</z>\n\r"
             "<floatArr>[ -1.500000, 3.250000, 55.400004 ] </floatArr>\n\r"
@@ -131,12 +131,12 @@ TEST(StreamStructuredDataGTest, TestWriteXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestWrite(&table));
 }
 
-TEST(StreamStructuredDataGTest, TestCopy) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestCopy) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
     ASSERT_TRUE(myStreamStructuredDataTest.TestCopy());
 }
 
-TEST(StreamStructuredDataGTest, TestAddToCurrentNodeStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestAddToCurrentNodeStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -169,7 +169,7 @@ TEST(StreamStructuredDataGTest, TestAddToCurrentNodeStandard) {
 }
 
 
-TEST(StreamStructuredDataGTest, TestAddToCurrentNodeStandard_DeleteBlocks) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestAddToCurrentNodeStandard_DeleteBlocks) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -199,7 +199,7 @@ TEST(StreamStructuredDataGTest, TestAddToCurrentNodeStandard_DeleteBlocks) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestAddToCurrentNode(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestAddToCurrentNodeJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestAddToCurrentNodeJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -231,7 +231,7 @@ TEST(StreamStructuredDataGTest, TestAddToCurrentNodeJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestAddToCurrentNode(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestAddToCurrentNodeJson2) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestAddToCurrentNodeJson2) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -263,7 +263,7 @@ TEST(StreamStructuredDataGTest, TestAddToCurrentNodeJson2) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestAddToCurrentNode(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestAddToCurrentNodeXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestAddToCurrentNodeXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -295,7 +295,7 @@ TEST(StreamStructuredDataGTest, TestAddToCurrentNodeXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestAddToCurrentNode(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToRootStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToRootStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -329,7 +329,7 @@ TEST(StreamStructuredDataGTest, TestMoveToRootStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToRoot(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToRootJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToRootJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -363,7 +363,7 @@ TEST(StreamStructuredDataGTest, TestMoveToRootJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToRoot(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToRootXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToRootXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -397,7 +397,7 @@ TEST(StreamStructuredDataGTest, TestMoveToRootXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToRoot(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToAncestorStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -431,7 +431,7 @@ TEST(StreamStructuredDataGTest, TestMoveToAncestorStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestor(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToAncestorJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -465,7 +465,7 @@ TEST(StreamStructuredDataGTest, TestMoveToAncestorJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestor(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToAncestorXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -499,7 +499,7 @@ TEST(StreamStructuredDataGTest, TestMoveToAncestorXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestor(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveAbsoluteStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveAbsoluteStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -531,7 +531,7 @@ TEST(StreamStructuredDataGTest, TestMoveAbsoluteStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveAbsolute(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveAbsoluteJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveAbsoluteJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -563,7 +563,7 @@ TEST(StreamStructuredDataGTest, TestMoveAbsoluteJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveAbsolute(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveAbsoluteXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveAbsoluteXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -595,7 +595,7 @@ TEST(StreamStructuredDataGTest, TestMoveAbsoluteXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveAbsolute(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveRelativeStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveRelativeStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -623,7 +623,7 @@ TEST(StreamStructuredDataGTest, TestMoveRelativeStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveRelative(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveRelativeJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveRelativeJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -651,7 +651,7 @@ TEST(StreamStructuredDataGTest, TestMoveRelativeJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveRelative(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveRelativeXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveRelativeXML) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -679,7 +679,7 @@ TEST(StreamStructuredDataGTest, TestMoveRelativeXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveRelative(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToChildStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToChildStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -710,7 +710,7 @@ TEST(StreamStructuredDataGTest, TestMoveToChildStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToChild(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToChildJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToChildJson) {
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -741,7 +741,7 @@ TEST(StreamStructuredDataGTest, TestMoveToChildJson) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToChild(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestMoveToChild) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToChild) {
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
     ReferenceT<StreamStructuredDataNodeDes> a(GlobalObjectsDatabase::Instance()->GetStandardHeap());
@@ -772,7 +772,7 @@ TEST(StreamStructuredDataGTest, TestMoveToChild) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToChild(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestCreateAbsoluteStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestCreateAbsoluteStandard) {
 
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
@@ -793,7 +793,7 @@ TEST(StreamStructuredDataGTest, TestCreateAbsoluteStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestCreateAbsolute(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestCreateAbsoluteJson) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestCreateAbsoluteJson) {
 
     StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
 
@@ -815,7 +815,7 @@ TEST(StreamStructuredDataGTest, TestCreateAbsoluteJson) {
 }
 
 
-TEST(StreamStructuredDataGTest, TestCreateAbsoluteXML) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestCreateAbsoluteXML) {
 
     StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
 
@@ -836,7 +836,7 @@ TEST(StreamStructuredDataGTest, TestCreateAbsoluteXML) {
 }
 
 
-TEST(StreamStructuredDataGTest, TestCreateRelativeStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestCreateRelativeStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
     StreamStructuredDataTestAddToCurrentNodeStruct arg;
@@ -853,12 +853,12 @@ TEST(StreamStructuredDataGTest, TestCreateRelativeStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestCreateRelative(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestDelete) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestDelete) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
     ASSERT_TRUE(myStreamStructuredDataTest.TestDelete());
 }
 
-TEST(StreamStructuredDataGTest, TestGetNameStandard) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestGetNameStandard) {
 
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
@@ -888,7 +888,7 @@ TEST(StreamStructuredDataGTest, TestGetNameStandard) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestGetName(&arg));
 }
 
-TEST(StreamStructuredDataGTest, TestGetChildName) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestGetChildName) {
 
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
@@ -919,7 +919,7 @@ TEST(StreamStructuredDataGTest, TestGetChildName) {
 
 }
 
-TEST(StreamStructuredDataGTest, TestGetNumberOfChildren) {
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestGetNumberOfChildren) {
 
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 
