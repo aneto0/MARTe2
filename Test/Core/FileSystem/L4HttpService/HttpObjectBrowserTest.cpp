@@ -1104,6 +1104,7 @@ bool HttpObjectBrowserTest::TestGetAsStructuredData_Realm() {
     test.SetServerAddress("127.0.0.1");
     test.SetServerPort(9094);
     test.SetServerUri("/");
+    test.SetAuthorisation("ignore");
     StreamString reply;
     if (ok) {
         //Authenticate
@@ -1207,6 +1208,7 @@ bool HttpObjectBrowserTest::TestGetAsText_Realm() {
     test.SetServerAddress("127.0.0.1");
     test.SetServerPort(9094);
     test.SetServerUri("/?path=HttpObjectBrowserTest.txt");
+    test.SetAuthorisation("ignore");
     StreamString reply;
     if (ok) {
         //Authenticate
