@@ -28,6 +28,7 @@ OBJSX= HttpObjectBrowserGTest.x \
     HttpChunkedStreamGTest.x \
     HttpClientGTest.x \
     HttpDataExportIGTest.x \
+    HttpDirectoryResourceGTest.x \
     HttpProtocolGTest.x \
     HttpServiceGTest.x
 		

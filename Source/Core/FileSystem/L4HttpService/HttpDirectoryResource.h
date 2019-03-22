@@ -40,16 +40,24 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * @brief TODO
+ * @brief HTTP browsing of files and directories.
+ *
+ * @details The configuration syntax is (names are only given as an example):
+ * <pre>
+ * +HttpDirectoryResource1 = {
+ *     Class = HttpDirectoryResource
+ *     BaseDir = "/" //Compulsory. The base directory w.r.t. to which all the paths are evaluated.
+ * }
+ * </pre>
  */
-class HttpDirectoryResource : public Object, public HttpDataExportI {
+class HttpDirectoryResource: public Object, public HttpDataExportI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Constructor. NOOP.
      */
-    HttpDirectoryResource();
+HttpDirectoryResource    ();
 
     /**
      * @brief Destructor. NOOP.
@@ -57,44 +65,56 @@ public:
     virtual ~HttpDirectoryResource();
 
     /**
-     * @brief TODO.
+     * @brief Calls Object::Initialise and reads the BaseDir parameters (see class description) .
+     * @return true if the parameters are correctly specified.
      */
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief TODO.
+     * @brief Retrieves the contents of the directory or the details of a given file.
+     * @param[out] data output where the directory contents or the file information is written into.
+     * @param[in] protocol expected to contain a \a path parameter where to read the relative path (w.r.t. to the BaseDir defined above).
+     * @return true if all the data write operations are successful.
      */
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief TODO.
+     * @brief Retrieves the contents of a given file.
+     * @param[out] stream output where the directory contents or the file information is written into.
+     * @param[in] protocol expected to contain a \a path parameter where to read the relative path (w.r.t. to the BaseDir defined above).
+     * @return true if all the data write operations are successful.
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
 private:
 
     /**
-     * TODO
+     * @brief Helper function which check if a file has a given extension.
+     * @param[in] fname the name of the file to check.
+     * @param[in] ext the file name extension.
+     * @return true if the file terminates with the extension.
      */
     bool CheckExtension(StreamString &fname, const char8 * const ext);
 
     /**
-     * TODO
+     * @brief Helper function which streams the filename over the provided stream.
+     * @param[in] fname the name of the file to stream.
+     * @param[out] stream where to stream the file.
+     * @param[out] protocol to write the Content-type.
+     * @return true if the file can be successfully streamed.
      */
     bool ServeFile(StreamString &fname, StreamI &stream, HttpProtocol &protocol);
 
     /**
-     * TODO
+     * The base directory w.r.t. which all the paths are evaluated.
      */
     StreamString baseDir;
 };
 }
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* L4HTTPSERVICE_HTTPDIRECTORYRESOURCE_H_ */
-	
+
