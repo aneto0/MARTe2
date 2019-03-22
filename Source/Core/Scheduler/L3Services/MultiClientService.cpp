@@ -127,8 +127,10 @@ uint16 MultiClientService::GetNumberOfActiveThreads() {
     uint32 i;
     for (i = 0u; (i < numberOfThreads); i++) {
         ReferenceT<EmbeddedThreadI> thread = threadPool.Get(i);
-        if (thread->GetStatus() != EmbeddedThreadI::OffState) {
-            numberOfAliveThreads++;
+        if (thread.IsValid()) {
+            if (thread->GetStatus() != EmbeddedThreadI::OffState) {
+                numberOfAliveThreads++;
+            }
         }
     }
 

@@ -57,144 +57,16 @@ bool HttpDirectoryResourceTest::TestInitialise() {
     return ok;
 }
 
-#if 0
-bool HttpDirectoryResourceTest::TestInitialise_ObjectRegistryDatabase_Root() {
+bool HttpDirectoryResourceTest::TestInitialise_False_No_BaseDir() {
     using namespace MARTe;
     ConfigurationDatabase cdb;
-    cdb.Write("Root", "/");
-
-    ReferenceT<HttpObjectBrowser> httpObjectBrowser(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    bool ok = httpObjectBrowser->Initialise(cdb);
+    ReferenceT<HttpDirectoryResource> httpDirectoryResource(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    bool ok = !httpDirectoryResource->Initialise(cdb);
     ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
-bool HttpDirectoryResourceTest::TestInitialise_Self_Root() {
-    using namespace MARTe;
-    ConfigurationDatabase cdb;
-    cdb.Write("Root", ".");
-
-    ReferenceT<HttpObjectBrowser> httpObjectBrowser(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    bool ok = httpObjectBrowser->Initialise(cdb);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_Other_Root() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+ARoot = {\n"
-            "    Class = ReferenceContainer\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = ARoot"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_False_No_Root() {
-    using namespace MARTe;
-    ConfigurationDatabase cdb;
-    ReferenceT<HttpObjectBrowser> httpObjectBrowser(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    bool ok = !httpObjectBrowser->Initialise(cdb);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_False_Bad_Root_1() {
-    using namespace MARTe;
-    ConfigurationDatabase cdb;
-    cdb.Write("Root", "?");
-
-    ReferenceT<HttpObjectBrowser> httpObjectBrowser(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    bool ok = !httpObjectBrowser->Initialise(cdb);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_False_Bad_Root_2() {
-    using namespace MARTe;
-    ConfigurationDatabase cdb;
-    cdb.Write("Root", "HttpDirectoryResourceTestARoot");
-
-    ReferenceT<HttpObjectBrowser> httpObjectBrowser(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    bool ok = !httpObjectBrowser->Initialise(cdb);
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_Realm() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+ARoot = {\n"
-            "    Class = ReferenceContainer\n"
-            "}\n"
-            "+ARealm = {\n"
-            "    Class = HttpDirectoryResourceTestRealm\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = ARoot\n"
-            "    Realm = ARealm\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestInitialise_False_Realm() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+ARoot = {\n"
-            "    Class = ReferenceContainer\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = ARoot\n"
-            "    Realm = ARoot\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = !ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_This_Self() {
+bool HttpDirectoryResourceTest::TestGetAsStructuredData_Directory() {
     using namespace MARTe;
     StreamString cfg = ""
             "+HttpService1 = {\n"
@@ -214,502 +86,16 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_This_Self() {
             "    +AChild = {\n"
             "        Class = ReferenceContainer\n"
             "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = ""
-            "1F\r\n"
-            "{\n\r"
-            "\"Name\": \"HttpObjectBrowser1\"\r\n"
-            "1F\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpObjectBrowser\"\r\n"
-            "9\r\n"
-            "\n\r"
-            ",\"0\": {\r\n"
-            "12\r\n"
-            "\n\r"
-            "\"Name\": \"AChild\"\r\n"
-            "20\r\n"
-            ",\n\r"
-            "\"Class\": \"ReferenceContainer\"\r\n"
-            "13\r\n"
-            ",\n\r"
-            "\"IsContainer\": 1\r\n"
-            "3\r\n"
-            "\n\r"
-            "}\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_This_ObjectRegistryDatabase() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \"/\""
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("HttpObjectBrowser1");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = ""
-            "1F\r\n"
-            "{\n\r"
-            "\"Name\": \"HttpObjectBrowser1\"\r\n"
-            "1F\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpObjectBrowser\"\r\n"
-            "9\r\n"
-            "\n\r"
-            ",\"0\": {\r\n"
-            "18\r\n"
-            "\n\r"
-            "\"Name\": \"HttpService1\"\r\n"
-            "19\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpService\"\r\n"
-            "13\r\n"
-            ",\n\r"
-            "\"IsContainer\": 1\r\n"
-            "3\r\n"
-            "\n\r"
-            "}\r\n"
-            "9\r\n"
-            ",\n\r"
-            "\"1\": {\r\n"
-            "1E\r\n"
-            "\n\r"
-            "\"Name\": \"HttpObjectBrowser1\"\r\n"
-            "1F\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpObjectBrowser\"\r\n"
-            "13\r\n"
-            ",\n\r"
-            "\"IsContainer\": 1\r\n"
-            "3\r\n"
-            "\n\r"
-            "}\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_This_Other() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+RC1 = {\n"
-            "    Class = ReferenceContainer\n"
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "             Class = ReferenceContainer\n"
-            "        }\n"
-            "    }\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \"RC1\""
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("HttpObjectBrowser1");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = ""
-            "1F\r\n"
-            "{\n\r"
-            "\"Name\": \"HttpObjectBrowser1\"\r\n"
-            "1F\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpObjectBrowser\"\r\n"
-            "9\r\n"
-            "\n\r"
-            ",\"0\": {\r\n"
-            "12\r\n"
-            "\n\r"
-            "\"Name\": \"AChild\"\r\n"
-            "20\r\n"
-            ",\n\r"
-            "\"Class\": \"ReferenceContainer\"\r\n"
-            "13\r\n"
-            ",\n\r"
-            "\"IsContainer\": 1\r\n"
-            "3\r\n"
-            "\n\r"
-            "}\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_Other_Not_HttpObjectBrowser() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+RC1 = {\n"
-            "    Class = ReferenceContainer\n"
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "             Class = ReferenceContainer\n"
-            "        }\n"
-            "    }\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \"RC1\""
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("HttpObjectBrowser1/AChild");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = ""
-            "13\r\n"
-            "{\n\r"
-            "\"Name\": \"AChild\""
-            "\r\n"
-            "20\r\n"
-            ",\n\r"
-            "\"Class\": \"ReferenceContainer\"\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+RC1 = {\n"
-            "    Class = ReferenceContainer\n"
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "             Class = ReferenceContainer\n"
-            "        }\n"
-            "    }\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \"RC1\""
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("HttpObjectBrowser1/AChild/ANonExistentChild");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = ""
-            "13\r\n"
-            "{\n\r"
-            "\"Name\": \"AChild\""
-            "\r\n"
-            "20\r\n"
-            ",\n\r"
-            "\"Class\": \"ReferenceContainer\"\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_InvalidTarget() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+RC1 = {\n"
-            "    Class = ReferenceContainer\n"
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "             Class = ReferenceContainer\n"
-            "        }\n"
-            "    }\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \"RC1\""
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("ANonExistentChild");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = "";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_This() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\""
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "    +DirectoryResource = {\n"
+            "    +DirectoryResource1 = {\n"
             "        Class = HttpDirectoryResource\n"
-            "        BaseDir = \".\""
+            "        BaseDir = \"HttpDirectoryResourceTestFolder\""
             "    }\n"
             "}\n";
 
+    Directory d("HttpDirectoryResourceTestFolder");
+    d.Create();
     File f;
-    f.Open("HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Open("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
     f.Printf("Test %d", 1);
     f.Flush();
     f.Close();
@@ -733,376 +119,28 @@ bool HttpDirectoryResourceTest::TestGetAsText_This() {
     HttpClient test;
     test.SetServerAddress("127.0.0.1");
     test.SetServerPort(9094);
-    test.SetServerUri("/?path=HttpDirectoryResourceTest.txt");
+    test.SetServerUri("/DirectoryResource1?path=.");
     StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = "Test 1";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    Directory d("HttpDirectoryResourceTest.txt");
-    d.Delete();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_This_FileNotFound() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\""
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "    +DirectoryResource = {\n"
-            "        Class = HttpDirectoryResource\n"
-            "        BaseDir = \".\""
-            "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/?path=HttpDirectoryResourceTestNotFound.txt");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    if (ok) {
-        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_Other() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\""
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser\n"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "            Class = ReferenceContainer\n"
-            "        }\n"
-            "        +DirectoryResource = {\n"
-            "             Class = HttpDirectoryResource\n"
-            "             BaseDir = \".\""
-            "        }\n"
-            "    }\n"
-            "}\n";
-
-    File f;
-    f.Open("HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
-    f.Printf("Test %d", 2);
-    f.Flush();
-    f.Close();
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/HttpObjectBrowser1?path=HttpDirectoryResourceTest.txt");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = "Test 2";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    Directory d("HttpDirectoryResourceTest.txt");
-    d.Delete();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_Other_Not_HttpDataExportI() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\""
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser\n"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "            Class = ReferenceContainer\n"
-            "        }\n"
-            "        +DirectoryResource = {\n"
-            "             Class = HttpDirectoryResource\n"
-            "             BaseDir = \".\""
-            "        }\n"
-            "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/HttpObjectBrowser1/AChild?path=HttpDirectoryResourceTest.txt");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    if (ok) {
-        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_InvalidObject() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9096\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser2\n"
-            "}\n"
-            "+HttpObjectBrowser2 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\""
-            "    +HttpObjectBrowser1 = {\n"
-            "        Class = HttpObjectBrowser\n"
-            "        Root = \".\""
-            "        +AChild = {\n"
-            "            Class = ReferenceContainer\n"
-            "        }\n"
-            "        +DirectoryResource = {\n"
-            "             Class = HttpDirectoryResource\n"
-            "             BaseDir = \".\""
-            "        }\n"
-            "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9096);
-    test.SetServerUri("/NotExistent");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    if (ok) {
-        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyNotFound);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_Realm() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+ARealm = {\n"
-            "    Class = HttpDirectoryResourceTestRealm\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\"\n"
-            "    Realm = ARealm\n"
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpDirectoryResourceTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
-    realm->valid = true;
-
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/");
-    test.SetAuthorisation("ignore");
-    StreamString reply;
-    if (ok) {
-        //Authenticate
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-        reply = "";
-    }
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
     const char8 * expectedReply = ""
-            "1F\r\n"
-            "{\n\r"
-            "\"Name\": \"HttpObjectBrowser1\"\r\n"
-            "1F\r\n"
-            ",\n\r"
-            "\"Class\": \"HttpObjectBrowser\"\r\n"
-            "9\r\n"
-            "\n\r"
-            ",\"0\": {\r\n"
-            "12\r\n"
-            "\n\r"
-            "\"Name\": \"AChild\"\r\n"
-            "20\r\n"
-            ",\n\r"
-            "\"Class\": \"ReferenceContainer\"\r\n"
-            "13\r\n"
-            ",\n\r"
-            "\"IsContainer\": 1\r\n"
-            "3\r\n"
-            "\n\r"
-            "}\r\n"
-            "1\r\n"
-            "}\r\n"
-            "0\r\n"
-            "\r\n";
+            "1F\r\n{\n\r\"Name\": \"DirectoryResource1\"\r\n"
+            "20\r\n,\n\r\"Class\": \"HttpDirectoryResour\r\n"
+            "3\r\nce\"\r\nD\r\n\n\r,\"Files\": {\r\n8\r\n\n\r\"0\": {\r\n"
+            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\nF\r\nTestFolder/./.\"\r\n"
+            "15\r\n,\n\r\"IsDirectory\": \"1\"\r\nF\r\n,\n\r\"Size\": \""
+            "43\"\r\n3\r\n\n\r}\r\n9\r\n,\n\r\"1\": {\r\n"
+            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\n"
+            "10\r\nTestFolder/./..\"\r\n"
+            "15\r\n,\n\r\"IsDirectory\": \"1\"\r\n"
+            "11\r\n,\n\r\"Size\": \"4096\"\r\n3\r\n\n\r}\r\n"
+            "9\r\n,\n\r\"2\": {\r\n"
+            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\n"
+            "20\r\nTestFolder/./HttpDirectoryResour\r\n"
+            "B\r\nceTest.txt\"\r\n"
+            "15\r\n,\n\r\"IsDirectory\": \"0\"\r\nE\r\n,\n\r\"Size\": \"6\"\r\n"
+            "3\r\n\n\r}\r\n3\r\n\n\r}\r\n1\r\n}\r\n0\r\n\r\n";
     if (ok) {
         ok = (reply == expectedReply);
     }
@@ -1110,91 +148,14 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_Realm() {
         ok = service->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
 
-bool HttpDirectoryResourceTest::TestGetAsText_Realm() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+ARealm = {\n"
-            "    Class = HttpDirectoryResourceTestRealm\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\"\n"
-            "    Realm = ARealm\n"
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "    +DirectoryResource = {\n"
-            "        Class = HttpDirectoryResource\n"
-            "        BaseDir = \".\""
-            "    }\n"
-            "}\n";
-
-    File f;
-    f.Open("HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
-    f.Printf("Test %d", 1);
-    f.Flush();
-    f.Close();
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpDirectoryResourceTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
-    realm->valid = true;
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/?path=HttpDirectoryResourceTest.txt");
-    test.SetAuthorisation("ignore");
-    StreamString reply;
-    if (ok) {
-        //Authenticate
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-        reply = "";
-    }
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    const char8 * expectedReply = "Test 1";
-    if (ok) {
-        ok = (reply == expectedReply);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    Directory d("HttpDirectoryResourceTest.txt");
+    Directory df1("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt");
+    df1.Delete();
     d.Delete();
     return ok;
 }
 
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_Realm_False() {
+bool HttpDirectoryResourceTest::TestGetAsStructuredData_File() {
     using namespace MARTe;
     StreamString cfg = ""
             "+HttpService1 = {\n"
@@ -1208,88 +169,22 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_Realm_False() {
             "    IsTextMode = 0\n"
             "    WebRoot = HttpObjectBrowser1\n"
             "}\n"
-            "+ARealm = {\n"
-            "    Class = HttpDirectoryResourceTestRealm\n"
-            "}\n"
             "+HttpObjectBrowser1 = {\n"
             "    Class = HttpObjectBrowser\n"
-            "    Root = \".\"\n"
-            "    Realm = ARealm\n"
+            "    Root = \".\""
             "    +AChild = {\n"
             "        Class = ReferenceContainer\n"
             "    }\n"
-            "}\n";
-
-    cfg.Seek(0LLU);
-    StreamString err;
-    ConfigurationDatabase cdb;
-    StandardParser parser(cfg, cdb, &err);
-    bool ok = parser.Parse();
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
-    }
-    ReferenceT<HttpDirectoryResourceTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
-    realm->valid = false;
-
-    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
-    ok = service.IsValid();
-
-    if (ok) {
-        ok = service->Start();
-    }
-    HttpClient test;
-    test.SetServerAddress("127.0.0.1");
-    test.SetServerPort(9094);
-    test.SetServerUri("/");
-    StreamString reply;
-    if (ok) {
-        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
-    }
-    if (ok) {
-        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyAUTH);
-    }
-    if (ok) {
-        ok = service->Stop();
-    }
-    ObjectRegistryDatabase::Instance()->Purge();
-    return ok;
-}
-
-bool HttpDirectoryResourceTest::TestGetAsText_Realm_False() {
-    using namespace MARTe;
-    StreamString cfg = ""
-            "+HttpService1 = {\n"
-            "    Class = HttpService\n"
-            "    Port = 9094\n"
-            "    Timeout = 0\n"
-            "    AcceptTimeout = 100"
-            "    MinNumberOfThreads = 1\n"
-            "    MaxNumberOfThreads = 8\n"
-            "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 1\n"
-            "    WebRoot = HttpObjectBrowser1\n"
-            "}\n"
-            "+ARealm = {\n"
-            "    Class = HttpDirectoryResourceTestRealm\n"
-            "}\n"
-            "+HttpObjectBrowser1 = {\n"
-            "    Class = HttpObjectBrowser\n"
-            "    Root = \".\"\n"
-            "    Realm = ARealm\n"
-            "    +AChild = {\n"
-            "        Class = ReferenceContainer\n"
-            "    }\n"
-            "    +DirectoryResource = {\n"
+            "    +DirectoryResource1 = {\n"
             "        Class = HttpDirectoryResource\n"
-            "        BaseDir = \".\""
+            "        BaseDir = \"HttpDirectoryResourceTestFolder\""
             "    }\n"
             "}\n";
 
+    Directory d("HttpDirectoryResourceTestFolder");
+    d.Create();
     File f;
-    f.Open("HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Open("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
     f.Printf("Test %d", 1);
     f.Flush();
     f.Close();
@@ -1304,8 +199,6 @@ bool HttpDirectoryResourceTest::TestGetAsText_Realm_False() {
     if (ok) {
         ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpDirectoryResourceTestRealm> realm = ObjectRegistryDatabase::Instance()->Find("ARealm");
-    realm->valid = false;
     ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
     ok = service.IsValid();
 
@@ -1315,20 +208,193 @@ bool HttpDirectoryResourceTest::TestGetAsText_Realm_False() {
     HttpClient test;
     test.SetServerAddress("127.0.0.1");
     test.SetServerPort(9094);
-    test.SetServerUri("/?path=HttpDirectoryResourceTest.txt");
+    test.SetServerUri("/DirectoryResource1?path=HttpDirectoryResourceTest.txt");
     StreamString reply;
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
     }
+    const char8 * expectedReply = ""
+            "1F\r\n{\n\r\"Name\": \"DirectoryResource1\"\r\n"
+            "20\r\n,\n\r\"Class\": \"HttpDirectoryResour\r\n"
+            "3\r\nce\"\r\nD\r\n\n\r,\"Files\": {\r\n"
+            "8\r\n\n\r\"0\": {\r\n"
+            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\n"
+            "20\r\nTestFolder/HttpDirectoryResource\r\n9\r\nTest.txt\"\r\n"
+            "15\r\n,\n\r\"IsDirectory\": \"0\"\r\nE\r\n,\n\r\"Size\": \"6\"\r\n"
+            "3\r\n\n\r}\r\n3\r\n\n\r}\r\n1\r\n}\r\n0\r\n\r\n";
     if (ok) {
-        ok = (test.GetHttpProtocol()->GetHttpCommand() == HttpDefinition::HSHCReplyAUTH);
+        ok = (reply == expectedReply);
     }
     if (ok) {
         ok = service->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    Directory d("HttpDirectoryResourceTest.txt");
+
+    Directory df1("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt");
+    df1.Delete();
     d.Delete();
     return ok;
 }
-#endif
+
+bool HttpDirectoryResourceTest::TestGetAsText() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource1 = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \"HttpDirectoryResourceTestFolder\""
+            "    }\n"
+            "}\n";
+
+    Directory d("HttpDirectoryResourceTestFolder");
+    d.Create();
+    File f;
+    f.Open("HttpDirectoryResourceTestFolder/index.html", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Printf("<html>Test %d</html>", 1);
+    f.Flush();
+    f.Close();
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri(".");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    const char8 * expectedReply = "<html>Test 1</html>";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    Directory df1("HttpDirectoryResourceTestFolder/index.html");
+    df1.Delete();
+    d.Delete();
+
+    return ok;
+}
+
+bool HttpDirectoryResourceTest::TestGetAsText_MimeTypes() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource1 = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \".\""
+            "    }\n"
+            "}\n";
+
+    Directory d("HttpDirectoryResourceTestFolder");
+    d.Create();
+
+    const uint32 nOfFiles = 11u;
+    const char8 * filenames[nOfFiles] = { "HttpDirectoryResourceTestFolder/f1.htm", "HttpDirectoryResourceTestFolder/f1.html", "HttpDirectoryResourceTestFolder/f1.txt",
+            "HttpDirectoryResourceTestFolder/f1.csv", "HttpDirectoryResourceTestFolder/f1.css", "HttpDirectoryResourceTestFolder/f1.gif", "HttpDirectoryResourceTestFolder/f1.jpeg",
+            "HttpDirectoryResourceTestFolder/f1.jpg", "HttpDirectoryResourceTestFolder/f1.jnlp", "HttpDirectoryResourceTestFolder/f1.js", "HttpDirectoryResourceTestFolder/f1.bin" };
+    uint32 n;
+    for (n = 0u; n < nOfFiles; n++) {
+        File f;
+        f.Open(filenames[n], BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+        f.Printf("<html>Test %d</html>", 1);
+        f.Flush();
+        f.Close();
+    }
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    for (n = 0u; (n < nOfFiles) && (ok); n++) {
+        HttpClient test;
+        test.SetServerAddress("127.0.0.1");
+        test.SetServerPort(9094);
+        StreamString p;
+        p.Printf("/?path=%s", filenames[n]);
+        test.SetServerUri(p.Buffer());
+        StreamString reply;
+        if (ok) {
+            ok = test.HttpExchange(reply, HttpDefinition::HSHCGet, NULL, 1000u);
+        }
+        const char8 * expectedReply = "<html>Test 1</html>";
+        if (ok) {
+            ok = (reply == expectedReply);
+        }
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    for (n = 0u; n < nOfFiles; n++) {
+        Directory df1(filenames[n]);
+        df1.Delete();
+    }
+    d.Delete();
+
+    return ok;
+}
+

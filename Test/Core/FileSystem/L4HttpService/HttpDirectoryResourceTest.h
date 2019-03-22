@@ -45,122 +45,31 @@ public:
      * @brief Tests the Initialise method.
      */
     bool TestInitialise();
-#if 0
-    /**
-     * @brief Tests the Initialise method with the ObjectRegistryDatabase as the Root.
-     */
-    bool TestInitialise_ObjectRegistryDatabase_Root();
 
     /**
-     * @brief Tests the Initialise method with itself as the Root.
+     * @brief Tests that the Initialise method fails if no BaseDir is specified.
      */
-    bool TestInitialise_Self_Root();
+    bool TestInitialise_False_No_BaseDir();
 
     /**
-     * @brief Tests the Initialise method with another object as the Root.
+     * @brief Tests the GetAsStructuredData with a directory.
      */
-    bool TestInitialise_Other_Root();
+    bool TestGetAsStructuredData_Directory();
 
     /**
-     * @brief Tests that the Initialise method fails if no Root is specified.
+     * @brief Tests the GetAsStructuredData with a file.
      */
-    bool TestInitialise_False_No_Root();
+    bool TestGetAsStructuredData_File();
 
     /**
-     * @brief Tests that the Initialise method fails if an invalid Root is specified and only one character is passed as the root path.
+     * @brief Tests the GetAsText.
      */
-    bool TestInitialise_False_Bad_Root_1();
+    bool TestGetAsText();
 
     /**
-     * @brief Tests that the Initialise method fails if an invalid Root is specified.
+     * @brief Tests the GetAsText with all the mime-types.
      */
-    bool TestInitialise_False_Bad_Root_2();
-
-    /**
-     * @brief Tests the Initialise method with a valid Realm.
-     */
-    bool TestInitialise_Realm();
-
-    /**
-     * @brief Tests that the Initialise method fails with an invalid Realm.
-     */
-    bool TestInitialise_False_Realm();
-
-    /**
-     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root also being this HttpObjectBrowser.
-     */
-    bool TestGetAsStructuredData_This_Self();
-
-    /**
-     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root being the ObjectRegistryDatabase.
-     */
-    bool TestGetAsStructuredData_This_ObjectRegistryDatabase();
-
-    /**
-     * @brief Tests the GetAsStructuredData with the target being the HttpObjectBrowser and the Root being another object.
-     */
-    bool TestGetAsStructuredData_This_Other();
-
-    /**
-     * @brief Tests the GetAsStructuredData with the target not being an HttpObjectBrowser.
-     */
-    bool TestGetAsStructuredData_Other_Not_HttpObjectBrowser();
-
-    /**
-     * @brief Tests the GetAsStructuredData with a target having more information in the path than required.
-     */
-    bool TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path();
-
-    /**
-     * @brief Tests the GetAsStructuredData with a non existent target.
-     */
-    bool TestGetAsStructuredData_InvalidTarget();
-
-    /**
-     * @brief Tests the GetAsText with the target being this HttpObjectBrowser.
-     */
-    bool TestGetAsText_This();
-
-    /**
-     * @brief Tests the GetAsText with the target being this HttpObjectBrowser but with an unknown file.
-     */
-    bool TestGetAsText_This_FileNotFound();
-
-    /**
-     * @brief Tests the GetAsText with the target being another HttpObjectBrowser.
-     */
-    bool TestGetAsText_Other();
-
-    /**
-     * @brief Tests the GetAsText with the target being another Object that is not an HttpObjectBrowser.
-     */
-    bool TestGetAsText_Other_Not_HttpDataExportI();
-
-    /**
-     * @brief Tests the GetAsText with an invalid object.
-     */
-    bool TestGetAsText_InvalidObject();
-
-    /**
-     * @brief Test the GetAsStructuredData with a realm which authorises the resource.
-     */
-    bool TestGetAsStructuredData_Realm();
-
-    /**
-     * @brief Test the GetAsText with a realm which authorises the resource.
-     */
-    bool TestGetAsText_Realm();
-
-    /**
-     * @brief Test the GetAsStructuredData with a realm which does not authorise the resource.
-     */
-    bool TestGetAsStructuredData_Realm_False();
-
-    /**
-     * @brief Test the GetAsText with a realm which does not authorise the resource.
-     */
-    bool TestGetAsText_Realm_False();
-#endif
+    bool TestGetAsText_MimeTypes();
 };
 
 /*---------------------------------------------------------------------------*/

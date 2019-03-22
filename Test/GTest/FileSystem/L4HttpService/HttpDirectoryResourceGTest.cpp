@@ -49,119 +49,28 @@ TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise) {
     ASSERT_TRUE(test.TestInitialise());
 }
 
-#if 0
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_ObjectRegistryDatabase_Root) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_False_No_BaseDir) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_ObjectRegistryDatabase_Root());
+    ASSERT_TRUE(test.TestInitialise_False_No_BaseDir());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_Self_Root) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Directory) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_Self_Root());
+    ASSERT_TRUE(test.TestGetAsStructuredData_Directory());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_Other_Root) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_File) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_Other_Root());
+    ASSERT_TRUE(test.TestGetAsStructuredData_File());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_False_No_Root) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_No_Root());
+    ASSERT_TRUE(test.TestGetAsText());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_False_Bad_Root_1) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_MimeTypes) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_Bad_Root_1());
+    ASSERT_TRUE(test.TestGetAsText_MimeTypes());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_False_Bad_Root_2) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_Bad_Root_2());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_Realm) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_Realm());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestInitialise_False_Realm) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestInitialise_False_Realm());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_This_Self) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_This_Self());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_This_ObjectRegistryDatabase) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_This_ObjectRegistryDatabase());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_This_Other) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_This_Other());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Other_Not_HttpObjectBrowser) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Other_Not_HttpObjectBrowser_Long_Path());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_InvalidTarget) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_InvalidTarget());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_This) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_This());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_This_FileNotFound) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_This_FileNotFound());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_Other) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Other());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_Other_Not_HttpDataExportI) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Other_Not_HttpDataExportI());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_InvalidObject) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_InvalidObject());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Realm) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Realm());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_Realm) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Realm());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Realm_False) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_Realm_False());
-}
-
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_Realm_False) {
-    HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsText_Realm_False());
-}
-#endif
