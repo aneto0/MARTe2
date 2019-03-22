@@ -75,9 +75,7 @@ void HttpStreamTestRealm::SetPassw(const char8* passwIn) {
     passw = passwIn;
 }
 
-bool HttpStreamTestRealm::Validate(const char8 * key,
-                                   int32 command,
-                                   uint32 ipNumber) {
+bool HttpStreamTestRealm::Validate(const char8 * key, int32 command, uint32 ipNumber) {
     return (passw == key);
 }
 
@@ -96,10 +94,11 @@ CLASS_REGISTER(HttpStreamTestRealm, "1.0")
 /*---------------------------------------------------------------------------*/
 
 HttpProtocolTest::HttpProtocolTest() {
-    // Auto-generated constructor stub for HttpProtocolTest
-    // TODO Verify if manual additions are needed
     eventSem.Create();
     retVal = true;
+    command = 0;
+    isKeepAlive = false;
+    textMode = 0;
 }
 
 HttpProtocolTest::~HttpProtocolTest() {
@@ -185,8 +184,6 @@ bool HttpProtocolTest::TestReadHeader_Get1() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
-
     StreamString peer;
     ret &= cdb->Read("Peer", peer);
 
@@ -212,16 +209,13 @@ bool HttpProtocolTest::TestReadHeader_Get1() {
     if (ret) {
         StreamString url;
         test.GetId(url);
-        ret = (url == "docs/index.html");
-        printf("url=%s\n", url.Buffer());
-
+        ret = (url == "docs.index.html");
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "docs.index.html");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -288,7 +282,6 @@ bool HttpProtocolTest::TestReadHeader_Get2_Commands() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     StreamString peer;
     ret &= cdb->Read("Peer", peer);
@@ -326,16 +319,13 @@ bool HttpProtocolTest::TestReadHeader_Get2_Commands() {
     if (ret) {
         StreamString url;
         test.GetId(url);
-        ret = (url == "docs/index.html");
-        printf("url=%s\n", url.Buffer());
-
+        ret = (url == "docs.index.html");
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "docs.index.html");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -360,10 +350,10 @@ static void clientJobPut1(HttpProtocolTest &tt) {
     bool ret = socket.Connect("127.0.0.1", 5555);
     if (ret) {
         socket.Printf("%s", "PUT /user/1234567890 HTTP/1.1\n");
-        socket.Printf("%s", "Host: http://sookocheff.com\n");
+        socket.Printf("%s", "Host: http://marte2test.com\n");
         socket.Printf("%s", "\n{\n");
-        socket.Printf("%s", "\"name\": \"Kevin Sookocheff\"\n");
-        socket.Printf("%s", "\"website\": \"http://sookocheff.com\"\n");
+        socket.Printf("%s", "\"name\": \"Someone Somebody\"\n");
+        socket.Printf("%s", "\"website\": \"http://marte2test.com\"\n");
         socket.Printf("%s", "}\n");
         socket.Flush();
     }
@@ -411,14 +401,14 @@ bool HttpProtocolTest::TestReadHeader_Put1() {
         ret = cdb->MoveAbsolute("InputOptions");
         StreamString par;
         ret &= cdb->Read("Host", par);
-        ret &= (par == "http://sookocheff.com");
+        ret &= (par == "http://marte2test.com");
         par.SetSize(0);
     }
 
     if (ret) {
         StreamString url;
         test.GetId(url);
-        ret = (url == "user/1234567890");
+        ret = (url == "user.1234567890");
         printf("url=%s\n", url.Buffer());
 
     }
@@ -455,8 +445,7 @@ static void clientJobPost1(HttpProtocolTest &tt) {
         socket.Printf("%s", "Host: api.evasrv.com\n");
         socket.Printf("%s", "Cache-Control: no-cache\n");
         socket.Printf("%s", "Content-Type: application/x-www-form-urlencoded\n");
-        const char8* content =
-                "email=username%40domain.com&user_API_token=YOUR-EV-APP-API-TOKEN&free=true&disposable=true&did_you_mean=true&role=true&bad=true&ev_score=true";
+        const char8* content = "email=username%40domain.com&user_API_token=YOUR-EV-APP-API-TOKEN&free=true&disposable=true&did_you_mean=true&role=true&bad=true&ev_score=true";
         socket.Printf("%s: %d\n\n", "Content-Length", StringHelper::Length(content));
         socket.Printf("%s\n", content);
         socket.Flush();
@@ -518,9 +507,7 @@ bool HttpProtocolTest::TestReadHeader_Post1() {
         ret = cdb->MoveAbsolute("InputCommands");
         StreamString par;
         ret &= cdb->Read("rawPost", par);
-        ret &=
-                (par
-                        == "email=username%40domain.com&user_API_token=YOUR-EV-APP-API-TOKEN&free=true&disposable=true&did_you_mean=true&role=true&bad=true&ev_score=true\n");
+        ret &= (par == "email=username%40domain.com&user_API_token=YOUR-EV-APP-API-TOKEN&free=true&disposable=true&did_you_mean=true&role=true&bad=true&ev_score=true\n");
         par.SetSize(0);
         ret &= cdb->Read("email", par);
         ret &= (par == "username@domain.com");
@@ -551,16 +538,13 @@ bool HttpProtocolTest::TestReadHeader_Post1() {
     if (ret) {
         StreamString url;
         test.GetId(url);
-        ret = (url == "email_verification/");
-        printf("url=%s\n", url.Buffer());
-
+        ret = (url == "email_verification.");
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "email_verification.");
-        printf("path=%s\n", path.Buffer());
     }
     newSocket.Close();
     socket.Close();
@@ -603,7 +587,6 @@ static void clientJobPost2(HttpProtocolTest &tt) {
     StreamString resp;
     char8 term;
     socket.GetToken(resp, "\n", term);
-    printf("response=%s\n", resp.Buffer());
     tt.eventSem.Post();
     socket.Close();
     Threads::EndThread();
@@ -638,7 +621,6 @@ bool HttpProtocolTest::TestReadHeader_Post2_Multiform() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
@@ -692,7 +674,6 @@ bool HttpProtocolTest::TestReadHeader_Post2_Multiform() {
         StreamString path;
         test.GetPath(path);
         ret = (path == "submit.cgi");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -736,7 +717,6 @@ static void clientJobPost3(HttpProtocolTest &tt) {
     StreamString resp;
     char8 term;
     socket.GetToken(resp, "\n", term);
-    printf("response=%s\n", resp.Buffer());
     tt.eventSem.Post();
     socket.Close();
     Threads::EndThread();
@@ -817,7 +797,6 @@ bool HttpProtocolTest::TestReadHeader_Post2_Multiform_WrappedBoundary() {
         StreamString url;
         test.GetId(url);
         ret = (url == "submit.cgi");
-        printf("url=%s\n", url.Buffer());
 
     }
 
@@ -825,7 +804,6 @@ bool HttpProtocolTest::TestReadHeader_Post2_Multiform_WrappedBoundary() {
         StreamString path;
         test.GetPath(path);
         ret = (path == "submit.cgi");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -870,7 +848,6 @@ static void clientJobPostEmpty(HttpProtocolTest &tt) {
     StreamString resp;
     char8 term;
     socket.GetToken(resp, "\n", term);
-    printf("response=%s\n", resp.Buffer());
     tt.eventSem.Post();
     socket.Close();
     Threads::EndThread();
@@ -905,7 +882,6 @@ bool HttpProtocolTest::TestReadHeader_Post2_MultiformConsecutiveData() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
@@ -951,15 +927,12 @@ bool HttpProtocolTest::TestReadHeader_Post2_MultiformConsecutiveData() {
         StreamString url;
         test.GetId(url);
         ret = (url == "submit.cgi");
-        printf("url=%s\n", url.Buffer());
-
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "submit.cgi");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -1004,7 +977,6 @@ static void clientJobPostNoBound(HttpProtocolTest &tt) {
     StreamString resp;
     char8 term;
     socket.GetToken(resp, "\n", term);
-    printf("response=%s\n", resp.Buffer());
     tt.eventSem.Post();
     socket.Close();
     Threads::EndThread();
@@ -1054,8 +1026,8 @@ static void clientJobHead(HttpProtocolTest &tt) {
     tt.eventSem.Reset();
     bool ret = socket.Connect("127.0.0.1", 5555);
     if (ret) {
-        socket.Printf("%s", "HEAD /bit/thinner-archives-vol-1.zip.torrent HTTP/1.1\n");
-        socket.Printf("%s", "Host: www.legaltorrents.com\n\n");
+        socket.Printf("%s", "HEAD /bit/tests-vol-1.zip.tor HTTP/1.1\n");
+        socket.Printf("%s", "Host: www.marte2tests.com\n\n");
         socket.Flush();
     }
     tt.eventSem.Post();
@@ -1092,27 +1064,23 @@ bool HttpProtocolTest::TestReadHeader_Head() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
         StreamString par;
         ret &= cdb->Read("Host", par);
-        ret &= (par == "www.legaltorrents.com");
+        ret &= (par == "www.marte2tests.com");
     }
     if (ret) {
         StreamString url;
         test.GetId(url);
-        ret = (url == "bit/thinner-archives-vol-1.zip.torrent");
-        printf("url=%s\n", url.Buffer());
-
+        ret = (url == "bit.tests-vol-1.zip.tor");
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
-        ret = (path == "bit.thinner-archives-vol-1.zip.torrent");
-        printf("path=%s\n", path.Buffer());
+        ret = (path == "bit.tests-vol-1.zip.tor");
     }
 
     newSocket.Close();
@@ -1184,7 +1152,6 @@ bool HttpProtocolTest::TestReadHeader_Reply() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
@@ -1212,14 +1179,12 @@ bool HttpProtocolTest::TestReadHeader_Reply() {
         StreamString url;
         test.GetId(url);
         ret = (url == "");
-        printf("url=%s\n", url.Buffer());
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "");
-        printf("path=%s\n", path.Buffer());
     }
 
     newSocket.Close();
@@ -1291,7 +1256,6 @@ bool HttpProtocolTest::TestReadHeader_IncompatibleHTTPVersion() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
@@ -1316,14 +1280,12 @@ bool HttpProtocolTest::TestReadHeader_IncompatibleHTTPVersion() {
         StreamString url;
         test.GetId(url);
         ret = (url == "");
-        printf("url=%s\n", url.Buffer());
     }
 
     if (ret) {
         StreamString path;
         test.GetPath(path);
         ret = (path == "");
-        printf("path=%s\n", path.Buffer());
     }
 
     if (ret) {
@@ -1389,7 +1351,6 @@ bool HttpProtocolTest::TestReadHeader_IncompatibleHTTPVersionNoReply() {
     HttpProtocol test(newSocket);
     bool ret = test.ReadHeader();
     eventSem.Wait();
-
 
     if (ret) {
         ret = !test.KeepAlive();
@@ -1463,7 +1424,6 @@ bool HttpProtocolTest::TestReadHeader_FalseInvalidReplyCode() {
     return ret;
 }
 
-
 static void clientJobReplyInvalidCommand(HttpProtocolTest &tt) {
     //tells to the main process that the thread begins
 
@@ -1498,36 +1458,34 @@ static void clientJobReplyInvalidCommand(HttpProtocolTest &tt) {
     Threads::EndThread();
 }
 
-
-bool HttpProtocolTest::TestReadHeader_FalseInvalidCommand(){
+bool HttpProtocolTest::TestReadHeader_FalseInvalidCommand() {
     InternetHost source(5554, "127.0.0.1");
-       InternetHost destination(5555, "127.0.0.1");
+    InternetHost destination(5555, "127.0.0.1");
 
-       TCPSocket socket;
-       socket.SetSource(source);
-       socket.SetDestination(destination);
+    TCPSocket socket;
+    socket.SetSource(source);
+    socket.SetDestination(destination);
 
-       socket.Open();
-       socket.Listen(5555, 255);
-       //todo launch a thread with the client request
-       eventSem.Reset();
-       Threads::BeginThread((ThreadFunctionType) clientJobReplyInvalidCommand, this);
-       TCPSocket newSocket;
+    socket.Open();
+    socket.Listen(5555, 255);
+    //todo launch a thread with the client request
+    eventSem.Reset();
+    Threads::BeginThread((ThreadFunctionType) clientJobReplyInvalidCommand, this);
+    TCPSocket newSocket;
 
-       eventSem.Post();
+    eventSem.Post();
 
-       socket.WaitConnection(TTInfiniteWait, &newSocket);
+    socket.WaitConnection(TTInfiniteWait, &newSocket);
 
-       StreamString stream;
-       HttpProtocol test(newSocket);
-       bool ret = !test.ReadHeader();
-       eventSem.Wait();
+    StreamString stream;
+    HttpProtocol test(newSocket);
+    bool ret = !test.ReadHeader();
+    eventSem.Wait();
 
-       newSocket.Close();
-       socket.Close();
-       return ret;
+    newSocket.Close();
+    socket.Close();
+    return ret;
 }
-
 
 bool HttpProtocolTest::TestCompleteReadOperation() {
     InternetHost source(5554, "127.0.0.1");
@@ -1770,9 +1728,7 @@ bool HttpProtocolTest::TestWriteHeader() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
 
-    printf("%s\n", remained.Buffer());
     if (command != HttpDefinition::HSHCPost) {
         if (ret) {
             ret = (remained == "ciaobellooo\n");
@@ -1853,10 +1809,6 @@ bool HttpProtocolTest::TestWriteHeader2() {
     cdb->MoveToRoot();
     StreamString output2;
     output2.Printf("%@", *cdb);
-    printf("%s\n", output2.Buffer());
-
-    printf("%s\n", remained.Buffer());
-    printf("%s\n", remained2.Buffer());
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
         StreamString par;
@@ -2021,7 +1973,6 @@ bool HttpProtocolTest::TestWriteHeader_StrucuredDataStored() {
 
     socket.Open();
     socket.Listen(5555, 255);
-    //todo launch a thread with the client request
     Threads::BeginThread((ThreadFunctionType) clientJobWriteStructuredStored, this);
     TCPSocket newSocket;
 
@@ -2044,16 +1995,7 @@ bool HttpProtocolTest::TestWriteHeader_StrucuredDataStored() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
-    /*
-     if (ret) {
-     ret = cdb->MoveAbsolute("InputOptions");
-     StreamString par;
-     ret &= cdb->Read("Transfer-Encoding", par);
-     ret &= (par == "chunked");
-     par.SetSize(0);
-     }
-     */
+
     eventSem.Post();
 
     StreamString remained2;
@@ -2069,55 +2011,36 @@ bool HttpProtocolTest::TestWriteHeader_StrucuredDataStored() {
     cdb->MoveToRoot();
     StreamString output2;
     output2.Printf("%@", *cdb);
-    printf("%s\n", output2.Buffer());
-
-    printf("%s\n", remained.Buffer());
-    printf("|%s||%s|\n", remained2.Buffer(), "bellooo\n"
-           "\"A\": {\r\n"
-           "\"B\": {\r\n"
-           "\"C\": {\r\n"
-           "\"var1\": +1\r\n"
-           "}\r\n"
-           "},\r\n"
-           "\"D\": {\r\n"
-           "\"var2\": +2\r\n"
-           "},\r\n"
-           "\"E\": {\r\n"
-           "\"F\": {\r\n"
-           "\"var3\": +3\r\n"
-           "}\r\n"
-           "}\r\n"
-           "}");
 
     if (ret) {
         ret = cdb->MoveAbsolute("InputOptions");
         StreamString par;
         ret &= cdb->Read("Content-Length", par);
-        ret &= (par == "111");
+        ret &= (par == "108");
         par.SetSize(0);
     }
     if (ret) {
-
         ret = (remained == "ciao");
-        if (ret) {
-            ret = (remained2 == "bellooo\n\r"
-                    "\"A\": {\n\r"
-                    "\"B\": {\n\r"
-                    "\"C\": {\n\r"
-                    "\"var1\": +1\n\r"
-                    "}\n\r"
-                    "},\n\r"
-                    "\"D\": {\n\r"
-                    "\"var2\": +2\n\r"
-                    "},\n\r"
-                    "\"E\": {\n\r"
-                    "\"F\": {\n\r"
-                    "\"var3\": +3\n\r"
-                    "}\n\r"
-                    "}\n\r"
-                    "}");
-        }
     }
+    if (ret) {
+        ret = (remained2 == "bellooo\n\r"
+                "\"A\": {\n\r"
+                "\"B\": {\n\r"
+                "\"C\": {\n\r"
+                "\"var1\": 1\n\r"
+                "}\n\r"
+                "},\n\r"
+                "\"D\": {\n\r"
+                "\"var2\": 2\n\r"
+                "},\n\r"
+                "\"E\": {\n\r"
+                "\"F\": {\n\r"
+                "\"var3\": 3\n\r"
+                "}\n\r"
+                "}\n\r"
+                "}");
+    }
+
     newSocket.Close();
     socket.Close();
     return (ret && retVal);
@@ -2215,16 +2138,6 @@ bool HttpProtocolTest::TestWriteHeader_StrucuredDataOnline() {
     cdb->MoveToRoot();
     StreamString output;
     output.Printf("%@", *cdb);
-    printf("%s\n", output.Buffer());
-    /*
-     if (ret) {
-     ret = cdb->MoveAbsolute("InputOptions");
-     StreamString par;
-     ret &= cdb->Read("Transfer-Encoding", par);
-     ret &= (par == "chunked");
-     par.SetSize(0);
-     }
-     */
     eventSem.Post();
 
     StreamString remained2;
@@ -2240,47 +2153,28 @@ bool HttpProtocolTest::TestWriteHeader_StrucuredDataOnline() {
     cdb->MoveToRoot();
     StreamString output2;
     output2.Printf("%@", *cdb);
-    printf("%s\n", output2.Buffer());
-
-    printf("%s\n", remained.Buffer());
-    printf("|%s||%s|\n", remained2.Buffer(), "bellooo\n\r"
-           "\"A\": {\n\r"
-           "\"B\": {\n\r"
-           "\"C\": {\n\r"
-           "\"var1\": +1\n\r"
-           "}\n\r"
-           "},\n\r"
-           "\"D\": {\n\r"
-           "\"var2\": +2\n\r"
-           "},\r\n"
-           "\"E\": {\n\r"
-           "\"F\": {\n\r"
-           "\"var3\": +3\n\r"
-           "}\n\r"
-           "}\n\r"
-           "}");
 
     if (ret) {
-
         ret = (remained == "ciao");
-        if (ret) {
-            ret = (remained2 == "bellooo\n\r"
-                    "\"A\": {\n\r"
-                    "\"B\": {\n\r"
-                    "\"C\": {\n\r"
-                    "\"var1\": +1\n\r"
-                    "}\n\r"
-                    "},\n\r"
-                    "\"D\": {\n\r"
-                    "\"var2\": +2\n\r"
-                    "},\n\r"
-                    "\"E\": {\n\r"
-                    "\"F\": {\n\r"
-                    "\"var3\": +3\n\r"
-                    "}\n\r"
-                    "}\n\r"
-                    "}");
-        }
+    }
+    if (ret) {
+        ret = (remained2 == "bellooo\n\r"
+                "\"A\": {\n\r"
+                "\"B\": {\n\r"
+                "\"C\": {\n\r"
+                "\"var1\": 1\n\r"
+                "}\n\r"
+                "},\n\r"
+                "\"D\": {\n\r"
+                "\"var2\": 2\n\r"
+                "},\n\r"
+                "\"E\": {\n\r"
+                "\"F\": {\n\r"
+                "\"var3\": 3\n\r"
+                "}\n\r"
+                "}\n\r"
+                "}");
+
     }
 
     newSocket.Close();
