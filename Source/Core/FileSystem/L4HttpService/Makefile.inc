@@ -27,6 +27,7 @@
 OBJSX=	HttpClient.x\
     HttpDataExportI.x\
     HttpDirectoryResource.x \
+    HttpMessageInterface.x \
     HttpObjectBrowser.x \
     HttpService.x\
     HttpProtocol.x\

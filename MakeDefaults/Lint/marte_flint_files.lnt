@@ -82,6 +82,7 @@ HttpClient.cpp
 HttpDataExportI.cpp
 HttpDefinition.cpp
 HttpDirectoryResource.cpp
+HttpMessageInterface.cpp
 HttpObjectBrowser.cpp
 HttpProtocol.cpp
 HttpRealmI.cpp
