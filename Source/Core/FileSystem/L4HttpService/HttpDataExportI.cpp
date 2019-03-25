@@ -50,6 +50,7 @@ HttpDataExportI::~HttpDataExportI() {
 
 }
 
+/*lint -e{613} sstream cannot be NULL as otherwise ok would be false*/
 bool HttpDataExportI::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     bool ok = protocol.MoveAbsolute("OutputOptions");
     if (ok) {
@@ -74,6 +75,7 @@ bool HttpDataExportI::GetAsStructuredData(StreamStructuredDataI &data, HttpProto
     return ok;
 }
 
+/*lint -e{613} sstream cannot be NULL as otherwise ok would be false*/
 bool HttpDataExportI::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     bool ok = protocol.MoveAbsolute("OutputOptions");
     if (ok) {
@@ -98,7 +100,7 @@ bool HttpDataExportI::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     return ok;
 }
 
-bool HttpDataExportI::ReplyNotFound(HttpProtocol &protocol) {
+bool HttpDataExportI::ReplyNotFound(HttpProtocol &protocol) const {
     bool ok = protocol.MoveAbsolute("OutputOptions");
     if (ok) {
         ok = protocol.Write("Connection", "close");

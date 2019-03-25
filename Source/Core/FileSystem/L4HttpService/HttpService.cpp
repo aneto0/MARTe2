@@ -64,7 +64,7 @@ HttpService::HttpService() :
     }
 }
 
-/*lint -e{1551} no exception will be thrown by the destructor*/
+/*lint -e{1551, 1506} the MultiThreadService must be stopped at destruction time.*/
 HttpService::~HttpService() {
     (void) server.Close();
     if (Stop() != ErrorManagement::NoError) {
@@ -145,7 +145,7 @@ ErrorManagement::ErrorType HttpService::Start() {
     return err;
 }
 
-ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const commClient) {
+ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const commClient) const {
     ErrorManagement::ErrorType err = !(commClient == NULL);
 
     if (err.ErrorsCleared()) {
@@ -158,7 +158,7 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
     }
     //give the possibility to stop the thread
     if (err.ErrorsCleared()) {
-        int8 requestedTextMode = textMode;
+        uint8 requestedTextMode = textMode;
         HttpProtocol hprotocol(*commClient);
         if (sel.WaitUntil(1000u) > 0) {
             //you want plain text or data
@@ -177,7 +177,7 @@ ErrorManagement::ErrorType HttpService::ClientService(HttpChunkedStream * const 
                 if (!hprotocol.MoveAbsolute("OutputOptions")) {
                     err = !(hprotocol.CreateAbsolute("OutputOptions"));
                 }
-                if (requestedTextMode > 0) {
+                if (requestedTextMode > 0u) {
                     pagePrepared = webRoot->GetAsText(*commClient, hprotocol);
                 }
                 else {
@@ -269,6 +269,19 @@ ErrorManagement::ErrorType HttpService::ServerCycle(MARTe::ExecutionInfo &inform
     return err;
 }
 
+uint16 HttpService::GetPort() const {
+    return port;
+}
+
+int32 HttpService::GetMaxConnections() const {
+    return listenMaxConnections;
+}
+
+ReferenceT<HttpDataExportI> HttpService::GetWebRoot() const {
+    return webRoot;
+}
+
 CLASS_REGISTER(HttpService, "1.0")
 CLASS_METHOD_REGISTER(HttpService, Start)
 }
+

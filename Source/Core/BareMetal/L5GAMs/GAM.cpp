@@ -629,7 +629,7 @@ bool GAM::ExportData(StructuredDataI & data) {
                 ok = GetSignalNumberOfDimensions(InputSignals, i, numberOfDimensions);
             }
             if (ok) {
-                at.SetNumberOfDimensions(numberOfDimensions);
+                at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
                 uint32 numberOfElements = 0u;
                 if (ok) {
                     ok = GetSignalNumberOfElements(InputSignals, i, numberOfElements);
@@ -657,7 +657,7 @@ bool GAM::ExportData(StructuredDataI & data) {
                 uint32 numberOfDimensions = 0u;
                 ok = GetSignalNumberOfDimensions(OutputSignals, i, numberOfDimensions);
                 if (ok) {
-                    at.SetNumberOfDimensions(numberOfDimensions);
+                    at.SetNumberOfDimensions(static_cast<uint8>(numberOfDimensions));
                     uint32 numberOfElements = 0u;
                     if (ok) {
                         ok = GetSignalNumberOfElements(OutputSignals, i, numberOfElements);

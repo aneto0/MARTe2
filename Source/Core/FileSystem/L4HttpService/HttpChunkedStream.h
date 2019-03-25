@@ -97,7 +97,7 @@ public:
      */
     bool IsChunkMode() const;
 
-protected:
+private:
 
     /**
      * Chunk mode flag

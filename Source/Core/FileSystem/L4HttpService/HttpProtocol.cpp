@@ -62,7 +62,7 @@ HttpProtocol::~HttpProtocol() {
     outputStream = NULL_PTR(DoubleBufferedStream*);
 }
 
-bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout, uint32 bufferReadSize) {
+bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, TimeoutType msecTimeout, const uint32 bufferReadSize) {
 
     bool ret = true;
     //This way we can change the falsely undefined content-length when this is called from Write Header
@@ -103,7 +103,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
                 if (isChunked) {
                     //Check if it finishes with 0\r\n\r\n
                     if (sizeToWrite > 4u) {
-                        bool done = (StringHelper::CompareN(&buffer[sizeToWrite - 5u], "0\r\n\r\n", 5u) == 0u);
+                        bool done = (StringHelper::CompareN(&buffer[sizeToWrite - 5u], "0\r\n\r\n", 5u) == 0);
                         if (done) {
                             //break the while
                             readSize = 0u;
@@ -138,7 +138,7 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
 
 }
 
-bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
+bool HttpProtocol::ReadHeader(const uint32 bufferReadSize) {
     /** unknown information length */
     unreadInput = -1;
     lastUpdateTime = HighResolutionTimer::Counter();
@@ -253,6 +253,7 @@ bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
         ret = MoveToRoot();
         if (ret) {
             StreamString peer = "";
+            /*lint -e{740} outputStream may be a BasicSocket*/
             BasicSocket *clientSocket = dynamic_cast<BasicSocket *>(outputStream);
             if (clientSocket != NULL) {
                 // this could be very slow I think ip number will suffice
@@ -324,7 +325,7 @@ bool HttpProtocol::ReadHeader(uint32 bufferReadSize) {
     return ret;
 }
 
-bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id, uint32 bufferWriteSize) {
+bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id, const uint32 bufferWriteSize) {
 
     //if sending something with bodyCompleted=false
     //remember to write Transfer-Encoding: chunked in options
@@ -912,6 +913,7 @@ bool HttpProtocol::SecurityCheck(ReferenceT<HttpRealmI> realm) {
         StreamString authorisationKey;
         if (MoveAbsolute("InputOptions")) {
             if (Read("Authorization", authorisationKey)) {
+                /*lint -e{740} outputStream may be a BasicSocket*/
                 BasicSocket* mySocket = dynamic_cast<BasicSocket *>(outputStream);
                 ret = mySocket != NULL_PTR(BasicSocket*);
                 if (ret) {
@@ -942,15 +944,15 @@ void HttpProtocol::SetUnmatchedId(const char8 * const unMatchedIdIn) {
     unMatchedUrl = unMatchedIdIn;
 }
 
-void HttpProtocol::GetUnmatchedId(StreamString& unmatchedIdOut) {
+void HttpProtocol::GetUnmatchedId(StreamString& unmatchedIdOut) const {
     unmatchedIdOut = unMatchedUrl;
 }
 
-void HttpProtocol::GetPath(StreamString& pathOut) {
+void HttpProtocol::GetPath(StreamString& pathOut) const {
     pathOut = path;
 }
 
-void HttpProtocol::GetId(StreamString& idOut) {
+void HttpProtocol::GetId(StreamString& idOut) const {
     idOut = url;
 }
 

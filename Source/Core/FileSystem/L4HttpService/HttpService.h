@@ -137,9 +137,27 @@ public:
      * to get the required data to be sent as a HTTP reply.
      * @param[in] commClient is the socket to communicate with the client.
      */
-    ErrorManagement::ErrorType ClientService(HttpChunkedStream * const commClient);
+    ErrorManagement::ErrorType ClientService(HttpChunkedStream * const commClient) const;
 
-protected:
+    /**
+     * @brief Gets the configured port.
+     * @return the configured port.
+     */
+    uint16 GetPort() const;
+
+    /**
+     * @brief Gets the maximum number of connections.
+     * @return the maximum number of connections.
+     */
+    int32 GetMaxConnections() const;
+
+    /**
+     * @brief Gets the root reference.
+     * @return the maximum number of connections.
+     */
+    ReferenceT<HttpDataExportI> GetWebRoot() const;
+
+private:
     /**
      * The server socket
      */

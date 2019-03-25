@@ -94,16 +94,15 @@ private:
      * @param[in] ext the file name extension.
      * @return true if the file terminates with the extension.
      */
-    bool CheckExtension(StreamString &fname, const char8 * const ext);
+    bool CheckExtension(StreamString &fname, const char8 * const ext) const;
 
     /**
      * @brief Helper function which streams the filename over the provided stream.
      * @param[in] fname the name of the file to stream.
-     * @param[out] stream where to stream the file.
      * @param[out] protocol to write the Content-type.
      * @return true if the file can be successfully streamed.
      */
-    bool ServeFile(StreamString &fname, StreamI &stream, HttpProtocol &protocol);
+    bool ServeFile(StreamString &fname, HttpProtocol &protocol) const;
 
     /**
      * The base directory w.r.t. which all the paths are evaluated.

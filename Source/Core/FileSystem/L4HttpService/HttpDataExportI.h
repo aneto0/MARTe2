@@ -81,7 +81,7 @@ protected:
      * @param[out] protocol writes the HTTP protocol header.
      * @return true if the header is successfully written.
      */
-    bool ReplyNotFound(HttpProtocol &protocol);
+    bool ReplyNotFound(HttpProtocol &protocol) const;
 
 };
 

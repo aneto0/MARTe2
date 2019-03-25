@@ -145,9 +145,21 @@ public:
      */
     bool TestServerCycle();
 
+    /**
+     * @brief Tests the GetPort method.
+     */
+    bool TestGetPort();
 
+    /**
+     * @brief Tests the GetMaxConnections method.
+     */
+    bool TestGetMaxConnections();
+
+    /**
+     * @brief Tests the GetWebRoot method.
+     */
+    bool TestGetWebRoot();
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

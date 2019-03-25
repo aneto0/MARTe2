@@ -103,7 +103,7 @@ public:
      */
     bool CompleteReadOperation(BufferedStreamI * const streamout,
                                TimeoutType msecTimeout = TTInfiniteWait,
-                               uint32 bufferReadSize = 1024);
+                               uint32 bufferReadSize = 1024u);
 
     /**
      * @brief Performs a security check using the realm passed in input.
@@ -140,19 +140,19 @@ public:
      * @brief Returns the unmatched url.
      * @param[out] unmatchedIdOut contains the unmatched url in output.
      */
-    void GetUnmatchedId(StreamString& unmatchedIdOut);
+    void GetUnmatchedId(StreamString& unmatchedIdOut) const;
 
     /**
      * @brief Retrieves the path that has been built from the received url.
      * @param[out] pathOut contains the path in output.
      */
-    void GetPath(StreamString& pathOut);
+    void GetPath(StreamString& pathOut) const;
 
     /**
      * @brief Retrieves the received url.
      * @param[out] idOut contains the url in output.
      */
-    void GetId(StreamString& idOut);
+    void GetId(StreamString& idOut) const;
 
     /**
      * @brief Read the input command specified in \a commandName.
@@ -310,6 +310,7 @@ private:
                            StreamString &value,
                            bool &headerHandled);
 
+/*lint -e {1712} default constructor not set as this class needs a stream to be used*/
 };
 
 }

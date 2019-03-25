@@ -57,49 +57,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class HttpServiceTestService: public HttpService {
-public:
-    CLASS_REGISTER_DECLARATION()
-
-HttpServiceTestService    ();
-
-    virtual ~HttpServiceTestService();
-
-    uint32 GetPort();
-
-    ReferenceT<ReferenceContainer> GetWebRoot();
-
-    const char8 *GetWebRootPath();
-
-    uint32 GetListenMaxConnections();
-};
-
-HttpServiceTestService::HttpServiceTestService() {
-
-}
-
-HttpServiceTestService::~HttpServiceTestService() {
-
-}
-
-uint32 HttpServiceTestService::GetPort() {
-    return port;
-}
-
-ReferenceT<ReferenceContainer> HttpServiceTestService::GetWebRoot() {
-    return webRoot;
-}
-
-const char8 *HttpServiceTestService::GetWebRootPath() {
-    return webRootPath.Buffer();
-}
-
-uint32 HttpServiceTestService::GetListenMaxConnections() {
-    return listenMaxConnections;
-}
-
-CLASS_REGISTER(HttpServiceTestService, "1.0")
-
 class HttpServiceTestGAM: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -686,11 +643,10 @@ HttpServiceTest::~HttpServiceTest() {
 }
 
 bool HttpServiceTest::TestConstructor() {
-    HttpServiceTestService httpserver;
+    HttpService httpserver;
     bool ret = (httpserver.GetPort() == 0u);
 
-    ret &= (StringHelper::Compare(httpserver.GetWebRootPath(), "") == 0);
-    ret &= httpserver.GetListenMaxConnections() == 0;
+    ret &= httpserver.GetMaxConnections() == 0;
     ret &= !httpserver.GetWebRoot().IsValid();
     return ret;
 
@@ -703,7 +659,7 @@ bool HttpServiceTest::TestInitialise() {
             "  Root=\".\""
             "}\n"
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  WebRoot=\"WebRoot\"\n"
             "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
@@ -722,7 +678,7 @@ bool HttpServiceTest::TestInitialise() {
     if (ret) {
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpServiceTestService> test;
+    ReferenceT<HttpService> test;
     if (ret) {
         test = ObjectRegistryDatabase::Instance()->Find("HttpServerTest");
     }
@@ -734,7 +690,7 @@ bool HttpServiceTest::TestInitialise() {
     }
     if (ret) {
         ret = (test->GetPort() == 9094);
-        ret &= (test->GetListenMaxConnections() == 3);
+        ret &= (test->GetMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -744,7 +700,7 @@ bool HttpServiceTest::TestInitialise() {
 bool HttpServiceTest::TestInitialise_WebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
@@ -766,7 +722,7 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
     if (ret) {
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpServiceTestService> test;
+    ReferenceT<HttpService> test;
     if (ret) {
         test = ObjectRegistryDatabase::Instance()->Find("HttpServerTest");
     }
@@ -775,7 +731,7 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
     }
     if (ret) {
         ret = (test->GetPort() == 9094);
-        ret &= (test->GetListenMaxConnections() == 3);
+        ret &= (test->GetMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -785,7 +741,7 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
 bool HttpServiceTest::TestInitialise_FalseNoWebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
@@ -810,7 +766,7 @@ bool HttpServiceTest::TestInitialise_FalseNoWebRoot() {
 bool HttpServiceTest::TestInitialise_FalseBadWebRoot() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
             "  HttpRelayURL = \"www.google.it\"\n"
@@ -843,7 +799,7 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRootRef() {
             "  Root=\".\""
             "}\n"
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  WebRoot=\"WebRoot\"\n"
             "  Port=9094\n"
             "  ListenMaxConnections = 3\n"
@@ -862,7 +818,7 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRootRef() {
     if (ret) {
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpServiceTestService> test;
+    ReferenceT<HttpService> test;
     if (ret) {
         test = ObjectRegistryDatabase::Instance()->Find("HttpServerTest");
     }
@@ -879,7 +835,7 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRootRef() {
 bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  WebRoot=\"WebRoot\"\n"
             "  Port=9094\n"
             "  HttpRelayURL = \"www.google.it\"\n"
@@ -901,7 +857,7 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
     if (ret) {
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpServiceTestService> test;
+    ReferenceT<HttpService> test;
     if (ret) {
         test = ObjectRegistryDatabase::Instance()->Find("HttpServerTest");
     }
@@ -910,7 +866,7 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
     }
     if (ret) {
         ret = (test->GetPort() == 9094);
-        ret &= (test->GetListenMaxConnections() == 255);
+        ret &= (test->GetMaxConnections() == 255);
         ret &= (test->GetWebRoot().IsValid());
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -920,7 +876,7 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
 bool HttpServiceTest::TestInitialise_DefaultPort() {
     StreamString configStream = ""
             "+HttpServerTest = {\n"
-            "  Class = HttpServiceTestService\n"
+            "  Class = HttpService\n"
             "  WebRoot=\"WebRoot\"\n"
             "  HttpRelayURL = \"www.google.it\"\n"
             "  Timeout = 0\n"
@@ -941,7 +897,7 @@ bool HttpServiceTest::TestInitialise_DefaultPort() {
     if (ret) {
         ret = ObjectRegistryDatabase::Instance()->Initialise(cdb);
     }
-    ReferenceT<HttpServiceTestService> test;
+    ReferenceT<HttpService> test;
     if (ret) {
         test = ObjectRegistryDatabase::Instance()->Find("HttpServerTest");
     }
@@ -950,7 +906,7 @@ bool HttpServiceTest::TestInitialise_DefaultPort() {
     }
     if (ret) {
         ret = (test->GetPort() == 80);
-        ret &= (test->GetListenMaxConnections() == 255);
+        ret &= (test->GetMaxConnections() == 255);
         ret &= (test->GetWebRoot().IsValid());
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -973,7 +929,7 @@ bool HttpServiceTest::TestStart() {
             "$Application = {"
             "   Class = RealTimeApplication"
             "   +HttpServerTest = {"
-            "       Class = HttpServiceTestService"
+            "       Class = HttpService"
             "       WebRoot = \"WebRoot\""
             "       Port=9094"
             "       ListenMaxConnections = 255"
@@ -1044,7 +1000,7 @@ bool HttpServiceTest::TestStart() {
 
     bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<HttpServiceTestService> test = god->Find("Application.HttpServerTest");
+    ReferenceT<HttpService> test = god->Find("Application.HttpServerTest");
     if (ret) {
         ret = test.IsValid();
         if (ret) {
@@ -1080,7 +1036,7 @@ bool HttpServiceTest::TestStart_InvalidWebRoot() {
             "           }"
             "       }"
             "       +HttpServerTest = {"
-            "           Class = HttpServiceTestService"
+            "           Class = HttpService"
             "           WebRoot = \"Application.Invalid\""
             "           Port=9094"
             "           ListenMaxConnections = 255"
@@ -1151,7 +1107,7 @@ bool HttpServiceTest::TestStart_InvalidWebRoot() {
 
     bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
-    ReferenceT<HttpServiceTestService> test = god->Find("Application.HttpServerTest");
+    ReferenceT<HttpService> test = god->Find("Application.HttpServerTest");
     if (ret) {
         ret = test.IsValid();
         if (ret) {
@@ -1639,3 +1595,16 @@ bool HttpServiceTest::TestServerCycle() {
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
+
+bool HttpServiceTest::TestGetPort() {
+    return TestInitialise();
+}
+
+bool HttpServiceTest::TestGetMaxConnections() {
+    return TestInitialise();
+}
+
+bool HttpServiceTest::TestGetWebRoot() {
+    return TestInitialise();
+}
+

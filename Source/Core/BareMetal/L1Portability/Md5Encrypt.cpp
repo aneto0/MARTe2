@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/*lint -e{9158} -e{9159} -e{9021} allow to use #define for this implementation, but this should be revisited*/
+/*lint -e{9158} -e{9159} -e{9021} -e{123} allow to use #define for this implementation, but this should be revisited*/
 namespace Md5Encrypt {
 
 /*

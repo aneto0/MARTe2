@@ -54,6 +54,7 @@ HttpObjectBrowser::HttpObjectBrowser() :
 }
 
 HttpObjectBrowser::~HttpObjectBrowser() {
+    /*lint -e{1540} root is freed by the parent Reference*/
 }
 
 void HttpObjectBrowser::Purge(ReferenceContainer &purgeList) {
@@ -72,15 +73,15 @@ bool HttpObjectBrowser::Initialise(StructuredDataI &data) {
     }
     if (ok) {
         if (rootName.Size() == 1u) {
-            if (rootName[0] == '/') {
+            if (rootName[0u] == '/') {
                 root = ObjectRegistryDatabase::Instance();
             }
-            else if (rootName[0] == '.') {
+            else if (rootName[0u] == '.') {
                 root = this;
             }
             else {
                 ok = false;
-                REPORT_ERROR(ErrorManagement::ParametersError, "Unknown Root [%c]", rootName[0]);
+                REPORT_ERROR(ErrorManagement::ParametersError, "Unknown Root [%c]", rootName[0u]);
             }
         }
         else {
@@ -167,6 +168,9 @@ bool HttpObjectBrowser::CheckSecurity(HttpProtocol &protocol) {
                     }
                     ok = hprotocol->WriteHeader(true, HttpDefinition::HSHCReplyAUTH, &hstream, NULL_PTR(const char8*));
                 }
+                if (!ok) {
+                    REPORT_ERROR_STATIC(ErrorManagement::Warning, "Failed to write the header");
+                }
             }
         }
     }
@@ -198,13 +202,14 @@ Reference HttpObjectBrowser::FindTarget(HttpProtocol &protocol) {
                 else {
                     toAppend = lastDotToken;
                     toAppend += ".";
-                    toAppend += +reparsedPath.Buffer();
+                    toAppend += reparsedPath.Buffer();
                 }
                 reparsedPath = toAppend;
-                uint32 pathMatchSize = (lastDotToken - unmatchedPath.Buffer());
+                /*lint -e{9125,946,947} allow for pointers to be subtracted and cast to uint32*/
+                uint32 pathMatchSize = static_cast<uint32>(lastDotToken - unmatchedPath.Buffer());
                 //Remove the .
                 pathMatchSize -= 1u;
-                (void) unmatchedPath.SetSize(pathMatchSize);
+                (void) unmatchedPath.SetSize(static_cast<uint64>(pathMatchSize));
             }
         }
     }
@@ -217,6 +222,7 @@ Reference HttpObjectBrowser::FindTarget(HttpProtocol &protocol) {
     return target;
 }
 
+/*lint -e{613} sdata cannot be NULL as otherwise ok would be false*/
 bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     bool ok = CheckSecurity(protocol);
     if (ok) {
@@ -225,18 +231,17 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
         StreamStructuredData<JsonPrinter> *sdata;
         if (ok) {
             sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
-
+            /*lint -e{665} StreamStructuredData<JsonPrinter> is only used to define the pointer type of the NULL_PTR*/
             ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
         }
         if (ok) {
             bool isThis = (target == this);
             //If we are printing ourselves list all the elements belonging to the root (note that the root might be pointing elsewhere).
             if (isThis) {
-                if (ok) {
-                    ok = HttpDataExportI::GetAsStructuredData(data, protocol);
-                }
+                ok = HttpDataExportI::GetAsStructuredData(data, protocol);
                 //Print the opening {
                 if (ok) {
+                    //lint -e{644} sdata initialised otherwise ok would be false*/
                     ok = sdata->GetPrinter()->PrintBegin();
                 }
                 if (ok) {
@@ -247,7 +252,8 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                 uint32 numberOfChildren = root->Size();
                 for (uint32 i = 0u; (i < numberOfChildren) && (ok); i++) {
                     StreamString nname;
-                    ok = nname.Printf("%d", i);
+                    uint32 ii = i;
+                    ok = nname.Printf("%d", ii);
                     if (ok) {
                         ok = data.CreateRelative(nname.Buffer());
                     }
@@ -286,9 +292,7 @@ bool HttpObjectBrowser::GetAsStructuredData(StreamStructuredDataI &data, HttpPro
                 }
                 else {
                     //Otherwise dump the object values.
-                    if (ok) {
-                        ok = HttpDataExportI::GetAsStructuredData(data, protocol);
-                    }
+                    ok = HttpDataExportI::GetAsStructuredData(data, protocol);
                     //Print the opening {
                     if (ok) {
                         ok = sdata->GetPrinter()->PrintBegin();
@@ -358,10 +362,12 @@ Reference HttpObjectBrowser::FindReference(const char8 * const unmatchedPath) {
         uint32 mode = ReferenceContainerFilterMode::SHALLOW;
         ReferenceContainerFilterObjectName filter(occurrences, mode, unmatchedPath);
         ReferenceContainer results;
-        root->Find(results, filter);
-        if (results.Size() > 0ull) {
-            uint32 last = static_cast<uint32>(results.Size()) - 1u;
-            target = results.Get(last);
+        if (root != NULL_PTR(ReferenceContainer *)) {
+            root->Find(results, filter);
+            if (results.Size() > 0ull) {
+                uint32 last = static_cast<uint32>(results.Size()) - 1u;
+                target = results.Get(last);
+            }
         }
     }
     else {

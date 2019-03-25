@@ -130,3 +130,18 @@ TEST(FileSystem_L4HttpService_HttpServiceGTest, TestServerCycle) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestServerCycle());
 }
+
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestGetPort) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestGetPort());
+}
+
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestGetMaxConnections) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestGetMaxConnections());
+}
+
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestGetWebRoot) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestGetWebRoot());
+}

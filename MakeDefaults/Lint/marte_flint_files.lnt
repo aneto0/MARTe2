@@ -37,7 +37,6 @@ ConsoleLogger.cpp
 CRC.h
 CString.h
 DataSourceI.cpp
-DataExportI.cpp
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
@@ -76,9 +75,9 @@ GrammarInfo.h
 HandleI.h
 HeapI.h
 HeapManager.cpp
-HttpChunkedStream.cpp
 HighResolutionTimer.h
 HighResolutionTimerCalibrator.cpp
+HttpChunkedStream.cpp
 HttpClient.cpp
 HttpDataExportI.cpp
 HttpDefinition.cpp
@@ -147,7 +146,6 @@ MultiClientService.cpp
 MultiThreadService.cpp
 MutexSem.cpp
 Object.cpp
-ObjectBrowser.cpp
 ObjectBuilder.h
 ObjectBuilderT.h
 ObjectRegistryDatabase.cpp
@@ -157,7 +155,6 @@ OperatingSystemCallbacksI.h
 ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
-ProtocolI.cpp
 PrinterI.cpp
 QueuedMessageI.cpp
 QueueingMessageFilter.cpp

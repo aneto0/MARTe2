@@ -45,7 +45,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-HttpDirectoryResource::HttpDirectoryResource() {
+HttpDirectoryResource::HttpDirectoryResource() : Object(), HttpDataExportI() {
 
 }
 
@@ -67,13 +67,15 @@ bool HttpDirectoryResource::Initialise(StructuredDataI &data) {
     return ok;
 }
 
+/*lint -e{613} sdata cannot be NULL as otherwise ok would be false*/
 bool HttpDirectoryResource::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     bool ok = HttpDataExportI::GetAsStructuredData(data, protocol);
     if (ok) {
         StreamStructuredData<JsonPrinter> *sdata = dynamic_cast<StreamStructuredData<JsonPrinter> *>(&data);
+        /*lint -e{665} StreamStructuredData<JsonPrinter> is only used to define the pointer type of the NULL_PTR*/
         ok = (sdata != NULL_PTR(StreamStructuredData<JsonPrinter> *));
         if (ok) {
-            sdata->GetPrinter()->PrintBegin();
+            ok = sdata->GetPrinter()->PrintBegin();
         }
         if (ok) {
             ok = Object::ExportData(data);
@@ -84,20 +86,21 @@ bool HttpDirectoryResource::GetAsStructuredData(StreamStructuredDataI &data, Htt
             StreamString fullPath = baseDir;
             fullPath += DIRECTORY_SEPARATOR;
             fullPath += path.Buffer();
-            File f;
             Directory d(fullPath.Buffer());
             ok = data.CreateRelative("Files");
             if (ok) {
                 if (d.IsDirectory()) {
                     DirectoryScanner ds;
                     ok = ds.Scan(fullPath.Buffer());
-                    uint32 i = 0;
+                    uint32 i = 0u;
                     while ((ds.ListPeek(i) != NULL) && (ok)) {
-                        Directory *dt = static_cast<Directory *>(ds.ListPeek(i));
+                        Directory *dt = dynamic_cast<Directory *>(ds.ListPeek(i));
                         if (dt != NULL_PTR(Directory *)) {
                             StreamString idx;
-                            idx.Printf("%d", i);
-                            ok = data.CreateRelative(idx.Buffer());
+                            ok = idx.Printf("%d", i);
+                            if (ok) {
+                                ok = data.CreateRelative(idx.Buffer());
+                            }
                             if (ok) {
                                 ok = data.Write("Name", dt->GetName());
                             }
@@ -145,6 +148,7 @@ bool HttpDirectoryResource::GetAsStructuredData(StreamStructuredDataI &data, Htt
     return ok;
 }
 
+/*lint -e{715} stream not required by this implementation*/
 bool HttpDirectoryResource::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     StreamString path;
     if (!protocol.GetInputCommand("path", path)) {
@@ -154,26 +158,28 @@ bool HttpDirectoryResource::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     fullPath += DIRECTORY_SEPARATOR;
     fullPath += path.Buffer();
     REPORT_ERROR(ErrorManagement::Debug, "Serving %s", fullPath.Buffer());
-    bool ok = ServeFile(fullPath, stream, protocol);
+    bool ok = ServeFile(fullPath, protocol);
     return ok;
 }
 
-bool HttpDirectoryResource::CheckExtension(StreamString &fname, const char8 * const ext) {
+bool HttpDirectoryResource::CheckExtension(StreamString &fname, const char8 * const ext) const {
     uint32 extLen = StringHelper::Length(ext);
     bool ok = (fname.Size() >= extLen);
     if (ok) {
         const char8 * fnameb = fname.Buffer();
-        uint32 fnameNoExtIdx = (fname.Size() - extLen);
-        ok = (StringHelper::CompareNoCaseSensN(&fnameb[fnameNoExtIdx], ext, extLen) == 0u);
+        uint32 fnameNoExtIdx = static_cast<uint32>(fname.Size());
+        fnameNoExtIdx -= extLen;
+        ok = (StringHelper::CompareNoCaseSensN(&fnameb[fnameNoExtIdx], ext, extLen) == 0);
     }
     return ok;
 }
 
-bool HttpDirectoryResource::ServeFile(StreamString &fname, StreamI &stream, HttpProtocol &protocol) {
+bool HttpDirectoryResource::ServeFile(StreamString &fname, HttpProtocol &protocol) const {
     File f;
     bool ok = f.Open(fname.Buffer(), MARTe::BasicFile::ACCESS_MODE_R);
     StreamString mime = "binary";
 
+    /*lint -e{9007} no side effects on CheckExtension function call*/
     if (ok) {
         if (CheckExtension(fname, ".html") || CheckExtension(fname, ".htm")) {
             mime = "text/html";
@@ -202,9 +208,7 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, StreamI &stream, Http
         else {
             mime = "binary";
         }
-        if (ok) {
-            ok = protocol.MoveAbsolute("OutputOptions");
-        }
+        ok = protocol.MoveAbsolute("OutputOptions");
     }
     else {
         (void) HttpDataExportI::ReplyNotFound(protocol);
@@ -216,8 +220,10 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, StreamI &stream, Http
         //With the HEAD just inform that the file exists
         if (protocol.GetHttpCommand() == HttpDefinition::HSHCHead) {
             StreamString s;
-            s.SetSize(0LLU);
-            ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &s, NULL_PTR(const char8*));
+            ok = s.SetSize(0LLU);
+            if (ok) {
+                ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &s, NULL_PTR(const char8*));
+            }
         }
         else {
             ok = protocol.WriteHeader(true, HttpDefinition::HSHCReplyOK, &f, NULL_PTR(const char8*));
