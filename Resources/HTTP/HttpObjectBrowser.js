@@ -14,8 +14,9 @@ class HttpObjectBrowser extends MARTeObject {
         this.mainRow = document.createElement("div");
         this.leftPaneContainer = document.createElement("div");        
         this.leftPaneTree = document.createElement("div");
-        this.leftPaneConfig = document.createElement("div");
-        this.leftPaneConfigOptions = document.createElement("div");
+        this.leftPaneConfigHeader = document.createElement("div");
+        this.leftPaneConfigPanel = document.createElement("div");        
+        
         this.rightPaneContainer = document.createElement("div");
         
 		var showConfigBtn = document.createElement("button");
@@ -26,31 +27,35 @@ class HttpObjectBrowser extends MARTeObject {
 				this.toggleConfig();				
 			}.bind(this),
 		false);
-                
-        this.leftPaneConfig.appendChild(showConfigBtn);
-        this.addConfigOptions();
-        this.leftPaneConfig.appendChild(this.leftPaneConfigOptions);
-        
+                        
         this.mainRow.setAttribute("class", "mainrow");
 		this.leftPaneContainer.setAttribute("class", "maincolumnnav");
 		this.leftPaneTree.setAttribute("class", "maincolumntree");
-		this.leftPaneConfig.setAttribute("class", "maincolumnconfig");
+		this.leftPaneConfigHeader.setAttribute("class", "maincolumnconfig");
+		this.leftPaneConfigPanel.setAttribute("class", "maincolumnconfig");
+		this.leftPaneConfigPanel.style.display = "none";
+		this.addConfigOptions();
+		
+		showConfigBtn.setAttribute("class", "configbutton");
 		this.rightPaneContainer.setAttribute("class", "maincolumntarget");
 		
 		
-		this.leftPaneContainer.appendChild(this.leftPaneTree);
-		this.leftPaneContainer.appendChild(this.leftPaneConfig);
+		this.leftPaneConfigHeader.appendChild(showConfigBtn);				
+		this.leftPaneContainer.appendChild(this.leftPaneConfigHeader);
+		this.leftPaneContainer.appendChild(this.leftPaneTree);		
+		this.leftPaneContainer.appendChild(this.leftPaneConfigPanel);
 		this.mainRow.appendChild(this.leftPaneContainer);
 		this.mainRow.appendChild(this.rightPaneContainer); 
 		this.target.appendChild(this.mainRow);		 
         this.loadPanelConfig();        
     }
     
+    
     /**
      * TODO
      */
     addConfigOptions() {
-    	this.leftPaneConfigOptions.innerHTML = "<br/>" + 
+    	this.leftPaneConfigPanel.innerHTML = "<br/>" + 
     		"<label for=\"panelcfg\">Panel configuration</label>" +
     		"<input type=\"text\" id=\"panelcfg\" name=\"panelcfg\">"
     		"";
@@ -60,8 +65,14 @@ class HttpObjectBrowser extends MARTeObject {
     /**
      * TODO
      */
-	toggleConfig() {
-	}
+    toggleConfig() {
+        if (this.leftPaneConfigPanel.style.display === "none") {
+            this.leftPaneConfigPanel.style.display = "flex";
+        }
+        else {
+            this.leftPaneConfigPanel.style.display = "none";
+        }
+    }
 
     /**
      * TODO

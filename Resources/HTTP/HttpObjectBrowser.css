@@ -75,7 +75,7 @@ button {
 .maincolumnnav, .maincolumntarget, .maincolumntargetitem {	
   border-style: solid;
   border-width: 1px;
-  border-color: rgb(211, 215, 207);  				
+  border-color: rgb(211, 215, 207);
   overflow: auto;
   resize: horizontal;
   min-width: 0px;
@@ -95,6 +95,9 @@ button {
   width: 100%;
   display: flex; 
   align-items: flex-end; 
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  overflow: hidden;
 }
 
 .maincolumntarget {
@@ -113,3 +116,13 @@ button {
   resize: horizontal;
   height: unset;
 }
+
+.configbutton {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
