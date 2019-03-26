@@ -28,7 +28,7 @@ OBJSX=	HttpChunkedStreamTest.x \
     HttpClientTest.x \
     HttpDataExportITest.x \
     HttpDirectoryResourceTest.x \
-    HttpMessageInterface.x \
+    HttpMessageInterfaceTest.x \
     HttpObjectBrowserTest.x \
     HttpProtocolTest.x \
     HttpServiceTest.x

@@ -24,11 +24,12 @@
 #
 #############################################################
 
-OBJSX= HttpObjectBrowserGTest.x \
-    HttpChunkedStreamGTest.x \
+OBJSX= HttpChunkedStreamGTest.x \
     HttpClientGTest.x \
     HttpDataExportIGTest.x \
     HttpDirectoryResourceGTest.x \
+    HttpMessageInterfaceGTest.x \
+    HttpObjectBrowserGTest.x \
     HttpProtocolGTest.x \
     HttpServiceGTest.x
 		
