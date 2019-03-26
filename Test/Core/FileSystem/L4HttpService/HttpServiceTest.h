@@ -159,6 +159,12 @@ public:
      * @brief Tests the GetWebRoot method.
      */
     bool TestGetWebRoot();
+
+    /**
+     * @brief Tests the server under load (i.e. with no sufficient threads to serve the request).
+     */
+    bool TestClientService_NoMoreThreads();
+
 };
 
 /*---------------------------------------------------------------------------*/

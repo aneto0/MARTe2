@@ -250,6 +250,7 @@ ErrorManagement::ErrorType HttpService::ServerCycle(MARTe::ExecutionInfo &inform
                         if (!hprotocol.WriteHeader(false, HttpDefinition::HSHCReplyTooManyRequests, &s, NULL_PTR(const char8*))) {
                             REPORT_ERROR(ErrorManagement::FatalError, "Too many connections");
                         }
+                        REPORT_ERROR(ErrorManagement::Warning, "Too many connections");
                         (void) newClient->Close();
                         delete newClient;
                     }

@@ -236,6 +236,87 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_File() {
     return ok;
 }
 
+bool HttpDirectoryResourceTest::TestGetAsStructuredData_File_Head() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 0\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource1 = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \"HttpDirectoryResourceTestFolder\""
+            "    }\n"
+            "}\n";
+
+    Directory d("HttpDirectoryResourceTestFolder");
+    d.Create();
+    File f;
+    f.Open("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W);
+    f.Printf("Test %d", 1);
+    f.Flush();
+    f.Close();
+    cfg.Seek(0LLU);
+    StreamString err;
+    ConfigurationDatabase cdb;
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ok = service.IsValid();
+
+    if (ok) {
+        ok = service->Start();
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/DirectoryResource1?path=HttpDirectoryResourceTest.txt");
+    StreamString reply;
+    if (ok) {
+        ok = test.HttpExchange(reply, HttpDefinition::HSHCHead, NULL, 1000u);
+    }
+    const char8 * expectedReply = ""
+            "1F\r\n{\n\r\"Name\": \"DirectoryResource1\"\r\n"
+            "20\r\n,\n\r\"Class\": \"HttpDirectoryResour\r\n"
+            "3\r\nce\"\r\nD\r\n\n\r,\"Files\": {\r\n"
+            "8\r\n\n\r\"0\": {\r\n"
+            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\n"
+            "20\r\nTestFolder/HttpDirectoryResource\r\n9\r\nTest.txt\"\r\n"
+            "15\r\n,\n\r\"IsDirectory\": \"0\"\r\nE\r\n,\n\r\"Size\": \"6\"\r\n"
+            "3\r\n\n\r}\r\n3\r\n\n\r}\r\n1\r\n}\r\n0\r\n\r\n";
+    if (ok) {
+        ok = (reply == expectedReply);
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    Directory df1("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt");
+    df1.Delete();
+    d.Delete();
+    return ok;
+}
+
 bool HttpDirectoryResourceTest::TestGetAsText() {
     using namespace MARTe;
     StreamString cfg = ""

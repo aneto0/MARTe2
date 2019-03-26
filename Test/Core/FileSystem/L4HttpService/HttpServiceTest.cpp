@@ -52,6 +52,7 @@
 #include "StandardParser.h"
 #include "StreamStructuredData.h"
 #include "StringHelper.h"
+#include "ThreadInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -517,6 +518,42 @@ bool HttpServiceTestClassTest2::GetAuthenticationRequest(StreamString &message) 
 }
 
 CLASS_REGISTER(HttpServiceTestClassTest2, "1.0")
+
+class HttpServiceTestClassTest3: public ReferenceContainer, public HttpDataExportI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+HttpServiceTestClassTest3    ();
+
+    virtual ~HttpServiceTestClassTest3();
+
+    virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
+
+    virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
+
+};
+
+HttpServiceTestClassTest3::HttpServiceTestClassTest3() {
+
+}
+
+HttpServiceTestClassTest3::~HttpServiceTestClassTest3() {
+
+}
+
+bool HttpServiceTestClassTest3::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
+    HttpDataExportI::GetAsStructuredData(data, protocol);
+    data.Write("Test", "test");
+    Sleep::Sec(2.0);
+    return true;
+}
+
+bool HttpServiceTestClassTest3::GetAsText(StreamI &stream, HttpProtocol &protocol) {
+    HttpDataExportI::GetAsText(stream, protocol);
+    return true;
+}
+
+CLASS_REGISTER(HttpServiceTestClassTest3, "1.0")
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -1608,3 +1645,80 @@ bool HttpServiceTest::TestGetWebRoot() {
     return TestInitialise();
 }
 
+bool HttpServiceTest::TestClientService_NoMoreThreads() {
+
+    const char8 *config = ""
+            "$Application = {"
+            "   Class = ReferenceContainer"
+            "   +WebRoot = {"
+            "       Class = HttpObjectBrowser"
+            "       Root = \".\""
+            "       +Test3 = {"
+            "           Class = HttpServiceTestClassTest3"
+            "       }"
+            "   }"
+            "   +HttpServerTest = {"
+            "       Class = HttpService"
+            "       WebRoot = \"Application.WebRoot\""
+            "       Port=9094"
+            "       ListenMaxConnections = 255"
+            "       IsTextMode = 0"
+            "       Timeout = 0"
+            "       AcceptTimeout = 100"
+            "       MaxNumberOfThreads=2"
+            "       MinNumberOfThreads=1"
+            "   }"
+            "}";
+
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config);
+    ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
+
+    ReferenceT<HttpService> service = god->Find("Application.HttpServerTest");
+    ret = service.IsValid();
+
+    if (ret) {
+        ret = service->Start();
+    }
+
+    HttpClient test1;
+    if (ret) {
+        test1.SetServerAddress("127.0.0.1");
+        test1.SetServerPort(9094);
+        test1.SetServerUri("Test3");
+        StreamString readOut;
+        ret = test1.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ret) {
+        HttpClient test2;
+        test2.SetServerAddress("127.0.0.1");
+        test2.SetServerPort(9094);
+        test2.SetServerUri("Test3");
+        StreamString readOut;
+        ret = test2.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+    if (ret) {
+        //Force the closing of the connection with the server
+        test1.SetServerUri("TestDoesNotExist");
+        StreamString readOut;
+        (void) test1.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1000u);
+    }
+
+    Sleep::Sec(2.0);
+    if (ret) {
+        HttpClient test2;
+        test2.SetServerAddress("127.0.0.1");
+        test2.SetServerPort(9094);
+        test2.SetServerUri("Test3");
+        StreamString readOut;
+        ret = test2.HttpExchange(readOut, HttpDefinition::HSHCGet, NULL, 1000u);
+        if (ret) {
+            ret = (readOut == "10\r\n\n\r\"Test\": \"test\"\r\n");
+        }
+    }
+    if (ret) {
+        ret = service->Stop();
+    }
+
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ret;
+}

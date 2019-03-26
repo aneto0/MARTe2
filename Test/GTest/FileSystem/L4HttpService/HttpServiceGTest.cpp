@@ -145,3 +145,8 @@ TEST(FileSystem_L4HttpService_HttpServiceGTest, TestGetWebRoot) {
     HttpServiceTest test;
     ASSERT_TRUE(test.TestGetWebRoot());
 }
+
+TEST(FileSystem_L4HttpService_HttpServiceGTest, TestClientService_NoMoreThreads) {
+    HttpServiceTest test;
+    ASSERT_TRUE(test.TestClientService_NoMoreThreads());
+}

@@ -62,6 +62,11 @@ public:
     bool TestGetAsStructuredData_File();
 
     /**
+     * @brief Tests the GetAsStructuredData to check the file existence.
+     */
+    bool TestGetAsStructuredData_File_Head();
+
+    /**
      * @brief Tests the GetAsText.
      */
     bool TestGetAsText();

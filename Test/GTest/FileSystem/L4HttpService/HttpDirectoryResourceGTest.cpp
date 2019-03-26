@@ -64,6 +64,11 @@ TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Fil
     ASSERT_TRUE(test.TestGetAsStructuredData_File());
 }
 
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_File_Head) {
+    HttpDirectoryResourceTest test;
+    ASSERT_TRUE(test.TestGetAsStructuredData_File_Head());
+}
+
 TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText) {
     HttpDirectoryResourceTest test;
     ASSERT_TRUE(test.TestGetAsText());
