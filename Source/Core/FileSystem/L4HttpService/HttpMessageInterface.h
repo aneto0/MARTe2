@@ -102,11 +102,11 @@ HttpMessageInterface    ();
 private:
 
     /**
-     * @brief Sends the message.
+     * @brief Sends the message encoded in the "msg" HTTP command.
      * @param[in] protocol expected to contain a \a msg parameter where to read the name of the message to send.
      * @return true if the message can be sent (only if the "msg" HTTP command was set).
      */
-    bool SendMessage(HttpProtocol &protocol);
+    bool SendMessageFromHttp(HttpProtocol &protocol);
 };
 }
 

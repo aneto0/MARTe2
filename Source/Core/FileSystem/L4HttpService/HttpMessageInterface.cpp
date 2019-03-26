@@ -73,6 +73,7 @@ bool HttpMessageInterface::Initialise(StructuredDataI &data) {
     return ok;
 }
 
+/*lint -e{613} sdata cannot be NULL as otherwise ok would be false*/
 bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol) {
     bool ok = HttpDataExportI::GetAsStructuredData(data, protocol);
     StreamStructuredData<JsonPrinter> *sdata;
@@ -88,7 +89,7 @@ bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data, Http
     if (ok) {
         StreamString msgName;
         if (protocol.GetInputCommand("msg", msgName)) {
-            ok = SendMessage(protocol);
+            ok = SendMessageFromHttp(protocol);
             ok = data.Write("OK", ok ? 1u : 0u);
         }
         else {
@@ -105,12 +106,12 @@ bool HttpMessageInterface::GetAsStructuredData(StreamStructuredDataI &data, Http
 bool HttpMessageInterface::GetAsText(StreamI &stream, HttpProtocol &protocol) {
     bool ok = HttpDataExportI::GetAsText(stream, protocol);
     if (ok) {
-        ok = SendMessage(protocol);
+        ok = SendMessageFromHttp(protocol);
     }
     return ok;
 }
 
-bool HttpMessageInterface::SendMessage(HttpProtocol &protocol) {
+bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
     bool ok = true;
     StreamString msgName;
     if (protocol.GetInputCommand("msg", msgName)) {
