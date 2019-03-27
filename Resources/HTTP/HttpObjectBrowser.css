@@ -1,19 +1,32 @@
-/* Remove default bullets */
-ul, #myUL {
-  list-style-type: none;
-}
+/**
+ * @file HttpObjectBrowser.css 
+ * @brief Source file for css HttpObjectBrowser
+ * @date 27/03/2019
+ * @author Andre' Neto
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+ */
 
-/* Remove margins and padding from the parent ul */
-#myUL {
-  margin: 0;
-  padding: 0;
+/* Remove default bullets */
+ul {
+  list-style-type: none;
 }
 
 li {
   font-size: 18px;
 }
 
-button {
+.treeButton {
   font-size: 18px;
   width: 30px;
   height: 30px;
@@ -29,7 +42,7 @@ button {
   display: block;
 }
 
-.dropbtn {
+.dropButton {
   font-size: 18px;  
 }
 
@@ -65,14 +78,14 @@ button {
   background-color: rgb(46, 52, 54);
 }
 
-.mainrow, .mainrowtargetitem {
+.mainRow, .mainRowTargetItem {
   display: flex;
   height: 100%;
   width: 100%;
 }
 
 /* Defines the two main container panes properties*/
-.maincolumnnav, .maincolumntarget, .maincolumntargetitem {	
+.mainColumnNav, .mainColumnTarget, .mainColumnTargetItem {	
   border-style: solid;
   border-width: 1px;
   border-color: rgb(211, 215, 207);
@@ -82,16 +95,42 @@ button {
   width: 40%;
 }
 
-.maincolumnnav {
+.mainColumnTarget {
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+
+.mainRowTargetItem {
+  height: unset;
+}
+
+.mainColumnTargetItem {
+  resize: none;
+  width: 100%;	
+  resize: horizontal;
+  height: unset;
+}
+
+.configButton {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.mainColumnNav {
   padding-right: 10px;
   height: 100%;
 }	
 
-.maincolumntree {
+.mainColumnTree {
   width: 100%;
 }
 
-.maincolumnconfig {
+.mainColumnConfig, .mainPanelConfig {
   width: 100%;
   display: flex; 
   align-items: flex-end; 
@@ -99,30 +138,16 @@ button {
   position: sticky;
   overflow: hidden;
 }
-
-.maincolumntarget {
-  resize: none;
-  width: 100%;
-  height: 100%;
+  
+.mainPanelConfigTable {
+    border-style: dotted; 
+    border-width: 2px;
+    width:100%;
 }
 
-.mainrowtargetitem {
-  height: unset;
-}
-
-.maincolumntargetitem {
-  resize: none;
-  width: 100%;	
-  resize: horizontal;
-  height: unset;
-}
-
-.configbutton {
-  margin: 0;
-  padding: 0;
-  top: 0;
-  font-size: 12px;
-  width: 12px;
-  height: 12px;
+.mainPanelConfigTableTh {
+    background-color:#DCDCDC;
+    font-size:medium;padding-bottom: 5px;
+    padding-top: 5px;
 }
 

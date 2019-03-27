@@ -1,3 +1,21 @@
+<!--
+  @file index.html 
+  @brief Source file for index.html
+  @date 27/03/2019
+  @author Andre' Neto
+ 
+  @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+  the Development of Fusion Energy ('Fusion for Energy').
+  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+  by the European Commission - subsequent versions of the EUPL (the "Licence")
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+  @warning Unless required by applicable law or agreed to in writing, 
+  software distributed under the Licence is distributed on an "AS IS"
+  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+  or implied. See the Licence permissions and limitations under the Licence.
+-->
 <html>
     <head>
         <script src="/?path=MARTeLoader.js&TextMode=1">
@@ -8,9 +26,7 @@
     </head>
     <script>
     	function loadPanels() {    		
-    		/**
-    		 * Parse the GET params
-    		 */
+    		//Parse the GET params
 			var getVars = {};
     		window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
         		getVars[key] = value;
@@ -21,23 +37,6 @@
     		if (objpath === undefined) {
     			objpath = "";
     		}
-    		/*var standalone = false;
-    		if ("Standalone" in getVars) {
-    			standalone = (parseInt(getVars["Standalone"]) == 1);
-    		}
-    		if (!standalone) {
-    			MARTeLoader.instance().loadPanelConfig();
-    			MARTeLoader.instance().load('', '', 'leftPaneContainer');
-			}
-			else {
-				var objPath = getVars["ObjPath"];
-				var objClass = getVars["ObjClass"];
-				var rightPaneContainer = document.getElementById("rightPaneContainer");
-				rightPaneContainer.parentNode.removeChild(rightPaneContainer);
-				var leftPaneContainer = document.getElementById("leftPaneContainer");				
-				MARTeLoader.instance().load(objPath, objClass, 'leftPaneContainer');
-				leftPaneContainer.style.width = "100%";
-			} */  
 			var mainTargetContainer = document.getElementById("mainTarget");
 			mainTargetContainer.style.width = "100%";
 			MARTeLoader.instance().load(objpath, "", "mainTarget"); 		
@@ -45,11 +44,6 @@
     </script>    
     <body onload="loadPanels()">
     	<div id="mainTarget">
-    	<!--<div class="mainrow">-->
-        	<!--<div id="leftPaneContainer" class="maincolumnnav">            	
-        	</div>-->
-        	<!--<div id="rightPaneContainer" class="maincolumntarget" width="70%" >        		
-			</div>-->
     	</div>
     	<div id="martelogo" hidden>
     		<pre>                                                                                                                                                 

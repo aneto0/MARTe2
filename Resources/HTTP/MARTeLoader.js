@@ -1,3 +1,29 @@
+/**
+ * @file MARTeLoader.js 
+ * @brief Source file for class MARTeLoader.js
+ * @date 27/03/2019
+ * @author Andre' Neto
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class MARTeLoader (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/**
+ * @brief Helper class that allow to load javascript and css code based on a given class name.
+ */
 class MARTeLoader {
 
 	/**
@@ -72,7 +98,9 @@ class MARTeLoader {
 	}
 
 	/**
-	 * @brief TODO
+	 * @brief Reconstructs the URL associated to a given object path.
+     * @param[in] fullPath the object path (e.g. A/B/C)
+     * @return the URL associated to the object path, e.g. http://localhost:9094/A/B/C?Param1=1&TextMode=1
 	 */
 	getDataUrl(fullPath) {
 		//Get the URL and add all the extra parameters
@@ -100,7 +128,13 @@ class MARTeLoader {
 		fullUrl += getparams;
 		return fullUrl;
 	}	
-	
+
+    /**
+     * @brief Discovers and loads the css and javascript associated to a given class name (that inherits from MARTeObject).
+     * @param[in] fullPath the objeth path (e.g. A/B/C).
+     * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser).
+     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     */
 	load(fullPath, className, containerId) {
 		var xhttp = new XMLHttpRequest();
 		var that = this;
@@ -137,7 +171,7 @@ class MARTeLoader {
 						});
 					}
 					else {
-						//TODO
+                        console.log("The className was not found!");
 					}
 				}
 				catch (e) {
@@ -148,9 +182,6 @@ class MARTeLoader {
 					containerHtmlElem.appendChild(textarea);
 				}
 
-			}
-			else {
-				//TODO
 			}
 		};
 		//Get the URL and add all the extra parameters
@@ -176,7 +207,13 @@ class MARTeLoader {
 		return scriptAlreadyExists;
 	}
 
-
+    /**
+     * @brief Loads the javascript associated to the className and if successful updates the target HTML container.
+     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
+     * @param[in] fullPath the objeth path (e.g. A/B/C).
+     * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see jsLoaded).
+     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     */
 	loadJS(className, fullPath, jsonData, containerId) {
 		var fullClassName = className + ".js";
 		//If the script is not in the <head>, add it
@@ -202,6 +239,10 @@ class MARTeLoader {
 		}
 	}
 
+    /**
+     * @brief Loads the css associated to the className.
+     * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser).
+     */
 	loadCSS(className) {
 		var fullClassName = className + ".css";
 		//If the css is not in the <head>, add it
@@ -216,6 +257,13 @@ class MARTeLoader {
 		}
 	}
 
+    /**
+     * @brief Tries to create a new instance of the className (which inherits from the MARTeObject) and if successful call prepareDisplay and displayData on the instance.
+     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
+     * @param[in] fullPath the objeth path (e.g. A/B/C).
+     * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see MARTeObject::displayData).
+     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     */
 	jsLoaded(className, fullPath, jsonData, containerId) {
 		var objExists = eval("typeof(" + className + ");");
 		if (objExists !== "undefined") {

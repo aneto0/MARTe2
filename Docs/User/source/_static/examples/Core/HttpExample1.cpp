@@ -1,8 +1,8 @@
 /**
  * @file HttpExample1.cpp
  * @brief Source file for class HttpExample1
- * @date Oct 26, 2018
- * @author aneto
+ * @date 26/10/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -63,8 +63,8 @@ public:
     /**
      * @brief NOOP.
      */
-HttpObjectEx1    () : Object() {
-
+    HttpObjectEx1() : Object() {
+        counter = 10u;
     }
 
     virtual ~HttpObjectEx1 () {
@@ -74,8 +74,62 @@ HttpObjectEx1    () : Object() {
         }
     }
 
+    virtual bool ExportData(MARTe::StructuredDataI & data) {
+        bool ok = Object::ExportData(data);
+        counter++;
+        if (counter == 30u) {
+            counter = 10u;
+        }
+        if (ok) {
+            ok = data.Write("Counter", counter);
+        }
+        return ok;
+    }
+
+private:
+    MARTe::uint32 counter;
+
 };
 CLASS_REGISTER(HttpObjectEx1, "1.0")
+
+/**
+ * @brief A MARTe::Object class that will expose its properties using the DataExportI interface.
+ */
+class HttpObjectEx2: public MARTe::Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief NOOP.
+     */
+    HttpObjectEx2() : Object() {
+        counter = 10u;
+    }
+
+    virtual ~HttpObjectEx2 () {
+        if (GetName() != NULL_PTR(const MARTe::char8 *)) {
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    virtual bool ExportData(MARTe::StructuredDataI & data) {
+        bool ok = Object::ExportData(data);
+        counter++;
+        if (counter == 30u) {
+            counter = 10u;
+        }
+        if (ok) {
+            ok = data.Write("Counter", counter);
+        }
+        return ok;
+    }
+
+private:
+    MARTe::uint32 counter;
+
+};
+CLASS_REGISTER(HttpObjectEx2, "1.0")
 }
 
 int main(int argc, char **argv) {

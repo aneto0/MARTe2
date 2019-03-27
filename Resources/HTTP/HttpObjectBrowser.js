@@ -1,13 +1,45 @@
+/**
+ * @file HttpObjectBrowser.js 
+ * @brief Source file for class HttpObjectBrowser.js
+ * @date 27/03/2019
+ * @author Andre' Neto
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class HttpObjectBrowser (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+/**
+ * @brief MARTe object browser and display.
+ * @details Creates a two pane with a navigation tree on the left and a target display, where to show the selected objects, on the right.
+ *
+ * The layout of the target display is stored on the localStorage (see getPanelLayout()).
+ */
 class HttpObjectBrowser extends MARTeObject {
+
+    /**
+     * @brief NOOP
+     */
     constructor() {
         super();
     }
 
 
     /**
-     * TODO
+     * @brief Creates the navigation tree and the target display.
      */
-    prepareDisplay(target) {	
+    prepareDisplay(target) {
         this.uniquePanelId = new Date().getTime();	
         target.innerHTML = "";
         this.target = target;
@@ -23,21 +55,21 @@ class HttpObjectBrowser extends MARTeObject {
         var showConfigBtnTxt = document.createTextNode("*");
         showConfigBtn.appendChild(showConfigBtnTxt);
         showConfigBtn.addEventListener("click",
-                function(ev, objpath, expandObjectBtn, li) {			
+                function(ev) {			
                     this.toggleConfig();				
                 }.bind(this),
                 false);
 
-        this.mainRow.setAttribute("class", "mainrow");
-        this.leftPaneContainer.setAttribute("class", "maincolumnnav");
-        this.leftPaneTree.setAttribute("class", "maincolumntree");
-        this.leftPaneConfigHeader.setAttribute("class", "maincolumnconfig");
-        this.leftPaneConfigPanel.setAttribute("class", "maincolumnconfig");
+        this.mainRow.setAttribute("class", "mainRow");
+        this.leftPaneContainer.setAttribute("class", "mainColumnNav");
+        this.leftPaneTree.setAttribute("class", "mainColumnTree");
+        this.leftPaneConfigHeader.setAttribute("class", "mainColumnConfig");
+        this.leftPaneConfigPanel.setAttribute("class", "mainPanelConfig");
         this.leftPaneConfigPanel.style.display = "none";
         this.addConfigOptions();
 
-        showConfigBtn.setAttribute("class", "configbutton");
-        this.rightPaneContainer.setAttribute("class", "maincolumntarget");
+        showConfigBtn.setAttribute("class", "configButton");
+        this.rightPaneContainer.setAttribute("class", "mainColumnTarget");
 
 
         this.leftPaneConfigHeader.appendChild(showConfigBtn);				
@@ -47,27 +79,47 @@ class HttpObjectBrowser extends MARTeObject {
         this.mainRow.appendChild(this.leftPaneContainer);
         this.mainRow.appendChild(this.rightPaneContainer); 
         this.target.appendChild(this.mainRow);		 
-        this.loadPanelConfig();        
+        this.createTargetPanels(this.getPanelLayout());
+
+        this.panelsConfigurationText = document.getElementById("panelsConfigurationText");
+        var saveConfigButton = document.getElementById("saveConfig");
+        saveConfigButton.addEventListener("click",
+                function(ev) {
+                    try {
+                        var newConfiguration = JSON.parse(this.panelsConfigurationText.value);
+                        localStorage[this.getConfigName()] = this.panelsConfigurationText.value;
+                        window.open(window.location.href);				
+                    }
+                    catch (error) {
+                        alert("Invalid layout: " + error);
+                    }
+                }.bind(this),
+                false);
+
     }
 
-
     /**
-     * TODO
+     * @briefs Creates the configuration panel.
      */
     addConfigOptions() {
-        this.leftPaneConfigPanel.innerHTML = "<br/>" + 
-            "<label for=\"panelsConfigurationText\">Panel configuration</label>" +
-            "<input type=\"text\" id=\"panelsConfigurationText\" name=\"panelsConfigurationText\">"
-            "";
+        this.leftPaneConfigPanel.innerHTML = "<table class=\"mainPanelConfigTable\">" + 
+            "<th colspan=\"2\" class=\"mainPanelConfigTableTh\">Configuration</th>" +
+            "<tr>" +
+            "<td>Layout</td>" +
+            "<td><input type=\"text\" id=\"panelsConfigurationText\" name=\"panelsConfigurationText\" style=\"width:100%\"></td>" +
+            "</tr><tr>" +
+            "<td colspan=\"2\"><button id=\"saveConfig\" style=\"float:right\">Save/Apply</button></td>" +
+            "</tr>" +
+            "</table>";
+
     }
 
     /**
-     * TODO
+     * @brief Shows/hides the configuration panel.
      */
     toggleConfig() {
         if (this.leftPaneConfigPanel.style.display === "none") {
-            var panelsConfigurationText = document.getElementById("panelsConfigurationText");
-            panelsConfigurationText.value = JSON.stringify(this.getPanelConfig());
+            this.panelsConfigurationText.value = JSON.stringify(this.getPanelLayout());
             this.leftPaneConfigPanel.style.display = "flex";
         }
         else {
@@ -76,7 +128,8 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Renders the data on the navigation tree.
+     * @param[in] jsonData the data as received by the server and which should contain a list of objects.
      */
     displayData(jsonData) {
         this.createTreeNodes(jsonData, "", this.leftPaneTree);
@@ -84,14 +137,18 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Helper method which verifies if a given node is open.
+     * @param[in] btn the node to be checked.
+     * @return true if the node is open (i.e. expanded), false otherwise.
      */
     isNodeOpen(btn) {
         return (btn.innerHTML === "-");
     }
 
     /**
-     * TODO
+     * @brief Helper method which verifies if a given node is already populated (otherwise the required information will be retrieved from the server - only once).
+     * @param[in] node the node to be checked.
+     * @return true if the node is already populated.
      */
     isNodePopulated(node) {
         //two buttons
@@ -99,21 +156,24 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Helper method which expands a given tree node. Note that the childs nodes are only populated once.
+     * @param[in] path the full object path.
+     * @param[in] btn the button to expand.
+     * @param[in] parentNode the node where to append the new nodes.
      */
-    expandTreeNode(path, btn, obj) {
+    expandTreeNode(path, btn, parentNode) {
         if (!this.isNodeOpen(btn)) {
-            if (!this.isNodePopulated(obj)) {
+            if (!this.isNodePopulated(parentNode)) {
                 var xhttp = new XMLHttpRequest();
                 var that = this;
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         var jsonData = JSON.parse(this.responseText);
-                        that.createTreeNodes(jsonData, path, obj);
+                        that.createTreeNodes(jsonData, path, parentNode);
                         that.registerTreeLinks(jsonData, path);
                     }
                     else {
-                        //TODO
+                        console.log("Could not communicate with the MARTe server");
                     }
                 };
                 //Get the URL and add all the extra parameters
@@ -124,7 +184,7 @@ class HttpObjectBrowser extends MARTeObject {
             }
             else {
                 //Find the inner ul element
-                var ul = obj.querySelector(".nested");
+                var ul = parentNode.querySelector(".nested");
                 if (ul !== null) {
                     ul.classList.add("active");
                     btn.innerHTML = "-";
@@ -132,7 +192,7 @@ class HttpObjectBrowser extends MARTeObject {
             }
         }
         else {
-            var ul = obj.querySelector(".nested");
+            var ul = parentNode.querySelector(".nested");
             if (ul !== null) {
                 ul.classList.remove("active");
                 btn.innerHTML = "+";
@@ -142,7 +202,10 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Shows the select tree node in the target container or in a new page.
+     * @param[in] path the full object path.
+     * @param[in] obj the object to show.
+     * @param[in] rightPaneContainerId the identifier of the target HTML element.
      */
     showTreeNode(path, obj, rightPaneContainerId) {
         var marteClassName = obj.getAttribute("marteClassName");
@@ -158,18 +221,23 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Helper method to replace all the instance of / with a _ on a given identifier.
+     * @param[in] id the identifier to be replaced.
+     * @return the modified identifier.
      */
     generateId(id) {
         return id.replace(/\//g, '_');
     }
 
     /**
-     * TODO
+     * @brief Helper method to append navigation tree nodes to a parent node.
+     * @param[in] jsonData list of objects as received from the server.
+     * @param[in] fullpath the complete path to this instance HttpObjectBrowser instance.
+     * @param[in] parentNode the node where the new nodes will be added to.
      */
-    createTreeNodes(jsonData, fullpath, parent) {
+    createTreeNodes(jsonData, fullpath, parentNode) {
         var i = 0;
-        var panelConfig = this.getPanelConfig();
+        var panelConfig = this.getPanelLayout();
         var nodeName = "" + i;
         var hasMoreNodes = (jsonData[nodeName] !== undefined);
         if (fullpath.length === 0)  {
@@ -182,9 +250,9 @@ class HttpObjectBrowser extends MARTeObject {
         }		
 
         var ul = document.createElement("ul");
-        parent.appendChild(ul);
+        parentNode.appendChild(ul);
         ul.setAttribute("class", "nested active");
-        parent = ul;
+        parentNode = ul;
         while (hasMoreNodes) {
             var child = jsonData[nodeName];
             var objName = child["Name"];
@@ -203,6 +271,7 @@ class HttpObjectBrowser extends MARTeObject {
             }
 
             var expandBtn = document.createElement("button");
+            expandBtn.setAttribute("class", "treeButton");
             var expandBtnTxt = document.createTextNode("+");
             if (isContainer) {
                 var expandBtnId = "ebtn_" + pathid;
@@ -214,10 +283,11 @@ class HttpObjectBrowser extends MARTeObject {
             expandBtn.appendChild(expandBtnTxt);
 
             var showObjectBtn = document.createElement("button");
+            showObjectBtn.setAttribute("class", "treeButton");
             var showObjectBtnTxt = document.createTextNode(">");
             var showObjectBtnId = "sbtn_" + pathid;
             showObjectBtn.setAttribute("id", showObjectBtnId);
-            showObjectBtn.setAttribute("class", "dropbtn");
+            showObjectBtn.setAttribute("class", "dropButton");
             showObjectBtn.appendChild(showObjectBtnTxt);
 
             var li = document.createElement("li");
@@ -262,7 +332,7 @@ class HttpObjectBrowser extends MARTeObject {
             }
             divParentContainer.appendChild(dropdownDivContainers);								
             li.appendChild(divParentContainer);
-            parent.appendChild(li);
+            parentNode.appendChild(li);
 
             i++;
             nodeName = "" + i;
@@ -271,12 +341,14 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Helper method to register the links on the navigation tree.
+     * @param[in] jsonData list of objects as received from the server.
+     * @param[in] fullpath the complete path to this instance HttpObjectBrowser instance.
      */
     registerTreeLinks(jsonData, fullpath) {
         var i = 0;
         var nodeName = "" + i;
-        var panelConfig = this.getPanelConfig();
+        var panelConfig = this.getPanelLayout();
 
         var hasMoreNodes = (jsonData[nodeName] !== undefined);
         if (fullpath.length === 0)  {
@@ -344,7 +416,9 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Generates a unique identified based on a given row and column.
+     * @param[in] row the row.
+     * @param[in] col the column.
      */
     getRightPaneContainerId(row, col) {
         var rcid;
@@ -359,7 +433,8 @@ class HttpObjectBrowser extends MARTeObject {
 
 
     /**
-     * TODO
+     * @brief Helper method to create the target panel as per the getPanelLayout().
+     * @param[in] config the layout configuration.
      */
     createTargetPanels(config) {
         var target = this.rightPaneContainer;
@@ -371,7 +446,7 @@ class HttpObjectBrowser extends MARTeObject {
             //Add the row
             var rowd = document.createElement("div"); 
             var rid = this.getRightPaneContainerId(r); 
-            rowd.setAttribute("class", "mainrowtargetitem");
+            rowd.setAttribute("class", "mainRowTargetItem");
             rowd.setAttribute("id", rid);
             rowd.style.height = rheight + "%";
 
@@ -397,17 +472,32 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * TODO
+     * @brief Gets the panel layout as stored in the localStorage.
      */
-    loadPanelConfig() { 
-        this.createTargetPanels(this.getPanelConfig());
+    getPanelLayout() {
+        var configName = this.getConfigName();
+        if (localStorage[configName] === undefined) {
+            localStorage[configName] = JSON.stringify([[100], [50, 50]]);
+        }
+        var panelConfig = JSON.parse(localStorage[configName]);
+        return panelConfig;
     }
 
     /**
-     * TODO
+     * @brief Gets the name of the configuration string (for the localStorage) associated to the current instance.
      */
-    getPanelConfig() {
-        return [[100], [100]];
+    getConfigName() {
+        var getVars = {};
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+            getVars[key] = value;
+        });
+        var objpath = getVars["ObjPath"];
+        if (objpath === undefined) {
+            objpath = "";
+        }
+        objpath.replace(/\//g, "_");
+        var configName = "HttpObjectBrowser_" + objpath;
+        return configName; 
     }
 }
 
