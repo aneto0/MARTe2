@@ -111,7 +111,6 @@ class HttpObjectBrowser extends MARTeObject {
             "<td colspan=\"2\"><button id=\"saveConfig\" style=\"float:right\">Save/Apply</button></td>" +
             "</tr>" +
             "</table>";
-
     }
 
     /**
@@ -456,7 +455,7 @@ class HttpObjectBrowser extends MARTeObject {
                 var cold = document.createElement("div"); 
                 var cid = this.getRightPaneContainerId(r, c);
                 var cwidth = config[r][c]; 				 
-                cold.setAttribute("class", "maincolumntargetitem");
+                cold.setAttribute("class", "mainColumnTargetItem");
                 cold.setAttribute("id", cid);
                 cold.style.width = cwidth + "%";
                 if (c == (ncols - 1)) {

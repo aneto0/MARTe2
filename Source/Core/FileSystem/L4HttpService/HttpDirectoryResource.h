@@ -86,6 +86,11 @@ HttpDirectoryResource    ();
      */
     virtual bool GetAsText(StreamI &stream, HttpProtocol &protocol);
 
+    /**
+     * @brief Sets if replyNotFound should be set when a file is not found.
+     */
+    void SetReplyNotFound(bool replyNotFoundIn);
+
 private:
 
     /**
@@ -108,6 +113,11 @@ private:
      * The base directory w.r.t. which all the paths are evaluated.
      */
     StreamString baseDir;
+
+    /**
+     * True if ReplyNotFound should be set when a file is not found.
+     */
+    bool replyNotFound;
 };
 }
 

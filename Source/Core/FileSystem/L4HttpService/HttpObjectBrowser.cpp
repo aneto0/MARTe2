@@ -330,6 +330,7 @@ bool HttpObjectBrowser::GetAsText(StreamI &stream, HttpProtocol &protocol) {
                     ReferenceT<HttpDirectoryResource> httpDirectoryResource = Get(n);
                     handled = httpDirectoryResource.IsValid();
                     if (handled) {
+                        httpDirectoryResource->SetReplyNotFound(false);
                         handled = httpDirectoryResource->GetAsText(stream, protocol);
                     }
                 }

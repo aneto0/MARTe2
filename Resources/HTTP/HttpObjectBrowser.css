@@ -106,7 +106,6 @@ li {
 }
 
 .mainColumnTargetItem {
-  resize: none;
   width: 100%;	
   resize: horizontal;
   height: unset;

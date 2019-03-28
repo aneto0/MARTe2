@@ -24,6 +24,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <math.h>
+#include <signal.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -34,6 +36,7 @@
 #include "ClassRegistryItemT.h"
 #include "ConfigurationDatabase.h"
 #include "ErrorLoggerExample.h"
+#include "HighResolutionTimer.h"
 #include "HttpDataExportI.h"
 #include "HttpDefinition.h"
 #include "HttpService.h"
@@ -47,6 +50,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+static bool keepRunning = true;
+static MARTe::float32 timeStepPeriod = 1e-2;
+static void StopApp(int sig) {
+    keepRunning = false;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -95,18 +103,22 @@ CLASS_REGISTER(HttpObjectEx1, "1.0")
 /**
  * @brief A MARTe::Object class that will expose its properties using the DataExportI interface.
  */
-class HttpObjectEx2: public MARTe::Object {
+class HttpPendulumEx1: public MARTe::Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief NOOP.
      */
-    HttpObjectEx2() : Object() {
-        counter = 10u;
+    HttpPendulumEx1() : Object() {
+        velocity = 0;
+        angle = 3.1415 / 3;
+        gravity = -9.8;
+        length = 1;
+        timeStepCounter = 0;
     }
 
-    virtual ~HttpObjectEx2 () {
+    virtual ~HttpPendulumEx1 () {
         if (GetName() != NULL_PTR(const MARTe::char8 *)) {
             REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. "
                     "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
@@ -115,21 +127,29 @@ public:
 
     virtual bool ExportData(MARTe::StructuredDataI & data) {
         bool ok = Object::ExportData(data);
-        counter++;
-        if (counter == 30u) {
-            counter = 10u;
-        }
         if (ok) {
-            ok = data.Write("Counter", counter);
+            ok = data.Write("angle", angle);
         }
         return ok;
     }
 
+    void Execute() {
+        MARTe::float32 acceleration = gravity / length * sinf(angle);
+        velocity += acceleration * timeStepPeriod;
+        angle += velocity * timeStepPeriod;
+        timeStepCounter++;
+        //REPORT_ERROR_STATIC(MARTe::ErrorManagement::Debug, "Time = %f Angle = %f", timeStepPeriod, angle);
+    }
+
 private:
-    MARTe::uint32 counter;
+    MARTe::float32 length;
+    MARTe::float32 velocity;
+    MARTe::float32 angle;
+    MARTe::float32 gravity;
+    MARTe::uint32 timeStepCounter;
 
 };
-CLASS_REGISTER(HttpObjectEx2, "1.0")
+CLASS_REGISTER(HttpPendulumEx1, "1.0")
 }
 
 int main(int argc, char **argv) {
@@ -161,6 +181,9 @@ int main(int argc, char **argv) {
             "    +ARootObj3 = {"
             "        Class = HttpObjectEx1"
             "    }"
+            "    +Pendulum = {"
+            "        Class = HttpPendulumEx1"
+            "    }"
             "    +ResourcesHtml = {"
             "        Class = HttpDirectoryResource"
             "        BaseDir = \"../../../../../../Resources/HTTP/\""
@@ -168,6 +191,10 @@ int main(int argc, char **argv) {
             "    +ResourcesJS = {"
             "        Class = HttpDirectoryResource"
             "        BaseDir = \"../../../../../../Resources/HTTP/JS/\""
+            "    }"
+            "    +ResourcesJS2 = {"
+            "        Class = HttpDirectoryResource"
+            "        BaseDir = \".\""
             "    }"
             "}"
             "+WebServer = {"
@@ -209,15 +236,27 @@ int main(int argc, char **argv) {
     if (ok) {
         ok = service->Start();
     }
-    StreamString msg = "Hit any key to exit\n";
+    StreamString msg = "Type Ctrl + C to exit\n";
     BasicConsole con;
     con.Open(BasicConsoleMode::PerformCharacterInput);
     con.SetSceneSize(64, 1);
     uint32 msgSize = msg.Size();
     con.Write(msg.Buffer(), msgSize);
-    char8 ignore;
-    msgSize = 1u;
-    (void) con.Read(&ignore, msgSize);
+    ReferenceT<HttpPendulumEx1> pendulum = ObjectRegistryDatabase::Instance()->Find("WebRoot.Pendulum");
+    signal(SIGTERM, StopApp);
+    signal(SIGINT, StopApp);
+    if (ok) {
+        ok = pendulum.IsValid();
+    }
+    if (ok) {
+        while (keepRunning) {
+            pendulum->Execute();
+            Sleep::Sec(timeStepPeriod);
+        }
+    }
+    if (ok) {
+        ok = service->Stop();
+    }
     return 0;
 }
 

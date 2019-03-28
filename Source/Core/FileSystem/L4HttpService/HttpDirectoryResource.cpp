@@ -46,7 +46,7 @@
 namespace MARTe {
 
 HttpDirectoryResource::HttpDirectoryResource() : Object(), HttpDataExportI() {
-
+    replyNotFound = true;
 }
 
 HttpDirectoryResource::~HttpDirectoryResource() {
@@ -211,7 +211,9 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, HttpProtocol &protoco
         ok = protocol.MoveAbsolute("OutputOptions");
     }
     else {
-        (void) HttpDataExportI::ReplyNotFound(protocol);
+        if (replyNotFound) {
+            (void) HttpDataExportI::ReplyNotFound(protocol);
+        }
     }
     if (ok) {
         ok = protocol.Write("Content-Type", mime.Buffer());
@@ -254,6 +256,10 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, HttpProtocol &protoco
         ok = f.Close();
     }
     return ok;
+}
+
+void HttpDirectoryResource::SetReplyNotFound(bool replyNotFoundIn) {
+    replyNotFound = replyNotFoundIn;
 }
 
 CLASS_REGISTER(HttpDirectoryResource, "1.0")
