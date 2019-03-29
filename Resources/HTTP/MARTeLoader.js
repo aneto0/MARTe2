@@ -31,10 +31,10 @@ class MARTeLoader {
      * @return the singleton of the MARTeLoader.
      */
     static instance() {
-        if (this.ml == undefined) {
+        if (this.ml === undefined) {
             this.ml = new MARTeLoader();
             this.ml.urlCache = {};
-            this.ml.checkingIffUrlExist = false;
+            this.ml.loading = false;
             this.ml.head = document.getElementsByTagName('head')[0];
         }
         return this.ml;
@@ -47,42 +47,32 @@ class MARTeLoader {
      * @param[out] callbackFailed the function callback to be called if the resource does NOT exist in the server.
      */
     executeIffUrlExists(url, callbackOK, callbackFailed) {
-        if (this.checkingIffUrlExist) {
-            //Try again later
-            setTimeout(function() {this.executeIffUrlExists(url, callbackOK, callbackFailed); }.bind(this), 1000);
-        }
-        else {
-            this.checkingIffUrlExist = true;
-            if (this.urlCache[url] === undefined) {
-                var xhttp = new XMLHttpRequest();
-                var that = this;
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        callbackOK();
-                        that.urlCache[url] = true;
-                        that.checkingIffUrlExist = false;
-                    }
-                    else if (this.status == 400 || this.status == 404) {
-                        if (callbackFailed !== undefined) {
-                            callbackFailed();
-                        }
-                        that.urlCache[url] = false;
-                        that.checkingIffUrlExist = false;
-                    }
-                };
-                xhttp.open("HEAD", url, true);
-                xhttp.send();
-            }
-            else {
-                if (this.urlCache[url]) {
+        if (this.urlCache[url] === undefined) {
+            var xhttp = new XMLHttpRequest();
+            var that = this;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
                     callbackOK();
+                    that.urlCache[url] = true;
                 }
-                else {
+                else if (this.status == 400 || this.status == 404) {
                     if (callbackFailed !== undefined) {
                         callbackFailed();
                     }
+                    that.urlCache[url] = false;
                 }
-                this.checkingIffUrlExist = false;
+            };
+            xhttp.open("HEAD", url, true);
+            xhttp.send();
+        }
+        else {
+            if (this.urlCache[url]) {
+                callbackOK();
+            }
+            else {
+                if (callbackFailed !== undefined) {
+                    callbackFailed();
+                }
             }
         }
     }
@@ -146,59 +136,73 @@ class MARTeLoader {
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
      */
     load(fullPath, className, containerId) {
-        var xhttp = new XMLHttpRequest();
-        var that = this;
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var containerHtmlElem = document.getElementById(containerId);
-                var jsonData;
-                try {
-                    jsonData = JSON.parse(this.responseText);
-                    if (className.length === 0) {
-                        className = jsonData["Class"];
+        console.log("[" + className + "]=" + this.loading);
+        if (this.loading) {
+            //Try again later
+            setTimeout(function() { this.load(fullPath, className, containerId); }.bind(this), 50);
+        }
+        else {
+            this.loading = true;
+            console.log("[" + className + "]=" + this.loading);
+            var xhttp = new XMLHttpRequest();
+            var that = this;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var containerHtmlElem = document.getElementById(containerId);
+                    var jsonData;
+                    try {
+                        jsonData = JSON.parse(this.responseText);
+                        if (className.length === 0) {
+                            className = jsonData["Class"];
+                        }
+                        if (className !== undefined) {
+                            //Check if the url for the plugin exists
+                            var jsUrl = that.getPluginJsUrl(className);
+                            var cssUrl = that.getPlugiCssUrl(className);
+                            that.executeIffUrlExists(jsUrl,
+                                    //If there is a javascript try to load it.
+                                    function() {
+                                        that.loadJS(className, fullPath, jsonData, containerId);
+                                    }.bind(this),
+                                    //Otherwise just show the raw data.
+                                    function() {
+                                        if (this.standardDisplay === undefined) {
+                                            this.standardDisplay = new MARTeObject();
+                                            this.standardDisplay.setPath(fullPath);
+                                            containerHtmlElem.innerHTML = "";
+                                            this.standardDisplay.prepareDisplay(containerHtmlElem);
+                                            this.standardDisplay.displayData(jsonData);
+                                        }
+                                    }.bind(this),
+                                    );
+                            that.executeIffUrlExists(cssUrl, function() {
+                                that.loadCSS(className);
+                            });
+                        }
+                        else {
+                            console.log("The className was not found!");
+                        }
                     }
-                    if (className !== undefined) {
-                        //Check if the url for the plugin exists
-                        var jsUrl = that.getPluginJsUrl(className);
-                        var cssUrl = that.getPlugiCssUrl(className);
-                        that.executeIffUrlExists(jsUrl,
-                                //If there is a javascript try to load it.
-                                function() {
-                                    that.loadJS(className, fullPath, jsonData, containerId);
-                                }.bind(this),
-                                //Otherwise just show the raw data.
-                                function() {
-                                    if (this.standardDisplay === undefined) {
-                                        this.standardDisplay = new MARTeObject();
-                                        this.standardDisplay.setPath(fullPath);
-                                        containerHtmlElem.innerHTML = "";
-                                        this.standardDisplay.prepareDisplay(containerHtmlElem);
-                                        this.standardDisplay.displayData(jsonData);
-                                    }
-                                }.bind(this),
-                                );
-                        that.executeIffUrlExists(cssUrl, function() {
-                            that.loadCSS(className);
-                        });
+                    catch (e) {
+                        var textarea = document.createElement('textarea');
+                        textarea.setAttribute("disabled", true);
+                        textarea.innerHTML = "Failed to parse json from server " + e;
+                        containerHtmlElem.innerHTML = "";
+                        containerHtmlElem.appendChild(textarea);
                     }
-                    else {
-                        console.log("The className was not found!");
-                    }
-                }
-                catch (e) {
-                    var textarea = document.createElement('textarea');
-                    textarea.setAttribute("disabled", true);
-                    textarea.innerHTML = "Failed to parse json from server " + e;
-                    containerHtmlElem.innerHTML = "";
-                    containerHtmlElem.appendChild(textarea);
-                }
 
-            }
-        };
-        //Get the URL and add all the extra parameters
-        var fullURL = this.getDataUrl(fullPath);
-        xhttp.open("GET", fullURL, true);
-        xhttp.send();
+                    that.loading = false;
+                    console.log("[" + className + "]=" + that.loading);
+                }
+                else if (this.status == 400 || this.status == 404) {
+                    that.loading = false;
+                }
+            };
+            //Get the URL and add all the extra parameters
+            var fullURL = this.getDataUrl(fullPath);
+            xhttp.open("GET", fullURL, true);
+            xhttp.send();
+        }
     }
 
     /**
@@ -233,12 +237,8 @@ class MARTeLoader {
             var url = "/?path=" + fullClassName + "&TextMode=1";
             script.type = 'text/javascript';
             script.src = url;
-            var loaded = false;
             var jsLoader = function() {
-                if (!loaded) {
-                    loaded = true;
-                    this.jsLoaded(className, fullPath, jsonData, containerId);
-                }
+                this.jsLoaded(className, fullPath, jsonData, containerId);
             }.bind(this);
             script.onreadystatechange = jsLoader;
             script.onload = jsLoader;
@@ -285,6 +285,8 @@ class MARTeLoader {
             obj.prepareDisplay(htmlElem);
             obj.displayData(jsonData);
         }
+        else {
+            console.log("[" + className + "] does not exist");
+        }
     }
-
 }

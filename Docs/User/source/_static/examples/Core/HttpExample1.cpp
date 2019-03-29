@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
             "    }"
             "    +ResourcesJS2 = {"
             "        Class = HttpDirectoryResource"
-            "        BaseDir = \"./Resources/HTTP/\""
+            "        BaseDir = \"../Resources/HTTP/\""
             "    }"
             "}"
             "+WebServer = {"
