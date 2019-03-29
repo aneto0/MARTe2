@@ -327,10 +327,7 @@ bool StreamStructuredData<Printer>::Write(const char8 * const name, const AnyTyp
     }
 
     if (ret) {
-        if (ret) {
-            stream->Flush();
-        }
-
+        ret = stream->Flush();
         currentNode->numberOfVariables++;
     }
     return ret;
