@@ -172,7 +172,7 @@ class HttpObjectBrowser extends MARTeObject {
                         that.registerTreeLinks(jsonData, path);
                     }
                     else {
-                        console.log("Could not communicate with the MARTe server");
+                        //console.log("Could not communicate with the MARTe server");
                     }
                 };
                 //Get the URL and add all the extra parameters

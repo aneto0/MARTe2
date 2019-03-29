@@ -32,7 +32,7 @@
 #include "HttpMessageInterface.h"
 #include "JsonPrinter.h"
 #include "Message.h"
-#include "RegisteredMethodsMessageFilter.h"
+#include "ReplyMessageCatcherMessageFilter.h"
 #include "StreamStructuredData.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,12 +46,6 @@ namespace MARTe {
 
 HttpMessageInterface::HttpMessageInterface() :
         ReferenceContainer(), HttpDataExportI(), MessageI() {
-    ReferenceT<RegisteredMethodsMessageFilter> filter = ReferenceT<RegisteredMethodsMessageFilter>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    filter->SetDestination(this);
-    ErrorManagement::ErrorType ret = MessageI::InstallMessageFilter(filter);
-    if (!ret.ErrorsCleared()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed to install message filters");
-    }
 }
 
 HttpMessageInterface::~HttpMessageInterface() {
@@ -117,9 +111,17 @@ bool HttpMessageInterface::SendMessageFromHttp(HttpProtocol &protocol) {
     if (protocol.GetInputCommand("msg", msgName)) {
         ReferenceT<Message> msg = Find(msgName.Buffer());
         if (msg.IsValid()) {
-            if (MessageI::SendMessage(msg) != ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Could not send message %s", msgName.Buffer());
+            msg->SetAsReply(false);
+            ErrorManagement::ErrorType err;
+            if (msg->ExpectsReply()) {
+                err = MessageI::SendMessageAndWaitReply(msg, this);
+            }
+            else {
+                err = MessageI::SendMessage(msg, this);
+            }
+            if (err != ErrorManagement::NoError) {
                 ok = false;
+                REPORT_ERROR(ErrorManagement::FatalError, "Could not send message %s", msgName.Buffer());
             }
         }
         else {

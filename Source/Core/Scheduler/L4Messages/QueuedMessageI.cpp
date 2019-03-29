@@ -42,10 +42,7 @@
 namespace MARTe {
 
 QueuedMessageI::QueuedMessageI() :
-        MessageI(),
-        queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()),
-        queueProcessingThread(binder),
-        binder(*this, &QueuedMessageI::QueueProcessing) {
+        MessageI(), queue(GlobalObjectsDatabase::Instance()->GetStandardHeap()), queueProcessingThread(binder), binder(*this, &QueuedMessageI::QueueProcessing) {
 
     ErrorManagement::ErrorType err;
 
@@ -112,6 +109,17 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) 
 
             if (err.ErrorsCleared()) {
                 err = queuedMessageFilters.ReceiveMessage(message);
+                if (!message->IsReply()) {
+                    if (message->ExpectsReply()) {
+                        message->SetAsReply(true);
+                        // handles indirect reply
+                        if (message->ExpectsIndirectReply()) {
+                            // simply produce a warning
+                            // destination in reply is known so should not be set
+                            (void) MessageI::SendMessage(message, NULL_PTR(Object *));
+                        }
+                    }
+                }
             }
         }
 
@@ -123,8 +131,7 @@ ErrorManagement::ErrorType QueuedMessageI::QueueProcessing(ExecutionInfo &info) 
 
 }
 
-ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter,
-                                                                const int32 position) {
+ErrorManagement::ErrorType QueuedMessageI::InstallMessageFilter(ReferenceT<MessageFilter> messageFilter, const int32 position) {
     ErrorManagement::ErrorType err;
     err.parametersError = !messageFilter.IsValid();
     if (err.ErrorsCleared()) {

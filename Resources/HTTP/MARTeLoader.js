@@ -171,6 +171,7 @@ class MARTeLoader {
                                     if (this.standardDisplay === undefined) {
                                         this.standardDisplay = new MARTeObject();
                                         this.standardDisplay.setPath(fullPath);
+                                        containerHtmlElem.innerHTML = "";
                                         this.standardDisplay.prepareDisplay(containerHtmlElem);
                                         this.standardDisplay.displayData(jsonData);
                                     }
@@ -280,6 +281,7 @@ class MARTeLoader {
             var obj = eval("new " + className + "();");
             var htmlElem = document.getElementById(containerId);
             obj.setPath(fullPath);
+            htmlElem.innerHTML = "";
             obj.prepareDisplay(htmlElem);
             obj.displayData(jsonData);
         }
