@@ -135,74 +135,59 @@ class MARTeLoader {
      * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is discovered in the member Class from the json retrieved using TextMode = 0 on the fullPath.
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
      */
-    load(fullPath, className, containerId) {
-        console.log("[" + className + "]=" + this.loading);
-        if (this.loading) {
-            //Try again later
-            setTimeout(function() { this.load(fullPath, className, containerId); }.bind(this), 50);
-        }
-        else {
-            this.loading = true;
-            console.log("[" + className + "]=" + this.loading);
-            var xhttp = new XMLHttpRequest();
-            var that = this;
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    var containerHtmlElem = document.getElementById(containerId);
-                    var jsonData;
-                    try {
-                        jsonData = JSON.parse(this.responseText);
-                        if (className.length === 0) {
-                            className = jsonData["Class"];
-                        }
-                        if (className !== undefined) {
-                            //Check if the url for the plugin exists
-                            var jsUrl = that.getPluginJsUrl(className);
-                            var cssUrl = that.getPlugiCssUrl(className);
-                            that.executeIffUrlExists(jsUrl,
-                                    //If there is a javascript try to load it.
-                                    function() {
-                                        that.loadJS(className, fullPath, jsonData, containerId);
-                                    }.bind(this),
-                                    //Otherwise just show the raw data.
-                                    function() {
-                                        if (this.standardDisplay === undefined) {
-                                            this.standardDisplay = new MARTeObject();
-                                            this.standardDisplay.setPath(fullPath);
-                                            containerHtmlElem.innerHTML = "";
-                                            this.standardDisplay.prepareDisplay(containerHtmlElem);
-                                            this.standardDisplay.displayData(jsonData);
-                                        }
-                                    }.bind(this),
-                                    );
-                            that.executeIffUrlExists(cssUrl, function() {
-                                that.loadCSS(className);
-                            });
-                        }
-                        else {
-                            console.log("The className was not found!");
-                        }
+    load(fullPath, className, containerId, objLoadedCallback) {
+        var xhttp = new XMLHttpRequest();
+        var that = this;
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var containerHtmlElem = document.getElementById(containerId);
+                var jsonData;
+                try {
+                    jsonData = JSON.parse(this.responseText);
+                    if (className.length === 0) {
+                        className = jsonData["Class"];
                     }
-                    catch (e) {
-                        var textarea = document.createElement('textarea');
-                        textarea.setAttribute("disabled", true);
-                        textarea.innerHTML = "Failed to parse json from server " + e;
-                        containerHtmlElem.innerHTML = "";
-                        containerHtmlElem.appendChild(textarea);
+                    if (className !== undefined) {
+                        //Check if the url for the plugin exists
+                        var jsUrl = that.getPluginJsUrl(className);
+                        var cssUrl = that.getPlugiCssUrl(className);
+                        that.executeIffUrlExists(cssUrl, function() {
+                            that.loadCSS(className);
+                        });
+                        that.executeIffUrlExists(jsUrl,
+                            //If there is a javascript try to load it.
+                            function() {
+                                that.loadJS(fullPath, className, jsonData, containerId, objLoadedCallback);
+                            }.bind(this),
+                            //Otherwise just show the raw data.
+                            function() {
+                                if (this.standardDisplay === undefined) {
+                                    this.standardDisplay = new MARTeObject();
+                                    this.standardDisplay.setPath(fullPath);
+                                    containerHtmlElem.innerHTML = "";
+                                    this.standardDisplay.prepareDisplay(containerHtmlElem);
+                                    this.standardDisplay.displayData(jsonData);
+                                }
+                            }.bind(this),
+                        );
                     }
-
-                    that.loading = false;
-                    console.log("[" + className + "]=" + that.loading);
+                    else {
+                        console.log("The className was not found!");
+                    }
                 }
-                else if (this.status == 400 || this.status == 404) {
-                    that.loading = false;
+                catch (e) {
+                    var textarea = document.createElement('textarea');
+                    textarea.setAttribute("disabled", true);
+                    textarea.innerHTML = "Failed to parse json from server " + e;
+                    containerHtmlElem.innerHTML = "";
+                    containerHtmlElem.appendChild(textarea);
                 }
-            };
-            //Get the URL and add all the extra parameters
-            var fullURL = this.getDataUrl(fullPath);
-            xhttp.open("GET", fullURL, true);
-            xhttp.send();
-        }
+            }
+        };
+        //Get the URL and add all the extra parameters
+        var fullURL = this.getDataUrl(fullPath);
+        xhttp.open("GET", fullURL, true);
+        xhttp.send();
     }
 
     /**
@@ -224,29 +209,42 @@ class MARTeLoader {
 
     /**
      * @brief Loads the javascript associated to the className and if successful updates the target HTML container.
-     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
      * @param[in] fullPath the objeth path (e.g. A/B/C).
+     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
      * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see jsLoaded).
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
      */
-    loadJS(className, fullPath, jsonData, containerId) {
-        var fullClassName = className + ".js";
-        //If the script is not in the <head>, add it
-        if (!this.resourceAlreadyExists(fullClassName)) {
-            var script = document.createElement('script');
-            var url = "/?path=" + fullClassName + "&TextMode=1";
-            script.type = 'text/javascript';
-            script.src = url;
-            var jsLoader = function() {
-                this.jsLoaded(className, fullPath, jsonData, containerId);
-            }.bind(this);
-            script.onreadystatechange = jsLoader;
-            script.onload = jsLoader;
-            this.head.appendChild(script);
+    loadJS(fullPath, className, jsonData, containerId, objLoadedCallback) {
+        if (this.loading) {
+            //Try again later
+            setTimeout(function() { this.loadJS(fullPath, className, jsonData, containerId, objLoadedCallback); }.bind(this), 50);
         }
-        //Otherwise just load it
         else {
-            this.jsLoaded(className, fullPath, jsonData, containerId);
+            this.loading = true; 
+            var fullClassName = className + ".js";
+            //If the script is not in the <head>, add it
+            if (!this.resourceAlreadyExists(fullClassName)) {
+                var script = document.createElement('script');
+                var url = "/?path=" + fullClassName + "&TextMode=1";
+                script.type = 'text/javascript';
+                script.src = url;
+                var jsLoader = function() {
+                    this.jsLoaded(className, fullPath, jsonData, containerId, objLoadedCallback);
+                    this.loading = false; 
+                }.bind(this);
+                var jsLoaderFailed = function() {
+                    this.loading = false; 
+                }.bind(this);
+                script.onreadystatechange = jsLoader;
+                script.onload = jsLoader;
+                script.onerror = jsLoaderFailed;
+                this.head.appendChild(script);
+            }
+            //Otherwise just load it
+            else {
+                this.jsLoaded(className, fullPath, jsonData, containerId, objLoadedCallback);
+                this.loading = false; 
+            }
         }
     }
 
@@ -275,7 +273,7 @@ class MARTeLoader {
      * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see MARTeObject::displayData).
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
      */
-    jsLoaded(className, fullPath, jsonData, containerId) {
+    jsLoaded(className, fullPath, jsonData, containerId, objLoadedCallback) {
         var objExists = eval("typeof(" + className + ");");
         if (objExists !== "undefined") {
             var obj = eval("new " + className + "();");
@@ -284,6 +282,9 @@ class MARTeLoader {
             htmlElem.innerHTML = "";
             obj.prepareDisplay(htmlElem);
             obj.displayData(jsonData);
+            if (objLoadedCallback !== undefined) {
+                objLoadedCallback(obj);
+            }
         }
         else {
             console.log("[" + className + "] does not exist");

@@ -21,16 +21,15 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 /**
- * @brief Default plugin renderer for a pendulum.
+ * @brief Alternative plugin renderer for a pendulum.
  */
-class HttpPendulumEx1 extends MARTeObject {
+class HttpPendulumEx1P2 extends MARTeObject {
 
     /**
      * @brief NOOP
      */
     constructor() {
         super();
-        this.pcolor = "yellow";
     }
 
 
@@ -38,12 +37,10 @@ class HttpPendulumEx1 extends MARTeObject {
      * @brief Creates the canvas.
      */
     prepareDisplay(target) {
-        this.canvas = document.createElement("canvas");
-        this.canvas.setAttribute("class", "pendulumCanvas");
-        this.context = this.canvas.getContext("2d");
-        target.innerHTML = "";
-        target.appendChild(this.canvas);
-        this.lastAngle = 0;
+        this.targetDivText = document.createElement("div");
+        this.targetDivText.setAttribute("class", "divPendulumText");
+        target.appendChild(this.targetDivText);
+        target.style.background = "#4a4a6b";
         this.refresh(100);
     }
 
@@ -53,32 +50,7 @@ class HttpPendulumEx1 extends MARTeObject {
      */
     displayData(jsonData) {
         var angle = parseFloat(jsonData["angle"]);
-        var width = this.canvas.clientWidth;
-        var height = this.canvas.clientHeight;
-        var length = Math.min(width, height);
-        var rPend = length * 0.4;
-        var rBall = length * 0.04;
-        var rBar = length * 0.004;
-        var ballX = Math.sin(angle) * rPend;
-        var ballY = Math.cos(angle) * rPend;
-        this.context.fillStyle = "white";
-        this.context.fillRect(0, 0, width, height);
-        this.context.save();
-        this.context.translate(width/2, 10);
-        this.context.rotate(angle);
-        this.context.beginPath();
-        this.context.rect(-rBar, -rBar, rBar*2, rPend+rBar*2);
-        this.context.strokeStyle = "black";
-        this.context.fillStyle = "black";
-        this.context.fill();
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.arc(0, rPend, rBall, 0, Math.PI*2, false);
-        this.context.fillStyle = this.pcolor;
-        this.context.fill();
-        this.context.stroke();
-        this.context.restore();
-        this.lastAngle = angle;
+        this.targetDivText.innerHTML = "" + angle;
     }
 
     /**
@@ -86,7 +58,7 @@ class HttpPendulumEx1 extends MARTeObject {
      * @param[in] c the new pendulum color.
      */
     setColor(c) {
-        this.pcolor = c;
+        this.targetDivText.style.color = c;
     }
 }
 

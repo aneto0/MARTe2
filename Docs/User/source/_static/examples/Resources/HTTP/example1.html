@@ -27,8 +27,7 @@
     <style>
         .divTable{
             display: table;
-            width: 100%;
-            height: 100%;
+            width: 900px;
         }
         .divTableBody {
             display: table-row-group;
@@ -37,18 +36,24 @@
             display: table-row;
         }
         .divTableCell {
+            width: 400px;
+            border: 1px solid #999999;
             display: table-cell;
-            vertical-align: top;
+            vertical-align: middle;
+            max-width: 1px; //avoid dynamic change of width
         }
     </style>
     <script>
     	function loadPanels() {    		
 			var mainTargetContainer = document.getElementById("mainTarget");
-			mainTargetContainer.style.width = "100%";
 			MARTeLoader.instance().load("Pendulum", "", "table0x0"); 		
-			MARTeLoader.instance().load("Pendulum", "", "table0x1"); 		
-			MARTeLoader.instance().load("Pendulum", "", "table1x0"); 		
-			MARTeLoader.instance().load("Pendulum", "", "table1x1"); 		
+			MARTeLoader.instance().load("Pendulum", "HttpPendulumEx1P2", "table0x1"); 		
+			MARTeLoader.instance().load("Pendulum", "MARTeObject", "table1x0"); 		
+            MARTeLoader.instance().load("Pendulum", "", "table1x1", 
+                                            function(obj) {
+                                                obj.setColor("green");
+                                            }
+                                        );
     	}
     </script>    
     <body onload="loadPanels()">

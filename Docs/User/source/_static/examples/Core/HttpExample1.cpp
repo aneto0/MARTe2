@@ -196,6 +196,9 @@ int main(int argc, char **argv) {
             "        Class = HttpDirectoryResource"
             "        BaseDir = \"../Resources/HTTP/\""
             "    }"
+            "    +ThreadsInformationQuery = {"
+            "        Class = ThreadsInformationQuery"
+            "    }"
             "}"
             "+WebServer = {"
             "    Class = HttpService"
@@ -204,7 +207,7 @@ int main(int argc, char **argv) {
             "    Timeout = 0"
             "    ListenMaxConnections = 255"
             "    AcceptTimeout = 1000"
-            "    MaxNumberOfThreads = 8"
+            "    MaxNumberOfThreads = 64"
             "    MinNumberOfThreads = 1"
             "}";
 

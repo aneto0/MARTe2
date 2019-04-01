@@ -214,9 +214,11 @@ StructuredDataI.h
 TemplateParametersVerificator.h
 ThreadInformation.h
 ThreadInformation_Generic.cpp
+ThreadInformationQuery.cpp
 Threads.cpp
 ThreadsDatabase.h
 ThreadsDatabase_Generic.cpp
+ThreadsInformationQuery.cpp
 TimeStamp.cpp
 TimeoutType.h
 TimingDataSource.cpp

@@ -33,6 +33,7 @@ OBJSX=	EmbeddedServiceI.x \
     MultiClientEmbeddedThread.x \
     MultiClientService.x \
     SingleThreadService.x \
+    ThreadsInformationQuery.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

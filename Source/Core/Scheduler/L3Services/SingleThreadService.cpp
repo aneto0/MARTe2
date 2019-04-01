@@ -62,6 +62,7 @@ SingleThreadService::~SingleThreadService() {
 }
 
 ErrorManagement::ErrorType SingleThreadService::Start() {
+    embeddedThread.SetName(GetName());
     return embeddedThread.Start();
 }
 

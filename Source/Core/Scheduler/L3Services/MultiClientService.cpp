@@ -32,6 +32,7 @@
 #include "MultiClientEmbeddedThread.h"
 #include "MultiClientService.h"
 #include "ReferenceT.h"
+#include "StreamString.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -94,6 +95,9 @@ ErrorManagement::ErrorType MultiClientService::AddThread() {
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
+            StreamString tname;
+            (void)tname.Printf("%s_%d", GetName(), HighResolutionTimer::Counter32());
+            thread->SetName(tname.Buffer());
             err = thread->Start();
         }
 
@@ -149,6 +153,7 @@ ErrorManagement::ErrorType MultiClientService::Start() {
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
+            thread->SetName(GetName());
             err = thread->Start();
         }
         if (err.ErrorsCleared()) {
