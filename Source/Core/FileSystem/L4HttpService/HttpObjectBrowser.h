@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 /**
- * @brief HTTP browsing of any ReferenceContainer contents.
+ * @brief HTTP browsing of any ReferenceContainer.
  *
  * @details Given a Root object, retrieves the contents of a target object. The path to the target object (w.r.t. to the Root) is encoded in the HttpProtocol (see HttpProtocol::GetUnmatchedId).
  *

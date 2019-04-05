@@ -46,6 +46,7 @@
 #include "ReferenceT.h"
 #include "StandardParser.h"
 #include "StreamString.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -99,6 +100,63 @@ private:
 
 };
 CLASS_REGISTER(HttpObjectEx1, "1.0")
+
+/**
+ * @brief A MARTe::Object class that will expose its properties using the HttpDataExportI interface.
+ */
+class HttpObjectEx2: public MARTe::Object, public MARTe::HttpDataExportI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief NOOP.
+     */
+    HttpObjectEx2() : Object() {
+        counter = 10u;
+    }
+
+    virtual ~HttpObjectEx2 () {
+        if (GetName() != NULL_PTR(const MARTe::char8 *)) {
+            REPORT_ERROR_STATIC(MARTe::ErrorManagement::Information, "No more references pointing at %s [%s]. "
+                    "The Object will be safely deleted.", GetName(), GetClassProperties()->GetName());
+        }
+    }
+
+    virtual bool GetAsStructuredData(MARTe::StreamStructuredDataI &data, MARTe::HttpProtocol &protocol) {
+        bool ok = HttpDataExportI::GetAsStructuredData(data, protocol);
+        if (ok) {
+            ok = MARTe::Object::ExportData(data);
+        }
+        counter++;
+        if (counter == 30u) {
+            counter = 10u;
+        }
+        if (ok) {
+            ok = data.Write("Counter", counter);
+        }
+        return ok;
+
+    }
+
+    virtual bool GetAsText(MARTe::StreamI &stream, MARTe::HttpProtocol &protocol) {
+        bool ok = HttpDataExportI::GetAsText(stream, protocol);
+        MARTe::StreamString txt;
+        if (ok) {
+            ok = txt.Printf("<html><body><h1>Counter = %d</h1></body></html>\n", counter);
+        }
+        if (ok) {
+            MARTe::uint32 nBytes = txt.Size();
+            ok = stream.Write(txt.Buffer(), nBytes);
+        }
+        return ok;
+    }
+
+private:
+    MARTe::uint32 counter;
+
+};
+CLASS_REGISTER(HttpObjectEx2, "1.0")
+
 
 /**
  * @brief A MARTe::Object class that will expose its properties using the DataExportI interface.
