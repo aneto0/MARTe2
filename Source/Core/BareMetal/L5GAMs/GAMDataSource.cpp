@@ -56,6 +56,8 @@ GAMDataSource::GAMDataSource() :
     signalOffsets = NULL_PTR(uint32 *);
     memoryHeap = NULL_PTR(HeapI *);
     allowNoProducers = false;
+    resetUnusedVariablesAtStateChange = true;
+    forceResetUnusedVariablesAtStateChange = true;
 }
 
 GAMDataSource::~GAMDataSource() {
@@ -91,6 +93,12 @@ bool GAMDataSource::Initialise(StructuredDataI & data) {
         (void) (data.Read("AllowNoProducers", allowNoProducersUInt32));
         allowNoProducers = (allowNoProducersUInt32 == 1u);
     }
+    if (ret) {
+        uint32 resetUnusedVariablesAtStateChangeUInt32 = 1u;
+        (void) (data.Read("ResetUnusedVariablesAtStateChange", resetUnusedVariablesAtStateChangeUInt32));
+        resetUnusedVariablesAtStateChange = (resetUnusedVariablesAtStateChangeUInt32 == 1u);
+    }
+    forceResetUnusedVariablesAtStateChange = true;
     return ret;
 }
 
@@ -188,7 +196,14 @@ bool GAMDataSource::PrepareNextState(const char8 * const currentStateName, const
     uint32 numberOfFunctions = GetNumberOfFunctions();
     bool ret = true;
 
-    for (uint32 n = 0u; (n < numberOfFunctions) && (ret); n++) {
+    //At least the first time, reset all the variables to the default value.
+    bool resetUnusedVariables = resetUnusedVariablesAtStateChange;
+    if (forceResetUnusedVariablesAtStateChange) {
+        resetUnusedVariables = true;
+        forceResetUnusedVariablesAtStateChange = false;
+    }
+
+    for (uint32 n = 0u; (n < numberOfFunctions) && (ret) && (resetUnusedVariables); n++) {
         uint32 numberOfFunctionInputSignals;
         ret = GetFunctionNumberOfSignals(InputSignals, n, numberOfFunctionInputSignals);
         for (uint32 i = 0u; (i < numberOfFunctionInputSignals) && (ret); i++) {
@@ -336,9 +351,8 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
                 nStates = 0u;
             }
             if (nStates == 0u) {
-                REPORT_ERROR(ErrorManagement::Information,
-                                            "In GAMDataSource %s, signal %s will never be produced nor consumed because there is no GAM with this signal being executed in any state.", GetName(),
-                                            signalName.Buffer());
+                REPORT_ERROR(ErrorManagement::Information, "In GAMDataSource %s, signal %s will never be produced nor consumed because there is no GAM with this signal being executed in any state.",
+                             GetName(), signalName.Buffer());
             }
         }
         uint32 s;
@@ -354,12 +368,12 @@ bool GAMDataSource::SetConfiguredDatabase(StructuredDataI & data) {
             }
             if (!ret) {
                 ErrorManagement::ErrorType errLog = ErrorManagement::FatalError;
-                if (allowNoProducers)  {
+                if (allowNoProducers) {
                     ret = true;
                     errLog = ErrorManagement::Warning;
                 }
-                REPORT_ERROR(errLog, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(),
-                                            stateName.Buffer(), signalName.Buffer(), nProducers);
+                REPORT_ERROR(errLog, "In GAMDataSource %s, state %s, signal %s has an invalid number of producers. Should be > 0 but is %d", GetName(), stateName.Buffer(), signalName.Buffer(),
+                             nProducers);
             }
         }
     }

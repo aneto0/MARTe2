@@ -61,6 +61,7 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ConfigurationExample4$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample5$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
+        $(BUILD_DIR)/ConfigurationExample7$(EXEEXT) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/HighResolutionTimerExample1$(EXEEXT) \
         $(BUILD_DIR)/HttpExample1$(EXEEXT) \
