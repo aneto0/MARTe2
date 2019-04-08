@@ -70,7 +70,7 @@ class MARTeObject {
     
     /**
      * @brief Sets the object path.
-     * @param[in] the object path.
+     * @param[in] path the object path.
      */
     setPath(path) {
     	this.path = path;

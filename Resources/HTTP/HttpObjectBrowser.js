@@ -99,7 +99,7 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @briefs Creates the configuration panel.
+     * @brief Creates the configuration panel.
      */
     addConfigOptions() {
         this.leftPaneConfigPanel.innerHTML = "<table class=\"mainPanelConfigTable\">" + 

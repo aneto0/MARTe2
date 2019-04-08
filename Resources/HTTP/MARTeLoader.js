@@ -134,6 +134,7 @@ class MARTeLoader {
      * @param[in] fullPath the objeth path (e.g. A/B/C).
      * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is discovered in the member Class from the json retrieved using TextMode = 0 on the fullPath.
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
      */
     load(fullPath, className, containerId, objLoadedCallback) {
         var xhttp = new XMLHttpRequest();
@@ -191,7 +192,7 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Checks if the resource was already added to the <head>
+     * @brief Checks if the resource was already added to the \<head\>
      * @param[in] marteClassName the class name that identifies the resource.
      * @return true if the resource already exists.
      */
@@ -213,6 +214,7 @@ class MARTeLoader {
      * @param[in] className the name of the class (e.g. HttpObjectBrowser).
      * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see jsLoaded).
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
      */
     loadJS(fullPath, className, jsonData, containerId, objLoadedCallback) {
         if (this.loading) {
@@ -272,6 +274,7 @@ class MARTeLoader {
      * @param[in] fullPath the objeth path (e.g. A/B/C).
      * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see MARTeObject::displayData).
      * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
      */
     jsLoaded(className, fullPath, jsonData, containerId, objLoadedCallback) {
         var objExists = eval("typeof(" + className + ");");
