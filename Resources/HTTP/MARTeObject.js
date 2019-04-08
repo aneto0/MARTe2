@@ -1,6 +1,5 @@
 /**
  * @file MARTeObject.js 
- * @brief Source file for class MARTeObject.js
  * @date 27/03/2019
  * @author Andre' Neto
  *
@@ -10,31 +9,27 @@
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class MARTeObject (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
- */
+ */ 
 /**
- * @brief Parent class of all objects that which to use the MARTe based javascript plugin viewer.
+ * Parent class of all objects that which to use the MARTe based javascript plugin viewer.
  */
 class MARTeObject {
     /**
-     * @brief NOOP
+     * NOOP
      */
     constructor() {
         this.lastCallId = "";
     }
 
     /**
-     * @brief Virtual display method to be specialised by the inherited objects in order to create the display environment.
-     * @details The default implementation creates a text area to show the object value in a json structure.
-     * @param[in] target the target container where to display the data.
+     * Virtual display method to be specialised by the inherited objects in order to create the display environment.
+     * The default implementation creates a text area to show the object value in a json structure.
+     *
+     * @param {obj} target the target HTML container where to display the data.
      */
     prepareDisplay(target) {
         this.textarea = document.createElement('textarea');
@@ -60,34 +55,38 @@ class MARTeObject {
     }
 
     /**
-     * @brief Virtual display method to be specialised by the inherited objects in order to update the value of components.
-     * @details The default implementation shows the object value in a json structure.
-     * @param[in] jsonData the object information in json format.
+     * Virtual display method to be specialised by the inherited objects in order to update the value of components.
+     * The default implementation shows the object value in a json structure.
+     * 
+     * @param {obj} jsonData the object information in json format.
      */
     displayData(jsonData) {
 		this.textarea.innerHTML = JSON.stringify(jsonData, null, '\t');
     }
     
     /**
-     * @brief Sets the object path.
-     * @param[in] path the object path.
+     * Sets the object path.
+     * 
+     * @param {string} path the object path.
      */
     setPath(path) {
     	this.path = path;
     }
     
     /**
-     * @brief Gets the object path.
-     * @return the object path.
+     * Gets the object path.
+     * 
+     * @return {string} the object path.
      */
     getPath() {
     	return this.path;
     }
     
     /**
-     * @brief Refreshes the current object with new data from the server.
-     * @param[in] period optional refresh period in ms.
-     * @param[in] callId expected to be not set or to be the same of the last setTimeout (otherwise it implies that the period was changed in-between and thus the setTimeout should be aborted).
+     * Refreshes the current object with new data from the server.
+     * 
+     * @param {int} period optional refresh period in ms.
+     * @param {string} callId expected to either not be set or to be the same of the last setTimeout (otherwise it implies that the period was changed in-between and thus the setTimeout should be aborted).
      */
     refresh(period, callId) {
     	if (callId === undefined) {

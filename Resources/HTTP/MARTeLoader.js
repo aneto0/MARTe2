@@ -1,6 +1,5 @@
 /**
  * @file MARTeLoader.js 
- * @brief Source file for class MARTeLoader.js
  * @date 27/03/2019
  * @author Andre' Neto
  *
@@ -10,25 +9,20 @@
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class MARTeLoader (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
  */
-
 /**
- * @brief Helper class that allow to load javascript and css code based on a given class name.
+ * Helper class that allow to load javascript and css code based on a given class name.
  */
 class MARTeLoader {
 
     /**
-     * @brief Singleton access to the Loader class.
-     * @return the singleton of the MARTeLoader.
+     * Singleton access to the Loader class.
+     * 
+     * @return {obj} the singleton of the MARTeLoader.
      */
     static instance() {
         if (this.ml === undefined) {
@@ -41,10 +35,11 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Only executes the callback if the url exists in the server. 
-     * @param[in] url the url to be checked.
-     * @param[out] callbackOK the function callback to be called if the resource exists in the server.
-     * @param[out] callbackFailed the function callback to be called if the resource does NOT exist in the server.
+     * Only executes the callback if the url exists in the server. 
+     * 
+     * @param {string} url the url to be checked.
+     * @param {function} callbackOK the function callback to be called if the resource exists in the server.
+     * @param {function} callbackFailed the function callback to be called if the resource does NOT exist in the server.
      */
     executeIffUrlExists(url, callbackOK, callbackFailed) {
         if (this.urlCache[url] === undefined) {
@@ -78,9 +73,11 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Gets the javascript plugin url from a class name.
-     * @param[in] className the class name for the plugin.
-     * @return the url where the javascript plugin for that class name might exist.
+     * Gets the javascript plugin url from a class name.
+     *
+     * @param {string} className the class name for the plugin.
+     *
+     * @return {string} the url where the javascript plugin for that class name might exist.
      */
     getPluginJsUrl(className) {
         var url = "/?path=" + className + ".js&TextMode=1";
@@ -88,9 +85,11 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Gets the CSS plugin url from a class name.
-     * @param[in] className the class name for the plugin.
-     * @return the url where the CSS plugin for that class name might exist.
+     * Gets the CSS plugin url from a class name.
+     * 
+     * @param {string} className the class name for the plugin.
+     *
+     * @return {string} the url where the CSS plugin for that class name might exist.
      */
     getPlugiCssUrl(className) {
         var url = "/?path=" + className + ".css&TextMode=1";
@@ -98,9 +97,11 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Reconstructs the URL associated to a given object path.
-     * @param[in] fullPath the object path (e.g. A/B/C)
-     * @return the URL associated to the object path, e.g. http://localhost:9094/A/B/C?Param1=1&TextMode=1
+     * Reconstructs the URL associated to a given object path.
+     *
+     * @param {string} fullPath the object path (e.g. A/B/C)
+     *
+     * @return {string} the URL associated to the object path, e.g. http://localhost:9094/A/B/C?Param1=1&TextMode=1
      */
     getDataUrl(fullPath) {
         //Get the URL and add all the extra parameters
@@ -130,11 +131,12 @@ class MARTeLoader {
     }	
 
     /**
-     * @brief Discovers and loads the css and javascript associated to a given class name (that inherits from MARTeObject).
-     * @param[in] fullPath the objeth path (e.g. A/B/C).
-     * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is discovered in the member Class from the json retrieved using TextMode = 0 on the fullPath.
-     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
-     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
+     * Discovers and loads the css and javascript associated to a given class name (that inherits from MARTeObject).
+     * 
+     * @param {string} fullPath the object path (e.g. A/B/C).
+     * @param {string} className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is discovered in the member Class from the json retrieved using TextMode = 0 on the fullPath.
+     * @param {string} containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param {function} objLoadedCallback callback function to be called when the object has been loaded.
      */
     load(fullPath, className, containerId, objLoadedCallback) {
         var xhttp = new XMLHttpRequest();
@@ -192,9 +194,10 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Checks if the resource was already added to the \<head\>
-     * @param[in] marteClassName the class name that identifies the resource.
-     * @return true if the resource already exists.
+     * Checks if the resource was already added to the head section of the document.
+     * @param {string} marteClassName the class name that identifies the resource.
+     *
+     * @return {boolean} true if the resource already exists.
      */
     resourceAlreadyExists(marteClassName) {		
         var scriptAlreadyExists = false;
@@ -209,12 +212,13 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Loads the javascript associated to the className and if successful updates the target HTML container.
-     * @param[in] fullPath the objeth path (e.g. A/B/C).
-     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
-     * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see jsLoaded).
-     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
-     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
+     * Loads the javascript associated to the className and if successful updates the target HTML container.
+     *
+     * @param {string} fullPath the object path (e.g. A/B/C).
+     * @param {string} className the name of the class (e.g. HttpObjectBrowser).
+     * @param {obj} jsonData json data as received from the server and that should be offered to the plugin (see jsLoaded).
+     * @param {string} containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param {function} objLoadedCallback callback function to be called when the object has been loaded.
      */
     loadJS(fullPath, className, jsonData, containerId, objLoadedCallback) {
         if (this.loading) {
@@ -251,8 +255,9 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Loads the css associated to the className.
-     * @param[in] className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser).
+     * Loads the css associated to the className.
+     *
+     * @param {string} className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser).
      */
     loadCSS(className) {
         var fullClassName = className + ".css";
@@ -269,12 +274,13 @@ class MARTeLoader {
     }
 
     /**
-     * @brief Tries to create a new instance of the className (which inherits from the MARTeObject) and if successful call prepareDisplay and displayData on the instance.
-     * @param[in] className the name of the class (e.g. HttpObjectBrowser).
-     * @param[in] fullPath the objeth path (e.g. A/B/C).
-     * @param[in] jsonData json data as received from the server and that should be offered to the plugin (see MARTeObject::displayData).
-     * @param[in] containerId the HTML identifier of the container where the target plugin should be load into.
-     * @param[in] objLoadedCallback callback function to be called when the object has been loaded.
+     * Tries to create a new instance of the className (which inherits from the MARTeObject) and if successful call prepareDisplay and displayData on the instance.
+     * 
+     * @param {string} className the name of the class (e.g. HttpObjectBrowser).
+     * @param {string} fullPath the object path (e.g. A/B/C).
+     * @param {obj} jsonData json data as received from the server and that should be offered to the plugin (see MARTeObject::displayData).
+     * @param {string} containerId the HTML identifier of the container where the target plugin should be load into.
+     * @param {function} objLoadedCallback callback function to be called when the object has been loaded.
      */
     jsLoaded(className, fullPath, jsonData, containerId, objLoadedCallback) {
         var objExists = eval("typeof(" + className + ");");

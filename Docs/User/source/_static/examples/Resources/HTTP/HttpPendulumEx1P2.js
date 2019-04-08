@@ -1,6 +1,5 @@
 /**
  * @file HttpPendulumEx1.js 
- * @brief Source file for class HttpPendulumEx1.js
  * @date 28/03/2019
  * @author Andre' Neto
  *
@@ -10,23 +9,18 @@
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class HttpPendulumEx1 (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
  */
 /**
- * @brief Alternative plugin renderer for a pendulum.
+ * Alternative plugin renderer for a pendulum.
  */
 class HttpPendulumEx1P2 extends MARTeObject {
 
     /**
-     * @brief NOOP
+     * NOOP
      */
     constructor() {
         super();
@@ -34,7 +28,9 @@ class HttpPendulumEx1P2 extends MARTeObject {
 
 
     /**
-     * @brief Creates the canvas.
+     * Creates the canvas.
+     * 
+     * @param {obj} target the target HTML container where to display the data.
      */
     prepareDisplay(target) {
         this.targetDivText = document.createElement("div");
@@ -45,8 +41,9 @@ class HttpPendulumEx1P2 extends MARTeObject {
     }
 
     /**
-     * @brief updates the pendulum with the new angle position.
-     * @param[in] jsonData the data as received by the server and which should contain the angle.
+     * Updates the pendulum with the new angle position.
+     *
+     * @param {obj} jsonData the data as received by the server and which should contain the angle.
      */
     displayData(jsonData) {
         var angle = parseFloat(jsonData["angle"]);
@@ -54,8 +51,9 @@ class HttpPendulumEx1P2 extends MARTeObject {
     }
 
     /**
-     * @brief Sets the pendulum color.
-     * @param[in] c the new pendulum color.
+     * Sets the pendulum color.
+     * 
+     * @param {color} c the new pendulum color.
      */
     setColor(c) {
         this.targetDivText.style.color = c;

@@ -1,6 +1,5 @@
 /**
  * @file HttpObjectBrowser.js 
- * @brief Source file for class HttpObjectBrowser.js
  * @date 27/03/2019
  * @author Andre' Neto
  *
@@ -10,26 +9,22 @@
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class HttpObjectBrowser (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
  */
 /**
- * @brief MARTe object browser and display.
- * @details Creates a two pane with a navigation tree on the left and a target display, where to show the selected objects, on the right.
+ * MARTe object browser and display.
+ * 
+ * Creates a two pane with a navigation tree on the left and a target display, where to show the selected objects, on the right.
  *
  * The layout of the target display is stored on the localStorage (see getPanelLayout()).
  */
 class HttpObjectBrowser extends MARTeObject {
 
     /**
-     * @brief NOOP
+     * NOOP
      */
     constructor() {
         super();
@@ -37,7 +32,9 @@ class HttpObjectBrowser extends MARTeObject {
 
 
     /**
-     * @brief Creates the navigation tree and the target display.
+     * Creates the navigation tree and the target display.
+     * 
+     * @param {obj} target the target container where to display the data.
      */
     prepareDisplay(target) {
         this.uniquePanelId = new Date().getTime();	
@@ -99,7 +96,7 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Creates the configuration panel.
+     * Creates the configuration panel.
      */
     addConfigOptions() {
         this.leftPaneConfigPanel.innerHTML = "<table class=\"mainPanelConfigTable\">" + 
@@ -114,7 +111,7 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Shows/hides the configuration panel.
+     * Shows/hides the configuration panel.
      */
     toggleConfig() {
         if (this.leftPaneConfigPanel.style.display === "none") {
@@ -127,8 +124,8 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Renders the data on the navigation tree.
-     * @param[in] jsonData the data as received by the server and which should contain a list of objects.
+     * Renders the data on the navigation tree.
+     * @param {obj} jsonData the data as received by the server and which should contain a list of objects.
      */
     displayData(jsonData) {
         this.createTreeNodes(jsonData, "", this.leftPaneTree);
@@ -136,18 +133,22 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Helper method which verifies if a given node is open.
-     * @param[in] btn the node to be checked.
-     * @return true if the node is open (i.e. expanded), false otherwise.
+     * Helper method which verifies if a given node is open.
+     * 
+     * @param {obj} btn the node to be checked.
+     *
+     * @return {boolean} true if the node is open (i.e. expanded), false otherwise.
      */
     isNodeOpen(btn) {
         return (btn.innerHTML === "-");
     }
 
     /**
-     * @brief Helper method which verifies if a given node is already populated (otherwise the required information will be retrieved from the server - only once).
-     * @param[in] node the node to be checked.
-     * @return true if the node is already populated.
+     * Helper method which verifies if a given node is already populated (otherwise the required information will be retrieved from the server - only once).
+     * 
+     * @param {obj} node the node to be checked.
+     *
+     * @return {boolean} true if the node is already populated.
      */
     isNodePopulated(node) {
         //two buttons
@@ -155,10 +156,11 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Helper method which expands a given tree node. Note that the childs nodes are only populated once.
-     * @param[in] path the full object path.
-     * @param[in] btn the button to expand.
-     * @param[in] parentNode the node where to append the new nodes.
+     * Helper method which expands a given tree node. Note that the childs nodes are only populated once.
+     * 
+     * @param {string} path the full object path.
+     * @param {obj} btn the button to expand.
+     * @param {obj} parentNode the node where to append the new nodes.
      */
     expandTreeNode(path, btn, parentNode) {
         if (!this.isNodeOpen(btn)) {
@@ -201,10 +203,10 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Shows the select tree node in the target container or in a new page.
-     * @param[in] path the full object path.
-     * @param[in] obj the object to show.
-     * @param[in] rightPaneContainerId the identifier of the target HTML element.
+     * Shows the select tree node in the target container or in a new page.
+     * @param {string} path the full object path.
+     * @param {obj} obj the object to show.
+     * @param {string} rightPaneContainerId the identifier of the target HTML element.
      */
     showTreeNode(path, obj, rightPaneContainerId) {
         var marteClassName = obj.getAttribute("marteClassName");
@@ -220,19 +222,22 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Helper method to replace all the instance of / with a _ on a given identifier.
-     * @param[in] id the identifier to be replaced.
-     * @return the modified identifier.
+     * Helper method to replace all the instance of / with a _ on a given identifier.
+     * 
+     * @param {string} id the identifier to be replaced.
+     * 
+     * @return {string} the modified identifier.
      */
     generateId(id) {
         return id.replace(/\//g, '_');
     }
 
     /**
-     * @brief Helper method to append navigation tree nodes to a parent node.
-     * @param[in] jsonData list of objects as received from the server.
-     * @param[in] fullpath the complete path to this instance HttpObjectBrowser instance.
-     * @param[in] parentNode the node where the new nodes will be added to.
+     * Helper method to append navigation tree nodes to a parent node.
+     *
+     * @param {obj} jsonData list of objects as received from the server.
+     * @param {string} fullpath the complete path to this instance HttpObjectBrowser instance.
+     * @param {obj} parentNode the node where the new nodes will be added to.
      */
     createTreeNodes(jsonData, fullpath, parentNode) {
         var i = 0;
@@ -340,9 +345,9 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Helper method to register the links on the navigation tree.
-     * @param[in] jsonData list of objects as received from the server.
-     * @param[in] fullpath the complete path to this instance HttpObjectBrowser instance.
+     * Helper method to register the links on the navigation tree.
+     * @param {obj} jsonData list of objects as received from the server.
+     * @param {string} fullpath the complete path to this instance HttpObjectBrowser instance.
      */
     registerTreeLinks(jsonData, fullpath) {
         var i = 0;
@@ -415,9 +420,10 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Generates a unique identified based on a given row and column.
-     * @param[in] row the row.
-     * @param[in] col the column.
+     * Generates a unique identified based on a given row and column.
+     * @param {int} row the row.
+     * @param {int} col the column.
+     * @return {string} the unique identifier.
      */
     getRightPaneContainerId(row, col) {
         var rcid;
@@ -432,8 +438,8 @@ class HttpObjectBrowser extends MARTeObject {
 
 
     /**
-     * @brief Helper method to create the target panel as per the getPanelLayout().
-     * @param[in] config the layout configuration.
+     * Helper method to create the target panel as per the getPanelLayout().
+     * @param {obj} config the layout configuration.
      */
     createTargetPanels(config) {
         var target = this.rightPaneContainer;
@@ -471,7 +477,9 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Gets the panel layout as stored in the localStorage.
+     * Gets the panel layout as stored in the localStorage.
+     * 
+     * @return {obj} the panel config as a JSON structure.
      */
     getPanelLayout() {
         var configName = this.getConfigName();
@@ -483,7 +491,8 @@ class HttpObjectBrowser extends MARTeObject {
     }
 
     /**
-     * @brief Gets the name of the configuration string (for the localStorage) associated to the current instance.
+     * Gets the name of the configuration string (for the localStorage) associated to the current instance.
+     * @return {string} the configuration string identifier.
      */
     getConfigName() {
         var getVars = {};

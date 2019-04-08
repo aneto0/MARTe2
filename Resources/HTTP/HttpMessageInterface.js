@@ -1,6 +1,5 @@
 /**
  * @file HttpMessageInterface.js 
- * @brief Source file for class HttpMessageInterface.js
  * @date 27/03/2019
  * @author Andre' Neto
  *
@@ -10,23 +9,18 @@
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class HttpMessageInterface (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
  */
 /**
- * @brief Interface to the HttpMessageInterface class. Creates one button for each Message.
+ * Interface to the HttpMessageInterface class. Creates one button for each Message.
  */
 class HttpMessageInterface extends MARTeObject {
 
     /**
-     * @brief NOOP
+     * NOOP
      */
     constructor() {
         super();
@@ -34,15 +28,16 @@ class HttpMessageInterface extends MARTeObject {
 
 
     /**
-     * @brief NOOP
+     * NOOP
      */
     prepareDisplay(target) {
         this.target = target;
     }
 
     /**
-     * @brief Renders the data on the navigation tree.
-     * @param[in] jsonData the data as received by the server and which should contain a list of objects.
+     * Renders the data on the navigation tree.
+     * 
+     * @param {obj} jsonData the data as received by the server and which should contain a list of objects.
      */
     displayData(jsonData) {
         var i = 0;
