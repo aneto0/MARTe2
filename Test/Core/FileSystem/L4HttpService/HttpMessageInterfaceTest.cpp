@@ -195,6 +195,7 @@ bool HttpMessageInterfaceTest::TestGetAsStructuredData() {
             "            Class = Message\n"
             "            Destination = TestObj\n"
             "            Function = ReceiverMethod\n"
+            "            Mode = ExpectsReply"
             "        }\n"
             "        +Msg2 = {\n"
             "            Class = Message\n"

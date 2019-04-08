@@ -236,7 +236,7 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_File() {
     return ok;
 }
 
-bool HttpDirectoryResourceTest::TestGetAsStructuredData_File_Head() {
+bool HttpDirectoryResourceTest::TestGetAsText_File_Head() {
     using namespace MARTe;
     StreamString cfg = ""
             "+HttpService1 = {\n"
@@ -247,7 +247,7 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_File_Head() {
             "    MinNumberOfThreads = 1\n"
             "    MaxNumberOfThreads = 8\n"
             "    ListenMaxConnections = 255\n"
-            "    IsTextMode = 0\n"
+            "    IsTextMode = 1\n"
             "    WebRoot = HttpObjectBrowser1\n"
             "}\n"
             "+HttpObjectBrowser1 = {\n"
@@ -294,15 +294,7 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_File_Head() {
     if (ok) {
         ok = test.HttpExchange(reply, HttpDefinition::HSHCHead, NULL, 1000u);
     }
-    const char8 * expectedReply = ""
-            "1F\r\n{\n\r\"Name\": \"DirectoryResource1\"\r\n"
-            "20\r\n,\n\r\"Class\": \"HttpDirectoryResour\r\n"
-            "3\r\nce\"\r\nD\r\n\n\r,\"Files\": {\r\n"
-            "8\r\n\n\r\"0\": {\r\n"
-            "20\r\n\n\r\"Name\": \"HttpDirectoryResource\r\n"
-            "20\r\nTestFolder/HttpDirectoryResource\r\n9\r\nTest.txt\"\r\n"
-            "15\r\n,\n\r\"IsDirectory\": \"0\"\r\nE\r\n,\n\r\"Size\": \"6\"\r\n"
-            "3\r\n\n\r}\r\n3\r\n\n\r}\r\n1\r\n}\r\n0\r\n\r\n";
+    const char8 * expectedReply = "";
     if (ok) {
         ok = (reply == expectedReply);
     }
@@ -314,6 +306,71 @@ bool HttpDirectoryResourceTest::TestGetAsStructuredData_File_Head() {
     Directory df1("HttpDirectoryResourceTestFolder/HttpDirectoryResourceTest.txt");
     df1.Delete();
     d.Delete();
+    return ok;
+}
+
+bool HttpDirectoryResourceTest::TestSetReplyNotFound() {
+    using namespace MARTe;
+    StreamString cfg = ""
+            "+HttpService1 = {\n"
+            "    Class = HttpService\n"
+            "    Port = 9094\n"
+            "    Timeout = 0\n"
+            "    AcceptTimeout = 100"
+            "    MinNumberOfThreads = 1\n"
+            "    MaxNumberOfThreads = 8\n"
+            "    ListenMaxConnections = 255\n"
+            "    IsTextMode = 1\n"
+            "    WebRoot = HttpObjectBrowser1\n"
+            "}\n"
+            "+HttpObjectBrowser1 = {\n"
+            "    Class = HttpObjectBrowser\n"
+            "    Root = \".\""
+            "    +AChild = {\n"
+            "        Class = ReferenceContainer\n"
+            "    }\n"
+            "    +DirectoryResource1 = {\n"
+            "        Class = HttpDirectoryResource\n"
+            "        BaseDir = \"HttpDirectoryResourceTestFolder\""
+            "    }\n"
+            "}\n";
+
+    StreamString err;
+    ConfigurationDatabase cdb;
+    cfg.Seek(0LLU);
+    StandardParser parser(cfg, cdb, &err);
+    bool ok = parser.Parse();
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+    }
+    ReferenceT<HttpService> service = ObjectRegistryDatabase::Instance()->Find("HttpService1");
+    ReferenceT<HttpDirectoryResource> httpDirectoryResource = ObjectRegistryDatabase::Instance()->Find("HttpObjectBrowser1.DirectoryResource1");
+    if (ok) {
+        ok = service.IsValid();
+    }
+    if (ok) {
+        ok = service->Start();
+    }
+    if (ok) {
+        ok = httpDirectoryResource.IsValid();
+    }
+    if (ok) {
+        httpDirectoryResource->SetReplyNotFound(true);
+    }
+    HttpClient test;
+    test.SetServerAddress("127.0.0.1");
+    test.SetServerPort(9094);
+    test.SetServerUri("/DirectoryResource1?path=HttpDirectoryResourceTest.txt");
+    StreamString reply;
+    if (ok) {
+        ok = !test.HttpExchange(reply, HttpDefinition::HSHCHead, NULL, 1000u);
+    }
+
+    ok = service->Stop();
+    ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
@@ -421,9 +478,10 @@ bool HttpDirectoryResourceTest::TestGetAsText_MimeTypes() {
     d.Create();
 
     const uint32 nOfFiles = 11u;
-    const char8 * filenames[nOfFiles] = { "HttpDirectoryResourceTestFolder/f1.htm", "HttpDirectoryResourceTestFolder/f1.html", "HttpDirectoryResourceTestFolder/f1.txt",
-            "HttpDirectoryResourceTestFolder/f1.csv", "HttpDirectoryResourceTestFolder/f1.css", "HttpDirectoryResourceTestFolder/f1.gif", "HttpDirectoryResourceTestFolder/f1.jpeg",
-            "HttpDirectoryResourceTestFolder/f1.jpg", "HttpDirectoryResourceTestFolder/f1.jnlp", "HttpDirectoryResourceTestFolder/f1.js", "HttpDirectoryResourceTestFolder/f1.bin" };
+    const char8 * filenames[nOfFiles] = { "HttpDirectoryResourceTestFolder/f1.htm", "HttpDirectoryResourceTestFolder/f1.html",
+            "HttpDirectoryResourceTestFolder/f1.txt", "HttpDirectoryResourceTestFolder/f1.csv", "HttpDirectoryResourceTestFolder/f1.css",
+            "HttpDirectoryResourceTestFolder/f1.gif", "HttpDirectoryResourceTestFolder/f1.jpeg", "HttpDirectoryResourceTestFolder/f1.jpg",
+            "HttpDirectoryResourceTestFolder/f1.jnlp", "HttpDirectoryResourceTestFolder/f1.js", "HttpDirectoryResourceTestFolder/f1.bin" };
     uint32 n;
     for (n = 0u; n < nOfFiles; n++) {
         File f;

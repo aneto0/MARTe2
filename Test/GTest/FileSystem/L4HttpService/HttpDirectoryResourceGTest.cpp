@@ -64,9 +64,9 @@ TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_Fil
     ASSERT_TRUE(test.TestGetAsStructuredData_File());
 }
 
-TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsStructuredData_File_Head) {
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_File_Head) {
     HttpDirectoryResourceTest test;
-    ASSERT_TRUE(test.TestGetAsStructuredData_File_Head());
+    ASSERT_TRUE(test.TestGetAsText_File_Head());
 }
 
 TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText) {
@@ -79,3 +79,7 @@ TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestGetAsText_MimeTypes) {
     ASSERT_TRUE(test.TestGetAsText_MimeTypes());
 }
 
+TEST(FileSystem_L4HttpService_HttpDirectoryResource, TestSetReplyNotFound) {
+    HttpDirectoryResourceTest test;
+    ASSERT_TRUE(test.TestSetReplyNotFound());
+}

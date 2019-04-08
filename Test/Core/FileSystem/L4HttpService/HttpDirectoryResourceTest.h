@@ -64,7 +64,7 @@ public:
     /**
      * @brief Tests the GetAsStructuredData to check the file existence.
      */
-    bool TestGetAsStructuredData_File_Head();
+    bool TestGetAsText_File_Head();
 
     /**
      * @brief Tests the GetAsText.
@@ -75,6 +75,11 @@ public:
      * @brief Tests the GetAsText with all the mime-types.
      */
     bool TestGetAsText_MimeTypes();
+
+    /**
+     * @brief Tests the SetReplyNotFound
+     */
+    bool TestSetReplyNotFound();
 };
 
 /*---------------------------------------------------------------------------*/
