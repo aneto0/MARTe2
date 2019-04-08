@@ -484,7 +484,7 @@ class HttpObjectBrowser extends MARTeObject {
     getPanelLayout() {
         var configName = this.getConfigName();
         if (localStorage[configName] === undefined) {
-            localStorage[configName] = JSON.stringify([[100], [50, 50]]);
+            localStorage[configName] = JSON.stringify([[100], [100]]);
         }
         var panelConfig = JSON.parse(localStorage[configName]);
         return panelConfig;

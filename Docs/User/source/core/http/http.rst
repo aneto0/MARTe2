@@ -89,10 +89,70 @@ Using the :vcisdoxygencl:`HttpMessageInterface` it is possible to send command t
 JavaScript client
 -----------------
 
-MARTe2 also ships a simple JavaScript based client framework that aims at easing the development of graphical user-interfaces.
+MARTe2 ships with a simple JavaScript based client framework that aims at easing the development of graphical user-interfaces.
 
 .. note::
 
     For more complex client applications, users should use the JSON interface and design their own client applications.
 
-The MARTe2 JavaScript client (see Resources/HTTP on the project folder) is based on a plug-in mechanism which retrieves the data from the server (using JSON) and offers it to a given class that inherits from MARTeObject.js 
+The MARTe2 JavaScript client (see Resources/HTTP on the project folder) is based on a plug-in mechanism which retrieves data from the server (using JSON) and offers it to a given class that inherits from the :vcisjsdocs:`MARTeObject` JavaScript class.
+
+.. code-block:: javascript
+
+    ...
+    class HttpPendulumEx1 extends MARTeObject {
+    ...
+        displayData(jsonData) {
+            var angle = parseFloat(jsonData["angle"]);
+            var width = this.canvas.clientWidth;
+            var height = this.canvas.clientHeight;
+    ... 
+
+
+These classes can be instantiated and associated to a given JSON data stream using the :vcisjsdocs:`MARTeLoader` singleton. In particular the ``load`` method allows to allocate a given instance of the provided class to an HTML element and later associated to a JSON data source.
+
+.. code-block:: javascript
+    
+    ...
+    var mainTargetContainer = document.getElementById("mainTarget");
+    //Associate the HttpPendulumEx1P2.js to an HTML element identified by the id "table0x1" and load with data coming from http://.../Pendulum
+    MARTeLoader.instance().load("Pendulum", "HttpPendulumEx1P2", "table0x1");
+    ...
+
+The :vcisjsdocs:`HttpObjectBrowser` is a plug-in implementation that offers a navigation tree and that allows to display the selected class instance in a given display pane.
+
+.. note::
+
+    Objects, such as the :vcisdoxygencl:`ThreadsInformationQuery`, can be used to easily export live information about a running system.
+
+The :vcisjsdocs:`HttpClient` allows to develop HTTP clients and is used as a core class for many of the HTTP service tests.
+
+Examples
+--------   
+   
+This example shows how to instantiate an HttpService and how to interface directly to an HttpDataExportI. After starting the application, point a browser at http://localhost:8084/
+
+.. literalinclude:: /_static/examples/Core/HttpExample1.cpp
+   :language: c++
+   :emphasize-lines: 93,125,126,135,141,142,145,189,220,221,246,247,258,262,264
+   :caption: Introspection of live objects using HTTP.
+   :linenos:
+
+For the example above, the Pendulum JavaScript class was coded as below:
+
+.. literalinclude:: /_static/examples/Resources/HTTP/HttpPendulumEx1.js
+   :language: javascript
+   :emphasize-lines: 20,36,41,50,51,76
+   :caption: Development of JavaScript plugins that can be integrated into client applications.
+   :linenos:
+
+Adding an HttpService to an existent MARTe application can be used to query live information about GAM signals and to change the StateMachine status. After starting the application, point a browser at http://localhost:8084 and navigate to the different GAMs. Also change the state machine state by interacting with the HttpMessageInterface component.
+
+.. literalinclude:: /_static/examples/Configurations/RTApp-5.cfg
+   :language: bash
+   :emphasize-lines: 6,12,20
+   :caption: Integration of an HttpService into an existent application (Run with MESSAGE=StateMachine:START and NAME_OF_THE_CONFIGURATION_FILE=RTApp-5.cfg)
+   :linenos:
+
+ 
+Instructions on how to compile and execute the examples can be found :doc:`here </core/examples>`.     

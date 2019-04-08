@@ -39,7 +39,6 @@ class HttpPendulumEx1 extends MARTeObject {
         this.context = this.canvas.getContext("2d");
         target.innerHTML = "";
         target.appendChild(this.canvas);
-        this.lastAngle = 0;
         this.refresh(100);
     }
 
@@ -75,7 +74,6 @@ class HttpPendulumEx1 extends MARTeObject {
         this.context.fill();
         this.context.stroke();
         this.context.restore();
-        this.lastAngle = angle;
     }
 
     /**

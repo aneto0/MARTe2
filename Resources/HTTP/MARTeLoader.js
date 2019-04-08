@@ -134,7 +134,7 @@ class MARTeLoader {
      * Discovers and loads the css and javascript associated to a given class name (that inherits from MARTeObject).
      * 
      * @param {string} fullPath the object path (e.g. A/B/C).
-     * @param {string} className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is discovered in the member Class from the json retrieved using TextMode = 0 on the fullPath.
+     * @param {string} className the name of the class (which shall inherit from MARTeObject) (e.g. HttpObjectBrowser). If the className is not specified, or has 0 length, then the class name is automatically set to be the "Class" field in the json structure which retrieved from the server using TextMode = 0 (with the URL=fullPath).
      * @param {string} containerId the HTML identifier of the container where the target plugin should be load into.
      * @param {function} objLoadedCallback callback function to be called when the object has been loaded.
      */
