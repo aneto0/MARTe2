@@ -37,6 +37,7 @@
 #include "MemoryMapMultiBufferOutputBroker.h"
 #include "MemoryMapSynchronisedMultiBufferInputBroker.h"
 #include "MemoryMapSynchronisedMultiBufferOutputBroker.h"
+#include "MutexSem.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StandardParser.h"
@@ -102,7 +103,9 @@ CircularBufferThreadInputDataSourceTestDS    ();
     uint32 GetStackSize();
 
     void Stop() {
+        sem.FastLock();
         stopped = true;
+        sem.FastUnLock();
     }
 
 private:
@@ -112,7 +115,7 @@ private:
     uint32 counter;
     bool stopped;
     volatile int32 continueRead;
-
+    FastPollingMutexSem sem;
 };
 
 CircularBufferThreadInputDataSourceTestDS::CircularBufferThreadInputDataSourceTestDS() {
@@ -122,6 +125,7 @@ CircularBufferThreadInputDataSourceTestDS::CircularBufferThreadInputDataSourceTe
     signalDriverFalse = 10;
     signalNoRead = 10;
     stopped = false;
+    sem.Create();
 }
 
 CircularBufferThreadInputDataSourceTestDS::~CircularBufferThreadInputDataSourceTestDS() {
@@ -184,32 +188,44 @@ const char8 *CircularBufferThreadInputDataSourceTestDS::GetBrokerName(Structured
 
     const char8 *brokerName = CircularBufferThreadInputDataSource::GetBrokerName(data, direction);
     if (brokerName == NULL) {
-        brokerName="Invalid";
+        brokerName = "Invalid";
     }
     return brokerName;
 
 }
 
 bool CircularBufferThreadInputDataSourceTestDS::DriverRead(char8 * const bufferToFill, uint32 &sizeToRead, const uint32 signalIdx) {
-    if (stopped) {
-        return true;
-    }
-    //give time to sync
-    if (signalIdx == 0u) {
-        while (continueRead == 0) {
-            Sleep::MSec(5);
+    sem.FastLock();
+    if (!stopped) {
+        sem.FastUnLock();
+        //give time to sync
+        if (signalIdx == 0u) {
+            while (continueRead == 0) {
+                sem.FastLock();
+                if (stopped) {
+                    sem.FastUnLock();
+                    break;
+                }
+                else {
+                    sem.FastUnLock();
+                }
+                Sleep::MSec(5);
+            }
+            Sleep::MSec(100);
         }
-        Sleep::MSec(100);
-    }
 
-    uint32 *bufferPtr = (uint32 *) bufferToFill;
-    for (uint32 i = 0u; i < sizeToRead / 4; i++) {
-        bufferPtr[i] = counter;
-        counter++;
-    }
+        uint32 *bufferPtr = (uint32 *) bufferToFill;
+        for (uint32 i = 0u; i < sizeToRead / 4; i++) {
+            bufferPtr[i] = counter;
+            counter++;
+        }
 
-    if (signalNoRead == signalIdx) {
-        sizeToRead = 0;
+        if (signalNoRead == signalIdx) {
+            sizeToRead = 0;
+        }
+    }
+    else {
+        sem.FastUnLock();
     }
 
     return (signalDriverFalse != signalIdx);

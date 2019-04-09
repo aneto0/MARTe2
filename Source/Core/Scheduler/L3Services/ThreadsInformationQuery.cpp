@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-ThreadsInformationQuery::ThreadsInformationQuery() {
+ThreadsInformationQuery::ThreadsInformationQuery() : Object() {
 
 }
 
@@ -60,7 +60,8 @@ bool ThreadsInformationQuery::ExportData(StructuredDataI & data) {
         }
         if (tinfo != 0u) {
             StreamString idx;
-            ok = idx.Printf("%d", n);
+            const uint32 nn = n;
+            ok = idx.Printf("%d", nn);
             if (ok) {
                 ok = data.CreateRelative(idx.Buffer());
             }
@@ -74,10 +75,12 @@ bool ThreadsInformationQuery::ExportData(StructuredDataI & data) {
             }
             if (ok) {
                 Threads::PriorityClassType pclass = Threads::GetPriorityClass(tinfo);
+                //lint -e{930} cast from enum required to be able to Write in StructuredDataI
                 ok = data.Write("PriorityClass", static_cast<uint32>(pclass));
             }
             if (ok) {
                 Threads::ThreadStateType tstate = Threads::GetState(tinfo);
+                //lint -e{930} cast from enum required to be able to Write in StructuredDataI
                 ok = data.Write("State", static_cast<uint32>(tstate));
             }
             if (ok) {

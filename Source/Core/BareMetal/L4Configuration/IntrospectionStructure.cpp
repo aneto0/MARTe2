@@ -323,6 +323,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
     bool ok = typesCDB.CreateAbsolute(typeName.Buffer());
     uint32 n;
     uint32 nChilds = in.GetNumberOfChildren();
+    //lint -e{850} n is modified inside the loop
     for (n = 0u; (n < nChilds) && (ok); n++) {
         const char8* const variableName = in.GetChildName(n);
         uint32 numberOfElements;
@@ -335,7 +336,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
             char8 ignore;
             bool isArray = varArrayName.GetToken(token, "[", ignore);
             if (isArray) {
-                numberOfElements = 1;
+                numberOfElements = 1u;
                 varArrayName = token;
                 (void) varArrayName.Seek(0LLU);
                 if (ok) {
@@ -343,7 +344,8 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
                 }
                 n++;
                 while (isArray && ok && (n < nChilds)) {
-                    StreamString nextVarArrayName = in.GetChildName(n);
+                    const uint32 nn = n;
+                    StreamString nextVarArrayName = in.GetChildName(nn);
                     (void) nextVarArrayName.Seek(0LLU);
                     token = "";
                     isArray = nextVarArrayName.GetToken(token, "[", ignore);
@@ -370,7 +372,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
                 }
             }
             else {
-                numberOfElements = 1;
+                numberOfElements = 1u;
             }
 
             ConfigurationDatabase typesCDBCurrent = typesCDB;
@@ -405,11 +407,11 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
         else {
             bool isTypeIdentifier = (typeIdentifier != NULL_PTR(const char8 * const));
             if (isTypeIdentifier) {
-                isTypeIdentifier = (StringHelper::Compare(variableName, typeIdentifier) == 0u);
+                isTypeIdentifier = (StringHelper::Compare(variableName, typeIdentifier) == 0);
             }
             if (!isTypeIdentifier) {
                 AnyType variableType = in.GetType(variableName);
-                const char8* const typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(variableType.GetTypeDescriptor());
+                const char8* const variableTypeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(variableType.GetTypeDescriptor());
                 uint8 nOfDimensions = variableType.GetNumberOfDimensions();
                 if (ok) {
                     ok = typesCDB.CreateRelative(variableName);
@@ -433,7 +435,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
                     delete[] numberOfElementsArr;
                 }
                 if (ok) {
-                    ok = typesCDB.Write("Type", typeName);
+                    ok = typesCDB.Write("Type", variableTypeName);
                 }
                 if (ok) {
                     ok = typesCDB.MoveToAncestor(1u);

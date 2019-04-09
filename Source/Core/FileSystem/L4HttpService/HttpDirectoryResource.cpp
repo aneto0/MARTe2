@@ -258,7 +258,7 @@ bool HttpDirectoryResource::ServeFile(StreamString &fname, HttpProtocol &protoco
     return ok;
 }
 
-void HttpDirectoryResource::SetReplyNotFound(bool replyNotFoundIn) {
+void HttpDirectoryResource::SetReplyNotFound(const bool replyNotFoundIn) {
     replyNotFound = replyNotFoundIn;
 }
 
