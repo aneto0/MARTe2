@@ -11,9 +11,7 @@ lcov --capture --initial --directory . --no-external --output-file $OUTPUT_DIR/M
 #Execute the tests
 Test/GTest/cov/MainGTest.ex --gtest_filter=BareMetal*
 Test/GTest/cov/MainGTest.ex --gtest_filter=FileSystem*
-Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*:-Scheduler*L5GAMs*
-Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*L5GAMs*:-Scheduler*CircularBufferThreadInputDataSourceGTest*
-Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*CircularBufferThreadInputDataSourceGTest*
+Test/GTest/cov/MainGTest.ex --gtest_filter=Scheduler*
 
 #Create test coverage data file
 lcov --capture --directory . --no-external --output-file $OUTPUT_DIR/MARTe2.coverage.info.tests

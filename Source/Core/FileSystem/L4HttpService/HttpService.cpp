@@ -36,7 +36,6 @@
 #include "HttpService.h"
 #include "JsonPrinter.h"
 #include "ObjectRegistryDatabase.h"
-#include "ReferenceContainerFilterNameAndType.h"
 #include "Select.h"
 #include "StreamStructuredData.h"
 /*---------------------------------------------------------------------------*/

@@ -39,28 +39,28 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ReferenceContainerFilterNameAndTypeGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterNameAndTypeGTest,TestDefaultConstructor) {
     ReferenceContainerFilterNameAndTypeTest test;
     ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
 
-TEST(ReferenceContainerFilterNameAndTypeGTest,TestSetConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterNameAndTypeGTest,TestSetConstructor) {
     ReferenceContainerFilterNameAndTypeTest test;
     ASSERT_TRUE(test.TestSetConstructor());
 }
 
-TEST(ReferenceContainerFilterNameAndTypeGTest,TestCopyConstructor) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterNameAndTypeGTest,TestCopyConstructor) {
     ReferenceContainerFilterNameAndTypeTest test;
     ASSERT_TRUE(test.TestCopyConstructor());
 }
 
-TEST(ReferenceContainerFilterNameAndTypeGTest,TestTest) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterNameAndTypeGTest,TestTest) {
     ReferenceContainerFilterNameAndTypeTest test;
     ASSERT_TRUE(test.TestTest());
 }
 
-TEST(ReferenceContainerFilterNameAndTypeGTest,TestGetRemainedAddrIndex) {
+TEST(BareMetal_L2Objects_ReferenceContainerFilterNameAndTypeGTest,TestGetRemainedAddrIndex) {
     ReferenceContainerFilterNameAndTypeTest test;
     ASSERT_TRUE(test.TestGetRemainedAddrIndex());
 }
