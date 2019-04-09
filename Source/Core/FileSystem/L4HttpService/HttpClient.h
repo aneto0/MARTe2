@@ -103,13 +103,12 @@ public:
      * @param[in] command the HTTP command code. It can be one of the following:
      *   HttpDefinition::HSHCGet, HttpDefinition::HSHCPut, HttpDefinition::HSHCPost, HttpDefinition::HSHCHead.
      * @param[in] payload is the body to be sent with the HTTP request.
-     * @param[in] timeout the operation timeout.
+     * @param[in] msecTimeout the operation timeout.
      * @param[in] operationId the operation id.
      * @return true if the HTTP request has been sent correctly and a reply has been received. False if timeout of
      * errors occur.
      */
-    bool HttpExchange(BufferedStreamI &streamDataRead, const int32 command, BufferedStreamI * const payload = NULL_PTR(BufferedStreamI *), TimeoutType msecTimeout = TTInfiniteWait, int32 operationId =
-                              -1);
+    bool HttpExchange(BufferedStreamI &streamDataRead, const int32 command, BufferedStreamI * const payload = NULL_PTR(BufferedStreamI *), TimeoutType msecTimeout = TTInfiniteWait, int32 operationId = -1);
 
     /**
      * @brief Sets the server ip address.
@@ -125,13 +124,13 @@ public:
 
     /**
      * @brief Sets the server uri.
-     * @param[in[ serverUriIn the server uri to be set.
+     * @param[in] serverUriIn the server uri to be set.
      */
     void SetServerUri(const char8 * const serverUriIn);
 
     /**
      * @brief Sets the authorisation text to be sent along with the HTTP request.
-     * @param[in[ authIn the authorisation text to be sent along with the HTTP request.
+     * @param[in] authIn the authorisation text to be sent along with the HTTP request.
      */
     void SetAuthorisation(const char8 * const authIn);
 
@@ -175,20 +174,19 @@ protected:
 
     /**
      * @brief Generates the digest key.
-     * @details Generates the digest key by appending all the inputs to the MD5 function that generates the
-     * key response, and the key response itself. In this way, the object on the server can check the client
-     * authenticity.
+     * @details Generates the digest key by appending all the inputs to the MD5 function that generates the key response, and the key response itself. In this way, the object on the server can check the client authenticity.
      * @param[out] key the authorisation digest key in output.
-     * @param[in] the data sent by the server object containing the [realm], the server object [nonce] and the [opaque].
+     * @param[in] data the data sent by the server object containing the [realm], the server object [nonce] and the [opaque].
      * @param[in] command the HTTP request command code.
      * @param[in] nc the operation id.
+     * @return the key.
      */
     bool GenerateDigestKey(StreamString & key, const char8 * const data, const char8 * const command, int32 nc);
 
     /**
      * @brief Performs the Digest or Basic authentication procedure.
      * @param[in] command the HTTP request command code.
-     * @param[in[ msecTimeout the function timeout.
+     * @param[in] msecTimeout the function timeout.
      * @param[in] operationId the operation id.
      */
     bool AutenticationProcedure(const int32 command, const TimeoutType &msecTimeout, const int32 operationId);

@@ -84,15 +84,15 @@ HttpMessageInterface    ();
     virtual bool Initialise(StructuredDataI &data);
 
     /**
-     * @brief Gets the available messages (see ReferenceContainer::GetAsStructuredData) and if the HTTP command "msg" exists, send the corresponding data..
-     * @param[out] data if the HTTP msg command exists writes OK=1 or 0 if the message is sucessfully sent, otherwise outputs the list of available messages.
+     * @brief Gets the available messages (see ReferenceContainer::GetAsStructuredData) and if the HTTP command "msg" exists, send the corresponding data.
+     * @param[out] data if the HTTP msg command exists writes OK=1 or 0 if the message is successfully sent, otherwise outputs the list of available messages.
      * @param[in] protocol expected to contain a \a msg parameter where to read the name of the message to send.
      * @return true if the message can be sent (only if the msg HTTP command was set).
      */
     virtual bool GetAsStructuredData(StreamStructuredDataI &data, HttpProtocol &protocol);
 
     /**
-     * @brief If the HTTP command "msg" exists, send the corresponding data..
+     * @brief If the HTTP command "msg" exists, send the corresponding data.
      * @param[out] stream not used.
      * @param[in] protocol expected to contain a \a msg parameter where to read the name of the message to send.
      * @return true if the message can be sent (only if the "msg" HTTP command was set).

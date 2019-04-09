@@ -59,10 +59,10 @@ void Md5(uint8 *const input,
 /**
  * @brief Adds the HMAC authentication mode to the MD5 hash function.
  * @param[in] key the secret key
- * @param[in} keylen the length of \a key
+ * @param[in] keylen the length of \a key
  * @param[in] input the input.
  * @param[in] ilen the length of \a input.
- * @param[out] the result of MD5_HMAC(input)
+ * @param[out] output the result of MD5_HMAC(input)
  */
 void Md5Hmac(const uint8 *const key,
              const uint32 keylen,

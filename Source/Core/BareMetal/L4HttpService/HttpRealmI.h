@@ -1,6 +1,6 @@
 /**
- * @file HttpRealm.h
- * @brief Header file for class HttpRealm
+ * @file HttpRealmI.h
+ * @brief Header file for class HttpRealmI
  * @date 22/08/2018
  * @author Giuseppe Ferro
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HttpRealm
+ * @details This header file contains the declaration of the class HttpRealmI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -59,7 +59,7 @@ public:
      * @brief Validates a key
      * @param[in] key the key to be validated
      * @param[in] command the HTTP command
-     * param[in] ipNumber the client ip number
+     * @param[in] ipNumber the client ip number
      * @return true if the key is valid, false otherwise
      */
     virtual bool Validate(const char8 * const key, const int32 command, const uint32 ipNumber) = 0;
@@ -72,7 +72,7 @@ public:
 
     /**
      * @brief Retrieves the authentication request.
-     * @param[out[ message contains the authentication request in output.
+     * @param[out] message contains the authentication request in output.
      * @return true if the operation succeeds, false otherwise.
      */
     virtual bool GetAuthenticationRequest(StreamString &message)= 0;

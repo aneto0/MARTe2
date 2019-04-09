@@ -413,7 +413,7 @@ public:
 
     /**
      * @see ReferenceContainer::ExportData(*)
-     * @detail Also exports the current value of all the input and output signals.
+     * @details Also exports the current value of all the input and output signals.
      */
     virtual bool ExportData(StructuredDataI & data);
 

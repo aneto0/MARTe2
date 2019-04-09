@@ -103,7 +103,7 @@ public:
 
     /**
      * @brief See HttpDataExportI::GetAsText and the class description above.
-     * @param[out] data see HttpDataExportI::GetAsText and the class description above.
+     * @param[out] stream see HttpDataExportI::GetAsText and the class description above.
      * @param[out] protocol see HttpDataExportI::GetAsText and the class description above.
      * @return see HttpDataExportI::GetAsText.
      */

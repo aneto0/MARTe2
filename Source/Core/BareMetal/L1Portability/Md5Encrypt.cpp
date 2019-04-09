@@ -419,7 +419,7 @@ void Md5(uint8 * const input,
 }
 
 /*
- * Output = HMAC-MD5( hmac key, input buffer )
+ * output = HMAC-MD5( hmac key (keylen), input buffer )
  */
 void Md5Hmac(const uint8 * const key,
              const uint32 keylen,
