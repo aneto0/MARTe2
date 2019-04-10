@@ -730,6 +730,9 @@ bool HttpServiceTest::TestInitialise() {
         ret &= (test->GetMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
     }
+    if (test.IsValid()) {
+        test->Stop();
+    }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -770,6 +773,9 @@ bool HttpServiceTest::TestInitialise_WebRoot() {
         ret = (test->GetPort() == 9094);
         ret &= (test->GetMaxConnections() == 3);
         ret &= (test->GetWebRoot().IsValid());
+    }
+    if (test.IsValid()) {
+        test->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
@@ -865,6 +871,9 @@ bool HttpServiceTest::TestInitialise_FalseBadWebRootRef() {
     if (ret) {
         ret = (test->Start() != ErrorManagement::NoError);
     }
+    if (test.IsValid()) {
+        test->Stop();
+    }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -906,6 +915,9 @@ bool HttpServiceTest::TestInitialise_DefaultNListenConnections() {
         ret &= (test->GetMaxConnections() == 255);
         ret &= (test->GetWebRoot().IsValid());
     }
+    if (test.IsValid()) {
+        test->Stop();
+    }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -945,6 +957,9 @@ bool HttpServiceTest::TestInitialise_DefaultPort() {
         ret = (test->GetPort() == 80);
         ret &= (test->GetMaxConnections() == 255);
         ret &= (test->GetWebRoot().IsValid());
+    }
+    if (test.IsValid()) {
+        test->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
@@ -1048,10 +1063,10 @@ bool HttpServiceTest::TestStart() {
         ReferenceT<ReferenceContainer> webroot = test->GetWebRoot();
         ret = webroot.IsValid();
     }
-
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
+
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 
@@ -1152,9 +1167,10 @@ bool HttpServiceTest::TestStart_InvalidWebRoot() {
         }
     }
 
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
+
     ObjectRegistryDatabase::Instance()->Purge();
     return ret;
 }
@@ -1233,7 +1249,7 @@ bool HttpServiceTest::TestClientService_Text() {
                 "0\r\n\r\n";
     }
 
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
 
@@ -1299,7 +1315,7 @@ bool HttpServiceTest::TestClientService_Structured() {
                 "}\r\n"
                 "0\r\n\r\n");
     }
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
 
@@ -1362,7 +1378,7 @@ bool HttpServiceTest::TestClientService_CloseConnection() {
                 "0\r\n\r\n";
     }
 
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
 
@@ -1509,7 +1525,7 @@ bool HttpServiceTest::TestClientService_Authorisation() {
 
     }
 
-    if (ret) {
+    if (service.IsValid()) {
         ret = service->Stop();
     }
     ObjectRegistryDatabase::Instance()->Purge();
@@ -1550,7 +1566,7 @@ bool HttpServiceTest::TestClientService_FailReadHeader() {
     socket.Printf("%s", "Connection: close\r\n\r\n");
     socket.Flush();
 
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
 
@@ -1625,7 +1641,7 @@ bool HttpServiceTest::TestServerCycle() {
 
     }
 
-    if (ret) {
+    if (test.IsValid()) {
         ret = test->Stop();
     }
 
@@ -1715,7 +1731,7 @@ bool HttpServiceTest::TestClientService_NoMoreThreads() {
             ret = (readOut == "10\r\n\n\r\"Test\": \"test\"\r\n");
         }
     }
-    if (ret) {
+    if (service.IsValid()) {
         ret = service->Stop();
     }
 

@@ -325,7 +325,8 @@ bool HttpProtocol::ReadHeader(const uint32 bufferReadSize) {
     return ret;
 }
 
-bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id, const uint32 bufferWriteSize) {
+bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 command, BufferedStreamI * const payload, const char8 * const id,
+                               const uint32 bufferWriteSize) {
 
     //if sending something with bodyCompleted=false
     //remember to write Transfer-Encoding: chunked in options
@@ -621,36 +622,44 @@ bool HttpProtocol::StoreInputOptions() {
     }
     if (ret) {
         bool ok = true;
+        const uint32 MAX_RETRIES = 5u;
+        uint32 nOfRetries = MAX_RETRIES;
         while (ok) {
             StreamString line;
             ret = outputStream->GetLine(line);
             if (!ret) {
+                nOfRetries--;
                 REPORT_ERROR_STATIC(ErrorManagement::CommunicationError, "Failed reading a line from socket");
+            }
+            if (nOfRetries == 0u) {
+                ok = false;
             }
 
             if (ret) {
+                nOfRetries = MAX_RETRIES;
                 ok = (line.Size() > 0ull);
                 // parse HTTP Options and add to CDB
                 if (ok) {
                     ret = line.Seek(0ull);
+                    StreamString key;
+                    StreamString value;
+
                     if (ret) {
-                        StreamString key;
-                        StreamString value;
                         ret = line.GetToken(key, " \t:", terminator);
+                    }
+                    if (ret) {
+                        (void) line.GetToken(value, " \t", terminator);
+                        // any other part separated by spaces add to the token
+                        // use a space as separator
+                        uint64 linePosition = line.Position();
+                        if (line.Size() > linePosition) {
+                            uint32 sizeW = 1u;
+                            char8 space = ' ';
+                            ret = value.Write(&space, sizeW);
+                        }
                         if (ret) {
-                            (void) line.GetToken(value, " \t", terminator);
-                            // any other part separated by spaces add to the token
-                            // use a space as separator
-                            uint64 linePosition = line.Position();
-                            if (line.Size() > linePosition) {
-                                uint32 sizeW = 1u;
-                                char8 space = ' ';
-                                ret = value.Write(&space, sizeW);
-                            }
-                            if (ret) {
-                                (void) line.GetToken(value, "", terminator);
-                                ret = Write(key.Buffer(), value.Buffer());
-                            }
+                            (void) line.GetToken(value, "", terminator);
+                            ret = Write(key.Buffer(), value.Buffer());
                         }
                     }
                 }
@@ -722,7 +731,8 @@ bool HttpProtocol::HandlePostHeader(StreamString &line, StreamString &content, S
     return ret;
 }
 
-bool HttpProtocol::HandlePostContent(StreamString &line, StreamString &boundary, StreamString &name, StreamString &filename, StreamString &value, bool &headerHandled) {
+bool HttpProtocol::HandlePostContent(StreamString &line, StreamString &boundary, StreamString &name, StreamString &filename, StreamString &value,
+                                     bool &headerHandled) {
 
     bool ret = true;
 //search for the boundary end
