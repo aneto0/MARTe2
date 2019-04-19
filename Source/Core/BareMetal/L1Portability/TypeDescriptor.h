@@ -50,7 +50,7 @@ namespace MARTe {
  *
  * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  *
- * @note The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
+ * @remark The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
  * described, if a basic one, or a structured one):
  * | isStructuredData   | isConstant  | type   | numberOfBits |
  * | :----:             | :----:      | :----: | :----:       |

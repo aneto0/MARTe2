@@ -39,182 +39,187 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(GAMGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestConstructor) {
     GAMTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(GAMGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestInitialise) {
     GAMTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(GAMGTest,TestAddSignals) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAddSignals) {
     GAMTest test;
     ASSERT_TRUE(test.TestAddSignals());
 }
 
-TEST(GAMGTest,TestSetConfiguredDatabase) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestSetConfiguredDatabase) {
     GAMTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase());
 }
 
-TEST(GAMGTest,TestGetNumberOfInputSignals) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetNumberOfInputSignals) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetNumberOfInputSignals());
 }
 
-TEST(GAMGTest,TestGetNumberOfOutputSignals) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetNumberOfOutputSignals) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetNumberOfOutputSignals());
 }
 
-TEST(GAMGTest,TestGetSignalName) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalName) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalName());
 }
 
-TEST(GAMGTest,TestGetSignalIndex) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalIndex) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalIndex());
 }
 
-TEST(GAMGTest,TestGetSignalDataSourceName) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalDataSourceName) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalDataSourceName());
 }
 
-TEST(GAMGTest,TestGetSignalType) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalType) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalType());
 }
 
-TEST(GAMGTest,TestGetSignalNumberOfDimensions) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalNumberOfDimensions) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfDimensions());
 }
 
-TEST(GAMGTest,TestGetSignalNumberOfElements) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalNumberOfElements) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfElements());
 }
 
-TEST(GAMGTest,TestGetSignalByteSize) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalByteSize) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalByteSize());
 }
 
-TEST(GAMGTest,TestGetSignalDefaultValue) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalDefaultValue) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalDefaultValue());
 }
 
-TEST(GAMGTest,TestGetSignalNumberOfByteOffsets) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalNumberOfByteOffsets) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfByteOffsets());
 }
 
-TEST(GAMGTest,TestGetSignalByteOffsetInfo) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalByteOffsetInfo) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalByteOffsetInfo());
 }
 
-TEST(GAMGTest,TestGetSignalNumberOfRanges) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalNumberOfRanges) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfRanges());
 }
 
-TEST(GAMGTest,TestGetSignalRangesInfo) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalRangesInfo) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalRangesInfo());
 }
 
-TEST(GAMGTest,TestGetSignalNumberOfSamples) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalNumberOfSamples) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfSamples());
 }
 
-TEST(GAMGTest,TestGetSignalFrequency_Input) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalFrequency_Input) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalFrequency_Input());
 }
 
-TEST(GAMGTest,TestGetSignalFrequency_Output) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetSignalFrequency_Output) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetSignalFrequency_Output());
 }
 
-TEST(GAMGTest,TestAllocateInputSignalsMemory) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAllocateInputSignalsMemory) {
     GAMTest test;
     ASSERT_TRUE(test.TestAllocateInputSignalsMemory());
 }
 
-TEST(GAMGTest,TestAllocateOutputSignalsMemory) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAllocateOutputSignalsMemory) {
     GAMTest test;
     ASSERT_TRUE(test.TestAllocateOutputSignalsMemory());
 }
 
-TEST(GAMGTest,TestGetInputSignalsMemoryPointer) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputSignalsMemoryPointer) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputSignalsMemory());
 }
 
-TEST(GAMGTest,TestGetOutputSignalsMemoryPointer) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetOutputSignalsMemoryPointer) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetOutputSignalsMemory());
 }
 
-TEST(GAMGTest,TestGetInputSignalMemoryPointer) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputSignalMemoryPointer) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputSignalMemory());
 }
 
-TEST(GAMGTest,TestGetOutputSignalMemoryPointer) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetOutputSignalMemoryPointer) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetOutputSignalMemory());
 }
 
-TEST(GAMGTest,TestGetInputSignalMemoryPointer_Samples) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputSignalMemoryPointer_Samples) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputSignalMemory_Samples());
 }
 
-TEST(GAMGTest,TestGetOutputSignalMemoryPointer_Samples) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetOutputSignalMemoryPointer_Samples) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetOutputSignalMemory_Samples());
 }
 
-TEST(GAMGTest,TestAddInputBrokers) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAddInputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestAddInputBrokers());
 }
 
-TEST(GAMGTest,TestAddInputBrokers_InvalidBroker) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAddInputBrokers_InvalidBroker) {
     GAMTest test;
     ASSERT_TRUE(test.TestAddInputBrokers_InvalidBroker());
 }
 
-TEST(GAMGTest,TestAddOutputBrokers) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAddOutputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestAddOutputBrokers());
 }
 
-TEST(GAMGTest,TestAddOutputBrokers_InvalidBroker) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestAddOutputBrokers_InvalidBroker) {
     GAMTest test;
     ASSERT_TRUE(test.TestAddOutputBrokers_InvalidBroker());
 }
 
-TEST(GAMGTest,TestGetInputBrokers) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetInputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetInputBrokers());
 }
 
-TEST(GAMGTest,TestGetOutputBrokers) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetOutputBrokers) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetOutputBrokers());
 }
 
-TEST(GAMGTest,TestGetQualifiedName) {
+TEST(BareMetal_L5GAMs_GAMGTest,TestGetQualifiedName) {
     GAMTest test;
     ASSERT_TRUE(test.TestGetQualifiedName());
+}
+
+TEST(BareMetal_L5GAMs_GAMGTest,TestExportData) {
+    GAMTest test;
+    ASSERT_TRUE(test.TestExportData());
 }

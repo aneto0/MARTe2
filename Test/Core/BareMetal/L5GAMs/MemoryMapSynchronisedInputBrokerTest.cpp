@@ -49,9 +49,14 @@ public:
 
 MemoryMapSynchronisedInputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 MemoryMapSynchronisedInputBrokerTestScheduler1::MemoryMapSynchronisedInputBrokerTestScheduler1() :
@@ -59,12 +64,12 @@ MemoryMapSynchronisedInputBrokerTestScheduler1::MemoryMapSynchronisedInputBroker
 
 }
 
-void MemoryMapSynchronisedInputBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapSynchronisedInputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapSynchronisedInputBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapSynchronisedInputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapSynchronisedInputBrokerTestScheduler1, "1.0")
@@ -85,6 +90,8 @@ MemoryMapSynchronisedInputBrokerTestGAM1    ();
     void *GetInputSignalMemory(uint32 signalIdx);
 
     void *GetOutputSignalMemory(uint32 signalIdx);
+
+    virtual bool Setup();
 
     virtual bool Execute();
 };
@@ -107,6 +114,10 @@ void *MemoryMapSynchronisedInputBrokerTestGAM1::GetInputSignalMemory(uint32 sign
 
 void *MemoryMapSynchronisedInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapSynchronisedInputBrokerTestGAM1::Setup() {
+    return true;
 }
 
 bool MemoryMapSynchronisedInputBrokerTestGAM1::Execute() {
@@ -287,7 +298,7 @@ static bool InitialiseMemoryMapSynchronisedInputBrokerEnviroment(const char8 * c
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;

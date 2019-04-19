@@ -25,13 +25,12 @@ PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-
-OBJSX=  GAMSchedulerGTest.x
+OBJSX=  CircularBufferThreadInputDataSourceGTest.x \
+    GAMSchedulerGTest.x \
+    MemoryMapAsyncOutputBrokerGTest.x\
+    MemoryMapAsyncTriggerOutputBrokerGTest.x
 		 
-		
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -39,6 +38,7 @@ INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects
 INCLUDES += -I../../../Core/BareMetal/L3Streams
 INCLUDES += -I../../../Core/BareMetal/L4Configuration
+INCLUDES += -I../../../Core/BareMetal/L4Messages
 INCLUDES += -I../../../Core/BareMetal/L5GAMs
 INCLUDES += -I../../../Core/Scheduler/L1Portability
 INCLUDES += -I../../../Core/Scheduler/L5GAMs
@@ -48,12 +48,12 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L3Services
 INCLUDES += -I../../../../Source/Core/Scheduler/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
-
-
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L5GAMsSGTest$(LIBEXT) 

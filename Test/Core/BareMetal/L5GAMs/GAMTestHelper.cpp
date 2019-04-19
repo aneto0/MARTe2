@@ -36,7 +36,7 @@
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
 #include "GAMSchedulerI.h"
-
+#include "Sleep.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -79,6 +79,50 @@ static const IntrospectionEntry* TestStructDEntries[] = { &TestStructD_c1_intros
         &TestStructD_c3_introspectionEntry, 0 };
 
 DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
+
+DECLARE_CLASS_MEMBER(TestStructBB, b1, int8, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructBB, b2, int64, "", "");
+
+static const IntrospectionEntry* TestStructBBEntries[] = { &TestStructBB_b1_introspectionEntry, &TestStructBB_b2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructBB, TestStructBBEntries)
+
+DECLARE_CLASS_MEMBER(TestStructCC, c1, TestStructBB, "", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c2, float32, "[3]", "");
+
+DECLARE_CLASS_MEMBER(TestStructCC, c3, int32, "[2][4]", "");
+
+static const IntrospectionEntry* TestStructCCEntries[] = { &TestStructCC_c1_introspectionEntry, &TestStructCC_c2_introspectionEntry,
+        &TestStructCC_c3_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructCC, TestStructCCEntries);
+
+DECLARE_CLASS_MEMBER(TestStructE, e1, TestStructC, "[2][1][2]", "");
+
+DECLARE_CLASS_MEMBER(TestStructE, e2, int32, "", "");
+
+static const IntrospectionEntry* TestStructEEntries[] = { &TestStructE_e1_introspectionEntry, &TestStructE_e2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructE, TestStructEEntries);
+
+DECLARE_CLASS_MEMBER(TestStructF, f1, TestStructE, "[2]", "");
+
+DECLARE_CLASS_MEMBER(TestStructF, f2, int32, "", "");
+
+static const IntrospectionEntry* TestStructFEntries[] = { &TestStructF_f1_introspectionEntry, &TestStructF_f2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructF, TestStructFEntries);
+
+DECLARE_CLASS_MEMBER(TestStructG, g1, TestStructF, "[2][2]", "");
+
+DECLARE_CLASS_MEMBER(TestStructG, g2, int32, "", "");
+
+static const IntrospectionEntry* TestStructGEntries[] = { &TestStructG_g1_introspectionEntry, &TestStructG_g2_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructG, TestStructGEntries);
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -87,7 +131,7 @@ DECLARE_STRUCT_INTROSPECTION(TestStructD, TestStructDEntries);
 GAM1::GAM1() :
         GAM() {
     numberOfExecutions = 0u;
-	context=0u;
+    context = 0u;
 
 }
 
@@ -99,8 +143,8 @@ bool GAM1::Initialise(StructuredDataI & data) {
 }
 
 bool GAM1::PrepareNextState(const char8 * currentStateName, const char8 * nextStateName) {
-	context++;
-	return true;
+    context++;
+    return true;
 }
 
 bool GAM1::Execute() {
@@ -109,30 +153,23 @@ bool GAM1::Execute() {
         ReferenceT<ExecutableI> broker = inputBrokers.Get(b);
         broker->Execute();
     }
-    const char8 *name = GetName();
-    printf("%s:\n", name);
-    uint32 numberOfInputSignals = GetNumberOfInputSignals();
-    uint32 numberOfOutputSignals = GetNumberOfOutputSignals();
-    printf("Inputs %d\n", numberOfInputSignals);
-    printf("Outputs %d\n", numberOfOutputSignals);
     uint32 *inputBuffer = (uint32 *) GetInputSignalsMemory();
-
     uint32 *outputBuffer = (uint32 *) GetOutputSignalsMemory();
 
     outputBuffer[0] = inputBuffer[0] + inputBuffer[1];
-    printf("  %d + %d = %d\n", inputBuffer[0], inputBuffer[1], outputBuffer[0]);
 
     for (b = 0u; b < outputBrokers.Size(); b++) {
         ReferenceT<ExecutableI> broker = outputBrokers.Get(b);
         broker->Execute();
     }
     numberOfExecutions++;
+    Sleep::MSec(100);
 
     return true;
 }
 
-void GAM1::SetUp() {
-
+bool GAM1::Setup() {
+    return true;
 }
 
 CLASS_REGISTER(GAM1, "1.0");
@@ -142,8 +179,7 @@ CLASS_REGISTER(GAM1, "1.0");
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 
-bool GAMGroup1::PrepareNextState(const char8 * currentStateName,
-                                 const char8 * nextStateName) {
+bool GAMGroup1::PrepareNextState(const char8 * currentStateName, const char8 * nextStateName) {
     return true;
 
 }
@@ -183,14 +219,11 @@ bool DS1::AllocateMemory() {
     return false;
 }
 
-bool DS1::GetSignalMemoryBuffer(const uint32 signalIdx,
-                                const uint32 bufferIdx,
-                                void *&signalAddress) {
+bool DS1::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
     return true;
 }
 
-const char8 *DS1::GetBrokerName(StructuredDataI &data,
-                                const SignalDirection direction) {
+const char8 *DS1::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -214,8 +247,7 @@ const char8 *DS1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool DS1::PrepareNextState(const char8 * const currentStateName,
-                           const char8 * const nextStateName) {
+bool DS1::PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
     return true;
 }
 
@@ -223,9 +255,7 @@ bool DS1::ChangeState() {
     return true;
 }
 
-bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                          const char8 * const functionName,
-                          void* const gamMemPtr) {
+bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers, const char8 * const functionName, void* const gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -241,9 +271,7 @@ bool DS1::GetInputBrokers(ReferenceContainer &inputBrokers,
     return ret;
 }
 
-bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                           const char8 * const functionName,
-                           void* const gamMemPtr) {
+bool DS1::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8 * const functionName, void* const gamMemPtr) {
 
     bool ret = true;
     //generally a loop for each supported broker
@@ -295,17 +323,14 @@ uint32 Driver1::GetNumberOfMemoryBuffers() {
 }
 
 bool Driver1::AllocateMemory() {
-    return false;
-}
-
-bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx,
-                                    const uint32 bufferIdx,
-                                    void *&signalAddress) {
     return true;
 }
 
-const char8 *Driver1::GetBrokerName(StructuredDataI &data,
-                                    const SignalDirection direction) {
+bool Driver1::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
+    return true;
+}
+
+const char8 *Driver1::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
     const char8* brokerName = NULL_PTR(const char8 *);
 
     float32 freq;
@@ -347,8 +372,7 @@ const char8 *Driver1::GetBrokerName(StructuredDataI &data,
 
 }
 
-bool Driver1::PrepareNextState(const char8 * const currentStateName,
-                               const char8 * const nextStateName) {
+bool Driver1::PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
     return true;
 }
 
@@ -356,9 +380,7 @@ bool Driver1::ChangeState() {
     return true;
 }
 
-bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
-                              const char8 * const functionName,
-                              void* const gamMemPtr) {
+bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers, const char8 * const functionName, void* const gamMemPtr) {
     bool ret = true;
     //generally a loop for each supported broker
     ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
@@ -374,9 +396,7 @@ bool Driver1::GetInputBrokers(ReferenceContainer &inputBrokers,
     return ret;
 }
 
-bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                               const char8 * const functionName,
-                               void* const gamMemPtr) {
+bool Driver1::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8 * const functionName, void* const gamMemPtr) {
 
     bool ret = true;
     //generally a loop for each supported broker
@@ -409,11 +429,16 @@ CLASS_REGISTER(Driver1, "1.0");
 DefaultSchedulerForTests::DefaultSchedulerForTests() :
         GAMSchedulerI() {
 }
-void DefaultSchedulerForTests::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void DefaultSchedulerForTests::StopExecution() {
+MARTe::ErrorManagement::ErrorType DefaultSchedulerForTests::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void DefaultSchedulerForTests::CustomPrepareNextState() {
+
 }
 
 CLASS_REGISTER(DefaultSchedulerForTests, "1.0")

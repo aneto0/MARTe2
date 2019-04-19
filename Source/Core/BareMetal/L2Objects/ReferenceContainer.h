@@ -46,7 +46,11 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+/**
+ * Number of tokens that identify in the first character of an Object name if a new object is to be built.
+ * lint -esym(551, MARTe::REFERENCE_CONTAINER_NUMBER_OF_TOKENS) the symbol is used to define the size of the token arrays
+ */
+const uint32 REFERENCE_CONTAINER_NUMBER_OF_TOKENS = 5u;
 /**
  * @brief Container of references.
  * @details One of the basilar classes of the framework. Linear container of references which may also
@@ -82,16 +86,6 @@ ReferenceContainer    ();
     virtual ~ReferenceContainer();
 
     /**
-     * @brief Full Destruction of the database.
-     * @details This function destroys each element of the database also in case of reference loops (the father contains a reference to the children and the
-     * children contains a reference to the father) by extracting all elements from the tree and destroying them separately.
-     * @warning This function does not perform the behavior of the ReferenceContainer destructor because if another ReferenceContainer shares some
-     * ReferenceT<ReferenceContainer> with this, this function will destroy also its sub-trees related with that shared elements. Vice versa, the
-     * destructor extracts references from the tree only if they are not referenced by someone else.
-     */
-    void CleanUp();
-
-    /**
      * @brief Inserts a new reference to the container.
      * @details If \a position = -1 the reference is added to the end of the container.
      * @param[in] ref the reference to be inserted.
@@ -104,7 +98,7 @@ ReferenceContainer    ();
      * @brief Inserts a new reference in the specified path.
      * @details Creates all the nodes in the \a path if needed before adding \a ref as a leaf.
      * @param[in] path is the path where \a ref must be inserted to.
-     * @param[in] red is the Reference to be inserted in the container.
+     * @param[in] ref is the Reference to be inserted in the container.
      * @return false if \a ref is not valid or in case of errors, true otherwise.
      */
     bool Insert(const char8 * const path, Reference ref);
@@ -138,6 +132,7 @@ ReferenceContainer    ();
     /**
      * @brief Finds the first element identified by \a path in RECURSIVE mode.
      * @param[in] path is the name of the element to be found or its full path.
+     * @param[in] recursive is the flag for recursive search
      * @return the element if it is found or an invalid reference if not.
      */
     Reference Find(const char8 * const path, const bool recursive=false);
@@ -196,11 +191,114 @@ ReferenceContainer    ();
     bool Lock();
 
     /**
-     * @Unlocks the internal spin-lock mutex.
+     * @brief Unlocks the internal spin-lock mutex.
      */
     void UnLock();
 
+    /**
+     * @brief Removes all the elements from the container and destroys any cyclic links.
+     * @details This function destroys each element of the container also in case of reference loops (the father contains a reference to the children and the
+     * children contains a reference to the father) by extracting all elements from the tree and destroying them separately.
+     * An example:
+     *  -->A---
+     *  |  |  |
+     *  |  v  |
+     *  |  B  |
+     *  |  |  |
+     *  |  v  |
+     *  ---C<--
+     *
+     *  Purge will first destroy the link to B and then the link to C. B and C have no more references pointing at them (NumberOfReferences == 0)
+     *  and can then be destroyed. When C is destroyed it will remove the link to A. A has no more references pointing into it and thus can also
+     *  be destroyed.
+     */
+    void Purge();
+
+    /**
+     * @brief Recursively adds to the purgeList all the reference containers held by this ReferenceContainer
+     * @param[in] purgeList a container with all the elements to be purged.
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
+
+    /**
+     * @brief see Object::IsReferenceContainer
+     * @return true.
+     */
+    virtual bool IsReferenceContainer() const;
+
+    /**
+     * @brief Checks if the input token is one of the tokens that force the creation of a new Object.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens that force the creation of a new Object.
+     */
+    static bool IsBuildToken(char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens that force the creation of a new Object.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddBuildToken(char8 token);
+
+    /**
+     * @brief Removes an existent token from the list of tokens that force the creation of a new Object.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveBuildToken(char8 token);
+
+    /**
+     * @brief Checks if the input token is one of the tokens that set an Object as a domain object.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens that set an Object as a domain object.
+     */
+    static bool IsDomainToken(char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens that set a given Object as a domain object.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddDomainToken(char8 token);
+
+    /**
+     * @brief Removes an existent token from the list of tokens that set an Object as a domain object.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveDomainToken(char8 token);
+
 private:
+    /**
+     * @brief The tokens that identify in the first character of an Object name, that a new object is to be built.
+     */
+    static char8 buildTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS];
+
+    /**
+     * @brief The tokens that identify in the first character of an Object name, that a new object is to be set as a Domain object.
+     */
+    static char8 domainTokensList[REFERENCE_CONTAINER_NUMBER_OF_TOKENS];
+
+    /**
+     * @brief Checks if the input token is one of the tokens in the input token list.
+     * @param[in] tokenList the token list to verify.
+     * @param[in] token the token to verify.
+     * @return true if the input token is one of the tokens in the token list.
+     */
+    static bool IsToken(const char8 * const tokenList, char8 token);
+
+    /**
+     * @brief Adds a new token to the list of tokens in the token list.
+     * @param[in] tokenList the token list to be modified.
+     * @param[in] token the token to add.
+     * @return true if the token was successfully added.
+     */
+    static bool AddToken(char8 * const tokenList, char8 token);
+
+    /**
+     * @brief Removes an existent token from the token list.
+     * @param[in] tokenList the token list to be modified.
+     * @param[in] token the token to remove.
+     */
+    static void RemoveToken(char8 * const tokenList, char8 token);
 
     /**
      * The list of references
@@ -217,10 +315,6 @@ private:
      */
     TimeoutType muxTimeout;
 
-    /**
-     * List used to destroy the database.
-     */
-    LinkedListHolderT<ReferenceContainerNode> purgeList;
 };
 
 }

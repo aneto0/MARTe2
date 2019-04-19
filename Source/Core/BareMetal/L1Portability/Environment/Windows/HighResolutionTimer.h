@@ -69,6 +69,10 @@ inline bool GetTimeStamp(TimeStamp &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
 }
 
+inline uint32 GetOsSleepUsec(){
+    return 1u;
+}
+
 }
 
 }

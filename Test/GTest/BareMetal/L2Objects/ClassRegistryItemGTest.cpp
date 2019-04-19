@@ -40,77 +40,77 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryItemGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestConstructor());
 }
 
-TEST(ClassRegistryItemGTest,TestIntrospectionCostructor) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestIntrospectionConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestIntrospectionConstructor());
 }
 
-TEST(ClassRegistryItemGTest,TestFullConstructor) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestFullConstructor) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestFullConstructor());
 }
 
-//TEST(ClassRegistryItemGTest,TestDestructor) {
+//TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestDestructor) {
 //    ClassRegistryItemTest myClassRegistryItemTest;
 //    ASSERT_TRUE(myClassRegistryItemTest.TestDestructor());
 //}
 
-TEST(ClassRegistryItemGTest,TestRegisterMethods) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestAddMethod) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestRegisterMethods());
+    ASSERT_TRUE(myClassRegistryItemTest.TestAddMethod());
 }
 
-TEST(ClassRegistryItemGTest,TestIncrementNumberOfInstances) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestFindMethod) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestFindMethod());
+}
+
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestIncrementNumberOfInstances) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestIncrementNumberOfInstances());
 }
 
-TEST(ClassRegistryItemGTest,TestDecrementNumberOfInstances) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestDecrementNumberOfInstances) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestDecrementNumberOfInstances());
 }
 
-TEST(ClassRegistryItemGTest,TestGetNumberOfInstances) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestGetNumberOfInstances) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetNumberOfInstances(32));
 }
 
-TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy());
 }
 
-TEST(ClassRegistryItemGTest,TestGetClassProperties) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestGetClassProperties) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties());
 }
 
-TEST(ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestSetGetLoadableLibrary("Hello"));
 }
 
-TEST(ClassRegistryItemGTest,TestGetObjectBuildFunction) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestGetObjectBuildFunction) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetObjectBuildFunction());
 }
 
-TEST(ClassRegistryItemGTest,TestGetIntrospection) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestGetIntrospection) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetIntrospection());
 }
 
-TEST(ClassRegistryItemGTest,TestCallRegisteredMethod) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestCallRegisteredMethod());
-}
-
-TEST(ClassRegistryItemGTest,TestSetUniqueIdentifier) {
+TEST(BareMetal_L2Objects_ClassRegistryItemGTest,TestSetUniqueIdentifier) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestSetUniqueIdentifier(0xfffff1));
 }

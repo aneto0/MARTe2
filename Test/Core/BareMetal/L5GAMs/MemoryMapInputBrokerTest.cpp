@@ -49,9 +49,12 @@ public:
 
 MemoryMapInputBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState();
+
 };
 
 MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
@@ -59,13 +62,18 @@ MemoryMapInputBrokerTestScheduler1::MemoryMapInputBrokerTestScheduler1() :
 
 }
 
-void MemoryMapInputBrokerTestScheduler1::StartExecution() {
+MARTe::ErrorManagement::ErrorType  MemoryMapInputBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+MARTe::ErrorManagement::ErrorType   MemoryMapInputBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void MemoryMapInputBrokerTestScheduler1::CustomPrepareNextState(){
 
 }
 
-void MemoryMapInputBrokerTestScheduler1::StopExecution() {
-
-}
 
 CLASS_REGISTER(MemoryMapInputBrokerTestScheduler1, "1.0")
 
@@ -85,6 +93,8 @@ MemoryMapInputBrokerTestGAM1    ();
     void *GetInputSignalMemory(uint32 signalIdx);
 
     void *GetOutputSignalMemory(uint32 signalIdx);
+
+    virtual bool Setup();
 
     virtual bool Execute();
 };
@@ -109,6 +119,10 @@ void *MemoryMapInputBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
 }
 
+bool MemoryMapInputBrokerTestGAM1::Setup() {
+    return true;
+}
+
 bool MemoryMapInputBrokerTestGAM1::Execute() {
     return true;
 }
@@ -130,6 +144,8 @@ MemoryMapInputBrokerDataSourceTestHelper    ();
     virtual ~ MemoryMapInputBrokerDataSourceTestHelper();
 
     virtual bool AllocateMemory();
+
+    virtual uint32 GetNumberOfStatefulMemoryBuffers();
 
     virtual uint32 GetNumberOfMemoryBuffers();
 
@@ -155,11 +171,15 @@ MemoryMapInputBrokerDataSourceTestHelper    ();
 
     virtual bool Synchronise();
 
+    virtual uint32 GetCurrentStateBuffer();
+
     void *signalMemory;
     uint32 *offsets;
 
     //Store 10 samples per signal.
     uint32 samples;
+
+    uint32 bufferIndex;
 };
 
 MemoryMapInputBrokerDataSourceTestHelper::MemoryMapInputBrokerDataSourceTestHelper() :
@@ -167,6 +187,7 @@ MemoryMapInputBrokerDataSourceTestHelper::MemoryMapInputBrokerDataSourceTestHelp
     signalMemory = NULL_PTR(void *);
     offsets = NULL_PTR(uint32 *);
     samples = 10;
+    bufferIndex = 0;
 }
 
 MemoryMapInputBrokerDataSourceTestHelper::~MemoryMapInputBrokerDataSourceTestHelper() {
@@ -205,6 +226,10 @@ bool MemoryMapInputBrokerDataSourceTestHelper::AllocateMemory() {
     return ret;
 }
 
+uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfStatefulMemoryBuffers() {
+    return samples;
+}
+
 uint32 MemoryMapInputBrokerDataSourceTestHelper::GetNumberOfMemoryBuffers() {
     return 1u;
 }
@@ -225,7 +250,7 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetSignalMemoryBuffer(const uint3
         memPtr[n] = static_cast<char8>(n * n);
     }
     if (ret) {
-        signalAddress = reinterpret_cast<void *&>(memPtr);
+        signalAddress = (void *)(&memPtr[bufferIdx*byteSize]);
     }
     return ret;
 }
@@ -263,8 +288,15 @@ bool MemoryMapInputBrokerDataSourceTestHelper::GetOutputBrokers(ReferenceContain
     return true;
 }
 
+uint32 MemoryMapInputBrokerDataSourceTestHelper::GetCurrentStateBuffer() {
+    return bufferIndex;
+}
+
 bool MemoryMapInputBrokerDataSourceTestHelper::Synchronise() {
-    return false;
+    bufferIndex++;
+    bufferIndex %= samples;
+
+    return true;
 }
 
 CLASS_REGISTER(MemoryMapInputBrokerDataSourceTestHelper, "1.0");
@@ -283,7 +315,7 @@ static bool InitialiseMemoryMapInputBrokerEnviroment(const char8 * const config)
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -613,6 +645,65 @@ bool MemoryMapInputBrokerTest::TestExecute_Samples() {
     uint32 copySize = broker->GetCopyByteSize(4);
     for (s = 0; (s < copySize) && (ret); s++) {
         ret = (*(gamPtr++) == static_cast<char8>(s * s));
+    }
+
+    return ret;
+}
+
+bool MemoryMapInputBrokerTest::TestExecute_MultiStateBuffer() {
+    bool ret = InitialiseMemoryMapInputBrokerEnviroment(config1);
+    ReferenceT<MemoryMapInputBrokerDataSourceTestHelper> dataSource;
+    ReferenceT < MemoryMapInputBroker > broker;
+    ReferenceT<MemoryMapInputBrokerTestGAM1> gamA;
+    ReferenceContainer brokers;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        gamA = ObjectRegistryDatabase::Instance()->Find("Application1.Functions.GAMA");
+        ret = gamA.IsValid();
+    }
+
+    if (ret) {
+        ret = dataSource->GetInputBrokers(brokers, "GAMA", (void *) gamA->GetInputSignalsMemory());
+    }
+    if (ret) {
+        ret = (brokers.Size() > 0u);
+    }
+    if (ret) {
+        broker = brokers.Get(0);
+        ret = broker.IsValid();
+    }
+    uint32 numberOfCopies;
+    if (ret) {
+        numberOfCopies = broker->GetNumberOfCopies();
+        ret = (numberOfCopies == 5u);
+    }
+    if (ret) {
+        ret = broker->Execute();
+    }
+    uint32 s;
+    uint8 *gamPtr;
+    //Skip the signal that belongs to the other DataSource...
+    if (ret) {
+        gamPtr = reinterpret_cast<uint8 *>(gamA->GetInputSignalMemory(3));
+    }
+    uint32 copySize = broker->GetCopyByteSize(4);
+
+    uint8* orig = gamPtr;
+    const uint32 nBuffers=10;
+
+    for (s = 0; (s < copySize * nBuffers) && (ret); s++) {
+        ret = ((*gamPtr) == (uint8) (s * s));
+        gamPtr++;
+        if ((s % copySize) == (copySize-1)) {
+            gamPtr = orig;
+            dataSource->Synchronise();
+            if (ret) {
+                ret = broker->Execute();
+            }
+        }
     }
 
     return ret;

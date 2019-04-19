@@ -40,31 +40,31 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectRegistryDatabaseGTest,TestInstance) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestInstance) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestInstance());
 }
 
-TEST(ObjectRegistryDatabaseGTest,TestFind) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestFind) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFind());
 }
 
-TEST(ObjectRegistryDatabaseGTest,TestFind_Relative) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestFind_Relative) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFind_Relative());
 }
 
-TEST(ObjectRegistryDatabaseGTest,TestFind_Absolute) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestFind_Absolute) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFind_Absolute());
 }
 
-TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFindTooManyBackSteps());
 }
-TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
+TEST(BareMetal_L2Objects_ObjectRegistryDatabaseGTest,TestGetClassName) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestGetClassName());
 }

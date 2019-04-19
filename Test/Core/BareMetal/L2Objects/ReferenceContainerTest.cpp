@@ -24,26 +24,25 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerTest.h"
-
-#include <ReferenceContainerFilterObjectName.h>
-#include "ReferenceContainerFilterReferences.h"
-#include "ReferenceContainerFilter.h"
-#include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
 #include "ConfigurationDatabase.h"
+#include "MemoryOperationsHelper.h"
+#include "ObjectRegistryDatabase.h"
 #include "ObjectTestHelper.h"
+#include "ReferenceContainerFilter.h"
+#include "ReferenceContainerFilterObjectName.h"
+#include "ReferenceContainerFilterReferences.h"
+#include "ReferenceContainerTest.h"
+#include "StringHelper.h"
 #include "Threads.h"
-#include "stdio.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
     h = NULL;
     tree = GenerateTestTree();
-    spinLock=0;
+    spinLock = 0;
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -58,6 +57,48 @@ bool ReferenceContainerTest::TestConstructor() {
     return ok;
 }
 
+bool ReferenceContainerTest::TestCopyConstructor() {
+    ReferenceT<ReferenceContainer> otherContainer("ReferenceContainer", h);
+    ReferenceContainer rc;
+    bool ok = (rc.Size() == 0u);
+    if (ok) {
+        ok &= (rc.GetTimeout() == TTInfiniteWait);
+    }
+    if (ok) {
+        ok &= rc.Insert(otherContainer);
+    }
+    if (ok) {
+        rc.SetTimeout(100);
+        ReferenceContainer rc2 = rc;
+        ok = (rc2.Size() == 1u);
+        if (ok) {
+            ok &= (rc2.GetTimeout() == rc.GetTimeout());
+        }
+    }
+    return ok;
+}
+
+bool ReferenceContainerTest::TestOperatorEqual() {
+    ReferenceT<ReferenceContainer> otherContainer("ReferenceContainer", h);
+    ReferenceContainer rc;
+    bool ok = (rc.Size() == 0u);
+    if (ok) {
+        ok &= (rc.GetTimeout() == TTInfiniteWait);
+    }
+    if (ok) {
+        ok &= rc.Insert(otherContainer);
+    }
+    if (ok) {
+        rc.SetTimeout(100);
+        ReferenceContainer rc2;
+        rc2 = rc;
+        ok = (rc2.Size() == 1u);
+        if (ok) {
+            ok &= (rc2.GetTimeout() == rc.GetTimeout());
+        }
+    }
+    return ok;
+}
 //bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
 //    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
 //    ClassProperties cp;
@@ -369,8 +410,7 @@ bool ReferenceContainerTest::TestFindRelativePathObjectNameFilter() {
     return ok;
 }
 
-float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
-                                                  ReferenceContainerFilter &filter) {
+float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter) {
     uint64 start = HighResolutionTimer::Counter();
     TestFindFilter(largeTree, filter, "U3");
     return (HighResolutionTimer::Counter() - start) * HighResolutionTimer::Period();
@@ -394,9 +434,7 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFil
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(
-            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH
-                    | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
     //Remove node "D.C"
     bool ok = TestFindFilter(tree, filter, "D.C");
     filter.Reset();
@@ -484,9 +522,7 @@ bool ReferenceContainerTest::TestFindRemoveAllOfMultipleInstance(ReferenceContai
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
-                                            ReferenceContainerFilter &filter,
-                                            const char8 * const expectedResult) {
+bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree, ReferenceContainerFilter &filter, const char8 * const expectedResult) {
     ReferenceContainer expectedResultContainer;
     ReferenceContainer result;
     bool ok = false;
@@ -702,7 +738,7 @@ bool ReferenceContainerTest::TestInitialise() {
     return true;
 }
 
-bool ReferenceContainerTest::TestCleanUp() {
+bool ReferenceContainerTest::TestPurge() {
     ReferenceContainer container;
     ConfigurationDatabase simpleCDB;
     simpleCDB.CreateAbsolute("+A");
@@ -719,16 +755,24 @@ bool ReferenceContainerTest::TestCleanUp() {
 
     container.Initialise(simpleCDB);
 
-    Reference recursiveLeaf = container.Find("A");
+    ReferenceT<ReferenceContainer> recursiveLeaf = container.Find("A");
 
     ReferenceT<ReferenceContainer> toLeaf = container.Find("A.B.C");
+    //  -->A---
+    //  |  |  |
+    //  |  v  |
+    //  |  B  |
+    //  |  |  |
+    //  |  v  |
+    //  ---C<--
+    recursiveLeaf->Insert(toLeaf);
     toLeaf->Insert(recursiveLeaf);
 
-    if (toLeaf.NumberOfReferences() != 2) {
+    if (toLeaf.NumberOfReferences() != 3) {
         return false;
     }
 
-    container.CleanUp();
+    container.Purge();
 
     if (toLeaf.NumberOfReferences() != 1) {
         return false;
@@ -736,15 +780,15 @@ bool ReferenceContainerTest::TestCleanUp() {
     return (container.Size() == 0);
 }
 
-static void CleanRoutine(ReferenceContainerTest &param) {
+static void PurgeRoutine(ReferenceContainerTest &param) {
     while (param.spinLock != 1) {
         Sleep::MSec(10);
     }
-    param.containerU1->CleanUp();
+    param.containerU1->Purge();
     Threads::EndThread();
 }
 
-bool ReferenceContainerTest::TestCleanUp_Shared() {
+bool ReferenceContainerTest::TestPurge_Shared() {
     ReferenceT<ReferenceContainer> container = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
     containerU1 = container;
 
@@ -759,7 +803,7 @@ bool ReferenceContainerTest::TestCleanUp_Shared() {
         container->Insert(nodeU2);
         container = nodeU1;
     }
-    //recursive assignement
+    //recursive assignment
     container->Insert(containerU1);
 
     if (containerU1->NumberOfReferences() != 2) {
@@ -767,7 +811,7 @@ bool ReferenceContainerTest::TestCleanUp_Shared() {
     }
 
     for (uint32 i = 0u; i < 3u; i++) {
-        Threads::BeginThread((ThreadFunctionType) CleanRoutine, this);
+        Threads::BeginThread((ThreadFunctionType) PurgeRoutine, this);
     }
 
     Atomic::Increment(&spinLock);
@@ -809,6 +853,8 @@ bool ReferenceContainerTest::TestExportData() {
     simpleCDB.Write("leaf", leaf);
     simpleCDB.CreateAbsolute("+B");
     simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("+B.+C");
+    simpleCDB.Write("Class", "ReferenceContainer");
     simpleCDB.MoveToRoot();
 
     container.Initialise(simpleCDB);
@@ -819,27 +865,20 @@ bool ReferenceContainerTest::TestExportData() {
     }
     StreamString output;
     output.Printf("%!", out);
-    printf("\n%s\n", output.Buffer());
 
-    const char8 *test = "+root = {\r\n"
+    const char8 *test = ""
+            "Name = \"root\"\r\n"
             "Class = \"ReferenceContainer\"\r\n"
-            "+A = {\r\n"
-            "Class = \"ReferenceContainer\"\r\n"
-            "+B = {\r\n"
-            "Class = \"ReferenceContainer\"\r\n"
-            "+C = {\r\n"
-            "Class = \"ReferenceContainer\"\r\n"
+            "0 = {\r\n"
+            "    Name = \"A\"\r\n"
+            "    Class = \"ReferenceContainer\"\r\n"
+            "    IsContainer = 1\r\n"
             "}\r\n"
-            "}\r\n"
-            "}\r\n"
-            "+B = {\r\n"
-            "Class = \"ReferenceContainer\"\r\n"
-            "+C = {\r\n"
-            "Class = \"ReferenceContainer\"\r\n"
-            "}\r\n"
-            "}\r\n"
+            "1 = {\r\n"
+            "    Name = \"B\"\r\n"
+            "    Class = \"ReferenceContainer\"\r\n"
+            "    IsContainer = 1\r\n"
             "}\r\n";
-
     return output == test;
 }
 
@@ -907,8 +946,7 @@ ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTreeLarge(uin
     return containerRoot;
 }
 
-bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
-                                                  ReferenceContainer &test) {
+bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source, ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
     if (ok) {
         uint32 i;
@@ -920,8 +958,7 @@ bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
     return ok;
 }
 
-bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer &source,
-                                                              ReferenceContainer &test) {
+bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer &source, ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
     if (ok) {
         uint32 i;
@@ -933,9 +970,7 @@ bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer
     return ok;
 }
 
-bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
-                                                                                     ReferenceContainer &result,
-                                                                                     const char8 * const str) {
+bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source, ReferenceContainer &result, const char8 * const str) {
     bool ok = true;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
@@ -973,8 +1008,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
     return ok;
 }
 
-bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result,
-                                                              const char8 * const str) {
+bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result, const char8 * const str) {
     bool ok = true;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
@@ -1003,6 +1037,152 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
     }
     delete[] name;
     return ok;
+}
+
+bool ReferenceContainerTest::TestIsReferenceContainer() {
+    using namespace MARTe;
+    ReferenceContainer rc;
+    return rc.IsReferenceContainer();
+}
+
+bool ReferenceContainerTest::TestIsBuildToken() {
+    ReferenceContainer container;
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('*');
+    ReferenceContainer::AddBuildToken('%');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+    ReferenceContainer::AddBuildToken('_');
+
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("_B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("*C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("%D");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+
+    ord->Purge();
+    simpleCDB.MoveToRoot();
+    bool ok = ord->Initialise(simpleCDB);
+    if (ok) {
+        ok = (ord->Size() == 4u);
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddBuildToken('#');
+    }
+    if (ok) {
+        //No more space...
+        ok = !ReferenceContainer::AddBuildToken('@');
+    }
+    if (ok) {
+        ReferenceContainer::RemoveBuildToken('*');
+        ok = ReferenceContainer::AddBuildToken('@');
+    }
+    ReferenceContainer::RemoveBuildToken('@');
+    ReferenceContainer::RemoveBuildToken('_');
+    ReferenceContainer::RemoveBuildToken('#');
+    ReferenceContainer::RemoveBuildToken('%');
+
+    ord->Purge();
+    return ok;
+}
+
+bool ReferenceContainerTest::TestAddBuildToken() {
+    return TestIsBuildToken();
+}
+
+bool ReferenceContainerTest::TestRemoveBuildToken() {
+    return TestIsBuildToken();
+}
+
+bool ReferenceContainerTest::TestIsDomainToken() {
+    ReferenceContainer container;
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('_');
+    ReferenceContainer::AddDomainToken('*');
+    ReferenceContainer::AddDomainToken('%');
+    ReferenceContainer::AddDomainToken('*');
+    ReferenceContainer::AddDomainToken('*');
+
+    ConfigurationDatabase simpleCDB;
+    simpleCDB.CreateAbsolute("+A");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("$B");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("_C");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("%D");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    simpleCDB.CreateAbsolute("*E");
+    simpleCDB.Write("Class", "ReferenceContainer");
+    ObjectRegistryDatabase *ord = ObjectRegistryDatabase::Instance();
+
+    ord->Purge();
+    simpleCDB.MoveToRoot();
+    bool ok = ord->Initialise(simpleCDB);
+    if (ok) {
+        ok = (ord->Size() == 5u);
+    }
+    if (ok) {
+        ok = !(ord->Get(0u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(1u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(2u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(3u)->IsDomain());
+    }
+    if (ok) {
+        ok = (ord->Get(4u)->IsDomain());
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('#');
+    }
+    if (ok) {
+        //No more space...
+        ok = !ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ReferenceContainer::RemoveDomainToken('*');
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    if (ok) {
+        ok = ReferenceContainer::AddDomainToken('@');
+    }
+    ReferenceContainer::RemoveDomainToken('@');
+    ReferenceContainer::RemoveDomainToken('_');
+    ReferenceContainer::RemoveDomainToken('#');
+    ReferenceContainer::RemoveDomainToken('%');
+
+    ord->Purge();
+    return ok;
+}
+
+bool ReferenceContainerTest::TestAddDomainToken() {
+    return TestIsDomainToken();
+}
+
+bool ReferenceContainerTest::TestRemoveDomainToken() {
+    return TestIsDomainToken();
 }
 
 /*---------------------------------------------------------------------------*/

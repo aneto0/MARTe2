@@ -86,7 +86,8 @@ public:
 
     /**
      * @brief Sets the buffer size.
-     * @param[in] bufferSize the desired size for the buffer.
+     * @param[in] readBufferSize the desired size for the read buffer.
+     * @param[in] writeBufferSize the desired size for the write buffer.
      * @return true if the buffer memory is reallocated correctly.
      * @pre
      *    readBufferSize > 8u &&
@@ -163,12 +164,6 @@ public:
     virtual bool SetSize(uint64 size);
 
     /**
-     * @brief Flushes the write buffer.
-     * @return true if the Flush of the buffer succeeds.
-     */
-    inline bool Flush();
-
-    /**
      * @brief Gets the timeout value for read/write operations.
      * @return the timeout value for read/write operations.
      */
@@ -195,8 +190,6 @@ protected:
      */
     virtual IOBuffer *GetWriteBuffer();
 
-private:
-
     /**
      * The read buffer. It is used as
      * a middle buffer between the stream and the input.
@@ -222,16 +215,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool DoubleBufferedStream::Flush() {
 
-    bool ret = true;
-    // some data in writeBuffer
-    // we can flush in all cases then
-    if (writeBuffer.UsedSize() > 0u) {
-        ret = writeBuffer.Flush();
-    }
-    return ret;
-}
 
 }
 #endif /* DOUBLEBUFFEREDSTREAM_H_ */

@@ -45,93 +45,93 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(FastPollingEventSemGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestConstructor) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestConstructor());
 }
 
-TEST(FastPollingEventSemGTest,TestConstructorFromExternal) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestConstructorFromExternal) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestConstructorFromExternal());
 }
 
-TEST(FastPollingEventSemGTest,TestCreateWait) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestCreateWait) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestCreate(true));
 }
 
-TEST(FastPollingEventSemGTest,TestCreateNoWait) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestCreateNoWait) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestCreate(false));
 }
 
-TEST(FastPollingEventSemGTest,TestCreateWait_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestCreateWait_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestCreateExternal(true));
 }
 
-TEST(FastPollingEventSemGTest,TestCreateNoWait_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestCreateNoWait_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestCreateExternal(false));
 }
 
-TEST(FastPollingEventSemGTest,TestFastWait) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastWait) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastWait(32, TTInfiniteWait));
 }
 
-TEST(FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastWait(32, 10000000));
 }
 
 
-TEST(FastPollingEventSemGTest,TestFastWait_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastWait_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastWaitExternal(32, TTInfiniteWait));
 }
 
 
-TEST(FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastWaitExternal(32, 10000000));
 }
 
 
 
-TEST(FastPollingEventSemGTest,TestFastPost) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastPost) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastPost(32, TTInfiniteWait));
 }
 
-TEST(FastPollingEventSemGTest,TestFastPostWithFiniteTimeout) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastPostWithFiniteTimeout) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastPost(32, 10000000));
 }
 
 
-TEST(FastPollingEventSemGTest,TestFastPost_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastPost_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastPostExternal(32, TTInfiniteWait));
 }
 
 
-TEST(FastPollingEventSemGTest,TestFastPostWithFiniteTimeout_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastPostWithFiniteTimeout_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastPostExternal(32, 10000000));
 }
 
-TEST(FastPollingEventSemGTest,TestFastResetWait) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastResetWait) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastResetWait(32));
 }
 
-TEST(FastPollingEventSemGTest,TestFastResetWait_External) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastResetWait_External) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastResetWaitExternal(32));
 }
 
-TEST(FastPollingEventSemGTest,TestFastWaitErrorCode) {
+TEST(BareMetal_L1Portability_FastPollingEventSemGTest,TestFastWaitErrorCode) {
     FastPollingEventSemTest eventTest;
     ASSERT_TRUE(eventTest.TestFastWaitErrorCode());
 }

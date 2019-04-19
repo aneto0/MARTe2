@@ -24,32 +24,33 @@
 
 
 OBJSX=  AtomicGTest.x \
-		BasicConsoleGTest.x \
-		EndianityGTest.x \
-		ErrorManagementGTest.x \
-		FastMathGTest.x \
-		FastPollingEventSemGTest.x \
-		FastPollingMutexSemGTest.x \
-		FormatDescriptorGTest.x \
-		GlobalObjectsDatabaseGTest.x \
-		HeapManagerGTest.x \
-		HighResolutionTimerGTest.x \
-		LoadableLibraryGTest.x \
-		MemoryAreaGTest.x \
-		MemoryCheckGTest.x\
-		MemoryOperationsHelperGTest.x\
-		ProcessorTypeGTest.x \
-		SleepGTest.x\
-		StandardHeap_GenericGTest.x \
-		StaticListGTest.x \
-		StringHelperGTest.x \
-		StringPortableGTest.x \
-		TimeStampGTest.x \
-		TimeoutTypeGTest.x \
-		TypeDescriptorGTest.x 
+	BasicConsoleGTest.x \
+	CircularStaticListGTest.x \
+	EndianityGTest.x \
+	ErrorManagementGTest.x \
+	FastMathGTest.x \
+	FastPollingEventSemGTest.x \
+	FastPollingMutexSemGTest.x \
+	FastResourceContainerGTest.x \
+	FormatDescriptorGTest.x \
+	GlobalObjectsDatabaseGTest.x \
+	HeapManagerGTest.x \
+	HighResolutionTimerGTest.x \
+	Md5EncryptGTest.x\
+	LoadableLibraryGTest.x \
+	MemoryAreaGTest.x \
+	MemoryCheckGTest.x\
+	MemoryOperationsHelperGTest.x\
+	ProcessorTypeGTest.x \
+	SleepGTest.x\
+	StandardHeap_GenericGTest.x \
+	StaticListGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	TimeStampGTest.x \
+	TimeoutTypeGTest.x \
+	TypeDescriptorGTest.x
 		
-
-
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

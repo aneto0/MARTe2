@@ -46,9 +46,9 @@ static void PrintErrorOnStream(const char8 * const format,
                                BufferedStreamI * const err) {
     if (err != NULL) {
         if (!err->Printf(format, lineNumber)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
-        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, format, lineNumber)
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, format, lineNumber);
     }
 }
 

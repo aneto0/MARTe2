@@ -1,8 +1,8 @@
 /**
  * @file StandardParserGTest.cpp
  * @brief Source file for class StandardParserGTest
- * @date 09/dic/2015
- * @author pc
+ * @date 09/12/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,37 +41,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StandardParserGTest,TestConstructor) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestConstructor) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
-TEST(StandardParserGTest,TestGetGrammarInfo) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetGrammarInfo) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestGetGrammarInfo());
 }
 
-TEST(StandardParserGTest,TestParseScalar) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseScalar) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseScalar());
 }
 
-TEST(StandardParserGTest,TestParseVector) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseVector) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseVector());
 }
 
-TEST(StandardParserGTest,TestParseMatrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseMatrix) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseMatrix());
 }
 
-TEST(StandardParserGTest,TestNestedBlocks) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestNestedBlocks) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestNestedBlocks());
 }
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_int8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_int8) {
     StandardParserTest parserTest;
     const TypeCastTableTest<int8> table[]={
             {"var1=(int8) 127", "var1", 127, true},
@@ -87,7 +87,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_int8) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_uint8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_uint8) {
     StandardParserTest parserTest;
     const TypeCastTableTest<uint8> table[]={
             {"var1=(uint8) 127", "var1", 127, true},
@@ -102,7 +102,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_uint8) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_int16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_int16) {
     StandardParserTest parserTest;
     const TypeCastTableTest<int16> table[]={
             {"var1=(int16) 32767", "var1", 32767, true},
@@ -118,7 +118,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_int16) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_uint16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_uint16) {
     StandardParserTest parserTest;
     const TypeCastTableTest<uint16> table[]={
             {"var1=(uint16) 32767", "var1", 32767, true},
@@ -135,7 +135,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_uint16) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_int32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_int32) {
     StandardParserTest parserTest;
     const TypeCastTableTest<int32> table[]={
             {"var1=(int32) 2147483647", "var1", 2147483647, true},
@@ -151,7 +151,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_int32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_uint32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_uint32) {
     StandardParserTest parserTest;
     const TypeCastTableTest<uint32> table[]={
             {"var1=(uint32) 2147483647", "var1", 2147483647, true},
@@ -167,7 +167,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_uint32) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_int64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_int64) {
     StandardParserTest parserTest;
     const TypeCastTableTest<int64> table[]={
             {"var1=(int64) 9223372036854775807", "var1", (int64)9223372036854775807ul, true},
@@ -183,7 +183,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_int64) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_uint64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_uint64) {
     StandardParserTest parserTest;
     const TypeCastTableTest<uint64> table[]={
             {"var1=(uint64) 9223372036854775807", "var1", 9223372036854775807ul, true},
@@ -198,7 +198,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_uint64) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_float32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_float32) {
     StandardParserTest parserTest;
     const TypeCastTableTest<float32> table[]={
             {"var1=(float32) 0xFF", "var1", 255.0f, true},
@@ -214,7 +214,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_float32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Scalar_float64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Scalar_float64) {
     StandardParserTest parserTest;
     const TypeCastTableTest<float64> table[]={
             {"var1=(float64) 0xFF", "var1", 255.0, true},
@@ -229,7 +229,7 @@ TEST(StandardParserGTest,TestTypeCast_Scalar_float64) {
     ASSERT_TRUE(parserTest.TestTypeCast_Scalar(table));
 }
 
-TEST(StandardParserGTest,TestTypeCast_Vector_int8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_int8) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<int8, 5> table[]={
             {"var1=(int8) {127 -128 0b1, 0x80 0xFF}", "var1", {127, -128, 1 , -128, -1}, true},
@@ -241,7 +241,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_int8) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_uint8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_uint8) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<uint8, 4> table[]={
             {"var1=(uint8) {127 255 0b1 0xFF}", "var1", {127, 255, 1, 255}, true},
@@ -255,7 +255,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_uint8) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_int16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_int16) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<int16, 5> table[]={
             {"var1=(int16) {32767 -32768 0b1 0x8000 0xFFFF}", "var1", {32767,-32768,1, -32768, -1}, true},
@@ -267,7 +267,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_int16) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_uint16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_uint16) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<uint16, 4> table[]={
             {"var1=(uint16) {32767 65535 0b1 0xFFFF}", "var1", {32767, 65535, 1, 65535}, true},
@@ -279,7 +279,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_uint16) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_int32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_int32) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<int32, 5> table[]={
             {"var1=(int32) {2147483647 -2147483648 0b1 0x80000000 0xFFFFFFFF}", "var1", {2147483647, -2147483648, 1,-2147483648, -1}, true},
@@ -291,7 +291,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_int32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_uint32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_uint32) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<uint32, 4> table[]={
             {"var1=(uint32) {2147483647, 4294967295 0b1 0xFFFFFFFF}", "var1", {2147483647, 4294967295, 1, 4294967295}, true},
@@ -304,7 +304,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_uint32) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_int64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_int64) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<int64, 5> table[]={
             {"var1=(int64) {9223372036854775807 -9223372036854775808 0b1 0x8000000000000000 0xFFFFFFFFFFFFFFFF}", "var1", {(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1,(int64)-9223372036854775808ul,-1}, true},
@@ -316,7 +316,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_int64) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_uint64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_uint64) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<uint64, 4> table[]={
             {"var1=(uint64) {9223372036854775807 18446744073709551615 0b1 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807ul, 18446744073709551615ul, 1, 18446744073709551615ul}, true},
@@ -327,7 +327,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_uint64) {
     ASSERT_TRUE(parserTest.TestTypeCast_Vector(table));
 }
 
-TEST(StandardParserGTest,TestTypeCast_Vector_float32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_float32) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<float32, 4> table[]={
             {"var1=(float32) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0f, -340282346638528859811704183484516925440.0f, 1.0f, 340282346638528859811704183484516925440.0f}, true},
@@ -339,7 +339,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_float32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Vector_float64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Vector_float64) {
     StandardParserTest parserTest;
     const TypeCastTableTestVector<float64, 4> table[]={
             {"var1=(float64) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0, -340282346638528859811704183484516925440.0, 1.0, 340282346638528859811704183484516925440.0}, true},
@@ -351,7 +351,7 @@ TEST(StandardParserGTest,TestTypeCast_Vector_float64) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_int8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_int8) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<int8, 2,3> table[]={
             {"var1=(int8) {{127 -128 0b1} {0x80 0xFF, -1}}", "var1", {{127, -128, 1 },{ -128, -1, -1}}, true},
@@ -363,7 +363,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_int8) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_uint8) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_uint8) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<uint8, 2,2> table[]={
             {"var1=(uint8) {{127 255}{0b1 0xFF}}", "var1", {{127, 255},{1, 255}}, true},
@@ -377,7 +377,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_uint8) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_int16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_int16) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<int16, 2,3> table[]={
             {"var1=(int16) {{32767 -32768 0b1}{ 0x8000 0xFFFF -1}}", "var1", {{32767,-32768,1},{ -32768, -1, -1}}, true},
@@ -389,7 +389,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_int16) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_uint16) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_uint16) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<uint16, 2,2> table[]={
             {"var1=(uint16) {{32767 65535}{ 0b1 0xFFFF}}", "var1", {{32767, 65535},{ 1, 65535}}, true},
@@ -401,7 +401,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_uint16) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_int32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_int32) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<int32, 2,3> table[]={
             {"var1=(int32) {{2147483647 -2147483648 0b1}{ 0x80000000 0xFFFFFFFF -1}}", "var1", {{2147483647, -2147483648, 1},{-2147483648, -1, -1}}, true},
@@ -413,7 +413,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_int32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_uint32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_uint32) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<uint32, 2,2> table[]={
             {"var1=(uint32) {{2147483647, 4294967295 }{0b1 0xFFFFFFFF}}", "var1", {{2147483647, 4294967295},{ 1, 4294967295}}, true},
@@ -426,7 +426,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_uint32) {
 
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_int64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_int64) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<int64, 2,3> table[]={
             {"var1=(int64) {{9223372036854775807 -9223372036854775808 0b1}{ 0x8000000000000000 0xFFFFFFFFFFFFFFFF -1}}", "var1", {{(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1},{(int64)-9223372036854775808ul,-1, -1}}, true},
@@ -438,7 +438,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_int64) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_uint64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_uint64) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<uint64, 2,2> table[]={
             {"var1=(uint64) {{9223372036854775807 18446744073709551615}{ 0b1 0xFFFFFFFFFFFFFFFF}}", "var1", {{9223372036854775807ul, 18446744073709551615ul},{ 1, 18446744073709551615ul}}, true},
@@ -449,7 +449,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_uint64) {
     ASSERT_TRUE(parserTest.TestTypeCast_Matrix(table));
 }
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_float32) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_float32) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<float32, 2,2> table[]={
             {"var1=(float32) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0f, -340282346638528859811704183484516925440.0f}, {1.0f, 340282346638528859811704183484516925440.0f}}, true},
@@ -461,7 +461,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_float32) {
 }
 
 
-TEST(StandardParserGTest,TestTypeCast_Matrix_float64) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestTypeCast_Matrix_float64) {
     StandardParserTest parserTest;
     const TypeCastTableTestMatrix<float64, 2,2> table[]={
             {"var1=(float64) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0, -340282346638528859811704183484516925440.0},{ 1.0, 340282346638528859811704183484516925440.0}}, true},
@@ -472,7 +472,7 @@ TEST(StandardParserGTest,TestTypeCast_Matrix_float64) {
     ASSERT_TRUE(parserTest.TestTypeCast_Matrix(table));
 }
 
-TEST(StandardParserGTest,TestParseErrors_NotLValue_variable_1) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_NotLValue_variable_1) {
     StandardParserTest parserTest;
     const char8* configString="block={\n"
             "                        var{10}\n"
@@ -481,7 +481,7 @@ TEST(StandardParserGTest,TestParseErrors_NotLValue_variable_1) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_NotLValue_variable_2) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_NotLValue_variable_2) {
     StandardParserTest parserTest;
     const char8* configString="block={\n"
             "                    //this is ok\n"
@@ -495,7 +495,7 @@ TEST(StandardParserGTest,TestParseErrors_NotLValue_variable_2) {
 
 
 
-TEST(StandardParserGTest,TestParseErrors_NotLValue_Block) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_NotLValue_Block) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var={10}\n"
@@ -507,7 +507,7 @@ TEST(StandardParserGTest,TestParseErrors_NotLValue_Block) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_empty_vector) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_empty_vector) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -519,7 +519,7 @@ TEST(StandardParserGTest,TestParseErrors_empty_vector) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_unterminated_vector) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_unterminated_vector) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -531,7 +531,7 @@ TEST(StandardParserGTest,TestParseErrors_unterminated_vector) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_mixTypes_vector) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_mixTypes_vector) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -543,7 +543,7 @@ TEST(StandardParserGTest,TestParseErrors_mixTypes_vector) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_badCloseTerminal_vector) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_badCloseTerminal_vector) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -555,7 +555,7 @@ TEST(StandardParserGTest,TestParseErrors_badCloseTerminal_vector) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_empty_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_empty_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -566,7 +566,7 @@ TEST(StandardParserGTest,TestParseErrors_empty_matrix) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_badVectorOpenTerminal_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_badVectorOpenTerminal_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -578,7 +578,7 @@ TEST(StandardParserGTest,TestParseErrors_badVectorOpenTerminal_matrix) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_noVectorOpenTerminal_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_noVectorOpenTerminal_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -590,7 +590,7 @@ TEST(StandardParserGTest,TestParseErrors_noVectorOpenTerminal_matrix) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_badVectorCloseTerminal_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_badVectorCloseTerminal_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -602,7 +602,7 @@ TEST(StandardParserGTest,TestParseErrors_badVectorCloseTerminal_matrix) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_noVectorCloseTerminal_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_noVectorCloseTerminal_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -613,7 +613,7 @@ TEST(StandardParserGTest,TestParseErrors_noVectorCloseTerminal_matrix) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_mixTypes_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_mixTypes_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -625,7 +625,7 @@ TEST(StandardParserGTest,TestParseErrors_mixTypes_matrix) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_badFormat_matrix) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_badFormat_matrix) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -637,7 +637,7 @@ TEST(StandardParserGTest,TestParseErrors_badFormat_matrix) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_typeCast_terminal_1) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_typeCast_terminal_1) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -649,7 +649,7 @@ TEST(StandardParserGTest,TestParseErrors_typeCast_terminal_1) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_typeCast_terminal_2) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_typeCast_terminal_2) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -663,7 +663,7 @@ TEST(StandardParserGTest,TestParseErrors_typeCast_terminal_2) {
 
 
 
-TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_1) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_1) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -674,7 +674,7 @@ TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_1) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_2) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_2) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -685,7 +685,7 @@ TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_2) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_3) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_3) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -697,7 +697,7 @@ TEST(StandardParserGTest,TestParseErrors_Too_many_CloseBlockTerminal_3) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_Too_many_OpenBlockTerminal) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_Too_many_OpenBlockTerminal) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -709,7 +709,7 @@ TEST(StandardParserGTest,TestParseErrors_Too_many_OpenBlockTerminal) {
 }
 
 
-TEST(StandardParserGTest,TestParseErrors_Unexpected_EOF) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseErrors_Unexpected_EOF) {
     StandardParserTest parserTest;
     const char8* configString="block1={\n"
             "                        var=1\n"
@@ -719,7 +719,7 @@ TEST(StandardParserGTest,TestParseErrors_Unexpected_EOF) {
 }
 
 
-TEST(StandardParserGTest,TestStandardCast) {
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestStandardCast) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestStandardCast());
 }

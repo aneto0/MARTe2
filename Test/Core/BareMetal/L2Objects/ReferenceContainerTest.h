@@ -71,6 +71,16 @@ public:
      * @return true if ClassProperties::GetName == "ReferenceContainer".
      */
 
+    /**
+     * @brief Tests the ReferenceContainer copy constructor.
+     */
+    bool TestCopyConstructor();
+
+    /**
+     * @brief Tests the ReferenceContainer operator =.
+     */
+    bool TestOperatorEqual();
+
     bool TestGetClassProperties();
 
     /**
@@ -300,10 +310,7 @@ public:
      * @param[in] filter must be setup to look for the third occurrence of U3.
      * @return the time in seconds that it took to execute the function.
      */
-    float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
-                              ReferenceContainerFilter &filter);
-
-
+    float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter);
 
     bool TestFindWithPath();
 
@@ -384,10 +391,7 @@ public:
      */
     bool TestDelete();
 
-
     bool TestDeleteWithPath();
-
-
 
     /**
      * @brief Tests if for each of the marked nodes of \a data a new Object
@@ -395,18 +399,51 @@ public:
      */
     bool TestInitialise();
 
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge();
 
+    /**
+     * @brief Tests the Purge method
+     */
+    bool TestPurge_Shared();
 
-    bool TestCleanUp();
-
-
-    bool TestCleanUp_Shared();
-
-
+    /**
+     * @brief Tests the ExportData function
+     */
     bool TestExportData();
 
+    /**
+     * @brief Tests the IsBuildToken method.
+     */
+    bool TestIsBuildToken();
 
-   /**
+    /**
+     * @brief Tests the AddBuildToken method.
+     */
+    bool TestAddBuildToken();
+
+    /**
+     * @brief Tests the RemoveBuildToken method.
+     */
+    bool TestRemoveBuildToken();
+
+    /**
+     * @brief Tests the IsDomainToken method.
+     */
+    bool TestIsDomainToken();
+
+    /**
+     * @brief Tests the AddDomainToken method.
+     */
+    bool TestAddDomainToken();
+
+    /**
+     * @brief Tests the RemoveDomainToken method.
+     */
+    bool TestRemoveDomainToken();
+    /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
     ReferenceT<ReferenceContainer> tree;
@@ -458,6 +495,10 @@ public:
      */
     ReferenceT<ReferenceContainer> GenerateTestTreeLarge(uint32 depth);
 
+    /**
+     * @brief Tests the IsReferenceContainer method.
+     */
+    bool TestIsReferenceContainer();
 
     volatile int32 spinLock;
 
@@ -473,8 +514,7 @@ private:
      * @param[in] test second container to be compared.
      * @return true if the \a source and \a test containers hold the same object and if the containers are equally ordered.
      */
-    bool VerifyExpectedResult(ReferenceContainer &source,
-                              ReferenceContainer &test);
+    bool VerifyExpectedResult(ReferenceContainer &source, ReferenceContainer &test);
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.
@@ -482,8 +522,7 @@ private:
      * @param[in] test second container to be compared.
      * @return true if the references hold by \a source and \a test hold objects that have the same name  and if the containers are equally ordered.
      */
-    bool VerifyExpectedResultByObjectName(ReferenceContainer &source,
-                                          ReferenceContainer &test);
+    bool VerifyExpectedResultByObjectName(ReferenceContainer &source, ReferenceContainer &test);
 
     /**
      * @brief Generic utility function to test the ReferenceContainer::Find.
@@ -492,9 +531,7 @@ private:
      * @param[in] expectedResult The expected resulted expressed as a string (dots separate nodes, e.g. D.C.E.H).
      * @return true if the expectedResult is equal to the result retrieved by tree->Find
      */
-    bool TestFindFilter(ReferenceT<ReferenceContainer> tree,
-                        ReferenceContainerFilter &filter,
-                        const char8 * const expectedResult);
+    bool TestFindFilter(ReferenceT<ReferenceContainer> tree, ReferenceContainerFilter &filter, const char8 * const expectedResult);
 
     /**
      * @brief Generates a container of references from a string representation.
@@ -502,8 +539,7 @@ private:
      * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
-    bool GenerateExpectedResultFromString(ReferenceContainer &result,
-                                          const char8 * const str);
+    bool GenerateExpectedResultFromString(ReferenceContainer &result, const char8 * const str);
 
     /**
      * @brief Generates a container of references, linking to existing references, from a string representation.
@@ -512,10 +548,7 @@ private:
      * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
-    bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
-                                                                 ReferenceContainer &result,
-                                                                 const char8 * const str);
-
+    bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source, ReferenceContainer &result, const char8 * const str);
 
 };
 

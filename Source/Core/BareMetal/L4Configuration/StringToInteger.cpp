@@ -29,11 +29,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "FormatDescriptor.h"
+#include "AdvancedErrorManagement.h"
 #include "BitSetToInteger.h"
+#include "FormatDescriptor.h"
+#include "GeneralDefinitions.h"
 #include "IOBuffer.h"
-#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -123,7 +123,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
 
             // number > max
             if (number > max) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
                 canReturn = true;
                 ret = false;
             }
@@ -140,7 +140,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
                     // it will exit at the next loop
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
                     canReturn = true;
                     ret = false;
                 }
@@ -154,7 +154,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         else {
             if (digit != '\0') {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Invalid token.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Invalid token.");
             }
             canReturn = true;
         }
@@ -173,7 +173,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         else {
             number = static_cast<T>(0);
             ret = false;
-            REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: The string represents a negative number and output type is unsigned.");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: The string represents a negative number and output type is unsigned.");
         }
     }
 
@@ -225,7 +225,7 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
                 if ((newDigit < 10) || (newDigit > 15)) {
                     if (digit != '\0') {
                         ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
                     }
                     canReturn = true;
                 }
@@ -234,7 +234,7 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
         if (!canReturn) {
             totalShift += 4u;
             if (totalShift > (static_cast<uint32>(sizeof(T) * 8u))) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Overflow.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Overflow.");
                 ret = false;
                 canReturn = true;
             }
@@ -293,7 +293,7 @@ static bool StringToIntegerOctalNotation(const char8 * const input,
         if ((newDigit < 0) || (newDigit > 7)) {
             if (digit != '\0') {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
             }
             canReturn = true;
         }
@@ -303,20 +303,20 @@ static bool StringToIntegerOctalNotation(const char8 * const input,
             if (totalShift > static_cast<uint32>(sizeof(T) * 8u)) {
                 if (totalShift == static_cast<uint32>((sizeof(T) * 8u) + 1u)) {
                     if (firstDigit > 3) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
                         canReturn = true;
                         ret = false;
                     }
                 }
                 if (totalShift == static_cast<uint32>((sizeof(T) * 8u) + 2u)) {
                     if (firstDigit > 1) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
                         canReturn = true;
                         ret = false;
                     }
                 }
                 if (totalShift > static_cast<uint32>((sizeof(T) * 8u) + 2u)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerOctalNotation: Overflow.");
                     canReturn = true;
                     ret = false;
                 }
@@ -371,14 +371,14 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
         if ((newDigit < 0) || (newDigit > 1)) {
             if (digit != '\0') {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
             }
             canReturn = true;
         }
         else {
             totalShift++;
             if (totalShift > static_cast<uint32>(sizeof(T) * 8u)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerBinaryNotation: Overflow.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerBinaryNotation: Overflow.");
                 canReturn = true;
                 ret = false;
             }
@@ -434,7 +434,7 @@ static bool StringToInteger(const char8 * const input,
         }
             break;
         default: {
-            REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerPrivate: Invalid token.");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StringToIntegerPrivate: Invalid token.");
             ret = false;
         }
         }

@@ -41,39 +41,40 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(HighResolutionTimerGTest,TestFrequency) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestFrequency) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestFrequency());
 }
 
-TEST(HighResolutionTimerGTest,TestPeriod) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestPeriod) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestPeriod());
 }
 
-TEST(HighResolutionTimerGTest,TestPeriodFrequency) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestPeriodFrequency) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestPeriodFrequency());
 }
 
-TEST(HighResolutionTimerGTest,TestCounter) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestCounter) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestCounter(0.5));
 }
 
-TEST(HighResolutionTimerGTest,TestCounter32) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestCounter32) {
     HighResolutionTimerTest hrtTest;
     //This has to be a short time otherwise it will overflow in 32 bits...
     ASSERT_TRUE(hrtTest.TestCounter32(0.05));
 }
 
-TEST(HighResolutionTimerGTest,TestTicksToTime) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestTicksToTime) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestTicksToTime());
 }
 
-TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
+TEST(BareMetal_L1Portability_HighResolutionTimerGTest,TestGetTimeStamp) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
 }
+
 

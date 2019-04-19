@@ -46,27 +46,27 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(LexicalAnalyzerGTest, TestDefaultConstructor) {
+TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestDefaultConstructor) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestConstructor());
 }
 
-TEST(LexicalAnalyzerGTest, TestGetToken) {
+TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestGetToken) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestGetToken());
 }
 
-TEST(LexicalAnalyzerGTest, TestPeekToken) {
+TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestPeekToken) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestPeekToken());
 }
 
-TEST(LexicalAnalyzerGTest, TestEscape) {
+TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestEscape) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestEscape());
 }
 
-TEST(LexicalAnalyzerGTest, TestComments) {
+TEST(BareMetal_L4Configuration_LexicalAnalyzerGTest, TestComments) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestComments());
 }

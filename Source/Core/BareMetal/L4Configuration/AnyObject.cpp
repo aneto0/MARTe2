@@ -30,13 +30,15 @@
 /*---------------------------------------------------------------------------*/
 #define DLL_API
 
-#include "ClassRegistryItemT.h"
 #include "AnyObject.h"
-#include "Vector.h"
+#include "AdvancedErrorManagement.h"
+#include "ClassRegistryItemT.h"
 #include "Matrix.h"
+#include "MemoryOperationsHelper.h"
 #include "StreamString.h"
 #include "StringHelper.h"
-#include "MemoryOperationsHelper.h"
+#include "Vector.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -219,7 +221,7 @@ static bool SerializeVector(const AnyType &typeIn,
             }
             if (isCArrayOnHeap) {
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
-                tokenLength = typeIn.GetByteSize();
+                tokenLength = typeIn.GetByteSize() * numberOfElements;
             }
             if (isString) {
                 token = (reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
@@ -324,7 +326,7 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
             ok = SerializeMatrix(typeIn, type);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Serialisation of AnyType with dimension > 2 not supported!");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Serialisation of AnyType with dimension > 2 not supported!");
             ok = false;
         }
 
@@ -361,7 +363,7 @@ void AnyObject::CleanUp() {
                 for (uint32 idx = 0u; idx < numberOfColumns; idx++) {
                     void *charMem = reinterpret_cast<void *>(charArray[idx]);
                     if (!HeapManager::Free(charMem)) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Vector memory not deallocated.");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HeapManager::Free failed. Vector memory not deallocated.");
                     }
                 }
             }
@@ -379,7 +381,7 @@ void AnyObject::CleanUp() {
                             char8 **destStr = reinterpret_cast<char8 **>(typePointer);
                             void *charMem = reinterpret_cast<void *>(destStr[idx]);
                             if (!HeapManager::Free(charMem)) {
-                                REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                             }
                         }
                     }
@@ -391,7 +393,7 @@ void AnyObject::CleanUp() {
                             if (charRow != NULL) {
                                 void *charMem = reinterpret_cast<void*>(charRow[c]);
                                 if (!HeapManager::Free(charMem)) {
-                                    REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                                 }
                             }
                         }
@@ -401,14 +403,14 @@ void AnyObject::CleanUp() {
                     void **destStr = reinterpret_cast<void **>(typePointer);
                     void* charMem = reinterpret_cast<void *>(destStr[r]);
                     if (!HeapManager::Free(charMem)) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
                     }
                 }
             }
         }
         if(!isPointer) {
             if (!HeapManager::Free(typePointer)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                REPORT_ERROR_STATIC(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
             }
         }
         type = voidAnyType;

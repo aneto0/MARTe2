@@ -44,27 +44,633 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassMethodInterfaceMapperGTest,TestDefaultConstructor) {
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestGetMethod) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestDefaultConstructor());
+    ASSERT_TRUE(target.TestGetMethodCaller());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWithNoArguments) {
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestGetMethodName) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestConstructorForMethodWithNoArguments());
+    ASSERT_TRUE(target.TestGetMethodName());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWith1ArgumentByCopy) {
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestSetMethodName) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestConstructorForMethodWith1ArgumentByCopy());
+    ASSERT_TRUE(target.TestSetMethodName());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,TestConstructorForMethodWith1ArgumentByRef) {
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_OneParameter_Pointer) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestConstructorForMethodWith1ArgumentByRef());
+    ASSERT_TRUE(target.TestConstructor_OneParameter_Pointer());
 }
 
-TEST(ClassMethodInterfaceMapperGTest,TestCall) {
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_VoidParameters) {
     ClassMethodInterfaceMapperTest target;
-    ASSERT_TRUE(target.TestCall());
+    ASSERT_TRUE(target.TestConstructor_VoidParameters());
 }
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperTest,TestConstructor_OneParameter_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_OneParameter_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperTest,TestConstructor_OneParameter_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_OneParameter_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperTest,TestConstructor_OneParameter_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_OneParameter_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_TwoParameters_Pointers) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_TwoParameters_Pointers());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_C_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_C_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_R_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_R_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_ThreeParameters_W_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_ThreeParameters_W_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_C_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_C_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_R_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_R_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_C_W_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_C_W_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_C_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_C_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_R_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_R_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_R_W_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_R_W_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_C_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_C_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_R_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_R_W_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_C_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_C_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_C_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_C_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_C_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_C_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_R_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_R_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_R_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_R_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_R_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_R_W());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_W_C) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_W_C());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_W_R) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_W_R());
+}
+
+TEST(BareMetal_L2Objects_ClassMethodInterfaceMapperGTest,TestConstructor_FourParameters_W_W_W_W) {
+    ClassMethodInterfaceMapperTest target;
+    ASSERT_TRUE(target.TestConstructor_FourParameters_W_W_W_W());
+}
+

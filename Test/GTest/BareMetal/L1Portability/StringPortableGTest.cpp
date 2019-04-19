@@ -42,89 +42,89 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StringPortableGTest,TestLength) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestLength) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestLength("Hello"));
 }
 
-TEST(StringPortableGTest,TestCompare) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestCompare) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCompare("Hello", "Hello"));
 }
 
-TEST(StringPortableGTest,TestCompareN) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestCompareN) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCompareN());
 }
 
-TEST(StringPortableGTest,TestCopy) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestCopy) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCopy("Hello"));
 }
 
-TEST(StringPortableGTest,TestCopyN) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestCopyN) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCopyN());
 }
 
-TEST(StringPortableGTest,TestConcatenateNoResult) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestConcatenateNoResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateNoResult());
 }
-TEST(StringPortableGTest,TestConcatenateNNoResult) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestConcatenateNNoResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateNNoResult());
 }
 
-TEST(StringPortableGTest,TestConcatenateWithResult) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestConcatenateWithResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateWithResult());
 }
-TEST(StringPortableGTest,TestConcatenateNWithResult) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestConcatenateNWithResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateNWithResult());
 }
 
-TEST(StringPortableGTest,TestSearchChars) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSearchChars) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchChars());
 }
 
-TEST(StringPortableGTest,TestSearchChar) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSearchChar) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchChar());
 }
 
-TEST(StringPortableGTest,TestSearchLastChar) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSearchLastChar) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchLastChar());
 }
-TEST(StringPortableGTest,TestSearchString) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSearchString) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchString());
 }
 
-TEST(StringPortableGTest,TestSearchIndex) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSearchIndex) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchIndex());
 }
 
-TEST(StringPortableGTest,TestTokenByChars) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestTokenByChars) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestTokenizeByChars());
 }
 
-TEST(StringPortableGTest,TestTokenByString) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestTokenByString) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestTokenizeByString());
 }
 
-TEST(StringPortableGTest,TestSubstr) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSubstr) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSubstr());
 }
 
-TEST(StringPortableGTest,TestSetChar) {
+TEST(BareMetal_L1Portability_StringPortableGTest,TestSetChar) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSetChar());
 }

@@ -105,7 +105,8 @@ public:
      * @param[in] size is the size of the buffer to pass to the GetUniqueName function.
      * @return true if the tests explained in the details section succeed, false otherwise.
      */
-    bool TestGetUniqueName(const char8* name,uint32 buffSize);
+    bool TestGetUniqueName(const char8* name,
+                           uint32 buffSize);
 
     /**
      * @brief Checks if the name returned by GetUniqueName is different for two objects with the same name.
@@ -132,9 +133,34 @@ public:
     bool TestExportMetadata();
 
     /**
-     * TODO
+     * @brief Tests the CallRegisteredMethod function with no parameters.
      */
     bool TestCallRegisteredMethod();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with no parameters on a non-existent method.
+     */
+    bool TestCallRegisteredMethod_InvalidMethod();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a StructuredDataI.
+     */
+    bool TestCallRegisteredMethod_StructuredDataI();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a ReferenceContainer.
+     */
+    bool TestCallRegisteredMethod_ReferenceContainer();
+
+    /**
+     * @brief Tests the CallRegisteredMethod function with a StreamI.
+     */
+    bool TestCallRegisteredMethod_StreamI();
+
+    /**
+     * @brief Tests the IsReferenceContainer method.
+     */
+    bool TestIsReferenceContainer();
 };
 
 /*---------------------------------------------------------------------------*/

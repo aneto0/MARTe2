@@ -172,13 +172,13 @@ public:
     /**
      * @brief Adds an element at the end of the list
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
+     * @return false if precondition is broken or memory allocation fails
      * @pre
      *   copyFrom != NULL
      * @post
      *   GetSize() == this'old->GetSize() + 1 &&
      *   GetCapacity() >= this'old->GetCapacity() &&
      *   {value:*elementType | Peek(GetSize()-1,value) => *value == *copyFrom}
-     * @return false if precondition is broken or memory allocation fails
      * @warning *copyFrom must be a valid allocated memory of size GetElementSize()
      */
     bool Add(const void * const copyFrom);
@@ -187,6 +187,7 @@ public:
      * @brief Inserts an element at a given position of the list
      * @param[in] position The index where the new element has to be added
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
+     * @return false if precondition is broken or memory allocation fails
      * @pre
      *   position>=0 &&
      *   position<=GetSize() &&
@@ -198,7 +199,6 @@ public:
      *   {value1,value2:*elementType; i:uint32 in [position+1..GetSize()-1] |
      *    Peek(i,value1) && this'old->Peek(i-1,value2) => *value1 == *value2}
      * @warning *copyFrom must be valid allocated memory of size GetElementSize()
-     * @return false if precondition is broken or memory allocation fails
      */
     bool Insert(const uint32 position,
                 const void * const copyFrom);
@@ -207,6 +207,7 @@ public:
      * @brief Peeks an element from a given position of the list
      * @param[in] position The index of the requested element
      * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
+     * @return false if precondition is broken or memory operation fails.
      * @pre
      *   position >= 0 &&
      *   position < GetSize() &&
@@ -215,7 +216,6 @@ public:
      *   copyTo != NULL &&
      *   *copyTo holds a copy of the requested element
      * @warning *copyTo must be a valid allocated memory of size GetElementSize()
-     * @return false if precondition is broken or memory operation fails.
      */
     bool Peek(const uint32 position,
               void * const copyTo) const;
@@ -223,6 +223,7 @@ public:
     /**
      * @brief Extracts an element from a given position of the list (i.e. peeks and deletes)
      * @param[in] position The index of the element to remove
+     * @return false if precondition is broken or memory operation fails.
      * @pre
      *   position >= 0 &&
      *   position < GetSize() &&
@@ -230,21 +231,20 @@ public:
      *   GetSize() == this'old->GetSize() - 1 &&
      *   {value1,value2:*elementType; i:uint32 in [position..GetSize()-1] |
      *    Peek(i,value1) && this'old->Peek(i+1,value2) => *value1 == *value2}
-     * @return false if precondition is broken or memory operation fails.
      */
     bool Remove(const uint32 position);
 
     /**
      * @brief Extracts an element from a given position of the list (i.e. peeks and deletes)
-     * @param[in] position The index of the element to peek and remove
-     * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
      * @details This method is equivalent to the execution of {
      *   Peek(position, copyTo);
      *   Remove(position);
      * }
+     * @param[in] position The index of the element to peek and remove
+     * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
+     * @return false if the precondition is broken or the memory operation fails.
      * @pre Peek'pre && Remove'pre
      * @post Peek'post && Remove'post
-     * @return false if the precondition is broken or the memory operation fails.
      */
     bool Extract(const uint32 position,
                  void * const copyTo);
@@ -253,9 +253,9 @@ public:
      * @brief Replaces the element at the specified position
      * @param[in] position The index of the element to replace
      * @param[in] value pointer to the memory address where the requested element will be copied from.
+     * @return false if the precondition is broken or the memory operation fails.
      * @pre position < GetSize()
      * @post Peek(position, element) => *element = *value
-     * @return false if the precondition is broken or the memory operation fails.
      */
     bool Set(const uint32 position,
              const void * const value);
@@ -270,9 +270,9 @@ private:
 
     /**
      * @brief Increases the capacity of the list
+     * @return false if precondition is broken or memory allocation fails
      * @pre GetCapacity() + GetAllocationGranularity() <= GetMaxCapacity()
      * @post GetCapacity() == GetCapacity()'old + GetAllocationGranularity()
-     * @return false if precondition is broken or memory allocation fails
      */
     bool IncreaseCapacity(void);
 

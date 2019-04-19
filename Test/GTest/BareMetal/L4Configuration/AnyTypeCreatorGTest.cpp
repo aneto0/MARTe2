@@ -1,8 +1,8 @@
 /**
  * @file AnyTypeCreatorGTest.cpp
  * @brief Source file for class AnyTypeCreatorGTest
- * @date 11/dic/2015
- * @author pc
+ * @date 11/12/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,27 +47,27 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-TEST(AnyTypeCreatorGTest, TestConstructor) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestConstructor) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestConstructor());
 }
 
-TEST(AnyTypeCreatorGTest, TestCleanUp) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCleanUp) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCleanUp());
 }
 
-TEST(AnyTypeCreatorGTest, TestGetSize) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestGetSize) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestGetSize(32));
 }
 
-TEST(AnyTypeCreatorGTest, TestGetGranularity) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestGetGranularity) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestGetGranularity(32));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_uint8) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_uint8) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint8", "255",""},
@@ -78,7 +78,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_uint8) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_int8) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_int8) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int8", "127",""},
@@ -91,7 +91,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_int8) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_uint16) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_uint16) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint16", "65535",""},
@@ -102,7 +102,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_uint16) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_int16) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_int16) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int16", "32767",""},
@@ -115,7 +115,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_int16) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_uint32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_uint32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint32", "4294967295",""},
@@ -126,7 +126,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_uint32) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_int32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_int32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int32", "2147483647",""},
@@ -139,7 +139,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_int32) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_uint64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_uint64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint64", "18446744073709551615",""},
@@ -150,7 +150,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_uint64) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_int64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_int64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int64", "9223372036854775807",""},
@@ -164,7 +164,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_int64) {
 }
 
 
-TEST(AnyTypeCreatorGTest, TestAdd_float32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_float32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"float32", "123.4",""},
@@ -176,7 +176,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_float32) {
 }
 
 
-TEST(AnyTypeCreatorGTest, TestAdd_float64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_float64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"float64", "123.4",""},
@@ -187,7 +187,7 @@ TEST(AnyTypeCreatorGTest, TestAdd_float64) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_string) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_string) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"string", "Hello",""},
@@ -199,95 +199,95 @@ TEST(AnyTypeCreatorGTest, TestAdd_string) {
     ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestAdd_TypeMismatch) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestAdd_TypeMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAdd_TypeMismatch());
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_NullMemory) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_NullMemory) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCreate_NullMemory());
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_SizeMismatch) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_SizeMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCreate_SizeMismatch());
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_int8) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_int8) {
     AnyTypeCreatorTest myAnyTypeTest;
     int8 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 12, 15,SignedInteger8Bit, "int8", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_uint8) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_uint8) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint8 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 15, 12,UnsignedInteger8Bit, "uint8", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_int16) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_int16) {
     AnyTypeCreatorTest myAnyTypeTest;
     int16 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 4, 22,SignedInteger16Bit, "int16", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_uint16) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_uint16) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint16 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,UnsignedInteger16Bit, "uint16", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_int32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_int32) {
     AnyTypeCreatorTest myAnyTypeTest;
     int32 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 24, 2,SignedInteger32Bit, "int32", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_uint32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_uint32) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint32 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(0, 1, 1,UnsignedInteger32Bit, "uint32", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_int64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_int64) {
     AnyTypeCreatorTest myAnyTypeTest;
     int64 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 4, 2,SignedInteger64Bit, "int64", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_uint64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_uint64) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint64 x=0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 13, 13,UnsignedInteger64Bit, "uint64", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestCreate_float32) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_float32) {
     AnyTypeCreatorTest myAnyTypeTest;
     float32 x=0.0f;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,Float32Bit, "float32", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_float64) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_float64) {
     AnyTypeCreatorTest myAnyTypeTest;
     float64 x=0.0;
     ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,Float64Bit, "float64", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_DimensionMismatch) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_DimensionMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCreate_DimensionMismatch());
 }
 
-TEST(AnyTypeCreatorGTest, TestCreate_String) {
+TEST(BareMetal_L4Configuration_AnyTypeCreatorGTest, TestCreate_String) {
     AnyTypeCreatorTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCreate_String());
 }

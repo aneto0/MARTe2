@@ -40,11 +40,6 @@
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in JSON language.
- */
-static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
-
 
 
 /**

@@ -47,17 +47,19 @@ namespace MARTe {
  * different threads to be executed.
  *
  * The syntax in the configuration stream shall be:
- * State_name = {\n
- *     Class = RealTimeState\n
+ * <pre>
+ * State_name = {
+ *     Class = RealTimeState
  *     +Threads = {
  *         Class = ReferenceContainer
- *         RealTimeThread_name = {\n
- *             Class = RealTimeThread\n
- *             ...\n
- *         }\n
- *         ...\n
- *      }\n
- * }\n
+ *         RealTimeThread_name = {
+ *             Class = RealTimeThread
+ *             ...
+ *         }
+ *         ...
+ *      }
+ * }
+ * </pre>
  */
 class DLL_API RealTimeState: public ReferenceContainer, public StatefulI {
 
@@ -97,6 +99,11 @@ RealTimeState    ();
      * @return  the number of StatefulI Functions that are that are executed by all the RealTimeThreads that are owned by this RealTimeState.
      */
     uint32 GetNumberOfStatefuls();
+
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 private:
 

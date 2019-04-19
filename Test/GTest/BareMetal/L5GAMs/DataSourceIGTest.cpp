@@ -39,173 +39,232 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(DataSourceIGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestConstructor) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(DataSourceIGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestInitialise) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(DataSourceIGTest,TestAddSignals) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestAddSignals) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestAddSignals());
 }
 
-TEST(DataSourceIGTest,TestSetConfiguredDatabase) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestSetConfiguredDatabase) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase());
 }
 
-TEST(DataSourceIGTest,TestGetNumberOfSignals) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetNumberOfSignals) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetNumberOfSignals());
 }
 
-TEST(DataSourceIGTest,TestGetSignalIndex) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalIndex) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalIndex());
 }
 
-TEST(DataSourceIGTest,TestGetSignalName) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalName) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalName());
 }
 
-TEST(DataSourceIGTest,TestGetSignalType) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalType) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalType());
 }
 
-TEST(DataSourceIGTest,TestGetSignalNumberOfDimensions) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfDimensions) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfDimensions());
 }
 
-TEST(DataSourceIGTest,TestGetSignalNumberOfElements) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfElements) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfElements());
 }
 
-TEST(DataSourceIGTest,TestGetSignalByteSize) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalByteSize) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalByteSize());
 }
 
-TEST(DataSourceIGTest,TestGetSignalNumberOfStates) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfStates) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfStates());
 }
 
-TEST(DataSourceIGTest,TestGetSignalStateName) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalStateName) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalStateName());
 }
 
-TEST(DataSourceIGTest,TestGetSignalNumberOfConsumers) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfConsumers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfConsumers());
 }
 
-TEST(DataSourceIGTest,TestGetSignalNumberOfProducers) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalNumberOfProducers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalNumberOfProducers());
 }
 
-TEST(DataSourceIGTest,TestGetSignalConsumerName) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalConsumerName) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalConsumerName());
 }
 
-TEST(DataSourceIGTest,TestGetSignalProducerName) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalProducerName) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalProducerName());
 }
 
-TEST(DataSourceIGTest,TestGetSignalDefaultValue) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalDefaultValue) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalDefaultValue());
 }
 
-TEST(DataSourceIGTest,TestGetSignalDefaultValueType) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetSignalDefaultValueType) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetSignalDefaultValueType());
 }
 
-TEST(DataSourceIGTest,TestGetNumberOfFunctions) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetNumberOfFunctions) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetNumberOfFunctions());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionIndex) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionIndex) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionIndex());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionName) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionName) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionName());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionNumberOfSignals) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionNumberOfSignals) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionNumberOfSignals());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalsByteSize) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalsByteSize) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalsByteSize());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalIndex) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalIndex) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalIndex());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalAlias) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalAlias) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalAlias());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalNumberOfByteOffsets) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalNumberOfByteOffsets) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalNumberOfByteOffsets());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalByteOffsetInfo) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalByteOffsetInfo) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalByteOffsetInfo());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalSamples) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalSamples) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalSamples());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyInput) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalReadFrequencyInput) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyInput());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalReadFrequencyOutput) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalReadFrequencyOutput());
 }
 
-TEST(DataSourceIGTest,TestGetFunctionSignalGAMMemoryOffset) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalTrigger) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetFunctionSignalTrigger());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetFunctionSignalGAMMemoryOffset) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetFunctionSignalGAMMemoryOffset());
 }
 
-TEST(DataSourceIGTest,TestGetAddBrokers) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetAddBrokers) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestGetAddBrokers());
 }
 
-TEST(DataSourceIGTest,TestIsSupportedBroker) {
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestIsSupportedBroker) {
     DataSourceITest test;
     ASSERT_TRUE(test.TestIsSupportedBroker());
 }
 
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetCurrentStateBuffer) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetCurrentStateBuffer());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetNumberOfStatefulMemoryBuffers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfStatefulMemoryBuffers());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestPrepareInputOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestPrepareInputOffsets());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestPrepareOutputOffsets) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestPrepareOutputOffsets());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetInputOffset) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetInputOffset());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetOutputOffset) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetOutputOffset());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestTerminateInputCopy) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestTerminateInputCopy());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestTerminateOutputCopy) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestTerminateOutputCopy());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetNumberOfMemoryBuffers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetNumberOfMemoryBuffers());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetInputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetInputBrokers());
+}
+
+TEST(BareMetal_L5GAMs_DataSourceIGTest,TestGetOutputBrokers) {
+    DataSourceITest test;
+    ASSERT_TRUE(test.TestGetOutputBrokers());
+}

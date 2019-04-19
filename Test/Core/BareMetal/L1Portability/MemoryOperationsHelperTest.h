@@ -131,6 +131,16 @@ public:
      */
     bool TestSearchZeroSize();
 
+    /**
+     * @brief Tests the InterleavedToFlat function
+     */
+    bool TestInterleavedToFlat();
+
+    /**
+     * @brief Tests the FlatToInterleaved function
+     */
+    bool TestFlatToInterleaved();
+
 };
 
 /*---------------------------------------------------------------------------*/

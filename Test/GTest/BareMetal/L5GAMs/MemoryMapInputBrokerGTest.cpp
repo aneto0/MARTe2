@@ -41,22 +41,27 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryMapInputBrokerGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_MemoryMapInputBrokerGTest,TestConstructor) {
     MemoryMapInputBrokerTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(MemoryMapInputBrokerGTest,TestExecute) {
+TEST(BareMetal_L5GAMs_MemoryMapInputBrokerGTest,TestExecute) {
     MemoryMapInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute());
 }
 
-TEST(MemoryMapInputBrokerGTest,TestExecute_Ranges) {
+TEST(BareMetal_L5GAMs_MemoryMapInputBrokerGTest,TestExecute_Ranges) {
     MemoryMapInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Ranges());
 }
 
-TEST(MemoryMapInputBrokerGTest,TestExecute_Samples) {
+TEST(BareMetal_L5GAMs_MemoryMapInputBrokerGTest,TestExecute_Samples) {
     MemoryMapInputBrokerTest test;
     ASSERT_TRUE(test.TestExecute_Samples());
+}
+
+TEST(BareMetal_L5GAMs_MemoryMapInputBrokerGTest,TestExecute_MultiStateBuffer) {
+    MemoryMapInputBrokerTest test;
+    ASSERT_TRUE(test.TestExecute_MultiStateBuffer());
 }

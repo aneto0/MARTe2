@@ -49,7 +49,7 @@ typedef struct termio ConsoleHandle;
 const uint32 THREADS_DATABASE_GRANULARITY = 64u;
 
 /** Defines the default stack size for a thread. */
-const uint32 THREADS_DEFAULT_STACKSIZE = 32768u;
+const uint32 THREADS_DEFAULT_STACKSIZE = 262144u;
 
 /** Defines the maximum number of elements in the memory database */
 const uint32 MAX_NO_OF_MEMORY_MONITORS = 64u;
@@ -83,8 +83,10 @@ struct BasicConsoleProperties;
 
 typedef int32 Handle;
 static const char8 DIRECTORY_SEPARATOR = '/';
+const uint32 SCHED_GRANULARITY_US = 10000;
 
 }
+
 
 #endif /* GENERALDEFINITIONSOS_H_ */
 

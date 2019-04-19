@@ -1,8 +1,8 @@
 /**
  * @file TCPSocket.h
  * @brief Header file for class TCPSocket
- * @date Mar 17, 2016
- * @author fsartori
+ * @date 17/03/2016
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,21 +43,20 @@
 namespace MARTe {
 
 /**
- * */
+ * @brief Buffered implementation of the BasicTCPSocket.
+ */
 class TCPSocket: public BufferedStreamGenerator<DoubleBufferedStream,BasicTCPSocket>{
 
 public:
     /**
-     * */
-    TCPSocket(){
-
-    }
+     * @brief Default constructor. NOOP.
+     */
+    TCPSocket();
 
     /**
-     * */
-    virtual ~TCPSocket(){
-
-    }
+     * @brief Destructor.
+     */
+    virtual ~TCPSocket();
 };
 
 };

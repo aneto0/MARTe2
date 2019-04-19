@@ -121,3 +121,15 @@ bool ClassPropertiesTest::TestSetUniqueIdentifier(uint32 uniqueIdentifier) {
     classProperties1.SetUniqueIdentifier(uniqueIdentifier);
     return (classProperties1.GetUniqueIdentifier() == uniqueIdentifier);
 }
+
+bool ClassPropertiesTest::TestReset() {
+    ClassProperties classProperties;
+    classProperties.SetUniqueIdentifier(100);
+    classProperties.Reset("A", "B", "C", 15);
+    bool ok = (StringHelper::Compare("A", classProperties.GetName()) == 0);
+    ok &= (StringHelper::Compare("B", classProperties.GetTypeIdName()) == 0);
+    ok &= (StringHelper::Compare("C", classProperties.GetVersion()) == 0);
+    ok &= (classProperties.GetSize() == 15);
+    ok &= (classProperties.GetUniqueIdentifier() == 100);
+    return ok;
+}

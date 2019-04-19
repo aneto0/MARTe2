@@ -23,8 +23,13 @@
 #############################################################
 
 
-OBJSX=  MessageGTest.x \
-		MessageIGTest.x
+OBJSX=  MessageFilterPoolGTest.x \
+        MessageGTest.x \
+	MessageIGTest.x \
+	ObjectRegistryDatabaseMessageFilterGTest.x \
+	ObjectRegistryDatabaseMessageIGTest.x \
+	RegisteredMethodsMessageFilterGTest.x \
+	ReplyMessageCatcherMessageFilterGTest.x
 		
 
 PACKAGE=GTest/BareMetal

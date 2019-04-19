@@ -60,10 +60,11 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 
     addressNumberNodes = 0u;
     addressToSearch = static_cast<char8 **>(NULL);
+    /*lint -e{1506} the caller must know that the address pointer shall be valid while the class is to be used*/
     SetAddress(address);
 }
 
-/*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
+/*lint -e{929} -e{925} -e{9007} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
 void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address) {
     const char8 *lastOccurrence = address;
     addressToSearch = static_cast<char8 **>(NULL);
@@ -156,7 +157,7 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
                 }
             }
         }
@@ -189,7 +190,7 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
             bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
             }
         }
         delete[] addressToSearch;
@@ -212,7 +213,7 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
 }
 
 bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
+                                              Reference const &referenceToTest) {
     bool found = (addressNumberNodes > 0u);
 
     if (addressNumberNodes > 1u) {

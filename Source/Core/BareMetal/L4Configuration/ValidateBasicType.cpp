@@ -2,7 +2,7 @@
  * @file ValidateBasicType.cpp
  * @brief Source file for class ValidateBasicType
  * @date 25/gen/2016
- * @author pc
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,13 +31,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "ConfigurationDatabase.h"
+#include "StandardParser.h"
+#include "StringHelper.h"
 #include "ValidateBasicType.h"
 #include "TypeDescriptor.h"
 #include "TypeConversion.h"
-#include "StringHelper.h"
-#include "StandardParser.h"
-#include "ConfigurationDatabase.h"
-#include "ErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -952,7 +953,7 @@ bool ValidateBasicType(const AnyType &value,
                             }
                             else {
                                 recognized=false;
-                                REPORT_ERROR(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
+                                REPORT_ERROR_STATIC(ErrorManagement::Warning, "ValidateBasicType: Basic Type not matched");
                             }
                         }
                     }

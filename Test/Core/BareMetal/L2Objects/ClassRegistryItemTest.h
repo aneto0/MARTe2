@@ -70,10 +70,16 @@ public:
 //    bool TestDestructor();
 
     /**
-     * @brief Tests ClassRegistryItem::TestRegisterMethods.
+     * @brief Tests ClassRegistryItem::AddMethod.
      * @return true if the registering of methods succeeds.
      */
-    bool TestRegisterMethods();
+    bool TestAddMethod();
+
+    /**
+     * @brief Tests ClassRegistryItem::FindMethod.
+     * @return true if the registering of methods succeeds and the Find method returns a valid pointer to the caller.
+     */
+    bool TestFindMethod();
 
     /**
      * @brief Tests ClassRegistryItem::IncrementNumberOfInstances.
@@ -129,17 +135,10 @@ public:
      */
     bool TestGetObjectBuildFunction();
 
-
     /**
      * @brief Checks if the function returns the pointer to the Introspection set by constructor.
      */
     bool TestGetIntrospection();
-
-    /**
-     * @brief Tests ClassRegistryItem::CallRegisteredMethod.
-     * @return true if the call to registered methods succeed.
-     */
-    bool TestCallRegisteredMethod();
 
     /**
      * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.

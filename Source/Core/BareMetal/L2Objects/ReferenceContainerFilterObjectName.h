@@ -98,14 +98,15 @@ public:
      * @return true if the name of the object hold by referenceToTest is compatible with the address.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest);
+                      Reference const &referenceToTest);
 
     /**
-     * TODO
+     * @brief Sets the address of the object to search.
+     * @param[in] address the address of the object to search.
      */
-    void SetAddress(const char8 * const address);
+    virtual void SetAddress(const char8 * const address);
 
-private:
+protected:
 
     /**
      * Broken-down list of the address to search.

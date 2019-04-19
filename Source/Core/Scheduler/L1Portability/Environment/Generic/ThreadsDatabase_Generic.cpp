@@ -92,7 +92,7 @@ bool NewEntry(ThreadInformation * const threadInformation) {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: cannot find an empty slot");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: cannot find an empty slot");
         }
     }
     return ok;
@@ -115,7 +115,7 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
                     /*lint -e{929} Type handled inside HeapManager::Free through a HeapI interface */
                     bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
                     if (!ok) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Error: database memory cleanup failed");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: database memory cleanup failed");
                     }
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
@@ -163,20 +163,28 @@ uint32 NumberOfThreads() {
 
 ThreadIdentifier GetThreadID(const uint32 &n) {
     ThreadIdentifier tid = 0u;
-    if (n < maxNOfEntries) {
-        if (entries[n] != NULL) {
-            tid = entries[n]->GetThreadIdentifier();
+    uint32 notEmptyN = (n + 1u);
+    uint32 index = 0u;
+    while ((notEmptyN != 0u) && (index < maxNOfEntries)) {
+        if (entries[index] != NULL) {
+            notEmptyN--;
         }
+        index++;
+    }
+    index--;
+    if (notEmptyN != 0u) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: the index in input is greater than the number of database records");
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the index in input is greater than the number of database records");
+        if (entries[index] != NULL) {
+            tid = entries[index]->GetThreadIdentifier();
+        }
     }
 
     return tid;
 }
 
-bool GetInfoIndex(ThreadInformation &threadInfoCopy,
-                  const uint32 &n) {
+bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n) {
     ThreadIdentifier threadId = GetThreadID(n);
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
@@ -185,8 +193,7 @@ bool GetInfoIndex(ThreadInformation &threadInfoCopy,
     return (threadInfo != NULL);
 }
 
-bool GetInfo(ThreadInformation &threadInfoCopy,
-             const ThreadIdentifier &threadId) {
+bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
         threadInfoCopy.Copy(*threadInfo);
@@ -196,7 +203,7 @@ bool GetInfo(ThreadInformation &threadInfoCopy,
 
 ThreadIdentifier Find(const char8 * const name) {
     ThreadIdentifier tid = 0u;
-    // search for empty space staring from guess
+// search for empty space starting from guess
     uint32 index = 0u;
     while (index < maxNOfEntries) {
         if (entries[index] != NULL) {
@@ -213,7 +220,7 @@ ThreadIdentifier Find(const char8 * const name) {
 
 bool AllocMore() {
     bool ok = true;
-    // no need
+// no need
     if (maxNOfEntries <= nOfEntries) {
         // first time?
         if (entries == NULL) {
@@ -225,7 +232,7 @@ bool AllocMore() {
                 nOfEntries = 0u;
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: memory allocation for the database failed");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: memory allocation for the database failed");
                 ok = false;
             }
         }
@@ -239,7 +246,7 @@ bool AllocMore() {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: memory reallocation for the database failed");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: memory reallocation for the database failed");
                 ok = false;
             }
         }

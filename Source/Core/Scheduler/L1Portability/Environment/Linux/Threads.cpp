@@ -98,6 +98,7 @@ ThreadStateType GetState(const ThreadIdentifier &threadId) {
 
 uint32 GetCPUs(const ThreadIdentifier &threadId) {
     uint32 cpus = 0u;
+    (void) ThreadsDatabase::Lock();
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
     if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) == 0) {
@@ -110,8 +111,9 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_getaffinity_np()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_getaffinity_np()");
     }
+    (void) ThreadsDatabase::UnLock();
     return cpus;
 }
 
@@ -169,11 +171,11 @@ void SetPriority(const ThreadIdentifier &threadId,
                 if (pthread_setschedparam(threadId, policy, &param) != 0) {
                     threadInfo->SetPriorityLevel(oldPriorityLevel);
                     threadInfo->SetPriorityClass(oldPriorityClass);
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setschedparam()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setschedparam()");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_getschedparam()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_getschedparam()");
             }
         }
     }
@@ -252,13 +254,13 @@ bool Kill(const ThreadIdentifier &threadId) {
         if (ok) {
             ok = (pthread_cancel(threadId) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cancel()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_cancel()");
             }
         }
         if (ok) {
             ok = (pthread_join(threadId, static_cast<void **>(NULL)) != 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_join()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_join()");
             }
         }
 
@@ -292,19 +294,19 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         if (ok) {
             ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
             }
         }
 
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_init()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_attr_init()");
         }
 
         if (ok) {
             /*lint -e{929} cast from pointer to pointer required in order to cast into the pthread callback required function type.*/
             ok = (pthread_create(&threadId, &stackSizeAttribute, reinterpret_cast<void *(*)(void *)>(&SystemThreadFunction), threadInfo) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_create()");
             }
 
             if (ok) {
@@ -324,7 +326,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_detach()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_detach()");
             }
         }
         if (ok) {
@@ -344,7 +346,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 ok = threadInfo->ThreadPost();
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
             }
         }
         if (!ok) {

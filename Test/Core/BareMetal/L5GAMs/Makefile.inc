@@ -32,13 +32,18 @@ OBJSX= BrokerITest.x \
        GAMSchedulerITest.x \
        GAMTest.x\
        GAMTestHelper.x\
+       MemoryDataSourceITest.x\
        MemoryMapBrokerTest.x\
        MemoryMapInputBrokerTest.x\
+       MemoryMapInterpolatedInputBrokerTest.x\
+       MemoryMapMultiBufferBrokerTest.x \
+       MemoryMapMultiBufferInputBrokerTest.x \
+       MemoryMapMultiBufferOutputBrokerTest.x \
        MemoryMapOutputBrokerTest.x\
-       MemoryMapStatefulBrokerTest.x\
-       MemoryMapStatefulInputBrokerTest.x\
-       MemoryMapStatefulOutputBrokerTest.x\
        MemoryMapSynchronisedInputBrokerTest.x\
+       MemoryMapSynchronisedMultiBufferOutputBrokerTest.x\
+       MemoryMapSynchronisedMultiBufferInputBrokerTest.x\
+       MemoryMapSynchronisedOutputBrokerTest.x\
        RealTimeApplicationTest.x\
        RealTimeApplicationConfigurationBuilderTest.x\
        RealTimeStateTest.x\
@@ -56,6 +61,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/BareMetal/L4Messages
 INCLUDES += -I../../../../Source/Core/BareMetal/L5GAMs
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability

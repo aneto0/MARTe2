@@ -1,7 +1,8 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
-#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -19,12 +20,15 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
 TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES_STATIC= L1Portability/cov/L1PortabilityFGTest$(LIBEXT)
+LIBRARIES_STATIC = L1Portability/cov/L1PortabilityFGTest$(LIBEXT)
+LIBRARIES_STATIC += L3Streams/cov/L3StreamsFGTest$(LIBEXT)
+LIBRARIES_STATIC += L4LoggerService/cov/L4LoggerServiceFGTest$(LIBEXT)
+LIBRARIES_STATIC += L4HttpService/cov/L4HttpServiceFGTest$(LIBEXT)
+LIBRARIES_STATIC += L6App/cov/L6AppFGTest$(LIBEXT)
+

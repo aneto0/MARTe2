@@ -24,17 +24,25 @@
 #
 #############################################################
 
-OBJSX=	BitSetToIntegerTest.x \
-		BufferedStreamIOBufferTest.x \
-		BufferedStreamITest.x \
-		CharBufferTest.x \
-		DoubleBufferedStreamTest.x \
-		IOBufferTest.x \
-		SingleBufferedStreamTest.x \
-		StreamMemoryReferenceTest.x \
-		StreamStringIOBufferTest.x \
-		StreamStringTest.x \
-		StreamTestHelper.x
+OBJSX=	AdvancedErrorManagementTest.x \
+        Base64EncoderTest.x\
+        BitSetToIntegerTest.x \
+	BufferedStreamIOBufferTest.x \
+	BufferedStreamITest.x \
+	CharBufferTest.x \
+	DoubleBufferedStreamTest.x \
+	IOBufferTest.x \
+	JsonPrinterTest.x\
+	PrinterITest.x\
+	SingleBufferedStreamTest.x \
+	StandardPrinterTest.x\
+	StreamMemoryReferenceTest.x \
+	StreamStringIOBufferTest.x \
+	StreamStringTest.x \
+	StreamTestHelper.x\
+	StreamStructuredDataTest.x\
+	StreamStructuredDataITest.x\
+	XMLPrinterTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "AdvancedErrorManagement.h"
 #include "AnyTypeCreator.h"
 #include "TypeConversion.h"
 #include "StringHelper.h"
@@ -68,7 +68,7 @@ void AnyTypeCreator::CleanUp(const uint32 granularityIn) {
 
                 char8* stringElement = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
                 if (!HeapManager::Free(reinterpret_cast<void* &>(stringElement))) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
+                    REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
                 }
             }
         }
@@ -124,7 +124,7 @@ bool AnyTypeCreator::Add(const char8 * const type,
     // try to insert an element with a different type
     if (memory != NULL) {
         if(StringHelper::Compare(type, TypeDescriptor::GetTypeNameFromStaticTable(typeIndex)) != 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "ToType: Type mismatch!");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ToType: Type mismatch!");
         }
     }
     else {
@@ -139,7 +139,7 @@ bool AnyTypeCreator::Add(const char8 * const type,
         }
 
         if(!ret){
-            REPORT_ERROR(ErrorManagement::Warning, "ToType: Type not found; automatic cast to C-string");
+            REPORT_ERROR_STATIC(ErrorManagement::Warning, "ToType: Type not found; automatic cast to C-string");
             typeIndex = 0u;
         }
     }
@@ -247,11 +247,11 @@ bool AnyTypeCreator::Add(const char8 * const type,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ToType: Invalid type in input!");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ToType: Invalid type in input!");
     }
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "ToType: Failed conversion to the specified type!");
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "ToType: Failed conversion to the specified type!");
     }
 
     return ret;

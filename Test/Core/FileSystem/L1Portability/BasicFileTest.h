@@ -2,7 +2,7 @@
  * @file BasicFileTest.h
  * @brief Header file for class TestBasicFile
  * @date 04/11/2015
- * @author Lloren� Capell�
+ * @author Llorenc Capella
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

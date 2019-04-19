@@ -26,7 +26,9 @@
 OBJSX=  BasicTypeGTest.x \
 		BitBooleanGTest.x \
 		BitRangeGTest.x \
+		CRCGTest.x \
 		DoubleIntegerGTest.x \
+		ErrorTypeGTest.x \
 		FractionalIntegerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \

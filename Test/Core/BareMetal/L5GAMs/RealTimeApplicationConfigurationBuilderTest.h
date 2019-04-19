@@ -145,6 +145,11 @@ public:
     bool TestFlattenSignalsDatabases_Defaults2();
 
     /**
+     * @brief Tests that the FlattenSignalsDatabases method returns false.
+     */
+    bool TestFlattenSignalsDatabases_False();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with dimensions>0 in struct.
      */
     bool TestFlattenSignalsDatabases_InvalidNDimensionsInStruct();
@@ -160,14 +165,29 @@ public:
     bool TestFlattenSignalsDatabases_OnlyFrequencyInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with only sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_OnlySyncSignalInStruct();
 
     /**
+     * @brief Tests the FlattenSignalsDatabases method with only trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_OnlyTriggerSignalInStruct();
+
+    /**
      * @brief Tests the FlattenSignalsDatabases method with an invalid sync signal specified in struct.
      */
     bool TestFlattenSignalsDatabases_InvalidSyncSignalInStruct();
+
+    /**
+     * @brief Tests the FlattenSignalsDatabases method with an invalid trigger signal specified in struct.
+     */
+    bool TestFlattenSignalsDatabases_InvalidTriggerSignalInStruct();
 
     /**
      * @brief Tests the FlattenSignalsDatabases method with an unregistered type.
@@ -195,6 +215,16 @@ public:
     bool TestResolveDataSources_StructMap();
 
     /**
+     * @brief Tests the ResolveDataSources method with structures remapping with structures that contain arrays.
+     */
+    bool TestResolveDataSources_StructMap2();
+
+    /**
+     * @brief Tests the ResolveDataSources method with structures remapping with arrays of structures.
+     */
+    bool TestResolveDataSources_StructMap3();
+
+    /**
      * @brief Tests the ResolveDataSources method with structures remapping with DataSourceI namespaces.
      */
     bool TestResolveDataSources_StructMapNamespaces();
@@ -208,6 +238,11 @@ public:
      * @brief Tests the ResolveDataSources method with structures remapping using namespaces.
      */
     bool TestResolveDataSources_StructNamespaceMapInDs();
+
+    /**
+     * @brief Tests that the ResolveDataSource method returns false.
+     */
+    bool TestResolveDataSource_False();
 
     /**
      * @brief Tests the ResolveDataSource method with Type mismatch.
@@ -280,6 +315,11 @@ public:
     bool TestResolveDataSourcesSignalsFalse_AddSignalToLockedDataSource();
 
     /**
+     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
+     */
+    bool TestResolveDataSourcesSignalsFalse_CompleteSignalInLockedDataSource();
+
+    /**
      * @brief Tests the VerifyDataSourcesSignals.
      */
     bool TestVerifyDataSourcesSignals1();
@@ -308,6 +348,11 @@ public:
      * @brief Tests the VerifyDataSourcesSignals method with a DataSource with type.
      */
     bool TestVerifyDataSourcesSignalsFalse_NoType();
+
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False();
 
     /**
      * @brief Tests the VerifyDataSourcesSignals method with no type.
@@ -345,9 +390,9 @@ public:
     bool TestResolveFunctionSignals3();
 
     /**
-     * @brief Tests the ResolveFunctionSignals method with a locked DataSource.
+     * @brief Tests the ResolveFunctionSignals method on the ConfigureBeforeInitialisation context.
      */
-    bool TestResolveFunctionSignalsFalse_CompleteSignalInLockedDataSource();
+    bool TestConfigureBeforeInitialisation_ResolveFunctionSignals_False();
 
     /**
      * @brief Tests VerifyFunctionSignals method.
@@ -373,6 +418,11 @@ public:
      * @brief Tests the VerifyFunctionSignals method with no qualified name.
      */
     bool TestVerifyFunctionSignalsFalse_FalseNoQualifiedName();
+
+    /**
+     * @brief Tests the VerifyFunctionSignals method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_VerifyFunctionSignals_False();
 
     /**
      * @brief Tests the ResolveStates method.
@@ -418,6 +468,11 @@ public:
      * @brief Tests the ResolveStates method with an invalid application.
      */
     bool TestResolveStatesFalse_InvalidApplication();
+
+    /**
+     * @brief Tests the ResolveStates method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_ResolveStates_False();
 
     /**
      * @brief Tests the VerifyStates method.
@@ -505,6 +560,11 @@ public:
     bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();
 
     /**
+     * @brief Tests the VerifyConsumersProducers method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_VerifyConsumersProducers_False();
+
+    /**
      * @brief Tests the ResolveFunctionSignalsMemorySize.
      */
     bool TestResolveFunctionSignalsMemorySize();
@@ -528,6 +588,11 @@ public:
      * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges field 3 columns.
      */
     bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3();
+
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False();
 
     /**
      * @brief Tests the ResolveFunctionsMemory method.
@@ -555,6 +620,11 @@ public:
     bool TestResolveFunctionsMemoryFalse_InvalidSamples();
 
     /**
+     * @brief Tests the ResolveFunctionsMemory method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False();
+
+    /**
      * @brief Tests the AssignFunctionsMemoryToDataSource.
      */
     bool TestAssignFunctionsMemoryToDataSource();
@@ -563,6 +633,11 @@ public:
      * @brief Tests the AssignFunctionsMemoryToDataSource method with the same gam as producer and consumer
      */
     bool TestAssignFunctionsMemoryToDataSource_GamIO();
+
+    /**
+     * @brief Tests the ResolveFunctionSignalsMemorySize with a structure aligned with unused memory.
+     */
+    bool TestAssignFunctionsMemoryToDataSource_AlignedStruct();
 
     /**
      * @brief Tests the AssignBrokersToFunctions.
@@ -578,6 +653,11 @@ public:
      * @brief Tests the AssignBrokersToFunctions method with an  unsupported broker.
      */
     bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker();
+
+    /**
+     * @brief Tests the AssignBrokersToFunctions method with an  unsupported broker for output signals.
+     */
+    bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output();
 
     /**
      * @brief Tests the AssignBrokersToFunctions method with an invalid application.
@@ -625,9 +705,29 @@ public:
     bool TestConfigureBeforeInitialisation();
 
     /**
+     * @brief Tests the ConfigureBeforeInitialisation method without putting a Functions section.
+     */
+    bool TestConfigureBeforeInitialisation_False_NoFunctions();
+
+    /**
+     * @brief Tests the ConfigureBeforeInitialisation method without putting a Data section.
+     */
+    bool TestConfigureBeforeInitialisation_False_NoData();
+
+    /**
      * @brief Tests the ConfigureThreads method (tested implicitly).
      */
     bool TestConfigureThreads();
+
+    /**
+     * @brief Tests that the application is successfully built with structures that contain arrays of types
+     */
+    bool TestArraysOfStructures1();
+
+    /**
+     * @brief Tests that the application is successfully built with structures that contain arrays of types
+     */
+    bool TestArraysOfStructures2();
 
 };
 

@@ -74,4 +74,10 @@ bool GAMGroup::SetContext(ConstReference context) {
     return ret;
 }
 
+
+void GAMGroup::Purge(ReferenceContainer &purgeList) {
+    GAMs.Purge(purgeList);
+    ReferenceContainer::Purge(purgeList);
+}
+
 }

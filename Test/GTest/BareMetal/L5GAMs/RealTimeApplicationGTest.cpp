@@ -1,8 +1,8 @@
 /**
  * @file RealTimeApplicationGTest.cpp
  * @brief Source file for class RealTimeApplicationGTest
- * @date 04/ago/2016
- * @author pc
+ * @date 04/08/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,58 +40,127 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(RealTimeApplicationGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConstructor) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(RealTimeApplicationGTest,TestInitialise) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestInitialise) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestInitialise());
 }
 
-TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoStatesFound) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestInitialiseFalse_NoStatesFound) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestInitialiseFalse_NoStatesFound());
 }
 
-TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoDataFound) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestInitialiseFalse_NoDataFound) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestInitialiseFalse_NoDataFound());
 }
 
-TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoFunctionsFound) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestInitialiseFalse_NoFunctionsFound) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestInitialiseFalse_NoFunctionsFound());
 }
 
-TEST(RealTimeApplicationGTest,TestInitialiseFalse_NoSchedulerFound) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestInitialiseFalse_NoSchedulerFound) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestInitialiseFalse_NoSchedulerFound());
 }
 
-TEST(RealTimeApplicationGTest,TestConfigureApplication) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestConfigureApplication());
 }
-TEST(RealTimeApplicationGTest,TestConfigureApplicationNoInit) {
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication_False_ConfigureAfterInitialisation) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_ConfigureAfterInitialisation());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication_False_PostConfigureDataSources) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_PostConfigureDataSources());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication_False_ConfigureScheduler) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_ConfigureScheduler());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication_False_AllocateGAMMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_AllocateGAMMemory());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplication_False_AllocateDataSourceMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplication_False_AllocateDataSourceMemory());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationNoInit) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestConfigureApplicationNoInit());
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AssignBrokersToFunctions());
+}
 
-TEST(RealTimeApplicationGTest,TestPrepareNextState) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_PostConfigureDataSources());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AllocateGAMMemory());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AllocateDataSourceMemory());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_AddBrokersToFunctions());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestConfigureApplicationAfterInitialisation_False_ConfigureScheduler());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestPrepareNextState) {
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestPrepareNextState());
 }
 
-TEST(RealTimeApplicationGTest,TestStartExecution) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestPrepareNextState_Message) {
     RealTimeApplicationTest test;
-    ASSERT_TRUE(test.TestStartExecution());
+    ASSERT_TRUE(test.TestPrepareNextState_Message());
 }
 
-TEST(RealTimeApplicationGTest,TestStopExecution) {
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestStartNextStateExecution) {
     RealTimeApplicationTest test;
-    ASSERT_TRUE(test.TestStopExecution());
+    ASSERT_TRUE(test.TestStartNextStateExecution());
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestStopCurrentStateExecution) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStopCurrentStateExecution());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestStartNextStateExecution_Message) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStartNextStateExecution_Message());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestStopCurrentStateExecution_Message) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestStopCurrentStateExecution_Message());
+}

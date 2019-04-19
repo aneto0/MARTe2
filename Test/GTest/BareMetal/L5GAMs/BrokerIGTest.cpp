@@ -39,32 +39,32 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(BrokerIGTest,TestConstructor) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestConstructor) {
     BrokerITest test;
     ASSERT_TRUE(test.TestConstructor());
 }
 
-TEST(BrokerIGTest,TestInitFunctionPointers) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestInitFunctionPointers) {
     BrokerITest test;
     ASSERT_TRUE(test.TestInitFunctionPointers());
 }
 
-TEST(BrokerIGTest,TestGetNumberOfCopies) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetNumberOfCopies) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetNumberOfCopies());
 }
 
-TEST(BrokerIGTest,TestGetCopyByteSize) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyByteSize) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetCopyByteSize());
 }
 
-TEST(BrokerIGTest,TestGetCopyOffset) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetCopyOffset) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetCopyOffset());
 }
 
-TEST(BrokerIGTest,TestGetFunctionPointer) {
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetFunctionPointer) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetFunctionPointer());
 }

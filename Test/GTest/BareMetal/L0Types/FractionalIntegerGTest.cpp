@@ -40,49 +40,49 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     uint16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned16in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     uint16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned16in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     uint16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned16in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     uint16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned16in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     int16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned16in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     int16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned16in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     int16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     int16 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
@@ -90,49 +90,49 @@ TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
 
 ///////////////////////////////////////////////
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned8in16) {
     FractionalIntegerTest<uint16> fractionalInteger;
     uint8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned8in16) {
     FractionalIntegerTest<uint16> fractionalInteger;
     uint8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned8in16) {
     FractionalIntegerTest<int16> fractionalInteger;
     uint8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned8in16) {
     FractionalIntegerTest<int16> fractionalInteger;
     uint8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned8in16) {
     FractionalIntegerTest<int16> fractionalInteger;
     int8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned8in16) {
     FractionalIntegerTest<int16> fractionalInteger;
     int8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned8in16) {
     FractionalIntegerTest<uint16> fractionalInteger;
     int8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
     FractionalIntegerTest<uint16> fractionalInteger;
     int8 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
@@ -140,49 +140,49 @@ TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
 
 //////////////////////////////////////////////////////
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned32in64) {
     FractionalIntegerTest<uint64> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned32in64) {
     FractionalIntegerTest<uint64> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned32in64) {
     FractionalIntegerTest<int64> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedUnsigned32in64) {
     FractionalIntegerTest<int64> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned32in64) {
     FractionalIntegerTest<int64> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeSignedSigned32in64) {
     FractionalIntegerTest<int64> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned32in64) {
     FractionalIntegerTest<uint64> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
     FractionalIntegerTest<uint64> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMajorSize(input));
@@ -190,57 +190,57 @@ TEST(FractionalIntegerGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
 
 /////////////////////////////////
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsignedSameSize32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsignedSameSize32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsignedSameSize32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsignedSameSize32) {
     FractionalIntegerTest<int32> fractionalInteger;
     uint32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSignedSameSize32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSignedSameSize32) {
     FractionalIntegerTest<int32> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSignedSameSize32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSignedSameSize32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     int32 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
 ///////////////////////////////////
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned64in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned64in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     uint64 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned64in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedUnsigned64in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     uint64 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned64in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeSignedSigned64in32) {
     FractionalIntegerTest<int32> fractionalInteger;
     int64 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     int64 input = 0;
     ASSERT_TRUE(fractionalInteger.TestBasicTypeCastMinorSize(input));
 }
 
 /////////////////////////////
-TEST(FractionalIntegerGTest,TestBitSize) {
+TEST(BareMetal_L0Types_FractionalIntegerGTest,TestBitSize) {
     FractionalIntegerTest<uint32> fractionalInteger;
     ASSERT_TRUE(fractionalInteger.TestGetNumberOfBits());
 }

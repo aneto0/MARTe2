@@ -1,8 +1,8 @@
 /**
  * @file BitBooleanGTest.cpp
  * @brief Source file for class BitBooleanGTest
- * @date 28/ago/2015
- * @author pc
+ * @date 28/08/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -45,143 +45,143 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 /*
-TEST(BitBooleanGTest,myTest) {
+TEST(BareMetal_L0Types_BitBooleanGTest,myTest) {
     BitBooleanTest<int64> bitbool;
-    ASSERT_TRUE(bitbool.myTest());
+    ASSERT_TRUE(bitbool.myTEST(BareMetal_L0Types_));
 }
 */
 
-TEST(BitBooleanGTest,TestCopyOperatorUnion) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestCopyOperatorUnion) {
     BitBooleanTest<int64> bitbool;
     ASSERT_TRUE(bitbool.TestCopyOperatorUnion());
 }
 
 
 
-TEST(BitBooleanGTest,TestBoolCastU8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastU8) {
     BitBooleanTest<uint8> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
 
-TEST(BitBooleanGTest,TestBoolCastU16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastU16) {
     BitBooleanTest<uint16> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastU32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastU32) {
     BitBooleanTest<uint32> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastU64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastU64) {
     BitBooleanTest<uint64> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastS8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastS8) {
     BitBooleanTest<int8> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastS16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastS16) {
     BitBooleanTest<int16> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastS32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastS32) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-TEST(BitBooleanGTest,TestBoolCastS64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBoolCastS64) {
     BitBooleanTest<int64> bitbool;
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
 
-TEST(BitBooleanGTest,TestAnyTypeCast) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestAnyTypeCast) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestAnyTypeCast());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsU8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsU8) {
     BitBooleanTest<uint8> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsU16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsU16) {
     BitBooleanTest<uint16> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsU32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsU32) {
     BitBooleanTest<uint32> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsU64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsU64) {
     BitBooleanTest<uint64> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsS8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsS8) {
     BitBooleanTest<int8> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsS16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsS16) {
     BitBooleanTest<int16> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsS32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsS32) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestNumberOfBitsS64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestNumberOfBitsS64) {
     BitBooleanTest<int64> bitbool;
     ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
 
-TEST(BitBooleanGTest,TestBitOffsetU8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetU8) {
     BitBooleanTest<uint8> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetU16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetU16) {
     BitBooleanTest<uint16> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetU32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetU32) {
     BitBooleanTest<uint32> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetU64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetU64) {
     BitBooleanTest<uint64> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetS8) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetS8) {
     BitBooleanTest<int8> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetS16) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetS16) {
     BitBooleanTest<int16> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetS32) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetS32) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestBitOffsetS64) {
+TEST(BareMetal_L0Types_BitBooleanGTest,TestBitOffsetS64) {
     BitBooleanTest<int64> bitbool;
     ASSERT_TRUE(bitbool.TestBitOffset());
 }

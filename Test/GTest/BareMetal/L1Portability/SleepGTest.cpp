@@ -39,38 +39,38 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-TEST(SleepGTest,TestSleepAtLeast) {
+/*
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepAtLeast) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestAtLeast(1.2));
 }
-
-TEST(SleepGTest,TestSleepNoMore) {
+*/
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepNoMore) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestNoMore(0.8));
 }
 
-TEST(SleepGTest,TestSleepSecD) {
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepSecD) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestSec(0.2));
 }
 
-TEST(SleepGTest,TestSleepMSec) {
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepMSec) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestMSec(120));
 }
 
-TEST(SleepGTest,TestSleepBusy) {
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepBusy) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestBusy(0.4));
 }
 
-TEST(SleepGTest,TestSleepSemiBusy) {
+TEST(BareMetal_L1Portability_SleepGTest,TestSleepSemiBusy) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestSemiBusy(0.5, 0.2));
 }
 
-TEST(SleepGTest,TestGetDateSeconds) {
+TEST(BareMetal_L1Portability_SleepGTest,TestGetDateSeconds) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestGetDateSeconds());
 }

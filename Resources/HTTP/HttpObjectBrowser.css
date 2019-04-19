@@ -1,0 +1,152 @@
+/**
+ * @file HttpObjectBrowser.css 
+ * @brief Source file for css HttpObjectBrowser
+ * @date 27/03/2019
+ * @author Andre' Neto
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+ */
+
+/* Remove default bullets */
+ul {
+  list-style-type: none;
+}
+
+li {
+  font-size: 18px;
+}
+
+.treeButton {
+  font-size: 18px;
+  width: 30px;
+  height: 30px;
+}
+
+/* Hide the nested list when the - button is clicked */
+.nested {
+  display: none;
+}
+
+/* Show the nested list when the + button is clicked */
+.active {
+  display: block;
+}
+
+.dropButton {
+  font-size: 18px;  
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: rgb(46, 52, 54);
+}
+
+.mainRow, .mainRowTargetItem {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* Defines the two main container panes properties*/
+.mainColumnNav, .mainColumnTarget, .mainColumnTargetItem {	
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(211, 215, 207);
+  overflow: auto;
+  resize: horizontal;
+  min-width: 0px;
+  width: 40%;
+}
+
+.mainColumnTarget {
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+
+.mainRowTargetItem {
+  height: unset;
+}
+
+.mainColumnTargetItem {
+  width: 100%;	
+  resize: horizontal;
+  height: unset;
+}
+
+.configButton {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.mainColumnNav {
+  padding-right: 10px;
+  height: 100%;
+}	
+
+.mainColumnTree {
+  width: 100%;
+}
+
+.mainColumnConfig, .mainPanelConfig {
+  width: 100%;
+  display: flex; 
+  align-items: flex-end; 
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  overflow: hidden;
+}
+  
+.mainPanelConfigTable {
+    border-style: dotted; 
+    border-width: 2px;
+    width:100%;
+}
+
+.mainPanelConfigTableTh {
+    background-color:#DCDCDC;
+    font-size:medium;padding-bottom: 5px;
+    padding-top: 5px;
+}
+

@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -26,7 +27,6 @@
 TARGET=cov
 
 include Makefile.inc
-INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 LIBRARIES   += ../../Source/Core/BareMetal/$(TARGET)/MARTeCoreB$(LIBEXT) 
 LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT) 
@@ -38,4 +38,4 @@ LIBRARIES   += BareMetal/cov/MARTeBGTest$(LIBEXT)
 LIBRARIES   += Scheduler/cov/MARTeSGTest$(LIBEXT)
 LIBRARIES   += FileSystem/cov/MARTeFGTest$(LIBEXT)
 
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a  

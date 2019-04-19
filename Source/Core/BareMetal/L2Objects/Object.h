@@ -32,20 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CLASSREGISTER.h"
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "StringHelper.h"
-
+#include "StructuredDataI.h"
+#include "CLASSREGISTER.h"
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-class StructuredDataI;
+//class StructuredDataI;
+class ReferenceContainer;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -79,7 +80,7 @@ public:
      *   NumberOfReference() == 0
      *   IsDomain() == false
      */
-Object    ();
+    Object ();
 
     /**
      * @brief Copy constructor.
@@ -108,7 +109,22 @@ Object    ();
      */
     virtual bool Initialise(StructuredDataI &data);
 
-    //virtual bool ProcessMessage(const MessageI & message, MessageI & data);
+    /**
+     * @brief Purge internal links to references that cannot be reached when all the
+     * explicit references to this object have been removed.
+     * @details The smart pointer mechanism guarantees that when there are no references pointing
+     *  at a given object this is destroyed.
+     * Nevertheless, this does not prevent developers from creating internal references, so that there will
+     *  be at least one reference pointing at the Object and thus it never gets destroyed.
+     * An example: A is a specialised ReferenceContainer and has a member b which is also a ReferenceContainer.
+     *  b contains an element C (b.Get(0)) which in turn contains a reference to A. A will then always have at least one
+     *  unreachable reference pointing as b can only be destroyed (thus calling Delete(0) when A is destroyed,
+     *  but A cannot be destroyed because it has a reference pointing at it. Upon calling this method, A is expected to remove all the references
+     *  from b so that no implicit links exist and the global Purge (see ReferenceContainer::Purge) can remove all
+     *  the references from the application.
+     * @param[in] purgeList a container with all the elements to be purged.
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
     /**
      * @brief Extracts the data of the object and puts it into an object which
@@ -175,7 +191,7 @@ Object    ();
 
     /**
      * @brief Sets/unsets this object as a domain.
-     * @detail In a tree of objects, a domain object is a local root of a sub-tree.
+     * @details In a tree of objects, a domain object is a local root of a sub-tree.
      * Domain objects are identified with a prefix $ in their name.
      * @param[in] isDomainFlag true if the object is a domain.
      * @post
@@ -235,22 +251,50 @@ Object    ();
     ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName);
 
     /**
-     * @brief Calls a registered method with one argument.
+     * @brief Calls a registered method without arguments.
      * @param[in] methodName is the method name.
-     * @param[in] parameters is the method argument
-     * @tparam argType is the method argument type
+     * @param[in] parameters a reference to a ReferenceContainer that will be used to fill the parameters to call the functions
      * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
      * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
      */
-    template <typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName,argType parameters);
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters);
 
-    /*
+    /**
+     * @brief Calls a registered method without arguments.
+     * @param[in] methodName is the method name.
+     * @param[in] parameters a reference to a StructuredDataI object where to read/write parameters/results.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     */
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters);
+
+    /**
+     * @brief Calls a registered method without arguments.
+     * @param[in] methodName is the method name.
+     * @param[in] stream a reference to a Stream that will be used to fill the parameters to call the functions.
+     * @return ErrorManagement::UnsupportedFeature if the \a methodName is not registered or if the prototype is not supported.
+     * ErrorManagement::FatalError will be returned if the function returns false, ErrorManagement::NoError otherwise.
+     */
+    ErrorManagement::ErrorType CallRegisteredMethod(const CCString &methodName, StreamI &stream);
+
+    /**
      * @brief Returns the class properties associated with this class type.
+     * @return a pointer to the class properties object (which might be NULL).
      */
     const ClassProperties *GetClassProperties() const;
 
+    /**
+     * @brief Returns true if the Object is a ReferenceContainer.
+     * @details This function was added for optimisation. The alternative of doing
+     * ReferenceT<ReferenceContainer> test = rc; test.IsValid(), was to slow (as it is  
+     * called millions of times).
+     * @return true if the Object is a ReferenceContainer.
+     */
+    virtual bool IsReferenceContainer() const;
+
 private:
+
+
 
     /**
      * @brief Decrements the number of references to this object.
@@ -332,7 +376,7 @@ private:
     /**
      * The name of this object.
      */
-    char8 *name;
+    char8 *thisObjName;
 
     /**
      * Specifies if the object is a domain
@@ -340,30 +384,18 @@ private:
     bool isDomain;
 };
 
-}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-template<typename argType>
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName,
-                                                        argType parameters) {
-ErrorManagement::ErrorType ret;
-ClassRegistryItem * cri = GetClassRegistryItem();
 
-if (cri != NULL_PTR(ClassRegistryItem *)) {
-    ret = cri->CallRegisteredMethod<argType>(this, methodName, parameters);
-}
-else {
-    ret.internalSetupError = true;
-}
 
-return ret;
 
-}
+
+
 
 }
 

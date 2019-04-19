@@ -1,8 +1,8 @@
 /**
  * @file ObjectWithMessages.cpp
  * @brief Source file for class ObjectWithMessages
- * @date 14/giu/2016
- * @author pc
+ * @date 14/06/2016
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,8 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "CLASSMETHODREGISTER.h"
 #include "ClassRegistryItemT.h"
 #include "ObjectWithMessages.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,16 +45,25 @@
 
 namespace MARTe {
 
-ObjectWithMessages::ObjectWithMessages(){
-    flag=-1;
+ObjectWithMessages::ObjectWithMessages() {
+    ReferenceT<RegisteredMethodsMessageFilter> registeredMethodsMessageFilter("RegisteredMethodsMessageFilter");
+    registeredMethodsMessageFilter->SetDestination(this);
+
+    if (registeredMethodsMessageFilter.IsValid()) {
+        InstallMessageFilter(registeredMethodsMessageFilter);
+    }
+    flag = -1;
 }
 
-bool ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
+ErrorManagement::ErrorType ObjectWithMessages::ReceiverMethod(ReferenceContainer& ref) {
     flag = 0;
+    ReferenceT<Object> obj = ReferenceT<Object>(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    obj->SetName("REPLY");
+    ref.Insert(obj);
     return true;
 }
 
-bool ObjectWithMessages::SenderMethod(ReferenceContainer& ref) {
+ErrorManagement::ErrorType ObjectWithMessages::SenderMethod(ReferenceContainer& ref) {
     flag = 1;
     return true;
 }
@@ -61,13 +72,15 @@ int32 ObjectWithMessages::Flag() {
     return flag;
 }
 
-bool ObjectWithMessages::HandleReply(ReferenceContainer& ref){
+ErrorManagement::ErrorType ObjectWithMessages::HandleReply() {
     flag = 2;
     return true;
 }
 
 CLASS_REGISTER(ObjectWithMessages, "1.0")
 
-CLASS_METHOD_REGISTER(ObjectWithMessages, &ObjectWithMessages::ReceiverMethod, &ObjectWithMessages::SenderMethod, &ObjectWithMessages::HandleReply)
+CLASS_METHOD_REGISTER(ObjectWithMessages, ReceiverMethod)
+CLASS_METHOD_REGISTER(ObjectWithMessages, SenderMethod)
+CLASS_METHOD_REGISTER(ObjectWithMessages, HandleReply)
 
 }

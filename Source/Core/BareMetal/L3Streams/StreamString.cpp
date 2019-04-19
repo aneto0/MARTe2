@@ -49,7 +49,7 @@ StreamString::StreamString() :
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 }
 
@@ -60,12 +60,29 @@ StreamString::StreamString(const char8 * const initialisationString) :
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed Set() function");
+        }
+    }
+}
+
+StreamString::StreamString(CCString initialisationString) :
+        BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
+    }
+
+    if (initialisationString.GetList()!= static_cast<const char8 *>(NULL)) {
+        if (!Set(initialisationString.GetList())) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed Set() function");
         }
     }
 }
@@ -78,12 +95,12 @@ StreamString::StreamString(const StreamString &toCopy) :
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 
     if (&toCopy != this) {
         if (!Set(toCopy)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed Set() function");
         }
     }
 }
@@ -152,10 +169,10 @@ bool StreamString::Seek(const uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         retval = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Desired Position greater than current size: moved to end");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Desired Position greater than current size: moved to end");
     }
 
     return (retval) ? (buffer.Seek(static_cast<uint32>(pos))) : false;
@@ -165,7 +182,7 @@ bool StreamString::RelativeSeek(const int64 deltaPos) {
 
     bool ret = true;
     if ((deltaPos > MAX_INT32) || (deltaPos < MIN_INT32)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "RelativeSeek: The seek offset should be in the int32 range");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "RelativeSeek: The seek offset should be in the int32 range");
         ret = false;
     }
     else {
@@ -179,7 +196,7 @@ uint64 StreamString::Position() {
 }
 
 bool StreamString::SetSize(const uint64 size) {
-    return buffer.SetBufferAllocationSize(static_cast<uint32>(size) + 1u);
+    return buffer.SetBufferAllocationSize(static_cast<uint32>(size));
 }
 
 bool StreamString::CanSeek() const {
@@ -189,7 +206,7 @@ bool StreamString::CanSeek() const {
 bool StreamString::Append(const char8 c) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
     }
     else {
         ret = buffer.PutC(c);
@@ -210,7 +227,7 @@ bool StreamString::Append(const char8 * const s) {
     if (s != NULL) {
         uint32 size = StringHelper::Length(s);
         if (!buffer.Seek(buffer.UsedSize())) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         else {
             ret = buffer.Write(s, size);
@@ -232,7 +249,7 @@ bool StreamString::Set(const char8 * const s) {
 bool StreamString::Append(const StreamString &s) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
     }
     else {
         uint32 size = s.buffer.UsedSize();

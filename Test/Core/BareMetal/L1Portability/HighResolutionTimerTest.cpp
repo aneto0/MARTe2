@@ -143,3 +143,6 @@ bool HighResolutionTimerTest::TestPeriodFrequency() {
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
     return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }
+
+
+

@@ -129,7 +129,7 @@ public:
      * @return if the \a referenceToTest meets the searching criteria.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest) = 0;
+                      Reference const &referenceToTest) = 0;
 
     /**
      * @brief Informs that a new occurrence has been found.

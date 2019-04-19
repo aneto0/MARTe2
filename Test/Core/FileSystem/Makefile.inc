@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX=
-SPB    = L1Portability.x
+SPB    = L1Portability.x L3Streams.x L4HttpService.x L4LoggerService.x L6App.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 
@@ -32,6 +32,10 @@ ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L4HttpService/L4HttpServiceTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L4LoggerService/L4LoggerServiceTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppTest$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
 		    $(BUILD_DIR)/MARTeCoreFTest$(LIBEXT)

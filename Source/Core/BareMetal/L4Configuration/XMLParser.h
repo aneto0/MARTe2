@@ -40,11 +40,6 @@
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in XML language.
- */
-static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
-
 
 /**
  * @brief Concrete class for MARTe::ParserI abstract class, configured

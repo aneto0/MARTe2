@@ -66,7 +66,7 @@ namespace MARTe {
  *
  * AnyType works with basic types as well as classes, as long as they are
  * registered in the ClassRegistryDatabase.
- * @note A constructor for each basic type has been defined and implemented in
+ * @remark A constructor for each basic type has been defined and implemented in
  * order to automatically build the relative AnyType object. Some of these
  * constructors are templates.
  */
@@ -83,7 +83,7 @@ public:
     /**
      * @brief Default constructor.
      * @details TypeDescriptor is initialized to VoidType, dataPointer to null and the bit-shift to 0.
-     * @note The empty AnyType is used as the terminator element in a Printf list.
+     * @remark The empty AnyType is used as the terminator element in a Printf list.
      */
     inline AnyType(void);
 
@@ -709,8 +709,8 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
+     * @tparam baseType the type of the source object
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
      */
@@ -720,8 +720,8 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
-     * @tparam baseType the type of the source object
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
+     * @tparam baseType the type of the source object
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
      */
@@ -739,8 +739,8 @@ public:
 
     /**
      * @brief Sets the number of dimensions associated to this AnyType.
-     * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
      * @details nOfDimensions == 0 => scalar, nOfDimensions == 1 => vector
+     * @param[in] nOfDimensions the new number of dimensions represented by this AnyType.
      * nOfDimensions == 2 => matrix
      */
     inline void SetNumberOfDimensions(const uint8 nOfDimensions);
@@ -1213,10 +1213,10 @@ template<uint32 nOfElementsStatic>
 AnyType::AnyType(char8 (&source)[nOfElementsStatic]) {
     Init();
     dataPointer = (void*) (&source[0]);
+    numberOfDimensions = 1u;
+    numberOfElements[0] = nOfElementsStatic;
     staticDeclared = true;
-    dataDescriptor.numberOfBits = nOfElementsStatic * 8u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
+    dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }
@@ -1225,10 +1225,10 @@ template<uint32 nOfElementsStatic>
 AnyType::AnyType(const char8 (&source)[nOfElementsStatic]) {
     Init();
     dataPointer = (void*) (&source[0]);
+    numberOfDimensions = 1u;
+    numberOfElements[0] = nOfElementsStatic;
     staticDeclared = true;
-    dataDescriptor.numberOfBits = nOfElementsStatic * 8u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
+    dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = true;
     bitAddress = 0u;
 }
@@ -1251,12 +1251,12 @@ template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     Init();
     dataPointer = (void *) (&source);
-    numberOfDimensions = 1u;
-    numberOfElements[0] = nOfRowsStatic;
+    numberOfDimensions = 2u;
+    numberOfElements[0] = nOfColumnsStatic;
+    numberOfElements[1] = nOfRowsStatic;
+
     staticDeclared = true;
-    dataDescriptor.numberOfBits = nOfColumnsStatic * 8u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
+    dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }
@@ -1265,13 +1265,12 @@ template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic, uint32 nOfChars>
 AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic][nOfChars]) {
     Init();
     dataPointer = (void *) (&source);
-    numberOfDimensions = 2u;
+    numberOfDimensions = 3u;
     numberOfElements[0] = nOfColumnsStatic;
     numberOfElements[1] = nOfRowsStatic;
+    numberOfElements[2] = nOfChars;
     staticDeclared = true;
-    dataDescriptor.numberOfBits = nOfChars * 8u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
+    dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }
@@ -1294,12 +1293,12 @@ AnyType::AnyType(Matrix<T> &mat) {
 AnyType::AnyType(Matrix<char8> &mat) {
     Init();
     dataPointer = mat.GetDataPointer();
-    numberOfDimensions = 1u;
-    numberOfElements[0] = mat.GetNumberOfRows();
+    numberOfDimensions = 2u;
+    numberOfElements[0] = mat.GetNumberOfColumns();
+    numberOfElements[1] = mat.GetNumberOfRows();
     staticDeclared = mat.IsStaticDeclared();
-    dataDescriptor.numberOfBits = mat.GetNumberOfColumns() * 8u;
+    dataDescriptor = Character8Bit;
     dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }
@@ -1321,10 +1320,9 @@ AnyType::AnyType(Vector<T> &vec) {
 AnyType::AnyType(Vector<char8> &vec) {
     Init();
     dataPointer = vec.GetDataPointer();
-    numberOfDimensions = 0u;
-    dataDescriptor.numberOfBits = vec.GetNumberOfElements() * 8u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.type = CArray;
+    numberOfDimensions = 1u;
+    numberOfElements[0] = vec.GetNumberOfElements();
+    dataDescriptor = Character8Bit;
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }

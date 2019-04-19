@@ -31,6 +31,7 @@
 
 #include <dlfcn.h>
 #include "LoadableLibrary.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -69,7 +70,12 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
      * in operating system api*/
     m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
     if (m == NULL) {
-        REPORT_ERROR(ErrorManagement::OSError, "LoadableLibrary: Failed dlopen()");
+        const char8 *err1 = "LoadableLibrary: Failed dlopen(): ";
+        char8 *err2 = dlerror();
+        uint32 errLen = (StringHelper::Length(err1) + StringHelper::Length(err2) + 1u);
+        char8 err[errLen];
+        (void) StringHelper::Concatenate(err1, err2, &err[0]);
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, &err[0]);
         ret = false;
     }
     SetModule(m);
@@ -85,11 +91,11 @@ void *LoadableLibrary::Function(char8 const * const name) {
             ret = dlsym(m, name);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "LoadableLibrary: Failed GetModule()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "LoadableLibrary: Failed GetModule()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "LoadableLibrary: Invalid input arguments");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "LoadableLibrary: Invalid input arguments");
 
     }
 

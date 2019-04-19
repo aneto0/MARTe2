@@ -1,7 +1,7 @@
 #############################################################
 #
-# Copyright 2015 F4E | European Joint Undertaking for ITER 
-#  and the Development of Fusion Energy ('Fusion for Energy')
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -20,10 +20,9 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id$
 #
 #############################################################
-
 ctags : %.cpp %.c %.h
 	ctags -R
 
@@ -35,73 +34,62 @@ createLibrary :
 
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
-#	$(COMPILER) -S $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+#	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(BUILD_DIR)
-	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
-#	$(COMPILER) -S $(OPTIM) $(INCLUDES) $(CFLAGS) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.s
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+#	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
-$(BUILD_DIR)/%.a : $(OBJS) createLibrary
+$(BUILD_DIR)/%.a : createLibrary $(OBJS)
 	touch $@
 	rm -f $(BUILD_DIR)/$*.a
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 	rm -f createLibrary
-	
 
-$(BUILD_DIR)/%.so : $(OBJS)
-	touch dummy.cpp	
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o	
-	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $@
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
+	touch $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -Wl,-soname,$*.so -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	rm dummy.*
-
-%.ifo :  %.h
-	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint  -i temp/temp.pp $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.ifo
-
-%.sinfo.cpp :  %.h
-	$(COMPILER) -D_CINT -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
-	cint   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
+	rm -f createLibrary
 
 $(BUILD_DIR)/%.def : 
 	touch a.out
 	objdump -t $(@:%.def=%.a) > $@
 	rm a.out
 
-$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o 
+$(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS) 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
-	
 
 depends.$(TARGET): dependsRaw.$(TARGET) 
-	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
-	sed -f CreateLinuxDepends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
-	rm -f CreateLinuxDepends.sed 
+	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > Create$(TARGET)Depends.sed
+	sed -f Create$(TARGET)Depends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
+	rm -f Create$(TARGET)Depends.sed 
 
 dependsRaw.$(TARGET): 
-	$(COMPILER) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.$(TARGET)
+	$(COMPILER) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.$(TARGET)
 	@mkdir -p temp
 	@mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(COMPILER) $(LFLAGS) -shared  $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
+	$(COMPILER) $(LFLAGS) -shared $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 %.spb : 
-	$(MAKE) -C $* -f Makefile.$(TARGET_BASE) 
+	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) 
 
 %.spc : 
-	$(MAKE) -C $* -f Makefile.$(TARGET_BASE) clean
+	$(MAKE) -C $* -f Makefile.$(TARGET_PARENT) clean
 
 clean:  $(SUBPROJC)
 	@rm -f depends*

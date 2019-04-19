@@ -54,6 +54,7 @@ class RealTimeApplication;
  * another for the DataSources.
  *
  * The schema used below to define the pre and post condition is
+ * <pre>
  * &NAME = VALUE
  * Where VALUE can be a node {} or can be a string representing a property
  * The & can be replaced by:
@@ -63,6 +64,7 @@ class RealTimeApplication;
  *   +*, i.e. NAME+* = VALUE, the NAME may exist. If it exists the * rules apply.
  *   |, i.e NAME|NAME = VALUE, one and only one of the specified NAME shall exist.
  *   +|, i.e NAME|NAME = VALUE, the NAME may exist. If it exists the | rules apply.
+ * </pre>
  */
 class DLL_API RealTimeApplicationConfigurationBuilder {
 public:
@@ -100,6 +102,7 @@ public:
      *   functionsDatabase = ""
      *   dataSourcesDatabase = ""
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -115,6 +118,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0, defines the number of (time) samples to be copied on each operation. The default value is one.
      *                 +Frequency = NUMBER>0, defines the cycle time frequency. Only and only one signal may define this property.
+     *                 +Trigger = 0|1, defines if the signal should trigger the destination DataSourceI
      *                 +Default = "Default value as a string". The value to be used when the signal is not produced in a previous state.
      *                 +MemberAliases = {//Only valid for StructuredType signals
      *                    OriginalMemberName1 = NewMemberName1
@@ -140,6 +144,7 @@ public:
      *              +NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0, the frequency at which the signal is expected to be produced. -1 => the latest value available
      *                   (i.e. the frequency is not important), any other positive number is the desired frequency. The default is -1
+     *              +Trigger = 0|1 . The default is 0
      *            }
      *          }
      *        }
@@ -150,6 +155,7 @@ public:
      *              }
      *           }
      *       }
+     * </pre>
      */
     bool InitialiseSignalsDatabase();
 
@@ -162,6 +168,7 @@ public:
      * @pre
      *   InitialiseSignalsDatabase()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -178,6 +185,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -194,6 +202,7 @@ public:
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -204,6 +213,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool FlattenSignalsDatabases();
 
@@ -217,6 +227,7 @@ public:
      * @pre
      *   FlattenSignalsDatabases()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -233,6 +244,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -249,6 +261,7 @@ public:
      *              +NumberOfDimensions = 0|1|2
      *              +NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -259,6 +272,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveDataSources();
 
@@ -269,6 +283,7 @@ public:
      * @pre
      *   ResolveDataSources()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -285,6 +300,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -302,6 +318,7 @@ public:
      *              NumberOfElements = NUMBER>0
      *              ByteSize = NUMBER > 0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -313,6 +330,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool VerifyDataSourcesSignals();
 
@@ -327,6 +345,7 @@ public:
      * @pre
      *   VerifyDataSourcesSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -343,6 +362,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -359,6 +379,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -370,6 +391,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionSignals();
 
@@ -379,6 +401,7 @@ public:
      * @pre
      *   ResolveFunctionSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -395,6 +418,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -411,6 +435,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -422,6 +447,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool VerifyFunctionSignals();
 
@@ -432,6 +458,7 @@ public:
      * @pre
      *   VerifyFunctionSignals()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -448,6 +475,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -467,6 +495,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *            }
      *          }
      *        }
@@ -478,6 +507,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveStates();
 
@@ -499,6 +529,7 @@ public:
      * @pre
      *   ResolveStates()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -515,6 +546,7 @@ public:
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -534,6 +566,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
@@ -548,6 +581,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveConsumersAndProducers();
 
@@ -566,6 +600,7 @@ public:
      * @pre
      *   VerifyConsumersAndProducers()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -584,6 +619,7 @@ public:
      *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -603,6 +639,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
@@ -617,6 +654,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionSignalsMemorySize();
 
@@ -627,6 +665,7 @@ public:
      * @pre
      *   ResolveFunctionSignalsMemorySize()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -645,6 +684,7 @@ public:
      *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -661,6 +701,7 @@ public:
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                   Frequency = -1|NUMBER>0
+     *                   Trigger = 0|1
      *                   Samples = |NUMBER>0
      *                 }
      *               }
@@ -680,6 +721,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              Frequency = -1|NUMBER>0
+     *              Trigger = 0|1
      *              Samples = -1|NUMBER>0
      *              +States = {
      *                *StateN = {
@@ -695,6 +737,7 @@ public:
      *          }
      *        }
      *      }
+     * </pre>
      */
     bool ResolveFunctionsMemory();
 
@@ -705,6 +748,7 @@ public:
      * @pre
      *   CalculateFunctionsMemory()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -723,6 +767,7 @@ public:
      *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -740,6 +785,7 @@ public:
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                   Frequency = -1|NUMBER>0
+     *                   Trigger = 0|1
      *                   Samples = -1|NUMBER>0
      *                 }
      *               }
@@ -759,6 +805,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
@@ -780,6 +827,7 @@ public:
      *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                       Frequency = -1|NUMBER>0
      *                       Samples = -1|NUMBER>0
+     *                       Trigger = 0|1
      *                    }
      *                 }
      *               }
@@ -787,6 +835,7 @@ public:
      *          }
      *        }
      *     }
+     * </pre>
      */
     bool AssignFunctionsMemoryToDataSource();
 
@@ -796,6 +845,7 @@ public:
      * @pre
      *   AssignFunctionsMemoryToDataSource()
      * @post
+     * <pre>
      *   functionsDatabase =
      *     Functions = {
      *       *NUMBER = {
@@ -814,6 +864,7 @@ public:
      *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
+     *                 +Trigger = 0|1
      *               }
      *            }
      *         }
@@ -831,6 +882,7 @@ public:
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                   Frequency = -1|NUMBER>0
+     *                   Trigger = 0|1
      *                   Samples = -1|NUMBER>0
      *                 }
      *               }
@@ -850,6 +902,7 @@ public:
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
      *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
@@ -870,6 +923,7 @@ public:
      *                      QualifiedName = "QualifiedName of the Signal"
      *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                       Frequency = -1|NUMBER>0
+     *                       Trigger = 0|1
      *                       Samples = -1|NUMBER>0
      *                       Broker = "Name of the Broker returned by the DataSource"
      *                    }
@@ -879,6 +933,7 @@ public:
      *          }
      *        }
      *     }
+     * </pre>
      */
     bool AssignBrokersToFunctions();
 
@@ -907,7 +962,7 @@ public:
      * @brief Calls RealTimeThread::ConfigureArchitecture on all the threads.
      * @return true if RealTimeThread::ConfigureArchitecture returns true on all RealTimeThread elements.
      */
-    bool ConfigureThreads();
+    bool ConfigureThreads() const;
 
     /**
      * @brief Compiles all the information required to build a RealTimeApplication after the
@@ -973,6 +1028,11 @@ private:
      * ConfigurationDatabase that was already pre-initialised.
      */
     ConfigurationDatabase globalDatabase;
+
+    /**
+     * Allows to speed-up access to the databases
+     */
+    ConfigurationDatabase cachedDatabase;
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -1168,14 +1228,17 @@ private:
      * @brief[in] typeName the signal type.
      * @brief[in] signalName the signal name.
      * @brief[in] dataSourceName the DataSourceI object name.
-     * @brief[in] syncSignalName used in recursion. The name of the signal that provides synchronisation for the structured signal (every member inherits this property).
+     * @brief[in] syncSignalName used in recursion. The name of the signal that provides synchronisation for the structured signal.
+     * @brief[in] triggerSignalName used in recursion. The name of the signal that provides trigger for the structured signal.
      * @brief[in] fullTypeName used in recursion. The typeName including in path all the types leading to the signal.
      * @brief[in] ranges used in recursion. The signal ranges that was set for the structured signal (every member inherits this property).
      * @brief[in] samples used in recursion. The signal number of samples that was set for the structured signal (every member inherits this property).
-     * @brief[in] frequency used in recursion. The signal frequency that was set for the structured signal (every member inherits this property).
+     * @brief[in] frequency used in recursion. The signal frequency that was set for the structured signal.
+     * @brief[in] trigger used in recursion. Value != Empty if the trigger was set.
      * @brief[out] data where to write the configuration information.
      * @brief[out] signalNumber used in recursion. The current signal index, w.r.t. to the number of signals declared for this structure.
      * @brief[out] syncSet used in recursion. True if a synchronising signal was already set.
+     * @brief[out] triggerSet used in recursion. True if a triggering signal was already set.
      * @brief[out] isFunctionDatabase true if the function is being called in the context of the Functions ConfigurationDatabase.
      * @return true if all the structure signals can be successfully flattened.
      */
@@ -1185,13 +1248,16 @@ private:
                                              const char8 * const alias,
                                              const char8 * const dataSourceName,
                                              const char8 * const syncSignalName,
+                                             const char8 * const triggerSignalName,
                                              const char8 * const fullTypeName,
                                              const AnyType & ranges,
                                              const AnyType & samples,
                                              const AnyType & frequency,
-                                             StructuredDataI & data,
+                                             const AnyType & trigger,
+                                             ConfigurationDatabase & data,
                                              uint32 &signalNumber,
                                              bool &syncSet,
+                                             bool &triggerSet,
                                              const bool isFunctionDatabase);
 
     /**

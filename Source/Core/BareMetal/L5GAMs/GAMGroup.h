@@ -74,7 +74,10 @@ public:
      */
     virtual ~GAMGroup();
 
-
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 protected:
 

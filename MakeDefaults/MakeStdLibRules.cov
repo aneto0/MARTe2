@@ -29,6 +29,9 @@ ctags : %.cpp %.c %.h
 %_Gen.cpp : ../Generic/%_Generic.cpp
 	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 	
+createLibrary :
+	touch createLibrary
+
 
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
@@ -40,13 +43,15 @@ $(BUILD_DIR)/%.o : %.c
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
-$(BUILD_DIR)/%.a : $(OBJS)
+$(BUILD_DIR)/%.a : createLibrary $(OBJS)
 	mkdir -p $(BUILD_DIR)
 	touch $(BUILD_DIR)/$*.a
 	rm -f $(BUILD_DIR)/$*.a	
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.a
+	rm -f createLibrary
+	
 
-$(BUILD_DIR)/%.so : $(OBJS)
+$(BUILD_DIR)/%.so : createLibrary $(OBJS)
 	mkdir -p $(BUILD_DIR)
 	touch dummy.cpp	
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o
@@ -55,6 +60,8 @@ $(BUILD_DIR)/%.so : $(OBJS)
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
 	rm dummy.*
+	rm -f createLibrary
+	
 	
 %.ifo :  %.h
 	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
@@ -69,14 +76,16 @@ $(BUILD_DIR)/%.def :
 	objdump -t $(@:%.def=%.a) > $@
 	rm a.out
 
-$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
+$(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o
 	mkdir -p $(BUILD_DIR) 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
+$(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(CPPFLAGS) $(LFLAGS) $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $(BUILD_DIR)/$*.ex
+	rm -f createLibrary
+	
 
 depends.cov: dependsRaw.cov
 	mkdir -p $(BUILD_DIR)

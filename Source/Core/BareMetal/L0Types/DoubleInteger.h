@@ -46,7 +46,7 @@ namespace MARTe {
  * @tparam T the integer type of the upper and lower part of the double integer
  * defined by this class. This integer type must provide at list the same
  * operators that the class provides.
- * @note The interpretation of the endianity is system dependent.
+ * @remark The interpretation of the endianity is system dependent.
  */
 template<typename T>
 class DoubleInteger {
@@ -60,6 +60,7 @@ public:
 
     /**
      * @brief Copy constructor.
+     * @post[in] n Instance to be copied.
      * @post lower = n.lower\n
      * upper = n.upper.
      */
@@ -67,6 +68,8 @@ public:
 
     /**
      * @brief Constructor by upper and lower part.
+     * @param[in] upperIn upper part of the double integer.
+     * @param[in] lowerIn lower part of the double integer.
      * @post lower = lowerIn\n
      * upper = upperIn.
      */
@@ -77,6 +80,7 @@ public:
      * @brief Smart copy constructor by generic integer type.
      * @details Builds the double integer depending on the size of T2.
      * @tparam T2 the integer type of the n parameter.
+     * @param[in] n the integer value
      */
     template<typename T2>
     DoubleInteger(T2 n);
@@ -109,7 +113,8 @@ public:
 
     /**
      * @brief Bitwise and operator.
-     * @param[in] n is the DoubleInteger argument.
+     * @param[in,out] n is the DoubleInteger argument.
+     * @return the bitwised result.
      */
     void operator&=(const DoubleInteger<T> &n);
 
@@ -140,7 +145,7 @@ public:
 
     /**
      * @brief Bitwise and.
-     * @param[in] n is the DoubleInteger argument.
+     * @param[in,out] n is the DoubleInteger argument.
      * @return the result of the bitwise and between this and n.
      */
     DoubleInteger<T> operator&(const DoubleInteger<T> &n) const;

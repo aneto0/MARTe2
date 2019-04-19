@@ -97,7 +97,7 @@ BasicFile::BasicFile(const BasicFile &bf) :
                              FALSE,
                              DUPLICATE_SAME_ACCESS);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: DuplicateHandle()");
         }
     }
     if (ok) {
@@ -128,14 +128,14 @@ BasicFile& BasicFile::operator=(const BasicFile &bf) {
                                  FALSE,
                                  DUPLICATE_SAME_ACCESS);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: DuplicateHandle()");
             }
         }
         if (ok) {
             if (properties.handle != INVALID_HANDLE_VALUE) {
                 ok = CloseHandle(properties.handle);
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CloseHandle()");
                 }
             }
             properties.handle = handle;
@@ -156,7 +156,7 @@ BasicFile::~BasicFile() {
         bool ok = true;
         ok = CloseHandle(properties.handle);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CloseHandle()");
         }
     }
 }
@@ -170,7 +170,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -224,7 +224,7 @@ bool BasicFile::Open(const char * pathname,
         handle = CreateFile(pathname, desiredAccess, FILE_SHARE_READ, NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
         ok = (handle != INVALID_HANDLE_VALUE);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CreateFile()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CreateFile()");
         }
 
         //Sets the properties
@@ -243,7 +243,7 @@ bool BasicFile::Open(const char * pathname,
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -266,7 +266,7 @@ bool BasicFile::Close() {
         //Closes the file
         ok = CloseHandle(properties.handle);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CloseHandle()");
         }
 
         //Resets the properties
@@ -286,14 +286,14 @@ bool BasicFile::Read(char8* const output,
 
     if (IsOpen() && CanRead() /* && size >= 0 */) {
         //Reads the data setting an infinite timeout
-        ok = Read(output, size, TTInfiniteWait);
+        ok = BasicFile::Read(output, size, TTInfiniteWait);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Read()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Read()");
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -324,7 +324,7 @@ bool BasicFile::Read(char8 * const output,
         ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
         ok = (ol.hEvent != NULL);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CreateEvent()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CreateEvent()");
         }
 
         //Starts the reading operation
@@ -333,7 +333,7 @@ bool BasicFile::Read(char8 * const output,
             readVal = ReadFile(properties.handle, (void *) output, size, NULL, &ol);
             ok = (!readVal && (GetLastError() == ERROR_IO_PENDING));
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: ReadFile()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: ReadFile()");
             }
         }
 
@@ -344,10 +344,10 @@ bool BasicFile::Read(char8 * const output,
             ok = (waitVal == WAIT_OBJECT_0);
             if (!ok) {
                 if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while reading");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Timeout while reading");
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: WaitForSingleObject()");
                 }
             }
         }
@@ -360,7 +360,7 @@ bool BasicFile::Read(char8 * const output,
                 size = actual;
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: GetOverlappedResult()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetOverlappedResult()");
             }
         }
 
@@ -370,13 +370,13 @@ bool BasicFile::Read(char8 * const output,
             newpos.QuadPart = oldpos + size;
             ok = SetFilePointerEx(properties.handle, newpos, NULL, FILE_CURRENT);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -388,14 +388,14 @@ bool BasicFile::Write(const char8 * const input,
 
     if (IsOpen() && CanWrite() /* && size >= 0 */) {
         //Writes the data setting an infinite timeout
-        ok = Write(input, size, TTInfiniteWait);
+        ok = BasicFile::Write(input, size, TTInfiniteWait);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Write()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Write()");
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -420,7 +420,7 @@ bool BasicFile::Write(const char8 * const input,
             zero.QuadPart = 0;
             ok = SetFilePointerEx(properties.handle, zero, NULL, FILE_END);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
 
@@ -439,7 +439,7 @@ bool BasicFile::Write(const char8 * const input,
             ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
             ok = (ol.hEvent != NULL);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: CreateEvent()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: CreateEvent()");
             }
         }
 
@@ -449,7 +449,7 @@ bool BasicFile::Write(const char8 * const input,
             writeVal = WriteFile(properties.handle, input, size, NULL, &ol);
             ok = (!writeVal && (GetLastError() == ERROR_IO_PENDING));
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: WriteFile()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: WriteFile()");
             }
         }
 
@@ -460,10 +460,10 @@ bool BasicFile::Write(const char8 * const input,
             ok = (waitVal == WAIT_OBJECT_0);
             if (!ok) {
                 if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while writing");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Timeout while writing");
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: WaitForSingleObject()");
                 }
             }
         }
@@ -476,7 +476,7 @@ bool BasicFile::Write(const char8 * const input,
                 size = actual;
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: GetOverlappedResult()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetOverlappedResult()");
             }
         }
 
@@ -486,13 +486,13 @@ bool BasicFile::Write(const char8 * const input,
             newpos.QuadPart = oldpos + size;
             ok = SetFilePointerEx(properties.handle, newpos, NULL, FILE_CURRENT);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -511,7 +511,7 @@ uint64 BasicFile::Size() {
         }
         else {
             value = 0xFFFFFFFF;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: GetFileSizeEx()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: GetFileSizeEx()");
         }
     }
 
@@ -529,7 +529,7 @@ bool BasicFile::Seek(const uint64 pos) {
         size = Size();
         ok = (size != 0xFFFFFFFF);
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Size()");
         }
 
         //Calculates the absolute position value
@@ -546,13 +546,13 @@ bool BasicFile::Seek(const uint64 pos) {
         if (ok) {
             ok = SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -571,7 +571,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
             size = Size();
             ok = (size != 0xFFFFFFFF);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Size()");
             }
         }
 
@@ -580,7 +580,7 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
             position = Position();
             ok = (position != 0xFFFFFFFF);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Position()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Position()");
             }
         }
 
@@ -602,13 +602,13 @@ bool BasicFile::RelativeSeek(const int64 deltaPos) {
         if (ok) {
             ok = SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;
@@ -629,7 +629,7 @@ uint64 BasicFile::Position() {
         }
         else {
             value = 0xFFFFFFFF;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
         }
     }
 
@@ -653,11 +653,11 @@ bool BasicFile::SetSize(uint64 size) {
             if (ok) {
                 ok = SetEndOfFile(properties.handle);
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: SetEndOfFile()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetEndOfFile()");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
             }
         }
 
@@ -668,14 +668,14 @@ bool BasicFile::SetSize(uint64 size) {
                 olddist.QuadPart = oldpos;
                 ok = SetFilePointerEx(properties.handle, olddist, NULL, FILE_BEGIN);
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: SetFilePointerEx()");
                 }
             }
         }
     }
     else {
         ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
     return ok;

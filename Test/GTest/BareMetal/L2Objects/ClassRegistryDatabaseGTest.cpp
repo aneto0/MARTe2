@@ -40,68 +40,63 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryDatabaseGTest,TestInstance) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestInstance) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
-//TEST(ClassRegistryDatabaseGTest,TestAdd) {
-//    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-//    ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
-//}
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestFind) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind());
+}
 
-//TEST(ClassRegistryDatabaseGTest,TestFind) {
-//    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-//    ASSERT_TRUE(classRegistryDatabaseTest.TestFind());
-//}
-
-TEST(ClassRegistryDatabaseGTest,TestFindByTypeIdName) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestFindByTypeIdName) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindTypeIdName());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","IntegerObject",true));
 }
 
-TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","boh",false));
 }
 
-TEST(ClassRegistryDatabaseGTest,TestGetSize) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestGetSize) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
 }
 
-//TEST(ClassRegistryDatabaseGTest,TestPeek) {
+//TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestPeek) {
 //    ClassRegistryDatabaseTest classRegistryDatabaseTest;
 //    ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
 //}
 
-TEST(ClassRegistryDatabaseGTest,TestCreateInstances) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestCreateInstances) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestCreateInstances());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestPolimorphismChild2Father) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestPolimorphismChild2Father) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismChild2Father());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestGetClassName) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
 }
 
 
-TEST(ClassRegistryDatabaseGTest,TestCleanUp) {
+TEST(BareMetal_L2Objects_ClassRegistryDatabaseGTest,TestCleanUp) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestCleanUp());
 }

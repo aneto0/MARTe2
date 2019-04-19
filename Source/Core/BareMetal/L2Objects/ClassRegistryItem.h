@@ -32,25 +32,23 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CallRegisteredMethodLauncherT.h"
-#include "LinkedListHolderT.h"
-#include "FractionalInteger.h"    //using ClassUID typedef
+#include "ClassProperties.h"
 #include "CString.h"
+#include "FractionalInteger.h"    //using ClassUID typedef
+#include "Introspection.h"
 #include "LinkedListable.h"
+#include "LinkedListHolderT.h"
+#include "LoadableLibrary.h"
+#include "ObjectBuilder.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-class Object;
-class ClassMethodsRegistryItem;
-class ClassProperties;
-class Introspection;
-class LoadableLibrary;
-class ObjectBuilder;
-class ReferenceContainer;
+class ClassMethodCaller;
+class ClassMethodInterfaceMapper;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -106,7 +104,7 @@ public:
 
     /**
      * @brief Adds the introspection data.
-     * @param[in] introspectioIn is the pointer to the object containing the informations
+     * @param[in] introspectionIn is the pointer to the object containing the informations
      * about the registered class attributes.
      */
     void SetIntrospection(const Introspection * const introspectionIn);
@@ -128,14 +126,6 @@ public:
      * @return a pointer to the library (dll) of the class type represented by this registry item.
      */
     const LoadableLibrary *GetLoadableLibrary() const;
-
-    /**
-     * @brief Adds a list of registered class methods.
-     * @param[in] classMethodRecord contains a list of registered class methods
-     * to add to the class registry item instance. The class of this argument
-     * must be a descendant of LinkedListable.
-     */
-    void RegisterMethods(ClassMethodsRegistryItem * const classMethodRecord);
 
     /**
      * @brief Sets the object builder defining the way to allocate the memory when creating a new
@@ -160,49 +150,33 @@ public:
     void SetUniqueIdentifier(const ClassUID &uid);
 
     /**
-     * @brief Calls a registered method of the registered class without arguments.
-     * @param[in] object is the object which must call the method.
-     * @param[in] methodName is the name of the class method to be called.
-     * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::UnsupportedFeature if \a methodName is not
-     * + registered or the class has not declared the method;
-     * + ErrorManagement::FatalError if the class method returns false;
-     * + ErrorManagement::NoError if the class method returns true.
+     * @brief Gets the ClassMethodCaller associated to the method with name = methodName.
+     * @param[in] methodName the name of the method.
+     * @return the ClassMethodCaller associated to the method with name = methodName.
      */
-    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
-                                                    CCString methodName);
+    ClassMethodCaller *FindMethod(CCString methodName);
 
     /**
-     * @brief Calls a registered method of the registered class with one argument.
-     * @tparam argType is the type of the class method argument.
-     * @param[in] object is the object which must call the method.
-     * @param[in] methodName is the name of the class method to be called.
-     * @param[in] parameters is the class method argument.
-     * @return the status value of the execution, being one of the following:
-     * + ErrorManagement::UnsupportedFeature if \a methodName is not
-     * + registered or the class has not declared the method;
-     * + ErrorManagement::FatalError if the class method returns false;
-     * + ErrorManagement::NoError if the class method returns true.
+     * @brief Registers a method that can be later retrieved with FindMethod.
+     * @param[in] method the method to register. The pointer will be freed by this class.
      */
-    template<typename argType>
-    ErrorManagement::ErrorType CallRegisteredMethod(Object * const object,
-                                                    CCString methodName,
-                                                    argType parameters);
+    void AddMethod(ClassMethodInterfaceMapper * const method);
 
 protected:
 
     /**
-     // singleton approach - usable only by descendant methods
-     * @brief Default constructor
+     * @brief Default constructor. Singleton approach - usable only by descendant methods.
+     * @param[in] classProperties_in class properties associated to this item.
      */
     ClassRegistryItem(ClassProperties &classProperties_in);
 
-    /** singleton approach - usable only by descendant methods
-     * common code
-     * static ptr is specialised in the templetised descendant
+    /**
+     * @brief Gets a pointer to this pseudo-singleton instance.
+     * @param[in] instance if instance != NULL a new instance of ClassRegistryItem is created and assigned to instance.
+     * @param[in] classProperties_in class properties associated to this item.
+     * This mechanism is used by the ClassRegistryItemT
      */
-    static ClassRegistryItem *Instance(ClassRegistryItem *&instance,
-                                       ClassProperties &classProperties_in);
+    static ClassRegistryItem *Instance(ClassRegistryItem *&instance, ClassProperties &classProperties_in);
 
 private:
 
@@ -235,44 +209,19 @@ private:
     /**
      * A list of lists of registered class methods.
      */
-    LinkedListHolderT<ClassMethodsRegistryItem, false> classMethods;
+    LinkedListHolderT<ClassMethodInterfaceMapper, true> classMethods;
 
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-template<typename argType>
-ErrorManagement::ErrorType ClassRegistryItem::CallRegisteredMethod(Object * const object,
-                                                                   CCString methodName,
-                                                                   argType parameters) {
-    ErrorManagement::ErrorType ret;
 
-    if (object == NULL_PTR(Object*)) {
-        ret.parametersError = true;
-    }
 
-    if (methodName.GetList() == NULL_PTR(char8*)) {
-        ret.parametersError = true;
-    }
 
-    if (ret.NoError()) {
-        // search in the list the first function returning without unsupported feature
-        CallRegisteredMethodLauncherT<argType> launcher(object, methodName, parameters);
-        if (classMethods.ListSearch(&launcher)) {
-            ret = launcher.GetResults();
-        }
-        else {
-            ret.unsupportedFeature = true;
-        }
-    }
-    return ret;
-}
 
 }
 

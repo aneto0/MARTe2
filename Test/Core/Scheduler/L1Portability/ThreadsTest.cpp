@@ -594,7 +594,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
             Sleep::Sec(10e-3);
         }
         //the next position is at the end but there are THREADS_DATABASE_GRANULARITY - 1 threads!
-        if (Threads::FindByIndex(THREADS_DATABASE_GRANULARITY - 1) != tid) {
+        if (Threads::FindByIndex(THREADS_DATABASE_GRANULARITY - 2) != tid) {
             retValue = false;
         }
         tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);

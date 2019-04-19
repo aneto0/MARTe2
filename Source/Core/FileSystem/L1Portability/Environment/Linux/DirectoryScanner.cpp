@@ -1,8 +1,8 @@
 /**
  * @file DirectoryScanner.cpp
  * @brief Source file for class DirectoryScanner
- * @date 04/nov/2015
- * @author pc
+ * @date 04/11/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -35,6 +35,7 @@
 
 #include "DirectoryScanner.h"
 #include "Directory.h"
+#include "GlobalObjectsDatabase.h"
 #include "StringHelper.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
@@ -150,9 +151,8 @@ bool DirectoryScanner::Scan(const char8 * const path,
         /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
         int32 n = scandir(basePath, &namelist, &fileFilter, &alphasort);
 
-
         if (n < 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed scandir()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: Failed scandir()");
             ret = false;
         }
         else {
@@ -211,14 +211,12 @@ bool DirectoryScanner::Scan(const char8 * const path,
                     size += entry->GetSize();
                 }
 
-                if(!HeapManager::Free(reinterpret_cast<void*&>(namelist[n]))){
-
-                }
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist[n]));
                 n--;
             }
-            /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
-            if(!HeapManager::Free(reinterpret_cast<void*&>(namelist))){
-
+            if (namelist != NULL_PTR(struct dirent **)) {
+                /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist));
             }
         }
     }

@@ -59,6 +59,7 @@ public:
 
     /**
      * @brief Sequentially copies all the signals from the GAM memory to the DataSourceI memory.
+     * @details This implementation supports multi-state buffers and will query the DataSource for the GetCurrentStateBuffer.
      * @return true if all copies are successfully performed.
      */
     virtual bool Execute();

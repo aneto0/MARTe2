@@ -61,7 +61,7 @@ public:
      * @brief Returns the Reference hold by this node.
      * @return the Reference hold by this node.
      */
-    Reference GetReference() const;
+    Reference const & GetReference() const;
 
     /**
      * @brief Sets the to Reference hold by this node.

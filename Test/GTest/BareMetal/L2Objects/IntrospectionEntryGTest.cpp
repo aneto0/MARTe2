@@ -44,49 +44,49 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(IntrospectionEntryGTest,TestConstructor) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestConstructor) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestConstructor("memberx", "char8",  "*C", "max=2", sizeof(char8*), 4));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberName) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberName) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberName("memberx"));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberModifiers) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberModifiers) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberModifiers("memberx"));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberTypeName) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberTypeName) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberTypeName("memberx"));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberSize) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberSize) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberSize(10));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberByteOffset) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberByteOffset) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberByteOffset(10));
 }
 
-TEST(IntrospectionEntryGTest,TestGetMemberTypeDescriptor) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberTypeDescriptor) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberTypeDescriptor());
 }
 
 
-TEST(IntrospectionEntryGTest,TestGetMemberAttributes) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberAttributes) {
     IntrospectionEntryTest IntrospectionEntryTest;
     ASSERT_TRUE(IntrospectionEntryTest.TestGetMemberAttributes("memberx"));
 }
 
 
-TEST(IntrospectionEntryGTest,TestIsConstant) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestIsConstant) {
     IntrospectionEntryTest IntrospectionEntryTest;
     const IntrospectionEntryTestTable table[] = {
             {"C", 0, true},
@@ -108,7 +108,7 @@ TEST(IntrospectionEntryGTest,TestIsConstant) {
 }
 
 
-TEST(IntrospectionEntryGTest,TestGetMemberPointerLevel) {
+TEST(BareMetal_L2Objects_IntrospectionEntryGTest,TestGetMemberPointerLevel) {
     IntrospectionEntryTest IntrospectionEntryTest;
     const IntrospectionEntryTestTable table[] = {
             {"C", 0, true},

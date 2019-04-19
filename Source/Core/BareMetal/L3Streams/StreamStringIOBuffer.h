@@ -115,8 +115,6 @@ public:
      */
     virtual void Terminate();
 
-protected:
-
     /**
      * @brief Calls NoMoreSpaceToWrite(1U)
      * @see IOBuffer::NoMoreSpaceToWrite()

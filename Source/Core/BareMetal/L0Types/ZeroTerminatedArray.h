@@ -79,7 +79,9 @@ public:
      */
     T * GetList();
 
-
+    /**
+     * @brief Implicit conversion operator to T*
+     */
     operator T*();
 
 private:
@@ -109,7 +111,6 @@ ZeroTerminatedArray<T>::ZeroTerminatedArray(T *arrayIn) :
         array(arrayIn) {
 }
 
-
 template<typename T>
 inline T &ZeroTerminatedArray<T>::operator[](const uint32 index) const {
     return array[index];
@@ -137,7 +138,6 @@ template<typename T>
 bool ZeroTerminatedArray<T>::Zero(const T & data) const {
     return (data == static_cast<T>(0));
 }
-
 
 template<typename T>
 ZeroTerminatedArray<T>::operator T*(){

@@ -32,11 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabase.h"
+#include "CLASSMETHODREGISTER.h"
+#include "GAMSchedulerI.h"
+#include "MessageI.h"
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "RegisteredMethodsMessageFilter.h"
 #include "StatefulI.h"
-#include "GAMSchedulerI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -53,59 +56,60 @@ namespace MARTe {
  * one producer for every data signal data is produced).
  *
  * The syntax in the configuration stream should be:
- *
- * RealTimeApplication_name = {\n
- *     Class = RealTimeApplication\n
- *     +Functions = {\n
- *         Class = ReferenceContainer\n
- *         GAM_name = {\n
- *             Class = GAM\n
- *             ...\n
- *         }\n
- *         GAM_Group_name = {\n
- *             Class = GAMGroup\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- *     +States = {\n
- *         Class = ReferenceContainer\n
- *         State_name = {\n
- *             Class = RealTimeState\n
- *             +Threads = {\n
- *                 Class = RealTimeThread\n
- *                 ...\n
- *             }\n
- *             ...\n
- *         }\n
- *         ...\n
- *     }\n
- *     +Data = {\n
+ * <pre>
+ * RealTimeApplication_name = {
+ *     Class = RealTimeApplication
+ *     +Functions = {
  *         Class = ReferenceContainer
- *         DataSource_name = {\n
- *             Class = (inherited from DataSourceI) \n
- *             ...\n
- *         }\n
- *         Timings_name = {
- *             Class = TimingDataSource \n
+ *         GAM_name = {
+ *             Class = GAM
+ *             ...
+ *         }
+ *         GAM_Group_name = {
+ *             Class = GAMGroup
+ *             ...
  *         }
  *         ...
- *     }\n
- *     +Scheduler = {\n
- *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
- *         ...\n
- *     }\n
- * }\n
+ *     }
+ *     +States = {
+ *         Class = ReferenceContainer
+ *         State_name = {
+ *             Class = RealTimeState
+ *             +Threads = {
+ *                 Class = RealTimeThread
+ *                 ...
+ *             }
+ *             ...
+ *         }
+ *         ...
+ *     }
+ *     +Data = {
+ *         Class = ReferenceContainer
+ *         DataSource_name = {
+ *             Class = (inherited from DataSourceI)
+ *             ...
+ *         }
+ *         Timings_name = {
+ *             Class = TimingDataSource
+ *         }
+ *         ...
+ *     }
+ *     +Scheduler = {
+ *         Class = Scheduler_class_name (inherited from GAMSchedulerI)
+ *         ...
+ *     }
+ * }
+ * </pre>
  */
 /*lint -e{9109} RealTimeApplication is forward declared in RealTimeApplicationConfigurationBuilder.*/
-class DLL_API RealTimeApplication: public ReferenceContainer {
+class DLL_API RealTimeApplication: public ReferenceContainer, public MessageI {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. NOOP
      */
-RealTimeApplication    ();
+    RealTimeApplication();
 
     /**
      * @brief Destructor. NOOP.
@@ -116,48 +120,48 @@ RealTimeApplication    ();
      * @brief Initialises the application from a StructuredDataI in input.
      * @details The following fields must be specified:
      *
-     *   FirstState = (the name of the first state to be executed) //TODO (State Machine ?)
-     *     Class = RealTimeApplication\n
-     *     +Functions = {\n
-     *         Class = ReferenceContainer\n
-     *         GAM_name = {\n
-     *             Class = GAM\n
-     *             ...\n
-     *         }\n
-     *         GAM_Group_name = {\n
-     *             Class = GAMGroup\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +States = {\n
-     *         Class = ReferenceContainer\n
-     *         State_name = {\n
-     *             Class = RealTimeState\n
-     *             +Threads = {\n
-     *                 Class = RealTimeThread\n
-     *                 ...\n
-     *             }\n
-     *             ...\n
-     *         }\n
-     *         ...\n
-     *     }\n
-     *     +Data = {\n
+     *<pre>
+     *     Class = RealTimeApplication
+     *     +Functions = {
      *         Class = ReferenceContainer
-     *         IsFinal = true v false\n
-     *         DataSource_name = {\n
-     *             ...\n
-     *         }\n
-     *         Timings_name = {
-     *             Class = TimingDataSource \n
+     *         GAM_name = {
+     *             Class = GAM
+     *             ...
+     *         }
+     *         GAM_Group_name = {
+     *             Class = GAMGroup
+     *             ...
      *         }
      *         ...
-     *     }\n
-     *     +Scheduler = {\n
-     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)\n
-     *         ...\n
-     *     }\n
-     *
+     *     }
+     *     +States = {
+     *         Class = ReferenceContainer
+     *         State_name = {
+     *             Class = RealTimeState
+     *             +Threads = {
+     *                 Class = RealTimeThread
+     *                 ...
+     *             }
+     *             ...
+     *         }
+     *         ...
+     *     }
+     *     +Data = {
+     *         Class = ReferenceContainer
+     *         IsFinal = true v false
+     *         DataSource_name = {
+     *             ...
+     *         }
+     *         Timings_name = {
+     *             Class = TimingDataSource
+     *         }
+     *         ...
+     *     }
+     *     +Scheduler = {
+     *         Class = Scheduler_class_name (inherited from GAMSchedulerI)
+     *         ...
+     *     }
+     *</pre>
      * @param[in] data contains the initialisation data.
      * @return true if the parameters +Functions, +States, +Data and +Scheduler
      * exist and each inherit from ReferenceContainer.
@@ -189,30 +193,37 @@ RealTimeApplication    ();
      * @param[in] nextStateName the name of the next state to be executed.
      * @return true iff PrepareNextState is successful on all the StatefulI components.
      */
-    virtual bool PrepareNextState(const char8 * const nextStateName);
+    ErrorManagement::ErrorType PrepareNextState(StreamString nextStateName);
 
     /**
      * @brief Swaps the current execution index (RealTimeApplication::GetIndex) and calls GAMSchedulerI::StartExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StartNextStateExecution
      */
-    void StartExecution();
+    ErrorManagement::ErrorType StartNextStateExecution();
 
     /**
-     * @brief Calls GAMSchedulerI::StoptExecution on the defined application Scheduler.
+     * @brief Calls GAMSchedulerI::StopCurrentExecution on the defined application Scheduler.
+     * @return GAMSchedulerI::StopCurrentExecution
      */
-    void StopExecution();
+    ErrorManagement::ErrorType StopCurrentStateExecution();
 
     /**
      * @brief Gets the declared RealTimeState components.
      * @param[out] states container to add all the RealTimeApplication States.
      * @return true if the RealTimeState components exist and can be successfully copied into the \a states container.
      */
-    bool GetStates(ReferenceContainer &states);
+    bool GetStates(ReferenceContainer &states) const;
 
     /**
      * @brief Gets the current execution index. This number swaps between 0 and 1 each time StartExecution is called.
      * @return the current execution index.
      */
-    static uint32 GetIndex();
+    uint32 GetIndex() const;
+
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 private:
 
@@ -248,7 +259,7 @@ private:
     /**
      * The unique RealTimeApplication index which swaps between 0/1 at every state change.
      */
-    static uint32 index;
+    uint32 index;
 
     /**
      * The +States container.
@@ -286,9 +297,14 @@ private:
     ConfigurationDatabase dataSourcesDatabase;
 
     /**
-      *The default data source name to be used when this is not specified in the Signals.
+     * The default data source name to be used when this is not specified in the Signals.
      */
     StreamString defaultDataSourceName;
+
+    /**
+     * Filter to receive the RPC
+     */
+    ReferenceT<RegisteredMethodsMessageFilter> filter;
 
 };
 

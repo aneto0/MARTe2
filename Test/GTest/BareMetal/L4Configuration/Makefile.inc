@@ -26,6 +26,7 @@
 OBJSX=  AnyObjectGTest.x \
 		AnyTypeCreatorGTest.x \
 		ConfigurationDatabaseGTest.x \
+		IntrospectionStructureGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
 		StandardParserGTest.x \

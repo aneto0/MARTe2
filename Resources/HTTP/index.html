@@ -1,0 +1,70 @@
+<!--
+  @file index.html 
+  @brief Source file for index.html
+  @date 27/03/2019
+  @author Andre' Neto
+ 
+  @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+  the Development of Fusion Energy ('Fusion for Energy').
+  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+  by the European Commission - subsequent versions of the EUPL (the "Licence")
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+  @warning Unless required by applicable law or agreed to in writing, 
+  software distributed under the Licence is distributed on an "AS IS"
+  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+  or implied. See the Licence permissions and limitations under the Licence.
+-->
+<html>
+    <head>
+        <script src="/?path=MARTeLoader.js&TextMode=1">
+        </script>
+        <script src="/?path=MARTeObject.js&TextMode=1">
+        </script>
+        <link type="text/css" rel="stylesheet" href="/?path=MARTe.css&TextMode=1"/>
+    </head>
+    <script>
+    	function loadPanels() {    		
+    		//Parse the GET params
+			var getVars = {};
+    		window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        		getVars[key] = value;
+    		});
+    		
+    		//A path must be encoded in the GET parameters otherwise the index.html will never be retrieved!
+    		var objpath = getVars["ObjPath"];
+    		if (objpath === undefined) {
+    			objpath = "";
+    		}
+			var mainTargetContainer = document.getElementById("mainTarget");
+			mainTargetContainer.style.width = "100%";
+			MARTeLoader.instance().load(objpath, "", "mainTarget"); 		
+    	}
+    </script>    
+    <body onload="loadPanels()">
+    	<div id="mainTarget">
+    	</div>
+    	<div id="martelogo" hidden>
+    		<pre>                                                                                                                                                 
+	MMMMMMMM               MMMMMMMM               AAA               RRRRRRRRRRRRRRRRR   TTTTTTTTTTTTTTTTTTTTTTT                      222222222222222    
+	M:::::::M             M:::::::M              A:::A              R::::::::::::::::R  T:::::::::::::::::::::T                     2:::::::::::::::22  
+	M::::::::M           M::::::::M             A:::::A             R::::::RRRRRR:::::R T:::::::::::::::::::::T                     2::::::222222:::::2 
+	M:::::::::M         M:::::::::M            A:::::::A            RR:::::R     R:::::RT:::::TT:::::::TT:::::T                     2222222     2:::::2 
+	M::::::::::M       M::::::::::M           A:::::::::A             R::::R     R:::::RTTTTTT  T:::::T  TTTTTTeeeeeeeeeeee                     2:::::2 
+	M:::::::::::M     M:::::::::::M          A:::::A:::::A            R::::R     R:::::R        T:::::T      ee::::::::::::ee                   2:::::2 
+	M:::::::M::::M   M::::M:::::::M         A:::::A A:::::A           R::::RRRRRR:::::R         T:::::T     e::::::eeeee:::::ee              2222::::2  
+	M::::::M M::::M M::::M M::::::M        A:::::A   A:::::A          R:::::::::::::RR          T:::::T    e::::::e     e:::::e         22222::::::22   
+	M::::::M  M::::M::::M  M::::::M       A:::::A     A:::::A         R::::RRRRRR:::::R         T:::::T    e:::::::eeeee::::::e       22::::::::222     
+	M::::::M   M:::::::M   M::::::M      A:::::AAAAAAAAA:::::A        R::::R     R:::::R        T:::::T    e:::::::::::::::::e       2:::::22222        
+	M::::::M    M:::::M    M::::::M     A:::::::::::::::::::::A       R::::R     R:::::R        T:::::T    e::::::eeeeeeeeeee       2:::::2             
+	M::::::M     MMMMM     M::::::M    A:::::AAAAAAAAAAAAA:::::A      R::::R     R:::::R        T:::::T    e:::::::e                2:::::2             
+	M::::::M               M::::::M   A:::::A             A:::::A   RR:::::R     R:::::R      TT:::::::TT  e::::::::e               2:::::2       222222
+	M::::::M               M::::::M  A:::::A               A:::::A  R::::::R     R:::::R      T:::::::::T   e::::::::eeeeeeee       2::::::2222222:::::2
+	M::::::M               M::::::M A:::::A                 A:::::A R::::::R     R:::::R      T:::::::::T    ee:::::::::::::e       2::::::::::::::::::2
+	MMMMMMMM               MMMMMMMMAAAAAAA                   AAAAAAARRRRRRRR     RRRRRRR      TTTTTTTTTTT      eeeeeeeeeeeeee       22222222222222222222                     
+            </pre>
+            <a href="https://vcis.f4e.europa.eu/marte2-docs/master/html/" target="_blank">About...</a>
+    	</div>
+    </body>
+</html>

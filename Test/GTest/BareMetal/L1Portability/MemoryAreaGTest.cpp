@@ -42,52 +42,52 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryAreaGTest,TestConstructor) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestConstructor) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestConstructor());
 }
 
-TEST(MemoryAreaGTest,TestAdd_OnlySize) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestAdd_OnlySize) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestAdd_OnlySize());
 }
 
-TEST(MemoryAreaGTest,TestAdd_Element) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestAdd_Element) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestAdd_Element());
 }
 
-TEST(MemoryAreaGTest,TestFree) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestFree) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestFree());
 }
 
-TEST(MemoryAreaGTest,TestGetMemoryStart) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestGetMemoryStart) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestGetMemoryStart());
 }
 
-TEST(MemoryAreaGTest,TestGetMemorySize_32) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestGetMemorySize_32) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(32));
 }
 
-TEST(MemoryAreaGTest,TestGetMemorySize_0) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestGetMemorySize_0) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(0));
 }
 
-TEST(MemoryAreaGTest,TestGetPointer) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestGetPointer) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestGetPointer());
 }
 
-TEST(MemoryAreaGTest,TestInitMemory) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestInitMemory) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestInitMemory());
 }
 
-TEST(MemoryAreaGTest,TestInitMemoryFalse_AlreadyInit) {
+TEST(BareMetal_L1Portability_MemoryAreaGTest,TestInitMemoryFalse_AlreadyInit) {
     MemoryAreaTest MyMemoryAreaTest;
     ASSERT_TRUE(MyMemoryAreaTest.TestInitMemoryFalse_AlreadyInit());
 }

@@ -72,6 +72,21 @@ struct ErrorInformation {
     uint64 hrtTime;
 
     /**
+     * Time in seconds from the epoch
+     */
+    int32 timeSeconds;
+
+    /**
+     * The object name (if available).
+     */
+    const char8 * objectName;
+
+    /**
+     * The class name (if available)
+     */
+    const char8 * className;
+
+    /**
      * The error file name.
      */
     const char8 * fileName;
@@ -90,14 +105,8 @@ struct ErrorInformation {
      * Object may be temporary in memory because the
      * objectPointer will only be printed, not used
      */
-    void * objectPointer;
+    const void * objectPointer;
 
-    /**
-     * A pointer to a const char * which is persistent
-     * so a real constant, not a char * relabeled as const char *
-     * scope. It should be global to the application and persistent
-     */
-    const char8 * className;
 
 };
 }

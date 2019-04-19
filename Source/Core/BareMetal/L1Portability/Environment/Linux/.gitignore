@@ -3,3 +3,9 @@
 /cov/
 /depends.cov
 /dependsRaw.cov
+/ErrorManagement_Gen.cpp
+/MemoryCheck_Gen.cpp
+/MemoryOperationsHelper_CLIB_Gen.cpp
+/StandardHeap_Gen.cpp
+/StringHelper_CLIB_Gen.cpp
+/StringHelperExtras_Gen.cpp

@@ -60,10 +60,9 @@ ObjectRegistryDatabase::ObjectRegistryDatabase() :
         ReferenceContainer() {
 }
 
-/*lint -e{1551} .*/
+/*lint -e{1551} Guarantees that all the nodes are cleared before destroying the application.*/
 ObjectRegistryDatabase::~ObjectRegistryDatabase() {
-    ReferenceContainer::CleanUp();
-    // The ReferenceContainer destructor does the work
+    Purge();
 }
 
 Reference ObjectRegistryDatabase::Find(const char8 * const path,
@@ -102,7 +101,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
             }
 
             if (stepsCounter > 0u) {
-                REPORT_ERROR(ErrorManagement::Warning, "Find: Too many back steps in the path. The searching will start from the root");
+                REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Find: Too many back steps in the path. The searching will start from the root");
                 isSearchDomain = false;
             }
         }
@@ -120,7 +119,7 @@ Reference ObjectRegistryDatabase::Find(const char8 * const path,
                 domain->Find(resultSingle, filterName);
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Find: Invalid domain");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Find: Invalid domain");
             }
         }
         else {

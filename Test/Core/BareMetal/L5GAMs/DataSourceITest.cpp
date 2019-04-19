@@ -34,6 +34,8 @@
 #include "GAMSchedulerI.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
+#include "MemoryMapSynchronisedInputBroker.h"
+#include "MemoryMapSynchronisedOutputBroker.h"
 #include "ObjectRegistryDatabase.h"
 #include "RealTimeApplication.h"
 #include "StandardParser.h"
@@ -41,15 +43,29 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/**
+ * Helper class for the broker tests
+ */
+class DataSourceITestBrokerRef: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+ReferenceContainer    brokers;
+    StreamString gamName;
+};
+CLASS_REGISTER(DataSourceITestBrokerRef, "1.0")
+
 class DataSourceITestScheduler1: public GAMSchedulerI {
 public:
     CLASS_REGISTER_DECLARATION()
 
 DataSourceITestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
+    virtual void CustomPrepareNextState();
+
 };
 
 DataSourceITestScheduler1::DataSourceITestScheduler1() :
@@ -57,11 +73,15 @@ DataSourceITestScheduler1::DataSourceITestScheduler1() :
 
 }
 
-void DataSourceITestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void DataSourceITestScheduler1::StopExecution() {
+MARTe::ErrorManagement::ErrorType DataSourceITestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
+}
+
+void DataSourceITestScheduler1::CustomPrepareNextState() {
 
 }
 
@@ -72,13 +92,17 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 DataSourceITestGAM1    ();
-
+    virtual bool Setup();
     virtual bool Execute();
 };
 
 DataSourceITestGAM1::DataSourceITestGAM1() :
         GAM() {
 
+}
+
+bool DataSourceITestGAM1::Setup() {
+    return true;
 }
 
 bool DataSourceITestGAM1::Execute() {
@@ -120,6 +144,8 @@ DataSourceITestHelper    ();
 
     virtual bool Synchronise();
 
+    ReferenceContainer allInputBrokers;
+    ReferenceContainer allOutputBrokers;
 };
 
 DataSourceITestHelper::DataSourceITestHelper() :
@@ -136,48 +162,75 @@ bool DataSourceITestHelper::AllocateMemory() {
 }
 
 uint32 DataSourceITestHelper::GetNumberOfMemoryBuffers() {
-    return 0u;
+    return 1u;
 }
 
-bool DataSourceITestHelper::GetSignalMemoryBuffer(const uint32 signalIdx,
-                                                  const uint32 bufferIdx,
-                                                  void *&signalAddress) {
+bool DataSourceITestHelper::GetSignalMemoryBuffer(const uint32 signalIdx, const uint32 bufferIdx, void *&signalAddress) {
     return true;
 }
 
-const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data,
-                                                  const SignalDirection direction) {
+const char8 *DataSourceITestHelper::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+    float32 freq = 0;
+    bool syncOrTrigger = false;
+    data.Read("Frequency", freq);
+    syncOrTrigger = (freq > 0);
+    const char8 * brokerName;
+
     if (direction == InputSignals) {
-        return "MemoryMapInputBroker";
+        if (syncOrTrigger) {
+            brokerName = "MemoryMapSynchronisedInputBroker";
+        }
+        else {
+            brokerName = "MemoryMapInputBroker";
+        }
     }
-    return "MemoryMapOutputBroker";
+    if (!syncOrTrigger) {
+        uint32 trigger = 0;
+        data.Read("Trigger", trigger);
+        syncOrTrigger = (trigger > 0);
+    }
+
+    if (direction == OutputSignals) {
+        if (syncOrTrigger) {
+            brokerName = "MemoryMapSynchronisedOutputBroker";
+        }
+        else {
+            brokerName = "MemoryMapOutputBroker";
+        }
+    }
+    return brokerName;
 }
 
-bool DataSourceITestHelper::PrepareNextState(const char8 * const currentStateName,
-                                             const char8 * const nextStateName) {
+bool DataSourceITestHelper::PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
     return true;
 }
 
-bool DataSourceITestHelper::GetInputBrokers(ReferenceContainer &inputBrokers,
-                                            const char8* const functionName,
-                                            void * const gamMemPtr) {
-    ReferenceT<MemoryMapInputBroker> broker("MemoryMapInputBroker");
-    bool ret = broker.IsValid();
-    if (ret) {
-        ret = inputBrokers.Insert(broker);
+bool DataSourceITestHelper::GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+    bool ok = DataSourceI::GetInputBrokers(inputBrokers, functionName, gamMemPtr);
+    if (ok) {
+        uint32 i;
+        ReferenceT<DataSourceITestBrokerRef> brokerRef(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        brokerRef->gamName = functionName;
+        for (i = 0; i < inputBrokers.Size(); i++) {
+            brokerRef->brokers.Insert(inputBrokers.Get(i));
+        }
+        allInputBrokers.Insert(brokerRef);
     }
-    return ret;
+    return ok;
 }
 
-bool DataSourceITestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers,
-                                             const char8* const functionName,
-                                             void * const gamMemPtr) {
-    ReferenceT<MemoryMapOutputBroker> broker("MemoryMapOutputBroker");
-    bool ret = broker.IsValid();
-    if (ret) {
-        ret = outputBrokers.Insert(broker);
+bool DataSourceITestHelper::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+    bool ok = DataSourceI::GetOutputBrokers(outputBrokers, functionName, gamMemPtr);
+    if (ok) {
+        uint32 i;
+        ReferenceT<DataSourceITestBrokerRef> brokerRef(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        brokerRef->gamName = functionName;
+        for (i = 0; i < outputBrokers.Size(); i++) {
+            brokerRef->brokers.Insert(outputBrokers.Get(i));
+        }
+        allOutputBrokers.Insert(brokerRef);
     }
-    return ret;
+    return ok;
 }
 
 bool DataSourceITestHelper::Synchronise() {
@@ -197,7 +250,7 @@ static bool InitialiseDataSourceIEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -226,12 +279,13 @@ static const char8 * const config1 = ""
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
         "                   Ranges = {{0 0} {2 5} {9 9}}"
-        "                   Frequency = 5.0"
         "               }"
         "               Signal5 = {"
         "                   DataSource = Drv1"
         "                   Type = uint32"
         "                   Samples = 3"
+        "                   Trigger = 1"
+        "                   Frequency = 5.0"
         "               }"
         "               Signal0 = {"
         "                   DataSource = DDB1"
@@ -251,6 +305,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -273,6 +328,7 @@ static const char8 * const config1 = ""
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
         "                   Ranges = {{0 0} {2 5} {9 9}}"
+        "                   Trigger = 1"
         "               }"
         "               Signal5 = {"
         "                   DataSource = Drv1"
@@ -287,6 +343,7 @@ static const char8 * const config1 = ""
         "               Signal2 = {"
         "                   DataSource = Drv1"
         "                   Type = float32"
+        "                   Trigger = 1"
         "               }"
         "            }"
         "        }"
@@ -869,7 +926,7 @@ bool DataSourceITest::TestGetSignalStateName() {
     }
 
     const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
-    const char8 *signalStateNames[][2] = { { "State1", NULL }, { "State2", NULL }, { "State1", "State2" }, { "State1", NULL }, { "State1", NULL } };
+    const char8 *signalStateNames[][2] = { { "State1", NULL }, {"State2", NULL}, {"State1", "State2"}, {"State1", NULL}, {"State1", NULL}};
     StreamString stateName;
     uint32 idx;
     uint32 n;
@@ -997,8 +1054,8 @@ bool DataSourceITest::TestGetSignalConsumerName() {
     const uint32 numberOfConsumers = 2;
     const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
     const char8 *signalStates[] = { "State1", "State2" };
-    const char8 *signalConsumerNames[][numberOfStates][numberOfConsumers] = { { { "GAMA", NULL }, { NULL, NULL } }, { { NULL, NULL }, { "GAMB", "GAME" } }, { {
-    NULL, NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } }, { { "GAMA", NULL }, { NULL, NULL } } };
+    const char8 *signalConsumerNames[][numberOfStates][numberOfConsumers] = { { { "GAMA", NULL }, {NULL, NULL}}, { {NULL, NULL}, {"GAMB", "GAME"}}, { {
+        NULL, NULL}, {NULL, NULL}}, { {"GAMA", NULL}, {NULL, NULL}}, { {"GAMA", NULL}, {NULL, NULL}}};
 
     uint32 idx;
     uint32 n;
@@ -1044,7 +1101,7 @@ bool DataSourceITest::TestGetSignalProducerName() {
     const uint32 numberOfStates = 2;
     const char8 *signalNames[] = { "Signal1A", "Signal2", "Signal3", "Signal4A", "Signal5" };
     const char8 *signalStates[] = { "State1", "State2" };
-    const char8 *signalProducerNames[][numberOfStates] = { { "GAMC", NULL }, { NULL, "GAMD" }, { "GAMF", "GAMF" }, { "GAMC", NULL }, { "GAMC", NULL } };
+    const char8 *signalProducerNames[][numberOfStates] = { { "GAMC", NULL }, {NULL, "GAMD"}, {"GAMF", "GAMF"}, {"GAMC", NULL}, {"GAMC", NULL}};
 
     uint32 idx;
     uint32 n;
@@ -1307,10 +1364,10 @@ bool DataSourceITest::TestGetFunctionSignalIndex() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
 
     uint32 n;
     uint32 functionSignalIdx;
@@ -1378,10 +1435,10 @@ bool DataSourceITest::TestGetFunctionSignalAlias() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     const char8 *functionInputSignalAlias[][maxNumberOfInputSignals] = { { "Signal4A", "Signal5", "Signal1A" }, { "Signal2", "", "" }, { "", "", "" }, { "", "",
             "" }, { "Signal2", "", "" }, { "Signal3", "", "" } };
     const char8 *functionOutputSignalAlias[][maxNumberOfInputSignals] = { { "", "", "" }, { "", "", "" }, { "Signal1A", "Signal4A", "Signal5" }, { "Signal2",
@@ -1453,10 +1510,10 @@ bool DataSourceITest::TestGetFunctionSignalNumberOfByteOffsets() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     uint32 numberOfBytesOffsetsInput[][maxNumberOfInputSignals] = { { 3, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
     uint32 numberOfBytesOffsetsOutput[][maxNumberOfOutputSignals] = { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 3, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
 
@@ -1526,10 +1583,10 @@ bool DataSourceITest::TestGetFunctionSignalByteOffsetInfo() {
     const uint32 maxNumberOfOutputSignals = 3;
     const uint32 maxNumberOfByteOffsets = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     uint32 byteOffsetStartIndexInput[][maxNumberOfInputSignals][maxNumberOfByteOffsets] = { { { 0, 8, 36 }, { 0, 0, 0 }, { 0, 0, 0 } }, { { 0, 0, 0 },
             { 0, 0, 0 }, { 0, 0, 0 } }, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } }, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } }, { { 0, 0, 0 }, { 0, 0, 0 }, { 0,
             0, 0 } }, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } };
@@ -1635,10 +1692,10 @@ bool DataSourceITest::TestGetFunctionSignalSamples() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     uint32 numberOfSamplesInput[][maxNumberOfInputSignals] = { { 1, 3, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
     uint32 numberOfSamplesOutput[][maxNumberOfOutputSignals] = { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 3 }, { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
 
@@ -1707,11 +1764,11 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyInput() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
-    float32 frequencyInput[][maxNumberOfInputSignals] = { { 5.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0,
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
+    float32 frequencyInput[][maxNumberOfInputSignals] = { { -1.0, 5.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0,
             -1.0 }, { -1.0, -1.0, -1.0 } };
     float32 frequencyOutput[][maxNumberOfOutputSignals] = { { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0,
             -1.0, -1.0 }, { -1.0, -1.0, -1.0 } };
@@ -1781,10 +1838,10 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     float32 frequencyInput[][maxNumberOfInputSignals] = { { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0,
             -1.0 }, { -1.0, -1.0, -1.0 } };
     float32 frequencyOutput[][maxNumberOfOutputSignals] = { { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { -1.0,
@@ -1838,6 +1895,78 @@ bool DataSourceITest::TestGetFunctionSignalReadFrequencyOutput() {
     return ret;
 }
 
+bool DataSourceITest::TestGetFunctionSignalTrigger() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
+
+    if (ret) {
+        ret = (numberOfFunctions == 6u);
+    }
+    StreamString value;
+    uint32 idx;
+    const uint32 maxNumberOfInputSignals = 3;
+    const uint32 maxNumberOfOutputSignals = 3;
+    const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
+    uint32 triggerInput[][maxNumberOfInputSignals] = { { 0, 1, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    uint32 triggerOutput[][maxNumberOfOutputSignals] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 1, 0 }, { 1, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+
+    uint32 n;
+    uint32 functionSignalIdx;
+    uint32 trigger;
+    for (n = 0u; (n < numberOfFunctions) && (ret); n++) {
+        ret = dataSource->GetFunctionIndex(idx, functionNames[n]);
+        if (ret) {
+            uint32 i;
+            for (i = 0; (i < maxNumberOfInputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(InputSignals, idx, functionSignalIdx, functionInputSignalNames[n][i]);
+                if (functionInputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(InputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerInput[n][i]);
+                    }
+                }
+            }
+            for (i = 0; (i < maxNumberOfOutputSignals) && (ret); i++) {
+                ret = dataSource->GetFunctionSignalIndex(OutputSignals, idx, functionSignalIdx, functionOutputSignalNames[n][i]);
+                if (functionOutputSignalNames[n][i] == NULL) {
+                    ret = !ret;
+                }
+                else if (ret) {
+                    ret = dataSource->GetFunctionSignalTrigger(OutputSignals, idx, functionSignalIdx, trigger);
+                    if (ret) {
+                        ret = (trigger == triggerOutput[n][i]);
+                    }
+                }
+            }
+        }
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 0, 10000, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(InputSignals, 10000, 0, trigger);
+    }
+    if (ret) {
+        ret = !dataSource->GetFunctionSignalTrigger(OutputSignals, 10000, 0, trigger);
+    }
+    return ret;
+}
+
 bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
     bool ret = InitialiseDataSourceIEnviroment(config2);
     ReferenceT<DataSourceITestHelper> dataSource;
@@ -1855,10 +1984,10 @@ bool DataSourceITest::TestGetFunctionSignalGAMMemoryOffset() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
     uint32 offsetInput[][maxNumberOfInputSignals] = { { 0, 24, 40 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
     uint32 offsetOutput[][maxNumberOfOutputSignals] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 8, 32 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
 
@@ -1930,10 +2059,15 @@ bool DataSourceITest::TestIsSupportedBroker() {
     const uint32 maxNumberOfInputSignals = 3;
     const uint32 maxNumberOfOutputSignals = 3;
     const char8 *functionNames[] = { "GAMA", "GAMB", "GAMC", "GAMD", "GAME", "GAMF" };
-    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL }, {
-    NULL, NULL, NULL }, { "Signal2", NULL, NULL }, { NULL, NULL, NULL } };
-    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL }, { NULL, NULL, NULL }, { "Signal1", "Signal4", "Signal5" }, {
-            "Signal2", NULL, NULL }, { NULL, NULL, NULL }, { "Signal3", NULL, NULL } };
+    const char8 *functionInputSignalNames[][maxNumberOfInputSignals] = { { "Signal4", "Signal5", "Signal1" }, { "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"Signal2", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalNames[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"Signal1", "Signal4", "Signal5"}, {
+    "Signal2", NULL, NULL}, {NULL, NULL, NULL}, {"Signal3", NULL, NULL}};
+    const char8 *functionInputSignalBrokers[][maxNumberOfInputSignals] = {
+            { "MemoryMapInputBroker", "MemoryMapSynchronisedInputBroker", "MemoryMapInputBroker" }, { "MemoryMapInputBroker", NULL, NULL}, {NULL, NULL, NULL}, {
+    NULL, NULL, NULL}, {"MemoryMapInputBroker", NULL, NULL}, {NULL, NULL, NULL}};
+    const char8 *functionOutputSignalBrokers[][maxNumberOfOutputSignals] = { { NULL, NULL, NULL}, {NULL, NULL, NULL}, {"MemoryMapOutputBroker", "MemoryMapSynchronisedOutputBroker", "MemoryMapOutputBroker"}, {
+    "MemoryMapSynchronisedOutputBroker", NULL, NULL}, {NULL, NULL, NULL}, {"MemoryMapOutputBroker", NULL, NULL}};
 
     uint32 numberOfFunctions = dataSource->GetNumberOfFunctions();
     uint32 n;
@@ -1948,9 +2082,9 @@ bool DataSourceITest::TestIsSupportedBroker() {
                     ret = !ret;
                 }
                 else if (ret) {
-                    ret = dataSource->IsSupportedBroker(InputSignals, idx, functionSignalIdx, "MemoryMapInputBroker");
+                    ret = dataSource->IsSupportedBroker(InputSignals, idx, functionSignalIdx, functionInputSignalBrokers[n][i]);
                     if (ret) {
-                        ret = !dataSource->IsSupportedBroker(InputSignals, idx, functionSignalIdx, "MemoryMapOutputBroker");
+                        ret = !dataSource->IsSupportedBroker(OutputSignals, idx, functionSignalIdx, functionInputSignalBrokers[n][i]);
                     }
                 }
             }
@@ -1960,9 +2094,9 @@ bool DataSourceITest::TestIsSupportedBroker() {
                     ret = !ret;
                 }
                 else if (ret) {
-                    ret = dataSource->IsSupportedBroker(OutputSignals, idx, functionSignalIdx, "MemoryMapOutputBroker");
+                    ret = dataSource->IsSupportedBroker(OutputSignals, idx, functionSignalIdx, functionOutputSignalBrokers[n][i]);
                     if (ret) {
-                        ret = !dataSource->IsSupportedBroker(OutputSignals, idx, functionSignalIdx, "MemoryMapInputBroker");
+                        ret = !dataSource->IsSupportedBroker(InputSignals, idx, functionSignalIdx, functionOutputSignalBrokers[n][i]);
                     }
                 }
             }
@@ -1979,6 +2113,232 @@ bool DataSourceITest::TestIsSupportedBroker() {
     }
     if (ret) {
         ret = !dataSource->IsSupportedBroker(OutputSignals, 100000, 0, "MemoryMapOutputBroker");
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetCurrentStateBuffer() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetCurrentStateBuffer() == 0u);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetNumberOfStatefulMemoryBuffers() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfStatefulMemoryBuffers() == 1u);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestPrepareInputOffsets() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        (dataSource->PrepareInputOffsets());
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestPrepareOutputOffsets() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        (dataSource->PrepareOutputOffsets());
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetInputOffset() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        uint32 offset;
+        ret = (!dataSource->GetInputOffset(0, 0, offset));
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetOutputOffset() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        uint32 offset;
+        ret = (!dataSource->GetOutputOffset(0, 0, offset));
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestTerminateInputCopy() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->TerminateInputCopy(0, 0, 0));
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestTerminateOutputCopy() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->TerminateOutputCopy(0, 0, 0));
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetNumberOfMemoryBuffers() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        ret = (dataSource->GetNumberOfMemoryBuffers() == 1u);
+    }
+    return ret;
+}
+
+bool DataSourceITest::TestGetInputBrokers() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        uint32 j;
+        for (j = 0; (j < dataSource->allInputBrokers.Size()) && (ret); j++) {
+            ReferenceT<DataSourceITestBrokerRef> brokerRef = dataSource->allInputBrokers.Get(j);
+            if (brokerRef->gamName == "GAMA") {
+                ReferenceT<MemoryMapSynchronisedInputBroker> broker = brokerRef->brokers.Get(0);
+                if (ret) {
+                    ret = broker.IsValid();
+                }
+                if (ret) {
+                    ret = (broker->GetNumberOfCopies() == 1);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 2);
+                }
+                if (ret) {
+                    ReferenceT<MemoryMapInputBroker> brokerNoSync = brokerRef->brokers.Get(1);
+                    ret = (brokerNoSync->GetNumberOfCopies() == 4);
+                }
+            }
+            if (brokerRef->gamName == "GAMB") {
+                ReferenceT<MemoryMapInputBroker> broker = brokerRef->brokers.Get(0);
+                if (ret) {
+                    ret = broker.IsValid();
+                }
+                if (ret) {
+                    ret = (broker->GetNumberOfCopies() == 1);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 1);
+                }
+            }
+            if (brokerRef->gamName == "GAME") {
+                ReferenceT<MemoryMapInputBroker> broker = brokerRef->brokers.Get(0);
+                if (ret) {
+                    ret = broker.IsValid();
+                }
+                if (ret) {
+                    ret = (broker->GetNumberOfCopies() == 1);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 1);
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+
+bool DataSourceITest::TestGetOutputBrokers() {
+    bool ret = InitialiseDataSourceIEnviroment(config1);
+    ReferenceT<DataSourceITestHelper> dataSource;
+    if (ret) {
+        dataSource = ObjectRegistryDatabase::Instance()->Find("Application1.Data.Drv1");
+        ret = dataSource.IsValid();
+    }
+    if (ret) {
+        uint32 j;
+        for (j = 0; (j < dataSource->allOutputBrokers.Size()) && (ret); j++) {
+            ReferenceT<DataSourceITestBrokerRef> brokerRef = dataSource->allOutputBrokers.Get(j);
+            if (brokerRef->gamName == "GAMC") {
+                ReferenceT<MemoryMapOutputBroker> brokerNoSync = brokerRef->brokers.Get(0);
+                ret = brokerNoSync.IsValid();
+                if (ret) {
+                    ret = (brokerNoSync->GetNumberOfCopies() == 2);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 2);
+                }
+                if (ret) {
+                    ReferenceT<MemoryMapSynchronisedOutputBroker> broker = brokerRef->brokers.Get(1);
+                    ret = (broker->GetNumberOfCopies() == 3);
+                }
+            }
+            if (brokerRef->gamName == "GAMD") {
+                ReferenceT<MemoryMapSynchronisedOutputBroker> broker = brokerRef->brokers.Get(0);
+                ret = broker.IsValid();
+                if (ret) {
+                    ret = (broker->GetNumberOfCopies() == 1);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 1);
+                }
+            }
+            if (brokerRef->gamName == "GAMF") {
+                ReferenceT<MemoryMapOutputBroker> broker = brokerRef->brokers.Get(0);
+                ret = broker.IsValid();
+                if (ret) {
+                    ret = (broker->GetNumberOfCopies() == 1);
+                }
+                if (ret) {
+                    ret = (brokerRef->brokers.Size() == 1);
+                }
+            }
+        }
     }
     return ret;
 }

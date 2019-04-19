@@ -91,6 +91,11 @@ public:
      */
     bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
 
+    /**
+     * @brief Tests the Reset.
+     */
+    bool TestReset();
+
 };
 
 /*---------------------------------------------------------------------------*/

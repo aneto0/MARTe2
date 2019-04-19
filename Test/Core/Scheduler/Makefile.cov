@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -27,7 +28,12 @@ TARGET=cov
 include Makefile.inc
 
 LIBRARIES_STATIC=L1Portability/cov/L1PortabilityTest$(LIBEXT)
+LIBRARIES_STATIC+=L3Services/cov/L3ServicesTest$(LIBEXT)
+LIBRARIES_STATIC+=L4LoggerService/cov/L4LoggerServiceTest$(LIBEXT)
 LIBRARIES_STATIC+=L4Messages/cov/L4MessagesTest$(LIBEXT)
+LIBRARIES_STATIC+=L4StateMachine/cov/L4StateMachineTest$(LIBEXT)
+LIBRARIES_STATIC+=L5GAMs/cov/L5GAMsTest$(LIBEXT)
+
 
 LIBRARIES += -lm
 

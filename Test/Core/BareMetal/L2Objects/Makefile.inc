@@ -26,8 +26,6 @@
 
 
 OBJSX=  AnyTypeTest.x\
-		CallRegisteredMethodLauncherTest.x \
-		CallRegisteredMethodLauncherTTest.x \
 		ClassMethodCallerTest.x \
 		ClassMethodCallerTTest.x \
 		ClassMethodInterfaceMapperTest.x \
@@ -43,6 +41,7 @@ OBJSX=  AnyTypeTest.x\
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
+		ReferenceContainerFilterNameAndTypeTest.x\
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \
 		ReferenceContainerNodeTest.x \

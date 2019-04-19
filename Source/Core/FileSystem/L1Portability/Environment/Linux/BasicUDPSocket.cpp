@@ -73,11 +73,11 @@ bool BasicUDPSocket::Peek(char8* const output,
             size = static_cast<uint32>(ret);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (ret > 0);
 
@@ -99,11 +99,11 @@ bool BasicUDPSocket::Read(char8* const output,
             size = static_cast<uint32>(ret);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (ret > 0);
 }
@@ -123,11 +123,11 @@ bool BasicUDPSocket::Write(const char8* const input,
             size = static_cast<uint32>(ret);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
 
     }
     return (ret > 0);
@@ -149,7 +149,7 @@ bool BasicUDPSocket::Listen(const uint16 port) {
         errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (errorCode >= 0);
 }
@@ -168,7 +168,7 @@ bool BasicUDPSocket::Connect(const char8 * const address,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
 
     return ret;
@@ -203,27 +203,27 @@ bool BasicUDPSocket::Read(char8 * const output,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the read timeout");
             }
             else {
-                if (Read(output, sizeToRead)) {
+                if (BasicUDPSocket::Read(output, sizeToRead)) {
                     size = sizeToRead;
                 }
             }
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-                REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the read timeout");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the read timeout");
             }
         }
         else {
-            if (Read(output, sizeToRead)) {
+            if (BasicUDPSocket::Read(output, sizeToRead)) {
                 size = sizeToRead;
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (size > 0u);
 }
@@ -245,27 +245,27 @@ bool BasicUDPSocket::Write(const char8 * const input,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() setting the write timeout");
             }
             else {
-                if (Write(input, sizeToWrite)) {
+                if (BasicUDPSocket::Write(input, sizeToWrite)) {
                     size = sizeToWrite;
                 }
             }
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-                REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the write timeout");
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the write timeout");
             }
         }
         else {
-            if (Write(input, sizeToWrite)) {
+            if (BasicUDPSocket::Write(input, sizeToWrite)) {
                 size = sizeToWrite;
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
     return (size > 0u);
 }

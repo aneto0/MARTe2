@@ -339,7 +339,7 @@ bool Free(void *&data) {
     }
     else {
 
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap");
 
     }
 
@@ -363,7 +363,7 @@ void *Malloc(uint32 const size,
             address = heap->Malloc(size);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: no heaps with the specified name found");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Error: no heaps with the specified name found");
         }
 
     }
@@ -439,7 +439,9 @@ bool AddHeap(HeapI * const newHeap) {
             if (heap == newHeap) {
                 ok = false;
 
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: heap already registered in the database");
+                //Do not uncomment this line. The HeapManager cannot use the REPORT_ERROR since the HeapDatabase::Instance() is locked and
+                // the user callback function could use the HeapDatabase, e.g. by using a StreamString
+                //REPORT_ERROR(ErrorManagement::FatalError, "Error: heap already registered in the database");
 
             }
         }
@@ -457,7 +459,9 @@ bool AddHeap(HeapI * const newHeap) {
             /* no more space */
             if (!found) {
                 ok = false;
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: not enough space in the database for new records");
+                //Do not uncomment this line. The HeapManager cannot use the REPORT_ERROR since the HeapDatabase::Instance() is locked and
+                // the user callback function could use the HeapDatabase, e.g. by using a StreamString
+                //REPORT_ERROR(ErrorManagement::FatalError, "Error: not enough space in the database for new records");
 
             }
 

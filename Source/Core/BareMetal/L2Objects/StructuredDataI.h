@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONFIGURATION_DATABASE_H_
-#define CONFIGURATION_DATABASE_H_
+#ifndef STRUCTURED_DATA_I_H_
+#define STRUCTURED_DATA_I_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -90,8 +90,7 @@ public:
      * @pre
      *   GetType(name).GetTypeDescriptor() != VoidType
      */
-    virtual bool Read(const char8 * const name,
-                      const AnyType &value) = 0;
+    virtual bool Read(const char8 * const name, const AnyType &value) = 0;
 
     /**
      * @brief Gets the type of a previously stored AnyType.
@@ -110,8 +109,7 @@ public:
      *   name != NULL &&
      *   StringHelper::Length(name) > 0
      */
-    virtual bool Write(const char8 * const name,
-                       const AnyType &value) = 0;
+    virtual bool Write(const char8 * const name, const AnyType &value) = 0;
 
     /**
      * @brief Copies the content of the current node to the provided destination.
@@ -161,6 +159,14 @@ public:
      * is not changed.
      */
     virtual bool MoveRelative(const char8 * const path) = 0;
+
+    /**
+     * @brief Moves the current node the child with idx \a childIdx.
+     * @param[in] childIdx the index of the child where to move to.
+     * @return true if the move was successful and the current node is the node at index \a .childIdx If unsuccessful the current node
+     * is not changed.
+     */
+    virtual bool MoveToChild(const uint32 childIdx) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided absolute path.

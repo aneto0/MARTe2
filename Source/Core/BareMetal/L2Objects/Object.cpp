@@ -39,6 +39,7 @@
 #include "ReferenceContainer.h"
 #include "MemoryOperationsHelper.h"
 #include "Atomic.h"
+#include "ClassMethodCaller.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,18 +47,107 @@
 
 namespace MARTe {
 
-bool Object::ConvertDataToStructuredData(void* const ptr,
-                                         const char8* const className,
-                                         StructuredDataI& data,
-                                         const char8* const objName) {
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName) {
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()) {
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
+        err = caller->Call(this);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, ReferenceContainer &parameters) {
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()) {
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
+        err = caller->Call(this, parameters);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StructuredDataI &parameters) {
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()) {
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
+        err = caller->Call(this, parameters);
+    }
+
+    return err;
+}
+
+ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName, StreamI &stream) {
+    ErrorManagement::ErrorType err;
+
+    ClassRegistryItem * cri = GetClassRegistryItem();
+    ClassMethodCaller *caller = NULL_PTR(ClassMethodCaller *);
+
+    err.fatalError = (cri == NULL_PTR(ClassRegistryItem *));
+
+    if (err.ErrorsCleared()) {
+        caller = cri->FindMethod(methodName);
+        err.unsupportedFeature = (caller == NULL_PTR(ClassMethodCaller *));
+    }
+
+    if (err.ErrorsCleared()) {
+        /*lint -e{613} err.unsupportedFeature protects from using caller = NULL*/
+        err = caller->Call(this, stream);
+    }
+
+    return err;
+}
+
+bool Object::ConvertDataToStructuredData(void* const ptr, const char8* const className, StructuredDataI& data, const char8* const objName) {
     bool ret = false;
 
     const ClassRegistryItem* sourceItem = ClassRegistryDatabase::Instance()->Find(className);
 
     if (sourceItem != NULL) {
         const Introspection *sourceIntrospection = sourceItem->GetIntrospection();
-        if (sourceIntrospection != NULL) {
-            ret = true;
+        if (GetName() != NULL_PTR(const char8 *)) {
+            ret = data.Write("Name", GetName());
+        }
+        else {
+            ret = data.Write("Name", "?");
+        }
+        if (ret) {
+            ret = data.Write("Class", sourceItem->GetClassProperties()->GetName());
+        }
+        if ((sourceIntrospection != NULL) && (ret)) {
             if (objName != NULL) {
                 ret = data.CreateRelative(objName);
             }
@@ -91,7 +181,7 @@ bool Object::ConvertDataToStructuredData(void* const ptr,
                     bool isNewSourceStructured = newSourceDescriptor.isStructuredData;
                     if (isNewSourceStructured) {
                         if (newSource.GetNumberOfDimensions() > 0u) {
-                            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Number of dimensions greater than 0 not supported.");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertDataToStructuredData: Number of dimensions greater than 0 not supported.");
                         }
                         else {
                             // structured data again! Create a node and go recursively
@@ -114,20 +204,14 @@ bool Object::ConvertDataToStructuredData(void* const ptr,
                 ret = data.MoveToAncestor(1u);
             }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Introspection not found for the specified class");
-        }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertDataToStructuredData: Class not registered");
     }
     return ret;
 }
 
-bool Object::ConvertMetadataToStructuredData(void * const ptr,
-                                             const char8 * const className,
-                                             StructuredDataI &data,
-                                             const int32 recursionLevel) {
+bool Object::ConvertMetadataToStructuredData(void * const ptr, const char8 * const className, StructuredDataI &data, const int32 recursionLevel) {
     bool ret = false;
 
     const ClassRegistryItem *sourceItem = ClassRegistryDatabase::Instance()->Find(className);
@@ -146,31 +230,27 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
                         const char8* memberTypeName = sourceMemberIntrospection.GetMemberTypeName();
                         // write the type name
                         if (!data.Write("type", memberTypeName)) {
-                            REPORT_ERROR(ErrorManagement::FatalError,
-                                         "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                             ret = false;
                         }
                         if (ret) {
                             const char8* memberModifiers = sourceMemberIntrospection.GetMemberModifiers();
                             if (!data.Write("modifiers", memberModifiers)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                                 ret = false;
                             }
                         }
                         if (ret) {
                             const char8* memberAttributes = sourceMemberIntrospection.GetMemberAttributes();
                             if (!data.Write("attributes", memberAttributes)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                                 ret = false;
                             }
                         }
                         if (ret) {
                             uint32 memberSize = sourceMemberIntrospection.GetMemberSize();
                             if (!data.Write("size", memberSize)) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                                 ret = false;
                             }
                         }
@@ -179,8 +259,7 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
                             /*lint -e{9091} -e{923} the casting from pointer type to integer type is
                              * required in order to be able to get a numeric address of the pointer.*/
                             if (!data.Write("pointer", (reinterpret_cast<uintp>(ptr) + memberOffset))) {
-                                REPORT_ERROR(ErrorManagement::FatalError,
-                                             "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
+                                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Error when writing a leaf on the StructuredDataI object");
                                 ret = false;
                             }
                         }
@@ -218,11 +297,11 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Introspection not found for the specified class");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Introspection not found for the specified class");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ConvertMetadataToStructuredData: Class not registered");
     }
 
     return ret;
@@ -234,13 +313,18 @@ bool Object::ConvertMetadataToStructuredData(void * const ptr,
 
 Object::Object() {
     referenceCounter = 0;
-    name = NULL_PTR(char8 *);
+    thisObjName = NULL_PTR(char8 *);
     isDomain = false;
 }
 
 Object::Object(const Object &copy) {
     referenceCounter = 0;
-    name = StringHelper::StringDup(copy.name);
+    if (copy.thisObjName != NULL_PTR(char8 *)) {
+        thisObjName = StringHelper::StringDup(copy.thisObjName);
+    }
+    else {
+        thisObjName = NULL_PTR(char8 *);
+    }
     isDomain = false;
 }
 
@@ -248,11 +332,11 @@ Object::Object(const Object &copy) {
  * thrown given that name always points to a valid memory address and thus Memory::Free
  * should not raise exceptions.*/
 Object::~Object() {
-    if (name != NULL_PTR(char8 *)) {
+    if (thisObjName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free() in destructor");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Object: Failed HeapManager::Free() in destructor");
         }
     }
 }
@@ -289,22 +373,21 @@ void *Object::operator new(const osulong size) throw () {
 //LCOV_EXCL_STOP
 
 const char8 * const Object::GetName() const {
-    return name;
+    return thisObjName;
 }
 
-void Object::GetUniqueName(char8 * const destination,
-                           const uint32 &size) const {
+void Object::GetUniqueName(char8 * const destination, const uint32 &size) const {
     if (!MemoryOperationsHelper::Set(destination, '\0', size)) {
-        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of the object name in output");
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Failed initialization of the object name in output");
     }
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);
-    //Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
+//Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
     uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
     uint32 shiftBits = 0u;
 
-    //Count the number of leading zeros
+//Count the number of leading zeros
     uint32 nLeadingOfZeros = 0u;
     uint32 i;
     for (i = 0u; i < nOfPtrChars; i++) {
@@ -346,7 +429,7 @@ void Object::GetUniqueName(char8 * const destination,
         destination[i] = ':';
         i++;
     }
-    //If there is no space to even write \0 don't even try
+//If there is no space to even write \0 don't even try
     if (i < size) {
         if (GetName() != NULL) {
             // TODO check memory allocation
@@ -361,14 +444,14 @@ void Object::GetUniqueName(char8 * const destination,
 }
 
 void Object::SetName(const char8 * const newName) {
-    if (name != NULL_PTR(char8 *)) {
+    if (thisObjName != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(thisObjName));
         if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "Object: Failed HeapManager::Free()");
         }
     }
-    name = StringHelper::StringDup(newName);
+    thisObjName = StringHelper::StringDup(newName);
 }
 
 bool Object::ExportData(StructuredDataI & data) {
@@ -381,8 +464,7 @@ bool Object::ExportData(StructuredDataI & data) {
     return ret;
 }
 
-bool Object::ExportMetadata(StructuredDataI & data,
-                            const int32 level) {
+bool Object::ExportMetadata(StructuredDataI & data, const int32 level) {
     bool ret = false;
 
     const ClassProperties *myProperties = GetClassProperties();
@@ -413,18 +495,13 @@ bool Object::IsDomain() const {
     return isDomain;
 }
 
-ErrorManagement::ErrorType Object::CallRegisteredMethod(const CCString &methodName) {
-    ErrorManagement::ErrorType ret;
-    ClassRegistryItem * cri = GetClassRegistryItem();
+/*lint -e{715} purgeList is not used in the default implementation of the method*/
+void Object::Purge(ReferenceContainer &purgeList) {
 
-    if (cri != NULL_PTR(ClassRegistryItem *)) {
-        ret = cri->CallRegisteredMethod(this, methodName);
-    }
-    else {
-        ret.internalSetupError = true;
-    }
+}
 
-    return ret;
+bool Object::IsReferenceContainer() const {
+    return false;
 }
 
 CLASS_REGISTER(Object, "1.0")

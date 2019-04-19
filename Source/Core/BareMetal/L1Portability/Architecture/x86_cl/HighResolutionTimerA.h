@@ -22,7 +22,7 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERA_H_
-#define 		HIGHRESOLUTIONTIMERA_H_
+#define HIGHRESOLUTIONTIMERA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

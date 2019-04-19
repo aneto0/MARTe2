@@ -40,85 +40,113 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MessageIGTest,TestDefaultConstructor) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestDefaultConstructor) {
     MessageITest target;
     ASSERT_TRUE(target.TestDefaultConstructor());
 }
 
-TEST(MessageIGTest,TestSendMessage) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage());
 }
 
-TEST(MessageIGTest,TestSendMessage_NULL_Source) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_NULL_Source) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_NULL_Source());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_InvalidMessage) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidMessage) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_InvalidMessage());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_NotExpectedLateReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_NotExpectedIndirectReply) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessage_False_NotExpectedLateReply());
+    ASSERT_TRUE(target.TestSendMessage_False_NotExpectedIndirectReply());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_NoDestinationForReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_NoDestinationForReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_NoDestinationForReply());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_NoDestinationForExpectedReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_NoDestinationForExpectedReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_NoDestinationForExpectedReply());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_InvalidDestination) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidDestination) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination());
 }
 
-TEST(MessageIGTest,TestSendMessage_False_InvalidFunction) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidFunction) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_InvalidFunction());
 }
 
-/*TEST(MessageIGTest,TestSendMessage_False_NotReplyButImmediateReplayExpected) {
-    MessageITest target;
-    ASSERT_TRUE(target.TestSendMessage_False_NotReplyButImmediateReplayExpected());
-}*/
-
-TEST(MessageIGTest,TestSendMessageAndWaitReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndWaitReply());
 }
 
 
-TEST(MessageIGTest,TestSendMessageAndWaitReply_False_InvalidMessage) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitReply_False_InvalidMessage) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_InvalidMessage());
 }
 
-
-TEST(MessageIGTest,TestSendMessageAndWaitReply_False_ReplyOfReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitReply_False_ReplyOfReply) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessageAndWaitReply_False_ReplyOfReply());
 }
 
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_ExpectsIndirectReply) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater());
+    ASSERT_TRUE(target.TestSendMessage_ExpectsIndirectReply());
 }
 
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_InvalidMessage) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitIndirectReply) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_InvalidMessage());
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply());
 }
 
-TEST(MessageIGTest,TestSendMessageAndExpectReplyLater_False_ReplyOfReply) {
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitIndirectReply_InvalidMessage) {
     MessageITest target;
-    ASSERT_TRUE(target.TestSendMessageAndExpectReplyLater_False_ReplyOfReply());
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply_InvalidMessage());
 }
 
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessageAndWaitIndirectReply_InvalidDestination) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessageAndWaitIndirectReply_InvalidDestination());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestWaitForReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestWaitForReply_InvalidMessage) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_InvalidMessage());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestWaitForReply_NotExpectsReply) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_NotExpectsReply());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestWaitForReply_Timeout) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestWaitForReply_Timeout());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestInstallMessageFilter) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestInstallMessageFilter());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestRemoveMessageFilter) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestRemoveMessageFilter());
+}

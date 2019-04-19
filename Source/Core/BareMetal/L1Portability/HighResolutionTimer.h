@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagement.h"
+//#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
 #include "TimeStamp.h"
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)

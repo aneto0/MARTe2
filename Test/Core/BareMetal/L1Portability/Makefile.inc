@@ -25,32 +25,33 @@
 #############################################################
 
 OBJSX=  AtomicTest.x \
-		AuxHeap.x\
-		BasicConsoleTest.x \
-		EndianityTest.x \
-		ErrorManagementTest.x \
-		FastMathTest.x \
-		FastPollingMutexSemTest.x \
-		FastPollingEventSemTest.x \
-		FormatDescriptorTest.x \
-		GlobalObjectsDatabaseTest.x \
-		HeapManagerTest.x \
-		HighResolutionTimerTest.x \
-		LoadableLibraryTest.x \
-		MemoryAreaTest.x \
-		MemoryCheckTest.x \
-		MemoryOperationsHelperTest.x\
-		ProcessorTypeTest.x \
-		SleepTest.x\
-		StandardHeap_GenericTest.x \
-		StaticListTest.x \
-		StringHelperTest.x \
-		StringPortableTest.x \
-		TimeStampTest.x \
-		TimeoutTypeTest.x \
-		TypeDescriptorTest.x 
+	AuxHeap.x\
+	BasicConsoleTest.x \
+	EndianityTest.x \
+	ErrorManagementTest.x \
+	FastMathTest.x \
+	FastPollingMutexSemTest.x \
+	FastPollingEventSemTest.x \
+	FastResourceContainerTest.x \
+	FormatDescriptorTest.x \
+	GlobalObjectsDatabaseTest.x \
+	HeapManagerTest.x \
+	HighResolutionTimerTest.x \
+	Md5EncryptTest.x\
+	LoadableLibraryTest.x \
+	MemoryAreaTest.x \
+	MemoryCheckTest.x \
+	MemoryOperationsHelperTest.x\
+	ProcessorTypeTest.x \
+	SleepTest.x\
+	StandardHeap_GenericTest.x \
+	StaticListTest.x \
+	StringHelperTest.x \
+	StringPortableTest.x \
+	TimeStampTest.x \
+	TimeoutTypeTest.x \
+	TypeDescriptorTest.x
 		
-
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -59,6 +60,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 

@@ -52,9 +52,10 @@ namespace MARTe {
  *
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
-class DLL_API ConfigurationDatabase: public StructuredDataI {
+class DLL_API ConfigurationDatabase: public StructuredDataI, public Object {
 
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor.
@@ -62,17 +63,33 @@ public:
      * @post
      *   MoveToRoot() == true
      */
-    ConfigurationDatabase();
+ConfigurationDatabase    ();
+
+    /**
+     * @brief Copy constructor
+     * @details Create a copy of the ConfigurationDatabase which copies a reference to the current and root node, so that
+     *  the copied ConfigurationDatabase can move independently on the database.
+     * @param[in] toCopy the ConfigurationDatabase where to copy from
+     */
+    ConfigurationDatabase(const ConfigurationDatabase &toCopy);
+
+    /**
+     * @brief Operator = (does not perform a deep copy, see Copy)
+     * @details Create a copy of the ConfigurationDatabase which copies a reference to the current and root node, so that
+     *  the copied ConfigurationDatabase can move independently on the database.
+     * @param[in] toCopy the ConfigurationDatabase where to copy from
+     */
+    ConfigurationDatabase & operator = (const ConfigurationDatabase &toCopy);
 
     /**
      * @brief Destructor.
      */
     virtual ~ConfigurationDatabase();
 
-
-    //TODO test and document
-    void CleanUp();
-
+    /**
+     * @brief Removes all the elements from the database.
+     */
+    void Purge();
 
     /**
      * @see StructuredDataI::Read
@@ -82,7 +99,7 @@ public:
      * the ConfigurationDatabase.
      */
     virtual bool Read(const char8 * const name,
-                      const AnyType &value);
+            const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
@@ -96,7 +113,7 @@ public:
      * the ConfigurationDatabase.
      */
     virtual bool Write(const char8 * const name,
-                       const AnyType &value);
+            const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
@@ -122,6 +139,11 @@ public:
      * @see StructuredDataI::MoveRelative
      */
     virtual bool MoveRelative(const char8 * const path);
+
+    /**
+     * @see StructuredDataI::MoveToChild
+     */
+    virtual bool MoveToChild(const uint32 childIdx);
 
     /**
      * @see StructuredDataI::CreateAbsolute
@@ -159,6 +181,13 @@ public:
     virtual uint32 GetNumberOfChildren();
 
     /**
+     * @brief Initialises the contents of this ConfigurationDatabase from a StructuredDataI
+     * @details Calls data.Copy(*this)
+     * @return true if data.Copy(*this) is successful.
+     */
+    virtual bool Initialise(StructuredDataI &data);
+
+    /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
@@ -171,11 +200,22 @@ public:
      */
     void Unlock();
 
-    // TODO. Test and Document! adds the possibility to use find, filters ecc ecc
-    operator ReferenceT<ReferenceContainer>(){
-        return currentNode;
-    }
+    /**
+     * @brief Gets a reference to the current node as a ReferenceContainer.
+     * @return a reference to the current node as a ReferenceContainer.
+     */
+    ReferenceT<ReferenceContainer> GetCurrentNode() const;
 
+    /**
+     * @brief Sets the current node as the root node.
+     */
+    void SetCurrentNodeAsRootNode();
+
+
+    /**
+     * @see ReferenceContainer::Purge()
+     */
+    virtual void Purge(ReferenceContainer &purgeList);
 
 private:
 

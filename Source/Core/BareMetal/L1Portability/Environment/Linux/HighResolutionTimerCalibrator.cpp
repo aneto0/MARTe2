@@ -77,7 +77,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             fclose(f);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
         }
 
         if (size > 0u) {
@@ -95,12 +95,13 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: gettimeofday()");
     }
+
 }
 
 bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
@@ -140,5 +141,6 @@ uint64 HighResolutionTimerCalibrator::GetFrequency() const {
 float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
 }
+
 
 }

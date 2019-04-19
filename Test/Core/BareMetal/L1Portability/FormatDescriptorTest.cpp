@@ -60,7 +60,7 @@ bool FormatDescriptorTest::TestInitialiseFromString(){
     retVal &= (formatDescriptor.binaryNotation == DecimalNotation);
     retVal &= (formatDescriptor.binaryPadded == false);
     retVal &= (formatDescriptor.fullNotation == true);
-    retVal &= (formatDescriptor.spareBits == 0u);
+    retVal &= (formatDescriptor.desiredGrammar == 0u);
 
     return retVal;
 }
@@ -85,7 +85,7 @@ bool FormatDescriptorTest::TestDefaultConstructor(){
     retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
     retVal &= (fdDefaultConst.binaryPadded == false);
     retVal &= (fdDefaultConst.fullNotation == false);
-    retVal &= (fdDefaultConst.spareBits == 0u);
+    retVal &= (fdDefaultConst.desiredGrammar == 0u);
 
     return retVal;
 }
@@ -111,7 +111,7 @@ bool FormatDescriptorTest::TestConstructor(){
     retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
     retVal &= (fdDefaultConst.binaryPadded == false);
     retVal &= (fdDefaultConst.fullNotation == false);
-    retVal &= (fdDefaultConst.spareBits == 0u);
+    retVal &= (fdDefaultConst.desiredGrammar == 0u);
 
     return retVal;
 }

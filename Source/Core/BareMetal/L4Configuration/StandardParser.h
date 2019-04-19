@@ -38,10 +38,6 @@
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
- */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
 /**
  * @brief Concrete class for MARTe::ParserI abstract class, configured

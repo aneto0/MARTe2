@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ValidateBasicTypeGTest,TestValidate_int8) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_int8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int8> table[]={
@@ -65,7 +65,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_int8) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_int16) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_int16) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int16> table[]={
@@ -87,7 +87,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_int16) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_int32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_int32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int32> table[]={
@@ -109,7 +109,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_int32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_int64) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_int64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<int64> table[]={
@@ -132,7 +132,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_int64) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_uint8) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_uint8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint8> table[]={
@@ -154,7 +154,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_uint8) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_uint16) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_uint16) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint16> table[]={
@@ -176,7 +176,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_uint16) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_uint32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_uint32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint32> table[]={
@@ -198,7 +198,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_uint32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_uint64) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_uint64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<uint64> table[]={
@@ -220,7 +220,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_uint64) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_float32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_float32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<float32> table[]={
@@ -245,7 +245,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_float32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_float64) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_float64) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<float64> table[]={
@@ -270,7 +270,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_float64) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_char8) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_char8) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<char8> table[]={
@@ -293,7 +293,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_char8) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestValidate_string) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidate_string) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTable<const char8 *> table[]={
@@ -318,7 +318,7 @@ TEST(ValidateBasicTypeGTest,TestValidate_string) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestValidateVector_int32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateVector_int32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableVector<int32, 3> table[]={
@@ -331,7 +331,7 @@ TEST(ValidateBasicTypeGTest,TestValidateVector_int32) {
     ASSERT_TRUE(validateTest.TestValidateBasicTypeVector(table));
 }
 
-TEST(ValidateBasicTypeGTest,TestValidateVector_float32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateVector_float32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableVector<float32, 3> table[]={
@@ -345,7 +345,7 @@ TEST(ValidateBasicTypeGTest,TestValidateVector_float32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidateVector_string) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateVector_string) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableVector<const char8 *, 3> table[]={
@@ -359,7 +359,7 @@ TEST(ValidateBasicTypeGTest,TestValidateVector_string) {
 
 
 
-TEST(ValidateBasicTypeGTest,TestValidateMatrix_int32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateMatrix_int32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableMatrix<int32, 2,2> table[]={
@@ -372,7 +372,7 @@ TEST(ValidateBasicTypeGTest,TestValidateMatrix_int32) {
     ASSERT_TRUE(validateTest.TestValidateBasicTypeMatrix(table));
 }
 
-TEST(ValidateBasicTypeGTest,TestValidateMatrix_float32) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateMatrix_float32) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableMatrix<float32, 2,2> table[]={
@@ -386,7 +386,7 @@ TEST(ValidateBasicTypeGTest,TestValidateMatrix_float32) {
 }
 
 
-TEST(ValidateBasicTypeGTest,TestValidateMatrix_string) {
+TEST(BareMetal_L4Configuration_ValidateBasicTypeGTest,TestValidateMatrix_string) {
     ValidateBasicTypeTest validateTest;
 
     const ValidateBasicTypeTestTableMatrix<const char8 *, 2,2> table[]={

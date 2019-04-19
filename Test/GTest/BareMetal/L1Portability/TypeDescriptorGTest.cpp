@@ -1,8 +1,8 @@
 /**
  * @file TypeDescriptorGTest.cpp
  * @brief Source file for class TypeDescriptorGTest
- * @date 03/set/2015
- * @author pc
+ * @date 03/09/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -42,54 +42,54 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TypeDescriptorGTest,TestConstructorUint) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestConstructorUint) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestConstructorUint(true, false, 10, Float));
 }
 
-TEST(TypeDescriptorGTest,TestConstructorBasicType) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestConstructorBasicType) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, BT_CCString));
 }
 
-TEST(TypeDescriptorGTest,TestConstructorObject) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestConstructorObject) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestConstructorObject(false, 23));
 }
 
-TEST(TypeDescriptorGTest,TestIsEqualOperator) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsEqualOperator) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator( 21,Pointer));
 }
 
 
-TEST(TypeDescriptorGTest,TestIsEqualOperatorFail) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestIsEqualOperatorFail) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperatorFail());
 }
 
-TEST(TypeDescriptorGTest,TestFieldSaturation) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestFieldSaturation) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestFieldSaturation());
 }
 
-TEST(TypeDescriptorGTest,TestGetTypeDescriptorFromTypeName) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestGetTypeDescriptorFromTypeName) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestGetTypeDescriptorFromTypeName());
 }
 
-TEST(TypeDescriptorGTest,TestGetTypeNameFromTypeDescriptor) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestGetTypeNameFromTypeDescriptor) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromTypeDescriptor());
 }
 
 
-TEST(TypeDescriptorGTest,TestGetTypeDescriptorFromStaticTable) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestGetTypeDescriptorFromStaticTable) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestGetTypeDescriptorFromStaticTable());
 }
 
-TEST(TypeDescriptorGTest,TestGetTypeNameFromStaticTable) {
+TEST(BareMetal_L1Portability_TypeDescriptorGTest,TestGetTypeNameFromStaticTable) {
     TypeDescriptorTest typeDescriptorTest;
     ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromStaticTable());
 }

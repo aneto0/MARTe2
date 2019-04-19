@@ -43,69 +43,78 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(MemoryOperationsHelperGTest,TestCopy) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestCopy) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopy());
 }
 
-TEST(MemoryOperationsHelperGTest,TestCopyZeroSize) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestCopyZeroSize) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopyZeroSize());
 }
 
-TEST(MemoryOperationsHelperGTest,TestCopyNullPointer) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestCopyNullPointer) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopyNullPointer());
 }
 
-TEST(MemoryOperationsHelperGTest,TestMove) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestMove) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMove());
 }
 
-TEST(MemoryOperationsHelperGTest,TestMoveZeroSize) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestMoveZeroSize) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMoveZeroSize());
 }
 
-TEST(MemoryOperationsHelperGTest,TestMoveNullPointer) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestMoveNullPointer) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMoveNullPointer());
 }
 
-TEST(MemoryOperationsHelperGTest,TestCompare) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestCompare) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCompare());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSet) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSet) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSet());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSetZeroSize) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSetZeroSize) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSetZeroSize());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSearch) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSearch) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearch());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSearchNotInBuffer) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSearchNotInBuffer) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchNotInBuffer());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSearchOutOfRanges) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSearchOutOfRanges) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchOutOfRanges());
 }
 
-TEST(MemoryOperationsHelperGTest,TestSearchZeroSize) {
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestSearchZeroSize) {
     MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchZeroSize());
 }
 
-	
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestInterleavedToFlat) {
+    MemoryOperationsHelperTest test;
+    ASSERT_TRUE(test.TestInterleavedToFlat());
+}
+
+TEST(BareMetal_L1Portability_MemoryOperationsHelperGTest,TestFlatToInterleaved) {
+    MemoryOperationsHelperTest test;
+    ASSERT_TRUE(test.TestFlatToInterleaved());
+}
+

@@ -49,9 +49,14 @@ public:
 
 MemoryMapBrokerTestScheduler1    ();
 
-    virtual void StartExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
 
-    virtual void StopExecution();
+    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
+
+    virtual void CustomPrepareNextState(){
+
+    }
+
 };
 
 MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :
@@ -59,12 +64,12 @@ MemoryMapBrokerTestScheduler1::MemoryMapBrokerTestScheduler1() :
 
 }
 
-void MemoryMapBrokerTestScheduler1::StartExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapBrokerTestScheduler1::StartNextStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
-void MemoryMapBrokerTestScheduler1::StopExecution() {
-
+MARTe::ErrorManagement::ErrorType MemoryMapBrokerTestScheduler1::StopCurrentStateExecution() {
+    return MARTe::ErrorManagement::NoError;
 }
 
 CLASS_REGISTER(MemoryMapBrokerTestScheduler1, "1.0")
@@ -77,6 +82,8 @@ public:
     CLASS_REGISTER_DECLARATION()
 
 MemoryMapBrokerTestGAM1    ();
+
+    virtual bool Setup();
 
     virtual bool Execute();
 
@@ -107,6 +114,10 @@ void *MemoryMapBrokerTestGAM1::GetInputSignalMemory(uint32 signalIdx) {
 
 void *MemoryMapBrokerTestGAM1::GetOutputSignalMemory(uint32 signalIdx) {
     return GAM::GetOutputSignalMemory(signalIdx);
+}
+
+bool MemoryMapBrokerTestGAM1::Setup() {
+    return true;
 }
 
 bool MemoryMapBrokerTestGAM1::Execute() {
@@ -308,7 +319,7 @@ static bool InitialiseMemoryMapBrokerEnviroment(const char8 * const config) {
     ObjectRegistryDatabase *god = ObjectRegistryDatabase::Instance();
 
     if (ok) {
-        god->CleanUp();
+        god->Purge();
         ok = god->Initialise(cdb);
     }
     ReferenceT<RealTimeApplication> application;
@@ -339,7 +350,7 @@ static const char8 * const config1 = ""
         "                   Alias = Signal4A"
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
-        "                   Ranges = {{0 0} {2 5} {9 9}}"
+        "                   Ranges = {{1 1} {2 5} {9 9}}"
         "                   Frequency = 5.0"
         "               }"
         "               Signal5 = {"
@@ -386,7 +397,7 @@ static const char8 * const config1 = ""
         "                   Alias = Signal4A"
         "                   NumberOfDimensions = 2"
         "                   NumberOfElements = 10"
-        "                   Ranges = {{0 0} {2 5} {9 9}}"
+        "                   Ranges = {{1 1} {2 5} {9 9}}"
         "               }"
         "               Signal5 = {"
         "                   DataSource = Drv1"
@@ -803,6 +814,8 @@ bool MemoryMapBrokerTest::TestInit_Output_Ranges() {
     if (ret) {
         //3rd signal of the GAM. The 2nd belongs to another DataSource (and thus to another Broker)
         gamPtr = reinterpret_cast<char8 *>(gamC->GetOutputSignalMemory(2));
+        uint32 signalNBytes =0;
+        gamC->GetSignalByteSize(OutputSignals, 2, signalNBytes);
     }
     for (n = 1u; (n < 4) && (ret); n++) {
         uint32 startOffset = 0;

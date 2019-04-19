@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Messages-4.svg"
+   inkscape:export-filename="/home/aneto/Projects/MARTe2-dev/Docs/User/source/core/gams/Messages-1.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2862"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2886"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2908"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2930"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3182"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3204"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4046"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4081"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4112"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4136"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4157"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4289"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="512.32522"
+     inkscape:cy="929.2311"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1004"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2816" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#333333;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2818"
+       width="270"
+       height="160"
+       x="30"
+       y="62.362183" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="40"
+       y="82.362183"
+       id="text2820"
+       inkscape:export-filename="/home/aneto/Projects/MARTe2-dev/Docs/User/source/core/messages/Messages-4.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan2822"
+         x="40"
+         y="82.362183">Sender: <tspan
+   style="font-weight:bold"
+   id="tspan3168">A.B</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="40"
+         y="97.362183"
+         id="tspan2826">UniqueName:0xAABBCCDD</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="167.03046"
+       y="152.70482"
+       id="text2830"><tspan
+         sodipodi:role="line"
+         id="tspan2832"
+         x="167.03046"
+         y="152.70482">Destination: <tspan
+   style="font-weight:bold"
+   id="tspan3164">C.D.E</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="167.03046"
+         y="167.70482"
+         id="tspan4277">Destination: <tspan
+   style="font-weight:bold"
+   id="tspan4279">A.B</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="167.03046"
+         y="182.70482"
+         id="tspan2834">Function: <tspan
+   style="font-weight:bold"
+   id="tspan3166">AFunction</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="167.03046"
+         y="197.70482"
+         id="tspan3170">ExpectsReply: <tspan
+   style="font-weight:bold"
+   id="tspan3172">No</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="167.03046"
+         y="212.70482"
+         id="tspan4271">IsReply: <tspan
+   style="font-weight:bold"
+   id="tspan4273">Yes</tspan></tspan></text>
+    <g
+       id="g3042"
+       transform="matrix(0.68173172,0,0,0.68173172,90.681698,25.51866)">
+      <g
+         id="g3009">
+        <g
+           id="g3145"
+           transform="translate(494.46967,33.840111)">
+          <path
+             id="path2848-9"
+             d="m -247.78717,93.010251 c -15.69632,-7.534242 -22.313,-26.36633 -14.77876,-42.062653 7.53423,-15.69631 26.36632,-22.313006 42.06265,-14.778767 15.69632,7.534238 22.31301,26.366326 14.77877,42.062648 -7.53425,15.696308 -26.36634,22.312981 -42.06266,14.778772 z"
+             style="fill:#b3b3b3;stroke:#333333;stroke-width:2.93370533;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
+          <path
+             id="path2848"
+             d="m -251.94833,75.029474 c -5.76582,-9.83238 -2.46922,-22.47722 7.36316,-28.24304 9.83239,-5.76582 22.47723,-2.46922 28.24305,7.36316 5.76582,9.83238 2.46922,22.47722 -7.36316,28.24304 -9.83238,5.76582 -22.47723,2.46922 -28.24305,-7.36316 z"
+             style="fill:#e6e6e6;fill-opacity:1;stroke:#333333;stroke-width:2.93370533;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
+          <text
+             transform="translate(1.0108829,0.11040037)"
+             id="text3138"
+             style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             xml:space="preserve"><textPath
+               id="textPath3142"
+               xlink:href="#path2848"><tspan
+   id="tspan3140">MARTe Post Office</tspan></textPath></text>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g4171"
+       transform="translate(-26,-1.4285698)">
+      <rect
+         y="63.790752"
+         x="357.14285"
+         height="160"
+         width="270"
+         id="rect2818-3"
+         style="fill:#e6e6e6;fill-opacity:1;stroke:#333333;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         id="path4126"
+         d="m 357.32143,64.326467 9.64286,33.214291 250.89286,0 9.28571,-33.928576 -269.82143,0.714285 z"
+         style="color:#000000;fill:#f9f9f9;fill-opacity:1;fill-rule:nonzero;stroke:#333333;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 2;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         sodipodi:nodetypes="ccccc"
+         id="path4126-3"
+         d="m 357.32143,62.826474 9.64286,-33.214291 250.89286,0 9.28571,33.928576 -269.82143,-0.714285 z"
+         style="color:#000000;fill:#e6e6e6;fill-opacity:1;fill-rule:nonzero;stroke:#333333;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <g
+         transform="translate(7.5892693,-8.362219)"
+         id="g3252">
+        <rect
+           style="fill:#fff6d5;fill-opacity:1;stroke:#333333;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect2818-3-0"
+           width="216.42857"
+           height="160"
+           x="376.42859"
+           y="-54.066395" />
+        <text
+           xml:space="preserve"
+           style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           x="387.16632"
+           y="-14.507801"
+           id="text3218"><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="-14.507801"
+             id="tspan3226">Payload (<tspan
+   style="font-weight:bold"
+   id="tspan3246">ReferenceContainer</tspan>)</tspan><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="0.49219894"
+             id="tspan3234" /><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="15.492199"
+             id="tspan3236">Reference:Object3</tspan><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="30.492199"
+             id="tspan3238" /><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="45.492199"
+             id="tspan3240">Reference:Object4</tspan><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="60.492199"
+             id="tspan3248" /><tspan
+             sodipodi:role="line"
+             x="387.16632"
+             y="75.492203"
+             id="tspan3250">...</tspan></text>
+      </g>
+    </g>
+    <path
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 168.32866,148.35687 c 108.3149,0 108.3149,0 108.3149,0"
+       id="path4275" />
+    <path
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 41.393481,77.913113 c 72.927329,0 72.927329,0 72.927329,0"
+       id="path4275-9" />
+  </g>
+</svg>

@@ -52,9 +52,7 @@ namespace MemoryOperationsHelper {
  * @return true if source, destination and destination after copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-DLL_API bool Copy(void * const destination,
-                  const void * const source,
-                  uint32 size);
+DLL_API bool Copy(void * const destination, const void * const source, uint32 size);
 
 /**
  * @brief Compares the first specified bytes of two blocks of memories.
@@ -64,9 +62,7 @@ DLL_API bool Copy(void * const destination,
  * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2).
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-DLL_API int32 Compare(const void * const mem1,
-                      const void * const mem2,
-                      uint32 size);
+DLL_API int32 Compare(const void * const mem1, const void * const mem2, uint32 size);
 
 /**
  * @brief Searches a character in the specified memory block.
@@ -76,9 +72,7 @@ DLL_API int32 Compare(const void * const mem1,
  * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
  * @pre the size parameter must be minor than the memory block size.
  */
-DLL_API const void *Search(const void * const mem,
-                           const char8 c,
-                           const uint32 size);
+DLL_API const void *Search(const void * const mem, const char8 c, const uint32 size);
 
 /**
  * @brief Copies a block of memory into another allowing overlapping.
@@ -88,9 +82,7 @@ DLL_API const void *Search(const void * const mem,
  * @return true if source, destination, and destination after the copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-DLL_API bool Move(void * const destination,
-                  const void * const source,
-                  const uint32 size);
+DLL_API bool Move(void * const destination, const void * const source, const uint32 size);
 
 /**
  * @brief Sets a defined number bytes of the specified memory area equal to a specified character.
@@ -100,16 +92,138 @@ DLL_API bool Move(void * const destination,
  * @return true if the memory could be set to desired value.
  * @pre the size parameter must be minor than the memory block size.
  */
-DLL_API bool Set(void * const mem,
-                 const char8 c,
-                 const uint32 size);
+DLL_API bool Set(void * const mem, const char8 c, const uint32 size);
+
+/**
+ * @brief Converts the memory from an interleaved to flat representation for a specified number of samples.
+ * @details Assume for instance an \a originSource with 2 samples organised as [(uint32) counter_1, (uint16) x_1, (uint8) y_1][(uint32) counter_2, (uint16) x_2, (uint8) y_2].
+ * Giving the following parameters:\n
+ *   packetMemberSize[] = {4, 2, 1}\n
+ *   packetByteSize = 7\n
+ *   numberOfPacketMembers = 3\n
+ *   numberOfSamples = 2\n
+ * Then the output in \a originDest will be [counter_1, counter_2][x_1, x_2][y_1, y_2].
+ * param[in] originSource the source memory area
+ * param[in] originDest the destination memory area
+ * param[in] beginIndex is the start index in the \a packetMemberSize vector
+ * param[in] packetMemberSize the size of each member in the sample (i.e. packet) definition
+ * param[in] packetByteSize the size of each sample (i.e. of the packet) in bytes
+ * param[in] numberOfPacketMembers the number elements of each samples (i.e. packet, i.e. the number of elements in the packetMemberSize)
+ * param[in] numberOfSamples the number of samples
+ * @pre
+ *   originSource must be valid with a size greater than packetByteSize*numberOfSamples;\n
+ *   originDest must be valid with a size greater than packetByteSize*numberOfSamples;\n
+ * @post
+ *   originDest is filled with the re-organised data from interleaved to flat.
+ */
+inline void InterleavedToFlat(uint8 * const originSource, uint8 * const originDest, const uint32 beginIndex, const uint32 * const packetMemberSize,
+                       const uint32 packetByteSize, const uint32 numberOfPacketMembers, const uint32 numberOfSamples);
+
+/**
+ * @brief Converts the memory from a flat to an interleaved representation for a specified number of samples.
+ * @details Assume for instance an \a originSource with 2 samples organised as [(uint32)counter_1, counter_2][(uint16)x_1, x_2][(uint8)y_1, y_2].
+ * Giving the following parameters:\n
+ *   packetMemberSize[] = {4, 2, 1}\n
+ *   packetByteSize = 7\n
+ *   numberOfPacketMembers = 3\n
+ *   numberOfSamples = 2\n
+ * Then the output in \a originDest will be [(uint32) counter_1, (uint16) x_1, (uint8) y_1][(uint32) counter_2, (uint16) x_2, (uint8) y_2].
+ * param[in] originSource the source memory area
+ * param[in] originDest the destination memory area
+ * param[in] beginIndex is the start index in the \a packetOutputChunkSize vector
+ * param[in] packetMemberSize the size of each member in the sample (i.e. packet) definition
+ * param[in] packetByteSize the size of the sample in bytes
+ * param[in] numberOfPacketMembers the number elements of each samples (i.e. packet, i.e. the number of elements in the packetMemberSize)
+ * param[in] numberOfSamples the number of samples
+ * @pre
+ *   originSource must be valid with a size greater than outputByteSize*numberOfSamples;\n
+ *   originDest must be valid with a size greater than outputByteSize*numberOfSamples;\n
+ * @post
+ *   originDest is filled with the re-organised data from flat to interleaved.
+ */
+inline void FlatToInterleaved(uint8 * const originSource, uint8 * const originDest, const uint32 beginIndex, const uint32 * const packetMemberSize,
+                       const uint32 packetByteSize, const uint32 numberOfPacketMembers, const uint32 numberOfSamples);
 
 }
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+//Implement in the header file so that the includer can use optimisation flags.
+void MemoryOperationsHelper::InterleavedToFlat(uint8 * const originSource, uint8 * const originDest, const uint32 beginIndex,
+                                               const uint32 * const packetMemberSize, const uint32 packetByteSize, const uint32 numberOfPacketMembers,
+                                               const uint32 numberOfSamples) {
+
+    //this should be the number of samples
+    /*lint -e{613} null pointer checked before.*/
+    for (uint32 k = 0u; k < numberOfSamples; k++) {
+        //return to the gam pointet
+        uint8 *dest = originDest;
+        //go to the k-th packet in the data source
+        /*lint -e{613} null pointer checked before.*/
+        uint32 index = (k * packetByteSize);
+        /*lint -e{613} null pointer checked before.*/
+        uint8 *source = &originSource[index];
+        /*lint -e{613} null pointer checked before.*/
+        for (uint32 i = 0u; i < numberOfPacketMembers; i++) {
+            //get the chunk size
+            index = (beginIndex + i);
+            /*lint -e{613} null pointer checked before.*/
+            uint32 chunkSize = packetMemberSize[index];
+            //put the k-th element
+            index = (k * chunkSize);
+            dest = &dest[index];
+            for (uint32 j = 0u; j < chunkSize; j++) {
+                dest[j] = source[j];
+            }
+            //(void) MemoryOperationsHelper::Copy(dest, source, chunkSize);
+            //skip the N-k other samples to go to the next chunk mem
+            index = ((numberOfSamples - k) * chunkSize);
+            dest = &dest[index];
+            //get the next chunk in source
+            source = &source[chunkSize];
+        }
+    }
+}
+
+void MemoryOperationsHelper::FlatToInterleaved(uint8 * const originSource, uint8 * const originDest, const uint32 beginIndex,
+                                               const uint32 * const packetMemberSize, const uint32 packetByteSize, const uint32 numberOfPacketMembers,
+                                               const uint32 numberOfSamples) {
+
+    //this should be the number of samples
+    /*lint -e{613} null pointer checked before.*/
+    for (uint32 k = 0u; k < numberOfSamples; k++) {
+        //return to the gam pointet
+        uint8 *source = originSource;
+        //go to the k-th packet in the data source
+        /*lint -e{613} null pointer checked before.*/
+        uint32 index = (k * packetByteSize);
+        /*lint -e{613} null pointer checked before.*/
+        uint8 *dest = &originDest[index];
+        /*lint -e{613} null pointer checked before.*/
+        for (uint32 i = 0u; i < numberOfPacketMembers; i++) {
+            //get the chunk size
+            index = (beginIndex + i);
+            /*lint -e{613} null pointer checked before.*/
+            uint32 chunkSize = packetMemberSize[index];
+            //put the k-th element
+            index = (k * chunkSize);
+            source = &source[index];
+            for (uint32 j = 0u; j < chunkSize; j++) {
+                dest[j] = source[j];
+            }
+            //skip the N-k other samples to go to the next chunk mem
+            index = ((numberOfSamples - k) * chunkSize);
+            source = &source[index];
+            //get the next chunk in source
+            dest = &dest[chunkSize];
+        }
+    }
+}
+}
 
 #endif /* MEMORYOPERATIONSHELPER_H_ */
 

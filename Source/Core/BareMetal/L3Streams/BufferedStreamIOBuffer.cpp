@@ -46,12 +46,14 @@ namespace MARTe {
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
     stream = static_cast<OperatingSystemCallbacksI *>(NULL);
+    streamBuffered = static_cast<BufferedStreamI *>(NULL);
     timeout = TTInfiniteWait;
 }
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s) :
         IOBuffer() {
     stream = s;
+    streamBuffered =dynamic_cast<BufferedStreamI *>(s);
     timeout = TTInfiniteWait;
 }
 
@@ -70,7 +72,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // position is to the character after the buffer end
             /*lint -e{613} . Justification: The NULL pointer condition is handled*/
             if (!stream->OSSeek(stream->OSPosition() - deltaToEnd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSSeek");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSSeek");
                 retval = false;
             }
 
@@ -80,7 +82,7 @@ bool BufferedStreamIOBuffer::Resync() {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -103,14 +105,14 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
                 retval = true;
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSRead");
+                REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSRead");
                 Empty();
             }
 
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -134,19 +136,46 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
                     Empty();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSWrite");
+                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSWrite");
                 }
             }
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
 
 bool BufferedStreamIOBuffer::SetBufferSize(const uint32 size) {
     return IOBuffer::SetBufferHeapMemory(size, 0u);
+}
+
+bool BufferedStreamIOBuffer::Flush(const uint32 neededSize) {
+
+    bool ret = true;
+
+    if (streamBuffered != NULL_PTR(BufferedStreamI*)) {
+        ret = streamBuffered->Flush();
+    }
+    else {
+        ret = IOBuffer::NoMoreSpaceToWrite(neededSize);
+    }
+    return ret;
+}
+
+
+bool BufferedStreamIOBuffer::Refill(){
+
+    bool ret = true;
+
+    if (streamBuffered != NULL_PTR(BufferedStreamI*)) {
+        ret = streamBuffered->Refill();
+    }
+    else {
+        ret = IOBuffer::NoMoreDataToRead();
+    }
+    return ret;
 }
 
 }

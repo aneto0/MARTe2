@@ -67,7 +67,7 @@ bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
     }
 
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: localtime()");
     }
     return ret;
 }

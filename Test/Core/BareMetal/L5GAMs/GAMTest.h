@@ -40,7 +40,7 @@
 using namespace MARTe;
 
 /**
- * @brief Tests the GAM I public methods.
+ * @brief Tests the GAM public methods.
  */
 class GAMTest {
 
@@ -225,6 +225,11 @@ public:
      * @brief Tests the GetOutputBrokers method.
      */
     bool TestGetOutputBrokers();
+
+    /**
+     * @brief Tests the ExportData method.
+     */
+    bool TestExportData();
 };
 
 /*---------------------------------------------------------------------------*/

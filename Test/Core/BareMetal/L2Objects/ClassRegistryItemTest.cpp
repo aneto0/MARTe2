@@ -29,35 +29,33 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemTest.h"
-#include "ClassRegistryItemT.h"
-#include "MemoryCheck.h"
-#include "StringHelper.h"
+#include "ClassMethodInterfaceMapper.h"
 #include "ClassRegistryDatabase.h"
-#include "IntrospectionEntry.h"
-#include "Introspection.h"
-#include "LoadableLibrary.h"
-#include "Object.h"
-#include <typeinfo>
-#include "ReferenceContainer.h"
+#include "ClassRegistryItemT.h"
+#include "ClassRegistryItemTest.h"
 #include "ClassWithCallableMethods.h"
 #include "ErrorType.h"
+#include "Introspection.h"
+#include "IntrospectionEntry.h"
+#include "LoadableLibrary.h"
+#include "MemoryCheck.h"
+#include "Object.h"
 #include "Reference.h"
+#include "ReferenceContainer.h"
+#include "StringHelper.h"
+#include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 class MyObject: public Object {
 public:
-    CLASS_REGISTER_DECLARATION()
-};
+    CLASS_REGISTER_DECLARATION()};
 CLASS_REGISTER(MyObject, "1.0")
-
 
 class MyObject2: public Object {
 public:
-    CLASS_REGISTER_DECLARATION()
-};
+    CLASS_REGISTER_DECLARATION()};
 CLASS_REGISTER(MyObject2, "1.0")
 
 class DummyObjectBuilder: public ObjectBuilderT<MyObject2> {
@@ -71,8 +69,7 @@ class DummyObjectBuilder: public ObjectBuilderT<MyObject2> {
 
 class TestIntrospectionCRI: public Object {
 public:
-    CLASS_REGISTER_DECLARATION()
-};
+    CLASS_REGISTER_DECLARATION()};
 CLASS_REGISTER(TestIntrospectionCRI, "1.1")
 
 static DummyObjectBuilder dummyObjectBuilder;
@@ -93,7 +90,8 @@ static ClassRegistryItem myItemIntro = *(ClassRegistryItemT<TestIntrospectionCRI
 
 static ClassRegistryItem myItemFull = *(ClassRegistryItemT<MyObject>::Instance());
 
-class ClassWithCallableMethods3: public ClassWithCallableMethods {};
+class ClassWithCallableMethods3: public ClassWithCallableMethods {
+};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -153,12 +151,10 @@ bool ClassRegistryItemTest::TestConstructor() {
 
     HeapManager::Free((void*&) instance);
 
-
     myItemIntro.SetIntrospection(&introspectionTest);
 
     myItemFull.SetIntrospection(&introspectionTest);
 //    myItemFull.SetObjectBuilder(&dummyObjectBuilder);
-
 
     return retVal;
 
@@ -257,31 +253,28 @@ bool ClassRegistryItemTest::TestFullConstructor() {
 //    return (dummy == NULL);
 //}
 
-bool ClassRegistryItemTest::TestRegisterMethods() {
+bool ClassRegistryItemTest::TestAddMethod() {
     bool result = true;
 
     //Sets the target of this test to the global ClassRegistryItem of ClassWithCallableMethods3
     ClassRegistryItem* const target = ClassRegistryItemT<ClassWithCallableMethods3>::Instance();
 
-    //Specifies the methods to be registered
-    ClassMethodInterfaceMapper cmim[] = { &ClassWithCallableMethods3::MethodWithInputInteger };
-    const char* names = "&ClassWithCallableMethods3::MethodWithInputInteger";
-    ClassMethodsRegistryItem cmri(NULL, cmim, names);
+    ClassMethodInterfaceMapper *mapper1 = new ClassMethodInterfaceMapper(&ClassWithCallableMethods3::MethodWithThreeParameters_C_C_C);
+    mapper1->SetMethodName("MethodWithThreeParameters_C_C_C_TestAddMethod");
+    target->AddMethod(mapper1);
+    ClassMethodInterfaceMapper *mapper2 = new ClassMethodInterfaceMapper(&ClassWithCallableMethods3::MethodWithThreeParameters_C_R_C);
+    mapper2->SetMethodName("MethodWithThreeParameters_C_R_C_TestAddMethod");
+    target->AddMethod(mapper2);
 
-    //Registers the methods specified in cmri to be registered
-    target->RegisterMethods(&cmri);
-
-    //Check if the method has been registered (calling it)
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 10;
-        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
-    }
+    result &= (target->FindMethod("MethodWithThreeParameters_C_C_C_TestAddMethod") != NULL);
+    result &= (target->FindMethod("MethodWithThreeParameters_C_R_C_TestAddMethod") != NULL);
+    result &= (target->FindMethod("MethodWithThreeParameters_C_W_C_TestAddMethod") == NULL);
 
     return result;
+}
+
+bool ClassRegistryItemTest::TestFindMethod() {
+    return TestAddMethod();
 }
 
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
@@ -390,154 +383,11 @@ bool ClassRegistryItemTest::TestGetIntrospection() {
     return myItemIntro.GetIntrospection() == &introspectionTest;
 }
 
-bool ClassRegistryItemTest::TestCallRegisteredMethod() {
-    bool result = true;
-    ClassRegistryItem* target = ClassRegistryItemT<ClassWithCallableMethods>::Instance();
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "NonRegisteredMethod", params);
-        result &= status.unsupportedFeature;
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "FaultyMethod", params);
-        result &= status.functionError;
-        result &= (context.GetLastMethodExecuted() == "FaultyMethod(MARTe::ReferenceContainer&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        status = target->CallRegisteredMethod(&context, "OverloadedMethod");
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod()");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target->CallRegisteredMethod<int&>(&context, "OverloadedMethod", params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(int&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "OverloadedMethod", params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "OverloadedMethod(MARTe::ReferenceContainer&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 10;
-        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputInteger", params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputInteger(int&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 0;
-        status = target->CallRegisteredMethod<int&>(&context, "MethodWithOutputInteger", params);
-        result &= status;
-        result &= (params == 20);
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputInteger(int&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 30;
-        status = target->CallRegisteredMethod<int&>(&context, "MethodWithInputOutputInteger", params);
-        result &= status;
-        result &= (params == (30 + 5));
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputInteger(int&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputReferenceContainer", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        else {
-            result = false;
-        }
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj;
-        status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithOutputReferenceContainer", params);
-        result &= status;
-        obj = params.Find("TestObject2");
-        result &= obj.IsValid();
-        result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(MARTe::ReferenceContainer&)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObject", obj);
-        if (success) {
-            Reference objDel;
-            Reference objNew;
-            status = target->CallRegisteredMethod<ReferenceContainer&>(&context, "MethodWithInputOutputReferenceContainer", params);
-            result &= status;
-            objDel = params.Find("TestObject");
-            result &= !objDel.IsValid();
-            objNew = params.Find("TestObject2");
-            result &= objNew.IsValid();
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputReferenceContainer(MARTe::ReferenceContainer&)");
-        }
-        else {
-            result = false;
-        }
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        int params = 80;
-        status = target->CallRegisteredMethod<int>(&context, "MethodWithInputIntegerByCopy", params);
-        result &= status;
-        result &= (context.GetLastMethodExecuted() == "MethodWithInputIntegerByCopy(int)");
-    }
-    {
-        ErrorManagement::ErrorType status;
-        ClassWithCallableMethods context;
-        ReferenceContainer params;
-        Reference obj("Object");
-        bool success;
-        success = params.Insert("TestObjectIntoReferenceContainerByCopy", obj);
-        if (success) {
-            status = target->CallRegisteredMethod<ReferenceContainer>(&context, "MethodWithInputReferenceContainerByCopy", params);
-            result &= status;
-            result &= (context.GetLastMethodExecuted() == "MethodWithInputReferenceContainerByCopy(MARTe::ReferenceContainer)");
-        }
-        else {
-            result = false;
-        }
-    }
-    return result;
-}
-
 bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {
     bool ret = true;
 
     ClassUID prev = myItem.GetClassProperties()->GetUniqueIdentifier();
-    myItem.SetUniqueIdentifier(prev+1);
+    myItem.SetUniqueIdentifier(prev + 1);
     if (myItem.GetClassProperties()->GetUniqueIdentifier() != (prev + 1)) {
         ret = false;
     }
