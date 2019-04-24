@@ -24,32 +24,27 @@
 #
 #############################################################
 
-PACKAGE=Core/FileSystem/L1Portability
+PACKAGE=Core/BareMetal/L6App
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicFile.x \
-    BasicSocket.x \
-    BasicTCPSocket.x \
-    BasicUDPSocket.x \
-    Directory.x \
-    DirectoryScanner.x \
-    InternetHost.x \
-    InternetService.x \
-    Select.x
+OBJSX=  Bootstrap.x
 		
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
+INCLUDES+=-I../../../L0Types
+INCLUDES+=-I../../../L1Portability
+INCLUDES+=-I../../../L2Objects
+INCLUDES+=-I../../../L3Streams
+INCLUDES+=-I../../../L4Configuration
+INCLUDES+=-I../../../L4Logger
+INCLUDES+=-I../../../L4Messages
+INCLUDES+=-I../../../L5GAMs
 
-INCLUDES+=-I../../../../BareMetal/L0Types
-INCLUDES+=-I../../../../BareMetal/L1Portability
-INCLUDES+=-I../../../../BareMetal/L2Objects
-INCLUDES+=-I../../../../BareMetal/L3Streams
-INCLUDES+=-I../../../../Scheduler/L1Portability
 
 all: $(OBJS) $(CPPS) \
-     $(BUILD_DIR)/L1Portability$(LIBEXT)
+     $(BUILD_DIR)/L6App$(LIBEXT)
 	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)

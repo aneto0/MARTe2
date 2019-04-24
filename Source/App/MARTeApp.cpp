@@ -59,23 +59,15 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
     bootstrap.Printf(err.Buffer());
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
 /**
- * @brief Main function.
- * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
- * @param[in] argv the value of the arguments to be parsed by the MARTe::Bootstrap.
- * @return 0
+ * TODO
  */
-int main(int argc, char **argv) {
+
+void MainRun(void) {
+    MARTe::ConfigurationDatabase loaderParameters;
+    MARTe::StreamI *configurationStream = NULL_PTR(MARTe::StreamI *);
     using namespace MARTe;
-    SetErrorProcessFunction(&MainErrorProcessFunction);
-
-    ConfigurationDatabase loaderParameters;
-    StreamI *configurationStream = NULL_PTR(StreamI *);
-
-    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(argc, argv, loaderParameters);
+    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(1, NULL, &loaderParameters);
     if (ret) {
         ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
         if (ret) {
@@ -88,7 +80,6 @@ int main(int argc, char **argv) {
     else {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Could not ReadParameters.");
     }
-
     StreamString loaderClass;
     if (ret) {
         ret.fatalError = !loaderParameters.Read("Loader", loaderClass);
@@ -96,7 +87,6 @@ int main(int argc, char **argv) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Loader not specified");
         }
     }
-
     //Try to instantiate a new loader.
     ReferenceT<Loader> loaderRef;
     if (ret) {
@@ -125,6 +115,23 @@ int main(int argc, char **argv) {
         ret = loaderRef->Stop();
     }
     MARTe::ObjectRegistryDatabase::Instance()->Purge();
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Main function.
+ * @param[in] argc the number of arguments to be parsed by the MARTe::Bootstrap.
+ * @param[in] argv the value of the arguments to be parsed by the MARTe::Bootstrap.
+ * @return 0
+ */
+int main(int argc, char **argv) {
+    using namespace MARTe;
+    SetErrorProcessFunction(&MainErrorProcessFunction);
+    bootstrap.Load(&MainRun);
 
     return 0;
 }

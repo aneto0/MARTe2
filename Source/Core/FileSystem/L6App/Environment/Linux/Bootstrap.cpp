@@ -109,4 +109,8 @@ ErrorManagement::ErrorType Bootstrap::Run() {
     return ret;
 }
 
+void Bootstrap::Load(void (*loader)(void)) {
+    loader();
+}
+
 }

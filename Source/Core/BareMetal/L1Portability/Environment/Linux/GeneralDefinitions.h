@@ -83,8 +83,8 @@ struct BasicConsoleProperties;
 
 typedef int32 Handle;
 static const char8 DIRECTORY_SEPARATOR = '/';
-const uint32 SCHED_GRANULARITY_US = 10000;
-
+const uint32 SCHED_GRANULARITY_US = 10000u;
+const uint32 IOBUFFER_GRANULARITY = 64u;
 }
 
 

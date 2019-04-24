@@ -80,7 +80,7 @@ void *StandardHeap::Malloc(const uint32 size) {
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed Failed malloc()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "StandardHeap: Failed Failed malloc()");
     }
     return pointer;
 
@@ -142,7 +142,7 @@ void *StandardHeap::Duplicate(const void * const data,
         } //copy loop
     } //check Malloc success
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
+        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
     }
     // copy bound by size
 

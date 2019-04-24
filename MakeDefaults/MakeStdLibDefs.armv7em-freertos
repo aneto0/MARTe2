@@ -29,7 +29,7 @@ BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDI
 TARGET_BASE=gcc
 ENVIRONMENT=FreeRTOS
 ARCHITECTURE=armv7m_gcc
-EXEEXT=.bin
+EXEEXT=.o
 DLLEXT=.so
 LIBEXT=.a
 OBJEXT=.o
@@ -62,15 +62,23 @@ MAKE     = make
 
 DEBUG = -g 
 OPTIM = -Os
+
 FREE_RTOS_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS
 PORT_MACRO_H_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1
-CMSIS_DIRECTORY=$(STM_CUBE_FW_DIR)/Drivers/CMSIS/Include/
+CMSIS_DIRECTORY=$(FREE_RTOS_DIRECTORY)/Source/CMSIS_RTOS/
 
 #You have to give in YOUR environment variables the location of the FreeRTOSConfig.h and set it FREE_RTOS_CONFIG_DIRECTORY
 INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) -I$(FREE_RTOS_CONFIG_DIRECTORY) -I$(CMSIS_DIRECTORY)
 LFLAGS =-mcpu=cortex-m7 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -falign-functions=16 -lm -lgcc -lc -lnosys -specs=nosys.specs -Wl,--gc-section -g 
 
 CFLAGS =  -DSTM32F746xx -MD -MP -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -g -Wall 
+ifdef LWIP_INCLUDE_DIRECTORIES
+#Explicitly set space separated directories with -I (e.g. "-IDIR1 -IDIR2 ")  
+INCLUDES+=$(LWIP_INCLUDE_DIRECTORIES)
+CFLAGS += -DLWIP_ENABLED
+CFLAGS += -DLWIP_DNS=1
+endif
+
 CPPFLAGS = $(CFLAGS) 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_FREERTOS
   

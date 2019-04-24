@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBuffer.cpp
- * @brief Source file for class StreamStringIOBuffer
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @file Bootstrap.cpp
+ * @brief Source file for class Bootstrap
+ * @date 04/04/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,11 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringIOBuffer (public, protected, and private). Be aware that some 
+ * the class Bootstrap (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -29,8 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <StreamStringIOBuffer.h>
+#include "AdvancedErrorManagement.h"
+#include "Bootstrap.h"
+#include "ConfigurationDatabase.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,85 +40,41 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
-StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(IOBUFFER_GRANULARITY, 0u) {
+//Note that some methods are implemented in FileSystem/L6App/Environment/Linux/Bootstrap.cpp
+
+Bootstrap::Bootstrap() {
 
 }
 
-StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
-        IOBuffer(granularity, 0u) {
+Bootstrap::~Bootstrap() {
 
 }
 
-StreamStringIOBuffer::~StreamStringIOBuffer() {
-
-}
-
-bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
-
-    bool ret;
-
-    //add one to desired size for the terminator character.
-    ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
-
+ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI *loaderParameters) {
+    //TODO finishe me
+    ErrorManagement::ErrorType ret;
+    ret.parametersError = !loaderParameters->Write("Loader", "RealTimeLoader");
     if (ret) {
-        if (desiredSize < UsedSize()) {
-            SetUsedSize(desiredSize);
+        //ret.parametersError = !loaderParameters->Write("FirstState", "State1");
+        ret.parametersError = !loaderParameters->Write("MessageDestination", "StateMachine");
+        if (ret) {
+            ret.parametersError = !loaderParameters->Write("MessageFunction", "START");
         }
-
-        Terminate();
     }
-
-    return ret;
-}
-
-bool StreamStringIOBuffer::Write(const char8 * const buffer,
-                                 uint32 &size) {
-
-    bool ret = true;
-
-    if (size > AmountLeft()) {
-        ret = SetBufferAllocationSize(Position() + size);
-    }
-
     if (ret) {
-        ret = IOBuffer::Write(buffer, size);
+        ret.parametersError = !loaderParameters->Write("Parser", "cdb");
     }
-
     return ret;
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + 1u);
-
-    return ret;
+extern "C" {
+    void HardwarePrintf(const char8 * const msg);
 }
-
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + neededSize);
-
-    return ret;
-}
-
-void StreamStringIOBuffer::Terminate() {
-    if (BufferReference() != NULL) {
-        BufferReference()[UsedSize()] = '\0';
-    }
+void Bootstrap::Printf(const char8 * const msg) {
+    //TODO
+    HardwarePrintf(msg);
 }
 
 }

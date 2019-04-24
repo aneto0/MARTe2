@@ -35,17 +35,17 @@ createLibrary :
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
 	rm -f $(ROOT_DIR)/createLibrary.o	
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o	
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $< -o $(BUILD_DIR)/$*.o	
 
 $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(BUILD_DIR)
 	rm -f $(ROOT_DIR)/createLibrary.o
-	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $< -o $(BUILD_DIR)/$*.o
 	
 $(BUILD_DIR)/%.o : %.s
 	mkdir -p $(BUILD_DIR)
 	rm -f $(ROOT_DIR)/createLibrary.o
-	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.s -o $(BUILD_DIR)/$*.o
+	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $< -o $(BUILD_DIR)/$*.o
 
 $(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	mkdir -p $(BUILD_DIR)
@@ -74,10 +74,6 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS) createLibrary
-	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
-	rm createLibrary
-
 depends.$(TARGET): dependsRaw.$(TARGET) 
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
 	sed -f CreateLinuxDepends.sed dependsRaw.$(TARGET) >depends.$(TARGET)
@@ -101,6 +97,8 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 	$(MAKE) -C $* -f Makefile.$(TARGET_BASE) clean
 
 $(BUILD_DIR)/%.elf: $(OBJS) 
+	mkdir -p $(BUILD_DIR)
+	rm -f $(ROOT_DIR)/createLibrary.o
 	$(COMPILER) -T $(LINKER_LD_FILE) $(LFLAGS) $(OBJS) $(LIBRARIES_STATIC) -o $@ 	
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
@@ -112,6 +110,8 @@ $(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf
 $(BUILD_DIR)/%.sym: $(BUILD_DIR)/%.elf
 	$(NM)  $^ | sort > $@
 
+$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.hex
+    
 clean:  $(SUBPROJC)
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)

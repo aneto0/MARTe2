@@ -1,8 +1,8 @@
 /**
- * @file SleepOS.cpp
- * @brief Source file for class SleepOS
- * @date 31/07/2015
- * @author André Neto
+ * @file SocketCore.h
+ * @brief Header file for class SocketCore
+ * @date 19/04/2019
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,47 +16,33 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class SleepOS (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class SocketCore
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
-
-#include "FreeRTOS.h"
+#ifndef SOCKETCORE_H_
+#define SOCKETCORE_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "HighResolutionTimer.h"
-#include "Sleep.h"
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-extern "C" {
-
-void HAL_Delay(volatile uint32_t Delay);
-}
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-void Sleep::OsUsleep(const uint32 usecTime) {
-    if (usecTime > 0u) {
-        HAL_Delay(usecTime / 1000);
-#if 0
-        vTaskDelay((usecTime * configTICK_RATE_HZ) / 1000000);
-#endif
-    }
-}
-
-int32 Sleep::GetDateSeconds() {
-    return HighResolutionTimer::Counter() * HighResolutionTimer::Period();
-}
+typedef Handle SocketCore;
 
 }
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* SOCKETCORE_H_ */
+

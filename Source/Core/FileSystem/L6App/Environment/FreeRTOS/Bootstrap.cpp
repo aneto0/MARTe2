@@ -1,8 +1,8 @@
 /**
- * @file TimeStamp.cpp
- * @brief Source file for class TimeStamp
- * @date 11/11/2015
- * @author Giuseppe Ferrò
+ * @file Bootstrap.cpp
+ * @brief Source file for class Bootstrap
+ * @date 04/04/2018
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,59 +17,85 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class TimeStamp (public, protected, and private). Be aware that some 
+ * the class Bootstrap (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <math.h>
-#include <time.h>
+#include "cmsis_os.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "TimeStamp.h"
-#include "ErrorManagement.h"
+#include "AdvancedErrorManagement.h"
+#include "Bootstrap.h"
+#include "BasicFile.h"
+#include "ConfigurationDatabase.h"
+#include "StreamMemoryReference.h"
+#include "StructuredDataI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+/**
+ * True while the application is to be running.
+ */
+static bool keepRunning = true;
+}
+
+extern "C" {
+
+    extern void HardwareMain(void);
+    extern const MARTe::char8 * const GetMARTeConfigurationString();
+    
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
+
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-TimeStamp::TimeStamp() {
-    microseconds = 0u;
-    seconds = 0u;
-    minutes = 0u;
-    hours = 0u;
-    days = 0u;
-    month = 0u;
-    year = 1900u;
+StreamMemoryReference *staticConfigurationStream = NULL;
+ErrorManagement::ErrorType Bootstrap::GetConfigurationStream(StructuredDataI &loaderParameters, StreamI *&configurationStream) {
+    const char8 * const marteConfig = GetMARTeConfigurationString();
+    uint32 marteConfigLength = StringHelper::Length(marteConfig) + 1;
+    if (staticConfigurationStream == NULL) {
+        staticConfigurationStream = new StreamMemoryReference(marteConfig, marteConfigLength);
+    }
+    configurationStream = staticConfigurationStream;
+    return true;
 }
 
-bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
+extern "C" {
+    void PreLoader(const void *_loader) {
+        void (*loader) (void) = (void (*) (void))_loader;
+        //Wait for LWIP and friends...
+        //Sleep::Sec(10.0);
+        loader();
+    }
+}
 
-    //fill the time structure
-    time_t secondsFromEpochTimeT = secondsFromEpoch;
-    const struct tm *tValues = localtime(&secondsFromEpochTimeT);
-    bool ret = (tValues != NULL);
-    if (ret) {
-        seconds = static_cast<uint32>(tValues->tm_sec);
-        minutes = static_cast<uint32>(tValues->tm_min);
-        hours = static_cast<uint32>(tValues->tm_hour);
-        days = static_cast<uint32>(tValues->tm_mday) - 1u;
-        month = static_cast<uint32>(tValues->tm_mon);
-        year = static_cast<uint32>(tValues->tm_year) + 1900u;
+void Bootstrap::Load(void (*loader)(void)) {
+    osThreadDef(loaderTask, PreLoader, osPriorityNormal, 1, 4 * THREADS_DEFAULT_STACKSIZE);
+    osThreadCreate (osThread(loaderTask), (void *)loader);
+    HardwareMain();
+}
+
+ErrorManagement::ErrorType Bootstrap::Run() {
+    while (keepRunning) {
+        Sleep::Sec(1.0);
+    }
+    if (staticConfigurationStream != NULL) {
+        delete staticConfigurationStream;
     }
 
-    else {
-        REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: localtime()");
-    }
-    return ret;
+    return true;
 }
 
 }

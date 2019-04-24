@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBuffer.cpp
- * @brief Source file for class StreamStringIOBuffer
- * @date 26/10/2015
- * @author Giuseppe Ferrò
+ * @file Directory.cpp
+ * @brief Source file for class Directory
+ * @date 20/04/2019
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,11 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringIOBuffer (public, protected, and private). Be aware that some 
+ * the class Directory (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -30,8 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <StreamStringIOBuffer.h>
-
+#include "Directory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,85 +37,58 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 namespace MARTe {
 
-StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(IOBUFFER_GRANULARITY, 0u) {
-
+Directory::Directory(const char8 * const path) :
+        LinkedListable() {
+    fname = "";
+    directoryHandle = 0;
 }
 
-StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
-        IOBuffer(granularity, 0u) {
-
+Directory::~Directory() {
 }
 
-StreamStringIOBuffer::~StreamStringIOBuffer() {
-
+bool Directory::SetByName(const char8 * const path) {
+    return false;
 }
 
-bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
-
-    bool ret;
-
-    //add one to desired size for the terminator character.
-    ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
-
-    if (ret) {
-        if (desiredSize < UsedSize()) {
-            SetUsedSize(desiredSize);
-        }
-
-        Terminate();
-    }
-
-    return ret;
+const char8 *Directory::GetName() const {
+    return "";
 }
 
-bool StreamStringIOBuffer::Write(const char8 * const buffer,
-                                 uint32 &size) {
-
-    bool ret = true;
-
-    if (size > AmountLeft()) {
-        ret = SetBufferAllocationSize(Position() + size);
-    }
-
-    if (ret) {
-        ret = IOBuffer::Write(buffer, size);
-    }
-
-    return ret;
+bool Directory::IsDirectory() const {
+    return false;
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + 1u);
-
-    return ret;
+bool Directory::IsFile() const {
+    return false;
 }
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
-
-    bool ret;
-
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    ret = SetBufferAllocationSize(GetBufferSize() + neededSize);
-
-    return ret;
+uint64 Directory::GetSize() {
+    return 0LLU;
 }
 
-void StreamStringIOBuffer::Terminate() {
-    if (BufferReference() != NULL) {
-        BufferReference()[UsedSize()] = '\0';
-    }
+TimeStamp Directory::GetLastWriteTime() {
+    TimeStamp timeStamp;
+    return timeStamp;
+}
+
+TimeStamp Directory::GetLastAccessTime() {
+    TimeStamp timeStamp;
+    return timeStamp;
+}
+
+bool Directory::Create(const bool isFile) {
+    return false;
+}
+
+bool Directory::Exists() {
+    return false;;
+}
+
+bool Directory::Delete() {
+    return false;
 }
 
 }
+
