@@ -35,7 +35,7 @@ OBJSO+= $(shell dir $(BUILD_DIR)\FileSystem\*.obj /b/s)
 OBJSX=$(OBJSO:$(BUILD_DIR)\%.obj=%.x)
 
 CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
-INCLUDES += -I../../Lib/gtest-1.7.0/include
+INCLUDES += -I../../Lib/$(TARGET)/gtest-1.7.0/include
 
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\MARTe2$(LIBEXT) 
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreBTest$(LIBEXT) 
@@ -44,5 +44,5 @@ LIBRARIES   += ..\..\Build\$(TARGET)\Core\FileSystem\MARTeCoreFTest$(LIBEXT)
 
 
 
-LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
+LIBRARIES   += ..\..\Lib\$(TARGET)/gtest-1.7.0\gtest_main-md.lib ..\..\Lib\$(TARGET)/gtest-1.7.0\gtest-md.lib 
 LIBRARIES   += Winmm.lib

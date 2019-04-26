@@ -29,4 +29,4 @@ TARGET=cov
 
 include Makefile.inc
 
-INCLUDES += -I../../../../Lib/gtest-1.7.0/include
+INCLUDES += -I../../../../Lib/$(TARGET)/$(TARGET)/gtest-1.7.0/include

@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     //Automatically generate a new object instance based on the class name and on the correct Heap
     Reference ref1(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
     Reference ref2(className, GlobalObjectsDatabase::Instance()->GetStandardHeap());
-    Reference ref3;
+    Reference ref3, ref4;
 
     //ref3 is not initialised and thus should not be valid
     if (ref1.IsValid() && ref2.IsValid() && !ref3.IsValid()) {
@@ -94,12 +94,19 @@ int main(int argc, char **argv) {
         }
 
         ref3 = ref1;
+        ref4 = ref3;
         //ref3 is now valid and should point at the same object as ref1
         Object *referencedObj3 = ref3.operator ->();
+        Object *referencedObj4 = ref4.operator ->();
         if (referencedObj1 == referencedObj3) {
             REPORT_ERROR_STATIC(ErrorManagement::Information, "As expected ref1 "
             		"and ref3 are pointing at the "
             		"same instance (%s == %s).", ref1->GetName(), ref3->GetName());
+        }
+        if (referencedObj4 == referencedObj3) {
+            REPORT_ERROR_STATIC(ErrorManagement::Information, "Luca : As expected ref4 "
+                        "and ref3 are pointing at the "
+                        "same instance (%s == %s).", ref4->GetName(), ref3->GetName());
         }
     }
     else {

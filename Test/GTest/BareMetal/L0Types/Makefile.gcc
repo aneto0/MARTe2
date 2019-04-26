@@ -26,5 +26,5 @@
 
 
 include Makefile.inc
-INCLUDES += -I../../../../Lib/gtest-1.7.0/include
+INCLUDES += -I../../../../Lib/$(TARGET)/gtest-1.7.0/include
 

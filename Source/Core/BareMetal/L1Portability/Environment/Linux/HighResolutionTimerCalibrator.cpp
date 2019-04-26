@@ -66,36 +66,63 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     initialSecs = initTime.tv_sec;
     initialUSecs = initTime.tv_usec;
 
+    bool ok = false;
+
     if (ret == 0) {
-        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
-        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
-
-        FILE *f = fopen("/proc/cpuinfo", "r");
-        size_t size = LINUX_CPUINFO_BUFFER_SIZE;
-        if (f != NULL) {
-            size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
-            fclose(f);
-        }
-        else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen()");
-        }
-
-        if (size > 0u) {
-            const char8 *pattern = "MHz";
-            const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
-            if (p != NULL) {
-                p = StringHelper::SearchString(p, ":");
-                p++;
-                float64 freqMHz = strtof(p, static_cast<char8 **>(0));
-                if (freqMHz > 0.) {
-                    float64 frequencyF = freqMHz *= 1.0e6;
-                    period = 1.0 / frequencyF;
-                    frequency = static_cast<uint64>(frequencyF);
-                }
+        char8* cpu_freq = getenv("CPU_FREQ");
+        ok = (cpu_freq != NULL);
+        if (ok) {
+            float64 freqHz = strtof(cpu_freq, static_cast<char8 **>(0));
+            if (freqHz > 0.) {
+                period = 1.0 / freqHz;
+                frequency = static_cast<uint64>(freqHz);
             }
         }
         else {
-            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fread()");
+            char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
+            memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
+            FILE *f = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r");
+            size_t size = LINUX_CPUINFO_BUFFER_SIZE;
+            ok = (f != NULL);
+            if (ok) {
+                size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
+                fclose(f);
+                if (buffer[0] != '\0') {
+                    const char8 *p = &buffer[0];
+
+                    float64 freqKHz = strtof(p, static_cast<char8 **>(0));
+                    if (freqKHz > 0.) {
+                        float64 frequencyF = freqKHz * 1.0e3;
+                        period = 1.0 / frequencyF;
+                        frequency = static_cast<uint64>(frequencyF);
+                    }
+                }
+            }
+            else {
+                f = fopen("/proc/cpuinfo", "r");
+                ok = (f != NULL);
+                if (ok) {
+                    size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
+                    fclose(f);
+                    if (size > 0u) {
+                        const char8 *pattern = "MHz";
+                        const char8 *p = StringHelper::SearchString(&buffer[0], pattern);
+                        if (p != NULL) {
+                            p = StringHelper::SearchString(p, ":");
+                            p++;
+                            float64 freqMHz = strtof(p, static_cast<char8 **>(0));
+                            if (freqMHz > 0.) {
+                                float64 frequencyF = freqMHz *= 1.0e6;
+                                period = 1.0 / frequencyF;
+                                frequency = static_cast<uint64>(frequencyF);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!ok) {
+            REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "HighResolutionTimerCalibrator: fopen() and CPU_FREQ env");
         }
     }
     else {
@@ -108,17 +135,17 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
 
     uint64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
 
-    //Use HRT
+//Use HRT
     float64 secondsFromStart = static_cast<float64>(ticksFromStart) * period;
     float64 uSecondsFromStart = (secondsFromStart - floor(secondsFromStart)) * 1e6;
 
-    //Add HRT to the the initial time saved in the calibration.
+//Add HRT to the the initial time saved in the calibration.
     float64 secondsFromEpoch = static_cast<float64>(initialSecs) + secondsFromStart;
     float64 uSecondsFromEpoch = static_cast<float64>(initialUSecs) + uSecondsFromStart;
 
     uint32 microseconds = static_cast<uint32>(uSecondsFromEpoch);
 
-    //Check the overflow
+//Check the overflow
     if (microseconds >= 1000000u) {
         microseconds -= 1000000u;
         secondsFromEpoch++;
@@ -126,7 +153,7 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
 
     timeStamp.SetMicroseconds(microseconds);
 
-    //fill the time structure
+//fill the time structure
     time_t secondsFromEpoch32 = static_cast<time_t>(secondsFromEpoch);
 
     bool ret = timeStamp.ConvertFromEpoch(secondsFromEpoch32);
@@ -142,5 +169,5 @@ float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
 }
 
-
 }
+

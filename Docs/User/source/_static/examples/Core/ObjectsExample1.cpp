@@ -55,8 +55,8 @@ public:
     /**
      * @brief NOOP.
      */
-ControllerEx1    () {
-        gain = 0u;
+        ControllerEx1    () {
+            gain = 0u;
     }
 
     /**

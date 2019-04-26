@@ -24,7 +24,8 @@
 
 OBJSX=ErrorLoggerExample.x \
     GAMGroupSharedInfoExample1.x \
-    TCPSocketMessageProxyExample.x
+    TCPSocketMessageProxyExample.x \
+    ConstantDataSource.x
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
@@ -46,7 +47,13 @@ INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
 INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
 
+LIBRARIES += /home/lporzio/open62541/build/bin/libopen62541.a
+
 all: $(OBJS) $(SUBPROJ) \
+	$(BUILD_DIR)/ConstantDataSource$(DLLEXT) \
+	$(BUILD_DIR)/WaterTankGAM$(GAMEXT) \
+	$(BUILD_DIR)/OPCUATestGAM$(GAMEXT) \
+	$(BUILD_DIR)/MyTest$(EXEEXT) \
         $(BUILD_DIR)/AtomicExample1$(EXEEXT) \
         $(BUILD_DIR)/BasicStreamsExample1$(EXEEXT) \
         $(BUILD_DIR)/BufferedStreamsExample1$(EXEEXT) \

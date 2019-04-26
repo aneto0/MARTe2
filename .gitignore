@@ -8,5 +8,5 @@
 /_Test.txt
 /.README.md.html
 *.dia~
-depends*.gcc
-depends*.x86-linux
+depends*.*
+depends*.*
