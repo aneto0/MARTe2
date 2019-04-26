@@ -363,10 +363,13 @@ int32 Select::WaitUntil(const TimeoutType &timeout) {
     else {
         if (timeout.IsFinite()) {
             struct timeval timeoutLinux;
+	    uint32 toSleep = timeout.GetTimeoutMSec();
+	    uint32 toSleepS = toSleep / 1000u;
+	    uint32 toSleepms = toSleep - (toSleepS * 1000u);
+	    /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
+            timeoutLinux.tv_sec = static_cast<int64>(toSleepS);
             /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-            timeoutLinux.tv_usec = static_cast<int64>(timeout.GetTimeoutMSec()) * 1000;
-            /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-            timeoutLinux.tv_sec = static_cast<int64>(timeout.GetTimeoutMSec()) / 1000;
+	    timeoutLinux.tv_usec = static_cast<int64>(toSleepms) * 1000;
             retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux);
         }
         else {

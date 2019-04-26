@@ -151,7 +151,7 @@ public:
         expectedTrigger = NULL;
         counter = 0;
         memoryOK = true;
-        stackSize = 65536;
+        stackSize = 262144;
         broker = NULL;
     }
 
@@ -1244,7 +1244,7 @@ static const MARTe::char8 * const config10 = ""
         "            PreTriggerBuffers = 4"
         "            PostTriggerBuffers = 3"
         "            CPUMask = 15"
-        "            StackSize = 32768"
+        "            StackSize = 262144"
         "            ExpectedTrigger = {0 1 0 1 0 1 0 1 1}"
         "            ExpectedSignal =  {1 2 4 5 8 9 8 7 6}"
         "        }"
@@ -1889,7 +1889,7 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestGetStackSize() {
     dataSource->GetOutputBrokers(brokers, "GAM1", fakeMem);
     ReferenceT<MemoryMapAsyncTriggerOutputBroker> broker = brokers.Get(0);
     if (ok) {
-        ok = (broker->GetStackSize() == 32768);
+        ok = (broker->GetStackSize() == 262144);
     }
     delete fakeMem;
 

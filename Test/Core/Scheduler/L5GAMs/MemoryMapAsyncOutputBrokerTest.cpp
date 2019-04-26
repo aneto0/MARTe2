@@ -123,7 +123,7 @@ MemoryMapAsyncOutputBrokerDataSourceTestHelper    () {
         totalNumberOfSignalElements = 0;
         signalMemory = NULL;
         cpuMask = 0xff;
-        stackSize = 65536;
+        stackSize = 262144;
         numberOfExecutes = 0;
         expectedSignal = NULL;
         counter = 0;
@@ -785,7 +785,7 @@ static const MARTe::char8 * const config10 = ""
         "            Class = MemoryMapAsyncOutputBrokerDataSourceTestHelper"
         "            NumberOfBuffers = 10"
         "            CPUMask = 15"
-        "            StackSize = 32768"
+        "            StackSize = 262144"
         "            ExpectedSignal =  {1 2 4 5 8 9 8 7 6}"
         "        }"
         "    }"
@@ -969,7 +969,7 @@ bool MemoryMapAsyncOutputBrokerTest::TestGetStackSize() {
     dataSource->GetOutputBrokers(brokers, "GAM1", fakeMem);
     ReferenceT<MemoryMapAsyncOutputBroker> broker = brokers.Get(0);
     if (ok) {
-        ok = (broker->GetStackSize() == 32768);
+        ok = (broker->GetStackSize() == 262144);
     }
     delete fakeMem;
 
