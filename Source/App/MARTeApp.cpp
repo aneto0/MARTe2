@@ -39,11 +39,12 @@
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceT.h"
 #include "StreamI.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,Kernel.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
+static Kernel kernel;
 static MARTe::Bootstrap bootstrap;
 
 /**
@@ -64,10 +65,12 @@ void MainErrorProcessFunction(const MARTe::ErrorManagement::ErrorInformation &er
  */
 
 void MainRun(void) {
-    MARTe::ConfigurationDatabase loaderParameters;
-    MARTe::StreamI *configurationStream = NULL_PTR(MARTe::StreamI *);
     using namespace MARTe;
-    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(1, NULL, &loaderParameters);
+
+    ConfigurationDatabase loaderParameters;
+    StreamI *configurationStream = NULL_PTR(MARTe::StreamI *);
+
+    ErrorManagement::ErrorType ret = bootstrap.ReadParameters(1, NULL, loaderParameters);
     if (ret) {
         ret = bootstrap.GetConfigurationStream(loaderParameters, configurationStream);
         if (ret) {
@@ -130,6 +133,8 @@ void MainRun(void) {
  */
 int main(int argc, char **argv) {
     using namespace MARTe;
+    kernel.Initialize();
+
     SetErrorProcessFunction(&MainErrorProcessFunction);
     bootstrap.Load(&MainRun);
 

@@ -70,7 +70,7 @@ public:
      * - FirstState (optional): the name of the FirstState in a RealTimeApplication (see RealTimeLoader::Initialise).
      * @return ErrorManagement::NoError if all the compulsory parameters can be read from the \a argv and written into the loaderParameters. A specific ErrorType otherwise.
      */
-    ErrorManagement::ErrorType ReadParameters(int32 argc, char8 **argv, StructuredDataI *loaderParameters);
+    ErrorManagement::ErrorType ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters);
 
     /**
      * @brief Gets the configuration stream to be used for the application start.

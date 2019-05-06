@@ -208,7 +208,6 @@ protected:
      * The real-time application linked to this scheduler
      */
     Reference realTimeApp;
-private:
 
     /**
      * Double buffer accelerator to the threads to be executed for the current

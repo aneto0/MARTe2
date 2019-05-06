@@ -52,19 +52,19 @@ Bootstrap::~Bootstrap() {
 
 }
 
-ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI *loaderParameters) {
+ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, StructuredDataI &loaderParameters) {
     //TODO finishe me
     ErrorManagement::ErrorType ret;
-    ret.parametersError = !loaderParameters->Write("Loader", "RealTimeLoader");
+    ret.parametersError = !loaderParameters.Write("Loader", "RealTimeLoader");
     if (ret) {
-        //ret.parametersError = !loaderParameters->Write("FirstState", "State1");
-        ret.parametersError = !loaderParameters->Write("MessageDestination", "StateMachine");
+        //ret.parametersError = !loaderParameters.Write("FirstState", "State1");
+        ret.parametersError = !loaderParameters.Write("MessageDestination", "StateMachine");
         if (ret) {
-            ret.parametersError = !loaderParameters->Write("MessageFunction", "START");
+            ret.parametersError = !loaderParameters.Write("MessageFunction", "START");
         }
     }
     if (ret) {
-        ret.parametersError = !loaderParameters->Write("Parser", "cdb");
+        ret.parametersError = !loaderParameters.Write("Parser", "cdb");
     }
     return ret;
 }

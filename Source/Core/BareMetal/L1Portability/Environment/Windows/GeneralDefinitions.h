@@ -80,6 +80,6 @@ typedef HANDLE Handle;
 static const char8 DIRECTORY_SEPARATOR = '\\';
 
 const uint32 SCHED_GRANULARITY_US = 10000;
-const uint32 IOBUFFER_GRANULARITY = 64u;
+
 }
 #endif /* GENERALDEFINITIONS_ENV_H_ */

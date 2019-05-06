@@ -101,6 +101,9 @@ $(BUILD_DIR)/%.elf: $(OBJS)
 	rm -f $(ROOT_DIR)/createLibrary.o
 	$(COMPILER) -T $(LINKER_LD_FILE) $(LFLAGS) $(OBJS) $(LIBRARIES_STATIC) -o $@ 	
 
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf
+	$(OBJCOPY) -S -O binary  $< $@
+
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
 	$(OBJCOPY) -Oihex  $< $@
 	

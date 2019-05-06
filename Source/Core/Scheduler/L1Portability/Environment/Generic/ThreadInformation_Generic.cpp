@@ -44,7 +44,7 @@
 namespace MARTe {
 
 ThreadInformation::ThreadInformation() {
-    userThreadFunction = static_cast<ThreadFunctionType>(NULL);
+    userThreadFunction = static_cast<ThreadFunctionType>(0);
     userData = static_cast<void *>(NULL);
     name = static_cast<char8 *>(NULL);
     threadId = InvalidThreadIdentifier;

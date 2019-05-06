@@ -147,7 +147,8 @@ void *StandardHeap::Duplicate(const void * const data,
             /*lint -e{586} the use of strlen is necessary because
              * the size of the array is unknown */
             size = static_cast<uint32>(strlen(inputData));
-            duplicate = strdup(inputData);
+            duplicate = StandardHeap::Malloc(size);
+            strcpy(reinterpret_cast<char8*>(duplicate), inputData);
 
             if (duplicate == NULL) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "StandardHeap: Failed strdup()");

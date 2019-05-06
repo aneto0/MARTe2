@@ -93,7 +93,7 @@ JsonParser::JsonParser(StreamI &stream,
                        StructuredDataI &databaseIn,
                        BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, JsonGrammar) {
-    Action[0] = static_cast<void (JsonParser::*)(void)>(NULL);
+    Action[0] = static_cast<void (JsonParser::*)(void)>(0);
     Action[1] = &JsonParser::End;
     Action[2] = &JsonParser::GetNodeName;
     Action[3] = &JsonParser::AddLeaf;

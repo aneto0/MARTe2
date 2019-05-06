@@ -147,7 +147,6 @@ namespace MARTe {
          */
         SocketCore connectionSocket;
 
-    private:
 
         bool isBlocking;
 

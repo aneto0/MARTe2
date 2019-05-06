@@ -87,7 +87,7 @@ StandardParser::StandardParser(StreamI &stream,
                                StructuredDataI &databaseIn,
                                BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, StandardGrammar) {
-    Action[0] = static_cast<void (StandardParser::*)(void)>(NULL);
+    Action[0] = static_cast<void (StandardParser::*)(void)>(0);
     Action[1] = &StandardParser::End;
     Action[2] = &StandardParser::GetNodeName;
     Action[3] = &StandardParser::AddLeaf;

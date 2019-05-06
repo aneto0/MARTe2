@@ -107,7 +107,7 @@ XMLParser::XMLParser(StreamI &stream,
                      StructuredDataI &databaseIn,
                      BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, XMLGrammar) {
-    Action[0] = static_cast<void (XMLParser::*)(void)>(NULL);
+    Action[0] = static_cast<void (XMLParser::*)(void)>(0);
     Action[1] = &XMLParser::End;
     Action[2] = &XMLParser::GetNodeName;
     Action[3] = &XMLParser::AddLeaf;
