@@ -256,14 +256,15 @@ ErrorManagement::ErrorType MultiThreadService::CreateThreads() {
     uint16 threadNumber = 0u;
     while ((threadPool.Size() < numberOfPoolThreads) && (errorsCleared)) {
         ReferenceT<EmbeddedThread> thread(new (NULL) EmbeddedThread(method, threadNumber));
+
         err.fatalError = !thread.IsValid();
         if (err.ErrorsCleared()) {
             thread->SetPriorityClass(GetPriorityClass());
             thread->SetPriorityLevel(GetPriorityLevel());
             thread->SetCPUMask(GetCPUMask());
             thread->SetTimeout(GetTimeout());
-            StreamString tname;
-            (void) tname.Printf("%s_%d", GetName(), threadNumber);
+            StreamString tname = GetName();
+            (void) tname.Printf("_%d", threadNumber);
             thread->SetName(tname.Buffer());
         }
         if (err.ErrorsCleared()) {

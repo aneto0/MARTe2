@@ -1,0 +1,120 @@
+#############################################################
+#
+# Copyright 2015 EFDA | European Joint Undertaking for ITER
+# and the Development of Fusion Energy ("Fusion for Energy")
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+ARCHITECTURE_BM_L0Types_DIR=$(ROOT_DIR)/Core/BareMetal/L0Types/Architecture
+ARCHITECTURE_BM_L1Portability_DIR=$(ROOT_DIR)/Core/BareMetal/L1Portability/Architecture
+
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+
+#The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
+
+TARGET_PARENT=gcc
+ENVIRONMENT=Pi3_BM
+ARCHITECTURE=armv8_rpi3_bm
+
+CIRCLE_HOME=/home/pc/MARTe2Project/GIT/circle
+LINKER_FILE=$(CIRCLE_HOME)/circle.ld
+
+EXEEXT=.o
+DLLEXT=.so
+LIBEXT=.a
+OBJEXT=.o
+ASMEXT=.s
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+GCOVEXT=.gcov
+DEFEXT=.def
+IMGEXT=.img
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
+
+SUBPROJ = $(SPB:%.x=%.spb)
+SUBPROJC = $(SPB:%.x=%.spc)
+SUBPROJ2 = $(SPB2:%.x=%.spb)
+SUBPROJC += $(SPB2:%.x=%.spc)
+
+#PREFIX = /home/pc/MARTe2Project/GIT/gcc-aarch64/bin/aarch64-elf-
+PREFIX = arm-none-eabi-
+COMPILER = $(PREFIX)g++
+CCOMPILER = $(PREFIX)gcc
+LINKER = $(PREFIX)ld
+
+MAKE = make
+
+DEBUG = -g -ggdb
+OPTIM = 
+INCLUDES = -I$(CIRCLE_HOME)/include\
+	-I $(CIRCLE_HOME)/addon -I $(CIRCLE_HOME)/app/lib\
+	-I $(CIRCLE_HOME)/addon/vc4 -I $(CIRCLE_HOME)/addon/vc4/interface/khronos/include
+	
+LFLAGS =  -march=armv8-a -mtune=cortex-a53 -marm -mfpu=neon-fp-armv8 -mfloat-abi=softfp -Wall -fsigned-char -D__circle__ -DRASPPI=3 -DSTDLIB_SUPPORT=3 -D__VCCOREVER__=0x04000000 -U__unix__ -U__linux__ -DARM_ALLOW_MULTI_CORE -specs=nosys.specs -specs=nano.specs -g
+
+#CFLAGS = -DAARCH=64 -march=armv8-a -mtune=cortex-a53 -mlittle-endian -mcmodel=small -Wall -fsigned-char -D__circle__ -DRASPPI=3 -DSTDLIB_SUPPORT=1 -D__VCCOREVER__=0x04000000 -U__unix__ -U__linux__ -DARM_ALLOW_MULTI_CORE
+CFLAGS = -DAARCH=32 -march=armv8-a -mtune=cortex-a53 -marm -mfpu=neon-fp-armv8 -mfloat-abi=softfp -Wall -fsigned-char -D__circle__ -DRASPPI=3 -DSTDLIB_SUPPORT=3 -D__VCCOREVER__=0x04000000 -U__unix__ -U__linux__ -DARM_ALLOW_MULTI_CORE
+
+
+CPPFLAGS = $(CFLAGS) -MD -MP -fPIC -frtti -std=c++14 -fpermissive -ffunction-sections -fdata-sections --specs=nosys.specs
+
+#-Wno-invalid-offsetof 
+
+ifndef ARCHITECTURE_BM_L0Types_DIR
+	 ARCHITECTURE_BM_L0Types_DIR = Architecture
+endif
+ifndef ARCHITECTURE_BM_L1Portability_DIR
+	 ARCHITECTURE_BM_L1Portability_DIR = Architecture
+endif
+ifndef ENVIRONMENT_BM_L1Portability_DIR
+	 ENVIRONMENT_BM_L1Portability_DIR = Environment
+endif
+ifndef ENVIRONMENT_BM_L6App_DIR
+	 ENVIRONMENT_BM_L6App_DIR = Environment
+endif
+ifndef ENVIRONMENT_FS_L1Portability_DIR
+	 ENVIRONMENT_FS_L1Portability_DIR = Environment
+endif
+ifndef ENVIRONMENT_FS_L6App_DIR
+	 ENVIRONMENT_FS_L6App_DIR = Environment
+endif
+ifndef ENVIRONMENT_SC_L1Portability_DIR
+	 ENVIRONMENT_SC_L1Portability_DIR = Environment
+endif
+
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) $(SPEC_DEFS) 
+	
+	
+	
+
+
+LIBRARIES_STATIC = 
+	  
+#/home/pc/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/libc.a /home/pc/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/libm.a /home/pc/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/libnosys.a
+#/home/pc/MARTe2Project/GIT/gcc-aarch64/bin/../aarch64-elf/libc/usr/lib/libm.a  
+#/home/pc/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/libgcc.a
+.SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam .img

@@ -35,6 +35,8 @@
 #ifndef LINT
 #include <string.h>
 #endif
+#include <circle/logger.h>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -151,7 +153,7 @@ void *StandardHeap::Duplicate(const void * const data,
             strcpy(reinterpret_cast<char8*>(duplicate), inputData);
 
             if (duplicate == NULL) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "StandardHeap: Failed strdup()");
+                CLogger::Get()->Write("ciao", LogNotice, "StandardHeap: Failed strdup() %s %d", inputData, size);
             }
         }
         else { // strdup style

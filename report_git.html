@@ -1,0 +1,53 @@
+
+<html>
+<title>GIT REPORT gferro </title>
+<head>
+<script src="string.js"></script>
+<script src="PrintTable.js"></script>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+
+<style>
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+th,
+td {
+  padding: 10px 15px;
+}
+thead {
+  background: #395870;
+  color: #fff;
+}
+tbody tr:nth-child(even) {
+  background: #f0f0f2;
+}
+td {
+  border-bottom: 1px solid #cecfd5;
+  border-right: 1px solid #cecfd5;
+}
+td:first-child {
+  border-left: 1px solid #cecfd5;
+}
+
+
+</style>
+</head>
+<body>
+<h1>GIT commits done by Giuseppe Ferrò from 2018-08-01 to 2018-10-11</h1>
+<script>
+
+document.write("<table><tr><th>GIT COMMITS</th></tr>");
+document.write("<tr><td>");
+document.write("\
+</tr></td><tr><td>commit 16b2c59eacdcf05388b4c09e169b6f3503af3e47<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Oct 11 15:43:41 2018 +0200<br><br>    Test Lint and documentation done<br><br></tr></td><tr><td>commit f11e8945e5dae4d1f1aeae50d85e93d06fbcd121<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Oct 9 18:22:00 2018 +0200<br><br>    Added HttpClient tests<br>    Lint of Base64Encoder done<br>    Ongoing linting of Md5Encrypt<br><br></tr></td><tr><td>commit 22e85fb06bcb41d960df0e35452eead279eec138<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Oct 5 17:51:25 2018 +0200<br><br>    added HttpClientTest<br><br></tr></td><tr><td>commit e45675150a36bec429a0839da08946bcff72761a<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Oct 5 17:50:46 2018 +0200<br><br>    Finished documentation<br>    Implemented HttpClient and doing tests<br>    <br>    //todo lint and coverage<br><br></tr></td><tr><td>commit 2bac1be867e8d868da74fb29be34fb2b65dd1cfc<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Oct 4 17:40:22 2018 +0200<br><br>    Documentation done<br>    <br>    //todo<br>    HttpRealm<br>    HttpClient<br><br></tr></td><tr><td>commit 07691a0978a855b0e98a35f35e23ef8f6a2dcf83<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Wed Oct 3 18:23:46 2018 +0200<br><br>    Continuing quality process and documentation.<br><br></tr></td><tr><td>commit 65053e9e347e82bcaa319c45b97b439e6d5acdfb<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Oct 2 18:28:56 2018 +0200<br><br>    Passing linting and checking coverage<br>    //todo documentation<br><br></tr></td><tr><td>commit d3447b9851cf842700eda0ea3a9409cd11f036dd<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Oct 1 18:11:29 2018 +0200<br><br>    Implemented Flush in IOBuffer that calls Stream->Flush that has to call<br>    NoMoreSpaceToWrite<br>    <br>    Continuing HttpService tests<br><br></tr></td><tr><td>commit aa99cf6ccc761b7863b47643f627b63123474b5b<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Sep 28 17:58:28 2018 +0200<br><br>    DataExportI should only export the body<br>    The header is managed in chunked encoding directly by the HttpService<br>    The object can get input commands //todo specific interface for this<br><br></tr></td><tr><td>commit 75792f2514089914887cf0c4ccd68ac05796655f<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Sep 27 18:34:43 2018 +0200<br><br>    Removed HttpStream and re-implemented in better way the interface of<br>    DataExportI in order to manage the stream within the object<br><br></tr></td><tr><td>commit d8ff8713138c53c8e2fe9f8d2a5d431e740c1cb8<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Wed Sep 26 18:28:25 2018 +0200<br><br>    Passing coverage and adding tests<br>    TODO<br>    Protocol in the caller service<br>    IsDirectStream in DataExportI<br>    The service decides the stream to pass to the methods of DataExportI<br><br></tr></td><tr><td>commit ce4e8125389828fa3b327295bd0269d46ef287d5<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Wed Sep 19 18:41:37 2018 +0200<br><br>    Templetized the HttpStream and used the Json typedef inside HttpService<br>    Finished IOBuffer Linting and testing<br>    <br>    //TODO HttpProtocol linting<br><br></tr></td><tr><td>commit 5dbb8ea3a00c8ee8d8118dd6ecc6e501ce2ddac1<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Sep 18 18:41:12 2018 +0200<br><br>    added files<br><br></tr></td><tr><td>commit 42a3040ee752fb936d5461b087c6d075a171c848<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Sep 18 18:39:25 2018 +0200<br><br>    Lint and tests of<br>    -HttpDefinition<br>    -PrinterI<br>    -JsonPrinter<br>    -StandardPrinter<br>    -XMLPrinter<br>    <br>    Added tests of new print modes on IOBuffer<br>    //TODO pass lint again on IOBuffer<br><br></tr></td><tr><td>commit ff68802b11a5cf9c2e8bc01c7ee5af2a8e206903<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Sep 17 18:16:24 2018 +0200<br><br>    start linting and separated HttpProtocol from HttpStream<br><br></tr></td><tr><td>commit 1dd723154a737d6ccd504e01a6251ae9bde3014b<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Sep 14 19:08:41 2018 +0200<br><br>    Changed interfaces and added HttpProtocol<br>    Removed MultiStream and SDStream<br><br></tr></td><tr><td>commit 70be95f3ba81d65490590ceb0e3491ffa6ab27f6<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Sep 13 17:56:38 2018 +0200<br><br>    Continuing with HttpService tests<br><br></tr></td><tr><td>commit ab1e3aff720fdd550b6e9dc8e7059bec47319140<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Wed Sep 12 18:21:59 2018 +0200<br><br>    Added HttpStream tests using it as a StructuredDataI<br>    Begin with HttpService tests<br><br></tr></td><tr><td>commit 66da084dd5150f0fa65ba3ea1343eacb8bfe3795<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Sep 7 18:43:54 2018 +0200<br><br>    added code<br><br></tr></td><tr><td>commit 0ad0e0d54373b6af843d654212d95e80d4b12071<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Sep 7 18:42:20 2018 +0200<br><br>    Implemented printers and finished the SenderStructuredData<br>    Starting functional tests<br><br></tr></td><tr><td>commit a72dbe4f3b22f44a54946677185bf185b28f7d3e<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Sep 6 19:15:40 2018 +0200<br><br>    Removed useless file<br><br></tr></td><tr><td>commit 62e3fee9b5d480963222622c2bfb6fd6897834cb<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Sep 6 19:14:32 2018 +0200<br><br>    Implemented standard, generic and xml print modes<br>    Ongoing implementation of StructuredDataStream<br><br></tr></td><tr><td>commit ec50e761b8d075ea497550f9363d93d9f13c4824<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Sep 6 12:20:28 2018 +0200<br><br>    x<br><br></tr></td><tr><td>commit d3f39c3667dd4ac51d7f2d6a07efeec1b8d20fc3<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Wed Sep 5 18:20:58 2018 +0200<br><br>    The greater part of HttpStream tests is done.<br><br></tr></td><tr><td>commit e6356eb76e854b5afa19ab4e22159057827b368d<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Sep 4 18:10:15 2018 +0200<br><br>    Added StringCompareNoCaseSens<br>    Continue testing HttpStream.<br><br></tr></td><tr><td>commit 721875810bfc6885d2815dd1c6f9ee0b5aac881e<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Sep 3 13:48:33 2018 +0200<br><br>    Ongoiung tests<br><br></tr></td><tr><td>commit 308bbed4a5e8bb1530dc6bd8de466011d0dbede9<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Sep 3 10:51:41 2018 +0200<br><br>    Solved (?) the StreamString::SetSize bug<br><br></tr></td><tr><td>commit da2154f0461f548aac2be2817bddb6a8c5162541<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Aug 31 09:50:59 2018 +0200<br><br>    continuing tests<br><br></tr></td><tr><td>commit b241335bf743f197b4f03fef2e6714521aff01ab<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Tue Aug 28 18:02:29 2018 +0200<br><br>    Tests of the filter done<br><br></tr></td><tr><td>commit 26848609ba5d570e94ed21a88aef6c7260f10d51<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Aug 27 18:51:59 2018 +0200<br><br>    ri-</tr></td><tr><td>commit<br><br></tr></td><tr><td>commit a68ccec84b9c0de1fa489d5a2b4103836e7b0c71<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Aug 27 18:50:49 2018 +0200<br><br>    ri</tr></td><tr><td>commit<br><br></tr></td><tr><td>commit 24d115127c6061fd63eca602a05a3ecc68f27b76<br>Merge: 7233ac1 0d698f5<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Aug 27 18:35:37 2018 +0200<br><br>    Merge branch \'HttpService\' of<br>    https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git into HttpService<br>    <br>    Conflicts:<br>    	Source/Core/BareMetal/L1Portability/TypeDescriptor.cpp<br>    	Source/Core/BareMetal/L1Portability/TypeDescriptor.h<br>    	Source/Core/BareMetal/L2Objects/AnyType.h<br>    	Source/Core/BareMetal/L2Objects/ClassProperties.h<br><br></tr></td><tr><td>commit 7233ac15497d2dad8872678e41bdced760f5a6c9<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Mon Aug 27 18:32:28 2018 +0200<br><br>    compiled... begin tests<br><br></tr></td><tr><td>commit 271fc9c66a06218f8a649e1bcbe86518ce75c92e<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Aug 24 18:00:40 2018 +0200<br><br>    Added some HTTP code<br><br></tr></td><tr><td>commit 19e454d90d7cf3ec5f2ff4d7aecc9667eef9ec34<br>Merge: a2d2e2d 4c13dbb<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Thu Aug 16 15:54:55 2018 +0200<br><br>    Merge branch \'develop\' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git into develop<br><br></tr></td><tr><td>commit a2d2e2d9545380e24aab83a9ce41b2b879a0c693<br>Author: gferro <g.ferro@vitrocisetbelgium.com><br>Date:   Fri Aug 3 10:30:11 2018 +0200<br><br>    RTLoader tests")
+
+document.write("</tr></td>");
+
+document.write("</table>");
+
+</script> 
+
+</body>
+</html>

@@ -213,6 +213,7 @@ void GAMScheduler::CustomPrepareNextState() {
         REPORT_ERROR(ErrorManagement::FatalError, "Failed Reset(*) of the event semaphore");
     }
 
+
 }
 
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/

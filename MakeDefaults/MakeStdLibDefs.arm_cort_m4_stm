@@ -1,0 +1,119 @@
+#############################################################
+#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
+#############################################################
+STM_CUBE_FW_DIR=/home/pc/STM32Cube/Repository/STM32Cube_FW_F4_V1.21.0
+FREE_RTOS_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS
+PORT_MACRO_H_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/r0p1
+CMSIS_DIRECTORY=$(STM_CUBE_FW_DIR)/Drivers/CMSIS/Include/
+FREE_RTOS_CONFIG_DIRECTORY=
+
+
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+
+TARGET_PARENT=gcc
+ENVIRONMENT=FreeRTOS
+ARCHITECTURE=arm_cort_m4_stm
+EXEEXT=.bin
+DLLEXT=.so
+LIBEXT=.a
+OBJEXT=.o
+ASMEXT=.s
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+GCOVEXT=.gcov
+HEXEXT=.hex
+LSTEXT=.lst
+SYMEXT=.sym
+ELFEXT=.elf
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+
+SUBPROJ = $(SPB:%.x=%.spb)
+SUBPROJT = $(SPBT:%.x=%.spb)
+SUBPROJGT = $(SPBGT:%.x=%.spb)
+SUBPROJC = $(SPB:%.x=%.spc)
+
+CROSS_COMPILER = arm-none-eabi
+COMPILER = $(CROSS_COMPILER)-g++
+CCOMPILER = $(CROSS_COMPILER)-gcc
+LINKER = $(CROSS_COMPILER)-ld
+OBJCOPY = $(CROSS_COMPILER)-objcopy
+OBJDUMP = $(CROSS_COMPILER)-objdump
+NM = $(COMPILER_BASE)-nm
+MAKE     = make
+
+DEBUG = -g 
+OPTIM = -Os
+
+ARM_INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) -I$(FREE_RTOS_CONFIG_DIRECTORY) -I$(CMSIS_DIRECTORY) -I/usr/include/c++/4.8 -I/usr/include/newlib/c++/4.9/arm-none-eabi/armv7-m/
+ARM_CFLAGS= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -ffunction-sections -fdata-sections 
+ARM_LFLAGS= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -ffunction-sections -fdata-sections -lm -lgcc -lc -lnosys -specs=nosys.specs -Wl,--gc-section -g
+
+INCLUDES=$(ARM_INCLUDES)
+
+
+CFLAGS = -MD -MP -g -Wall $(ARM_CFLAGS)
+LFLAGS =  $(ARM_LFLAGS)
+
+CPPFLAGS = $(CFLAGS) 
+
+ifndef ARCHITECTURE_BM_L0Types_DIR
+	 ARCHITECTURE_BM_L0Types_DIR = Architecture
+endif
+ifndef ARCHITECTURE_BM_L1Portability_DIR
+	 ARCHITECTURE_BM_L1Portability_DIR = Architecture
+endif
+ifndef ENVIRONMENT_BM_L1Portability_DIR
+	 ENVIRONMENT_BM_L1Portability_DIR = Environment
+endif
+ifndef ENVIRONMENT_BM_L6App_DIR
+	 ENVIRONMENT_BM_L6App_DIR = Environment
+endif
+ifndef ENVIRONMENT_FS_L1Portability_DIR
+	 ENVIRONMENT_FS_L1Portability_DIR = Environment
+endif
+ifndef ENVIRONMENT_FS_L6App_DIR
+	 ENVIRONMENT_FS_L6App_DIR = Environment
+endif
+ifndef ENVIRONMENT_SC_L1Portability_DIR
+	 ENVIRONMENT_SC_L1Portability_DIR = Environment
+endif
+
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) $(SPEC_DEFS) -D_ARCHITECTURE_BM_L0Types_DIR=$(ARCHITECTURE_BM_L0Types_DIR) -D_MARTe2_DIR=$(MARTe2_DIR)\
+	-D_ARCHITECTURE_BM_L1Portability_DIR=$(ARCHITECTURE_BM_L1Portability_DIR)\
+	-D_ENVIRONMENT_BM_L1Portability_DIR=$(ENVIRONMENT_BM_L1Portability_DIR)\
+	-D_ENVIRONMENT_BM_L6App_DIR=$(ENVIRONMENT_BM_L6App_DIR)\
+	-D_ENVIRONMENT_FS_L1Portability_DIR=$(ENVIRONMENT_FS_L1Portability_DIR)\
+	-D_ENVIRONMENT_FS_L6App_DIR=$(ENVIRONMENT_FS_L6App_DIR)\
+	-D_ENVIRONMENT_FS_L6App_DIR=$(ENVIRONMENT_FS_L6App_DIR)\
+	-D_ENVIRONMENT_SC_L1Portability_DIR=$(ENVIRONMENT_SC_L1Portability_DIR)
+  
+.SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+
+
+#LFLAGS =-mcpu=cortex-m7 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -falign-functions=16 -lm -lgcc -lc -lnosys -specs=nosys.specs -Wl,--gc-section -g 
+#CFLAGS =  -DSTM32F746xx -MD -MP -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -g -Wall 

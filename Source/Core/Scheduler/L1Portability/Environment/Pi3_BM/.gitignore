@@ -1,0 +1,7 @@
+/depends.linux
+/dependsRaw.linux
+/cov/
+/depends.cov
+/dependsRaw.cov
+/ThreadInformation_Gen.cpp
+/ThreadsDatabase_Gen.cpp

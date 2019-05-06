@@ -466,7 +466,9 @@ ErrorManagement::ErrorType RealTimeApplication::PrepareNextState(StreamString ne
     if (ret) {
         ret = scheduler.IsValid();
         if (ret) {
+
             ret = scheduler->PrepareNextState(stateNameHolder[index].Buffer(), nextStateName.Buffer());
+
         }
     }
     uint32 nextIndex = (index + 1u) % 2u;
