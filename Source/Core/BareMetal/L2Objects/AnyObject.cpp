@@ -25,6 +25,7 @@
 #include "AnyObjectT.h"
 #include "AnyObjectM.h"
 #include "HeapManager.h"
+#include "ReferenceT.h"
 
 #define CHECKANDMAKE(size)									\
 		if (sizeToCopy <= size){							\

@@ -157,6 +157,8 @@ private:
     /*lint -e{1712} This class does not have a default constructor because
      * the numberOfPages must be defined on construction and remain constant
      * during object's lifetime*/
+
+    void operator=(const Logger &l){}
 };
 }
 

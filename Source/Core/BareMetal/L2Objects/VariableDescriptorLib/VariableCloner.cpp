@@ -178,7 +178,7 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 							}
 
 						} else {
-							uint8 *newAddressOfOutput;
+							uint8 *newAddressOfOutput = NULL_PTR(uint8*);
 							const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(vip->GetDataPointer());
 							if (ret){
 								ret = DoCreateR(level+1,newInputPointer,newAddressOfOutput,VariableDescriptorLib::DimensionSize(vip->GetNumberOfElements()));
@@ -207,7 +207,7 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 						ret = RedirectP(newInputPointer,true);
 		    			REPORT_ERROR(ret, "RedirectP failed");
 		    			if (newInputPointer != NULL){
-		    				uint32 nextLayerSize;
+//		    				uint32 nextLayerSize;
 
 //		    				ret = handler[level].GetNextLayerElementSize(nextLayerSize);
 //			    			REPORT_ERROR(ret, "GetNextLayerElementSize failed");

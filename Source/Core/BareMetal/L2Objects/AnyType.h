@@ -45,7 +45,7 @@
 #include "Matrix.h"
 #include "ErrorType.h"
 #include "Object.h"
-#include "ReferenceT.h"
+//#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */
@@ -131,6 +131,7 @@ public:
      */
     inline AnyType(const VariableDescriptor &dataDescriptorIn,const void* const dataPointerIn);
 
+#if 0
     /**
      * @brief constructor from Reference
      * @param[in] reference is the Reference to get the pointer from.
@@ -145,7 +146,7 @@ public:
      */
     template <class T>
     inline AnyType(ReferenceT<T> &reference);
-
+#endif
     /**
      * @brief Constructor from non-const non-ptr. Uses VariableDescriptor constructor.
      * @param[in] x is any variable non-const non-ptr
@@ -314,7 +315,7 @@ AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
     /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
     this->pointer2Variable = x.pointer2Variable;
 }
-
+#if 0
 AnyType::AnyType(Reference &reference):AnyType(){
 	reference.ToAnyType(*this);
 }
@@ -323,6 +324,8 @@ template <class T>
 AnyType::AnyType(ReferenceT<T> &reference):AnyType(){
 	reference.ToAnyType(*this);
 }
+
+#endif
 
 template <class T>
 AnyType::AnyType(T &x): variableDescriptor (reinterpret_cast<T *>(&x)){

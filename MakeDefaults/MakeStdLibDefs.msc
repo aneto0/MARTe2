@@ -58,9 +58,9 @@ SUBPROJC += $(SPB2:%.x=%.spc)
 MAKE     =   make
 COMPILER =   cl 
 FCOMPILER =  f77
-DEBUG    =   -Zi
+DEBUG    =   -Zi -O1 -Oy-
 #OPTIM    =   -Wall -O2 -Ob2
-OPTIM    =   -Wall -wd4820 -wd4514 -wd4668 -wd4100 -wd4251 -wd4521 -wd4061 -wd4127 -wd4275 -wd4263 -wd4264 -wd4266
+OPTIM    =   -Wall -wd4711 -wd4710 -wd4820 -wd4514 -wd4668 -wd4100 -wd4251 -wd4521 -wd4061 -wd4127 -wd4275 -wd4263 -wd4264 -wd4266
 
 CFLAGSPEC=   -MD -GR -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
 ASSEMBLER=   -Fa$(BUILD_DIR)/$*.asm

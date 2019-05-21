@@ -172,6 +172,12 @@ public:
      */
     void ToAnyType(AnyType &at) const;
 
+    /**
+     * @brief Provides access to the underlying object by mean of his AnyType
+     * @return the AnyType of the object
+     */
+    operator AnyType() const;
+
 protected:
 
     /**
@@ -213,7 +219,6 @@ namespace MARTe {
 Object* Reference::operator->() const {
     return objectPointer;
 }
-
 
 
 }

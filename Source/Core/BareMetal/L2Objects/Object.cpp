@@ -31,7 +31,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "IntrospectionTools.h"
-
 #include "Object.h"
 #include "AnyType.h"
 #include "StringHelper.h"
@@ -43,7 +42,6 @@
 #include "ClassRegistryDatabase.h"
 #include "CCString.h"
 #include "CString.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -195,12 +193,16 @@ CCString Object::GetName() const {
     return objectName.GetList();
 }
 
-static inline char8 toHex(uint8 value){
-    uint8 hexValue;
-    if (value < 10){
+static inline char8 toHex(uint32 value){
+    uint32 hexValue;
+    if (value < 10u){
         hexValue =  48u+value;
-    } else {
+    } else
+    if (value < 16u){
         hexValue =  55u+value;
+    } else
+    {
+        hexValue =  70u;
     }
 
     return static_cast<char8>(hexValue);
@@ -226,9 +228,9 @@ bool Object::GetUniqueName(StreamI &nameStream) const {
         char8 *pb = &buffer[1];
 
         // fill the buffer
-        uint32 i;
-        for (i = nOfPtrChars-1;i >=0;i-- ){
-            uint32 masked = (ptrNum >> (i * 4)) & 0xF;
+        int32 i;
+        for (i = static_cast<int32>(nOfPtrChars-1);i >=0;i-- ){
+            uint32 masked = static_cast<uint32>((ptrNum >> (i * 4)) & 0xF);
             *pb++ = toHex(masked);
         }
         // terminate
@@ -290,6 +292,10 @@ bool Object::IsReferenceContainer() const {
     return false;
 }
 
+
+
 CLASS_REGISTER(Object, "1.0") 
+
+
 
 }

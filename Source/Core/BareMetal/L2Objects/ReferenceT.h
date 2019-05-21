@@ -34,6 +34,7 @@
 
 #include "Reference.h"
 #include "HeapI.h"
+#include "AnyType.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -155,6 +156,11 @@ public:
     virtual bool Initialise(StructuredDataI &data,
                             const bool &initOnly);
 
+    /**
+     * @brief Provides access to the underlying object by mean of his AnyType
+     * @return the AnyType of the object
+     */
+    operator AnyType() const;
 private:
 
     /**
@@ -334,6 +340,11 @@ ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& sourceReference) {
 template<typename T>
 bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
     return (typeTObjectPointer == sourceReference.typeTObjectPointer);
+}
+
+template<typename T>
+ReferenceT<T>::operator AnyType() const{
+	return Reference::operator AnyType();
 }
 
 }

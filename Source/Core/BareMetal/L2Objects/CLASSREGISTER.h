@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CLASSREGISTER_H_
-#define CLASSREGISTER_H_
+#ifndef CLASS_REGISTER_H_
+#define CLASS_REGISTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -119,16 +119,19 @@
     void * className::operator new(const MARTe::osulong size, MARTe::HeapManager::HeapId heap) {                       \
         void *obj = NULL_PTR(void *);                                                                                  \
         obj = MARTe::HeapManager::Malloc(static_cast<MARTe::uint32>(size),heap);                                       \
-        GetClassRegistryItem_Static()->IncrementNumberOfInstances();                                                   \
+        MARTe::ClassRegistryItem *cri = GetClassRegistryItem_Static();												   \
+        cri->IncrementNumberOfInstances();                                                   						   \
         return obj;                                                                                                    \
     }                                                                                                                  \
     void className::operator delete(void *p) {                                                                         \
         MARTe::HeapManager::Free(p);                                                                                   \
-        GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
+        MARTe::ClassRegistryItem *cri = GetClassRegistryItem_Static();												   \
+        cri->DecrementNumberOfInstances();                                                   						   \
     }                                                                                                                  \
 	static class className ## _Initializer_{                                                                           \
     	public: className ## _Initializer_(){                                                                          \
-		    className::GetClassRegistryItem_Static()->SetClassDetails(CCString(#className),CCString(#ver));            \
+    		MARTe::ClassRegistryItem *cri = className::GetClassRegistryItem_Static();								   \
+		    cri->SetClassDetails(CCString(#className),CCString(#ver));                                                 \
 		};                                                                                                             \
     } className ## _Initializer_Instance;
 

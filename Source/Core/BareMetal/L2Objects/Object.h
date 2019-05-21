@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

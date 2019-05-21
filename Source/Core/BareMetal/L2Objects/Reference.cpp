@@ -204,9 +204,15 @@ void Reference::ToAnyType(AnyType &at) const{
 	    objectPointer->ToAnyType(at);
 	} else {
 		at = AnyType();
-//		REPORT_ERROR(ErrorManagement::FatalError,"Trying to get Anytype of invalid reference");
 	}
 }
+
+Reference::operator AnyType() const{
+	AnyType at;
+	ToAnyType(at);
+	return at;
+}
+
 
 Reference::Reference(const AnyType &anyType):Reference(){
 	ErrorManagement::ErrorType ok;
