@@ -1,8 +1,8 @@
 /**
- * @file GlobalObjectI.h
- * @brief Header file for class GlobalObjectI
- * @date 25/09/2015
- * @author Andre' Neto
+ * @file DirectIndex.h
+ * @brief Header file for class AnyType
+ * @date 30 Apr 2018
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GlobalObjectI
+ * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
- */
+*/
 
-#ifndef GLOBALOBJECTI_H_
-#define GLOBALOBJECTI_H_
+#ifndef DIRECTINDEX_H_
+#define DIRECTINDEX_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,56 +31,62 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "CCString.h"
+#include "CompilerTypes.h"
+#include "ErrorType.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
 /**
- * @brief Interface definition for all the framework global objects.
- * @details All the framework global objects (singletons included) shall
- * implement this interface and register in the GlobalObjectsDatabase by calling
- * the GlobalObjectsDatabase->Add method.
+ * use memory addresses directly as database keys
+ * implements the Index template interface
  */
-class DLL_API GlobalObjectI {
+class DirectIndex{
 
 public:
 
-    /**
-     * @brief Destructor.
-     * @details This destructor is pure virtual, so it will be a NOOP.
-     */
-    virtual ~GlobalObjectI();
+	// main function of this class
+	// allows retrieving the address of the data from the index
+	inline void *operator[](uintp index);
 
-    /**
-     * @brief Gets the name of the class.
-     * @return the class name.
-     */
-    virtual CCString GetClassName() const = 0;
+	// allocates an index to a data pointer
+	inline ErrorManagement::ErrorType Store(void *data,uintp &index);
 
-    /**
-     * @brief Guarantees that the class is instantiated in the StandardHeap.
-     * @param[in] size is the memory size to be allocated.
-     * @return a new instance of the class allocated in the StandardHeap.
-     */
-    static void * operator new(const osulong  size);
+	/**
+	 * the index must be valid! Invalid indexes will result in access to invalid memory
+	 * removes the element at the index position
+	 */
+	inline ErrorManagement::ErrorType FreeIndex(uintp index);
 
-    /**
-     * @brief Frees the memory area pointed by \a p previously allocated on the StandardHeap.
-     * @param[in] p is the pointer to be freed.
-     */
-    static void operator delete(void *p);
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GLOBALOBJECTI_H_ */
+void *DirectIndex::operator[](uintp index){
+	return static_cast<void *> (index);
+}
 
+ErrorManagement::ErrorType  DirectIndex::Store(void *data,uintp &index){
+	ErrorManagement::ErrorType ret;
+	index = static_cast<uintp> (data);
+	return ret;
+}
+
+ErrorManagement::ErrorType DirectIndex::FreeIndex(uintp index){
+	ErrorManagement::ErrorType ret;
+	return ret;
+}
+
+} // MARTe
+
+#endif /* SOURCE_CORE_BAREMETAL_L1DATABASE_DIRECTINDEX_H_ */

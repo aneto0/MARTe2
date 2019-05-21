@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryArea (public, protected, and private). Be aware that some 
+ * the class MemoryArea (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,14 +25,15 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+
 #define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "MemoryOperators.h"
 #include "MemoryArea.h"
-#include "Memory.h"
 #include "StringHelper.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -44,9 +45,11 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 MemoryArea::MemoryArea() {
     memory = NULL_PTR(void*);
     size = 0u;
+    heapId = HeapManager::standardHeapId;
 }
 
 /*lint -e{1579} the pointer "memory" is freed by the function Free() */
@@ -78,8 +81,8 @@ void MemoryArea::Free() {
     size = 0u;
 }
 
-void MemoryArea::SetHeapName(CCString const name) {
-    heapName.Append(name);
+void MemoryArea::SetHeap(HeapManager::HeapId heapId) {
+    this->heapId  = heapId;
 }
 
 bool MemoryArea::Add(const uint32 memorySize,
@@ -87,7 +90,7 @@ bool MemoryArea::Add(const uint32 memorySize,
     bool ret = false;
 
     if (size == 0u) {
-        memory = HeapManager::Malloc(memorySize, heapName.GetList());
+        memory = HeapManager::Malloc(memorySize, heapId);
         if (memory != NULL) {
             offset = 0u;
             size += memorySize;

@@ -43,6 +43,7 @@
 #include "AnyObjectT.h"
 #include "SaturatedInteger.h"
 #include "ProgressiveTypeCreator.h"
+#include "ErrorTypeLookup.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -53,6 +54,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#if 0
 long long allocCount = 0;
 
 void *operator new(std::size_t size){
@@ -89,7 +91,7 @@ void operator delete[](void *ptr) {
 		free(ptr);
 	}
 }
-
+#endif
 
 namespace MARTe{
 
@@ -377,16 +379,7 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
     if (err){
         if (!string1.isSameAs(string2.GetList())){
             err.comparisonFailure = true;
-            DynamicCString errM;
-            errM.Append(string1.GetList());
-            errM.Append('{');
-            errM.Append(vd1.GetModifiers());
-            errM.Append("} != ");
-            errM.Append(string2.GetList());
-            errM.Append('{');
-            errM.Append(vd2.GetModifiers());
-            errM.Append('}');
-			REPORT_ERROR(err,errM.GetList());
+			COMPOSITE_REPORT_ERROR(err,string1.GetList(),'{',vd1.GetModifiers(),"} != ",string2.GetList(),'{',vd2.GetModifiers(),'}');
         }
     }
 
@@ -408,19 +401,7 @@ ErrorManagement::ErrorType CheckSize(AnyType at,uint64 dataSizeCheck,uint64 stor
     if (ok){
         if ((dataSize != dataSizeCheck) || (storageSize != storageSizeCheck)){
         	ok.comparisonFailure = true;
-        	DynamicCString errM;
-        	errM.Append('(');
-        	errM.Append(dataSize);
-        	errM.Append(',');
-        	errM.Append(storageSize);
-        	errM.Append(") != (");
-        	errM.Append(dataSizeCheck);
-        	errM.Append(',');
-        	errM.Append(storageSizeCheck);
-        	errM.Append(')');
-    		REPORT_ERROR(ok,errM.GetList());
-
-//            printf("(%lli,%lli) != (%lli,%lli) ",dataSize,storageSize,dataSizeCheck,storageSizeCheck);
+    		COMPOSITE_REPORT_ERROR(ok,'(',dataSize,',',storageSize,") != (",dataSizeCheck,',',storageSizeCheck,')');
         }
     }
 
@@ -494,12 +475,16 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeAndSize(AnyType at,CCString ex
 }
 
 
-#define MARK printf("(%i)\n",__LINE__);
+#define MARK
+
+//printf("(%i)\n",__LINE__);
 
 ErrorManagement::ErrorType DereferenceAndCheckTypeSizeAndContent(AnyType at,CCString expression,CCString typeCheck,CCString contentCheck,uint64 dataSizeCheck,uint64 storageSizeCheck,bool clone = true ){
     ErrorManagement::ErrorType ok;
 
 MARK
+	for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
+	printf("%s", expression.GetList());
 	ok = at.MultipleDereference(expression);
 	REPORT_ERROR(ok,"MultipleDereference error");
 MARK
@@ -514,15 +499,14 @@ MARK
 			ok.fatalError = true;
 			REPORT_ERROR(ok,"Cloning of variable failed");
 		}
-printf("refNo = %i atc=%p\n",atc->NumberOfReferences(),atc.operator ->());
+//printf("refNo = %i atc=%p\n",atc->NumberOfReferences(),atc.operator ->());
 	}
 MARK
 	if (ok){
-		for (uint32 ix= expression.GetSize();ix<28;ix++) putchar(' ');
         if (clone){
-            printf ("%s-C>",expression.GetList());
+            printf ("-C>");
         } else {
-            printf ("%s ->",expression.GetList());
+            printf ("->");
         }
 
 	    ErrorManagement::ErrorType ok2;
@@ -636,8 +620,8 @@ template<typename T1>
 
 //static inline void NumSet<DynamicCString>(DynamicCString &dest,uint32 &source) {
 static inline void NumSet(DynamicCString &dest,uint64 &source) {
-		dest.Truncate(0);
-		dest.Append(source);
+		dest().Truncate(0);
+		dest().Append(source);
  }
 
 
@@ -694,7 +678,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
     for (uint32 ix= message.GetSize();ix<28;ix++) putchar(' ');
     printf ("%s ->",message.GetList());
-    message.Truncate(0);
+    message().Truncate(0);
 
 	ErrorManagement::ErrorType ret;
 	ret = pfstc.Start(td);
@@ -742,8 +726,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 		REPORT_ERROR(ret,"pfstc.GetReference failed");
 
 		if (ret){
-			message.Append(aoi->GetClassRegistryItem()->GetClassName());
-			message.Append("{");
+			message().Append(aoi->GetClassRegistryItem()->GetClassName()).Append("{");
 		}
 	}
 
@@ -754,7 +737,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 		if (ret){
 			x.ToString(message);
 		}
-		message.Append("}");
+		message().Append("}");
 	}
 	//ok
 
@@ -767,7 +750,7 @@ ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor t
 
 	if (!ret){
 		DynamicCString string;
-		string.Append("Failed ");
+		string().Append("Failed ");
 		at.ToString(string);
 		REPORT_ERROR(ret, string.GetList());
 		printf ("*NO* Random Creation/CopyTo Compare Failed (see log) \n");
@@ -891,10 +874,12 @@ ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCStrin
     return ret;
 }
 
-#define MEM_SAVE()  { long long saveCount = allocCount; printf("<<%lli>",saveCount);
+#define MEM_SAVE()
+#define MEM_CHECK()
 
-#define MEM_CHECK()  ErrorManagement::ErrorType ok2; \
-	ok2.notCompleted = (saveCount != allocCount); REPORT_ERROR(ok2,"!!!!!!MEM_BALANCE Failed\n"); printf("<%lli>>",allocCount);}
+//#define MEM_SAVE()  { long long saveCount = allocCount; printf("<<%lli>",saveCount);
+
+//#define MEM_CHECK()  ErrorManagement::ErrorType ok2; 	ok2.notCompleted = (saveCount != allocCount); REPORT_ERROR(ok2,"!!!!!!MEM_BALANCE Failed\n"); printf("<%lli>>",allocCount);}
 
 #define DEREF_CHECK(at,mod,type,size,store)\
 MEM_SAVE()\
@@ -974,7 +959,7 @@ void Test(){
     ErrorManagement::ErrorType ok;
     AnyType at(test1Class);
 
-#if 1
+
     /*
      * starts with test1Class introspectable anyType
      * then dereference on the base of the first string
@@ -987,8 +972,6 @@ void Test(){
 
     /// note all these tests operate on simple 1D variables after redirection.
     DEREF_CLONE_CHECKCONTENT(at,".int8Var","int8","18",sizeof(int8),0); // MC
-
-return;
     DEREF_CLONE_CHECKCONTENT(at,".char8Var","char8","c",sizeof(char8),0);
     DEREF_CLONE_CHECKCONTENT(at,".int16Var","int16","116",sizeof(int16),0);
     DEREF_CLONE_CHECKCONTENT(at,".int32Var","int32","132",sizeof(int32),0);
@@ -1091,7 +1074,7 @@ return;
     CHECK3N(at,".SString","StreamString",(char8 *)"succhiarriello",78,64,false); // expect to fail as char8* is not considered a string
     CHECK3(at,".SString","StreamString",CCString("succhiarriello"),78,64,false);
 
-	ProgressiveTypeCreator pfstc(1024);
+    ProgressiveTypeCreator pfstc(1024);
 
 	CHECK4S(int8,1,1,SignedInteger8Bit);
 	CHECK4S(int8,1,2,SignedInteger8Bit);
@@ -1115,12 +1098,13 @@ return;
 	CHECK4R(uint32 ,4,45,5,UnsignedInteger32Bit);
 	CHECK4R(uint64 ,141,532,5,UnsignedInteger64Bit);
 	CHECK4(DynamicCString ,1,1,1,CCString,ConstCharString(sizeof(CCString)));
+//	return;
 	CHECK4(DynamicCString ,1,6,6,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,2,2,2,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,5,5,5,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,10,35,5,CCString,ConstCharString(sizeof(CCString)));
 	CHECK4(DynamicCString ,515,235,5,CCString,ConstCharString(sizeof(CCString)));
-#endif
+//	return;
 
     typedef uint32 uint32_4[4];
     typedef uint32 uint32_1[1];
@@ -1200,13 +1184,13 @@ return;
 	xx = temp;
 	PrintType(xx);printf("\n");
 
-	ReferenceT<AnyObjectT<9>> ao8(buildNow);
+	ReferenceT<AnyObjectT<9>> ao8(HeapManager::standardHeapId);
 	ao8->Setup(sizeof(temp),&temp,VariableDescriptor(&temp));
 
 	xx = ao8;
 	PrintType(xx);printf("\n");
-    zz = ao8;
-    xx = zz;
+        zz = ao8;
+        xx = zz;
 	PrintType(xx);printf("\n");
 
 	printf("test of GetVariableInformation\n");
@@ -1250,6 +1234,33 @@ return;
 		printf("ZeroTerminatedArray<int [5]> [7] ==> nDim=%i size = %i,%i,%i\n",maxDim,dimension[0],dimension[1],dimension[2]);
 
 	}
+
+        {
+    static CCString pippo[5] = {
+            CCString("uno"),
+            CCString("duo"),
+            CCString("tre"),
+            CCString("quattro"),
+            CCString("cinque")
+    };
+
+    Vector<DynamicCString> pluto;
+    AnyType pippoAT(pippo);
+
+    ErrorManagement::ErrorType ret = pippoAT.CopyTo(pluto);
+    REPORT_ERROR(ret,"CopyTo failed");
+    if (ret){
+        for (int i = 0;i< pluto.GetNumberOfElements();i++){
+            printf("%s\n",pluto[i]);
+        }
+    }
+
+
+
+
+
+
+        }
 }
 }
 
@@ -1258,6 +1269,7 @@ return;
 
 
 int main(int argc, char **argv){
+	MARTe::StartupManager::Initialise();
 #if 1
 	MARTe::PrepareTestObject();
     MARTe::Test();
@@ -1270,5 +1282,9 @@ int main(int argc, char **argv){
 	((MARTe::Vector<float> *)q)[3].InitVector(NULL,0);
 
 #endif
+    
+
+
+    MARTe::StartupManager::Terminate();
     return 0;
 }

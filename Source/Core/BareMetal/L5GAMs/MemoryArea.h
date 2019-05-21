@@ -90,7 +90,7 @@ public:
      * @param[in] name is the name of the heap where the memory has to be
      * allocated.
      */
-    void SetHeapName(CCString const name);
+    void SetHeap(HeapManager::HeapId heapId);
 
     /**
      * @brief Creates a chunk of memory into this memory area and copies existing memory.
@@ -119,8 +119,7 @@ public:
      *    GetMemorySize() = GetMemorySize()' + memorySize &&
      *    offset = GetMemorySize()'
      */
-    bool Add(const uint32 memorySize,
-             uint32 &offset);
+    bool Add(const uint32 memorySize,uint32 &offset);
 
     /**
      * @brief Retrieves the pointer to the begin of the memory area.
@@ -153,7 +152,7 @@ private:
     /**
      * The name of the heap where the memory managed by this area belongs to.
      */
-    DynamicCString heapName;
+    HeapManager::HeapId heapId;
 
     /**
      * The size of the memory area.

@@ -34,10 +34,11 @@
 #include "VariableDescriptor.h"
 #include "DynamicCString.h"
 #include "StaticCString.h"
-#include "ErrorType.h"
+#include "ErrorTypeLookup.h"
 #include "MemoryCheck.h"
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
+#include "StartupManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,10 +55,10 @@ void printType(const AnyType &at){
     const VariableDescriptor &vd = at.GetFullVariableDescriptor();
     //printf("!4");
 
-    MARTe::DynamicCString line;
+    DynamicCString line;
     vd.ToString(line);
     printf("%s",line.GetList());
-    line.Truncate(0);
+    line().Truncate(0);
     vd.ToString(line,true);
     printf("  {%s}",line.GetList());
 
@@ -65,8 +66,8 @@ void printType(const AnyType &at){
     uint64 storageSize;
     vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
 
-    int sz = dataSize;
-    int stsz = storageSize;
+    int sz = static_cast<int>(dataSize);
+    int stsz = static_cast<int>(storageSize);
     printf(" sz = %i stsz = %i\n",sz,stsz);
 }
 
@@ -370,8 +371,10 @@ int pluto;
 
 int main(int argc, char **argv){
 
+	MARTe::StartupManager::Initialise();
 
-    //	testOther();
+
+	//	testOther();
     //return 0;
     int pippo;
     float *x = (float *)0x123;
@@ -408,6 +411,8 @@ int main(int argc, char **argv){
             (int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct5),
             (int)ancestorIndexof(MARTe::testStruct4,MARTe::testStruct6));
 
+
+    MARTe::StartupManager::Terminate();
     return 0;
 }
 
