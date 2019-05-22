@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Vector.h"
-#include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -127,7 +126,7 @@ bool VectorTest::TestConstructorByPointerHeap(T* array,
     Vector<T> myVector(array, nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
-        if (MemoryOperationsHelper::Compare(&myVector[i], &array[i], sizeof(T))) {
+        if (Memory::Compare(&myVector[i], &array[i], sizeof(T))) {
             return false;
         }
     }

@@ -25,7 +25,7 @@
 #############################################################
 
 
-OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
   
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -38,10 +38,10 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
 
-all: $(OBJS) 
-	echo  $(OBJS)
+#all: $(OBJS) 
+#	echo  $(OBJS)
 
-include depends.$(TARGET)
+#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

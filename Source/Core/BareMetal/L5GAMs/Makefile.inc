@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
   
 
 _OBJSX=BrokerI.x \
@@ -65,12 +65,14 @@ INCLUDES += -I../L3Streams
 INCLUDES += -I../L4Configuration
 INCLUDES += -I../L4Messages
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
-	        $(BUILD_DIR)/L5GAMsB.def
-	echo  $(OBJS)
+APPS = $(BUILD_DIR)/L5GAMsB$(LIBEXT)
 
-include depends.$(TARGET)
+#all: $(OBJS)    \
+#	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
+#	        $(BUILD_DIR)/L5GAMsB.def
+#	echo  $(OBJS)
+
+#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

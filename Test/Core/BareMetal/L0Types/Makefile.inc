@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=  BasicTypeTest.x \
+xxOBJSX=  BasicTypeTest.x \
 		BitBooleanTest.x\
 		BitRangeTest.x \
 		DoubleIntegerTest.x \
@@ -50,11 +50,13 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
-all: $(OBJS) \
-                $(BUILD_DIR)/L0TypesTest$(LIBEXT)
-	echo  $(OBJS)
+APPS = $(BUILD_DIR)/L0TypesTest$(LIBEXT)
 
-include depends.$(TARGET)
+#all: $(OBJS) \
+#                $(BUILD_DIR)/L0TypesTest$(LIBEXT)
+#	echo  $(OBJS)
+
+#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

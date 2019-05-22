@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=Loader.x RealTimeLoader.x
+#OBJSX=Loader.x RealTimeLoader.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -44,13 +44,14 @@ INCLUDES += -I../L4Messages
 INCLUDES += -I../L5GAMs
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L6App$(LIBEXT)
+APPS = $(BUILD_DIR)/L6App$(LIBEXT)
 
-all: $(OBJS) $(SUBPROJ) \
-	        $(BUILD_DIR)/L6AppB$(LIBEXT) \
-	        $(BUILD_DIR)/L6AppB.def
-	echo  $(OBJS)
+#all: $(OBJS) $(SUBPROJ) \
+#	        $(BUILD_DIR)/L6AppB$(LIBEXT) \
+#	        $(BUILD_DIR)/L6AppB.def
+#	echo  $(OBJS)
 
-include depends.$(TARGET)
+#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

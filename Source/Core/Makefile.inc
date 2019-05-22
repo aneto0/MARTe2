@@ -23,8 +23,10 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
+#OBJSX=
 SPB    = BareMetal.x Scheduler.x FileSystem.x
+APPS   = $(BUILD_DIR)/MARTe2$(DLLEXT)
+
 PACKAGE=
 MAKEDEFAULTDIR=../../MakeDefaults
 
@@ -51,8 +53,8 @@ INCLUDES += -IScheduler/L4Messages
 INCLUDES += -IScheduler/L4StateMachine
 INCLUDES += -IScheduler/L5GAMs
 
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTe2$(DLLEXT)
-	echo  $(OBJS)
+#all: $(OBJS) $(SUBPROJ) \
+#		$(BUILD_DIR)/MARTe2$(DLLEXT)
+#	echo  $(OBJS)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

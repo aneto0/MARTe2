@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "VectorTest.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -142,7 +143,7 @@ bool VectorTest::TestVectorOperator_Static() {
     int32 array[nElements];
 
     for (uint32 i = 0; i < nElements; i++) {
-        array[i] = i;
+        array[i] = (int32)i;
     }
 
     Vector<int32> vector1(array);
@@ -161,7 +162,7 @@ bool VectorTest::TestVectorOperator_Heap() {
     int32 *array = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
-        array[i] = i;
+        array[i] = (int32)i;
     }
 
     Vector<int32> vector1(array, nElements);

@@ -112,10 +112,6 @@ public:
      */
     bool TestGetDataPointer();
 
-    /**
-     * @brief Tests if the function returns true if the matrix is static and false if it is allocated on heap.
-     */
-    bool TestIsStaticDeclared();
 
     /**
      * @brief Tests if the product between two static matrices returns the correct result.

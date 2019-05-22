@@ -580,8 +580,9 @@ bool LinkedListHolderTest::TestListExtractIndex() {
         return false;
     }
 
-    for (int32 i = (size - 1); i >= 0; i--) {
-        if (list.ListExtract(i) != &stored[i]) {
+    for (int32 i = (size - 1); i >= 0u; i--) {
+    	uint32 ix = static_cast<uint32>(i);
+        if (list.ListExtract(ix) != &stored[i]) {
             return false;
         }
 
@@ -589,7 +590,7 @@ bool LinkedListHolderTest::TestListExtractIndex() {
             return false;
         }
 
-        if (list.ListSize() != (uint32) i) {
+        if (list.ListSize() !=  ix) {
             return false;
         }
     }

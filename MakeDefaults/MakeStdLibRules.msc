@@ -33,7 +33,7 @@ $(BUILD_DIR)\\%.obj : %.cpp
 	@echo $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
 
-$(BUILD_DIR)\\%.obj : Environment/Windows/%.cpp
+$(BUILD_DIR)\\%.obj : Environment/$(ENVIRONMENT)/%.cpp
 	@echo $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  Environment/Windows/$*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
 
@@ -128,12 +128,29 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)\%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $*.def -Fe$@
 
 %.spb : 
-	$(MAKE) -C $* -f Makefile.$(TARGET)
+	$(MAKE) -C $* -f Makefile.$(TARGET) MAKEMODE=$(MAKEMODE)
 
-%.spc : 
-	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
-clean:  $(SUBPROJC)
+MAKEMODE:=INFO
+
+.PHONY: clean
+clean:  
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=CLEAN
+
+.PHONY: test
+test: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=TEST
+
+.PHONY: all
+all: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=ALL
+
+.PHONY: build
+build: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=BUILD
+
+.PHONY: do_cleandir
+do_cleandir: 	
 	@if exist depends.* rm -f depends*
 	@if exist $(BUILD_DIR)/*$(DLLEXT) rm -f $(BUILD_DIR)/*$(DLLEXT)	
 	@if exist $(BUILD_DIR)/*$(EXEEXT) rm -f $(BUILD_DIR)/*$(EXEEXT)
@@ -147,5 +164,43 @@ clean:  $(SUBPROJC)
 	@if exist $(BUILD_DIR)/*$(PDBEXT) rm -f $(BUILD_DIR)/*$(PDBEXT)
 	@if exist $(BUILD_DIR)/*$(DEFEXT) rm -f $(BUILD_DIR)/*$(DEFEXT)	
 	@if exist $(BUILD_DIR)/*$(OBJEXT) rm -f $(BUILD_DIR)/*$(OBJEXT)
-	
+        
+.PHONY: do_showInfo
+do_showInfo: 	
+	@echo choose among 
+	@echo 1) make Makefile.msc build   to build libraries
+	@echo 2) make Makefile.msc clean   to remove any produced file
+	@echo 3) make Makefile.msc test    to build test programs
+	@echo 4) make Makefile.msc all     to build libraries and test programs
+    
+
+ifeq (CLEAN,$(MAKEMODE))
+DEPENDS = do_cleandir $(SUBPROJ)
+endif
+
+ifeq (INFO,$(MAKEMODE))
+DEPENDS = do_showInfo
+endif
+
+ifeq (BUILD,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJ) $(APPS)
+include depends.$(TARGET)
+endif
+
+ifeq (TEST,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJT) $(APPS)
+include depends.$(TARGET)
+endif
+
+ifeq (ALL,$(MAKEMODE))
+DEPENDS = $(OBJS)  $(SUBPROJ) $(SUBPROJT) $(APPS)
+include depends.$(TARGET)
+endif
 		
+.PHONY: default
+default:   $(DEPENDS)
+	@echo MAKEMODE=$(MAKEMODE)
+	@echo executed $(DEPENDS)
+
+
+

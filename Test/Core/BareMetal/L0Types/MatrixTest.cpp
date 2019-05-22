@@ -46,10 +46,6 @@ bool MatrixTest::TestDefaultConstructor() {
 
     Matrix<int32> myMatrix;
 
-    if (!myMatrix.IsStaticDeclared()) {
-        return false;
-    }
-
     if (myMatrix.GetNumberOfColumns() != 0) {
         return false;
     }
@@ -63,20 +59,20 @@ bool MatrixTest::TestDefaultConstructor() {
 
 bool MatrixTest::TestConstructorOnHeap() {
 
-    const int32 nRows = 32;
-    const int32 nCols = 32;
+    const uint32 nRows = 32;
+    const uint32 nCols = 32;
 
     Matrix<int32> myMatrix(nRows, nCols);
 
-    for (int32 i = 0; i < nRows; i++) {
-        for (int32 j = 0; j < nCols; j++) {
-            myMatrix[i][j] = (i + j);
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            myMatrix[i][j] = (int32)(i + j);
         }
     }
 
-    for (int32 i = 0; i < nRows; i++) {
-        for (int32 j = 0; j < nCols; j++) {
-            if (myMatrix[i][j] != (i + j)) {
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (myMatrix[i][j] != (int32)(i + j)) {
                 return false;
             }
         }
@@ -103,16 +99,15 @@ bool MatrixTest::TestMatrixOperator_Static() {
 
     for (uint32 i = 0; i < nRow; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            matrix[i][j] = i + j;
+            matrix[i][j] = (int32)(i + j);
         }
     }
 
     Matrix<int32> myMatrix(matrix);
 
     for (uint32 i = 0; i < nRow; i++) {
-        Vector<int32> row = myMatrix[i];
         for (uint32 j = 0; j < nCols; j++) {
-            if (row[j] != matrix[i][j]) {
+            if (myMatrix[i][j] != (int32)(i + j)) {
                 return false;
             }
         }
@@ -124,15 +119,10 @@ bool MatrixTest::TestMatrixOperator_Heap() {
     const uint32 nRows = 32;
     const uint32 nCols = 32;
 
-    int32 ** matrix = new int32*[nRows];
-
-    for (uint32 i = 0; i < nRows; i++) {
-        matrix[i] = new int32[nCols];
-    }
-
+    int32 *matrix = static_cast<int32*>(malloc(sizeof(int32) * nRows * nCols));
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            matrix[i][j] = i + j;
+            matrix[i*nCols+j] = (int32)(i + j);
         }
     }
 
@@ -140,19 +130,15 @@ bool MatrixTest::TestMatrixOperator_Heap() {
 
     bool ret = true;
     for (uint32 i = 0; i < nRows; i++) {
-        Vector<int32> row = myMatrix[i];
         for (uint32 j = 0; j < nCols; j++) {
-            if (row[j] != matrix[i][j]) {
-                ret = false;
+            if (myMatrix[i][j] != (int32)(i + j)) {
+                return false;
             }
         }
     }
 
-    for (uint32 i = 0; i < nRows; i++) {
-        delete[] matrix[i];
-    }
 
-    delete[] matrix;
+    free (matrix);
 
     return ret;
 }
@@ -166,7 +152,7 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Static() {
 
         for (uint32 i = 0; i < nRow; i++) {
             for (uint32 j = 0; j < nCols; j++) {
-                matrix[i][j] = i + j;
+                matrix[i][j] = (int32)(i + j);
             }
         }
 
@@ -186,7 +172,7 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Static() {
 
         for (uint32 i = 0; i < nRow; i++) {
             for (uint32 j = 0; j < nCols; j++) {
-                myMatrix(i,j) = i + j;
+                myMatrix(i,j) = (int32)(i + j);
             }
         }
 
@@ -217,8 +203,8 @@ bool MatrixTest::TestMatrixFunctionCallOperator_Heap() {
 
     for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-            myMatrix(i,j) = i + j;
-            matrix[i][j] = i + j;
+            myMatrix(i,j) = (int32)(i + j);
+            matrix[i][j] = (int32)(i + j);
         }
     }
 
@@ -254,7 +240,7 @@ bool MatrixTest::TestGetDataPointer() {
         return false;
     }
 
-    int32 **heapArray = NULL;
+    int32 *heapArray = NULL;
     Matrix<int32> matrix3(heapArray, 2, 2);
 
     if (matrix3.GetDataPointer() != heapArray) {
@@ -266,32 +252,6 @@ bool MatrixTest::TestGetDataPointer() {
     return matrix4.GetDataPointer() != NULL;
 }
 
-bool MatrixTest::TestIsStaticDeclared() {
-    Matrix<int32> matrix1;
-
-    if (!matrix1.IsStaticDeclared()) {
-        return false;
-    }
-
-    int32 array[2][2];
-
-    Matrix<int32> matrix2(array);
-
-    if (!matrix2.IsStaticDeclared()) {
-        return false;
-    }
-
-    int32 **heapArray = NULL;
-    Matrix<int32> matrix3(heapArray, 2, 2);
-
-    if (matrix3.IsStaticDeclared()) {
-        return false;
-    }
-
-    Matrix<int32> matrix4(2, 2);
-
-    return !matrix4.IsStaticDeclared();
-}
 
 bool MatrixTest::TestProduct() {
 
@@ -310,8 +270,8 @@ bool MatrixTest::TestProduct() {
 
     int32 testResult[4][2] = { { -28, -12 }, { 18, 65 }, { 38, 126 }, { -4, 12 } };
 
-    for (int32 i = 0; i < 4; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 4; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (result[i][j] != testResult[i][j]) {
                 return false;
             }
@@ -342,8 +302,8 @@ bool MatrixTest::TestSum() {
 
     int32 testResult[3][3] = { { 2, 4, -2}, { -8, 6, 11}, {8, 15, 17}};
 
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             if (result[i][j] != testResult[i][j]) {
                 return false;
             }
@@ -367,8 +327,8 @@ bool MatrixTest::TestCopy() {
     if (!addend1.Copy(addend2)) {
         return false;
     }
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             if (addend1[i][j] != addend2[i][j]) {
                 return false;
             }
@@ -393,8 +353,8 @@ bool MatrixTest::TestSubMatrix() {
     }
     int32 test[][2] = { { 5, 6 }, { 8, 9 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (subMatrix[i][j] != test[i][j]) {
 
                 return false;
@@ -483,8 +443,8 @@ bool MatrixTest::TestTranspose() {
 
     int32 transposeTest[3][2] = { { 1, 4 }, { 2, 5 }, { 3, 6 } };
 
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (transpose[i][j] != transposeTest[i][j]) {
                 return false;
             }
@@ -510,8 +470,8 @@ bool MatrixTest::TestInverse_float32() {
 
     float32 inverseTest[2][2] = { { -2.0, 1.0 }, { 1.5, -0.5 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (inverse[i][j] != inverseTest[i][j]) {
                 return false;
             }
@@ -545,8 +505,8 @@ bool MatrixTest::TestInverse_float64() {
 
     float64 inverseTest[2][2] = { { -2.0, 1.0 }, { 1.5, -0.5 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (inverse[i][j] != inverseTest[i][j]) {
                 return false;
             }
@@ -586,15 +546,15 @@ bool MatrixTest::TestProduct_Heap() {
 
     Matrix<int32> factor1(4, 3);
 
-    for (int32 i = 0; i < 4; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 4; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             factor1[i][j] = matrix1[i][j];
         }
     }
 
     Matrix<int32> factor2(3, 2);
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             factor2[i][j] = matrix2[i][j];
         }
     }
@@ -607,8 +567,8 @@ bool MatrixTest::TestProduct_Heap() {
 
     int32 testResult[4][2] = { { -28, -12 }, { 18, 65 }, { 38, 126 }, { -4, 12 } };
 
-    for (int32 i = 0; i < 4; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 4; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (result[i][j] != testResult[i][j]) {
                 return false;
             }
@@ -631,15 +591,15 @@ bool MatrixTest::TestSum_Heap() {
 
     Matrix<int32> addend1(3, 3);
 
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             addend1[i][j] = matrix1[i][j];
         }
     }
 
     Matrix<int32> addend2(3, 3);
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             addend2[i][j] = matrix2[i][j];
         }
     }
@@ -650,8 +610,8 @@ bool MatrixTest::TestSum_Heap() {
         return false;
     }
     int32 testResult[3][3] = { { 2, 4, -2}, { -8, 6, 11}, {8, 15, 17}};
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             if (result[i][j] != testResult[i][j]) {
                 return false;
             }
@@ -671,23 +631,23 @@ bool MatrixTest::TestCopy_Heap() {
 
     Matrix<int32> addend1(3, 3);
 
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             addend1[i][j] = matrix1[i][j];
         }
     }
 
     Matrix<int32> addend2(3, 3);
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             addend2[i][j] = matrix2[i][j];
         }
     }
     if (!addend1.Copy(addend2)) {
         return false;
     }
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             if (addend1[i][j] != addend2[i][j]) {
                 return false;
             }
@@ -706,8 +666,8 @@ bool MatrixTest::TestSubMatrix_Heap() {
     int32 matrix2[2][2];
 
     Matrix<int32> bigMatrix(4, 3);
-    for (int32 i = 0; i < 4; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 4; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             bigMatrix[i][j] = matrix1[i][j];
         }
     }
@@ -719,8 +679,8 @@ bool MatrixTest::TestSubMatrix_Heap() {
     }
     int32 test[][2] = { { 5, 6 }, { 8, 9 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (subMatrix[i][j] != test[i][j]) {
 
                 return false;
@@ -734,8 +694,8 @@ bool MatrixTest::TestDeterminant_Heap() {
     float32 matrix1[2][2] = { { 1.0, 2.0 }, { 3.0, 4.0 } };
 
     Matrix<float32> testMatrix(2, 2);
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             testMatrix[i][j] = matrix1[i][j];
         }
     }
@@ -775,8 +735,8 @@ bool MatrixTest::TestTranspose_Heap() {
     int32 matrix2[3][2];
 
     Matrix<int32> testMatrix(2, 3);
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 3; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 3; j++) {
             testMatrix[i][j] = matrix1[i][j];
         }
     }
@@ -788,8 +748,8 @@ bool MatrixTest::TestTranspose_Heap() {
 
     int32 transposeTest[3][2] = { { 1, 4 }, { 2, 5 }, { 3, 6 } };
 
-    for (int32 i = 0; i < 3; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 3; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (transpose[i][j] != transposeTest[i][j]) {
                 return false;
             }
@@ -807,8 +767,8 @@ bool MatrixTest::TestInverse_float32_Heap() {
 
     float32 matrix2[2][2];
     Matrix<float32> testMatrix(2, 2);
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             testMatrix[i][j] = matrix1[i][j];
         }
     }
@@ -821,8 +781,8 @@ bool MatrixTest::TestInverse_float32_Heap() {
 
     float32 inverseTest[2][2] = { { -2.0, 1.0 }, { 1.5, -0.5 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (inverse[i][j] != inverseTest[i][j]) {
                 return false;
             }
@@ -836,8 +796,8 @@ bool MatrixTest::TestInverse_float64_Heap() {
 
     float64 matrix2[2][2];
     Matrix<float64> testMatrix(2, 2);
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             testMatrix[i][j] = matrix1[i][j];
         }
     }
@@ -850,8 +810,8 @@ bool MatrixTest::TestInverse_float64_Heap() {
 
     float64 inverseTest[2][2] = { { -2.0, 1.0 }, { 1.5, -0.5 } };
 
-    for (int32 i = 0; i < 2; i++) {
-        for (int32 j = 0; j < 2; j++) {
+    for (uint32 i = 0; i < 2; i++) {
+        for (uint32 j = 0; j < 2; j++) {
             if (inverse[i][j] != inverseTest[i][j]) {
                 return false;
             }

@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) 
 
 OBJSX_=	BufferedStreamI.x \
 	BufferedStreamIOBuffer.x \
@@ -58,10 +58,10 @@ INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 
 
-all: $(OBJS)    
-	echo  $(OBJSX)
+#all: $(OBJS)    
+#	echo  $(OBJSX)
 
-include depends.$(TARGET)
+#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "TimeoutType.h"
 #include "ErrorType.h"
 #include "ErrorManagement.h"
 

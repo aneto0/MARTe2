@@ -23,6 +23,8 @@
 #
 #############################################################
 
+.DEFAULT_GOAL := default
+
 BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
 
 ENVIRONMENT=Windows
@@ -46,14 +48,15 @@ OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)\\%.obj)
 
 PP=   $(PPX:%.x=msc\\%.pp) 
 
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp))
 OBJS_=  $(OBJSX:%.x=msc\\%.obj) 
 OBJS2_= $(OBJSX2:%.x=msc\\%.obj) 
 OBJS3_= $(OBJSX3:%.x=msc\\%.obj) 
 
-SUBPROJ = $(SPB:%.x=%.spb)
-SUBPROJ2 = $(SPB2:%.x=%.spb)
-SUBPROJC = $(SPB:%.x=%.spc)
-SUBPROJC += $(SPB2:%.x=%.spc)
+SUBPROJ  = $(SPB:%.x=%.spb)
+SUBPROJT = $(SPBT:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 
 
 MAKE     =   make
 COMPILER =   cl 
