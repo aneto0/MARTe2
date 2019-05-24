@@ -101,8 +101,8 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
             uint32 readSize = MaxUsableAmount();
 
             if (stream->OSRead(BufferReference(), readSize)) {
+                retval = (readSize > 0u);
                 IOBuffer::SetUsedSize(readSize);
-                retval = true;
             }
             else {
                 REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSRead");

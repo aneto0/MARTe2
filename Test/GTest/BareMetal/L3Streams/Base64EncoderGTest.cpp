@@ -46,22 +46,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(Base64EncoderGTest,TestEncode) {
+TEST(BareMetal_L3Streams_Base64EncoderGTest,TestEncode) {
     Base64EncoderTest test;
     ASSERT_TRUE(test.TestEncode("abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+"));
 }
 
-TEST(Base64EncoderGTest,TestEncode_Size1) {
+TEST(BareMetal_L3Streams_Base64EncoderGTest,TestEncode_Size1) {
     Base64EncoderTest test;
     ASSERT_TRUE(test.TestEncode("a", "YQ=="));
 }
 
-TEST(Base64EncoderGTest,TestDecode) {
+TEST(BareMetal_L3Streams_Base64EncoderGTest,TestDecode) {
     Base64EncoderTest test;
     ASSERT_TRUE(test.TestDecode("Y2lhbw==", "ciao"));
 }
 
-TEST(Base64EncoderGTest,TestDecode_Size1) {
+TEST(BareMetal_L3Streams_Base64EncoderGTest,TestDecode_Size1) {
     Base64EncoderTest test;
     ASSERT_TRUE(test.TestDecode("bWVyY===", "mer`"));
 }

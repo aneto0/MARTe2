@@ -656,27 +656,27 @@ TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintPointerMatrix) {
     ASSERT_TRUE(myIOBufferTest.TestPrintPointerMatrix());
 }
 
-TEST(IOBufferGTest, TestRefill) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRefill) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRefill());
 }
 
-TEST(IOBufferGTest, TestFlush) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFlush) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestFlush());
 }
 
-TEST(IOBufferGTest, TestNoMoreSpaceToWriteArg) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWriteArg) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWriteArg());
 }
 
-TEST(IOBufferGTest, TestNoMoreSpaceToWrite) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWrite) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWrite());
 }
 
-TEST(IOBufferGTest, TestNoMoreDataToRead) {
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreDataToRead) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestNoMoreDataToRead());
 }
