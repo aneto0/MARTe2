@@ -32,7 +32,7 @@
 #include "ZeroTerminatedArrayTool.h"
 #include "AllocationPointer.h"
 #include "ZeroTerminatedArray.h"
-
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -77,8 +77,11 @@ void ZeroTerminatedArrayTool::Truncate(uint32 newIndex){
 void ZeroTerminatedArrayTool::Append(const uint8 *data,uint32 dataSize){
 	if ((data != NULL_PTR(const uint8 *))&& (dataSize > 0) && ret){
 
-		//TODO check overflow
-		int32 finalIndex = static_cast<int32>(index + dataSize);
+		uint32 temp = index + dataSize;
+		int32 finalIndex = static_cast<int32>(temp);
+		if (temp >= static_cast<uint32>(TypeCharacteristics<int32>::MaxValue())){
+			finalIndex  = TypeCharacteristics<int32>::MaxValue()-1;
+		}
 
 		/** check if we need to allocate more memory */
 		if (finalIndex >= maxIndex){
@@ -114,7 +117,7 @@ void ZeroTerminatedArrayTool::Append(const uint8 *data,uint32 dataSize){
 			memcpy(start,data,dataSize * elementSize);
 
 			Terminate(static_cast<uint32>(finalIndex));
-			index = finalIndex;
+			index = static_cast<uint32>(finalIndex);
 		}
 	}
 }

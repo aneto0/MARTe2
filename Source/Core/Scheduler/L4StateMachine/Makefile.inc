@@ -23,13 +23,10 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-
-OBJSX=	StateMachine.x \
-    StateMachineEvent.x
-        
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -43,12 +40,9 @@ INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
 INCLUDES += -I../../Scheduler/L3Services
 INCLUDES += -I../../Scheduler/L4Messages
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4StateMachineS$(LIBEXT) \
-	        $(BUILD_DIR)/L4StateMachineS.def
-	echo  $(OBJS)
 
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L4StateMachineS$(LIBEXT) \
+	        $(BUILD_DIR)/L4StateMachineS.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

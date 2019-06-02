@@ -73,7 +73,12 @@ ErrorInformation x;
 
 void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription){
 	if (errorFile == NULL){
-		errorFile = fopen("MARTe_Error.log","w");
+//		errorFile = fopen("MARTe_Error.log","w");
+		errno_t err;
+		err  = fopen_s( &errorFile, "MARTe_Error.log","w");
+		if (err != 0){
+			errorFile = NULL;
+		}
 	}
 
 	if (errorFile != NULL){

@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "VectorTest.h"
-#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -89,7 +88,7 @@ bool VectorTest::TestGetNumberOfElements() {
         ret = false;
     }
 
-    int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
+    int32 *heapPointer = (int32*) malloc(sizeof(int32) * nElements);
 
     Vector<int32> vector3(heapPointer, nElements);
 
@@ -100,7 +99,7 @@ bool VectorTest::TestGetNumberOfElements() {
     Vector<int32> vector4(nElements);
 
     ret &= (vector4.GetNumberOfElements() == nElements);
-    HeapManager::Free((void*&) heapPointer);
+    free((void*&) heapPointer);
     return ret;
 }
 
@@ -122,7 +121,7 @@ bool VectorTest::TestGetDataPointer() {
         ret= false;
     }
 
-    int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
+    int32 *heapPointer = (int32*) malloc(sizeof(int32) * nElements);
 
     Vector<int32> vector3(heapPointer, nElements);
 
@@ -133,7 +132,7 @@ bool VectorTest::TestGetDataPointer() {
     Vector<int32> vector4(nElements);
 
     ret&= (vector4.GetDataPointer() != NULL);
-    HeapManager::Free((void*&) heapPointer);
+    free((void*&) heapPointer);
     return ret;
 }
 
@@ -159,7 +158,7 @@ bool VectorTest::TestVectorOperator_Static() {
 bool VectorTest::TestVectorOperator_Heap() {
 
     const uint32 nElements = 32;
-    int32 *array = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
+    int32 *array = (int32*) malloc(sizeof(int32) * nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
         array[i] = (int32)i;
@@ -169,11 +168,11 @@ bool VectorTest::TestVectorOperator_Heap() {
 
     for (uint32 i = 0; i < nElements; i++) {
         if (array[i] != vector1[i]) {
-            HeapManager::Free((void*&)array);
+            free((void*&)array);
             return false;
         }
     }
-    HeapManager::Free((void*&)array);
+    free((void*&)array);
     return true;
 }
 

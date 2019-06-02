@@ -23,20 +23,6 @@
 #############################################################
 
 
-OBJSX=  BasicTypeGTest.x \
-		BitBooleanGTest.x \
-		BitRangeGTest.x \
-		DoubleIntegerGTest.x \
-		ErrorTypeGTest.x \
-		FractionalIntegerGTest.x \
-		LinkedListHolderGTest.x \
-		LinkedListableGTest.x \
-		MatrixGTest.x \
-		ShiftGTest.x \
-		TypeCharacteristicsGTest.x \
-		VectorGTest.x \
-		ZeroTerminatedArrayGTest.x 
-
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
@@ -46,26 +32,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
-INCLUDES += -I../../../Core/BareMetal/L1Portability
-INCLUDES += -I../../../Core/BareMetal/L2Objects
-INCLUDES += -I../../../Core/BareMetal/L3Streams
-INCLUDES += -I../../../Core/BareMetal/L4Configuration
-INCLUDES += -I../../../Core/Scheduler/L1Portability
-INCLUDES += -I../../../Core/FileSystem/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
-INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
-
-
-all: $(OBJS)    \
-        $(BUILD_DIR)/L0TypesBGTest$(LIBEXT) 
-	echo  $(OBJS)
-
-include depends.$(TARGET)
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

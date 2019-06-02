@@ -35,7 +35,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "ZeroTerminatedArrayTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

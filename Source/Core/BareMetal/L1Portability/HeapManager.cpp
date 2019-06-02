@@ -152,7 +152,7 @@ HeapManager::HeapId HeapIdFromName(CCString name){
 	}
 
 	if (!found) {
-        COMPOSITE_REPORT_ERROR(ErrorManagement::Warning, "Could not instantiate an memoryHeap with the name: ", name);
+        COMPOSITE_REPORT_ERROR(ErrorManagement::Warning, "Could not find an memoryHeap with the name: ", name);
 		index = standardHeapId;
 	}
 	return index;
@@ -283,8 +283,11 @@ ErrorManagement::ErrorType AllocationPointer::Free(){
 	HeapManager::HeapId id = HeapManager::standardHeapId;
 	if (ret){
 		id = memory->heapId;
+		// sets an invalid number in case of attempt of further freeing memory
+		memory->heapId = 0xFF;
 		ret.internalSetupError = (id >= MAX_HEAPS);
 		oldSize = memory->byteSize;
+		memory->byteSize = 0;
 	}
 
 	HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);

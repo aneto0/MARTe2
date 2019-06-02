@@ -27,12 +27,12 @@
 
 #include <limits.h>
 
+#include "../../../Core/Scheduler/L1Portability/FastPollingMutexSemTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "gtest/gtest.h"
-#include "FastPollingMutexSemTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

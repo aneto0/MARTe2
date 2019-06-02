@@ -25,10 +25,7 @@
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
 SPB=Environment/$(ENVIRONMENT).x
-
-OBJSX=
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -44,12 +41,7 @@ INCLUDES+=-I../../BareMetal/L6App
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L6App$(LIBEXT)
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L6AppF$(LIBEXT) \
+BUILD_PRODUCT = $(BUILD_DIR)/L6AppF$(LIBEXT) \
 		$(BUILD_DIR)/L6AppF.def
-
-	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

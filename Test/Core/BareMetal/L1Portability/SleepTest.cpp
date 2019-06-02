@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "SleepTest.h"
+#include "Seconds.h"
 
 using namespace MARTe;
 
@@ -44,6 +45,7 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 
 bool SleepTest::TestGetDateSeconds() {
+
     return Sleep::GetDateSeconds() == time(NULL);
 }
 /*
@@ -59,12 +61,12 @@ bool SleepTest::TestAtLeast(float64 sec) {
     return testResult;
 }
 */
-bool SleepTest::TestNoMore(float64 sec) {
+bool SleepTest::TestNoMore(MARTe::float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    Sleep::NoMore(sec);
+    Sleep::NoMore(sec,Units::s);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -76,7 +78,7 @@ bool SleepTest::TestSec(float64 sec) {
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    Sleep::Sec(sec);
+    Sleep::Long(sec,Units::s);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -88,7 +90,7 @@ bool SleepTest::TestMSec(int32 msec) {
     float64 maxSleepTime = 2 * msec; /* 100% margin */
     int initialTime = clock();
 
-    Sleep::MSec(msec);
+    Sleep::Short(msec,Units::ms);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -100,7 +102,7 @@ bool SleepTest::TestBusy(float64 sec) {
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    Sleep::Busy(sec);
+    Sleep::Busy(sec,Units::s);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -113,7 +115,7 @@ bool SleepTest::TestSemiBusy(float64 totalSleepSec,
     float64 maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
     int initialTime = clock();
 
-    Sleep::SemiBusy(totalSleepSec, nonBusySleepSec);
+    Sleep::SemiBusy(MicroSeconds(totalSleepSec,Units::s), MicroSeconds(nonBusySleepSec,Units::s));
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 

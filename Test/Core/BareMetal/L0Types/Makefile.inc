@@ -24,39 +24,15 @@
 #
 #############################################################
 
-xxOBJSX=  BasicTypeTest.x \
-		BitBooleanTest.x\
-		BitRangeTest.x \
-		DoubleIntegerTest.x \
-		ErrorTypeTest.x \
-		FractionalIntegerTest.x \
-		LinkedListHolderTest.x \
-		LinkedListableTest.x \
-		MatrixTest.x \
-		ShiftTest.x \
-		TypeCharacteristicsTest.x \
-		VectorTest.x \
-		ZeroTerminatedArrayTest.x
-		
-PACKAGE=Core/BareMetal
+PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 APPS = $(BUILD_DIR)/L0TypesTest$(LIBEXT)
-
-#all: $(OBJS) \
-#                $(BUILD_DIR)/L0TypesTest$(LIBEXT)
-#	echo  $(OBJS)
-
-#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

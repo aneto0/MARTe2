@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "FractionalInteger.h"
-#include "AnyType.h"
+//#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -71,6 +71,7 @@ public:
     template<typename T2>
     bool TestBasicTypeCastMajorSize(T2 input);
 
+#if 0
     /**
      * @brief Tests the AnyType cast by constant FractionalInteger.
      * @return true if all AnyType attributes are initialized correctly.
@@ -82,6 +83,7 @@ public:
      * @return true if all AnyType attributes are initialized correctly.
      */
     bool TestAnyTypeCastConst();
+#endif
 
     /**
      * @brief Checks if BitSize function returns the same size specified in template initialization.
@@ -108,14 +110,14 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     FractionalInteger<T, minorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
 
     // max and min values of the input
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : (T2) 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics<T>::IsSigned();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -159,7 +161,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     FractionalInteger<T, majorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
     T2 maxValue = 0;
     T2 minValue = 0;
     T2 zero = (T2) 0;
@@ -175,7 +177,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
         minValue = 0;
     }
 
-    bool isSigned = TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics<T>::IsSigned();
 
     myFractionalInteger = maxValue;
 
@@ -210,7 +212,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     return true;
 }
-
+#if 0
 template<typename T>
 bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
@@ -269,6 +271,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 
     return true;
 }
+#endif
 
 template<typename T>
 bool FractionalIntegerTest<T>::TestGetNumberOfBits() {

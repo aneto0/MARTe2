@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "DoubleInteger.h"
-#include "FormatDescriptor.h"
+//#include "FormatDescriptor.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

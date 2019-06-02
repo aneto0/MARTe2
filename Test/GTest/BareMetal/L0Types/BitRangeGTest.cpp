@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "BitRangeTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -248,7 +248,7 @@ TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
 
 /////////////////////////////
 
-
+#if 0
 TEST(BitRangeGTest,TestAnyTypeCastSigned) {
     BitRangeTest<int32> bitrange;
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
@@ -258,6 +258,7 @@ TEST(BitRangeGTest,TestAnyTypeCastUnsigned) {
     BitRangeTest<uint32> bitrange;
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
+#endif
 
 TEST(BitRangeGTest,TestNumberOfBits) {
     BitRangeTest<uint32> bitrange;

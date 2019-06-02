@@ -24,44 +24,16 @@
 #
 #############################################################
 
-#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) 
-
-OBJSX_=	BufferedStreamI.x \
-	BufferedStreamIOBuffer.x \
-	CharBuffer.x \
-	DoubleBufferedStream.x \
-	IOBuffer.x \
-	IOBufferFloatPrint.x \
-	IOBufferIntegerPrint.x \
-	IOBufferStringPrint.x \
-	IOBufferStreamPrint.x \
-	ToStringConversionFactory.x\
-	IOBufferAnyTypeInfo.x \
-	IOBufferAnyTypePrint.x \
-	IOBufferStaticFunctions.x \
-	SingleBufferedStream.x \
-	StreamMemoryReference.x \
-	StreamString.x\
-	StreamStringIOBuffer.x
-
-# IOBufferStructuredPrint.x \
-
-
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
 INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
-
-
-#all: $(OBJS)    
-#	echo  $(OBJSX)
-
-#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

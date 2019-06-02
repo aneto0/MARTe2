@@ -88,10 +88,11 @@ struct AllocationHeader{
 	 */
 	uint32 						byteSize;
 
+// TODO develop more sophisticated header
 	/**
 	 * should be new32bDataCount or new32bDataSize
 	 */
-	uint16		 				flags;
+//	uint16		 				flags;
 
 	/**
 	 * 0 = default heap 1-63 custom heaps

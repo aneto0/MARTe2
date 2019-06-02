@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "AnyType.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
 /*---------------------------------------------------------------------------*/
@@ -63,7 +62,7 @@ public:
      * @brief Tests the cast to AnyType.
      * @return true if the AnyType attributes are initialized correctly. False otherwise.
      */
-    bool TestAnyTypeCast();
+//    bool TestAnyTypeCast();
 
     /**
      * @brief Tests if the returned bit size is correct.
@@ -162,6 +161,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
 
 }
 
+#if 0
 template<typename T>
 bool BitBooleanTest<T>::TestAnyTypeCast() {
 
@@ -226,6 +226,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
 
     return true;
 }
+#endif
 
 template<typename T>
 bool BitBooleanTest<T>::TestNumberOfBits() {

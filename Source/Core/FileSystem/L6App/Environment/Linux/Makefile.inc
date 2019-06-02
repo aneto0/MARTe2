@@ -28,12 +28,9 @@ PACKAGE=Core/FileSystem/L6App
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  Bootstrap.x
-		
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
-
 INCLUDES+=-I../../../L1Portability
 INCLUDES+=-I../../../../BareMetal/L0Types
 INCLUDES+=-I../../../../BareMetal/L1Portability
@@ -45,11 +42,7 @@ INCLUDES+=-I../../../../BareMetal/L4Messages
 INCLUDES+=-I../../../../BareMetal/L5GAMs
 INCLUDES+=-I../../../../BareMetal/L6App
 
-all: $(OBJS) $(CPPS) \
-     $(BUILD_DIR)/L6App$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L6App$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

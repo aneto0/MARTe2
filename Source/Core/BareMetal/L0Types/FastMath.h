@@ -32,8 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L0Types/GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
@@ -131,6 +132,20 @@ namespace MARTe {
          */
         /*lint -e(762) This declaration is redundant. */
         inline float32 Sin(const float32 angle);
+
+	inline uint8  Mul(uint8  x1,uint8  x2,uint8  &high);
+	inline uint16 Mul(uint16 x1,uint16 x2,uint16 &high);
+	inline uint32 Mul(uint32 x1,uint32 x2,uint32 &high);
+	inline uint64 Mul(uint64 x1,uint64 x2,uint64 &high);
+	inline int8  Mul(int8  x1,int8  x2,int8  &high);
+	inline int16 Mul(int16 x1,int16 x2,int16 &high);
+	inline int32 Mul(int32 x1,int32 x2,int32 &high);
+	inline int64 Mul(int64 x1,int64 x2,int64 &high);
+
+
+
+
+
     }
 
     /*---------------------------------------------------------------------------*/

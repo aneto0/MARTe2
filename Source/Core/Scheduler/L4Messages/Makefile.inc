@@ -23,14 +23,11 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-
-OBJSX=	QueuedMessageI.x \
-    QueuedReplyMessageCatcherFilter.x \
-    QueueingMessageFilter.x
         
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -43,12 +40,9 @@ INCLUDES += -I../../BareMetal/L4Messages
 INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
 INCLUDES += -I../../Scheduler/L3Services
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4MessagesS$(LIBEXT) \
-	        $(BUILD_DIR)/L4MessagesS.def
-	echo  $(OBJS)
 
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L4MessagesS$(LIBEXT) \
+	        $(BUILD_DIR)/L4MessagesS.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

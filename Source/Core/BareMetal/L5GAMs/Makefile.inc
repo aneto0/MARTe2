@@ -24,37 +24,11 @@
 #
 #############################################################
 
-#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
-  
-
-_OBJSX=BrokerI.x \
-    DataSourceI.x \
-    ExecutableI.x \
-    GAM.x \
-    GAMGroup.x \
-    GAMSchedulerI.x \
-    GAMDataSource.x \
-    MemoryDataSourceI.x \
-    MemoryMapBroker.x \
-    MemoryMapInterpolatedInputBroker.x \
-    MemoryMapMultiBufferBroker.x \
-    MemoryMapMultiBufferInputBroker.x \
-    MemoryMapMultiBufferOutputBroker.x \
-    MemoryMapInputBroker.x \
-    MemoryMapOutputBroker.x \
-    MemoryMapSynchronisedInputBroker.x \
-    MemoryMapSynchronisedMultiBufferInputBroker.x \
-    MemoryMapSynchronisedMultiBufferOutputBroker.x \
-    MemoryMapSynchronisedOutputBroker.x \
-    RealTimeApplication.x \
-    RealTimeApplicationConfigurationBuilder.x \
-    RealTimeState.x \
-    RealTimeThread.x \
-    TimingDataSource.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -65,14 +39,7 @@ INCLUDES += -I../L3Streams
 INCLUDES += -I../L4Configuration
 INCLUDES += -I../L4Messages
 
-APPS = $(BUILD_DIR)/L5GAMsB$(LIBEXT)
-
-#all: $(OBJS)    \
-#	        $(BUILD_DIR)/L5GAMsB$(LIBEXT) \
-#	        $(BUILD_DIR)/L5GAMsB.def
-#	echo  $(OBJS)
-
-#include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L5GAMsB$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

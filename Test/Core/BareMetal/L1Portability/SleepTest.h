@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SLEEPTEST_H_
-#define SLEEPTEST_H_
+#ifndef L1PORTABILITY_TEST_SLEEP_TEST_H_
+#define L1PORTABILITY_TEST_SLEEP_TEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

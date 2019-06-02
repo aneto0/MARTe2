@@ -24,19 +24,10 @@
 #
 #############################################################
 
-OBJSX=	EmbeddedServiceI.x \
-    EmbeddedServiceMethodBinderI.x \
-    EmbeddedThreadI.x \
-    EmbeddedThread.x \
-    ExecutionInfo.x \
-    MultiThreadService.x \
-    MultiClientEmbeddedThread.x \
-    MultiClientService.x \
-    SingleThreadService.x \
-        
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -48,12 +39,9 @@ INCLUDES += -I../../BareMetal/L4Configuration
 INCLUDES += -I../../BareMetal/L4Messages
 INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L3ServicesS$(LIBEXT) \
-	        $(BUILD_DIR)/L3ServicesS.def
-	echo  $(OBJS)
 
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L3ServicesS$(LIBEXT) \
+	        $(BUILD_DIR)/L3ServicesS.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

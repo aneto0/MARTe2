@@ -56,25 +56,25 @@ bool MemoryCheckTest::TestCheck() {
     int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
     //checks if all the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute),
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode),
                             size * sizeof(int32))) {
         return false;
     }
 
     //checks if a part the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute),
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode),
                             (size / 2) * sizeof(int32))) {
         return false;
     }
 
     //0 as size
     uint32 testSize = 0;
-    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), testSize)) {
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode), testSize)) {
         return false;
     }
 
     HeapManager::Free((void*&) allocated);
 
     //the check function on a null pointer should return false
-    return !MemoryCheck::Check(NULL, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size);
+    return !MemoryCheck::Check(NULL,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode), size);
 }

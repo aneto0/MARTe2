@@ -24,11 +24,10 @@
 #
 #############################################################
 
-OBJSX=	UDPLogger.x
-        
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -47,12 +46,8 @@ INCLUDES += -I../../Scheduler/L4LoggerService
 INCLUDES += -I../../FileSystem/L1Portability
 INCLUDES += -I../../FileSystem/L3Streams
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L4LoggerServiceF$(LIBEXT) \
+BUILD_PRODUCT = $(BUILD_DIR)/L4LoggerServiceF$(LIBEXT) \
 	        $(BUILD_DIR)/L4LoggerServiceF.def
-	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

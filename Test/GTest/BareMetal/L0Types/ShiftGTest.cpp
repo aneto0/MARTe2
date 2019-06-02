@@ -27,8 +27,7 @@
 
 #include <limits.h>
 
-#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "ShiftTest.h"
 
 /*---------------------------------------------------------------------------*/

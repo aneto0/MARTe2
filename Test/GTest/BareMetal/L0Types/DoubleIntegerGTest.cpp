@@ -4,7 +4,7 @@
  *  Created on: Mar 5, 2015
  */
 #include <limits.h>
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "DoubleIntegerTest.h"
 
 

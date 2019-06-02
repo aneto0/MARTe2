@@ -28,26 +28,14 @@ PACKAGE=Core/Scheduler/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  EventSem.x \
-		MutexSem.x \
-		Processor.x \
-		ThreadInformation_Gen.x \
-		Threads.x \
-		ThreadsDatabase_Gen.x
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 INCLUDES+=-I../../../../BareMetal/L0Types/
 INCLUDES+=-I../../../../BareMetal/L1Portability
 
-all: $(OBJS)    $(CPPS) \
-                $(BUILD_DIR)/L1Portability$(LIBEXT) \
+BUILD_PRODUCT = $(BUILD_DIR)/L1Portability$(LIBEXT) \
                 $(BUILD_DIR)/L1Portability.def
-                
-	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

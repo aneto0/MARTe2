@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-//#include "../L1Portability/GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
 #include "Units.h"
+#include "SaturatedInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -82,14 +82,14 @@ public:
 	inline TimeType(const TimeType<bT,uT> &tt);
 
 	/**
-	 *  @return  the raw value of time. Actual value depends on the units
+	 *  @return the raw integer value of time. only valid if GetTime.IsValid()
 	 */
 	inline baseType 	GetTimeRaw() const ;
 
 	/**
-	 *  @return  the max value of the raw time (before special codes)
+	 *  @return  the raw value of time. Actual value depends on the units
 	 */
-	static inline baseType 	GetMaxRawValue() ;
+	inline SaturatedInteger<baseType> 	GetTime() const ;
 
 	/**
 	 *  @return the units used in this type
@@ -101,16 +101,28 @@ public:
      * @param[in] tt is the value which will be subtracted to the timeout
      * @return this object.
      */
-	template<typename bT, class uT>
-    inline TimeType<baseType,unitType> &operator-=(const TimeType<bT,uT> &tt);
+    inline TimeType<baseType,unitType> &operator-=(const TimeType<baseType,unitType> &tt);
 
     /**
      * @brief Subtracts the specified time to the current value.
      * @param[in] tt is the value which will be subtracted to the timeout
      * @return this object.
      */
-	template<typename bT, class uT>
-    inline TimeType<baseType,unitType> &operator+=(const TimeType<bT,uT> &tt);
+    inline TimeType<baseType,unitType> operator-(const TimeType<baseType,unitType> &tt) const;
+
+    /**
+     * @brief Subtracts the specified time to the current value.
+     * @param[in] tt is the value which will be subtracted to the timeout
+     * @return this object.
+     */
+    inline TimeType<baseType,unitType> &operator+=(const TimeType<baseType,unitType> &tt);
+
+    /**
+     * @brief Subtracts the specified time to the current value.
+     * @param[in] tt is the value which will be subtracted to the timeout
+     * @return this object.
+     */
+    inline TimeType<baseType,unitType> operator+(const TimeType<baseType,unitType> &tt) const;
 
 	/**
      * @brief Compares two TimeTypes.
@@ -147,67 +159,31 @@ public:
 	bool IsInfinite() const;
 
 	/**
-	 * -infinite or negative
-	 */
-	bool IsNegative() const;
-
-	/**
-	 *  +infinite or valid
-	 */
-	bool IsPositive() const;
-
-	/**
 	 * indeterminate
 	 */
 	bool IsIndeterminate() const;
+
+	/**
+	 * Valid or positive infinite
+	 */
+	bool IsPositive() const;
 
 	/**
 	 * constant infinite
 	 */
 	static const TimeType<baseType,unitType> Infinite;
 
-	/**
-	 * constant negative
-	 */
-	static const TimeType<baseType,unitType> Negative;
-
-	/**
-	 * Returns 0 for a valid number or infiniteCodeOffset,negativeCodeOffset
-	 */
-	inline uint8 GetCode() const;
 
 private:
 
 	/**
-	 * Contains the time information expressed in the units specified
-	 * It is an unsigned integer number
-	 * Valid values are 0 to maxValue-4
-	 * maxValue indicates positive saturation
-	 * maxValue-1 indicates negative saturation
-	 * maxValue-2 spare
-	 * maxValue-3 spare
 	 */
-	baseType 		time;
+	SaturatedInteger<baseType> 		time;
 
 	/**
 	 *
 	 */
 	unitType        units;
-
-	/**
-	 *
-	 */
-	static const uint8 spareCodes     	  = 4;
-	static const uint8 infinite 		  = 4;
-	static const uint8 negative           = 3;
-	static const uint8 negativeInf 		  = 2;
-	static const uint8 indeterminate 	  = 1;
-	static const uint8 valid    		  = 0;
-
-	static const uint8 TTSubtractionCodeMap[5][5];
-	static const uint8 TTAdditionCodeMap[5][5];
-
-	static const baseType maxRawValue;
 
 };
 
@@ -215,59 +191,16 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename baseType,class unitType>
-const baseType TimeType<baseType,unitType>::maxRawValue = TypeCharacteristics<baseType>::MaxValue()-spareCodes;
-
-template<typename baseType,class unitType>
-const TimeType<baseType,unitType> TimeType<baseType,unitType>::Infinite(maxRawValue + infinite,Units::raw);
-
-template<typename baseType,class unitType>
-const TimeType<baseType,unitType> TimeType<baseType,unitType>::Negative(maxRawValue+ negative,Units::raw);
-
-
-/*
- *  Maps Code combination to code
- */
-template<typename baseType,class unitType>
-const uint8 TimeType<baseType,unitType>::TTSubtractionCodeMap[5][5] = {
-		{valid,    	    indeterminate, infinite,      indeterminate, negativeInf},   // valid
-		{indeterminate, indeterminate, indeterminate, indeterminate, indeterminate}, // indeterminate
-		{negativeInf,   indeterminate, indeterminate, negativeInf,   negativeInf},   // negative inf
-		{negative,      indeterminate, infinite,      indeterminate, negativeInf},   // negative -
-		{infinite,      indeterminate, infinite,      infinite, 	 indeterminate}  // infinite
-};
-
-/*
- *  Maps Code combination to code
- */
-template<typename baseType,class unitType>
-const uint8 TimeType<baseType,unitType>::TTAdditionCodeMap[5][5] = {
-		{valid,    	    indeterminate, negativeInf,   indeterminate, infinite},      // valid
-		{indeterminate, indeterminate, indeterminate, indeterminate, indeterminate}, // indeterminate
-		{negativeInf,   indeterminate, negativeInf,   negativeInf,   indeterminate}, // negative inf
-		{indeterminate, indeterminate, negativeInf,   negative,      infinite},      // negative -
-		{infinite,      indeterminate, indeterminate, infinite, 	 infinite}       // infinite
-};
 
 
 template<typename baseType,class unitType>
 baseType TimeType<baseType,unitType>::GetTimeRaw() const {
-	return time;
+	return time.GetData();
 }
 
 template<typename baseType,class unitType>
-uint8 TimeType<baseType,unitType>::GetCode() const {
-	uint8 ret = valid;
-	if (time >= maxRawValue){
-		// valid because there are only a few possible values above maxRawValue
-		ret = static_cast<uint8>(time - maxRawValue);
-	}
-	return ret;
-}
-
-template<typename baseType,class unitType>
-baseType TimeType<baseType,unitType>::GetMaxRawValue()  {
-	return maxRawValue;
+SaturatedInteger<baseType> TimeType<baseType,unitType>::GetTime() const {
+	return time.GetData();
 }
 
 template<typename baseType,class unitType>
@@ -277,44 +210,33 @@ unitType TimeType<baseType,unitType>::GetUnits() const {
 
 template<typename baseType,class unitType>
 bool TimeType<baseType,unitType>::IsValid() const{
-	return (GetCode() == valid) ;
+	return (time.IsValid()) ;
 }
 
 template<typename baseType,class unitType>
 bool TimeType<baseType,unitType>::IsIndeterminate() const{
-	return (GetCode() == indeterminate);
+	return (time.IsIndeterminate());
 }
 
 template<typename baseType,class unitType>
 bool TimeType<baseType,unitType>::IsInfinite() const{
-	return (GetCode() == infinite) || (GetCode() == negativeInf);
-}
-
-template<typename baseType,class unitType>
-bool TimeType<baseType,unitType>::IsNegative() const{
-	return (GetCode() == negative) || (GetCode() == negativeInf);
+	return (time.IsInfinite());
 }
 
 template<typename baseType,class unitType>
 bool TimeType<baseType,unitType>::IsPositive() const{
-	return (GetCode() == infinite) || (GetCode() == valid);
+	return (time.IsInfinite() || time.IsValid());
 }
+
 
 template<typename baseType,class unitType>
 template<typename bT, class uT>
 TimeType<baseType,unitType>::TimeType(bT time,const uT &units){
 	if (units.GetScale() == 0.0){
-		this->time = static_cast<baseType>(time);
+		this->time = SaturatedInteger<baseType>(time);
 	} else {
 	    double temp = 0.5 + static_cast<double>(time) * (units.GetScale() * this->units.GetScaleInv());
-		if (temp < 0.0){
-	        *this = Negative;
-	    } else
-		if (temp >= static_cast<double>(maxRawValue+1)){
-	        *this = Infinite;
-	    } else {
-	        this->time = static_cast<baseType>(temp);
-	    }
+		this->time = SaturatedInteger<baseType>(temp);
 	}
 }
 
@@ -324,7 +246,8 @@ template<typename bT, class uT>
 	if (tt.IsValid()){
 		*this = TimeType<baseType,unitType>(tt.GetTimeRaw(),tt.GetUnits());
 	} else {
-		time = maxRawValue + tt.GetCode();
+		// if it is invalid then the calibration is irrelevant
+		time = SaturatedInteger<baseType>(tt.GetTime());
 	}
 }
 
@@ -334,44 +257,36 @@ TimeType<baseType,unitType>::TimeType(){
 }
 
 template<typename baseType,class unitType>
-template<typename bT, class uT>
-TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator+=(const TimeType<bT,uT> &tt){
-	TimeType<baseType,unitType> t(tt);
-	if (!IsValid() || !tt.IsValid()){
-		time = maxRawValue +  TTAdditionCodeMap[GetCode()][tt.GetCode()];
-	} else {
-		baseType ts = time + t.time;
-		if ((ts < time ) && (ts < t.time)){
-			*this = Infinite;
-		} else {
-			*time = ts;
-		}
-	}
+TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator+=(const TimeType<baseType,unitType> &tt){
+	time += tt.GetTime();
 	return *this;
 }
 
 template<typename baseType,class unitType>
-template<typename bT, class uT>
-TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator-=(const TimeType<bT,uT> &tt){
-	TimeType<baseType,unitType> t(tt);
-	if (!IsValid() || !tt.IsValid()){
-		time = maxRawValue +  TTSubtractionCodeMap[GetCode()][tt.GetCode()];
-	} else
-		if (time >= t.time){
-			time -= t.time;
-		} else {
-			*this = Negative();
-		}
+TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator-=(const TimeType<baseType,unitType> &tt){
+	time -= tt.GetTime();
 	return *this;
 }
 
+template<typename baseType,class unitType>
+TimeType<baseType,unitType> TimeType<baseType,unitType>::operator+(const TimeType<baseType,unitType> &tt) const{
+	TimeType<baseType,unitType> res(*this);
+	res += tt;
+	return res;
+}
+
+template<typename baseType,class unitType>
+TimeType<baseType,unitType> TimeType<baseType,unitType>::operator-(const TimeType<baseType,unitType> &tt) const{
+	TimeType<baseType,unitType> res(*this);
+	res -= tt;
+	return res;
+}
 
 template<typename baseType,class unitType>
 template<typename bT, class uT>
 bool TimeType<baseType,unitType>::operator==(const TimeType<bT,uT> &tt) const{
 	TimeType<baseType,unitType> t(tt);
-
-	return (t==t.time) && t.IsValid();
+	return (time==t.time) && t.IsValid();
 }
 
 template<typename baseType,class unitType>

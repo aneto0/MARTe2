@@ -25,11 +25,7 @@
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
 SPB    = VariableDescriptorLib.x  
-
-#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
-
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -39,12 +35,6 @@ LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
 
-
-#all: $(OBJS) $(SUBPROJ)
-#	echo  $(OBJSX)
-
-
-#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

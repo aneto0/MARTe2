@@ -35,7 +35,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "MatrixTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -56,211 +56,6 @@ TEST(MatrixGTest,TestConstructorOnHeap) {
     ASSERT_TRUE(matrixTest.TestConstructorOnHeap());
 }
 
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int8) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    int8 **matrix = new int8*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new int8[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i - j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt8) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    uint8 **matrix = new uint8*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new uint8[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int16) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    int16 **matrix = new int16*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new int16[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i - j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt16) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    uint16 **matrix = new uint16*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new uint16[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int32) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    int32 **matrix = new int32*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new int32[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i - j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt32) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    uint32 **matrix = new uint32*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new uint32[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_Int64) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    int64 **matrix = new int64*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new int64[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i - j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_UInt64) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    uint64 **matrix = new uint64*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new uint64[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j);
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_Float32) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    float32 **matrix = new float32*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new float32[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j) + 0.956 * i - 1.112 * j;
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-    delete [] matrix;
-}
-
-TEST(MatrixGTest,TestConstructorByPointerHeap_Float64) {
-    MatrixTest matrixTest;
-
-    const int32 nRows = 2;
-    const int32 nCols = 2;
-    float64 **matrix = new float64*[nRows];
-    for (int32 i = 0; i < nRows; i++) {
-        matrix[i] = new float64[nCols];
-        for (int32 j = 0; j < nCols; j++) {
-            matrix[i][j] = (i + j) + 0.956 * i - 1.112 * j;
-        }
-    }
-
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerHeap(matrix, nRows, nCols));
-
-    for (int32 i = 0; i < nRows; i++) {
-        delete [] matrix[i];
-    }
-
-    delete [] matrix;
-}
-
-
-
 TEST(MatrixGTest,TestConstructorByPointerStatic_Int8) {
     MatrixTest matrixTest;
 
@@ -274,7 +69,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int8) {
         }
     }
 
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_UInt8) {
@@ -290,7 +85,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt8) {
         }
     }
 
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_Int16) {
@@ -306,7 +101,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int16) {
         }
     }
 
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_UInt16) {
@@ -322,7 +117,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt16) {
         }
     }
 
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_Int32) {
@@ -337,7 +132,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int32) {
             matrix[i][j] = (i - j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_UInt32) {
@@ -351,7 +146,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt32) {
             matrix[i][j] = (i + j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_Int64) {
@@ -365,7 +160,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Int64) {
             matrix[i][j] = (i - j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_UInt64) {
@@ -379,7 +174,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_UInt64) {
             matrix[i][j] = (i + j);
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_Float32) {
@@ -393,7 +188,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Float32) {
             matrix[i][j] = (i + j) + 0.956 * i - 1.112 * j;
         }
     }
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByPointerStatic_Float64) {
@@ -408,7 +203,7 @@ TEST(MatrixGTest,TestConstructorByPointerStatic_Float64) {
         }
     }
 
-    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic(matrix, nRows, nCols));
+    ASSERT_TRUE(matrixTest.TestConstructorByPointerStatic((int32*)&matrix[0][0], nRows, nCols));
 }
 
 TEST(MatrixGTest,TestConstructorByTable_Int8) {
@@ -544,11 +339,6 @@ TEST(MatrixGTest,TestMatrixFunctionCallOperator_Heap) {
 TEST(MatrixGTest,TestGetDataPointer) {
     MatrixTest matrixTest;
     ASSERT_TRUE(matrixTest.TestGetDataPointer());
-}
-
-TEST(MatrixGTest,TestIsStaticDeclared) {
-    MatrixTest matrixTest;
-    ASSERT_TRUE(matrixTest.TestIsStaticDeclared());
 }
 
 TEST(MatrixGTest,TestProduct) {

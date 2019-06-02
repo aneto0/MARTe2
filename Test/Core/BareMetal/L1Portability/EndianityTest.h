@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Endianity.h"
-#include "MemoryOperationsHelper.h"
+#include "MemoryOperators.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -177,7 +177,7 @@ bool EndianityTest<T>::TestToBigEndian() {
     Endianity::ToBigEndian(valueBigEndian);
 
     //the system uses big endian if the be conversion returns the same number.
-    bool isBigEndian = MemoryOperationsHelper::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0;
+    bool isBigEndian = Memory::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -196,7 +196,7 @@ bool EndianityTest<T>::TestToLittleEndian() {
     Endianity::ToLittleEndian(valueLittleEndian);
 
     //the system uses little endian if the le conversion returns the same number.
-    bool isLittleEndian = MemoryOperationsHelper::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0;
+    bool isLittleEndian = Memory::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -215,7 +215,7 @@ bool EndianityTest<T>::TestFromBigEndian() {
     Endianity::FromBigEndian(valueBigEndian);
 
     //the system uses big endian if the be conversion returns the same number.
-    bool isBigEndian = MemoryOperationsHelper::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0;
+    bool isBigEndian = Memory::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -234,7 +234,7 @@ bool EndianityTest<T>::TestFromLittleEndian() {
     Endianity::FromLittleEndian(valueLittleEndian);
 
     //the system uses little endian if the le conversion returns the same number.
-    bool isLittleEndian = MemoryOperationsHelper::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0;
+    bool isLittleEndian = Memory::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -253,7 +253,7 @@ bool EndianityTest<T>::TestMemCopyToBigEndian() {
     Endianity::MemCopyToBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
 
     //if the system uses big endian each number in the array remains the same.
-    bool isBigEndian =  MemoryOperationsHelper::Compare(&testArray[0], &arrayBigEndian[0], 3 * sizeof(T)) == 0;
+    bool isBigEndian =  Memory::Compare(&testArray[0], &arrayBigEndian[0], 3 * sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -272,7 +272,7 @@ bool EndianityTest<T>::TestMemCopyToLittleEndian() {
     Endianity::MemCopyToLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
 
     //if the system uses little endian each number in the array remains the same.
-    bool isLittleEndian = MemoryOperationsHelper::Compare(&testArray[0], &arrayLittleEndian[0], 3 * sizeof(T)) == 0;
+    bool isLittleEndian = Memory::Compare(&testArray[0], &arrayLittleEndian[0], 3 * sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -291,7 +291,7 @@ bool EndianityTest<T>::TestMemCopyFromBigEndian() {
     Endianity::MemCopyFromBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
 
     //if the system uses big endian each number in the array remains the same.
-    bool isBigEndian = MemoryOperationsHelper::Compare(&testArray[0], &arrayBigEndian[0], 3 * sizeof(T)) == 0;
+    bool isBigEndian = Memory::Compare(&testArray[0], &arrayBigEndian[0], 3 * sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -310,7 +310,7 @@ bool EndianityTest<T>::TestMemCopyFromLittleEndian() {
     Endianity::MemCopyFromLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
 
     //if the system uses little endian each number in the array remains the same.
-    bool isLittleEndian = MemoryOperationsHelper::Compare(&testArray[0], &arrayLittleEndian[0], 3 * sizeof(T)) == 0;
+    bool isLittleEndian = Memory::Compare(&testArray[0], &arrayLittleEndian[0], 3 * sizeof(T)) == 0;
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
@@ -335,8 +335,8 @@ bool EndianityTest<T>::TestToFromEndian() {
     Endianity::FromBigEndian(valueBigEndian);
 
     //the value must remain the same after the opposite conversions
-    return (MemoryOperationsHelper::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0)
-            && (MemoryOperationsHelper::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0);
+    return (Memory::Compare(&testValue, &valueLittleEndian, sizeof(T)) == 0)
+            && (Memory::Compare(&testValue, &valueBigEndian, sizeof(T)) == 0);
 }
 
 template<class T>
@@ -350,14 +350,14 @@ bool EndianityTest<T>::TestMemCopyToFromEndian() {
     Endianity::MemCopyFromLittleEndian((T *) arrayToFrom, (T *) arrayLittleEndian, 3);
 
     //Each element should remain the same
-    bool okLittleEndian = MemoryOperationsHelper::Compare(&testArray[0], &arrayToFrom[0], 3 * sizeof(T)) == 0;
+    bool okLittleEndian = Memory::Compare(&testArray[0], &arrayToFrom[0], 3 * sizeof(T)) == 0;
 
     //copy the array to big endian and then from big endian
     Endianity::MemCopyToBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
     Endianity::MemCopyFromBigEndian((T *) arrayToFrom, (T *) arrayBigEndian, 3);
 
     //Each element should remain the same
-    bool okBigEndian = MemoryOperationsHelper::Compare(&testArray[0], &arrayToFrom[0], 3 * sizeof(T)) == 0;
+    bool okBigEndian = Memory::Compare(&testArray[0], &arrayToFrom[0], 3 * sizeof(T)) == 0;
 
     return (okLittleEndian && okBigEndian);
 }

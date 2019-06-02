@@ -100,7 +100,7 @@ private:
     /**
      * String used to initialize a FormatDescripto object
      */
-    const char8* string;
+    CCString string;
 
     /**
      * Format descriptor object used during the test.

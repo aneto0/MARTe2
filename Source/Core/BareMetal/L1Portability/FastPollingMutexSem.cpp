@@ -71,7 +71,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const Ticks &timeout,co
     ticksStop += HighResolutionTimer::Counter();
 
     ErrorManagement::ErrorType ret;
-	ret.parametersError = !timeout.IsPositive();
+	ret.parametersError = !timeout.IsPositive() ;
 	REPORT_ERROR(ret,"Invalid timeout");
 
     while ((!Atomic::TestAndSet(flag))&& (ret)) {

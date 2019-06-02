@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "FastMath.h"
+#include "../../../../Source/Core/BareMetal/L0Types/FastMath.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/

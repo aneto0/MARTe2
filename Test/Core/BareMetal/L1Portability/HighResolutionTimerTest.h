@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../../Source/Core/BareMetal/L0Types/GeneralDefinitions.h"
+#include "GeneralDefinitions.h"
 
 using namespace MARTe;
 
@@ -77,14 +77,6 @@ public:
      * @return true if the measured time is more or less the sleep time,
      */
     bool TestCounter32(float64 sleepTime);
-
-    /**
-     * @brief Test the HighResolutionTimer::TicksToTime function.
-     * @details converts the time passed by argument in ticks and checks if HighResolutionTimer::TicksToTime returns the same time.
-     * @param[in] sleepTime is the time argument.
-     * @return true if the conversion from ticks to time is correct.
-     */
-    bool TestTicksToTime();
 
     /**
      * @brief Test the time stamp returned by HighResolutionTimer::GetTimeStamp.

@@ -24,14 +24,11 @@
 #
 #############################################################
 OBJSX= 
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Logger.x L4Messages.x L5GAMs.x L6App.x
-APPS = $(BUILD_DIR)/MARTeCoreB$(LIBEXT) \
-       $(BUILD_DIR)/MARTeCoreB.def
-
+ROOT_DIR=../../..
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Logger.x L4Messages.x L5GAMs.x L6App.x
 
-ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesB$(LIBEXT)
@@ -44,13 +41,7 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppB$(LIBEXT)
 
-
-#all: $(OBJS) $(SUBPROJ) \
-#		$(BUILD_DIR)/MARTeCoreB$(LIBEXT) \
-#		$(BUILD_DIR)/MARTeCoreB.def 
-#	echo  $(OBJS)
-
-
+BUILD_PRODUCT = $(BUILD_DIR)/MARTeCoreB$(LIBEXT)  $(BUILD_DIR)/MARTeCoreB.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

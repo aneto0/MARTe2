@@ -25,10 +25,7 @@
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
 SPB=Environment/$(ENVIRONMENT).x
-
-OBJSX=
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -39,12 +36,7 @@ INCLUDES+=-I../../BareMetal/L3Streams
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
+BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityF.def
-
-	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

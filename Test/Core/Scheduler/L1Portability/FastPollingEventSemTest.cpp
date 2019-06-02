@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "FastPollingEventSemTest.h"
+#include "../../Scheduler/L1Portability/FastPollingEventSemTest.h"
+
 #include "Sleep.h"
 #include "Atomic.h"
 #include "FlagsType.h"

@@ -27,32 +27,17 @@
 PACKAGE=Core/FileSystem/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
-OBJSX=  BasicFile.x \
-		BasicSocket.x \
-		BasicTCPSocket.x \
-		BasicUDPSocket.x \
-		Directory.x \
-		DirectoryScanner.x \
-		InternetHost.x \
-		InternetService.x \
-		Select.x 
-		
+	
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
-
 INCLUDES+=-I../../../../BareMetal/L0Types
 INCLUDES+=-I../../../../BareMetal/L1Portability
 INCLUDES+=-I../../../../BareMetal/L2Objects
 INCLUDES+=-I../../../../BareMetal/L3Streams
 INCLUDES+=-I../../../../Scheduler/L1Portability
 
-all: $(OBJS) $(CPPS) \
-     $(BUILD_DIR)/L1Portability$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L1Portability$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

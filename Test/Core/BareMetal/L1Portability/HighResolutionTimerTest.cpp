@@ -31,6 +31,7 @@
 #include "HighResolutionTimerTest.h"
 #include "HighResolutionTimer.h"
 #include "Sleep.h"
+#include "Ticks.h"
 
 using namespace MARTe;
 
@@ -59,44 +60,36 @@ bool HighResolutionTimerTest::TestPeriod() {
 }
 
 bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
-    uint64 counter_1 = 0;
-    uint64 counter = 0;
-    float64 time;
-    counter_1 = HighResolutionTimer::Counter();
-    Sleep::Sec(sleepTime);
-    counter = HighResolutionTimer::Counter();
-    time = HighResolutionTimer::TicksToTime(int64(counter), int64(counter_1));
-    return Tolerance(time, sleepTime, sleepTime * .1);
+//    uint64 counter_1 = 0;
+//    uint64 counter = 0;
+//    float64 time;
+    Ticks t1 = HighResolutionTimer::GetTicks();
+//    counter_1 = HighResolutionTimer::Counter();
+    Sleep::Long(sleepTime,Units::s);
+    Ticks t2 = HighResolutionTimer::GetTicks();
+//    counter = HighResolutionTimer::Counter();
+	Ticks sleepTimeTicks(sleepTime,Units::ticks);
+    Ticks err = t2 - t1 - sleepTimeTicks;
+    Ticks tolerance(sleepTime*0.1,Units::s);
+
+    return err.GetTimeRaw() < tolerance.GetTimeRaw();
+//    time = HighResolutionTimer::TicksToTime(int64(counter), int64(counter_1));
+//    return Tolerance(time, sleepTime, sleepTime * .1);
 }
+#if 1
 
 bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     uint32 counter_1 = 0;
     uint32 counter = 0;
     float64 time;
     counter_1 = HighResolutionTimer::Counter32();
-    Sleep::Sec(sleepTime);
+    Sleep::Long(sleepTime,Units::s);
     counter = HighResolutionTimer::Counter32();
     time = (counter - counter_1) * HighResolutionTimer::Period();
     return Tolerance(time, sleepTime, sleepTime * .5);
 }
 
-bool HighResolutionTimerTest::TestTicksToTime() {
-    bool retValue;
-    float64 sleepTime;
-    //minimum time
-    sleepTime = 0;
-    int64 ticks = sleepTime * HighResolutionTimer::Frequency();
-    retValue = Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
-    //Arbitrary time
-    sleepTime = 5;
-    ticks = sleepTime * HighResolutionTimer::Frequency();
-    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
-    //large time
-    sleepTime = 123456789;
-    ticks = sleepTime * HighResolutionTimer::Frequency();
-    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
-    return retValue;
-}
+
 
 bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
     TimeStamp myTimeStamp1;
@@ -108,13 +101,19 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
     if (tolerance == 0) {
         tolerance = 1;
     }
-    HighResolutionTimer::GetTimeStamp(myTimeStamp1);
-    Sleep::MSec(millisecs);
-    HighResolutionTimer::GetTimeStamp(myTimeStamp2);
+
+
+    myTimeStamp1.GetTime();
+    Sleep::Short(millisecs,Units::ms);
+    myTimeStamp2.GetTime();
+
     //it could fail if you are unlucky and launch the test across one month and the other at least!
-    int32 elapsed = (myTimeStamp2.GetDay() - myTimeStamp1.GetDay()) * conversions[3] + (myTimeStamp2.GetHour()- myTimeStamp1.GetHour()) * conversions[2]
-            + (myTimeStamp2.GetMinutes()- myTimeStamp1.GetMinutes()) * conversions[1] + (myTimeStamp2.GetSeconds()- myTimeStamp1.GetSeconds()) * conversions[0]
-            + ((int32)(myTimeStamp2.GetMicroseconds() - myTimeStamp1.GetMicroseconds())) / conversions[0];
+    int32 elapsed = (int32)(myTimeStamp2.GetDay() - myTimeStamp1.GetDay()) * conversions[3];
+    elapsed += (int32)(myTimeStamp2.GetHour()- myTimeStamp1.GetHour()) * conversions[2];
+    elapsed += (int32)(myTimeStamp2.GetMinutes()- myTimeStamp1.GetMinutes()) * conversions[1];
+    elapsed += (int32)(myTimeStamp2.GetSeconds()- myTimeStamp1.GetSeconds()) * conversions[0];
+    elapsed += ((int32)(myTimeStamp2.GetMicroseconds() - myTimeStamp1.GetMicroseconds())) / conversions[0];
+
     int32 diff = (int32) (elapsed - millisecs);
 
     if (diff > tolerance || diff < -tolerance) {
@@ -137,12 +136,12 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
 }
 
 bool HighResolutionTimerTest::TestPeriodFrequency() {
-    int64 HRTfrequency = HighResolutionTimer::Frequency();
+    uint64 HRTfrequency = HighResolutionTimer::Frequency();
     float64 HRTperiod = HighResolutionTimer::Period();
     float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
     return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }
 
-
+#endif
 

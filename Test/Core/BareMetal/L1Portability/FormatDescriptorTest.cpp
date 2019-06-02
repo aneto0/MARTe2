@@ -44,7 +44,6 @@ using namespace MARTe;
 
 FormatDescriptorTest::FormatDescriptorTest() {
     retVal = false;
-    string = NULL;
 }
 
 bool FormatDescriptorTest::TestInitialiseFromString(){

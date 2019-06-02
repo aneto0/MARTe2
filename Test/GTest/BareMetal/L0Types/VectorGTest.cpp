@@ -35,8 +35,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "VectorTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -138,119 +139,119 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Int8) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    int8 *array = (int8*) HeapManager::Malloc(sizeof(int8) * size);
+    int8 *array = (int8*) malloc(sizeof(int8) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = -i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_UInt8) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    uint8 *array = (uint8*) HeapManager::Malloc(sizeof(uint8) * size);
+    uint8 *array = (uint8*) malloc(sizeof(uint8) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_Int16) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    int16 *array = (int16*) HeapManager::Malloc(sizeof(int16) * size);
+    int16 *array = (int16*) malloc(sizeof(int16) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = -i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_UInt16) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    uint16 *array = (uint16*) HeapManager::Malloc(sizeof(uint16) * size);
+    uint16 *array = (uint16*) malloc(sizeof(uint16) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_Int32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    int32 *array = (int32*) HeapManager::Malloc(sizeof(int32) * size);
+    int32 *array = (int32*) malloc(sizeof(int32) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = -i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_UInt32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    uint32 *array = (uint32*) HeapManager::Malloc(sizeof(uint32) * size);
+    uint32 *array = (uint32*) malloc(sizeof(uint32) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_Int64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    int64 *array = (int64*) HeapManager::Malloc(sizeof(int64) * size);
+    int64 *array = (int64*) malloc(sizeof(int64) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = -i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_UInt64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    uint64 *array = (uint64*) HeapManager::Malloc(sizeof(uint64) * size);
+    uint64 *array = (uint64*) malloc(sizeof(uint64) * size);
 
     for (uint32 i = 0; i < size; i++) {
         array[i] = i;
     }
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_Float32) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    float32 *array = (float32*) HeapManager::Malloc(sizeof(float32) * size);
+    float32 *array = (float32*) malloc(sizeof(float32) * size);
 
     array[0] = 100.001E+3;
     array[1] = 12345.12345;
@@ -259,14 +260,14 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Float32) {
 
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByPointerHeap_Float64) {
     VectorTest vectorTest;
 
     uint32 size = 4;
-    float64 *array = (float64*) HeapManager::Malloc(sizeof(float64) * size);
+    float64 *array = (float64*) malloc(sizeof(float64) * size);
 
     array[0] = 100.001E+3;
     array[1] = 12345.12345;
@@ -275,7 +276,7 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Float64) {
 
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
-    HeapManager::Free((void*&) array);
+    free(array);
 }
 
 TEST(VectorGTest,TestConstructorByTable_Int8) {

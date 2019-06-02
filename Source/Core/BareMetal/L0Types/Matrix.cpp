@@ -26,7 +26,7 @@
 namespace MARTe{
 
 
-template<> inline
+template<>
 bool Matrix<float32>::Determinant(float32 &det) const {
 
     bool ret = (numberOfRows == numberOfColumns);
@@ -63,7 +63,7 @@ bool Matrix<float32>::Determinant(float32 &det) const {
     return ret;
 }
 
-template<> inline
+template<>
 bool Matrix<float64>::Determinant(float64 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
@@ -98,7 +98,7 @@ bool Matrix<float64>::Determinant(float64 &det) const {
     return ret;
 }
 
-template<> inline
+template<>
 bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
     bool cond2 = (inverse.numberOfRows == numberOfRows);
@@ -130,7 +130,7 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
                 }
                 float32 subDet = 0.0f;
                 subMatrix.Determinant(subDet);
-                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
+                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0F) : (-1.0F);
                 inverse[j][i] = (subDet * sign) / determinant;
             }
         }
@@ -139,7 +139,7 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
     return ret;
 }
 
-template<> inline
+template<>
 bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
     bool cond2 = (inverse.numberOfRows == numberOfRows);

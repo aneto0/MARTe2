@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "FastPollingEventSem.h"
-#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -89,15 +88,13 @@ public:
      * @return true if the calls to FastPollingMutexSem::FastWait returns true and if the threads waits until the post function
      * is triggered by the main thread.
      */
-    bool TestFastWait(int32 nOfThreads,
-                      TimeoutType timeout);
+    bool TestFastWait(int32 nOfThreads,const Ticks &timeout );
 
 
     /**
      * @see TestFastLock with FastPollingMutexSem initalised by external spin-lock.
      */
-    bool TestFastWaitExternal(int32 nOfThreads,
-                      TimeoutType timeout);
+    bool TestFastWaitExternal(int32 nOfThreads,const Ticks &timeout);
 
 
     /**
@@ -108,14 +105,11 @@ public:
      * @return true if the calls to FastPollingMutexSem::FastWait returns true and if the threads waits until the post function
      * is triggered by the main thread.
      */
-    bool TestFastPost(int32 nOfThreads,
-                        TimeoutType timeout);
-
+    bool TestFastPost(int32 nOfThreads,const Ticks &timeout);
     /**
      * @see TestFastUnLock with FastPollingMutexSem initalised by external spin-lock.
      */
-    bool TestFastPostExternal(int32 nOfThreads,
-                        TimeoutType timeout);
+    bool TestFastPostExternal(int32 nOfThreads,const Ticks &timeout);
 
 
     /**
@@ -160,7 +154,7 @@ private:
     /**
      * timeout to be used for the locking test
      */
-    TimeoutType testEventTimeout;
+    Ticks testEventTimeout;
 
     /**
      * Shared variable that is protected by the unit testing functions
@@ -198,8 +192,7 @@ private:
      * @param[in] functionToTest the function callback to be called by the threads.
      * @return the value returned by the functionToTest.
      */
-    bool GenericEventTestCaller(int32 nOfThreads,
-                                TimeoutType timeout,
+    bool GenericEventTestCaller(int32 nOfThreads,const Ticks &timeout,
                                 ThreadFunctionType functionToTest);
 
     /**

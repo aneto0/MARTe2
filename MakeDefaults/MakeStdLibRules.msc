@@ -38,7 +38,7 @@ $(BUILD_DIR)\\%.obj : Environment/$(ENVIRONMENT)/%.cpp
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  Environment/Windows/$*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
 
 $(BUILD_DIR)\\%.obj : %.c
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) $*.c  $(ASSEMBLER)
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.c  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
 
 
 $(BUILD_DIR)\\%.obj : %.f
@@ -78,7 +78,7 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -Fe$@
-	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\windows\expdef.exe $@ > $(@:%.dll=%.def)
+	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\ExpDef\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
 	rm createLibrary
 
@@ -94,7 +94,7 @@ $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
-	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\windows\expdef.exe $< > $@
+	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\ExpDef\expdef.exe $< > $@
 	@rm -f $(BUILD_DIR)\dummy.dll 
 
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
@@ -141,6 +141,10 @@ clean:
 test: 	
 	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=TEST
 
+.PHONY: localTest
+localTest: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=LOCALTEST
+
 .PHONY: all
 all: 	
 	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=ALL
@@ -168,10 +172,11 @@ do_cleandir:
 .PHONY: do_showInfo
 do_showInfo: 	
 	@echo choose among 
-	@echo 1) make Makefile.msc build   to build libraries
-	@echo 2) make Makefile.msc clean   to remove any produced file
-	@echo 3) make Makefile.msc test    to build test programs
-	@echo 4) make Makefile.msc all     to build libraries and test programs
+	@echo 1) make Makefile.msc build     to build libraries
+	@echo 2) make Makefile.msc clean     to remove any produced file
+	@echo 3) make Makefile.msc test      to build test programs after all the libraries
+	@echo 4) make Makefile.msc localTest to build test programs level by level
+	@echo 5) make Makefile.msc all       to build libraries and test programs
     
 
 ifeq (CLEAN,$(MAKEMODE))
@@ -183,17 +188,22 @@ DEPENDS = do_showInfo
 endif
 
 ifeq (BUILD,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJ) $(APPS)
+DEPENDS = $(OBJS) $(SUBPROJ) $(BUILD_PRODUCT)
 include depends.$(TARGET)
 endif
 
 ifeq (TEST,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJT) $(APPS)
+DEPENDS = $(OBJS) $(SUBPROJT) $(BUILD_PRODUCT)
+include depends.$(TARGET)
+endif
+
+ifeq (LOCALTEST,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT)
 include depends.$(TARGET)
 endif
 
 ifeq (ALL,$(MAKEMODE))
-DEPENDS = $(OBJS)  $(SUBPROJ) $(SUBPROJT) $(APPS)
+DEPENDS = $(OBJS)  $(SUBPROJLT) $(SUBPROJT) $(BUILD_PRODUCT)
 include depends.$(TARGET)
 endif
 		

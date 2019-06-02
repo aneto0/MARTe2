@@ -56,14 +56,6 @@ public:
     bool TestConstructorOnHeap();
 
     /**
-     * @brief Tests the constructor passing a double pointer which represents a matrix on heap.
-     */
-    template<typename T>
-    bool TestConstructorByPointerHeap(T** matrix,
-                                      uint32 nRows,
-                                      uint32 nCols);
-
-    /**
      * @brief Tests the constructor passing a pointer to a static memory.
      */
     template<typename T>
@@ -204,24 +196,6 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename T>
-bool MatrixTest::TestConstructorByPointerHeap(T** matrix,
-                                              uint32 nRows,
-                                              uint32 nCols) {
-
-    Matrix<T> myMatrix(matrix, nRows, nCols);
-
-    for (uint32 i = 0; i < nRows; i++) {
-        for (uint32 j = 0; j < nCols; j++) {
-            if (myMatrix[i][j] != matrix[i][j]) {
-                return false;
-            }
-        }
-    }
-
-    return !myMatrix.IsStaticDeclared();
-
-}
 
 template<typename T>
 bool MatrixTest::TestConstructorByPointerStatic(T* matrix,
@@ -238,8 +212,7 @@ bool MatrixTest::TestConstructorByPointerStatic(T* matrix,
         }
     }
 
-    return myMatrix.IsStaticDeclared();
-
+    return true;
 }
 
 template<typename T, uint32 nRows, uint32 nCols>
@@ -255,7 +228,7 @@ bool MatrixTest::TestConstructorByTable(T (&matrix)[nRows][nCols]) {
         }
     }
 
-    return myMatrix.IsStaticDeclared();
+    return true;
 }
 
 #endif /* MATRIXTEST_H_ */

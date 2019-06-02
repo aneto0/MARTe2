@@ -56,7 +56,7 @@ inline void Swap32(volatile void *x,
                    uint32 sizer) {
 
     unsigned long *xx = (unsigned long *) x;
-    for (int i = 0; i < sizer; i++) {
+    for (uint32 i = 0u; i < sizer; i++) {
         xx[i] = _byteswap_ulong(xx[i]);
     }
 }
@@ -68,7 +68,7 @@ inline void MemCopySwap32(volatile void *dest,
     unsigned long *srcCopy = (unsigned long *) src;
     unsigned long *destCopy = (unsigned long *) dest;
 
-    for (int i = 0; i < sizer; i++) {
+    for (uint32 i = 0u; i < sizer; i++) {
         destCopy[i] = _byteswap_ulong(srcCopy[i]);
     }
 }
@@ -82,7 +82,7 @@ inline void Swap16(volatile void *x,
                    uint32 sizer) {
 
     unsigned short *xx = (unsigned short *) x;
-    for (int i = 0; i < sizer; i++) {
+    for (uint32 i = 0u; i < sizer; i++) {
         xx[i] = _byteswap_ushort(xx[i]);
     }
 }
@@ -94,7 +94,7 @@ inline void MemCopySwap16(volatile void *dest,
     unsigned short *srcCopy = (unsigned short *) src;
     unsigned short *destCopy = (unsigned short *) dest;
 
-    for (int i = 0; i < sizer; i++) {
+    for (uint32 i = 0u; i < sizer; i++) {
         destCopy[i] = _byteswap_ushort(srcCopy[i]);
     }
 }
@@ -115,7 +115,7 @@ inline void MemCopySwap64(volatile void *dest,
                           uint32 sizer) {
     int64 *s = (int64 *) src;
     int64 *d = (int64 *) dest;
-    for (uint32 i = 0; i < sizer; i++) {
+    for (uint32 i = 0u; i < sizer; i++) {
         *d = *s;
         Swap64(d);
         d++;

@@ -23,14 +23,11 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-
-OBJSX=	File.x \
-    TCPSocket.x \
-    UDPSocket.x
         
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
@@ -40,12 +37,8 @@ INCLUDES+=-I../../BareMetal/L2Objects
 INCLUDES+=-I../../BareMetal/L3Streams
 INCLUDES+=-I../L1Portability
 
-all: $(OBJS)    \
-	        $(BUILD_DIR)/L3StreamsF$(LIBEXT) \
+BUILD_PRODUCT = $(BUILD_DIR)/L3StreamsF$(LIBEXT) \
 	        $(BUILD_DIR)/L3StreamsF.def
-	echo  $(OBJS)
-
-include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

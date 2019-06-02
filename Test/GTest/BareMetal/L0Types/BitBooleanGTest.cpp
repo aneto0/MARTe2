@@ -34,8 +34,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+//#include "gtest/gtest.h"
 #include "BitBooleanTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -99,11 +100,12 @@ TEST(BitBooleanGTest,TestBoolCastS64) {
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-
+/*
 TEST(BitBooleanGTest,TestAnyTypeCast) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestAnyTypeCast());
 }
+*/
 
 TEST(BitBooleanGTest,TestNumberOfBitsU8) {
     BitBooleanTest<uint8> bitbool;

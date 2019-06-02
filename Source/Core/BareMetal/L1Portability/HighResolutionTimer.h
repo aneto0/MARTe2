@@ -38,6 +38,7 @@
 #include "GeneralDefinitions.h"
 #include "TimeCalibration.h"
 //#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
+#include "Ticks.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -53,6 +54,14 @@ namespace MARTe {
          * @details Reads the cpu ticks on an 64 bits integer.
          */
         inline uint64 Counter();
+
+        /**
+         * @brief A high resolution 64-bit time counter.
+         * @details Reads the cpu ticks on an 64 bits integer.
+         */
+        inline Ticks GetTicks(){
+        	return Ticks(Counter(),Units::ticks);
+        }
 
         /**
          * @brief A high resolution 32-bit time counter.
@@ -71,6 +80,9 @@ namespace MARTe {
          * @return the current frequency of the cpu.
          */
         inline uint64 Frequency();
+
+
+
 #if 0
         /**
          * @brief Converts HighResolutionTimer ticks to time in seconds.
@@ -99,5 +111,6 @@ namespace MARTe {
         }
 #endif
     }
+
 }
 #endif /* HIGHRESOLUTIONTIME_H_ */

@@ -26,12 +26,6 @@ PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-
-OBJSX = CircularBufferThreadInputDataSource.x \
-	GAMScheduler.x \
-	MemoryMapAsyncOutputBroker.x \
-	MemoryMapAsyncTriggerOutputBroker.x 
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../BareMetal/L0Types
@@ -44,12 +38,7 @@ INCLUDES += -I../../BareMetal/L5GAMs
 INCLUDES += -I../../Scheduler/L1Portability
 INCLUDES += -I../../Scheduler/L3Services
 
-
-all: $(OBJS) $(SUBPROJ)   \
-	$(BUILD_DIR)/L5GAMsS$(LIBEXT) \
-	$(BUILD_DIR)/L5GAMsS.def
-	echo  $(OBJS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L5GAMsS$(LIBEXT) \
+        	$(BUILD_DIR)/L5GAMsS.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Vector.h"
+#include <stdlib.h>
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -126,7 +127,8 @@ bool VectorTest::TestConstructorByPointerHeap(T* array,
     Vector<T> myVector(array, nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
-        if (Memory::Compare(&myVector[i], &array[i], sizeof(T))) {
+
+    	if (memcmp(&myVector[i], &array[i], sizeof(T)) != 0){
             return false;
         }
     }

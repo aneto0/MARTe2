@@ -30,7 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TimeoutTypeTest.h"
-#include "stdio.h"
+#include "TimeType.h"
+#include "MilliSeconds.h"
+#include "Ticks.h"
+#include "HighResolutionTimer.h"
+
 
 using namespace MARTe;
 
@@ -43,93 +47,71 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 
 TimeoutTypeTest::TimeoutTypeTest() {
-    retValue = true;
 }
 
 TimeoutTypeTest::~TimeoutTypeTest() {
 }
 
 bool TimeoutTypeTest::TestConstructorDefault() {
-    TimeoutType time;
-    return (TTInfiniteWait == time.GetTimeoutMSec());
+	MilliSeconds time;
+    return (time.GetTimeRaw()  == 0);
 }
 
 bool TimeoutTypeTest::TestConstructorNotDefault(uint32 msec) {
-    TimeoutType time(msec);
-    return (msec == time.GetTimeoutMSec());
+	MilliSeconds time(msec,Units::ms);
+    return (msec == time.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestSetTimeoutSec(double sec) {
-    TimeoutType time;
-    time.SetTimeoutSec(sec);
-    return (sec * 1000 == time.GetTimeoutMSec());
+	MilliSeconds time(sec,Units::s);
+    return (sec * 1000 == time.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestSetTimeoutHighResolutionTimerTicks() {
-    TimeoutType timeout;
     int64 ticks = 100000000;
-    uint32 expectedTimeout;
-    timeout.SetTimeoutHighResolutionTimerTicks(ticks);
-    expectedTimeout = ticks * HighResolutionTimer::Period()*1000;
-    retValue = (expectedTimeout == timeout.GetTimeoutMSec());
-    return retValue;
+	MilliSeconds time(ticks,Units::ticks);
+    int64 expectedTimeout;
+    expectedTimeout = ticks * HighResolutionTimer::Period() * 1000;
+    return (expectedTimeout == time.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestHighResolutionTimerTicks() {
-    TimeoutType timeout;
     int32 msecTimeout = 100;
+	Ticks time(double(msecTimeout)*1e-3,Units::s);
     uint64 expectedTicks;
-    timeout.SetTimeoutSec(double(msecTimeout)*1e-3);
     expectedTicks = uint64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
-    return (expectedTicks == timeout.HighResolutionTimerTicks());
+    return (expectedTicks == time.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestSubstractAssignOperator() {
-    int32 intialTimeout = 100;
-    TimeoutType timeout(intialTimeout);
-    int32 substractValue = 60;
-    int32 expectedTime = intialTimeout-substractValue;
-    timeout -= substractValue;
-    retValue = uint32(expectedTime) == timeout.GetTimeoutMSec();
-    timeout -= substractValue;
-    retValue &= (0 == timeout.GetTimeoutMSec());
-    return retValue;
+    uint32 intialTimeout = 100;
+    uint32 substractValue = 60;
+    uint32 expectedTime = intialTimeout-substractValue;
+
+    MilliSeconds time(intialTimeout,Units::ms);
+    time -= MilliSeconds(substractValue,Units::ms);
+
+    return  (expectedTime == time.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestEqualComparison() {
-    TimeoutType timeout1(100);
-    TimeoutType timeout2(100);
-    TimeoutType timeout3(10);
-    retValue = (timeout1 == timeout2);
-    retValue &= !(timeout1 == timeout3);
-    return retValue;
+    MilliSeconds time1(100,Units::ms);
+    MilliSeconds time2(100,Units::ms);
+    MilliSeconds time3(10,Units::ms);
+    return  ((time1 == time2) && (time2 != time3));
 }
 
-bool TimeoutTypeTest::TestDiffComparison() {
-    TimeoutType timeout1(100);
-    TimeoutType timeout2(100);
-    TimeoutType timeout3(10);
-    retValue = !(timeout1 != timeout2);
-    retValue &= timeout1 != timeout3;
-    return retValue;
-}
 
 bool TimeoutTypeTest::TestAssignOperator() {
-    TimeoutType timeout1(100);
-    TimeoutType timeout2;
-    timeout2 = timeout1;
-    return (timeout1.GetTimeoutMSec() == timeout2.GetTimeoutMSec());
+    MilliSeconds time1(100,Units::ms);
+    MilliSeconds time2;
+    time2 = time1;
+    return (time1.GetTimeRaw() == time2.GetTimeRaw());
 }
 
 bool TimeoutTypeTest::TestIsFinite() {
-    TimeoutType timeout1;
-    TimeoutType timeout2(100);
-    retValue = !timeout1.IsFinite();
-    retValue &= timeout2.IsFinite();
-    return retValue;
+    MilliSeconds time1(MilliSeconds::Infinite);
+    MilliSeconds time2(100,Units::ms);
+    return time1.IsInfinite() && !time2.IsInfinite();
 }
 
-bool TimeoutTypeTest::TestGetTimeoutMSec() {
-    TimeoutType timeout;
-    return (TTInfiniteWait == timeout.GetTimeoutMSec());
-}

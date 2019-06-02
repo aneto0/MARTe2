@@ -30,8 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AuxHeap.h"
-#include "StringHelper.h"
-#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,16 +45,11 @@ namespace MARTe {
  */
 AuxHeap::AuxHeap() {
 
-    /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
-    firstAddress = 0U;
-    lastAddress = 0U;
 }
 /**
  * @brief destructor
  */
 AuxHeap::~AuxHeap() {
-    lastAddress = 0U;
-    firstAddress = 0U;
 }
 
 /**
@@ -65,35 +58,7 @@ AuxHeap::~AuxHeap() {
  */
 /*lint -e{586} use of malloc function (deprecated) */
 void *AuxHeap::Malloc(const uint32 size) {
-    //void *pointer = malloc(size);
-    //void *pointer = new char8[size];
-
-    void* pointer = NULL_PTR(void*); 
-
-    if (size != 0u) {
-        pointer = GlobalObjectsDatabase::Instance().GetStandardHeap().Malloc(static_cast<osulong>(size));
-    }
-
-    if (pointer != NULL) {
-
-        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-         * in order to be able to update the range of addresses provided by this heap
-         * uintp is an integer type that has by design the same span as a pointer in all systems*/
-        uintp address = reinterpret_cast<uintp>(pointer);
-        if ((firstAddress > address) || (firstAddress == 0U)) {
-            firstAddress = address;
-        }
-        address += size;
-        if ((lastAddress < address) || (lastAddress == 0U)) {
-            lastAddress = address;
-        }
-
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
-    }
-    return pointer;
-
+	return HeapManager::Malloc(size);
 }
 
 /**
@@ -102,114 +67,13 @@ void *AuxHeap::Malloc(const uint32 size) {
  */
 /*lint -e{586} use of free function (deprecated) */
 void AuxHeap::Free(void *&data) {
-    if (data != NULL) {
-        GlobalObjectsDatabase::Instance().GetStandardHeap().Free(data);
-    }
-//    delete[] (reinterpret_cast<char8 *>(data));
-    data = NULL_PTR(void *);
-//    free(data);
+	return HeapManager::Free(data);
 }
 
 /*lint -e{586} use of realloc function (deprecated) */
-void *AuxHeap::Realloc(void *&data,
-                       const uint32 newSize) {
+void *AuxHeap::Realloc(void *&data,const uint32 newSize) {
 
-    if (data == NULL) {
-        data = AuxHeap::Malloc(newSize);
-    }
-    else {
-        if (newSize == 0u) {
-            AuxHeap::Free(data);
-        }
-        else {
-            data = GlobalObjectsDatabase::Instance().GetStandardHeap().Realloc(data, static_cast<osulong>(newSize));
-            if (data != NULL) {
-                /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-                 * in order to be able to update the range of addresses provided by this heap
-                 * uintp is an integer type that has by design the same span as a pointer in all systems*/
-                uintp address = reinterpret_cast<uintp>(data);
-                if ((firstAddress > address) || (firstAddress == 0U)) {
-                    firstAddress = address;
-                }
-                address += newSize;
-                if ((lastAddress < address) || (lastAddress == 0U)) {
-                    lastAddress = address;
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()");
-            }
-        }
-    }
-    return data;
-
-}
-
-/*lint -e{925} cast pointer to pointer required */
-void *AuxHeap::Duplicate(const void * const data,
-                         uint32 size) {
-
-    void *duplicate = NULL_PTR(void *);
-
-    // check if 0 zerminated copy to be done
-    if (size == 0U) {
-        const char8* inputData = static_cast<const char8 *>(data);
-        size = StringHelper::Length(inputData) + 1u;
-    }
-    duplicate = AuxHeap::Malloc(size);
-    if (duplicate != NULL) {
-        const char8 *source = static_cast<const char8 *>(data);
-        char8 *destination = static_cast<char8 *>(duplicate);
-        uint32 i;
-        for (i = 0u; i < size; i++) {
-            *destination = *source;
-            destination++;
-            source++;
-        } //copy loop
-    } //check Malloc success
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
-    }
-
-    if (duplicate != NULL) {
-        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-         * in order to be able to update the range of addresses provided by this heap
-         * uintp is an integer type that has by design the same span as a pointer in all systems*/
-        uintp address = reinterpret_cast<uintp>(duplicate);
-        if ((firstAddress > address) || (firstAddress == 0U)) {
-            firstAddress = address;
-        }
-        address += size;
-        if ((lastAddress < address) || (lastAddress == 0U)) {
-            lastAddress = address;
-        }
-    }
-
-    return duplicate;
-}
-
-/**
- * @brief start of range of memory addresses served by this heap.
- * @return first memory address
- */
-uintp AuxHeap::FirstAddress() const {
-    return firstAddress;
-}
-
-/**
- * @brief end (inclusive) of range of memory addresses served by this heap.
- * @return last memory address
- */
-uintp AuxHeap::LastAddress() const {
-    return lastAddress;
-}
-
-/**
- * @brief Returns the name of the heap
- * @return name of the heap
- */
-const char8 *AuxHeap::Name() const {
-    return "AuxHeap";
+	return HeapManager::Realloc(data,newSize);
 }
 
 }

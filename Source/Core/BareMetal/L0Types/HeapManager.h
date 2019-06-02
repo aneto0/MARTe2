@@ -48,7 +48,7 @@
 namespace MARTe{
 
 /**
- * contains objects and function to manage heaps and alloacte memory and objects
+ * contains objects and function to manage heaps and allocate memory and objects
  */
 namespace HeapManager{
 

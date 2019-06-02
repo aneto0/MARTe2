@@ -25,7 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */

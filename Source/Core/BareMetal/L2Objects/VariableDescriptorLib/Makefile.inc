@@ -26,17 +26,10 @@ PACKAGE=Core/BareMetal/L2Objects
 ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I.. -I../../L1Portability -I../../L0Types
-
-#all: $(OBJS) $(SUBPROJ)   
-#	echo  $(OBJSX)
-
-
-#include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

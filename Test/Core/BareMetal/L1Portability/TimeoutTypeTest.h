@@ -21,6 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
+#include "CompilerTypes.h"
+
 #ifndef TIMEOUTTYPETEST_H_
 #define TIMEOUTTYPETEST_H_
 
@@ -31,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "TimeoutType.h"
 
 using namespace MARTe;
 
@@ -108,19 +108,10 @@ public:
 
     /**
      * @brief Test == operator.
-     * @detail compare 3 TimeoutType two of them are equals and the other are different.
-     * @return true if the comparison is true when the equal TimeoutType variables are compared and
-     * false when they are different.
+     * @detail compares 3 TimeTypes. Uses operator== to check the first 2 expecting true result. Checks first and last using operator !=
+     * @return true if both comparison succeed as expected.
      */
     bool TestEqualComparison();
-
-    /**
-     * @brief Test != operator.
-     * @detail compare 3 TimeoutType two of them are equals and the other are different.
-     * @return true if the comparison is false when the equal TimeoutType variables are compared and
-     * true when they are different.
-     */
-    bool TestDiffComparison();
 
     /**
      * @brief Test = operator.
@@ -138,19 +129,8 @@ public:
      */
     bool TestIsFinite();
 
-    /**
-     * @brief Test TimeoutType::GetTimeoutMSec() function.
-     * @detail create TimeoutType using default constructor and then check the msecTimeout
-     * @return true if TimeoutType::TestGetTimeoutMSec() returns the expected msecTimeout.
-     */
-    bool TestGetTimeoutMSec();
 
-private:
 
-    /**
-     * Value used for performing checks
-     */
-    bool retValue;
 };
 
 /*---------------------------------------------------------------------------*/

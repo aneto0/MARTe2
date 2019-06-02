@@ -20,24 +20,21 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-PACKAGE=Tools/
-ROOT_DIR=../../../../
+PACKAGE=Core/BareMetal/L2Objects
+ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
-OBJSX=  ExpDef.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I../../L1Portability -I../../L0Types -I../VariableDescriptorLib -I..
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/*$(OBJEXT)
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/VariableDescriptorLib/*$(OBJEXT)
 
-all: $(OBJS)  $(CPPS)  \
-                $(BUILD_DIR)/expdef$(EXEEXT) 
-	echo  $(OBJS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/test$(EXEEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

@@ -159,7 +159,7 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
     test.SetMask(0);
     test.AddCPU(cpuNumber1);
 
-    uint32 save = 1 << (cpuNumber1 - 1);
+    uint32 save = 1u << (cpuNumber1 - 1);
     if (test.GetProcessorMask() != save) {
         return false;
     }

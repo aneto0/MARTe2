@@ -28,26 +28,12 @@ PACKAGE=Core/BareMetal/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicConsole.x \
-	ErrorManagementConsoleFunction_Gen.x \
-	OSInitializer.x \
-	LoadableLibrary.x  \
-	MemoryCheck.x  \
-	Sleep.x \
-	StandardHeap_Gen.x \
-	TimeStamp.x
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
-
 INCLUDES+=-I../../../L0Types
 
-all: $(OBJS) $(CPPS) \
-     $(BUILD_DIR)/L1Portability$(LIBEXT)
-	echo  $(OBJS) $(CPPS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT =      $(BUILD_DIR)/L1Portability$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

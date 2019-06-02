@@ -30,10 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
-#include <GlobalObjectsDatabase.h>
-#include "StringHelper.h"
+//#include <GlobalObjectsDatabase.h>
+//#include "StringHelper.h"
 #include "HeapManager.h"
-#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
+#include "HeapI.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -64,38 +65,66 @@ bool HeapManagerTest::TestMallocDefaultName() {
 
 bool HeapManagerTest::TestMallocSpecificName() {
     uint32 size = 2;
-    AddHeap(&sh);
-    ptr = Malloc(size * sizeof(int32), "StandardHeap");
-    retVal = (ptr != NULL);
-    Free(ptr);
-    RemoveHeap(&sh);
-    return retVal;
+
+    ErrorManagement::ErrorType ret;
+
+    AuxHeap sh;
+
+    ret = InstallAllocator(&sh,customHeapId);
+
+    REPORT_ERROR(ret,"InstallAllocator customHeapId failed");
+
+    if (ret){
+        ptr = Malloc(size * sizeof(int32), customHeapId);
+
+        ret.outOfMemory = (ptr==NULL);
+        REPORT_ERROR(ret,"Malloc @customHeapId failed");
+
+        if (ret){
+            Free(ptr);
+        }
+
+        ret = RemoveAllocator(customHeapId);
+        REPORT_ERROR(ret,"RemoveAllocator failed");
+    }
+
+    return ret;
 }
 
+/*
+ * Allocates from a non-initialised Heap.
+ * Memory will be taken from the singleton heap
+ */
 bool HeapManagerTest::TestMallocInvalidName() {
-    uint32 size = 2;
-    AddHeap(&sh);
-    ptr = Malloc(size * sizeof(int32), "WrongName");
-    retVal = (ptr == NULL);
+
+    uint32 cnt = allocatedBlocks[singletonHeapId];
+    ptr = Malloc(2 * sizeof(int32), customHeapId);
+
+    //check that the singleton heap use count has grown
+    retVal = (ptr != NULL) && (allocatedBlocks[singletonHeapId] == cnt + 1);
+
     Free(ptr);
-    RemoveHeap(&sh);
     return retVal;
 }
 
 bool HeapManagerTest::TestFree() {
     uint32 size = 2;
-    ptr = Malloc(size * sizeof(int32));
-    retVal = Free(ptr);
-    retVal &= (ptr == NULL);
-    return retVal;
+    uint32 cnt = allocatedBlocks[standardHeapId];
+    ptr = Malloc(size * sizeof(int32),standardHeapId);
+    Free(ptr);
+    return (cnt == allocatedBlocks[standardHeapId]);
 }
 
 bool HeapManagerTest::TestFreeInvalidPointer() {
     uint32 size = 2;
-    void * invalidPointer = Malloc(size * sizeof(int32));
-    retVal = Free(invalidPointer);
-    retVal = !Free(invalidPointer);
-    return retVal;
+    uint32 cnt = allocatedBlocks[standardHeapId];
+    ptr = Malloc(size * sizeof(int32),standardHeapId);
+    Free(ptr);
+    uint32 cnt2 = allocatedBlocks[standardHeapId];
+    // MARTe produces an error message here
+    Free(ptr);
+    uint32 cnt3 = allocatedBlocks[standardHeapId];
+    return (cnt == cnt2) && (cnt2 == cnt3);
 }
 
 bool HeapManagerTest::TestRealloc() {
@@ -125,226 +154,83 @@ bool HeapManagerTest::TestReallocInvalidPointer() {
 }
 
 bool HeapManagerTest::TestAddHeap() {
-    retVal = AddHeap(&sh);
-    RemoveHeap(&sh);
-    return retVal;
+    ErrorManagement::ErrorType ret;
+
+    AuxHeap sh;
+
+    ret = InstallAllocator(&sh,customHeapId);
+
+    REPORT_ERROR(ret,"InstallAllocator customHeapId failed");
+
+    if (ret){
+        ret = RemoveAllocator(customHeapId);
+        REPORT_ERROR(ret,"RemoveAllocator failed");
+    }
+    return ret;
 }
 
 bool HeapManagerTest::TestAddHeapNULL() {
-    retVal = !AddHeap(NULL);
-    return retVal;
+    ErrorManagement::ErrorType ret;
+
+    ret = InstallAllocator(NULL,customHeapId);
+
+    return ret.IsErrorCode();
 }
 
 bool HeapManagerTest::TestAddHeapRepetedHeap() {
-    AddHeap(&sh);
-    retVal = !AddHeap(&sh);
-    RemoveHeap(&sh);
-    return retVal;
+    ErrorManagement::ErrorType ret;
+    ErrorManagement::ErrorType ret2;
+
+    AuxHeap sh;
+
+    ret = InstallAllocator(&sh,customHeapId);
+    REPORT_ERROR(ret,"InstallAllocator customHeapId failed");
+
+    if (ret){
+        ret2 = InstallAllocator(&sh,customHeapId);
+
+        RemoveAllocator(customHeapId);
+    }
+
+    // an error is needed here!
+    return ret2.IsErrorCode();
 }
 
-bool HeapManagerTest::TestAddHeapTooMuch() {
-    StandardHeap sh1;
-    StandardHeap sh2;
-    StandardHeap sh3;
-    StandardHeap sh4;
-    StandardHeap sh5;
-    StandardHeap sh6;
-    StandardHeap sh7;
-    StandardHeap sh8;
-    StandardHeap sh9;
-    StandardHeap sh10;
-    StandardHeap sh11;
-    StandardHeap sh12;
-    StandardHeap sh13;
-    StandardHeap sh14;
-    StandardHeap sh15;
-    StandardHeap sh16;
+bool HeapManagerTest::TestAddHeapTooMany() {
+    ErrorManagement::ErrorType ret;
 
-    AddHeap(&sh);
-    AddHeap(&sh1);
-    AddHeap(&sh2);
-    AddHeap(&sh3);
-    AddHeap(&sh4);
-    AddHeap(&sh5);
-    AddHeap(&sh6);
-    AddHeap(&sh7);
-    AddHeap(&sh8);
-    AddHeap(&sh9);
-    AddHeap(&sh10);
-    AddHeap(&sh11);
-    AddHeap(&sh12);
-    AddHeap(&sh13);
-    AddHeap(&sh14);
-    retVal = AddHeap(&sh15);
-    retVal &= !AddHeap(&sh16);
+    AuxHeap sh;
 
-    RemoveHeap(&sh);
-    RemoveHeap(&sh1);
-    RemoveHeap(&sh2);
-    RemoveHeap(&sh3);
-    RemoveHeap(&sh4);
-    RemoveHeap(&sh5);
-    RemoveHeap(&sh6);
-    RemoveHeap(&sh7);
-    RemoveHeap(&sh8);
-    RemoveHeap(&sh9);
-    RemoveHeap(&sh10);
-    RemoveHeap(&sh11);
-    RemoveHeap(&sh12);
-    RemoveHeap(&sh13);
-    RemoveHeap(&sh14);
-    RemoveHeap(&sh15);
-
-    return retVal;
+    ret = InstallAllocator(&sh,MAX_HEAPS);
+    return ret.IsErrorCode();
 }
 
 bool HeapManagerTest::TestFindHeapByName() {
-    void * ptr;
-    AddHeap(&sh);
-    ptr = FindHeap("StandardHeap");
-    retVal = (ptr == &sh);
-    RemoveHeap(&sh);
-    return retVal;
+    HeapId id = HeapIdFromName("standardHeap");
+
+    return ((id > 0) && (id < MAX_HEAPS));
+
 }
 
 bool HeapManagerTest::TestFindHeapByNameInvalidName() {
-    void * ptr;
-    AddHeap(&sh);
-    ptr = FindHeap("WrongName");
-    retVal = (ptr == NULL);
-    RemoveHeap(&sh);
-    return retVal;
-}
+    HeapId id = HeapIdFromName("wrongHeap");
 
-bool HeapManagerTest::TestFindHeapByAddress() {
-    uint32 size = 4;
-    void *ptr;
-    void *ptr1;
-    AddHeap(&sh);
-    ptr1 = Malloc(size * sizeof(uint32), "StandardHeap");
-    ptr = FindHeap(ptr1);
-    retVal = (ptr == &sh);
-    Free(ptr1);
-    RemoveHeap(&sh);
-    return retVal;
-}
-
-bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
-    uint32 size = 3;
-    void *ptr1 = NULL;
-    void * invalidPointer = Malloc(size * sizeof(int32));
-    retVal = Free(invalidPointer);
-    ptr1 = FindHeap(invalidPointer);
-    retVal = (ptr1 == NULL);
-    return retVal;
-}
-
-bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
-    uint32 size = 4;
-    void *ptr1;
-    void *shptr[3] = { NULL, NULL, NULL};
-    void *ahptr;
-    void *copyahptr = NULL;
-    AddHeap(&sh);
-    AddHeap(&ah);
-    ptr1 = Malloc(size * sizeof(uint32), "StandardHeap");
-    //Malloc several times in order to increase the "size of the StandarHeap, then free the memory
-    //in order to be used by "AuxHeap". As a result the two heaps memory span is shared.
-    shptr[0] = Malloc(size * sizeof(uint32), "StandardHeap");
-    shptr[1] = Malloc(size * sizeof(uint32), "StandardHeap");
-    shptr[2] = Malloc(size * sizeof(uint32), "StandardHeap");
-    Free(shptr[0]);
-    Free(shptr[1]);
-    Free(shptr[2]);
-    ahptr = Malloc(size * sizeof(uint32), "AuxHeap");
-    ptr = FindHeap(ahptr);
-    retVal = (ptr == &ah);
-    copyahptr = ahptr;
-    Free(ahptr);
-    RemoveHeap(&ah);
-    ptr = FindHeap(copyahptr);
-    retVal &= (ptr == &sh);
-    Free(ptr1);
-    RemoveHeap(&sh);
-    return retVal;
-}
-
-bool HeapManagerTest::TestGetStandardHeap() {
-    ptr = GlobalObjectsDatabase::Instance()->GetStandardHeap();
-    retVal = (ptr != NULL);
-    return retVal;
+    // returns standardHeapId and an error message on the log
+    return (id == standardHeapId);
 }
 
 bool HeapManagerTest::TestRemoveHeap() {
-    AddHeap(&sh);
-    retVal = RemoveHeap(&sh);
-    return retVal;
-}
+    ErrorManagement::ErrorType ret;
 
-bool HeapManagerTest::TestDuplicateDefault() {
-    void *ptr1 = NULL;
-    uint32 size = 10;
-    ptr = Malloc(size * sizeof(int32));
-    ptr1 = Duplicate(ptr, size);
-    retVal = (ptr1 != NULL);
-    Free(ptr);
-    Free(ptr1);
-    return retVal;
-}
+    AuxHeap sh;
 
-bool HeapManagerTest::TestDuplicateSpecificName() {
-    uint32 size = 4;
-    int32 * auxIntPtr = NULL;
-    int32 * auxIntPtr1 = NULL;
-    void *ptr1 = NULL;
-    AddHeap(&ah);
-    ptr = Malloc(size * sizeof(int32), "AuxHeap");
-    auxIntPtr = (int32*) (ptr);
-    *auxIntPtr = 0;
-    *(auxIntPtr + 1) = 1;
-    *(auxIntPtr + 2) = 2;
-    *(auxIntPtr + 3) = 3;
-    ptr1 = Duplicate(ptr, size * sizeof(int32), "AuxHeap");
-    auxIntPtr1 = (int32*) ptr1;
-    retVal = (*auxIntPtr == *auxIntPtr1);
-    retVal &= (*(auxIntPtr + 1) == *(auxIntPtr1 + 1));
-    retVal &= (*(auxIntPtr + 2) == *(auxIntPtr1 + 2));
-    retVal &= (*(auxIntPtr + 3) == *(auxIntPtr1 + 3));
-    Free(ptr);
-    Free(ptr1);
-    RemoveHeap(&ah);
-    return retVal;
-}
+    ret = InstallAllocator(&sh,customHeapId);
+    REPORT_ERROR(ret,"InstallAllocator customHeapId failed");
 
-bool HeapManagerTest::TestDuplicateString() {
-    uint32 size = 4;
-    char8 *auxCharPtr = NULL;
-    char8 *auxCharPtr1 = NULL;
-    void *ptr1 = NULL;
-    AddHeap(&ah);
-    ptr = Malloc(size * sizeof(char8), "AuxHeap");
-    auxCharPtr = (char8*) (ptr);
-    *auxCharPtr = 'a';
-    *(auxCharPtr + 1) = 'b';
-    *(auxCharPtr + 2) = 'c';
-    *(auxCharPtr + 3) = '\0';
-    ptr1 = Duplicate(ptr, 0, "AuxHeap");
-    auxCharPtr1 = (char8*) ptr1;
-    retVal = (*auxCharPtr == *auxCharPtr1);
-    retVal &= (*(auxCharPtr + 1) == *(auxCharPtr1 + 1));
-    retVal &= (*(auxCharPtr + 2) == *(auxCharPtr1 + 2));
-    retVal &= (*(auxCharPtr + 3) == *(auxCharPtr1 + 3));
-    Free(ptr);
-    Free(ptr1);
-    RemoveHeap(&ah);
-    return retVal;
-}
+    if (ret){
+        ret = RemoveAllocator(customHeapId);
+    }
 
-bool HeapManagerTest::TestDuplicateNoAllocationMemory() {
-    const char8 *s = "hello";
-    ptr = Duplicate(s);
-    retVal = (StringHelper::Compare(s, (char*) (ptr)) == 0);
-    Free(ptr);
-    return retVal;
+    return ret;
 }
 
