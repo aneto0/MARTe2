@@ -30,9 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringPortableTest.h"
-
-#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
-#include "StringTestHelper.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
