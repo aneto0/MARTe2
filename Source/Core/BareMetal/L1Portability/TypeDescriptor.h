@@ -420,7 +420,7 @@ public:
 private:
 
     /**
-     * @brief Equality operator used to compare types. Force private to avoid use as it is ambiguous.
+     * @brief Equality operator used to compare types. Forced private to avoid its use as its meaning is ambiguous.
      * @param[in] typeDescriptor is the type to be compared with.
      * @return In case of native types returns true if type and size fields are equal.
      * If the type is an object compares the structuredDataIdCode.

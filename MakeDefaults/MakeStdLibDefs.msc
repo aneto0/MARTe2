@@ -23,8 +23,30 @@
 #
 #############################################################
 
+#!! variables to be set before including  this !!
+# name of the destination minus the current directory which is appended to
+#PACKAGE=
+# path (relative or absolute) to the MARTe root
+#ROOT_DIR=../../../../..
+# path (relative or absolute) to the MakeDefaults
+#MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+#!! variables to be modified after including  this !!
+# sets the libraries to be use when building exes dlls and libs. Dependencies are not checked
+#LIBRARIES_NODEP =
+# sets the libraries to be use when building exes dlls and libs. Dependencies are checked
+#LIBRARIES =
+# sets the search paths to be added to the includes
+#INCLUDES =
+# sets the subrojects to be built as part of this build
+#SPB    = 
+# sets the exe/lib/dll targets to be added
+#BUILD_PRODUCT = 
+
+
 .DEFAULT_GOAL := default
 
+# calculates the build directory by combining $ROOT_DIR "Build" $PACKAGE Current_Directory
 BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
 
 ENVIRONMENT=Windows

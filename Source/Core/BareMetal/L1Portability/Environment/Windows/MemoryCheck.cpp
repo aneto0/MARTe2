@@ -63,7 +63,7 @@ bool Check(const void * const address,
 
     MEMORY_BASIC_INFORMATION mbi = {0};
     if (ret) {
-    	ret = VirtualQuery(address, &mbi, sizeof(mbi));
+    	ret = (VirtualQuery(address, &mbi, sizeof(mbi)) != 0) ;
 //printf("protect = %x address = %p\n",mbi.Protect,address);
     }
     if (ret){

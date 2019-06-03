@@ -48,10 +48,10 @@
 namespace MARTe{
 
 /**
- *	This is a set of values to be loaded in the stack to allow efficient manipulation of strings
+ *	@brief This is a set of values to be loaded in the stack to allow efficient manipulation of strings
  *	It is all wrapped into a class that is obtained from CString, StaticCString and DynamicCString
-  */
-class ZeroTerminatedArrayTool: public ZeroTerminatedArrayStaticTools{
+*/
+class DLL_API ZeroTerminatedArrayTool: public ZeroTerminatedArrayStaticTools{
 public:
 
 	/**

@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "../../BareMetal/L0Types/StreamI.h"
 #include "InternetHost.h"
-#include "StreamI.h"
 #include "HandleI.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 

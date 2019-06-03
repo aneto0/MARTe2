@@ -32,7 +32,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
+#include "MilliSeconds.h"
 #include "BasicConsoleTest.h"
 #define Windows 2
 #define Linux 1
@@ -171,7 +172,7 @@ TEST(BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
     BasicFile inputFile;
     RedirectConsoleInput(inputFile, "");
-    ASSERT_TRUE(console.TestTimeoutRead(100));
+    ASSERT_TRUE(console.TestTimeoutRead(MilliSeconds(100,Units::ms)));
     Clean(inputFile);
 }
 
@@ -239,7 +240,7 @@ TEST(BasicConsoleGTest,TestCanSeek) {
 
 TEST(BasicConsoleGTest,TestTimeoutWrite) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld", 500));
+    ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld", MilliSeconds(500,Units::ms)));
 }
 
 TEST(BasicConsoleGTest,TestSize) {

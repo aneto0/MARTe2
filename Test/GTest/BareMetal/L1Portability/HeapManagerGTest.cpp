@@ -26,13 +26,15 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
-#include "gtest/gtest.h"
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
+#include "TestSupport.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -93,10 +95,12 @@ TEST(HeapManagerGTest,TestAddHeapRepetedHeap) {
     ASSERT_TRUE(myHeapManagerTest.TestAddHeapRepetedHeap());
 }
 
+#if 0
 TEST(HeapManagerGTest,TestAddHeapTooMuch) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeapTooMuch());
 }
+#endif
 
 TEST(HeapManagerGTest,TestFindHeapByName) {
     HeapManagerTest myHeapManagerTest;
@@ -107,7 +111,7 @@ TEST(HeapManagerGTest,TestFindHeapByNameInvalidName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByNameInvalidName());
 }
-
+#if 0
 TEST(HeapManagerGTest,TestFindHeapByAddress) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddress());
@@ -128,12 +132,14 @@ TEST(HeapManagerGTest,TestGetStandardHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestGetStandardHeap());
 }
+#endif
 
 TEST(HeapManagerGTest,TestRemoveHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestRemoveHeap());
 }
 
+#if 0
 TEST(HeapManagerGTest,TestDuplicateDefault) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateDefault());
@@ -153,3 +159,4 @@ TEST(HeapManagerGTest,TestDuplicateNoAllocationMemory) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateNoAllocationMemory());
 }
+#endif

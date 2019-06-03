@@ -32,13 +32,16 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CompilerTypes.h"
 #include "MilliSeconds.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
 /**
  * @brief Abstract super class for all streams.
@@ -90,15 +93,12 @@ public:
     /**
      * Default constructor
      */
-    StreamI() {
-    }
+    StreamI() ;
 
     /**
      * @brief Default destructor
      */
-    virtual ~StreamI() {
-
-    }
+    virtual ~StreamI() ;
 
     /**
      * @brief Queries if the stream is writable, i.e. if write operations can

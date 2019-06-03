@@ -92,7 +92,7 @@ void RunAllTests();
 						printf("NO=OK  :");\
 					}\
 				}\
-				printf ( #test_code "\n");\
+				printf ( #test_code "@%s:%i\n",__FILE__,__LINE__);\
 			}\
 			result = result & (localRet ^ expect); }
 
@@ -113,7 +113,7 @@ void RunAllTests();
 						printf("**NO!=%i:",expect);\
 					}\
 				}\
-				printf ( #test_code "\n");\
+				printf ( #test_code "@%s:%i\n",__FILE__,__LINE__);\
 			}\
 			result = result & (localRet != expect); }
 

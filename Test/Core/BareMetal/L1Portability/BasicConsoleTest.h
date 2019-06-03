@@ -34,6 +34,9 @@
 
 #include "BasicConsole.h"
 #include "Sleep.h"
+#include "CCString.h"
+#include "Milliseconds.h"
+
 
 using namespace MARTe;
 
@@ -120,7 +123,7 @@ public:
      * and the real string size. In this test when padding is negative automatically it is set to 0.
      * @return true if the BasicConsol::write() returns ErrorManagement::NoError for all open modes.
      */
-    bool TestWriteCheckReturn(const char8 *string,
+    bool TestWriteCheckReturn(CCString string,
                               uint32 padding);
     /**
      * @brief Tests BasicConsole::Write() function.
@@ -137,7 +140,7 @@ public:
      * @param[in] string is the string to write.
      * @return true if the sizes of the written string is the same than the real size of the string.
      */
-    bool TestWriteExactSize(const char8 *string);
+    bool TestWriteExactSize(CCString string);
 
     /**
      * @brief Tests BasicConsole::Write() function.
@@ -146,7 +149,7 @@ public:
      * @param[in] string is the string to write.
      * @return true if the sizes of the written string = realStringSize+padding (where padding is negative)
      */
-    bool TestWriteSmallSize(const char8 *string);
+    bool TestWriteSmallSize(CCString string);
 
     /**
      * @brief Tests BasicConsole::Write() function.
@@ -177,14 +180,14 @@ public:
      * @param[in] stringArg is the string to match with the read string.
      * @return true if the read string is equal to the passed argument.
      */
-    bool TestRead(const char8 *stringArg);
+    bool TestRead(CCString stringArg);
 
     /**
      * @brief Tests BasicConsole::Read passing a finite timeout.
      * @param[in] timeout is the desired timeout.
      * @return true if the read function returns after the timeout expire, false otherwise.
      */
-    bool TestTimeoutRead(uint32 timeout);
+    bool TestTimeoutRead(MilliSeconds timeout);
 
     /**
      * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
@@ -228,7 +231,7 @@ public:
      * @param[in] title is the desired title.
      * @return the return value of the tested function.
      */
-    bool TestSetGetTitleBar(const char8 *title);
+    bool TestSetGetTitleBar(CCString title);
 
     /**
      * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.
@@ -260,8 +263,8 @@ public:
     bool TestPlotChar(char8 c,
                       Colours foregroundColour,
                       Colours backgroundColour,
-                      int column,
-                      int row);
+                      uint32 column,
+                      uint32 row);
 
 
     bool TestCanWrite();
@@ -270,7 +273,7 @@ public:
 
     bool TestCanSeek();
 
-    bool TestTimeoutWrite(const char8 *string, TimeoutType timeout);
+    bool TestTimeoutWrite(CCString string, MilliSeconds timeout);
 
     bool TestSize();
 

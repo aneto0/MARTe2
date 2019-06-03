@@ -32,12 +32,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "ErrorManagement.h"
 #include "ErrorType.h"
 #include "FlagsType.h"
 #include "CompilerTypes.h"
 #include "HandleI.h"
-#include "StreamI.h"
 #include "StringHelper.h"
 #include "HighResolutionTimer.h"
 

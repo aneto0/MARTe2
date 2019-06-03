@@ -1,8 +1,8 @@
 /**
- * @file StructuredDataSerDesI.h
- * @brief Header file for class StructuredDataSerDesI
- * @date 05/09/2017
- * @author Filippo Sartori
+ * @file GlobalObjectsDatabaseTest.h
+ * @brief Header file for class GlobalObjectsDatabaseTest
+ * @date 26/09/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StructuredDataI
+ * @details This header file contains the declaration of the class GlobalObjectsDatabaseTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STRUCTURED_DATA_SERDES_I_H_
-#define STRUCTURED_DATA_SERDES_I_H_
+#ifndef GLOBALOBJECTSDATABASETEST_H_
+#define GLOBALOBJECTSDATABASETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,15 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-
-#include "../L0Types/StreamI.h"
-#include "StructuredDataI.h"
-#include "ErrorManagement.h"
-
-/*---------------------------------------------------------------------------*/
-/*                         Forward declarations                              */
-/*---------------------------------------------------------------------------*/
-
+#include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,22 +40,24 @@
 
 namespace MARTe {
 
-/**
+class GlobalObjectsDatabaseTest {
 
- */
-/*lint -e{9109} forward declaration of this class is required in other modules*/
-class DLL_API StructuredDataSerDesI {
 public:
 
     /**
-     * @brief Destructor.
+     * @brief Tests that an instance of the GlobalObjectsDatabase exists.
      */
-    virtual ~StructuredDataSerDesI();
+    bool TestInstance();
 
-    virtual ErrorManagement::ErrorType ConvertToStream(const StructuredDataI &input, StreamI &stream)=0;
+    /**
+     * @brief Tests the GlobalObjectsDatabase::Peek function by searching for the ClassRegistryDatabase global instance.
+     */
+    bool TestPeek();
 
-    virtual ErrorManagement::ErrorType ParseStream(StructuredDataI &output, StreamI &stream)=0;
-
+    /**
+     * @brief Tests the an instance of the StandardHeap exists.
+     */
+    bool TestGetStandardHeap();
 };
 
 }
@@ -72,7 +66,4 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
-
-#endif /* CONFIGURATION_DATABASE_H_ */
+#endif /* GLOBALOBJECTSDATABASETEST_H_ */

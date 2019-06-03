@@ -1,6 +1,6 @@
 /**
- * @file GlobalObjectsDatabaseTest.cpp
- * @brief Source file for class GlobalObjectsDatabaseTest
+ * @file GlobalObjectsDatabaseGTest.cpp
+ * @brief Source file for class GlobalObjectsDatabaseGTest
  * @date 26/09/2015
  * @author Andre' Neto
  *
@@ -17,20 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class GlobalObjectsDatabaseTest (public, protected, and private). Be aware that some 
+ * the class GlobalObjectsDatabaseGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
 
+#include "../../../Core/BareMetal/L2Objects/GlobalObjectsDatabaseTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "GlobalObjectsDatabaseTest.h"
-#include "StringHelper.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,34 +39,21 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-bool GlobalObjectsDatabaseTest::TestInstance() {
-    return (&GlobalObjectsDatabase::Instance() != NULL_PTR(GlobalObjectsDatabase *));
+using namespace MARTe;
+TEST(GlobalObjectsDatabaseGTest,TestInstance) {
+    GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
+    ASSERT_TRUE(globalObjectsDatabaseTest.TestInstance());
 }
 
-bool GlobalObjectsDatabaseTest::TestPeek() {
-    bool result = false;
-    uint32 i;
-    GlobalObjectsDatabase *database = &GlobalObjectsDatabase::Instance();
-    for (i = 0; i < NUMBER_OF_GLOBAL_OBJECTS; i++) {
-        const GlobalObjectI *globalObjectI = database->Peek(i);
-        if (globalObjectI != NULL_PTR(GlobalObjectI *)) {
-            const char8 * const className = globalObjectI->GetClassName();
-            if (StringHelper::Compare(className, "ClassRegistryDatabase") == 0) {
-                result = true;
-                break;
-            }
-        }
-    }
-    return result;
+TEST(GlobalObjectsDatabaseGTest,TestPeek) {
+    GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
+    ASSERT_TRUE(globalObjectsDatabaseTest.TestPeek());
 }
 
-bool GlobalObjectsDatabaseTest::TestGetStandardHeap() {
-    HeapI *heap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
-    StandardHeap *stdHeap = dynamic_cast<StandardHeap *>(heap);
-    return (stdHeap != NULL_PTR(StandardHeap *));
+TEST(GlobalObjectsDatabaseGTest,TestGetStandardHeap) {
+    GlobalObjectsDatabaseTest globalObjectsDatabaseTest;
+    ASSERT_TRUE(globalObjectsDatabaseTest.TestGetStandardHeap());
 }
 
-}
+
+	

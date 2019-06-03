@@ -29,9 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <CircularStaticListTest.h>
+#include "CircularStaticListTest.h"
 #include "CompilerTypes.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -32,7 +32,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 
-APPS = $(BUILD_DIR)/L0TypesTest$(LIBEXT)
+BUILD_PRODUCT = $(BUILD_DIR)/L0TypesTest$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

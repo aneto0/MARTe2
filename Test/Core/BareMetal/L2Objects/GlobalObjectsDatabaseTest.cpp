@@ -1,8 +1,8 @@
 /**
- * @file MemoryAreaGTest.cpp
- * @brief Source file for class MemoryAreaGTest
- * @date 10/03/2016
- * @author Giuseppe Ferrò
+ * @file GlobalObjectsDatabaseTest.cpp
+ * @brief Source file for class GlobalObjectsDatabaseTest
+ * @date 26/09/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryAreaGTest (public, protected, and private). Be aware that some 
+ * the class GlobalObjectsDatabaseTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,14 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
-#include "MemoryAreaTest.h"
+#include "../L2Objects/GlobalObjectsDatabaseTest.h"
+
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,52 +41,33 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(MemoryAreaGTest,TestConstructor) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestConstructor());
+namespace MARTe {
+
+bool GlobalObjectsDatabaseTest::TestInstance() {
+    return (&GlobalObjectsDatabase::Instance() != NULL_PTR(GlobalObjectsDatabase *));
 }
 
-TEST(MemoryAreaGTest,TestAdd_OnlySize) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_OnlySize());
+bool GlobalObjectsDatabaseTest::TestPeek() {
+    bool result = false;
+    uint32 i;
+    GlobalObjectsDatabase *database = &GlobalObjectsDatabase::Instance();
+    for (i = 0; i < NUMBER_OF_GLOBAL_OBJECTS; i++) {
+        const GlobalObjectI *globalObjectI = database->Peek(i);
+        if (globalObjectI != NULL_PTR(GlobalObjectI *)) {
+            const char8 * const className = globalObjectI->GetClassName();
+            if (StringHelper::Compare(className, "ClassRegistryDatabase") == 0) {
+                result = true;
+                break;
+            }
+        }
+    }
+    return result;
 }
 
-TEST(MemoryAreaGTest,TestAdd_Element) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_Element());
+bool GlobalObjectsDatabaseTest::TestGetStandardHeap() {
+    HeapI *heap = &GlobalObjectsDatabase::Instance().GetStandardHeap();
+    StandardHeap *stdHeap = dynamic_cast<StandardHeap *>(heap);
+    return (stdHeap != NULL_PTR(StandardHeap *));
 }
 
-TEST(MemoryAreaGTest,TestFree) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestFree());
-}
-
-TEST(MemoryAreaGTest,TestGetMemoryStart) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemoryStart());
-}
-
-TEST(MemoryAreaGTest,TestGetMemorySize_32) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(32));
-}
-
-TEST(MemoryAreaGTest,TestGetMemorySize_0) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(0));
-}
-
-TEST(MemoryAreaGTest,TestGetPointer) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestGetPointer());
-}
-
-TEST(MemoryAreaGTest,TestInitMemory) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemory());
-}
-
-TEST(MemoryAreaGTest,TestInitMemoryFalse_AlreadyInit) {
-    MemoryAreaTest MyMemoryAreaTest;
-    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemoryFalse_AlreadyInit());
 }

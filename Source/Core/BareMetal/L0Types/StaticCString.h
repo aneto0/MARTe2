@@ -66,6 +66,24 @@ public:
      */
     inline CStringTool operator()();
 
+    /**
+     * @brief Retrieves the size of the TArray().
+     * @return the number of elements in the TArray() (excluding the terminator Zero).
+     */
+    inline uint32 GetSize() const;
+
+    /**
+     * @brief Retrieves the maximum size of the string that can be stored here
+     * @return the number of elements of the buffer -1
+     */
+    inline uint32 MaximumSize() const;
+
+    /**
+     * @brief Returns the pointer to the beginning of the TArray().
+     * @return the pointer to the beginning of the TArray().
+     */
+    inline char8 * GetList() const ;
+
 #if 0
     /**
      * @brief append a number at the end of the string
@@ -168,6 +186,21 @@ CStringTool StaticCString<size>::operator()(){
 template <uint32 size>
 StaticCString<size>::operator CCString() const{
 	return CCString(ZeroTerminatedArray<char8>::array);
+}
+
+template <uint32 size>
+uint32 StaticCString<size>::GetSize() const{
+	return StaticZeroTerminatedArray<char8,size >::GetSize();
+}
+
+template <uint32 size>
+inline uint32 StaticCString<size>::MaximumSize() const{
+	return size-1;
+}
+
+template <uint32 size>
+char8 * StaticCString<size>::GetList() const {
+	return StaticZeroTerminatedArray<char8,size >::GetList();
 }
 
 #if 0

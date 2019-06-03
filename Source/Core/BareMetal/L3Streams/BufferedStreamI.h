@@ -31,10 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "../L0Types/StreamI.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
-#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

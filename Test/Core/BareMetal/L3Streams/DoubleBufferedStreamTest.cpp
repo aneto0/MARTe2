@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStreamTest.h"
-#include "StreamI.h"
+
+#include "../../../../Source/Core/BareMetal/L0Types/StreamI.h"
 #include "StreamTestHelper.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/

@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "IOBuffer.h"
-#include "StreamI.h"
 #include "OperatingSystemCallbacksI.h"
 
 /*---------------------------------------------------------------------------*/

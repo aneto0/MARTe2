@@ -30,66 +30,83 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeDescriptorTest.h"
-#include "StringHelper.h"
+#include "DynamicCString.h"
+#include "CString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
-        UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType };
-static const char8* typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",
-        static_cast<const char8*>(NULL)};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool TypeDescriptorTest::TestConstructorUint(bool isObject,
-                                             bool isConst,
-                                             uint16 size,
-                                             BasicType type) {
 
-    uint16 initNumber = (isObject) | (isConst << 1) | (type << 2) | (size << 6);
-    TypeDescriptor testTD = initNumber;
+bool TypeDescriptorTest::TestConstructorFullType(bool dataIsConstantVal,uint32 objectSizeVal,TD_FullType fulltypeVal) {
 
-    if (testTD.isStructuredData != isObject) {
-        return false;
-    }
+	uint8 dataIsConstantInt = 0;
+	if (dataIsConstantVal) {dataIsConstantInt = 1;}
 
-    if (testTD.isConstant != isConst) {
-        return false;
-    }
+	TYPE_DESCRIPTOR_TYPE number = (TDRANGE(fullType,fulltypeVal) | TDRANGE(objectSize,objectSizeVal) | TDRANGE(dataIsConstant,dataIsConstantInt));
 
-    if (testTD.numberOfBits != size) {
-        return false;
-    }
-
-    if (testTD.type != type) {
-        return false;
-    }
-
-    return true;
-}
-
-bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
-                                                  uint16 size,
-                                                  BasicType type) {
-
-    TypeDescriptor testTD(isConst, type, size);
+    TypeDescriptor testTD = TypeDescriptor(number);
 
     if (testTD.isStructuredData != false) {
         return false;
     }
 
-    if (testTD.isConstant != isConst) {
+    if (testTD.dataIsConstant != dataIsConstantVal) {
         return false;
     }
 
-    if (testTD.numberOfBits != size) {
+    if (testTD.objectSize != objectSizeVal) {
         return false;
     }
 
-    if (testTD.type != type) {
+    if (testTD.fullType != fulltypeVal) {
+        return false;
+    }
+
+    return true;
+}
+
+bool TypeDescriptorTest::TestConstructorBasicType(
+						bool dataIsConstantVal,
+        				TD_FullType basicTypeVal,
+						TDBasicTypeSize basicTypeSizeVal,
+						bool hasBitSizeVal,
+						uint8 bitOffsetVal,
+						uint8 numberOfBitsVal) {
+
+	uint8 hasBitSizeInt = 0;
+	if (hasBitSizeVal) {hasBitSizeInt = 1;}
+	uint8 dataIsConstantInt = 0;
+	if (dataIsConstantVal) {dataIsConstantInt = 1;}
+
+    TypeDescriptor testTD = TypeDescriptor(TDRANGE(fullType,basicTypeVal) | TDRANGE(hasBitSize,hasBitSizeInt) | TDRANGE(basicTypeSize,basicTypeSizeVal) | TDRANGE(numberOfBits,numberOfBitsVal) | TDRANGE(bitOffset,bitOffsetVal) | TDRANGE(dataIsConstant,dataIsConstantInt));
+
+    if (testTD.isStructuredData != false) {
+        return false;
+    }
+
+    if (testTD.dataIsConstant != dataIsConstantVal) {
+        return false;
+    }
+
+    if (testTD.basicTypeSize != basicTypeSizeVal) {
+        return false;
+    }
+
+    if (testTD.numberOfBits != numberOfBitsVal) {
+        return false;
+    }
+
+    if (testTD.bitOffset != bitOffsetVal) {
+        return false;
+    }
+
+    if (testTD.fullType  != basicTypeVal) {
         return false;
     }
 
@@ -97,89 +114,72 @@ bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
 
 }
 
-bool TypeDescriptorTest::TestConstructorObject(bool isConst,
-                                               uint16 objCode) {
+bool TypeDescriptorTest::TestConstructorObject(bool dataIsConstant, uint32 structuredDataIdCodeVal) {
 
-    TypeDescriptor testTD(isConst, objCode);
+    TypeDescriptor testTD(dataIsConstant, structuredDataIdCodeVal);
 
     if (testTD.isStructuredData != true) {
         return false;
     }
 
-    if (testTD.isConstant != isConst) {
+    if (testTD.dataIsConstant != dataIsConstant) {
         return false;
     }
 
-    if (testTD.structuredDataIdCode != objCode) {
+    if (testTD.structuredDataIdCode != structuredDataIdCodeVal) {
         return false;
     }
 
     return true;
 }
 
-bool TypeDescriptorTest::TestIsEqualOperator(uint16 size,
-                                             BasicType type) {
+bool TypeDescriptorTest::TestIsEqualOperator(const TypeDescriptor &t1,const TypeDescriptor &t2, bool isSame, bool isSameType, bool isSameTypeAndSize){
 
-    bool isConst = true;
-    TypeDescriptor byBasicType1(isConst, type, size);
-    isConst = false;
-    TypeDescriptor byBasicType2(isConst, type, size);
+	bool success = true;
 
-    if (!(byBasicType1 == byBasicType2)) {
-        return false;
-    }
+	success = success && (t1.SameAs(t2)^ isSame);
+	success = success && (t1.SameTypeAs(t2)^ isSameType);
+	success = success && (t1.SameTypeAndSizeAs(t2)^ isSameTypeAndSize);
 
-    uint16 code = (type) | (size << 4);
-    isConst = true;
-    TypeDescriptor byObj1(isConst, code);
-    isConst = false;
-    TypeDescriptor byObj2(isConst, code);
-
-    if (!(byObj1 == byObj2)) {
-        return false;
-    }
-
-    return !(byBasicType1 == byObj1);
-}
-
-bool TypeDescriptorTest::TestIsEqualOperatorFail() {
-
-    TypeDescriptor test1(0x10);
-
-    TypeDescriptor test2(0x20);
-
-    return !(test1 == test2);
-
+    return success;
 }
 
 bool TypeDescriptorTest::TestFieldSaturation() {
 
-    uint16 size = 1 << 10;
-    uint16 type = 1 << 4;
+    TypeDescriptor testTD1 = UnsignedBitSet_number(uint32,1,1);
 
-    bool isConst = true;
+    testTD1.numberOfBits = 256;
+    testTD1.bitOffset = 256;
+    testTD1.basicTypeSize = 16;
+    testTD1.fullType = 64;
 
-    TypeDescriptor testTD1(isConst, type, size);
-    if (testTD1.all != 0xfffe) {
+    if (testTD1.numberOfBits != 255) {
         return false;
     }
 
-    type = 0;
-    TypeDescriptor testTD2(isConst, type, size);
-    if (testTD2.all != 0xffc2) {
+    if (testTD1.bitOffset != 255) {
         return false;
     }
 
-    uint16 code = (size << 4) | (type);
-    TypeDescriptor testTD3(isConst, code);
-    return testTD3.all != 0xfffe;
+    if (testTD1.basicTypeSize != 15) {
+        return false;
+    }
+
+    if (testTD1.fullType != 63) {
+        return false;
+    }
 }
+
+static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
+        UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType(0) };
+static const CCString typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",emptyString};
 
 bool TypeDescriptorTest::TestGetTypeDescriptorFromTypeName() {
 
     uint32 i = 0u;
-    while (typeNames[i] != NULL) {
-        if(TypeDescriptor::GetTypeDescriptorFromTypeName(typeNames[i])!=typeDes[i]) {
+    while (typeNames[i].IsNullPtr()) {
+
+        if ( !TypeDescriptor(typeNames[i]).SameAs(typeDes[i])) {
             return false;
         }
         i++;
@@ -190,34 +190,12 @@ bool TypeDescriptorTest::TestGetTypeDescriptorFromTypeName() {
 bool TypeDescriptorTest::TestGetTypeNameFromTypeDescriptor() {
     uint32 i = 0u;
     while (typeNames[i] != NULL) {
-        if(StringHelper::Compare(TypeDescriptor::GetTypeNameFromTypeDescriptor(typeDes[i]),typeNames[i])!=0) {
+    	DynamicCString name;
+    	typeDes[i].ToString(name);
+    	if (!name.isSameAs(typeNames[i])){
             return false;
         }
         i++;
     }
-    return true;
-}
-
-bool TypeDescriptorTest::TestGetTypeDescriptorFromStaticTable() {
-    uint32 i = 0u;
-    while (typeDes[i] != InvalidType) {
-        if (TypeDescriptor::GetTypeDescriptorFromStaticTable(i) != typeDes[i]) {
-            return false;
-        }
-        i++;
-    }
-
-    return true;
-}
-
-bool TypeDescriptorTest::TestGetTypeNameFromStaticTable() {
-    uint32 i = 0u;
-    while (typeDes[i] != InvalidType) {
-        if (StringHelper::Compare(TypeDescriptor::GetTypeNameFromStaticTable(i), typeNames[i]) != 0) {
-            return false;
-        }
-        i++;
-    }
-
     return true;
 }

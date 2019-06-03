@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../../Source/Core/BareMetal/L0Types/FastMath.h"
+#include "FastMath.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -88,6 +88,8 @@ public:
      */
     bool All();
 
+#if 0
+
     /**
      * @brief Tests the SquareRoot function for uint8.
      */
@@ -136,7 +138,7 @@ public:
      * @brief Tests the SquareRoot function for float64.
      */
     bool TestSquareRootFloat64(const float64 testVal, const float64 expectedRes);
-
+#endif
 private:
 
     // Math constants

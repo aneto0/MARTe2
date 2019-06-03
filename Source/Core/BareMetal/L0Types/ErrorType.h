@@ -118,8 +118,7 @@ ERROR_CONSTANT_MACRO(GENERATE_ERROR_CONSTANTS)
 /**
  * To generate one error bit within ErrorType
  */
-#define GENERATE_ERROR_BITRANGE(dummy,errorName,bit)    BitBoolean<ErrorIntegerFormat, bit> errorName;
-
+#define GENERATE_ERROR_BITRANGE(dummy,errorName,bit)    		BitBoolean<ErrorIntegerFormat, bit> errorName;
 
 
 /**
@@ -242,6 +241,13 @@ public:
     };
 
 };
+
+
+/**
+ * A return code that is not an error
+ */
+#define NON_ERROR_CODE(userCode) 	ErrorManagement::ErrorType(ErrorManagement::NotAnErrorCode | (ErrorManagement::ErrorIntegerFormat)userCode)
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

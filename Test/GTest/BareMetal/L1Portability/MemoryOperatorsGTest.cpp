@@ -26,13 +26,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
-
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
-#include "MemoryOperationsHelperTest.h"
+#include "MemoryOperatorsTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,77 +44,78 @@
 
 
 TEST(MemoryOperationsHelperGTest,TestCopy) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopy());
 }
 
 TEST(MemoryOperationsHelperGTest,TestCopyZeroSize) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopyZeroSize());
 }
 
 TEST(MemoryOperationsHelperGTest,TestCopyNullPointer) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCopyNullPointer());
 }
 
 TEST(MemoryOperationsHelperGTest,TestMove) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMove());
 }
 
 TEST(MemoryOperationsHelperGTest,TestMoveZeroSize) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMoveZeroSize());
 }
 
 TEST(MemoryOperationsHelperGTest,TestMoveNullPointer) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestMoveNullPointer());
 }
 
 TEST(MemoryOperationsHelperGTest,TestCompare) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestCompare());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSet) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSet());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSetZeroSize) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSetZeroSize());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSearch) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearch());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSearchNotInBuffer) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchNotInBuffer());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSearchOutOfRanges) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchOutOfRanges());
 }
 
 TEST(MemoryOperationsHelperGTest,TestSearchZeroSize) {
-    MemoryOperationsHelperTest MyMemoryOperationsHelperTest;
+    MemoryOperatorsTest MyMemoryOperationsHelperTest;
     ASSERT_TRUE(MyMemoryOperationsHelperTest.TestSearchZeroSize());
 }
 
+#if 0
 TEST(MemoryOperationsHelperGTest,TestInterleavedToFlat) {
-    MemoryOperationsHelperTest test;
+    MemoryOperatorsTest test;
     ASSERT_TRUE(test.TestInterleavedToFlat());
 }
 
 TEST(MemoryOperationsHelperGTest,TestFlatToInterleaved) {
-    MemoryOperationsHelperTest test;
+    MemoryOperatorsTest test;
     ASSERT_TRUE(test.TestFlatToInterleaved());
 }
-
+#endif

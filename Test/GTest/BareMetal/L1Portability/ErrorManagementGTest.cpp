@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "ErrorManagementTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -58,13 +58,13 @@ TEST(ErrorManagementGTest,TestReportError) {
 
 }
 
+#if 0
 TEST(ErrorManagementGTest,TestReportErrorFullContext) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportErrorFullContext(ErrorManagement::Information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
-
 }
-
+#endif
 
 TEST(ErrorManagementGTest,TestReportErrorMacro) {
     ErrorManagementTest errorManTest;
@@ -73,12 +73,13 @@ TEST(ErrorManagementGTest,TestReportErrorMacro) {
 
 }
 
+#if 0
 TEST(ErrorManagementGTest,TestReportErrorMacroFullContext) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestReportErrorMacroFullContext(ErrorManagement::Information,"Error!!","Information",32));
     ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
-
 }
+#endif
 
 TEST(ErrorManagementGTest,TestSetErrorProcessFunction) {
     ErrorManagementTest errorManTest;

@@ -134,6 +134,7 @@ public:
 
 };
 
+static const CCString emptyString(static_cast<uint32>(0));
 
 
 /*---------------------------------------------------------------------------*/
@@ -160,8 +161,6 @@ bool CCString::operator==(const CCString &s) const{
 bool CCString::operator==(const char8 *s) const{
 	return ZeroTerminatedArray<const char8>::isSameAs(s);
 }
-
-static const CCString emptyString(static_cast<uint32>(0));
 
 uint32 CCString::GetSize() const{
 	return ZeroTerminatedArray<const char8>::GetSize();

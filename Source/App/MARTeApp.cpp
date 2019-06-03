@@ -33,12 +33,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "../Core/BareMetal/L0Types/StreamI.h"
 #include "AdvancedErrorManagement.h"
 #include "Bootstrap.h"
 #include "Loader.h"
 #include "ObjectRegistryDatabase.h"
 #include "ReferenceT.h"
-#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -1,8 +1,8 @@
 /**
- * @file TypeDescriptorGTest.cpp
- * @brief Source file for class TypeDescriptorGTest
- * @date 03/09/2015
- * @author Giuseppe Ferro
+ * @file MemoryAreaGTest.cpp
+ * @brief Source file for class MemoryAreaGTest
+ * @date 10/03/2016
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class TypeDescriptorGTest (public, protected, and private). Be aware that some 
+ * the class MemoryAreaGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -27,13 +27,12 @@
 
 #include <limits.h>
 
+#include "../../../Core/BareMetal/L2Objects/MemoryAreaTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "TestSupport.h"
-#include "TypeDescriptorTest.h"
-#include "CCString.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,47 +42,52 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TypeDescriptorGTest,TestConstructorUint) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(true,TDF_Float,Size32bit,false,0,0));
+TEST(MemoryAreaGTest,TestConstructor) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestConstructor());
 }
 
-TEST(TypeDescriptorGTest,TestConstructorBasicType) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorFullType(false, sizeof(CCString), TDF_CString));
+TEST(MemoryAreaGTest,TestAdd_OnlySize) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_OnlySize());
 }
 
-TEST(TypeDescriptorGTest,TestConstructorObject) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorObject(false, 23));
+TEST(MemoryAreaGTest,TestAdd_Element) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestAdd_Element());
 }
 
-TEST(TypeDescriptorGTest,TestIsEqualOperatorPT) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator(PointerType,ConstPointerType,false,true,true));
+TEST(MemoryAreaGTest,TestFree) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestFree());
 }
 
-TEST(TypeDescriptorGTest,TestIsEqualOperator) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator(ConstCharString(5),ConstCharString(7),false,true,false));
+TEST(MemoryAreaGTest,TestGetMemoryStart) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemoryStart());
 }
 
-TEST(TypeDescriptorGTest,TestFieldSaturation) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestFieldSaturation());
+TEST(MemoryAreaGTest,TestGetMemorySize_32) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(32));
 }
 
-TEST(TypeDescriptorGTest,TestGetTypeDescriptorFromTypeName) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestGetTypeDescriptorFromTypeName());
+TEST(MemoryAreaGTest,TestGetMemorySize_0) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetMemorySize(0));
 }
 
-TEST(TypeDescriptorGTest,TestGetTypeNameFromTypeDescriptor) {
-    TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestGetTypeNameFromTypeDescriptor());
+TEST(MemoryAreaGTest,TestGetPointer) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestGetPointer());
 }
 
+TEST(MemoryAreaGTest,TestInitMemory) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemory());
+}
 
-
-
-
+TEST(MemoryAreaGTest,TestInitMemoryFalse_AlreadyInit) {
+    MemoryAreaTest MyMemoryAreaTest;
+    ASSERT_TRUE(MyMemoryAreaTest.TestInitMemoryFalse_AlreadyInit());
+}

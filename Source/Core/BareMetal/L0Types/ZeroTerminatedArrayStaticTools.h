@@ -46,6 +46,9 @@
 
 namespace MARTe{
 
+/**
+ * @brief common functions to handle ZTAs
+ */
 class ZeroTerminatedArrayStaticTools{
 public:
     /**

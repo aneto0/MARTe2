@@ -25,15 +25,24 @@
 PACKAGE=Core/BareMetal/L1Portability
 ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../L1Portability
-INCLUDES += -I../../L0Types 
 INCLUDES += -I..
+INCLUDES += -I../../L0Types 
+INCLUDES += -I../../L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/$(PACKAGE)
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+
+SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
+         $(ROOT_DIR)/Test/GTest/BareMetal/L1Portability.x \
+         $(ROOT_DIR)/Source/Tools/TestSupport.x
+
 
 BUILD_PRODUCT = $(BUILD_DIR)/test$(EXEEXT)
 

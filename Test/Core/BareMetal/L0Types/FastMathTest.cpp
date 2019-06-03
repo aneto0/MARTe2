@@ -31,21 +31,19 @@
 
 #include "FastMathTest.h"
 
-#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-const float FastMathTest::SIN_1 = 0.841470984807;
+const float FastMathTest::SIN_1 = (float)0.841470984807;
 const float FastMathTest::SIN_PI_2 = 1.0;
-const float FastMathTest::SIN_PI_4 = 0.707106781186;
+const float FastMathTest::SIN_PI_4 = (float)0.707106781186;
 
-const float FastMathTest::COS_1 = 0.540302305868;
+const float FastMathTest::COS_1 = (float)0.540302305868;
 const float FastMathTest::COS_PI_2 = 0.0;
-const float FastMathTest::COS_PI_4 = 0.707106781186;
+const float FastMathTest::COS_PI_4 = (float)0.707106781186;
 
-const float FastMathTest::EPSILON = 0.000001;
+const float FastMathTest::EPSILON = (float)0.000001;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -92,24 +90,24 @@ bool FastMathTest::CircleTest() {
         if (!((cos - 1 <= EPSILON) && (cos - 1 >= -EPSILON))) {
             return false;
         }
-        angle += 0.001;
+        angle += (float)0.001;
     }
     return true;
 }
 
 bool FastMathTest::All() {
-    bool ok = TestFloatToInt32(42.24, 42);
-    ok = ok && TestFloatToInt32(-42.24, -42);
+    bool ok = TestFloatToInt32((float)42.24, 42);
+    ok = ok && TestFloatToInt32((float)-42.24, -42);
     ok = ok && TestSin(1, SIN_1);
-    ok = ok && TestSin(FastMath::PI_2, SIN_PI_2);
-    ok = ok && TestSin(FastMath::PI_4, SIN_PI_4);
-    ok = ok && TestCos(1, COS_1);
-    ok = ok && TestCos(3 * (FastMath::PI), -1.0);
-    ok = ok && TestCos(FastMath::PI_4, COS_PI_4);
+    ok = ok && TestSin((float)FastMath::PI_2, (float)SIN_PI_2);
+    ok = ok && TestSin((float)FastMath::PI_4, (float)SIN_PI_4);
+    ok = ok && TestCos(1, (float)COS_1);
+    ok = ok && TestCos(3 * ((float)FastMath::PI), -1.0);
+    ok = ok && TestCos((float)FastMath::PI_4, (float)COS_PI_4);
     return ok;
 }
 
-
+#if 0
 bool FastMathTest::TestSquareRootUint8(const uint8 testVal,const  uint8 expectedRes){
     return (expectedRes==FastMath::SquareRoot<uint8>(testVal));
 }
@@ -152,3 +150,4 @@ bool FastMathTest::TestSquareRootFloat32(const float32 testVal,const  float32 ex
 bool FastMathTest::TestSquareRootFloat64(const float64 testVal,const  float64 expectedRes){
     return (expectedRes==FastMath::SquareRoot<float64>(testVal));
 }
+#endif

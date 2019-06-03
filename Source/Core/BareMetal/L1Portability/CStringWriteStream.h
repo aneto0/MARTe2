@@ -1,7 +1,7 @@
 /**
- * @file Units.h
+ * @file CStringStream.h
  * @brief Header file for class AnyType
- * @date 17 Sep 2018
+ * @date 3 Jun 2019
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,9 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef UNITS_H_
-#define UNITS_H_
+#ifndef SOURCE_CORE_BAREMETAL_L1PORTABILITY_CSTRINGWRITESTREAM_H_
+#define SOURCE_CORE_BAREMETAL_L1PORTABILITY_CSTRINGWRITESTREAM_H_
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +33,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeCharacteristics.h"
+#include "StreamI.h"
+#include "CStringTool.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -45,86 +47,11 @@
 namespace MARTe{
 
 /**
- * A collection of classes used to specify and characterize units
- * They all have the same interface but are not virtual as they are used in templates
+ * @brief Wrapper over a CStringTool to allow writing on a CString usin
+ *
  */
-namespace Units{
+class CStringWriteStream: public StreamI{
 
-
-	/**
-	 * The seconds
-	 */
-	static const class sClass{
-    	public:
-    	/**
-    	 * The value of one unit in seconds
-    	 */
-    	inline double GetScale() const{ return 1.0; }
-    	/**
-    	 * How many units to make a second
-    	 */
-    	inline double GetScaleInv() const{ return 1.0; }
-    } s;
-
-	/**
-	 * The milli seconds
-	 */
-    static const class msClass{
-    	public:
-    	/**
-    	 * The value of one unit in seconds
-    	 */
-    	inline double GetScale() const{ return 1.0E-3; }
-    	/**
-    	 * How many units to make a second
-    	 */
-    	inline double GetScaleInv() const{ return 1.0E3; }
-    } ms;
-
-	/**
-	 * The micro seconds
-	 */
-    static const class usClass{
-    	public:
-    	/**
-    	 * The value of one unit in seconds
-    	 */
-    	inline double GetScale() const{ return 1.0E-6; }
-    	/**
-    	 * How many units to make a second
-    	 */
-    	inline double GetScaleInv() const{ return 1.0E6; }
-    } us;
-
-	/**
-	 * The nano seconds
-	 */
-    static const class nsClass{
-    	public:
-    	/**
-    	 * The value of one unit in seconds
-    	 */
-    	inline double GetScale() const{ return 1.0E-9; }
-    	/**
-    	 * How many units to make a second
-    	 */
-    	inline double GetScaleInv() const{ return 1.0E9; }
-    } ns;
-
-    /**
-     * The raw value
-     */
-    static const class rawClass{
-    	public:
-    	/**
-    	 * The value of one unit in seconds
-    	 */
-    	inline double GetScale() const{ return 0.0; }
-    	/**
-    	 * How many units to make a second
-    	 */
-    	inline double GetScaleInv() const{ return 0.0; }
-    } raw;
 
 };
 
@@ -135,4 +62,4 @@ namespace Units{
 
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L0TYPES_UNITS_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_CSTRINGSTREAM_H_ */

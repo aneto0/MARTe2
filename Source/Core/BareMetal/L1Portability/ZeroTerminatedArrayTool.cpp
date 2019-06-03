@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
 
 #include "ZeroTerminatedArrayTool.h"
 #include "AllocationPointer.h"

@@ -140,6 +140,10 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
     }
 }
 
+void GetErrorProcessFunction(ErrorProcessFunctionType &userFun) {
+	userFun = errorMessageProcessFunction;
+}
+
 }
 
 }

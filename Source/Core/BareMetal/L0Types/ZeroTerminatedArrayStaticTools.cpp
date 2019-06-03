@@ -21,6 +21,7 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+
 #include "ZeroTerminatedArray.h"
 
 namespace MARTe{

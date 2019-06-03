@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
-#include "StreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
 #include "BufferedStreamI.h"

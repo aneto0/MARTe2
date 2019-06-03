@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "TimeoutTypeTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -77,11 +77,6 @@ TEST(TimeoutTypeGTest,TestEqualComparison) {
     ASSERT_TRUE(timeoutTypeTest.TestEqualComparison());
 }
 
-TEST(TimeoutTypeGTest,TestDiffComparison) {
-    TimeoutTypeTest timeoutTypeTest;
-    ASSERT_TRUE(timeoutTypeTest.TestDiffComparison());
-}
-
 TEST(TimeoutTypeGTest,TestAssingOperator) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestAssignOperator());
@@ -92,7 +87,9 @@ TEST(TimeoutTypeGTest,TestIsFinite) {
     ASSERT_TRUE(timeoutTypeTest.TestIsFinite());
 }
 
+#if 0
 TEST(TimeoutTypeGTest,TestGetTimeoutMSec) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestGetTimeoutMSec());
 }
+#endif

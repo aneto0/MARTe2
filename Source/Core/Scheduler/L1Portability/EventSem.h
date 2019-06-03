@@ -34,7 +34,6 @@
 
 #include "GeneralDefinitions.h"
 #include "ErrorType.h"
-#include "TimeoutType.h"
 #include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
@@ -114,7 +113,7 @@ public:
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Wait(const TimeoutType &timeout);
+    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
 
     /**
      * @brief Resets the semaphore (raises the barrier).

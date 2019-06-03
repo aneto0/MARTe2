@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
+#include "../L0Types/StreamI.h"
 #include "IOBufferPrivate.h"
-#include "StreamI.h"
 #include "CCString.h"
 
 

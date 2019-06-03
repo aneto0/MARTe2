@@ -26,7 +26,7 @@
 %_Gen.cpp : ../Generic/%_Generic.cpp
 	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 
-CreateLibrary :
+createLibrary :
 	touch createLibrary
 
 $(BUILD_DIR)\\%.obj : %.cpp
@@ -77,7 +77,7 @@ $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI) createLibrary
 $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -Fe$@
+	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@
 	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\ExpDef\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
 	rm createLibrary
@@ -87,7 +87,7 @@ $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) dummy.cpp  $(ASSEMBLER)
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) dllGenerator.def -Fe$@
+	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@
 	rm dllGenerator.def
 	rm dummy.*
 	
@@ -99,13 +99,13 @@ $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)\%.obj $(LIBRARIES) createLibrary
-	$(COMPILER)  $(LFLAGS) -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) -Fe$@ $(LOPTS)
+	$(COMPILER)  $(LFLAGS) -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) -Fe$@ $(LOPTS)
 	@if exist createLibrary rm -f createLibrary
 	
 
 #Note that the / is used here in the /%. as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)\%.obj $(OBJS)  $(LIBRARIES)  %.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $*.def -Fe$@
+	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) $*.def -Fe$@
 
 depends.msc : dependsRaw.msc
 	@echo /\.o:/s/^^/$(subst \,\\,$(BUILD_DIR))\\/ > CreateMSCDepends.sed
@@ -125,7 +125,7 @@ dependsRaw.msc:
 
 #Note that the / is used here in the /%. as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)\%.obj $(OBJS)  $(LIBRARIES)  %.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $*.def -Fe$@
+	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) $*.def -Fe$@
 
 %.spb : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) MAKEMODE=$(MAKEMODE)
@@ -180,7 +180,7 @@ do_showInfo:
     
 
 ifeq (CLEAN,$(MAKEMODE))
-DEPENDS = do_cleandir $(SUBPROJ)
+DEPENDS = do_cleandir $(SUBPROJLT)
 endif
 
 ifeq (INFO,$(MAKEMODE))

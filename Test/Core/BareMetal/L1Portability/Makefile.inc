@@ -24,49 +24,17 @@
 #
 #############################################################
 
-xxOBJSX=  AtomicTest.x \
-	AuxHeap.x\
-	BasicConsoleTest.x \
-	EndianityTest.x \
-	ErrorManagementTest.x \
-	FastMathTest.x \
-	FastPollingMutexSemTest.x \
-	FastPollingEventSemTest.x \
-	FastResourceContainerTest.x \
-	FormatDescriptorTest.x \
-	GlobalObjectsDatabaseTest.x \
-	HeapManagerTest.x \
-	HighResolutionTimerTest.x \
-	LoadableLibraryTest.x \
-	MemoryAreaTest.x \
-	MemoryCheckTest.x \
-	MemoryOperationsHelperTest.x\
-	ProcessorTypeTest.x \
-	SleepTest.x\
-	StandardHeap_GenericTest.x \
-	StaticListTest.x \
-	StringHelperTest.x \
-	StringPortableTest.x \
-	TimeStampTest.x \
-	TimeoutTypeTest.x \
-	TypeDescriptorTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-APPS=$(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
 
-
-#all: $(OBJS) \
-#                $(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
-#	echo  $(OBJS)
-
-include depends.$(TARGET)
+#BUILD_PRODUCT=$(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

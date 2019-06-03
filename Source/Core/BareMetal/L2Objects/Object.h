@@ -32,12 +32,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "ClassRegistryItem.h"
 #include "ErrorType.h"
 #include "CLASSREGISTER.h"
-#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Forward declarations                              */

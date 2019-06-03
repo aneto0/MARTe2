@@ -34,8 +34,6 @@
 #include "ErrorType.h"
 #include "ErrorManagement.h"
 
-#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
-
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -54,27 +52,27 @@ public:
     /**
      * Stores the error description in input
      */
-    static const char8* expectedErrorDescription;
+    static CCString expectedErrorDescription;
 
     /**
      * Stores the error file name in input
      */
-    static const char8* expectedErrorFilename;
+    static CCString expectedErrorFilename;
 
     /**
      * Stores the error line in input
      */
-    static uint16 expectedErrorLine;
+    static int16 expectedErrorLine;
 
     /**
      * Stores the error function name in input
      */
-    static const char8* expectedErrorFunction;
+    static CCString expectedErrorFunction;
 
     /**
      * Stores expected error name
      */
-    static const char8* expectedErrorName;
+    static CCString expectedErrorName;
 
     /**
      * The return value
@@ -96,7 +94,6 @@ public:
      */
     bool syncFlag;
 
-
     /**
      * Stores the high resolution timer counter.
      */
@@ -110,8 +107,10 @@ public:
     ErrorManagementTest() {
         retVal = false;
         fullContext = false;
+        syncFlag = false;
+        expectedHRTCounter = 0;
+        nThreads = 0;
     }
-
 
     /**
      * @brief Tests the SetErrorMessageProcessFunction.
@@ -142,30 +141,10 @@ public:
                          const char8* errorName,
                          const char8* errorDescription,
                          const char8* errorFileName = "",
-                         uint16 errorLineNumber = 0,
+                         int16 errorLineNumber = 0,
                          const char8* errorFunctionName = "");
 
-    /**
-     * @brief Tests the ReportError function.
-     * @details The error function checks if the ErrorInfo structure passed by the ReportError function is filled correctly with the
-     * right error informations. Launches a certain number of threads checking if also the thread id field is correct.
-     * @param[in] code is the desired error code.
-     * @param[in] expected is the expected error code string.
-     * @param[in] errorDescription is the desired error description.
-     * @param[in] errorFileName is the desired error file name.
-     * @param[in] errorLineNumber is the desired error line number.
-     * @param[in] errorFunctionName is the desired error function name.
-     * @param[in] numThreads is the number of threads to launch.
-     * @return true if the ErrorInfo structure passed by the ReportError function is filled correctly with the
-     * right error informations, false otherwise.
-     */
-    bool TestReportErrorFullContext(ErrorManagement::ErrorType code,
-                                    const char8* expected,
-                                    const char8* errorDescription,
-                                    const char8* errorFileName = "",
-                                    uint16 errorLineNumber = 0,
-                                    const char8* errorFunctionName = "",
-                                    uint32 numThreads = 0);
+
 
     /**
      * @brief Tests the REPORT_ERROR macro.
@@ -179,26 +158,11 @@ public:
                               const char8 *errorName);
 
     /**
-     * @brief Tests the REPORT_ERROR_FULL macro.
-     * @param[in] code is the desired error code.
-     * @param[in] errorDescription is the desired error description.
-     * @param[in] errorName is the expected error code string.
-     * @param[in] numThreads is the number of threads to launch.
-     * @return true if the ErrorInfo Structure is filled with the file name, the line number and the function name where the error is triggered.
-     * Launches also a certain number of threads and returns true if the thread is field is equal to the id of the thread which calls the macro.
-     */
-    bool TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
-                                         const char8 *errorDescription,
-                                         const char8 *errorName,
-                                         uint32 numThreads);
-
-    /**
      * @brief Checks if the errorInfo fields contains correct data.
      * @param[in] errorInfo is the structure which contains the error informations.
      * @param[in] description is the error description.
      */
-    void CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
-                         const char* description);
+    void CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,CCString description);
 
 };
 

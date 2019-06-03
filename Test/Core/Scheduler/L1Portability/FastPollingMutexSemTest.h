@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "FastPollingMutexSem.h"
-#include "EventSem.h"
-#include "Threads.h"
 
 using namespace MARTe;
 

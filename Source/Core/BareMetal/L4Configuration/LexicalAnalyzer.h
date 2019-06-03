@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "GrammarInfo.h"
 #include "StaticList.h"
-#include "StreamI.h"
 #include "Token.h"
 
 /*---------------------------------------------------------------------------*/

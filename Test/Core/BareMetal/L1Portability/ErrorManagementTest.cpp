@@ -32,9 +32,7 @@
 #include "ErrorManagementTest.h"
 #include "HighResolutionTimer.h"
 #include "Sleep.h"
-#include "StreamString.h"
-#include "StringHelper.h"
-#include "Threads.h"
+#include "DynamicCString.h"
 
 using namespace MARTe;
 
@@ -43,39 +41,38 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 
 ErrorManagement::ErrorType ErrorManagementTest::expectedErrorCode;
-const char8* ErrorManagementTest::expectedErrorDescription;
-const char8* ErrorManagementTest::expectedErrorFilename;
-uint16 ErrorManagementTest::expectedErrorLine;
-const char8* ErrorManagementTest::expectedErrorFunction;
-const char8* ErrorManagementTest::expectedErrorName;
+CCString ErrorManagementTest::expectedErrorDescription;
+CCString ErrorManagementTest::expectedErrorFilename;
+int16 ErrorManagementTest::expectedErrorLine;
+CCString ErrorManagementTest::expectedErrorFunction;
+CCString ErrorManagementTest::expectedErrorName;
 bool ErrorManagementTest::fullContext = false;
 bool ErrorManagementTest::retVal = false;
 uint64 ErrorManagementTest::expectedHRTCounter = HighResolutionTimer::Counter();
 
-static void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
-                               const char * const description) {
+static void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,CCString const errorDescription){
 
     ErrorManagementTest::retVal = true;
-
 }
 
-static void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
-                               const char * const description) {
+static void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,CCString const errorDescription){
 
     //shared static attributes
     ErrorManagementTest newEM;
     //checks if the structure is filled correctly
-    newEM.CheckParameters(errorInfo, description);
+    newEM.CheckParameters(errorInfo, errorDescription);
 
 }
 
+
+#if 0
 static void ThreadErrorTestFunction(ErrorManagementTest& t) {
     //launches error report functions.
     t.fullContext = false;
 
-    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription, NULL, NULL, NULL, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
+    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription,  t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
     t.fullContext = true;
-    ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
+    ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, emptyString,emptyString ,NULL,t.expectedErrorFilename, t.expectedErrorLine,
                                             t.expectedErrorFunction);
 
     t.syncFlag = true;
@@ -86,13 +83,14 @@ static void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     t.fullContext = false;
     t.expectedErrorFunction = __ERROR_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR_STATIC_0(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR_STATIC_0(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
 
     t.syncFlag = true;
 }
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -103,7 +101,7 @@ bool ErrorManagementTest::TestSetErrorProcessFunction() {
 
     ErrorManagement::SetErrorProcessFunction(DummyErrorFunction);
 
-    ErrorManagement::ReportError(ErrorManagement::Information, "", NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), "", 0, "");
+    ErrorManagement::ReportErrorFullContext(ErrorManagement::Information, "", NULL_PTR(const char8* ), NULL_PTR(const char8* ), NULL_PTR(const void* ), "", 0, "");
 
     return retVal;
 
@@ -117,21 +115,24 @@ bool ErrorManagementTest::TestErrorCodeToStream() {
             ErrorManagement::Exception, ErrorManagement::Timeout, ErrorManagement::CommunicationError, ErrorManagement::SyntaxError,
             ErrorManagement::UnsupportedFeature };
 
-    const char8 *names[] = { "NoError", "Debug", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
+    CCString names[] = { "NoError", "Debug", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
             "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
             "UnsupportedFeature" };
 
     uint32 i = 0;
     bool ok = true;
     while ((all[i] != ErrorManagement::UnsupportedFeature) && ok) {
-        StreamString s;
-        ErrorManagement::ErrorCodeToStream(all[i], s);
-        ok = (StringHelper::Compare(s.Buffer(), names[i]) == 0);
+    	DynamicCString buffer;
+    	CStringTool bufferCST = buffer();
+        ErrorManagement::ErrorCodeToStream(all[i],bufferCST );
+        ok &= (buffer.isSameAs(names[i]));
         i++;
     }
-    StreamString s;
-    ErrorManagement::ErrorCodeToStream(all[i], s);
-    ok &= (StringHelper::Compare(s.Buffer(), names[i]) == 0);
+
+	DynamicCString buffer;
+	CStringTool bufferCST = buffer();
+    ErrorManagement::ErrorCodeToStream(all[i],bufferCST );
+    ok &= (buffer.isSameAs(names[i]));
     return ok;
 }
 
@@ -139,7 +140,7 @@ bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
                                           const char8* errorName,
                                           const char8* errorDescription,
                                           const char8* errorFileName,
-                                          uint16 errorLineNumber,
+                                          int16 errorLineNumber,
                                           const char8* errorFunctionName) {
 
     expectedErrorCode = code;
@@ -151,16 +152,18 @@ bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
     expectedHRTCounter = HighResolutionTimer::Counter();
 
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
-    ErrorManagement::ReportError(code, errorDescription, NULL, NULL, NULL, errorFileName, errorLineNumber, errorFunctionName);
+    ErrorManagement::ReportError(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
 
     return retVal;
 }
 
+
+#if 0 // moved to ErrorManagementMTTest
 bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType code,
                                                      const char8* errorName,
                                                      const char8* errorDescription,
                                                      const char8* errorFileName,
-                                                     uint16 errorLineNumber,
+                                                     int16 errorLineNumber,
                                                      const char8* errorFunctionName,
                                                      uint32 numThreads) {
 
@@ -174,6 +177,8 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType 
     expectedHRTCounter = HighResolutionTimer::Counter();
     nThreads = numThreads;
 
+    ErrorManagement::ErrorProcessFunctionType saveFun;
+    ErrorManagement::GetErrorProcessFunction(saveFun);
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
 
     for (uint32 i = 0; i < nThreads; i++) {
@@ -191,20 +196,20 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType 
                 Threads::Kill(tid);
                 return false;
             }
-            Sleep::Sec(1e-3);
+            Sleep::Long(1,Units::ms);
         }
 
         //if the test fails return false
-        Sleep::Sec(1e-3);
+        Sleep::Long(1,Units::ms);
         if (!retVal) {
             return false;
         }
-
     }
 
 //success, return true.
     return retVal;
 }
+#endif
 
 bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
                                                const char8 *errorDescription,
@@ -220,12 +225,13 @@ bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
 
 //put always the report error at the next line otherwise the test will fail!
     expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR_STATIC_0(code, errorDescription);
+    REPORT_ERROR(code, errorDescription);
 
     return retVal;
 
 }
 
+#if 0
 bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
                                                           const char8 *errorDescription,
                                                           const char8 *errorName,
@@ -254,11 +260,11 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::Error
                 Threads::Kill(tid);
                 return false;
             }
-            Sleep::Sec(1e-3);
+            Sleep::Long(1,Units::ms);
         }
 
         //if the test fails return false
-        Sleep::Sec(1e-3);
+        Sleep::Long(1,Units::ms);
         if (!retVal) {
             return false;
         }
@@ -269,9 +275,9 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::Error
     return retVal;
 
 }
+#endif
 
-void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
-                                          const char* description) {
+void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo, CCString description) {
 
 //Checks the error code
     if (errorInfo.header.errorType != expectedErrorCode) {
@@ -286,19 +292,19 @@ void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformatio
     }
 
 //Checks the error file name. */
-    if (StringHelper::Compare(errorInfo.fileName, expectedErrorFilename) != 0) {
+    if (!expectedErrorFilename.isSameAs(errorInfo.fileName)){
         retVal = false;
         return;
     }
 
 //Checks the error function name. */
-    if (StringHelper::Compare(errorInfo.functionName, expectedErrorFunction) != 0) {
+    if (!expectedErrorFunction.isSameAs(errorInfo.functionName)){
         retVal = false;
         return;
     }
 
 //Checks the error description. */
-    if (StringHelper::Compare(description, expectedErrorDescription) != 0) {
+    if (!expectedErrorDescription.isSameAs(description)){
         retVal = false;
         return;
     }
@@ -312,7 +318,7 @@ void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformatio
 
     }
 
-    if ((errorInfo.hrtTime - expectedHRTCounter) < 0) {
+    if (errorInfo.hrtTime < expectedHRTCounter)  {
         retVal = false;
         return;
     }

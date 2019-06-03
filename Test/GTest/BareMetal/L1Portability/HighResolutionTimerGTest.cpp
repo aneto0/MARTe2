@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "HighResolutionTimerTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -67,10 +67,12 @@ TEST(HighResolutionTimerGTest,TestCounter32) {
     ASSERT_TRUE(hrtTest.TestCounter32(0.05));
 }
 
+#if 0
 TEST(HighResolutionTimerGTest,TestTicksToTime) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestTicksToTime());
 }
+#endif
 
 TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
     HighResolutionTimerTest hrtTest;

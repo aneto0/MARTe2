@@ -32,10 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../L0Types/StreamI.h"
 #include "ErrorInformation.h"
 #include "ErrorType.h"
 #include "TimeStamp.h"
-#include "StreamI.h"
 #include "CCString.h"
 #include "GeneralDefinitions.h"
 
@@ -95,7 +95,6 @@ DLL_API void ReportErrorFullContext(const ErrorType &code,
                          CCString const functionName
                          );
 
-
 /**
  * @brief A null ErrorProcessing function
  * @details This function is compatible with the function prototype defined
@@ -110,12 +109,17 @@ DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString
  */
 DLL_API void ErrorCodeToStream (const ErrorType &errorCode,StreamI &stream );
 
-
 /**
  * @brief Sets the routine for error managing.
  * @param[in] userFun is a pointer to the function called by ReportError.
  */
 DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
+
+/**
+ * @brief Gets the installed routine for error managing.
+ * @param[in] userFun is a pointer to the function called by ReportError.
+ */
+DLL_API void GetErrorProcessFunction(ErrorProcessFunctionType &userFun);
 
 
 /**
@@ -185,8 +189,6 @@ void ErrorManagement::ConditionalReportErrorFullContext(const ErrorType &code,
 		ReportErrorFullContext(code,errorDescription,className,objectName,objectPointer,fileName,lineNumber,functionName);
 	}
 }
-
-
 
 /**
  * @brief The function to report errors, warning or info.

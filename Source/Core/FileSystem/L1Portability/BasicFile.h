@@ -33,8 +33,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../../BareMetal/L0Types/StreamI.h"
 #include "GeneralDefinitions.h"
-#include "StreamI.h"
 #include "HandleI.h"
 #include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)

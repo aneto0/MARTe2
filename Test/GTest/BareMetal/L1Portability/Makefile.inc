@@ -22,63 +22,19 @@
 #
 #############################################################
 
-
-OBJSX=  AtomicGTest.x \
-	BasicConsoleGTest.x \
-	CircularStaticListGTest.x \
-	EndianityGTest.x \
-	ErrorManagementGTest.x \
-	FastMathGTest.x \
-	FastPollingEventSemGTest.x \
-	FastPollingMutexSemGTest.x \
-	FastResourceContainerGTest.x \
-	FormatDescriptorGTest.x \
-	GlobalObjectsDatabaseGTest.x \
-	HeapManagerGTest.x \
-	HighResolutionTimerGTest.x \
-	LoadableLibraryGTest.x \
-	MemoryAreaGTest.x \
-	MemoryCheckGTest.x\
-	MemoryOperationsHelperGTest.x\
-	ProcessorTypeGTest.x \
-	SleepGTest.x\
-	StandardHeap_GenericGTest.x \
-	StaticListGTest.x \
-	StringHelperGTest.x \
-	StringPortableGTest.x \
-	TimeStampGTest.x \
-	TimeoutTypeGTest.x \
-	TypeDescriptorGTest.x
-		
+	
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-INCLUDES += -I../../../
-INCLUDES += -I../../../Core/BareMetal/L0Types
-INCLUDES += -I../../../Core/BareMetal/L1Portability
-INCLUDES += -I../../../Core/BareMetal/L2Objects
-INCLUDES += -I../../../Core/BareMetal/L3Streams
-INCLUDES += -I../../../Core/BareMetal/L4Configuration
-INCLUDES += -I../../../Core/Scheduler/L1Portability
-INCLUDES += -I../../../Core/FileSystem/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
-INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
-
-
-all: $(OBJS)    \
-        $(BUILD_DIR)/L1PortabilityBGTest$(LIBEXT) 
-	echo  $(OBJS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityBGTest$(LIBEXT) 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

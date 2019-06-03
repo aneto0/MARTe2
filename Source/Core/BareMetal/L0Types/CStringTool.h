@@ -33,7 +33,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "VoidStream.h"
 #include "ZeroTerminatedArrayTool.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,17 +50,17 @@ namespace MARTe{
 /**
  * allows operating on CStrings, StaticCString and DynamicCString
  */
-class CStringTool: public ZeroTerminatedArrayTool{
+class DLL_API CStringTool: public ZeroTerminatedArrayTool,public VoidStream{
 
 public:
 
 	/**
-	 *
+	 * @allows constructing the tool
 	 */
 	inline CStringTool(char8 **dataPointerAddressIn,char8 *dataPointerIn,uint32 sizeOfBufferIn);
 
 	/**
-	 *
+	 * @brief allow using the result of a tool operation, which is the tool itself as the error code produced by the operation
 	 */
 	inline operator ErrorManagement::ErrorType();
 
@@ -137,6 +139,30 @@ public:
 	 */
     inline CStringTool &Remove(uint32 elements);
 
+    /**
+     * @brief how long is the string now?
+     */
+    inline uint32 GetSize();
+
+    /**
+     * @see StreamI
+     */
+    virtual bool CanWrite() const;
+
+
+    /**
+     * @see StreamI
+     */
+    virtual bool Write(const char8 * const input, uint32 & size);
+
+
+    /**
+     * @see StreamI
+     */
+    virtual bool Write(const char8 * const input,
+            uint32 & size,
+            const MilliSeconds &timeout);
+
 protected:
     /**
      *
@@ -174,6 +200,10 @@ CStringTool::operator ErrorManagement::ErrorType(){
 
 void CStringTool::Terminate(uint32 index){
 	ZeroTerminatedArrayStaticTools::ZTAZero(dataPointer+index*elementSize,elementSize);
+}
+
+uint32 CStringTool::GetSize(){
+	return index;
 }
 
 CStringTool &CStringTool::Append(const uint64 num){

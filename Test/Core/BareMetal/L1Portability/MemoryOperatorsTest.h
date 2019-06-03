@@ -1,6 +1,6 @@
 /**
- * @file MemoryOperationsHelperTest.h
- * @brief Header file for class MemoryOperationsHelperTest
+ * @file MemoryOperatorsTest.h
+ * @brief Header file for class MemoryOperatorsTest
  * @date 25/08/2015
  * @author Llorenç Capellà
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryOperationsHelperTest
+ * @details This header file contains the declaration of the class MemoryOperatorsTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -36,19 +36,19 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class MemoryOperationsHelperTest {
+class MemoryOperatorsTest {
 
 public:
 
     /*
      * @brief Default constructor
      */
-    MemoryOperationsHelperTest();
+    MemoryOperatorsTest();
 
     /*
      * @brief Destructor
      */
-    virtual ~MemoryOperationsHelperTest();
+    virtual ~MemoryOperatorsTest();
 
     /**
      * @brief Tests the Memory::Copy function.
@@ -130,7 +130,7 @@ public:
      * @return true if the Memory::Search function returns false for size = 0.
      */
     bool TestSearchZeroSize();
-
+#if 0
     /**
      * @brief Tests the InterleavedToFlat function
      */
@@ -140,7 +140,7 @@ public:
      * @brief Tests the FlatToInterleaved function
      */
     bool TestFlatToInterleaved();
-
+#endif
 };
 
 /*---------------------------------------------------------------------------*/
