@@ -171,7 +171,7 @@ public:
 	/**
 	 * constant infinite
 	 */
-	static const TimeType<baseType,unitType> Infinite;
+	static const  TimeType Infinite;
 
 
 private:
@@ -185,6 +185,10 @@ private:
 	 */
 	unitType        units;
 
+	/**
+	 * construct from saturated integer
+	 */
+	inline TimeType(SaturatedInteger<baseType> si);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -302,6 +306,13 @@ inline TimeType<baseType,unitType> &TimeType<baseType,unitType>::operator=(const
 	return *this;
 }
 
+template<typename baseType,class unitType>
+TimeType<baseType,unitType>::TimeType(SaturatedInteger<baseType> si){
+	time = si;
+}
+
+template<typename baseType,class unitType>
+const TimeType<baseType,unitType> TimeType<baseType,unitType>::Infinite(SaturatedInteger<baseType>('I'));
 
 
 } // MARTe

@@ -44,15 +44,103 @@ using namespace MARTe;
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
+
 namespace SaturatedIntegerTest{
 
+/**
+ * @brief Copies a number of type bt1 to a Saturated Integer of type bt2 and vice versa.
+ * Returns true if the number is unchanged. Fails also if the SaturatedInteger is Invalid
+ */
+template <typename bt1,typename bt2,typename bt3>
+bool TestConversion(bt3 value){
+	bool ret;
+	bool show=true;
+	bt1 valueS;
+	// use this function to clip to within range of bt1
+	SafeNumber2Number(value,valueS);
+	// now test the conversion to bt2
+	SaturatedInteger<bt2> saturatedValue(valueS);
+
+	ret = saturatedValue.IsValid();
+	if (show && !ret) printf("1 ");
+
+	if (ret){
+		bt1 value2;
+		bt2 value3 = saturatedValue.GetData();
+		ret = SafeNumber2Number(value3,value2);
+		if (show && !ret) printf("2 ");
+
+		if (ret){
+			ret = (valueS == value2);
+			if (show && !ret) printf("M ");
+		}
+	}
+	return ret;
+}
 
 /**
- * @brief Performs a full test of the SaturatedInteger type.
- * @param[in] testSet is a set of 1-64 bits. Each bit correspond to a subset to be executed
- * @return True if the selected tests are successful. False otherwise.
+ * @brief calculates (value1+value2)*(value1-value2) + (value1-value2)
+ * Returns true if the number is unchanged. Fails also if the SaturatedInteger is Invalid
  */
-bool Test(uint64 testSelection,bool show=false);
+template <typename bt1,typename bt2>
+int TestMathOps(bt2 value1,bt2 value2){
+	int retI=0;
+	bool ret;
+
+	SaturatedInteger<bt1>  value1S(value1);
+	SaturatedInteger<bt1>  value2S(value2);
+	SaturatedInteger<bt1>  temp(0);
+
+	ret = value1S.IsValid() && value2S.IsValid() ;
+	if (!ret) { retI = 1; }
+
+	if (ret){
+		// use operators +,-,*
+		SaturatedInteger<bt1>  temp2 = (value1S + value2S);
+		ret = temp2.IsValid();
+		if (!ret) { retI = 2; }
+		if (ret){
+			SaturatedInteger<bt1>  temp3 = (value1S - value2S);
+			ret = temp3.IsValid();
+			if (!ret) { retI = 3; }
+
+			if (ret){
+				temp = temp2 * temp3;
+				ret = temp.IsValid();
+				if (!ret) { retI = 4; }
+
+				if (ret){
+					temp += value1S;
+					ret = temp.IsValid();
+					if (!ret) { retI = 5;}
+
+					if (ret){
+						value2S *=SaturatedInteger<bt1>(10);
+						ret = value2S.IsValid();
+						if (!ret) { retI = 6;}
+
+						if (ret){
+							temp -= value2S;
+							ret = temp.IsValid();
+							if (!ret) { retI = 7;}
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (ret){
+		bt1 result = (value1 + value2)*(value1 - value2) + value1 - value2*10;
+		SaturatedInteger<bt1>  resultS(result);
+		ret = (temp == resultS);
+		if (!ret) { retI = 8;}
+	}
+	return retI;
+}
+
 
 }
 

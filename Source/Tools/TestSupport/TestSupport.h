@@ -120,6 +120,7 @@ void RunAllTests();
 #define ASSERT_TRUE(code_to_execute)  ASSERT((code_to_execute),TestSupportShowResults,false)
 #define ASSERT_FALSE(code_to_execute) ASSERT((code_to_execute),TestSupportShowResults,true)
 #define ASSERT_VALUE(code_to_execute,value) ASSERTI((code_to_execute),TestSupportShowResults,value)
+#define ASSERT_BOOL(code_to_execute,cond)  ASSERT((code_to_execute),TestSupportShowResults,cond)
 
 
 

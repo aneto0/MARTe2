@@ -324,7 +324,7 @@ public:
      *   isConstantIn == isConstant &&
      *   structuredDataIdCodeIn == structuredDataIdCode
      */
-    TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn);
+    inline TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn);
 
     /**
      * @brief String to typeDescriptor
@@ -535,6 +535,12 @@ bool TypeDescriptor::IsInvalid() const {
 TypeDescriptor::TypeDescriptor(const uint32 x) {
     all = x;
 }
+
+TypeDescriptor::TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn){
+	this->structuredDataIdCode = structuredDataIdCodeIn;
+	this->dataIsConstant = isConstantIn;
+}
+
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
     return all == typeDescriptor.all;
