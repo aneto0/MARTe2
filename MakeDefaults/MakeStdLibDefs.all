@@ -1,0 +1,81 @@
+#############################################################
+#
+# Copyright 2011 EFDA | European Fusion Development Agreement
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http:k/ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+
+#!! variables to be set before including  this !!
+# name of the destination minus the current directory which is appended to
+#PACKAGE=
+# path (relative or absolute) to the MARTe root
+#ROOT_DIR=../../../../..
+# path (relative or absolute) to the MakeDefaults
+#MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+#!! variables to be modified after including  this !!
+# sets the libraries to be use when building exes dlls and libs. Dependencies are not checked
+#LIBRARIES_NODEP =
+# sets the libraries to be use when building exes dlls and libs. Dependencies are checked
+#LIBRARIES =
+# sets the search paths to be added to the includes
+#INCLUDES =
+# sets the subrojects to be built as part of this build
+#SPB    = 
+# sets the exe/lib/dll targets to be added
+#BUILD_PRODUCT = 
+
+#sets the default goal of the Makefile
+.DEFAULT_GOAL := default
+
+# calculates the build directory by combining $ROOT_DIR "Build" $PACKAGE Current_Directory
+BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
+
+# classical MARTe compilation order. Tear by Tear
+ifeq (VERTICAL,$(MAKEPATH))
+VTEARS= BareMetal $(TEARS)
+HTEARS= 
+endif
+
+# new MARTe compilation order. Level by level
+ifeq (HORIZONTAL,$(MAKEPATH))
+VTEARS= BareMetal
+HTEARS= $(TEARS)
+endif
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)\\%.obj) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)\\%.obj) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)\\%.obj) 
+
+PP=   $(PPX:%.x=msc\\%.pp) 
+
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+
+OBJS_=  $(OBJSX:%.x=msc\\%.obj) 
+OBJS2_= $(OBJSX2:%.x=msc\\%.obj) 
+OBJS3_= $(OBJSX3:%.x=msc\\%.obj) 
+
+SUBPROJ    = $(SPB:%.x=%.spb)
+SUBPROJLT  = $(SPB:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 
+SUBPROJLT2 = $(SPBLT:%.x=%.spb)  
+
