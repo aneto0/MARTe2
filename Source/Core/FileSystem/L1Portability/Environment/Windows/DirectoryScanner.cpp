@@ -26,14 +26,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include <windows.h>
-#include <iostream>
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "DirectoryScanner.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,165 +46,78 @@ namespace MARTe {
 
 DirectoryScanner::DirectoryScanner() :
         LinkedListHolder() {
-    basePath = static_cast<char8 *>(NULL);
     size = 0u;
 }
 
 DirectoryScanner::~DirectoryScanner() {
     size = 0u;
-    if (basePath != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
-        }
-        basePath = static_cast<char8 *>(NULL);
-    }
 }
 
 void DirectoryScanner::CleanUp() {
     LinkedListHolder::CleanUp();
     size = 0u;
-    if (basePath != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
-        }
-        basePath = static_cast<char8 *>(NULL);
-    }
 }
 
-bool DirectoryScanner::Scan(const char8 * const path,
-                            const char8 *fileMask,
+bool DirectoryScanner::Scan(CCString path,
+                            CCString fileMask,
                             SortFilter * const sorter) {
 
-    bool ret = true;
+    ErrorManagement::ErrorType ret;
     CleanUp();
 
-    // if path is not null it is copied into basePath
-    uint32 addressLen = StringHelper::Length(path);
-    if ((path != NULL) && (addressLen > 0u)) {
-        basePath = static_cast<char8 *>(HeapManager::Malloc(addressLen + 2u));
-        if (!StringHelper::Copy(basePath, path)) {
-            HeapManager::Free(reinterpret_cast<void *&>(basePath));
-            ret = false;
-        }
-    }
-    if (ret) {
-        // if basePath is still NULL it becomes "\" (root)
-        if (basePath == NULL) {
-            basePath = static_cast<char8 *>(HeapManager::Malloc(2u));
-            if (basePath != NULL) {
-                basePath[0] = DIRECTORY_SEPARATOR;
-                basePath[1] = '\0';
-            }
-            else {
-                ret = false;
-            }
-        }
-        else {
-            // otherwise append the separator at the end of basePath
-            uint32 baseAddressLen = StringHelper::Length(basePath);
-            if (baseAddressLen > 0u) {
-                uint32 index = baseAddressLen - 1u;
-                if ((path[index] != '\\') || (path[index] != '/')) {
-                    basePath[baseAddressLen] = DIRECTORY_SEPARATOR;
-                    index = baseAddressLen + 1u;
-                    basePath[index] = '\0';
-                }
-            }
-            else {
-                ret = false;
-            }
-        }
+    basePath = path;
+    if (basePath.GetSize()==0){
+    	ret = basePath().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
 
-    if (ret) {
-        uint32 pathSize = 512u;
-        char8 statAddr[512];
-        char8 *searchMask = NULL;
-        if (fileMask != NULL) {
-            searchMask = static_cast<char8 *>(HeapManager::Malloc(strlen(basePath)+strlen(fileMask)+2u));
-            StringHelper::Copy(searchMask,basePath);
-
-            if(StringHelper::Compare(fileMask, "") != 0) {
-                StringHelper::Concatenate(searchMask,fileMask);
-            }
-            else {
-                StringHelper::Concatenate(searchMask,"*");
-            }
-        }
-        else {
-            searchMask = static_cast<char8 *>(HeapManager::Malloc(strlen(basePath)+2u));
-            searchMask = StringHelper::StringDup(basePath);
-            StringHelper::Concatenate(searchMask,"*");
-
-        }
-
-        WIN32_FIND_DATA lpFindFileData;
-        HANDLE h = FindFirstFile(searchMask, &lpFindFileData);
-        if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
-            FindClose(h);
-            ret = false;
-        }
-        if (ret) {
-
-            if (!StringHelper::Copy(&statAddr[0], basePath)) {
-                ret = false;
-            }
-            // concatenate it with the file name to create the full path
-            if (ret) {
-                if (!StringHelper::Concatenate(&statAddr[0], (char8 *) lpFindFileData.cFileName)) {
-                    ret = false;
-                }
-            }
-            if (StringHelper::Compare((char8 *) lpFindFileData.cFileName, ".") != 0) {
-                Directory *entry = new Directory(&statAddr[0]);
-                if (ret) {
-                    if (sorter == NULL) {
-                        ListInsert(entry);
-                    }
-                    else {
-                        ListInsert(entry,sorter);
-                    }
-                }
-            }
-
-            while (FindNextFile(h, &lpFindFileData)) {
-                // empties statAddr
-                if (!StringHelper::Copy(&statAddr[0], basePath)) {
-                    ret = false;
-                }
-
-                if (ret) {
-                    // concatenate it with the file name to create the full path
-                    if (!StringHelper::Concatenate(&statAddr[0], (char8 *) lpFindFileData.cFileName)) {
-                        ret = false;
-                    }
-                }
-
-                if (StringHelper::Compare((char8 *) lpFindFileData.cFileName, "..") != 0) {
-
-                    Directory * temp = new Directory(&statAddr[0]);
-                    if (sorter == NULL) {
-                        ListInsert(temp);
-                    }
-                    else {
-                        ListInsert(temp, sorter);
-                    }
-                    size += temp->GetSize();
-                }
-            }
-        }
-
-        HeapManager::Free(reinterpret_cast<void *&>(searchMask));
-
-        if (!ret) {
-            CleanUp();
-        }
-
-        if (FindClose(h) == 0) {
-            ret = false;
-        }
+    if (ret && (basePath[basePath.GetSize()-1] != DIRECTORY_SEPARATOR)){
+    	ret = basePath().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
+
+    if (fileMask.GetSize()==0){
+    	fileMask = "*";
+    }
+    DynamicCString searchMask;
+    if (ret){
+    	ret = searchMask().Append(basePath).Append(fileMask);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
+    }
+
+    WIN32_FIND_DATA lpFindFileData;
+    HANDLE h = INVALID_HANDLE_VALUE;
+    if (ret){
+        h = FindFirstFile(searchMask.GetList(), &lpFindFileData);
+        ret.OSError = (h == INVALID_HANDLE_VALUE);
+        REPORT_ERROR(ret, "Error: Failed FindFirstFile() in initialization");
+    }
+
+    if (ret){
+        do {
+        	DynamicCString fullPath;
+        	CCString fileName(&lpFindFileData.cFileName[0]);
+        	ret = fullPath().Append(basePath).Append(fileName);
+            REPORT_ERROR(ret, "Error: Failed appending strings");
+
+        	if (ret && !fileName.isSameAs(".") && !fileName.isSameAs("..")){
+                Directory *entry = new Directory(fullPath);
+                if (sorter == NULL) {
+                    ListInsert(entry);
+                }
+                else {
+                    ListInsert(entry,sorter);
+                }
+        	}
+        }
+        while(ret && FindNextFile(h, &lpFindFileData));
+    }
+
+    if (h != INVALID_HANDLE_VALUE){
+    	ret.OSError = (FindClose(h) == 0);
+    	REPORT_ERROR(ret, "Error: closing handle");
+    }
+
     return ret;
 }
 
@@ -213,7 +125,7 @@ uint64 DirectoryScanner::DirectorySize() const {
     return size;
 }
 
-const char8* DirectoryScanner::BasePath() const {
+CCString DirectoryScanner::BasePath() const {
     return basePath;
 }
 

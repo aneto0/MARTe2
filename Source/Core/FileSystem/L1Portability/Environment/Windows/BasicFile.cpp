@@ -338,7 +338,7 @@ bool BasicFile::Read(char8 * const output,
         uint64 newPos = oldPos + size;
 
         LARGE_INTEGER newPosLI;
-        ret.outOfRange = SafeNumber2Number(newPos,newPosLI.QuadPart);
+        ret.outOfRange = !SafeNumber2Number(newPos,newPosLI.QuadPart);
         REPORT_ERROR(ret, "Error: file position > int64");
 //            newpos.QuadPart = oldPos + size;
 
@@ -434,7 +434,7 @@ bool BasicFile::Write(const char8 * const input,
         uint64 newPos = oldPos + size;
 
         LARGE_INTEGER newPosLI;
-        ret.outOfRange = SafeNumber2Number(newPos,newPosLI.QuadPart);
+        ret.outOfRange = !SafeNumber2Number(newPos,newPosLI.QuadPart);
         REPORT_ERROR(ret, "Error: file position > int64");
 
         if (ret) {

@@ -62,20 +62,16 @@ VTEARS= BareMetal
 HTEARS= $(TEARS)
 endif
 
-OBJS=   $(OBJSX:%.x=$(BUILD_DIR)\\%.obj) 
-OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)\\%.obj) 
-OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)\\%.obj) 
-
 PP=   $(PPX:%.x=msc\\%.pp) 
 
 OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
 $(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
 
-OBJS_=  $(OBJSX:%.x=msc\\%.obj) 
-OBJS2_= $(OBJSX2:%.x=msc\\%.obj) 
-OBJS3_= $(OBJSX3:%.x=msc\\%.obj) 
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)\\%$(OBJEXT)) 
 
 SUBPROJ    = $(SPB:%.x=%.spb)
 SUBPROJLT  = $(SPB:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 
 SUBPROJLT2 = $(SPBLT:%.x=%.spb)  
+
+
 

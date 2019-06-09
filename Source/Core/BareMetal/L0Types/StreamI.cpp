@@ -33,4 +33,6 @@ StreamI::~StreamI() {
 
 }
 
+const uint64 StreamI::Invalid = 0xFFFFFFFFFFFFFFFF;
+
 } //MARTe

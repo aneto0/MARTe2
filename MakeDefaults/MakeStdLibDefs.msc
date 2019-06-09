@@ -24,9 +24,6 @@
 #############################################################
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
-
-
 # PLATFORM SPECIFIC
 ENVIRONMENT=Windows
 ARCHITECTURE=x86_cl
@@ -62,3 +59,4 @@ FOPTS    =   -optimize:4
 
 .SUFFIXES:     .cpp .obj  .o .a .lib .exe 
 
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all

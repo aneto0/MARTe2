@@ -80,15 +80,15 @@ public:
      * @param[in] sorter specifies the desired sort of the elements in the list.
      * @return false in case of errors, true otherwise.
      */
-    bool Scan(const char8 * const path,
-              const char8 *fileMask = "*",
+    bool Scan(CCString path,
+              CCString fileMask = "*",
               SortFilter * const sorter = NULL);
 
     /**
      * @brief Gets the directory absolute path.
      * @return the the directory absolute path.
      */
-    const char8 *BasePath() const;
+    CCString BasePath() const;
 
     /**
      * @brief Removes all the elements from the list.
@@ -103,7 +103,7 @@ private:
     /**
      * The directory path.
      */
-    char8* basePath;
+    DynamicCString basePath;
 
     /**
      * The total content size.

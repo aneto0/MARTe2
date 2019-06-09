@@ -22,8 +22,8 @@
  */
 
 
-		#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_
-		#define 		SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_
+#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_
+#define SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -45,5 +45,5 @@ typedef WIN32_FIND_DATA DirectoryCore;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_ */
+#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_DIRECTORYCORE_H_ */
 	

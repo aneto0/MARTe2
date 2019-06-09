@@ -61,7 +61,7 @@ bool BasicUDPSocket::Peek(char8* const output,
     ErrorManagement::ErrorType eRet;
 
     int32 sizeToRead = 0;
-    eRet.outOfRange = SafeNumber2Number(size, sizeToRead);
+    eRet.outOfRange = !SafeNumber2Number(size, sizeToRead);
     REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
 
     if (eRet){
@@ -96,7 +96,7 @@ bool BasicUDPSocket::Read(char8* const output,
     ErrorManagement::ErrorType eRet;
 
     int32 sizeToRead = 0;
-    eRet.outOfRange = SafeNumber2Number(size, sizeToRead);
+    eRet.outOfRange = !SafeNumber2Number(size, sizeToRead);
     REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
 
     if (eRet){
@@ -129,7 +129,7 @@ bool BasicUDPSocket::Write(const char8* const input,
     ErrorManagement::ErrorType eRet;
 
     int32 sizeToWrite = 0;
-    eRet.outOfRange = SafeNumber2Number(size, sizeToWrite);
+    eRet.outOfRange = !SafeNumber2Number(size, sizeToWrite);
     REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
 
     if (eRet){

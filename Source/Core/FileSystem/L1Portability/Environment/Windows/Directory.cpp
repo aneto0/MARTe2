@@ -25,11 +25,12 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <windows.h>
-#include <iostream>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Directory.h"
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,18 +41,24 @@
 
 namespace MARTe {
 
-Directory::Directory(const char8 * const path) :
-        LinkedListable() {
-    fname = static_cast<char8 *>(NULL);
-    if (path != NULL) {
-        fname = StringHelper::StringDup(path);
-        HANDLE h = FindFirstFile(fname, &directoryHandle);
-        if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
-        }
-        FindClose(h);
+ErrorManagement::ErrorType Directory::Update(){
+	ErrorManagement::ErrorType ret;
+
+    HANDLE h = FindFirstFile(fileName.GetList(), &directoryHandle);
+    ret.OSError = (h == INVALID_HANDLE_VALUE);
+    REPORT_ERROR(ret, "Error: FindFirstFile returns INVALID_HANDLE_VALUE");
+
+    if (h != INVALID_HANDLE_VALUE){
+        ret.OSError = (FindClose(h) == 0);
+        REPORT_ERROR(ret, "Error: FindClose failed");
     }
-    else {
+    return ret;
+}
+
+Directory::Directory(CCString path) :   LinkedListable() {
+	fileName = path;
+
+	if (fileName.GetSize() == 0){
         directoryHandle.dwFileAttributes = static_cast<DWORD>(0u);
         directoryHandle.ftCreationTime.dwLowDateTime = static_cast<DWORD>(0u);
         directoryHandle.ftCreationTime.dwHighDateTime = static_cast<DWORD>(0u);
@@ -65,52 +72,36 @@ Directory::Directory(const char8 * const path) :
         directoryHandle.dwReserved1 = static_cast<DWORD>(0u);
         directoryHandle.cFileName[0] = 0u;
         directoryHandle.cAlternateFileName[0] = 0u;
-        fname = static_cast<char8 *>(NULL);
-    }
+	} else {
+		Update();
+	}
 }
 
 Directory::~Directory() {
-    if (fname != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
-        }
-    }
 }
 
-bool Directory::SetByName(const char8 * const path) {
-    bool ret = true;
+bool Directory::SetByName(CCString path) {
+	ErrorManagement::ErrorType ret;
 
-    if (fname != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            ret = false;
-        }
-    }
-    fname = StringHelper::StringDup(path);
-    uint32 size = StringHelper::Length(path);
-    char8* fnameTemp;
-    if (path[size - 1] != '\\') {
-        fnameTemp = StringHelper::StringDup(path);
-    }
-    else {
-        fnameTemp = StringHelper::StringDup(path);
-        fnameTemp[size - 1] = '\0';
+	fileName = path;
+
+    if (fileName.GetSize()==0){
+    	ret = fileName().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
 
-    if (ret) {
-        HANDLE h = FindFirstFile(fnameTemp, &directoryHandle);
-        if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: SetByName Failed INVALID_HANDLE_VALUE");
-            ret = false;
-        }
-        FindClose(h);
+    if (ret && (fileName[fileName.GetSize()-1] != DIRECTORY_SEPARATOR)){
+    	ret = fileName().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
-    HeapManager::Free(reinterpret_cast<void *&>(fnameTemp));
+
+	Update();
 
     return ret;
 }
 
-const char8 *Directory::GetName() const {
-    return fname;
+CCString Directory::GetName() const {
+    return fileName;
 }
 
 bool Directory::IsDirectory() const {
@@ -122,12 +113,9 @@ bool Directory::IsFile() const {
     return (IsDirectory() == false);
 }
 
+
 uint64 Directory::GetSize() {
-    HANDLE h = FindFirstFile(fname, &directoryHandle);
-    if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetSize Failed INVALID_HANDLE_VALUE");
-    }
-    FindClose(h);
+	Update();
 
     uint64 size = 0L;
     size = (((uint64) directoryHandle.nFileSizeHigh) * (MAXDWORD) + 1) + directoryHandle.nFileSizeLow;
@@ -135,13 +123,10 @@ uint64 Directory::GetSize() {
 }
 
 TimeStamp Directory::GetLastWriteTime() {
+	Update();
+
     TimeStamp timeStamp;
     SYSTEMTIME systemTime;
-    HANDLE h = FindFirstFile(fname, &directoryHandle);
-    if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastWriteTime Failed INVALID_HANDLE_VALUE");
-    }
-    FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastWriteTime, &systemTime);
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));
@@ -159,13 +144,10 @@ TimeStamp Directory::GetLastWriteTime() {
 }
 
 TimeStamp Directory::GetLastAccessTime() {
-    TimeStamp timeStamp;
+	Update();
+
+	TimeStamp timeStamp;
     SYSTEMTIME systemTime;
-    HANDLE h = FindFirstFile(fname, &directoryHandle);
-    if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastAccessTime Failed INVALID_HANDLE_VALUE");
-    }
-    FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastAccessTime, &systemTime);
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));

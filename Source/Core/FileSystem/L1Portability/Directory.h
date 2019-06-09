@@ -34,8 +34,7 @@
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "LinkedListHolder.h"
-#include "MemoryOperationsHelper.h"
-#include "StringHelper.h"
+#include "DynamicCString.h"
 #include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 
@@ -82,7 +81,7 @@ namespace MARTe {
          * @post
          *   GetName() = path
          */
-        Directory(const char8 * const path = NULL);
+        Directory(CCString path = emptyString);
 
         /**
          * @brief Default destructor.
@@ -98,13 +97,13 @@ namespace MARTe {
          * @post
          *   GetName() = path
          */
-        bool SetByName(const char8 * const path);
+        bool SetByName(CCString path);
 
         /**
          * @brief Gets the file/directory name.
          * @return the file/directory absolute path name.
          */
-        const char8 *GetName() const;
+        CCString GetName() const;
 
         /**
          * @brief Check if this instance represents is a directory.
@@ -160,11 +159,15 @@ namespace MARTe {
          */
         bool Exists();
 
+    protected:
+
+        ErrorManagement::ErrorType Update();
+
     private:
         /**
          * The file or directory name
          */
-        char8 *fname;
+        DynamicCString fileName;
 
         /**
          * File/directory attributes.
