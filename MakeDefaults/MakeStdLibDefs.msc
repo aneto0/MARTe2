@@ -24,7 +24,7 @@
 #############################################################
 
 
-include $(MAKEDEFAULTDIR)/GeneralDefs
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
 
 
 # PLATFORM SPECIFIC
