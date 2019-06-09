@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "TimeoutType.h"
+#include "MilliSeconds.h"
 #include "HandleI.h"
 
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
@@ -165,7 +165,7 @@ namespace MARTe {
          * @param[in] timeout is the timeout of the function, in ms. Default is no timeout.
          * @return -1 in case of errors, 0 if timeout expires, otherwise the number of handles which received an I/O event.
          */
-        int32 WaitUntil(const TimeoutType &timeout = TTInfiniteWait);
+        int32 WaitUntil(const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     private:
 

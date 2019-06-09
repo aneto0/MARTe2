@@ -113,10 +113,7 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
                 if (nOfEntries == 0u) {
                     /*lint -e{9025} We are passing a double-pointer to a reference */
                     /*lint -e{929} Type handled inside HeapManager::Free through a HeapI interface */
-                    bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
-                    if (!ok) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "Error: database memory cleanup failed");
-                    }
+                    HeapManager::Free(reinterpret_cast<void *&>(entries));
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
                 }

@@ -49,11 +49,10 @@
 #define sock_errno()  errno
 
 namespace MARTe {
-BasicTCPSocket::BasicTCPSocket() :
-        BasicSocket() {
+BasicTCPSocket::BasicTCPSocket() : BasicSocket() {
     WSADATA wsaData;
     // Initialize Winsock
-    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 }
 
 BasicTCPSocket::~BasicTCPSocket() {
@@ -64,43 +63,36 @@ BasicTCPSocket::~BasicTCPSocket() {
 }
 
 bool BasicTCPSocket::Open() {
-    bool ret = false;
+    ErrorManagement::ErrorType ret;
     const int32 one = 1;
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
-    if (connectionSocket != INVALID_SOCKET) {
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char8*>(&one), static_cast<uint32>(sizeof(one))) >= 0) {
-            ret = true;
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed");
+    ret.OSError = (connectionSocket == INVALID_SOCKET);
+    REPORT_ERROR(ret, "BasicTCPSocket: socket(PF_INET, SOCK_STREAM,0)");
+
+    if (ret) {
+    	ret.OSError = (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char8*>(&one), static_cast<uint32>(sizeof(one))) != 0);
+        REPORT_ERROR(ret, "BasicTCPSocket: setsockopt");
     }
     return ret;
 }
 
-bool BasicTCPSocket::Listen(const uint16 port,
-                            const int32 maxConnections) const {
-    bool ret = false;
-    if (IsValid()) {
-        InternetHost server;
-        server.SetPort(port);
-        int32 errorCode = bind(connectionSocket, reinterpret_cast<SOCKADDR *>(server.GetInternetHost()), server.Size());
+bool BasicTCPSocket::Listen(const uint16 port,const int32 maxConnections) const {
+    ErrorManagement::ErrorType ret;
 
-        if (errorCode == 0) {
-            errorCode = listen(connectionSocket, maxConnections);
-            if (errorCode == 0) {
-                ret = true;
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed listen()");
-            }
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed bind()");
-        }
+    ret.invalidOperation = !IsValid();
+    REPORT_ERROR(ret, "BasicTCPSocket: The socked handle is not valid");
+
+    InternetHost server;
+    if (ret) {
+        server.SetPort(port);
+
+        ret.OSError = (bind(connectionSocket, reinterpret_cast<SOCKADDR *>(server.GetInternetHost()), static_cast<int32>(server.Size()))!= 0);
+        REPORT_ERROR(ret, "BasicTCPSocket: bind failed");
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
+
+    if (ret){
+    	ret.OSError = (listen(connectionSocket, maxConnections)!= 0);
+        REPORT_ERROR(ret, "BasicTCPSocket: listen failed");
     }
 
     return ret;
@@ -108,7 +100,7 @@ bool BasicTCPSocket::Listen(const uint16 port,
 
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
-                             const TimeoutType &timeout) {
+                             const MilliSeconds &timeout) {
     destination.SetPort(port);
     bool ret = IsValid();
     bool wasBlocking = IsBlocking();
@@ -120,7 +112,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
         }
         if (ret) {
             source = destination;
-            if (timeout.IsFinite()) {
+            if (timeout.IsValid()) {
                 //set as unblocking if the timeout is finite.
                 if (wasBlocking) {
                     ret = SetBlocking(false);
@@ -131,7 +123,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
             }
             if (ret) {
 
-                int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
+                int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), static_cast<int32>(destination.Size()));
 
                 if (errorCode != 0) {
                     errorCode = WSAGetLastError();
@@ -149,8 +141,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         FD_SET(connectionSocket, &writeFDS);
                         timeval timeWait;
                         if (wasBlocking) {
-                            timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-                            timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+                        	MS2TV(timeout, timeWait);
                         }
                         else {
                             timeWait.tv_sec = 1u;
@@ -188,7 +179,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                 }
             }
 
-            if (timeout.IsFinite()) {
+            if (timeout.IsValid()) {
                 if (wasBlocking) {
                     if (!SetBlocking(true)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Socket reset to blocking mode failed");
@@ -213,7 +204,7 @@ bool BasicTCPSocket::IsConnected() const {
     if (IsValid()) {
         InternetHost information;
 
-        int32 len = information.Size();
+        int32 len = static_cast<int32>(information.Size());
 
         ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
     }
@@ -224,8 +215,7 @@ bool BasicTCPSocket::IsConnected() const {
 
 }
 
-BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
-                                               BasicTCPSocket *client) {
+BasicTCPSocket *BasicTCPSocket::WaitConnection(const MilliSeconds &timeout,BasicTCPSocket *client) {
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
 
     if (IsValid()) {
@@ -233,7 +223,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
         bool wasBlocking = IsBlocking();
 
         bool ok = true;
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             if(wasBlocking) {
                 if(!SetBlocking(false)) {
                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Socket set to non-block mode failed.");
@@ -258,7 +248,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             }
             else {
                 if (wasBlocking) {
-                    if (timeout.IsFinite()) {
+                    if (timeout.IsValid()) {
                         int32 errorCode;
                         errorCode = WSAGetLastError();
                         if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
@@ -266,8 +256,10 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                             FD_ZERO(&readFDS);
                             FD_SET(connectionSocket, &readFDS);
                             timeval timeWait;
-                            timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-                            timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+                        	MS2TV(timeout,timeWait);
+
+//                        	timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
+//                            timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
 
                             uint32 readySockets = select(256, &readFDS, &readFDS, static_cast<fd_set*>(NULL), &timeWait);
                             if(readySockets > 0) {
@@ -284,7 +276,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                 }
             }
         }
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             if(wasBlocking) {
                 if(!SetBlocking(true)) {
                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Socket reset to non-block mode failed.");
@@ -350,8 +342,7 @@ bool BasicTCPSocket::Read(char8* const output,
     return (readBytes > 0);
 }
 
-bool BasicTCPSocket::Write(const char8* const input,
-                           uint32 &size) {
+bool BasicTCPSocket::Write(const char8* const input,uint32 &size) {
     int32 writtenBytes = 0;
     uint32 sizeToWrite = size;
     size = 0u;
@@ -380,15 +371,14 @@ bool BasicTCPSocket::Write(const char8* const input,
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size,
-                          const TimeoutType &timeout) {
+                          const MilliSeconds &timeout) {
 
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+            MS2TV(timeout, timeoutVal);
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal)));
             if (ret != 0) {
@@ -417,15 +407,14 @@ bool BasicTCPSocket::Read(char8* const output,
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size,
-                           const TimeoutType &timeout) {
+                           const MilliSeconds &timeout) {
 
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+            MS2TV(timeout, timeoutVal);
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal)));
 

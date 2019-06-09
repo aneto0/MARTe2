@@ -58,20 +58,11 @@ ThreadInformation::ThreadInformation() {
 
 ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
                                      const void * const threadData,
-                                     const char8 * const threadName) {
+                                     CCString threadName): name(threadName) {
     this->userThreadFunction = threadFunction;
     this->userData = threadData;
-    if (threadName != NULL) {
-        this->name = StringHelper::StringDup(threadName);
-        if (this->name == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name failed");
-        }
-    }
-    else {
-        this->name = StringHelper::StringDup("Unknown");
-        if (this->name == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name \"Unknown\" failed");
-        }
+    if (threadName.GetSize() == 0) {
+    	name = CCString ("Unknown");
     }
     threadId = InvalidThreadIdentifier;
     priorityClass = Threads::UnknownPriorityClass;
@@ -96,12 +87,7 @@ ThreadInformation::~ThreadInformation() {
 void ThreadInformation::Copy(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
-    if(name!=NULL){
-        /*lint -e{534} possible failure is not handled nor propagated.*/
-        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        HeapManager::Free(reinterpret_cast<void *&>(name));
-    }
-    name = StringHelper::StringDup(threadInfo.name);
+    name = threadInfo.name;
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;
     priorityLevel = threadInfo.priorityLevel;
@@ -113,8 +99,8 @@ void ThreadInformation::UserThreadFunction() const {
     }
 }
 
-const char8 *ThreadInformation::ThreadName() const {
-    return name;
+CCString ThreadInformation::ThreadName() const {
+    return name.GetList();
 }
 
 Threads::PriorityClassType ThreadInformation::GetPriorityClass() const {

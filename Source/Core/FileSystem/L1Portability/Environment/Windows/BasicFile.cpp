@@ -81,26 +81,22 @@ BasicFile::BasicFile() :
     properties.pathname = "";
 }
 
-BasicFile::BasicFile(const BasicFile &bf) :
-        StreamI() {
-    bool ok = true;
+BasicFile::BasicFile(const BasicFile &bf) : StreamI() {
+	ErrorManagement::ErrorType ret;
     HANDLE handle;
     if (bf.properties.handle == INVALID_HANDLE_VALUE) {
         handle = INVALID_HANDLE_VALUE;
-    }
-    else {
-        ok = DuplicateHandle(GetCurrentProcess(),
+    }  else {
+        ret.OSError = (DuplicateHandle(GetCurrentProcess(),
                              bf.properties.handle,
                              GetCurrentProcess(),
                              &handle,
                              0,
                              FALSE,
-                             DUPLICATE_SAME_ACCESS);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
-        }
+                             DUPLICATE_SAME_ACCESS)==0);
+        REPORT_ERROR(ret, "Error: DuplicateHandle()");
     }
-    if (ok) {
+    if (ret) {
         properties.handle = handle;
         properties.flags = bf.properties.flags;
         properties.pathname = bf.properties.pathname;
@@ -113,30 +109,26 @@ BasicFile::BasicFile(const BasicFile &bf) :
 }
 
 BasicFile& BasicFile::operator=(const BasicFile &bf) {
-    if (this != &bf) {
-        bool ok = true;
+	ErrorManagement::ErrorType ret;
+
+	if (this != &bf) {
         HANDLE handle;
         if (bf.properties.handle == INVALID_HANDLE_VALUE) {
             handle = INVALID_HANDLE_VALUE;
-        }
-        else {
-            ok = DuplicateHandle(GetCurrentProcess(),
+        } else {
+            ret.OSError = (DuplicateHandle(GetCurrentProcess(),
                                  bf.properties.handle,
                                  GetCurrentProcess(),
                                  &handle,
                                  0,
                                  FALSE,
-                                 DUPLICATE_SAME_ACCESS);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
-            }
+                                 DUPLICATE_SAME_ACCESS)==0);
+            REPORT_ERROR(ret, "Error: DuplicateHandle()");
         }
-        if (ok) {
+        if (ret) {
             if (properties.handle != INVALID_HANDLE_VALUE) {
-                ok = CloseHandle(properties.handle);
-                if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
-                }
+                ret.OSError = (CloseHandle(properties.handle)==0);
+                REPORT_ERROR(ret, "Error: CloseHandle()");
             }
             properties.handle = handle;
             properties.flags = bf.properties.flags;
@@ -147,33 +139,30 @@ BasicFile& BasicFile::operator=(const BasicFile &bf) {
 }
 
 BasicFile::~BasicFile() {
+	ErrorManagement::ErrorType ret;
     /*
      * Note: No exceptions can be thrown by CloseHandle (neither IsOpen),
      * but if there is an error on closing the file, it will be reported,
      * although not propagated.
      */
     if (IsOpen()) {
-        bool ok = true;
-        ok = CloseHandle(properties.handle);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
-        }
+        ret.OSError = (CloseHandle(properties.handle)==0);
+        REPORT_ERROR(ret, "Error: CloseHandle()");
     }
 }
 
 bool BasicFile::SetFlags(const uint32 setFlags) {
-    bool ok = true;
+	ErrorManagement::ErrorType ret;
 
     if (IsOpen()) {
         //Sets the flags
         properties.flags = setFlags;
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+    } else {
+    	ret.illegalOperation = true;
+        REPORT_ERROR(ret, "Error: SetFlags on file not opened");
     }
 
-    return ok;
+    return ret;
 }
 
 uint32 BasicFile::GetFlags() const {
@@ -192,9 +181,8 @@ bool BasicFile::CanSeek() const {
     return (properties.handle != INVALID_HANDLE_VALUE);
 }
 
-bool BasicFile::Open(const char * pathname,
-                     const uint32 flags) {
-    bool ok = true;
+bool BasicFile::Open(const char * pathname,const uint32 flags) {
+	ErrorManagement::ErrorType ret;
     HANDLE handle;
 
     if (!IsOpen()) {
@@ -222,31 +210,28 @@ bool BasicFile::Open(const char * pathname,
 
         //Opens the file by pathname with the right flags
         handle = CreateFile(pathname, desiredAccess, FILE_SHARE_READ, NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
-        ok = (handle != INVALID_HANDLE_VALUE);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CreateFile()");
-        }
+        ret.OSError = (handle == INVALID_HANDLE_VALUE);
+        REPORT_ERROR(ret, "Error: CreateFile()");
 
         //Sets the properties
-        if (ok) {
+        if (ret) {
             properties.handle = handle;
             properties.flags = CheckFlags(flags);
             properties.pathname = pathname;
         }
 
         //Truncates the file if needed
-        if (ok) {
+        if (ret) {
             if (((flags & FLAG_TRUNC) == FLAG_TRUNC) && ((flags & ACCESS_MODE_W) == ACCESS_MODE_W)) {
                 SetSize(0u);
             }
         }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+    } else {
+        ret.illegalOperation=true;
+        REPORT_ERROR(ret, "Error: Trying to Open a file already Opened");
     }
 
-    return ok;
+    return ret;
 }
 
 bool BasicFile::IsOpen() const {
@@ -254,382 +239,328 @@ bool BasicFile::IsOpen() const {
 }
 
 bool BasicFile::Close() {
+	ErrorManagement::ErrorType ret;
     /*
      * Note: If the file is not opened, then
      * it is already closed, so it does nothing.
      */
-
-    bool ok = true;
-
     if (IsOpen()) {
 
         //Closes the file
-        ok = CloseHandle(properties.handle);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
-        }
+        ret.OSError = (CloseHandle(properties.handle)==0);
+        REPORT_ERROR(ret, "Error: CloseHandle()");
 
         //Resets the properties
-        if (ok) {
+        if (ret) {
             properties.handle = INVALID_HANDLE_VALUE;
             properties.flags = 0u;
             properties.pathname = "";
         }
     }
 
-    return ok;
+    return ret;
 }
 
-bool BasicFile::Read(char8* const output,
-                     uint32 & size) {
-    bool ok = true;
+bool BasicFile::Read(char8* const output,uint32 & size) {
+	ErrorManagement::ErrorType ret;
 
     if (IsOpen() && CanRead() /* && size >= 0 */) {
         //Reads the data setting an infinite timeout
-        ok = BasicFile::Read(output, size, TTInfiniteWait);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Read()");
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        ret.fatalError = !BasicFile::Read(output, size, MilliSeconds::Infinite);
+        REPORT_ERROR(ret, "Error: Read()");
+    } else {
+        ret.invalidOperation = true;
+        REPORT_ERROR(ret, "Error: Read on a Closed File or a Write only file");
     }
 
-    return ok;
+    return ret;
 }
 
 bool BasicFile::Read(char8 * const output,
                      uint32 & size,
-                     const TimeoutType &msecTimeout) {
-    bool ok = true;
+                     const MilliSeconds &msecTimeout) {
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanRead() /* && size >= 0 */) {
-        uint64 oldpos;
-        DWORD timeout;
-        OVERLAPPED ol = { 0 };
+	ret.invalidOperation = (!IsOpen() || !CanRead());
+    REPORT_ERROR(ret, "Read from Close File or from writeonly file");
 
-        //Caches the old position
-        oldpos = Position();
+    OVERLAPPED ol = { 0 };
+    uint64 oldPos = 0U;
+    DWORD timeout = INFINITE;
+    if (ret) {
+
+    	//Caches the old position
+        oldPos = Position();
 
         //Sets the timeout value
-        if (msecTimeout == TTInfiniteWait) {
-            timeout = INFINITE;
-        }
-        else {
-            timeout = msecTimeout.GetTimeoutMSec();
+        if (msecTimeout.IsValid() ) {
+            timeout = msecTimeout.GetTimeRaw();
         }
 
         //Creates a waiting event
         ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-        ok = (ol.hEvent != NULL);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: CreateEvent()");
-        }
+        ret.OSError = (ol.hEvent == NULL);
+        REPORT_ERROR(ret, "Error: CreateEvent()");
 
-        //Starts the reading operation
-        if (ok) {
-            bool readVal;
-            readVal = ReadFile(properties.handle, (void *) output, size, NULL, &ol);
-            ok = (!readVal && (GetLastError() == ERROR_IO_PENDING));
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: ReadFile()");
-            }
-        }
-
-        //Waits for reading completion
-        if (ok) {
-            DWORD waitVal;
-            waitVal = WaitForSingleObject(ol.hEvent, timeout);
-            ok = (waitVal == WAIT_OBJECT_0);
-            if (!ok) {
-                if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while reading");
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
-                }
-            }
-        }
-
-        //Updates size with the actual bytes read
-        if (ok) {
-            DWORD actual;
-            ok = GetOverlappedResult(properties.handle, &ol, &actual, false);
-            if (ok) {
-                size = actual;
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: GetOverlappedResult()");
-            }
-        }
-
-        //Updates position to the last written byte
-        if (ok) {
-            LARGE_INTEGER newpos;
-            newpos.QuadPart = oldpos + size;
-            ok = SetFilePointerEx(properties.handle, newpos, NULL, FILE_CURRENT);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
     }
 
-    return ok;
+    //Starts the reading operation
+    if (ret) {
+        bool failed = (ReadFile(properties.handle, (void *) output, size, NULL, &ol)==0);
+        ret.OSError = !(failed && (GetLastError() == ERROR_IO_PENDING));
+        REPORT_ERROR(ret, "ReadFile !failed or last error !ERROR_IO_PENDING");
+    }
+
+    //Waits for reading completion
+    if (ret) {
+        DWORD waitVal;
+        waitVal = WaitForSingleObject(ol.hEvent, timeout);
+        ret.OSError    = (waitVal != WAIT_OBJECT_0) && (waitVal != WAIT_TIMEOUT);
+        REPORT_ERROR(ret, "Error: WaitForSingleObject()");
+        if (ret){
+            ret.warning = (waitVal == WAIT_TIMEOUT);
+            REPORT_ERROR(ret, "Error: Timeout while reading");
+        }
+    }
+
+    //Updates size with the actual bytes read
+    if (ret) {
+        DWORD actual;
+        ret.OSError = (GetOverlappedResult(properties.handle, &ol, &actual, false)==0);
+        REPORT_ERROR(ret, "Error: GetOverlappedResult()");
+        if (ret) {
+            size = actual;
+        }
+    }
+
+    //Updates position to the last written byte
+    if (ret) {
+        uint64 newPos = oldPos + size;
+
+        LARGE_INTEGER newPosLI;
+        ret.outOfRange = SafeNumber2Number(newPos,newPosLI.QuadPart);
+        REPORT_ERROR(ret, "Error: file position > int64");
+//            newpos.QuadPart = oldPos + size;
+
+        if (ret) {
+        	ret.OSError = (SetFilePointerEx(properties.handle, newPosLI, NULL, FILE_CURRENT)==0);
+            REPORT_ERROR(ret, "Error: SetFilePointerEx()");
+        }
+    }
+
+    return ret;
 }
 
 bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
-    bool ok = true;
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanWrite() /* && size >= 0 */) {
-        //Writes the data setting an infinite timeout
-        ok = BasicFile::Write(input, size, TTInfiniteWait);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Write()");
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
-    }
+    //Writes the data setting an infinite timeout
+    ret.fatalError = (BasicFile::Write(input, size, MilliSeconds::Infinite)==0);
+    REPORT_ERROR(ret, "Error: Write()");
 
-    return ok;
+    return ret;
 }
 
 bool BasicFile::Write(const char8 * const input,
                       uint32 & size,
-                      const TimeoutType &msecTimeout) {
-    bool ok = true;
+                      const MilliSeconds &msecTimeout) {
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanWrite() /* && size >= 0 */) {
-        uint64 oldpos;
-        DWORD timeout;
-        OVERLAPPED ol = { 0 };
+	ret.invalidOperation = (!IsOpen() || !CanWrite());
+    REPORT_ERROR(ret, "Write to a closed or ReadOnly file");
+
+    uint64 oldPos = 0;
+    OVERLAPPED ol = { 0 };
+    DWORD timeout = INFINITE;
+    if (ret) {
 
         //Caches the old position
-        oldpos = Position();
+        oldPos = Position();
+
+        //Sets the timeout value
+        if (msecTimeout.IsValid() ) {
+            timeout = msecTimeout.GetTimeRaw();
+        }
 
         //Sets position to EOF if needed
         if ((properties.flags & FLAG_APPEND) == FLAG_APPEND) {
             LARGE_INTEGER zero;
             zero.QuadPart = 0;
-            ok = SetFilePointerEx(properties.handle, zero, NULL, FILE_END);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
-        }
-
-        //Sets the timeout value
-        if (ok) {
-            if (msecTimeout == TTInfiniteWait) {
-                timeout = INFINITE;
-            }
-            else {
-                timeout = msecTimeout.GetTimeoutMSec();
-            }
-        }
-
-        //Creates a waiting event
-        if (ok) {
-            ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-            ok = (ol.hEvent != NULL);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: CreateEvent()");
-            }
-        }
-
-        //Starts the reading operation
-        if (ok) {
-            bool writeVal;
-            writeVal = WriteFile(properties.handle, input, size, NULL, &ol);
-            ok = (!writeVal && (GetLastError() == ERROR_IO_PENDING));
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: WriteFile()");
-            }
-        }
-
-        //Waits for reading completion
-        if (ok) {
-            DWORD waitVal;
-            waitVal = WaitForSingleObject(ol.hEvent, timeout);
-            ok = (waitVal == WAIT_OBJECT_0);
-            if (!ok) {
-                if (waitVal == WAIT_TIMEOUT) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Timeout while writing");
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: WaitForSingleObject()");
-                }
-            }
-        }
-
-        //Updates size with the actual bytes written
-        if (ok) {
-            DWORD actual;
-            ok = GetOverlappedResult(properties.handle, &ol, &actual, false);
-            if (ok) {
-                size = actual;
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: GetOverlappedResult()");
-            }
-        }
-
-        //Updates position to the last written byte
-        if (ok) {
-            LARGE_INTEGER newpos;
-            newpos.QuadPart = oldpos + size;
-            ok = SetFilePointerEx(properties.handle, newpos, NULL, FILE_CURRENT);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
+            ret.OSError = (SetFilePointerEx(properties.handle, zero, NULL, FILE_END)==0);
+            REPORT_ERROR(ret, "Error: SetFilePointerEx()");
         }
     }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+
+    //Creates a waiting event
+    if (ret) {
+        ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+        ret.OSError = (ol.hEvent == NULL);
+        REPORT_ERROR(ret, "Error: CreateEvent()");
     }
 
-    return ok;
+    //Starts the write operation
+    if (ret) {
+        bool failed;
+        failed = (WriteFile(properties.handle, input, size, NULL, &ol)==0);
+        ret.OSError = !(failed && (GetLastError() == ERROR_IO_PENDING));
+        REPORT_ERROR(ret, "Error: WriteFile()");
+    }
+
+    //Waits for write completion
+    if (ret) {
+        DWORD waitVal;
+        waitVal = WaitForSingleObject(ol.hEvent, timeout);
+        ret.OSError    = (waitVal != WAIT_OBJECT_0) && (waitVal != WAIT_TIMEOUT);
+        REPORT_ERROR(ret, "Error: WaitForSingleObject()");
+        if (ret){
+            ret.warning = (waitVal == WAIT_TIMEOUT);
+            REPORT_ERROR(ret, "Error: Timeout while writing");
+        }
+    }
+
+    //Updates size with the actual bytes written
+    if (ret) {
+        DWORD actual;
+        ret.OSError = (GetOverlappedResult(properties.handle, &ol, &actual, false)==0);
+        REPORT_ERROR(ret, "Error: GetOverlappedResult()");
+        if (ret) {
+            size = actual;
+        }
+    }
+
+    //Updates position to the last written byte
+    if (ret) {
+        uint64 newPos = oldPos + size;
+
+        LARGE_INTEGER newPosLI;
+        ret.outOfRange = SafeNumber2Number(newPos,newPosLI.QuadPart);
+        REPORT_ERROR(ret, "Error: file position > int64");
+
+        if (ret) {
+        	ret.OSError = (SetFilePointerEx(properties.handle, newPosLI, NULL, FILE_CURRENT)==0);
+            REPORT_ERROR(ret, "Error: SetFilePointerEx()");
+        }
+    }
+
+    return ret;
 }
 
 uint64 BasicFile::Size() const{
-    uint64 value = 0u;
+
+	uint64 value = 0u;
 
     //Gets the size of the file if it is opened, otherwise it is 0.
     if (IsOpen()) {
-        bool ok = true;
-        LARGE_INTEGER pos;
-        ok = GetFileSizeEx(properties.handle, &pos);
-        if (ok) {
-            value = pos.QuadPart;
-        }
-        else {
-            value = 0xFFFFFFFF;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: GetFileSizeEx()");
+        value = StreamI::Invalid;
+    	ErrorManagement::ErrorType ret;
+
+    	LARGE_INTEGER pos;
+        ret.OSError = (GetFileSizeEx(properties.handle, &pos)==0);
+        REPORT_ERROR(ret, "Error: GetFileSizeEx()");
+        if (ret) {
+            SafeNumber2Number(pos.QuadPart,value);
         }
     }
 
     return value;
 }
 
-bool BasicFile::Seek(const uint64 pos) {
-    bool ok = true;
+bool BasicFile::Seek(uint64 pos) {
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanSeek()) {
-        uint64 size;
-        LARGE_INTEGER dist;
+	ret.invalidOperation = (!IsOpen() || !CanSeek());
+    REPORT_ERROR(ret, "Error: Seek on a closed file or on a not seekable file");
 
+    uint64 size = 0;
+    if (ret) {
         //Caches the current size
         size = Size();
-        ok = (size != 0xFFFFFFFF);
-        if (!ok) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
-        }
+        ret.fatalError = (size == StreamI::Invalid);
+        REPORT_ERROR(ret, "Error: Size()");
+    }
 
-        //Calculates the absolute position value
-        if (ok) {
-            if (pos <= size) {
-                dist.QuadPart = pos;
-            }
-            else {
-                dist.QuadPart = size;
-            }
+    //Calculates the absolute position value
+    if (ret) {
+        LARGE_INTEGER dist;
+        if (pos <= size) {
+        	/** always correct as pos is checked against actual file size which is limited to int64 range */
+            dist.QuadPart = static_cast<int64>(pos);
+        }
+        else {
+        	/** always correct as pos is checked against actual file size which is limited to int64 range */
+            dist.QuadPart = static_cast<int64>(size);
         }
 
         //Sets the file pointer to the absolute position
-        if (ok) {
-            ok = SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        ret.OSError = (SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN)==0);
+        REPORT_ERROR(ret, "Error: SetFilePointerEx()");
     }
 
-    return ok;
+    return ret;
 }
 
 bool BasicFile::RelativeSeek(const int64 deltaPos) {
-    bool ok = true;
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanSeek()) {
-        uint64 size;
-        uint64 position;
+	ret.invalidOperation = (!IsOpen() || !CanSeek());
+    REPORT_ERROR(ret, "Cannot RelativeSeek on a closed file or one without seek ability");
+
+    uint64 size = 0;
+    uint64 position = 0;
+    if (ret) {
+        size = Size();
+        position = Position();
+
+    	ret.fatalError = ((size == StreamI::Invalid) || (position == StreamI::Invalid));
+        REPORT_ERROR(ErrorManagement::FatalError, "Error calling Size() and/or Position()");
+    }
+
+    //Calculates the absolute position
+    if (ret) {
         LARGE_INTEGER dist;
 
-        //Caches the current size
-        if (ok) {
-            size = Size();
-            ok = (size != 0xFFFFFFFF);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Size()");
-            }
+        SaturatedInteger<uint64> newPos;
+        if (deltaPos > 0){
+        	newPos += SaturatedInteger<uint64> (deltaPos);
+        } else {
+        	newPos -= SaturatedInteger<uint64> (-deltaPos);
         }
 
-        //Caches the current position
-        if (ok) {
-            position = Position();
-            ok = (position != 0xFFFFFFFF);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Position()");
-            }
+        if (newPos.IsPositiveInf()){
+            dist.QuadPart = static_cast<int64>(size-1U);
+            REPORT_ERROR(ErrorManagement::Warning, "Error: Seek beyond end of file (saturated)");
+        } else
+        if (newPos.IsValid()){
+            dist.QuadPart = static_cast<int64>(newPos.GetData());
+        } else
+        {
+            dist.QuadPart = 0;
+            REPORT_ERROR(ErrorManagement::Warning, "Error: Seek beyond start of file (saturated)");
         }
 
-        //Calculates the absolute position
-        if (ok) {
-            int32 abspos = position + deltaPos;
-            if (abspos < 0) {
-                dist.QuadPart = 0;
-            }
-            else if (abspos <= size) {
-                dist.QuadPart = abspos;
-            }
-            else if (abspos > size) {
-                dist.QuadPart = size;
-            }
-        }
-
-        //Sets the file pointer to the absolute position
-        if (ok) {
-            ok = SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN);
-            if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+        ret.OSError = (SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN)==0);
+        REPORT_ERROR(ret, "Error: SetFilePointerEx()");
     }
 
-    return ok;
+    return ret;
 }
 
 uint64 BasicFile::Position() const{
+	ErrorManagement::ErrorType ret;
     uint64 value = 0u;
 
     //Gets the position of the file if it is opened, otherwise it is 0.
     if (IsOpen()) {
-        bool ok = true;
+        value = StreamI::Invalid;
         LARGE_INTEGER zero;
         LARGE_INTEGER pos;
         zero.QuadPart = 0;
-        ok = SetFilePointerEx(properties.handle, zero, &pos, FILE_CURRENT);
-        if (ok) {
-            value = pos.QuadPart;
-        }
-        else {
-            value = 0xFFFFFFFF;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
+        ret.OSError = (SetFilePointerEx(properties.handle, zero, &pos, FILE_CURRENT)==0);
+        REPORT_ERROR(ret, "Error: SetFilePointerEx()");
+        if (ret) {
+        	// valid as
+            value = static_cast<uint64>(pos.QuadPart);
         }
     }
 
@@ -637,48 +568,43 @@ uint64 BasicFile::Position() const{
 }
 
 bool BasicFile::SetSize(uint64 size) {
-    bool ok = true;
+	ErrorManagement::ErrorType ret;
 
-    if (IsOpen() && CanWrite()) {
-        int64 oldpos = 0;
+	ret.illegalOperation = (!IsOpen() && !CanWrite());
+    REPORT_ERROR(ret, "SetSize closed or read only file ");
 
-        //Caches the old position
-        oldpos = Position();
-
-        //Sets the size of the file to size
-        {
-            LARGE_INTEGER dist;
-            dist.QuadPart = size;
-            ok = SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN);
-            if (ok) {
-                ok = SetEndOfFile(properties.handle);
-                if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: SetEndOfFile()");
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-            }
-        }
-
-        //Restores the position if needed
-        if (ok) {
-            if (oldpos < size) {
-                LARGE_INTEGER olddist;
-                olddist.QuadPart = oldpos;
-                ok = SetFilePointerEx(properties.handle, olddist, NULL, FILE_BEGIN);
-                if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: SetFilePointerEx()");
-                }
-            }
-        }
-    }
-    else {
-        ok = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Precondition violated");
+    uint64 oldPos = 0U;
+    if (ret) {
+    	oldPos =  Position();
+        ret.fatalError = (oldPos == StreamI::Invalid);
+        REPORT_ERROR(ret, "SetSize Position() call failed");
     }
 
-    return ok;
+    //Sets the size of the file to size
+    LARGE_INTEGER dist= {0};
+    if (ret){
+        ret.outOfRange = !SafeNumber2Number(size,dist.QuadPart);
+        REPORT_ERROR(ret, "SetSize size is too large > int64");
+    }
+
+    if (ret) {
+        ret.OSError = (SetFilePointerEx(properties.handle, dist, NULL, FILE_BEGIN)==0);
+        REPORT_ERROR(ret, "Error: SetFilePointerEx()");
+    }
+
+    if (ret) {
+    	ret.OSError = (SetEndOfFile(properties.handle)==0);
+    	REPORT_ERROR(ret, "Error: SetEndOfFile()");
+    }
+
+    if (ret && (oldPos < size)) {
+        LARGE_INTEGER olddist;
+        olddist.QuadPart = static_cast<int32>(oldPos);
+        ret.OSError = (SetFilePointerEx(properties.handle, olddist, NULL, FILE_BEGIN)==0);
+        REPORT_ERROR(ret, "Error: SetFilePointerEx()");
+    }
+
+    return ret;
 }
 
 StreamString BasicFile::GetPathName() const {

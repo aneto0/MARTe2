@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SELECTPROPERTIES_H_
-		#define 		SELECTPROPERTIES_H_
+#ifndef SELECT_PROPERTIES_H_
+#define SELECT_PROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "HandleI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -38,8 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-//typedef Handle *SetIdentifier;
-    typedef struct SetIdentifier {
+    struct SetIdentifier {
         Handle *registeredHandles;
         Handle *selectHandles;
         Handle selectedHandle;
@@ -51,5 +51,5 @@ namespace MARTe {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SELECTPROPERTIES_H_ */
+#endif /* SELECTPROPERTIES_H_ */
 	

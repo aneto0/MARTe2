@@ -54,7 +54,8 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
 
             bool ok = ThreadsDatabase::Lock();
             if (ok) {
-                ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Id());
+            	ThreadIdentifier tid = Id();
+                ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(tid);
                 if (threadInfo != threadInfo2) {
                     //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                 }
@@ -130,6 +131,7 @@ void SetPriority(const ThreadIdentifier &threadId,
                 isRealtimeClass = true;
             }
             break;
+        case UnknownPriorityClass: break;
         }
     }
 
@@ -297,7 +299,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
     }
 
     DWORD threadId = 0;
-    CreateThread(NULL, stacksize, (LPTHREAD_START_ROUTINE) SystemThreadFunction, threadInfo, 0, &threadId);
+    CreateThread(NULL, stacksize, reinterpret_cast<LPTHREAD_START_ROUTINE>(SystemThreadFunction) , threadInfo, 0, &threadId);
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
         threadInfo->SetThreadIdentifier(threadId);

@@ -35,6 +35,7 @@
 #include "EventSem.h"
 #include "ExceptionHandler.h"
 #include "Threads.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -62,7 +63,7 @@ public:
      */
     ThreadInformation(const ThreadFunctionType threadFunction,
                       const void * const threadData,
-                      const char8 * const threadName);
+                      CCString threadName);
 
     /**
      * @brief Copy a thread information into this.
@@ -88,7 +89,7 @@ public:
      * @brief Returns the name of the thread.
      * @return A reference to the dynamically allocated string containing the name of the thread.
      */
-    const char8 *ThreadName() const;
+    CCString ThreadName() const;
 
     /**
      *  @brief Locks an internal EventSem.
@@ -173,7 +174,7 @@ private:
     /**
      * The name of the thread.
      */
-    char8 * name;
+    DynamicCString name;
 
     /**
      * Enables the operating system to perform some housekeeping

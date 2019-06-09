@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "../../BareMetal/L0Types/StreamI.h"
+#include "StreamI.h"
 #include "InternetHost.h"
 #include "HandleI.h"
+#include "MilliSeconds.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -50,7 +51,7 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public virtual StreamI, public HandleI {
+    class DLL_API BasicSocket: public StreamI, public HandleI {
     public:
         /**
          * @brief Default constructor.
@@ -149,14 +150,28 @@ namespace MARTe {
 
     private:
 
+        /**
+         *  TODO
+         */
         bool isBlocking;
+
+    protected:
+        /**
+         * TODO
+         */
+        inline void MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal);
 
     };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+void MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal){
+    timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeRaw() / 1000u);
+    timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeRaw() % 1000u) * 1000u);
+}
+}
 
 #endif /* BASICSOCKET_H_ */
 

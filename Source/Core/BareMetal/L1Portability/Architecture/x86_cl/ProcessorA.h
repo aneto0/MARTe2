@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORA_H_
-#define 		PROCESSORA_H_
+#define PROCESSORA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Processor.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -61,19 +62,19 @@ DLL_API extern char8 processorVendorId[13];
  * @param[out] C the CPU C register
  * @param[out] D the CPU D register
  */
-inline void CPUID(uint32 code,
+inline void CPUID(       uint32 code,
                          uint32 &A,
                          uint32 &B,
                          uint32 &C,
                          uint32 &D) {
 
     int32 cpuInfo[4];
-    __cpuid(cpuInfo, code);
+    __cpuid(cpuInfo, static_cast<int>(code));
 
-    A = cpuInfo[0];
-    B = cpuInfo[1];
-    C = cpuInfo[2];
-    D = cpuInfo[3];
+    A = static_cast<uint32>(cpuInfo[0]);
+    B = static_cast<uint32>(cpuInfo[1]);
+    C = static_cast<uint32>(cpuInfo[2]);
+    D = static_cast<uint32>(cpuInfo[3]);
 }
 
 uint32 Family() {
@@ -109,7 +110,7 @@ CCString VendorId() {
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
     processorVendorId[12] = 0;
-    return &(processorVendorId[0]);
+    return CCString(&(processorVendorId[0]));
 }
 
 }

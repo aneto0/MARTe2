@@ -77,19 +77,20 @@ $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI) createLibrary
 $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS) createLibrary
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@
+	$(COMPILER)  -LDd -Zi $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@  $(LFLAGS)
 	$(subst /,\,$(ROOT_DIR))\Build\msc\Tools\ExpDef\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
 	rm createLibrary
 
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	touch dummy.cpp
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES) dummy.cpp  $(ASSEMBLER)
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -Fa$(BUILD_DIR)/$%.asm $(INCLUDES) dummy.cpp $(LFLAGS)   
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@
-	rm dllGenerator.def
-	rm dummy.*
+	@rm dllGenerator.def
+	@rm $(BUILD_DIR)\dummy.*
+	@rm dummy.*
 	
 	
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
@@ -99,13 +100,16 @@ $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)\%.obj $(LIBRARIES) createLibrary
-	$(COMPILER)  $(LFLAGS) -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) -Fe$@ $(LOPTS)
+	$(COMPILER)  -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) -Fe$@ $(LFLAGS) 
 	@if exist createLibrary rm -f createLibrary
 	
 
 #Note that the / is used here in the /%. as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)\%.obj $(OBJS)  $(LIBRARIES)  %.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) $*.def -Fe$@
+	$(COMPILER)   -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) $*.def -Fe$@ $(LFLAGS)
+
+
+
 
 depends.msc : dependsRaw.msc
 	@echo /\.o:/s/^^/$(subst \,\\,$(BUILD_DIR))\\/ > CreateMSCDepends.sed
@@ -128,14 +132,18 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)\%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES) $(LIBRARIES_NODEP) $*.def -Fe$@
 
 %.spb : 
-	$(MAKE) -C $* -f Makefile.$(TARGET) MAKEMODE=$(MAKEMODE)
-
+	$(MAKE) -C $* -f Makefile.$(TARGET) MAKEMODE=$(MAKEMODE) MAKEPATH=$(MAKEPATH)
 
 MAKEMODE:=INFO
+MAKEPATH:=VERTICAL
 
 .PHONY: clean
 clean:  
 	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=CLEAN
+
+.PHONY: cleanLT
+cleanLT:   
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=CLEANLT MAKEPATH=HORIZONTAL
 
 .PHONY: test
 test: 	
@@ -143,7 +151,7 @@ test:
 
 .PHONY: localTest
 localTest: 	
-	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=LOCALTEST
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=LOCALTEST MAKEPATH=HORIZONTAL
 
 .PHONY: all
 all: 	
@@ -176,11 +184,16 @@ do_showInfo:
 	@echo 2) make Makefile.msc clean     to remove any produced file
 	@echo 3) make Makefile.msc test      to build test programs after all the libraries
 	@echo 4) make Makefile.msc localTest to build test programs level by level
-	@echo 5) make Makefile.msc all       to build libraries and test programs
+	@echo 5) make Makefile.msc cleanLT   to remove any produced file in the local test build
+	@echo 6) make Makefile.msc all       to build libraries and test programs
     
 
+ifeq (CLEANLT,$(MAKEMODE))
+DEPENDS = do_cleandir $(SUBPROJLT) $(SUBPROJLT2)
+endif
+
 ifeq (CLEAN,$(MAKEMODE))
-DEPENDS = do_cleandir $(SUBPROJLT)
+DEPENDS = do_cleandir $(SUBPROJ)
 endif
 
 ifeq (INFO,$(MAKEMODE))
@@ -198,7 +211,7 @@ include depends.$(TARGET)
 endif
 
 ifeq (LOCALTEST,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT)
+DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT) $(SUBPROJLT2)
 include depends.$(TARGET)
 endif
 
@@ -209,7 +222,10 @@ endif
 		
 .PHONY: default
 default:   $(DEPENDS)
-	@echo MAKEMODE=$(MAKEMODE)
+	@echo MAKEMODE=$(MAKEMODE) MAKEPATH=$(MAKEPATH) 
+	@echo VTEARS=$(VTEARS)
+	@echo HTEARS=$(HTEARS)
+	@echo SPBLT= $(SPBLT)
 	@echo executed $(DEPENDS)
 
 

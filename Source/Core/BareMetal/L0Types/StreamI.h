@@ -195,7 +195,7 @@ public:
 
     /**
      * @brief Gets the size of the stream.
-     * @return the size of the stream.
+     * @return the size of the stream. 0xFFFFFFFFFFFFFFFF is returned in case of invalid operation
      */
     virtual uint64 Size() const = 0;
 
@@ -233,7 +233,7 @@ public:
 
     /**
      * @brief Gets the current position.
-     * @return the current position in the stream.
+     * @return the current position in the stream. 0xFFFFFFFFFFFFFFFF is returned in case of invalid operation
      */
     virtual uint64 Position() const = 0;
 
@@ -246,13 +246,19 @@ public:
      */
     virtual bool SetSize(uint64 size) = 0;
 
+    /*
+     *@TODO
+     */
+    static const uint64 Invalid;
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+const uint64 StreamI::Invalid = 0xFFFFFFFFFFFFFFFF;
+
+}
 
 #endif /* BUFFEREDSTREAM_H_ */
 

@@ -107,7 +107,7 @@ public:
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
+    ErrorManagement::ErrorType Lock(const MilliSeconds &timeout);
 
     /**
      * @brief Unlocks the semaphore.

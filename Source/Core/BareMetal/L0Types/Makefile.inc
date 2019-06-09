@@ -28,6 +28,10 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+# to allow horizontal naviagtion in the tree. Generates subprojects associated to the HTEARS
+SPBLT= $(patsubst %,%.x,$(foreach toCheck,$(foreach hPath, $(HTEARS), $(subst BareMetal,$(hPath),$(CURDIR))),$(wildcard $(toCheck))))
+
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
 

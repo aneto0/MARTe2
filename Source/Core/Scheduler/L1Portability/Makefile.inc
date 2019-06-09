@@ -25,15 +25,24 @@
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-SPB=Environment/$(ENVIRONMENT).x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
+INCLUDES+=-I.
+INCLUDES+=-I../../BareMetal/L0Types
+INCLUDES+=-I../../BareMetal/L1Portability 
 
 BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
         	$(BUILD_DIR)/L1PortabilityS.def
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+OBJSX2 =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+
+
+pippo:
+	echo $(OBJSX2)
+	echo $(wildcard Environment/$(ENVIRONMENT)/*.cpp)
+
+

@@ -139,14 +139,14 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &timeout);
+                      const MilliSeconds &timeout);
 
     /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &timeout);
+                       const MilliSeconds &timeout);
 
     /**
      * @brief Unsupported feature.

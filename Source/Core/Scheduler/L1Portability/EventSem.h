@@ -136,7 +136,7 @@ public:
      * the Wait function returns ErrorManagement::NoError.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType ResetWait(const TimeoutType &timeout);
+    ErrorManagement::ErrorType ResetWait(const MilliSeconds &timeout);
 
     /**
      * @brief Return the operating system low level properties.

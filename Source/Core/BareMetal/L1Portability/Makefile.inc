@@ -26,6 +26,10 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+#SPBLT= $(patsubst %,%.x,$(foreach dir,$(patsubst %,$(ROOT_DIR)/Source/Core/%/L1Portability,$(HTEARS)), $(wildcard $(dir))))
+SPBLT= $(patsubst %,%.x,$(foreach toCheck,$(foreach hPath, $(HTEARS), $(subst BareMetal,$(hPath),$(CURDIR))),$(wildcard $(toCheck))))
+
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I.
@@ -33,3 +37,9 @@ INCLUDES+=-I../L0Types
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 
+pippo:
+	@echo SPBLT = $(SPBLT)
+	@echo SPBLT2 = $(SPBLT2)
+	@echo VTEARS = $(VTEARS)
+	@echo HTEARS = $(HTEARS)
+	@echo $(lastword $(subst /,\\ ,$(CURDIR)))

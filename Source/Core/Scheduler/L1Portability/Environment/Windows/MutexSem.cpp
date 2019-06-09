@@ -155,8 +155,8 @@ ErrorManagement::ErrorType MutexSem::Lock() {
     return error;
 }
 
-ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
-    DWORD ret = WaitForSingleObject(handle->mutexHandle, timeout.GetTimeoutMSec());
+ErrorManagement::ErrorType MutexSem::Lock(const MilliSeconds &timeout) {
+    DWORD ret = WaitForSingleObject(handle->mutexHandle, timeout.GetTimeRaw());
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;

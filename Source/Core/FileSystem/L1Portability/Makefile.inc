@@ -25,16 +25,14 @@
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-SPB=Environment/$(ENVIRONMENT).x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I.
 INCLUDES+=-I../../BareMetal/L0Types
 INCLUDES+=-I../../BareMetal/L1Portability
 INCLUDES+=-I../../BareMetal/L2Objects
 INCLUDES+=-I../../BareMetal/L3Streams
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityF.def

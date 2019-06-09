@@ -46,7 +46,7 @@ namespace MARTe {
          * @brief Returns the processor vendor identifier.
          * @return a string which contains the processor vendor identifier.
          */
-        inline const char8 *VendorId();
+        inline CCString VendorId();
 
         /**
          * @brief Returns the processor family.

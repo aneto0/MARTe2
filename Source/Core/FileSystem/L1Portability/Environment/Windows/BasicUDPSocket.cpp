@@ -58,77 +58,101 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 bool BasicUDPSocket::Peek(char8* const output,
                           uint32 &size) {
+    ErrorManagement::ErrorType eRet;
 
-    int32 ret = -1;
-    uint32 sizeToRead = size;
+    int32 sizeToRead = 0;
+    eRet.outOfRange = SafeNumber2Number(size, sizeToRead);
+    REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
+
+    if (eRet){
+    	eRet.internalSetupError = !IsValid();
+        REPORT_ERROR(eRet, "BasicUDPSocket: The socket handle is not valid");
+    }
+
     size = 0u;
-    if (IsValid()) {
-        uint32 sourceSize = source.Size();
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), MSG_PEEK,
+    if (eRet) {
+        // surely within range of int32
+        int32 sourceSize = static_cast<int32>(source.Size());
+        int32 receivedAmount = -1;
+        receivedAmount = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<int>(sizeToRead), MSG_PEEK,
                                           reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), reinterpret_cast<int32 *>(&sourceSize)));
-        if (ret != SOCKET_ERROR) {
-            size = static_cast<uint32>(ret);
+        eRet.OSError = (receivedAmount < 0);
+        REPORT_ERROR(eRet, "BasicUDPSocket: Failed recvfrom(PEEK)");
+
+        if (eRet) {
+            size = static_cast<uint32>(receivedAmount);
+
             // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size <= 0u) {
-                Sleep::MSec(1);
+            if (size == 0u) {
+                Sleep::Short(1,Units::ms);
             }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
-        }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
-    return (ret > 0);
+    return eRet;
 }
 
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
-    int32 ret = -1;
-    uint32 sizeToRead = size;
+    ErrorManagement::ErrorType eRet;
+
+    int32 sizeToRead = 0;
+    eRet.outOfRange = SafeNumber2Number(size, sizeToRead);
+    REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
+
+    if (eRet){
+    	eRet.internalSetupError = !IsValid();
+        REPORT_ERROR(eRet, "BasicUDPSocket: The socket handle is not valid");
+    }
+
     size = 0u;
-    if (IsValid()) {
-        int32 sourceSize = source.Size();
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, sizeToRead, 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), &sourceSize));
-        if (ret > 0) {
-            size = ret;
+    if (eRet) {
+        // surely within range of int32
+        int32 sourceSize = static_cast<int32>(source.Size());
+        int32 receivedAmount = -1;
+        receivedAmount = static_cast<int32>(recvfrom(connectionSocket, output, sizeToRead, 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), &sourceSize));
+        eRet.OSError = (receivedAmount < 0);
+        REPORT_ERROR(eRet, "BasicUDPSocket: Failed recvfrom()");
+
+        if (eRet) {
+            size = static_cast<uint32>(receivedAmount);
             // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size <= 0u) {
-                Sleep::MSec(1);
+            if (size == 0u) {
+                Sleep::Short(1,Units::ms);
             }
         }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
-        }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
-    }
-    return (ret > 0);
+    return eRet;
 }
 
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
+    ErrorManagement::ErrorType eRet;
 
-    int32 ret = -1;
-    uint32 sizeToWrite = size;
+    int32 sizeToWrite = 0;
+    eRet.outOfRange = SafeNumber2Number(size, sizeToWrite);
+    REPORT_ERROR(eRet, "BasicUDPSocket: size too large");
+
+    if (eRet){
+    	eRet.internalSetupError = !IsValid();
+        REPORT_ERROR(eRet, "BasicUDPSocket: The socket handle is not valid");
+    }
+
     size = 0u;
     if (IsValid()) {
-        ret = static_cast<int32>(sendto(connectionSocket, input, sizeToWrite, 0, reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()),
-                                        destination.Size()));
-        if (ret != SOCKET_ERROR) {
-            size = static_cast<uint32>(ret);
+        int32 written = -1;
+        written = static_cast<int32>(sendto(connectionSocket, input, sizeToWrite, 0, reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()),
+                                        static_cast<int32>(destination.Size())));
+
+        eRet.OSError = (written < 0);
+        REPORT_ERROR(eRet, "BasicUDPSocket: Failed sendto()");
+
+        if (eRet) {
+            size = static_cast<uint32>(written);
         }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
 
     }
-    return (ret > 0);
+
+    return eRet;
 }
 
 bool BasicUDPSocket::Open() {
@@ -136,7 +160,7 @@ bool BasicUDPSocket::Open() {
     if (connectionSocket != INVALID_SOCKET) {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: connectionSocket == INVALID_SOCKET");
     }
-    return (connectionSocket >= 0);
+    return (connectionSocket != 0);
 }
 
 bool BasicUDPSocket::Listen(const uint16 port) {
@@ -187,16 +211,16 @@ bool BasicUDPSocket::CanSeek() const {
     return false;
 }
 
+
 bool BasicUDPSocket::Read(char8 * const output,
                           uint32 & size,
-                          const TimeoutType &timeout) {
+                          const MilliSeconds &timeout) {
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+            MS2TV(timeout, timeoutVal);
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<int32>(sizeof(timeoutVal))); //int32 -> socklen_t
 
@@ -228,15 +252,13 @@ bool BasicUDPSocket::Read(char8 * const output,
 
 bool BasicUDPSocket::Write(const char8 * const input,
                            uint32 & size,
-                           const TimeoutType &timeout) {
+                           const MilliSeconds &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
-
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+            MS2TV(timeout, timeoutVal);
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<int32>(sizeof(timeoutVal)));
 
             if (ret < 0) {

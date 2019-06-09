@@ -152,7 +152,8 @@ EventSem::~EventSem() {
 
 ErrorManagement::ErrorType EventSem::Wait() {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
-    int ret = WaitForSingleObject(handle->eventHandle, INFINITE);
+    DWORD time2Wait = static_cast<DWORD>(INFINITE);
+    DWORD ret = WaitForSingleObject(handle->eventHandle, time2Wait);
 
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
@@ -161,9 +162,9 @@ ErrorManagement::ErrorType EventSem::Wait() {
     return error;
 }
 
-ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::Wait(const MilliSeconds &timeout) {
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
-    int ret = WaitForSingleObject(handle->eventHandle, timeout.GetTimeoutMSec());
+    DWORD ret = WaitForSingleObject(handle->eventHandle, timeout.GetTimeRaw());
 
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
@@ -186,7 +187,7 @@ bool EventSem::Reset() {
     return (ResetEvent(handle->eventHandle) == TRUE);
 }
 
-ErrorManagement::ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::ResetWait(const MilliSeconds &timeout) {
     Reset();
     return Wait(timeout);
 }

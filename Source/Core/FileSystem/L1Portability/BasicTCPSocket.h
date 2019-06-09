@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TimeoutType.h"
+#include "MilliSeconds.h"
 #include "BasicSocket.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -96,7 +96,7 @@ public:
      */
     virtual bool Read(char8* const output,
                       uint32 &size,
-                      const TimeoutType &timeout);
+                      const MilliSeconds &timeout);
 
     /**
      * @brief Write within timeout.
@@ -110,7 +110,7 @@ public:
      */
     virtual bool Write(const char8* const input,
                        uint32 &size,
-                       const TimeoutType &timeout);
+                       const MilliSeconds &timeout);
 
     /**
      * @brief Unsupported feature.
@@ -196,7 +196,7 @@ public:
      */
     bool Connect(const char8 * const address,
                  const uint16 port,
-                 const TimeoutType &timeout = TTInfiniteWait);
+                 const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     /**
      * @brief Returns true if the client is connected to a server, false otherwise
@@ -211,7 +211,7 @@ public:
      * @remark If the socket is in non-block mode, the timeout has no meaning.\n
      * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
      */
-    BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
+    BasicTCPSocket *WaitConnection(const MilliSeconds &timeout = MilliSeconds::Infinite,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
 };

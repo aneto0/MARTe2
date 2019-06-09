@@ -33,10 +33,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../BareMetal/L0Types/StreamI.h"
+#include "StreamI.h"
 #include "GeneralDefinitions.h"
 #include "HandleI.h"
-#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
 /*---------------------------------------------------------------------------*/
@@ -246,7 +245,7 @@ namespace MARTe {
          **/
         virtual bool Read(char8 * const output,
                 uint32 & size,
-                const TimeoutType &msecTimeout);
+                const MilliSeconds &msecTimeout);
 
         /**
          * @brief Writes size characters to a file and updates the position and the size.
@@ -287,11 +286,11 @@ namespace MARTe {
          **/
         virtual bool Write(const char8 * const input,
                 uint32 & size,
-                const TimeoutType &msecTimeout);
+                const MilliSeconds &msecTimeout);
 
         /**
          * @brief Queries the size.
-         * @return the number of characters in the file if it succeeds or 0xFFFFFFFF otherwise.
+         * @return the number of characters in the file if it succeeds or 0xFFFFFFFFFFFFFFFF otherwise.
          */
         virtual uint64 Size() const;
 
@@ -307,7 +306,7 @@ namespace MARTe {
          *   pos > Size() => Position() == Size()
          * @return true if the pointer points to the position pos.
          */
-        virtual bool Seek(const uint64 pos);
+        virtual bool Seek(uint64 pos);
 
         /**
          * @brief Move the pointer to the specified position.

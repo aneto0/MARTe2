@@ -44,11 +44,11 @@ namespace MARTe {
 BasicSocket::BasicSocket() :
         StreamI(),
         HandleI() {
-    connectionSocket = -1;
+    connectionSocket = INVALID_SOCKET ;
     isBlocking = true;
     WSADATA wsaData;
     // Initialize Winsock
-    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 }
 
 BasicSocket::~BasicSocket() {
@@ -86,7 +86,7 @@ bool BasicSocket::Close() {
     int32 ret = -1;
     if (IsValid()) {
         ret = closesocket(connectionSocket);
-        connectionSocket = -1;
+        connectionSocket = INVALID_SOCKET ;
         if (ret != 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed returning");
             ret = -1;
@@ -116,7 +116,7 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 
 bool BasicSocket::IsValid() const {
     ///Modified the return, in windows socket is not an int32 and the comparison is true, it's necessary a cast
-    return (static_cast<int32>(connectionSocket) >= 0);
+    return (connectionSocket != INVALID_SOCKET);
 }
 
 bool BasicSocket::IsBlocking() const {
