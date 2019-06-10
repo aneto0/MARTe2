@@ -26,15 +26,17 @@
 /*---------------------------------------------------------------------------*/
 #include <winsock2.h>
 #include <winsock.h>
+#include <ws2tcpip.h>
 #include <windows.h>
-#include <stdio.h>
+//#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 #include "FastPollingMutexSem.h"
 #include "InternetHost.h"
-#include "StringHelper.h"
+#include "DynamicCString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,201 +47,88 @@
 
 namespace MARTe {
 
-FastPollingMutexSem hostnameFastSem;
 
-class DLL_API LocalHostInfo {
-public:
+void InternetHost::GetAddress(DynamicCString &addrAsString) const {
+	char8 buffer[256];
+	inet_ntop(AF_INET,const_cast<PVOID>(reinterpret_cast<const void *>(&address.sin_addr)),&buffer[0],sizeof(buffer));
+	CCString converted(&buffer[0]);
 
-    static LocalHostInfo *Instance() {
-        static LocalHostInfo instance;
-        return &instance;
-    }
-
-    ~LocalHostInfo() {
-        if (ipAddress != NULL) {
-            free(reinterpret_cast<void *>(const_cast<char8 *>(ipAddress)));
-        }
-        if (localHostName != NULL) {
-            free(reinterpret_cast<void *>(const_cast<char8 *>(localHostName)));
-        }
-    }
-
-    const char8 *GetLocalHostName() {
-        Init();
-        return localHostName;
-    }
-
-    const char8 *GetIpAddress() {
-        Init();
-        return ipAddress;
-    }
-
-    bool Initialized() const {
-        return internetAddressInfoInitialised;
-    }
-private:
-    const char8 *localHostName;
-    const char8 *ipAddress;
-    bool internetAddressInfoInitialised;
-    FastPollingMutexSem internalFastSem;
-
-    LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
-        Init();
-    }
-
-    void Init() {
-
-        WSADATA wsaData;
-        int iResult;
-        // Initialize Winsock
-        iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-        if (iResult != 0) {
-            REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed WSAStartup");
-        }
-
-        if (!internetAddressInfoInitialised) {
-
-            if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
-            }
-
-            localHostName = static_cast<const char8*>(NULL);
-            ipAddress = static_cast<const char8*>(NULL);
-
-            char8 hostname[128];
-            int32 ret = gethostname(&hostname[0], static_cast<osulong>(128u));
-            struct hostent *h = static_cast<struct hostent *>(NULL);
-            if (ret == 0) {
-                h = gethostbyname(&hostname[0]);
-            }
-            if (h != NULL) {
-                localHostName = StringHelper::StringDup(h->h_name);
-                struct in_addr sin_addr;
-                char8* addr = h->h_addr_list[0];
-                if(addr != static_cast<char8 *>(NULL)) {
-                    sin_addr.S_un.S_addr = *(reinterpret_cast<uint32 *> (addr));
-
-                    // Convert the ip number in a dot notation string
-                    ipAddress = StringHelper::StringDup(inet_ntoa(sin_addr));
-                    internetAddressInfoInitialised = true;
-                    internalFastSem.FastUnLock();
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
-            }
-        }
-        return;
-    }
-};
-
-StreamString InternetHost::GetHostName() const {
-
-    if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
-    }
-
-    StreamString hostName = GetAddress();
-
-    struct hostent *h = gethostbyaddr(reinterpret_cast<const char8 *>(&address.sin_addr.s_addr), 4, AF_INET);
-
-    if (h != NULL) {
-        hostName = h->h_name;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
-    }
-    hostnameFastSem.FastUnLock();
-
-    return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
+	addrAsString = converted;
 }
 
-const char8 *InternetHost::GetLocalHostName() {
-    return LocalHostInfo::Instance()->GetLocalHostName();
-}
+bool InternetHost::GetHostName(DynamicCString &hostName) const {
+	ErrorManagement::ErrorType ret;
+	char8 buffer[512];
 
-const char8 *InternetHost::GetLocalAddress() {
-    return LocalHostInfo::Instance()->GetIpAddress();
-}
+    ret.OSError = (getnameinfo(reinterpret_cast<const SOCKADDR *>(&address),sizeof (address),&buffer[0],sizeof(buffer), NULL, 0, 0)!=0);
+    REPORT_ERROR(ret,"getnameinfo failed");
 
-uint32 InternetHost::GetLocalAddressAsNumber() {
-    uint32 ret = 0u;
-    uint32 comp[4];
-    const char8* name = LocalHostInfo::Instance()->GetIpAddress();
-    if (name != NULL) {
-        sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
-        uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
-        ret= addressN;
+    if (!ret){
+    	GetAddress(hostName);
     }
+
     return ret;
 }
 
-InternetHost::InternetHost(const uint16 port,
-                           const char8 * const addr) {
-    WSADATA wsaData;
-    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
-    }
-    address.sin_family = static_cast<uint16>(AF_INET);
-    SetPort(port);
-
-    if (!SetAddress(addr)) {
-        REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed SetAddress");
-    }
-}
 
 uint16 InternetHost::GetPort() const {
     return htons(address.sin_port);
-}
-
-StreamString InternetHost::GetAddress() const {
-    StreamString dotName(inet_ntoa(address.sin_addr));
-    return dotName;
-}
-
-uint32 InternetHost::GetAddressAsNumber() const {
-    return static_cast<uint32>(address.sin_addr.s_addr);
 }
 
 void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-bool InternetHost::SetAddress(const char8 * const addr) {
+InternetHost::InternetHost(const uint16 port,CCString addr) {
+	ErrorManagement::ErrorType ret;
+    address.sin_family = static_cast<uint16>(AF_INET);
+    address.sin_port = htons(port);
+
+    ret.fatalError = SetAddress(addr);
+    REPORT_ERROR(ret, "InternetHost: Failed SetAddress");
+}
+
+uint32 InternetHost::GetAddressAsNumber() const {
+    return static_cast<uint32>(address.sin_addr.s_addr);
+}
+
+bool InternetHost::SetAddress(CCString addr) {
+	ErrorManagement::ErrorType ret;
     address.sin_addr.s_addr = INADDR_ANY;
-    bool ret = true;
-    if (addr != NULL) {
-        uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
-        if (iaddr != INADDR_NONE) {
-            address.sin_addr.S_un.S_addr = iaddr;
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed inet_addr(), address=0xFFFFFFFF");
-            ret = false;
-        }
+
+    ret.parametersError = (addr.GetSize() ==0);
+    REPORT_ERROR(ErrorManagement::OSError, "InternetHost: SetAddres(empty)");
+
+    uint32 iaddr = INADDR_NONE;
+    if (ret) {
+        uint32 iaddr = inet_addr(addr.GetList());
+
+        ret.fatalError = (iaddr == INADDR_NONE);
+        COMPOSITE_REPORT_ERROR(ret, "InternetHost: Failed inet_addr(",addr,"), address=0xFFFFFFFF");
     }
+
+    if (ret){
+        address.sin_addr.S_un.S_addr = iaddr;
+    }
+
     return ret;
 }
 
-bool InternetHost::SetAddressByHostName(const char8 * hostName) {
-    bool ret = false;
+bool InternetHost::SetAddressByHostName(CCString hostName) {
+	ErrorManagement::ErrorType ret;
     //  hostName can be NULL meaning localhost
 
-    if (hostName == NULL) {
-        hostName = "localhost";
+    if (hostName.GetSize() == 0) {
+        hostName = CCString("localhost");
     }
-    struct hostent *h = gethostbyname(hostName);
 
-    if (h != NULL) {
+    // memory is in the TLS
+    struct hostent *h = gethostbyname(hostName);
+    ret.OSError = (h==NULL);
+    COMPOSITE_REPORT_ERROR(ret,"InternetHost: Failed gethostbyname(",hostName,")");
+
+    if (ret) {
         address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
-        ret= true;
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
     }
     return ret;
 }

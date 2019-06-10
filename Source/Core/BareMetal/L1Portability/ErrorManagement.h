@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L0Types/StreamI.h"
+#include "StreamI.h"
 #include "ErrorInformation.h"
 #include "ErrorType.h"
 #include "TimeStamp.h"

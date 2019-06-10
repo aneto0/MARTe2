@@ -32,7 +32,7 @@
 
 #include "ErrorManagement.h"
 #include "Select.h"
-#include "TimeoutType.h"
+#include "MilliSeconds.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,11 +46,6 @@ namespace MARTe {
 
 Select::Select() {
     //Note that the readHandle will contain the read and the write handles (see WaitUntil which accepts only one array)
-    WSADATA wsaData;
-    int32 err = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (err != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::Select(), Fail WSAStartup.");
-    }
     readHandle.registeredHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     readHandle.selectHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     readHandle.selectedHandle = reinterpret_cast<Handle>(-1);
@@ -330,7 +325,7 @@ bool Select::IsSet(const HandleI &handle) const {
     return retVal;
 }
 
-int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
+int32 Select::WaitUntil(const MilliSeconds &msecTimeout) {
     Handle * allHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     uint8 i = 0;
     uint8 aux = 0;
@@ -356,7 +351,7 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
         aux++;
     }
 
-    int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &allHandles[0], false, msecTimeout.GetTimeoutMSec(), true);
+    int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &allHandles[0], false, msecTimeout.GetTimeRaw(), true);
     if (ret == WAIT_TIMEOUT) {
         ret = 0;
     }

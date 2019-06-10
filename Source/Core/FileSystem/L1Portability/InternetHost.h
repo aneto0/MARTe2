@@ -31,14 +31,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetHostCore.h)
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
     /**
      * @brief Class which describes the configuration of an internet host, like
@@ -59,7 +60,7 @@ namespace MARTe {
          *    GetPort() == port\n
          *    GetAddress() == addr
          */
-        InternetHost(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
+        InternetHost(const uint16 port=0u,CCString addr=emptyString);
 
         /**
          * @brief Returns the port number.
@@ -71,13 +72,13 @@ namespace MARTe {
          * @brief Returns the IP address in the IPv4 format.
          * @return the IP address in the IPv4 format.
          */
-        StreamString GetAddress() const;
+        void GetAddress(DynamicCString &addrAsString) const;
 
         /**
          * @brief Returns the host name as a StreamString.
          * @return the host name as a StreamString. In case of failure the returned StreamString is empty.
          */
-        StreamString GetHostName() const;
+        bool GetHostName(DynamicCString &hostName) const;
 
         /**
          * @brief Returns the IP address as an integer number.
@@ -89,13 +90,13 @@ namespace MARTe {
          * @brief Returns the host name of the machine where the library is being executed.
          * @return the host name of the machine where the library is being executed.
          */
-        static const char8 *GetLocalHostName();
+        static CCString GetLocalHostName();
 
         /**
          * @brief Returns the IP address of the machine where the library is being executed in the IPv4 format.
          * @return the IP address of the machine where the library is being executed in the IPv4 format.
          */
-        static const char8 *GetLocalAddress();
+        static CCString GetLocalAddress();
 
         /**
          * @brief Returns the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]
@@ -118,14 +119,14 @@ namespace MARTe {
          * @pre
          *    addr must be in the IPv4 format (3-digits numbers in [0-255] separated by dots).
          */
-        bool SetAddress(const char8 * const addr);
+        bool SetAddress(CCString addr);
 
         /**
          * @brief Sets the host name.
          * @param[in] hostName the host name to be set.
          * @return true if the host name is set correctly, false otherwise.
          */
-        bool SetAddressByHostName(const char8 * hostName);
+        bool SetAddressByHostName(CCString hostName);
 
         /**
          * @brief Set the IP address a.b.c.d passing the equivalent input [a + 256*b + (256^2)*c + (256^3)*d].

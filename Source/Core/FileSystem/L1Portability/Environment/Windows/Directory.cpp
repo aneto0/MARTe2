@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Directory.h"
-#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ ErrorManagement::ErrorType Directory::Update(){
 
     HANDLE h = FindFirstFile(fileName.GetList(), &directoryHandle);
     ret.OSError = (h == INVALID_HANDLE_VALUE);
-    REPORT_ERROR(ret, "Error: FindFirstFile returns INVALID_HANDLE_VALUE");
+    COMPOSITE_REPORT_ERROR(ret, "Error: FindFirstFile(",fileName.GetList(),") returns INVALID_HANDLE_VALUE");
 
     if (h != INVALID_HANDLE_VALUE){
         ret.OSError = (FindClose(h) == 0);
@@ -123,11 +123,15 @@ uint64 Directory::GetSize() {
 }
 
 TimeStamp Directory::GetLastWriteTime() {
-	Update();
+	ErrorManagement::ErrorType ret;
+	ret = Update();
 
     TimeStamp timeStamp;
-    SYSTEMTIME systemTime;
-    bool ret = FileTimeToSystemTime(&directoryHandle.ftLastWriteTime, &systemTime);
+    SYSTEMTIME systemTime={0,0,0,0,0,0,0};
+    if (ret){
+        ret.OSError = (FileTimeToSystemTime(&directoryHandle.ftLastWriteTime, &systemTime)==0);
+        REPORT_ERROR(ret, "Error FileTimeToSystemTime");
+    }
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));
         timeStamp.SetSeconds(static_cast<uint32>(systemTime.wSecond));
@@ -136,19 +140,21 @@ TimeStamp Directory::GetLastWriteTime() {
         timeStamp.SetDay(static_cast<uint32>(systemTime.wDay));
         timeStamp.SetMonth(static_cast<uint32>(systemTime.wMonth));
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
     }
     return timeStamp;
 }
 
 TimeStamp Directory::GetLastAccessTime() {
-	Update();
+	ErrorManagement::ErrorType ret;
+	ret = Update();
 
-	TimeStamp timeStamp;
-    SYSTEMTIME systemTime;
-    bool ret = FileTimeToSystemTime(&directoryHandle.ftLastAccessTime, &systemTime);
+    TimeStamp timeStamp;
+    SYSTEMTIME systemTime={0,0,0,0,0,0,0};
+
+    if (ret){
+        ret.OSError = (FileTimeToSystemTime(&directoryHandle.ftLastAccessTime, &systemTime)==0);
+        REPORT_ERROR(ret, "Error FileTimeToSystemTime");
+    }
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));
         timeStamp.SetSeconds(static_cast<uint32>(systemTime.wSecond));
@@ -158,79 +164,65 @@ TimeStamp Directory::GetLastAccessTime() {
         timeStamp.SetMonth(static_cast<uint32>(systemTime.wMonth));
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
     }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: FileTimeToSystemTime()");
-    }
     return timeStamp;
 }
 
 bool Directory::Create(const bool isFile) {
-    bool ret = (fname != NULL);
-    if (ret) {
-        if (isFile) {
-            HANDLE file = CreateFile(fname, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-            if (file == INVALID_HANDLE_VALUE) {
-                ret = false;
-            }
-            if(CloseHandle(file) == 0) {
-                ret = false;
-            }
-        }
-        else {
-            if (CreateDirectory(fname,NULL) == 0) {
-                ret = false;
-            }
+	ErrorManagement::ErrorType ret;
+
+	ret.initialisationError = (fileName.GetSize() == 0);
+    REPORT_ERROR(ret, "fileName is empty");
+
+    if (ret && isFile) {
+        HANDLE file = CreateFile(fileName.GetList(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+        ret.OSError = (file == INVALID_HANDLE_VALUE);
+        COMPOSITE_REPORT_ERROR(ret, "Error: failed creating file",fileName.GetList());
+
+        if (file != INVALID_HANDLE_VALUE){
+        	ret.OSError = (CloseHandle(file) == 0);
+            REPORT_ERROR(ret, "failed closing file");
         }
     }
+
+    if (ret && !isFile) {
+    	ret.OSError = (CreateDirectory(fileName.GetList(), NULL) == 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: failed creating directory",fileName.GetList());
+    }
+
     if(ret) {
-        HANDLE h = FindFirstFile(fname, &directoryHandle);
-        if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Create");
-            ret = false;
-        }
-        FindClose(h);
+    	ret = Update();
     }
+
     return ret;
 }
 
 bool Directory::Exists() {
-    bool exist = true;
-    DWORD e = GetFileAttributes(fname);
-    if (e == INVALID_FILE_ATTRIBUTES) {
-        exist = false;
-    }
-    return exist;
+	return (GetFileAttributesA(fileName.GetList()) != INVALID_FILE_ATTRIBUTES);
 }
 
 bool Directory::Delete() {
-    bool del = (fname != NULL);
-    if (del) {
-        HANDLE h = FindFirstFile(fname, &directoryHandle);
-        if (h == INVALID_HANDLE_VALUE) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Delete");
-            del = false;
-        }
-        else {
-            if (IsDirectory()) {
-                if (RemoveDirectory(fname) == 0) {
-                    del = false;
-                }
-            }
-            else {
-                if (DeleteFile(fname) == 0) {
-                    del = false;
-                }
-            }
-        }
-        if (FindClose(h) == 0) {
-            del = false;
-        }
+	ErrorManagement::ErrorType ret;
+
+	ret.invalidOperation = (fileName.GetSize() == 0);
+    REPORT_ERROR(ret, "trying to delete a file with no name");
+
+    if (ret){
+    	ret = Update();
     }
-    if(del) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
-        }
+
+	if (ret && IsDirectory()){
+		ret.OSError = (RemoveDirectory(fileName.GetList()) == 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: failed to remove directory",fileName.GetList());
+	}
+
+	if (ret && IsFile()){
+		ret.OSError = (DeleteFile(fileName.GetList()) == 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: failed to remove file",fileName.GetList());
+	}
+
+    if(ret) {
+    	fileName = "";
     }
-    return del;
+    return ret;
 }
 }
