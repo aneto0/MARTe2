@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "StreamString.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -55,7 +55,7 @@ struct DLL_API BasicFileProperties {
     /**
      * The cached pathname set when opening the file
      */
-    StreamString pathname;
+    DynamicCString pathname;
 };
 
 }

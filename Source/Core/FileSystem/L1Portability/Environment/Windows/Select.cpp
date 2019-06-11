@@ -82,89 +82,188 @@ Select::~Select() {
     delete[] exceptionHandle.selectHandles;
 }
 
-bool Select::AddReadHandle(const HandleI &handle) {
-    bool retVal = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
-    Handle h = handle.GetReadHandle();
-    int32 indexMax = 0L;
-    if (reinterpret_cast<int32>(h) >= 0) {
-        if (retVal) {
-            while (readHandle.selectHandles[indexMax] != NULL) {
-                indexMax++;
-            }
-            for (int32 i = 0; i < indexMax; i++) {
-                if (readHandle.registeredHandles[i] == h) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(), Same Handle.");
-                    retVal = false;
-                }
-            }
-        }
-        if (retVal) {
-            WSAEVENT wsaevent;
-            wsaevent = WSACreateEvent();
-            if (wsaevent != WSA_INVALID_EVENT) {
-                int32 hSocket = (int32) h;
-                int32 error = WSAEventSelect(hSocket, wsaevent, FD_READ);
-                if (error != SOCKET_ERROR) {
-                    readHandle.registeredHandles[indexMax] = wsaevent;
-                }
-                else {
-                    readHandle.registeredHandles[indexMax] = h;
-                }
-                readHandle.selectHandles[indexMax] = h;
-                highestHandle++;
-            }
 
+static inline bool AddHandle(const HandleI &handle, SetIdentifier &handles,int32 &highestHandle,int32 eventMask){
+	ErrorManagement::ErrorType ret;
+
+
+    Handle hSocket = handle.GetReadHandle();
+    ret.parametersError = (hSocket < 0);
+    REPORT_ERROR(ret, "Select::AddHandle(). Invalid descriptor.");
+
+    if (ret){
+        ret.outOfRange = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
+        REPORT_ERROR(ret,"too many handles");
+    }
+
+    int32 indexMax = 0L;
+    if (ret){
+        while (handles.selectHandles[indexMax] != NULL) {
+            indexMax++;
+        }
+        for (int32 i = 0; (i < indexMax) && ret; i++) {
+            ret.illegalOperation = (handles.registeredHandles[i] == hSocket);
+            REPORT_ERROR(ret, "Select::AddHandle(), Same Handle.");
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
-        retVal = false;
+
+    WSAEVENT wsaevent = WSA_INVALID_EVENT;
+    if (ret){
+        wsaevent = WSACreateEvent();
+        ret.OSError = (wsaevent == WSA_INVALID_EVENT);
+        REPORT_ERROR(ret, "Select::WSACreateEvent failed.");
     }
-    return retVal;
+
+    if (ret){
+        int32 error = WSAEventSelect(reinterpret_cast<SOCKET>(hSocket), wsaevent, eventMask);
+        if (error != SOCKET_ERROR) {
+        	handles.registeredHandles[indexMax] = wsaevent;
+        }
+        else {
+        	handles.registeredHandles[indexMax] = hSocket;
+        }
+        handles.selectHandles[indexMax] = hSocket;
+        highestHandle++;
+    }
+	return ret;
+}
+
+static inline bool RemoveHandle(const HandleI &handle, SetIdentifier &handles,int32 &highestHandle){
+	ErrorManagement::ErrorType ret;
+
+    Handle hSocket = handle.GetReadHandle();
+    ret.parametersError = (hSocket < 0);
+    REPORT_ERROR(ret, "Select::RemoveHandle(). Invalid descriptor.");
+
+
+    if (ret){
+    	bool found = false;
+        for (int32 i = 0; i < (MAXIMUM_WAIT_OBJECTS - 1); i++) {
+            if ((handles.selectHandles[i] == hSocket)&& !found)  {
+                found = true;
+            }
+            if (found) {
+            	handles.registeredHandles[i] = handles.registeredHandles[i + 1];
+            	handles.selectHandles[i] = handles.selectHandles[i + 1];
+            }
+        }
+
+        ret.invalidOperation = !found;
+        REPORT_ERROR(ret, "Select::RemoveHandle not found.");
+    }
+
+    if (ret){
+        highestHandle--;
+    }
+
+	return ret;
+}
+
+
+bool Select::AddReadHandle(const HandleI &handle) {
+
+	return AddHandle(handle, readHandle,highestHandle,FD_READ);
+
+/*
+	ErrorManagement::ErrorType ret;
+
+    Handle hSocket = handle.GetReadHandle();
+    ret.parametersError = (hSocket < 0);
+    REPORT_ERROR(ret, "Select::AddHandle(). Invalid descriptor.");
+
+    if (ret){
+        ret.outOfRange = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
+        REPORT_ERROR(ret,"too many handles");
+    }
+
+    int32 indexMax = 0L;
+    if (ret){
+        while (readHandle.selectHandles[indexMax] != NULL) {
+            indexMax++;
+        }
+        for (int32 i = 0; (i < indexMax) && ret; i++) {
+            ret.illegalOperation = (readHandle.registeredHandles[i] == hSocket);
+            REPORT_ERROR(ret, "Select::AddHandle(), Same Handle.");
+        }
+    }
+
+    WSAEVENT wsaevent = WSA_INVALID_EVENT;
+    if (ret){
+        wsaevent = WSACreateEvent();
+        ret.OSError = (wsaevent == WSA_INVALID_EVENT);
+        REPORT_ERROR(ret, "Select::WSACreateEvent failed.");
+    }
+
+    if (ret){
+        int32 error = WSAEventSelect(reinterpret_cast<SOCKET>(hSocket), wsaevent, FD_READ);
+        if (error != SOCKET_ERROR) {
+            readHandle.registeredHandles[indexMax] = wsaevent;
+        }
+        else {
+            readHandle.registeredHandles[indexMax] = hSocket;
+        }
+        readHandle.selectHandles[indexMax] = hSocket;
+        highestHandle++;
+    }
+
+    return ret;
+*/
 }
 
 bool Select::AddWriteHandle(const HandleI &handle) {
-    bool retVal = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
-    Handle h = handle.GetWriteHandle();
-    int32 indexMax = 0L;
-    if (reinterpret_cast<int32>(h) >= 0) {
-        if (retVal) {
-            while (writeHandle.selectHandles[indexMax] != NULL) {
-                indexMax++;
-            }
-            for (int32 i = 0; i < indexMax; i++) {
-                if (writeHandle.registeredHandles[i] == h) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(), Same Handle.");
-                    retVal = false;
-                }
-            }
-        }
-        if (retVal) {
-            WSAEVENT wsaevent;
-            wsaevent = WSACreateEvent();
-            if (wsaevent != WSA_INVALID_EVENT) {
-                int32 hSocket = (int32) h;
-                int32 error = WSAEventSelect(hSocket, wsaevent, FD_WRITE);
-                if (error != SOCKET_ERROR) {
-                    writeHandle.registeredHandles[indexMax] = wsaevent;
-                }
-                else {
-                    writeHandle.registeredHandles[indexMax] = h;
-                }
-                writeHandle.selectHandles[indexMax] = h;
-                highestHandle++;
-            }
 
+	return AddHandle(handle, writeHandle,highestHandle,FD_WRITE);
+/*
+	ErrorManagement::ErrorType ret;
+
+    Handle hSocket = handle.GetReadHandle();
+    ret.parametersError = (hSocket < 0);
+    REPORT_ERROR(ret, "Select::AddHandle(). Invalid descriptor.");
+
+    if (ret){
+        ret.outOfRange = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
+        REPORT_ERROR(ret,"too many handles");
+    }
+
+    int32 indexMax = 0L;
+    if (ret){
+        while (writeHandle.selectHandles[indexMax] != NULL) {
+            indexMax++;
+        }
+        for (int32 i = 0; (i < indexMax) && ret; i++) {
+            ret.illegalOperation = (writeHandle.registeredHandles[i] == hSocket);
+            REPORT_ERROR(ret, "Select::AddHandle(), Same Handle.");
         }
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
-        retVal = false;
+
+    WSAEVENT wsaevent = WSA_INVALID_EVENT;
+    if (ret){
+        wsaevent = WSACreateEvent();
+        ret.OSError = (wsaevent == WSA_INVALID_EVENT);
+        REPORT_ERROR(ret, "Select::WSACreateEvent failed.");
     }
-    return retVal;
+
+    if (ret){
+        int32 error = WSAEventSelect(hSocket, wsaevent, FD_WRITE);
+        if (error != SOCKET_ERROR) {
+        	writeHandle.registeredHandles[indexMax] = wsaevent;
+        }
+        else {
+        	writeHandle.registeredHandles[indexMax] = hSocket;
+        }
+        writeHandle.selectHandles[indexMax] = hSocket;
+        highestHandle++;
+    }
+
+    return ret;
+    */
 }
 
 bool Select::AddExceptionHandle(const HandleI &handle) {
+	return AddHandle(handle, exceptionHandle,highestHandle,FD_READ);
+
+	/*
+
     bool retVal = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
     Handle h = handle.GetReadHandle();
     int32 indexMax = 0L;
@@ -203,10 +302,14 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
         retVal = false;
     }
     return retVal;
+    */
 }
 
+
 bool Select::RemoveReadHandle(const HandleI &handle) {
-    bool retVal = false;
+	return RemoveHandle(handle, readHandle,highestHandle);
+/*
+	bool retVal = false;
     Handle h = handle.GetReadHandle();
     if (reinterpret_cast<int32>(h) >= 0) {
         for (int32 i = 0; i < (MAXIMUM_WAIT_OBJECTS - 1); i++) {
@@ -227,9 +330,12 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
         highestHandle--;
     }
     return retVal;
+    */
 }
 
 bool Select::RemoveWriteHandle(const HandleI &handle) {
+	return RemoveHandle(handle, writeHandle,highestHandle);
+	/*
     bool retVal = false;
     Handle h = handle.GetWriteHandle();
     if (reinterpret_cast<int32>(h) >= 0) {
@@ -251,9 +357,12 @@ bool Select::RemoveWriteHandle(const HandleI &handle) {
         highestHandle--;
     }
     return retVal;
+    */
 }
 
 bool Select::RemoveExceptionHandle(const HandleI &handle) {
+	return RemoveHandle(handle, exceptionHandle,highestHandle);
+/*
     bool retVal = false;
     Handle h = handle.GetReadHandle();
     if (reinterpret_cast<int32>(h) >= 0) {
@@ -275,6 +384,7 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
         highestHandle--;
     }
     return retVal;
+    */
 }
 
 void Select::ClearAllHandles() {
@@ -295,8 +405,7 @@ void Select::ClearAllHandles() {
 bool Select::IsSet(const HandleI &handle) const {
     bool retVal = false;
     Handle hr = handle.GetReadHandle();
-    Handle hw = handle.GetWriteHandle();
-    if (reinterpret_cast<int32>(hr) >= 0) {
+    if (hr >= 0) {
         if (readHandle.selectedHandle == hr) {
             retVal = true;
         }
@@ -309,7 +418,8 @@ bool Select::IsSet(const HandleI &handle) const {
             retVal = true;
         }
     }
-    if (reinterpret_cast<int32>(hw) >= 0) {
+    Handle hw = handle.GetWriteHandle();
+    if (hw >= 0) {
         if (readHandle.selectedHandle == hw) {
             retVal = true;
         }
@@ -328,49 +438,46 @@ bool Select::IsSet(const HandleI &handle) const {
 int32 Select::WaitUntil(const MilliSeconds &msecTimeout) {
     Handle * allHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     uint8 i = 0;
-    uint8 aux = 0;
-    uint8 regRead = 0;
-    uint8 regWrite = 0;
+    uint16 counter = 0;
+    uint16 regRead = 0;
+    uint16 regWrite = 0;
     while (readHandle.registeredHandles[i] != NULL) {
-        allHandles[aux] = readHandle.registeredHandles[i];
+        allHandles[counter] = readHandle.registeredHandles[i];
         i++;
-        aux++;
+        counter++;
     }
-    regRead = aux - 1;
+    regRead = counter;
     i = 0;
     while (writeHandle.registeredHandles[i] != NULL) {
-        allHandles[aux] = writeHandle.registeredHandles[i];
+        allHandles[counter] = writeHandle.registeredHandles[i];
         i++;
-        aux++;
+        counter++;
     }
-    regWrite = aux - 1;
+    regWrite = counter;
     i = 0;
     while (exceptionHandle.registeredHandles[i] != NULL) {
-        allHandles[aux] = exceptionHandle.registeredHandles[i];
+        allHandles[counter] = exceptionHandle.registeredHandles[i];
         i++;
-        aux++;
+        counter++;
     }
-
-    int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &allHandles[0], false, msecTimeout.GetTimeRaw(), true);
-    if (ret == WAIT_TIMEOUT) {
-        ret = 0;
-    }
-    else if (ret != -1) {
-        ret -= WAIT_OBJECT_0;
-        if (ret <= regRead) {
-            readHandle.selectedHandle = readHandle.selectHandles[ret];
-        }
-        else if (ret <= regWrite) {
-            writeHandle.selectedHandle = readHandle.selectHandles[ret];
-        }
-        else {
-            exceptionHandle.selectedHandle = readHandle.selectHandles[ret];
-        }
-        //In Windows only one handle can be identified as the source of the event
-        ret = 1;
+    int32 retVal= -1;
+    uint32 selected = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &allHandles[0], false, msecTimeout.GetTimeRaw(), true);
+    if (selected < (WAIT_OBJECT_0 + counter)){
+    	retVal = 1;
+    	if (selected < regRead){
+            readHandle.selectedHandle = allHandles[selected];
+    	} else
+    	if (selected < regWrite){
+    		writeHandle.selectedHandle = allHandles[selected];
+    	} else {
+            exceptionHandle.selectedHandle = allHandles[selected];
+    	}
+    } else
+    if (selected == WAIT_TIMEOUT){
+    	retVal = 0;
     }
     delete[] allHandles;
-    return ret;
+    return retVal;
 }
 
 }

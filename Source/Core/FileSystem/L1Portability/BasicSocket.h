@@ -167,7 +167,7 @@ namespace MARTe {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-void MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal){
+void BasicSocket::MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal){
     timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeRaw() / 1000u);
     timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeRaw() % 1000u) * 1000u);
 }

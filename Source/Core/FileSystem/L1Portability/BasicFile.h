@@ -346,7 +346,7 @@ namespace MARTe {
         /**
          * @brief Queries the pathname of the file
          */
-        StreamString GetPathName() const;
+        CCString GetPathName() const;
 
         /**
          * @brief Queries the read handle of the file.

@@ -31,8 +31,6 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES+=-I.
 INCLUDES+=-I../../BareMetal/L0Types
 INCLUDES+=-I../../BareMetal/L1Portability
-INCLUDES+=-I../../BareMetal/L2Objects
-INCLUDES+=-I../../BareMetal/L3Streams
 
 BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityF.def

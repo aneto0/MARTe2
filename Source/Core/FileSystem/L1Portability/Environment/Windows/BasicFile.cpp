@@ -607,7 +607,7 @@ bool BasicFile::SetSize(uint64 size) {
     return ret;
 }
 
-StreamString BasicFile::GetPathName() const {
+CCString BasicFile::GetPathName() const {
     return properties.pathname;
 }
 
