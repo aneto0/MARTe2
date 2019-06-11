@@ -33,6 +33,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "FastPollingMutexSem.h"
+#include "EventSem.h"
+#include "Threads.h"
+
 
 using namespace MARTe;
 
@@ -93,14 +96,14 @@ public:
      * @return true if the calls to FastPollingMutexSem::Lock returned true and if the shared resource was protected.
      */
     bool TestFastLock(int32 nOfThreads,
-                      TimeoutType timeout);
+                      MilliSeconds timeout);
 
 
     /**
      * @see TestFastLock with FastPollingMutexSem initalised by external spin-lock.
      */
     bool TestFastLockExternal(int32 nOfThreads,
-                      TimeoutType timeout);
+                      MilliSeconds timeout);
 
 
     /**
@@ -114,13 +117,13 @@ public:
      * @return true if the calls to FastPollingMutexSem::UnLock returned true and if the shared resource was protected.
      */
     bool TestFastUnLock(int32 nOfThreads,
-                        TimeoutType timeout);
+                        MilliSeconds timeout);
 
     /**
      * @see TestFastUnLock with FastPollingMutexSem initalised by external spin-lock.
      */
     bool TestFastUnLockExternal(int32 nOfThreads,
-                        TimeoutType timeout);
+                        MilliSeconds timeout);
 
 
     /**
@@ -182,7 +185,7 @@ private:
     /**
      * timeout to be used for the locking test
      */
-    TimeoutType testMutexTimeout;
+    MilliSeconds testMutexTimeout;
 
     /**
      * Shared variable that is protected by the unit testing functions
@@ -228,7 +231,7 @@ private:
      * @return the value returned by the functionToTest.
      */
     bool GenericMutexTestCaller(int32 nOfThreads,
-                                TimeoutType timeout,
+                                MilliSeconds timeout,
                                 ThreadFunctionType functionToTest);
 
     /**
@@ -237,23 +240,23 @@ private:
     /**
      * @see TestFastLock
      */
-    friend void TestFastLockCallback(FastPollingMutexSemTest &mt);
+    friend void TestFastLockCallback(FastPollingMutexSemTest *mt);
     /**
      * @see TestFastUnLock
      */
-    friend void TestFastUnLockCallback(FastPollingMutexSemTest &mt);
+    friend void TestFastUnLockCallback(FastPollingMutexSemTest *mt);
     /**
      * @see TestFastTryLock
      */
-    friend void TestFastTryLockCallback(FastPollingMutexSemTest &mt);
+    friend void TestFastTryLockCallback(FastPollingMutexSemTest *mt);
     /**
      * @see TestFastLockErrorCode
      */
-    friend void TestFastLockErrorCodeCallback(FastPollingMutexSemTest &mt);
+    friend void TestFastLockErrorCodeCallback(FastPollingMutexSemTest *mt);
     /**
      * @see TestRecursive
      */
-    friend void TestRecursiveCallback(FastPollingMutexSemTest &mt);
+    friend void TestRecursiveCallback(FastPollingMutexSemTest *mt);
 };
 
 /*---------------------------------------------------------------------------*/

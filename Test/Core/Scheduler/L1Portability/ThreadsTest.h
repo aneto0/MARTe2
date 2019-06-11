@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Threads.h"
+#include "CCString.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -61,9 +62,9 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if all the threads can be successfully launched.
      */
-    bool TestBeginThread(const char8 *name,
+    bool TestBeginThread(CCString name,
                          uint32 stackSize,
-                         uint32 nOfThreads);
+                         int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::EndThread function.
@@ -80,9 +81,9 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if all the threads can be successfully launched.
      */
-    bool TestEndThread(const char8 *name,
+    bool TestEndThread(CCString name,
                        uint32 stackSize,
-                       uint32 nOfThreads);
+                       int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::BeginThread function.
@@ -90,7 +91,7 @@ public:
      * @param[in] name is the desired thread name.
      * @return true if no function is launched.
      **/
-    bool TestBeginThreadNullFunction(const char8 *name);
+    bool TestBeginThreadNullFunction(CCString name);
 
     /**
      * @brief Tests the Threads::IsAlive function.
@@ -98,7 +99,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the thread is all the threads are alive, false otherwise.
      */
-    bool TestIsAlive(uint32 nOfThreads);
+    bool TestIsAlive(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::IsAlive function.
@@ -106,7 +107,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the thread is not alive after kill, false otherwise.
      */
-    bool TestIsAliveAfterkill(uint32 nOfThreads);
+    bool TestIsAliveAfterkill(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::Kill function.
@@ -122,7 +123,7 @@ public:
      * @return true if the thread is killed, false if the thread is still alive or a second kill returns
      * true.
      */
-    bool TestKill(uint32 nOfThreads);
+    bool TestKill(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::SetPriority() for all priority levels and classes.
@@ -144,7 +145,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the returned value of the Threads::Id() = tidTest, false otherwise.
      */
-    bool TestId(uint32 nOfThreads);
+    bool TestId(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::GetCPUs function.
@@ -161,8 +162,8 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if Threads::Name() returns the expected name of the thread, false otherwise.
      */
-    bool TestName(const char8 *name,
-                  uint32 nOfThreads);
+    bool TestName(CCString name,
+                  int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::Name function.
@@ -178,7 +179,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the number of threads in the database is the expected number, false otherwise.
      */
-    bool TestNumberOfThreads(uint32 nOfThreads);
+    bool TestNumberOfThreads(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::FindByIndex function.
@@ -187,7 +188,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the searched index thread has the correct ID, false otherwise.
      */
-    bool TestFindByIndex(uint32 nOfThreads);
+    bool TestFindByIndex(int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::GetThreadInfoCopy function.
@@ -198,8 +199,8 @@ public:
      * @return true if the properties of the threads (name, priorityClass, priorityLevel and threadId), are
      *  equal to the expected values, false otherwise.
      */
-    bool TestGetThreadInfoCopy(uint32 nOfThreads,
-                               const char8 *name);
+    bool TestGetThreadInfoCopy(int32 nOfThreads,
+                               CCString name);
 
     /**
      * @brief Tests the Threads::GetThreadInfoCopy function.
@@ -218,7 +219,7 @@ public:
      * @return true if can find a thread with "name" and another with "known" as a name, false otherwise.
      */
     bool TestFindByName(int32 nOfThreads,
-                        const char8 *name,
+                        CCString name,
                         int32 position);
 
     /**
@@ -235,6 +236,11 @@ public:
      * A boolean to store the return value.
      */
     bool retValue;
+
+private:
+
+    bool CheckThreadStart(int32 N);
+    bool CheckThreadTermination(int32 N);
 };
 
 /*---------------------------------------------------------------------------*/

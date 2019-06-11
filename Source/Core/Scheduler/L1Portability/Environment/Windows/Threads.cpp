@@ -44,7 +44,7 @@ namespace Threads {
 
 bool isRealtimeClass = false;
 
-static void SystemThreadFunction(ThreadInformation * const threadInfo) {
+static uint32 SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
         //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
         ErrorManagement::ErrorType err = threadInfo->ThreadWait();
@@ -64,11 +64,12 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
         }
         delete threadInfo;
     }
+    return 0;
 }
 
 static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
                                                                     const void * const userData,
-                                                                    const char8 * const threadName) {
+                                                                    CCString threadName) {
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
@@ -279,7 +280,7 @@ bool Kill(const ThreadIdentifier &threadId) {
 ThreadIdentifier BeginThread(const ThreadFunctionType function,
                              const void * const parameters,
                              const uint32 &stacksize,
-                             const char8 * const name,
+                             CCString	 name,
                              const uint32 exceptionHandlerBehaviour,
                              ProcessorType runOnCPUs) {
 

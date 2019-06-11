@@ -30,12 +30,12 @@
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
 
-#include "../../../Core/Scheduler/L1Portability/FastPollingEventSemTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
+#include "FastPollingEventSemTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -77,48 +77,48 @@ TEST(FastPollingEventSemGTest,TestCreateNoWait_External) {
 
 TEST(FastPollingEventSemGTest,TestFastWait) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastWait(32, TTInfiniteWait));
+    ASSERT_TRUE(eventTest.TestFastWait(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastWait(32, 10000000));
+    ASSERT_TRUE(eventTest.TestFastWait(32, MilliSeconds(100000,Units::ms)));
 }
 
 
 TEST(FastPollingEventSemGTest,TestFastWait_External) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastWaitExternal(32, TTInfiniteWait));
+    ASSERT_TRUE(eventTest.TestFastWaitExternal(32, MilliSeconds::Infinite));
 }
 
 
 TEST(FastPollingEventSemGTest,TestFastWaitWithFiniteTimeout_External) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastWaitExternal(32, 10000000));
+    ASSERT_TRUE(eventTest.TestFastWaitExternal(32, MilliSeconds(100000,Units::ms)));
 }
 
 
 
 TEST(FastPollingEventSemGTest,TestFastPost) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastPost(32, TTInfiniteWait));
+    ASSERT_TRUE(eventTest.TestFastPost(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingEventSemGTest,TestFastPostWithFiniteTimeout) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastPost(32, 10000000));
+    ASSERT_TRUE(eventTest.TestFastPost(32, MilliSeconds(100000,Units::ms)));
 }
 
 
 TEST(FastPollingEventSemGTest,TestFastPost_External) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastPostExternal(32, TTInfiniteWait));
+    ASSERT_TRUE(eventTest.TestFastPostExternal(32, MilliSeconds::Infinite));
 }
 
 
 TEST(FastPollingEventSemGTest,TestFastPostWithFiniteTimeout_External) {
     FastPollingEventSemTest eventTest;
-    ASSERT_TRUE(eventTest.TestFastPostExternal(32, 10000000));
+    ASSERT_TRUE(eventTest.TestFastPostExternal(32, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(FastPollingEventSemGTest,TestFastResetWait) {

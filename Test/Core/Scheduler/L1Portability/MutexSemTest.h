@@ -92,7 +92,7 @@ public:
      * @return true if the calls to MutexSem::Lock returned true and if the shared resource was protected.
      */
     bool TestLock(int32 nOfThreads,
-                  TimeoutType timeout);
+                  MilliSeconds timeout);
 
     /**
      * @brief Tests the MutexSem::UnLock function.
@@ -107,7 +107,7 @@ public:
      * @return true if the calls to MutexSem::UnLock returned true and if the shared resource was protected.
      */
     bool TestUnLock(int32 nOfThreads,
-                    TimeoutType timeout);
+                    MilliSeconds timeout);
 
     /**
      * @brief Tests the MutexSem::Lock function and checks that the error code is correctly set.
@@ -165,7 +165,7 @@ private:
     MutexSem testMutex;
 
     /** timeout to be used for the locking test*/
-    TimeoutType testMutexTimeout;
+    MilliSeconds testMutexTimeout;
 
     /** Shared variable that is protected by the unit testing functions */
     int32 sharedVariable;
@@ -196,7 +196,7 @@ private:
      * @return the value returned by the functionToTest.
      */
     bool GenericMutexSemTestCaller(int32 nOfThreads,
-                                   TimeoutType timeout,
+                                   MilliSeconds timeout,
                                    ThreadFunctionType functionToTest);
 
     /**
@@ -205,35 +205,35 @@ private:
     /**
      * @see TestLock
      */
-    friend void TestLockCallback(MutexSemTest &mt);
+    friend void TestLockCallback(MutexSemTest *mt);
     /**
      * @see TestUnLock
      */
-    friend void TestUnLockCallback(MutexSemTest &mt);
+    friend void TestUnLockCallback(MutexSemTest *mt);
     /**
      * @see TestFastLock
      */
-    friend void TestFastLockCallback(MutexSemTest &mt);
+    friend void TestFastLockCallback(MutexSemTest *mt);
     /**
      * @see TestFastTryLock
      */
-    friend void TestFastTryLockCallback(MutexSemTest &mt);
+    friend void TestFastTryLockCallback(MutexSemTest *mt);
     /**
      * @see TestFastUnLock
      */
-    friend void TestFastUnLockCallback(MutexSemTest &mt);
+    friend void TestFastUnLockCallback(MutexSemTest *mt);
     /**
      * @see TestLockErrorCode
      */
-    friend void TestLockErrorCodeCallback(MutexSemTest &mt);
+    friend void TestLockErrorCodeCallback(MutexSemTest *mt);
     /**
      * @see TestFastLockErrorCode
      */
-    friend void TestFastLockErrorCodeCallback(MutexSemTest &mt);
+    friend void TestFastLockErrorCodeCallback(MutexSemTest *mt);
     /**
      * @see TestRecursive
      */
-    friend void TestRecursiveCallback(MutexSemTest &mt);
+    friend void TestRecursiveCallback(MutexSemTest *mt);
 };
 
 /*---------------------------------------------------------------------------*/

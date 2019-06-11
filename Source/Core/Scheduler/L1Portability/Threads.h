@@ -35,6 +35,7 @@
 #include "GeneralDefinitions.h"
 #include "ExceptionHandler.h"
 #include "ProcessorType.h"
+#include "CCString.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -151,10 +152,10 @@ DLL_API void SetPriority(const ThreadIdentifier &threadId,
  */
 DLL_API ThreadIdentifier BeginThread(const ThreadFunctionType function,
                                      const void * const parameters = static_cast<void *>(NULL),
-const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
-const char8 * name = static_cast<char8*>(NULL),
-uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-ProcessorType runOnCPUs = UndefinedCPUs);
+									 const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
+									 CCString name = emptyString,
+									 uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
+									 ProcessorType runOnCPUs = UndefinedCPUs);
 
 /**
  * @brief Deallocated the thread resources.

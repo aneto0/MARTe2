@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "FastPollingEventSem.h"
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -195,22 +196,23 @@ private:
     bool GenericEventTestCaller(int32 nOfThreads,const Ticks &timeout,
                                 ThreadFunctionType functionToTest);
 
+
     /**
      * Allow the callback functions to access the private methods of the class
      */
     /**
      * @see TestFastWait
      */
-    friend void TestFastWaitCallback(FastPollingEventSemTest &mt);
+    friend void TestFastWaitCallback(FastPollingEventSemTest *mt);
 
     /**
      * @see TestFastResetWait
      */
-    friend void TestFastResetWaitCallback(FastPollingEventSemTest &mt);
+    friend void TestFastResetWaitCallback(FastPollingEventSemTest *mt);
     /**
      * @see TestFastWaitErrorCode
      */
-    friend void TestFastWaitErrorCodeCallback(FastPollingEventSemTest &mt);
+    friend void TestFastWaitErrorCodeCallback(FastPollingEventSemTest *mt);
 
 };
 

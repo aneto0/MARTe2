@@ -47,7 +47,7 @@ MutexSemTest::MutexSemTest() {
 
     sharedVariable = 0;
     nOfExecutingThreads = 0;
-    testMutexTimeout = TTInfiniteWait;
+    testMutexTimeout = MilliSeconds::Infinite;
     failed = true;
     stop = false;
 }
@@ -78,7 +78,7 @@ bool MutexSemTest::TestClose(bool recursive) {
 }
 
 bool MutexSemTest::GenericMutexSemTestCaller(int32 nOfThreads,
-                                             TimeoutType timeout,
+                                             MilliSeconds timeout,
                                              ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
@@ -92,81 +92,81 @@ bool MutexSemTest::GenericMutexSemTestCaller(int32 nOfThreads,
     }
     synchSem.Post();
 
-    Sleep::Sec(1.0f);
+    Sleep::Short(1000,Units::ms);
     stop = true;
     while (nOfExecutingThreads > 0) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     return !failed;
 }
 
-void TestLockCallback(MutexSemTest &mt) {
-    mt.synchSem.Wait();
-    while (!mt.stop) {
-        ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != ErrorManagement::NoError);
-        int32 state = mt.sharedVariable;
-        mt.sharedVariable++;
-        Sleep::MSec(10);
-        if (mt.sharedVariable != (state + 1)) {
-            mt.failed = true;
+void TestLockCallback(MutexSemTest *mt) {
+    mt->synchSem.Wait();
+    while (!mt->stop) {
+        ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
+        mt->failed |= (err != ErrorManagement::NoError);
+        int32 state = mt->sharedVariable;
+        mt->sharedVariable++;
+        Sleep::Short(10,Units::ms);
+        if (mt->sharedVariable != (state + 1)) {
+            mt->failed = true;
         }
-        mt.testMutex.UnLock();
-        if (mt.failed) {
+        mt->testMutex.UnLock();
+        if (mt->failed) {
             break;
         }
     }
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
     Threads::EndThread();
 
 }
 
 bool MutexSemTest::TestLock(int32 nOfThreads,
-                            TimeoutType timeout) {
+                            MilliSeconds timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestLockCallback);
 }
 
-void TestUnLockCallback(MutexSemTest &mt) {
-    mt.synchSem.Wait();
+void TestUnLockCallback(MutexSemTest *mt) {
+    mt->synchSem.Wait();
 
-    while (!mt.stop) {
-        ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != ErrorManagement::NoError);
-        int32 state = mt.sharedVariable;
-        mt.sharedVariable++;
-        Sleep::MSec(10);
-        if (mt.sharedVariable != (state + 1)) {
-            mt.failed = true;
+    while (!mt->stop) {
+        ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
+        mt->failed |= (err != ErrorManagement::NoError);
+        int32 state = mt->sharedVariable;
+        mt->sharedVariable++;
+        Sleep::Short(10,Units::ms);
+        if (mt->sharedVariable != (state + 1)) {
+            mt->failed = true;
         }
-        mt.failed |= !mt.testMutex.UnLock();
-        if (mt.failed) {
+        mt->failed |= !mt->testMutex.UnLock();
+        if (mt->failed) {
             break;
         }
     }
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
     Threads::EndThread();
 
 }
 
 bool MutexSemTest::TestUnLock(int32 nOfThreads,
-                              TimeoutType timeout) {
+                              MilliSeconds timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestUnLockCallback);
 }
 
-void TestLockErrorCodeCallback(MutexSemTest &mt) {
-    mt.failed = false;
+void TestLockErrorCodeCallback(MutexSemTest *mt) {
+    mt->failed = false;
     //This should fail because it was already locked in the TestLockErrorCode
-    ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
+    ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
     if (err != ErrorManagement::Timeout) {
-        mt.failed = true;
+        mt->failed = true;
     }
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
     Threads::EndThread();
 
 }
@@ -175,7 +175,7 @@ bool MutexSemTest::TestLockErrorCode() {
     bool ok = false;
     ErrorManagement::ErrorType err = testMutex.Lock();
     if (err == ErrorManagement::NoError) {
-        ok = GenericMutexSemTestCaller(1, 1, (ThreadFunctionType) TestLockErrorCodeCallback);
+        ok = GenericMutexSemTestCaller(1, MilliSeconds(1,Units::ms), (ThreadFunctionType) TestLockErrorCodeCallback);
     }
     testMutex.UnLock();
 
@@ -207,12 +207,12 @@ bool MutexSemTest::TestIsRecursive() {
     return test;
 }
 
-void TestRecursiveCallback(MutexSemTest &mt) {
-    mt.testMutex.Lock();
-    mt.testMutex.Lock();
-    mt.testMutex.UnLock();
-    mt.testMutex.UnLock();
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+void TestRecursiveCallback(MutexSemTest *mt) {
+    mt->testMutex.Lock();
+    mt->testMutex.Lock();
+    mt->testMutex.UnLock();
+    mt->testMutex.UnLock();
+    Atomic::Decrement(&mt->nOfExecutingThreads);
     Threads::EndThread();
 
 }
@@ -225,7 +225,7 @@ bool MutexSemTest::TestRecursive(bool recursive) {
     int32 counter = 0;
     ThreadIdentifier threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
     while (nOfExecutingThreads == 1) {
-        Sleep::MSec(100);
+        Sleep::Short(100,Units::ms);
         if (counter++ > 10) {
             if (!recursive) {
                 test = true;

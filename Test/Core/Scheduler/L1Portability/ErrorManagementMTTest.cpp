@@ -30,6 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ErrorManagementMTTest.h"
+#include "HighResolutionTimer.h"
+#include "Threads.h"
+#include "Sleep.h"
 
 using namespace MARTe;
 
@@ -37,39 +40,47 @@ using namespace MARTe;
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static void ThreadErrorTestFunction(ErrorManagementTest& t) {
+static void ThreadErrorTestFunction(ErrorManagementTest* t) {
     //launches error report functions.
-    t.fullContext = false;
+    t->fullContext = false;
 
-    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription,  t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
-    t.fullContext = true;
-    ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, emptyString,emptyString ,NULL,t.expectedErrorFilename, t.expectedErrorLine,
-                                            t.expectedErrorFunction);
+    ErrorManagement::ReportError(t->expectedErrorCode, t->expectedErrorDescription,  t->expectedErrorFilename, t->expectedErrorLine, t->expectedErrorFunction);
+    t->fullContext = true;
+    ErrorManagement::ReportErrorFullContext(t->expectedErrorCode, t->expectedErrorDescription, emptyString,emptyString ,NULL,t->expectedErrorFilename, t->expectedErrorLine,
+                                            t->expectedErrorFunction);
 
-    t.syncFlag = true;
+    t->syncFlag = true;
 }
 
-static void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
+static void ThreadErrorTestFunctionMacro(ErrorManagementTest *t) {
     //launches error report functions.
-    t.fullContext = false;
-    t.expectedErrorFunction = __ERROR_FUNCTION_NAME__;
-    t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
-    t.fullContext = true;
-    t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
+    t->fullContext = false;
+    t->expectedErrorFunction = __ERROR_FUNCTION_NAME__;
+    t->expectedErrorLine = __LINE__ + 1;
+    REPORT_ERROR(t->expectedErrorCode, t->expectedErrorDescription);
+    t->fullContext = true;
+    t->expectedErrorLine = __LINE__ + 1;
+    REPORT_ERROR(t->expectedErrorCode, t->expectedErrorDescription);
 
-    t.syncFlag = true;
+    t->syncFlag = true;
 }
 
+static void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,CCString const errorDescription){
 
-bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType code,
-                                                     const char8* errorName,
-                                                     const char8* errorDescription,
-                                                     const char8* errorFileName,
-                                                     int16 errorLineNumber,
-                                                     const char8* errorFunctionName,
-                                                     uint32 numThreads) {
+    //shared static attributes
+    ErrorManagementTest newEM;
+    //checks if the structure is filled correctly
+    newEM.CheckParameters(errorInfo, errorDescription);
+
+}
+
+bool ErrorManagementMTTest::TestReportErrorFullContext(ErrorManagement::ErrorType code,
+													CCString errorName,
+													CCString errorDescription,
+													CCString errorFileName,
+                                                    int16 errorLineNumber,
+													CCString errorFunctionName,
+                                                    uint32 numThreads) {
 
 //Fill the class attributes
     expectedErrorCode = code;
@@ -114,9 +125,9 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType 
     return retVal;
 }
 
-bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
-                                                          const char8 *errorDescription,
-                                                          const char8 *errorName,
+bool ErrorManagementMTTest::TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
+                                                          CCString errorDescription,
+														  CCString errorName,
                                                           uint32 numThreads) {
 
     expectedErrorCode = code;

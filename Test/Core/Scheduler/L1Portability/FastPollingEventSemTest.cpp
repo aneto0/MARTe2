@@ -25,16 +25,16 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../Scheduler/L1Portability/FastPollingEventSemTest.h"
-
+#include "FastPollingEventSemTest.h"
 #include "Sleep.h"
 #include "Atomic.h"
 #include "FlagsType.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ FastPollingEventSemTest::FastPollingEventSemTest() :
     testEvent.Create();
     sharedVariable = 0;
     nOfExecutingThreads = 0;
-    testEventTimeout = TTInfiniteWait;
+    testEventTimeout=Ticks::Infinite;
     failed = true;
     stop = false;
     external = false;
@@ -98,9 +98,7 @@ bool FastPollingEventSemTest::TestCreateExternal(bool wait) {
     return test;
 }
 
-bool FastPollingEventSemTest::GenericEventTestCaller(int32 nOfThreads,
-                                                     TimeoutType timeout,
-                                                     ThreadFunctionType functionToTest) {
+bool FastPollingEventSemTest::GenericEventTestCaller(int32 nOfThreads,const Ticks &timeout,ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -112,10 +110,10 @@ bool FastPollingEventSemTest::GenericEventTestCaller(int32 nOfThreads,
         nOfExecutingThreads++;
     }
     while (sharedVariable < nOfExecutingThreads) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
 
-    Sleep::MSec(10);
+    Sleep::Short(10,Units::ms);
     failed = (sharedVariable != nOfExecutingThreads);
 
     if (external) {
@@ -125,94 +123,91 @@ bool FastPollingEventSemTest::GenericEventTestCaller(int32 nOfThreads,
         testEvent.FastPost();
     }
 
-    Sleep::Sec(1.0f);
+    Sleep::Short(1.0f,Units::s);
     stop = true;
     while (nOfExecutingThreads > 0) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     return !failed;
 }
 
-void TestFastWaitCallback(FastPollingEventSemTest &mt) {
+void TestFastWaitCallback(FastPollingEventSemTest *mt) {
+
     FlagsType error;
-    Atomic::Increment(&mt.sharedVariable);
-    if (mt.external) {
-        mt.testEventExt.FastWait();
+    Atomic::Increment(&mt->sharedVariable);
+    if (&mt->external) {
+        mt->testEventExt.FastWait();
     }
     else {
-        mt.testEvent.FastWait();
+        mt->testEvent.FastWait();
     }
 
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
 }
 
-bool FastPollingEventSemTest::TestFastWait(int32 nOfThreads,
-                                           TimeoutType timeout) {
+bool FastPollingEventSemTest::TestFastWait(int32 nOfThreads,const Ticks & timeout) {
     return GenericEventTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastWaitCallback);
 }
 
-bool FastPollingEventSemTest::TestFastWaitExternal(int32 nOfThreads,
-                                                   TimeoutType timeout) {
+bool FastPollingEventSemTest::TestFastWaitExternal(int32 nOfThreads,const Ticks & timeout) {
     external = true;
     return GenericEventTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastWaitCallback);
 }
 
-bool FastPollingEventSemTest::TestFastPost(int32 nOfThreads,
-                                           TimeoutType timeout) {
+bool FastPollingEventSemTest::TestFastPost(int32 nOfThreads,const Ticks &timeout) {
     return GenericEventTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastWaitCallback);
 }
 
-bool FastPollingEventSemTest::TestFastPostExternal(int32 nOfThreads,
-                                                   TimeoutType timeout) {
+bool FastPollingEventSemTest::TestFastPostExternal(int32 nOfThreads,const Ticks &timeout) {
     external = true;
     return GenericEventTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastWaitCallback);
 }
 
-void TestFastResetWaitCallback(FastPollingEventSemTest &mt) {
+void TestFastResetWaitCallback(FastPollingEventSemTest *mt) {
     FlagsType error;
-    Atomic::Increment(&mt.sharedVariable);
-    if (mt.external) {
-        mt.testEventExt.FastResetWait();
+    Atomic::Increment(&mt->sharedVariable);
+    if (mt->external) {
+        mt->testEventExt.FastResetWait();
     }
     else {
-        mt.testEvent.FastResetWait();
+        mt->testEvent.FastResetWait();
     }
     //Careful that without this, the threads when exiting can overwrite the
     //assignment operation and the subtraction of the value thus generating
     //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
 }
 
 bool FastPollingEventSemTest::TestFastResetWait(int32 nOfThreads) {
-    bool test = GenericEventTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastResetWaitCallback);
+    bool test = GenericEventTestCaller(nOfThreads, Ticks::Infinite, (ThreadFunctionType) TestFastResetWaitCallback);
     sharedVariable=0;
     // launch other threads without reset the semaphore
-    test &= GenericEventTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastResetWaitCallback);
+    test &= GenericEventTestCaller(nOfThreads, Ticks::Infinite, (ThreadFunctionType) TestFastResetWaitCallback);
 
     return test;
 }
 
 bool FastPollingEventSemTest::TestFastResetWaitExternal(int32 nOfThreads) {
     external = true;
-    bool test = GenericEventTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastResetWaitCallback);
+    bool test = GenericEventTestCaller(nOfThreads, Ticks::Infinite, (ThreadFunctionType) TestFastResetWaitCallback);
     sharedVariable=0;
     // launch other threads without reset the semaphore
-    test &= GenericEventTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastResetWaitCallback);
+    test &= GenericEventTestCaller(nOfThreads, Ticks::Infinite, (ThreadFunctionType) TestFastResetWaitCallback);
 
     return test;
 }
 
-void TestFastWaitErrorCodeCallback(FastPollingEventSemTest &mt) {
-    mt.failed = false;
+void TestFastWaitErrorCodeCallback(FastPollingEventSemTest *mt) {
+    mt->failed = false;
     //This should fail because it was already locked in the TestFastLockErrorCode
-    ErrorManagement::ErrorType err = mt.testEvent.FastWait(TTInfiniteWait);
+    ErrorManagement::ErrorType err = mt->testEvent.FastWait(Ticks::Infinite);
     if (err != ErrorManagement::NoError) {
-        mt.failed = true;
+        mt->failed = true;
     }
-    Atomic::Decrement(&mt.nOfExecutingThreads);
+    Atomic::Decrement(&mt->nOfExecutingThreads);
 }
 
 bool FastPollingEventSemTest::TestFastWaitErrorCode() {
@@ -221,12 +216,12 @@ bool FastPollingEventSemTest::TestFastWaitErrorCode() {
     Threads::BeginThread((ThreadFunctionType) TestFastWaitErrorCodeCallback, this);
     nOfExecutingThreads++;
 
-    ErrorManagement::ErrorType err = testEvent.FastWait(1);
+    ErrorManagement::ErrorType err = testEvent.FastWait(Ticks(1,Units::ticks));
     ok &= (err == ErrorManagement::Timeout);
 
     testEvent.FastPost();
     while (nOfExecutingThreads > 0) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     ok &= !failed;
     return ok;

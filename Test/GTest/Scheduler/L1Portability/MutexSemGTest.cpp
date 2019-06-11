@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MutexSemTest.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -69,32 +69,32 @@ TEST(MutexSemGTest,TestCloseRecursive) {
 
 TEST(MutexSemGTest,TestLock) {
     MutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestLock(16, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestLock(16, MilliSeconds::Infinite));
 }
 
 TEST(MutexSemGTest,TestLockWithFiniteTimeout) {
     MutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestLock(1, 10000000));
+    ASSERT_TRUE(mutextest.TestLock(1, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(MutexSemGTest,TestUnLock) {
     MutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestUnLock(50, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestUnLock(50, MilliSeconds::Infinite));
 }
 
 TEST(MutexSemGTest,TestUnLockWithFiniteTimeout) {
     MutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestUnLock(50, 10000000));
+    ASSERT_TRUE(mutextest.TestUnLock(50, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(MutexSemGTest,TestLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestLock(50, 1));
+    ASSERT_FALSE(mutextest.TestLock(50, MilliSeconds(1,Units::ms)));
 }
 
 TEST(MutexSemGTest,TestUnLockWithSmallFiniteTimeoutToFail) {
     MutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestUnLock(50, 1));
+    ASSERT_FALSE(mutextest.TestUnLock(50, MilliSeconds(1,Units::ms)));
 }
 
 TEST(MutexSemGTest,TestLockErrorCode) {

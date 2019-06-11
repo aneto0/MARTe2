@@ -121,7 +121,7 @@ public:
      * @param[in] timeout is the desired timeout.
      * @return true if the wait function correctly expires with the timeout and signals the correct error.
      */
-    bool TestWait(TimeoutType timeout);
+    bool TestWait(MilliSeconds timeout);
 
     /**
      * @brief Tests the EventSem::Wait function.
@@ -197,7 +197,7 @@ private:
     /**
      * timeout for the tests with timeout
      */
-    TimeoutType timeout;
+    MilliSeconds timeout;
 
     /**
      * Helper semaphore
@@ -225,12 +225,12 @@ private:
      * @brief Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
      * @param[in] eventSemTest the class instance under test
      */
-    friend void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest);
+    friend void MultiThreadedTestWaitCallback(EventSemTest *eventSemTest);
     /**
      * @brief Helper callback to post the EventSem so that the Wait and Reset functions can be tested
      * @param[in] eventSemTest the class instance under test
      */
-    friend void PosterThreadCallback(EventSemTest &eventSemTest);
+    friend void PosterThreadCallback(EventSemTest *eventSemTest);
 
 };
 

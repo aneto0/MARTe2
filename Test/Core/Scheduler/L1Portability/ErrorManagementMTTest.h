@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagementTest.h"
+#include "../../BareMetal/L1Portability/ErrorManagementTest.h"
 
 using namespace MARTe;
 
@@ -58,11 +58,11 @@ public:
      * right error informations, false otherwise.
      */
     bool TestReportErrorFullContext(ErrorManagement::ErrorType code,
-                                    const char8* expected,
-                                    const char8* errorDescription,
-                                    const char8* errorFileName = "",
+                                    CCString expected,
+									CCString errorDescription,
+									CCString errorFileName = "",
                                     int16 errorLineNumber = 0,
-                                    const char8* errorFunctionName = "",
+									CCString errorFunctionName = "",
                                     uint32 numThreads = 0);
 
 
@@ -76,8 +76,8 @@ public:
      * Launches also a certain number of threads and returns true if the thread is field is equal to the id of the thread which calls the macro.
      */
     bool TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
-                                         const char8 *errorDescription,
-                                         const char8 *errorName,
+                                         CCString errorDescription,
+										 CCString errorName,
                                          uint32 numThreads);
 
 

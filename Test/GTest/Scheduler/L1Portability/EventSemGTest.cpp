@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "EventSemTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -97,7 +97,7 @@ TEST(EventSemGTest,TestReset) {
 
 TEST(EventSemGTest,TestWaitTimeout) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.TestWait(500));
+    ASSERT_TRUE(eventSemTest.TestWait(MilliSeconds(500,Units::ms)));
 }
 /*
 TEST(EventSemGTest,TestWaitTimeoutNoTimeout) {

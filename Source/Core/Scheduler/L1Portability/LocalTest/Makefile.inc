@@ -22,23 +22,31 @@
 #
 #############################################################
 
-
-PACKAGE=GTest/Scheduler
-ROOT_DIR=../../../..
+PACKAGE=Core/Scheduler/L1Portability
+ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L1Portability
-INCLUDES += -I$(ROOT_DIR)/Test/Core/Scheduler/L1Portability
+INCLUDES += -I..
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
-INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/$(PACKAGE)
 INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilitySGTest$(LIBEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
-include depends.$(TARGET)
+SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
+         $(ROOT_DIR)/Test/GTest/Scheduler/L1Portability.x \
+         $(ROOT_DIR)/Source/Tools/TestSupport.x
+
+
+BUILD_PRODUCT = $(BUILD_DIR)/test$(EXEEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

@@ -27,5 +27,5 @@ TARGET=msc
 
 include Makefile.inc
 
-CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
-INCLUDES += -I../../../../Lib/gtest-1.7.0/include
+#CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
+#INCLUDES += -I../../../../Lib/gtest-1.7.0/include

@@ -27,12 +27,12 @@
 
 #include <limits.h>
 
-#include "../../../Core/Scheduler/L1Portability/FastPollingMutexSemTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
+#include "FastPollingMutexSemTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -74,62 +74,62 @@ TEST(FastPollingMutexSemGTest,TestCreateLock_External) {
 
 TEST(FastPollingMutexSemGTest,TestFastLock) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLock(32, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestFastLock(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLock(32, 10000000));
+    ASSERT_TRUE(mutextest.TestFastLock(32, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLock_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLockExternal(32, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestFastLockExternal(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockWithFiniteTimeout_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastLockExternal(32, 10000000));
+    ASSERT_TRUE(mutextest.TestFastLockExternal(32, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLock) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLock(32, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestFastUnLock(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLock_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, TTInfiniteWait));
+    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, MilliSeconds::Infinite));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLock(32, 10000000));
+    ASSERT_TRUE(mutextest.TestFastUnLock(32, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithFiniteTimeout_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, 10000000));
+    ASSERT_TRUE(mutextest.TestFastUnLockExternal(32, MilliSeconds(100000,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastLock(32, 1));
+    ASSERT_FALSE(mutextest.TestFastLock(32, MilliSeconds(1,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockWithSmallFiniteTimeoutToFail_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastLockExternal(32, 1));
+    ASSERT_FALSE(mutextest.TestFastLockExternal(32, MilliSeconds(1,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastUnLock(32, 1));
+    ASSERT_FALSE(mutextest.TestFastUnLock(32, MilliSeconds(1,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastUnLockWithSmallFiniteTimeoutToFail_External) {
     FastPollingMutexSemTest mutextest;
-    ASSERT_FALSE(mutextest.TestFastUnLockExternal(32, 1));
+    ASSERT_FALSE(mutextest.TestFastUnLockExternal(32, MilliSeconds(1,Units::ms)));
 }
 
 TEST(FastPollingMutexSemGTest,TestFastLockErrorCode) {
