@@ -103,7 +103,7 @@ public:
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
+    inline bool IsSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
     /**
      * @brief Allows obtaining a tool to perform efficient editing operations on the string
@@ -232,8 +232,8 @@ T * DynamicZeroTerminatedArray<T>::GetList() const{
 }
 
 template<typename T>
-bool DynamicZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
-    return ZeroTerminatedArray<T>::isSameAs(arrayIn,limit);
+bool DynamicZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
+    return ZeroTerminatedArray<T>::IsSameAs(arrayIn,limit);
 }
 
 template<typename T>

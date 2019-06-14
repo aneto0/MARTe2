@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "InternetHost.h"
+#include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,12 +44,13 @@ using namespace MARTe;
  * @brief A structure used for InternetAddress tests
  */
 struct InternetHostTestTable {
-    const char8* address;
+    CCString address;
     uint32 relatedNumber;
     uint16 port;
 
 };
 
+ZeroTerminatedArray<CCString [2]> xx;
 /**
  * @brief Tests all the InternetAddress public functions
  */
@@ -65,8 +67,8 @@ public:
      * @brief Tests if the full constructor set the attributes correctly
      */
     bool TestFullConstructor(uint16 port,
-                             const char8 * address,
-                             const char8 *expected);
+                             CCString address,
+							 CCString expected);
 
     /**
      * @brief Tests if the function returns the port number.
@@ -76,12 +78,12 @@ public:
     /**
      * @brief Tests if the function returns the IP address in the format x.x.x.x
      */
-    bool TestGetAddress(const char8 *table[][2]);
+    bool TestGetAddress(const ZeroTerminatedArray<CCString [2]> &table);
 
     /**
      * @brief Tests if the function returns the correct host name.
      */
-    bool TestGetHostName(const char8 *table[][2]);
+    bool TestGetHostName(const ZeroTerminatedArray<CCString [2]> &table);
 
     /**
      * @brief Test if the function returns the IP in number format.
@@ -111,12 +113,12 @@ public:
     /**
      * @brief Tests if the IP is set correctly passing a string in the format x.x.x.x
      */
-    bool TestSetAddress(const char8 *table[][2]);
+    bool TestSetAddress(const ZeroTerminatedArray<CCString [2]> &table);
 
     /**
      * @brief Tests if the IP is set correctly passing the host name.
      */
-    bool TestSetAddressByHostName(const char8 *table[][2]);
+    bool TestSetAddressByHostName(const ZeroTerminatedArray<CCString [2]> &table);
 
     /**
      * @brief Tests if the IP is set correctly if initialized by number format.

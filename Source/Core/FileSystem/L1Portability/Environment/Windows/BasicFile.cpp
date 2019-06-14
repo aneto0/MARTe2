@@ -181,7 +181,7 @@ bool BasicFile::CanSeek() const {
     return (properties.handle != INVALID_HANDLE_VALUE);
 }
 
-bool BasicFile::Open(const char * pathname,const uint32 flags) {
+bool BasicFile::Open(CCString pathname,const uint32 flags) {
 	ErrorManagement::ErrorType ret;
     HANDLE handle;
 
@@ -209,7 +209,7 @@ bool BasicFile::Open(const char * pathname,const uint32 flags) {
         }
 
         //Opens the file by pathname with the right flags
-        handle = CreateFile(pathname, desiredAccess, FILE_SHARE_READ, NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
+        handle = CreateFile(pathname.GetList(), desiredAccess, FILE_SHARE_READ, NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, NULL);
         ret.OSError = (handle == INVALID_HANDLE_VALUE);
         REPORT_ERROR(ret, "Error: CreateFile()");
 

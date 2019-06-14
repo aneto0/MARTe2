@@ -49,8 +49,8 @@ InternetService::InternetService() {
     service.s_proto=static_cast<char8*>(NULL);
 }
 
-bool InternetService::SearchByName(const char8 * const name,
-                                   const char8 * const protocol) {
+bool InternetService::SearchByName(CCString name,
+                                   CCString protocol) {
     servent *serv = getservbyname(name, protocol);
     bool ret = (serv != NULL);
     if (ret) {
@@ -64,7 +64,7 @@ bool InternetService::SearchByName(const char8 * const name,
 }
 
 bool InternetService::SearchByPort(const uint16 port,
-                                   const char8 * const protocol) {
+                                   CCString protocol) {
 
     servent *serv = getservbyport(static_cast<int32>(htons(port)), protocol);
     bool ret = (serv != NULL);
@@ -83,11 +83,11 @@ uint16 InternetService::Port() const {
     return htons(static_cast<uint16>(service.s_port));
 }
 
-const char8 *InternetService::Name() const {
+CCString InternetService::Name() const {
     return service.s_name;
 }
 
-const char8 *InternetService::Protocol() const {
+CCString InternetService::Protocol() const {
     return service.s_proto;
 }
 

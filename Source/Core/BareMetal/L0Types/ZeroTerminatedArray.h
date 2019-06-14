@@ -129,12 +129,21 @@ public:
 
     /**
      * @brief Checks if the input \a arrayIn has the same content as the array
-     * @details This function allows implementing operator==. The class T must have a defined operator ==
+     * @details The class T must have a defined operator ==
      * @param[in] arrayIn is the array to be compared
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
+    inline bool IsSameAs(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
+
+    /**
+     * @brief establish an order between \a arrayIn and the array
+     * @details This function requires that T has the operators < and >
+     * @param[in] arrayIn is the array to be compared
+     * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
+     * @return true if \a arrayIn is the same.
+     */
+    inline int32 CompareContent(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
     /**
      * @brief Allows obtaining a tool to perform efficient editing operations on the string
@@ -166,8 +175,7 @@ public:
      */
     inline ZeroTerminatedArrayToolT<T>    Remove(uint32 elements);
 
-
-protected:
+ protected:
 
     /**
      * @brief The array
@@ -257,7 +265,7 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
 }
 
 template<typename T>
-bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
+bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
     bool same = true;
     if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
@@ -277,7 +285,7 @@ bool ZeroTerminatedArray<T>::isSameAs(const T *arrayIn,uint32 limit) const {
 }
 
 template<>
-bool ZeroTerminatedArray<const char8>::isSameAs(const char8 *arrayIn,uint32 limit) const {
+bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const {
     bool same = true;
     if ((array != NULL_PTR(char8*))&&(arrayIn != NULL_PTR(char8*))) {
         const char8 * listP = array;
@@ -294,6 +302,50 @@ bool ZeroTerminatedArray<const char8>::isSameAs(const char8 *arrayIn,uint32 limi
         }
     }
     return same;
+}
+
+template<typename T>
+int32 ZeroTerminatedArray<T>::CompareContent(const T *arrayIn,uint32 limit) const {
+	int32 compResult = 0;
+	bool finished = false;
+
+	if (array == NULL_PTR(T*)){
+		finished = true;
+		compResult--;
+	}
+	if (arrayIn == NULL_PTR(T*)){
+		finished = true;
+		compResult++;
+	}
+    const T * listP = array;
+    const T * listPIn = arrayIn;
+
+    while (!IsZero(*listP) && !finished && (limit > 0)) {
+    	if (*listP > *listPIn){
+    		compResult= 1;
+    		finished = true;
+    	} else
+    	if (*listP < *listPIn){
+    		compResult= -1;
+    		finished = true;
+    	}
+        listP++;
+        listPIn++;
+        limit--;
+    }
+
+    // exit due to limit or IsZero
+    if ((!finished) && (limit > 0)){
+    	if (IsZero(*listP)){
+    		finished = true;
+    		compResult--;
+    	}
+    	if (IsZero(*listPIn)){
+    		finished = true;
+    		compResult++;
+    	}
+    }
+    return compResult;
 }
 
 

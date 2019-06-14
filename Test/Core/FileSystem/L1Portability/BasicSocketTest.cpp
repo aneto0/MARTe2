@@ -42,26 +42,28 @@
 using namespace MARTe;
 
 bool BasicSocketTest::TestDefaultConstructor() {
+	BasicTCPSocket socket;
 
-    BasicTCPSocket basicSocket;
-
-    if (basicSocket.GetDestination().GetAddress() != "0.0.0.0") {
+	DynamicCString address;
+    socket.GetDestination().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
-    if (basicSocket.GetDestination().GetPort() != 0) {
+    if (socket.GetDestination().GetPort() != 0) {
         return false;
     }
 
-    if (basicSocket.GetSource().GetAddress() != "0.0.0.0") {
+    socket.GetSource().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
-    if (basicSocket.GetSource().GetPort() != 0) {
+    if (socket.GetSource().GetPort() != 0) {
         return false;
     }
 
-    return !basicSocket.IsValid();
+    return !socket.IsValid();
 }
 
 bool BasicSocketTest::TestSetBlocking(bool isBlocked) {
@@ -95,7 +97,10 @@ bool BasicSocketTest::TestClose_false() {
 bool BasicSocketTest::TestGetSource() {
 
     BasicTCPSocket basicSocket;
-    if (basicSocket.GetSource().GetAddress() != "0.0.0.0") {
+
+    DynamicCString address;
+    basicSocket.GetSource().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
@@ -112,7 +117,8 @@ bool BasicSocketTest::TestGetSource() {
 
     InternetHost copy = basicSocket.GetSource();
 
-    if (copy.GetAddress() != "127.0.0.1") {
+    copy.GetAddress(address);
+    if (!address.IsSameAs("127.0.0.1")) {
         return false;
     }
 
@@ -122,7 +128,9 @@ bool BasicSocketTest::TestGetSource() {
 bool BasicSocketTest::TestGetDestination() {
 
     BasicTCPSocket basicSocket;
-    if (basicSocket.GetDestination().GetAddress() != "0.0.0.0") {
+    DynamicCString address;
+    basicSocket.GetDestination().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
@@ -139,7 +147,8 @@ bool BasicSocketTest::TestGetDestination() {
 
     InternetHost copy = basicSocket.GetDestination();
 
-    if (copy.GetAddress() != "127.0.0.1") {
+    copy.GetAddress(address);
+    if (!address.IsSameAs("127.0.0.1")) {
         return false;
     }
 

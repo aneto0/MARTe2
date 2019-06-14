@@ -125,7 +125,7 @@ public:
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
+    inline bool IsSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
 };
 
 
@@ -147,7 +147,7 @@ DynamicCString::operator CCString() const{
 }
 
 bool DynamicCString::operator==(const CCString &s) const{
-	return DynamicZeroTerminatedArray<char8>::isSameAs(s.GetList());
+	return DynamicZeroTerminatedArray<char8>::IsSameAs(s.GetList());
 }
 
 void DynamicCString::operator=(const DynamicCString &s) {
@@ -181,8 +181,8 @@ char8* DynamicCString::GetList() const {
 	return DynamicZeroTerminatedArray<char8>::GetList();
 }
 
-bool DynamicCString::isSameAs(const char8 *arrayIn,uint32 limit) const{
-	return DynamicZeroTerminatedArray<char8>::isSameAs(arrayIn,limit);
+bool DynamicCString::IsSameAs(const char8 *arrayIn,uint32 limit) const{
+	return DynamicZeroTerminatedArray<char8>::IsSameAs(arrayIn,limit);
 }
 
 

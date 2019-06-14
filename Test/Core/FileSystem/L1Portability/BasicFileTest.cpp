@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicFileTest.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,8 +53,8 @@ BasicFileTest::BasicFileTest() {
     defaultRFlags = BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R;
     str1 = "TargetFile_Test.txt";
     str2 = "abcdefghi";
-    nameFileTarget = str1.Buffer();
-    stringTarget = str2.Buffer();
+    nameFileTarget = str1.GetList();
+    stringTarget = str2.GetList();
 }
 
 BasicFileTest::~BasicFileTest() {
@@ -137,17 +136,19 @@ bool BasicFileTest::TestAssignmentOperator_withClosedFile() {
 
 bool BasicFileTest::TestAssignmentOperator_checkPointsToSameFile() {
     BasicFile copybf;
-    const char8 * writeString = str2.Buffer();
-    uint32 size1 = 3;
-    char8 buffer[10];
-    char8 * const readString = buffer;
+    CCString writeString = str2.GetList();
+
     bf.Open("TestAssignmentOperator_Test.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W /*defaultRWFlags*/);
     copybf = bf;
+    uint32 size1 = 3;
     bf.Write(writeString, size1);
+
     //Move back the pointer (after write it was moved forward)
     copybf.Seek(0);
-    copybf.Read(readString, size1);
-    retVal &= ((StringHelper::CompareN(readString, writeString, size1)) == 0);
+    char8 buffer[6];
+    size1 = 3;
+    copybf.Read(buffer, size1);
+    retVal &= (writeString.IsSameAs(buffer,size1));
     bf.Close();
     copybf.Close();
     return retVal;
@@ -344,7 +345,7 @@ bool BasicFileTest::TestClose() {
     retVal &= (bf.Size() == 0);
     retVal &= (bf.Position() == 0);
     retVal &= (bf.GetFlags() == 0);
-    retVal &= (bf.GetPathName().Size() == 0);
+    retVal &= (bf.GetPathName().GetSize() == 0);
     return retVal;
 }
 
@@ -368,7 +369,7 @@ bool BasicFileTest::TestWrite_timeout() {
     uint32 oldSize = size;
     uint32 newSize = size;
     bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/BasicFile::ACCESS_MODE_W);
-    retVal &= bf.Write(stringTarget, newSize, 100);
+    retVal &= bf.Write(stringTarget, newSize, MilliSeconds(100,Units::ms));
     retVal &= (oldSize >= newSize);
     retVal &= (bf.Position() == newSize);
     bf.Close();
@@ -377,7 +378,7 @@ bool BasicFileTest::TestWrite_timeout() {
 
 bool BasicFileTest::TestWrite_timeout_close() {
     uint32 NewSize = size;
-    return !bf.Write(stringTarget, NewSize, 100);
+    return !bf.Write(stringTarget, NewSize, MilliSeconds(100,Units::ms));
 }
 
 bool BasicFileTest::TestRead() {
@@ -386,7 +387,7 @@ bool BasicFileTest::TestRead() {
     retVal &= TestWrite();
     bf.Open(nameFileTarget, BasicFile::ACCESS_MODE_R);
     retVal &= bf.Read(buffer, newSize);
-    retVal &= (0 == StringHelper::CompareN(stringTarget, buffer, newSize));
+    retVal &= (stringTarget.IsSameAs(buffer, newSize));
     retVal &= (bf.Position() == newSize);
     return retVal;
 }
@@ -402,15 +403,15 @@ bool BasicFileTest::TestRead_timeout() {
     uint32 newSize = size;
     retVal &= TestWrite();
     bf.Open(nameFileTarget, BasicFile::ACCESS_MODE_R);
-    retVal &= bf.Read(buffer, newSize, 100);
-    retVal &= (0 == StringHelper::CompareN(stringTarget, buffer, newSize));
+    retVal &= bf.Read(buffer, newSize, MilliSeconds(100,Units::ms));
+    retVal &= (stringTarget.IsSameAs(buffer, newSize));
     return retVal;
 }
 
 bool BasicFileTest::TestRead_timeout_close() {
     char8 buffer[size + 1];
     uint32 newSize = size;
-    return !bf.Read(buffer, newSize, 100);
+    return !bf.Read(buffer, newSize, MilliSeconds(100,Units::ms));
 }
 
 bool BasicFileTest::TestSize() {
@@ -462,7 +463,8 @@ bool BasicFileTest::TestRelativeSeek_small() {
     bf.SetSize(sizeFile);
     bf.Seek(pos);
     retVal &= bf.RelativeSeek(deltaPos);
-    retVal &= ((pos + deltaPos) == bf.Position());
+    uint32 newPos = static_cast<uint32>(static_cast<int32>(pos) + deltaPos);
+    retVal &= (newPos == bf.Position());
     return retVal;
 }
 

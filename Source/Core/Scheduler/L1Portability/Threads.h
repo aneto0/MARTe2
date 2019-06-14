@@ -189,7 +189,7 @@ DLL_API bool IsAlive(const ThreadIdentifier &threadId);
  * @param[in] threadId the id of the thread,
  * @return the name of the thread.
  */
-DLL_API const char8 *Name(const ThreadIdentifier &threadId);
+DLL_API CCString Name(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the task state.
@@ -255,7 +255,7 @@ DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
  * @param[in] name is the thread name.
  * @return the id of the first found thread with the specified name.
  */
-DLL_API ThreadIdentifier FindByName(const char8 * const name);
+DLL_API ThreadIdentifier FindByName(CCString name);
 
 }
 

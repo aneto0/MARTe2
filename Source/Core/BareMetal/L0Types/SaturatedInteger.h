@@ -63,13 +63,13 @@ public:
 	/**
 	 * @brief copy constructor
 	 */
-	SaturatedInteger(const SaturatedInteger<baseType> & x);
+	inline SaturatedInteger(const SaturatedInteger<baseType> & x);
 
 	/**
 	 * @brief conversion constructor
 	 */
 	template <typename inputType>
-	SaturatedInteger(const SaturatedInteger<inputType> & x);
+	inline SaturatedInteger(const SaturatedInteger<inputType> & x);
 
 	/**
 	 * @brief conversion constructor
@@ -151,10 +151,18 @@ public:
      */
 	inline SaturatedInteger<baseType> &operator*=(const SaturatedInteger<baseType> &x);
 
+    /**
+     * @brief multiplies the specified value to the current value.
+     * @param[in] x is the value which will be multiplied to the value
+     * @return this object.
+     */
+	inline SaturatedInteger<baseType> &Scale(const double &x);
+
 	/**
 	 * @brief saturation safe product operator
 	 */
-	inline SaturatedInteger<baseType> operator*(const SaturatedInteger<baseType> &x) const;
+	template <typename mType>
+	inline SaturatedInteger<baseType> operator*(const mType &x) const;
 
 	/**
 	 * @brief saturation safe product operator
@@ -509,9 +517,23 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator*=(const Saturat
 	return *this;
 }
 
+template<typename baseType>
+SaturatedInteger<baseType> &SaturatedInteger<baseType>::Scale(const double &x){
+	if (IsValid()){
+		double result = data * x;
+		*this = SaturatedInteger<baseType>(result);
+	} else {
+		if (IsNegativeInf() && (data < 0)){
+			this->SetCode(positiveInf);
+		}
+	}
+	return *this;
+}
+
 
 template <typename baseType>
-SaturatedInteger<baseType> SaturatedInteger<baseType>::operator*(const SaturatedInteger<baseType> &x) const{
+template <typename mType>
+SaturatedInteger<baseType> SaturatedInteger<baseType>::operator*(const mType &x) const{
 	SaturatedInteger<baseType> ret(*this);
 	ret *= x;
 	return ret;

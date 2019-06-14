@@ -32,7 +32,7 @@
 #include "ThreadsDatabase.h"
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
-#include "StringHelper.h"
+//#include "StringHelper.h"
 #include "ErrorManagement.h"
 #include "FastPollingMutexSem.h"
 
@@ -191,16 +191,16 @@ bool GetInfo(ThreadInformation &threadInfoCopy,
     return (threadInfo != NULL);
 }
 
-ThreadIdentifier Find(const char8 * const name) {
+ThreadIdentifier Find(CCString name) {
     ThreadIdentifier tid = 0u;
     // search for empty space staring from guess
     uint32 index = 0u;
     while (index < maxNOfEntries) {
         if (entries[index] != NULL) {
-            if (StringHelper::Compare(entries[index]->ThreadName(), name) == 0) {
+        	if (name.IsSameAs(entries[index]->ThreadName())){
                 tid = entries[index]->GetThreadIdentifier();
                 break;
-            }
+        	}
         }
         index++;
     }

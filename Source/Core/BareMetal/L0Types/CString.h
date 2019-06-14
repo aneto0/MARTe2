@@ -91,7 +91,7 @@ public:
 /*---------------------------------------------------------------------------*/
 
 bool CString::operator==(const CCString &s) const{
-	return ZeroTerminatedArray<char8>::isSameAs(s.GetList());
+	return ZeroTerminatedArray<char8>::IsSameAs(s.GetList());
 }
 
 

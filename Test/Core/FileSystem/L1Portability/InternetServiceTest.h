@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "InternetService.h"
+#include "CCString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,10 +43,10 @@ using namespace MARTe;
  * @brief A structure used for Internet Service tests.
  */
 struct InternetServiceTestTable {
-    const char8* name;
-    const char8* protocol;
-    int32 port;
-    const char8* expectedProtocol;
+    CCString name;
+    CCString protocol;
+    uint16 port;
+    CCString expectedProtocol;
     bool expected;
 
 };

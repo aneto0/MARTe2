@@ -44,6 +44,11 @@ bool CStringTool::Write(const char8 * const input,uint32 & size,const MilliSecon
 	return Write(input,size);
 }
 
-
+/*
+bool CStringTool::StreamOutTo(StreamI &stream) const{
+	uint32 size = this->index * this->elementSize;
+	const char8 *ptr = reinterpret_cast<char8 *>(dataPointer);
+	return stream.Write(ptr,size);
+}*/
 
 } //MARTe

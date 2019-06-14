@@ -49,12 +49,10 @@ BasicUDPSocketTest::BasicUDPSocketTest() {
     exitCondition = 0;
     isBlocking = true;
     alives = 0;
-    string = NULL;
-    result = NULL;
     size = 0;
     expectedSize = 0;
     isServer = true;
-    timeout = TTInfiniteWait;
+    timeout = MilliSeconds::Infinite;
     isTimeout = false;
     isValidServer = true;
     isValidClient = true;
@@ -68,7 +66,9 @@ bool BasicUDPSocketTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (socket.GetDestination().GetAddress() != "0.0.0.0") {
+    DynamicCString address;
+    socket.GetDestination().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
@@ -76,7 +76,8 @@ bool BasicUDPSocketTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (socket.GetSource().GetAddress() != "0.0.0.0") {
+    socket.GetSource().GetAddress(address);
+    if (!address.IsSameAs("0.0.0.0") ) {
         return false;
     }
 
@@ -155,114 +156,116 @@ bool BasicUDPSocketTest::TestClose() {
     return TestIsValid();
 }
 
-void StartServer_Listen(BasicUDPSocketTest &param) {
+void StartServer_Listen(BasicUDPSocketTest *param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.NoError = false;
+        param->NoError = false;
         return;
     }
 
-    if (!param.isValidServer) {
+    if (!param->isValidServer) {
         serverSocket.Close();
     }
 
-    if (!serverSocket.Listen(param.server.GetPort())) {
-        param.retVal = false;
-        param.sem.FastLock();
-        param.exitCondition = 1;
-        param.sem.FastUnLock();
+    if (!serverSocket.Listen(param->server.GetPort())) {
+        param->retVal = false;
+        param->sem.FastLock();
+        param->exitCondition = 1;
+        param->sem.FastUnLock();
         return;
     }
 
-    param.sem.FastLock();
-    param.exitCondition = 1;
-    param.sem.FastUnLock();
+    param->sem.FastLock();
+    param->exitCondition = 1;
+    param->sem.FastUnLock();
 
-    if (param.isValidClient) {
-        for (uint32 i = 0; i < param.alives; i++) {
+    if (param->isValidClient) {
+        for (uint32 i = 0; i < param->alives; i++) {
             char8 output[32] = { 0 };
             uint32 sizeRead = 32;
             if (!serverSocket.Read(output, sizeRead)) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
             else {
-                if (StringHelper::Compare(output, "HelloServer") != 0) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+            	if (!CCString(&output[0]).IsSameAs("HelloServer")){
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
             }
 
-            if (param.NoError) {
+            if (param->NoError) {
                 serverSocket.SetDestination(serverSocket.GetSource());
-                const char8 *toWrite = "HelloClient";
-                uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+                CCString toWrite("HelloClient");
+                uint32 sizeWrite = toWrite.GetSize()+1;
                 if (!serverSocket.Write(toWrite, sizeWrite)) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
             }
 
         }
     }
-    while (Threads::NumberOfThreads() < (param.alives + 1)) {
-        Sleep::MSec(10);
+    while (Threads::NumberOfThreads() < (param->alives + 1)) {
+        Sleep::Short(10,Units::ms);
     }
 
-    param.eventSem.Post();
+    param->eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     serverSocket.Close();
 }
 
-void ClientJob_Listen(BasicUDPSocketTest &param) {
+void ClientJob_Listen(BasicUDPSocketTest *param) {
 
     BasicUDPSocket clientSocket;
     bool go = clientSocket.Open();
-    go &= clientSocket.SetBlocking(param.isBlocking);
+    go &= clientSocket.SetBlocking(param->isBlocking);
 
     if (!go) {
-        param.sem.FastLock();
-        param.NoError = false;
-        param.sem.FastUnLock();
+        param->sem.FastLock();
+        param->NoError = false;
+        param->sem.FastUnLock();
     }
     else {
-        if (!param.isValidClient) {
+        if (!param->isValidClient) {
             clientSocket.Close();
         }
 
-        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
-            param.sem.FastLock();
-            param.retVal = false;
-            param.sem.FastUnLock();
+        DynamicCString address;
+        param->server.GetAddress(address);
+        if (!clientSocket.Connect(address.GetList(), param->server.GetPort())) {
+            param->sem.FastLock();
+            param->retVal = false;
+            param->sem.FastUnLock();
         }
 
         else {
-            const char8* toWrite = "HelloServer";
-            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            CCString toWrite = "HelloServer";
+            uint32 sizeWrite = toWrite.GetSize()  + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
             else {
                 char8 output[32] = { 0 };
                 uint32 sizeRead = 32;
                 if (!clientSocket.Read(output, sizeRead)) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
                 else {
-                    if (StringHelper::Compare(output, "HelloClient") != 0) {
-                        param.sem.FastLock();
-                        param.NoError = false;
-                        param.sem.FastUnLock();
+                	if (!CCString("HelloClient").IsSameAs(output)){
+                        param->sem.FastLock();
+                        param->NoError = false;
+                        param->sem.FastUnLock();
                     }
                 }
             }
@@ -270,7 +273,7 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
 
     }
 
-    param.eventSem.Wait();
+    param->eventSem.Wait();
     clientSocket.Close();
 }
 
@@ -301,11 +304,11 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
             if (!param.NoError) {
                 param.alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
-                    Sleep::MSec(10);
+                    Sleep::Short(10,Units::ms);
                 }
                 return false;
             }
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         if (!param.retVal) {
@@ -317,7 +320,7 @@ static bool ListenConnectTest(BasicUDPSocketTest &param,
         }
 
         while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         if ((param.retVal != table[i].expected) || (!param.NoError)) {
@@ -341,128 +344,131 @@ bool BasicUDPSocketTest::TestConnect(const ConnectListenUDPTestTable* table) {
     return ListenConnectTest(*this, table, false);
 }
 
-void StartServer_Read(BasicUDPSocketTest &param) {
+void StartServer_Read(BasicUDPSocketTest *param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.NoError = false;
+        param->NoError = false;
         return;
     }
 
-    if (!serverSocket.Listen(param.server.GetPort())) {
-        param.NoError = false;
+    if (!serverSocket.Listen(param->server.GetPort())) {
+        param->NoError = false;
         return;
     }
 
-    param.sem.FastLock();
-    param.exitCondition = 1;
-    param.sem.FastUnLock();
+    param->sem.FastLock();
+    param->exitCondition = 1;
+    param->sem.FastUnLock();
 
-    for (uint32 i = 0; i < param.alives; i++) {
+    for (uint32 i = 0; i < param->alives; i++) {
         char8 output[32] = { 0 };
         uint32 sizeRead = 32;
         if (!serverSocket.Read(output, sizeRead)) {
-            param.sem.FastLock();
-            param.NoError = false;
-            param.sem.FastUnLock();
+            param->sem.FastLock();
+            param->NoError = false;
+            param->sem.FastUnLock();
         }
         else {
-            if (StringHelper::Compare(output, "HelloServer") != 0) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+        	if (!CCString("HelloServer").IsSameAs(output)) {
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
         }
 
-        if (param.NoError && param.isServer && param.isValidClient) {
+        if (param->NoError && param->isServer && param->isValidClient) {
             serverSocket.SetDestination(serverSocket.GetSource());
 
-            //uint32 sizeWrite = 64;
-            char8 input[64] = { 0 };
-            StringHelper::Copy(input, param.string);
-            uint32 sizeWrite = param.size;
-            if (!serverSocket.Write(input, sizeWrite)) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+//            char8 input[64] = { 0 };
+//            StringHelper::Copy(input, param->string);
+            uint32 sizeWrite = param->size;
+//            if (!serverSocket.Write(input, sizeWrite)) {
+            if (!serverSocket.Write(param->string.GetList(), sizeWrite)) {
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
         }
     }
 
-    while (Threads::NumberOfThreads() < (param.alives + 1)) {
-        Sleep::MSec(10);
+    while (Threads::NumberOfThreads() < (param->alives + 1)) {
+        Sleep::Short(10,Units::ms);
     }
-    param.eventSem.Post();
+    param->eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     serverSocket.Close();
 }
 
-void ClientJob_Read(BasicUDPSocketTest &param) {
+void ClientJob_Read(BasicUDPSocketTest *param) {
 
     BasicUDPSocket clientSocket;
 
     if (!clientSocket.Open()) {
-        param.sem.FastLock();
-        param.NoError = false;
-        param.sem.FastUnLock();
+        param->sem.FastLock();
+        param->NoError = false;
+        param->sem.FastUnLock();
     }
     else {
-        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
-            param.sem.FastLock();
-            param.NoError = false;
-            param.sem.FastUnLock();
+        DynamicCString address;
+        param->server.GetAddress(address);
+        if (!clientSocket.Connect(address.GetList(),param->server.GetPort())) {
+            param->sem.FastLock();
+            param->NoError = false;
+            param->sem.FastUnLock();
         }
 
         else {
 
-            const char8* toWrite = "HelloServer";
-            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            CCString toWrite = "HelloServer";
+            uint32 sizeWrite = toWrite.GetSize()  + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
             else {
 
-                bool ret = clientSocket.SetBlocking(param.isBlocking);
+                bool ret = clientSocket.SetBlocking(param->isBlocking);
                 if (!ret) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
                 else {
-                    if (!param.isValidClient) {
+                    if (!param->isValidClient) {
                         clientSocket.Close();
                     }
 
                     char8 output[64] = { 0 };
-                    uint32 sizeRead = 64; //param.size;
-                    if (param.isTimeout) {
-                        ret = clientSocket.Read(output, sizeRead, param.timeout);
+                    uint32 sizeRead = 64; //param->size;
+                    if (param->isTimeout) {
+                        ret = clientSocket.Read(output, sizeRead, param->timeout);
                     }
                     else {
                         ret = clientSocket.Read(output, sizeRead);
                     }
                     if (!ret) {
-                        param.sem.FastLock();
-                        param.retVal = false;
-                        param.sem.FastUnLock();
+                        param->sem.FastLock();
+                        param->retVal = false;
+                        param->sem.FastUnLock();
                     }
                     else {
 
-                        if (sizeRead != param.expectedSize) {
-                            param.sem.FastLock();
-                            param.retVal = false;
-                            param.sem.FastUnLock();
+                        if (sizeRead != param->expectedSize) {
+                            param->sem.FastLock();
+                            param->retVal = false;
+                            param->sem.FastUnLock();
                         }
                         else {
                             output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
-                            if (StringHelper::Compare(output, param.result) != 0) {
-                                param.sem.FastLock();
-                                param.retVal = false;
-                                param.sem.FastUnLock();
+
+                            if (!param->result.IsSameAs(output)) {
+                                param->sem.FastLock();
+                                param->retVal = false;
+                                param->sem.FastUnLock();
                             }
                         }
                     }
@@ -470,7 +476,7 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
             }
         }
     }
-    param.eventSem.Wait();
+    param->eventSem.Wait();
     clientSocket.Close();
 }
 
@@ -500,11 +506,11 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
             if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
-                    Sleep::MSec(10);
+                    Sleep::Short(10,Units::ms);
                 }
                 return false;
             }
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
 
         }
 
@@ -513,7 +519,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         }
 
         while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(50);
+            Sleep::Short(50,Units::ms);
         }
 
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -525,70 +531,72 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
     return true;
 }
 
-void ClientJob_Peek(BasicUDPSocketTest &param) {
+void ClientJob_Peek(BasicUDPSocketTest *param) {
 
     BasicUDPSocket clientSocket;
     if (!clientSocket.Open()) {
-        param.sem.FastLock();
-        param.NoError = false;
-        param.sem.FastUnLock();
+        param->sem.FastLock();
+        param->NoError = false;
+        param->sem.FastUnLock();
     }
     else {
-        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
-            param.sem.FastLock();
-            param.NoError = false;
-            param.sem.FastUnLock();
+        DynamicCString address;
+        param->server.GetAddress(address);
+        if (!clientSocket.Connect(address.GetList(), param->server.GetPort())) {
+            param->sem.FastLock();
+            param->NoError = false;
+            param->sem.FastUnLock();
         }
 
         else {
 
-            const char8* toWrite = "HelloServer";
-            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            CCString toWrite = "HelloServer";
+            uint32 sizeWrite = toWrite.GetSize()  + 1;
             if (!clientSocket.Write(toWrite, sizeWrite)) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
             else {
 
-                bool ret = clientSocket.SetBlocking(param.isBlocking);
+                bool ret = clientSocket.SetBlocking(param->isBlocking);
 
                 if (!ret) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
                 else {
-                    if (!param.isValidClient) {
+                    if (!param->isValidClient) {
                         clientSocket.Close();
                     }
 
                     char8 output[64] = { 0 };
-                    uint32 sizeRead = 64; //param.size;
+                    uint32 sizeRead = 64; //param->size;
 
                     for (uint32 i = 0; i < 4; i++) {
                         ret = clientSocket.Peek(output, sizeRead);
 
                         if (!ret) {
-                            param.sem.FastLock();
-                            param.retVal = false;
-                            param.sem.FastUnLock();
+                            param->sem.FastLock();
+                            param->retVal = false;
+                            param->sem.FastUnLock();
                             break;
                         }
                         else {
 
-                            if (sizeRead != param.expectedSize) {
-                                param.sem.FastLock();
-                                param.retVal = false;
-                                param.sem.FastUnLock();
+                            if (sizeRead != param->expectedSize) {
+                                param->sem.FastLock();
+                                param->retVal = false;
+                                param->sem.FastUnLock();
                                 break;
                             }
                             else {
                                 output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
-                                if (StringHelper::Compare(output, param.result) != 0) {
-                                    param.sem.FastLock();
-                                    param.retVal = false;
-                                    param.sem.FastUnLock();
+                                if (!param->result.IsSameAs(output)) {
+                                    param->sem.FastLock();
+                                    param->retVal = false;
+                                    param->sem.FastUnLock();
                                     break;
                                 }
                             }
@@ -598,7 +606,7 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
             }
         }
     }
-    param.eventSem.Wait();
+    param->eventSem.Wait();
     clientSocket.Close();
 }
 
@@ -628,11 +636,11 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
             if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
-                    Sleep::MSec(10);
+                    Sleep::Short(10,Units::ms);
                 }
                 return false;
             }
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
@@ -640,7 +648,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         }
 
         while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         if ((retVal != table[i].expected) || (!NoError)) {
@@ -652,47 +660,47 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
     return true;
 }
 
-void StartServer_Write(BasicUDPSocketTest &param) {
+void StartServer_Write(BasicUDPSocketTest *param) {
     BasicUDPSocket serverSocket;
 
     if (!serverSocket.Open()) {
-        param.NoError = false;
+        param->NoError = false;
         return;
     }
 
-    if (!serverSocket.Listen(param.server.GetPort())) {
-        param.NoError = false;
+    if (!serverSocket.Listen(param->server.GetPort())) {
+        param->NoError = false;
         return;
     }
 
-    param.sem.FastLock();
-    param.exitCondition = 1;
-    param.sem.FastUnLock();
+    param->sem.FastLock();
+    param->exitCondition = 1;
+    param->sem.FastUnLock();
 
-    if (param.isValidClient) {
-        for (uint32 i = 0; i < param.alives; i++) {
+    if (param->isValidClient) {
+        for (uint32 i = 0; i < param->alives; i++) {
 
-            if (param.isServer) {
+            if (param->isServer) {
 
                 uint32 sizeRead = 64;
                 char8 output[64];
                 if (!serverSocket.Read(output, sizeRead)) {
-                    param.sem.FastLock();
-                    param.NoError = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->NoError = false;
+                    param->sem.FastUnLock();
                 }
                 else {
-                    if (sizeRead != param.expectedSize) {
-                        param.sem.FastLock();
-                        param.retVal = false;
-                        param.sem.FastUnLock();
+                    if (sizeRead != param->expectedSize) {
+                        param->sem.FastLock();
+                        param->retVal = false;
+                        param->sem.FastUnLock();
                     }
                     else {
                         output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
-                        if (StringHelper::Compare(output, param.result) != 0) {
-                            param.sem.FastLock();
-                            param.retVal = false;
-                            param.sem.FastUnLock();
+                        if (!param->result.IsSameAs(output)) {
+                            param->sem.FastLock();
+                            param->retVal = false;
+                            param->sem.FastUnLock();
                         }
                     }
                 }
@@ -700,65 +708,69 @@ void StartServer_Write(BasicUDPSocketTest &param) {
         }
     }
 
-    while (Threads::NumberOfThreads() < (param.alives + 1)) {
-        Sleep::MSec(10);
+    while (Threads::NumberOfThreads() < (param->alives + 1)) {
+        Sleep::Short(10,Units::ms);
     }
-    param.eventSem.Post();
+    param->eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
     serverSocket.Close();
 }
 
-void ClientJob_Write(BasicUDPSocketTest &param) {
+void ClientJob_Write(BasicUDPSocketTest *param) {
 
     BasicUDPSocket clientSocket;
     if (!clientSocket.Open()) {
-        param.sem.FastLock();
-        param.NoError = false;
-        param.sem.FastUnLock();
+        param->sem.FastLock();
+        param->NoError = false;
+        param->sem.FastUnLock();
     }
     else {
-        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
-            param.sem.FastLock();
-            param.NoError = false;
-            param.sem.FastUnLock();
+        DynamicCString address;
+        param->server.GetAddress(address);
+        if (!clientSocket.Connect(address.GetList(), param->server.GetPort())) {
+            param->sem.FastLock();
+            param->NoError = false;
+            param->sem.FastUnLock();
         }
 
         else {
-            bool ret = clientSocket.SetBlocking(param.isBlocking);
+            bool ret = clientSocket.SetBlocking(param->isBlocking);
 
             if (!ret) {
-                param.sem.FastLock();
-                param.NoError = false;
-                param.sem.FastUnLock();
+                param->sem.FastLock();
+                param->NoError = false;
+                param->sem.FastUnLock();
             }
             else {
 
-                if (!param.isValidClient) {
+                if (!param->isValidClient) {
                     clientSocket.Close();
                 }
 
-                char8 input[128];
-                MemoryOperationsHelper::Set(input, 0, 128);
-                StringHelper::Copy(input, param.string);
-                uint32 sizeWrite = param.size;
-                if (param.isTimeout) {
-                    ret = clientSocket.Write(input, sizeWrite, param.timeout);
+//                char8 input[128];
+//                MemoryOperationsHelper::Set(input, 0, 128);
+//                StringHelper::Copy(input, param->string);
+                uint32 sizeWrite = param->size;
+                if (param->isTimeout) {
+//                    ret = clientSocket.Write(input, sizeWrite, param->timeout);
+                    ret = clientSocket.Write(param->string.GetList(), sizeWrite, param->timeout);
                 }
                 else {
-                    ret = clientSocket.Write(input, sizeWrite);
+//                    ret = clientSocket.Write(input, sizeWrite);
+                    ret = clientSocket.Write(param->string.GetList(), sizeWrite, param->timeout);
                 }
                 if (!ret) {
-                    param.sem.FastLock();
-                    param.retVal = false;
-                    param.sem.FastUnLock();
+                    param->sem.FastLock();
+                    param->retVal = false;
+                    param->sem.FastUnLock();
                 }
 
             }
         }
     }
-    param.eventSem.Wait();
+    param->eventSem.Wait();
     clientSocket.Close();
 }
 
@@ -787,11 +799,11 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
             if (!NoError) {
                 alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
-                    Sleep::MSec(10);
+                    Sleep::Short(10,Units::ms);
                 }
                 return false;
             }
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
@@ -799,7 +811,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         }
 
         while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(10);
+            Sleep::Short(10,Units::ms);
         }
 
         if ((retVal != table[i].expected) || (!NoError)) {

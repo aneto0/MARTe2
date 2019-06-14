@@ -48,7 +48,7 @@ struct ConnectListenTestTable {
     uint16 port;
     uint32 maxConnectionsIn;
     uint32 nClientsIn;
-    TimeoutType timeoutIn;
+    MilliSeconds timeoutIn;
     bool expected;
     bool isBlockingIn;
     bool isServer;
@@ -64,7 +64,7 @@ struct ReadWriteTestTable {
     const char8 *stringIn;
     const char8* resultIn;
     uint32 nClientsIn;
-    TimeoutType timeoutIn;
+    MilliSeconds timeoutIn;
     bool expected;
     bool isBlockingIn;
     bool isServer;
@@ -78,7 +78,7 @@ struct ReadWriteTestTable {
 struct WaitConnectionTestTable {
     uint32 nClientsIn;
     bool createOnHeapIn;
-    TimeoutType timeoutIn;
+    MilliSeconds timeoutIn;
     bool isBlockingIn;
     bool expected;
     bool isValid;
@@ -201,12 +201,12 @@ public:
     uint32 alives;
     int32 exitCondition;
     ThreadFunctionType serverJob;
-    TimeoutType timeout;
+    MilliSeconds timeout;
     EventSem eventSem;
-    const char8 *serviceName;
+    CCString serviceName;
     bool isBlocking;
-    const char8* string;
-    const char8* result;
+    CCString string;
+    CCString result;
     uint32 size;
     uint32 expectedSize;
     bool isServer;

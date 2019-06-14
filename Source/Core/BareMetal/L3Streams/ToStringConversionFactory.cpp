@@ -242,7 +242,7 @@ private:
 	/**
 	 * the result
 	 */
-	bool isSame;
+	bool IsSame;
 };
 
 
@@ -381,18 +381,18 @@ ErrorManagement::ErrorType  IOBufferDynStringWrapper::Next(){
 
 IOBufferCStringCompareWrapper::IOBufferCStringCompareWrapper(): IOBufferWrapper(){
 	string = NULL;
-	isSame = false;
+	IsSame = false;
 }
 
 void IOBufferCStringCompareWrapper::Wrap(void *ptr){
 	string = reinterpret_cast<CCString *>(ptr);
 	currentString = string[0];
-	isSame = true;
+	IsSame = true;
 }
 
 ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Check(){
 	ErrorManagement::ErrorType  ret;
-	if (!isSame){
+	if (!IsSame){
 		ret.comparisonFailure = true;
 	}
 	return ret;
@@ -401,7 +401,7 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Check(){
 ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
 	ErrorManagement::ErrorType  ret;
 	NoMoreSpaceToWrite();
-	if (!isSame){
+	if (!IsSame){
 		ret.comparisonFailure = true;
 	}
 	string++;
@@ -411,7 +411,7 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
 
  bool IOBufferCStringCompareWrapper::NoMoreSpaceToWrite() {
     bool retval = false;
-	if (!currentString.IsNullPtr() && isSame) {
+	if (!currentString.IsNullPtr() && IsSame) {
         // no buffering!
         if (Buffer() != NULL) {
 
@@ -422,7 +422,7 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
             }
             // write
             else {
-            	if (currentString.isSameAs(Buffer(),writeSize)){
+            	if (currentString.IsSameAs(Buffer(),writeSize)){
                     retval = true;
                     Empty();
                 } else {
@@ -430,7 +430,7 @@ ErrorManagement::ErrorType  IOBufferCStringCompareWrapper::Next(){
                 	string().Append(Buffer(),writeSize);
         			COMPOSITE_REPORT_ERROR(ErrorManagement::ComparisonFailure,
                         	"String (",string,") != (",currentString.GetList(),") ");
-                	isSame = false;
+                	IsSame = false;
                 }
             }
         }

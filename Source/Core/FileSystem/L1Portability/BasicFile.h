@@ -184,7 +184,7 @@ namespace MARTe {
          *   GetPathName() == pathname
          * @return true if the file is open successfully.
          */
-        bool Open(const char * pathname, const uint32 flags);
+        bool Open(CCString pathname, const uint32 flags);
 
         /**
          * @brief Queries if the file is opened.
@@ -223,8 +223,7 @@ namespace MARTe {
          *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
          * @return false if the read fails.
          */
-        virtual bool Read(char8* const output,
-                uint32 & size);
+        virtual bool Read(char8* const output,uint32 & size);
 
         /**
          * @brief Reads size characters from a file and updates the position.

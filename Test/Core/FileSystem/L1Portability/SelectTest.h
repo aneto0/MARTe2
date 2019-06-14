@@ -35,7 +35,6 @@
 #include "BasicConsole.h"
 #include "BasicFile.h"
 #include "Select.h"
-#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -209,7 +208,7 @@ public:
      * @details add a read UPDSocked handle, lunched a thread which wait to write, Select::WaitUtil() on the socket to read and finally writes on the port.
      * @return True if the returned value of Select::WaitUntil() is one and Select::IsSet() is true.
      */
-    bool TestWaitUntil_waitRead(TimeoutType timeout);
+    bool TestWaitUntil_waitRead(MilliSeconds timeout);
 
     /**
      * @brief Test Select::WaitUntil()
@@ -237,7 +236,7 @@ private:
     /**
      * Timeout used in some of the tests, expressed in msec
      */
-    TimeoutType defaultTo;
+    MilliSeconds defaultTo;
 
     /**
      * Select variable to test the Select class

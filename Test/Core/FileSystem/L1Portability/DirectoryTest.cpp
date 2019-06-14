@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryTest.h"
+#include "Sleep.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,7 +41,7 @@
 
 using namespace MARTe;
 
-static const char8 * const BASE_PATH = "GTestDirectoryTest";
+static CCString BASE_PATH = "GTestDirectoryTest";
 
 DirectoryTest::DirectoryTest() {
 
@@ -50,38 +51,38 @@ DirectoryTest::~DirectoryTest() {
 
 }
 
-bool DirectoryTest::TestDirectoryTest(const char8 * pathin) {
-    char8 path[128];
+bool DirectoryTest::TestDirectoryTest(CCString pathin) {
+    DynamicCString path;
     DirectoryCreateN(path, pathin);
     Directory dir(path);
-    return (StringHelper::Compare(dir.GetName(), path) == 0);
+    return (dir.GetName() == path);
 }
 
 bool DirectoryTest::TestSetByName_Valid() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestSetByName_Valid");
     Directory dir(path);
     dir.Create(false);
     bool ok = dir.SetByName(path);
     if (ok) {
-        ok = (StringHelper::Compare(dir.GetName(), path) == 0);
+        ok = (dir.GetName() == path);
     }
     return ok;
 }
 
 bool DirectoryTest::TestSetByName_NULL() {
-    char8 path[128];
-    DirectoryCreateN(path, NULL);
+    DynamicCString path;
+    DirectoryCreateN(path, "");
     Directory dir(path);
     bool ok = dir.SetByName(path);
     if (ok) {
-        ok = (StringHelper::Compare(dir.GetName(), path) == 0);
+        ok = (dir.GetName() == path);
     }
     return ok;
 }
 
 bool DirectoryTest::TestSetByName_Invalid() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "abc");
     Directory dir(path);
     bool ok = !dir.SetByName(path);
@@ -89,21 +90,21 @@ bool DirectoryTest::TestSetByName_Invalid() {
 }
 
 bool DirectoryTest::TestGetName_Valid() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestNameValid");
     Directory dir(path);
     dir.Create(false);
-    return StringHelper::Compare(dir.GetName(), path) == 0;
+    return dir.GetName() == path;
 }
 
 bool DirectoryTest::TestGetName_Invalid() {
     const char8 * const path = NULL;
     Directory dir(path);
-    return (StringHelper::Compare(dir.GetName(), path) == -1);
+    return !dir.GetName().IsSameAs(path);
 }
 
 bool DirectoryTest::TestIsDirectory_Invalid() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestIsDirectoryInvalid.txt");
     Directory dir(path);
     dir.Create(true);
@@ -111,7 +112,7 @@ bool DirectoryTest::TestIsDirectory_Invalid() {
 }
 
 bool DirectoryTest::TestIsDirectory_Valid() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestIsDirectoryValid");
     Directory dir(path);
     dir.Create(false);
@@ -119,7 +120,7 @@ bool DirectoryTest::TestIsDirectory_Valid() {
 }
 
 bool DirectoryTest::TestIsFile_No() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestIsNoFile");
     Directory dir(path);
     dir.Create(false);
@@ -127,7 +128,7 @@ bool DirectoryTest::TestIsFile_No() {
 }
 
 bool DirectoryTest::TestIsFile_Yes() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestIsFile.txt");
     Directory dir(path);
     dir.Create(true);
@@ -135,8 +136,8 @@ bool DirectoryTest::TestIsFile_Yes() {
 }
 
 bool DirectoryTest::TestGetSize_Dir() {
-    char8 path[128];
-    char8 path2[128];
+    DynamicCString path;
+    DynamicCString path2;
 
     DirectoryCreateN(path, "TestGetSize_Dir1");
     Directory dir(path);
@@ -149,9 +150,14 @@ bool DirectoryTest::TestGetSize_Dir() {
     return(dir.GetSize() == dir2.GetSize());
 }
 
+static inline void Write2File(BasicFile &file, CCString message){
+    uint32 size = message.GetSize();
+    file.Write(message.GetList(), size);
+}
+
 bool DirectoryTest::TestGetSize_FileCorrect() {
-    char8 path[128];
-    char8 path2[128];
+    DynamicCString path;
+    DynamicCString path2;
     DirectoryCreateN(path, "TestGetSize_File_C.txt");
     DirectoryCreateN(path2, "TestGetSize_File1_C.txt");
     Directory dir(path);
@@ -161,13 +167,11 @@ bool DirectoryTest::TestGetSize_FileCorrect() {
 
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("The sizes of files are equals");
-    file.Write("The sizes of files are equals", size);
+    Write2File(file, "The sizes of files are equals");
     file.Close();
 
     file.Open(path2, file.ACCESS_MODE_W);
-    size = StringHelper::Length("The sizes of files are equals");
-    file.Write("The sizes of files are equals", size);
+    Write2File(file, "The sizes of files are equals");
     file.Close();
 
     return (dir.GetSize() == dir2.GetSize());
@@ -175,8 +179,8 @@ bool DirectoryTest::TestGetSize_FileCorrect() {
 }
 
 bool DirectoryTest::TestGetSize_FileIncorrect() {
-    char8 path[128];
-    char8 path2[128];
+    DynamicCString path;
+    DynamicCString path2;
     DirectoryCreateN(path, "TestGetSize_File_I.txt");
     DirectoryCreateN(path2, "TestGetSize_File1_I.txt");
     Directory dir(path);
@@ -186,54 +190,51 @@ bool DirectoryTest::TestGetSize_FileIncorrect() {
 
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("the size of file are different in this file");
-    file.Write("the size of file are different in this file", size);
+    Write2File(file, "the size of file are different in this file");
     file.Close();
 
     file.Open(path2, file.ACCESS_MODE_W);
-    size = StringHelper::Length("that in this");
-    file.Write("that in this", size);
+    Write2File(file, "that in this");
     file.Close();
 
     return (dir.GetSize() != dir2.GetSize());
 }
 
 bool DirectoryTest::TestGetLastAccessTime() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestGetLastAccessTime.txt");
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("Confirm the lastAccess");
-    file.Write("Confirm the lastAccess", size);
+    Write2File(file, "Confirm the lastAccess");
     file.Close();
     TimeStamp lastAccessTime = dir.GetLastAccessTime();
 
-    Sleep::Sec(1.1e-0);
+    Sleep::Short(1100,Units::ms);
     TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
 
     return (lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestGetLastAccessTime_ReRead() {
-    char8 path[128];
+    DynamicCString path;
     char8 pathR[128];
     DirectoryCreateN(path, "TestGetLastAccessTime_ReRead.txt");
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("Confirm the last access read again");
-    file.Write("Confirm the last access read again", size);
+    Write2File(file, "Confirm the last access read again");
     file.Close();
 
     file.Open(path, BasicFile::ACCESS_MODE_R);
+    uint32 size = 10;
     file.Read(pathR, size);
     file.Close();
     TimeStamp lastAccessTime = dir.GetLastAccessTime();
 
-    Sleep::Sec(1.1e-0);
+    Sleep::Short(1100,Units::ms);
     file.Open(path, BasicFile::ACCESS_MODE_R);
     file.Read(pathR, size);
     file.Close();
@@ -242,51 +243,47 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
 }
 
 bool DirectoryTest::TestGetLastWriteTime() {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, "TestGetLastWriteTime.txt");
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("Confirm the last Write");
-    file.Write("Confirm the last Write", size);
+    Write2File(file, "Confirm the last Write");
     file.Close();
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
-    Sleep::Sec(1.1e-0);
+    Sleep::Short(1100,Units::ms);
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
     return (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
-    char8 path[128];
+    DynamicCString path;
 
     DirectoryCreateN(path, "TestGetLastWriteTime_ReWrite.txt");
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = StringHelper::Length("Confirm writing again");
-    file.Write("Confirm writing again", size);
+    Write2File(file, "Confirm writing again");
     file.Close();
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
 
-    Sleep::Sec(1.1e-0);
+    Sleep::Short(1100,Units::ms);
     file.Open(path, file.ACCESS_MODE_W);
-    size = StringHelper::Length("to be confirmed it is need write again");
-    file.Write("to be confirmed it is need write again", size);
+    Write2File(file, "to be confirmed it is need write again");
     file.Close();
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
 
     return (lastWriteTime.GetSeconds() != lastWriteTime2.GetSeconds());
 }
 
-bool DirectoryTest::TestCreate(const char8 *pathin,
-                               const bool isFile) {
-    char8 path[128];
+bool DirectoryTest::TestCreate(CCString pathin,const bool isFile) {
+    DynamicCString path;
     DirectoryCreateN(path, pathin);
     Directory dir(path);
 #if ENVIRONMENT == Windows
-    if ((!dir.Exists()) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
+    if ((!dir.Exists()) && (pathin != NULL && (pathin.GetSize() > 0))) {
 #elif ENVIRONMENT == Linux
         if (((!dir.Exists() || isFile)) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
 #endif
@@ -297,13 +294,13 @@ bool DirectoryTest::TestCreate(const char8 *pathin,
     }
 }
 
-bool DirectoryTest::TestDelete(const char8 * pathin,
+bool DirectoryTest::TestDelete(CCString pathin,
                                bool isFile) {
-    char8 path[128];
+    DynamicCString path;
     DirectoryCreateN(path, pathin);
     Directory dir(path);
     dir.Create(isFile);
-    if ((pathin != NULL) && (StringHelper::Compare(pathin, "") != 0)) {
+    if ((pathin != NULL) && (pathin.GetSize() > 0)) {
         return dir.Delete();
     }
     else {
@@ -311,13 +308,12 @@ bool DirectoryTest::TestDelete(const char8 * pathin,
     }
 }
 
-bool DirectoryTest::TestExists(const char8 * pathin,
-                               bool isFile) {
-    char8 path[128];
+bool DirectoryTest::TestExists(CCString pathin, bool isFile) {
+    DynamicCString path;
     DirectoryCreateN(path, pathin);
     Directory dir(path);
     dir.Create(isFile);
-    if (StringHelper::Compare(dir.GetName(), path) == 0) {
+    if (dir.GetName() == path) {
         return dir.Exists();
     }
     else {
@@ -325,12 +321,9 @@ bool DirectoryTest::TestExists(const char8 * pathin,
     }
 }
 
-void DirectoryTest::DirectoryCreateN(char8 *destination,
-                                     const char8 *path) {
-    destination[0] = '\0';
-    StringHelper::Concatenate(destination, BASE_PATH);
-    StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
-    StringHelper::Concatenate(destination, path);
+void DirectoryTest::DirectoryCreateN(DynamicCString &destination,CCString path) {
+	destination = "";
+	destination().Append(BASE_PATH).Append(DIRECTORY_SEPARATOR).Append(path);
 }
 
 bool DirectoryTest::Create_Directory() {

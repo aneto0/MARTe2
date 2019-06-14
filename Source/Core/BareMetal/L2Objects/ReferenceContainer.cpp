@@ -174,7 +174,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                     uint32 i;
                     for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
                         foundReference = currentNode->Get(i);
-                        found = (foundReference->GetName().isSameAs(token.GetList()));
+                        found = (foundReference->GetName().IsSameAs(token.GetList()));
                     }
                     // take the next token : nextToken
                     toTokenize = StringHelper::Tokenize(toTokenize, nextToken,CCString("."), CCString("."));

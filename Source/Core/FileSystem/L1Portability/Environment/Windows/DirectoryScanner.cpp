@@ -100,7 +100,7 @@ bool DirectoryScanner::Scan(CCString path,
         	ret = fullPath().Append(basePath).Append(fileName);
             REPORT_ERROR(ret, "Error: Failed appending strings");
 
-        	if (ret && !fileName.isSameAs(".") && !fileName.isSameAs("..")){
+        	if (ret && !fileName.IsSameAs(".") && !fileName.IsSameAs("..")){
                 Directory *entry = new Directory(fullPath);
                 if (sorter == NULL) {
                     ListInsert(entry);

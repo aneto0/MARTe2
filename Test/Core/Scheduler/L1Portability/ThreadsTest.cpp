@@ -32,7 +32,6 @@
 #include "ThreadsTest.h"
 #include "Atomic.h"
 #include "Sleep.h"
-#include "StringHelper.h"
 #include "ThreadInformation.h"
 
 /*---------------------------------------------------------------------------*/
@@ -414,11 +413,11 @@ bool ThreadsTest::TestName(CCString name,int32 nOfThreads) {
             }
             Sleep::Short(10,Units::ms);
         }
-        if (Threads::Name(tid) == NULL) {
+        if (Threads::Name(tid).GetSize() == 0) {
             retValue = false;
         }
         else {
-            if (StringHelper::Compare(name, Threads::Name(tid)) != 0) {
+            if (!name.IsSameAs(Threads::Name(tid))) {
                 retValue = false;
             }
         }
@@ -448,7 +447,8 @@ bool ThreadsTest::TestNameNull() {
         }
         Sleep::Short(10,Units::ms);
     }
-    if (StringHelper::Compare(Threads::Name(tid), "Unknown") != 0) {
+
+    if (!Threads::Name(tid).IsSameAs("Unknown")) {
         retValue = false;
     }
     exitCondition++;
@@ -632,7 +632,7 @@ bool ThreadsTest::TestGetThreadInfoCopy(int32 nOfThreads,
             retValue = false;
         }
 
-        if (StringHelper::Compare(name, ti.ThreadName()) != 0) {
+        if (!name.IsSameAs(ti.ThreadName())) {
             retValue = false;
         }
         if (ti.GetThreadIdentifier() != tid) {
@@ -674,7 +674,7 @@ bool ThreadsTest::TestGetThreadInfoCopy(int32 nOfThreads,
             retValue = false;
         }
 
-        if ((StringHelper::Compare(name, tiCopy.ThreadName()) != 0) || (StringHelper::Compare(name, tiCopy2.ThreadName()) != 0)) {
+        if ( !name.IsSameAs(tiCopy.ThreadName()) || !name.IsSameAs(tiCopy2.ThreadName()) ) {
             retValue = false;
         }
 
@@ -745,7 +745,7 @@ bool ThreadsTest::TestFindByName(int32 nOfThreads,
     //wait the threads termination
     CheckThreadTermination(nOfThreads);
 
-    return retValue && Threads::FindByName(NULL) == InvalidThreadIdentifier;
+    return retValue && (Threads::FindByName("") == InvalidThreadIdentifier);
 
 }
 

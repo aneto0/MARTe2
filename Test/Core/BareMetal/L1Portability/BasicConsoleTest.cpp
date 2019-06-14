@@ -279,7 +279,7 @@ bool BasicConsoleTest::TestRead(CCString stringArg) {
     bool err = myConsole.Read(reply.GetList(), totalSize, MilliSeconds::Infinite);
     reply[stringSize] = '\0';
     //compare the read string with the argument
-    bool stringLengthOK = stringArg.isSameAs(reply);
+    bool stringLengthOK = stringArg.IsSameAs(reply);
 
     return (err) && stringLengthOK;
 }
@@ -417,7 +417,7 @@ bool BasicConsoleTest::TestSetGetTitleBar(CCString title) {
         return false;
     }
 
-    if (!title.isSameAs(buffer)){
+    if (!title.IsSameAs(buffer)){
         return false;
     }
 

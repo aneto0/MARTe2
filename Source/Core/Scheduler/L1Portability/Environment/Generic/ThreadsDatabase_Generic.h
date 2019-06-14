@@ -110,7 +110,7 @@ namespace ThreadsDatabase {
      * @return the id of the first thread found with the specified name, or 0 if it does not exist in the database.
      * @pre name != NULL
      */
-    DLL_API ThreadIdentifier Find(const char8 * const name);
+    DLL_API ThreadIdentifier Find(CCString name);
 
     /**
      * @brief Allocate more space in the database.

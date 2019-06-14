@@ -59,7 +59,7 @@ public:
      * @return If testEqual is false returns true if Processor::VendorId() returns a vendor id different from vendorIdTest, otherwise
      * if testEqual is true returns true if Processor::VendorId() returns a vendor id equal to vendorIdTest.
      */
-    bool TestVendorId(const char8 * vendorIdTest);
+    bool TestVendorId(CCString vendorIdTest);
 
     /**
      * @brief Tests the Processor::Family() function.

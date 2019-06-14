@@ -83,7 +83,9 @@ CCString  SearchString(CCString  const string,CCString  const substring) {
 
         while ((size1 - i) >= size2) {
             uint32 sizeArg = static_cast<uint32>(size2);
-            if (CompareN(string.GetList()+i, substring, sizeArg) == 0) {
+
+            CCString stringPart(string.GetList()+i);
+            if (stringPart == substring){
                 ret = string.GetList()+i;
                 //exit from the loop
                 i = size1 - size2;
@@ -98,6 +100,7 @@ CCString  SearchString(CCString  const string,CCString  const substring) {
     return ret;
 }
 
+#if 0
 
 int32 Compare(CCString  const string1,CCString  const string2) {
 
@@ -173,6 +176,7 @@ int32 CompareN(CCString  const string1, CCString  const string2, const uint32 si
 
     return ret;
 }
+#endif
 
 CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const delimiters, CCString const skip,bool keepTerm){
 
@@ -214,7 +218,9 @@ static int32 Match(CCString const string, ZeroTerminatedArray<const CCString> co
 	int32 index = 0;
 	bool found = false;
 	while (!matches[static_cast<uint32>(index)].IsNullPtr()  && ! found){
-		found = (CompareN(matches[static_cast<uint32>(index)],string,matches[static_cast<uint32>(index)].GetSize())==0);
+
+		found = (matches[index].IsSameAs(string,matches[index].GetSize()));
+//		found = (CompareN(matches[static_cast<uint32>(index)],string,matches[static_cast<uint32>(index)].GetSize())==0);
 		index++;
 	}
 	if (!found){

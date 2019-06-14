@@ -322,15 +322,16 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 void EndThread() {
 }
 
-const char8 *Name(const ThreadIdentifier &threadId) {
+CCString Name(const ThreadIdentifier &threadId) {
+	CCString name = emptyString;
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     ThreadsDatabase::UnLock();
 
     if (threadInfo != NULL) {
-        return threadInfo->ThreadName();
+        name =  threadInfo->ThreadName();
     }
-    return NULL;
+    return name;
 }
 
 ThreadIdentifier FindByIndex(const uint32 &n) {
@@ -351,7 +352,7 @@ bool GetThreadInfoCopy(ThreadInformation &copy,
     return ThreadsDatabase::GetInfo(copy, threadId);
 }
 
-ThreadIdentifier FindByName(const char8 * const name) {
+ThreadIdentifier FindByName(CCString name) {
     return ThreadsDatabase::Find(name);
 }
 

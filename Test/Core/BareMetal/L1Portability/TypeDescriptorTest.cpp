@@ -192,7 +192,7 @@ bool TypeDescriptorTest::TestGetTypeNameFromTypeDescriptor() {
     while (typeNames[i] != NULL) {
     	DynamicCString name;
     	typeDes[i].ToString(name);
-    	if (!name.isSameAs(typeNames[i])){
+    	if (!name.IsSameAs(typeNames[i])){
             return false;
         }
         i++;

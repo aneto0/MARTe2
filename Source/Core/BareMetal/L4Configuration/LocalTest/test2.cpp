@@ -340,7 +340,7 @@ ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck){
     }
 
     if (err){
-        if (!string.isSameAs(typeCheck.GetList())){
+        if (!string.IsSameAs(typeCheck.GetList())){
             err.comparisonFailure = true;
             printf("(%s)%s != %s ",string2.GetList(),string.GetList(),typeCheck.GetList());
         }
@@ -377,7 +377,7 @@ ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2){
     }
 
     if (err){
-        if (!string1.isSameAs(string2.GetList())){
+        if (!string1.IsSameAs(string2.GetList())){
             err.comparisonFailure = true;
 			COMPOSITE_REPORT_ERROR(err,string1.GetList(),'{',vd1.GetModifiers(),"} != ",string2.GetList(),'{',vd2.GetModifiers(),'}');
         }
@@ -417,7 +417,7 @@ ErrorManagement::ErrorType CheckContent(AnyType at,CCString contentCheck){
 		REPORT_ERROR(ok,"CopyTo error");
    	}
 
-	ok.comparisonFailure = !destinationString.isSameAs(contentCheck.GetList());
+	ok.comparisonFailure = !destinationString.IsSameAs(contentCheck.GetList());
 	COMPOSITE_REPORT_ERROR(ok,"Values (",destinationString.GetList(),"!=",contentCheck.GetList());
     return ok;
 }

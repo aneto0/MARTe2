@@ -87,6 +87,11 @@ public:
     inline bool operator==(const char8 *s) const;
 
     /**
+     * TODO
+     */
+    inline bool operator==(const char8 c) const;
+
+    /**
      * @brief Retrieves the size of the array().
      * @return the number of elements in the array() (excluding the terminator Zero).
      */
@@ -123,7 +128,16 @@ public:
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
      * @return true if \a arrayIn is the same.
      */
-    inline bool isSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
+    inline bool IsSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
+
+    /**
+     * @brief establish an order between \a arrayIn and the array
+     * @details This function requires that T has the operators < and >
+     * @param[in] arrayIn is the array to be compared
+     * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
+     * @return true if \a arrayIn is the same.
+     */
+    inline int32 CompareContent(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
     /**
      * @brief Checks if data is in this array
@@ -155,11 +169,19 @@ char8 CCString::operator[](uint32 index) const{
 }
 
 bool CCString::operator==(const CCString &s) const{
-	return ZeroTerminatedArray<const char8>::isSameAs(s.GetList());
+	return ZeroTerminatedArray<const char8>::IsSameAs(s.GetList());
 }
 
 bool CCString::operator==(const char8 *s) const{
-	return ZeroTerminatedArray<const char8>::isSameAs(s);
+	return ZeroTerminatedArray<const char8>::IsSameAs(s);
+}
+
+bool CCString::operator==(const char8 c) const{
+	bool ret = false;
+	if (GetSize() == 1){
+		ret = (*GetList() == c);
+	}
+	return ret;
 }
 
 uint32 CCString::GetSize() const{
@@ -182,9 +204,14 @@ void CCString::operator++(int) {//int is for postfix operator!
 	ZeroTerminatedArray<const char8>::SetList(GetList()+1);
 }
 
-bool CCString::isSameAs(const char8 *arrayIn,uint32 limit) const{
-	return ZeroTerminatedArray<const char8>::isSameAs(arrayIn,limit);
+bool CCString::IsSameAs(const char8 *arrayIn,uint32 limit) const{
+	return ZeroTerminatedArray<const char8>::IsSameAs(arrayIn,limit);
 }
+
+int32 CCString::CompareContent(const char8 *arrayIn,uint32 limit) const{
+	return ZeroTerminatedArray<const char8>::CompareContent(arrayIn,limit);
+}
+
 
 bool CCString::In(const char8& data) const{
 	return ZeroTerminatedArray<const char8>::In(data);

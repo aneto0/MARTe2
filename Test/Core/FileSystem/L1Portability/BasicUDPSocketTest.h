@@ -47,7 +47,7 @@ using namespace MARTe;
  * @brief A structure used to test the connect and listen functions.
  */
 struct ConnectListenUDPTestTable {
-    uint32 port;
+    uint16 port;
     uint32 nClients;
     bool expected;
     bool isValid;
@@ -57,12 +57,12 @@ struct ConnectListenUDPTestTable {
  * @brief A structure used to test the read and write functions.
  */
 struct ReadWriteUDPTestTable {
-    const char8* string;
-    const char8* result;
+    CCString string;
+    CCString result;
     uint32 size;
     uint32 expectedSize;
-    uint32 port;
-    TimeoutType timeout;
+    uint16 port;
+    MilliSeconds timeout;
     uint32 nClients;
     bool expected;
     bool isBlocking;
@@ -177,12 +177,12 @@ public:
     bool isBlocking;
     uint32 alives;
     FastPollingMutexSem sem;
-    const char8* string;
-    const char8* result;
+    CCString string;
+    CCString result;
     uint32 size;
     uint32 expectedSize;
     bool isServer;
-    TimeoutType timeout;
+    MilliSeconds timeout;
     bool isTimeout;
     bool isValidServer;
     bool isValidClient;

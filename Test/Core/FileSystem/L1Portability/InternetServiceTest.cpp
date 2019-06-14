@@ -24,13 +24,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
 #include "InternetServiceTest.h"
-#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +51,7 @@ bool InternetServiceTest::TestDefaultConstructor() {
         return false;
     }
 
-    return service.Protocol() == NULL;
+    return (service.Protocol().GetSize() == 0);
 
 }
 
@@ -61,7 +60,7 @@ bool InternetServiceTest::TestSearchByName(const InternetServiceTestTable* table
     InternetService service;
 
     uint32 i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
         if (table[i].expected) {
@@ -69,12 +68,10 @@ bool InternetServiceTest::TestSearchByName(const InternetServiceTestTable* table
             if (service.Port() != table[i].port) {
                 return false;
             }
-            if (StringHelper::Compare(service.Name(), table[i].name) != 0) {
-                if (table[i].name != NULL) {
-                    return false;
-                }
+            if (!service.Name().IsSameAs(table[i].name)){
+                return false;
             }
-            if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {
+            if (!service.Protocol().IsSameAs(table[i].expectedProtocol) ) {
                 return false;
             }
         }
@@ -91,7 +88,7 @@ bool InternetServiceTest::TestSearchByPort(const InternetServiceTestTable* table
     InternetService service;
 
     uint32 i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
 
@@ -100,12 +97,10 @@ bool InternetServiceTest::TestSearchByPort(const InternetServiceTestTable* table
             if (service.Port() != table[i].port) {
                 return false;
             }
-            if (StringHelper::Compare(service.Name(), table[i].name) != 0) {
-                if (table[i].name != NULL) {
-                    return false;
-                }
+            if (!service.Name().IsSameAs(table[i].name)){
+                return false;
             }
-            if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {
+            if (!service.Protocol().IsSameAs(table[i].expectedProtocol) ) {
                 return false;
             }
         }
@@ -122,7 +117,7 @@ bool InternetServiceTest::TestPort(const InternetServiceTestTable* table) {
     InternetService service;
 
     uint32 i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
         if (table[i].expected) {
@@ -144,12 +139,12 @@ bool InternetServiceTest::TestName(const InternetServiceTestTable* table) {
     InternetService service;
 
     uint32 i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
         if (table[i].expected) {
 
-            if (StringHelper::Compare(service.Name(), table[i].name) != 0) {
+            if (!service.Name().IsSameAs(table[i].name)){
                 if (table[i].name != NULL) {
                     return false;
                 }
@@ -168,12 +163,12 @@ bool InternetServiceTest::TestProtocol(const InternetServiceTestTable* table) {
     InternetService service;
 
     uint32 i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
         if (table[i].expected) {
 
-            if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {
+            if (!service.Protocol().IsSameAs(table[i].expectedProtocol) ) {
                 return false;
             }
         }
@@ -184,12 +179,12 @@ bool InternetServiceTest::TestProtocol(const InternetServiceTestTable* table) {
     }
 
     i = 0;
-    while (table[i].name != NULL) {
+    while (table[i].name.GetSize() > 0) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
         if (table[i].expected) {
 
-            if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {
+            if (!service.Protocol().IsSameAs(table[i].expectedProtocol) ) {
                 return false;
             }
         }

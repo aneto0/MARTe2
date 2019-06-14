@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ProcessorTest.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,13 +43,13 @@ ProcessorTest::ProcessorTest(bool testEqual) {
     this->testEqual=testEqual;
 }
 
-bool ProcessorTest::TestVendorId(const char8* vendorIdTest) {
-    const char8 * vendorId = NULL;
+bool ProcessorTest::TestVendorId(CCString vendorIdTest) {
+    CCString vendorId;
 
     vendorId = Processor::VendorId();
 
     //return true if testEqual & vendorId==vendorIdTest || !testEqual & !vendorIdTest
-    return !(testEqual^(StringHelper::Compare(vendorId,vendorIdTest)==0));
+    return !(testEqual ^ (  vendorId == vendorIdTest) );
 }
 
 bool ProcessorTest::TestFamily(uint32 familyTest) {

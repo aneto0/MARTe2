@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -34,11 +35,10 @@
 #include "Directory.h"
 #include "DirectoryScanner.h"
 #include "LinkedListHolder.h"
-#include "StringHelper.h"
 #include "SortFilter.h"
 #include "BasicFile.h"
-#include "stdio.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
+#include "DynamicCString.h"
+//#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -70,24 +70,24 @@ public:
      * @param[in] path is the path of the directory to scan.
      * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
      */
-    bool TestScan(const char8 * path,
-                  const char8 *fileMask = "*");
+    bool TestScan(CCString path,
+                  CCString fileMask = "*");
 
     /**
      * @brief Check if Scan add all file/directory to the List.
      * @param[in] path Contain NULL.
      * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
      */
-    bool TestScan_NULL(const char8 * path,
-                       const char8 *fileMask = "*");
+    bool TestScan_NULL(CCString path,
+                       CCString fileMask = "*");
 
     /**
      * @brief Check if Scan add all file/directory to the List.
      * @param[in] path Contain a path that not exist.
      * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
      */
-    bool TestScan_NoExist(const char8 * path,
-                          const char8 *fileMask = "*");
+    bool TestScan_NoExist(CCString path,
+                          CCString fileMask = "*");
 
     /**
      * @brief Check if the elements in the list are sort, in this occasion by size.
@@ -103,7 +103,7 @@ public:
      * @brief Check if after the scan, the basePath are the same that the pathin .
      * @param[in] pathin is the path to directory.
      */
-    bool TestBasePath(const char8 * pathin);
+    bool TestBasePath(CCString pathin);
 
     /**
      * @brief Check if all elements from the list are been deleted.
@@ -118,8 +118,7 @@ public:
     /**
      * @brief Create test directory
      */
-    void DirectoryCreateN(char8 *destination,
-                          const char8 *path);
+    void DirectoryCreateN(DynamicCString &destination,CCString path);
 };
 
 /*---------------------------------------------------------------------------*/

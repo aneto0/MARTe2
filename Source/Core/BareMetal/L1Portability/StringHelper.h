@@ -56,6 +56,8 @@ namespace StringHelper {
  * @return a pointer to the first occurrence of substring in string.
  */
 DLL_API CCString SearchString(CCString  const string, CCString  const substring);
+
+#if 0   // already implemented in ZeroTerminatedArray::CompareContent
 /**
  * @brief Compares two strings.
  * @param[in] string1 the first string.
@@ -73,6 +75,8 @@ DLL_API int32 Compare(CCString  const string1, CCString  const string2);
  * @pre size <= largest length of the string1 or string2.
  */
 DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uint32 size);
+
+#endif
 
 /**
  * @brief Get the token using characters as delimiters.

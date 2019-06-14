@@ -37,7 +37,6 @@
 #include "LinkedListHolder.h"
 #include "Sleep.h"
 #include "stdio.h"
-#include "StringHelper.h"
 #include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
@@ -61,7 +60,7 @@ public:
      * @brief Constructor test
      * param[in] pathin Content the directory that will create for be tested.
      */
-    bool TestDirectoryTest(const char8 * pathin);
+    bool TestDirectoryTest(CCString pathin);
 
     /**
      * @brief Destructor
@@ -153,7 +152,7 @@ public:
      * @param[in] path is the path of the new folder to be created.
      * @param[in] isFile specifies if a file or a folder should be created.
      */
-    bool TestCreate(const char8 * path,
+    bool TestCreate(CCString path,
                     const bool isFile = false);
 
     /**
@@ -161,7 +160,7 @@ public:
      * @param[in] path is the path of the file / directory to be deleted.
      * @param[in] file is for know if it will create a file or a folder to be deleted.
      */
-    bool TestDelete(const char8 * path,
+    bool TestDelete(CCString path,
                     bool file);
 
     /**
@@ -169,7 +168,7 @@ public:
      * @param[in] path is the path of the file-directory to will be create.
      * @param[in] file is for know if it will create a file or a folder to check if exist.
      */
-    bool TestExists(const char8 * path,
+    bool TestExists(CCString path,
                     bool isFile);
 
     /**
@@ -177,8 +176,7 @@ public:
      * @param[in] destination is the path of the file-directory to will be create.
      * @param[in] path is the sub-directory that we want create.
      */
-    void DirectoryCreateN(char8 *destination,
-                          const char8 *path);
+    void DirectoryCreateN(DynamicCString &destination, CCString path);
 
     /**
      * @brief Create test directory folder

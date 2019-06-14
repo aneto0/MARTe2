@@ -194,8 +194,7 @@ public:
      * @return false in case of errors.
      * @remark If the socket is in non-block mode, the timeout has no meaning.
      */
-    bool Connect(const char8 * const address,
-                 const uint16 port,
+    bool Connect(CCString address,const uint16 port,
                  const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     /**

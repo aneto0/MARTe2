@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "CCString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetServiceCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -60,8 +61,7 @@ namespace MARTe {
          * @param[in] protocol is the protocol used in the search.
          * @details if protocol is NULL any protocol will be matched.
          */
-        bool SearchByName(const char8 * const name,
-                const char8 * const protocol = static_cast<const char8 *>(NULL));
+        bool SearchByName(CCString name,CCString protocol = emptyString);
 
         /**
          * @brief Sets the InternetService handle structure searching in the
@@ -70,7 +70,7 @@ namespace MARTe {
          * @param[in] protocol is the protocol used in the search.
          * @details if protocol is NULL any protocol will be matched.
          */
-        bool SearchByPort(const uint16 port,const char8 *const protocol=static_cast<char8 *>(NULL));
+        bool SearchByPort(const uint16 port,CCString protocol = emptyString);
 
         /**
          * @brief Retrieves the internet service port.
@@ -80,12 +80,12 @@ namespace MARTe {
         /**
          * @brief Retrieves the internet service name.
          */
-        const char8 *Name() const;
+        CCString Name() const;
 
         /**
          * @brief Retrieves the internet service protocol.
          */
-        const char8 *Protocol() const;
+        CCString Protocol() const;
 
     private:
 

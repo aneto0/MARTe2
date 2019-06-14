@@ -24,15 +24,6 @@
 #
 #############################################################
 
-OBJSX=  BasicFileGTest.x \
-		BasicSocketGTest.x\
-		BasicTCPSocketGTest.x \
-		BasicUDPSocketGTest.x \
-		DirectoryGTest.x \
-		DirectoryScannerGTest.x \
-		InternetHostGTest.x \
-		InternetServiceGTest.x \
-		SelectGTest.x 
 		
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
@@ -40,28 +31,15 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../../
-INCLUDES += -I../../../Core/BareMetal/L0Types
-INCLUDES += -I../../../Core/BareMetal/L1Portability
-INCLUDES += -I../../../Core/BareMetal/L2Objects
-INCLUDES += -I../../../Core/BareMetal/L3Streams
-INCLUDES += -I../../../Core/BareMetal/L4Configuration
-INCLUDES += -I../../../Core/Scheduler/L1Portability
-INCLUDES += -I../../../Core/FileSystem/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
-INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Test/Core/FileSystem/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-
-all: $(OBJS) \
-                $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)
-	echo  $(OBJS)
-
-include depends.$(TARGET)
+BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

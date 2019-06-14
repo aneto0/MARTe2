@@ -125,14 +125,14 @@ bool ErrorManagementTest::TestErrorCodeToStream() {
     	DynamicCString buffer;
     	CStringTool bufferCST = buffer();
         ErrorManagement::ErrorCodeToStream(all[i],bufferCST );
-        ok &= (buffer.isSameAs(names[i]));
+        ok &= (buffer.IsSameAs(names[i]));
         i++;
     }
 
 	DynamicCString buffer;
 	CStringTool bufferCST = buffer();
     ErrorManagement::ErrorCodeToStream(all[i],bufferCST );
-    ok &= (buffer.isSameAs(names[i]));
+    ok &= (buffer.IsSameAs(names[i]));
     return ok;
 }
 
@@ -292,19 +292,19 @@ void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformatio
     }
 
 //Checks the error file name. */
-    if (!expectedErrorFilename.isSameAs(errorInfo.fileName)){
+    if (!expectedErrorFilename.IsSameAs(errorInfo.fileName)){
         retVal = false;
         return;
     }
 
 //Checks the error function name. */
-    if (!expectedErrorFunction.isSameAs(errorInfo.functionName)){
+    if (!expectedErrorFunction.IsSameAs(errorInfo.functionName)){
         retVal = false;
         return;
     }
 
 //Checks the error description. */
-    if (!expectedErrorDescription.isSameAs(description)){
+    if (!expectedErrorDescription.IsSameAs(description)){
         retVal = false;
         return;
     }

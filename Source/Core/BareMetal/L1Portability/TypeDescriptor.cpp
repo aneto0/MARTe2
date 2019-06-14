@@ -265,33 +265,33 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 
 	GetToken(typeName,token);
 
-	if (token.isSameAs("CString")){
+	if (token.IsSameAs("CString")){
 		*this = CharString;
 	} else
-	if (token.isSameAs("CCString")){
+	if (token.IsSameAs("CCString")){
 		*this = ConstCharString(sizeof(CCString));
 	} else
-	if (token.isSameAs("DynamicCString")){
+	if (token.IsSameAs("DynamicCString")){
 		*this = DynamicCharString;
 	} else
-	if (token.isSameAs("char")){
+	if (token.IsSameAs("char")){
 		all = Character8Bit_number;
 	} else
-	if (token.isSameAs("float")){
+	if (token.IsSameAs("float")){
 		all = Float32Bit_number;
 	} else
-	if (token.isSameAs("double")){
+	if (token.IsSameAs("double")){
 		all = Float64Bit_number;
 	} else
-	if (token.isSameAs("uint",4)){
+	if (token.IsSameAs("uint",4)){
 		ft = TDF_UnsignedInteger;
 		numericPart = token.GetList()+4;
 	} else
-	if (token.isSameAs("int",3)){
+	if (token.IsSameAs("int",3)){
 		ft = TDF_SignedInteger;
 		numericPart = token.GetList()+4;
 	} else
-	if (token.isSameAs("BitRange<",3)){
+	if (token.IsSameAs("BitRange<",3)){
 		// TODO add error message
 		// TODO complete
 	} else {

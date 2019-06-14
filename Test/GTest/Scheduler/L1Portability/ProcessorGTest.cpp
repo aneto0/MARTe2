@@ -44,20 +44,20 @@
 
 TEST(ProcessorGTest,VendorIdTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestVendorId(NULL));
+    ASSERT_TRUE(processorTest.TestVendorId(""));
 }
 
 TEST(ProcessorGTest,FamilyTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestFamily(-1));
+    ASSERT_TRUE(processorTest.TestFamily(0xFFFFFFFF));
 }
 
 TEST(ProcessorGTest,ModelTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestModel(-1));
+    ASSERT_TRUE(processorTest.TestModel(0xFFFFFFFF));
 }
 
 TEST(ProcessorGTest,AvailableTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestAvailable(-1));
+    ASSERT_TRUE(processorTest.TestAvailable(0xFFFFFFFF));
 }

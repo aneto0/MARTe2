@@ -38,7 +38,5 @@ INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
 BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilitySGTest$(LIBEXT) 
 
-include depends.$(TARGET)
-
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

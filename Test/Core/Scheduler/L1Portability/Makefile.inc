@@ -24,26 +24,18 @@
 #
 #############################################################
 
-OBJSX=  EventSemTest.x \
-		MutexSemTest.x \
-		ProcessorTest.x \
-		ThreadsTest.x
 
-PACKAGE=Core/Scheduler
+PACKAGE=GTest/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
-INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
 
-all: $(OBJS) \
-                $(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
-	echo  $(OBJS)
+BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
 
 include depends.$(TARGET)
 

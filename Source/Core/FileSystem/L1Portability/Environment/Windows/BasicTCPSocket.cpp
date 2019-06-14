@@ -126,8 +126,7 @@ bool BasicTCPSocket::Listen(const uint16 port,const int32 maxConnections) const 
 }
 
 
-bool BasicTCPSocket::Connect(const char8 * const address,
-                             const uint16 port,
+bool BasicTCPSocket::Connect(CCString address,const uint16 port,
                              const MilliSeconds &timeout) {
     ErrorManagement::ErrorType ret;
 

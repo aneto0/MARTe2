@@ -52,22 +52,22 @@ void ZeroTerminatedArrayStaticTools::ZTAZero(uint8 *pointer, uint32 elSize){
 }
 
 bool ZeroTerminatedArrayStaticTools::ZTAIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize){
-	bool isSame = true;
+	bool IsSame = true;
     if ((pointer != NULL_PTR(const uint8 *)) && (data != NULL_PTR(const uint8 *))){
-    	while((elSize > 3)&& isSame){
-    		isSame = (*((uint32 *)pointer) == *((uint32 *)data));
+    	while((elSize > 3)&& IsSame){
+    		IsSame = (*((uint32 *)pointer) == *((uint32 *)data));
     		elSize-=4;
     		pointer+=4;
     		data+=4;
     	}
-    	while((elSize > 0)&& isSame){
-    		isSame = (*pointer == *data);
+    	while((elSize > 0)&& IsSame){
+    		IsSame = (*pointer == *data);
     		elSize--;
     		pointer++;
     		data++;
     	}
     }
-	return isSame;
+	return IsSame;
 }
 
 

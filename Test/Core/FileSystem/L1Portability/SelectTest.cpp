@@ -44,7 +44,7 @@ static const uint16 ACTUAL_TESTING_PORT = 49152;
 static const uint16 DUMMY_TESTING_PORT_1 = 49153;
 static const uint16 DUMMY_TESTING_PORT_2 = 49154;
 
-static void ThreadWrite(TimeoutType &defaultTo) {
+static void ThreadWrite(MilliSeconds *defaultTo) {
     BasicUDPSocket bUDPsWrite;
     if (!bUDPsWrite.Open()) {
         return;
@@ -53,16 +53,17 @@ static void ThreadWrite(TimeoutType &defaultTo) {
         return;
     }
     uint32 size = 3;
-    Sleep::MSec(defaultTo.GetTimeoutMSec() / 2);
+    Sleep::Short(*defaultTo * 0.5);
     bUDPsWrite.Write("Hey", size);
     bUDPsWrite.Close();
     return;
 }
 
-static void ThreadWriteFile(BasicFile &basicFile) {
-    Sleep::MSec(100);
-    uint32 size = StringHelper::Length("Write File\n");
-    basicFile.Write("Write File\n", size);
+static void ThreadWriteFile(BasicFile *basicFile) {
+    Sleep::Short(100,Units::ms);
+    CCString message("Write File\n");
+    uint32 size = message.GetSize();
+    basicFile->Write("Write File\n", size);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -73,7 +74,7 @@ using namespace MARTe;
 
 SelectTest::SelectTest() {
     retVal = true;
-    defaultTo = 2000;
+    defaultTo = MilliSeconds(2000,Units::ms);
 }
 
 SelectTest::~SelectTest() {
@@ -260,7 +261,7 @@ bool SelectTest::TestIsSet() {
     sel.WaitUntil(defaultTo);
     retVal &= sel.IsSet(bf);
     while (Threads::IsAlive(tid)) {
-        Sleep::MSec(1);
+        MilliSeconds(1,Units::ms);
     }
     bf.Close();
     d.SetByName("Test.txt");
@@ -276,7 +277,7 @@ bool SelectTest::TestWaitUntil_waitTimeout() {
     return retVal;
 }
 
-bool SelectTest::TestWaitUntil_waitRead(TimeoutType timeout) {
+bool SelectTest::TestWaitUntil_waitRead(MilliSeconds timeout) {
     BasicUDPSocket bUDPsRead;
     if (!bUDPsRead.Open()) {
         retVal = false;
@@ -295,7 +296,7 @@ bool SelectTest::TestWaitUntil_waitRead(TimeoutType timeout) {
     uint32 size = 32;
     bUDPsRead.Read(buffer, size);
     while (Threads::IsAlive(tid)) {
-        Sleep::MSec(1);
+        MilliSeconds(1,Units::ms);
     }
     bUDPsRead.Close();
     return retVal;
@@ -340,7 +341,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
     retVal &= !sel.IsSet(dummy1);
     retVal &= !sel.IsSet(dummy2);
     while (Threads::IsAlive(tid)) {
-        Sleep::MSec(1);
+        MilliSeconds(1,Units::ms);
     }
     bUDPsRead.Close();
     dummy1.Close();
@@ -389,7 +390,7 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
     retVal &= !sel.IsSet(dummy1);
     retVal &= !sel.IsSet(dummy2);
     while (Threads::IsAlive(tid)) {
-        Sleep::MSec(1);
+        MilliSeconds(1,Units::ms);
     }
     bUDPsRead.Close();
     dummy1.Close();

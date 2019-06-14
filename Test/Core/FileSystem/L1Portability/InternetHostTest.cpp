@@ -25,30 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "StringHelper.h"
 #include "InternetHostTest.h"
-#include "stdio.h"
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
-#include "InternetHostTest.h"
-#include "StreamString.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
 
 bool InternetHostTest::TestDefaultConstructor() {
 
@@ -57,23 +41,23 @@ bool InternetHostTest::TestDefaultConstructor() {
         return false;
     }
 
-    StreamString ret = addr.GetAddress();
-
-    return ret == "0.0.0.0";
+    DynamicCString addressReadback;
+    addr.GetAddress(addressReadback);
+    return addressReadback == "0.0.0.0";
 }
 
 bool InternetHostTest::TestFullConstructor(uint16 port,
-                                              const char8 * address,
-                                              const char8 * expected) {
+                                              CCString address,
+											  CCString expected) {
 
     InternetHost addr(port, address);
     if (addr.GetPort() != port) {
         return false;
     }
 
-    StreamString ret = addr.GetAddress();
-
-    return (ret == expected);
+    DynamicCString addressReadback;
+    addr.GetAddress(addressReadback);
+    return (addressReadback == expected);
 
 }
 
@@ -82,13 +66,14 @@ bool InternetHostTest::TestGetPort(uint16 port) {
     return addr.GetPort() == port;
 }
 
-bool InternetHostTest::TestGetAddress(const char8 *table[][2]) {
+bool InternetHostTest::TestGetAddress(const ZeroTerminatedArray<CCString [2]> &table) {
 
     uint32 i = 0;
-    while (table[i][0] != NULL) {
+    while (!table[i][0].IsNullPtr()) {
         InternetHost addr(0, table[i][0]);
-        StreamString ret = addr.GetAddress();
-        if (ret != table[i][1]) {
+        DynamicCString address;
+        addr.GetAddress(address);
+        if (!address.IsSameAs(table[i][1])) {
             return false;
         }
         i++;
@@ -96,13 +81,14 @@ bool InternetHostTest::TestGetAddress(const char8 *table[][2]) {
     return true;
 }
 
-bool InternetHostTest::TestGetHostName(const char8 *table[][2]) {
+bool InternetHostTest::TestGetHostName(const ZeroTerminatedArray<CCString [2]> &table) {
 
     uint32 i = 0;
-    while (table[i][0] != NULL) {
+   while (!table[i][0].IsNullPtr()){
         InternetHost addr(0, table[i][0]);
-        StreamString ret = addr.GetHostName();
-        if (ret != table[i][1]) {
+        DynamicCString address;
+        addr.GetAddress(address);
+        if (!address.IsSameAs(table[i][1])) {
             return false;
         }
         i++;
@@ -127,7 +113,7 @@ bool InternetHostTest::TestGetAddressAsNumber(const InternetHostTestTable *table
 
 bool InternetHostTest::TestGetLocalHostName() {
 
-    StreamString ret = InternetHost::GetLocalHostName();
+    DynamicCString ret = InternetHost::GetLocalHostName();
 
 
     return true;
@@ -136,12 +122,11 @@ bool InternetHostTest::TestGetLocalHostName() {
 
 bool InternetHostTest::TestGetLocalAddress() {
 
-    StreamString ret = InternetHost::GetLocalAddress();
-    bool ok = (StringHelper::Length(ret.Buffer()) > 0);
-    StreamString tok;
+    DynamicCString ret = InternetHost::GetLocalAddress();
+    bool ok = (InternetHost::GetLocalAddress().GetSize() > 0);
+    DynamicCString tok;
     uint32 i=0;
     char8 terminator;
-    ret.Seek(0);
     while(ret.GetToken(tok, ".", terminator)){
         tok = "";
         i++;
@@ -163,14 +148,15 @@ bool InternetHostTest::TestSetPort(uint16 port) {
     return addr.GetPort() == port;
 }
 
-bool InternetHostTest::TestSetAddress(const char8 *table[][2]) {
+bool InternetHostTest::TestSetAddress(const ZeroTerminatedArray<CCString [2]> &table) {
     InternetHost addr;
 
     uint32 i = 0;
-    while (table[i][0] != NULL) {
+   while (!table[i][0].IsNullPtr()){
         addr.SetAddress(table[i][0]);
-        StreamString ret = addr.GetAddress();
-        if (ret != table[i][1]) {
+        DynamicCString address;
+        addr.GetAddress(address);
+        if (!address.IsSameAs(table[i][1])) {
             return false;
         }
         i++;
@@ -179,15 +165,16 @@ bool InternetHostTest::TestSetAddress(const char8 *table[][2]) {
 
 }
 
-bool InternetHostTest::TestSetAddressByHostName(const char8 *table[][2]) {
+bool InternetHostTest::TestSetAddressByHostName(const ZeroTerminatedArray<CCString [2]> &table) {
 
     InternetHost addr;
 
     uint32 i = 0;
-    while (table[i][0] != NULL) {
+   while (!table[i][0].IsNullPtr()){
         addr.SetAddressByHostName(table[i][1]);
-        StreamString ret = addr.GetAddress();
-        if (ret != table[i][0]) {
+        DynamicCString address;
+        addr.GetAddress(address);
+        if (address != table[i][0]) {
             return false;
         }
         i++;
@@ -202,8 +189,9 @@ bool InternetHostTest::TestSetAddressByNumber(const InternetHostTestTable *table
     uint32 i = 0;
     while (table[i].address != NULL) {
         addr.SetAddressByNumber(table[i].relatedNumber);
-        StreamString ret = addr.GetAddress();
-        if (ret != table[i].address) {
+        DynamicCString address;
+        addr.GetAddress(address);
+        if (address != table[i].address) {
             return false;
         }
         i++;
@@ -216,7 +204,9 @@ bool InternetHostTest::TestSetLocalAddress() {
     InternetHost addr;
     addr.SetLocalAddress();
 
-    StreamString dotAddr = addr.GetAddress();
+    DynamicCString dotAddr;
+    addr.GetAddress(dotAddr);
+
     return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 

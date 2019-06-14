@@ -94,7 +94,7 @@ TypeDescriptor ClassRegistryIndex::GetTypeDescriptor(CCString name){
 		ClassRegistryItemI *crii =  (*this)[i];
 		if (crii != NULL){
 			CCString className = crii->GetClassName();
-			if (name.isSameAs(className.GetList())){
+			if (name.IsSameAs(className.GetList())){
 				td = crii->GetTypeDescriptor();
 			}
 		}

@@ -34,7 +34,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicFile.h"
-#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -369,10 +368,10 @@ private:
     uint32 defaultWFlags;
     /*Default flags to perform some test. This flags have to create a file if does not exist and remove the contests of a file if it exists */
     uint32 defaultRFlags;
-    const char8 * nameFileTarget;
-    const char8 * stringTarget;
-    StreamString str1;
-    StreamString str2;
+    CCString nameFileTarget;
+    CCString stringTarget;
+    DynamicCString str1;
+    DynamicCString str2;
 };
 
 /*---------------------------------------------------------------------------*/

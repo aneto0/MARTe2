@@ -362,7 +362,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         uint32 i;
         for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
             foundReference = currentNode->Get(i);
-            found = (token.isSameAs(foundReference->GetName().GetList()));
+            found = (token.IsSameAs(foundReference->GetName().GetList()));
         }
 
         if (found) {

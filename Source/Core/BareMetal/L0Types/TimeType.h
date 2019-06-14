@@ -124,6 +124,28 @@ public:
      */
     inline TimeType<baseType,unitType> operator+(const TimeType<baseType,unitType> &tt) const;
 
+    /**
+     * @brief scales a time type using a number. Product among TimeTypes has no meaning
+     * @param[in] scale is the value to be multiplied
+     * @return this object.
+     */
+    template <typename scaleType>
+    inline TimeType<baseType,unitType> operator*(const scaleType &scale) const;
+
+    /**
+     * @brief Compares the values.
+     * @param[in] tt is the value which will be subtracted to the timeout
+     * @return true if this value is bigger than tt.
+     */
+    inline bool operator>(const TimeType<baseType,unitType> &tt) const;
+
+    /**
+     * @brief Compares the values.
+     * @param[in] tt is the value which will be subtracted to the timeout
+     * @return true if this value is smaller than tt.
+     */
+    inline bool operator<(const TimeType<baseType,unitType> &tt) const;
+
 	/**
      * @brief Compares two TimeTypes.
      * @param[in] tt is the timeout object to be compared with this.
@@ -285,6 +307,26 @@ TimeType<baseType,unitType> TimeType<baseType,unitType>::operator-(const TimeTyp
 	res -= tt;
 	return res;
 }
+
+template<typename baseType,class unitType>
+template <typename scaleType>
+TimeType<baseType,unitType> TimeType<baseType,unitType>::operator*(const scaleType &scale) const{
+	TimeType<baseType,unitType> res(*this);
+	res.time.Scale(scale);
+	return res;
+}
+
+
+template<typename baseType,class unitType>
+bool TimeType<baseType,unitType>::operator>(const TimeType<baseType,unitType> &tt) const{
+	return time > tt.time;
+}
+
+template<typename baseType,class unitType>
+bool TimeType<baseType,unitType>::operator<(const TimeType<baseType,unitType> &tt) const{
+	return time < tt.time;
+}
+
 
 template<typename baseType,class unitType>
 template<typename bT, class uT>
