@@ -1,0 +1,4 @@
+UNAME := $(shell uname)
+
+all:
+	echo $(UNAME)

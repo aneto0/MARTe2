@@ -24,6 +24,8 @@
 #
 #############################################################
 
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
+
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
 #The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
