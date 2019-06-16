@@ -114,6 +114,7 @@ ErrorManagement::ErrorType Dimension::ReSize(
 	return ret;
 }
 
+/*
 static ErrorManagement::ErrorType SetPtrToZero(DimensionSize numberOfElements, uint8 *ptr){
 	ErrorManagement::ErrorType ret;
 	uint32 n;
@@ -127,7 +128,7 @@ static ErrorManagement::ErrorType SetPtrToZero(DimensionSize numberOfElements, u
 	}
 	return ret;
 }
-
+*/
 
 
 }

@@ -438,7 +438,8 @@ bool StreamString::operator+=(const StreamString &s) {
 
 bool StreamString::operator==(const StreamString &s) const {
     bool ok1 = (buffer.UsedSize() == s.buffer.UsedSize());
-    bool ok2 = (StringHelper::CompareN(buffer.Buffer(), s.buffer.Buffer(), buffer.UsedSize()) == 0);
+    bool ok2 = CCString(buffer.Buffer()).IsSameAs(s.buffer.Buffer(),buffer.UsedSize());
+//    bool ok2 = (StringHelper::CompareN(buffer.Buffer(), s.buffer.Buffer(), buffer.UsedSize()) == 0);
 
     return ok1 && ok2;
 }
@@ -446,7 +447,8 @@ bool StreamString::operator==(const StreamString &s) const {
 bool StreamString::operator==(CCString const  s) const {
     bool ok1 = !(s.IsNullPtr());
     bool ok2 = (s.GetSize() == buffer.UsedSize());
-    bool ok3 = (StringHelper::CompareN(buffer.Buffer(), s, buffer.UsedSize()) == 0);
+    bool ok3 = s.IsSameAs(buffer.Buffer(),buffer.UsedSize());
+//    bool ok3 = (StringHelper::CompareN(buffer.Buffer(), s, buffer.UsedSize()) == 0);
     return (ok1) && (ok2) && (ok3);
 }
 

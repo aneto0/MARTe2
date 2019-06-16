@@ -82,7 +82,7 @@ CCString  SearchString(CCString  const string,CCString  const substring) {
         int32 i = 0;
 
         while ((size1 - i) >= size2) {
-            uint32 sizeArg = static_cast<uint32>(size2);
+//            uint32 sizeArg = static_cast<uint32>(size2);
 
             CCString stringPart(string.GetList()+i);
             if (stringPart == substring){

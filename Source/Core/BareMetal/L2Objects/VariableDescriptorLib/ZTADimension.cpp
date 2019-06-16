@@ -116,8 +116,8 @@ ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 			uint32 &		numberOfRows) const {
 	ErrorManagement::ErrorType ok;
 
-	numberOfColumns = 0;
-	numberOfRows = 1;
+	numberOfColumns = 0U;
+	numberOfRows = 1U;
 	ok.fatalError = (next == NULL);
 	REPORT_ERROR(ok,"next element of a ZTA is missing");
 
@@ -128,7 +128,7 @@ ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 		REPORT_ERROR(ok, "ZTA type  redirection failed ");
 	}
 
-	uint32 nextElementSize;
+	uint32 nextElementSize = 0U;
 	if (ok){
 		ok = next->GetLayerCombinedElementSize().ToNumber(nextElementSize);
 	    REPORT_ERROR(ok, "elementSize is infinite/indefinite");

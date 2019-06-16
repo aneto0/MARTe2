@@ -122,7 +122,7 @@ ErrorManagement::ErrorType MatrixDimension::ReSize(
 	ret = GetNextLayerElementSize(totalSizeD);
     REPORT_ERROR(ret, "GetNextLayerElementSize failed");
 
-    uint32 totalAllocationSize;
+    uint32 totalAllocationSize = 0;
     if (ret){
     	totalSizeD = totalSizeD * numberOfColumns;
     	totalSizeD = totalSizeD * numberOfRows;

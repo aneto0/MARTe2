@@ -55,6 +55,11 @@ BufferedStreamIOBuffer::BufferedStreamIOBuffer(OperatingSystemCallbacksI * const
     timeout = MilliSeconds::Infinite;
 }
 
+void BufferedStreamIOBuffer::SetBuffer(OperatingSystemCallbacksI * const s){
+    stream = s;
+}
+
+
 bool BufferedStreamIOBuffer::Resync() {
     bool retval = (stream != NULL);
 

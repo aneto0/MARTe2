@@ -202,7 +202,7 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 					const uint8 * const *zip = reinterpret_cast<const uint8 * const *>(inputPointer);
 					// loop through the collapsed layer
 					for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
-						uint8 *newAddressOfOutput;
+						uint8 *newAddressOfOutput = NULL_PTR(uint8 *);
 						const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(zip);
 						ret = RedirectP(newInputPointer,true);
 		    			REPORT_ERROR(ret, "RedirectP failed");
@@ -316,7 +316,7 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 				const uint8 * const *fip = reinterpret_cast<const uint8 * const *>(inputPointer);
 				// loop through the collapsed layer
 				for (uint32 i = 0; (i < numberOfElementsD.GetData()) && ret; i++){
-					uint8 *newAddressOfOutput;
+					uint8 *newAddressOfOutput= NULL_PTR(uint8 *);;
 					const uint8 *newInputPointer = reinterpret_cast<const uint8 *>(fip);
 					ret = RedirectP(newInputPointer,true);
 	    			REPORT_ERROR(ret, "RedirectP failed");

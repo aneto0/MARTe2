@@ -846,8 +846,8 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 }
 
 BitSetToStringTCO::BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn): StringTCO(writerIn){
-	numberBitSize  = td.numberOfBits;
-	numberBitShift = td.bitOffset;
+	numberBitSize  = static_cast<uint8>(td.numberOfBits);
+	numberBitShift = static_cast<uint8>(td.bitOffset);
 	byteSize 	   = SizeFromTDBasicTypeSize(td.basicTypeSize);
 	isSigned       = isSignedIn;
 }

@@ -44,9 +44,10 @@
 namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
-        BufferedStreamI(),
-        readBuffer(this),
-        writeBuffer(this) {
+        BufferedStreamI() {
+	readBuffer.SetBuffer(this);
+	writeBuffer.SetBuffer(this);
+
     bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {
         REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
@@ -59,9 +60,10 @@ DoubleBufferedStream::DoubleBufferedStream() :
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const MilliSeconds &timeoutIn) :
-        BufferedStreamI(),
-        readBuffer(this),
-        writeBuffer(this) {
+        BufferedStreamI() {
+
+	readBuffer.SetBuffer(this);
+	writeBuffer.SetBuffer(this);
     SetTimeout(timeoutIn);
     bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {

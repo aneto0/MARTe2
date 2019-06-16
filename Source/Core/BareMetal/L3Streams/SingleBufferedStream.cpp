@@ -44,8 +44,9 @@
 namespace MARTe {
 
 SingleBufferedStream::SingleBufferedStream() :
-        BufferedStreamI(),
-        internalBuffer(this) {
+        BufferedStreamI() {
+
+	internalBuffer.SetBuffer(this);
     mutexReadMode = true;
     mutexWriteMode = false;
     bufferSizeSet = true;
@@ -56,8 +57,9 @@ SingleBufferedStream::SingleBufferedStream() :
 }
 
 SingleBufferedStream::SingleBufferedStream(const MilliSeconds &timeoutIn) :
-        BufferedStreamI(),
-        internalBuffer(this) {
+        BufferedStreamI() {
+
+	internalBuffer.SetBuffer(this);
     mutexReadMode = true;
     mutexWriteMode = false;
     bufferSizeSet = true;

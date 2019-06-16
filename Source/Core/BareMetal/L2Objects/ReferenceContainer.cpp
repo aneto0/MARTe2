@@ -161,7 +161,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
             DynamicCString nextToken;
 
             CCString toTokenize(path);
-            toTokenize = StringHelper::Tokenize(toTokenize, token,CCString("."), CCString("."));
+            toTokenize = DynamicCString::Tokenize(toTokenize, token,CCString("."), CCString("."));
 
             bool created = false;
             bool done = false;
@@ -177,7 +177,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                         found = (foundReference->GetName().IsSameAs(token.GetList()));
                     }
                     // take the next token : nextToken
-                    toTokenize = StringHelper::Tokenize(toTokenize, nextToken,CCString("."), CCString("."));
+                    toTokenize = DynamicCString::Tokenize(toTokenize, nextToken,CCString("."), CCString("."));
 
                     if (found) {
                     	// if found, simply move to it

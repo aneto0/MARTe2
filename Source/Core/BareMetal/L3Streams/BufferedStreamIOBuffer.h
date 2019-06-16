@@ -93,6 +93,12 @@ public:
      */
     BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s);
 
+    /*
+     * @brief use just after construction with no parameter
+     * @param[in] s is a pointer to the stream which uses this buffer.
+     */
+    void SetBuffer(OperatingSystemCallbacksI * const s);
+
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
      * @return whatever NoMoreDataToRead returns.

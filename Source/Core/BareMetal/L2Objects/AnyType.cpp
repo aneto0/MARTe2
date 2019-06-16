@@ -142,7 +142,7 @@ ErrorManagement::ErrorType  AnyType::MultipleDereference (CCString CExpression){
 	while ((deref.GetSize()>0) && (ok)){
 		DynamicCString token;
 		int32 term  =-1;
-    	deref = StringHelper::Tokenize(deref,token,term, delimiters,CCString(". "));
+    	deref = DynamicCString::Tokenize(deref,token,term, delimiters,CCString(". "));
 
     	// process token
     	if (token.GetSize() > 0){

@@ -657,7 +657,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
     if (number < static_cast<T>(0)) {
 
         /*lint -e{9134} -e{501} -e{732} the number is signed */
-        positiveNumber = -number;
+        positiveNumber = static_cast<T>(-number);
         numberSize++;
 
     }
@@ -829,7 +829,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
     uint16 numberOfDigits = GetNumberOfDigitsHexNotation(number);
 
     // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
+    uint16 numberSize = static_cast<uint16>(headerSize + numberOfDigits);
 
     // 1000 = no limits
     if (maximumSize == 0u) {
@@ -866,16 +866,16 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         if (zeroPaddedDigits > numberOfDigits) {
 
             // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
+            uint16 fullNumberSize = static_cast<uint16>(headerSize + zeroPaddedDigits);
 
             // check if adding all zeros number will not fit
             if (fullNumberSize > maximumSize) {
                 // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
+                uint16 excess = static_cast<uint16>(fullNumberSize - maximumSize);
                 // number is made to fit the available space
                 numberSize = maximumSize;
                 // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedDigits - excess;
+                numberOfDigits = static_cast<uint16>(zeroPaddedDigits - excess);
             }
             else {
                 // we will use the full number size
@@ -999,7 +999,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
     uint16 numberOfDigits = GetNumberOfDigitsOctalNotation(number);
 
     // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
+    uint16 numberSize = static_cast<uint16>(headerSize + numberOfDigits);
 
     // 1000 = no limits
     if (maximumSize == 0u) {
@@ -1036,16 +1036,16 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         if (zeroPaddedDigits > numberOfDigits) {
 
             // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
+            uint16 fullNumberSize = static_cast<uint16>(headerSize + zeroPaddedDigits);
 
             // check if adding all zeros number will not fit
             if (fullNumberSize > maximumSize) {
                 // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
+                uint16 excess = static_cast<uint16>(fullNumberSize - maximumSize);
                 // number is made to fit the available space
                 numberSize = maximumSize;
                 // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedDigits - excess;
+                numberOfDigits = static_cast<uint16>(zeroPaddedDigits - excess);
             }
             else {
                 // we will use the full number size
@@ -1160,7 +1160,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     uint16 numberOfDigits = GetNumberOfDigitsBinaryNotation(number);
 
     // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
+    uint16 numberSize = static_cast<uint16>(headerSize + numberOfDigits);
 
     // cannot fit the number even without trailing zeroes
     bool ok = true;
@@ -1190,16 +1190,16 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         if (zeroPaddedBitSize > numberOfDigits) {
 
             // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedBitSize;
+            uint16 fullNumberSize = static_cast<uint16>(headerSize + zeroPaddedBitSize);
 
             // check if adding all zeros number will not fit
             if (fullNumberSize > maximumSize) {
                 // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
+                uint16 excess = static_cast<uint16>(fullNumberSize - maximumSize);
                 // number is made to fit the available space
                 numberSize = maximumSize;
                 // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedBitSize - excess;
+                numberOfDigits = static_cast<uint16>(zeroPaddedBitSize - excess);
             }
             else {
                 // we will use the full number size

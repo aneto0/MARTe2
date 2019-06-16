@@ -354,7 +354,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
     bool created = false;
     ReferenceT < ReferenceContainer > currentNodeOld = currentNode;
 
-    path = StringHelper::Tokenize(path, token,".","");
+    path = DynamicCString::Tokenize(path, token,".","");
     while ((token.GetSize() > 0) && ret){
 
         bool found = false;
@@ -385,7 +385,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         }
 
     	if (ret && (path.GetSize()>0)){
-            path = StringHelper::Tokenize(path, token,".","");
+            path = DynamicCString::Tokenize(path, token,".","");
     	} else {
     		token = "";
     	}

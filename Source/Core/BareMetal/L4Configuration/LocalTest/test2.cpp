@@ -801,7 +801,8 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
     T1 x;
 	ss.Printf("(%?)((%f*%f)+%f-%f) == ",x,mul1,mul2, sum1, sub1);
 
-	if (x5.notANormalNumber()){
+	if (!x5.IsValid()){
+//	if (x5.notANormalNumber()){
 		ss.Printf("%s",CCString("saturated"));
 	} else {
 		ss.Printf("%i",x5.GetData());
@@ -815,7 +816,8 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
 		ss.Printf("%s",CCString(" != "));
 	}
 
-	if (expected.notANormalNumber()){
+	if (!expected.IsValid()){
+//	if (expected.notANormalNumber()){
 		ss.Printf("%s\n",CCString("saturated"));
 	} else {
 		ss.Printf("%i\n",expected.GetData());
