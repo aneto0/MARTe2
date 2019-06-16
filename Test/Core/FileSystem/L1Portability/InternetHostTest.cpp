@@ -122,16 +122,20 @@ bool InternetHostTest::TestGetLocalHostName() {
 
 bool InternetHostTest::TestGetLocalAddress() {
 
-    DynamicCString ret = InternetHost::GetLocalAddress();
     bool ok = (InternetHost::GetLocalAddress().GetSize() > 0);
-    DynamicCString tok;
-    uint32 i=0;
-    char8 terminator;
-    while(ret.GetToken(tok, ".", terminator)){
-        tok = "";
-        i++;
+
+    if (ok){
+        CCString address = InternetHost::GetLocalAddress();
+        DynamicCString tok;
+
+        uint32 nOfDots=0;
+        do {
+        	address = DynamicCString::Tokenize(address,tok,CCString("."),emptyString,false);
+        	nOfDots++;
+        } while (address.GetSize()==0);
+
+        ok = (nOfDots == 4u);
     }
-    ok &= (i == 4u);
     return ok;
 }
 
@@ -174,7 +178,7 @@ bool InternetHostTest::TestSetAddressByHostName(const ZeroTerminatedArray<CCStri
         addr.SetAddressByHostName(table[i][1]);
         DynamicCString address;
         addr.GetAddress(address);
-        if (address != table[i][0]) {
+        if (!address.IsSameAs(table[i][0])) {
             return false;
         }
         i++;
@@ -191,7 +195,7 @@ bool InternetHostTest::TestSetAddressByNumber(const InternetHostTestTable *table
         addr.SetAddressByNumber(table[i].relatedNumber);
         DynamicCString address;
         addr.GetAddress(address);
-        if (address != table[i].address) {
+        if (!address.IsSameAs(table[i].address)) {
             return false;
         }
         i++;
@@ -217,8 +221,8 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
     uint32 i = 0;
     while (table[i].address != NULL) {
         InternetHost addr(table[i].port, table[i].address);
-        InternetHostCore *copy = addr.GetInternetHost();
 
+        InternetHostCore *copy = addr.GetInternetHost();
 #if ENVIRONMENT == Linux
         if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
             return false;
@@ -229,12 +233,12 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 
 #else
         //ENVIRONMENT==Windows
-        /*if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
+        if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
             return false;
         }
         if (copy->sin_port != htons(addr.GetPort())) {
             return false;
-        }*/
+        }
 #endif
 
         i++;

@@ -26,7 +26,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
-#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -34,6 +33,7 @@
 
 #include "BasicFileTest.h"
 #include "DirectoryScanner.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

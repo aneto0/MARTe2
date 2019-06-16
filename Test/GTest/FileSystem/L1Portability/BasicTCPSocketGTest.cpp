@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "BasicTCPSocketTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -89,26 +89,26 @@ TEST(BasicTCPSocketGTest,TestCanSeek) {
 
 // Note: in linux (at least on my pc) the the listen accepts +3 clients than the max specified
 const ConnectListenTestTable tableListenConnect[]={
-        {4444,3, 3, 100, true,true, true, true},
-        {4446,0, 4, 10, false,true, true, true},
-        {4448,28, 32, 10, false,true, true, true},
-        {4450,32, 32, 100, true,true, true, true},
-        {4452,60, 64, 10, false,true, true, true},
-        {4454,60, 128, 10, false,true, true, true},
-        {4456,128, 60, 100, true,true, true, true},
-        {4458,128, 128, 100, true,true, true, true},
-        {4460,128, 128, 10, false, true, false, true},
-        {4462,3, 3, TTInfiniteWait, true,false, true, true},
-        {4464,4, 4, TTInfiniteWait, true,false, true, true},
-        {4466,32, 32, TTInfiniteWait, true,false, true, true},
-        {4468,32, 30, TTInfiniteWait, true,false, true, true},
-        {4470,64, 64, TTInfiniteWait, true,false, true, true},
-        {4472,128, 128, TTInfiniteWait, true,false, true, true},
-        {4474,128, 60, TTInfiniteWait, true,false, true, true},
-        {4476,128, 128, TTInfiniteWait, true,false, true, true},
-        {4478,128, 128, TTInfiniteWait, false, false, false, true},
-        {4480,128, 60, 10, false, true, true, false},
-        {0,0,0,0,0,0,0,0}
+        {4444,3, 3, MilliSeconds(100,Units::ms), true,true, true, true},
+        {4446,0, 4, MilliSeconds(10,Units::ms), false,true, true, true},
+        {4448,28, 32, MilliSeconds(10,Units::ms), false,true, true, true},
+        {4450,32, 32, MilliSeconds(100,Units::ms), true,true, true, true},
+        {4452,60, 64, MilliSeconds(10,Units::ms), false,true, true, true},
+        {4454,60, 128, MilliSeconds(10,Units::ms), false,true, true, true},
+        {4456,128, 60, MilliSeconds(100,Units::ms), true,true, true, true},
+        {4458,128, 128, MilliSeconds(100,Units::ms), true,true, true, true},
+        {4460,128, 128, MilliSeconds(10,Units::ms), false, true, false, true},
+        {4462,3, 3, MilliSeconds::Infinite, true,false, true, true},
+        {4464,4, 4, MilliSeconds::Infinite, true,false, true, true},
+        {4466,32, 32, MilliSeconds::Infinite, true,false, true, true},
+        {4468,32, 30, MilliSeconds::Infinite, true,false, true, true},
+        {4470,64, 64, MilliSeconds::Infinite, true,false, true, true},
+        {4472,128, 128, MilliSeconds::Infinite, true,false, true, true},
+        {4474,128, 60, MilliSeconds::Infinite, true,false, true, true},
+        {4476,128, 128, MilliSeconds::Infinite, true,false, true, true},
+        {4478,128, 128, MilliSeconds::Infinite, false, false, false, true},
+        {4480,128, 60, MilliSeconds(10,Units::ms), false, true, true, false},
+        {0,0,0,MilliSeconds(0,Units::ms),0,0,0,0}
 };
 
 
@@ -127,19 +127,19 @@ TEST(BasicTCPSocketGTest,TestRead) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true,true},
-            {11,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true,true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
-            {0,0,0,0,0,0,0,0,0}
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 2, MilliSeconds::Infinite, true, true, true, true,true},
+            {32,32,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {11,11,"HelloWorld", "HelloWorld", 32, MilliSeconds::Infinite, true, true, true, true,true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {32,32,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {11,11,"HelloWorld","HelloWorld", 32, MilliSeconds(100,Units::ms), false, true, false, true,true},
+            {11,11,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, false, false, false, true,true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, false, true, true, false,false},
+            {0 ,0 ,emptyString , emptyString , 0,MilliSeconds(0,Units::ms),0,0,0}
     };
 
     ASSERT_TRUE(basicTCPSocketTest.TestRead(table));
@@ -150,17 +150,17 @@ TEST(BasicTCPSocketGTest,TestPeek) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
-            {0,0,0,0,0,0,0,0,0}
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 2, MilliSeconds::Infinite, true, true, true, true,true},
+            {32,32,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false,true},
+            {11,11,"HelloWorld", "HelloWorld", 32, MilliSeconds::Infinite, true, true, true, true,true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {32,32,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, false, true, true, false,false},
+            {0 ,0 ,emptyString , emptyString , 0,MilliSeconds(0,Units::ms),0,0,0}
     };
 
     ASSERT_TRUE(basicTCPSocketTest.TestPeek(table));
@@ -172,20 +172,20 @@ TEST(BasicTCPSocketGTest,TestWrite) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true, true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
-            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true, true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true, true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false, true},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
-            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
-            {64,64,"HelloWorld","HelloWorld", 32, 50, true, true, true, false, true},
-            {11,11,"HelloWorld","HelloWorld", 32, 10, true, true, false, true, true},
-            //{0x7fffffff,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true, true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
-            {0,0,0,0,0,0,0,0,0}
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false, true},
+            {5,5,"HelloWorld", "Hello", 2, MilliSeconds::Infinite, true, true, true, true, true},
+            {32,32,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, false, true},
+            {64,64,"HelloWorld","HelloWorld", 2, MilliSeconds::Infinite, true, true, true, true, true},
+            {11,11,"HelloWorld", "HelloWorld", 32, MilliSeconds::Infinite, true, true, true, true, true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, true, true, true, false, true},
+            {32,32,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false, true},
+            {64,64,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, true, true, true, false, true},
+            {64,64,"HelloWorld","HelloWorld", 32, MilliSeconds(50,Units::ms), true, true, true, false, true},
+            {11,11,"HelloWorld","HelloWorld", 32, MilliSeconds(10,Units::ms), true, true, false, true, true},
+            //{0x7fffffff,11,"HelloWorld","HelloWorld", 32, MilliSeconds::Infinite, false, false, false, true, true},
+            {5,5,"HelloWorld", "Hello", 32, MilliSeconds::Infinite, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, MilliSeconds::Infinite, false, true, true, false,false},
+            {0 ,0 ,emptyString , emptyString , 0,MilliSeconds(0,Units::ms),0,0,0}
     };
 
     ASSERT_TRUE(basicTCPSocketTest.TestWrite(table));
@@ -196,13 +196,13 @@ TEST(BasicTCPSocketGTest,TestWrite) {
 TEST(BasicTCPSocketGTest,TestWaitConnection) {
     BasicTCPSocketTest basicTCPSocketTest;
     const WaitConnectionTestTable table[]={
-            {10, true, TTInfiniteWait,true, true, true},
-            {10, false, TTInfiniteWait,true, true, true},
-            {0, false, 100, true, false, true},
-            {0, false, 100, false, false, true},
-            {10, false, 1000, true, true, true},
-            {10, true, TTInfiniteWait,true, false, false},
-            {0,0,0,0,0,0}
+            {10, true, MilliSeconds::Infinite,true, true, true},
+            {10, false, MilliSeconds::Infinite,true, true, true},
+            {0, false, MilliSeconds(100,Units::ms), true, false, true},
+            {0, false, MilliSeconds(100,Units::ms), false, false, true},
+            {10, false, MilliSeconds(1000,Units::ms), true, true, true},
+            {10, true, MilliSeconds::Infinite,true, false, false},
+            {0,0,MilliSeconds(0,Units::ms),0,0,0}
     };
 
     ASSERT_TRUE(basicTCPSocketTest.TestWaitConnection(table));

@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "BasicSocketTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "CompilerTypes.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetHostCore.h)
 #include "DynamicCString.h"
 

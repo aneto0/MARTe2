@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "SelectTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -154,12 +154,12 @@ TEST(SelectGTest, TestWaitUntil_waitTimeout) {
 
 TEST(SelectGTest, TestWaitUntil_waitRead) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(2000));
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(MilliSeconds(2000,Units::ms)));
 }
 
 TEST(SelectGTest, TestWaitUntil_waitRead_Infinite) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(TTInfiniteWait));
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(MilliSeconds::Infinite));
 }
 
 TEST(SelectGTest, TestWaitUntil_severaDifferentWaitRead) {

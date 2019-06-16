@@ -87,7 +87,7 @@ $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -Fa$(BUILD_DIR)/$%.asm $(INCLUDES) dummy.cpp 
 	echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	cat title $(IMPDEFS) > dllGenerator.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@
+	$(COMPILER)  -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) $(LIBRARIES_NODEP) dllGenerator.def -Fe$@ $(LFLAGS) 
 	@rm dllGenerator.def
 	@rm dummy.*
 #	@rm $(BUILD_DIR)\dummy.*

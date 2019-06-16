@@ -31,12 +31,13 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L1Portability
-INCLUDES += -I$(ROOT_DIR)/Test/Core/Scheduler/L1Portability
+#INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L1Portability
+#INCLUDES += -I$(ROOT_DIR)/Test/Core/Scheduler/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Test/Core/FileSystem/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
 BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)

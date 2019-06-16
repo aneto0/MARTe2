@@ -25,11 +25,11 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
-#include "gtest/gtest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryScannerTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -55,12 +55,12 @@ TEST(DirectoryScannerGTest, TestScan) {
 
 TEST(DirectoryScannerGTest, TestScan2) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan("TestScan1",NULL));
+    ASSERT_TRUE(myClassTest.TestScan("TestScan1",emptyString));
 }
 
 TEST(DirectoryScannerGTest, TestScan_NULL) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,NULL));
+    ASSERT_TRUE(myClassTest.TestScan_NULL(emptyString,emptyString));
 }
 
 TEST(DirectoryScannerGTest, TestScan_Empy) {
@@ -70,17 +70,17 @@ TEST(DirectoryScannerGTest, TestScan_Empy) {
 
 TEST(DirectoryScannerGTest, TestScan_FailMix) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,""));
+    ASSERT_TRUE(myClassTest.TestScan_NULL(emptyString,""));
 }
 
 TEST(DirectoryScannerGTest, TestScan_FailMix2) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan_NULL("",NULL));
+    ASSERT_TRUE(myClassTest.TestScan_NULL("",emptyString));
 }
 
 TEST(DirectoryScannerGTest, TestScan_FailMix3) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan_NoExist("abc",NULL));
+    ASSERT_TRUE(myClassTest.TestScan_NoExist("abc",emptyString));
 }
 
 TEST(DirectoryScannerGTest, TestScan_Mask) {

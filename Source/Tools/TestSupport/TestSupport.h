@@ -62,6 +62,10 @@ public:
 
 void RunAllTests();
 
+namespace testing{
+	class Test{};
+};
+
 #define TEST(test_group_name,test_name)\
 	class test_group_name ##  test_name ## TestInstance: public TestInstance{  \
 	public:\
@@ -74,7 +78,22 @@ void RunAllTests();
 	}\
 	void test_group_name ##  test_name ## TestInstance::Execute(bool &result)
 
+#if 0
+#define TEST_F(test_class_name,test_name)\
+	class test_group_name ##  test_name ## TestInstance: public TestInstance{  \
+	public:\
+		test_group_name ##  test_name ## TestInstance(const char* testName);\
+		virtual void Execute(bool &result);\
+	}  test_group_name ##  test_name ## testInstance(#test_group_name "::" #test_name);\
+	test_group_name ##  test_name ## TestInstance::test_group_name ##  test_name ## TestInstance(const char* testName){\
+		this->testName = testName; \
+		printf("added test %s\n",testName); \
+	}\
+	void test_group_name ##  test_name ## TestInstance::Execute(bool &result)
+		test_class_name::SetUpTestCase();\
+		test_class_name::TearDownTestCase();
 
+#endif
 
 #define ASSERT(test_code,show,expect)\
 			{ bool localRet = test_code;\

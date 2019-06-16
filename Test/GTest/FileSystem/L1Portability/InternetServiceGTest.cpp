@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "InternetServiceTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,13 +54,13 @@ TEST(InternetServiceGTest,TesDefaultConstructor) {
 TEST(InternetServiceGTest,TestSearchByName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {NULL, NULL, 0, "tcp", false},
-            {"ftp", NULL, 21, "tcp", true},
-            {"http", NULL, 80, "tcp", true},
+            {emptyString, emptyString, 0, "tcp", false},
+            {"ftp", emptyString, 21, "tcp", true},
+            {"http", emptyString, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
             {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {0,0,0,0,0}
+            {emptyString,emptyString,0,emptyString,false}
     };
 
     ASSERT_TRUE(internetServiceTest.TestSearchByName(table));
@@ -71,12 +71,12 @@ TEST(InternetServiceGTest,TestSearchByName) {
 TEST(InternetServiceGTest,TestSearchByPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 21, "tcp", true},
-            {"http", NULL, 80, "tcp", true},
+            {"ftp", emptyString, 21, "tcp", true},
+            {"http", emptyString, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
             {"ntp", "udp", 123, "udp", true}, //change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {0,0,0,0,0}
+            {emptyString,emptyString,0,emptyString,false}
     };
 
     ASSERT_TRUE(internetServiceTest.TestSearchByPort(table));
@@ -86,12 +86,12 @@ TEST(InternetServiceGTest,TestSearchByPort) {
 TEST(InternetServiceGTest,TestPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 21, "tcp", true},
-            {"http", NULL, 80, "tcp", true},
+            {"ftp", emptyString, 21, "tcp", true},
+            {"http", emptyString, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
             {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {0,0,0,0,0}
+            {emptyString,emptyString,0,emptyString,false}
     };
 
     ASSERT_TRUE(internetServiceTest.TestPort(table));
@@ -101,12 +101,12 @@ TEST(InternetServiceGTest,TestPort) {
 TEST(InternetServiceGTest,TestName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 21, "tcp", true},
-            {"http", NULL, 80, "tcp", true},
+            {"ftp", emptyString, 21, "tcp", true},
+            {"http", emptyString, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
             {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {0,0,0,0,0}
+            {emptyString,emptyString,0,emptyString,false}
     };
 
     ASSERT_TRUE(internetServiceTest.TestName(table));
@@ -117,12 +117,12 @@ TEST(InternetServiceGTest,TestName) {
 TEST(InternetServiceGTest,TestProtocol) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 21, "tcp", true},
-            {"http", NULL, 80, "tcp", true},
+            {"ftp", emptyString, 21, "tcp", true},
+            {"http", emptyString, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
             {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {0,0,0,0,0}
+            {emptyString,emptyString,0,emptyString,false}
     };
 
     ASSERT_TRUE(internetServiceTest.TestProtocol(table));

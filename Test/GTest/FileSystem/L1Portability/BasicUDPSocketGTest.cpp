@@ -31,8 +31,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
 #include "BasicUDPSocketTest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -140,16 +140,16 @@ TEST(BasicUDPSocketGTest,TestRead) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
-            {"HelloWorld1","HelloWorld1",64,64,4444,TTInfiniteWait,64,true,true,true,false,true},
-            {"HelloWorld2","HelloWorld2",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
-            {"HelloWorld3","HelloWorld3",32,32,4444,1000,32,false,true,false,true,true},//{"HelloWorld3","HelloWorld3",32,32,4444,100,32,false,true,false,true,true},
-            {"HelloWorld4","HelloWorld4",32,32,4444,TTInfiniteWait,32,false,false,false,true,true},
-            {"HelloWorld5","HelloWorld5",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
-            {0}
+            {"HelloWorld" ,"HelloWorld" ,11,11,4444,MilliSeconds::Infinite,2,true,true,true,false,true},
+            {"abcdefghil" ,"abcde"      , 5, 5,4444,MilliSeconds::Infinite,32,true,true,true,true,true},
+            {"HelloWorld1","HelloWorld1",64,64,4444,MilliSeconds::Infinite,64,true,true,true,false,true},
+            {"HelloWorld2","HelloWorld2",32,32,4444,MilliSeconds::Infinite,128,true,true,true,true,true},
+            {"HelloWorld3","HelloWorld3",32,32,4444,MilliSeconds(1000,Units::ms),32,false,true,false,true,true},//{"HelloWorld3","HelloWorld3",32,32,4444,100,32,false,true,false,true,true},
+            {"HelloWorld4","HelloWorld4",32,32,4444,MilliSeconds::Infinite,32,false,false,false,true,true},
+            {"HelloWorld5","HelloWorld5",32,32,4444,MilliSeconds::Infinite,32,false,false,false,false,true},
+            {"HelloWorld" ,"HelloWorld" ,11,11,4444,MilliSeconds::Infinite,128,false,true,true,true,false},
+            {"HelloWorld" ,"HelloWorld" ,11,11,4444,MilliSeconds::Infinite,128,false,true,true,false,false},
+            {emptyString  ,emptyString  , 0, 0,   0,MilliSeconds::Infinite,128,false,false,false,false,false}
     };
 
     ASSERT_TRUE(basicUDPSocketTest.TestRead(table));
@@ -160,13 +160,13 @@ TEST(BasicUDPSocketGTest,TestPeek) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
-            {"HelloWorld","HelloWorld",64,64,4444,TTInfiniteWait,64,true,true,true,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
-            {0}
+            {"HelloWorld","HelloWorld",11,11,4444,MilliSeconds::Infinite,2,true,true,true,false,true},
+            {"abcdefghil","abcde",5,5,4444,MilliSeconds::Infinite,32,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",64,64,4444,MilliSeconds::Infinite,64,true,true,true,false,true},
+            {"HelloWorld","HelloWorld",32,32,4444,MilliSeconds::Infinite,128,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,MilliSeconds::Infinite,32,false,false,false,false,true},
+            {"HelloWorld","HelloWorld",11,11,4444,MilliSeconds::Infinite,128,false,true,true,true,false},
+            {emptyString  ,emptyString  , 0, 0,   0,MilliSeconds::Infinite,128,false,false,false,false,false}
     };
 
     ASSERT_TRUE(basicUDPSocketTest.TestPeek(table));
@@ -179,16 +179,16 @@ TEST(BasicUDPSocketGTest,TestWrite) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
-            {"HelloWorld","HelloWorld",64,64,4444,TTInfiniteWait,64,true,true,true,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",11,11,4444,MilliSeconds::Infinite,2,true,true,true,false,true},
+            {"abcdefghil","abcde",5,5,4444,MilliSeconds::Infinite,32,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",64,64,4444,MilliSeconds::Infinite,64,true,true,true,false,true},
+            {"HelloWorld","HelloWorld",32,32,4444,MilliSeconds::Infinite,128,true,true,true,true,true},
        /*     {"HelloWorld","HelloWorld",0xffffffff,32,4444,100,32,false,true,false,true,true},
-            {"HelloWorld","HelloWorld",0xffffffff,32,4444,TTInfiniteWait,32,false,false,false,true,true},
-            {"HelloWorld","HelloWorld",0xffffffff,32,4444,TTInfiniteWait,32,false,false,false,false,true},*/
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
-            {0}
+            {"HelloWorld","HelloWorld",0xffffffff,32,4444,MilliSeconds::Infinite,32,false,false,false,true,true},
+            {"HelloWorld","HelloWorld",0xffffffff,32,4444,MilliSeconds::Infinite,32,false,false,false,false,true},*/
+            {"HelloWorld","HelloWorld",11,11,4444,MilliSeconds::Infinite,128,false,true,true,true,false},
+            {"HelloWorld","HelloWorld",11,11,4444,MilliSeconds::Infinite,128,false,true,true,false,false},
+            {emptyString  ,emptyString  , 0, 0,   0,MilliSeconds::Infinite,128,false,false,false,false,false}
     };
 
     ASSERT_TRUE(basicUDPSocketTest.TestWrite(table));

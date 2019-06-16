@@ -89,15 +89,17 @@ TEST(InternetHostGTest,TestGetPort_MAX) {
 
 TEST(InternetHostGTest,TestGetAddress) {
     InternetHostTest internetHostTest;
-    const char8 *table[][2]={
+
+    CCString tableC[][2]={
             {"1.1.1.1","1.1.1.1"},
             {"255.1","255.0.0.1"},
             {"1.1.256.1","0.0.0.0"},
             {"1.256.1","0.0.0.0"},
             {"1","0.0.0.1"},
             {"1.1.1.1.1","0.0.0.0"},
-            {0,0}
+            {emptyString,emptyString}
     };
+    const ZeroTerminatedArray<CCString[2]> table = &tableC[0];
 
     ASSERT_TRUE(internetHostTest.TestGetAddress(table));
 }
@@ -105,10 +107,11 @@ TEST(InternetHostGTest,TestGetAddress) {
 
 TEST(InternetHostGTest,TestGetHostName) {
     InternetHostTest internetHostTest;
-    const char8 *table[][2]={
+    CCString tableC[][2]={
             {"8.8.8.8","google-public-dns-a.google.com"},
-            {0,0}
+            {emptyString,emptyString}
     };
+    const ZeroTerminatedArray<CCString[2]> table = &tableC[0];
 
     ASSERT_TRUE(internetHostTest.TestGetHostName(table));
 }
@@ -119,7 +122,7 @@ TEST(InternetHostGTest,TestGetAddressAsNumber) {
     const InternetHostTestTable table[]={
             {"255.0.0.1",0x10000ff,0},
             {"8.8",0x8000008,0},
-            {0,0}
+            {emptyString,0}
     };
 
     ASSERT_TRUE(internetHostTest.TestGetAddressAsNumber(table));
@@ -167,15 +170,16 @@ TEST(InternetHostGTest,TestSetPort_MAX) {
 
 TEST(InternetHostGTest,TestSetAddress) {
     InternetHostTest internetHostTest;
-    const char8 *table[][2]={
+    CCString tableC[][2]={
             {"1.1.1.1","1.1.1.1"},
             {"255.1","255.0.0.1"},
             {"1.1.256.1","0.0.0.0"},
             {"1.256.1","0.0.0.0"},
             {"1","0.0.0.1"},
             {"1.1.1.1.1","0.0.0.0"},
-            {0,0}
+            {emptyString,emptyString}
     };
+    const ZeroTerminatedArray<CCString[2]> table = &tableC[0];
 
     ASSERT_TRUE(internetHostTest.TestSetAddress(table));
 }
@@ -183,11 +187,13 @@ TEST(InternetHostGTest,TestSetAddress) {
 
 TEST(InternetHostGTest,TestSetAddressByHostName) {
     InternetHostTest internetHostTest;
-    const char8 *table[][2]={
+    CCString tableC[][2]={
             {"127.0.0.1","localhost"},
             {"8.8.8.8","google-public-dns-a.google.com"},
-            {0,0}
+            {emptyString,emptyString}
     };
+
+    const ZeroTerminatedArray<CCString[2]> table = &tableC[0];
 
     ASSERT_TRUE(internetHostTest.TestSetAddressByHostName(table));
 }
@@ -197,8 +203,9 @@ TEST(InternetHostGTest,TestSetAddressByNumber) {
     const InternetHostTestTable table[]={
             {"255.0.0.1",0x10000ff,0},
             {"8.0.0.8",0x8000008,0},
-            {0,0}
+            {emptyString,0}
     };
+
 
     ASSERT_TRUE(internetHostTest.TestSetAddressByNumber(table));
 }
@@ -215,7 +222,7 @@ TEST(InternetHostGTest,TestGetInternetHost) {
             {"8.0.0.8",0x8000008,0xffff},
             {"8.127.0.8",0x8007f8,1234},
             {"8.3.10.8",0x80a0308,0},
-            {0,0}
+            {emptyString,0}
     };
 
     ASSERT_TRUE(internetHostTest.TestGetInternetHost(table));

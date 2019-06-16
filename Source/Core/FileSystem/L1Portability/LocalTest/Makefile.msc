@@ -27,5 +27,4 @@ TARGET=msc
 
 include Makefile.inc
 
-
-
+LIBRARIES_NODEP += kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib

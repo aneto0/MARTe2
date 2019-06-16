@@ -49,13 +49,7 @@ namespace MARTe {
 namespace StringHelper {
 
 
-/**
- * @brief Returns a pointer to the first occurrence of substring in string.
- * @param[in] string the source string.
- * @param[in] substring the string which must be searched in string.
- * @return a pointer to the first occurrence of substring in string.
- */
-DLL_API CCString SearchString(CCString  const string, CCString  const substring);
+
 
 #if 0   // already implemented in ZeroTerminatedArray::CompareContent
 /**
@@ -76,7 +70,6 @@ DLL_API int32 Compare(CCString  const string1, CCString  const string2);
  */
 DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uint32 size);
 
-#endif
 
 /**
  * @brief Get the token using characters as delimiters.
@@ -92,7 +85,7 @@ DLL_API int32 CompareN(CCString  const string1,CCString  const string2,const uin
 DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, CCString const delimiters, CCString const skip,bool keepTerm=false);
 
 /**
- * @brief Get the token using characters as delimiters.
+ * @brief Get the token using strings as delimiters.
  * @param[in] string is the string to tokenize.
  * @param[in] delimiters contains string delimiters.
  * @param[in] skip contains characters not to be included in token
@@ -103,7 +96,15 @@ DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, CCStri
  * arguments is NULL.
  */
 DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &limit, ZeroTerminatedArray<const CCString> const delimiters, CCString const skip);
+#endif
 
+/**
+ * @brief Returns a pointer to the first occurrence of substring in string.
+ * @param[in] string the source string.
+ * @param[in] substring the string which must be searched in string.
+ * @return a pointer to the first occurrence of substring in string.
+ */
+DLL_API CCString SearchString(CCString  const string, CCString  const substring);
 
 /**
  * @brief Returns the index position of the first character in string2 found in string1 (e.g. "abcde" "12d" returns 3).

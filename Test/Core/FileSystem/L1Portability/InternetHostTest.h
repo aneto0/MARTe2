@@ -50,7 +50,6 @@ struct InternetHostTestTable {
 
 };
 
-ZeroTerminatedArray<CCString [2]> xx;
 /**
  * @brief Tests all the InternetAddress public functions
  */
