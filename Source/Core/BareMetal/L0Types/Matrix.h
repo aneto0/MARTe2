@@ -393,7 +393,7 @@ void Matrix<T>::FreeMemory() {
 	    		p8 += sizeof(T);
 	    	}
 
-	        delete(dataPointer);
+	        delete(reinterpret_cast<char8 *>(dataPointer));
 	    }
 	}
     Pointer::Set(NULL);

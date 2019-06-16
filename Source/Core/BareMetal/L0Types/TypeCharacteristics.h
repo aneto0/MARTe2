@@ -123,12 +123,12 @@ static inline const uint16 UsableNegativeBitSize() {
 };
 
 template <>
-static const float TypeCharacteristics<float>::MinValue(){
+inline const float TypeCharacteristics<float>::MinValue(){
 	return -std::numeric_limits<float>::max();
 }
 
 template <>
-static const double TypeCharacteristics<double>::MinValue(){
+inline const double TypeCharacteristics<double>::MinValue(){
 	return -std::numeric_limits<double>::max();
 }
 

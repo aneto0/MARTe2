@@ -44,6 +44,7 @@ namespace MARTe {
 
 namespace FastMath {
 
+#if 0
 typedef unsigned char uint8 ;
 typedef unsigned short uint16 ;
 typedef unsigned long uint32 ;
@@ -53,6 +54,7 @@ typedef short int16 ;
 typedef long int32 ;
 typedef long long int64 ;
 typedef float float32 ;
+#endif
 
 /** 128 Bit unsigned integer. */
 typedef unsigned __int128 uint128;

@@ -24,9 +24,7 @@
 #
 #############################################################
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
-
-BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+#include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
 
 #The name of the parent target (i.e. the Makefiles that use this definition are Makefile.gcc)
 
@@ -47,11 +45,11 @@ GCOVEXT=.gcov
 DEFEXT=.def
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
-OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
-OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
+#OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
+#OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
 
-SUBPROJ = $(SPB:%.x=%.spb)
-SUBPROJC = $(SPB:%.x=%.spc)
+#SUBPROJ = $(SPB:%.x=%.spb)
+#SUBPROJC = $(SPB:%.x=%.spc)
 
 COMPILER = g++
 CCOMPILER = gcc
@@ -66,3 +64,12 @@ CPPFLAGS = -fPIC -frtti -Wall -std=c++98 -Werror -Wno-invalid-offsetof
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+
+#
+# parts depending on the directory separator 
+#
+
+# calculates the build directory by combining $ROOT_DIR "Build" $PACKAGE Current_Directory
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%$(OBJEXT)) 
+

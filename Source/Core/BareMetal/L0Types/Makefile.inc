@@ -26,7 +26,7 @@
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-       
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 # to allow horizontal naviagtion in the tree. Generates subprojects associated to the HTEARS

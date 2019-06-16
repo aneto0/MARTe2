@@ -302,9 +302,10 @@ void SaturatedInteger<baseType>::SetCode(uint8 code)  {
 	data += (baseType)code;
 }
 
+//SaturatedInteger<baseType>::SaturatedInteger(char8 special='0'){
 
 template <typename baseType>
-SaturatedInteger<baseType>::SaturatedInteger(char8 special='\0'){
+SaturatedInteger<baseType>::SaturatedInteger(char8 special){
 	if (special == '\0'){
 		data = 0;
 	} else
@@ -499,7 +500,8 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator*=(const Saturat
 					SetCode(positiveInf);
 				}
 			} else {
-				if ((~overflow == 0) && (result < 0)){
+				baseType overFlowBI = ~overflow;
+				if ((overFlowBI == 0) && (result < 0)){
 					data = result;
 				} else {
 					SetCode(negativeInf);

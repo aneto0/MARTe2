@@ -33,9 +33,9 @@ INCLUDES += -I../../L0Types
 INCLUDES += -I$(ROOT_DIR)/Test/$(PACKAGE)
 INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L0Types/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
 SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
          $(ROOT_DIR)/Test/GTest/BareMetal/L0Types.x \

@@ -36,12 +36,12 @@ INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Test/$(PACKAGE)
 INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/L1Portability/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/GTest/FileSystem/L1Portability/*$(OBJEXT) 
-LIBRARIES_NODEP += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/FileSystem/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
 SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
          $(ROOT_DIR)/Test/GTest/FileSystem/L1Portability.x \

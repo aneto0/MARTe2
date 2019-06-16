@@ -31,6 +31,8 @@
 
 #include "MatrixTest.h"
 #include <stdio.h>
+#include <stdlib.h>
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

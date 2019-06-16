@@ -169,7 +169,7 @@ baseType BitRange<baseType, numberOfBits, bitOffset>::BitOffset() {
 }
 
 template <typename baseType, uint8 numberOfBits, uint8 bitOffset>
-class TypeCharacteristics<BitRange<baseType, numberOfBits, bitOffset>>{
+class TypeCharacteristics<BitRange<baseType, numberOfBits, bitOffset> >{
 public:
 
 	/**

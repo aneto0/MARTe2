@@ -24,6 +24,7 @@
 #############################################################
 
 
+
 # PLATFORM SPECIFIC
 ENVIRONMENT=Windows
 ARCHITECTURE=x86_cl
@@ -59,4 +60,13 @@ FOPTS    =   -optimize:4
 
 .SUFFIXES:     .cpp .obj  .o .a .lib .exe 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
+#include $(MAKEDEFAULTDIR)/MakeStdLibDefs.all
+
+#
+# parts depending on the directory separator 
+#
+
+# calculates the build directory by combining $ROOT_DIR "Build" $PACKAGE Current_Directory
+BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)\\%$(OBJEXT)) 

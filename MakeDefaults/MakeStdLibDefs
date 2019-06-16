@@ -1,0 +1,79 @@
+#############################################################
+#
+# Copyright 2011 EFDA | European Fusion Development Agreement
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http:k/ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+#!! variables to be set before including  this !!
+# name of the destination minus the current directory which is appended to
+#PACKAGE=
+# path (relative or absolute) to the MARTe root
+#ROOT_DIR=../../../../..
+# path (relative or absolute) to the MakeDefaults
+#MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+#!! variables to be modified after including  this !!
+# sets the libraries to be use when building exes dlls and libs. Dependencies are NOT checked
+#LIBRARIES =
+# sets the search paths to be added to the includes
+#INCLUDES =
+# sets the subrojects to be built as part of this build
+#SPB    = 
+# sets the exe/lib/dll targets to be added
+#BUILD_PRODUCT = 
+
+#sets the default goal of the Makefile
+.DEFAULT_GOAL := default
+
+# classical MARTe compilation order. Tear by Tear
+ifeq (VERTICAL,$(MAKEPATH))
+VTEARS= BareMetal $(TEARS)
+HTEARS= 
+endif
+
+# new MARTe compilation order. Level by level
+ifeq (HORIZONTAL,$(MAKEPATH))
+VTEARS= BareMetal
+HTEARS= $(TEARS)
+endif
+
+#identify OS
+UNAME := $(shell uname)
+ifeq (Linux,$(UNAME))
+TARGET = x86-linux
+endif
+ifeq (windows32,$(UNAME))
+TARGET = msc
+endif
+
+OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) $(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+
+SUBPROJ    = $(SPB:%.x=%.spb)
+SUBPROJLT  = $(SPB:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 
+SUBPROJLT2 = $(SPBLT:%.x=%.spb)  
+
+PP=   $(PPX:%.x=msc\\%.pp) 
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+
+

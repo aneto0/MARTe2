@@ -32,6 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CompilerTypes.h"
+
+
 #include "Pointer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -253,7 +256,7 @@ void Vector<T>::FreeMemory(){
     		pT->~T();
     		p8 += sizeof(T);
     	}
-        delete(dataPointer);
+        delete(reinterpret_cast<char8*>(dataPointer));
     }
     Pointer::Set(NULL);
     dataPointer = NULL;

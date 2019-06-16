@@ -131,7 +131,7 @@ FractionalInteger<baseType, numberOfBits>::operator baseType() const {
 }
 
 template <typename baseType, uint8 numberOfBits>
-class TypeCharacteristics<FractionalInteger<baseType, numberOfBits>>{
+class TypeCharacteristics<FractionalInteger<baseType, numberOfBits> >{
 public:
 
 	/**

@@ -59,7 +59,7 @@ public:
      * @pre
      *   arrayIn is zero terminated.
      */
-    ZeroTerminatedArray(T *arrayIn=NULL_PTR(T *));
+    inline ZeroTerminatedArray(T *arrayIn=NULL_PTR(T *));
 
     /**
      * @brief Returns the element in the specified position.
@@ -72,14 +72,14 @@ public:
      * @brief Retrieves the size of the array.
      * @return the number of elements in the array (excluding the terminator Zero).
      */
-    uint32 GetSize() const;
+    inline uint32 GetSize() const;
 
     /**
      * @brief Finds the first location in the array that contains T
      * @param[in] data is the element to be found.
      * @return the position in the array where T is found, 0xFFFFFFFF if not found.
      */
-    uint32 Find(const T & data) const;
+    inline uint32 Find(const T & data) const;
 
     /**
      * @brief Checks if data is in this array
@@ -92,13 +92,13 @@ public:
      * @brief Returns the pointer to the beginning of the array.
      * @return the pointer to the beginning of the array.
      */
-    T * GetList() const ;
+    inline T * GetList() const ;
 
     /**
      * @brief Allows changing the list
      * @param[in] arrayIn is the zero terminated array input.
      */
-    void SetList(T *arrayIn)  ;
+    inline void SetList(T *arrayIn)  ;
 
     /**
      * move pointer ahead of one element. Checks limits
@@ -283,6 +283,10 @@ bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
     }
     return same;
 }
+
+template<>
+inline bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const;
+
 
 template<>
 bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const {

@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,11 +20,29 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
-TARGET=msc
 
-include Makefile.inc
+PACKAGE=Core/BareMetal/L0Types
+ROOT_DIR=../../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-LIBRARIES += kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs
+
+INCLUDES += -I..
+INCLUDES += -I../../L0Types 
+INCLUDES += -I$(ROOT_DIR)/Test/$(PACKAGE)
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
+
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+
+SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
+         $(ROOT_DIR)/Test/GTest/BareMetal/L0Types.x \
+         $(ROOT_DIR)/Source/Tools/TestSupport.x
+
+
+BUILD_PRODUCT = $(BUILD_DIR)/Test$(EXEEXT)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules
+
