@@ -1,0 +1,99 @@
+%.spb : 
+	$(MAKE) -C $* -f Makefile.$(TARGET) MAKEMODE=$(MAKEMODE) MAKEPATH=$(MAKEPATH)
+
+MAKEMODE:=INFO
+MAKEPATH:=VERTICAL
+
+.PHONY: clean
+clean:  
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=CLEAN
+
+.PHONY: cleanLT
+cleanLT:   
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=CLEANLT MAKEPATH=HORIZONTAL
+
+.PHONY: test
+test: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=TEST
+
+.PHONY: localTest
+localTest: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=LOCALTEST MAKEPATH=HORIZONTAL
+
+.PHONY: all
+all: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=ALL
+
+.PHONY: build
+build: 	
+	$(MAKE)  -f Makefile.$(TARGET) MAKEMODE=BUILD
+
+.PHONY: do_cleandir
+do_cleandir: 	
+	@if exist depends.* rm -f depends*
+	@if exist $(BUILD_DIR)/*$(DLLEXT) rm -f $(BUILD_DIR)/*$(DLLEXT)	
+	@if exist $(BUILD_DIR)/*$(EXEEXT) rm -f $(BUILD_DIR)/*$(EXEEXT)
+	@if exist $(BUILD_DIR)/*$(LIBEXT) rm -f $(BUILD_DIR)/*$(LIBEXT)
+	@if exist $(BUILD_DIR)/*$(GAMEXT) rm -f $(BUILD_DIR)/*$(GAMEXT)
+	@if exist $(BUILD_DIR)/*$(DRVEXT) rm -f $(BUILD_DIR)/*$(DRVEXT)
+	@if exist $(BUILD_DIR)/*$(ASMEXT) rm -f $(BUILD_DIR)/*$(ASMEXT)
+	@if exist $(BUILD_DIR)/*$(GCNOEXT) rm -f $(BUILD_DIR)/*$(GCNOEXT)
+	@if exist $(BUILD_DIR)/*$(GCDAEXT) rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@if exist $(BUILD_DIR)/*$(ILKEXT) rm -f $(BUILD_DIR)/*$(ILKEXT)
+	@if exist $(BUILD_DIR)/*$(PDBEXT) rm -f $(BUILD_DIR)/*$(PDBEXT)
+	@if exist $(BUILD_DIR)/*$(DEFEXT) rm -f $(BUILD_DIR)/*$(DEFEXT)	
+	@if exist $(BUILD_DIR)/*$(OBJEXT) rm -f $(BUILD_DIR)/*$(OBJEXT)
+        
+.PHONY: do_showInfo
+do_showInfo: 	
+	@echo choose among 
+	@echo 1) make Makefile.msc build     to build libraries
+	@echo 2) make Makefile.msc clean     to remove any produced file
+	@echo 3) make Makefile.msc test      to build test programs after all the libraries
+	@echo 4) make Makefile.msc localTest to build test programs level by level
+	@echo 5) make Makefile.msc cleanLT   to remove any produced file in the local test build
+	@echo 6) make Makefile.msc all       to build libraries and test programs
+    
+
+ifeq (CLEANLT,$(MAKEMODE))
+DEPENDS = do_cleandir $(SUBPROJLT) $(SUBPROJLT2)
+endif
+
+ifeq (CLEAN,$(MAKEMODE))
+DEPENDS = do_cleandir $(SUBPROJ)
+endif
+
+ifeq (INFO,$(MAKEMODE))
+DEPENDS = do_showInfo
+endif
+
+ifeq (BUILD,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJ) $(BUILD_PRODUCT)
+include depends.$(TARGET)
+endif
+
+ifeq (TEST,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJT) $(BUILD_PRODUCT)
+include depends.$(TARGET)
+endif
+
+ifeq (LOCALTEST,$(MAKEMODE))
+DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT) $(SUBPROJLT2)
+include depends.$(TARGET)
+endif
+
+ifeq (ALL,$(MAKEMODE))
+DEPENDS = $(OBJS)  $(SUBPROJLT) $(SUBPROJT) $(BUILD_PRODUCT)
+include depends.$(TARGET)
+endif
+		
+.PHONY: default
+default:   $(DEPENDS)
+	@echo MAKEMODE=$(MAKEMODE) MAKEPATH=$(MAKEPATH) 
+	@echo VTEARS=$(VTEARS)
+	@echo HTEARS=$(HTEARS)
+	@echo SPBLT= $(SPBLT)
+	@echo executed $(DEPENDS)
+
+
+
