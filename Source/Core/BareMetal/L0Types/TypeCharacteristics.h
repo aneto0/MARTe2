@@ -133,7 +133,11 @@ inline const double TypeCharacteristics<double>::MinValue(){
 }
 
 /**
- * @briefs converts any number to any other number saturating the conversion
+ * @briefs converts any number to any other number saturating the conversion. The function works with any type for which TypeCharacteristics is implemented
+ * @tparam outputType Any number for which TypeCharacteristics is implemented
+ * @tparam inputType Any number for which TypeCharacteristics is implemented
+ * @param src is the number to copy
+ * @param dest is the number to be copied to
  * @return false if saturation was necessary
  */
 template <typename inputType,typename outputType>
@@ -166,7 +170,7 @@ inline bool SafeNumber2Number(inputType src,outputType &dest){
  * @tparam inputType An integer type
  * @tparam bitSize The bit size value of type outputType
  * @param[in] input is the input value.
- * @return If the input value is minor than the maximum value (depending on the specified type and bit size)
+ * @return If the input value is less than the maximum value (depending on the specified type and bit size)
  * and greater than the minimum value it will be returned untouched. Otherwise this function returns the
  * maximum value if it is smaller than the input, or the minimum value if is greater than the input.
  */

@@ -143,7 +143,8 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 				// whether to switch to next for next cycle
 				// after a delete there is no need anymore
 				//bool getNext=true;
-				ListNodeT<loadClass> *target = reinterpret_cast<ListNodeT<loadClass>*>(current->next);
+//				ListNodeT<loadClass> *target = reinterpret_cast<ListNodeT<loadClass>*>(current->next);
+				ListNodeT<loadClass> *target = static_cast<ListNodeT<loadClass>*>(current->next);
 
 				ia = iterator.Do(target->load);
 				if (ia.notAnErrorCode){
@@ -163,7 +164,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 						if (!iterator.GetNodeToInsert(lc)){
 							ret.format_as_integer = ErrorManagement::InvalidOperation;
 						}
-						ListNode *rep;
+						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
 							if (rep == NULL){
@@ -184,7 +185,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 						if (!iterator.GetNodeToInsert(lc)){
 							ret.format_as_integer = ErrorManagement::InvalidOperation;
 						}
-						ListNode *rep;
+						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
 							if (rep == NULL){
@@ -206,7 +207,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 						if (!iterator.GetNodeToInsert(lc)){
 							ret.format_as_integer = ErrorManagement::InvalidOperation;
 						}
-						ListNode *rep;
+						ListNode *rep = NULL_PTR(ListNode *);
 						if (ret){
 							rep = new ListNodeT<loadClass>(lc);
 							if (rep == NULL){

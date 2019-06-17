@@ -54,44 +54,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#if 0
-long long allocCount = 0;
 
-void *operator new(std::size_t size){
-	if (size == 0 ) return NULL;
-	++allocCount;
-//	printf("A new %i %lli \n",size,count);
-    void* ptr = malloc( size );
-	printf("[+%08p, %lli]\n",ptr,allocCount);
-    return ptr;
-}
-void *operator new[](std::size_t size){
-	if (size == 0 ) return NULL;
-	++allocCount;
-//	printf("B new %i %lli \n",size,count);
-    void* ptr = malloc( size );
-	printf("[>%08p, %lli]\n",ptr,allocCount);
-    return ptr;
-}
-void operator delete(void *ptr) {
-	if (ptr== NULL ) {
-		printf("[-%08p, %lli]\n",ptr,allocCount);
-	} else {
-		allocCount--;
-		printf("[-%08p, %lli]\n",ptr,allocCount);
-		free(ptr);
-	}
-}
-void operator delete[](void *ptr) {
-	if (ptr== NULL ) {
-		printf("[-%08p, %lli]\n",ptr,allocCount);
-	} else {
-		allocCount--;
-		printf("[-%08p, %lli]\n",ptr,allocCount);
-		free(ptr);
-	}
-}
-#endif
 
 namespace MARTe{
 

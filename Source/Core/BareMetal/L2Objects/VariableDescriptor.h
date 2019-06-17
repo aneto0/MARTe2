@@ -48,7 +48,7 @@ class Object;
 class DynamicCString;
 class StreamString;
 class StructuredDataI;
-class testStruct;
+//class testStruct;
 class Reference;
 template <uint32 sz>  class StaticCString;
 }

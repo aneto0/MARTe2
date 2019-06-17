@@ -26,6 +26,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -33,6 +35,9 @@
 
 #include "TestSupport.h"
 #include "TypeCharacteristicsTest.h"
+#include "CompilerTypes.h"
+#include "BitRange.h"
+#include "FractionalInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,6 +46,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+//void printf(const char *s,...);
 
 TEST(TypeCharacteristicsGTest,TestIsSignedInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
@@ -137,5 +144,25 @@ TEST(TypeCharacteristicsGTest,TestSaturableIntegerLessThan2) {
     ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan2());
 }
 
+#define TestSafeN2N(typeIn,typeOut,valueIn,expectedValueOut,testName)\
+TEST(TypeCharacteristicsGTest,TestSafeNumber2Number ## testName) {\
+    TypeCharacteristicsTest myTypeCharacteristicsTest;\
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<typeIn,typeOut>(valueIn,expectedValueOut)));\
+}\
 
+
+
+TestSafeN2N(MARTe::float32,MARTe::int20,1e6,524287,F32_I20_1M);
+TestSafeN2N(MARTe::float32,MARTe::int21,1e6,1000000,F32_I21_1M);
+TestSafeN2N(MARTe::float32,MARTe::uint19,1e6,524287,F32_U19_1M);
+TestSafeN2N(MARTe::float32,MARTe::uint20,1e6,1000000,F32_U20_1M);
+TestSafeN2N(MARTe::float32,MARTe::int20,-1e6,-524288,F32_I20_M1M);
+TestSafeN2N(MARTe::float32,MARTe::int21,-1e6,-1000000,F32_I21_M1M);
+TestSafeN2N(MARTe::uint30,MARTe::int30,1000000000,536870911,U30_I30_1G);
+TestSafeN2N(MARTe::uint30,MARTe::int31,1000000000,1000000000,U30_I31_1G);
+TestSafeN2N(MARTe::uint35,MARTe::int32,4000000000,2147483647,U35_I32_4G);
+TestSafeN2N(MARTe::uint35,MARTe::uint32,4000000000,4000000000,U35_U32_4G);
+TestSafeN2N(MARTe::int35 ,MARTe::uint32,4000000000,4000000000,I35_U32_4G);
+TestSafeN2N(MARTe::int35 ,MARTe::float32,4000000128,4000000000,I35_F32_4G);
+TestSafeN2N(MARTe::int35 ,MARTe::float64,4000000000,4000000000,I35_F64_4G);
 	

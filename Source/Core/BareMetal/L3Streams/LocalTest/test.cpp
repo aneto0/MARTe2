@@ -21,9 +21,6 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-// disable warning on sprintf
-#define _CRT_SECURE_NO_WARNINGS
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -42,8 +39,6 @@
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
 #include "StartupManager.h"
-#include "CompositeErrorManagement.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -56,9 +51,92 @@
 namespace MARTe{
 
 
-/**
- * Big complex structure for testing
- */
+void printType(const AnyType &at){
+    const VariableDescriptor &vd = at.GetFullVariableDescriptor();
+    //printf("!4");
+
+    DynamicCString line;
+    vd.ToString(line);
+    printf("%s",line.GetList());
+    line().Truncate(0);
+    vd.ToString(line,true);
+    printf("  {%s}",line.GetList());
+
+    uint64 dataSize;
+    uint64 storageSize;
+    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
+
+    int sz = static_cast<int>(dataSize);
+    int stsz = static_cast<int>(storageSize);
+    printf(" sz = %i stsz = %i\n",sz,stsz);
+}
+
+
+template <class T>
+ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
+
+    ErrorManagement::ErrorType ok;
+
+    printf("------------------\n");
+
+    /*
+     * used as a pointer to avoid allocating unnecessary stack memory
+     */
+    T *x ;
+    // build a memory block made with pointers pointing to the next pointer...
+    const uint32 NS = 128;
+    void *memory[NS];
+    uint32 i;
+    for (i=0;i<(NS-1);i++){
+        memory[i]=&memory[i+1];
+    }
+    memory[NS-1]=NULL;
+
+    /* assigned to a real pointer to avoid problems */
+    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
+
+    AnyType at(*x);
+    //printf("!1");
+
+    if (deref.GetSize() > 0){
+        printf("(%-24s)%s",orig.GetList(),deref.GetList());
+
+        ok = at.MultipleDereference(deref);
+
+    } else {
+        printf("%-26s ",orig.GetList());
+    }
+
+    //printf("!2");
+    if (ok){
+        bool sameAddress = (at.GetVariablePointer() == &memory);
+        if (sameAddress) {
+            printf("[Address same] ");
+        }
+        else {
+            int64 delta =  reinterpret_cast<const char8 *>(at.GetVariablePointer()) - reinterpret_cast<const char8  *>(&memory[0]);
+            printf("[Address delta(B)= %Li] ",delta);
+        }
+        printf("\n");
+        //printf("!3");
+        printType(at);
+    } else {
+        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
+        while (!etl->name.IsNullPtr()){
+            if ((etl->errorBitSet &  ok.format_as_integer)!= 0){
+                printf("%s\n",etl->name.GetList());
+            }
+            etl++;
+        }
+    }
+
+    return ok;
+}
+
+
+
+
+
 struct testStruct3{
     float 		fieldA;
     CCString	fieldB;
@@ -89,19 +167,8 @@ struct testStruct2{
     Vector<float> fieldF;
     float*        fieldG;
     CString       fieldH;
-
-    testStruct2():fieldB(0){
-    	fieldA[0]='\0';
-    	fieldC = NULL;
-    	fieldD = 0;
-    	fieldE = 0;
-    	fieldG = NULL;
-    }
-private:
-    void operator=(testStruct2 &x){
-
-    }
 };
+
 
 struct testStruct{
     char8         fieldA;
@@ -116,110 +183,8 @@ struct testStruct{
     testStruct2   fieldJ;
     Matrix<testStruct3>   fieldK;
     testStruct4   fieldL;
-
-    testStruct():fieldB(0){
-    	fieldA ='\0';
-    	fieldC = NULL;
-    	fieldD = 0;
-    	fieldE = 0;
-    	fieldF = 0.0;
-    	fieldG = NULL;
-    	fieldI = NULL;
-    }
-
-private:
-    void operator=(testStruct &x){
-
-    }
 };
 
-/**
- * Utility Function
- */
-static void printType(const AnyType &at){
-    const VariableDescriptor &vd = at.GetFullVariableDescriptor();
-    //printf("!4");
-
-    DynamicCString line;
-    vd.ToString(line);
-    printf("%s",line.GetList());
-    line().Truncate(0);
-    vd.ToString(line,true);
-    printf("  {%s}",line.GetList());
-
-    uint64 dataSize;
-    uint64 storageSize;
-    vd.GetSize(reinterpret_cast<const uint8 *>(at.GetVariablePointer()),dataSize, &storageSize);
-
-    int sz = static_cast<int>(dataSize);
-    int stsz = static_cast<int>(storageSize);
-    printf(" sz = %i stsz = %i\n",sz,stsz);
-}
-
-
-/**
- * Creates a variable of type T. Memory is initialised with uintp values containing addresses within same memory
- * AnyType of this variable is created.
- * Using the expression deref an AnyType of the dereference of the original variable is created
- *
- */
-template <class T>
-static ErrorManagement::ErrorType testDerefT(CCString orig,CCString deref=""){
-
-    ErrorManagement::ErrorType ok;
-
-    printf("------------------\n");
-
-    /*
-     * used as a pointer to avoid allocating unnecessary stack memory
-     */
-    T *x ;
-    // build a memory block made with pointers pointing to the next pointer...
-    const uint32 NS = 128;
-    void *memory[NS];
-    uint32 i;
-    for (i=0;i<(NS-1);i++){
-        memory[i]=&memory[i+1];
-    }
-    memory[NS-1]=NULL;
-
-    /* assigned to a real pointer to avoid problems */
-    x = reinterpret_cast<T*>(reinterpret_cast<uintp>(&memory));
-
-    AnyType at(*x);
-
-    if (deref.GetSize() > 0){
-        printf("(%-24s)%s",orig.GetList(),deref.GetList());
-
-        ok = at.MultipleDereference(deref);
-        COMPOSITE_REPORT_ERROR(ok,"Failed ",orig,"->MultipleDereference(",deref,")");
-    } else {
-        printf("%-26s ",orig.GetList());
-    }
-
-    if (ok){
-        bool sameAddress = (at.GetVariablePointer() == &memory);
-        if (sameAddress) {
-            printf("[Address same] ");
-        }
-        else {
-            int64 delta =  reinterpret_cast<const char8 *>(at.GetVariablePointer()) - reinterpret_cast<const char8  *>(&memory[0]);
-            printf("[Address delta(B)= %Li] ",delta);
-        }
-        printf("\n");
-        printType(at);
-    } else {
-        ErrorManagement::ErrorTypeLookup *etl = &ErrorManagement::errorTypeLookup[0];
-        while (!etl->name.IsNullPtr()){
-            if ((etl->errorBitSet &  ok.format_as_integer)!= 0){
-                printf("%s\n",etl->name.GetList());
-            }
-            etl++;
-        }
-    }
-
-    return ok;
-}
 
 
 #define TEST(x)     testDerefT<x>(#x)
@@ -471,13 +436,11 @@ struct RefNameKey{
     static int8 CompareToKey(Reference &ref, const BalancedTreeNodeKey &K){
         const char8* Ks = static_cast<const char8 *> (K);
         CCString key(Ks);
-        return static_cast<int8>(ref->GetName().CompareContent(key));
-//        return StringHelper::Compare(ref->GetName(),key );
+        return StringHelper::Compare(ref->GetName(),key );
     }
 
     static int8 Compare(Reference &ref, Reference &ref2){
-        return static_cast<int8>(ref->GetName().CompareContent(ref2->GetName()));
-//        return StringHelper::Compare(ref->GetName(),ref2->GetName());
+        return StringHelper::Compare(ref->GetName(),ref2->GetName());
     }
 };
 
@@ -596,9 +559,10 @@ void testOther(){
 
     for (i = 0;i< refsSz;i++){
         char buffer[256];
-        MARTe::uint32 r = static_cast<MARTe::uint32>(rand());
-        MARTe::uint32 r2 = static_cast<MARTe::uint32>(rand());
-        MARTe::uint32 r3 = static_cast<MARTe::uint32>(rand());
+        MARTe::uint32 r = rand();
+        MARTe::uint32 r2 = rand();
+        MARTe::uint32 r3 = rand();
+
 
         sprintf(buffer,"%x%x%x",r,r2,r3);
 
@@ -617,7 +581,7 @@ void testOther(){
 
     printf("Tree1 Size = % 7i % 3i %12f  \n",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
 
-    for (char k = 0;k<16;k++)
+    for (int k = 0;k<16;k++)
     {
         char c = '0'+k;
         if (k>= 10) c = 'a'+k-10;
@@ -627,7 +591,7 @@ void testOther(){
         printf("Tree1 Size = % 7i % 3i %12f  \n",bth.Size() ,bth.Depth() ,(float)bth.Depth() /(log10((float)bth.Size()) /log10(2.0)));
     }
 
-    for (char k = 0;k<16;k++)
+    for (int k = 0;k<16;k++)
     {
         char c = '0'+k;
         if (k>= 10) c = 'a'+k-10;
@@ -637,7 +601,7 @@ void testOther(){
         printf("Tree2 Size = % 7i % 3i %12f  \n",bth2.Size() ,bth2.Depth() ,(float)bth2.Depth() /(log10((float)bth2.Size()) /log10(2.0)));
     }
 
-    for (char k = 0;k<16;k++)
+    for (int k = 0;k<16;k++)
     {
         char c = '0'+k;
         if (k>= 10) c = 'a'+k-10;

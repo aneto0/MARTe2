@@ -163,6 +163,14 @@ public:
      */
     bool TestSaturableIntegerLessThan2();
 
+    /**
+     * @brief Test the SafeNumber2Number function
+     * @details the function checks if ret = SafeNumber2Number(src, dest) && dest = expectedResult.
+     * Also does ret2 = SafeNumber2Number(dest,src2) and expects ((ret==true) && (src==src2)) || ((ret!=true) && (src!=src2))
+     */
+    template <typename inputType,typename checkType>
+    inline bool TestSafeNumber2Number(inputType src,checkType expectedResult);
+
 private:
 
     /**
@@ -170,12 +178,34 @@ private:
      */
     bool retVal;
 
-
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+template <typename inputType,typename checkType>
+bool TypeCharacteristicsTest::TestSafeNumber2Number(inputType src,checkType expectedResult){
+	bool ret;
+
+	checkType dest;
+	bool ret1 = SafeNumber2Number(src,dest);
+
+	ret = (dest == expectedResult);
+	inputType src2 = src;
+	if (ret){
+		ret = SafeNumber2Number(dest,src2);
+	}
+	if (ret){
+		inputType err = 0;
+		if (src > src2) err = src - src2;
+		else            err = src2 - src;
+		// the threshold is to allow errors in float to int conversions
+		ret = (ret1 == (err <= 128));
+	}
+
+	return ret;
+}
+
 
 #endif /* TEST_CORE_L0TYPEDEV_TYPECHARACTERISTICSTEST_H_ */
 

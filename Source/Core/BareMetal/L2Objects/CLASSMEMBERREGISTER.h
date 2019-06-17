@@ -58,17 +58,22 @@ public:
 
 	/**
 	 * @brief constructor. Its job is to add class member info to the database
+     * @param[in] cri is the class record to be filled with information : always MARTe::ClassRegistryItem::Instance<className>()
+     * @param[in] member is the member to be documented
+     * @param[in] nameIn is the name of the member to be documented
+     * @param[in] offsetIn is the position of the member within the class
+     * @param[in] size is the size of the member
 	 */
 	template <class  Tmember>
 	ClassMemberRegister(
 			            ClassRegistryItem * cri,
 			            Tmember &member,
-			            CCString methodName,
-			            uint64 index,
+			            CCString nameIn,
+						uint32 offsetIn,
 			            uint32 size)
 	{
 	    if (cri != NULL_PTR(ClassRegistryItem * )){
-	        cri->AddMember(new ClassMember(&member, methodName, index));
+	        cri->AddMember(new ClassMember(&member, nameIn, offsetIn));
 	    }
 	}
 
@@ -86,7 +91,7 @@ public:
                MARTe::ClassRegistryItem::Instance<className>(),\
                memberOf(className, memberName),\
                #memberName, \
-               indexof(className, memberName),\
+               static_cast<uint32>(indexof(className, memberName)),\
                msizeof(className, memberName) );
 
 #define CLASS_INHERIT_REGISTER(className, className2)\
@@ -94,7 +99,7 @@ public:
                MARTe::ClassRegistryItem::Instance<className>(),\
                *((className2 *)(1024)),\
                "", \
-               ancestorIndexof(className, className2),\
+			   static_cast<uint32>(ancestorIndexof(className, className2)),\
                sizeof(className2) );
 
 

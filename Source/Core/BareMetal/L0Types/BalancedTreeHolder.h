@@ -129,7 +129,8 @@ inline ErrorManagement::ErrorType BalancedTreeHolder<loadClass,keyClass,loadKey>
 				BalancedTreeNodeKey dummy;
 				BalancedTreeNode *rootG = root;
 				if (BalancedTreeNode::ExtractAVL(rootG, extracted,dummy,0)){
-					root = reinterpret_cast<BalancedTreeNodeT<loadClass,keyClass, loadKey>*>(rootG);
+					root = static_cast<BalancedTreeNodeT<loadClass,keyClass, loadKey>*>(rootG);
+//					root = reinterpret_cast<BalancedTreeNodeT<loadClass,keyClass, loadKey>*>(rootG);
 					delete extracted;
 				}
 			} break;
