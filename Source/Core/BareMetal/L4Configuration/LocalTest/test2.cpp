@@ -744,11 +744,8 @@ void TestSafeN2N(T1 value)
     bool ret = SafeNumber2Number(in,out);
     double tst = out;
     if (!ret) printf("sat   "); else printf("no sat ");
-//    int32 ival = i1;
     ss.Printf("%!(%?) --> %!(%?) !! %!(%?) \n",in,in,out,out,tst,tst);
     printf("%s",ss.Buffer());
-//    printf ("%f --> %i(int%i)\n",f,ival,i1.GetNumberOfBits());
-
 }
 
 template <typename T1>

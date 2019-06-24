@@ -146,6 +146,12 @@ public:
      */
     inline bool In(const char8& data) const;
 
+    /**
+     * @brief Finds the first location in the array that contains T
+     * @param[in] pattern is the substring to be found.
+     * @return the position in the array where T is found, 0xFFFFFFFF if not found.
+     */
+    uint32 FindPattern(CCString pattern) const;
 };
 
 static const CCString emptyString(static_cast<uint32>(0));
@@ -212,10 +218,14 @@ int32 CCString::CompareContent(const char8 *arrayIn,uint32 limit) const{
 	return ZeroTerminatedArray<const char8>::CompareContent(arrayIn,limit);
 }
 
-
 bool CCString::In(const char8& data) const{
 	return ZeroTerminatedArray<const char8>::In(data);
 }
+
+uint32 CCString::FindPattern(CCString pattern) const{
+	return ZeroTerminatedArray<const char8>::FindPattern(pattern.GetList());
+}
+
 }
 #endif /* L0TYPES_CCSTRING_H_ */
 	

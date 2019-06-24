@@ -32,25 +32,34 @@
 #include "ClassMethodCallerTTest.h"
 #include "ClassMethodCallerT.h"
 #include "ClassWithCallableMethods.h"
-#include "ConfigurationDatabase.h"
 #include "ErrorType.h"
 #include "ReferenceContainer.h"
+#include "VoidStream.h"
+#include "SimpleStructuredData.h"
+#include "SimpleStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace {
-/**
- * @brief Helper class to test a StreamString inside a reference container
- */
-class ClassMethodCallerTTestStreamString: public MARTe::Object, public MARTe::StreamString {
-public:
-    CLASS_REGISTER_DECLARATION()
 
-ClassMethodCallerTTestStreamString    () : Object(), StreamString() {
+
+namespace {
+
+/**
+ * @brief Helper class to test a DynamicCString inside a reference container
+ */
+class ClassMethodCallerTTestStreamString: public MARTe::Object, public MARTe::SimpleStream {
+public:
+    CLASS_REGISTER_DECLARATION();
+
+    ClassMethodCallerTTestStreamString    () : Object(),  SimpleStream() {
 
     }
+
+    MARTe::CCString ToString(){
+		return MARTe::CCString(this->GetList());
+	}
 
 };
 CLASS_REGISTER(ClassMethodCallerTTestStreamString, "1.0")
@@ -85,7 +94,7 @@ bool ClassMethodCallerTTest::TestCall_VoidParameters() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(void), void, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithVoidParameters, 0x0000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         target.Call(&context, parameters);
         result = (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
     }
@@ -101,7 +110,7 @@ bool ClassMethodCallerTTest::TestCall_VoidParameters() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(void), void, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithVoidParameters, 0x0000);
-        StreamString parameters;
+        SimpleStream parameters;
         result = target.Call(&context, parameters);
         result &= (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
     }
@@ -115,7 +124,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 80;
         parameters.Write("param1", param1);
         result = target.Call(&context, parameters);
@@ -127,7 +136,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 80;
         info->Write("param1", param1);
         ReferenceContainer parameters;
@@ -141,7 +150,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 80;
         info->Write("param2", param1);
         ReferenceContainer parameters;
@@ -159,7 +168,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputIntegerByCopy, 0x0000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -168,7 +177,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 40;
         parameters.Write("param1", param1);
         result = target.Call(&context, parameters);
@@ -180,7 +189,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 40;
         info->Write("param1", param1);
         ReferenceContainer parameters;
@@ -194,7 +203,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 40;
         info->Write("param2", param1);
         ReferenceContainer parameters;
@@ -212,7 +221,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputInteger, 0x0000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -227,7 +236,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         result = target.Call(&context, parameters);
         uint32 param1;
         parameters.Read("param1", param1);
@@ -238,7 +247,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         ReferenceContainer parameters;
         parameters.Insert(info);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -251,7 +260,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputOutputInteger, 0x1000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 10;
         parameters.Write("param1", param1);
         result = target.Call(&context, parameters);
@@ -263,7 +272,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputOutputInteger, 0x1000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         ReferenceContainer parameters;
         parameters.Insert(info);
         uint32 param1 = 10;
@@ -277,7 +286,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 10;
         info->Write("param2", param1);
         ReferenceContainer parameters;
@@ -295,7 +304,7 @@ bool ClassMethodCallerTTest::TestCall_OneBasicParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(int32 &), int32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputInteger, 0x1000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -310,7 +319,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StructuredDataI &), StructuredDataI, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithConstInputStructuredDataI, 0x0000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 value = 20;
         parameters.Write("value", value);
         result = target.Call(&context, parameters);
@@ -322,7 +331,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StructuredDataI &), StructuredDataI, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithConstInputStructuredDataI, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 value = 20;
         info->Write("value", value);
         ReferenceContainer parameters;
@@ -343,7 +352,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StructuredDataI &), StructuredDataI, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithConstInputStructuredDataI, 0x0000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -358,7 +367,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StructuredDataI &), StructuredDataI, void, void,
                 void> target(&ClassWithCallableMethods::MethodWithOutputStructuredDataI, 0x1000);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 value = 30;
         parameters.Write("value", value);
         result = target.Call(&context, parameters);
@@ -370,7 +379,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StructuredDataI &), StructuredDataI, void, void,
                 void> target(&ClassWithCallableMethods::MethodWithOutputStructuredDataI, 0x1000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 value = 30;
         info->Write("value", value);
         ReferenceContainer parameters;
@@ -391,7 +400,7 @@ bool ClassMethodCallerTTest::TestCall_OneStructuredDataIParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StructuredDataI &), StructuredDataI, void, void,
                 void> target(&ClassWithCallableMethods::MethodWithOutputStructuredDataI, 0x1000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -408,7 +417,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
                 void, void> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, 0x0000);
 
         ReferenceContainer parameters;
-        ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<Object> obj(HeapManager::standardHeapId);
         obj->SetName("TestObject");
         parameters.Insert(obj);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -418,7 +427,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(ReferenceContainer &), ReferenceContainer, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerAndStructuredDataIAt0, 0x0000);
-        ReferenceT<ConfigurationDatabase> info(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<SimpleStructuredData> info(HeapManager::standardHeapId);
         uint32 param1 = 10;
         info->Write("value", param1);
         result &= (target.Call(&context, *(info.operator->())) == ErrorManagement::NoError);
@@ -432,7 +441,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
                 void, void, void> target(&ClassWithCallableMethods::MethodWithConstInputReferenceContainer, 0x0000);
 
         ReferenceContainer parameters;
-        ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<Object> obj(HeapManager::standardHeapId);
         obj->SetName("TestObject");
         parameters.Insert(obj);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -442,7 +451,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(ReferenceContainer), ReferenceContainer, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithInputReferenceContainerByCopy, 0x0000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -463,7 +472,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
         ReferenceT<Object> obj = parameters.Get(0);
         result &= obj.IsValid();
         if (result) {
-            result &= (StringHelper::Compare(obj->GetName(), "TestObject2") == 0);
+            result &= (obj->GetName() == "TestObject2") ;
         }
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputReferenceContainer(ReferenceContainer&)");
     }
@@ -474,7 +483,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
         ReferenceContainer parameters;
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         uint32 value;
-        ReferenceT<ConfigurationDatabase> info = parameters.Get(0);
+        ReferenceT<SimpleStructuredData> info = parameters.Get(0);
         result = info.IsValid();
         if (result) {
             info->Read("value", value);
@@ -488,7 +497,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
                 void, void> target(&ClassWithCallableMethods::MethodWithInputOutputReferenceContainer, 0x1000);
 
         ReferenceContainer parameters;
-        ReferenceT<Object> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<Object> obj(HeapManager::standardHeapId);
         obj->SetName("TestObject");
         parameters.Insert(obj);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -500,7 +509,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(ReferenceContainer &), ReferenceContainer, void,
                 void, void> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainer, 0x1000);
-        StreamString parameters;
+        SimpleStream parameters;
         ClassMethodCaller targetForce = target;
         result &= (targetForce.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -515,7 +524,7 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadOnly() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputStreamI, 0x0000);
-        StreamString parameters = "MethodWithConstInputStreamI";
+        SimpleStream parameters("MethodWithConstInputStreamI");
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputStreamI(StreamI)");
     }
@@ -524,9 +533,10 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadOnly() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithConstInputStreamI, 0x0000);
         ReferenceContainer parameters;
-        ReferenceT<ClassMethodCallerTTestStreamString> ss(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        uint32 size = StringHelper::Length("MethodWithConstInputStreamI");
-        ss->Write("MethodWithConstInputStreamI", size);
+        ReferenceT<ClassMethodCallerTTestStreamString> ss(HeapManager::standardHeapId);
+        ss->Init("MethodWithConstInputStreamI");
+//        uint32 size = StringHelper::Length("MethodWithConstInputStreamI");
+//        ss->("MethodWithConstInputStreamI", size);
         parameters.Insert(ss);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (context.GetLastMethodExecuted() == "MethodWithConstInputStreamI(StreamI)");
@@ -542,8 +552,9 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputStreamI, 0x1000);
-        StreamString parameters;
-        result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
+        SimpleStream parameters;
+
+        result &= (!target.Call(&context, parameters).IsErrorCode());
         result &= (parameters == "MethodWithOutputStreamI");
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStreamI(StreamI&)");
     }
@@ -552,18 +563,19 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOutputStreamI, 0x1000);
         ReferenceContainer parameters;
-        ReferenceT<ClassMethodCallerTTestStreamString> ss(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+        ReferenceT<ClassMethodCallerTTestStreamString> ss(HeapManager::standardHeapId);
         parameters.Insert(ss);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
-        StreamString ssToCompare = ss->Buffer();
-        result &= (ssToCompare == "MethodWithOutputStreamI");
+//        DynamicCString ssToCompare = ss->Buffer();
+//        result &= (ssToCompare == "MethodWithOutputStreamI");
+        result &= (ss->ToString() == "MethodWithOutputStreamI");
         result &= (context.GetLastMethodExecuted() == "MethodWithOutputStreamI(StreamI&)");
     }
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputOutputStreamI, 0x1000);
-        StreamString parameters = "MethodWithInputOutputStreamI";
+        SimpleStream parameters = "MethodWithInputOutputStreamI";
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
         result &= (parameters == "ReturnFromMethodWithInputOutputStreamII");
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputStreamI(StreamI&)");
@@ -573,13 +585,14 @@ bool ClassMethodCallerTTest::TestCall_OneStreamIParameterReadWrite() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(StreamI &), StreamI, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithInputOutputStreamI, 0x1000);
         ReferenceContainer parameters;
-        ReferenceT<ClassMethodCallerTTestStreamString> ss(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-        uint32 size = StringHelper::Length("MethodWithInputOutputStreamI");
-        ss->Write("MethodWithInputOutputStreamI", size);
+        ReferenceT<ClassMethodCallerTTestStreamString> ss(HeapManager::standardHeapId);
+//        uint32 size = StringHelper::Length("MethodWithInputOutputStreamI");
+//        ss->Write("MethodWithInputOutputStreamI", size);
+        ss->Init("MethodWithInputOutputStreamI");
         parameters.Insert(ss);
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
-        StreamString ssToCompare = ss->Buffer();
-        result &= (ssToCompare == "ReturnFromMethodWithInputOutputStreamII");
+//        DynamicCString ssToCompare = ss->Buffer();
+        result &= (ss->ToString() == "ReturnFromMethodWithInputOutputStreamII");
         result &= (context.GetLastMethodExecuted() == "MethodWithInputOutputStreamI(StreamI&)");
     }
     return result;
@@ -592,16 +605,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_C");
@@ -615,16 +628,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R, 0x0);
-    ConfigurationDatabase parameters;
+																										  MARTe::DynamicCString),
+					uint32, float32, float64,MARTe::DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_C_R");
@@ -638,16 +651,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -663,16 +676,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_C");
@@ -686,16 +699,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_C_R_R");
@@ -709,16 +722,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -734,16 +747,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -759,16 +772,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -784,16 +797,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_C_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W, 0x11);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W, 0x11);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -811,16 +824,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_C");
@@ -834,16 +847,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_C_R");
@@ -857,16 +870,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -882,16 +895,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_C");
@@ -905,16 +918,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_C_R_R_R");
@@ -928,16 +941,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -953,16 +966,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -978,16 +991,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1003,16 +1016,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_R_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W, 0x11);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W, 0x11);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1030,16 +1043,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1055,16 +1068,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1080,16 +1093,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W, 0x101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W, 0x101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1107,16 +1120,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1132,16 +1145,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1157,16 +1170,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W, 0x101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W, 0x101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1184,16 +1197,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C, 0x110);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C, 0x110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1211,16 +1224,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R, 0x110);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R, 0x110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1238,16 +1251,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_C_W_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W, 0x111);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W, 0x111);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1267,16 +1280,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_C");
@@ -1290,16 +1303,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_C_R");
@@ -1313,16 +1326,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -1338,16 +1351,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_C");
@@ -1361,16 +1374,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_C_R_R");
@@ -1384,16 +1397,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -1409,16 +1422,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1434,16 +1447,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1459,16 +1472,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_C_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W, 0x11);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W, 0x11);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1486,16 +1499,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_C");
@@ -1509,16 +1522,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_C_R");
@@ -1532,16 +1545,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -1557,16 +1570,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_C");
@@ -1580,16 +1593,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithFourParameters_R_R_R_R");
@@ -1603,16 +1616,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W, 0x1);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W, 0x1);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param4", param4);
@@ -1628,16 +1641,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1653,16 +1666,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R, 0x10);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R, 0x10);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1678,16 +1691,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_R_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W, 0x11);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W, 0x11);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -1705,16 +1718,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1730,16 +1743,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1755,16 +1768,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W, 0x101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W, 0x101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1782,16 +1795,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1807,16 +1820,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1832,16 +1845,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W, 0x101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W, 0x101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1859,16 +1872,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C, 0x110);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C, 0x110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1886,16 +1899,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R, 0x110);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R, 0x110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1913,16 +1926,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_R_W_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W, 0x111);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W, 0x111);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -1942,16 +1955,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -1967,16 +1980,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -1992,16 +2005,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W, 0x1001);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W, 0x1001);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2019,16 +2032,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2044,16 +2057,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2069,16 +2082,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W, 0x1001);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W, 0x1001);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2096,16 +2109,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C, 0x1010);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C, 0x1010);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2123,16 +2136,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R, 0x1010);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R, 0x1010);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2150,16 +2163,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_C_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W, 0x1011);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W, 0x1011);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2179,16 +2192,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2204,16 +2217,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2229,16 +2242,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W, 0x1001);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W, 0x1001);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2256,16 +2269,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2281,16 +2294,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2306,16 +2319,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W, 0x1001);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W, 0x1001);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2333,16 +2346,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C, 0x1010);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C, 0x1010);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2360,16 +2373,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R, 0x1010);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R, 0x1010);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2387,16 +2400,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_R_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W, 0x1011);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W, 0x1011);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2416,16 +2429,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C, 0x1100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C, 0x1100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2443,16 +2456,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R, 0x1100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R, 0x1100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2470,16 +2483,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_C_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           const MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W, 0x1101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W, 0x1101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2499,16 +2512,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C, 0x1100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C, 0x1100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2526,16 +2539,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R, 0x1100);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R, 0x1100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2553,16 +2566,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_R_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W, 0x1101);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W, 0x1101);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2582,16 +2595,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_C() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            float64, StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C, 0x1110);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            float64, DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C, 0x1110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2611,16 +2624,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_R() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R, 0x1110);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R, 0x1110);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2640,16 +2653,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_W_W_W_W() {
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
                                                                                                           MARTe::float64 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, float64,
-            StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-    ConfigurationDatabase parameters;
+                                                                                                          MARTe::DynamicCString &), uint32, float32, float64,
+            DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -2672,16 +2685,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter1() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1E", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
         float64 param3 = -9.0;
         parameters.Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parameters.Write("param4", param4);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -2697,16 +2710,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter2() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2E", param2);
         float64 param3 = -9.0;
         parameters.Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parameters.Write("param4", param4);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -2722,16 +2735,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter3() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
         float64 param3 = -9.0;
         parameters.Write("param3E", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parameters.Write("param4", param4);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -2747,16 +2760,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameter4() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
         float64 param3 = -9.0;
         parameters.Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parameters.Write("param4E", param4);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -2772,16 +2785,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ErrorParameterReturn() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParametersReturnError, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParametersReturnError, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
         float64 param3 = -9.0;
         parameters.Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parameters.Write("param4", param4);
         result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
@@ -2797,16 +2810,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
         float32 param2 = 2.0;
         parametersDB->Write("param2", param2);
         float64 param3 = -9.0;
         parametersDB->Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parametersDB->Write("param4", param4);
 
         ReferenceContainer parameters;
@@ -2827,16 +2840,16 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParametersReturnError, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParametersReturnError, 0x1111);
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
         float32 param2 = 2.0;
         parametersDB->Write("param2", param2);
         float64 param3 = -9.0;
         parametersDB->Write("param3", param3);
-        StreamString param4 = "KO";
+        DynamicCString param4 = "KO";
         parametersDB->Write("param4", param4);
 
         ReferenceContainer parameters;
@@ -2848,8 +2861,8 @@ bool ClassMethodCallerTTest::TestCall_FourParameters_ReferenceContainer() {
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
                                                                                                               MARTe::float64 &,
-                                                                                                              MARTe::StreamString &), uint32, float32, float64,
-                StreamString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
+                                                                                                              MARTe::DynamicCString &), uint32, float32, float64,
+                DynamicCString> target(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W, 0x1111);
         ReferenceContainer parameters;
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -2862,14 +2875,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_C");
@@ -2882,14 +2895,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_C_R");
@@ -2902,14 +2915,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_C_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_W, 0x10);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -2924,14 +2937,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_C");
@@ -2944,14 +2957,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_C_R_R");
@@ -2964,14 +2977,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_R_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_W, 0x10);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -2986,14 +2999,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3008,14 +3021,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_R, 0x100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3030,14 +3043,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_C_W_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_W, 0x110);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3054,14 +3067,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_C");
@@ -3074,14 +3087,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_C_R");
@@ -3094,14 +3107,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_C_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_W, 0x10);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -3116,14 +3129,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C, 0x0);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C, 0x0);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_C");
@@ -3136,14 +3149,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithThreeParameters_R_R_R");
@@ -3156,14 +3169,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_R_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_W, 0x10);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param3", param3);
@@ -3178,14 +3191,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C, 0x100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C, 0x100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3200,14 +3213,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_R, 0x100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3222,14 +3235,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_R_W_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_W, 0x110);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3246,14 +3259,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3268,14 +3281,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_R, 0x1000);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3290,14 +3303,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_C_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           const MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_W, 0x1010);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3314,14 +3327,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C, 0x1000);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C, 0x1000);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3336,14 +3349,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_R, 0x1000);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3358,14 +3371,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_R_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_W, 0x1010);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3382,14 +3395,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          const MARTe::StreamString &), uint32, float32,
-            StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C, 0x1100);
-    ConfigurationDatabase parameters;
+                                                                                                          const MARTe::DynamicCString &), uint32, float32,
+            DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C, 0x1100);
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3406,14 +3419,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_R, 0x1100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3430,14 +3443,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_W_W_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                           MARTe::float32 &,
-                                                                                                          MARTe::StreamString &), uint32, float32, StreamString,
+                                                                                                          MARTe::DynamicCString &), uint32, float32, DynamicCString,
             void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1110);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3457,14 +3470,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter1() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1E", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parameters.Write("param3", param3);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3479,14 +3492,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter2() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2E", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parameters.Write("param3", param3);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3501,14 +3514,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameter3() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parameters.Write("param3E", param3);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3523,14 +3536,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ErrorParameterReturn() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParametersReturnError, 0x1111);
-        ConfigurationDatabase parameters;
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParametersReturnError, 0x1111);
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         float32 param2 = 2.0;
         parameters.Write("param2", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parameters.Write("param3", param3);
         result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
@@ -3545,14 +3558,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
         float32 param2 = 2.0;
         parametersDB->Write("param2", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parametersDB->Write("param3", param3);
 
         ReferenceContainer parameters;
@@ -3570,14 +3583,14 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParametersReturnError, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParametersReturnError, 0x1111);
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
         float32 param2 = 2.0;
         parametersDB->Write("param2", param2);
-        StreamString param3 = "KO";
+        DynamicCString param3 = "KO";
         parametersDB->Write("param3", param3);
 
         ReferenceContainer parameters;
@@ -3588,8 +3601,8 @@ bool ClassMethodCallerTTest::TestCall_ThreeParameters_ReferenceContainer() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
                                                                                                               MARTe::float32 &,
-                                                                                                              MARTe::StreamString &), uint32, float32,
-                StreamString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
+                                                                                                              MARTe::DynamicCString &), uint32, float32,
+                DynamicCString, void> target(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W, 0x1111);
         ReferenceContainer parameters;
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3601,12 +3614,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+                                                                                                          const MARTe::DynamicCString &), uint32, DynamicCString,
             void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_C, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_C");
@@ -3618,12 +3631,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+                                                                                                          MARTe::DynamicCString), uint32, DynamicCString, void, void> target(
             &ClassWithCallableMethods::MethodWithTwoParameters_C_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_C_R");
@@ -3635,12 +3648,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &,
-                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+                                                                                                          MARTe::DynamicCString &), uint32, DynamicCString, void,
             void> target(&ClassWithCallableMethods::MethodWithTwoParameters_C_W, 0x100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3654,12 +3667,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+                                                                                                          const MARTe::DynamicCString &), uint32, DynamicCString,
             void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_C, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_C");
@@ -3671,12 +3684,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+                                                                                                          MARTe::DynamicCString), uint32, DynamicCString, void, void> target(
             &ClassWithCallableMethods::MethodWithTwoParameters_R_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     result &= (context.GetLastMethodExecuted() == "MethodWithTwoParameters_R_R");
@@ -3688,12 +3701,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32,
-                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+                                                                                                          MARTe::DynamicCString &), uint32, DynamicCString, void,
             void> target(&ClassWithCallableMethods::MethodWithTwoParameters_R_W, 0x100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param2", param2);
@@ -3707,12 +3720,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                          const MARTe::StreamString &), uint32, StreamString,
+                                                                                                          const MARTe::DynamicCString &), uint32, DynamicCString,
             void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_C, 0x1000);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3726,12 +3739,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                          MARTe::StreamString), uint32, StreamString, void, void> target(
+                                                                                                          MARTe::DynamicCString), uint32, DynamicCString, void, void> target(
             &ClassWithCallableMethods::MethodWithTwoParameters_W_R, 0x1000);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3745,12 +3758,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                          MARTe::StreamString &), uint32, StreamString, void,
+                                                                                                          MARTe::DynamicCString &), uint32, DynamicCString, void,
             void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1100);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
     parameters.Read("param1", param1);
@@ -3767,12 +3780,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameter1() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1E", param1);
-        StreamString param2 = "KO";
+        DynamicCString param2 = "KO";
         parameters.Write("param2", param2);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3786,12 +3799,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameter2() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1111);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
-        StreamString param2 = "KO";
+        DynamicCString param2 = "KO";
         parameters.Write("param2E", param2);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
     }
@@ -3805,12 +3818,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ErrorParameterReturn() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParametersReturnError, 0x1111);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
-        StreamString param2 = "KO";
+        DynamicCString param2 = "KO";
         parameters.Write("param2", param2);
         result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
     }
@@ -3824,12 +3837,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
-        StreamString param2 = "KO";
+        DynamicCString param2 = "KO";
         parametersDB->Write("param2", param2);
 
         ReferenceContainer parameters;
@@ -3844,12 +3857,12 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParametersReturnError, 0x1111);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
-        StreamString param2 = "KO";
+        DynamicCString param2 = "KO";
         parametersDB->Write("param2", param2);
 
         ReferenceContainer parameters;
@@ -3859,7 +3872,7 @@ bool ClassMethodCallerTTest::TestCall_TwoParameters_ReferenceContainer() {
     {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &,
-                                                                                                              MARTe::StreamString &), uint32, StreamString,
+                                                                                                              MARTe::DynamicCString &), uint32, DynamicCString,
                 void, void> target(&ClassWithCallableMethods::MethodWithTwoParameters_W_W, 0x1111);
         ReferenceContainer parameters;
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
@@ -3873,7 +3886,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_C() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &), uint32, void, void, void> target(
             &ClassWithCallableMethods::MethodWithOneParameter_C, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -3887,7 +3900,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_R() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32), uint32, void, void, void> target(
             &ClassWithCallableMethods::MethodWithOneParameter_R, 0x0);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -3901,7 +3914,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_W() {
     ClassWithCallableMethods context;
     ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
             &ClassWithCallableMethods::MethodWithOneParameter_W, 0x1000);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
@@ -3918,7 +3931,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ErrorParameter1() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(const MARTe::uint32 &), uint32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOneParameter_C, 0x0);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1E", param1);
         result &= (target.Call(&context, parameters) == ErrorManagement::ParametersError);
@@ -3934,7 +3947,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ErrorParameterReturn() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOneParameterReturnError, 0x0);
-        ConfigurationDatabase parameters;
+        SimpleStructuredData parameters;
         uint32 param1 = 3;
         parameters.Write("param1", param1);
         result &= (target.Call(&context, parameters) != ErrorManagement::NoError);
@@ -3950,7 +3963,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ReferenceContainer() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOneParameter_W, 0x1000);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
 
@@ -3965,7 +3978,7 @@ bool ClassMethodCallerTTest::TestCall_OneParameter_ReferenceContainer() {
         ClassWithCallableMethods context;
         ClassMethodCallerT<ClassWithCallableMethods, ErrorManagement::ErrorType (ClassWithCallableMethods::*)(MARTe::uint32 &), uint32, void, void, void> target(
                 &ClassWithCallableMethods::MethodWithOneParameterReturnError, 0x0);
-        ReferenceT<ConfigurationDatabase> parametersDB("ConfigurationDatabase");
+        ReferenceT<SimpleStructuredData> parametersDB("SimpleStructuredData");
         uint32 param1 = 3;
         parametersDB->Write("param1", param1);
 

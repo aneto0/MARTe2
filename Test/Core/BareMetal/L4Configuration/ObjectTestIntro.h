@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef OBJECTTEST_H_
-#define OBJECTTEST_H_
+#ifndef OBJECTTEST_INTRO_H_
+#define OBJECTTEST_INTRO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -44,6 +44,7 @@ using namespace MARTe;
  */
 class ObjectTest {
 public:
+#if 0
 
     /**
      * @brief Tests the constructor.
@@ -112,7 +113,7 @@ public:
      * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
      */
     bool TestGetUniqueName2();
-
+#endif
     /**
      * @brief Tests the Object::ExportData function.
      * @details Checks that the Object::ExportData method returns the right
@@ -120,7 +121,7 @@ public:
      * members, with complex ones, etc).
      * @return true if the tests explained in the details section succeed, false otherwise.
      */
-    //bool TestExportData(); --> level4
+    bool TestExportData();
 
     /**
      * @brief Tests the Object::ExportMetaData function.
@@ -129,8 +130,8 @@ public:
      * members, with complex ones, etc).
      * @return true if the tests explained in the details section succeed, false otherwise.
      */
-    //bool TestExportMetadata(); --> level4
-
+    bool TestExportMetadata();
+#if 0
     /**
      * @brief Tests the CallRegisteredMethod function with no parameters.
      */
@@ -160,6 +161,7 @@ public:
      * @brief Tests the IsReferenceContainer method.
      */
     bool TestIsReferenceContainer();
+#endif
 };
 
 /*---------------------------------------------------------------------------*/

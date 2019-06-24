@@ -94,7 +94,8 @@ public:
      * @details Uses AnyObjectT or MemoryPageObject
      * @param[in] anyType the pointer to the object to copy
      */
-    Reference(const AnyType &anyType);
+//    Reference(const AnyType &anyType);
+    ErrorManagement::ErrorType FromAnyType(const AnyType &anyType);
 
     /**
      * @brief Destructor. Removes the reference to the underlying object.
@@ -208,6 +209,11 @@ private:
     Object *CreateByName(CCString const className,HeapManager::HeapId) const;
 };
 
+/**
+ * a void regerence
+ */
+static const Reference emptyReference;
+
 } 
 
 /*---------------------------------------------------------------------------*/
@@ -215,6 +221,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
 Object* Reference::operator->() const {
     return objectPointer;

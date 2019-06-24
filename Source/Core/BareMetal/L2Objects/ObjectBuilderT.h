@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L0Types/HeapI.h"
 #include "ObjectBuilder.h"
 
 /*---------------------------------------------------------------------------*/
@@ -73,7 +72,7 @@ public:
      * instance will be allocated.
      * @return a pointer to the new created instance.
      */
-    virtual Object *Build(HeapI* const heap) const;
+    virtual Object *Build(HeapManager::HeapId heapId) const;
 
 };
 
@@ -95,8 +94,8 @@ ObjectBuilderT<T>::~ObjectBuilderT() {
 }
 
 template<typename T>
-Object *ObjectBuilderT<T>::Build(HeapI* const heap) const {
-    T *p = new (heap) T();
+Object *ObjectBuilderT<T>::Build(HeapManager::HeapId heapId) const {
+    T *p = new (heapId) T();
     return p;
 }
 

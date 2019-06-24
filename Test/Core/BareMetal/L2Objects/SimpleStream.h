@@ -1,7 +1,7 @@
 /**
- * @file ObjectBuilder.h
- * @brief Header file for class ObjectBuilder
- * @date 11/04/2016
+ * @file SimpleStream.h
+ * @brief Header file for class AnyType
+ * @date 24 Jun 2019
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,14 +15,16 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class ObjectBuilder
+
+ * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
- */
+*/
 
-#ifndef OBJECTBUILDER_H_
-#define OBJECTBUILDER_H_
+#ifndef TEST_CORE_BAREMETAL_L2OBJECTS_SIMPLESTREAM_H_
+#define TEST_CORE_BAREMETAL_L2OBJECTS_SIMPLESTREAM_H_
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,82 +33,38 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "HeapManager.h"
-
+#include "VoidStream.h"
+#include "DynamicCString.h"
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-/*lint -e{9109} forward declaration of this class is required in other modules*/
-class Object;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+namespace MARTe{
 
-/**
- * @brief This class represents an abstract object builder.
- *
- * @details An object builder is an object whose purpose is to build another
- * object. In order to build an object, an object builder needs:
- * + A HeapI object which will allocate the memory for the object to be built.
- * + An overloaded new operator for creating a new instance for a specific
- * class using the HeapI object.
- *
- * @remark This class must be considered as a pure abstract class, i.e. an
- * interface, although it does not declare any of its methods as pure virtual.
- * Instead, it implements the Build method forcing it to return a default
- * value (NULL). The reason to this is that derived classes are expected to
- * implement the Build method, while the abstract class can be used as an
- * invalid object builder (useful for setting a default builder).
- */
-/*lint -e{9109} forward declaration of this class is required in other modules*/
-class DLL_API ObjectBuilder {
+class SimpleStream: public VoidStream,public DynamicCString {
+	uint32 index;
 public:
-
-    /**
-     * @brief Default constructor
-     */
-    ObjectBuilder();
-
-    /**
-     * @brief Destructor.
-     */
-    virtual ~ObjectBuilder();
-
-    /**
-     * @brief invalid object builder function.
-     * @param[in] heap is the heap where the memory for the new instance must
-     * be allocated.
-     * @return a NULL pointer to MARTe::Object.
-     */
-    virtual Object *Build(HeapManager::HeapId heapId) const;
-
+	SimpleStream(CCString init=emptyString);
+	void Init(CCString init);
+    virtual bool CanRead() const;
+    virtual bool CanSeek() const;
+    virtual bool CanWrite() const;
+    virtual bool Read(char8 * const output,uint32 & size);
+    virtual bool Seek(uint64 pos);
+    virtual bool Write(const char8 * const input, uint32 & size);
+    virtual bool SetSize(uint64 size);
 };
 
-}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+} // MARTe
 
-inline ObjectBuilder::ObjectBuilder() {
-}
-
-inline ObjectBuilder::~ObjectBuilder() {
-}
-
-inline Object *ObjectBuilder::Build(HeapManager::HeapId heapId) const {
-    return NULL_PTR(Object *);
-}
-
-}
-
-#endif /* OBJECTBUILDER_H_ */
+#endif /* TEST_CORE_BAREMETAL_L2OBJECTS_SIMPLESTREAM_H_ */

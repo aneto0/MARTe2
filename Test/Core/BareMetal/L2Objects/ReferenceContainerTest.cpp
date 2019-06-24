@@ -28,15 +28,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ConfigurationDatabase.h"
-#include "MemoryOperationsHelper.h"
 #include "ObjectRegistryDatabase.h"
 #include "ObjectTestHelper.h"
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerTest.h"
-#include "StringHelper.h"
 #include "Threads.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
@@ -52,7 +49,7 @@ bool ReferenceContainerTest::TestConstructor() {
         ok &= (container->Size() == 0);
     }
     if (ok) {
-        ok &= (container->GetTimeout() == TTInfiniteWait);
+        ok &= (container->GetTimeout() == MilliSeconds::Infinite);
     }
     return ok;
 }
@@ -62,13 +59,13 @@ bool ReferenceContainerTest::TestCopyConstructor() {
     ReferenceContainer rc;
     bool ok = (rc.Size() == 0u);
     if (ok) {
-        ok &= (rc.GetTimeout() == TTInfiniteWait);
+        ok &= (rc.GetTimeout() == MilliSeconds::Infinite);
     }
     if (ok) {
         ok &= rc.Insert(otherContainer);
     }
     if (ok) {
-        rc.SetTimeout(100);
+    	rc.SetTimeout(MilliSeconds(100,Units::ms));
         ReferenceContainer rc2 = rc;
         ok = (rc2.Size() == 1u);
         if (ok) {
@@ -83,13 +80,13 @@ bool ReferenceContainerTest::TestOperatorEqual() {
     ReferenceContainer rc;
     bool ok = (rc.Size() == 0u);
     if (ok) {
-        ok &= (rc.GetTimeout() == TTInfiniteWait);
+        ok &= (rc.GetTimeout() == MilliSeconds::Infinite);
     }
     if (ok) {
         ok &= rc.Insert(otherContainer);
     }
     if (ok) {
-        rc.SetTimeout(100);
+        rc.SetTimeout(MilliSeconds(100,Units::ms));
         ReferenceContainer rc2;
         rc2 = rc;
         ok = (rc2.Size() == 1u);
@@ -112,7 +109,7 @@ bool ReferenceContainerTest::TestGetClassProperties() {
     return (StringHelper::Compare(cp->GetName(), "ReferenceContainer") == 0);
 }
 
-bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
+bool ReferenceContainerTest::TestGetTimeout(MilliSeconds timeout) {
     ReferenceT<ReferenceContainer> container("ReferenceContainer");
     bool ok = container.IsValid();
     if (ok) {
@@ -122,7 +119,7 @@ bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
     return ok;
 }
 
-bool ReferenceContainerTest::TestSetTimeout(TimeoutType timeout) {
+bool ReferenceContainerTest::TestSetTimeout(MilliSeconds timeout) {
     ReferenceT<ReferenceContainer> container("ReferenceContainer");
     bool ok = container.IsValid();
     if (ok) {
@@ -792,11 +789,11 @@ bool ReferenceContainerTest::TestPurge() {
     return (container.Size() == 0);
 }
 
-static void PurgeRoutine(ReferenceContainerTest &param) {
-    while (param.spinLock != 1) {
-        Sleep::MSec(10);
+static void PurgeRoutine(ReferenceContainerTest *param) {
+    while (param->spinLock != 1) {
+        Sleep::Short(10,Units::ms);
     }
-    param.containerU1->Purge();
+    param->containerU1->Purge();
     Threads::EndThread();
 }
 
@@ -829,7 +826,7 @@ bool ReferenceContainerTest::TestPurge_Shared() {
     Atomic::Increment(&spinLock);
 
     while (Threads::NumberOfThreads() > 0u) {
-        Sleep::MSec(100);
+        Sleep::Short(100,Units::ms);
     }
 
     if (containerU1.NumberOfReferences() != 1) {

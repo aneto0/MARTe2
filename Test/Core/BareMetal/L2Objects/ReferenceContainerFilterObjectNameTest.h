@@ -59,8 +59,7 @@ public:
      * @param[in] toSearch is the pattern to be searched.
      * @return true if the test explained in the details section passes, false otherwise.
      */
-    bool TestFullConstructor(int32 occurrence,
-                             const char8 *toSearch);
+    bool TestFullConstructor(int32 occurrence,CCString toSearch);
 
     /**
      * @brief Tests the copy constructor.
@@ -70,8 +69,7 @@ public:
      * @param[in] toSearch is the pattern to be searched.
      * @return true if the test explained in the details section passes, false otherwise.
      */
-    bool TestCopyConstructor(int32 occurrence,
-                             const char8 *toSearch);
+    bool TestCopyConstructor(int32 occurrence,CCString toSearch);
 
 
     /**
@@ -83,8 +81,8 @@ public:
      * @return true if the result of the test returns the expected value, false otherwise.
      */
     bool TestTest(ReferenceContainer &previouslyFound,
-                  const char8 *toSearch,
-                  bool expected);
+    				CCString toSearch,
+					bool expected);
 
     /**
      * @brief Tests the = operator.
@@ -92,8 +90,7 @@ public:
      * @param[in] toSearch is the pattern to be searched.
      * @see TestCopyConstructor using the = operator instead of the copy constructor.
      */
-    bool TestAssignOperator(int32 occurrence,
-                            const char8 *toSearch);
+    bool TestAssignOperator(int32 occurrence,CCString toSearch);
 
 };
 

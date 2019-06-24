@@ -36,6 +36,7 @@
 
 #include "StartupManager.h"
 #include "ClassRegistryItem.h"
+#include "ObjectBuilderT.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -90,8 +91,7 @@
      * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
      /*lint -e{1511} This function will be redeclared in descendants */                                                \
-     static void operator delete(void *p);                                                                             \
-                                                                                                                       \
+     static void operator delete(void *p);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -128,10 +128,12 @@
         MARTe::ClassRegistryItem *cri = GetClassRegistryItem_Static();												   \
         cri->DecrementNumberOfInstances();                                                   						   \
     }                                                                                                                  \
+    static const MARTe::ObjectBuilderT<className> className ## Builder;                                                \
 	static class className ## _Initializer_{                                                                           \
     	public: className ## _Initializer_(){                                                                          \
     		MARTe::ClassRegistryItem *cri = className::GetClassRegistryItem_Static();								   \
-		    cri->SetClassDetails(CCString(#className),CCString(#ver));                                                 \
+		    cri->SetClassDetails(MARTe::CCString(#className),MARTe::CCString(#ver));                                   \
+		    cri->SetObjectBuilder(&className ## Builder);                                                              \
 		};                                                                                                             \
     } className ## _Initializer_Instance;
 

@@ -48,7 +48,7 @@ class Object;
 class DynamicCString;
 class StreamString;
 class StructuredDataI;
-//class testStruct;
+class testStruct;
 class Reference;
 template <uint32 sz>  class StaticCString;
 }
@@ -387,7 +387,7 @@ private:
      * @post closes the matching chain assigning the typeDescriptor
      */
     template <class T>
-    inline void MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x);
+    inline void MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)/*&&!isSameOrBaseOf(Object,T)*/&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x);
 
     /**
      * @brief Matches a T if derivative of StreamI but not StreamString
@@ -702,7 +702,7 @@ void VariableDescriptor::Match(StreamString *s){
 }
 
 template <class T>
-void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)&&!isSameOrBaseOf(Object,T)&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x){
+void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(StreamI,T)&&!isSameOrBaseOf(Reference,T)/*&&!isSameOrBaseOf(Object,T)*/&&!isSameOrBaseOf(StructuredDataI,T), T>::type *x){
 	ClassRegistryItem *cri =  ClassRegistryItem::Instance<T>();
     if (cri != NULL) {
     	FinaliseCode(cri->GetTypeDescriptor());

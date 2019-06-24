@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ObjectRegistryDatabase.h"
-#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,29 +39,6 @@
 
 using namespace MARTe;
 
-/**
- * @brief Class used for tests
- */
-class PID: public Object {
-    /**
-     * @brief Initialises the gains from cdb
-     */
-    virtual bool Initialise(StructuredDataI &data);
-public:
-    /**
-     * Proportional gain
-     */
-    uint32 Kp;
-    /**
-     * Integral gain
-     */
-    uint32 Ki;
-    /**
-     * Derivative gain
-     */
-    uint32 Kd;CLASS_REGISTER_DECLARATION()
-    ;
-};
 
 /**
  * @brief Tests all the ObjectRegistryDatabase functions
@@ -84,7 +60,7 @@ public:
     /**
      * @brief Tests if the function does not return null
      */
-    bool TestInstance();
+//    bool TestInstance();
 
     /**
      * @brief Tests if the function behaves in the correct way searching absolute path (without passing reference start point in input)
@@ -111,7 +87,7 @@ public:
     /**
      * @brief Tests if the function returns "ObjectRegistryDatabase"
      */
-    bool TestGetClassName();
+//    bool TestGetClassName();
 
 
 private:
@@ -119,7 +95,7 @@ private:
     /**
      * Configuration database used in tests.
      */
-    ConfigurationDatabase cdb;
+ //   ConfigurationDatabase cdb;
 
 };
 

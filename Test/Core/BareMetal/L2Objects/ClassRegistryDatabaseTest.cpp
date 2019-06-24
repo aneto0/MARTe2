@@ -31,20 +31,19 @@
 #include "ClassRegistryDatabaseTest.h"
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 //static ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
 //static ClassRegistryItemT<Object> myItem(testClassProperties);
-ClassProperties testClassPropertiesLongName(
-        "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
-        "", "V");
+//ClassProperties testClassPropertiesLongName(
+//        "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf",
+//        "", "V");
 
 //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
 //ClassRegistryItemT<Object> myItemLongName(testClassPropertiesLongName);
-
+#if 0
 class DummyClassRegistryDatabase: public ClassRegistryDatabase {
 public:
 
@@ -70,7 +69,7 @@ public:
     }
 
 };
-
+#endif
 
 class ObjToCleanUp: public Object {
     ObjToCleanUp() {
@@ -84,7 +83,7 @@ class ObjToCleanUp: public Object {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+#if 0
 bool ClassRegistryDatabaseTest::TestInstance() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
@@ -119,55 +118,58 @@ bool ClassRegistryDatabaseTest::TestInstance() {
     ok &= (integerItemPtr != NULL);
     return ok;
 }
+#endif
 
 
-bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
-                                            const MARTe::char8* className,
+bool ClassRegistryDatabaseTest::TestFindDLL(MARTe::CCString dllName,
+                                            MARTe::CCString className,
                                             bool validName) {
 
-    char8 fullName[64];
-    StringHelper::Copy(fullName, dllName);
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    char8 fullName[64];
+//    StringHelper::Copy(fullName, dllName);
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    StringHelper::Concatenate(fullName, "::");
-    StringHelper::Concatenate(fullName, className);
+	DynamicCString fullName(dllName);
+	fullName().Append("::").Append(className);
+//    StringHelper::Concatenate(fullName, "::");
+//    StringHelper::Concatenate(fullName, className);
 
-    return !(validName ^ (db->Find(fullName) != NULL));
+    return !(validName ^ (ClassRegistryDatabase::Find(fullName) != NULL));
 }
 
 bool ClassRegistryDatabaseTest::TestFind() {
 
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    //ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    bool found = (db->Find("IntegerObject") != NULL);
+    bool found = (ClassRegistryDatabase::Find("IntegerObject") != NULL);
 //    //These are deleted by the the ClassRegistryDatabase destructor
     return found;
 }
 
 bool ClassRegistryDatabaseTest::TestFindLongName() {
 
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-    const char *name =
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    MARTe::CCString name =
             "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
 
-    return (db->Find(name) != NULL);
+    return (ClassRegistryDatabase::Find(name) != NULL);
 
 }
 
 bool ClassRegistryDatabaseTest::TestFindTypeIdName() {
 
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    bool found = (db->FindTypeIdName(typeid(Object).name()) != NULL);
+    bool found = (ClassRegistryDatabase::FindTypeIdName(typeid(Object).name()) != NULL);
     //These are deleted by the the ClassRegistryDatabase destructor
     return found;
 }
 
 bool ClassRegistryDatabaseTest::TestGetSize() {
 
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    return db->GetSize() > 0u;
+    return ClassRegistryDatabase::GetSize() > 0u;
 }
 
 //bool ClassRegistryDatabaseTest::TestPeek() {
@@ -181,10 +183,10 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
 //}
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = ClassRegistryDatabase::Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = ClassRegistryDatabase::Find("SpecialIntegerObject");
 
     if ((integerObjProp == NULL) || (specialIntegerObjProp == NULL)) {
         return false;
@@ -220,15 +222,15 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
         return false;
     }
 
-    return (db->Find("CollectInts")->GetNumberOfInstances() == 1);
+    return (ClassRegistryDatabase::Find("CollectInts")->GetNumberOfInstances() == 1);
 }
 
 bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
 
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = ClassRegistryDatabase::Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = ClassRegistryDatabase::Find("SpecialIntegerObject");
 
     ReferenceT<IntegerObject> child2father = ReferenceT<IntegerObject>("SpecialIntegerObject");
 
@@ -247,10 +249,10 @@ bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
 }
 
 bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = ClassRegistryDatabase::Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = ClassRegistryDatabase::Find("SpecialIntegerObject");
 
     ReferenceT<SpecialIntegerObject> father2child = ReferenceT<SpecialIntegerObject>("IntegerObject");
 
@@ -264,9 +266,12 @@ bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
 
 }
 
+/*
+
 bool ClassRegistryDatabaseTest::TestGetClassName() {
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-    return (StringHelper::Compare(db->GetClassName(), "ClassRegistryDatabase") == 0);
+//    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+//    return (StringHelper::Compare(ClassRegistryDatabase::GetClassName(), "ClassRegistryDatabase") == 0);
+	  return (ClassRegistryDatabase::GetClassName() == "ClassRegistryDatabase");
 }
 
 bool ClassRegistryDatabaseTest::TestCleanUp() {
@@ -281,3 +286,4 @@ bool ClassRegistryDatabaseTest::TestCleanUp() {
     testDB.CleanUp();
     return testDB.GetSize() == 0;
 }
+*/

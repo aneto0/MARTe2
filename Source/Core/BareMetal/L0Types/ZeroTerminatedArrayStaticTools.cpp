@@ -70,6 +70,70 @@ bool ZeroTerminatedArrayStaticTools::ZTAIsSame(const uint8 *pointer,const uint8 
 	return IsSame;
 }
 
+/*******************************************************************
+ *
+ *   ZTAISSameArray
+ *
+ ********************************************************************/
+#if 0
+template <typename T>
+static inline bool ZTAIsSameArrayLT(const T *pointer,const T *array, uint32 limit){
+    bool same = true;
+    if (pointer != array){
+    	if ((pointer != NULL_PTR(uint8 *))&&(array != NULL_PTR(uint8 *))) {
+            while ((pointer[0]!=0U) && same && (limit > 0)) {
+                same = (*pointer++ == *array++);
+                limit--;
+            }
+            // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
+            if (same && (limit > 0)){
+            	same = (array[0]==0U);
+            }
+
+    	} else {
+    		same = false;
+    	}
+    }
+    return same;
+}
+
+bool ZeroTerminatedArrayStaticTools::ZTAIsSameArray2(const uint16 *pointer,const uint16 *array, uint32 limit){
+	return ZTAIsSameArrayLT<uint16>(pointer,array, limit);
+}
+
+bool ZeroTerminatedArrayStaticTools::ZTAIsSameArray4(const uint32 *pointer,const uint32 *array, uint32 limit){
+	return ZTAIsSameArrayLT<uint32>(pointer,array, limit);
+}
+
+bool ZeroTerminatedArrayStaticTools::ZTAIsSameArray8(const uint64 *pointer,const uint64 *array, uint32 limit){
+	return ZTAIsSameArrayLT<uint64>(pointer,array, limit);
+}
+
+bool ZeroTerminatedArrayStaticTools::ZTAIsSameArray(const uint8 *pointer,const uint8 *array, uint32 elSize,uint32 limit){
+    bool same = true;
+    if ((pointer != NULL_PTR(uint8 *))&&(array != NULL_PTR(uint8 *))) {
+        while (!ZTAIsZero(pointer,elSize) && same && (limit > 0)) {
+            same = ZTAIsSame(pointer,array,elSize);
+            pointer+=elSize;
+            array+=elSize;
+            limit--;
+        }
+        // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
+        if (same && (limit > 0)){
+        	same = ZTAIsZero(array,elSize);
+        }
+    }
+    return same;
+}
+#endif
+
+/*******************************************************************
+ *
+ *   xxx
+ *
+ ********************************************************************/
+
+
 
 // calculates size of a generic ZeroTermArray
 uint32 ZeroTerminatedArrayStaticTools::ZTAGetSize(const uint8 *pointer, uint32 elSize){
@@ -109,8 +173,13 @@ uint32 ZeroTerminatedArrayStaticTools::ZTAFind(const uint8 *pointer,const uint8 
         }
     }
     return pos;
-
 }
+
+
+
+
+
+
 
 
 } //MARTe

@@ -46,15 +46,18 @@ bool ReferenceContainerFilterObjectNameTest::TestDefaultConstructor() {
 }
 
 bool ReferenceContainerFilterObjectNameTest::TestFullConstructor(int32 occurrence,
-                                                                 const char8 *toSearch) {
+                                                                 CCString toSearch) {
 
-    const char8* begin = toSearch;
+    CCString begin = toSearch;
     if (toSearch[0] == '.') {
         begin++;
     }
 
-    bool invalid = StringHelper::SearchString(begin, "..") != NULL;
-    bool moreThanOneNode = (!invalid) && (StringHelper::SearchIndex(begin, ".") < ((int32) (StringHelper::Length(begin) - 1u)));
+    bool invalid = (begin.FindPattern("..") != 0xFFFFFFFFu);
+//    bool invalid = StringHelper::SearchString(begin, "..") != NULL;
+//    uint32 length = begin.GetSize();
+    bool moreThanOneNode = (!invalid) && (begin.FindPattern(".") != 0xFFFFFFFFu);
+//    bool moreThanOneNode = (!invalid) && (StringHelper::SearchIndex(begin, ".") < ((int32) (StringHelper::Length(begin) - 1u)));
 
     ReferenceContainer fakeTree;
 
@@ -95,7 +98,7 @@ bool ReferenceContainerFilterObjectNameTest::TestFullConstructor(int32 occurrenc
 }
 
 bool ReferenceContainerFilterObjectNameTest::TestCopyConstructor(int32 occurrence,
-                                                                 const char8 *toSearch) {
+                                                                 CCString toSearch) {
 
     for (uint32 mode = 0; mode < 8; mode++) {
         // creates a filter
@@ -106,7 +109,7 @@ bool ReferenceContainerFilterObjectNameTest::TestCopyConstructor(int32 occurrenc
 
         ReferenceContainer fakeTree;
 
-        int32 cycles = (occurrence >= 0) ? occurrence : 500u;
+        int32 cycles = (occurrence >= 0) ? occurrence : 500;
 
         for (int32 i = 0; i < cycles; i++) {
             myFilterName->Test(fakeTree, testRef);
@@ -152,7 +155,7 @@ bool ReferenceContainerFilterObjectNameTest::TestCopyConstructor(int32 occurrenc
 
 
 bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previouslyFound,
-                                                      const char8 *toSearch,
+                                                      CCString toSearch,
                                                       bool expected) {
 
 
@@ -160,26 +163,30 @@ bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previo
         toSearch++;
     }
 
-    uint32 length = StringHelper::Length(toSearch);
+    uint32 length = toSearch.GetSize();
     uint32 addressNumberNodes = 1;
+    CCString lastNode;
     for (uint32 i = 0; i < length; i++) {
         if (toSearch[i] == '.') {
             //increment the number of nodes where a '.' is found
             addressNumberNodes++;
+            lastNode = CCString(toSearch.GetList()+i);
         }
     }
 
-    const char8 *lastNode = StringHelper::SearchLastChar(toSearch, '.');
-    if (lastNode == NULL) {
+    //const char8 *lastNode = StringHelper::SearchLastChar(toSearch, '.');
+    //if (lastNode == NULL) {
+    if (lastNode.GetSize() == 0){
         lastNode = toSearch;
     }
     else {
-        if (lastNode[0] != '\0') {
+//        if (lastNode[0] != '\0') {
+    		// skip the .
             lastNode++;
-        }
-        else {
-            return false;
-        }
+//        }
+//        else {
+//            return false;
+//        }
     }
 
     Reference toBeSearched("Object");
@@ -197,8 +204,7 @@ bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previo
     return true;
 }
 
-bool ReferenceContainerFilterObjectNameTest::TestAssignOperator(int32 occurrence,
-                                                                const char8 *toSearch) {
+bool ReferenceContainerFilterObjectNameTest::TestAssignOperator(int32 occurrence,CCString toSearch) {
     for (uint32 mode = 0; mode < 8; mode++) {
         // creates a filter
         ReferenceContainerFilterObjectName *myFilterName = new ReferenceContainerFilterObjectName(occurrence, mode, toSearch);
@@ -208,7 +214,7 @@ bool ReferenceContainerFilterObjectNameTest::TestAssignOperator(int32 occurrence
 
         ReferenceContainer fakeTree;
 
-        int32 cycles = (occurrence >= 0) ? occurrence : 500u;
+        int32 cycles = (occurrence >= 0) ? occurrence : 500;
 
         for (int32 i = 0; i < cycles; i++) {
             myFilterName->Test(fakeTree, testRef);

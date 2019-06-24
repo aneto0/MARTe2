@@ -36,7 +36,8 @@
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "ConfigurationDatabase.h"
+#include "SimpleStructuredData.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,9 +45,15 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
+}
+
 ReferenceTest::ReferenceTest() {
     eventSem.Create();
     nRefs = 0;
+    arrayRefs = NULL;
 }
 
 bool ReferenceTest::TestDefaultConstructor() {
@@ -158,8 +165,8 @@ bool ReferenceTest::TestDestructor() {
 
 bool ReferenceTest::TestInitialiseNoCreation() {
     Reference intObjRef = Reference("IntegerObject");
-    ConfigurationDatabase cdb;
-    uint32 value = 1;
+    SimpleStructuredData cdb;
+    int32 value = 1;
     cdb.Write("var", value);
     if (!intObjRef.Initialise(cdb, true)) {
         return false;
@@ -170,8 +177,8 @@ bool ReferenceTest::TestInitialiseNoCreation() {
 
 bool ReferenceTest::TestInitialiseCreation() {
     Reference intObjRef;
-    ConfigurationDatabase cdb;
-    uint32 value = 1;
+    SimpleStructuredData cdb;
+    int32 value = 1;
     cdb.Write("Class", "IntegerObject");
     cdb.Write("var", value);
     if (!intObjRef.Initialise(cdb, false)) {
@@ -183,7 +190,7 @@ bool ReferenceTest::TestInitialiseCreation() {
 
 bool ReferenceTest::TestInitialiseNoObject() {
     Reference intObjRef;
-    ConfigurationDatabase cdb;
+    SimpleStructuredData cdb;
     int32 value = 1;
     cdb.Write("var", value);
     return !intObjRef.Initialise(cdb, true);
@@ -191,7 +198,7 @@ bool ReferenceTest::TestInitialiseNoObject() {
 
 bool ReferenceTest::TestInitialiseNoClassName(){
     Reference intObjRef;
-    ConfigurationDatabase cdb;
+    SimpleStructuredData cdb;
     int32 value = 1;
     cdb.Write("var", value);
     return !intObjRef.Initialise(cdb, false);
@@ -255,7 +262,7 @@ bool ReferenceTest::TestCopyOperatorReferenceNull() {
 }
 
 bool ReferenceTest::TestCopyOperatorObject() {
-    ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase::Instance();
 
     Reference intObjRef = Reference("IntegerObject");
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
@@ -410,14 +417,14 @@ bool ReferenceTest::TestDifferentOperator() {
 
 }
 
-void CreateRefsOnStack(ReferenceTest &rt) {
+void CreateRefsOnStack(ReferenceTest *rt) {
 
     Reference newRef[32];
     for (uint32 i = 0; i < 32; i++) {
-        newRef[i] = rt.storedRef;
+        newRef[i] = rt->storedRef;
     }
 
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 }
 
 bool ReferenceTest::TestInFunctionOnStack() {
@@ -434,35 +441,35 @@ bool ReferenceTest::TestInFunctionOnStack() {
             return false;
         }
 
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
 
     eventSem.Post();
 
     while (Threads::NumberOfThreads() != 0) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
-    Sleep::MSec(10);
+    Sleep::Short(10,Units::ms);
 
     return storedRef.NumberOfReferences() == 1;
 
 }
 
-void CreateRefsOnHeap(ReferenceTest &rt) {
+void CreateRefsOnHeap(ReferenceTest *rt) {
 
-    rt.arrayRefs = (Reference **) HeapManager::Malloc(sizeof(Reference*) * rt.nRefs);
+    rt->arrayRefs = (Reference **) HeapManager::Malloc(sizeof(Reference*) * rt->nRefs);
 
-    for (uint32 i = 0; i < rt.nRefs; i++) {
-        rt.arrayRefs[i] = new Reference;
-        *(rt.arrayRefs[i]) = rt.storedRef;
+    for (uint32 i = 0; i < rt->nRefs; i++) {
+        rt->arrayRefs[i] = new Reference;
+        *(rt->arrayRefs[i]) = rt->storedRef;
     }
 
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 }
 
 bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
-    ClassRegistryDatabase::Instance();
+//    ClassRegistryDatabase::Instance();
 
     storedRef = Reference("Object");
 
@@ -480,15 +487,15 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
             break;
         }
 
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
 
     eventSem.Post();
 
     while (Threads::NumberOfThreads() != 0) {
-        Sleep::MSec(10);
+        Sleep::Short(10,Units::ms);
     }
-    Sleep::MSec(10);
+    Sleep::Short(10,Units::ms);
 
     if (storedRef.NumberOfReferences() != totalNRefs) {
         ret = false;
@@ -542,54 +549,54 @@ bool ReferenceTest::TestWrongInherithance() {
 
 }
 
-void ActsOnRefs1(ReferenceTest &rt) {
+void ActsOnRefs1(ReferenceTest *rt) {
 
     //add a certain number of references to the first object
-    for (uint32 i = 0; i < (rt.nRefs); i++) {
-        rt.arrayRefs[i] = new Reference;
-        *(rt.arrayRefs[i]) = (rt.storedRef);
+    for (uint32 i = 0; i < (rt->nRefs); i++) {
+        rt->arrayRefs[i] = new Reference;
+        *(rt->arrayRefs[i]) = (rt->storedRef);
     }
 
     //add a certain number of references to the second object
-    for (uint32 i = (rt.nRefs); i < (2 * rt.nRefs); i++) {
-        rt.arrayRefs[i] = new Reference;
-        *(rt.arrayRefs[i]) = (rt.storedRef2);
+    for (uint32 i = (rt->nRefs); i < (2 * rt->nRefs); i++) {
+        rt->arrayRefs[i] = new Reference;
+        *(rt->arrayRefs[i]) = (rt->storedRef2);
     }
 
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 
-    for (uint32 i = (2 * rt.nRefs); i < (3 * rt.nRefs); i++) {
-        rt.arrayRefs[i]->RemoveReference();
+    for (uint32 i = (2 * rt->nRefs); i < (3 * rt->nRefs); i++) {
+        rt->arrayRefs[i]->RemoveReference();
     }
 
-    for (uint32 i = (3 * rt.nRefs); i < (4 * rt.nRefs); i++) {
-        rt.arrayRefs[i]->RemoveReference();
+    for (uint32 i = (3 * rt->nRefs); i < (4 * rt->nRefs); i++) {
+        rt->arrayRefs[i]->RemoveReference();
     }
 
 }
 
-void ActsOnRefs2(ReferenceTest &rt) {
+void ActsOnRefs2(ReferenceTest *rt) {
 
     //add a certain number of references to the first object
-    for (uint32 i = (2 * rt.nRefs); i < (3 * rt.nRefs); i++) {
-        rt.arrayRefs[i] = new Reference;
-        *(rt.arrayRefs[i]) = (rt.storedRef);
+    for (uint32 i = (2 * rt->nRefs); i < (3 * rt->nRefs); i++) {
+        rt->arrayRefs[i] = new Reference;
+        *(rt->arrayRefs[i]) = (rt->storedRef);
     }
 
     //add a certain number of references to the second object
-    for (uint32 i = (3 * rt.nRefs); i < (4 * rt.nRefs); i++) {
-        rt.arrayRefs[i] = new Reference;
-        *(rt.arrayRefs[i]) = (rt.storedRef2);
+    for (uint32 i = (3 * rt->nRefs); i < (4 * rt->nRefs); i++) {
+        rt->arrayRefs[i] = new Reference;
+        *(rt->arrayRefs[i]) = (rt->storedRef2);
     }
 
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 
-    for (uint32 i = 0; i < rt.nRefs; i++) {
-        rt.arrayRefs[i]->RemoveReference();
+    for (uint32 i = 0; i < rt->nRefs; i++) {
+        rt->arrayRefs[i]->RemoveReference();
     }
 
-    for (uint32 i = rt.nRefs; i < (2 * rt.nRefs); i++) {
-        rt.arrayRefs[i]->RemoveReference();
+    for (uint32 i = rt->nRefs; i < (2 * rt->nRefs); i++) {
+        rt->arrayRefs[i]->RemoveReference();
     }
 }
 
@@ -611,7 +618,7 @@ bool ReferenceTest::HugeTest(uint32 nRefs) {
             ret = false;
             break;
         }
-        Sleep::MSec(100);
+        Sleep::Short(100,Units::ms);
     }
 
     eventSem.Post();
@@ -622,7 +629,7 @@ bool ReferenceTest::HugeTest(uint32 nRefs) {
             ret = false;
             break;
         }
-        Sleep::MSec(100);
+        Sleep::Short(100,Units::ms);
     }
 
     for (uint32 i = 0; i < (4 * nRefs); i++) {

@@ -93,6 +93,8 @@ public:
      */
     static bool ZTAIsSame(const uint8 *pointer,const uint8 *data, uint32 elSize);
 
+
+
 };
 
 
@@ -100,6 +102,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 
 } // MARTe
 

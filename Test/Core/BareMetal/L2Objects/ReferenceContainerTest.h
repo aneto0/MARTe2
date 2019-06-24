@@ -34,9 +34,9 @@
 #include "Object.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
-
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "Milliseconds.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -87,13 +87,13 @@ public:
      * @brief Tests the ReferenceContainer::GetTimeout function.
      * @return true if the timeout is changed to a new value and correctly read-back.
      */
-    bool TestGetTimeout(TimeoutType timeout);
+    bool TestGetTimeout(MilliSeconds timeout);
 
     /**
      * @brief Tests the ReferenceContainer::SetTimeout function.
      * @return true if the timeout is changed to a new value and correctly read-back.
      */
-    bool TestSetTimeout(TimeoutType timeout);
+    bool TestSetTimeout(MilliSeconds timeout);
 
     /**
      * @brief Tests the ReferenceContainer::Find function.
@@ -506,7 +506,7 @@ private:
     /**
      * Heap used for the tests
      */
-    HeapI* h;
+    HeapManager::HeapId h;
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.

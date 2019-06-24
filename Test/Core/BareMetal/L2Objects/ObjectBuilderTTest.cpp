@@ -33,8 +33,8 @@
 
 #include "ObjectBuilderTTest.h"
 
-#include "GlobalObjectsDatabase.h"
-#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
+//#include "GlobalObjectsDatabase.h"
+#include "HeapI.h"
 #include "Object.h"
 #include "ObjectBuilderT.h"
 
@@ -75,8 +75,8 @@ bool ObjectBuilderTTest::TestBuild() {
     using namespace MARTe;
     bool result;
     ObjectBuilderT<NotBuildableAgainObj> target;
-    HeapI* heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
-    NotBuildableAgainObj *obj = (NotBuildableAgainObj *) target.Build(heap);
+//    HeapI* heap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
+    NotBuildableAgainObj *obj = (NotBuildableAgainObj *) target.Build(HeapManager::standardHeapId);
     if (obj == NULL) {
         result = false;
     }

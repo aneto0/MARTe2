@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
 #include "StructuredDataI.h"
+#include "AnyType.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -61,7 +62,7 @@ public:
     /**
      * @return the value of the dummy variable.
      */
-    uint32 GetVariable() const {
+    int32 GetVariable() const {
         return dummyVariable;
     }
 

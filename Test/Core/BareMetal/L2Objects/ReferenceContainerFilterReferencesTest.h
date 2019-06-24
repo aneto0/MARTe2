@@ -131,7 +131,7 @@ public:
      * @param[in] occurrence is the desired pattern occurrence.
      * @return true if the test explained in the details section passes, false otherwise.
      */
-    bool TestReset(uint32 occurrence);
+    bool TestReset(int32 occurrence);
 
     /**
      * @brief Tests the TestSetGetOriginalSetOccurrence.

@@ -30,11 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CLASSMETHODREGISTER.h"
-#include "ClassRegistryItemT.h"
 #include "ClassWithCallableMethods.h"
-#include "ConfigurationDatabase.h"
+//#include "ConfigurationDatabase.h"
 #include "Reference.h"
-#include "StreamString.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -143,31 +142,52 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStru
     bool result = data.Read("value", value);
     result &= (value == 30);
     value = 40;
-    result &= data.Write("value", value);
+    result = result && data.Write("value", value);
 
     lastMethodExecuted = "MethodWithOutputStructuredDataI(StructuredDataI)";
     return result;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithConstInputStreamI(const MARTe::StreamI &data) {
-    const MARTe::StreamString &ss = reinterpret_cast<const MARTe::StreamString &>(data);
+
+	MARTe::StreamI &dataNS = const_cast<MARTe::StreamI &>(data);
+	char buffer[256];
+	MARTe::uint32 size = sizeof(buffer)-1;
+	dataNS.Read(buffer,size);
+	buffer[size]=0;
+	MARTe::CCString ss(&buffer[0]);
+
+//	const MARTe::DynamicCString &ss = reinterpret_cast<const MARTe::DynamicCString &>(data);
     bool result = (ss == "MethodWithConstInputStreamI");
     lastMethodExecuted = "MethodWithConstInputStreamI(StreamI)";
     return result;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputStreamI(MARTe::StreamI &data) {
-    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
-    ss = "MethodWithOutputStreamI";
+//    MARTe::DynamicCString &ss = reinterpret_cast<MARTe::DynamicCString &>(data);
+//    ss = "MethodWithOutputStreamI";
+	MARTe::CCString message("MethodWithOutputStreamI");
+	MARTe::uint32 size = message.GetSize();
+	data.Write(message.GetList(),size);
     lastMethodExecuted = "MethodWithOutputStreamI(StreamI&)";
     return true;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithInputOutputStreamI(MARTe::StreamI &data) {
-    MARTe::StreamString &ss = reinterpret_cast<MARTe::StreamString &>(data);
+	char buffer[256];
+	MARTe::uint32 size = sizeof(buffer)-1;
+	data.Seek(0U);
+	data.Read(buffer,size);
+	buffer[size]=0;
+	MARTe::CCString ss(&buffer[0]);
+//    MARTe::DynamicCString &ss = reinterpret_cast<MARTe::DynamicCString &>(data);
     bool result = (ss == "MethodWithInputOutputStreamI");
     lastMethodExecuted = "MethodWithInputOutputStreamI(StreamI&)";
-    ss = "ReturnFromMethodWithInputOutputStreamII";
+    data.SetSize(0);
+	MARTe::CCString message("ReturnFromMethodWithInputOutputStreamII");
+	size = message.GetSize();
+	data.Write(message.GetList(),size);
+//    ss = "ReturnFromMethodWithInputOutputStreamII";
     return result;
 }
 
@@ -192,15 +212,18 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithInputRefer
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithOutputReferenceContainerAndStructuredDataIAt0(MARTe::ReferenceContainer &data) {
     bool result = true;
-    MARTe::ReferenceT<MARTe::ConfigurationDatabase> obj(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
     MARTe::uint32 value = 60;
-    obj->Write("value", value);
-    data.Insert(obj);
+    MARTe::AnyType at(value);
+    MARTe::Reference ref;
+    at.Clone(ref);
+//    MARTe::ReferenceT<MARTe::ConfigurationDatabase> obj(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+//    obj->Write("value", value);
+    data.Insert(ref);
     lastMethodExecuted = "MethodWithOutputReferenceContainerAndStructuredDataIAt0(ReferenceContainer&)";
     return result;
 }
 
-MARTe::StreamString ClassWithCallableMethods::GetLastMethodExecuted() {
+MARTe::DynamicCString ClassWithCallableMethods::GetLastMethodExecuted() {
     return lastMethodExecuted;
 }
 
@@ -212,7 +235,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithVoidParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -225,7 +248,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -238,7 +261,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -251,7 +274,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -264,7 +287,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -277,7 +300,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -290,7 +313,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -303,7 +326,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -316,7 +339,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W(const MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -329,7 +352,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -342,7 +365,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -355,7 +378,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -368,7 +391,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -381,7 +404,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -394,7 +417,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -407,7 +430,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -420,7 +443,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -433,7 +456,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -446,7 +469,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -459,7 +482,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -472,7 +495,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -485,7 +508,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -498,7 +521,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -511,7 +534,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -524,7 +547,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -537,7 +560,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -550,7 +573,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W(const MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -563,7 +586,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -576,7 +599,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -589,7 +612,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -602,7 +625,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -615,7 +638,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -628,7 +651,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -641,7 +664,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -654,7 +677,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -667,7 +690,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W(MARTe::uint32 param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -680,7 +703,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -693,7 +716,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -706,7 +729,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -719,7 +742,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -732,7 +755,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -745,7 +768,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -758,7 +781,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -771,7 +794,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -784,7 +807,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -797,7 +820,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -810,7 +833,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -823,7 +846,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -836,7 +859,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -849,7 +872,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -862,7 +885,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -875,7 +898,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -888,7 +911,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -901,7 +924,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W(MARTe::uint32 param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -914,7 +937,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -927,7 +950,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -940,7 +963,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -953,7 +976,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -966,7 +989,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -979,7 +1002,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -992,7 +1015,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1005,7 +1028,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1018,7 +1041,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W(MARTe::uint32 &param1,
                                                                                              const MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1031,7 +1054,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1044,7 +1067,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1057,7 +1080,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1070,7 +1093,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1083,7 +1106,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1096,7 +1119,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1109,7 +1132,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1122,7 +1145,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1135,7 +1158,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1148,7 +1171,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1161,7 +1184,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1174,7 +1197,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              const MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1187,7 +1210,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1200,7 +1223,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1213,7 +1236,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1226,7 +1249,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             const MARTe::StreamString &param4) {
+                                                                                             const MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1239,7 +1262,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString param4) {
+                                                                                             MARTe::DynamicCString param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1252,7 +1275,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W(MARTe::uint32 &param1,
                                                                                              MARTe::float32 &param2,
                                                                                              MARTe::float64 &param3,
-                                                                                             MARTe::StreamString &param4) {
+                                                                                             MARTe::DynamicCString &param4) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1265,13 +1288,13 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParame
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithFourParametersReturnError(MARTe::uint32 &param1,
                                                                                                 MARTe::float32 &param2,
                                                                                                 MARTe::float64 &param3,
-                                                                                                MARTe::StreamString &param4) {
+                                                                                                MARTe::DynamicCString &param4) {
     return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_C(const MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1282,7 +1305,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_R(const MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1293,7 +1316,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_C_W(const MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1304,7 +1327,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_C(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1315,7 +1338,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_R(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1326,7 +1349,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_R_W(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1337,7 +1360,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_C(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1348,7 +1371,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_R(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1359,7 +1382,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_C_W_W(const MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1370,7 +1393,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_C(MARTe::uint32 param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1381,7 +1404,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_R(MARTe::uint32 param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1392,7 +1415,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_C_W(MARTe::uint32 param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1403,7 +1426,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_C(MARTe::uint32 param1,
                                                                                             MARTe::float32 param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1414,7 +1437,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_R(MARTe::uint32 param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1425,7 +1448,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_R_W(MARTe::uint32 param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == 2.0);
@@ -1436,7 +1459,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_C(MARTe::uint32 param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1447,7 +1470,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_R(MARTe::uint32 param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1458,7 +1481,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_R_W_W(MARTe::uint32 param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     result &= (param1 == 3);
     param2 = 6.0;
@@ -1469,7 +1492,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_C(MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1480,7 +1503,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_R(MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1491,7 +1514,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_C_W(MARTe::uint32 & param1,
                                                                                             const MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1502,7 +1525,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_C(MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1513,7 +1536,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_R(MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1524,7 +1547,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_R_W(MARTe::uint32 & param1,
                                                                                             MARTe::float32 param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     result &= (param2 == 2.0);
@@ -1535,7 +1558,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_C(MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            const MARTe::StreamString & param3) {
+                                                                                            const MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1546,7 +1569,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_R(MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString param3) {
+                                                                                            MARTe::DynamicCString param3) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1557,7 +1580,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParameters_W_W_W(MARTe::uint32 & param1,
                                                                                             MARTe::float32 & param2,
-                                                                                            MARTe::StreamString & param3) {
+                                                                                            MARTe::DynamicCString & param3) {
     bool result = true;
     param1 = 5;
     param2 = 6.0;
@@ -1568,12 +1591,12 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParam
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithThreeParametersReturnError(MARTe::uint32 &param1,
                                                                                                  MARTe::float32 &param2,
-                                                                                                 MARTe::StreamString &param3) {
+                                                                                                 MARTe::DynamicCString &param3) {
     return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_C(const MARTe::uint32 & param1,
-                                                                                        const MARTe::StreamString & param2) {
+                                                                                        const MARTe::DynamicCString & param2) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == "KO");
@@ -1582,7 +1605,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_R(const MARTe::uint32 & param1,
-                                                                                        MARTe::StreamString param2) {
+                                                                                        MARTe::DynamicCString param2) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == "KO");
@@ -1591,7 +1614,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_C_W(const MARTe::uint32 & param1,
-                                                                                        MARTe::StreamString & param2) {
+                                                                                        MARTe::DynamicCString & param2) {
     bool result = true;
     result &= (param1 == 3);
     param2 = "OK";
@@ -1600,7 +1623,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_C(MARTe::uint32 param1,
-                                                                                        const MARTe::StreamString & param2) {
+                                                                                        const MARTe::DynamicCString & param2) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == "KO");
@@ -1609,7 +1632,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_R(MARTe::uint32 param1,
-                                                                                        MARTe::StreamString param2) {
+                                                                                        MARTe::DynamicCString param2) {
     bool result = true;
     result &= (param1 == 3);
     result &= (param2 == "KO");
@@ -1618,7 +1641,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_R_W(MARTe::uint32 param1,
-                                                                                        MARTe::StreamString & param2) {
+                                                                                        MARTe::DynamicCString & param2) {
     bool result = true;
     result &= (param1 == 3);
     param2 = "OK";
@@ -1627,7 +1650,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_C(MARTe::uint32 & param1,
-                                                                                        const MARTe::StreamString & param2) {
+                                                                                        const MARTe::DynamicCString & param2) {
     bool result = true;
     param1 = 5;
     result &= (param2 == "KO");
@@ -1636,7 +1659,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_R(MARTe::uint32 & param1,
-                                                                                        MARTe::StreamString param2) {
+                                                                                        MARTe::DynamicCString param2) {
     bool result = true;
     param1 = 5;
     result &= (param2 == "KO");
@@ -1645,7 +1668,7 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_W_W(MARTe::uint32 & param1,
-                                                                                        MARTe::StreamString & param2) {
+                                                                                        MARTe::DynamicCString & param2) {
     bool result = true;
     param1 = 5;
     param2 = "OK";
@@ -1654,22 +1677,22 @@ MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParamet
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParametersReturnError(MARTe::uint32 &param1,
-                                                                                               MARTe::StreamString &param2) {
+                                                                                               MARTe::DynamicCString &param2) {
     return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1(MARTe::uint32 * param1,
-                                                                                              MARTe::StreamString & param2) {
+                                                                                              MARTe::DynamicCString & param2) {
     return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_2(MARTe::uint32 & param1,
-                                                                                              MARTe::StreamString * param2) {
+                                                                                              MARTe::DynamicCString * param2) {
     return MARTe::ErrorManagement::FatalError;
 }
 
 MARTe::ErrorManagement::ErrorType ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1_2(MARTe::uint32 * param1,
-                                                                                                MARTe::StreamString * param2) {
+                                                                                                MARTe::DynamicCString * param2) {
     return MARTe::ErrorManagement::FatalError;
 }
 

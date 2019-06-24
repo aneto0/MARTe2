@@ -50,7 +50,7 @@ public:
      * @return Since the database is a singleton, this test returns true if the instance function
      * returns always the same database object.
      */
-    bool TestInstance();
+//    bool TestInstance();
 
     /**
      * @brief Tests the Delete function.
@@ -100,8 +100,8 @@ public:
      * (the test should return false)
      * @return true if \a validName=true DLLName::ClassName returns true and if \a validName=false and DLLName::ClassName returns false.
      */
-    bool TestFindDLL(const MARTe::char8* dllName,
-                     const MARTe::char8* className,
+    bool TestFindDLL(MARTe::CCString dllName,
+                     MARTe::CCString className,
                      bool validName);
 
     /**
@@ -153,11 +153,11 @@ public:
     /**
      * @brief Tests that GetClassName() returns "ClassRegistryDatabase"
      */
-    bool TestGetClassName();
+//    bool TestGetClassName();
 
 
 
-    bool TestCleanUp();
+//    bool TestCleanUp();
 
 };
 

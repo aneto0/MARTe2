@@ -24,21 +24,57 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
+//#include "ClassRegistryItemT.h"
 #include "ObjectRegistryDatabaseTest.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Class used for tests
+ */
+class PID: public Object {
+    /**
+     * @brief Initialises the gains from cdb
+     */
+    virtual bool Initialise(StructuredDataI &data);
+public:
+    /**
+     * Proportional gain
+     */
+    uint32 Kp;
+    /**
+     * Integral gain
+     */
+    uint32 Ki;
+    /**
+     * Derivative gain
+     */
+    uint32 Kd;
+
+    void Init(uint32 Kp,uint32 Ki,uint32 Kd);
+
+    CLASS_REGISTER_DECLARATION()
+    ;
+};
+
+void PID::Init(uint32 Kp,uint32 Ki,uint32 Kd){
+	this->Kp= Kp;
+	this->Ki= Ki;
+	this->Kd= Kd;
+}
+
 bool PID::Initialise(StructuredDataI & data) {
     bool ok = data.Read("Kp", Kp);
-    ok &= data.Read("Ki", Ki);
-    ok &= data.Read("Kd", Kd);
+    ok = ok && data.Read("Ki", Ki);
+    ok = ok && data.Read("Kd", Kd);
     return ok;
 }
 CLASS_REGISTER(PID, "1.0")
@@ -48,6 +84,7 @@ CLASS_REGISTER(PID, "1.0")
 /*---------------------------------------------------------------------------*/
 
 ObjectRegistryDatabaseTest::ObjectRegistryDatabaseTest() {
+#if 0
     cdb.CreateAbsolute("$A");
     cdb.Write("Class", "ReferenceContainer");
     cdb.CreateRelative("+PID");
@@ -70,20 +107,30 @@ ObjectRegistryDatabaseTest::ObjectRegistryDatabaseTest() {
     cdb.Write("Ki", 2);
     cdb.Write("Kd", 3);
     cdb.MoveToRoot();
-    ObjectRegistryDatabase::Instance()->Initialise(cdb);
-
+#endif
+//    ObjectRegistryDatabase::Access().Initialise(cdb);
+    ReferenceT<PID> pid1(HeapManager::standardHeapId);
+    pid1->Init(7,8,9);
+    ReferenceT<PID> pid2(HeapManager::standardHeapId);
+    pid1->Init(4,5,6);
+    ReferenceT<PID> pid3(HeapManager::standardHeapId);
+    pid1->Init(1,2,3);
+    ObjectRegistryDatabase::Access()->Insert("A.PID",pid1);
+    ObjectRegistryDatabase::Access()->Insert("A.B.PID",pid2);
+    ObjectRegistryDatabase::Access()->Insert("A.B.C.PID",pid3);
 }
 
 ObjectRegistryDatabaseTest::~ObjectRegistryDatabaseTest() {
-    ObjectRegistryDatabase::Instance()->Purge();
+//    ObjectRegistryDatabase::Purge();
 }
 
-bool ObjectRegistryDatabaseTest::TestInstance() {
-    return ObjectRegistryDatabase::Instance() != NULL;
-}
+//bool ObjectRegistryDatabaseTest::TestInstance() {
+//    return ObjectRegistryDatabase::Instance() != NULL;
+//}
 
 bool ObjectRegistryDatabaseTest::TestFind() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
+	  ReferenceT<PID> test = ObjectRegistryDatabase::Find("A.B.C.PID");
+//    ReferenceT<PID> test = ObjectRegistryDatabase::Find("A.B.C.PID");
 
     if (!test.IsValid()) {
         return false;
@@ -102,12 +149,14 @@ bool ObjectRegistryDatabaseTest::TestFind() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Relative() {
-    ReferenceT<PID> test = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
+//    ReferenceT<PID> test = ObjectRegistryDatabase::Find("A.B.C.PID");
+    ReferenceT<PID> test = ObjectRegistryDatabase::Find("A.B.C.PID");
 
     if (!test.IsValid()) {
         return false;
     }
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::PID", test);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Find(":::PID", test);
+//    ReferenceT<PID> test2 = ObjectRegistryDatabase::Find(":::PID", test);
     if (!test2.IsValid()) {
         return false;
     }
@@ -121,12 +170,12 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
         return false;
     }
 
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Find("A.B");
     if (!start.IsValid()) {
         return false;
     }
     // relative search
-    ReferenceT<PID> test4 = ObjectRegistryDatabase::Instance()->Find(":C.PID", start);
+    ReferenceT<PID> test4 = ObjectRegistryDatabase::Find(":C.PID", start);
     if (!test4.IsValid()) {
         return false;
     }
@@ -143,12 +192,12 @@ bool ObjectRegistryDatabaseTest::TestFind_Relative() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
-    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Instance()->Find("A.B");
+    ReferenceT<ReferenceContainer> start = ObjectRegistryDatabase::Find("A.B");
     if (!start.IsValid()) {
         return false;
     }
 // absolute search
-    ReferenceT<PID> test5 = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID", start);
+    ReferenceT<PID> test5 = ObjectRegistryDatabase::Find("A.B.C.PID", start);
     if (!test5.IsValid()) {
         return false;
     }
@@ -167,13 +216,13 @@ bool ObjectRegistryDatabaseTest::TestFind_Absolute() {
 }
 
 bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
-    ReferenceT<PID> start = ObjectRegistryDatabase::Instance()->Find("A.B.C.PID");
+    ReferenceT<PID> start = ObjectRegistryDatabase::Find("A.B.C.PID");
     if (!start.IsValid()) {
         return false;
     }
 
 // searches from the beginning
-    ReferenceT<PID> test2 = ObjectRegistryDatabase::Instance()->Find(":::::A.PID", start);
+    ReferenceT<PID> test2 = ObjectRegistryDatabase::Find(":::::A.PID", start);
     if (!test2.IsValid()) {
         return false;
     }
@@ -190,7 +239,7 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
     return true;
 }
 
-bool ObjectRegistryDatabaseTest::TestGetClassName() {
-    return StringHelper::Compare(ObjectRegistryDatabase::Instance()->GetClassName(), "ObjectRegistryDatabase") == 0;
-}
+//bool ObjectRegistryDatabaseTest::TestGetClassName() {
+//    return StringHelper::Compare(ObjectRegistryDatabase::GetClassName(), "ObjectRegistryDatabase") == 0;
+//}
 

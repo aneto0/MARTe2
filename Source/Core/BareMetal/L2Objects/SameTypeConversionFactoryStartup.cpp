@@ -62,6 +62,11 @@ private:
 	 */
 	const bool compare;
 
+	/**
+	 * @brief disable its use
+	 */
+	void operator=(const CopyTCO &src){}
+
 };
 
 

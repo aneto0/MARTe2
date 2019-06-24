@@ -30,12 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodsRegistryItemTest.h"
-
-#include <ClassRegistryItem-old.h>
+//#include <ClassRegistryItem-old.h>
 #include "ClassMethodInterfaceMapper.h"
-#include "ClassRegistryItemT.h"
+#include "ClassRegistryItem.h"
 #include "ClassWithCallableMethods.h"
-#include "ConfigurationDatabase.h"
+//#include "ConfigurationDatabase.h"
 #include "ErrorType.h"
 #include "Object.h"
 #include "ReferenceContainer.h"

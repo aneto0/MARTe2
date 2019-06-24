@@ -31,9 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 #include "HeapManager.h"
-#include "StringHelper.h"
 #include "TestObjectHelper2.h"
 
 /*---------------------------------------------------------------------------*/

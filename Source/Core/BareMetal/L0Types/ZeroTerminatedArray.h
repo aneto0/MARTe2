@@ -82,11 +82,25 @@ public:
     inline uint32 Find(const T & data) const;
 
     /**
+     * @brief Finds the first location in the array that contains T
+     * @param[in] data is the element to be found.
+     * @return the position in the array where T is found, 0xFFFFFFFF if not found.
+     */
+    inline uint32 FindPattern(const T *data) const;
+
+    /**
      * @brief Checks if data is in this array
      * @param[in] data is the element to be found.
      * @return true if found
      */
     inline bool In(const T& data) const;
+
+    /**
+     * @brief Checks if the array data is in this array
+     * @param[in] data is the element to be found.
+     * @return true if found
+     */
+    inline bool In(const ZeroTerminatedArray<T>& data) const;
 
     /**
      * @brief Returns the pointer to the beginning of the array.
@@ -145,6 +159,7 @@ public:
      */
     inline int32 CompareContent(const T *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
+
     /**
      * @brief Allows obtaining a tool to perform efficient editing operations on the string
      */
@@ -194,6 +209,15 @@ public:
 
 };
 
+template<>
+inline bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const;
+
+template<>
+inline int32 ZeroTerminatedArray<const char8>::CompareContent(const char *arrayIn,uint32 limit) const ;
+
+template<>
+inline uint32 ZeroTerminatedArray<const char8>::FindPattern(const char8 * data) const;
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -227,6 +251,37 @@ uint32 ZeroTerminatedArray<T>::GetSize() const {
 template<typename T>
 uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
 	return ZTAFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
+}
+
+template<typename T>
+uint32 ZeroTerminatedArray<T>::FindPattern(const T * data) const{
+	uint32 ret = 0xFFFFFFFFu;
+
+	const T *pArray = array;
+	const T *pTest = data;
+	if ((pArray != NULL_PTR(const T*)) && (pTest != NULL_PTR(const T*))){
+		uint32 limit = ZeroTerminatedArray<T>(data).GetSize();
+		bool found = false;
+    	ZeroTerminatedArray<T> search(this);
+	    while (!IsZero(*pArray) && !found) {
+	    	found = search.IsSameAs(pTest,limit);
+	    	search++;
+	    }
+	    if (found ){
+		    ret = static_cast<uint32>(search.array - array);
+	    }
+	}
+	return ret;
+}
+
+template<>
+uint32 ZeroTerminatedArray<const char8>::FindPattern(const char8* data) const{
+	const char8 *found = strstr(array,data);
+	uint32 ret = 0xFFFFFFFFU;
+	if (found != NULL_PTR(const char8 *)){
+		ret = static_cast<uint32>(found - array);
+	}
+	return ret;
 }
 
 template<typename T>
@@ -266,7 +321,7 @@ void ZeroTerminatedArray<T>::operator++(int) {//int is for postfix operator!
 
 template<typename T>
 bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
-    bool same = true;
+	bool same = true;
     if ((array != NULL_PTR(T*))&&(arrayIn != NULL_PTR(T*))) {
         const T * listP = array;
         const T * list2P = arrayIn;
@@ -284,12 +339,11 @@ bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
     return same;
 }
 
-template<>
-inline bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const;
-
 
 template<>
 bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const {
+	return (strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit)==0);
+#if 0
     bool same = true;
     if ((array != NULL_PTR(char8*))&&(arrayIn != NULL_PTR(char8*))) {
         const char8 * listP = array;
@@ -306,6 +360,7 @@ bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limi
         }
     }
     return same;
+#endif
 }
 
 template<typename T>
@@ -350,6 +405,12 @@ int32 ZeroTerminatedArray<T>::CompareContent(const T *arrayIn,uint32 limit) cons
     	}
     }
     return compResult;
+}
+
+
+template<>
+int32 ZeroTerminatedArray<const char8>::CompareContent(const char *arrayIn,uint32 limit) const {
+	return strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit);
 }
 
 

@@ -405,7 +405,7 @@ ErrorManagement::ErrorType CopyToRecursive(
 			ret = sourceDimensions->GetNextLayerElementSize(sourceElementSize);
 	        REPORT_ERROR(ret, "source dimensions overflow");
 
-			uint32 destElementSize;
+			uint32 destElementSize = 0U;
 	        if (ret){
 	        	ret = destDimensions->GetNextLayerElementSize(destElementSize);
 		        REPORT_ERROR(ret, "dest dimensions overflow");

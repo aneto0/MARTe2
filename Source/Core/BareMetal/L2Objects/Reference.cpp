@@ -199,6 +199,18 @@ Object *Reference::CreateByName(CCString const className,HeapManager::HeapId hea
     return obj;
 } 
 
+ErrorManagement::ErrorType Reference::FromAnyType(const AnyType &anyType){
+	ErrorManagement::ErrorType ok;
+	ok.parametersError = !anyType.IsValid();
+	REPORT_ERROR(ok,"AnyType parameter is not valid");
+
+	if (ok){
+		ok = anyType.Clone(*this);
+		REPORT_ERROR(ok,"Clone Failed");
+	}
+	return ok;
+}
+
 void Reference::ToAnyType(AnyType &at) const{
 	if (objectPointer != NULL){
 	    objectPointer->ToAnyType(at);
@@ -214,15 +226,6 @@ Reference::operator AnyType() const{
 }
 
 
-Reference::Reference(const AnyType &anyType):Reference(){
-	ErrorManagement::ErrorType ok;
-	ok.parametersError = !anyType.IsValid();
-	REPORT_ERROR(ok,"AnyType parameter is not valid");
 
-	if (ok){
-		ok = anyType.Clone(*this);
-		REPORT_ERROR(ok,"Clone Failed");
-	}
-}
 
 }

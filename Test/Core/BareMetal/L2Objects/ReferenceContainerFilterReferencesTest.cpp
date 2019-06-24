@@ -334,13 +334,13 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetMode(int32 occurrence) {
 
 }
 
-bool ReferenceContainerFilterReferencesTest::TestReset(uint32 occurrence) {
+bool ReferenceContainerFilterReferencesTest::TestReset(int32 occurrence) {
 
     Reference testRef = Reference("Object");
     ReferenceContainerFilterReferences myRefFilter(occurrence, 0, testRef);
     ReferenceContainer myTree;
 
-    uint32 cnt = 0;
+    int32 cnt = 0;
     while (!myRefFilter.IsFinished()) {
 
         if (!myRefFilter.Test(myTree, testRef)) {
