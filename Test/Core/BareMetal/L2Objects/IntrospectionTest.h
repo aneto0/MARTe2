@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "IntrospectionT.h"
+#include "IntrospectionTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

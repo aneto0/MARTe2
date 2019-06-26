@@ -310,8 +310,11 @@ public:
      * @param[in] filter must be setup to look for the third occurrence of U3.
      * @return the time in seconds that it took to execute the function.
      */
-    float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter);
+    double TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter);
 
+    /**
+     *
+     */
     bool TestFindWithPath();
 
     /**
@@ -391,24 +394,28 @@ public:
      */
     bool TestDelete();
 
+    /**
+     *
+     */
     bool TestDeleteWithPath();
 
     /**
      * @brief Tests if for each of the marked nodes of \a data a new Object
      * will be created and its Reference added to the container.
      */
-    bool TestInitialise();
+//    bool TestInitialise();
 
     /**
      * @brief Tests the Purge method
      */
-    bool TestPurge();
+//    bool TestPurge();
 
     /**
      * @brief Tests the Purge method
      */
     bool TestPurge_Shared();
 
+#if 0
     /**
      * @brief Tests the ExportData function
      */
@@ -443,6 +450,7 @@ public:
      * @brief Tests the RemoveDomainToken method.
      */
     bool TestRemoveDomainToken();
+#endif
     /**
      * List of nodes for the tree described in the GenerateTestTree function
      */
@@ -531,7 +539,7 @@ private:
      * @param[in] expectedResult The expected resulted expressed as a string (dots separate nodes, e.g. D.C.E.H).
      * @return true if the expectedResult is equal to the result retrieved by tree->Find
      */
-    bool TestFindFilter(ReferenceT<ReferenceContainer> tree, ReferenceContainerFilter &filter, const char8 * const expectedResult);
+    bool TestFindFilter(ReferenceT<ReferenceContainer> tree, ReferenceContainerFilter &filter,CCString expectedResult);
 
     /**
      * @brief Generates a container of references from a string representation.
@@ -539,7 +547,7 @@ private:
      * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
-    bool GenerateExpectedResultFromString(ReferenceContainer &result, const char8 * const str);
+    bool GenerateExpectedResultFromString(ReferenceContainer &result,CCString str);
 
     /**
      * @brief Generates a container of references, linking to existing references, from a string representation.
@@ -548,7 +556,7 @@ private:
      * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
-    bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source, ReferenceContainer &result, const char8 * const str);
+    bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source, ReferenceContainer &result,CCString str);
 
 };
 

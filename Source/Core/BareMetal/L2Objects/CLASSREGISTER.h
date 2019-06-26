@@ -36,7 +36,7 @@
 
 #include "StartupManager.h"
 #include "ClassRegistryItem.h"
-#include "ObjectBuilderT.h"
+//#include "ObjectBuilderT.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -128,12 +128,10 @@
         MARTe::ClassRegistryItem *cri = GetClassRegistryItem_Static();												   \
         cri->DecrementNumberOfInstances();                                                   						   \
     }                                                                                                                  \
-    static const MARTe::ObjectBuilderT<className> className ## Builder;                                                \
 	static class className ## _Initializer_{                                                                           \
     	public: className ## _Initializer_(){                                                                          \
     		MARTe::ClassRegistryItem *cri = className::GetClassRegistryItem_Static();								   \
 		    cri->SetClassDetails(MARTe::CCString(#className),MARTe::CCString(#ver));                                   \
-		    cri->SetObjectBuilder(&className ## Builder);                                                              \
 		};                                                                                                             \
     } className ## _Initializer_Instance;
 

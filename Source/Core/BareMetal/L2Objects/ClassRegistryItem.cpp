@@ -43,6 +43,7 @@
 #include "ClassMethodInterfaceMapper.h"
 #include "ClassMember.h"
 #include "Atomic.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,11 +56,12 @@ namespace MARTe {
 
 class Introspection;
 
-ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn):classMethods() {
+
+ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn,const ObjectBuilder * const objectBuilderIn):classMethods() {
 
     numberOfInstances = 0;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
-    objectBuilder = NULL_PTR(ObjectBuilder *);
+    objectBuilder = objectBuilderIn;
 
     sizeOfClass = sizeOfClassIn;
     typeidName = typeidNameIn;

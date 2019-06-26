@@ -39,6 +39,9 @@
 #include "TypeDescriptor.h"
 #include "LinkedListHolderT.h"
 #include "ClassRegistryIndex.h"
+#include "ObjectBuilderT.h"
+#include "FastPollingMutexSem.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -180,22 +183,39 @@ public:
     void                    AddMember(ClassMember * const member);
 
     /**
+     * @brief How many members are registered?
+     * @return the number of registered members
+     */
+    inline uint32 			NumberOfMembers() const;
+
+    /**
      * @brief Destructor.
      */
     virtual                 ~ClassRegistryItem();
 
     /**
      * @brief Allows obtaining per-class singleton ClassRegistryItem
+     * @details The function will allocate the memory to hold the record and also,
+     * if T descends from Object, will allocate a specialized ObjectBuilderT and add
+     * it to the record.
+     * Installing a further specialized ObjectBuilderT will correctly override the default
+     * as the default will be installed first during the access to the record.
      */
+//    template <class T>
+//    static ClassRegistryItem *Instance();
+
     template <class T>
-    static ClassRegistryItem *Instance();
+    static ClassRegistryItem *Instance(typename enable_if<isSameOrBaseOf(Object,T), T>::type *x=NULL);
+
+    template <class T>
+    static ClassRegistryItem *Instance(typename enable_if<!isSameOrBaseOf(Object,T), T>::type *x=NULL);
 
 private:
 
     /**
      * @brief Constructor.
      */
-    ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn);
+    ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn,const ObjectBuilder * const builder=NULL_PTR(const ObjectBuilder *));
 
     /**
      * The number of instantiated objects of the class type represented by this registry item.
@@ -255,27 +275,50 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+
+
 template <class T>
- ClassRegistryItem *ClassRegistryItem::Instance(){
-//	bool generic = !isSameOrBaseOf(Object,T);
-//TODO handle generic
-    /**
-     * static variable. not automatic! persistent across calls
-     * will be initialised with a pointer to the only valid instance of this
-     */
-    static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+ClassRegistryItem *ClassRegistryItem::Instance(typename enable_if<isSameOrBaseOf(Object,T), T>::type *x){
 
-    /// first time will go inside here
-    if (instance == NULL_PTR(ClassRegistryItem *)) {
+	// flag used to implement a spinlock
+	static int32 flag = 0;
+	// local static object are constructed in a thread safe matter. So avoid them
+	static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+	// this is built only if T descends from Object
+    static ObjectBuilderT<T> *builder = NULL_PTR(ObjectBuilderT<T>*);
 
-//    	T *dummy;
-        /// all common code here
-        instance = new ClassRegistryItem(typeid(T).name(),sizeof(T) );
-
-    }
+	//spinlock
+	FastPollingMutexSem mux(flag);
+	while (mux.FastTryLock() && (instance == NULL_PTR(ClassRegistryItem *))){
+		if (instance == NULL_PTR(ClassRegistryItem *)){
+			builder = new ObjectBuilderT<T> (false);
+			instance = new ClassRegistryItem(typeid(T).name(),sizeof(T),builder);
+		}
+	}
     return instance;
 }
 
+template <class T>
+ClassRegistryItem *ClassRegistryItem::Instance(typename enable_if<!isSameOrBaseOf(Object,T), T>::type *x){
+
+	// flag used to implement a spinlock
+	static int32 flag = 0;
+	// local static object are constructed in a thread safe matter. So avoid them
+	static ClassRegistryItem *instance = NULL_PTR(ClassRegistryItem *);
+
+	//spinlock
+	FastPollingMutexSem mux(flag);
+	while (mux.FastTryLock() && (instance == NULL_PTR(ClassRegistryItem *))){
+		if (instance == NULL_PTR(ClassRegistryItem *)){
+			instance = new ClassRegistryItem(typeid(T).name(),sizeof(T),NULL);
+		}
+	}
+    return instance;
+}
+
+uint32 ClassRegistryItem::NumberOfMembers() const{
+	return classMembers.ListSize();
+}
 
 }
 #endif /* L2OBJECTS_CLASSREGISTRYITEM2_H_ */

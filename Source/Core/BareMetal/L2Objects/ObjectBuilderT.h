@@ -58,7 +58,7 @@ public:
      * @brief Default constructor.
      * @details Registers itself into the ClassRegistryItem of the type T.
      */
-    ObjectBuilderT();
+    ObjectBuilderT(bool selfInstall= true);
 
     /**
      * @brief Destructor.
@@ -85,8 +85,11 @@ public:
 namespace MARTe {
 
 template<typename T>
-ObjectBuilderT<T>::ObjectBuilderT() {
-    T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
+ObjectBuilderT<T>::ObjectBuilderT(bool selfInstall) {
+	if (selfInstall){
+		// during the access to get the ClassRegistryItem a default version of the ObjectBuilderT is installed.
+	    T::GetClassRegistryItem_Static()->SetObjectBuilder(this);
+	}
 }
 
 template<typename T>

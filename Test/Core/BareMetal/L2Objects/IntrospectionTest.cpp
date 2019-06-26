@@ -31,12 +31,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 #include "HeapManager.h"
 #include "IntrospectionTest.h"
-#include "StringHelper.h"
 #include "Object.h"
 #include "ClassRegistryDatabase.h"
+#include "CLASSMEMBERREGISTER.h"
+#include "CompositeErrorManagement.h"
+#include "AnyType.h"
+
 
 using namespace MARTe;
 
@@ -52,8 +54,18 @@ struct TestIntrospectionStructure {
     uint32 member1;
     float32 *member2;
     float64 member3[32];
-    const char8 * const member4;
+    CCString member4;
     TestIntrospectionNestedStructure member5;
+
+    // dummy constructor to please compiler
+    TestIntrospectionStructure():member4(""){
+    	member1 =0;
+    	member2 =NULL;
+    }
+    // dummy copy to please compiler
+    void operator=(const TestIntrospectionStructure & s){
+    	member1 = s.member1;
+    }
 };
 
 /**
@@ -74,45 +86,77 @@ public:
 
 };
 
-CLASS_REGISTER(DummyObject, "1.0")
+CLASS_REGISTER(DummyObject, "1.0");
+CLASS_MEMBER_REGISTER(DummyObject, member);
 
-DECLARE_CLASS_MEMBER(DummyObject, member, int32, "", "");
-static const IntrospectionEntry* objFields[] = { &DummyObject_member_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(DummyObject, objFields);
-//CLASS_INTROSPECTION_REGISTER(DummyObject, "1.0", DummyObject_introspection)
+CLASS_MEMBER_REGISTER(TestIntrospectionNestedStructure, nestedMember1);
 
-DECLARE_CLASS_MEMBER(TestIntrospectionNestedStructure, nestedMember1, uint32, "", "");
+CLASS_MEMBER_REGISTER(TestIntrospectionStructure, member1);
+CLASS_MEMBER_REGISTER(TestIntrospectionStructure, member2);
+CLASS_MEMBER_REGISTER(TestIntrospectionStructure, member3);
+CLASS_MEMBER_REGISTER(TestIntrospectionStructure, member4);
+CLASS_MEMBER_REGISTER(TestIntrospectionStructure, member5);
 
-static const IntrospectionEntry* nestedFields[] = { &TestIntrospectionNestedStructure_nestedMember1_introspectionEntry, 0 };
-
-DECLARE_STRUCT_INTROSPECTION(TestIntrospectionNestedStructure, nestedFields);
-//INTROSPECTION_REGISTER(TestIntrospectionNestedStructure, "1.0", TestIntrospectionNestedStructure_introspection)
-
-static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIntrospectionStructure, member1),
-                                       INTROSPECTION_MEMBER_INDEX(TestIntrospectionStructure, member1));
-
-DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member2, float32, "*", "");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member3, float64, "[32]", "");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member4, string, "C", "");
-
-DECLARE_CLASS_MEMBER(TestIntrospectionStructure, member5, TestIntrospectionNestedStructure, "", "");
-
-static const IntrospectionEntry* fields[] = { &member1Field, &TestIntrospectionStructure_member2_introspectionEntry,
-        &TestIntrospectionStructure_member3_introspectionEntry, &TestIntrospectionStructure_member4_introspectionEntry,
-        &TestIntrospectionStructure_member5_introspectionEntry, 0 };
-
-DECLARE_STRUCT_INTROSPECTION(TestIntrospectionStructure, fields);
-//INTROSPECTION_REGISTER(TestIntrospectionStructure, "1.0", TestIntrospectionStructure_introspection)
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool IntrospectionTest::TestConstructor() {
 
-    ////// check member 1
+template <class T>
+static ErrorManagement::ErrorType CheckIntroType(CCString memberName,const AnyType &type,uint32 offset){
+	ErrorManagement::ErrorType ret;
+	ClassRegistryItem *cri = ClassRegistryItem::Instance<T>();
+
+	const ClassMember *cm1 = cri->FindMember(memberName);
+	ret.fatalError = (cm1 == NULL);
+	COMPOSITE_REPORT_ERROR(ret,"cannot find member ",memberName);
+	if (ret){
+		const VariableDescriptor vdi = cm1->GetDescriptor();
+		const VariableDescriptor vdc = type.GetFullVariableDescriptor();
+
+		ret.fatalError = !(vdi.GetSummaryTypeDescriptor().SameAs(vdc.GetSummaryTypeDescriptor())  && CCString(vdi.GetModifiers()) == vdc.GetModifiers());
+		if (!ret){
+			DynamicCString vdiTypeName;
+			vdi.ToString(vdiTypeName);
+			DynamicCString vdcTypeName;
+			vdc.ToString(vdcTypeName);
+			COMPOSITE_REPORT_ERROR(ret,memberName," is not ",vdcTypeName," but ",vdiTypeName );
+		}
+
+		if (ret){
+			ret.fatalError = (cm1->GetOffset() != offset);
+			COMPOSITE_REPORT_ERROR(ret,memberName," is not at offset ",offset," but ",cm1->GetOffset() );
+		}
+	}
+
+
+	return ret;
+};
+
+bool IntrospectionTest::TestConstructor() {
+	ErrorManagement::ErrorType ret;
+
+	TestIntrospectionStructure tis;
+
+	ret = CheckIntroType<TestIntrospectionStructure>("member1",tis.member1,indexof(TestIntrospectionStructure,member1));
+	ret = CheckIntroType<TestIntrospectionStructure>("member2",tis.member2,indexof(TestIntrospectionStructure,member2));
+
+#if 0
+
+	////// check member 1
+	ClassRegistryItem *cri = ClassRegistryItem::Instance<TestIntrospectionStructure>();
+
+	ClassMember *cm1 = cri->FindMember("member1");
+	ret.fatalError = (cm1 == NULL);
+	REPORT_ERROR(ret,"cannot find member member1");
+	if (ret){
+		VariableDescriptor vd1 = cm1->GetDescriptor();
+		TypeDescriptor td1 = vd1.GetSummaryTypeDescriptor();
+
+		ret.fatalError = (td1 != UnsignedInteger32Bit);
+		REPORT_ERROR(ret,"member1 is not uint32");
+	}
 
     const IntrospectionEntry member1Copy = TestIntrospectionStructure_introspection[0];
     if (StringHelper::Compare(member1Copy.GetMemberName(), "member1") != 0) {
@@ -175,9 +219,22 @@ bool IntrospectionTest::TestConstructor() {
         return false;
     }
     return true;
+#endif
+    return ret;
 }
 
 bool IntrospectionTest::TestPositionOperator() {
+	ErrorManagement::ErrorType ret;
+
+	TestIntrospectionStructure tis;
+
+	ret = CheckIntroType<TestIntrospectionStructure>("member3",tis.member3,indexof(TestIntrospectionStructure,member3));
+#if 0
+
+
+
+
+
 
     //////// check member3
     const IntrospectionEntry member3Copy = TestIntrospectionStructure_introspection[2];
@@ -209,10 +266,22 @@ bool IntrospectionTest::TestPositionOperator() {
     if (member3Copy.GetMemberByteOffset() != 2 * sizeof(float32*)) {
         return false;
     }
+
     return true;
+#endif
+    return ret;
+
 }
 
 bool IntrospectionTest::TestMacroToAddBasicInClassRegistryDatabase() {
+	ErrorManagement::ErrorType ret;
+
+	TestIntrospectionStructure tis;
+
+	ret = CheckIntroType<TestIntrospectionStructure>("member4",tis.member4,indexof(TestIntrospectionStructure,member4));
+	return ret;
+#if 0
+
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *introInfo = instance->Find("TestIntrospectionStructure");
     if (introInfo == NULL) {
@@ -249,11 +318,17 @@ bool IntrospectionTest::TestMacroToAddBasicInClassRegistryDatabase() {
         return false;
     }
     return true;
-
+#endif
 }
 
 bool IntrospectionTest::TestMacroToAddStructuredInClassRegistryDatabase() {
+	ErrorManagement::ErrorType ret;
 
+	TestIntrospectionStructure tis;
+
+	ret = CheckIntroType<TestIntrospectionStructure>("member5",tis.member5,indexof(TestIntrospectionStructure,member5));
+	return ret;
+#if 0
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *introInfo = instance->Find("TestIntrospectionStructure");
     if (introInfo == NULL) {
@@ -286,34 +361,36 @@ bool IntrospectionTest::TestMacroToAddStructuredInClassRegistryDatabase() {
         return false;
     }
     return true;
-
+#endif
 }
 
 bool IntrospectionTest::TestGetNumberOfMembers() {
 
-    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
-    const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
-    if (item == NULL) {
-        return false;
-    }
+	ErrorManagement::ErrorType ret;
+	ClassRegistryItem *cri = ClassRegistryItem::Instance<TestIntrospectionStructure>();
 
-    const Introspection *classIntro = item->GetIntrospection();
-    return classIntro->GetNumberOfMembers() == 5u;
+	return (cri->NumberOfMembers()==5);
 }
 
 bool IntrospectionTest::TestGetClassSize() {
-    ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
-    const ClassRegistryItem *item = instance->Find("TestIntrospectionStructure");
-    if (item == NULL) {
-        return false;
-    }
+	ErrorManagement::ErrorType ret;
+	ClassRegistryItem *cri = ClassRegistryItem::Instance<TestIntrospectionStructure>();
 
-    const Introspection *classIntro = item->GetIntrospection();
-    return classIntro->GetClassSize() == sizeof(TestIntrospectionStructure);
+	return (cri->GetSizeOfClass() == sizeof(TestIntrospectionStructure));
 }
 
 bool IntrospectionTest::TestMacroToAddObjectClassRegistryDatabase() {
+	ErrorManagement::ErrorType ret;
 
+	DummyObject dobj;
+
+	ret = CheckIntroType<DummyObject>("member",dobj.member,indexof(DummyObject,member));
+
+	//the ability to dereference will be tested in the IntrospectionExtendedTest.h
+
+	return ret;
+
+#if 0
     ClassRegistryDatabase *instance = ClassRegistryDatabase::Instance();
     const ClassRegistryItem *introInfo = instance->Find("DummyObject");
     if (introInfo == NULL) {
@@ -351,5 +428,5 @@ bool IntrospectionTest::TestMacroToAddObjectClassRegistryDatabase() {
     *memberPtr = 2;
 
     return obj.member == 2;
-
+#endif
 }
