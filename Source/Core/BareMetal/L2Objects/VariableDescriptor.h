@@ -208,15 +208,15 @@ public:
      * in case of a variable that a combination of array and pointers, the dimension scan will stop at the occurrence of the first pointer
      * for Matrix, Vector, ZeroTerminatedArray, as their dimensions is not predetermined they will reported as size 0 unless
      * they occur as the first dimension.
-     * @param[in] variablePtr is the pointer to the variable
+     * The function called with both NULL pointers will return just the equivalent TypeDescriptor at a given depth of redirection
+     * @param[in] variablePtr is the pointer to the variable (needed to get actual information of variable dimensions for some types). If NULL size of Matrix, Vector, ZTAs is reported as 0
      * @param[in] dimensionSizes is the pointer to a vector of uint32 larger than the value of depth. Upon return will contain
      * the size of each dimensions. If a dimensions has a variable size its size is reported as zero. For instance
-     * Vector<int> a[N] will be reported as {N,0} as the size of each Vector may be different
+     * Vector<int> a[N] will be reported as {N,0} as the size of each Vector may be different. If NULL the dimensions will no be reported.
      * @param[in,out] nOfDimensions specifies the max number of dimensions to examine. Upon return will contain the number of
      * dimensions encountered if not more than originally specified in depth
      * @param[in,out] td will be the actual variable type as seen at the last dimension explored
-     * @return parametersError if variablePtr or dimensionSizes are NULL; internalStateError if a
-     * ZeroTerminatedArray of elements that are too large is encountered
+     * @return internalStateError if a ZeroTerminatedArray of elements that are too large is encountered
      */
     ErrorManagement::ErrorType GetVariableDimensions(
     		const void *		variablePtr,
@@ -228,6 +228,11 @@ public:
      * @brief getter for modifiers
      */
     inline const char8 *GetModifiers() const;
+
+    /**
+     * @brief getter for typeDescriptor
+     */
+    inline TypeDescriptor GetFinalTypeDescriptor() const;
 
 private:
     /**
@@ -489,7 +494,8 @@ private:
      * @brief Constructor from void pointer.
      * @param[in] p is the void pointer input.
      */
-    inline void Match(void * *p);
+//    inline void Match(void * *p);
+    inline void Match(void * p);
 
     /**
      * @brief Constructor by BitBoolean.
@@ -779,8 +785,12 @@ void VariableDescriptor::Match(float64 * i) {
 	FinaliseCode(Float64Bit);
 }
 
-void VariableDescriptor::Match(void * * p) {
-	FinaliseCode(PointerType);
+//void VariableDescriptor::Match(void * * p) {
+//	FinaliseCode(PointerType);
+//}
+
+void VariableDescriptor::Match(void * p) {
+	FinaliseCode(VoidType);
 }
 
 void VariableDescriptor::Match(StructuredDataI *s){
@@ -821,7 +831,9 @@ inline TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const{
     return td;
 }
 
-
+inline TypeDescriptor VariableDescriptor::GetFinalTypeDescriptor() const{
+    return typeDescriptor;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

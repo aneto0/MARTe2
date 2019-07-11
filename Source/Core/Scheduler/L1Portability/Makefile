@@ -36,6 +36,13 @@ INCLUDES+=-I../../BareMetal/L1Portability
 BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
         	$(BUILD_DIR)/L1PortabilityS.def
 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+
+
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 
 OBJSX2 =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \

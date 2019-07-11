@@ -482,7 +482,7 @@ bool ClassMethodCallerTTest::TestCall_OneReferenceContainerParameterReadWrite() 
                 void, void> target(&ClassWithCallableMethods::MethodWithOutputReferenceContainerAndStructuredDataIAt0, 0x1000);
         ReferenceContainer parameters;
         result &= (target.Call(&context, parameters) == ErrorManagement::NoError);
-        uint32 value;
+        uint32 value = 0;
         ReferenceT<SimpleStructuredData> info = parameters.Get(0);
         result = info.IsValid();
         if (result) {

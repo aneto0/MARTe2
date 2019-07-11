@@ -25,11 +25,11 @@
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-SPB    = VariableDescriptorLib.x  
+#SPB    = VariableDescriptorLib.x  
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
-INCLUDES+=-I../L1Portability -I../L0Types -IVariableDescriptorLib
+INCLUDES+=-I. -I../L1Portability -I../L0Types -IVariableDescriptorLib
 
 LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)

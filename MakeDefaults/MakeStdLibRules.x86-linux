@@ -39,7 +39,11 @@ $(BUILD_DIR)/%.o : %.cpp
 
 $(BUILD_DIR)/%.o : Environment/$(ENVIRONMENT)/%.cpp
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Environment/Windows/$*.cpp -o $(BUILD_DIR)/$*.o
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Environment/$(ENVIRONMENT)/$*.cpp -o $(BUILD_DIR)/$*.o
+
+$(BUILD_DIR)/%.o : Private/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Private/$*.cpp -o $(BUILD_DIR)/$*.o
 
 
 $(BUILD_DIR)/%.o : %.c

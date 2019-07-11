@@ -36,7 +36,8 @@
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "ConfigurationDatabase.h"
+#include "SimpleStructuredData.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -122,8 +123,7 @@ bool ReferenceTTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTTest::TestCreateConstructor() {
 
-    HeapI* mem = NULL;
-    ReferenceT<IntegerObject> ref(mem);
+    ReferenceT<IntegerObject> ref(HeapManager::standardHeapId);
 
     if (!ref.IsValid()) {
         return false;
@@ -199,8 +199,8 @@ bool ReferenceTTest::TestDestructor() {
 
 bool ReferenceTTest::TestInitialiseNoCreation() {
     ReferenceT<IntegerObject> test = Reference("IntegerObject");
-    ConfigurationDatabase cdb;
-    uint32 value = 1;
+    SimpleStructuredData cdb;
+    int32 value = 1;
     cdb.Write("var", value);
     if (!test.Initialise(cdb, true)) {
         return false;
@@ -210,8 +210,8 @@ bool ReferenceTTest::TestInitialiseNoCreation() {
 
 bool ReferenceTTest::TestInitialiseCreation() {
     ReferenceT<IntegerObject> test;
-    ConfigurationDatabase cdb;
-    uint32 value = 1;
+    SimpleStructuredData cdb;
+    int32 value = 1;
     cdb.Write("Class", "IntegerObject");
     cdb.Write("var", value);
     if (!test.Initialise(cdb, false)) {
@@ -222,7 +222,7 @@ bool ReferenceTTest::TestInitialiseCreation() {
 
 bool ReferenceTTest::TestInitialiseNoObject() {
     ReferenceT<IntegerObject> test;
-    ConfigurationDatabase cdb;
+    SimpleStructuredData cdb;
     int32 value = 1;
     cdb.Write("var", value);
     return !test.Initialise(cdb, true);
@@ -230,7 +230,7 @@ bool ReferenceTTest::TestInitialiseNoObject() {
 
 bool ReferenceTTest::TestInitialiseNoClassName() {
     ReferenceT<IntegerObject> test;
-    ConfigurationDatabase cdb;
+    SimpleStructuredData cdb;
     int32 value = 1;
     cdb.Write("var", value);
     return !test.Initialise(cdb, false);
@@ -239,7 +239,7 @@ bool ReferenceTTest::TestInitialiseNoClassName() {
 
 bool ReferenceTTest::TestInitialiseIncompatibleCast() {
     ReferenceT<IntegerObject> test;
-    ConfigurationDatabase cdb;
+    SimpleStructuredData cdb;
     int32 value = 1;
     cdb.Write("Class", "FloatObject");
     cdb.Write("var", value);
@@ -483,14 +483,14 @@ bool ReferenceTTest::TestDifferentOperator() {
 
 }
 
-void CreateRefsOnStack(ReferenceTTest &rt) {
+void CreateRefsOnStack(ReferenceTTest *rt) {
 
     ReferenceT<Object> newRef[32];
     for (uint32 i = 0; i < 32; i++) {
-        newRef[i] = rt.storedRef;
+        newRef[i] = rt->storedRef;
     }
 
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 }
 
 bool ReferenceTTest::TestInFunctionOnStack() {
@@ -507,29 +507,29 @@ bool ReferenceTTest::TestInFunctionOnStack() {
             return false;
         }
 
-        Sleep::MSec(10);
+        Sleep::Short(MilliSeconds(10,Units::ms));
     }
 
     eventSem.Post();
 
     while (Threads::NumberOfThreads() != 0) {
-        Sleep::MSec(10);
+        Sleep::Short(MilliSeconds(10,Units::ms));
     }
-    Sleep::MSec(10);
+    Sleep::Short(MilliSeconds(10,Units::ms));
 
     return storedRef.NumberOfReferences() == 1;
 
 }
 
-void CreateRefsOnHeap(ReferenceTTest &rt) {
+void CreateRefsOnHeap(ReferenceTTest *rt) {
 
-    rt.arrayRefs = (ReferenceT<Object> **) HeapManager::Malloc(sizeof(ReferenceT<Object>*) * rt.nRefs);
+    rt->arrayRefs = (ReferenceT<Object> **) HeapManager::Malloc(sizeof(ReferenceT<Object>*) * rt->nRefs);
 
-    for (uint32 i = 0; i < rt.nRefs; i++) {
-        rt.arrayRefs[i] = new ReferenceT<Object>;
-        *(rt.arrayRefs[i]) = rt.storedRef;
+    for (uint32 i = 0; i < rt->nRefs; i++) {
+        rt->arrayRefs[i] = new ReferenceT<Object>;
+        *(rt->arrayRefs[i]) = rt->storedRef;
     }
-    rt.eventSem.Wait();
+    rt->eventSem.Wait();
 }
 
 bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
@@ -547,14 +547,14 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
             return false;
         }
 
-        Sleep::MSec(10);
+        Sleep::Short(MilliSeconds(10,Units::ms));
     }
     eventSem.Post();
 
     while (Threads::NumberOfThreads() != 0) {
-        Sleep::MSec(10);
+        Sleep::Short(MilliSeconds(10,Units::ms));
     }
-    Sleep::MSec(10);
+    Sleep::Short(MilliSeconds(10,Units::ms));
 
     if (storedRef.NumberOfReferences() != totalNRefs) {
         return false;

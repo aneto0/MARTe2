@@ -27,7 +27,7 @@
 #include "ProgressiveTypeCreator.h"
 #include "TypeConversionManager.h"
 #include "MemoryOperators.h"
-#include "MemoryPageObject.h"
+#include "Private/MemoryPageObject.h"
 #include "AnyObject.h"
 
 namespace MARTe{

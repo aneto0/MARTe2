@@ -30,10 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectBuilderTest.h"
-
 #include "Object.h"
 #include "ObjectBuilder.h"
-#include "../../../../Source/Core/BareMetal/L0Types/HeapI.h"
+//#include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -63,7 +62,8 @@ bool ObjectBuilderTest::TestBuild() {
     using namespace MARTe;
     bool result;
     ObjectBuilder target;
-    Object *obj = target.Build(NULL_PTR(HeapI *));
+    Object *obj = target.Build(HeapManager::standardHeapId);
+//    Object *obj = target.Build(NULL_PTR(HeapI *));
     result = (obj == NULL_PTR(Object *));
     return result;
 }

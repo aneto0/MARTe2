@@ -151,7 +151,7 @@ public:
      * @param[in] pattern is the substring to be found.
      * @return the position in the array where T is found, 0xFFFFFFFF if not found.
      */
-    uint32 FindPattern(CCString pattern) const;
+    inline uint32 FindPattern(CCString pattern) const;
 };
 
 static const CCString emptyString(static_cast<uint32>(0));

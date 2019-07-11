@@ -39,7 +39,7 @@
 #include "StaticListHolder.h"
 #include "TypeCharacteristics.h"
 #include "ReferenceT.h"
-#include "MemoryPageFile.h"
+#include "Private/MemoryPageFile.h"
 
 
 /*---------------------------------------------------------------------------*/

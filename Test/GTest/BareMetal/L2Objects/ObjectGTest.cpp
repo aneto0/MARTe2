@@ -32,7 +32,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectTest.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
+#include "CCString.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -79,7 +81,7 @@ TEST(ObjectGTest,TestSetGetName) {
 
 TEST(ObjectGTest,TestSetGetNameNull) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestSetGetName(NULL));
+    ASSERT_TRUE(objectTest.TestSetGetName(emptyString));
 }
 
 TEST(ObjectGTest,TestDuplicateName) {
@@ -89,23 +91,26 @@ TEST(ObjectGTest,TestDuplicateName) {
 
 TEST(ObjectGTest,TestGetUniqueName) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 128));
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello"));
 }
 
 TEST(ObjectGTest,TestGetUniqueNameClipPointer) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 2));
+    // TODO was truncted to 2??
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello"));
 }
 
 TEST(ObjectGTest,TestGetUniqueNameClipName) {
     ObjectTest objectTest;
-    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello0000000000000000000000000000000000", 20));
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello0000000000000000000000000000000000"));
 }
 
 TEST(ObjectGTest,TestGetUniqueName2) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestGetUniqueName2());
 }
+
+/*
 
 TEST(ObjectGTest,TestExportData) {
     ObjectTest objectTest;
@@ -116,6 +121,7 @@ TEST(ObjectGTest,TestExportMetadata) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestExportMetadata());
 }
+*/
 
 TEST(ObjectGTest,TestCallRegisteredMethod) {
     ObjectTest objectTest;

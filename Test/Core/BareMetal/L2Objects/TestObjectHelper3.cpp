@@ -31,40 +31,25 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 #include "HeapManager.h"
 #include "StringHelper.h"
+#include "CLASSREGISTER.h"
+#include "CLASSMEMBERREGISTER.h"
 #include "TestObjectHelper3.h"
-#include "IntrospectionT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 CLASS_REGISTER(TestObjectHelper3, "1.0")
-
 CLASS_REGISTER(NestedObjectHelper3, "1.0")
+CLASS_MEMBER_REGISTER(NestedObjectHelper3, x);
 
-DECLARE_CLASS_MEMBER(NestedObjectHelper3, x, int32, "", "nested");
 
-static const IntrospectionEntry* nestedObj3[] = { &NestedObjectHelper3_x_introspectionEntry, 0 };
-DECLARE_CLASS_INTROSPECTION(NestedObjectHelper3, nestedObj3);
-//CLASS_INTROSPECTION_REGISTER(NestedObjectHelper3, "1.0", NestedObjectHelper3_introspection)
-
-DECLARE_CLASS_MEMBER(TestObjectHelper3, a, uint32, "", "hello");
-
-DECLARE_CLASS_MEMBER(TestObjectHelper3, b, string, "", "world");
-
-DECLARE_CLASS_MEMBER(TestObjectHelper3, c, float64, "[2][2]", "");
-
-DECLARE_CLASS_MEMBER(TestObjectHelper3, d, NestedObjectHelper3, "**", "hola");
-
-DECLARE_CLASS_MEMBER(TestObjectHelper3, e, NestedObjectHelper3, "", "mundo");
-
-static const IntrospectionEntry* fieldsObj3[] = { &TestObjectHelper3_a_introspectionEntry, &TestObjectHelper3_b_introspectionEntry,
-        &TestObjectHelper3_c_introspectionEntry, &TestObjectHelper3_d_introspectionEntry, &TestObjectHelper3_e_introspectionEntry, 0 };
-
-DECLARE_CLASS_INTROSPECTION(TestObjectHelper3, fieldsObj3);
-//CLASS_INTROSPECTION_REGISTER(TestObjectHelper3, "1.0", TestObjectHelper3_introspection)
+CLASS_MEMBER_REGISTER(TestObjectHelper3, a);
+CLASS_MEMBER_REGISTER(TestObjectHelper3, b);
+CLASS_MEMBER_REGISTER(TestObjectHelper3, c);
+CLASS_MEMBER_REGISTER(TestObjectHelper3, d);
+CLASS_MEMBER_REGISTER(TestObjectHelper3, e);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

@@ -542,6 +542,18 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
+    if (err.ErrorsCleared()) {
+    	argType1 param1;
+    	argType2 param2;
+    	argType3 param3;
+        argType4 param4;
+
+    	ErrorManagement::ErrorType err1 = parameters.Read("param1", param1);
+    	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
+    	ErrorManagement::ErrorType err3 = parameters.Read("param3", param3);
+    	ErrorManagement::ErrorType err4 = parameters.Read("param4", param4);
+        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode() || err4.IsErrorCode();
+/*
     argType1 param1;
     argType2 param2;
     argType3 param3;
@@ -566,38 +578,39 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
-        err = (actual->*pFun)(param1, param2, param3, param4);
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
-            if (!parameters.Write("param1", param1)) {
-                err.parametersError = true;
+    */
+        if (err.ErrorsCleared()) {
+            err = (actual->*pFun)(param1, param2, param3, param4);
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
+                if (!parameters.Write("param3", param3)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM4_IS_REFERENCE) == PARAM4_IS_REFERENCE) {
+                if (!parameters.Write("param4", param4)) {
+                    err.parametersError = true;
+                }
             }
         }
     }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
-            if (!parameters.Write("param2", param2)) {
-                err.parametersError = true;
-            }
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
-            if (!parameters.Write("param3", param3)) {
-                err.parametersError = true;
-            }
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM4_IS_REFERENCE) == PARAM4_IS_REFERENCE) {
-            if (!parameters.Write("param4", param4)) {
-                err.parametersError = true;
-            }
-        }
-    }
-
     return err;
 }
 
@@ -632,46 +645,55 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
-    argType1 param1;
-    argType2 param2;
-    argType3 param3;
+    if (err.ErrorsCleared()) {
+    	argType1 param1;
+    	argType2 param2;
+    	argType3 param3;
 
-    if (err.ErrorsCleared()) {
-        if (!parameters.Read("param1", param1)) {
-            err.parametersError = true;
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if (!parameters.Read("param2", param2)) {
-            err.parametersError = true;
-        }
-    }
-    if (err.ErrorsCleared()) {
-        if (!parameters.Read("param3", param3)) {
-            err.parametersError = true;
-        }
-    }
-    if (err.ErrorsCleared()) {
-        err = (actual->*pFun)(param1, param2, param3);
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
-            if (!parameters.Write("param1", param1)) {
+    	ErrorManagement::ErrorType err1 = parameters.Read("param1", param1);
+    	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
+    	ErrorManagement::ErrorType err3 = parameters.Read("param3", param3);
+        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() || err3.IsErrorCode();
+
+/*
+    	if (err.ErrorsCleared()) {
+            if (!parameters.Read("param1", param1)) {
                 err.parametersError = true;
             }
         }
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
-            if (!parameters.Write("param2", param2)) {
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param2", param2)) {
                 err.parametersError = true;
             }
         }
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
-            if (!parameters.Write("param3", param3)) {
+        if (err.ErrorsCleared()) {
+            if (!parameters.Read("param3", param3)) {
                 err.parametersError = true;
+            }
+        }
+*/
+        if (err.ErrorsCleared()) {
+            err = (actual->*pFun)(param1, param2, param3);
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
+            }
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM3_IS_REFERENCE) == PARAM3_IS_REFERENCE) {
+                if (!parameters.Write("param3", param3)) {
+                    err.parametersError = true;
+                }
             }
         }
     }
@@ -709,9 +731,15 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     err.unsupportedFeature = (actual == static_cast<className*>(0));
     err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
-    argType1 param1;
-    argType2 param2;
+    if (err.ErrorsCleared()) {
+    	argType1 param1;
+    	argType2 param2;
 
+    	ErrorManagement::ErrorType err1 = parameters.Read("param1", param1);
+    	ErrorManagement::ErrorType err2 = parameters.Read("param2", param2);
+        err.parametersError = err1.IsErrorCode() || err2.IsErrorCode() ;
+
+/*
     if (err.ErrorsCleared()) {
         if (!parameters.Read("param1", param1)) {
             err.parametersError = true;
@@ -722,20 +750,22 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
-        err = (actual->*pFun)(param1, param2);
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
-            if (!parameters.Write("param1", param1)) {
-                err.parametersError = true;
+    */
+        if (err.ErrorsCleared()) {
+            err = (actual->*pFun)(param1, param2);
+        }
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM1_IS_REFERENCE) == PARAM1_IS_REFERENCE) {
+                if (!parameters.Write("param1", param1)) {
+                    err.parametersError = true;
+                }
             }
         }
-    }
-    if (err.ErrorsCleared()) {
-        if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
-            if (!parameters.Write("param2", param2)) {
-                err.parametersError = true;
+        if (err.ErrorsCleared()) {
+            if ((mask & PARAM2_IS_REFERENCE) == PARAM2_IS_REFERENCE) {
+                if (!parameters.Write("param2", param2)) {
+                    err.parametersError = true;
+                }
             }
         }
     }
@@ -775,18 +805,26 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     className* actual = dynamic_cast<className *>(object);
     err.unsupportedFeature = (actual == static_cast<className*>(0));
 
-    argType1 param1;
+
+    if (err.ErrorsCleared()) {
+    	argType1 param1;
+
+    	err = parameters.Read("param1", param1);
+
+    	/*
     if (err.ErrorsCleared()) {
         if (!parameters.Read("param1", param1)) {
             err.parametersError = true;
         }
     }
-    if (err.ErrorsCleared()) {
-        err = (actual->*pFun)(param1);
-    }
-    if (err.ErrorsCleared()) {
-        if (mask != 0x0) {
-            err = !parameters.Write("param1", param1);
+    */
+        if (err.ErrorsCleared()) {
+            err = (actual->*pFun)(param1);
+        }
+        if (err.ErrorsCleared()) {
+            if (mask != 0x0) {
+                err = !parameters.Write("param1", param1);
+            }
         }
     }
     return err;

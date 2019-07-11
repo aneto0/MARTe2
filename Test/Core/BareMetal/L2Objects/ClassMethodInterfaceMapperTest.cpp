@@ -32,10 +32,10 @@
 #include "ClassMethodInterfaceMapperTest.h"
 #include "ClassMethodInterfaceMapper.h"
 #include "ClassWithCallableMethods.h"
-#include "ConfigurationDatabase.h"
 #include "ErrorType.h"
 #include "Reference.h"
 #include "ReferenceContainer.h"
+#include "SimpleStructuredData.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,15 +58,12 @@ ClassMethodInterfaceMapperTest::~ClassMethodInterfaceMapperTest() {
 bool ClassMethodInterfaceMapperTest::TestConstructor_VoidParameters() {
     using namespace MARTe;
     bool result = true;
-    {
-        ClassWithCallableMethods context;
-        ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithVoidParameters);
-        result &= (mapper.GetMethodCaller() != NULL);
-        if (result) {
-            result &= (mapper.GetMethodCaller()->Call(&context) == ErrorManagement::NoError);
-            result = (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
-        }
-        return result;
+    ClassWithCallableMethods context;
+    ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithVoidParameters);
+    result &= (mapper.GetMethodCaller() != NULL);
+    if (result) {
+        result &= (mapper.GetMethodCaller()->Call(&context) == ErrorManagement::NoError);
+        result = (context.GetLastMethodExecuted() == "MethodWithVoidParameters(void)");
     }
     return result;
 }
@@ -76,7 +73,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
@@ -92,7 +89,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
@@ -108,7 +105,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_OneParameter_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithOneParameter_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     result &= (mapper.GetMethodCaller() != NULL);
@@ -135,10 +132,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -153,10 +150,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -171,10 +168,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -191,10 +188,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -209,10 +206,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -227,10 +224,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -247,10 +244,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -267,10 +264,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -287,10 +284,10 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithTwoParameters_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    StreamString param2 = "KO";
+    DynamicCString param2 = "KO";
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -308,7 +305,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_Pointers() {
     using namespace MARTe;
     bool result = true;
     /*{
-     ErrorManagement::ErrorType (ClassWithCallableMethods::*foo)(uint32 *, MARTe::StreamString &);
+     ErrorManagement::ErrorType (ClassWithCallableMethods::*foo)(uint32 *, MARTe::DynamicCString &);
      foo = &ClassWithCallableMethods::MethodWithTwoParameters_Pointer_1;
      ClassMethodInterfaceMapper mapper(foo);
      result &= (mapper.GetMethodCaller() == NULL);
@@ -329,12 +326,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -349,12 +346,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -369,12 +366,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -391,12 +388,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -411,12 +408,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -431,12 +428,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -453,12 +450,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -475,12 +472,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -497,12 +494,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_C_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -521,12 +518,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -541,12 +538,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -561,12 +558,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -583,12 +580,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -603,12 +600,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -623,12 +620,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -645,12 +642,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -667,12 +664,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -689,12 +686,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_R_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -713,12 +710,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -735,12 +732,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -757,12 +754,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -781,12 +778,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -803,12 +800,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -825,12 +822,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -849,12 +846,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -873,12 +870,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -897,12 +894,12 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithThreeParameters_W_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    StreamString param3 = "KO";
+    DynamicCString param3 = "KO";
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -923,14 +920,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -945,14 +942,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -967,14 +964,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -991,14 +988,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1013,14 +1010,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1035,14 +1032,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1059,14 +1056,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1083,14 +1080,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1107,14 +1104,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_C_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1133,14 +1130,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1155,14 +1152,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1177,14 +1174,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1201,14 +1198,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1223,14 +1220,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1245,14 +1242,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1269,14 +1266,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1293,14 +1290,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1317,14 +1314,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_R_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1343,14 +1340,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1367,14 +1364,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1391,14 +1388,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1417,14 +1414,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1441,14 +1438,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1465,14 +1462,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1491,14 +1488,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1517,14 +1514,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1543,14 +1540,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_C_W_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1571,14 +1568,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1593,14 +1590,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1615,14 +1612,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1639,14 +1636,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1661,14 +1658,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1683,14 +1680,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1707,14 +1704,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1731,14 +1728,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1755,14 +1752,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_C_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1781,14 +1778,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1803,14 +1800,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1825,14 +1822,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1849,14 +1846,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1871,14 +1868,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1893,14 +1890,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1917,14 +1914,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1941,14 +1938,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1965,14 +1962,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_R_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1991,14 +1988,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2015,14 +2012,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2039,14 +2036,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2065,14 +2062,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2089,14 +2086,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2113,14 +2110,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2139,14 +2136,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2165,14 +2162,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2191,14 +2188,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_R_W_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2219,14 +2216,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2243,14 +2240,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2267,14 +2264,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2293,14 +2290,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2317,14 +2314,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2341,14 +2338,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2367,14 +2364,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2393,14 +2390,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2419,14 +2416,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_C_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2447,14 +2444,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2471,14 +2468,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2495,14 +2492,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2521,14 +2518,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2545,14 +2542,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2569,14 +2566,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2595,14 +2592,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2621,14 +2618,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2647,14 +2644,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_R_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2675,14 +2672,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2701,14 +2698,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2727,14 +2724,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_C_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2755,14 +2752,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2781,14 +2778,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2807,14 +2804,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_R_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2835,14 +2832,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_C() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_C);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2863,14 +2860,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_R() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_R);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2891,14 +2888,14 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_W() {
     bool result = true;
     ClassWithCallableMethods context;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W);
-    ConfigurationDatabase parameters;
+    SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    StreamString param4 = "KO";
+    DynamicCString param4 = "KO";
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2930,5 +2927,5 @@ bool ClassMethodInterfaceMapperTest::TestSetMethodName() {
     using namespace MARTe;
     ClassMethodInterfaceMapper mapper(&ClassWithCallableMethods::MethodWithFourParameters_W_W_W_W);
     mapper.SetMethodName("MethodWithFourParameters_W_W_W_W_Testing");
-    return (StringHelper::Compare(mapper.GetMethodName(), "MethodWithFourParameters_W_W_W_W_Testing") == 0);
+    return (mapper.GetMethodName().IsSameAs("MethodWithFourParameters_W_W_W_W_Testing"));
 }

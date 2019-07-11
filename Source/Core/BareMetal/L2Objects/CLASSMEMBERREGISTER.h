@@ -85,6 +85,25 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+/**
+ * Use this macro set to help registration of private and protected class members
+ * This first macro needs to be used within the class
+ */
+#define CLASS_PRIVATE_MEMBER_DECLARE(memberName)\
+		static MARTe::ClassMemberRegister   _ ## memberName ## _ ## CMR;
+
+/**
+ * Use this macro set to help registration of private and protected class members
+ * This second macro needs to be used within a single .cpp file
+ */
+#define CLASS_PRIVATE_MEMBER_REGISTER(className, memberName)\
+		MARTe::ClassMemberRegister  className :: _ ## memberName ## _ ## CMR (\
+               MARTe::ClassRegistryItem::Instance<className>(),\
+               memberOf(className, memberName),\
+               #memberName, \
+               static_cast<uint32>(indexof(className, memberName)),\
+               msizeof(className, memberName) );
+
 
 #define CLASS_MEMBER_REGISTER(className, memberName)\
 		MARTe::ClassMemberRegister  className ## _ ## memberName ## _ ## CMR (\

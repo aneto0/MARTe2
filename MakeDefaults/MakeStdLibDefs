@@ -65,7 +65,9 @@ ifeq (windows32,$(UNAME))
 TARGET = msc
 endif
 
-OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) $(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+SRCS  = $(wildcard *.c) $(wildcard *.cpp) $(wildcard Environment/$(ENVIRONMENT)/*.cpp) $(wildcard Private/*.cpp) 
+OBJSX =  $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,.x,$(subst .cpp,.x,$(SRCS)))))
+#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) $(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp)))  $(subst .cpp,.x,$(subst Private/,,$(wildcard Private/*.cpp))) 
 
 SUBPROJ    = $(SPB:%.x=%.spb)
 SUBPROJLT  = $(SPB:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 

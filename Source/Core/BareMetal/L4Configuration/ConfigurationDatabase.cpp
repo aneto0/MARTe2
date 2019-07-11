@@ -91,16 +91,18 @@ ErrorManagement::ErrorType ConfigurationDatabase::Write(Reference object){
 ErrorManagement::ErrorType ConfigurationDatabase::Write(CCString name, const AnyType &value) {
 	ErrorManagement::ErrorType ret;
 
-	Reference ref(value);
+	Reference ref;
 
-	ret.fatalError = !ref.IsValid();
+    ret =  ref.FromAnyType(value);
 	REPORT_ERROR(ret,"cannot create reference");
 
 	if (ret){
-		ref->SetName(name);
+		ret.fatalError = !ref.IsValid();
+		REPORT_ERROR(ret,"cannot create reference");
 	}
 
 	if (ret){
+		ref->SetName(name);
 		ret = Write(ref);
 	}
 

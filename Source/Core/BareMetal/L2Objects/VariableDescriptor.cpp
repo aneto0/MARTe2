@@ -36,13 +36,12 @@
 #include "MemoryCheck.h"
 #include "TypeConversionManager.h"
 #include "VariableDescriptor.h"
-#include "VariableDescriptorLib.h"
-#include "VariableCloner.h"
-#include "MemoryPageFile.h"
+#include "Private/VariableDescriptorLib.h"
+#include "Private/VariableCloner.h"
 #include "ReferenceT.h"
 #include "AnyObject.h"
-#include "MemoryPageObject.h"
-#include "MemoryPageFile.h"
+#include "Private/MemoryPageObject.h"
+#include "Private/MemoryPageFile.h"
 #include "ZeroTerminatedArray.h"
 #include "StaticList.h"
 #include "SaturatedInteger.h"
@@ -148,12 +147,12 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
 
     ErrorManagement::ErrorType ret;
     // error if varPtr
-    ret.parametersError = (varPtr == NULL) && (nOfDimensions > 0);
-	REPORT_ERROR(ret,"varPtr is a NULL pointer");
-	if (ret){
-	    ret.parametersError = (dimensionSizes == NULL) && (nOfDimensions > 0);
-		REPORT_ERROR(ret,"sizes is a NULL pointer");
-	}
+//    ret.parametersError = (varPtr == NULL) && (nOfDimensions > 0);
+//	REPORT_ERROR(ret,"varPtr is a NULL pointer");
+//	if (ret){
+//	    ret.parametersError = (dimensionSizes == NULL) && (nOfDimensions > 0);
+//		REPORT_ERROR(ret,"sizes is a NULL pointer");
+//	}
 
 	// at least it is a simple variable...
 	nOfDimensions = 0U;
@@ -188,10 +187,10 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		//sizes[>0] set to 0
 
     		// calculate depth only if this is not the last level
-    		if (nOfDimensions < maxDepth){
+    		if ((nOfDimensions < maxDepth) && (dimensionSizes != NULL)) {
         		// only at first level we read the size from memory.
         		// this is because the size is unique only at this level
-    			if (nOfDimensions == 0U){
+    			if ((nOfDimensions == 0U) && (varPtr != NULL)){
     				const Matrix<char8> *pm = reinterpret_cast<const Matrix<char8> *>(varPtr);
     				dimensionSizes[nOfDimensions] = pm->GetNumberOfRows();
     	    		if (nOfDimensions < maxDepth){
@@ -215,10 +214,10 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		//sizes[>0] set to 0
 
     		// calculate depth only if this is not the last level
-    		if (nOfDimensions < maxDepth){
+    		if ((nOfDimensions < maxDepth) && (dimensionSizes != NULL)) {
         		// only at first level we read the size from memory.
         		// this is because the size is unique only at this level
-    			if (nOfDimensions == 0){
+    			if ((nOfDimensions == 0) && (varPtr != NULL)){
     				const Vector<char8> *pv = reinterpret_cast<const Vector<char8> *>(varPtr);
     				dimensionSizes[nOfDimensions] = pv->GetNumberOfElements();
     			} else {
@@ -233,7 +232,7 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		//depth > 0;
     		//sizes[*] set to actual value
     		// calculate depth only if this is not the last level
-    		if (nOfDimensions < maxDepth){
+    		if ((nOfDimensions < maxDepth) && (dimensionSizes != NULL)) {
     			dimensionSizes[nOfDimensions] = size;
     		}
     	}break;
@@ -248,11 +247,11 @@ ErrorManagement::ErrorType VariableDescriptor::GetVariableDimensions(
     		//sizes[>0] set to 0
 
     		// calculate depth only if this is not the last level
-    		if (nOfDimensions < maxDepth){
-        		// only at first level we read the size from memory.
-        		// this is because the size is unique only at this level
-    			const uint8 *ptr = static_cast<const uint8 *>(varPtr);
-    			if (nOfDimensions == 0){
+    		if ((nOfDimensions < maxDepth) && (dimensionSizes != NULL)) {
+    			if ((nOfDimensions == 0) && (varPtr != NULL)){
+            		// only at first level we read the size from memory.
+            		// this is because the size is unique only at this level
+        			const uint8 *ptr = static_cast<const uint8 *>(varPtr);
     				ret = VariableDescriptorLib::RedirectP(ptr);
     				REPORT_ERROR(ret," redirection failed");
 

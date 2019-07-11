@@ -395,7 +395,7 @@ ErrorManagement::ErrorType DereferenceAndCheckTypeAndSize(AnyType at,CCString ex
 	// creates a clone
 	Reference atc;
 	if (ok && clone){
-		atc = Reference(at);
+		atc.FromAnyType(at);
 
 		if (atc.IsValid()){
 			atc.ToAnyType(at);
@@ -454,7 +454,8 @@ MARK
 	Reference atc;
 MARK
 	if (ok && clone){
-		atc = Reference(at);
+		atc.FromAnyType(at);
+//		atc = Reference(at);
 MARK
 		if (atc.IsValid()){
 			atc.ToAnyType(at);
@@ -511,7 +512,8 @@ ErrorManagement::ErrorType Check3(AnyType at,CCString expression,CCString typeCh
 
 	Reference atc;
 	if (ok && clone){
-		atc = Reference(at);
+		atc.FromAnyType(at);
+//		atc = Reference(at);
 
 		if (atc.IsValid()){
 			atc.ToAnyType(at);

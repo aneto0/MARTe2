@@ -31,8 +31,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "AnyTypeTest.h"
+#include "TestObjectHelper1.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,436 +46,229 @@
 /*---------------------------------------------------------------------------*/
 
 TEST(AnyTypeGTest, TestAnyType_Void) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Void());
+    ASSERT_TRUE(AnyTypeTest::TestAnyType_Void());
 }
 
 TEST(AnyTypeGTest, TestAnyType_AnyTypeVoid) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_AnyTypeVoid());
-}
-
-TEST(AnyTypeGTest, TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst());
-}
-
-TEST(AnyTypeGTest, TestAnyType_TypeDescriptor_BitAddress_ConstPointer) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_TypeDescriptor_BitAddress_ConstPointer());
-}
-
-TEST(AnyTypeGTest, TestIsVoid) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestIsVoid());
+    ASSERT_TRUE(AnyTypeTest::TestAnyType_AnyTypeVoid());
 }
 
 TEST(AnyTypeGTest, TestAnyType_Int8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Int8());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<int8>(1,SignedInteger8Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_UInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_UInt8());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<uint8>(1U,SignedInteger8Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstInt8());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const int8>(1,TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstUInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstUInt8());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const uint8>(1,TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Int16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Int16());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<int16>(1,SignedInteger16Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_UInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_UInt16());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<uint16>(1U,SignedInteger16Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstInt16());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const int16>(1,TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(basicTypeSize,Size16bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstUInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstUInt16());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const uint16>(1,TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(basicTypeSize,Size16bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Int32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Int32());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<int32>(1,SignedInteger32Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_UInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_UInt32());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<uint32>(1U,SignedInteger32Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstInt32());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const int32>(1,TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(basicTypeSize,Size32bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstUInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstUInt32());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const uint32>(1,TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(basicTypeSize,Size32bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Int64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Int64());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<int64>(1,SignedInteger64Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_UInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_UInt64());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<uint64>(1U,SignedInteger64Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstInt64());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const int64>(1,TypeDescriptor(TDRANGE(fullType,TDF_SignedInteger) | TDRANGE(basicTypeSize,Size64bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstUInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstUInt64());
+	ASSERT_TRUE(AnyTypeTest::ATVerify<const uint64>(1,TypeDescriptor(TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(basicTypeSize,Size64bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Float32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Float32());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<float32>(1.1F,Float32Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstFloat32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFloat32());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const float32>(1.1F,TypeDescriptor(TDRANGE(fullType,TDF_Float) | TDRANGE(basicTypeSize,Size32bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Float64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Float64());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<float64>(1.1F,Float64Bit));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstFloat64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFloat64());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const float64>(1.1F,TypeDescriptor(TDRANGE(fullType,TDF_Float) | TDRANGE(basicTypeSize,Size64bit) | TDRANGE(dataIsConstant,1))));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstPointerToConts) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstPointerToConts());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const void* const>(NULL,TDRANGE(fullType,TDF_Void) | TDRANGE(basicTypeSize,SizeUnknown) | TDRANGE(dataIsConstant,1),"p"));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstPointer) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstPointer());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<void* const>(NULL,TDRANGE(fullType,TDF_Void) | TDRANGE(basicTypeSize,SizeUnknown) | TDRANGE(dataIsConstant,1),"P"));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstCharPointerToConst());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const char8* const>(NULL,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1),"p"));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Char8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Char8());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<char8>(NULL,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstChar8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstChar8());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const char8>(NULL,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
 }
 
-
 TEST(AnyTypeGTest, TestAnyType_Object) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Object());
+    ASSERT_TRUE(AnyTypeTest::ATVerify<TestObjectHelper1 *>(NULL,ClassRegistryItem::Instance<TestObjectHelper1>()->GetTypeDescriptor(),"P"));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstObject) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstObject());
-}
-
-TEST(AnyTypeGTest, TestCreateFromOtherType) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestCreateFromOtherType());
-}
-
-TEST(AnyTypeGTest, TestCreateFromOtherConstType) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestCreateFromOtherConstType());
+	TypeDescriptor td = ClassRegistryItem::Instance<TestObjectHelper1>()->GetTypeDescriptor();
+	td.dataIsConstant = true;
+    ASSERT_TRUE(AnyTypeTest::ATVerify<TestObjectHelper1 * const >(NULL,td,"P"));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<uint8,4>*>(NULL, BitSetBoolean(uint8,4),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<uint16,9>*>(NULL, BitSetBoolean(uint16,9),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<uint32,18>*>(NULL, BitSetBoolean(uint32,18),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<uint64,34>*>(NULL, BitSetBoolean(uint64,34),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<int8,4>*>(NULL, SignedBitSet(int8,1,4),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<int16,9>*>(NULL, SignedBitSet(int16,1,9),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<int32,18>*>(NULL, SignedBitSet(int32,1,18),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitBoolean<int64,34>*>(NULL, SignedBitSet(int64,1,34),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeUInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<uint8,4,2>*>(NULL, UnsignedBitSet(uint8,4,2),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeUInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<uint16,4,10>*>(NULL, UnsignedBitSet(uint16,4,10),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeUInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<uint32,18,10>*>(NULL, UnsignedBitSet(uint32,18,10),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeUInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<uint64,18,40>*>(NULL, UnsignedBitSet(uint64,18,40),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<int8,4,2>*>(NULL, SignedBitSet(int8,4,2),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<int16,4,10>*>(NULL, SignedBitSet(int16,4,10),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<int32,18,10>*>(NULL, SignedBitSet(int32,18,10),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_BitRangeInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<BitRange<int64,18,40>*>(NULL, SignedBitSet(int64,18,40),"P")));
 }
 
+
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<uint4*>(NULL, UnsignedBitSet(uint8,4,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<uint12*>(NULL, UnsignedBitSet(uint16,12,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<uint24*>(NULL, UnsignedBitSet(uint32,24,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<uint48*>(NULL, UnsignedBitSet(uint64,48,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int8>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<int4*>(NULL, SignedBitSet(int8,4,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int16>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<int12*>(NULL, SignedBitSet(int16,12,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int32>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<int24*>(NULL, SignedBitSet(int32,24,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int64>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint8>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint16>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint32>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint64>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt8) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int8>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt16) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int16>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt32) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int32>());
-}
-
-TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt64) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int64>());
+    ASSERT_TRUE((AnyTypeTest::ATVerify<int48*>(NULL, SignedBitSet(int64,48,0),"P")));
 }
 
 TEST(AnyTypeGTest, TestSetDataPointer) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetDataPointer());
+    ASSERT_TRUE(AnyTypeTest::TestSetDataPointer());
 }
 
 TEST(AnyTypeGTest, TestGetDataPointer) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetDataPointer());
+    ASSERT_TRUE(AnyTypeTest::TestGetDataPointer());
 }
 
 TEST(AnyTypeGTest, TestGetTypeDescriptor) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetTypeDescriptor());
-}
-
-
-TEST(AnyTypeGTest, TestGetBitAddress) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetBitAddress());
-}
-
-TEST(AnyTypeGTest, TestSetNumberOfDimensions) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetNumberOfDimensions());
-}
-
-TEST(AnyTypeGTest, TestGetNumberOfDimensions) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetNumberOfDimensions());
-}
-
-TEST(AnyTypeGTest, TestSetNumberOfElements) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetNumberOfElements());
-}
-
-TEST(AnyTypeGTest, TestGetNumberOfElements) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetNumberOfElements());
-}
-
-TEST(AnyTypeGTest, TestSetStaticDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetStaticDeclared());
-}
-
-TEST(AnyTypeGTest, TestIsStaticDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestIsStaticDeclared());
-}
-
-TEST(AnyTypeGTest, TestGetBitSize) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetBitSize());
-}
-
-TEST(AnyTypeGTest, TestGetByteSize) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestGetByteSize());
-}
-
-
-TEST(AnyTypeGTest, TestPositionOperator_MatrixStructuredStaticDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixStructuredStaticDeclared());
-}
-
-
-TEST(AnyTypeGTest, TestPositionOperator_MatrixStructuredHeapDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixStructuredHeapDeclared());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_MatrixBasicStaticDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixBasicStaticDeclared());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_MatrixBasicHeapDeclared) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_MatrixBasicHeapDeclared());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_VectorStructured) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorStructured());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_VectorBasic) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorBasic());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_VectorCString) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorCString());
-}
-
-TEST(AnyTypeGTest, TestPositionOperator_VectorPointer) {
-    AnyTypeTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestPositionOperator_VectorPointer());
+    ASSERT_TRUE(AnyTypeTest::TestGetTypeDescriptor());
 }
 

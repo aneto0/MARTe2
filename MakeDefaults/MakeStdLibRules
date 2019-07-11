@@ -34,7 +34,9 @@ build:
 # defined in the platform MakeStdLibRules.$(TARGET)
         
 .PHONY: do_showInfo
-do_showInfo: 	
+do_showInfo:
+#	@echo $(SRCS) 
+#	@echo $(OBJSX) 
 	@echo choose among 
 	@echo 1\) make build     to build libraries
 	@echo 2\) make clean     to remove any produced file
@@ -44,7 +46,15 @@ do_showInfo:
 	@echo 6\) make all       to build libraries and test programs
 	@echo choose targer by adding -D TARGET  {msc x86-linux ...}
 	@echo current target is $(TARGET)
-    
+
+
+
+
+DEPEND_INCLUDE=  depends.$(TARGET)
+
+ifeq ($(SRCS),)
+DEPEND_INCLUDE=  
+endif
 
 ifeq (CLEANLT,$(MAKEMODE))
 DEPENDS = do_cleandir $(SUBPROJLT) $(SUBPROJLT2)
@@ -60,22 +70,22 @@ endif
 
 ifeq (BUILD,$(MAKEMODE))
 DEPENDS = $(OBJS) $(SUBPROJ) $(BUILD_PRODUCT)
-include depends.$(TARGET)
+include $(DEPEND_INCLUDE)
 endif
 
 ifeq (TEST,$(MAKEMODE))
 DEPENDS = $(OBJS) $(SUBPROJT) $(BUILD_PRODUCT)
-include depends.$(TARGET)
+include $(DEPEND_INCLUDE)
 endif
 
 ifeq (LOCALTEST,$(MAKEMODE))
 DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT) $(SUBPROJLT2)
-include depends.$(TARGET)
+include $(DEPEND_INCLUDE)
 endif
 
 ifeq (ALL,$(MAKEMODE))
 DEPENDS = $(OBJS)  $(SUBPROJLT) $(SUBPROJT) $(BUILD_PRODUCT)
-include depends.$(TARGET)
+include $(DEPEND_INCLUDE)
 endif
 		
 .PHONY: default

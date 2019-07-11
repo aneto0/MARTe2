@@ -32,7 +32,7 @@
 #define DLL_API
 
 #include "CompositeErrorManagement.h"
-#include "VariableDescriptorLib.h"
+#include "Private/VariableDescriptorLib.h"
 #include "MemoryCheck.h"
 #include "TypeConversionOperatorI.h"
 #include "Matrix.h"

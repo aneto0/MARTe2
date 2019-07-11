@@ -31,9 +31,11 @@
 
 #include "ClassMethodCallerTest.h"
 #include "ClassMethodCaller.h"
-#include "ConfigurationDatabase.h"
+#include "SimpleStructuredData.h"
+#include "SimpleStream.h"
 #include "ErrorType.h"
 #include "ReferenceContainer.h"
+#include "DynamicCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -79,7 +81,7 @@ bool ClassMethodCallerTest::TestCall() {
         ClassMethodCaller target;
         ErrorManagement::ErrorType status;
         Object context;
-        ConfigurationDatabase param;
+        SimpleStructuredData param;
         status = target.Call(&context, param);
         result &= (status == ErrorManagement::ParametersError);
     }
@@ -87,7 +89,7 @@ bool ClassMethodCallerTest::TestCall() {
         ClassMethodCaller target;
         ErrorManagement::ErrorType status;
         Object context;
-        StreamString param;
+        SimpleStream param;
         status = target.Call(&context, param);
         result &= (status == ErrorManagement::ParametersError);
     }

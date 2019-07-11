@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ObjectRegistryDatabaseTest.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,10 +40,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ObjectRegistryDatabaseGTest,TestInstance) {
-    ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestInstance());
-}
 
 TEST(ObjectRegistryDatabaseGTest,TestFind) {
     ObjectRegistryDatabaseTest objRegTest;
@@ -63,8 +59,4 @@ TEST(ObjectRegistryDatabaseGTest,TestFind_Absolute) {
 TEST(ObjectRegistryDatabaseGTest,TestFindTooManyBackSteps) {
     ObjectRegistryDatabaseTest objRegTest;
     ASSERT_TRUE(objRegTest.TestFindTooManyBackSteps());
-}
-TEST(ObjectRegistryDatabaseGTest,TestGetClassName) {
-    ObjectRegistryDatabaseTest objRegTest;
-    ASSERT_TRUE(objRegTest.TestGetClassName());
 }

@@ -35,7 +35,11 @@ $(BUILD_DIR)\\%.obj : %.cpp
 
 $(BUILD_DIR)\\%.obj : Environment/$(ENVIRONMENT)/%.cpp
 	@echo $(BUILD_DIR)
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  Environment/Windows/$*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  Environment/$(ENVIRONMENT)/$*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
+
+$(BUILD_DIR)\\%.obj : Private/%.cpp
+	@echo $(BUILD_DIR)
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  Private/$*.cpp  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
 
 $(BUILD_DIR)\\%.obj : %.c
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.c  $(ASSEMBLER) -Fo$(BUILD_DIR)\$*.obj
@@ -122,10 +126,16 @@ else
     SCAN = 
 endif
 
+#dependsRaw.msc: 
+#	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* $(SCAN) > dependsRaw.msc
+#	@if not exist temp mkdir temp
+#	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+
 dependsRaw.msc: 
-	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* $(SCAN) > dependsRaw.msc
+	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) $(SRCS) $(SCAN) > dependsRaw.msc
 	@if not exist temp mkdir temp
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+
 
 #Note that the / is used here in the /%. as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)\%.obj $(OBJS)    %.def
@@ -134,7 +144,7 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)\%.obj $(OBJS)    %.def
 
 .PHONY: do_cleandir
 do_cleandir:
-	@if exist depends.* rm -f depends*
+	@if exist depends* rm -f depends*
 	@if exist $(BUILD_DIR)/*$(OBJEXT) rm -f $(BUILD_DIR)/*$(OBJEXT)
 	@if exist $(BUILD_DIR)/*$(DLLEXT) rm -f $(BUILD_DIR)/*$(DLLEXT)	
 	@if exist $(BUILD_DIR)/*$(EXEEXT) rm -f $(BUILD_DIR)/*$(EXEEXT)

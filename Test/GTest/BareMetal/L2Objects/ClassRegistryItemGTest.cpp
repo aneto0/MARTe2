@@ -26,7 +26,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -85,15 +85,6 @@ TEST(ClassRegistryItemGTest,TestGetNumberOfInstances) {
     ASSERT_TRUE(myClassRegistryItemTest.TestGetNumberOfInstances(32));
 }
 
-TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy());
-}
-
-TEST(ClassRegistryItemGTest,TestGetClassProperties) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties());
-}
 
 TEST(ClassRegistryItemGTest,TestSetGetLoadableLibrary) {
     ClassRegistryItemTest myClassRegistryItemTest;
@@ -105,12 +96,4 @@ TEST(ClassRegistryItemGTest,TestGetObjectBuildFunction) {
     ASSERT_TRUE(myClassRegistryItemTest.TestGetObjectBuildFunction());
 }
 
-TEST(ClassRegistryItemGTest,TestGetIntrospection) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetIntrospection());
-}
 
-TEST(ClassRegistryItemGTest,TestSetTypeDescriptor) {
-    ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestSetTypeDescriptor(0xfff1));
-}

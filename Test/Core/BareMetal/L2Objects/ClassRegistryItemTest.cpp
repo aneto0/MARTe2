@@ -50,10 +50,14 @@ class MyObject: public Object {
 	uint32 member1;
 public:
     CLASS_REGISTER_DECLARATION()
-};
-CLASS_REGISTER(MyObject, "1.0")
+	CLASS_PRIVATE_MEMBER_DECLARE(member1)
 
-CLASS_MEMBER_REGISTER(MyObject,member1)
+};
+//CLASS_MEMBER_REGISTER(MyObject,member1)
+CLASS_REGISTER(MyObject, "1.0")
+CLASS_PRIVATE_MEMBER_REGISTER(MyObject, member1)
+
+
 
 
 class MyObject2: public Object {
@@ -78,9 +82,11 @@ class TestIntrospectionCRI: public Object {
 	uint32 member1;
 public:
     CLASS_REGISTER_DECLARATION()
+	CLASS_PRIVATE_MEMBER_DECLARE(member1)
 };
 CLASS_REGISTER(TestIntrospectionCRI, "1.1")
-CLASS_MEMBER_REGISTER(TestIntrospectionCRI,member1)
+CLASS_PRIVATE_MEMBER_REGISTER(TestIntrospectionCRI,member1)
+//CLASS_MEMBER_REGISTER(TestIntrospectionCRI,member1)
 
 #if 0
 

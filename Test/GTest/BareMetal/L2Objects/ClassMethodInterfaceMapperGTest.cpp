@@ -34,7 +34,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodInterfaceMapperTest.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

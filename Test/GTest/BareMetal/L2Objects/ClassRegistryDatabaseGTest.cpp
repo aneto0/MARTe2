@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,10 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryDatabaseGTest,TestInstance) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
-}
+
 
 TEST(ClassRegistryDatabaseGTest,TestFind) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
@@ -90,13 +87,3 @@ TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
-}
-
-
-TEST(ClassRegistryDatabaseGTest,TestCleanUp) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestCleanUp());
-}
