@@ -221,7 +221,7 @@ private:
 	static const baseType maxRawValue;
 };
 
-#if 0
+#if 0 // removed as causes recursion
 /**
  * defines the TypeCharacteristics for the SaturatedInteger<baseType> so that one can use the TypeCharacteristics functions
  */
@@ -235,7 +235,7 @@ public:
 	 * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
 	 */
 	static const baseType MaxValue() {
-		return SaturatedInteger<baseType>::maxRawValue;
+		return SaturatedInteger<baseType>::maxRawValue-3;
 	}
 };
 
@@ -289,7 +289,7 @@ const bool SaturatedInteger<baseType>::TTCompareCodeMap[4][4] = {
 template<typename baseType>
 uint8 SaturatedInteger<baseType>::GetCode() const {
 	uint8 ret = valid;
-	if (data >= maxRawValue){
+	if (data > maxRawValue){
 		// valid because there are only a few possible values above maxRawValue
 		ret = static_cast<uint8>(data - maxRawValue);
 	}
@@ -349,7 +349,7 @@ SaturatedInteger<baseType>::SaturatedInteger(const inputType & x){
 			SetCode(positiveInf);
 		}
 	} else {
-		if (data >= maxRawValue){
+		if (data > maxRawValue){
 			SetCode(positiveInf);
 		}
 	}

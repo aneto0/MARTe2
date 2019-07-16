@@ -39,6 +39,7 @@ TestInstance::~TestInstance(){
 void RunAllTests(){
 	TestInstance *test = TestRoot;
 	int counter = 0;
+	int failedCounter = 0;
 	while (test != NULL){
 		bool res = true;
 		test->Execute(res);
@@ -46,9 +47,10 @@ void RunAllTests(){
 			printf(" OK  %s\n",test->testName);
 		} else {
 			printf("*NO* %s\n",test->testName);
+			failedCounter++;
 		}
 		test = test->nextTest;
 		counter ++;
 	}
-	printf("executed %i tests\n",counter);
+	printf("executed %i tests - %i failed \n",counter,failedCounter);
 }

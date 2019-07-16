@@ -118,7 +118,7 @@ namespace testing{
 				}\
 				printf ( #test_code "@%s:%i\n",__FILE__,__LINE__);\
 			}\
-			result = result & (localRet != expect); }
+			result = result & (localRet == expect); }
 
 #define ASSERT_TRUE(code_to_execute)  ASSERT((code_to_execute),TestSupportShowResults,false)
 #define ASSERT_FALSE(code_to_execute) ASSERT((code_to_execute),TestSupportShowResults,true)

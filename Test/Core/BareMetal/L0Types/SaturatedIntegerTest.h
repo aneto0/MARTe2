@@ -58,7 +58,11 @@ bool TestConversion(bt3 value){
 	bool show=true;
 	bt1 valueS;
 	// use this function to clip to within range of bt1
-	SafeNumber2Number(value,valueS);
+	if (!SafeNumber2Number(value,valueS)){
+		if (valueS > 0){
+			valueS -= 3;  // allow for the reduced range of SaturatedInteger
+		}
+	}
 	// now test the conversion to bt2
 	SaturatedInteger<bt2> saturatedValue(valueS);
 

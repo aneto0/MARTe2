@@ -30,8 +30,13 @@ static const int FailIfNeg   = 0x08;
 static const int FailIfPos   = 0x04;
 static const int FailIfNever = 0x00;
 
-#define CheckFail(expect,map) ((expect && map) != 0)
+//#define CheckFail(expect,map) ((expect && map) != 0)
 //#define Pack(n) n
+static inline int CheckFail(int expect,int behave){
+//	printf("(%i,%i->%i)",expect,behave,(expect & behave));
+	return ((expect & behave)!=0);
+}
+
 
 #define TESTCONVBLOCKTYPE(type,N,expect,map,line) \
 TEST(SaturatedIntegerGTest,TestConvTo ## type ## __ ## line) {  \
