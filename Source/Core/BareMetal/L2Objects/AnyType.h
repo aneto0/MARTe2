@@ -261,8 +261,13 @@ public:
      * @brief Converts type descriptor to C/c++ equivalent
      * @return true if all ok
      */
-    inline ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
+    inline ErrorManagement::ErrorType  ToString(CStringTool &stringT,bool rawFormat=false) const;
 
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     * @return true if all ok
+     */
+    inline ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
 
 private:
 
@@ -343,6 +348,10 @@ const void* AnyType::GetVariablePointer() const{
 
 const VariableDescriptor &AnyType::GetFullVariableDescriptor() const{
     return variableDescriptor;
+}
+
+ErrorManagement::ErrorType AnyType::ToString(CStringTool &stringT,bool rawFormat) const{
+	return variableDescriptor.ToString(stringT,rawFormat);
 }
 
 ErrorManagement::ErrorType AnyType::ToString(DynamicCString &string,bool rawFormat) const{

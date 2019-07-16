@@ -416,7 +416,7 @@ public:
      * @brief Converts type descriptor to C/c++ equivalent
      *
      */
-    bool ToString(DynamicCString &string) const;
+    bool ToString(CStringTool &string) const;
 private:
 
     /**

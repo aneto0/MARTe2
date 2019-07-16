@@ -554,7 +554,7 @@ ErrorManagement::ErrorType GetSizeRecursive(
 /**
  * This function does a double recursion in order to process the pre-pending(*) and post-pending([]) modifiers
  */
-ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typeDescriptor,DynamicCString &string,CCString modifierString,bool start,int8 &priority){
+ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typeDescriptor,CStringTool &string,CCString modifierString,bool start,int8 &priority){
 	ErrorManagement::ErrorType ret;
 
 	if (modifierString.IsNullPtr()){
@@ -572,13 +572,13 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 		// process A and P in reverse
 		if (ret){
 			if (modifier == 'P'){
-				string().Append(" *");
+				string.Append(" *");
 			} else
 			if (modifier == 'F'){
-				string().Append("( *");
+				string.Append("( *");
 			} else
 			if (modifier == 'f'){
-				string().Append("( * const");
+				string.Append("( * const");
 			}
 
 			// if this was the start of the sequence now do the forward section to add the vectors[]
@@ -591,10 +591,10 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 					switch (modifier){
 					case 'f':
 					case 'F':{
-						string().Append(')').Append('[').Append(size).Append(']');
+						string.Append(')').Append('[').Append(size).Append(']');
 					}break;
 					case 'A':{
-						string().Append('[').Append(size).Append(']');
+						string.Append('[').Append(size).Append(']');
 					}break;
 					case 'p':
 					case 'P':{
@@ -668,15 +668,15 @@ ErrorManagement::ErrorType ToString(CCString modifiers,const TypeDescriptor &typ
 			}
 
 			if (ret){
-				string().Append(templateName);
+				string.Append(templateName);
 				// insert the type of what follows
 				int8 localPriority=0;
 				ret = ToString(modifiers,typeDescriptor,string,modifierString,true,localPriority);
 				if (hasSize){
-					string().Append(',').Append(size);
+					string.Append(',').Append(size);
 				}
 				// close the template
-				string().Append('>');
+				string.Append('>');
 			}
 		}
 	} // end of reverse action

@@ -43,20 +43,21 @@ DEFEXT=.def
 TEARS= Scheduler FileSystem
 
 
-MAKE     =   make
-COMPILER =   cl 
+MAKE      =   make
+COMPILER  =   cl 
 FCOMPILER =  f77
-DEBUG    =   -Zi -Oy-
+DEBUG     =   -Zi -Oy-
 #OPTIM    =   -Wall -O2 -Ob2
-OPTIM    =   -Wall -wd4711 -wd4710 -wd4820 -wd4514 -wd4668 -wd4100 -wd4251 -wd4521 -wd4061 -wd4127 -wd4275 -wd4263 -wd4264 -wd4266
+OPTIM     =   -Wall -wd4711 -wd4710 -wd4820 -wd4514 -wd4668 -wd4100 -wd4251 -wd4521 -wd4061 -wd4127 -wd4275 -wd4263 -wd4264 -wd4266
 
-CFLAGSPEC=   -MD -GR -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
-ASSEMBLER=   -Fa$(BUILD_DIR)/$%.asm
+CFLAGSPEC =   -MD -GR -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
+ASSEMBLER =   -Fa$(BUILD_DIR)/$%.asm
 #ASSEMBLER=   
 #LFLAGS   =  /LINK /OPT:NOREF 
-CFLAGS   =    
-FFLAGS   =   
-FOPTS    =   -optimize:4
+CFLAGS    =    
+FFLAGS    =   
+FOPTS     =   -optimize:4
+LIBRARIES = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
 
 .SUFFIXES:     .cpp .obj  .o .a .lib .exe 
 

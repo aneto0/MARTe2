@@ -178,7 +178,13 @@ public:
      * @brief Converts type descriptor to C/c++ equivalent
      * @return true if all ok
      */
-    ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
+    ErrorManagement::ErrorType  ToString(CStringTool &string,bool rawFormat=false) const;
+
+    /**
+     * @brief Converts type descriptor to C/c++ equivalent
+     * @return true if all ok
+     */
+    inline ErrorManagement::ErrorType  ToString(DynamicCString &string,bool rawFormat=false) const;
 
     /**
      * @brief Converts C/c++ string to type descriptor
@@ -834,6 +840,13 @@ inline TypeDescriptor VariableDescriptor::GetSummaryTypeDescriptor() const{
 inline TypeDescriptor VariableDescriptor::GetFinalTypeDescriptor() const{
     return typeDescriptor;
 }
+
+ErrorManagement::ErrorType
+VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
+	CStringTool cst = string();
+	return ToString(cst,rawFormat);
+}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <TypeDescriptor.h>
+#include "TypeDescriptor.h"
 #include "StringHelper.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -176,7 +176,7 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 		stringt.Append(#className "<").Append(constString).Append(typeName).Append(bits).Append('>');
 
 
-bool TypeDescriptor::ToString(DynamicCString &string) const{
+bool TypeDescriptor::ToString(CStringTool &stringt) const{
 	bool ret= true;
 
     const char8 *constString2= "const ";
@@ -184,8 +184,6 @@ bool TypeDescriptor::ToString(DynamicCString &string) const{
     if (dataIsConstant){
     	constString = constString2;
     }
-
-    CStringTool stringt = string();
 
     if (isStructuredData){
     	stringt.Append(constString);

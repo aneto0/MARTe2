@@ -469,11 +469,11 @@ ErrorManagement::ErrorType VariableDescriptor::Clone(
 /**************************************************************************************************/
 
 
-ErrorManagement::ErrorType VariableDescriptor::ToString(DynamicCString &string,bool rawFormat) const{
+ErrorManagement::ErrorType VariableDescriptor::ToString(CStringTool &string,bool rawFormat) const{
 	ErrorManagement::ErrorType  ret;
 	if (rawFormat){
 		bool retbool = true;
-		ErrorManagement::ErrorType ret = string().Append(modifiers).Append(' ');
+		ErrorManagement::ErrorType ret = string.Append(modifiers).Append(' ');
 		retbool = ret.ErrorsCleared();
 		retbool = retbool && typeDescriptor.ToString(string);
 		ret.fatalError = !retbool;

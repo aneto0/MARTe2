@@ -31,9 +31,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
 INCLUDES+=-I. -I../L1Portability -I../L0Types -IVariableDescriptorLib
 
-LIBRARIES_STATIC=$(BUILD_DIR)/../L0Types/L0TypesB$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/../L1Portability/L1PortabilityB$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/../L2Objects/VariableDescriptorLib/L2VDLib$(LIBEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/*$(OBJEXT) 
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
