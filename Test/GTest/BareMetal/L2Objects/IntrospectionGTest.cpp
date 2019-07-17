@@ -122,8 +122,8 @@ Test3ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test3Class)
         subTemplate(int64,int64Var,[],className)\
         subTemplate(uint32,uint32Var,[],className)\
         subTemplate(char8,char8Var,[],className)\
-        subTemplate(float,floatVar,[],className)\
-        subTemplate(double,doubleVar,[],className)
+        subTemplate(float32,floatVar,[],className)\
+        subTemplate(float64,float64Var,[],className)
 
 /// declare Test2Class
 class Test2Class{
@@ -156,10 +156,10 @@ private:
         subTemplate(CString,CStringVar,[],className)\
         subTemplate(DynamicCString,DCStringVar,[],className)\
         subTemplate(Vector<char8>,VCharVar,[],className)\
-        subTemplate(Matrix<float>,MFloatVar,[],className)\
+        subTemplate(Matrix<float32>,MFloatVar,[],className)\
         subTemplate(ZeroTerminatedArray<CCString>,CStringZTAVar,[],className)\
         subTemplate(ZeroTerminatedArray<Vector<CCString>[4]>,CStringVAZTAVar,[],className)\
-        subTemplate(Matrix<float (*)[10]>,MFloat10,[],className)\
+        subTemplate(Matrix<float32 (*)[10]>,MFloat10,[],className)\
         subTemplate(StreamI *,pStreamI,[],className)\
         subTemplate(SimpleStream,SString,[],className)\
         subTemplate(MyStream,myStream,[],className)\
@@ -319,7 +319,7 @@ void TestEnvironment::PrepareTestObject(){
     test1Class.uint32Var = 132;
     test1Class.char8Var = 'c';
     test1Class.floatVar = 10.1F;
-    test1Class.doubleVar = 11.1e9;
+    test1Class.float64Var = 11.1e9;
     test1Class.test2.int8Var = 8;
     test1Class.test2.int16Var = 16;
     test1Class.test2.int32Var = 32;
@@ -327,7 +327,7 @@ void TestEnvironment::PrepareTestObject(){
     test1Class.test2.uint32Var = 32;
     test1Class.test2.char8Var = 'c';
     test1Class.test2.floatVar = 0.1F;
-    test1Class.test2.doubleVar = 1.1e9;
+    test1Class.test2.float64Var = 1.1e9;
     test1Class.test3.bitset1 = 1;
     test1Class.test3.bitset2 = 2;
     test1Class.test3.bitset3 = 3;
@@ -368,12 +368,12 @@ void TestEnvironment::PrepareTestObject(){
     test1Class.CStringZTAVar = ZeroTerminatedArray<CCString>(pippo);
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
 
-    static float (*arrayP10[10][10])[10];
+    static float32 (*arrayP10[10][10])[10];
     for (int i=0;i<10;i++) for (int j=0;j<10;j++) {
     	arrayP10[i][j] = NULL;
     }
 
-    static float arrayF[10];
+    static float32 arrayF[10];
     arrayP10[1][1] = &arrayF;
     test1Class.MFloat10 = arrayP10;
 
@@ -882,7 +882,7 @@ void TestSafeN2N(T1 value)
     DynamicCString ss;
 //    StreamString ss;
     bool ret = SafeNumber2Number(in,out);
-    double tst = out;
+    float64 tst = out;
     if (!ret) printf("sat   "); else printf("no sat ");
     ss().Append()
     ss.Printf("%!(%?) --> %!(%?) !! %!(%?) \n",in,in,out,out,tst,tst);
@@ -1131,16 +1131,16 @@ DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".int16Var","int16","116",s
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".int32Var","int32","132",sizeof(int32),0,int32Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".uint32Var","uint32","132",sizeof(uint32),0,uint32Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".int64Var","int64","164",sizeof(int64),0,int64Var);  // MC
-DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".floatVar","float","10.100001",sizeof(float),0,floatVar);
-DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".doubleVar","double","11100000000.000000",sizeof(double),0,doubleVar);
+DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".floatVar","float32","10.100001",sizeof(float32),0,floatVar);
+DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".float64Var","float64","11100000000.000000",sizeof(float64),0,float64Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.char8Var","char8","c",sizeof(char8),0,test2_char8Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.int8Var","int8","8",sizeof(int8),0,test2_int8Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.int16Var","int16","16",sizeof(int16),0,test2_int16Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.int32Var","int32","32",sizeof(int32),0,test2_int32Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.uint32Var","uint32","32",sizeof(uint32),0,test2_uint32Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.int64Var","int64","64",sizeof(int64),0,test2_int64Var);
-DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.floatVar","float","0.100000",sizeof(float),0,test2_floatVar);
-DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.doubleVar","double","1100000000.000000",sizeof(double),0,test2_doubleVar);
+DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.floatVar","float32","0.100000",sizeof(float32),0,test2_floatVar);
+DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test2.float64Var","float64","1100000000.000000",sizeof(float64),0,test2_float64Var);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test3.bitset1","BitRange<uint32,1,0>","1",sizeof(uint32),0,bitset1);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test3.bitset2","BitRange<uint32,2,1>","2",sizeof(uint32),0,bitset2);
 DEREF_CLONE_CHECKCONTENT(TestEnvironment::Instance(),".test3.bitset3","BitRange<uint32,3,3>","3",sizeof(uint32),0,bitset3);
@@ -1189,12 +1189,12 @@ DEREF_CHECK(TestEnvironment::Instance(),".int64PArr","int64( *[11])[21]",424,siz
 DEREF_CHECK(TestEnvironment::Instance(),".int64PArr[4]","int64( *)[21]",176,8,int64PArr_4); // cannot clone pointers
 DEREF_CHECK(TestEnvironment::Instance(),".int32PVar","int32 *",8,0,int32PVar);  // cannot clone pointers
 DEREF_CHECK(TestEnvironment::Instance(),".VCharVar","Vector<char8>",16,16,VCharVar);/* clone creates only const structures*/
-DEREF_CHECK(TestEnvironment::Instance(),".MFloatVar","Matrix<float>",24,24,MFloatVar);/* clone creates only const structures*/
+DEREF_CHECK(TestEnvironment::Instance(),".MFloatVar","Matrix<float32>",24,24,MFloatVar);/* clone creates only const structures*/
 DEREF_CHECK(TestEnvironment::Instance(),".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56/* clone converts ZTA to vector */,CStringZTAVar);
 DEREF_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712/* cloning changes type*/,CStringVAZTAVar);
 DEREF_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144,CStringVAZTAVar_1);
 DEREF_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar[1][2]","Vector<CCString>",29,24,CStringVAZTAVar_1_2);
-DEREF_CHECK(TestEnvironment::Instance(),".MFloat10","Matrix<float( *)[10]>",864,824,MFloat10);
+DEREF_CHECK(TestEnvironment::Instance(),".MFloat10","Matrix<float32( *)[10]>",864,824,MFloat10);
 DEREF_CHECK(TestEnvironment::Instance(),".pStreamI","StreamI *",8,0/* pointers not supporte by clone */,pStreamI); // treat as a pointer
 DEREF_CHECK(TestEnvironment::Instance(),".myStream","StreamI",72,72,myStream);
 
@@ -1212,12 +1212,12 @@ DEREF_CLONE_CHECK(TestEnvironment::Instance(),".int16Arr","int16[12]",sizeof(tes
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0,int64Arr);
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".int32PVar*","int32",4,0,int32PVar);
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".VCharVar","const Vector<char8>",16,16,VCharVar);/* clone creates only const structures*/
-DEREF_CLONE_CHECK(TestEnvironment::Instance(),".MFloatVar","const Matrix<float>",24,24,MFloatVar);
+DEREF_CLONE_CHECK(TestEnvironment::Instance(),".MFloatVar","const Matrix<float32>",24,24,MFloatVar);
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".CStringZTAVar","const Vector<CCString>",83,56,CStringZTAVar); /* clone converts ZTA to vector */
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656,CStringVAZTAVar);/* cloning changes to const Vector*/
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144,CStringVAZTAVar_1);/* cloning changes to const Vector*/
 DEREF_CLONE_CHECK(TestEnvironment::Instance(),".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24,CStringVAZTAVar_1_2);
-DEREF_CLONE_CHECK(TestEnvironment::Instance(),".MFloat10","const Matrix<float( * const)[10]>",864,824,MFloat10);
+DEREF_CLONE_CHECK(TestEnvironment::Instance(),".MFloat10","const Matrix<float32( * const)[10]>",864,824,MFloat10);
 
 
 CCString testPatt[3] = {CCString("grande"),CCString("spazio"),CCString("aperto")};

@@ -99,12 +99,12 @@ void *Malloc(uint32 byteSize,HeapId id=standardHeapId);
 /**
  * @brief replacement of free
  */
-void Free(void *ptr);
+void Free(void *&ptr);
 
 /**
  * @brief replacement of realloc
  */
-void *Realloc(void *ptr,uint32 byteSize);
+void *Realloc(void *&ptr,uint32 byteSize);
 
 /**
  * @brief net number of allocated blocks on a given pool

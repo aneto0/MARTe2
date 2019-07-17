@@ -100,11 +100,12 @@ void *Malloc(uint32 byteSize,HeapManager::HeapId id){
     return ptr;
 
 }
-void Free(void *ptr){
+void Free(void *&ptr){
 	MARTe::HeapManager::AllocationPointer ap(ptr);
 	ap.Free();
+	ptr = NULL;
 }
-void *Realloc(void *ptr,uint32 byteSize){
+void *Realloc(void *&ptr,uint32 byteSize){
 	MARTe::HeapManager::AllocationPointer ap(ptr);
 	ap.Realloc(byteSize);
     ptr = ap;
@@ -250,24 +251,29 @@ ErrorManagement::ErrorType AllocationPointer::Realloc(uint32 byteSize){
 		HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);
 		if (ret){
 			h = heapList[id];
+
+			if ((h != NULL_PTR(HeapManager::HeapI *)) || (id == singletonHeapId)){
+				Atomic::Decrement((int32 *)&allocatedBlocks[id]);
+				Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
+
+				void *ptr = static_cast<void *>(memory);
+				if (h != NULL_PTR(HeapManager::HeapI *)){
+					memory = static_cast<AllocationHeader *> (h->Realloc(ptr,size));
+				} else {
+					memory = static_cast<AllocationHeader *> (std_realloc(ptr,size));
+				}
+
+				ret.outOfMemory = (memory == NULL_PTR(AllocationHeader *));
+			}
+
+			if (ret){
+				memory->byteSize = byteSize;
+				memory->heapId = id;
+				Atomic::Increment((int32 *)&allocatedBlocks[id]);
+				Atomic::Add((int32 *)&allocatedBytes[id],static_cast<int32>(byteSize));
+			}
+
 			ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
-		}
-
-		if (ret){
-			Atomic::Decrement((int32 *)&allocatedBlocks[id]);
-			Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
-
-			void *ptr = static_cast<void *>(memory);
-			memory = static_cast<AllocationHeader *> (h->Realloc(ptr,size));
-
-			ret.outOfMemory = (memory == NULL_PTR(AllocationHeader *));
-		}
-
-		if (ret){
-			memory->byteSize = byteSize;
-			memory->heapId = id;
-			Atomic::Increment((int32 *)&allocatedBlocks[id]);
-			Atomic::Add((int32 *)&allocatedBytes[id],static_cast<int32>(byteSize));
 		}
 	}
 
@@ -293,17 +299,23 @@ ErrorManagement::ErrorType AllocationPointer::Free(){
 	HeapManager::HeapI * h = NULL_PTR(HeapManager::HeapI *);
 	if (ret){
 		h = heapList[id];
+
+		void *ptr = static_cast<void *>(memory);
+
+		if ((h != NULL_PTR(HeapManager::HeapI *)) || (id == singletonHeapId)){
+			if (h != NULL_PTR(HeapManager::HeapI *)){
+				h->Free(ptr);
+			} else {
+				std_free(ptr);
+			}
+			Atomic::Decrement((int32 *)&allocatedBlocks[id]);
+			Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
+		}
+
+		memory = NULL_PTR(AllocationHeader *);
 		ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
 	}
 
-	if (ret){
-		void *ptr = static_cast<void *>(memory);
-		h->Free(ptr);
-		memory = NULL_PTR(AllocationHeader *);
-
-		Atomic::Decrement((int32 *)&allocatedBlocks[id]);
-		Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
-	}
 
 	return ret;
 

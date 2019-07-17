@@ -68,6 +68,11 @@ public:
     DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data);
 
     /**
+     * @brief Copy constructor.
+     */
+    DynamicZeroTerminatedArray(const DynamicZeroTerminatedArray< T> &data);
+
+    /**
      * @brief deallocates memory
      */
     ~DynamicZeroTerminatedArray();
@@ -145,13 +150,13 @@ protected:
      * @return false if realloc fails TODO
      */
     inline ZeroTerminatedArrayToolT<T>  AppendN(const ZeroTerminatedArray< const T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
-
+#if 1
     /**
      * @brief Adds one TArray() of elements to the TArray()
      * @return false if realloc fails TODO
      */
-    inline ZeroTerminatedArrayToolT<T>  AppendN(const ZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
-
+    inline ZeroTerminatedArrayToolT<T>  AppendN(const DynamicZeroTerminatedArray< T> &  data,uint32 maxAppendSize=0xFFFFFFFF);
+#endif
     /**
      * @brief shrinks the TArray() size to the minimum between newSize and the current size
      * @return false if realloc fails TODO
@@ -193,6 +198,11 @@ DynamicZeroTerminatedArray<T>::DynamicZeroTerminatedArray() :ZeroTerminatedArray
 
 template<typename T>
 DynamicZeroTerminatedArray<T>::DynamicZeroTerminatedArray(const ZeroTerminatedArray<const T> &data) :ZeroTerminatedArray<T>(){
+	AppendN(data);
+}
+
+template<typename T>
+DynamicZeroTerminatedArray<T>::DynamicZeroTerminatedArray(const DynamicZeroTerminatedArray<T> &data) :ZeroTerminatedArray<T>(){
 	AppendN(data);
 }
 
@@ -250,11 +260,12 @@ template<typename T>
 ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::AppendN(const ZeroTerminatedArray<const T> & data,uint32 maxAppendSize) {
 	return operator ()().AppendN(data,maxAppendSize);
 }
-
+#if 1
 template<typename T>
-ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::AppendN(const ZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
+ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::AppendN(const DynamicZeroTerminatedArray<T> & data,uint32 maxAppendSize) {
 	return operator ()().AppendN(data,maxAppendSize);
 }
+#endif
 
 template<typename T>
 ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::Truncate(uint32 newSize) {

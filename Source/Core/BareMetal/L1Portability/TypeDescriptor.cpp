@@ -161,16 +161,23 @@ CCString TypeDescriptor::GetNameOfClassFromStructureId() const{
 	return ret;
 }
 
+#if 0
 #define TYPENAME_CORE()             			\
 	stringt.Append(constString);				\
 	if ((fullType == TDF_Float) && (bits == 32)){\
-		stringt.Append("float");				\
+		stringt.Append("float32");				\
 	} else 										\
 	if ((fullType == TDF_Float) && (bits == 64)){\
-		stringt.Append("double");				\
+		stringt.Append("float64");				\
 	} else {									\
 		stringt.Append(typeName).Append(bits); \
 	}
+#else
+#define TYPENAME_CORE()             		\
+stringt.Append(constString);				\
+stringt.Append(typeName).Append(bits); 		\
+
+#endif
 
 #define TEMPLATED_TYPENAME_CORE(className)       \
 		stringt.Append(#className "<").Append(constString).Append(typeName).Append(bits).Append('>');
@@ -275,10 +282,10 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 	if (token.IsSameAs("char")){
 		all = Character8Bit_number;
 	} else
-	if (token.IsSameAs("float")){
+	if (token.IsSameAs("float32")){
 		all = Float32Bit_number;
 	} else
-	if (token.IsSameAs("double")){
+	if (token.IsSameAs("float64")){
 		all = Float64Bit_number;
 	} else
 	if (token.IsSameAs("uint",4)){

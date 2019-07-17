@@ -32,6 +32,7 @@
 #include "TypeDescriptorTest.h"
 #include "DynamicCString.h"
 #include "CString.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -170,33 +171,37 @@ bool TypeDescriptorTest::TestFieldSaturation() {
     }
 }
 
-static const TypeDescriptor typeDes[] = { CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
+static const TypeDescriptor typeDes[] = { DynamicCharString, ConstCharString(0), CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
         UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType(0) };
-static const CCString typeNames[] = { "string", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",emptyString};
+static const CCString typeNames[] = { "DynamicCString", "CCString", "CString", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",emptyString};
 
 bool TypeDescriptorTest::TestGetTypeDescriptorFromTypeName() {
-
+    bool ret = true;
     uint32 i = 0u;
-    while (typeNames[i].IsNullPtr()) {
+    while (typeNames[i] != emptyString) {
 
-        if ( !TypeDescriptor(typeNames[i]).SameAs(typeDes[i])) {
-            return false;
+    	TypeDescriptor td = TypeDescriptor(typeNames[i]);
+        if ( !td.SameAs(typeDes[i])) {
+    		COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Expecting ",typeNames[i]," to become :",typeDes[i].all, " instead :",td.all);
+            ret = false;
         }
         i++;
     }
-    return true;
+    return ret;
 }
 
 bool TypeDescriptorTest::TestGetTypeNameFromTypeDescriptor() {
     uint32 i = 0u;
-    while (typeNames[i] != NULL) {
+    bool ret = true;
+    while (typeNames[i] != emptyString) {
     	DynamicCString name;
     	CStringTool nameT = name();
     	typeDes[i].ToString(nameT);
     	if (!name.IsSameAs(typeNames[i])){
-            return false;
+    		COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Expecting :",typeNames[i]," obtained :",name);
+            ret = false;
         }
         i++;
     }
-    return true;
+    return ret;
 }

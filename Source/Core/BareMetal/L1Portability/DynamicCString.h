@@ -180,7 +180,7 @@ bool DynamicCString::operator==(const CCString &s) const{
 
 void DynamicCString::operator=(const DynamicCString &s) {
 	Truncate(0U);
-	DynamicZeroTerminatedArray<char8>::AppendN(s);
+	DynamicZeroTerminatedArray<char8>::AppendN(s.GetList());
 }
 
 void DynamicCString::operator=(const CCString &s) {
