@@ -52,27 +52,29 @@ namespace MARTe{
 
 
 void ZeroTerminatedArrayTool::Truncate(uint32 newIndex){
-    if (ret){
-	    ret.invalidOperation = (newIndex >= index);
-	}
-    if (ret){
-		/// shrink storage if too large
-		if ((static_cast<uint32>(maxIndex) > (newIndex + DZTA_APPEND_GRANULARITY)) && (maxIndex > 0)){
-	    	/// check for DynamicZTA
-	    	if (dataPointerAddress != NULL){
-	    		maxIndex = static_cast<int32>(newIndex);
-	        	HeapManager::AllocationPointer p(dataPointer);
-	        	ret = p.Realloc((maxIndex + 1)*elementSize);
-	        	*dataPointerAddress = p;
-	        	dataPointer = p;
-	            if (!ret){
-	            	maxIndex = 0;
-	            }
-	    	}
+	if (dataPointer != NULL){
+	    if (ret){
+		    ret.invalidOperation = (newIndex >= index);
 		}
-    	Terminate(newIndex);
-    	index = newIndex;
-    }
+	    if (ret){
+			/// shrink storage if too large
+			if ((static_cast<uint32>(maxIndex) > (newIndex + DZTA_APPEND_GRANULARITY)) && (maxIndex > 0)){
+		    	/// check for DynamicZTA
+		    	if (dataPointerAddress != NULL){
+		    		maxIndex = static_cast<int32>(newIndex);
+		        	HeapManager::AllocationPointer p(dataPointer);
+		        	ret = p.Realloc((maxIndex + 1)*elementSize);
+		        	*dataPointerAddress = p;
+		        	dataPointer = p;
+		            if (!ret){
+		            	maxIndex = 0;
+		            }
+		    	}
+			}
+	    	Terminate(newIndex);
+	    	index = newIndex;
+	    }
+	}
 }
 
 void ZeroTerminatedArrayTool::Append(const uint8 *data,uint32 dataSize){

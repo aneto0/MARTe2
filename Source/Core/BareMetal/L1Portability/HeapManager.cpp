@@ -214,6 +214,8 @@ ErrorManagement::ErrorType AllocationPointer::Malloc(uint32 byteSize,HeapManager
 			 */
 			id = singletonHeapId;
 			memory = static_cast<AllocationHeader *> (std_malloc(size));
+			REPORT(ErrorManagement::InternalSetupError,"allocated memory using std_malloc");
+
 		} else {
 			memory = static_cast<AllocationHeader *> (h->Malloc(size));
 		}
@@ -261,9 +263,13 @@ ErrorManagement::ErrorType AllocationPointer::Realloc(uint32 byteSize){
 					memory = static_cast<AllocationHeader *> (h->Realloc(ptr,size));
 				} else {
 					memory = static_cast<AllocationHeader *> (std_realloc(ptr,size));
+					REPORT(ErrorManagement::InternalSetupError,"re-allocated memory using std_realloc");
 				}
 
 				ret.outOfMemory = (memory == NULL_PTR(AllocationHeader *));
+			} else {
+				// no allocators
+				ret.internalSetupError = true;
 			}
 
 			if (ret){
@@ -273,7 +279,6 @@ ErrorManagement::ErrorType AllocationPointer::Realloc(uint32 byteSize){
 				Atomic::Add((int32 *)&allocatedBytes[id],static_cast<int32>(byteSize));
 			}
 
-			ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
 		}
 	}
 
@@ -307,13 +312,16 @@ ErrorManagement::ErrorType AllocationPointer::Free(){
 				h->Free(ptr);
 			} else {
 				std_free(ptr);
+				REPORT(ErrorManagement::InternalSetupError,"freed memory using std_free");
 			}
 			Atomic::Decrement((int32 *)&allocatedBlocks[id]);
 			Atomic::Sub((int32 *)&allocatedBytes[id],static_cast<int32>(oldSize));
+		} else {
+			// no allocators
+			ret.internalSetupError = true;
 		}
 
 		memory = NULL_PTR(AllocationHeader *);
-		ret.internalSetupError = (h == NULL_PTR(HeapManager::HeapI *));
 	}
 
 

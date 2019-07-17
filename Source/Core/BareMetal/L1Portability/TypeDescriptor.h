@@ -539,6 +539,7 @@ TypeDescriptor::TypeDescriptor(const uint32 x) {
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,const uint32 &structuredDataIdCodeIn){
 	this->structuredDataIdCode = structuredDataIdCodeIn;
 	this->dataIsConstant = isConstantIn;
+	this->isStructuredData = true;
 }
 
 

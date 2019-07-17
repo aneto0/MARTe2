@@ -279,7 +279,10 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 	if (token.IsSameAs("DynamicCString")){
 		*this = DynamicCharString;
 	} else
-	if (token.IsSameAs("char")){
+	if (token.IsSameAs("void")){
+		all = VoidType_number;
+	} else
+	if (token.IsSameAs("char8")){
 		all = Character8Bit_number;
 	} else
 	if (token.IsSameAs("float32")){
@@ -294,7 +297,7 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 	} else
 	if (token.IsSameAs("int",3)){
 		ft = TDF_SignedInteger;
-		numericPart = token.GetList()+4;
+		numericPart = token.GetList()+3;
 	} else
 	if (token.IsSameAs("BitRange<",3)){
 		// TODO add error message

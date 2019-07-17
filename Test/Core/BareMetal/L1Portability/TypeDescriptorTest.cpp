@@ -133,20 +133,31 @@ bool TypeDescriptorTest::TestConstructorObject(bool dataIsConstant, uint32 struc
 
     return true;
 }
-
+//#include <stdio.h>
 bool TypeDescriptorTest::TestIsEqualOperator(const TypeDescriptor &t1,const TypeDescriptor &t2, bool isSame, bool isSameType, bool isSameTypeAndSize){
 
 	bool success = true;
+	bool test1 = t1.SameAs(t2);
+	bool test2 = t1.SameTypeAs(t2);
+	bool test3 = t1.SameTypeAndSizeAs(t2);
 
-	success = success && (t1.SameAs(t2)^ isSame);
-	success = success && (t1.SameTypeAs(t2)^ isSameType);
-	success = success && (t1.SameTypeAndSizeAs(t2)^ isSameTypeAndSize);
+	if (test1 != isSame){
+		success = false;
+	}
+	if (test2 != isSameType){
+		success = false;
+	}
+	if (test3 != isSameTypeAndSize){
+		success = false;
+	}
+
+//printf ("%i %i %i %i %i %i \n",isSame, test1, isSameType,test2, isSameTypeAndSize,test3);
 
     return success;
 }
 
 bool TypeDescriptorTest::TestFieldSaturation() {
-
+	bool ret = true;
     TypeDescriptor testTD1 = UnsignedBitSet_number(uint32,1,1);
 
     testTD1.numberOfBits = 256;
@@ -155,23 +166,25 @@ bool TypeDescriptorTest::TestFieldSaturation() {
     testTD1.fullType = 64;
 
     if (testTD1.numberOfBits != 255) {
-        return false;
+        ret = false;
     }
 
     if (testTD1.bitOffset != 255) {
-        return false;
+        ret = false;
     }
 
     if (testTD1.basicTypeSize != 15) {
-        return false;
+        ret = false;
     }
 
     if (testTD1.fullType != 63) {
-        return false;
+        ret = false;
     }
+
+    return ret;
 }
 
-static const TypeDescriptor typeDes[] = { DynamicCharString, ConstCharString(0), CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
+static const TypeDescriptor typeDes[] = { DynamicCharString, ConstCharString(sizeof(CCString)), CharString, SignedInteger8Bit, SignedInteger16Bit, SignedInteger32Bit, SignedInteger64Bit, UnsignedInteger8Bit,
         UnsignedInteger16Bit, UnsignedInteger32Bit, UnsignedInteger64Bit, Float32Bit, Float64Bit, Character8Bit, VoidType, InvalidType(0) };
 static const CCString typeNames[] = { "DynamicCString", "CCString", "CString", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64", "char8", "void",emptyString};
 
@@ -182,7 +195,11 @@ bool TypeDescriptorTest::TestGetTypeDescriptorFromTypeName() {
 
     	TypeDescriptor td = TypeDescriptor(typeNames[i]);
         if ( !td.SameAs(typeDes[i])) {
-    		COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Expecting ",typeNames[i]," to become :",typeDes[i].all, " instead :",td.all);
+        	DynamicCString name;
+        	CStringTool nameT = name();
+        	td.ToString(nameT);
+
+    		COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Expecting ",typeNames[i]," to become :",typeDes[i].all, " instead :",td.all, " which infact means ", name  );
             ret = false;
         }
         i++;
