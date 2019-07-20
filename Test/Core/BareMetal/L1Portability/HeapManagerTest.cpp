@@ -188,8 +188,10 @@ bool HeapManagerTest::TestAddHeapRepetedHeap() {
 
     if (ret){
         ret2 = InstallAllocator(&sh,customHeapId);
+        REPORT_ERROR(ret2,"InstallAllocator customHeapId failed as expected");
 
-        RemoveAllocator(customHeapId);
+        ret = RemoveAllocator(customHeapId);
+        REPORT_ERROR(ret,"RemoveAllocator customHeapId failed ");
     }
 
     // an error is needed here!
@@ -224,11 +226,12 @@ bool HeapManagerTest::TestRemoveHeap() {
 
     AuxHeap sh;
 
-    ret = InstallAllocator(&sh,customHeapId);
+    ret = InstallAllocator(&sh,customHeapId+1);
     REPORT_ERROR(ret,"InstallAllocator customHeapId failed");
 
     if (ret){
-        ret = RemoveAllocator(customHeapId);
+        ret = RemoveAllocator(customHeapId+1);
+        REPORT_ERROR(ret,"RemoveAllocator customHeapId failed");
     }
 
     return ret;

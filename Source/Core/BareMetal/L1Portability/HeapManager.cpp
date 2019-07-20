@@ -164,10 +164,15 @@ ErrorManagement::ErrorType InstallAllocator(HeapI *heapi,HeapId id){
 	// cannot be changed using this interface
 	ret.unsupportedFeature = (id == singletonHeapId);
 	ret.outOfRange = (id >= MAX_HEAPS);
-	ret.parametersError = (heapi == NULL_PTR(HeapI*));
+	COMPOSITE_REPORT_ERROR(ret,"id:",id," is out of range");
 
 	if (ret){
+		ret.parametersError = (heapi == NULL_PTR(HeapI*));
+		REPORT_ERROR(ret,"heapi is NULL");
+	}
+	if (ret){
 		ret.initialisationError = (heapList[id] != NULL);
+		COMPOSITE_REPORT_ERROR(ret,"id:",id," is already used");
 	}
 
 	if (ret){
@@ -182,8 +187,12 @@ ErrorManagement::ErrorType RemoveAllocator(HeapId id){
 	// cannot be changed using this interface
 	ret.unsupportedFeature = (id == singletonHeapId);
 	ret.outOfRange = (id >= MAX_HEAPS);
-	ret.invalidOperation = (heapList[id] == NULL);
+	COMPOSITE_REPORT_ERROR(ret,"id:",id," is out of range");
 
+	if (ret){
+		ret.invalidOperation = (heapList[id] == NULL);
+		COMPOSITE_REPORT_ERROR(ret,"no installed heapmanager at id ",id);
+	}
 	if (ret){
 		heapList[id] = NULL;
 	}

@@ -38,9 +38,9 @@ BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/*$(OBJEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/*$(OBJEXT) 
+#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
+#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules

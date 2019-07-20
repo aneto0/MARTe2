@@ -51,7 +51,8 @@ MemoryOperatorsTest::~MemoryOperatorsTest() {
 }
 
 bool MemoryOperatorsTest::TestCopy() {
-    int32 myIntArray[5];
+    bool ret = true;
+	int32 myIntArray[5];
     float32 myFloatArray[5];
 
     for (int32 i = 0; i < 5; i++) {
@@ -62,21 +63,24 @@ bool MemoryOperatorsTest::TestCopy() {
     //Copy the int array in the float32 array.
     uint32 sizeToCopy = 4 * sizeof(int32);
     if (!Memory::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Copy failed");
+        ret=false;
     }
 
     //Check that bytes are equal independently from type.
     if (!Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy)) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Compare failed");
+        ret=false;
     }
 
     uint32 checkSize = sizeToCopy + sizeof(int32);
 
-    if (!Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize)) {
-        return false;
+    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize)) {
+    	REPORT(ErrorManagement::FatalError,"Compare should have failed");
+        ret=false;
     }
 
-    return true;
+    return ret;
 
 }
 
@@ -103,7 +107,7 @@ bool MemoryOperatorsTest::TestCopyNullPointer() {
 }
 
 bool MemoryOperatorsTest::TestMove() {
-
+	bool ret = true;
     int32 myIntArray[5];
     float32 myFloatArray[5];
 
@@ -115,18 +119,24 @@ bool MemoryOperatorsTest::TestMove() {
     //Copy the int array in the float32 array.
     uint32 sizeToCopy = 4 * sizeof(int32);
     if (!Memory::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Move failed");
+        ret = false;
     }
 
     //Check that bytes are equal independently from type.
     if (!Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy)) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Compare failed");
+        ret = false;
     }
 
     uint32 checkSize = sizeToCopy + sizeof(int32);
 
-    return (!Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize));
+    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize)){
+    	REPORT(ErrorManagement::FatalError,"Compare should have failed");
+        ret = false;
+    }
 
+    return ret;
 }
 
 bool MemoryOperatorsTest::TestMoveZeroSize() {
@@ -136,6 +146,7 @@ bool MemoryOperatorsTest::TestMoveZeroSize() {
     //size=0
     uint32 sizeToCopy = 0;
     if (!Memory::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    	REPORT(ErrorManagement::FatalError,"Move with size 0 should not report error");
         return false;
     }
     //nothing should change
@@ -156,40 +167,60 @@ bool MemoryOperatorsTest::TestCompare() {
     const char8 *source = "Hello World";
     const char8 *test = "Hello W0000";
 
+    bool ret = true;
     uint32 sizeToCopy = 7;
 
     //Source must be equal to test until 6.
     if (!Memory::Compare(source, test, sizeToCopy)) {
-        return false;
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
     }
 
     sizeToCopy = 11;
 
     //Source must be greater than test.
-    if (Memory::GetOrder(source, test, sizeToCopy) != NON_ERROR_CODE(2)) {
-        return false;
+    if (Memory::GetOrder(source, test, sizeToCopy) != GetOrderResultGreater) {
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
     }
 
     //Test must be less than source.
-    if (Memory::GetOrder(test, source, sizeToCopy) == NON_ERROR_CODE(1)) {
-        return false;
+    if (Memory::GetOrder(test, source, sizeToCopy) != GetOrderResultSmaller) {
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
     }
 
     //Test the result in case of NULL argument.
     if (Memory::Compare(NULL, source, sizeToCopy).parametersError == false ) {
-        return false;
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
     }
 
     //Test with size=0.
     sizeToCopy = 0;
     if (Memory::Compare(test, source, sizeToCopy).parametersError == false ) {
-        return false;
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
     }
 
     sizeToCopy = 1;
-    return (Memory::GetOrder(NULL, NULL, sizeToCopy) == NON_ERROR_CODE(1) && Memory::GetOrder(source, NULL, sizeToCopy) == NON_ERROR_CODE(1)
-            && Memory::GetOrder(NULL, test, sizeToCopy) == NON_ERROR_CODE(1));
 
+    if (Memory::GetOrder(NULL, NULL, sizeToCopy) == GetOrderResultSmaller){
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
+    }
+
+    if (Memory::GetOrder(source, NULL, sizeToCopy) == GetOrderResultSmaller){
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
+    }
+
+    if (Memory::GetOrder(NULL, test, sizeToCopy) == GetOrderResultGreater){
+        ret = false;
+        REPORT(ErrorManagement::Information,"failed here");
+    }
+
+    return ret;
 }
 
 bool MemoryOperatorsTest::TestSet() {

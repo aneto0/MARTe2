@@ -62,7 +62,7 @@ inline ErrorManagement::ErrorType Copy(void * const destination,const void * con
  * @return ErrorManagement::ParametersError in case of NULL parameter or
  * ErrorManagement::ComparisonFailure if areas are not the same or
  * no error if are the same
- * @pre the size parameter must be minor than the memory blocks sizes.
+ * @pre the size parameter must be smaller than the memory blocks sizes.
  */
 inline ErrorManagement::ErrorType Compare(const void * const mem1,const void * const mem2,uint32 size);
 
@@ -73,7 +73,7 @@ inline ErrorManagement::ErrorType Compare(const void * const mem1,const void * c
  * @param[in] size is the number of byte to compare.
  * @return ErrorManagement::ParametersError in case of NULL parameter or a
  * non-error-code (ErrorType::GetNonErrorCode()) of 0 if mem1 == mem2, 1 if mem1 < mem2, 2 if mem1 > mem2.
- * @pre the size parameter must be minor than the memory blocks sizes.
+ * @pre the size parameter must be smaller than the memory blocks sizes.
  */
 inline ErrorManagement::ErrorType GetOrder(const void * const mem1,const void * const mem2,uint32 size);
 
@@ -83,7 +83,7 @@ inline ErrorManagement::ErrorType GetOrder(const void * const mem1,const void * 
  * @param[in] c is the character to find.
  * @param[in] size is the size of the memory area.
  * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
- * @pre the size parameter must be minor than the memory block size.
+ * @pre the size parameter must be smaller than the memory block size.
  */
 inline const void *Search(const void * const mem,const char8 c,const uint32 size);
 
@@ -93,7 +93,7 @@ inline const void *Search(const void * const mem,const char8 c,const uint32 size
  * @param[in] source is the pointer to the source memory location.
  * @param[in] size is the number of bytes to be copied.
  * @return ErrorManagement::ParametersError in case of NULL parameter
- * @pre the size parameter must be minor than the memory blocks sizes.
+ * @pre the size parameter must be smaller than the memory blocks sizes.
  */
 inline ErrorManagement::ErrorType Move(void * const destination,const void * const source,const uint32 size);
 
@@ -103,7 +103,7 @@ inline ErrorManagement::ErrorType Move(void * const destination,const void * con
  * @param[in] c is the character to store.
  * @param[in] size is the number of bytes where c will be written.
  * @return ErrorManagement::ParametersError in case of NULL parameter
- * @pre the size parameter must be minor than the memory block size.
+ * @pre the size parameter must be smaller than the memory block size.
  */
 inline ErrorManagement::ErrorType Set(void * const mem,const char8 c, const uint32 size);
 
@@ -131,7 +131,7 @@ inline ErrorManagement::ErrorType Memory::Compare(const void * const mem1,const 
 
 	ErrorManagement::ErrorType ret;
 
-	ret.parametersError = ((mem1 == NULL) || (mem2 == NULL));
+	ret.parametersError = ((mem1 == NULL) || (mem2 == NULL) || (size == 0));
 
 	REPORT_ERROR(ret,"Memory::Compare NULL parameters");
 
@@ -143,6 +143,21 @@ inline ErrorManagement::ErrorType Memory::Compare(const void * const mem1,const 
     return ret;
 
 }
+
+/**
+ *
+ */
+#define GetOrderResultSame    ErrorManagement::ErrorType(0)
+
+/**
+ *
+ */
+#define GetOrderResultGreater NON_ERROR_CODE(2)
+
+/**
+ *
+ */
+#define GetOrderResultSmaller NON_ERROR_CODE(1)
 
 inline ErrorManagement::ErrorType Memory::GetOrder(const void * const mem1,const void * const mem2,const uint32 size) {
 
@@ -159,9 +174,6 @@ inline ErrorManagement::ErrorType Memory::GetOrder(const void * const mem1,const
         }
         if (temp > 0) {
         	ret.SetNonErrorCode(2); // 2 if mem1>mem2
-        }
-        if (temp == 0) {
-        	ret.SetNonErrorCode(0); // 0 if mem1==mem2
         }
 	}
     return ret;
@@ -193,8 +205,9 @@ inline ErrorManagement::ErrorType Memory::Move(void * const destination, const v
 
 	REPORT_ERROR(ret,"Memory::Move NULL parameters");
 
-    if (ret) {
-        ret = memmove(destination, source, static_cast<size_t>(size)) != NULL;
+    if (ret && (size > 0)) {
+        ret.invalidOperation = (memmove(destination, source, static_cast<size_t>(size)) == NULL);
+    	REPORT_ERROR(ret,"memmove returned NULL");
     }
 
     return ret;

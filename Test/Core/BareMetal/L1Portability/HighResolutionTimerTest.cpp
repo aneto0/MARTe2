@@ -67,12 +67,18 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
 //    counter_1 = HighResolutionTimer::Counter();
     Sleep::Long(sleepTime,Units::s);
     Ticks t2 = HighResolutionTimer::GetTicks();
+    Ticks deltaT = t2-t1;
+	Ticks sleepTimeTicks(sleepTime,Units::s);
+	Ticks err;
+    if (deltaT > sleepTimeTicks){
+    	err = deltaT - sleepTimeTicks;
+    } else {
+    	err = sleepTimeTicks - deltaT;
+    }
 //    counter = HighResolutionTimer::Counter();
-	Ticks sleepTimeTicks(sleepTime,Units::ticks);
-    Ticks err = t2 - t1 - sleepTimeTicks;
+//    Ticks err = t2 - t1 - sleepTimeTicks;
     Ticks tolerance(sleepTime*0.1,Units::s);
-
-    return err.GetTimeRaw() < tolerance.GetTimeRaw();
+    return err < tolerance;
 //    time = HighResolutionTimer::TicksToTime(int64(counter), int64(counter_1));
 //    return Tolerance(time, sleepTime, sleepTime * .1);
 }

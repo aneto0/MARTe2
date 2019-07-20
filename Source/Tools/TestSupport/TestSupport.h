@@ -60,6 +60,10 @@ public:
 	TestInstance *nextTest;
 };
 
+FILE *getTestResultsFile();
+FILE *getTestListFile();
+FILE *getTestDetailsFile();
+
 void RunAllTests();
 
 namespace testing{
@@ -74,7 +78,7 @@ namespace testing{
 	}  test_group_name ##  test_name ## testInstance(#test_group_name "::" #test_name);\
 	test_group_name ##  test_name ## TestInstance::test_group_name ##  test_name ## TestInstance(const char* testName){\
 		this->testName = testName; \
-		printf("added test %s\n",testName); \
+		fprintf(getTestListFile(),"added test %s\n",testName); \
 	}\
 	void test_group_name ##  test_name ## TestInstance::Execute(bool &result)
 
@@ -84,39 +88,39 @@ namespace testing{
 			if (show){\
 				if (!expect){ \
 					if (localRet){\
-						printf("OK       :");\
+						fprintf(getTestDetailsFile(),"OK       :");\
 					} else {\
-						printf("**NO   :");\
+						fprintf(getTestDetailsFile(),"**NO   :");\
 					}\
 				} else {\
 					if (localRet){\
-						printf("**OK=NO :");\
+						fprintf(getTestDetailsFile(),"**OK=NO :");\
 					} else {\
-						printf("NO=OK  :");\
+						fprintf(getTestDetailsFile(),"NO=OK  :");\
 					}\
 				}\
-				printf ( #test_code "@%s:%i\n",__FILE__,__LINE__);\
+				fprintf (getTestDetailsFile(), #test_code "@%s:%i\n",__FILE__,__LINE__);\
 			}\
 			result = result & (localRet ^ expect); }
 
 #define ASSERTI(test_code,show,expect)\
 			{ int localRet = test_code;\
 			if (show){\
-				printf("%i ",localRet);\
+				fprintf(getTestDetailsFile(),"%i ",localRet);\
 				if (expect==0){ \
 					if (localRet==0){\
-						printf("OK     :");\
+						fprintf(getTestDetailsFile(),"OK     :");\
 					} else {\
-						printf("**NO   :");\
+						fprintf(getTestDetailsFile(),"**NO   :");\
 					}\
 				} else {\
 					if (localRet==expect){\
-						printf("%i=OK   :",expect);\
+						fprintf(getTestDetailsFile(),"%i=OK   :",expect);\
 					} else {\
-						printf("**NO!=%i:",expect);\
+						fprintf(getTestDetailsFile(),"**NO!=%i:",expect);\
 					}\
 				}\
-				printf ( #test_code "@%s:%i\n",__FILE__,__LINE__);\
+				fprintf (getTestDetailsFile(), #test_code "@%s:%i\n",__FILE__,__LINE__);\
 			}\
 			result = result & (localRet == expect); }
 

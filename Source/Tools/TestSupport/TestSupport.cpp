@@ -22,6 +22,7 @@
 */
 
 #include "TestSupport.h"
+#include <stdio.h>
 
 class TestInstance;
 TestInstance *TestRoot = NULL;
@@ -36,7 +37,34 @@ TestInstance::TestInstance(){
 TestInstance::~TestInstance(){
 }
 
+FILE *testResultsFile = NULL;
+FILE *testListFile = NULL;
+FILE *testDetailsFile = NULL;
+
+FILE *getTestResultsFile(){
+	if (testResultsFile == NULL){
+		testResultsFile = fopen("testResults.lst","w");
+	}
+	return testResultsFile;
+}
+FILE *getTestListFile(){
+	if (testListFile == NULL){
+		testListFile = fopen("testList.lst","w");
+	}
+	return testListFile;
+}
+FILE *getTestDetailsFile(){
+	if (testDetailsFile == NULL){
+		testDetailsFile = fopen("testDetails.lst","w");
+	}
+	return testDetailsFile;
+}
+
 void RunAllTests(){
+	FILE *testResultsFile 	= getTestResultsFile();
+	FILE *testListFile 		= getTestListFile();
+	FILE *testDetailsFile 	= getTestDetailsFile();
+
 	TestInstance *test = TestRoot;
 	int counter = 0;
 	int failedCounter = 0;
@@ -44,13 +72,18 @@ void RunAllTests(){
 		bool res = true;
 		test->Execute(res);
 		if (res){
-			printf(" OK  %s\n",test->testName);
+			fprintf(testResultsFile," OK  %s\n",test->testName);
+			fprintf(testDetailsFile," OK  %s\n",test->testName);
 		} else {
-			printf("*NO* %s\n",test->testName);
+			fprintf(testResultsFile,"*NO* %s\n",test->testName);
+			fprintf(testDetailsFile,"*NO* %s\n",test->testName);
 			failedCounter++;
 		}
 		test = test->nextTest;
 		counter ++;
 	}
-	printf("executed %i tests - %i failed \n",counter,failedCounter);
+	fprintf(testResultsFile,"executed %i tests - %i failed \n",counter,failedCounter);
+	fclose(testResultsFile);
+	fclose(testListFile);
+	fclose(testDetailsFile);
 }

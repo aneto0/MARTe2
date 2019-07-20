@@ -42,6 +42,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#if ENVIRONMENT==Windows
+const char *libName = "msvcr120.dll";
+#else
+const char *libName = "libm.so";
+#endif
+
 TEST(LoadableLibraryGTest,TestConstructor) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestConstructor());
@@ -49,30 +55,30 @@ TEST(LoadableLibraryGTest,TestConstructor) {
 
 TEST(LoadableLibraryGTest,TestOpenCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary("libm.so"));
+    ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary(libName));
 }
 
 TEST(LoadableLibraryGTest,TestCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary("libm.so"));
+    ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary(libName));
 }
 
 TEST(LoadableLibraryGTest,TestLoadFunction) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction());
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction(libName));
 }
 
 TEST(LoadableLibraryGTest,TestLoadFunctionSquareBracketsOperator) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator());
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator(libName));
 }
 
 TEST(LoadableLibraryGTest,TestGetModule) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestGetModule());
+    ASSERT_TRUE(loadablelibrarytest.TestGetModule(libName));
 }
 
 TEST(LoadableLibraryGTest,TestSetModule) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestSetModule());
+    ASSERT_TRUE(loadablelibrarytest.TestSetModule(libName));
 }

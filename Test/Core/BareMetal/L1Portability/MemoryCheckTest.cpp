@@ -32,6 +32,7 @@
 #include "MemoryCheckTest.h"
 #include "MemoryCheck.h"
 #include "HeapManager.h"
+#include "ErrorManagement.h"
 
 using namespace MARTe;
 
@@ -51,30 +52,39 @@ MemoryCheckTest::~MemoryCheckTest() {
 
 bool MemoryCheckTest::TestCheck() {
     uint32 size = 100;
+    bool ret = true;
 
     //allocate a space of size integers
     int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
-    //checks if all the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode),
+    //checks if all the memory exists
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode ),
                             size * sizeof(int32))) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Check failed");
+        ret = false;
     }
 
     //checks if a part the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode),
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode ),
                             (size / 2) * sizeof(int32))) {
-        return false;
+    	REPORT(ErrorManagement::FatalError,"Check failed");
+        ret = false;
     }
 
     //0 as size
     uint32 testSize = 0;
-    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode), testSize)) {
-        return false;
+    if (!MemoryCheck::Check(allocated,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode ), testSize)) {
+    	REPORT(ErrorManagement::FatalError,"Check failed");
+        ret = false;
     }
 
     HeapManager::Free((void*&) allocated);
 
     //the check function on a null pointer should return false
-    return !MemoryCheck::Check(NULL,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode | MemoryCheck::ExecuteAccessMode), size);
+    if (MemoryCheck::Check(NULL,  (MemoryCheck::ReadAccessMode | MemoryCheck::WriteAccessMode ), size)){
+    	ret = false;
+    	REPORT(ErrorManagement::FatalError,"Check should have failed");
+    }
+
+    return ret;
 }

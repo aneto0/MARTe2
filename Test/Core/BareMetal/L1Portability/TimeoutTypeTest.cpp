@@ -34,6 +34,7 @@
 #include "MilliSeconds.h"
 #include "Ticks.h"
 #include "HighResolutionTimer.h"
+#include "CompositeErrorManagement.h"
 
 
 using namespace MARTe;
@@ -71,8 +72,12 @@ bool TimeoutTypeTest::TestSetTimeoutHighResolutionTimerTicks() {
     int64 ticks = 100000000;
 	MilliSeconds time(ticks,Units::ticks);
     int64 expectedTimeout;
-    expectedTimeout = ticks * HighResolutionTimer::Period() * 1000;
-    return (expectedTimeout == time.GetTimeRaw());
+    expectedTimeout = static_cast<int64>((double)ticks * HighResolutionTimer::Period() * 1000.0 +0.5);
+    bool ret = (expectedTimeout == time.GetTimeRaw());
+    if (!ret){
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"expecting ",expectedTimeout, " instead ",time.GetTimeRaw());
+    }
+    return ret;
 }
 
 bool TimeoutTypeTest::TestHighResolutionTimerTicks() {

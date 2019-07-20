@@ -81,7 +81,7 @@ public:
      * LoadableLibrary::Function
      * @return true if cosf(0.0) = 1.0;
      **/
-    bool TestLoadFunction();
+    bool TestLoadFunction(const char *dllName);
 
     /**
      * @brief Tests the correct load of a library function using square brackets.
@@ -89,14 +89,14 @@ public:
      * LoadableLibrary::Function using the [] syntax.
      * @return true if cosf(0.0) = 1.0;.
      **/
-    bool TestLoadFunctionSquareBracketsOperator();
+    bool TestLoadFunctionSquareBracketsOperator(const char *dllName);
 
     /**
      * @brief Tests LoadableLibrary::GetModule function.
      * @details This test opens a library and the checks the returned HANDLE.
      * @return true if the returned HANDLE is not NULL;.
      **/
-    bool TestGetModule();
+    bool TestGetModule(const char *dllName);
 
     /**
      * @brief Tests LoadableLibrary::SetModule function.
@@ -104,7 +104,7 @@ public:
      * LoadableLibrary::GetModule().
      * @return true if LoadableLibrary::GetModule() returns the Set HANDLE.
      */
-    bool TestSetModule();
+    bool TestSetModule(const char *dllName);
 
 private:
 

@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "../../MemoryCheck.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -48,8 +48,24 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
 
+class SystemInfoRecord{
+public:
+	static SYSTEM_INFO &Access(){
+		static SystemInfoRecord sir;
+		return sir.si;
+	}
+
+private:
+	SYSTEM_INFO si;
+	SystemInfoRecord(){
+		GetSystemInfo(&si);
+	}
+};
+
+//TODO check the full range
+
+namespace MARTe{
 namespace MemoryCheck {
 
 /*lint -e{715}  [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: This implementation does not require
@@ -58,32 +74,30 @@ bool Check(const void * const address,
            const uint8  accessMode,
            const uint32 size) {
 
-//	printf ("%016p\n",address);
-	bool ret = (address!= NULL);
+	ErrorManagement::ErrorType ret;
+	bool returnValue = false;
+	MEMORY_BASIC_INFORMATION mbi;
 
-    MEMORY_BASIC_INFORMATION mbi = {0};
-    if (ret) {
-    	ret = (VirtualQuery(address, &mbi, sizeof(mbi)) != 0) ;
-//printf("protect = %x address = %p\n",mbi.Protect,address);
-    }
+   	ret.illegalOperation = (VirtualQuery(address, &mbi, sizeof(mbi)) == 0) ;
+   	REPORT_ERROR(ret,"VirtualQuery failed");
+
     if (ret){
-		ret = ((mbi.Protect & (PAGE_GUARD|PAGE_NOACCESS))==0);
-    }
-    if (ret){
+
+		returnValue = ((mbi.Protect & (PAGE_GUARD|PAGE_NOACCESS))==0);
+
     	if (accessMode & ExecuteAccessMode){
-    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE))!=0);
+    		returnValue = returnValue && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE))!=0);
     	}
     	if (accessMode & ReadAccessMode){
-    		ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
+    		returnValue = returnValue && ((mbi.Protect  & (PAGE_EXECUTE_READ|PAGE_READONLY|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
     	}
         if (accessMode & WriteAccessMode){
-        	ret = ret && ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
+        	returnValue = returnValue && ((mbi.Protect  & (PAGE_EXECUTE_READWRITE|PAGE_READWRITE|PAGE_WRITECOPY))!=0);
         }
     }
-//if (!ret){
-//	printf("{prot=%x,%i,%i}\n",mbi.Protect,ret,accessMode);
-//}
-    return ret;
+
+
+    return returnValue;
 }
 
 

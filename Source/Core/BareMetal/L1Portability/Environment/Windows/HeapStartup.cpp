@@ -47,16 +47,15 @@ namespace MARTe{
 
 INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(HeapManager,("HeapManager",emptyString),(emptyString))
 
-StandardHeap heaps[4];
+StandardHeap heaps[3];
 
 ErrorManagement::ErrorType HeapManagerStartup::Init(){
 	ErrorManagement::ErrorType ret;
 
 	//TODO combine return codes
-	ret = HeapManager::InstallAllocator(&heaps[0],HeapManager::customHeapId);
-	ret = HeapManager::InstallAllocator(&heaps[1],HeapManager::standardHeapId);
-	ret = HeapManager::InstallAllocator(&heaps[2],HeapManager::internalsHeapId);
-	ret = HeapManager::InstallAllocator(&heaps[3],HeapManager::stringsHeapId);
+	ret = HeapManager::InstallAllocator(&heaps[0],HeapManager::standardHeapId);
+	ret = HeapManager::InstallAllocator(&heaps[1],HeapManager::internalsHeapId);
+	ret = HeapManager::InstallAllocator(&heaps[2],HeapManager::stringsHeapId);
 
 	return ret;
 }
@@ -65,7 +64,6 @@ ErrorManagement::ErrorType HeapManagerStartup::Finish(){
 	ErrorManagement::ErrorType ret;
 
 	//TODO combine return codes
-	ret = HeapManager::RemoveAllocator(HeapManager::customHeapId);
 	ret = HeapManager::RemoveAllocator(HeapManager::standardHeapId);
 	ret = HeapManager::RemoveAllocator(HeapManager::internalsHeapId);
 	ret = HeapManager::RemoveAllocator(HeapManager::stringsHeapId);

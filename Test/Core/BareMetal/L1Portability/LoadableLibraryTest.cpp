@@ -31,7 +31,7 @@
 
 #include "LoadableLibraryTest.h"
 
-#include "../../../../Source/Core/BareMetal/L1Portability/GeneralDefinitions.h"
+#include "GeneralDefinitions.h"
 
 using namespace MARTe;
 
@@ -65,11 +65,11 @@ bool LoadableLibraryTest::TestCloseLibrary(const char *dllName) {
     return retValue;
 }
 
-bool LoadableLibraryTest::TestLoadFunction() {
+bool LoadableLibraryTest::TestLoadFunction(const char *dllName) {
     float argument = 0;
     float (*pf)(float) = NULL;
     float result;
-    if (!myLoadableLibrary.Open("libm.so")) {
+    if (!myLoadableLibrary.Open(dllName)){
         return false;
     }
     if (myLoadableLibrary.Function(NULL) != NULL) {
@@ -82,11 +82,11 @@ bool LoadableLibraryTest::TestLoadFunction() {
     return (result == 1.0);
 }
 
-bool LoadableLibraryTest::TestLoadFunctionSquareBracketsOperator() {
+bool LoadableLibraryTest::TestLoadFunctionSquareBracketsOperator(const char *dllName) {
     float argument = 0;
     float (*pf)(float) = NULL;
     float result;
-    if (!myLoadableLibrary.Open("libm.so")) {
+    if (!myLoadableLibrary.Open(dllName)){
         return false;
     }
     if (myLoadableLibrary.Function(NULL) != NULL) {
@@ -99,22 +99,22 @@ bool LoadableLibraryTest::TestLoadFunctionSquareBracketsOperator() {
     return (result == 1.0);
 }
 
-bool LoadableLibraryTest::TestGetModule() {
+bool LoadableLibraryTest::TestGetModule(const char *dllName) {
     bool retValue;
     HANDLE m = NULL;
     retValue = (m == NULL);
-    myLoadableLibrary.Open("libm.so");
+    myLoadableLibrary.Open(dllName);
     m = myLoadableLibrary.GetModule();
     retValue &= (m != NULL);
     myLoadableLibrary.Close();
     return retValue;
 }
 
-bool LoadableLibraryTest::TestSetModule() {
+bool LoadableLibraryTest::TestSetModule(const char *dllName) {
     bool retValue;
     HANDLE m = NULL;
     HANDLE copy = NULL;
-    myLoadableLibrary.Open("libm.so");
+    myLoadableLibrary.Open(dllName);
     m = myLoadableLibrary.GetModule();
     myLoadableLibrary.SetModule(copy);
     retValue = (myLoadableLibrary.GetModule() == copy);

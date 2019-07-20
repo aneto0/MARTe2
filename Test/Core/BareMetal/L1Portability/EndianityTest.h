@@ -326,17 +326,22 @@ bool EndianityTest<T>::TestToFromEndian() {
     T valueLittleEndian = testValue;
     T valueBigEndian = testValue;
 
+    bool ok = true;
+    bool ok2 = true;
     //converts to little endian and then from little endian
     Endianity::ToLittleEndian(valueLittleEndian);
+    ok2 = (valueLittleEndian != testValue);
     Endianity::FromLittleEndian(valueLittleEndian);
+    ok =  (valueLittleEndian == testValue);
 
     //converts to big endian and then from big endian
     Endianity::ToBigEndian(valueBigEndian);
+    ok2 = ok2 ^ (valueBigEndian != testValue);
     Endianity::FromBigEndian(valueBigEndian);
+    ok = ok && (valueBigEndian == testValue);
 
     //the value must remain the same after the opposite conversions
-    return (!Memory::Compare(&testValue, &valueLittleEndian, sizeof(T)).IsErrorCode())
-            && (!Memory::Compare(&testValue, &valueBigEndian, sizeof(T)).IsErrorCode());
+    return ok && ok2;
 }
 
 template<class T>
