@@ -45,10 +45,8 @@ using namespace MARTe;
 class ThreadsTest {
 public:
 
-    ThreadsTest();
-
     /**
-     * @brief Tests the Threads::BeginThread function.
+     * @brief Tests the Threads::BeginThread and Threads::EndThread function.
      * @details nOfThreads are lunched by the test function.
      * Each thread increments a variable and polls on a shared variable
      * which is managed by the test function. When the test function changes the shared variable
@@ -66,24 +64,6 @@ public:
                          uint32 stackSize,
                          int32 nOfThreads);
 
-    /**
-     * @brief Tests the Threads::EndThread function.
-     * @details nOfThreads are lunched by the test function.
-     * Each thread increments a variable and polls on a shared variable
-     * which is managed by the test function. When the test function changes the shared variable
-     * the thread exits incrementing a exit condition and allowing for a new thread to be started.
-     * Notice that never two threads are never executed in parallel. The next thread is launched after the previous
-     * thread ends.
-     * The test function has a timeout, if the thread is not correctly lunched, after expiration of the time out
-     * the test function will return false;
-     * @param[in] name is the desired thread name.
-     * @param[in] stackSize is the desired stack size.
-     * @param[in] nOfThreads is the number of threads to launch.
-     * @return true if all the threads can be successfully launched.
-     */
-    bool TestEndThread(CCString name,
-                       uint32 stackSize,
-                       int32 nOfThreads);
 
     /**
      * @brief Tests the Threads::BeginThread function.
@@ -185,10 +165,9 @@ public:
      * @brief Tests the Threads::FindByIndex function.
      * @details Stores a number of threads in the database sequentially.
      * These are then searched by index and checked if the returned tid is correct.
-     * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the searched index thread has the correct ID, false otherwise.
      */
-    bool TestFindByIndex(int32 nOfThreads);
+    bool TestFindByIndex();
 
     /**
      * @brief Tests the Threads::GetThreadInfoCopy function.
@@ -222,25 +201,6 @@ public:
                         CCString name,
                         int32 position);
 
-    /**
-     * A shared variable used for synchronization.
-     */
-    int32 exitCondition;
-
-    /**
-     * A variable used to save a thread identifier.
-     */
-    ThreadIdentifier tidTest;
-
-    /**
-     * A boolean to store the return value.
-     */
-    bool retValue;
-
-private:
-
-    bool CheckThreadStart(int32 N);
-    bool CheckThreadTermination(int32 N);
 };
 
 /*---------------------------------------------------------------------------*/

@@ -217,7 +217,7 @@ DLL_API PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId);
  * @param[in] threadId is the thread identifier.
  * @return the CPU mask or 0 if the information cannot be retrieved.
  */
-DLL_API uint32 GetCPUs(const ThreadIdentifier &threadId);
+DLL_API uint64 GetCPUs(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the id of the n-th thread in the database.

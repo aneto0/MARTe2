@@ -72,13 +72,16 @@ void RunAllTests(){
 		bool res = true;
 		test->Execute(res);
 		if (res){
+			printf(" OK  %s\n",test->testName);
 			fprintf(testResultsFile," OK  %s\n",test->testName);
 			fprintf(testDetailsFile," OK  %s\n",test->testName);
 		} else {
+			printf("*NO* %s\n",test->testName);
 			fprintf(testResultsFile,"*NO* %s\n",test->testName);
 			fprintf(testDetailsFile,"*NO* %s\n",test->testName);
 			failedCounter++;
 		}
+		fflush(testResultsFile);
 		test = test->nextTest;
 		counter ++;
 	}

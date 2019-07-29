@@ -34,7 +34,7 @@ INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
 INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
 INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
-BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityBGTest$(LIBEXT) 
+#BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityBGTest$(LIBEXT) 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

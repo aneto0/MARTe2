@@ -380,7 +380,7 @@ bool BasicConsole::GetTitleBar(CString const title,
 bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                  const uint32 &numberOfRows) {
 
-    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType ret = ErrorManagement::NoError;
 
     COORD max = GetLargestConsoleWindowSize(handle->outputConsoleHandle);
 
@@ -390,11 +390,9 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
 
-    if (info.dwSize.X < 0 || info.dwSize.Y < 0) {
-        error = ErrorManagement::OSError;
-    }
+    ret.OSError = (info.dwSize.X < 0 || info.dwSize.Y < 0);
 
-    if (error == ErrorManagement::NoError) {
+    if (ret) {
         //saturate values at the max or at the buffer size
         if (numberOfColumnsUsed > max.X) {
             numberOfColumnsUsed = max.X;
@@ -421,14 +419,10 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
         srect.Right = srect.Left + numberOfColumnsUsed - 1;
         srect.Bottom = srect.Top + numberOfRowsUsed - 1;
 
-        if (!SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &srect)) {
-            //  CStaticPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
-
-            error = ErrorManagement::OSError;
-        }
+        ret.OSError = (SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &srect)==0);
     }
 
-    return (error == ErrorManagement::NoError);
+    return ret;
 }
 
 bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,

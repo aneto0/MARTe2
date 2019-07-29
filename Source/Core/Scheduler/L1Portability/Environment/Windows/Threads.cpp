@@ -33,16 +33,99 @@
 #include "Threads.h"
 #include "ThreadInformation.h"
 #include "ThreadsDatabase.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#include <Winternl.h>
+
+typedef struct {
+  HANDLE UniqueProcess;
+  HANDLE UniqueThread;
+} CLIENT_ID;
+
+typedef LONG       KPRIORITY;
+
+typedef struct _THREAD_BASIC_INFORMATION
+{
+    NTSTATUS ExitStatus;
+    PTEB TebBaseAddress;
+    CLIENT_ID ClientId;
+    ULONG_PTR AffinityMask;
+    KPRIORITY Priority;
+    LONG BasePriority;
+} THREAD_BASIC_INFORMATION, *PTHREAD_BASIC_INFORMATION;
+
+typedef NTSTATUS ( WINAPI *NtQueryInformationThreadType )( HANDLE, LONG, PVOID, ULONG, PULONG );
+typedef NTSTATUS ( WINAPI *NtSetInformationThreadType )( HANDLE, LONG, PVOID, ULONG);
+
+static const ULONG ThreadBasicInformation = 0;
+static const ULONG ThreadPriority = 2;
+static const ULONG ThreadBasePriority = 3;
+
+class NtInformationThreadProvider{
+public:
+
+	static inline NtQueryInformationThreadType NtQueryInformationThread(){
+		return Access().NtQueryInformationThreadPtr;
+	}
+	static inline NtSetInformationThreadType NtSetInformationThread(){
+		return Access().NtSetInformationThreadPtr;
+	}
+	static inline bool SetThreadPriorityEx(HANDLE threadHandle, MARTe::uint8 priority){
+		if (priority > 32){
+			priority = 32;
+		}
+		ULONG priorityEx = priority;
+	    MARTe::ErrorManagement::ErrorType ret;
+	    ret.OSError = (NtInformationThreadProvider::NtSetInformationThread()(
+	    	threadHandle,
+			ThreadBasePriority,
+	        &priorityEx,
+	        sizeof(priorityEx))!=0);
+
+	    COMPOSITE_REPORT_ERROR(ret,"NtSetInformationThread(ThreadBasePriority,",priority,") returned ",ret);
+	    return ret;
+	}
+
+	static inline bool GetThreadAffinityMask(HANDLE threadHandle, MARTe::uint64 &mask){
+	    THREAD_BASIC_INFORMATION tbi;
+
+	    ZeroMemory(&tbi, sizeof(tbi));
+
+	    NTSTATUS ret = NtInformationThreadProvider::NtQueryInformationThread()(
+	    	threadHandle,
+			ThreadBasicInformation, // ThreadBasicInformation, undocumented
+	        &tbi,
+	        sizeof(tbi),
+	        nullptr);
+	    mask = static_cast<MARTe::uint64>(tbi.AffinityMask);
+	    return (ret == 0);
+	}
+
+private:
+	static inline NtInformationThreadProvider &Access(){
+		static NtInformationThreadProvider nqit;
+		return nqit;
+	}
+
+	NtInformationThreadProvider(){
+		NtQueryInformationThreadPtr = reinterpret_cast<NtQueryInformationThreadType>(GetProcAddress(GetModuleHandle("ntdll.dll"), "NtQueryInformationThread"));
+		NtSetInformationThreadPtr   = reinterpret_cast<NtSetInformationThreadType>  (GetProcAddress(GetModuleHandle("ntdll.dll"), "NtSetInformationThread"));
+	}
+	NtQueryInformationThreadType NtQueryInformationThreadPtr;
+	NtSetInformationThreadType   NtSetInformationThreadPtr;
+};
+
+
 namespace MARTe {
 
 namespace Threads {
 
-bool isRealtimeClass = false;
+// removed and substituted with high priority class
+//bool isRealtimeClass = false;
 
 static uint32 SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
@@ -80,120 +163,146 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
 namespace Threads {
 
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
     return UnknownThreadStateType;
 }
 
-uint32 GetCPUs(const ThreadIdentifier &threadId) {
-    return 0;
+uint64 GetCPUs(const ThreadIdentifier &threadId) {
+    ErrorManagement::ErrorType ret;
+
+    HANDLE threadHandle = NULL;
+    if (ret){
+        threadHandle = OpenThread(THREAD_ALL_ACCESS, TRUE, threadId);
+        ret.internalSetupError = (threadHandle == NULL);
+        REPORT_ERROR(ret,"OpenThread failed");
+    }
+
+	uint64 mask = 0;
+	if (ret){
+		ret.OSError = !NtInformationThreadProvider::GetThreadAffinityMask(threadHandle, mask);
+		REPORT_ERROR(ret,"GetThreadAffinityMask failed");
+	}
+
+    if (threadHandle != NULL){
+    	CloseHandle(threadHandle);
+    }
+
+    return mask;
 }
 
 ThreadIdentifier Id() {
     return GetCurrentThreadId();
 }
 
+static const int priorityTranslationTable[16]={
+		THREAD_PRIORITY_IDLE,THREAD_PRIORITY_IDLE,
+		THREAD_PRIORITY_LOWEST,THREAD_PRIORITY_LOWEST,
+		THREAD_PRIORITY_BELOW_NORMAL,THREAD_PRIORITY_BELOW_NORMAL,
+		THREAD_PRIORITY_NORMAL,THREAD_PRIORITY_NORMAL,THREAD_PRIORITY_NORMAL,THREAD_PRIORITY_NORMAL,
+		THREAD_PRIORITY_ABOVE_NORMAL,THREAD_PRIORITY_ABOVE_NORMAL,
+		THREAD_PRIORITY_HIGHEST,THREAD_PRIORITY_HIGHEST,
+		THREAD_PRIORITY_TIME_CRITICAL,THREAD_PRIORITY_TIME_CRITICAL
+};
+/*
+static const int priorityTranslationTableRT[16]={
+		THREAD_PRIORITY_IDLE,
+		-7,
+		-6,
+		-5,
+		-4,
+		-3,
+		THREAD_PRIORITY_LOWEST,
+		THREAD_PRIORITY_BELOW_NORMAL,
+		THREAD_PRIORITY_NORMAL,
+		THREAD_PRIORITY_ABOVE_NORMAL,
+		THREAD_PRIORITY_HIGHEST,
+		3,
+		4,
+		5,
+		6,
+		THREAD_PRIORITY_TIME_CRITICAL
+};
+*/
+
 void SetPriority(const ThreadIdentifier &threadId,
                  const PriorityClassType &priorityClass,
                  const uint8 &priorityLevel) {
 
-    //Cannot set an unknown priority
-    if (priorityLevel == 0 && priorityClass == 0) {
-        return;
+    ErrorManagement::ErrorType ret;
+
+    if (ret){
+        ret.parametersError = (priorityLevel > 15);
+        REPORT_ERROR(ret,"cannot set PriorityLevel > 15");
     }
 
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    if (threadInfo == NULL) {
+    bool locked = false;
+    if (ret){
+    	locked = ThreadsDatabase::Lock();
+        ret.internalStateError = !locked;
+        REPORT_ERROR(ret,"cannot lock ThreadsDatabase");
+    }
+
+    ThreadInformation *threadInfo = NULL_PTR(ThreadInformation *);
+    if (ret){
+        threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        ret.internalSetupError = (threadInfo == NULL_PTR(ThreadInformation *));
+        REPORT_ERROR(ret,"cannot access ThreadsDatabase");
+    }
+
+    PriorityClassType priorityClassCopy = priorityClass;
+    if (ret){
+    	if (priorityClassCopy == UnknownPriorityClass){
+    		priorityClassCopy = threadInfo->GetPriorityClass();
+    	}
+    	ret.internalSetupError = ((priorityClassCopy > RealTimePriorityClass) || (priorityClassCopy < IdlePriorityClass));
+        COMPOSITE_REPORT_ERROR(ret,"priorityClass out ot range = ",priorityClassCopy);
+    }
+
+    HANDLE threadHandle = NULL;
+    if (ret){
+        threadHandle = OpenThread(THREAD_ALL_ACCESS, TRUE, threadId);
+        ret.internalSetupError = (threadHandle == NULL);
+        REPORT_ERROR(ret,"OpenThread failed");
+    }
+
+    int priorityDelta = 0;
+    if (ret){
+    	if (priorityClassCopy == RealTimePriorityClass){
+    		ret.OSError = (SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS)== FALSE);
+//    		priorityDelta = priorityTranslationTableRT[priorityLevel];
+       	} else
+    	if (priorityClassCopy == IdlePriorityClass){
+    		ret.OSError = (SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS)== FALSE);
+//    		priorityDelta = priorityTranslationTable[priorityLevel];
+       	} else {
+    		ret.OSError = (SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)== FALSE);
+//    		priorityDelta = priorityTranslationTable[priorityLevel];
+       	}
+
+		REPORT_ERROR(ret,"SetPriorityClass failed");
+    }
+
+    if (ret){
+		priorityDelta = priorityTranslationTable[priorityLevel];
+    	ret.OSError = (SetThreadPriority(threadHandle, priorityDelta) == FALSE);
+		COMPOSITE_REPORT_ERROR(ret,"SetThreadPriority(",priorityDelta,") failed");
+    }
+
+    if (ret){
+        threadInfo->SetPriorityClass(priorityClassCopy);
+        threadInfo->SetPriorityLevel(priorityLevel);
+    }
+
+    if (threadHandle != NULL){
+    	CloseHandle(threadHandle);
+    }
+
+    if (locked){
         ThreadsDatabase::UnLock();
-        return;
     }
-
-    HANDLE threadHandle = OpenThread(THREAD_ALL_ACCESS, TRUE, threadId);
-
-    //Change the priority class: this is applied to the current process.
-    if ((priorityClass != UnknownPriorityClass) && !(isRealtimeClass)) {
-
-        switch (priorityClass) {
-        case IdlePriorityClass:
-            if (::SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS) != 0) {
-                threadInfo->SetPriorityClass(priorityClass);
-            }
-            break;
-        case NormalPriorityClass:
-            if (::SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)) {
-                threadInfo->SetPriorityClass(priorityClass);
-            }
-            break;
-        case RealTimePriorityClass:
-            if (::SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS)) {
-                threadInfo->SetPriorityClass(priorityClass);
-                isRealtimeClass = true;
-            }
-            break;
-        case UnknownPriorityClass: break;
-        }
-    }
-
-    //change the priority level
-    if (priorityLevel > 0) {
-        uint8 prioLevel = priorityLevel;
-
-        if (prioLevel > 15) {
-            prioLevel = 15;
-        }
-
-        for (uint32 i = 0; i < 1; i++) {
-
-            //In case of Idle Priority class put always the idle priority level
-            if ((prioLevel <= 1) || (priorityClass == IdlePriorityClass)) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 3) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_LOWEST) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 5) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_BELOW_NORMAL) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 9) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 11) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 13) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_HIGHEST) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-            if (prioLevel <= 15) {
-                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_TIME_CRITICAL) != 0) {
-                    threadInfo->SetPriorityLevel(prioLevel);
-                }
-                break;
-            }
-        }
-
-    }
-
-    ThreadsDatabase::UnLock();
 
 }
 
@@ -212,17 +321,12 @@ uint8 GetPriorityLevel(const ThreadIdentifier &threadId) {
 PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId) {
 
     PriorityClassType priorityClass = UnknownPriorityClass;
-    if (isRealtimeClass) {
-        priorityClass = RealTimePriorityClass;
+    ThreadsDatabase::Lock();
+    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+    if (threadInfo != NULL) {
+        priorityClass = threadInfo->GetPriorityClass();
     }
-    else {
-        ThreadsDatabase::Lock();
-        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-        if (threadInfo != NULL) {
-            priorityClass = threadInfo->GetPriorityClass();
-        }
-        ThreadsDatabase::UnLock();
-    }
+    ThreadsDatabase::UnLock();
     return priorityClass;
 
 }
@@ -293,29 +397,66 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         }
     }
 
-    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
-    if (threadInfo == NULL) {
-        //CStaticAssertErrorCondition(InitialisationError,"ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
-        return (ThreadIdentifier) 0;
-    }
+    ErrorManagement::ErrorType ret;
+
+    ret.parametersError = (stacksize == 0);
+	REPORT_ERROR(ret,"stacksize = 0");
+
+	ThreadInformation *threadInfo = NULL;
+	if (ret){
+	    threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
+		ret.fatalError = (threadInfo == NULL) ;
+		REPORT_ERROR(ret,"threadInitialisationInterfaceConstructor failed");
+	}
 
     DWORD threadId = 0;
-    CreateThread(NULL, stacksize, reinterpret_cast<LPTHREAD_START_ROUTINE>(SystemThreadFunction) , threadInfo, 0, &threadId);
-    bool ok = ThreadsDatabase::Lock();
-    if (ok) {
-        threadInfo->SetThreadIdentifier(threadId);
+    HANDLE hThread = NULL;
+	if (ret){
+	    hThread = CreateThread(NULL, stacksize, reinterpret_cast<LPTHREAD_START_ROUTINE>(SystemThreadFunction) , threadInfo, 0, &threadId);
+	    ret.OSError = (hThread == NULL);
+		REPORT_ERROR(ret,"CreateThread failed");
+	}
 
-        ok = ThreadsDatabase::NewEntry(threadInfo);
-        ThreadsDatabase::UnLock();
+	/*
+	if (ret){
+		ret.OSError = (SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS) == FALSE);
+		REPORT_ERROR(ret,"SetPriorityClass failed");
+	}*/
+
+	if (ret){
+		ret.OSError = (SetThreadAffinityMask(hThread,runOnCPUs.GetProcessorMask()) == FALSE);
+		COMPOSITE_REPORT_ERROR(ret,"SetThreadAffinityMask (",runOnCPUs.GetProcessorMask(),")failed");
+	}
+
+    /**
+     * stores the threadInfo object pointer in the database
+     */
+    bool locked = false;
+    if (ret){
+        locked = ThreadsDatabase::Lock();
+        ret.internalSetupError = (locked==false);
+		REPORT_ERROR(ret,"database lock failed");
     }
-    if (ok) {
+
+    if (ret) {
+	    threadInfo->SetThreadIdentifier(threadId);
+        ret.internalSetupError = !ThreadsDatabase::NewEntry(threadInfo);
+		REPORT_ERROR(ret,"newEntry failed");
+    }
+
+    if (locked){
+    	ThreadsDatabase::UnLock();
+    }
+
+    if (ret) {
         threadInfo->SetPriorityLevel(0u);
         SetPriority(threadId, NormalPriorityClass, 0u);
-    }
-    //HANDLE threadId = (HANDLE)_beginthread((void (__cdecl *)(void *))SystemThreadFunction,stacksize,threadInfo);
 
-    //Enable the user thread to run...
-    threadInfo->ThreadPost();
+        //Enable the user thread to run...
+        threadInfo->ThreadPost();
+    }
+
+
     return (ThreadIdentifier) threadId;
 }
 

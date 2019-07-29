@@ -32,6 +32,7 @@
 #include "BasicConsoleTest.h"
 #include "StaticCString.h"
 #include "stdio.h"
+#include "CompositeErrorManagement.h"
 
 using namespace MARTe;
 
@@ -209,7 +210,7 @@ bool BasicConsoleTest::TestWriteSmallSize(CCString string) {
     //Enter a smaller size than the real size of the string (-2 is arbitrary number).
     size = realStringSize - padding;
     myConsole.Write(string.GetList(), size,MilliSeconds::Infinite);
-    retValue = (realStringSize + padding == size);
+    retValue = ((realStringSize - padding) == size);
     return retValue;
 }
 
@@ -326,35 +327,54 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
         return true;
     }
     myConsole.Open(BasicConsoleMode::Default);
-    myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-
-    ErrorManagement::ErrorType error = true;
-    error = myConsole.SetWindowSize(numberOfColumns - 2, numberOfRows - 2);
-    if (!error) {
-        return false;
-    }
+    myConsole.SetSceneSize(numberOfColumns+10, numberOfRows+10);
 
     uint32 nRows = 0;
     uint32 nCols = 0;
 
-    error = myConsole.GetWindowSize(nCols, nRows);
-    if (!error) {
-        return false;
-    }
-    if ((nRows != (numberOfRows - 2) || nCols != (numberOfColumns - 2))) {
-        return false;
+
+    ErrorManagement::ErrorType ret = true;
+
+    uint32 nColTarget = numberOfColumns - 2;
+    uint32 nRowTarget = numberOfRows    - 2;
+
+    if (ret){
+    	ret.OSError = !myConsole.SetWindowSize(nColTarget, nRowTarget);
+    	REPORT_ERROR(ret,"SetWindowSize failed");
     }
 
-    error = myConsole.SetWindowSize(numberOfColumns + 10, numberOfRows + 10);
-    if (!error) {
-        return false;
-    }
-    error = myConsole.GetWindowSize(nCols, nRows);
-    if (!error) {
-        return false;
+    if (ret){
+    	ret.OSError = !myConsole.GetWindowSize(nCols, nRows);
+    	REPORT_ERROR(ret,"GetWindowSize failed");
     }
 
-    return nRows == numberOfRows && nCols == numberOfColumns;
+    if (ret){
+    	ret.fatalError = ((nRows != nRowTarget || nCols != nColTarget));
+    	COMPOSITE_REPORT_ERROR(ret,"Set -Get WindowSize failed: (",nRows,",",nCols,")!=(",nRowTarget,",",nColTarget,")");
+    }
+
+    nColTarget = numberOfColumns + 10;
+    nRowTarget = numberOfRows    + 10;
+
+    if (ret){
+    	ret.OSError = !myConsole.SetWindowSize(nColTarget, nRowTarget);
+    	REPORT_ERROR(ret,"SetWindowSize failed");
+    }
+
+    if (ret){
+    	ret.OSError = !myConsole.GetWindowSize(nCols, nRows);
+    	REPORT_ERROR(ret,"GetWindowSize failed");
+    }
+
+    if (ret){
+    	ret.fatalError = ((nRows != nRowTarget || nCols != nColTarget));
+    	COMPOSITE_REPORT_ERROR(ret,"Set -Get WindowSize failed: (",nRows,",",nCols,")!=(",nRowTarget,",",nColTarget,")");
+    }
+
+    myConsole.SetWindowSize(numberOfColumns, numberOfRows);
+    myConsole.SetSceneSize(numberOfColumns, numberOfRows);
+
+    return ret;
 }
 
 bool BasicConsoleTest::TestClear() {

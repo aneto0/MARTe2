@@ -28,11 +28,12 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../BareMetal/L1Portability/ErrorManagementTest.h"
+
 
 using namespace MARTe;
 
@@ -40,7 +41,7 @@ using namespace MARTe;
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class ErrorManagementMTTest:public ErrorManagementTest {
+class ErrorManagementMTTest {
 
 public:
     /**
@@ -80,6 +81,67 @@ public:
 										 CCString errorName,
                                          uint32 numThreads);
 
+    /**
+     * @brief Checks if the errorInfo fields contains correct data.
+     * @param[in] errorInfo is the structure which contains the error informations.
+     * @param[in] description is the error description.
+     */
+    void CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,CCString description);
+
+    /**
+     * Stores the error code in input
+     */
+    static ErrorManagement::ErrorType expectedErrorCode;
+
+    /**
+     * Stores the error description in input
+     */
+    static CCString expectedErrorDescription;
+
+    /**
+     * Stores the error file name in input
+     */
+    static CCString expectedErrorFilename;
+
+    /**
+     * Stores the error line in input
+     */
+    static int16 expectedErrorLine;
+
+    /**
+     * Stores the error function name in input
+     */
+    static CCString expectedErrorFunction;
+
+    /**
+     * Stores expected error name
+     */
+    static CCString expectedErrorName;
+
+    /**
+     * The return value
+     */
+    static bool retVal;
+
+    /**
+     * Specifies if the error function stores also the thread id.
+     */
+    static bool fullContext;
+
+    /**
+     * Saves the number of threads to be launched.
+     */
+    uint32 nThreads;
+
+    /**
+     * A variable used to determinate when the thread terminates.
+     */
+    bool syncFlag;
+
+    /**
+     * Stores the high resolution timer counter.
+     */
+    static uint64 expectedHRTCounter;
 
 };
 

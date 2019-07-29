@@ -96,8 +96,8 @@ ThreadStateType GetState(const ThreadIdentifier &threadId) {
     return UnknownThreadStateType;
 }
 
-uint32 GetCPUs(const ThreadIdentifier &threadId) {
-    uint32 cpus = 0u;
+uint64 GetCPUs(const ThreadIdentifier &threadId) {
+    uint64 cpus = 0u;
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
     if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) == 0) {
@@ -306,20 +306,26 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()");
             }
+        }
 
+        // need to update the thread database to be able to use other thread functions
+        if (ok) {
+            threadInfo->SetThreadIdentifier(threadId);
+            threadInfo->SetPriorityLevel(0u);
+            ok = ThreadsDatabase::Lock();
             if (ok) {
-                ok = ThreadsDatabase::Lock();
-                if (ok) {
-                    threadInfo->SetThreadIdentifier(threadId);
-                    ok = ThreadsDatabase::NewEntry(threadInfo);
-                    ThreadsDatabase::UnLock();
-                }
-                if(ok) {
-                    threadInfo->SetPriorityLevel(0u);
-                    SetPriority(threadId, Threads::NormalPriorityClass, 0u);
-                }
+            	// the thread database will hold the pointer to this threadInfo
+                // he same pointer is held by the thread main routine
+                ok = ThreadsDatabase::NewEntry(threadInfo);
+                ThreadsDatabase::UnLock();
             }
         }
+
+        // will access database and update the threadInfo
+        if (ok) {
+            SetPriority(threadId, Threads::NormalPriorityClass, 0u);
+        }
+
 
         if (ok) {
             ok = (pthread_detach(threadId) == 0);

@@ -33,6 +33,9 @@
 #include "Atomic.h"
 #include "Sleep.h"
 #include "ThreadInformation.h"
+#include "Processor.h"
+#include "Vector.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,151 +45,256 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 //extern uint32 nOfEntries=0;
-ThreadsTest::ThreadsTest() {
-    exitCondition = 0;
-    tidTest = 0;
-    retValue = true;
-}
+#define exitStatusWait 1
+#define exitStatusGo 0
 
-static void DummyFunction(ThreadsTest *tt) {
+
+
+class ThreadTestEngine{
+public:
+	/* A shared variable used for synchronization. */
+    int32 exitStatus;
+
+    /* A shared variable used for synchronization */
+    int32 actionCounter;
+
+    /* A variable used to save a thread identifier. */
+    ThreadIdentifier tidTest;
+
+    /* A boolean to store the return value. */
+    bool retValue;
+
+    /* How many threads to start in this test */
+    int32 nOfThreads;
+
+    /* The thread ids */
+    Vector<ThreadIdentifier> tids;
+
+    /* the thread names */
+    Vector<DynamicCString> tidN;
+
+	uint32 stackSize;
+
+public:
+    ThreadTestEngine(int32 nOfThreadsIn){
+        tids.SetSize(static_cast<uint32>(nOfThreadsIn));
+        tidN.SetSize(static_cast<uint32>(nOfThreadsIn));
+        exitStatus = exitStatusWait;
+        actionCounter = 0;
+        tidTest = 0;
+        retValue = true;
+        nOfThreads = nOfThreadsIn;
+    	stackSize = THREADS_DEFAULT_STACKSIZE;
+    }
+
+    virtual ~ThreadTestEngine(){}
+
+    void InitCounters(){
+    	exitStatus = exitStatusWait;
+    	actionCounter = 0;
+    }
+
+    // signal all threads that they can stop
+    void StopThreads(){
+    	exitStatus = exitStatusGo;
+    	actionCounter = 0;
+    }
+
+    // wait until nOfThreads have signalled to have finished
+    bool WaitCounter(int32 nOfThreads=1){
+    	int32 j=0;
+    	while (actionCounter < nOfThreads) {
+        	if (j++ > 200) {
+        	    return false;
+        	}
+    	Sleep::Short(10,Units::ms);\
+    	}
+    	return true;
+    }
+
+    /**
+     * starts n Threads
+     * check for correct startup
+     * execute user check
+     * initiates threads shutdown
+     * checks for correct shutdown
+     */
+    bool StandardTest();
+
+    virtual bool UserCheckFunction(){
+    	return true;
+    }
+
+    virtual void UserStartThread(uint32 index);
+
+};
+
+//  thread function that increments the actionCounter on start and on exit. Will exit after exitStatus is 0
+static void DummyFunction(ThreadTestEngine *tt) {
     //tells to the main process that the thread begins
-    Atomic::Increment(&tt->exitCondition);
+    Atomic::Increment(&tt->actionCounter);
     //waits the permission of the main process to exit
-    while (tt->exitCondition < 2) {
-        Sleep::Short(1,Units::ms);
+    while (tt->exitStatus == exitStatusWait) {
         Sleep::Short(1,Units::ms);
     }
-    Atomic::Increment(&tt->exitCondition);
+    Atomic::Increment(&tt->actionCounter);
     Threads::EndThread();
 }
+
+void ThreadTestEngine::UserStartThread(uint32 index){
+    tids[index] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, tidN[index]);
+}
+
+/**
+ * starts n Threads
+ * check for correct startup
+ * execute user check
+ * initiates threads shutdown
+ * checks for correct shutdown
+ */
+bool ThreadTestEngine::StandardTest(){
+	bool ret = true;
+
+    if (Threads::NumberOfThreads() != 0) {
+    	REPORT(ErrorManagement::FatalError,"Other threads running in the system");
+        return false;
+    }
+
+    bool failed = false;
+
+	InitCounters();
+
+	//Calls the thread callback.
+    for (int32 i = 0; (i < nOfThreads) ; i++) {
+    	UserStartThread(static_cast<uint32>(i));
+    }
+
+    if (!WaitCounter(nOfThreads)){
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting threads: ",actionCounter, " out of ", nOfThreads);
+        ret = false;
+    }
+
+    if (ret){
+    	failed = !UserCheckFunction();
+    }
+
+    StopThreads();
+
+    if (!WaitCounter(nOfThreads)){
+        ret = false;
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed stopping threads nicely: ",actionCounter, " out of ", nOfThreads);
+    }
+
+    if (!ret){
+    	REPORT(ErrorManagement::FatalError,"Killing threads");
+        for (int32 i = 0; i <= nOfThreads; i++) {
+            Threads::Kill(tids[static_cast<uint32>(i)]);
+        }
+    }
+
+    int32 counter = 10;
+    while ((Threads::NumberOfThreads() != 0) && (counter > 0)){
+    	counter--;
+    	Sleep::Short(10000,Units::us);
+    }
+
+    if (Threads::NumberOfThreads() != 0) {
+    	REPORT(ErrorManagement::FatalError,"Threads still running in the system");
+        ret = false;
+    }
+
+    if (failed) {
+    	REPORT(ErrorManagement::FatalError,"User Test failed");
+    	ret = false;
+    }
+
+    if (Threads::NumberOfThreads() != 0) {
+    	REPORT(ErrorManagement::FatalError,"Still threads running?");
+    	ret = false;
+    }
+
+    return ret;
+}
+
+
+class TBT_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TBT_ThreadTestEngine(){}
+	TBT_ThreadTestEngine(int32 numberOfThreads,CCString baseName,uint32 stackSizeIn): ThreadTestEngine(numberOfThreads){
+		stackSize = stackSizeIn;
+		for (int32 i=0;i<numberOfThreads;i++){
+			DynamicCString name;
+			name().Append(baseName).Append(i);
+			tidN[static_cast<uint32>(i)] = name;
+		}
+	}
+};
+
 
 bool ThreadsTest::TestBeginThread(CCString name,
                                   uint32 stackSize,
                                   int32 nOfThreads) {
 
-    //test on thread number
-    for (int32 i = 0; i < nOfThreads; i++) {
+	TBT_ThreadTestEngine tte(nOfThreads,name,stackSize);
 
-        exitCondition = 0;
-        //Calls the thread callback.
-        //Note: in windows if the stack size is zero, the thread is initialized with the default stack size.
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, name);
-        int32 j = 0;
-
-        //Waits for the thread to begin
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        //allows the thread to exit
-        exitCondition++;
-
-        j = 0;
-        //waits some time
-        while (exitCondition < 3) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-    }
-    return true;
+	return tte.StandardTest();
 }
 
-bool ThreadsTest::TestEndThread(CCString name,
-                                uint32 stackSize,
-                                int32 nOfThreads) {
-    return TestBeginThread(name, stackSize, nOfThreads);
-
-}
 
 bool ThreadsTest::TestBeginThreadNullFunction(CCString name) {
 //try to launch a thread with null function. The thread is created
 //but the function is not launched because is null (see ThreadInformation::UserThreadFunction)
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) NULL, this, THREADS_DEFAULT_STACKSIZE, name);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) NULL, NULL, THREADS_DEFAULT_STACKSIZE, name);
 
     return tid != (ThreadIdentifier) 0;
 }
 
-bool ThreadsTest::TestIsAlive(int32 nOfThreads) {
-
-    for (int32 i = 0; i < nOfThreads; i++) {
-        exitCondition = 0;
-        //Calls the thread callback.
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
-        int32 j = 0;
-        //waits for the thread to begin
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
+class TIA_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TIA_ThreadTestEngine(){}
+	TIA_ThreadTestEngine(int32 numberOfThreads): ThreadTestEngine(numberOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool success = true;
+    	for (int32 i =0;i<nOfThreads;i++){
+            if (!Threads::IsAlive(tids[static_cast<uint32>(i)])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," is not alive")
+                success = false;
             }
-            Sleep::Short(10,Units::ms);
-        }
-        //checks if it is alive
-        if (!Threads::IsAlive(tid)) {
-            retValue = false;
-        }
-        //allows the thread to exit
-        exitCondition++;
-        j = 0;
-        //waits some time
-        while (exitCondition < 3) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        if (!retValue) {
-            return false;
-        }
+    	}
+    	return success;
     }
-    return retValue;
+};
+
+bool ThreadsTest::TestIsAlive(int32 nOfThreads) {
+	TIA_ThreadTestEngine tte(nOfThreads);
+	return tte.StandardTest();
 }
 
-bool ThreadsTest::TestIsAliveAfterkill(int32 nOfThreads) {
-    //try IsAlive after a kill
-    for (int32 i = 0; i < nOfThreads; i++) {
-        exitCondition = 0;
-        //Calls the thread callback.
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
-        int32 j = 0;
-        //Waits for the thread to begin
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
+class TIAK_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TIAK_ThreadTestEngine(){}
+	TIAK_ThreadTestEngine(int32 numberOfThreads): ThreadTestEngine(numberOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool success = true;
+    	for (int32 i =0;i<nOfThreads;i++){
+            Threads::Kill(tids[static_cast<uint32>(i)]);
+    	}
+    	for (int32 i =0;i<nOfThreads;i++){
+    		if (Threads::IsAlive(tids[static_cast<uint32>(i)])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," is alive after Kill")
+                success = false;
             }
-            Sleep::Short(10,Units::ms);
-        }
-        Threads::Kill(tid);
-        //checks if it is alive
-        if (Threads::IsAlive(tid)) {
-            retValue = false;
-        }
-        //allows the thread to exit if the thread is still alive
-        exitCondition++;
-        j = 0;
-        //waits some time
-        while (exitCondition < 3 && !retValue) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        if (!retValue) {
-            return false;
-        }
+    	}
+    	if (success) nOfThreads = 0;
+    	return success;
     }
-    return retValue;
+};
+
+bool ThreadsTest::TestIsAliveAfterkill(int32 nOfThreads) {
+	TIAK_ThreadTestEngine tte(nOfThreads);
+	return tte.StandardTest();
 }
 
 bool ThreadsTest::TestKillInvalidID() {
@@ -194,514 +302,387 @@ bool ThreadsTest::TestKillInvalidID() {
     return !(Threads::Kill(InvalidThreadIdentifier));
 }
 
-bool ThreadsTest::TestKill(int32 nOfThreads) {
-    for (int32 i = 0; i < nOfThreads; i++) {
-        exitCondition = 0;
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
-        int32 j = 0;
-        //Waits for the thread to begin
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
+class TK_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TK_ThreadTestEngine(){}
+	TK_ThreadTestEngine(int32 numberOfThreads): ThreadTestEngine(numberOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool success = true;
+    	for (int i =0;i<nOfThreads;i++){
+            if (!Threads::Kill(tids[static_cast<uint32>(i)])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," Kill failed")
+            	success = false;
             }
-            Sleep::Short(10,Units::ms);
-        }
-        //kills the thread
-        if (!Threads::Kill(tid)) {
-            return false;
-        }
-        //Sleep::Short(1,Units::ms);
-        //try to kill again the same thread
-        if (Threads::Kill(tid)) {
-            return false;
-        }
-        //error if the thread is still alive
-        if (Threads::IsAlive(tid)) {
-            exitCondition++;
-            Sleep::Short(10,Units::ms);
-            return false;
-        }
+    	}
+    	for (int i =0;i<nOfThreads;i++){
+            if (Threads::Kill(tids[static_cast<uint32>(i)])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," Kill succeeded after Kill")
+            	success = false;
+            }
+    	}
+    	for (int i =0;i<nOfThreads;i++){
+    		if (Threads::IsAlive(tids[static_cast<uint32>(i)])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," is alive after double Kill")
+                success = false;
+            }
+    	}
+    	if (success) nOfThreads = 0;
+    	return success;
     }
-    return true;
+};
+
+bool ThreadsTest::TestKill(int32 nOfThreads) {
+	TK_ThreadTestEngine tte(nOfThreads);
+	return tte.StandardTest();
 }
 
-bool PriorityTestFunction(ThreadsTest &t) {
+class TP_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TP_ThreadTestEngine(){}
+	TP_ThreadTestEngine(): ThreadTestEngine(64){
+	}
+    virtual bool UserCheckFunction(){
+        //Available priority classes
+        Threads::PriorityClassType allPrioClassTypes[] = {
+        		Threads::UnknownPriorityClass,
+    			Threads::IdlePriorityClass,
+    			Threads::NormalPriorityClass,
+                Threads::RealTimePriorityClass
+        };
+
+        bool success = true;
+    	for (int i =0;i<nOfThreads;i++){
+    		uint32 pc = static_cast<uint32>(i) /16;
+    		uint32 pl = static_cast<uint32>(i) %16;
+            //set priority level and class
+            Threads::SetPriority(tids[static_cast<uint32>(i)], allPrioClassTypes[pc], pl);
+
+            //gets priority level and class
+            Threads::PriorityClassType prio =  Threads::GetPriorityClass(tids[static_cast<uint32>(i)]);
+            if (pc!=0 && (prio != allPrioClassTypes[pc])) {
+                success = false;
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," GetPriorityClass mismatch: ", prio, " != ",allPrioClassTypes[pc]);
+            }
+
+            uint8 level = Threads::GetPriorityLevel(tids[static_cast<uint32>(i)]);
+            if (level != pl) {
+                success = false;
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," GetPriorityLevel mismatch: ",level, " != " ,pl )
+            }
+    	}
+    	return success;
+    }
+};
+
+bool ThreadsTest::TestPriority() {
 
     ThreadIdentifier fakeTid = (ThreadIdentifier) 0;
     if (Threads::GetPriorityClass(fakeTid) != Threads::UnknownPriorityClass || Threads::GetPriorityLevel(fakeTid) != 0) {
         return false;
     }
+    TP_ThreadTestEngine tte;
 
-    //Available priority classes
-    Threads::PriorityClassType allPrioClassTypes[] = { Threads::UnknownPriorityClass, Threads::IdlePriorityClass, Threads::NormalPriorityClass,
-            Threads::RealTimePriorityClass };
-    bool goOn = true;
-    //Creates all the necessary thread combinations with different priority classes and levels and checks
-    //that each of them has the correct priority class and level
-    for (uint32 i = 1; i < 4; i++) {
-        for (uint8 prio = 0; prio < 16; prio++) {
-            t.exitCondition = 0;
-            ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, &t);
-            int32 n = 0;
-            //waits the thread beginning
-            while (t.exitCondition < 1) {
-                if (n++ > 100) {
-                    Threads::Kill(tid);
-                    return false;
-                }
-                Sleep::Short(10,Units::ms);
-            }
+    return tte.StandardTest();
+}
 
-            //set priority level and class
-            Threads::SetPriority(tid, allPrioClassTypes[i], prio);
-
-            //gets priority level and class
-            if (Threads::GetPriorityClass(tid) != allPrioClassTypes[i]) {
-                goOn = false;
-            }
-
-            if (Threads::GetPriorityLevel(tid) != prio) {
-                goOn = false;
-            }
-            //end the thread
-            Atomic::Increment(&t.exitCondition);
-            n = 0;
-            //waits that the thread ends
-            while (t.exitCondition < 3) {
-                if (n++ > 100) {
-                    Threads::Kill(tid);
-                    return false;
-                }
-                Sleep::Short(10,Units::ms);
-            }
-            if (!goOn) {
-                return false;
-            }
-        }
+class GS_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~GS_ThreadTestEngine(){}
+	GS_ThreadTestEngine(): ThreadTestEngine(1){
+	}
+    virtual bool UserCheckFunction(){
+        return (Threads::GetState(tids[0]) == Threads::UnknownThreadStateType) ;
     }
-
-    return true;
-}
-
-bool ThreadsTest::TestPriority() {
-    return PriorityTestFunction(*this);
-}
+};
 
 bool ThreadsTest::TestGetState() {
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
-    int32 j = 0;
-    //waits the thread to begin
-    while (exitCondition < 1) {
-        if (j++ > 100) {
-            Threads::Kill(tid);
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-    bool ret = true;
-//in linux and windows the thread state function returns always unknown
-    if (Threads::GetState(tid) != Threads::UnknownThreadStateType) {
-        ret = false;
-    }
-//allows the thread to exit
-    exitCondition++;
-//waits that the thread ends
-    while (exitCondition < 3) {
-        if (j++ > 100) {
-            Threads::Kill(tid);
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-    return ret;
+	GS_ThreadTestEngine tte;
+
+	return tte.StandardTest();
 }
 
-static void TestIdFunction(ThreadsTest *tt) {
-    while (tt->tidTest == 0) {
+
+//  thread function that increments the actionCounter on start and on exit. Will exit after exitStatus is 0
+static void TestIdFunction(ThreadTestEngine *tt) {
+    //tells to the main process that the thread begins
+    Atomic::Increment(&tt->actionCounter);
+
+    tt->retValue = (Threads::Id() == tt->tids[0]);
+    if (!tt->retValue){
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Threads read id = ",static_cast<uint32>(Threads::Id())," instead of ",static_cast<uint32>(tt->tids[0]));
+    }
+
+    //waits the permission of the main process to exit
+    while (tt->exitStatus == exitStatusWait) {
         Sleep::Short(1,Units::ms);
     }
-    if (Threads::Id() != tt->tidTest) {
-        tt->retValue = false;
-    }
-    tt->exitCondition++;
+    Atomic::Increment(&tt->actionCounter);
     Threads::EndThread();
-
 }
+
+class TI_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TI_ThreadTestEngine(){}
+	TI_ThreadTestEngine(): ThreadTestEngine(1){
+	}
+    void UserStartThread(uint32 index){
+        tids[static_cast<uint32>(index)] = Threads::BeginThread((ThreadFunctionType) TestIdFunction, this);
+    }
+};
 
 bool ThreadsTest::TestId(int32 nOfThreads) {
-    for (int32 i = 0; i < nOfThreads; i++) {
-        exitCondition = 0;
-        tidTest = 0;
-        tidTest = Threads::BeginThread((ThreadFunctionType) TestIdFunction, this);
-        int32 j = 0;
-        //waits that the thread finishes
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tidTest);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        if (!retValue) {
-            return false;
-        }
-    }
-    return true;
+	bool ret = true;
+	for (int i =0;i<nOfThreads;i++){
+		TI_ThreadTestEngine tte;
+		if (!tte.StandardTest()){
+			ret = false;
+			REPORT(ErrorManagement::FatalError,"Threads::Id does not match");
+		}
+	}
+	return ret;
 }
 
+class GC_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~GC_ThreadTestEngine(){}
+	GC_ThreadTestEngine(): ThreadTestEngine(Processor::Available()){
+	}
+    virtual void UserStartThread(uint32 index){
+    	ProcessorType pt(0);
+    	pt.AddCPU(static_cast<uint32>(index+1));
+        tids[static_cast<uint32>(index)] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, emptyString, ExceptionHandler::NotHandled, pt);
+    }
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	for (int i =0;i<nOfThreads;i++){
+            ProcessorType pt2(Threads::GetCPUs(tids[static_cast<uint32>(i)]));
+            ProcessorType pt(0);
+            pt.AddCPU(static_cast<uint32>(i+1));
+            if (pt != pt2){
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," GetCPU mismatch: ",pt.GetProcessorMask(),"!=",pt2.GetProcessorMask());
+            	failed = true;
+            }
+    	}
+    	return !failed;
+    }
+};
 bool ThreadsTest::TestGetCPUs() {
-    //start a thread without specifying a cpu.
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
-    int32 j = 0;
-    //waits that the thread begins
-    while (exitCondition < 1) {
-
-        if (j++ > 100) {
-            Threads::Kill(tidTest);
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-    uint32 nCPUs = Threads::GetCPUs(tid);
-    exitCondition++;
-    Sleep::Short(1,Units::ms);
-    //note: in windows the get cpus function returns always -1
-
-    for (uint32 i = 1; i < nCPUs; i++) {
-        exitCondition = 0;
-        tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, emptyString, ExceptionHandler::NotHandled, i);
-        int32 j = 0;
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tidTest);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        if (Threads::GetCPUs(tid) != i) {
-            retValue = false;
-        }
-        j = 0;
-        exitCondition++;
-        //waits that the thread ends
-        while (exitCondition < 3) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-
-        if (retValue == false) {
-            return false;
-        }
-    }
-    return retValue;
+	GC_ThreadTestEngine tte;
+	return tte.StandardTest();
 }
 
+
+class TN_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~TN_ThreadTestEngine(){}
+	TN_ThreadTestEngine(int32 nOfThreads): ThreadTestEngine(nOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	for (int i =0;i<nOfThreads;i++){
+    		CCString name = Threads::Name(tids[static_cast<uint32>(i)]);
+            if (tidN[i].GetSize() == 0){
+                if (!name.IsSameAs("Unknown")){
+                	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," expecting Unknown instead", name);
+                	failed = true;
+                }
+            } else {
+                if (!tidN[i].IsSameAs(name)){
+                	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," expecting ",tidN[i], " instead ",name)
+                	failed = true;
+                }
+            }
+    	}
+    	return !failed;
+    }
+};
 bool ThreadsTest::TestName(CCString name,int32 nOfThreads) {
-
-    for (int32 i = 0; i < nOfThreads; i++) {
-        exitCondition = 0;
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, name);
-        int32 j = 0;
-        while (exitCondition < 1) {
-            if (j++ > 100) {
-                Threads::Kill(tidTest);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-        if (Threads::Name(tid).GetSize() == 0) {
-            retValue = false;
-        }
-        else {
-            if (!name.IsSameAs(Threads::Name(tid))) {
-                retValue = false;
-            }
-        }
-        exitCondition++;
-        //waits that the thread ends
-        while (exitCondition < 3) {
-            if (j++ > 100) {
-                Threads::Kill(tid);
-                return false;
-            }
-            Sleep::Short(10,Units::ms);
-        }
-
-    }
-    return retValue;
+	TN_ThreadTestEngine tte(nOfThreads);
+	if (name.GetSize()>0){
+		for (int i=0;i<nOfThreads;i++ ){
+			tte.tidN[i]().Append(name).Append(i);
+		}
+	}
+	return tte.StandardTest();
 }
-
 bool ThreadsTest::TestNameNull() {
-    //try to put a null name
-    exitCondition = 0;
-    uint32 j = 0;
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE );
-    while (exitCondition < 1) {
-        if (j++ > 100) {
-            Threads::Kill(tidTest);
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-
-    if (!Threads::Name(tid).IsSameAs("Unknown")) {
-        retValue = false;
-    }
-    exitCondition++;
-    j = 0;
-    //waits for the thread to end
-    while (exitCondition < 3) {
-        if (j++ > 100) {
-            Threads::Kill(tid);
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-    return retValue;
+	return TestName(emptyString,1);
 }
 
-static void WaitFunction(ThreadsTest *tt) {
-    Atomic::Increment(&(tt->exitCondition));
-    while (tt->exitCondition != 0) {
-        Sleep::Short(1,Units::ms);
-    }
-    Atomic::Increment(&(tt->exitCondition));
-    Threads::EndThread();
-}
-
-bool ThreadsTest::CheckThreadStart(int32 N){
-    //Wait for the threads to begin
-    int32 j = 0;
-    while (exitCondition < N) {
-        if (j > (10 * N)) {
-            exitCondition = 0;
-            Sleep::Short(1,Units::s);
-            return false;
+class NT_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~NT_ThreadTestEngine(){}
+	NT_ThreadTestEngine(int32 nOfThreads): ThreadTestEngine(nOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	uint32 N = Threads::NumberOfThreads();
+        if (N != static_cast<uint32>(nOfThreads)){
+        	failed = true;
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"NumberOfThreads() returns ",N," expecting ", nOfThreads);
         }
-        j++;
-        Sleep::Short(10,Units::ms);
+    	return !failed;
     }
-	return true;
-}
-
-bool ThreadsTest::CheckThreadTermination(int32 N){
-    int32 j = 0;
-    while (exitCondition < N) {
-        if (j++ > (10 * N)) {
-            return false;
-        }
-        Sleep::Short(10,Units::ms);
-    }
-    return true;
-}
-
+};
 bool ThreadsTest::TestNumberOfThreads(int32 nOfThreads) {
-	exitCondition = 0;
-    if (Threads::NumberOfThreads() != 0) {
-        return false;
-    }
-    for (int32 i = 0; i < nOfThreads; i++) {
-        Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-    }
+	ThreadTestEngine tte(nOfThreads);
 
-    if (!CheckThreadStart(nOfThreads)){
-    	return false;
-    }
-
-    //check
-    if (static_cast<int32>(Threads::NumberOfThreads()) != nOfThreads) {
-        retValue = false;
-    }
-    exitCondition = 0;
-    //wait the threads termination
-    CheckThreadTermination(nOfThreads);
-
-    Sleep::Short(10,Units::ms);
-    return retValue && Threads::NumberOfThreads() == 0;
+	return tte.StandardTest();
 }
 
-bool ThreadsTest::TestFindByIndex(int32 nOfThreads) {
-	exitCondition = 0;
-    int32 i = 0;
-    for (i = 0; i < nOfThreads; i++) {
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
 
-        if (!CheckThreadStart(i+1)){
-        	return false;
-        }
+class FBI_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~FBI_ThreadTestEngine(){}
+	FBI_ThreadTestEngine(): ThreadTestEngine(THREADS_DATABASE_GRANULARITY){
+	}
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	for (int32 i = 0;i < nOfThreads;i++){
+    		ThreadIdentifier t1 = Threads::FindByIndex(static_cast<uint32>(i));
+    		ThreadIdentifier t2 = tids[i];
+            if (t1 != t2) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"FindByIndex(",i,") returns ",static_cast<uint64>(t1)," expecting ", static_cast<uint64>(t2));
+                failed = true;
+            }
+    	}
 
-        //check
-        if (Threads::FindByIndex(static_cast<uint32>(i)) != tid) {
-            retValue = false;
-            i++;
-            break;
-        }
-    }
+    	if (!failed){
+            //removes the first thread
+            Threads::Kill(tids[0]);
+            Sleep::Short(10,Units::ms);
+            Atomic::Decrement(&actionCounter);
 
-    exitCondition = 0;
+            //removes the last thread
+            Threads::Kill(tids[nOfThreads-1]);
+            Sleep::Short(10,Units::ms);
+            Atomic::Decrement(&actionCounter);
 
-    //wait the threads termination
-    CheckThreadTermination(nOfThreads);
+            //adds another thread
+            tids[nOfThreads-1] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
 
-    if (!retValue) {
-        return false;
-    }
+            tids[0] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this);
 
-    exitCondition = 0;
-    if (THREADS_DATABASE_GRANULARITY >= 2) {
-        //second test
-        ThreadIdentifier firstTid;
-        ThreadIdentifier lastTid;
-        for (i = 0; i < THREADS_DATABASE_GRANULARITY; i++) {
-            switch (i) {
-            case 0:
-                firstTid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-                break;
-
-            case THREADS_DATABASE_GRANULARITY - 1:
-                lastTid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-                break;
-
-            default:
-                Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
+            if (!WaitCounter(nOfThreads)){
+                failed = true;
+            	REPORT(ErrorManagement::FatalError,"Failed starting replacement threads");
             }
 
-            if (!CheckThreadStart(i+1)){
-            	return false;
+            //the next position is at the end but there are THREADS_DATABASE_GRANULARITY - 1 threads!
+            if (Threads::FindByIndex(nOfThreads-1) != tids[nOfThreads-1]) {
+            	REPORT(ErrorManagement::FatalError,"replacement threads 1 is not at last position");
+                failed = true;
             }
 
-        }
+            //the next position is at the beginning!
+            if (Threads::FindByIndex(0) != tids[0]) {
+            	REPORT(ErrorManagement::FatalError,"replacement threads 2 is not at first position");
+                failed = true;
+            }
 
-        //removes the first thread
-        Threads::Kill(firstTid);
-        Sleep::Short(10,Units::ms);
-
-        Atomic::Decrement(&exitCondition);
-        //removes the last thread
-        Threads::Kill(lastTid);
-        Sleep::Short(10,Units::ms);
-
-        Atomic::Decrement(&exitCondition);
-        //adds another thread
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-
-        if (!CheckThreadStart(THREADS_DATABASE_GRANULARITY-1)){
-        	return false;
-        }
-
-        //the next position is at the end but there are THREADS_DATABASE_GRANULARITY - 1 threads!
-        if (Threads::FindByIndex(THREADS_DATABASE_GRANULARITY - 1) != tid) {
-            retValue = false;
-        }
-
-        tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-
-        if (!CheckThreadStart(THREADS_DATABASE_GRANULARITY)){
-        	return false;
-        }
-
-        //the next position is at the beginning!
-        if (Threads::FindByIndex(0) != tid) {
-            retValue = false;
-        }
-
-        exitCondition = 0;
-        //wait the threads termination
-        CheckThreadTermination(nOfThreads);
-
+    	}
+    	return !failed;
     }
-    return retValue;
+};
+bool ThreadsTest::TestFindByIndex() {
+	FBI_ThreadTestEngine tte;
+	return tte.StandardTest();
 }
 
-bool ThreadsTest::TestGetThreadInfoCopy(int32 nOfThreads,
-                                        CCString name) {
-    int32 i = 0;
-    ThreadInformation ti;
-    for (i = 0; i < nOfThreads; i++) {
-        ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this, THREADS_DEFAULT_STACKSIZE, name);
-        //waits that the thread begins
-        if (!CheckThreadStart(i+1)){
-        	return false;
-        }
+class GTI_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~GTI_ThreadTestEngine(){}
+	GTI_ThreadTestEngine(int32 nOfThreads): ThreadTestEngine(nOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	for (int32 i = 0;i < nOfThreads;i++){
+            ThreadInformation ti;
+    		CCString name = tidN[i];
 
-        if (!Threads::GetThreadInfoCopy(ti, tid)) {
-            retValue = false;
-        }
+            if (!Threads::GetThreadInfoCopy(ti, tids[i])){
+            	failed =  true;
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," GetThreadInfoCopy failed ");
+            }
+            if (!name.IsSameAs(ti.ThreadName())) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," expecting ",name,"instead", ti.ThreadName());
+            	failed =  true;
+            }
+            if (ti.GetThreadIdentifier() != tids[i]) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," tid mismatch ");
+            	failed =  true;
+            }
+            if (ti.GetPriorityClass() != Threads::NormalPriorityClass) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," priority class not Normal: ", ti.GetPriorityClass());
+            	failed =  true;
+            }
+            if (ti.GetPriorityLevel() != 0) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," priority level mismatch ");
+            	failed =  true;
+            }
 
-        if (!name.IsSameAs(ti.ThreadName())) {
-            retValue = false;
-        }
-        if (ti.GetThreadIdentifier() != tid) {
-            retValue = false;
-        }
+            Threads::SetPriority(tids[i], Threads::IdlePriorityClass, 15);
+            Threads::GetThreadInfoCopy(ti, tids[i]);
+            if (ti.GetPriorityClass() != Threads::IdlePriorityClass) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," modified priority class mismatch ");
+            	failed =  true;
+            }
+            if (ti.GetPriorityLevel() != 15) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," modified priority level mismatch ");
+            	failed =  true;
+            }
 
-        //by default the priority is normal
-        if (ti.GetPriorityClass() != Threads::NormalPriorityClass) {
-            retValue = false;
-        }
-        if (ti.GetPriorityLevel() != 0) {
-            retValue = false;
-        }
+            //A priority greater than 16 should be set to 15
+            Threads::SetPriority(tids[i], Threads::NormalPriorityClass, 16);
+            Threads::GetThreadInfoCopy(ti, tids[i]);
+            if (ti.GetPriorityLevel() != 15) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," modified priority level mismatch ");
+            	failed =  true;
+            }
 
-        Threads::SetPriority(tid, Threads::IdlePriorityClass, 15);
-        Threads::GetThreadInfoCopy(ti, tid);
-        if (ti.GetPriorityClass() != Threads::IdlePriorityClass) {
-            retValue = false;
-        }
-        if (ti.GetPriorityLevel() != 15) {
-            retValue = false;
-        }
+            Threads::SetPriority(tids[i], Threads::NormalPriorityClass, 15);
 
-        //A priority greater than 16 should be set to 15
-        Threads::SetPriority(tid, Threads::NormalPriorityClass, 16);
-        Threads::GetThreadInfoCopy(ti, tid);
-        if (ti.GetPriorityLevel() != 15) {
-            retValue = false;
-        }
-
-        //if the index is >=0 the function search by index in the database
-        ThreadInformation tiCopy;
-        ThreadInformation tiCopy2;
-        if (!Threads::GetThreadInfoCopy(tiCopy, tid)) {
-            retValue = false;
-        }
-
-        if (!Threads::GetThreadInfoCopy(tiCopy2, static_cast<uint32>(i))) {
-            retValue = false;
-        }
-
-        if ( !name.IsSameAs(tiCopy.ThreadName()) || !name.IsSameAs(tiCopy2.ThreadName()) ) {
-            retValue = false;
-        }
-
-        if ((tiCopy.GetThreadIdentifier() != tid) || (tiCopy2.GetThreadIdentifier() != tid)) {
-            retValue = false;
-        }
-
-        if ((tiCopy.GetPriorityClass() != Threads::NormalPriorityClass) || (tiCopy2.GetPriorityClass() != Threads::NormalPriorityClass)) {
-            retValue = false;
-        }
-
-        if ((tiCopy.GetPriorityLevel() != 15) || (tiCopy2.GetPriorityLevel() != 15)) {
-            retValue = false;
-        }
-
-        if (!retValue) {
-            i++;
-            break;
-        }
-
+            //if the index is >=0 the function search by index in the database
+            ThreadInformation tiCopy;
+            ThreadInformation tiCopy2;
+            if (!Threads::GetThreadInfoCopy(tiCopy, tids[i])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," read copy 1 failed");
+            	failed =  true;
+            }
+            if (!Threads::GetThreadInfoCopy(tiCopy2, static_cast<uint32>(i))) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," read copy 2 failed");
+            	failed =  true;
+            }
+            if ( !name.IsSameAs(tiCopy.ThreadName()) || !name.IsSameAs(tiCopy2.ThreadName()) ) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," name mismatch with copies");
+            	failed =  true;
+            }
+            if ((tiCopy.GetThreadIdentifier() != tids[i]) || (tiCopy2.GetThreadIdentifier() != tids[i])) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," tid mismatch with copies");
+            	failed =  true;
+            }
+            if ((tiCopy.GetPriorityClass() != Threads::NormalPriorityClass) || (tiCopy2.GetPriorityClass() != Threads::NormalPriorityClass)) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," priority class mismatch with copies");
+            	failed =  true;
+            }
+            if ((tiCopy.GetPriorityLevel() != 15) || (tiCopy2.GetPriorityLevel() != 15)) {
+            	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i," priority level mismatch with copies");
+            	failed =  true;
+            }
+    	}
+    	return !failed;
     }
+};
 
-    exitCondition = 0;
-    //wait the threads termination
-    CheckThreadTermination(nOfThreads);
-
-    return retValue;
+bool ThreadsTest::TestGetThreadInfoCopy(int32 nOfThreads,CCString name) {
+	GTI_ThreadTestEngine tte(nOfThreads);
+	if (name.GetSize()>0){
+		for (int i=0;i<nOfThreads;i++ ){
+			tte.tidN[i]().Append(name).Append(i);
+		}
+	}
+	return tte.StandardTest();
 }
 
 bool ThreadsTest::TestGetThreadInfoCopyInvalidID() {
@@ -709,43 +690,42 @@ bool ThreadsTest::TestGetThreadInfoCopyInvalidID() {
     return !Threads::GetThreadInfoCopy(ti, (ThreadIdentifier) 0);
 }
 
+class FBN_ThreadTestEngine: public ThreadTestEngine{
+public:
+	virtual ~FBN_ThreadTestEngine(){}
+	FBN_ThreadTestEngine(int32 nOfThreads): ThreadTestEngine(nOfThreads){
+	}
+    virtual bool UserCheckFunction(){
+    	bool failed = false;
+    	for (int32 i = 0;i < nOfThreads;i++){
+            ThreadInformation ti;
+    		CCString name = tidN[i];
+    		if (name.GetSize()>0){
+                if (tids[i] != Threads::FindByName(name)) {
+                	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"thread number ",i,"of name ",name, "cannot be found correctly by FindByName");
+                    failed = true;
+                }
+    		}
+    	}
+        if (tids[0] != Threads::FindByName("Unknown")) {
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"FindByName(Unknown) should return the first thread");
+            failed = true;
+        }
+
+        if (Threads::FindByName("") != InvalidThreadIdentifier){
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"FindByName() should fail");
+            failed = true;
+        }
+
+    	return !failed;
+    }
+};
+
+
 bool ThreadsTest::TestFindByName(int32 nOfThreads,
                                  CCString name,
                                  int32 position) {
-    int32 i = 0;
-    if (position > nOfThreads) {
-        position = nOfThreads;
-    }
-    ThreadIdentifier tidTest = 0;
-    ThreadIdentifier tid = 0;
-    for (i = 0; i < nOfThreads; i++) {
-        if (i == position) {
-            tidTest = Threads::BeginThread((ThreadFunctionType) WaitFunction, this, THREADS_DEFAULT_STACKSIZE, name);
-        }
-        else {
-        	ThreadIdentifier ttid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
-            if (tid == 0) {
-                tid = ttid;
-            }
-        }
-
-        if (!CheckThreadStart(i+1)){
-        	return false;
-        }
-    }
-
-    if (tidTest != Threads::FindByName(name)) {
-        retValue = false;
-    }
-    if (tid != Threads::FindByName("Unknown")) {
-        retValue = false;
-    }
-    exitCondition = 0;
-
-    //wait the threads termination
-    CheckThreadTermination(nOfThreads);
-
-    return retValue && (Threads::FindByName("") == InvalidThreadIdentifier);
-
+	FBN_ThreadTestEngine tte(nOfThreads);
+    tte.tidN[position] = name;
+    return tte.StandardTest();
 }
-

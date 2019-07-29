@@ -1,6 +1,6 @@
 /**
- * @file ErrorManagementTest.cpp
- * @brief Source file for class ErrorManagementTest
+ * @file ErrorManagementMTTest.cpp
+ * @brief Source file for class ErrorManagementMTTest
  * @date 25/08/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ErrorManagementTest (public, protected, and private). Be aware that some 
+ * the class ErrorManagementMTTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -33,6 +33,7 @@
 #include "HighResolutionTimer.h"
 #include "Threads.h"
 #include "Sleep.h"
+#include "Threads.h"
 
 using namespace MARTe;
 
@@ -40,7 +41,17 @@ using namespace MARTe;
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static void ThreadErrorTestFunction(ErrorManagementTest* t) {
+ErrorManagement::ErrorType ErrorManagementMTTest::expectedErrorCode;
+CCString ErrorManagementMTTest::expectedErrorDescription;
+CCString ErrorManagementMTTest::expectedErrorFilename;
+int16 ErrorManagementMTTest::expectedErrorLine;
+CCString ErrorManagementMTTest::expectedErrorFunction;
+CCString ErrorManagementMTTest::expectedErrorName;
+bool ErrorManagementMTTest::fullContext = false;
+bool ErrorManagementMTTest::retVal = false;
+uint64 ErrorManagementMTTest::expectedHRTCounter = HighResolutionTimer::Counter();
+
+static void ThreadErrorTestFunction(ErrorManagementMTTest* t) {
     //launches error report functions.
     t->fullContext = false;
 
@@ -52,7 +63,7 @@ static void ThreadErrorTestFunction(ErrorManagementTest* t) {
     t->syncFlag = true;
 }
 
-static void ThreadErrorTestFunctionMacro(ErrorManagementTest *t) {
+static void ThreadErrorTestFunctionMacro(ErrorManagementMTTest *t) {
     //launches error report functions.
     t->fullContext = false;
     t->expectedErrorFunction = __ERROR_FUNCTION_NAME__;
@@ -68,7 +79,7 @@ static void ThreadErrorTestFunctionMacro(ErrorManagementTest *t) {
 static void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,CCString const errorDescription){
 
     //shared static attributes
-    ErrorManagementTest newEM;
+    ErrorManagementMTTest newEM;
     //checks if the structure is filled correctly
     newEM.CheckParameters(errorInfo, errorDescription);
 
@@ -167,4 +178,54 @@ bool ErrorManagementMTTest::TestReportErrorMacroFullContext(ErrorManagement::Err
 //succes, return true.
     return retVal;
 
+}
+
+
+void ErrorManagementMTTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo, CCString description) {
+
+//Checks the error code
+    if (errorInfo.header.errorType != expectedErrorCode) {
+        retVal = false;
+        return;
+    }
+
+//Checks the error line number
+    if (errorInfo.header.lineNumber != expectedErrorLine) {
+        retVal = false;
+        return;
+    }
+
+//Checks the error file name. */
+    if (!expectedErrorFilename.IsSameAs(errorInfo.fileName)){
+        retVal = false;
+        return;
+    }
+
+//Checks the error function name. */
+    if (!expectedErrorFunction.IsSameAs(errorInfo.functionName)){
+        retVal = false;
+        return;
+    }
+
+//Checks the error description. */
+    if (!expectedErrorDescription.IsSameAs(description)){
+        retVal = false;
+        return;
+    }
+
+    if (fullContext) {
+        //Checks the thread id. */
+        /*if (errorInfo.threadId != Threads::Id()) {
+         retVal = false;
+         return;
+         }*/
+
+    }
+
+    if (errorInfo.hrtTime < expectedHRTCounter)  {
+        retVal = false;
+        return;
+    }
+
+    retVal = true;
 }
