@@ -163,8 +163,17 @@ ErrorManagement::ErrorType EventSem::Wait() {
 }
 
 ErrorManagement::ErrorType EventSem::Wait(const MilliSeconds &timeout) {
+	DWORD time = 0;
+	if (timeout.IsValid()){
+		time = timeout.GetTimeRaw();
+	} else {
+		if (timeout.IsInfinite()){
+			time = INFINITE;
+		}
+	}
+
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
-    DWORD ret = WaitForSingleObject(handle->eventHandle, timeout.GetTimeRaw());
+    DWORD ret = WaitForSingleObject(handle->eventHandle, time);
 
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;

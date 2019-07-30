@@ -135,7 +135,7 @@ void TestFastWaitCallback(FastPollingEventSemTest *mt) {
 
     FlagsType error;
     Atomic::Increment(&mt->sharedVariable);
-    if (&mt->external) {
+    if (mt->external) {
         mt->testEventExt.FastWait();
     }
     else {

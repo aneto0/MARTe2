@@ -30,12 +30,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSemTest.h"
-#include "ErrorType.h"
 #include "Threads.h"
 #include "Sleep.h"
 #include "HighResolutionTimer.h"
 #include "MutexSem.h"
 #include "Seconds.h"
+#include "ErrorManagement.h"
+#include "CompositeErrorManagement.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -126,7 +127,9 @@ void ThreadLocked(EventSemTest *tt) {
 }
 
 bool EventSemTest::TestCopyConstructor2Sem() {
-    bool test = false;
+    ErrorManagement::ErrorType ret;
+    sharedVariable1 = 0;
+
     eventSem.Create();
     EventSem copySem(eventSem);
     eventSem.Reset();
@@ -136,14 +139,22 @@ bool EventSemTest::TestCopyConstructor2Sem() {
     while (sharedVariable1 == 0) {
         Sleep::Short(10,Units::ms);
     }
-    test = copySem.Post();
+    ret.fatalError = !copySem.Post();
+    REPORT_ERROR(ret,"copySem Post failed");
+
     while (sharedVariable1 == 1) {
         Sleep::Short(10,Units::ms);
     }
     Ticks counter2 = HighResolutionTimer::GetTicks();
-    Ticks deltaT = counter1 - counter2;
+    Ticks deltaT = counter2 - counter1;
+
     MilliSeconds deltaMS(deltaT);
-    return (test && (deltaMS.GetTime() < 5000));
+    if (deltaMS.GetTimeRaw() > 5000){
+    	ret.timeout = true;
+        COMPOSITE_REPORT_ERROR(ret,"deltaT > 5000 = ",deltaMS.GetTimeRaw());
+    }
+
+    return ret;
 }
 
 bool EventSemTest::TestWait(MilliSeconds timeoutTime) {

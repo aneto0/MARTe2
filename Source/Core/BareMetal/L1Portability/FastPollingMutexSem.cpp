@@ -67,24 +67,31 @@ bool FastPollingMutexSem::Locked() const {
 }
 
 ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const Ticks &timeout,const MicroSeconds &sleepTimeUsec) {
-    uint64 ticksStop = timeout.GetTimeRaw();
-    ticksStop += HighResolutionTimer::Counter();
+	ErrorManagement::ErrorType ret;
 
-    ErrorManagement::ErrorType ret;
-	ret.parametersError = !timeout.IsPositive() ;
+	ret.parametersError = !timeout.IsPositive();
 	REPORT_ERROR(ret,"Invalid timeout");
 
-    while ((!Atomic::TestAndSet(flag))&& (ret)) {
-        if (timeout.IsValid()) {
-            uint64 ticks = HighResolutionTimer::Counter();
-            ret.timeout = (ticks > ticksStop);
-            REPORT_ERROR(ret, "FastPollingMutexSem: Timeout expired");
-        }
+	if (ret){
 
-        if ((sleepTimeUsec.GetTimeRaw() > 0) && (ret)) {
-            Sleep::Short(sleepTimeUsec);
-        }
-    }
+		if (timeout.IsInfinite()){
+		    while (!Atomic::TestAndSet(flag)) {
+
+		    	Sleep::Short(sleepTimeUsec);
+		    }
+
+		} else {
+		    uint64 ticksSleep = timeout.GetTimeRaw();
+		    uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
+
+		    while ((!Atomic::TestAndSet(flag)) && (ret)) {
+	            uint64 ticks = HighResolutionTimer::Counter();
+	            ret.timeout = (ticks > ticksStop);
+
+		        Sleep::Short(sleepTimeUsec);
+		    }
+		}
+	}
 
     return ret;
 }

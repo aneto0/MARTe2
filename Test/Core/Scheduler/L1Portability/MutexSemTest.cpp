@@ -133,16 +133,24 @@ void TestUnLockCallback(MutexSemTest *mt) {
     mt->synchSem.Wait();
 
     while (!mt->stop) {
-        ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
-        mt->failed |= (err != ErrorManagement::NoError);
-        int32 state = mt->sharedVariable;
-        mt->sharedVariable++;
-        Sleep::Short(10,Units::ms);
-        if (mt->sharedVariable != (state + 1)) {
-            mt->failed = true;
+        ErrorManagement::ErrorType ret = mt->testMutex.Lock(mt->testMutexTimeout);
+        REPORT_ERROR(ret,"Mutex Lock failed\n");
+
+        if (ret){
+            int32 state = mt->sharedVariable;
+            mt->sharedVariable++;
+            Sleep::Short(10,Units::ms);
+            if (mt->sharedVariable != (state + 1)) {
+                mt->failed = true;
+                REPORT_ERROR(ErrorManagement::FatalError,"variable not protected\n");
+            }
+
+        	ret.fatalError = !mt->testMutex.UnLock();
+            REPORT_ERROR(ret,"Mutex UnLock failed\n");
         }
-        mt->failed |= !mt->testMutex.UnLock();
-        if (mt->failed) {
+
+        if (!ret){
+            mt->failed = true;
             break;
         }
     }
@@ -251,16 +259,26 @@ bool MutexSemTest::TestRecursive(bool recursive) {
 }
 
 bool MutexSemTest::TestCopyConstructor() {
-    bool test = true;
-    test = testMutex.Create(false);
-    MutexSem copyTestMutex(testMutex);
+    ErrorManagement::ErrorType ret;
 
-    if (testMutex.GetProperties() != copyTestMutex.GetProperties()) {
-        test = false;
+    ret.fatalError = !testMutex.Create(false);
+    REPORT_ERROR(ret,"testMutex.Create failed");
+
+    MutexSem copyTestMutex(testMutex);
+    if (ret){
+        ret.fatalError = (testMutex.GetProperties() != copyTestMutex.GetProperties());
+        REPORT_ERROR(ret,"testMutex.GetProperties() != copyTestMutex.GetProperties()");
     }
 
-    test &= (testMutex.Lock() == ErrorManagement::NoError);
-    test &= copyTestMutex.UnLock();
+    if (ret){
+        ret = testMutex.Lock(MilliSeconds(1000,Units::ms));
+        REPORT_ERROR(ret,"testMutex.Lock(1000) failed");
+    }
 
-    return test;
+    if (ret){
+    	ret.fatalError = !copyTestMutex.UnLock();
+        REPORT_ERROR(ret,"copyTestMutex.UnLock() failed");
+    }
+
+    return ret;
 }

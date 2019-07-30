@@ -170,7 +170,7 @@ bool ThreadTestEngine::StandardTest(){
     }
 
     if (!WaitCounter(nOfThreads)){
-    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting threads: ",actionCounter, " out of ", nOfThreads);
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting threads: started ",actionCounter, " out of ", nOfThreads);
         ret = false;
     }
 
@@ -182,7 +182,7 @@ bool ThreadTestEngine::StandardTest(){
 
     if (!WaitCounter(nOfThreads)){
         ret = false;
-    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed stopping threads nicely: ",actionCounter, " out of ", nOfThreads);
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed stopping threads nicely: stopped ",actionCounter, " out of ", nOfThreads);
     }
 
     if (!ret){

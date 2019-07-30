@@ -99,10 +99,16 @@ MutexSem::MutexSem(MutexSem &source) {
 bool MutexSem::Create(const bool &recursive) {
     while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
-    handle->mutexHandle = CreateMutex(NULL, false, NULL);
+
+    if (recursive){
+        handle->mutexHandle = CreateMutex(NULL, false, NULL);
+        handle->recursive = true;
+    } else {
+        handle->mutexHandle = CreateSemaphore(NULL,1,1, NULL);
+        handle->recursive = false;
+    }
 
     //only recursive mode is supported.
-    handle->recursive = true;
     handle->closed = false;
     handle->referencesMux = 0;
     return (handle->mutexHandle != NULL);
@@ -156,7 +162,15 @@ ErrorManagement::ErrorType MutexSem::Lock() {
 }
 
 ErrorManagement::ErrorType MutexSem::Lock(const MilliSeconds &timeout) {
-    DWORD ret = WaitForSingleObject(handle->mutexHandle, timeout.GetTimeRaw());
+	DWORD time = 0;
+	if (timeout.IsValid()){
+		time = timeout.GetTimeRaw();
+	} else {
+		if (timeout.IsInfinite()){
+			time = INFINITE;
+		}
+	}
+    DWORD ret = WaitForSingleObject(handle->mutexHandle, time);
     ErrorManagement::ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
@@ -166,10 +180,16 @@ ErrorManagement::ErrorType MutexSem::Lock(const MilliSeconds &timeout) {
     }
     return error;
 }
-
+//#include <stdio.h>
 bool MutexSem::UnLock() {
-
-    return (ReleaseMutex(handle->mutexHandle) == TRUE);
+	bool ret = false;
+	if (handle->recursive){
+		ret = (ReleaseMutex(handle->mutexHandle) == TRUE);
+//printf("ReleaseSemaphore(%x)\n",handle->mutexHandle);
+	} else {
+		ret = (ReleaseSemaphore(handle->mutexHandle,1,NULL) == TRUE);
+	}
+    return ret;
 }
 
 bool MutexSem::IsRecursive() const {

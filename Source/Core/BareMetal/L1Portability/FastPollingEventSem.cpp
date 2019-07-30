@@ -62,26 +62,31 @@ void FastPollingEventSem::Create(const bool wait) {
 }
 
 ErrorManagement::ErrorType FastPollingEventSem::FastWait(const Ticks &timeout,const MicroSeconds &sleepTimeUsec) const {
-    // default initialisation is without error
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = !timeout.IsPositive();
 	REPORT_ERROR(ret,"Invalid timeout");
 
-    uint64 ticksSleep = timeout.GetTimeRaw();
-    uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
+	if (ret){
 
-    while ((*flag == 0) && (ret)) {
+		if (timeout.IsInfinite()){
+		    while (*flag == 0) {
 
-        if (timeout.IsValid()) {
-            ret.timeout = (HighResolutionTimer::Counter() > ticksStop);
-        }
+		    	Sleep::Short(sleepTimeUsec);
+		    }
 
-        if (sleepTimeUsec.GetTimeRaw() > 0) {
-            Sleep::Short(sleepTimeUsec);
-        }
-    }
+		} else {
+		    uint64 ticksSleep = timeout.GetTimeRaw();
+		    uint64 ticksStop = HighResolutionTimer::Counter() + ticksSleep;
 
+		    while ((*flag == 0) && (ret)) {
+
+	            ret.timeout = (HighResolutionTimer::Counter() > ticksStop);
+
+		        Sleep::Short(sleepTimeUsec);
+		    }
+		}
+	}
     return ret;
 }
 
