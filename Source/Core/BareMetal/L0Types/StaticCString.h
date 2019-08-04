@@ -180,7 +180,7 @@ StaticCString<size>::StaticCString (char8  (&s)[size]):StaticZeroTerminatedArray
 
 template <uint32 size>
 CStringTool StaticCString<size>::operator()(){
-	return CStringTool(NULL_PTR(char8 **),array ,size);
+	return CStringTool(NULL_PTR(char8 **),ZeroTerminatedArray<char8>::array ,size);
 }
 
 template <uint32 size>

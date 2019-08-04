@@ -267,7 +267,7 @@ bool BasicConsoleTest::TestRead(CCString stringArg) {
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
 
     uint32 stringSize = stringArg.GetSize();
-    DynamicCString prefix = "\nPut: ";
+    DynamicCString prefix("\nPut: ");
 
     prefix().Append(stringArg);
 

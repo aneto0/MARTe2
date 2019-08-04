@@ -362,14 +362,16 @@ template<uint32 size>
 class StaticCStringS: public MARTe::StaticCString<size>{
 	char8 buffer[size];
 public:
-	StaticCStringS(): StaticCString(buffer){buffer[0] = '\0';}
+	StaticCStringS(): StaticCString<size>(buffer){
+		buffer[0] = '\0';
+	}
 };
 
 } // namespace ErrorManagement
 
 
 #define COMPOSITE_REPORT_ERROR_STATIC(code,size,...)															  \
-MARTe::ErrorManagement::ErrorReportBuilder<MARTe::ErrorManagement::StaticCStringS<size>>::CompositeReportError(code,__VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
+MARTe::ErrorManagement::ErrorReportBuilder<MARTe::ErrorManagement::StaticCStringS<size> >::CompositeReportError(code,__VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
 
 #define COMPOSITE_REPORT_ERROR(code,...)															  \
 MARTe::ErrorManagement::ErrorReportBuilder<MARTe::DynamicCString>::CompositeReportError(code,__VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);

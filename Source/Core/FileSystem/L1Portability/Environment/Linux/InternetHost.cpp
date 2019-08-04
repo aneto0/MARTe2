@@ -61,24 +61,16 @@ public:
     }
     //
     ~LocalHostInfo() {
-        if (ipAddress != NULL) {
-            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
-            free(reinterpret_cast<void *>(const_cast<char8 *>(ipAddress)));
-        }
-        if (localHostName != NULL) {
-            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
-            free(reinterpret_cast<void *>(const_cast<char8 *>(localHostName)));
-        }
     }
     //
-    const char8 *GetLocalHostName() {
+    CCString GetLocalHostName() const {
         Init();
-        return localHostName;
+        return localHostName.GetList();
     }
     ///
-    const char8 *GetIpAddress() {
+    CCString GetIpAddress() const {
         Init();
-        return ipAddress;
+        return ipAddress.GetList();
     }
 
     bool Initialized() const {
@@ -86,13 +78,17 @@ public:
     }
 
 private:
-    const char8 *localHostName;
-    const char8 *ipAddress;
+    //
+    DynamicCString localHostName;
+    //
+    DynamicCString ipAddress;
+    //
     bool internetAddressInfoInitialised;
+    //
     FastPollingMutexSem internalFastSem;
 
     /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
-    LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
+    LocalHostInfo():internetAddressInfoInitialised(false),internalFastSem() {
         Init();
     }
 
@@ -103,24 +99,23 @@ private:
                 REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
-            localHostName = static_cast<const char8*>(NULL);
-            ipAddress = static_cast<const char8*>(NULL);
+            localHostName().Truncate(0);
+            ipAddress().Truncate(0);
 
             char8 hostname[128];
-            int32 ret = gethostname(&hostname[0], static_cast<size_t>(128u));
+            int32 ret = gethostname(&hostname[0], sizeof(hostname));
             struct hostent *h = static_cast<struct hostent *>(NULL);
             if (ret == 0) {
                 h = gethostbyname(&hostname[0]);
             }
             if (h != NULL) {
-                localHostName = strdup(h->h_name);
+                localHostName = h->h_name;
+
                 struct in_addr sin_addr;
                 char8* addr=h->h_addr_list[0];
                 if(addr!=static_cast<char8 *>(NULL)) {
                     sin_addr.s_addr = *(reinterpret_cast<uint32 *> (addr));
-
-                    // Convert the ip number in a dot notation string
-                    ipAddress = strdup(inet_ntoa(sin_addr));
+                    ipAddress = inet_ntoa(sin_addr);
                     internetAddressInfoInitialised = true;
                     internalFastSem.FastUnLock();
                 }
@@ -137,7 +132,7 @@ private:
 
 };
 
-StreamString InternetHost::GetHostName() const {
+CCString InternetHost::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
         REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
@@ -158,14 +153,14 @@ StreamString InternetHost::GetHostName() const {
     }
     hostnameFastSem.FastUnLock();
 
-    return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
+    return (hostName.Size() == 0u) ? (static_cast<CCString >(NULL)):(hostName);
 }
 
-const char8 *InternetHost::GetLocalHostName() {
+CCString InternetHost::GetLocalHostName() {
     return LocalHostInfo::Instance()->GetLocalHostName();
 }
 
-const char8 *InternetHost::GetLocalAddress() {
+CCString InternetHost::GetLocalAddress() {
     return LocalHostInfo::Instance()->GetIpAddress();
 }
 
@@ -183,7 +178,7 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 }
 
 InternetHost::InternetHost(const uint16 port,
-                           const char8 * const addr) {
+                           CCString  const addr) {
 
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
@@ -211,7 +206,7 @@ void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-bool InternetHost::SetAddress(const char8 * const addr) {
+bool InternetHost::SetAddress(CCString  const addr) {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
@@ -230,7 +225,7 @@ bool InternetHost::SetAddress(const char8 * const addr) {
     return ret;
 }
 
-bool InternetHost::SetAddressByHostName(const char8 * hostName) {
+bool InternetHost::SetAddressByHostName(CCString  hostName) {
     bool ret = false;
     //  hostName can be NULL meaning localhost
 

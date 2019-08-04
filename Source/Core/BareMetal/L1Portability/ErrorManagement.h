@@ -228,11 +228,6 @@ MARTe::ErrorManagement::ConditionalReportError(code,message,__FILE__,__LINE__,__
 MARTe::ErrorManagement::ConditionalReportErrorFullContext(code,message,className,objectName,objectPtr,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
 
-//#define REPORT_ERROR(code,...)															  \
-//MARTe::ErrorManagement::CompositeReportError(code,__VA_ARGS__,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);
-
-
-
 
 }
 #endif /* ERRORMANAGEMENT_H_ */

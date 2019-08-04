@@ -21,27 +21,17 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STANDARDHEAP_ENV_H_
-#define STANDARDHEAP_ENV_H_
+#ifndef STANDARDHEAP_H_
+#define STANDARDHEAP_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#ifndef LINT
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <stdlib.h>
-#include <string.h>
-#else
-#include "lint-linux.h"
-#endif
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../L0Types/HeapI.h"
 #include "../Generic/StandardHeap_Generic.h"
 
 /*---------------------------------------------------------------------------*/
@@ -54,5 +44,5 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STANDARDHEAP_ENV_H_ */
+#endif /* STANDARDHEAP_H_ */
 	

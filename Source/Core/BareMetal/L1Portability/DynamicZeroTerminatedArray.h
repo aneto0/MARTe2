@@ -179,7 +179,7 @@ protected:
 template<typename T>
 void DynamicZeroTerminatedArray<T>::Terminate(uint32 position){
 	T *p =  TArray();
-	ZTAZero(reinterpret_cast<uint8 *>(p+position),sizeof(T));
+	ZeroTerminatedArrayStaticTools::ZTAZero(reinterpret_cast<uint8 *>(p+position),sizeof(T));
 }
 
 template<typename T>
@@ -248,8 +248,9 @@ bool DynamicZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) cons
 
 template<typename T>
 ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::operator()(){
-	return ZeroTerminatedArrayToolT<T>(&array,array,GetSize()+1);
+	return ZeroTerminatedArrayToolT<T>(&TArray(),TArray(),GetSize()+1);
 }
+
 
 template<typename T>
 ZeroTerminatedArrayToolT<T> DynamicZeroTerminatedArray<T>::Append(const T &data) {

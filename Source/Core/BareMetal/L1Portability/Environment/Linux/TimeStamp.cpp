@@ -30,9 +30,11 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../../TimeStamp.h"
+#include "TimeStamp.h"
 #include "ErrorManagement.h"
-#include "../../TimerAndTime.h"
+#include "HighResolutionTimer.h"
+#include "../../TimeCalibration.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -56,15 +58,15 @@ TimeStamp::TimeStamp() {
 
 bool TimeStamp::GetTime() {
 
-    uint64 ticksFromStart = HighResolutionTimer::Counter() - OSInitializer::initialTicks;
+    uint64 ticksFromStart = HighResolutionTimer::Counter() - TimeCalibration::initialTicks;
 
     //Use HRT
-    float64 secondsFromStart = static_cast<float64>(ticksFromStart) * OSInitializer::period;
+    float64 secondsFromStart = static_cast<float64>(ticksFromStart) * TimeCalibration::period;
     float64 uSecondsFromStart = (secondsFromStart - floor(secondsFromStart)) * 1e6;
 
     //Add HRT to the the initial time saved in the calibration.
-    float64 secondsFromEpoch = static_cast<float64>(OSInitializer::initialSecs) + secondsFromStart;
-    float64 uSecondsFromEpoch = static_cast<float64>(OSInitializer::initialUSecs) + uSecondsFromStart;
+    float64 secondsFromEpoch = static_cast<float64>(TimeCalibration::initialSecs) + secondsFromStart;
+    float64 uSecondsFromEpoch = static_cast<float64>(TimeCalibration::initialUSecs) + uSecondsFromStart;
 
     uint32 microseconds = static_cast<uint32>(uSecondsFromEpoch);
 

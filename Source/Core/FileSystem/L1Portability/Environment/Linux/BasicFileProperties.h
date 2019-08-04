@@ -33,16 +33,17 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "StreamString.h"
+#include "DynamicCString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 struct BasicFileProperties {
-    Handle identifier;
-    uint32 saveFlags;
-    StreamString pathName;
+    Handle 			identifier;
+    uint32 			saveFlags;
+    DynamicCString 	pathName;
 };
 }
 

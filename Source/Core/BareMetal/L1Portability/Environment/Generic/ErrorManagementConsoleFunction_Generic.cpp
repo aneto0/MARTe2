@@ -34,7 +34,7 @@
 
 #include "ErrorManagement.h"
 #include "HighResolutionTimer.h"
-#include "../../../L0Types/ErrorInformation.h"
+#include "ErrorInformation.h"
 #include "ErrorTypeLookup.h"
 #include "StringHelper.h"
 #include "CString.h"
@@ -73,21 +73,16 @@ ErrorInformation x;
 
 void NullErrorProcessFunction(const ErrorInformation &errorInfo,CCString const errorDescription){
 	if (errorFile == NULL){
-//		errorFile = fopen("MARTe_Error.log","w");
-		errno_t err;
-		err  = fopen_s( &errorFile, "MARTe_Error.log","w");
-		if (err != 0){
-			errorFile = NULL;
-		}
+		errorFile = fopen("MARTe_Error.log","w");
 	}
 
 	if (errorFile != NULL){
-		fprintf (errorFile,"(%s ",errorInfo.fileName);
+		fprintf (errorFile,"(%s ",errorInfo.fileName.GetList());
 		fprintf (errorFile,", @%i): ",errorInfo.header.lineNumber);
 		fprintf (errorFile,"error ");
 		PrintError(errorInfo.header.errorType);
 		fprintf (errorFile," %s",errorDescription.GetList());
-		fprintf (errorFile,"   fn = %s ",errorInfo.functionName);
+		fprintf (errorFile,"   fn = %s ",errorInfo.functionName.GetList());
 		fprintf (errorFile,"\n");
 		fflush(errorFile);
 	}

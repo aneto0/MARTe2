@@ -35,7 +35,7 @@
 #include "BasicConsole.h"
 #include "Sleep.h"
 #include "CCString.h"
-#include "Milliseconds.h"
+#include "MilliSeconds.h"
 
 
 using namespace MARTe;

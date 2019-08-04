@@ -21,6 +21,8 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#if 0
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -41,8 +43,8 @@
 //#include "HighResolutionTimerCalibrator.h"
 //#include "HighResolutionTimer.h"
 #include "StringHelper.h"
-#include "../../TimerAndTimeStartup.h"
-#include "../../ErrorManagement.h"
+#include "TimerAndTimeStartup.h"
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -148,3 +150,5 @@ uint32 OSInitializer::osMinSleepUsec;
 
 
 }
+
+#endif

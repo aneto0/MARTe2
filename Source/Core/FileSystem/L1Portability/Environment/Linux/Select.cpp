@@ -32,7 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Select.h"
-#include "TimeoutType.h"
 #include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
@@ -346,7 +345,7 @@ bool Select::IsSet(const HandleI &handle) const {
     return retVal;
 }
 
-int32 Select::WaitUntil(const TimeoutType &timeout) {
+int32 Select::WaitUntil(const MilliSeconds &timeout) {
 
     int32 retSel = -1;
     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
@@ -361,12 +360,16 @@ int32 Select::WaitUntil(const TimeoutType &timeout) {
         REPORT_ERROR(ErrorManagement::Information, "Select::WaitAll(). The highestHandle is negative.");
     }
     else {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
+        	uint32 ms = timeout.GetTimeRaw();
+        	uint32 s  = ms / 1000u;
+        	ms = ms - (s * 1000u);
+        	uint32 us = ms *1000u;
+
             struct timeval timeoutLinux;
-            /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-            timeoutLinux.tv_usec = static_cast<int64>(timeout.GetTimeoutMSec()) * 1000;
-            /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-            timeoutLinux.tv_sec = static_cast<int64>(timeout.GetTimeoutMSec()) / 1000;
+            timeoutLinux.tv_usec = static_cast<__time_t>(s);
+            timeoutLinux.tv_sec = static_cast<__time_t>(us);
+
             retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux);
         }
         else {

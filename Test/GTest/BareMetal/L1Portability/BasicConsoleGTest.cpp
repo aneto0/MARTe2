@@ -27,6 +27,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
+#include <stdio.h>
+#include <unistd.h>
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -35,15 +38,12 @@
 #include "TestSupport.h"
 #include "MilliSeconds.h"
 #include "BasicConsoleTest.h"
+
 #define Windows 2
 #define Linux 1
 #if ENVIRONMENT == Linux
 #undef Linux
 #define Linux Linux
-#include "BasicFile.h"
-#include "Directory.h"
-#else
-#define BasicFile int32
 #endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -53,30 +53,26 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void RedirectConsoleInput(BasicFile &inputFile,
-                          const char8* inputString) {
+void RedirectConsoleInput(FILE * &inputFile,CCString inputString) {
 #if ENVIRONMENT == Linux
-    inputFile.Open("inputFile_Test.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W);
-    uint32 size = StringHelper::Length(inputString);
-    inputFile.Write(inputString, size);
+    inputFile = fopen("inputFile_Test.txt","RW");
+    fputs(inputString.GetList(),inputFile);
     if (N_CHARS_NEWLINE == 1u) {
-        size = 1u;
-        inputFile.Write("\n", size);
+        fputs("\n",inputFile);
     }
     else {
-        size = 2u;
-        inputFile.Write("\r\n", size);
+        fputs("\r\n",inputFile);
     }
-    inputFile.Seek(0);
-    dup2(inputFile.GetWriteHandle(), fileno(stdin));
+    fseek(inputFile,0,SEEK_SET);
+
+    dup2(fileno(inputFile), fileno(stdin));
 #endif
 }
 
-void Clean(BasicFile &inputFile) {
+void Clean(FILE * &inputFile) {
 #if ENVIRONMENT == Linux
-    inputFile.Close();
-    Directory remFile("inputFile_Test.txt");
-    remFile.Delete();
+    fclose(inputFile);
+    remove("inputFile_Test.txt");
 #endif
 }
 
@@ -153,7 +149,7 @@ TEST(BasicConsoleGTest,TestWrite2) {
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
-    BasicFile inputFile;
+    FILE * inputFile;
     RedirectConsoleInput(inputFile, "\n");
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
     Clean(inputFile);
@@ -162,7 +158,7 @@ TEST(BasicConsoleGTest,TestPaging) {
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
-    BasicFile inputFile;
+    FILE * inputFile;
     RedirectConsoleInput(inputFile, "Hello");
     ASSERT_TRUE(console.TestRead("Hello"));
     Clean(inputFile);
@@ -170,7 +166,7 @@ TEST(BasicConsoleGTest,TestRead) {
 
 TEST(BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
-    BasicFile inputFile;
+    FILE * inputFile;
     RedirectConsoleInput(inputFile, "");
     ASSERT_TRUE(console.TestTimeoutRead(MilliSeconds(100,Units::ms)));
     Clean(inputFile);

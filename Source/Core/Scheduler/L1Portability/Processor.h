@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "CCString.h"
+
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 
 /*---------------------------------------------------------------------------*/

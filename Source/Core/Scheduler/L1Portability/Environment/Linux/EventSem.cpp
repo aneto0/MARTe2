@@ -227,10 +227,10 @@ ErrorManagement::ErrorType EventSem::Wait() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
-ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::Wait(const MilliSeconds &timeout) {
     bool ok = !handle->closed;
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    if (timeout == TTInfiniteWait) {
+    if (timeout == MilliSeconds::Infinite) {
         err = Wait();
     }
     else {
@@ -240,16 +240,12 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
             ok = (ftime(&tb) == 0);
 
             if (ok) {
-                float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
-                sec += static_cast<float64>(tb.millitm);
-                sec *= 1e-3;
-                sec += static_cast<float64>(tb.time);
+            	uint32 ms = timeout.GetTimeRaw();
+            	uint32 s = ms/1000U;
+            	ms = ms - (s * 1000U);
+                timesValues.tv_sec  = static_cast<int32>(s);
+                timesValues.tv_nsec = static_cast<int32>(ms * 1000000U);
 
-                float64 roundValue = floor(sec);
-                timesValues.tv_sec = static_cast<int32>(roundValue);
-                float64 nSec = (sec - roundValue);
-                nSec *= 1e9;
-                timesValues.tv_nsec = static_cast<int32>(nSec);
                 ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
                 if (ok) {
                     if (handle->stop) {
@@ -309,7 +305,7 @@ bool EventSem::Reset() {
     return ok;
 }
 
-ErrorManagement::ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::ResetWait(const MilliSeconds &timeout) {
     bool ok = Reset();
     ErrorManagement::ErrorType err = ErrorManagement::OSError;
     if (ok) {

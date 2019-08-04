@@ -205,33 +205,34 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
     		stringt.Append(className);
     	}
     }
-    else // !isStructuredData
-   	if (!IsBasicType()){  //Stream,StructuredData,..
-   		stringt.Append(constString);
-   		TD_FullType ft = static_cast<TD_FullType>(fullType);
-   		stringt.Append(BasicTypeName(ft));
-   	}
-   	else { //!IsComplexType()
-   		TD_FullType ft = static_cast<TD_FullType>(fullType);
-   		CCString typeName = BasicTypeName(ft);
-   		if (IsBitType()){  // uint5 bitranges
-   			stringt.Append(constString);
-   			stringt.Append("BitRange<");
-			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
-   			TYPENAME_CORE()
-			stringt.Append(',');
-   			uint32 numberOfBitsR = static_cast<uint32>(numberOfBits);
-   			uint32 bitOffsetR = static_cast<uint32>(bitOffset);
-   			stringt.Append(numberOfBitsR);
-   			stringt.Append(',');
-   			stringt.Append(bitOffsetR);
-   			stringt.Append('>');
-   		}
-   		else {// not bit type
-			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
-   			TYPENAME_CORE()
-   		}
-   	}
+    else {// !isStructuredData
+       	if (!IsBasicType()){  //Stream,StructuredData,..
+       		stringt.Append(constString);
+       		TD_FullType ft = static_cast<TD_FullType>(fullType);
+       		stringt.Append(BasicTypeName(ft));
+       	}
+       	else { //!IsComplexType()
+       		TD_FullType ft = static_cast<TD_FullType>(fullType);
+       		CCString typeName = BasicTypeName(ft);
+       		if (IsBitType()){  // uint5 bitranges
+       			stringt.Append(constString);
+       			stringt.Append("BitRange<");
+    			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
+       			TYPENAME_CORE()
+    			stringt.Append(',');
+       			uint32 numberOfBitsR = static_cast<uint32>(numberOfBits);
+       			uint32 bitOffsetR = static_cast<uint32>(bitOffset);
+       			stringt.Append(numberOfBitsR);
+       			stringt.Append(',');
+       			stringt.Append(bitOffsetR);
+       			stringt.Append('>');
+       		}
+       		else {// not bit type
+    			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
+       			TYPENAME_CORE()
+       		}
+       	}
+    }
 	return ret;
 }
 

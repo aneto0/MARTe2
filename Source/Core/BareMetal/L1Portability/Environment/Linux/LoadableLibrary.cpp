@@ -31,6 +31,8 @@
 
 #include <dlfcn.h>
 #include "LoadableLibrary.h"
+#include "DynamicCString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -69,9 +71,9 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
      * in operating system api*/
     m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
     if (m == NULL) {
-        DynamicCString error = "LoadableLibrary: Failed dlopen(): ";
+        DynamicCString error("LoadableLibrary: Failed dlopen(): ");
         CCString dlError (dlerror());
-        error += dlError;
+        error().Append(dlError);
         REPORT_ERROR(ErrorManagement::OSError, error);
         ret = false;
     }

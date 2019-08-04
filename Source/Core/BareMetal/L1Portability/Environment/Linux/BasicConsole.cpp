@@ -200,7 +200,7 @@ bool BasicConsole::Read(char8 * const output,
                         uint32 & size,
                         const MilliSeconds &timeout) {
     bool ret = false;
-    if (timeout.IsValid())) {
+    if (timeout.IsValid()) {
         ret = Read(output, size);
     }
     else {
@@ -229,10 +229,10 @@ bool BasicConsole::Write(const char8 * const input,
                          uint32 & size) {
     bool err = true;
     if ((handle->openingMode & BasicConsoleMode::EnablePaging) == BasicConsoleMode::EnablePaging) {
-        err = PagedWrite(input, size, TTInfiniteWait);
+        err = PagedWrite(input, size, MilliSeconds::Infinite);
     }
     else {
-        err = OSWrite(input, size, TTInfiniteWait);
+        err = OSWrite(input, size, MilliSeconds::Infinite);
     }
     return err;
 }

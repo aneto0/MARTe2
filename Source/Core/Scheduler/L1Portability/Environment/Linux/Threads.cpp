@@ -270,7 +270,7 @@ bool Kill(const ThreadIdentifier &threadId) {
 ThreadIdentifier BeginThread(const ThreadFunctionType function,
                              const void * const parameters,
                              const uint32 &stacksize,
-                             const char8 * const name,
+                             CCString name,
                              const uint32 exceptionHandlerBehaviour,
                              ProcessorType runOnCPUs) {
 
@@ -365,8 +365,8 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 void EndThread() {
 }
 
-const char8 *Name(const ThreadIdentifier &threadId) {
-    const char8 *name = static_cast<const char8 *>(NULL);
+CCString Name(const ThreadIdentifier &threadId) {
+    CCString name = emptyString;
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
@@ -399,7 +399,7 @@ bool GetThreadInfoCopy(ThreadInformation &copy,
     return ThreadsDatabase::GetInfo(copy, threadId);
 }
 
-ThreadIdentifier FindByName(const char8 * const name) {
+ThreadIdentifier FindByName(CCString name) {
     return ThreadsDatabase::Find(name);
 }
 
