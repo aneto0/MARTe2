@@ -101,7 +101,7 @@ bool InternetHost::SetAddress(CCString addr) {
 
     uint32 iaddr = INADDR_NONE;
     if (ret) {
-        uint32 iaddr = inet_addr(addr.GetList());
+        iaddr = inet_addr(addr.GetList());
 
         ret.fatalError = (iaddr == INADDR_NONE);
         COMPOSITE_REPORT_ERROR(ret, "InternetHost: Failed inet_addr(",addr,"), address=0xFFFFFFFF");

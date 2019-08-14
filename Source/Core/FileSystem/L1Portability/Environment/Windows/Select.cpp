@@ -33,6 +33,7 @@
 #include "ErrorManagement.h"
 #include "Select.h"
 #include "MilliSeconds.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,6 +46,7 @@
 namespace MARTe {
 
 Select::Select() {
+#if 0
     //Note that the readHandle will contain the read and the write handles (see WaitUntil which accepts only one array)
     readHandle.registeredHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     readHandle.selectHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
@@ -69,9 +71,11 @@ Select::Select() {
         exceptionHandle.selectHandles[i] = NULL;
     }
     highestHandle = 0;
+#endif
 }
 
 Select::~Select() {
+#if 0
     delete[] readHandle.registeredHandles;
     delete[] readHandle.selectHandles;
 
@@ -80,19 +84,20 @@ Select::~Select() {
 
     delete[] exceptionHandle.registeredHandles;
     delete[] exceptionHandle.selectHandles;
+#endif
 }
 
+#if 0
+static inline bool AddHandle(const HandleI &handle, SetIdentifier &handlesint32 eventMask){
 
-static inline bool AddHandle(const HandleI &handle, SetIdentifier &handles,int32 &highestHandle,int32 eventMask){
 	ErrorManagement::ErrorType ret;
-
 
     Handle hSocket = handle.GetReadHandle();
     ret.parametersError = (hSocket < 0);
     REPORT_ERROR(ret, "Select::AddHandle(). Invalid descriptor.");
 
     if (ret){
-        ret.outOfRange = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
+        ret.outOfRange = ((highestHandle + 1) > MAXIMUM_WAIT_OBJECTS);
         REPORT_ERROR(ret,"too many handles");
     }
 
@@ -158,11 +163,260 @@ static inline bool RemoveHandle(const HandleI &handle, SetIdentifier &handles,in
 
 	return ret;
 }
+#endif
+
+uint32 SelectProperties::Find(HANDLE handle) const{
+	bool found = false;
+	uint32 index = 0;
+	uint32 maxIndex = handleDB.GetSize();
+	while (!found && (index < maxIndex)){
+		found = (handleDB[index] == handle);
+		if (!found) {
+			index++;
+		}
+	}
+
+	if (!found){
+		index = 0xFFFFFFFF;
+	}
+	return index;
+}
+
+uint32 SelectProperties::SocketFind(SOCKET socket) const{
+	bool found = false;
+	uint32 index = 0;
+	uint32 maxIndex = socketHandleDB.GetSize();
+	while (!found && (index < maxIndex)){
+		found = (socketHandleDB[index] == socket);
+		if (!found) {
+			index++;
+		}
+	}
+
+	if (!found){
+		index = 0xFFFFFFFF;
+	}
+	return index;
+}
 
 
+ErrorManagement::ErrorType SelectProperties::Add(HANDLE handle, const HandleFlags &flag){
+	ErrorManagement::ErrorType ret;
+
+	uint32 index = Find(handle);
+
+	if (index < handleDB.GetSize()){
+		handleFlagsDB.Access(index).Merge(flag);
+	} else {
+    	ret.outOfRange = (handleDB.GetSize() >= MAXIMUM_WAIT_OBJECTS);
+    	REPORT_ERROR(ret,"Too many Handles");
+
+    	if (ret){
+    		ret.fatalError =  !handleDB.Add(handle);
+        	REPORT_ERROR(ret," handleDB.Add failed");
+    	}
+
+    	if (ret){
+    		ret.fatalError =  !handleFlagsDB.Add(flag);
+        	REPORT_ERROR(ret," handleFlagsDB.Add failed");
+    	}
+
+    	if (ret){
+    		ret.fatalError =  !socketHandleDB.Add(0);
+        	REPORT_ERROR(ret," socketHandleDB.Add failed");
+    	}
+	}
+
+	return ret;
+}
+
+ErrorManagement::ErrorType SelectProperties::AddSocket(SOCKET socket, const HandleFlags &flag){
+	ErrorManagement::ErrorType ret;
+
+	uint32 index = SocketFind(socket);
+
+	WSAEVENT hEvent = 0;
+
+	if (index < handleDB.GetSize()){
+		handleFlagsDB.Access(index).Merge(flag);
+
+		WSAEVENT hEvent = handleDB[index];
+
+		ret.OSError = (WSAEventSelect(socket,hEvent,handleFlagsDB.Access(index).GetEvents())!=0);
+    	REPORT_ERROR(ret,"WSAEventSelect failed");
+
+	} else {
+    	ret.outOfRange = (handleDB.GetSize() >= MAXIMUM_WAIT_OBJECTS);
+    	REPORT_ERROR(ret,"Too many Handles");
+
+    	if (ret){
+    		ret.fatalError =  !socketHandleDB.Add(socket);
+        	REPORT_ERROR(ret," socketHandleDB.Add failed");
+    	}
+
+    	if (ret){
+    		hEvent = WSACreateEvent();
+    		ret.fatalError =  !handleDB.Add(hEvent);
+        	REPORT_ERROR(ret," handleDB.Add failed");
+    	}
+
+    	if (ret){
+    		ret.OSError = (WSAEventSelect(socket,hEvent,flag.GetEvents())!=0);
+        	REPORT_ERROR(ret,"WSAEventSelect failed");
+    	}
+
+    	if (ret){
+    		ret.fatalError =  !handleFlagsDB.Add(flag);
+        	REPORT_ERROR(ret," handleFlagsDB.Add failed");
+    	}
+	}
+
+	return ret;
+
+}
+
+ErrorManagement::ErrorType SelectProperties::Remove(HANDLE handle, const HandleFlags &flag){
+	ErrorManagement::ErrorType ret;
+
+	uint32 index = Find(handle);
+
+	ret.unsupportedFeature = (index >= handleDB.GetSize());
+	REPORT_ERROR(ret,"Handle not found");
+
+	if (ret){
+
+		handleFlagsDB.Access(index).Subtract(flag);
+
+		if (handleFlagsDB[index].IsEmpty()){
+			ErrorManagement::ErrorType ret2;
+			ret2.fatalError =  !handleDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," handleDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+
+			ret2.fatalError =  !socketHandleDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," socketHandleDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+
+			ret2.fatalError =  !handleFlagsDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," handleFlagsDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+		} else {
+			ret = Add(handle,handleFlagsDB[index]);
+		}
+	}
+	return ret;
+}
+
+
+ErrorManagement::ErrorType SelectProperties::RemoveSocket(SOCKET socket, const HandleFlags &flag){
+	ErrorManagement::ErrorType ret;
+
+	uint32 index = SocketFind(socket);
+
+	ret.unsupportedFeature = (index >= handleDB.GetSize());
+	REPORT_ERROR(ret,"Handle not found");
+
+	if (ret){
+
+		handleFlagsDB.Access(index).Subtract(flag);
+
+		if (handleFlagsDB[index].IsEmpty()){
+			ret.OSError = (WSACloseEvent(handleDB[index]) != TRUE);
+			REPORT_ERROR(ret,"WSACloseEvent failed");
+
+			ErrorManagement::ErrorType ret2;
+
+			ret2.fatalError =  !handleDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," handleDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+
+			ret2.fatalError =  !socketHandleDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," handleDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+
+			ret2.fatalError =  !handleFlagsDB.Remove(index);
+	    	COMPOSITE_REPORT_ERROR(ret2," handleFlagsDB.Remove(",index,") failed");
+	    	ret.internalSetupError = ret.internalSetupError | !ret2;
+		} else {
+			ret = AddSocket(socket,handleFlagsDB[index]);
+		}
+	}
+
+	return ret;
+}
+
+void SelectProperties::Clean(){
+	ErrorManagement::ErrorType ret;
+
+	for (uint32 i=0; i< handleDB.GetSize();i++){
+		if (socketHandleDB[i]!=0){
+			ErrorManagement::ErrorType ret;
+			ret.OSError = (WSACloseEvent(handleDB[i]) != TRUE);
+			REPORT_ERROR(ret,"WSACloseEvent failed");
+		}
+	}
+
+	socketHandleDB.Clean();
+	handleDB.Clean();
+	handleFlagsDB.Clean();
+}
+
+HandleFlags SelectProperties::GetProperties(HANDLE handle) const{
+	HandleFlags ret;
+
+	uint32 index = Find(handle);
+
+	if (index < handleFlagsDB.GetSize()){
+		ret =  handleFlagsDB[index];
+	}
+	return ret;
+}
+
+bool Select::Add(const HandleI &handle,bool readEvent,bool writeEvent,bool exceptEvent){
+	ErrorManagement::ErrorType ret;
+	HANDLE h = handle.GetReadHandle();
+	ret.internalSetupError = ((h==NULL) || (h == INVALID_HANDLE_VALUE));
+	REPORT_ERROR(ret,"invalid Handle ");
+
+	if (ret){
+		ret = 	selectProperties.Add(h,HandleFlags(readEvent,writeEvent,exceptEvent));
+		REPORT_ERROR(ret,"selectProperties.Add(h,readFlag) failed");
+	}
+
+	return ret;
+}
+
+bool Select::Add(const BasicSocket &socket,bool readEvent,bool writeEvent,bool exceptEvent){
+	ErrorManagement::ErrorType ret;
+	ret = 	selectProperties.AddSocket(socket.GetSocket(),HandleFlags(readEvent,writeEvent,exceptEvent));
+	REPORT_ERROR(ret,"selectProperties.AddSocket(h,readFlag) failed");
+	return ret;
+}
+
+bool Select::Remove(const HandleI &handle,bool readEvent,bool writeEvent,bool exceptEvent){
+	ErrorManagement::ErrorType ret;
+	HANDLE h = handle.GetReadHandle();
+	ret = 	selectProperties.Remove(h,HandleFlags(readEvent,writeEvent,exceptEvent));
+	REPORT_ERROR(ret,"selectProperties.Remove(h,readFlag) failed");
+	return ret;
+}
+
+bool Select::Remove(const BasicSocket &socket,bool readEvent,bool writeEvent,bool exceptEvent){
+	ErrorManagement::ErrorType ret;
+	ret = 	selectProperties.RemoveSocket(socket.GetSocket(),HandleFlags(readEvent,writeEvent,exceptEvent));
+	REPORT_ERROR(ret,"selectProperties.Remove(h,readFlag) failed");
+	return ret;
+}
+
+#if 0
 bool Select::AddReadHandle(const HandleI &handle) {
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetReadHandle();
+	ret = 	selectProperties.Add(h,readFlag);
+	REPORT_ERROR(ret,"selectProperties.Add(h,readFlag) failed");
+	return ret;
 
-	return AddHandle(handle, readHandle,highestHandle,FD_READ);
+//	return AddHandle(handle, readHandle,highestHandle,FD_READ);
 
 /*
 	ErrorManagement::ErrorType ret;
@@ -211,8 +465,13 @@ bool Select::AddReadHandle(const HandleI &handle) {
 }
 
 bool Select::AddWriteHandle(const HandleI &handle) {
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetWriteHandle();
+	ret = 	selectProperties.Add(h,writeFlag);
+	REPORT_ERROR(ret,"selectProperties.Add(h,readFlag) failed");
+	return ret;
 
-	return AddHandle(handle, writeHandle,highestHandle,FD_WRITE);
+//	return AddHandle(handle, writeHandle,highestHandle,FD_WRITE);
 /*
 	ErrorManagement::ErrorType ret;
 
@@ -260,7 +519,13 @@ bool Select::AddWriteHandle(const HandleI &handle) {
 }
 
 bool Select::AddExceptionHandle(const HandleI &handle) {
-	return AddHandle(handle, exceptionHandle,highestHandle,FD_READ);
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetReadHandle();
+	ret =selectProperties.Add(h,exceptionFlag);
+	REPORT_ERROR(ret,"selectProperties.Add(h,readFlag) failed");
+	return ret;
+
+//	return AddHandle(handle, exceptionHandle,highestHandle,FD_READ);
 
 	/*
 
@@ -307,7 +572,13 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
 
 
 bool Select::RemoveReadHandle(const HandleI &handle) {
-	return RemoveHandle(handle, readHandle,highestHandle);
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetReadHandle();
+	ret = 	selectProperties.Remove(h);
+	REPORT_ERROR(ret,"selectProperties.Remove(h) failed");
+	return ret;
+
+//	return RemoveHandle(handle, readHandle,highestHandle);
 /*
 	bool retVal = false;
     Handle h = handle.GetReadHandle();
@@ -334,7 +605,12 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
 }
 
 bool Select::RemoveWriteHandle(const HandleI &handle) {
-	return RemoveHandle(handle, writeHandle,highestHandle);
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetWriteHandle();
+	ret = 	selectProperties.Remove(h);
+	REPORT_ERROR(ret,"selectProperties.Remove(h) failed");
+	return ret;
+//	return RemoveHandle(handle, writeHandle,highestHandle);
 	/*
     bool retVal = false;
     Handle h = handle.GetWriteHandle();
@@ -361,7 +637,13 @@ bool Select::RemoveWriteHandle(const HandleI &handle) {
 }
 
 bool Select::RemoveExceptionHandle(const HandleI &handle) {
-	return RemoveHandle(handle, exceptionHandle,highestHandle);
+	ErrorManagement::ErrorType ret;
+	Handle h = handle.GetReadHandle();
+	ret = 	selectProperties.Remove(h);
+	REPORT_ERROR(ret,"selectProperties.Remove(h) failed");
+	return ret;
+
+//	return RemoveHandle(handle, exceptionHandle,highestHandle);
 /*
     bool retVal = false;
     Handle h = handle.GetReadHandle();
@@ -387,7 +669,11 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
     */
 }
 
+#endif
+
 void Select::ClearAllHandles() {
+	selectProperties.Clean();
+/*
     for (int32 i = 0; i < highestHandle; i++) {
         readHandle.registeredHandles[i] = NULL;
         readHandle.selectHandles[i] = NULL;
@@ -399,10 +685,33 @@ void Select::ClearAllHandles() {
         exceptionHandle.selectHandles[i] = NULL;
     }
     highestHandle = 0;
+*/
     return;
 }
 
 bool Select::IsSet(const HandleI &handle) const {
+	Handle h = handle.GetReadHandle();
+	HandleFlags hf = selectProperties.GetProperties(h);
+	return  hf.hasBeenSelected;
+}
+
+bool Select::IsSet(const BasicSocket &socket) const {
+	ErrorManagement::ErrorType ret;
+
+	uint32 index = selectProperties.SocketFind(socket.GetSocket());
+
+	ret.unsupportedFeature = (index >= selectProperties.handleDB.GetSize());
+	REPORT_ERROR(ret,"Handle not found");
+
+	bool result = false;
+	if (ret){
+		HandleFlags hf = selectProperties.GetProperties(selectProperties.handleDB[index]);
+		result = hf.hasBeenSelected;
+	}
+	return result;
+}
+
+/*
     bool retVal = false;
     Handle hr = handle.GetReadHandle();
     if (hr >= 0) {
@@ -433,9 +742,27 @@ bool Select::IsSet(const HandleI &handle) const {
         }
     }
     return retVal;
-}
+    */
+
 
 int32 Select::WaitUntil(const MilliSeconds &msecTimeout) {
+
+	uint32 nOfHandles = selectProperties.handleDB.GetSize();
+	const HANDLE *handles = selectProperties.handleDB.GetAllocatedMemoryConst();
+    uint32 selected = WaitForMultipleObjectsEx(nOfHandles, handles, false, msecTimeout.GetTimeRaw(), true);
+
+    if (selected < (WAIT_OBJECT_0 + selectProperties.handleFlagsDB.GetSize())){
+        selectProperties.handleFlagsDB.Access(selected-WAIT_OBJECT_0).hasBeenSelected = true;
+
+        return 1;
+    }
+    if (selected == WAIT_TIMEOUT){
+    	return 0;
+    }
+
+    return -1;
+}
+#if 0
     Handle * allHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
     uint8 i = 0;
     uint16 counter = 0;
@@ -479,6 +806,6 @@ int32 Select::WaitUntil(const MilliSeconds &msecTimeout) {
     delete[] allHandles;
     return retVal;
 }
-
+#endif
 }
 

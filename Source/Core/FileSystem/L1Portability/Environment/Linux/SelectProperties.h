@@ -39,8 +39,36 @@
 
 namespace MARTe {
 typedef fd_set SetIdentifier;
+
+/**
+
+*/
+struct SelectProperties{
+
+        /**
+         * Contains informations about the read handles used in the select. AddReadHandle() adds handles to it.
+         */
+        SetIdentifier readHandle;
+
+        /**
+         * Contains informations about the write handles used in the select. AddWriteHandle() adds handles to it.
+         */
+        SetIdentifier writeHandle;
+
+        /**
+         * Contains informations about the exceptions handles used in the select. AddExceptionHandle() adds handles to it.
+         */
+        SetIdentifier exceptionHandle;
+
+        /**
+         * The highest handle that readHandle, writeHandle or exceptionHandle contain (operating system specific).
+         */
+        int32 highestHandle;
+
 }
 
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

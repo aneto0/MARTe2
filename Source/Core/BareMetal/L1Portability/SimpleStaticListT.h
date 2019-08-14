@@ -48,7 +48,7 @@ namespace MARTe{
  * @details This class implements fixed size array with an index pointing at the next free object
  *
  * @tparam allocationSize is the size of this array as type T
- * @tparam T is any object. Note that T must have a zero paramemters constructor and have a working copy operator
+ * @tparam T is any object. Note that T must have a zero parameters constructor and have a working copy operator
  *
  */
 template <class T,uint32 allocationSize>

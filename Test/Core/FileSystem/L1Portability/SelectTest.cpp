@@ -34,6 +34,10 @@
 #include "SelectTest.h"
 #include "Sleep.h"
 #include "Threads.h"
+#include "ErrorType.h"
+#include "CompositeErrorManagement.h"
+#include "ErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,17 +49,25 @@ static const uint16 DUMMY_TESTING_PORT_1 = 49153;
 static const uint16 DUMMY_TESTING_PORT_2 = 49154;
 
 static void ThreadWrite(MilliSeconds *defaultTo) {
+	ErrorManagement::ErrorType ret;
     BasicUDPSocket bUDPsWrite;
-    if (!bUDPsWrite.Open()) {
-        return;
-    }
-    if (!bUDPsWrite.Connect(LOCALHOST_IP, ACTUAL_TESTING_PORT)) {
-        return;
+    bool opened = bUDPsWrite.Open();
+    ret.OSError = !opened;
+    REPORT_ERROR(ret,"bUDPsWrite.Open() failed");
+
+    if (ret){
+    	ret.OSError = !bUDPsWrite.Connect(LOCALHOST_IP, ACTUAL_TESTING_PORT);
+        COMPOSITE_REPORT_ERROR(ret,"bUDPsWrite.Connect(",LOCALHOST_IP,",",ACTUAL_TESTING_PORT,") failed");
     }
     uint32 size = 3;
-    Sleep::Short(*defaultTo * 0.5);
-    bUDPsWrite.Write("Hey", size);
-    bUDPsWrite.Close();
+    if (ret){
+    	Sleep::Short(*defaultTo * 0.5);
+    	ret.OSError = !bUDPsWrite.Write("Hey", size);
+        REPORT_ERROR(ret,"bUDPsWrite.Write() failed");
+    }
+    if (opened){
+        bUDPsWrite.Close();
+    }
     return;
 }
 
@@ -90,14 +102,14 @@ bool SelectTest::TestDefaultConstructor() {
 
 bool SelectTest::TestAddReadHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddReadHandle(bc);
+    retVal = sel.AddReadHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddReadHandle_SameHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddReadHandle(bc);
+    retVal = sel.AddReadHandle(bc);
     retVal &= !sel.AddReadHandle(bc);
     bc.Close();
     return retVal;
@@ -110,144 +122,178 @@ bool SelectTest::TestAddReadHandle_InvalidHandle() {
 
 bool SelectTest::TestAddWriteHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddWriteHandle(bc);
+    retVal = sel.AddWriteHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddWritedHandle_SameHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddWriteHandle(bc);
+    retVal = sel.AddWriteHandle(bc);
     retVal &= !sel.AddWriteHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddWritedHandle_InvalidHandle() {
-    retVal &= !sel.AddWriteHandle(bf);
+    retVal = !sel.AddWriteHandle(bf);
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddExceptionHandle(bc);
+    retVal = sel.AddExceptionHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle_SameHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddExceptionHandle(bc);
+    retVal = sel.AddExceptionHandle(bc);
     retVal &= !sel.AddExceptionHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle_Invalidle() {
-    retVal &= !sel.AddExceptionHandle(bf);
-    return retVal;
+	BasicFile bf;
+    return !sel.AddExceptionHandle(bf);
 }
 
 bool SelectTest::TestRemoveReadHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddReadHandle(bc);
-    retVal &= sel.RemoveReadHandle(bc);
+    retVal = sel.RemoveReadHandle(bc);
     retVal &= !sel.IsSet(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveReadHandle_SameHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddReadHandle(bc);
     sel.RemoveReadHandle(bc);
-    retVal &= !sel.RemoveReadHandle(bc);
+    retVal = !sel.RemoveReadHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveReadHandle_InvalidHandle() {
-    retVal &= !sel.RemoveReadHandle(bf);
-    return retVal;
+	BasicFile bf;
+    return !sel.RemoveReadHandle(bf);
 }
 
 bool SelectTest::TestRemoveWriteHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddWriteHandle(bc);
-    retVal &= sel.RemoveWriteHandle(bc);
+    retVal = sel.RemoveWriteHandle(bc);
     retVal &= !sel.IsSet(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveWriteHandle_SameHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddWriteHandle(bc);
     sel.RemoveWriteHandle(bc);
-    retVal &= !sel.RemoveWriteHandle(bc);
+    retVal = !sel.RemoveWriteHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveWriteHandle_InvalidHandle() {
-    retVal &= !sel.RemoveWriteHandle(bf);
-    return retVal;
+	BasicFile bf;
+    return !sel.RemoveWriteHandle(bf);
 }
 
 bool SelectTest::TestRemoveExceptionHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddExceptionHandle(bc);
-    retVal &= sel.RemoveExceptionHandle(bc);
+    retVal = sel.RemoveExceptionHandle(bc);
     retVal &= !sel.IsSet(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveExceptionHandle_SameHandle() {
+	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
     sel.AddExceptionHandle(bc);
     sel.RemoveExceptionHandle(bc);
-    retVal &= !sel.RemoveExceptionHandle(bc);
+    retVal = !sel.RemoveExceptionHandle(bc);
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
-    retVal &= !sel.RemoveExceptionHandle(bf);
+    retVal = !sel.RemoveExceptionHandle(bf);
     return retVal;
 }
 
 bool SelectTest::TestClearAllHandles() {
-    bool ok;
+	ErrorManagement::ErrorType ret;
     Directory dir;
     BasicFile bf;
-    ok = bc.Open(BasicConsoleMode::Default);
-    if (ok) {
-        ok = bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
-        if (ok) {
-            retVal &= sel.AddReadHandle(bc);
-            retVal &= sel.AddReadHandle(bf);
-            retVal &= sel.AddWriteHandle(bc);
-            retVal &= sel.AddWriteHandle(bf);
-            retVal &= sel.AddExceptionHandle(bc);
-            retVal &= sel.AddExceptionHandle(bf);
-            sel.ClearAllHandles();
-            retVal &= !sel.IsSet(bc);
-            retVal &= !sel.IsSet(bf);
-            ok = bf.Close();
-            if (ok) {
-                ok = bc.Close();
-                if (ok) {
-                    ok = dir.SetByName("Test.txt");
-                    if (ok) {
-                        ok = dir.Delete();
-                    }
-                }
-            }
-        }
+    BasicConsole bc;
+    bool fopened = false;
+    bool opened = bc.Open(BasicConsoleMode::Default);
+    ret.OSError= !opened;
+    REPORT_ERROR(ret,"BasicConsoleMode::Open failed");
+
+    if (ret) {
+    	fopened = bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
+        REPORT_ERROR(ret,"BasicFile::Open failed");
+        ret.OSError= !fopened;
     }
-    if (!ok) {
-        retVal = false;
+    if (ret) {
+    	ret.OSError = !sel.AddReadHandle(bc);
+        REPORT_ERROR(ret,"AddReadHandle failed");
+    }
+    if (ret) {
+    	ret.OSError = !sel.AddReadHandle(bf);
+        REPORT_ERROR(ret,"AddReadHandle failed");
+    }
+    if (ret) {
+    	ret.OSError = !sel.AddWriteHandle(bc);
+        REPORT_ERROR(ret,"AddWriteHandle failed");
+    }
+    if (ret) {
+    	ret.OSError = !sel.AddWriteHandle(bf);
+        REPORT_ERROR(ret,"AddWriteHandle failed");
+    }
+    if (ret) {
+    	ret.OSError = !sel.AddExceptionHandle(bc);
+        REPORT_ERROR(ret,"AddExceptionHandle failed");
+    }
+    if (ret) {
+    	ret.OSError = !sel.AddExceptionHandle(bf);
+        REPORT_ERROR(ret,"AddExceptionHandle failed");
+    }
+    if (ret) {
+    	sel.ClearAllHandles();
+    }
+
+    if (ret) {
+    	ret.internalSetupError = sel.IsSet(bc);
+        REPORT_ERROR(ret,"IsSet succeeded");
+    }
+
+    if (ret) {
+    	ret.internalSetupError = sel.IsSet(bf);
+        REPORT_ERROR(ret,"IsSet succeeded");
+    }
+
+    if (opened){
+    	bc.Close();
+    }
+    if (fopened){
+    	bf.Close();
     }
     return retVal;
 }
@@ -270,11 +316,30 @@ bool SelectTest::TestIsSet() {
 }
 
 bool SelectTest::TestWaitUntil_waitTimeout() {
-    bc.Open(BasicConsoleMode::Default);
-    sel.AddReadHandle(bc);
-    retVal &= (0 == sel.WaitUntil(defaultTo));
+	ErrorManagement::ErrorType ret;
+	BasicUDPSocket bc;
+	Select sel;
+	ret.OSError = !bc.Open();
+	REPORT_ERROR(ret,"BasicUDPSocket::Open failed");
+//    ret.OSError = !bc.Open(BasicConsoleMode::Default);
+//    REPORT_ERROR(ret,"BasicConsole::Open failed");
+
+    char buffer[256];
+    uint32 size= sizeof(buffer);
+    bc.Read(buffer,size);
+
+    if (ret){
+        ret.fatalError = !sel.AddReadHandle(bc);
+        REPORT_ERROR(ret,"AddReadHandle failed");
+    }
+
+    if (ret){
+        ret.fatalError = (0 != sel.WaitUntil(defaultTo));
+        REPORT_ERROR(ret,"WaitUntil succeeded when it should have been a timeout");
+    }
+
     bc.Close();
-    return retVal;
+    return ret;
 }
 
 bool SelectTest::TestWaitUntil_waitRead(MilliSeconds timeout) {
@@ -354,48 +419,86 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
     BasicUDPSocket dummy1;
     BasicUDPSocket dummy2;
 
-    if (!bUDPsRead.Open()) {
-        retVal = false;
-        return retVal;
-    }
-    if (!bUDPsRead.Listen(ACTUAL_TESTING_PORT)) {
-        retVal = false;
-        return retVal;
-    }
-    if (!dummy1.Open()) {
-        retVal = false;
-        return retVal;
-    }
-    if (!dummy1.Listen(DUMMY_TESTING_PORT_1)) {
-        retVal = false;
-        return retVal;
-    }
-    if (!dummy2.Open()) {
-        retVal = false;
-        return retVal;
-    }
-    if (!dummy2.Listen(DUMMY_TESTING_PORT_2)) {
-        retVal = false;
-        return retVal;
+    ErrorManagement::ErrorType ret;
+
+    ret.fatalError = !bUDPsRead.Open();
+    REPORT_ERROR(ret,"bUDPsRead.Open failed");
+
+    if (ret){
+    	ret.fatalError = !dummy1.Open();
+        REPORT_ERROR(ret,"dummy1.Open failed");
     }
 
-    sel.AddReadHandle(bUDPsRead);
-    sel.AddReadHandle(dummy1);
-    sel.AddReadHandle(dummy2);
-    sel.RemoveReadHandle(dummy2);
-    sel.RemoveReadHandle(dummy1);
+    if (ret){
+    	ret.fatalError = !dummy2.Open();
+        REPORT_ERROR(ret,"dummy2.Open failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !bUDPsRead.Listen(ACTUAL_TESTING_PORT);
+        COMPOSITE_REPORT_ERROR(ret,"bUDPsRead.Listen(",ACTUAL_TESTING_PORT,") failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !dummy1.Listen(DUMMY_TESTING_PORT_1);
+        COMPOSITE_REPORT_ERROR(ret,"dummy1.Listen(",DUMMY_TESTING_PORT_1,") failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !dummy2.Listen(DUMMY_TESTING_PORT_2);
+        COMPOSITE_REPORT_ERROR(ret,"dummy2.Listen(",DUMMY_TESTING_PORT_2,") failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !sel.AddReadHandle(bUDPsRead);
+        REPORT_ERROR(ret,"sel.AddReadHandle(bUDPsRead) failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !sel.AddReadHandle(dummy1);
+        REPORT_ERROR(ret,"sel.AddReadHandle(dummy1) failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !sel.AddReadHandle(dummy2);
+        REPORT_ERROR(ret,"sel.AddReadHandle(dummy2) failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !sel.RemoveReadHandle(dummy2);
+        REPORT_ERROR(ret,"sel.RemoveReadHandle(dummy2) failed");
+    }
+
+    if (ret){
+    	ret.fatalError = !sel.RemoveReadHandle(dummy1);
+        REPORT_ERROR(ret,"sel.RemoveReadHandle(dummy1) failed");
+    }
+
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
-    retVal &= (sel.WaitUntil(defaultTo) == 1);
-    retVal &= sel.IsSet(bUDPsRead);
-    retVal &= !sel.IsSet(dummy1);
-    retVal &= !sel.IsSet(dummy2);
+    Threads::SetPriority(tid,Threads::NormalPriorityClass,8U);
+
+
+    if (ret){
+    	ret.fatalError = (sel.WaitUntil(defaultTo) != 1);
+        REPORT_ERROR(ret,"sel.WaitUntil(defaultTo) != 1");
+    }
+
+    if (ret){
+    	bool s1 = sel.IsSet(bUDPsRead);
+    	bool s2 = sel.IsSet(dummy1);
+    	bool s3 = sel.IsSet(dummy2);
+    	ret.fatalError = !s1 || s2 || s3;
+        COMPOSITE_REPORT_ERROR(ret,"sel.IsSet failed: bUDPsRead= ",s1," dummy1= ",s2," dummy2= ",s3);
+    }
+
     while (Threads::IsAlive(tid)) {
         MilliSeconds(1,Units::ms);
     }
+
     bUDPsRead.Close();
     dummy1.Close();
     dummy2.Close();
-    return retVal;
+    return ret;
 }
 
 bool SelectTest::TestWaitUntil_emptyList() {

@@ -20,16 +20,26 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-PACKAGE=Core/BareMetal/L2Objects
-ROOT_DIR=../../../../..
+		
+PACKAGE=GTest/BareMetal
+ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
-INCLUDES+=-I.. -I../../L1Portability -I../../L0Types
+INCLUDES += -I$(ROOT_DIR)/Test/Core/BareMetal/L2Objects
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L2Objects
+INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
+
+BUILD_PRODUCT =  $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

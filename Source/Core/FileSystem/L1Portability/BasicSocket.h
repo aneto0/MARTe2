@@ -51,7 +51,7 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public StreamI, public HandleI {
+    class DLL_API BasicSocket: public StreamI/*, public HandleI*/ {
     public:
         /**
          * @brief Default constructor.
@@ -118,6 +118,13 @@ namespace MARTe {
         virtual bool IsValid() const;
 
         /**
+         *
+         */
+        inline SocketCore GetSocket() const;
+
+
+#if 0
+        /**
          * @brief Queries the read socked handle.
          * @details For the BasicSocket the read handle and the write handle are the same,
          * however the BasicConsol has two different handles: one for read and one for write.
@@ -130,7 +137,7 @@ namespace MARTe {
          * however the BasicConsol has two different handles: one for read and one for write.
          */
         virtual Handle GetWriteHandle() const;
-
+#endif
     protected:
 
         /**
@@ -171,6 +178,11 @@ void BasicSocket::MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal
     timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeRaw() / 1000u);
     timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeRaw() % 1000u) * 1000u);
 }
+
+SocketCore BasicSocket::GetSocket() const{
+	return connectionSocket;
+}
+
 }
 
 #endif /* BASICSOCKET_H_ */

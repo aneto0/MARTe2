@@ -28,7 +28,6 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
 
 
 /*---------------------------------------------------------------------------*/
@@ -44,6 +43,7 @@
 #if ENVIRONMENT == Linux
 #undef Linux
 #define Linux Linux
+#include <unistd.h>
 #endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

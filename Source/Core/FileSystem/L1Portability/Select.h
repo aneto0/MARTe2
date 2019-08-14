@@ -35,6 +35,7 @@
 #include "GeneralDefinitions.h"
 #include "MilliSeconds.h"
 #include "HandleI.h"
+#include "BasicSocket.h"
 
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
 
@@ -80,7 +81,8 @@ namespace MARTe {
          *     IsSet(handle)
          * @return True if the handle is correctly added to the watch list.
          */
-        bool AddReadHandle(const HandleI &handle);
+        template<class T>
+        inline bool AddReadHandle(const T &handle);
 
         /**
          * @brief Adds a handle to be monitored in write mode.
@@ -92,7 +94,8 @@ namespace MARTe {
          *     IsSet(handle)
          * @return True if the handle is correctly added to the watch list.
          */
-        bool AddWriteHandle(const HandleI &handle);
+        template<class T>
+        inline bool AddWriteHandle(const T &handle);
 
         /**
          * @brief Adds a handle to be monitored in exception mode.
@@ -106,7 +109,8 @@ namespace MARTe {
          *     IsSet(handle)
          * @return True if the handle is correctly added to the watch list.
          */
-        bool AddExceptionHandle(const HandleI &handle);
+        template<class T>
+        inline bool AddExceptionHandle(const T &handle);
 
         /**
          * @brief Removes a handle from being monitored in the read mode.
@@ -118,7 +122,8 @@ namespace MARTe {
          *     not IsSet(handle)
          * @return True if the handle is correctly removed from the watch list.
          */
-        bool RemoveReadHandle(const HandleI &handle);
+        template<class T>
+        inline bool RemoveReadHandle(const T &handle);
 
         /**
          * @brief Removes a handle from being monitored in write mode.
@@ -130,7 +135,8 @@ namespace MARTe {
          *     not IsSet(handle)
          * @return True if the handle is correctly removed from the watch list.
          */
-        bool RemoveWriteHandle(const HandleI &handle);
+        template<class T>
+        inline bool RemoveWriteHandle(const T &handle);
 
         /**
          * @brief Removes a handle from being monitored in exception mode.
@@ -142,7 +148,8 @@ namespace MARTe {
          *     not IsSet(handle)
          * @return True if the handle is correctly removed from the watch list.
          */
-        bool RemoveExceptionHandle(const HandleI &handle);
+        template<class T>
+        inline bool RemoveExceptionHandle(const T &handle);
 
         /**
          * @brief Removes all handles from being monitored in all modes.
@@ -161,6 +168,13 @@ namespace MARTe {
         bool IsSet(const HandleI &handle) const;
 
         /**
+         * @brief Queries if the handle is set in one of the three modes.
+         * @param[in] handle indicates the handle to be search for.
+         * @return True if the handle is set.
+         */
+        bool IsSet(const BasicSocket &socket) const;
+
+        /**
          * @brief Blocks until an I/O event occurs in one of the added handles, or the function timeouts.
          * @param[in] timeout is the timeout of the function, in ms. Default is no timeout.
          * @return -1 in case of errors, 0 if timeout expires, otherwise the number of handles which received an I/O event.
@@ -168,32 +182,57 @@ namespace MARTe {
         int32 WaitUntil(const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     private:
+        bool Add(const HandleI &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
+        bool Add(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
+        bool Remove(const HandleI &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
+        bool Remove(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
 
         /**
-         * Contains informations about the read handles used in the select. AddReadHandle() adds handles to it.
+         * the platform specific internal storage required to support select operations
          */
-        SetIdentifier readHandle;
+        SelectProperties selectProperties;
 
-        /**
-         * Contains informations about the write handles used in the select. AddWriteHandle() adds handles to it.
-         */
-        SetIdentifier writeHandle;
 
-        /**
-         * Contains informations about the exceptions handles used in the select. AddExceptionHandle() adds handles to it.
-         */
-        SetIdentifier exceptionHandle;
-
-        /**
-         * The highest handle that readHandle, writeHandle or exceptionHandle contain (operating system specific).
-         */
-        int32 highestHandle;
     };
-}
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+    template<class T>
+    bool Select::AddReadHandle(const T &handle){
+    	return Add(handle,true,false,false);
+    }
+
+    template<class T>
+    bool Select::AddWriteHandle(const T &handle){
+    	return Add(handle,false,true,false);
+    }
+
+    template<class T>
+    bool Select::AddExceptionHandle(const T &handle){
+    	return Add(handle,false,false,true);
+    }
+
+    template<class T>
+    bool Select::RemoveReadHandle(const T &handle){
+    	return Remove(handle,true,false,false);
+    }
+
+    template<class T>
+    bool Select::RemoveWriteHandle(const T &handle){
+    	return Remove(handle,false,true,false);
+    }
+
+    template<class T>
+    bool Select::RemoveExceptionHandle(const T &handle){
+    	return Remove(handle,false,false,true);
+    }
+
+
+
+
+}
 #endif /* _SELECT_H_ */
 

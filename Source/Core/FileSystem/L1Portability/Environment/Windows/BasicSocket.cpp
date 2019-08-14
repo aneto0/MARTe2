@@ -42,8 +42,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 BasicSocket::BasicSocket() :
-        StreamI(),
-        HandleI() {
+        StreamI()/*,
+        HandleI() */{
     connectionSocket = INVALID_SOCKET ;
     isBlocking = true;
     WSADATA wsaData;
@@ -123,6 +123,8 @@ bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
 
+/*
+
 Handle BasicSocket::GetReadHandle() const {
     return (Handle) connectionSocket;
 }
@@ -130,6 +132,6 @@ Handle BasicSocket::GetReadHandle() const {
 Handle BasicSocket::GetWriteHandle() const {
     return (Handle) connectionSocket;
 }
-
+*/
 }
 

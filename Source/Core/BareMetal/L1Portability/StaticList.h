@@ -94,8 +94,7 @@ public:
     /**
      * @see StaticListHolder::Peek()
      */
-    bool Peek(const uint32 position,
-              elementType &value) const;
+    bool Peek(const uint32 position, elementType &value) const;
 
     /**
      * @see StaticListHolder::Add()
@@ -106,8 +105,7 @@ public:
     /**
      * @see StaticListHolder::Insert()
      */
-    bool Insert(const uint32 position,
-                const elementType &value);
+    bool Insert(const uint32 position, const elementType &value);
 
     /**
      * @see StaticListHolder::Remove()
@@ -117,14 +115,12 @@ public:
     /**
      * @see StaticListHolder::Extract()
      */
-    bool Extract(const uint32 position,
-                 elementType &value);
+    bool Extract(const uint32 position, elementType &value);
 
     /**
      * @see StaticListHolder::Set()
      */
-    bool Set(const uint32 position,
-             elementType &value);
+    bool Set(const uint32 position, elementType &value);
 
     /**
      * @brief Fast peek of the element in \a pos position
@@ -136,7 +132,25 @@ public:
      */
     const elementType &operator[](uint32 pos) const;
 
+    /**
+     * @brief Fast peek of the element in \a pos position
+     * @param[in] pos is the position of the required element in the list.
+     * @return the element in \a pos position.
+     * @post
+     *   if (pos >= GetSize())
+     *      return last element in the list
+     */
     elementType &Access(uint32 pos);
+
+     /**
+      * @see StaticListHolder::GetAllocatedMemoryConst()
+      */
+     inline const elementType* GetAllocatedMemoryConst() const;
+
+     /**
+      * @see StaticListHolder::Clean()
+      */
+     inline void Clean();
 
 private:
 
@@ -154,6 +168,17 @@ private:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+template<typename elementType, uint32 listAllocationGranularity>
+inline const elementType* StaticList<elementType, listAllocationGranularity>::GetAllocatedMemoryConst() const{
+	return static_cast<const elementType*>(slh.GetAllocatedMemoryConst());
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+inline void StaticList<elementType, listAllocationGranularity>::Clean() {
+	slh.Clean();
+}
+
 
 template<typename elementType, uint32 listAllocationGranularity>
 StaticList<elementType, listAllocationGranularity>::StaticList(uint32 startSize, uint32 maxSize) :

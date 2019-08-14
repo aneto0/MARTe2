@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HandleI.h"
+#include "StaticList.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,6 +46,86 @@ namespace MARTe {
         Handle *selectHandles;
         Handle selectedHandle;
     };
+
+
+    struct HandleFlags{
+    	bool isRead:1;
+    	bool isWrite:1;
+    	bool isExcept:1;
+    	bool hasBeenSelected:1;
+
+    	inline HandleFlags(){
+    		isRead 			= false;
+    		isWrite 		= false;
+    		isExcept		= false;
+    		hasBeenSelected = false;
+    	}
+    	inline HandleFlags(bool R,bool W, bool X){
+    		isRead 			= R;
+    		isWrite 		= W;
+    		isExcept		= X;
+    		hasBeenSelected = false;
+    	}
+    	inline void Merge(const HandleFlags & flags){
+    		isRead 			= isRead   || flags.isRead;
+    		isWrite 	    = isWrite  || flags.isWrite;
+    		isExcept 		= isExcept || flags.isExcept;
+    	}
+    	inline void Subtract(const HandleFlags & flags){
+    		isRead 			= isRead   && !flags.isRead;
+    		isWrite 	    = isWrite  && !flags.isWrite;
+    		isExcept 		= isExcept && !flags.isExcept;
+    	}
+    	inline bool IsEmpty () const{
+    		return !(isRead || isWrite || isExcept);
+    	}
+    	inline int GetEvents() const{
+    		int events = 0;
+    		if (isRead) {
+    			events |= FD_READ;
+    		}
+    		if (isWrite) {
+    			events |= FD_WRITE;
+    		}
+    		if (isExcept) {
+    			events |= (FD_ACCEPT | FD_CONNECT | FD_CLOSE);
+    		}
+        	return events;
+    	}
+    };
+
+    const HandleFlags readFlag(true,false,false);
+    const HandleFlags writeFlag(false,true,false);
+    const HandleFlags exceptionFlag(false,false,true);
+
+    class SelectProperties{
+    public:
+
+        StaticList<SOCKET> socketHandleDB;
+
+        StaticList<HANDLE> handleDB;
+
+        StaticList<HandleFlags> handleFlagsDB;
+
+        uint32 Find(HANDLE handle) const;
+
+        uint32 SocketFind(SOCKET socket) const;
+
+        ErrorManagement::ErrorType Add(HANDLE handle, const HandleFlags &flag);
+
+        ErrorManagement::ErrorType AddSocket(SOCKET socket, const HandleFlags &flag);
+
+        ErrorManagement::ErrorType Remove(HANDLE handle, const HandleFlags &flag);
+
+        ErrorManagement::ErrorType RemoveSocket(SOCKET socket, const HandleFlags &flag);
+
+        void  Clean();
+
+        HandleFlags GetProperties(HANDLE handle) const;
+
+
+    };
+
 }
 
 
