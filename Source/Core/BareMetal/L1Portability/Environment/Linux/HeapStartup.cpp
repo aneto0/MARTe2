@@ -1,8 +1,8 @@
 /**
- * @file HighResolutionTimerGTest.cpp
- * @brief Source file for class HighResolutionTimerGTest
- * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @file HeapStartup.cpp
+ * @brief Header file for class AnyType
+ * @date 3 Jan 2019
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,22 +16,25 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class HighResolutionTimerGTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
- */
+ * @details This header file contains the declaration of the class HeapStartup
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+*/
+
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "TestSupport.h"
-#include "HighResolutionTimerTest.h"
+#include "StartupManager.h"
+#include "HeapManager.h"
+#include "StandardHeap.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,43 +43,34 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
 
-TEST(HighResolutionTimerGTest,TestFrequency) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestFrequency());
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(HeapManager,("HeapManager",emptyString),(emptyString))
+
+StandardHeap heaps[3];
+
+ErrorManagement::ErrorType HeapManagerStartup::Init(){
+	ErrorManagement::ErrorType ret;
+
+	//TODO combine return codes
+	ret = HeapManager::InstallAllocator(&heaps[0],HeapManager::standardHeapId);
+	ret = HeapManager::InstallAllocator(&heaps[1],HeapManager::internalsHeapId);
+	ret = HeapManager::InstallAllocator(&heaps[2],HeapManager::stringsHeapId);
+
+	return ret;
 }
 
-TEST(HighResolutionTimerGTest,TestPeriod) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestPeriod());
+ErrorManagement::ErrorType HeapManagerStartup::Finish(){
+	ErrorManagement::ErrorType ret;
+
+	//TODO combine return codes
+	ret = HeapManager::RemoveAllocator(HeapManager::standardHeapId);
+	ret = HeapManager::RemoveAllocator(HeapManager::internalsHeapId);
+	ret = HeapManager::RemoveAllocator(HeapManager::stringsHeapId);
+
+	return ret;
 }
 
-TEST(HighResolutionTimerGTest,TestPeriodFrequency) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestPeriodFrequency());
-}
 
-TEST(HighResolutionTimerGTest,TestCounter) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter(0.5));
-}
-
-TEST(HighResolutionTimerGTest,TestCounter32) {
-    HighResolutionTimerTest hrtTest;
-    //This has to be a short time otherwise it will overflow in 32 bits...
-    ASSERT_TRUE(hrtTest.TestCounter32(0.25));
-}
-
-#if 0
-TEST(HighResolutionTimerGTest,TestTicksToTime) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestTicksToTime());
-}
-#endif
-
-TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
-    HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
-}
-
+} //MARTe
 

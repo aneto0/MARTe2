@@ -96,7 +96,6 @@ DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token, CCStri
  * arguments is NULL.
  */
 DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &limit, ZeroTerminatedArray<const CCString> const delimiters, CCString const skip);
-#endif
 
 /**
  * @brief Returns a pointer to the first occurrence of substring in string.
@@ -115,6 +114,7 @@ DLL_API CCString SearchString(CCString  const string, CCString  const substring)
  * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
  */
 DLL_API int32 SearchIndex(CCString  const string1,   CCString  const string2);
+#endif
 
  
 }

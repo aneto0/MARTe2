@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 #include "HighResolutionTimerTest.h"
 #include "HighResolutionTimer.h"
+#include "CompositeErrorManagement.h"
+
 #include "Sleep.h"
 #include "Ticks.h"
 
@@ -82,17 +84,24 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
 //    time = HighResolutionTimer::TicksToTime(int64(counter), int64(counter_1));
 //    return Tolerance(time, sleepTime, sleepTime * .1);
 }
-#if 1
 
 bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     uint32 counter_1 = 0;
     uint32 counter = 0;
-    float64 time;
     counter_1 = HighResolutionTimer::Counter32();
-    Sleep::Long(sleepTime,Units::s);
+    Sleep::Short(sleepTime,Units::s);
     counter = HighResolutionTimer::Counter32();
-    time = (counter - counter_1) * HighResolutionTimer::Period();
-    return Tolerance(time, sleepTime, sleepTime * .5);
+    uint32 delta = counter - counter_1;
+
+//    TimeCalibration::CalibrateFrequency();
+    float64 time = delta * HighResolutionTimer::Period();
+
+    ErrorManagement::ErrorType ret;
+    ret.fatalError = !Tolerance(time, sleepTime, sleepTime * .5);
+
+    COMPOSITE_REPORT_ERROR(ret,"Sleep::Long(",sleepTime*1000.0,",ms) produce a counter32 step of ",delta, " which is in ms:",time*1000.0 );
+
+    return ret;
 }
 
 
@@ -149,5 +158,4 @@ bool HighResolutionTimerTest::TestPeriodFrequency() {
     return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }
 
-#endif
 

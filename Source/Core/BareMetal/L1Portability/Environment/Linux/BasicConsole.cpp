@@ -153,12 +153,12 @@ bool BasicConsole::Open(const FlagsType &mode) {
             ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(handle->outputConsoleHandle)) >= 0);
             if (!ok) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
+                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed ioctl()");
             }
         }
         else {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed ioctl()");
         }
     }
     if (err) {
@@ -190,7 +190,7 @@ bool BasicConsole::Close() {
         bool ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &handle->initialInfo) >= 0);
         if (!ok) {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed ioctl()");
         }
     }
     return err;
@@ -200,13 +200,15 @@ bool BasicConsole::Read(char8 * const output,
                         uint32 & size,
                         const MilliSeconds &timeout) {
     bool ret = false;
+    ret = Read(output, size);
+// TODO support timeouts
+/*
     if (timeout.IsValid()) {
-        ret = Read(output, size);
     }
     else {
         REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot read within timeout");
     }
-
+*/
     return ret;
 }
 
@@ -215,13 +217,16 @@ bool BasicConsole::Write(const char8 * const input,
                          const MilliSeconds &timeout) {
 
     bool ret = false;
+    ret = Write(input, size);
+
+    // TODO support timeouts
+    /*
     if (timeout.IsValid()) {
-        ret = Write(input, size);
     }
     else {
         REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot write within timeout");
     }
-
+	*/
     return ret;
 }
 

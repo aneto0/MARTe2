@@ -55,7 +55,7 @@
 
 void RedirectConsoleInput(FILE * &inputFile,CCString inputString) {
 #if ENVIRONMENT == Linux
-    inputFile = fopen("inputFile_Test.txt","RW");
+    inputFile = fopen("inputFile_Test.txt","w+");
     fputs(inputString.GetList(),inputFile);
     if (N_CHARS_NEWLINE == 1u) {
         fputs("\n",inputFile);
@@ -149,7 +149,7 @@ TEST(BasicConsoleGTest,TestWrite2) {
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
-    FILE * inputFile;
+    FILE * inputFile = NULL;
     RedirectConsoleInput(inputFile, "\n");
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
     Clean(inputFile);
@@ -158,7 +158,7 @@ TEST(BasicConsoleGTest,TestPaging) {
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
-    FILE * inputFile;
+    FILE * inputFile = NULL;
     RedirectConsoleInput(inputFile, "Hello");
     ASSERT_TRUE(console.TestRead("Hello"));
     Clean(inputFile);
@@ -166,7 +166,7 @@ TEST(BasicConsoleGTest,TestRead) {
 
 TEST(BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
-    FILE * inputFile;
+    FILE * inputFile = NULL;
     RedirectConsoleInput(inputFile, "");
     ASSERT_TRUE(console.TestTimeoutRead(MilliSeconds(100,Units::ms)));
     Clean(inputFile);

@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "ErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -84,6 +86,11 @@ namespace  TimeCalibration{
      * minimum value o be used in a sleep call to guarantee some sleep is actually performed.
      */
     extern uint32 osMinSleepUsec;
+
+    /**
+     * can be executed at anytime to allow copying with variable frequency
+     */
+    extern ErrorManagement::ErrorType  CalibrateFrequency();
 }
 
 }

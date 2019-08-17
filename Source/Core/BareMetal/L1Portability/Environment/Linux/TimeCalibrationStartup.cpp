@@ -31,8 +31,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-//#include <sys/time.h>
 #include <math.h>
+#include <sys/time.h>
 #else
 #include "lint-linux.h"
 #endif
@@ -41,11 +41,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-//#include "HighResolutionTimerCalibrator.h"
 #include "HighResolutionTimer.h"
-#include "StringHelper.h"
-#include "../../TimeCalibration.h"
-#include "ErrorManagement.h"
+#include "TimeCalibration.h"
+#include "CompositeErrorManagement.h"
 #include "StartupManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,63 +56,86 @@
 namespace MARTe {
 namespace TimeCalibration {
 
-INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(TimeCalibration,("TimeCalibrated",emptyString),(emptyString))
+INSTALL_STARTUP_MANAGER_INITIALISATION_ENTRY(TimeCalibration,("TimeCalibrated",emptyString),("HeapManager",emptyString))
 
 ErrorManagement::ErrorType CalibrateFrequency(){
 	ErrorManagement::ErrorType ret;
-    LARGE_INTEGER tt0, tt1, tt2, tt3, tt4, tt5;
-    uint64 dTa, dTb;
-    dTa = 0;
-    dTb = 0;
-    for (int i = 0; i < 50; i++) {
-        tt2.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
-        QueryPerformanceCounter(&tt0);
-        tt3.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
-        tt4 = tt3;
-        while ((tt4.QuadPart - tt3.QuadPart) < 100000)
-            tt4.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter()); // .5 ms at 200 Mhz
 
-        QueryPerformanceCounter(&tt1);
-        tt5.QuadPart = static_cast<LONGLONG>(HighResolutionTimer::Counter());
-        dTa += (tt1.QuadPart - tt0.QuadPart);
-        dTb += ((tt5.QuadPart + tt4.QuadPart) - (tt3.QuadPart + tt2.QuadPart)) / 2;
+    FILE *f = NULL;
+    const uint32 LINUX_CPUINFO_BUFFER_SIZE = 1023u;
+    char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1u];
+    if (ret ) {
+        memset(&buffer[0], 0, LINUX_CPUINFO_BUFFER_SIZE + 1u);
+
+        f = fopen("/proc/cpuinfo", "r");
+        ret.OSError = (f == NULL);
+        REPORT_ERROR(ret, "fopen(/proc/cpuinfo) failed");
     }
-    QueryPerformanceFrequency(&tt0);
-    frequency = static_cast<uint64>(tt0.QuadPart);
-    frequency *= dTb;
-    frequency /= dTa;
 
-    frequency += 999999;
-    frequency /= 2000000;
-    frequency *= 2000000;
+    size_t size = LINUX_CPUINFO_BUFFER_SIZE;
+    if (ret){
+        size = fread(&buffer[0], size, static_cast<size_t>(1u), f);
+        fclose(f);
 
-    period = 1.0 / frequency;
+        ret.fatalError  = (size == 0);
+        REPORT_ERROR(ret, "fread(/proc/cpuinfo) returned 0");
+    }
 
-    //
-    // Assumes a granularity of 10ms
-    //
-    osMinSleepUsec = 1000;
-    osSleepUsec    = 10000;
+    CCString MHzS;
+    if (ret){
+        CCString bufferString(&buffer[0]);
+        MHzS = bufferString.FindPatternString("MHz");
+        ret.fatalError = (MHzS.GetSize()==0);
+        COMPOSITE_REPORT_ERROR(ret, "cannot find MHz in cpuinfo string: ",bufferString);
+    }
+
+    float64 freqMHz = 0.0;
+    if (ret){
+    	MHzS = MHzS.FindPatternString(":");
+    	MHzS++;
+        freqMHz = strtof(MHzS.GetList(), static_cast<char8 **>(0));
+
+        ret.fatalError = (freqMHz <= 0.);
+        COMPOSITE_REPORT_ERROR(ret, "freqMHz is 0 or less ",freqMHz);
+
+    }
+
+    if (ret){
+        float64 frequencyF = freqMHz * 1.0e6;
+        period = 1.0 / frequencyF;
+        frequency = static_cast<uint64>(frequencyF);
+        COMPOSITE_REPORT_ERROR(ErrorManagement::Information, "frequency is ",frequencyF, "Hz period is ",(period*1.0e12), "ps");
+
+    }
+
+    osMinSleepUsec = 10;
+    osSleepUsec    = 100;
     osSleepTicks   = frequency / (1000000 / osSleepUsec);
-	return ret;
+
+    return ret;
 }
 
 ErrorManagement::ErrorType TimeCalibrationStartup::Init(){
+
 	ErrorManagement::ErrorType ret;
 
-    struct timeval initialTime;
-    time((time_t *) &initialTime.tv_sec);
-
-    //The precision is at the millisecond!
-    SYSTEMTIME forMs;
-    GetSystemTime(&forMs);
-    initialSecs = initialTime.tv_sec;
-    initialUSecs = forMs.wMilliseconds * 1000;
     initialTicks = HighResolutionTimer::Counter();
+    frequency = 0u;
+    period = 0.;
 
-    ret = CalibrateFrequency();
+    struct timeval initTime;
+    ret.OSError = gettimeofday(&initTime, static_cast<struct timezone *>(NULL));
+    REPORT_ERROR(ret, "gettimeofday failed");
 
-    return ret;
+    initialSecs = initTime.tv_sec;
+    initialUSecs = initTime.tv_usec;
+
+    if (ret){
+    	ret = CalibrateFrequency();
+    }
+
+
+	return ret;
 }
 
 ErrorManagement::ErrorType TimeCalibrationStartup::Finish(){

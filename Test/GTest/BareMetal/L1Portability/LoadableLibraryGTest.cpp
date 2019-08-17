@@ -33,6 +33,7 @@
 
 #include "LoadableLibraryTest.h"
 #include "TestSupport.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,11 +43,25 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#if ENVIRONMENT==Windows
-const char *libName = "msvcr120.dll";
-#else
-const char *libName = "libm.so";
-#endif
+
+#define str(x) #x
+
+MARTe::CCString GetLibName(){
+	MARTe::CCString platform;
+	MARTe::CCString libName;
+	platform = str(ENVIRONMENT);
+
+	if (platform == "Windows"){
+		libName == "msvcr120.dll";
+	} else
+	if (platform == "Linux"){
+		libName == "libm.so";
+	}
+
+	return libName;
+}
+
+#define libName GetLibName()
 
 TEST(LoadableLibraryGTest,TestConstructor) {
     LoadableLibraryTest loadablelibrarytest;

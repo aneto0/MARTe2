@@ -75,17 +75,22 @@ bool TimeoutTypeTest::TestSetTimeoutHighResolutionTimerTicks() {
     expectedTimeout = static_cast<int64>((double)ticks * HighResolutionTimer::Period() * 1000.0 +0.5);
     bool ret = (expectedTimeout == time.GetTimeRaw());
     if (!ret){
-    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"expecting ",expectedTimeout, " instead ",time.GetTimeRaw());
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"expecting ",expectedTimeout, " instead ",time.GetTimeRaw(), " Period = ",HighResolutionTimer::Period());
     }
     return ret;
 }
 
 bool TimeoutTypeTest::TestHighResolutionTimerTicks() {
     int32 msecTimeout = 100;
-	Ticks time(double(msecTimeout)*1e-3,Units::s);
+	Ticks time(msecTimeout,Units::ms);
     uint64 expectedTicks;
-    expectedTicks = uint64(1e-3*msecTimeout*HighResolutionTimer::Frequency());
-    return (expectedTicks == time.GetTimeRaw());
+    expectedTicks = uint64(1e-3*msecTimeout*HighResolutionTimer::Frequency()+0.5);
+
+    bool ret = (expectedTicks == time.GetTimeRaw());
+    if (!ret){
+    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"expecting ",expectedTicks, " instead ",time.GetTimeRaw(), " Frequency = ",HighResolutionTimer::Frequency());
+    }
+    return ret;
 }
 
 bool TimeoutTypeTest::TestSubstractAssignOperator() {

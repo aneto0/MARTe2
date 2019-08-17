@@ -42,7 +42,10 @@
 
 namespace MARTe{
 
+
 namespace StringHelper {
+
+#if 0
 
 CCString  SearchChar(CCString  const string,  const char8 c) {
 
@@ -100,7 +103,6 @@ CCString  SearchString(CCString  const string,CCString  const substring) {
     return ret;
 }
 
-#if 0
 
 int32 Compare(CCString  const string1,CCString  const string2) {
 
@@ -176,7 +178,6 @@ int32 CompareN(CCString  const string1, CCString  const string2, const uint32 si
 
     return ret;
 }
-#endif
 
 
 int32 SearchIndex(CCString  const string1, CCString  const string2) {
@@ -212,6 +213,7 @@ int32 SearchIndex(CCString  const string1, CCString  const string2) {
     return ret;
 }
  
+#endif
 
 
 

@@ -64,7 +64,7 @@ bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
 
     BasicConsole myConsole;
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::Default);
+    bool error = myConsole.Open(BasicConsoleMode::Default);
     return error;
 
 }
@@ -72,7 +72,7 @@ bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
 bool BasicConsoleTest::TestOpenModeCreateNewBuffer() {
     BasicConsole myConsole;
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::CreateNewBuffer);
+    bool error = myConsole.Open(BasicConsoleMode::CreateNewBuffer);
 
     return error;
 }
@@ -80,7 +80,7 @@ bool BasicConsoleTest::TestOpenModeCreateNewBuffer() {
 bool BasicConsoleTest::TestOpenModePerformCharacterInput() {
     BasicConsole myConsole;
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::PerformCharacterInput);
+    bool error = myConsole.Open(BasicConsoleMode::PerformCharacterInput);
     return error;
 
 }
@@ -88,14 +88,14 @@ bool BasicConsoleTest::TestOpenModePerformCharacterInput() {
 bool BasicConsoleTest::TestOpenModeDisableControlBreak() {
     BasicConsole myConsole;
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::DisableControlBreak);
+    bool error = myConsole.Open(BasicConsoleMode::DisableControlBreak);
     return error;
 }
 
 bool BasicConsoleTest::TestOpenModeEnablePaging() {
     BasicConsole myConsole;
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
-    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::EnablePaging);
+    bool error = myConsole.Open(BasicConsoleMode::EnablePaging);
     return error;
 }
 
@@ -387,6 +387,8 @@ bool BasicConsoleTest::TestClear() {
 }
 
 bool BasicConsoleTest::TestPerfChar() {
+	ErrorManagement::ErrorType ret;
+
     BasicConsole myConsole;
     myConsole.Open(BasicConsoleMode::PerformCharacterInput);
     myConsole.SetSceneSize(numberOfColumns, numberOfRows);
@@ -396,8 +398,15 @@ bool BasicConsoleTest::TestPerfChar() {
     myConsole.Write(myMessage, sizeMyMessage, MilliSeconds::Infinite);
     char8 read[32];
     uint32 size = 5;
-    bool ok = (myConsole.Read(read, size, MilliSeconds::Infinite));
-    return ok && (size == 1);
+    ret.invalidOperation = !myConsole.Read(read, size, MilliSeconds::Infinite);
+    REPORT_ERROR(ret,"myConsole.Read(infinite) failed");
+
+    if (ret){
+    	ret.fatalError = (size !=1 );
+        COMPOSITE_REPORT_ERROR(ret,"myConsole.Read ",size, " characters instead of 1");
+    }
+
+    return ret;
 }
 
 bool BasicConsoleTest::TestShowBuffer() {
