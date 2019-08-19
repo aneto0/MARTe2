@@ -53,7 +53,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void RedirectConsoleInput(FILE * &inputFile,CCString inputString) {
+void RedirectConsoleInput(FILE * &inputFile,CCString inputString,int &saveFd) {
 #if ENVIRONMENT == Linux
     inputFile = fopen("inputFile_Test.txt","w+");
     fputs(inputString.GetList(),inputFile);
@@ -65,12 +65,15 @@ void RedirectConsoleInput(FILE * &inputFile,CCString inputString) {
     }
     fseek(inputFile,0,SEEK_SET);
 
+    saveFd = dup(fileno(stdin));
     dup2(fileno(inputFile), fileno(stdin));
 #endif
 }
 
-void Clean(FILE * &inputFile) {
+void Clean(FILE * &inputFile,int saveFd) {
 #if ENVIRONMENT == Linux
+    dup2(saveFd,fileno(stdin));
+    close(saveFd);
     fclose(inputFile);
     remove("inputFile_Test.txt");
 #endif
@@ -150,26 +153,29 @@ TEST(BasicConsoleGTest,TestWrite2) {
 TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
     FILE * inputFile = NULL;
-    RedirectConsoleInput(inputFile, "\n");
+    int saveFd;
+    RedirectConsoleInput(inputFile, "\n",saveFd);
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
-    Clean(inputFile);
+    Clean(inputFile,saveFd);
 }
 
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
     FILE * inputFile = NULL;
-    RedirectConsoleInput(inputFile, "Hello");
+    int saveFd;
+    RedirectConsoleInput(inputFile, "Hello",saveFd);
     ASSERT_TRUE(console.TestRead("Hello"));
-    Clean(inputFile);
+    Clean(inputFile,saveFd);
 }
 
 TEST(BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
     FILE * inputFile = NULL;
-    RedirectConsoleInput(inputFile, "");
+    int saveFd;
+    RedirectConsoleInput(inputFile, "",saveFd);
     ASSERT_TRUE(console.TestTimeoutRead(MilliSeconds(100,Units::ms)));
-    Clean(inputFile);
+    Clean(inputFile,saveFd);
 }
 
 TEST(BasicConsoleGTest,TestSetGetSize) {

@@ -47,7 +47,7 @@ namespace MARTeTest{
 /**
  * dll that can be opened to perform tests
  */
-const char *testDLL = "libm.so";
+const char *testDLL = "libm.so.6";
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

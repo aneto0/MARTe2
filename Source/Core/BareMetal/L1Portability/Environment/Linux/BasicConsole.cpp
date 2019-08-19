@@ -31,6 +31,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <termios.h>
+#include <errno.h>
+
 #else
 #include "lint-linux.h"
 #endif
@@ -39,6 +41,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicConsole.h"
+#include "CompositeErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -129,14 +133,17 @@ BasicConsole::~BasicConsole() {
 }
 
 bool BasicConsole::Open(const FlagsType &mode) {
-    bool err = true;
+	ErrorManagement::ErrorType ret;
 
     handle->openingMode = mode;
     //In this case read immediately from the console without wait.
-    bool charactedInputSelected = (handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
-    if (charactedInputSelected) {
-        bool ok = ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &handle->outputConsoleHandle) >= 0;
-        if (ok) {
+    bool characterInputSelected = (handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
+
+    if (characterInputSelected) {
+    	ret.OSError = (ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &handle->outputConsoleHandle) < 0);
+        COMPOSITE_REPORT_ERROR(ret, "BasicConsole: Failed ioctl(stdin,TCGETA) errno=",errno);
+
+        if (ret) {
             handle->initialInfo = handle->outputConsoleHandle;
             struct termio &consoleMode = handle->outputConsoleHandle;
 
@@ -150,25 +157,17 @@ bool BasicConsole::Open(const FlagsType &mode) {
             saveMode.c_cc[VTIME] = consoleMode.c_cc[VTIME];
             consoleMode.c_cc[VTIME] = 0u;
 
-            ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(handle->outputConsoleHandle)) >= 0);
-            if (!ok) {
-                err = false;
-                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed ioctl()");
-            }
-        }
-        else {
-            err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed ioctl()");
+        	ret.OSError = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &handle->outputConsoleHandle) < 0);
+            COMPOSITE_REPORT_ERROR(ret, "BasicConsole: Failed ioctl(stdin,TCSETAW) errno=",errno);
         }
     }
-    if (err) {
-        bool ok = (fflush(stdout) == 0);
-        if (!ok) {
-            err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed fflush()");
-        }
+
+    if (ret) {
+    	ret.OSError = (fflush(stdout) != 0);
+    	COMPOSITE_REPORT_ERROR(ret, "BasicConsole: fflush(stdout) failed errno=",errno);
     }
-    return err;
+
+    return ret;
 }
 
 FlagsType BasicConsole::GetOpeningMode() const {
@@ -176,9 +175,9 @@ FlagsType BasicConsole::GetOpeningMode() const {
 }
 
 bool BasicConsole::Close() {
-    bool charactedInputSelected = (handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
+    bool characterInputSelected = (handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
     bool err = true;
-    if (charactedInputSelected) {
+    if (characterInputSelected) {
         //reset the original console modes
         struct termio &consoleMode = handle->outputConsoleHandle;
         struct termio &saveMode = handle->inputConsoleHandle;
