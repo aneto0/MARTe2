@@ -143,25 +143,32 @@ bool StringsTest::TestFindXXX(CCString string, CCString pattern, uint32 expected
 
 bool StringsTest::TestTokenize(CCString string,ZeroTerminatedArray<CCString> expectedTokens,CCString const delimiters,CCString const skipCharacters) {
 	ErrorManagement::ErrorType ret;
-	int32 limit = 0;
+	uint32 limit = 0;
 	uint32 tokenNo = 0;
 
-	while ((limit >= 0)&& ret){
-		ret.fatalError = (tokenNo >= expectedTokens.GetSize());
-		COMPOSITE_REPORT_ERROR(ret,"Found more tokens than ",expectedTokens.GetSize());
 
-		if (ret){
-			DynamicCString token;
-			string = DynamicCString::Tokenize(string,token,limit,delimiters,skipCharacters);
-			ret.comparisonFailure = !token.IsSameAs(expectedTokens[tokenNo]);
-			COMPOSITE_REPORT_ERROR(ret,"Found <",token,"> at position ",tokenNo," instead of <",expectedTokens[tokenNo],">");
-			tokenNo++;
+	while ((limit != 0xFFFFFFFF)&& ret){
+		DynamicCString token;
+		string = DynamicCString::Tokenize(string,token,limit,delimiters,skipCharacters);
+
+		if ((limit != 0xFFFFFFFF) || (token.GetSize() > 0)){
+			ret.fatalError = (tokenNo >= expectedTokens.GetSize());
+			COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo+1, " tokens, 1 more than ",expectedTokens.GetSize());
+
+			if (ret){
+				ret.comparisonFailure = !token.IsSameAs(expectedTokens[tokenNo]);
+				COMPOSITE_REPORT_ERROR(ret,"Found <",token,"> at position ",tokenNo," instead of <",expectedTokens[tokenNo],">");
+			}
+
+			if (ret){
+				tokenNo++;
+			}
 		}
 	}
 
 	if (ret){
-		ret.fatalError = ((tokenNo - 1) != expectedTokens.GetSize());
-		COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo-1," tokens instead of ",expectedTokens.GetSize());
+		ret.fatalError = (tokenNo  != expectedTokens.GetSize());
+		COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo," tokens instead of ",expectedTokens.GetSize());
 	}
 
 	return ret;
@@ -169,25 +176,31 @@ bool StringsTest::TestTokenize(CCString string,ZeroTerminatedArray<CCString> exp
 
 bool StringsTest::TestTokenizeString(CCString string,ZeroTerminatedArray<CCString> expectedTokens,ZeroTerminatedArray<const CCString> delimiters,CCString const skipCharacters) {
 	ErrorManagement::ErrorType ret;
-	int32 limit = 0;
+	uint32 limit = 0;
 	uint32 tokenNo = 0;
 
-	while ((limit >= 0)&& ret){
-		ret.fatalError = (tokenNo >= expectedTokens.GetSize());
-		COMPOSITE_REPORT_ERROR(ret,"Found more tokens than ",expectedTokens.GetSize());
+	while ((limit != 0xFFFFFFFF)&& ret){
+		DynamicCString token;
+		string = DynamicCString::Tokenize(string,token,limit,delimiters,skipCharacters);
 
-		if (ret){
-			DynamicCString token;
-			string = DynamicCString::Tokenize(string,token,limit,delimiters,skipCharacters);
-			ret.comparisonFailure = !token.IsSameAs(expectedTokens[tokenNo]);
-			COMPOSITE_REPORT_ERROR(ret,"Found <",token,"> at position ",tokenNo," instead of <",expectedTokens[tokenNo],">");
-			tokenNo++;
+		if ((limit != 0xFFFFFFFF) || (token.GetSize() > 0)){
+			ret.fatalError = (tokenNo >= expectedTokens.GetSize());
+			COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo+1, " tokens, 1 more than ",expectedTokens.GetSize());
+
+			if (ret){
+				ret.comparisonFailure = !token.IsSameAs(expectedTokens[tokenNo]);
+				COMPOSITE_REPORT_ERROR(ret,"Found <",token,"> at position ",tokenNo," instead of <",expectedTokens[tokenNo],">");
+			}
+
+			if (ret){
+				tokenNo++;
+			}
 		}
 	}
 
 	if (ret){
-		ret.fatalError = ((tokenNo - 1) != expectedTokens.GetSize());
-		COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo-1," tokens instead of ",expectedTokens.GetSize());
+		ret.fatalError = (tokenNo  != expectedTokens.GetSize());
+		COMPOSITE_REPORT_ERROR(ret,"Found ",tokenNo," tokens instead of ",expectedTokens.GetSize());
 	}
 
 	return ret;

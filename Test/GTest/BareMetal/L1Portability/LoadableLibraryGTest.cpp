@@ -34,6 +34,7 @@
 #include "LoadableLibraryTest.h"
 #include "TestSupport.h"
 #include "CCString.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,Platform.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,25 +44,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+//#define PIPPO(x) QUOTE(x ## _DLL)
+
+/*
+const char *Windows_DLL = "msvcr120.dll";
+const char *Linux_DLL = "libm.so";
+#define NAME_DLL(x) QUOTE(x ## _DLL)
+
+#define MARTeTest::testDLL NAME_DLL(ENVIRONMENT)
 
 #define str(x) #x
 
 MARTe::CCString GetLibName(){
+	printf("%s\n",PIPPO(ENVIRONMENT));
+
 	MARTe::CCString platform;
-	MARTe::CCString libName;
+	MARTe::CCString MARTeTest::testDLL;
 	platform = str(ENVIRONMENT);
 
 	if (platform == "Windows"){
-		libName == "msvcr120.dll";
+		MARTeTest::testDLL == "msvcr120.dll";
 	} else
 	if (platform == "Linux"){
-		libName == "libm.so";
+		MARTeTest::testDLL == "libm.so";
 	}
 
-	return libName;
+	return MARTeTest::testDLL;
 }
 
-#define libName GetLibName()
+#define MARTeTest::testDLL GetLibName()
+
+*/
 
 TEST(LoadableLibraryGTest,TestConstructor) {
     LoadableLibraryTest loadablelibrarytest;
@@ -70,30 +83,30 @@ TEST(LoadableLibraryGTest,TestConstructor) {
 
 TEST(LoadableLibraryGTest,TestOpenCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary(MARTeTest::testDLL));
 }
 
 TEST(LoadableLibraryGTest,TestCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary(MARTeTest::testDLL));
 }
 
 TEST(LoadableLibraryGTest,TestLoadFunction) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction(MARTeTest::testDLL));
 }
 
 TEST(LoadableLibraryGTest,TestLoadFunctionSquareBracketsOperator) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator(MARTeTest::testDLL));
 }
 
 TEST(LoadableLibraryGTest,TestGetModule) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestGetModule(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestGetModule(MARTeTest::testDLL));
 }
 
 TEST(LoadableLibraryGTest,TestSetModule) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestSetModule(libName));
+    ASSERT_TRUE(loadablelibrarytest.TestSetModule(MARTeTest::testDLL));
 }

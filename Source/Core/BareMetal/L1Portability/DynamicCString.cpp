@@ -28,8 +28,7 @@
 
 namespace MARTe{
 
-#if 1
-
+#if 0
 static CCString  SearchChar(CCString  const string,  const char8 c) {
 
     CCString  ret;
@@ -53,12 +52,14 @@ static CCString  SearchChar(CCString  const string,  const char8 c) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: Invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "Tokenize: string or delimiters are NULL");
     }
     return ret;
 }
 
-CCString  DynamicCString::Tokenize(CCString  const string, DynamicCString &token, CCString const delimiters, CCString const skip,bool keepTerm){
+#endif
+
+CCString  DynamicCString::Tokenize(CCString const string, DynamicCString &token,uint32 &limit,CCString const delimiters, CCString const skip,bool keepTerm){
 
     CCString ret;
 
@@ -69,9 +70,10 @@ CCString  DynamicCString::Tokenize(CCString  const string, DynamicCString &token
         char8 c = string[0];
         // prepare tool to speed up appending to DynamicCString
         CStringTool tokenST = token();
-
-        while ((c!=0) && (SearchChar(delimiters,c).IsNullPtr()) ){
-        	if (SearchChar(skip,c).IsNullPtr())	{
+//        while ((c!=0) && (SearchChar(delimiters,c).IsNullPtr()) ){
+//        	if (SearchChar(skip,c).IsNullPtr())	{
+       while ((c!=0) && ((limit = delimiters.Find(c))==0xFFFFFFFF) ){
+        	if (!skip.In(c)){
         		tokenST.Append(c);
         	}
             inputIndex++;
@@ -80,7 +82,7 @@ CCString  DynamicCString::Tokenize(CCString  const string, DynamicCString &token
 
         // skip separator - to save time avoid calling CompareN - check other reason to have terminated previous loop
         if (c!=0 && (!keepTerm || (token.GetSize()==0))) {
-        	if (SearchChar(skip,c).IsNullPtr())	{
+        	if (!skip.In(c)){
         		tokenST.Append(c);
         	}
             inputIndex++;
@@ -89,24 +91,23 @@ CCString  DynamicCString::Tokenize(CCString  const string, DynamicCString &token
         ret = (string.GetList() + inputIndex);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "Tokenize: string or delimiters are NULL");
     }
     return ret;
 }
 
-static int32 Match(CCString const string, ZeroTerminatedArray<const CCString> const matches){
-	uint32 indexU = 0;
+static uint32 Match(CCString const string, ZeroTerminatedArray<const CCString> const matches){
+	uint32 ret = 0;
 	bool found = false;
-	while (!matches[indexU].IsNullPtr()  && ! found){
-
-		uint32 size = matches[indexU].GetSize();
-		found = (matches[indexU].IsSameAs(string,size));
-//		found = (CompareN(matches[static_cast<uint32>(index)],string,matches[static_cast<uint32>(index)].GetSize())==0);
-		indexU++;
+	while (!matches[ret].IsNullPtr()  && ! found){
+		uint32 size = matches[ret].GetSize();
+		found = (matches[ret].IsSameAs(string,size));
+		if (!found){
+			ret++;
+		}
 	}
-	int32 ret = static_cast<int32>(indexU);
 	if (!found){
-		ret = -1;
+		ret = 0xFFFFFFFF;
 	}
 	return ret;
 }
@@ -114,12 +115,12 @@ static int32 Match(CCString const string, ZeroTerminatedArray<const CCString> co
 
 CCString  DynamicCString::Tokenize( CCString  const string,
 					DynamicCString &token,
-					int32          &limit,
+					uint32          &limit,
 					ZeroTerminatedArray<const CCString> const delimiters,
 					CCString const skip){
     CCString ret;
 
-    limit = -1;
+    limit = 0xFFFFFFFF;
     const char8 *stringP = string.GetList();
     if ((stringP != NULL_PTR(char8 *)) && (!delimiters.IsNullPtr()) ) {
 
@@ -129,8 +130,11 @@ CCString  DynamicCString::Tokenize( CCString  const string,
         // next character to be processed;
         char8 c = *stringP;
         limit = Match(stringP,delimiters);
-        while ((c!=0) && (limit < 0) ){
-        	if (SearchChar(skip,c).IsNullPtr())	tokenST.Append(c);
+        while ((c!=0) && (limit ==0xFFFFFFFF) ){
+        	if (!skip.In(c)){
+//        	if (SearchChar(skip,c).IsNullPtr()){
+        		tokenST.Append(c);
+        	}
         	stringP++;
             c = *stringP;
             if (c!= 0) {
@@ -138,7 +142,7 @@ CCString  DynamicCString::Tokenize( CCString  const string,
             }
         }
         // consume terminator
-        if (limit >= 0) {
+        if (limit != 0xFFFFFFFFU) {
         	CCString matchS = delimiters[static_cast<uint32>(limit)];
         	stringP += matchS.GetSize();
         }
@@ -151,8 +155,5 @@ CCString  DynamicCString::Tokenize( CCString  const string,
     return ret;
 
 }
-
-
-#endif
 
 } //MARTe

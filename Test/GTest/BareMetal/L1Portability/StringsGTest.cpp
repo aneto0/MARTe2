@@ -81,7 +81,7 @@ TEST(StringsGTest,TestCompareContentG) {
 }
 
 TEST(StringsGTest,TestCompareContentGx) {
-    ASSERT_TRUE(StringsTest::TestCompareContent("Hella", "Hello",4,0));
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hella", "Hello",0,4));
 }
 
 TEST(StringsGTest,TestCompareContentL) {
@@ -89,7 +89,7 @@ TEST(StringsGTest,TestCompareContentL) {
 }
 
 TEST(StringsGTest,TestCompareContentLx) {
-    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hella",4,0));
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hella",0,4));
 }
 
 TEST(StringsGTest,TestCompareContentG2) {
@@ -169,7 +169,7 @@ TEST(StringsGTest,TestTokenizeChar) {
 			"meraviglie",
 			emptyString
 	};
-    ASSERT_TRUE(StringsTest::TestTokenize("Alice nel paese ,delle ;meraviglie",expectedTokens," ",",;"));
+    ASSERT_TRUE(StringsTest::TestTokenize("Alice nel paese ,delle ;meraviglie",expectedTokens," "," ,;"));
 }
 
 TEST(StringsGTest,TestTokenizeChar2) {
@@ -180,8 +180,19 @@ TEST(StringsGTest,TestTokenizeChar2) {
 			"meraviglie",
 			emptyString
 	};
-    ASSERT_TRUE(StringsTest::TestTokenize("paese ,delle ;meraviglie",expectedTokens," ,",",;"));
+    ASSERT_TRUE(StringsTest::TestTokenize("paese ,delle ;meraviglie",expectedTokens," ,"," ,;"));
 }
+
+TEST(StringsGTest,TestTokenizeChar3) {
+	CCString expectedTokens[] = {
+			"paese ",
+			"delle ",
+			"meraviglie",
+			emptyString
+	};
+    ASSERT_TRUE(StringsTest::TestTokenize("paese ,delle ;meraviglie",expectedTokens," ",",;"));
+}
+
 
 TEST(StringsGTest,TestTokenizeString) {
 	CCString expectedTokens[] = {
@@ -189,7 +200,6 @@ TEST(StringsGTest,TestTokenizeString) {
 			"",
 			"b",
 			"c",
-			"",
 			emptyString
 	};
 	CCString tokens[]={

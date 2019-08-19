@@ -130,7 +130,8 @@ bool InternetHostTest::TestGetLocalAddress() {
 
         uint32 nOfDots=0;
         do {
-        	address = DynamicCString::Tokenize(address,tok,CCString("."),emptyString,false);
+        	uint32 index;
+        	address = DynamicCString::Tokenize(address,tok,index,CCString("."),emptyString,false);
         	nOfDots++;
         } while (address.GetSize()==0);
 

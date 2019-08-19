@@ -35,7 +35,6 @@
 #include "HeapManager.h"
 #include "Object.h"
 #include "DynamicCString.h"
-#include "StringHelper.h"
 #include "LoadableLibrary.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
@@ -105,7 +104,7 @@ ClassRegistryItem *Find(CCString className) {
 	if (cri == NULL){
 
 		// search class within container container::class
-		CCString classOnlyPartName = StringHelper::SearchString(className, "::");
+		CCString classOnlyPartName = className.FindPatternString("::");//StringHelper::SearchString(className, "::");
 		if (classOnlyPartName.GetSize() > 0){
 			cri = FindClassName(classOnlyPartName.GetList()+2);
 

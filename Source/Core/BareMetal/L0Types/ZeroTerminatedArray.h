@@ -282,7 +282,7 @@ uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
 template<>
 uint32 ZeroTerminatedArray<const char8>::Find(const char8 & data) const{
 	const char8 *found = NULL_PTR(const char8 *);
-	if (array != NULL_PTR(const char8 *)){
+	if ((array != NULL_PTR(const char8 *)) && (data != '\0')){
 		found = strchr(array,data);
 	}
 	uint32 ret = 0xFFFFFFFFU;
@@ -339,7 +339,7 @@ ZeroTerminatedArray<T> ZeroTerminatedArray<T>::FindString(const T & data) const{
 template<>
 ZeroTerminatedArray<const char8> ZeroTerminatedArray<const char8>::FindString(const char8 & data) const{
 	const char8 *found = NULL_PTR(const char8 *);
-	if (array != NULL_PTR(const char8 *)){
+	if ((array != NULL_PTR(const char8 *)) && (data != '\0')){
 		found = strchr(array,data);
 	}
 	ZeroTerminatedArray<const char8> retS;
