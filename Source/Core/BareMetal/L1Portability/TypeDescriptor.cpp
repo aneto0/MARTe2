@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeDescriptor.h"
-#include "StringHelper.h"
 #include "Vector.h"
 #include "Matrix.h"
 #include "ClassRegistryIndex.h"

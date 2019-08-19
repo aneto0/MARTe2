@@ -41,177 +41,167 @@
 /*---------------------------------------------------------------------------*/
 
 TEST(StringsGTest,TestLength) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestLength("Hello"));
+    ASSERT_TRUE(StringsTest::TestLength("Hello",5));
 }
 
-TEST(StringsGTest,TestCompare) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestCompare("Hello", "Hello"));
+TEST(StringsGTest,TestLength0) {
+    ASSERT_TRUE(StringsTest::TestLength("",0));
 }
 
-TEST(StringsGTest,TestCompareN) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestCompareN());
+TEST(StringsGTest,TestLengthNULL) {
+    ASSERT_TRUE(StringsTest::TestLength(emptyString,0));
 }
 
-TEST(StringsGTest,TestCopy) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestCopy("Hello"));
+TEST(StringsGTest,TestCompareT) {
+    ASSERT_TRUE(StringsTest::TestCompare("Hello", "Hello",true));
 }
 
-TEST(StringsGTest,TestCopyN) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestCopyN());
+TEST(StringsGTest,TestCompareF) {
+    ASSERT_TRUE(StringsTest::TestCompare("Hella", "Hello",false));
 }
 
-TEST(StringsGTest,TestConcatenate) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestConcatenate());
+TEST(StringsGTest,TestCompareFx) {
+    ASSERT_TRUE(StringsTest::TestCompare("Hella", "Hello",true,4));
 }
 
-TEST(StringsGTest,TestConcatenateN) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestConcatenateN());
+TEST(StringsGTest,TestCompareFE) {
+    ASSERT_TRUE(StringsTest::TestCompare("Hella", "",false));
 }
 
-TEST(StringsGTest,TestSearchChars) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearchChars());
+TEST(StringsGTest,TestCompareFN) {
+    ASSERT_TRUE(StringsTest::TestCompare("Hella", emptyString,false));
 }
 
-TEST(StringsGTest,TestSearchChar) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearchChar());
+TEST(StringsGTest,TestCompareContent) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hello",0));
 }
 
-TEST(StringsGTest,TestSearchLastChar) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearchLastChar());
-}
-TEST(StringsGTest,TestSearchString) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearchString());
+TEST(StringsGTest,TestCompareContentG) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hella", "Hello",-1));
 }
 
-TEST(StringsGTest,TestSearchIndex) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearchIndex());
+TEST(StringsGTest,TestCompareContentGx) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hella", "Hello",4,0));
 }
 
-TEST(StringsGTest,TestSetChar) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSetChar());
-}
-TEST(StringsGTest,TestTokenByChars) {
-    StringHelperTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestTokenizeByChars());
+TEST(StringsGTest,TestCompareContentL) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hella",1));
 }
 
-TEST(StringsGTest,TestTokenByString) {
-    StringHelperTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestTokenizeByString());
+TEST(StringsGTest,TestCompareContentLx) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hella",4,0));
 }
 
-TEST(StringsGTest,TestSubstr) {
-    StringHelperTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSubstr());
+TEST(StringsGTest,TestCompareContentG2) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hell", "Hello",-1));
 }
 
-TEST(StringsGTest,TestSetChar0Size) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSetChar0Size());
+TEST(StringsGTest,TestCompareContentL2) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", "Hell",1));
 }
 
-TEST(StringsGTest,TestSetCharNull) {
-    StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSetCharNull());
+TEST(StringsGTest,TestCompareContentG3) {
+    ASSERT_TRUE(StringsTest::TestCompareContent(emptyString, "Hello",-1));
 }
 
-TEST(StringPortableGTest,TestLength) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestLength("Hello"));
+TEST(StringsGTest,TestCompareContentL3) {
+    ASSERT_TRUE(StringsTest::TestCompareContent("Hello", emptyString,1));
 }
 
-TEST(StringPortableGTest,TestCompare) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestCompare("Hello", "Hello"));
+TEST(StringsGTest,TestCompareContent2) {
+    ASSERT_TRUE(StringsTest::TestCompareContent(emptyString, emptyString,0));
 }
 
-TEST(StringPortableGTest,TestCompareN) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestCompareN());
+TEST(StringsGTest,TestAppend) {
+    ASSERT_TRUE(StringsTest::TestAppend("Hello"));
 }
 
-TEST(StringPortableGTest,TestCopy) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestCopy("Hello"));
+TEST(StringsGTest,TestAppend2) {
+    ASSERT_TRUE(StringsTest::TestAppend("Hello",3));
 }
 
-TEST(StringPortableGTest,TestCopyN) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestCopyN());
+TEST(StringsGTest,TestAppend3) {
+    ASSERT_TRUE(StringsTest::TestAppend(emptyString,3,1,false));
 }
 
-TEST(StringPortableGTest,TestConcatenateNoResult) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestConcatenateNoResult());
-}
-TEST(StringPortableGTest,TestConcatenateNNoResult) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestConcatenateNNoResult());
+TEST(StringsGTest,TestAppend4) {
+    ASSERT_TRUE(StringsTest::TestAppend("Hello",0xFFFFFFFF,3));
 }
 
-TEST(StringPortableGTest,TestConcatenateWithResult) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestConcatenateWithResult());
-}
-TEST(StringPortableGTest,TestConcatenateNWithResult) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestConcatenateNWithResult());
+TEST(StringsGTest,TestAppend5) {
+    ASSERT_TRUE(StringsTest::TestAppend("Hello",3,5));
 }
 
-TEST(StringPortableGTest,TestSearchChars) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearchChars());
+TEST(StringsGTest,TestFindXXX) {
+    ASSERT_TRUE(StringsTest::TestFindXXX("Draconomicus","cono",3));
 }
 
-TEST(StringPortableGTest,TestSearchChar) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearchChar());
+TEST(StringsGTest,TestFindXXX1) {
+    ASSERT_TRUE(StringsTest::TestFindXXX("Draconomicus","m",7));
 }
 
-TEST(StringPortableGTest,TestSearchLastChar) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearchLastChar());
-}
-TEST(StringPortableGTest,TestSearchString) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearchString());
+TEST(StringsGTest,TestFindXXX2) {
+    ASSERT_TRUE(StringsTest::TestFindXXX("Draconomicus","noco",0,false));
 }
 
-TEST(StringPortableGTest,TestSearchIndex) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearchIndex());
+TEST(StringsGTest,TestFindXXX3) {
+    ASSERT_TRUE(StringsTest::TestFindXXX("Draconomicus","y",0,false));
 }
 
-TEST(StringPortableGTest,TestTokenByChars) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestTokenizeByChars());
+TEST(StringsGTest,TestFindXXX4) {
+    ASSERT_TRUE(StringsTest::TestFindXXX("Draconomicus",emptyString,0,false));
 }
 
-TEST(StringPortableGTest,TestTokenByString) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestTokenizeByString());
+TEST(StringsGTest,TestFindXXX5) {
+    ASSERT_TRUE(StringsTest::TestFindXXX(emptyString,"noco",0,false));
 }
 
-TEST(StringPortableGTest,TestSubstr) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSubstr());
+TEST(StringsGTest,TestFindXXX6) {
+    ASSERT_TRUE(StringsTest::TestFindXXX(emptyString,"y",0,false));
 }
 
-TEST(StringPortableGTest,TestSetChar) {
-    StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSetChar());
+TEST(StringsGTest,TestTokenizeChar) {
+	CCString expectedTokens[] = {
+			"Alice",
+			"nel",
+			"paese",
+			"delle",
+			"meraviglie",
+			emptyString
+	};
+    ASSERT_TRUE(StringsTest::TestTokenize("Alice nel paese ,delle ;meraviglie",expectedTokens," ",",;"));
 }
+
+TEST(StringsGTest,TestTokenizeChar2) {
+	CCString expectedTokens[] = {
+			"paese",
+			"",
+			"delle",
+			"meraviglie",
+			emptyString
+	};
+    ASSERT_TRUE(StringsTest::TestTokenize("paese ,delle ;meraviglie",expectedTokens," ,",",;"));
+}
+
+TEST(StringsGTest,TestTokenizeString) {
+	CCString expectedTokens[] = {
+			"a",
+			"",
+			"b",
+			"c",
+			"",
+			emptyString
+	};
+	CCString tokens[]={
+			"AND",
+			"OR",
+			"NOT",
+			"XOR",
+			"(",
+			")",
+			emptyString
+	};
+    ASSERT_TRUE(StringsTest::TestTokenizeString("a AND (b XOR c)",expectedTokens,tokens," "));
+}
+
 

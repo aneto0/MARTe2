@@ -34,7 +34,6 @@
 
 #include "Directory.h"
 #include "HeapManager.h"
-#include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -91,6 +91,20 @@ public:
     inline uint32 FindPattern(const T *data) const;
 
     /**
+     * @brief Finds the first location in the array that contains T
+     * @param[in] data is the element to be found.
+     * @return the string starting at the found position emptyString otherwise
+     */
+    inline ZeroTerminatedArray<T> FindString(const T & data) const;
+
+    /**
+     * @brief Finds the first location in the array that contains T
+     * @param[in] data is the element to be found.
+     * @return the string starting at the found position emptyString otherwise
+     */
+    inline ZeroTerminatedArray<T> FindPatternString(const T *data) const;
+
+    /**
      * @brief Checks if data is in this array
      * @param[in] data is the element to be found.
      * @return true if found
@@ -220,6 +234,16 @@ inline int32 ZeroTerminatedArray<const char8>::CompareContent(const char *arrayI
 template<>
 inline uint32 ZeroTerminatedArray<const char8>::FindPattern(const char8 * data) const;
 
+template<>
+inline uint32 ZeroTerminatedArray<const char8>::Find(const char8 & data) const;
+
+template<>
+inline ZeroTerminatedArray<const char8> ZeroTerminatedArray<const char8>::FindPatternString(const char8 * data) const;
+
+template<>
+inline ZeroTerminatedArray<const char8> ZeroTerminatedArray<const char8>::FindString(const char8 & data) const;
+
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -255,6 +279,19 @@ uint32 ZeroTerminatedArray<T>::Find(const T & data) const{
 	return ZTAFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
 }
 
+template<>
+uint32 ZeroTerminatedArray<const char8>::Find(const char8 & data) const{
+	const char8 *found = NULL_PTR(const char8 *);
+	if (array != NULL_PTR(const char8 *)){
+		found = strchr(array,data);
+	}
+	uint32 ret = 0xFFFFFFFFU;
+	if (found != NULL_PTR(const char8 *)){
+		ret = static_cast<uint32>(found - array);
+	}
+	return ret;
+}
+
 template<typename T>
 uint32 ZeroTerminatedArray<T>::FindPattern(const T * data) const{
 	uint32 ret = 0xFFFFFFFFu;
@@ -278,12 +315,72 @@ uint32 ZeroTerminatedArray<T>::FindPattern(const T * data) const{
 
 template<>
 uint32 ZeroTerminatedArray<const char8>::FindPattern(const char8* data) const{
-	const char8 *found = strstr(array,data);
+	const char8 *found = NULL_PTR(const char8 *);
+	if ((array != NULL_PTR(const char8 *)) && (data != NULL_PTR(const char8 *))){
+		found = strstr(array,data);
+	}
 	uint32 ret = 0xFFFFFFFFU;
 	if (found != NULL_PTR(const char8 *)){
 		ret = static_cast<uint32>(found - array);
 	}
 	return ret;
+}
+
+template<typename T>
+ZeroTerminatedArray<T> ZeroTerminatedArray<T>::FindString(const T & data) const{
+	uint32 index = ZTAFind((const uint8 *)array,(const uint8 *)&data,sizeof(T));
+	ZeroTerminatedArray<T> retS;
+	if (index != 0xFFFFFFFFU){
+		retS = array+index;
+	}
+	return retS;
+}
+
+template<>
+ZeroTerminatedArray<const char8> ZeroTerminatedArray<const char8>::FindString(const char8 & data) const{
+	const char8 *found = NULL_PTR(const char8 *);
+	if (array != NULL_PTR(const char8 *)){
+		found = strchr(array,data);
+	}
+	ZeroTerminatedArray<const char8> retS;
+	if (found != NULL_PTR(const char8 *)){
+		retS = found;
+	}
+	return retS;
+}
+
+template<typename T>
+ZeroTerminatedArray<T> ZeroTerminatedArray<T>::FindPatternString(const T * data) const{
+	ZeroTerminatedArray<T> retS;
+
+	const T *pArray = array;
+	const T *pTest = data;
+	if ((pArray != NULL_PTR(const T*)) && (pTest != NULL_PTR(const T*))){
+		uint32 limit = ZeroTerminatedArray<T>(data).GetSize();
+		bool found = false;
+    	ZeroTerminatedArray<T> search(this);
+	    while (!IsZero(*pArray) && !found) {
+	    	found = search.IsSameAs(pTest,limit);
+	    	search++;
+	    }
+	    if (found ){
+	    	retS = search.array;
+	    }
+	}
+	return retS;
+}
+
+template<>
+ZeroTerminatedArray<const char8> ZeroTerminatedArray<const char8>::FindPatternString(const char8* data) const{
+	const char8 *found = NULL_PTR(const char8 *);
+	if ((array != NULL_PTR(const char8 *)) && (data != NULL_PTR(const char8 *))){
+		found = strstr(array,data);
+	}
+	ZeroTerminatedArray<const char8> retS;
+	if (found != NULL){
+		retS = found;
+	}
+	return retS;
 }
 
 template<typename T>
@@ -344,25 +441,11 @@ bool ZeroTerminatedArray<T>::IsSameAs(const T *arrayIn,uint32 limit) const {
 
 template<>
 bool ZeroTerminatedArray<const char8>::IsSameAs(const char8 *arrayIn,uint32 limit) const {
-	return (strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit)==0);
-#if 0
-    bool same = true;
-    if ((array != NULL_PTR(char8*))&&(arrayIn != NULL_PTR(char8*))) {
-        const char8 * listP = array;
-        const char8 * list2P = arrayIn;
-        while ((*listP!='\0') && same && (limit > 0)) {
-            same = (*listP == *list2P);
-            listP++;
-            list2P++;
-            limit--;
-        }
-        // if sane and limit > 0 it means we reached a terminator on listP. Check list2P
-        if (same && (limit > 0)){
-        	same = (*list2P=='\0');
-        }
-    }
-    return same;
-#endif
+	bool ret = (array == arrayIn);
+	if (!ret && (array != NULL_PTR(const char8 *)) && (arrayIn != NULL_PTR(const char8 *))){
+		ret = (strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit)==0);
+	}
+	return ret;
 }
 
 template<typename T>
@@ -372,10 +455,10 @@ int32 ZeroTerminatedArray<T>::CompareContent(const T *arrayIn,uint32 limit) cons
 
 	if (array == NULL_PTR(T*)){
 		finished = true;
-		compResult--;
+		compResult--;  // returns -1 unless next is also NULL
 	}
 	if (arrayIn == NULL_PTR(T*)){
-		finished = true;
+		finished = true; // returns 1 unless previous was NULL
 		compResult++;
 	}
     const T * listP = array;
@@ -412,7 +495,22 @@ int32 ZeroTerminatedArray<T>::CompareContent(const T *arrayIn,uint32 limit) cons
 
 template<>
 int32 ZeroTerminatedArray<const char8>::CompareContent(const char *arrayIn,uint32 limit) const {
-	return strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit);
+	int32 ret = 0;
+	if (arrayIn == NULL_PTR(const char8 *)){
+		if (array != NULL_PTR(const char8 *)){
+			ret = 1;
+		}
+	} else
+	if (array == NULL_PTR(const char8 *)){
+		if (arrayIn != NULL_PTR(const char8 *)){
+			ret = -1;
+		}
+	} else {
+		ret =  strncmp(reinterpret_cast<const char*>(array),reinterpret_cast<const char*>(arrayIn),limit);
+		if (ret > 0) ret = 1;
+		if (ret < 0) ret = -1;
+	}
+	return ret;
 }
 
 

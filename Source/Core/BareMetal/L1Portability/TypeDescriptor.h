@@ -36,6 +36,7 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "DynamicCString.h"
+#include "CString.h"
 
 
 /*---------------------------------------------------------------------------*/

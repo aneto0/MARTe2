@@ -34,7 +34,6 @@
 #include "HighResolutionTimer.h"
 #include "ErrorInformation.h"
 #include "ErrorTypeLookup.h"
-#include "StringHelper.h"
 #include "CString.h"
 
 /*---------------------------------------------------------------------------*/

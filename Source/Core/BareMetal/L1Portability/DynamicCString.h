@@ -127,7 +127,7 @@ public:
      * @return true if \a arrayIn is the same.
      */
     inline bool IsSameAs(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
-#if 1
+
     /**
      * @brief Get the token using characters as delimiters.
      * @param[in] string is the string to tokenize.
@@ -153,7 +153,7 @@ public:
      * arguments is NULL.
      */
     static DLL_API CCString  Tokenize(CCString  const string, DynamicCString &token,int32 &limit, ZeroTerminatedArray<const CCString> const delimiters, CCString const skip);
-#endif
+
 };
 
 

@@ -32,7 +32,6 @@
 
 #include "ThreadInformation.h"
 #include "HeapManager.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

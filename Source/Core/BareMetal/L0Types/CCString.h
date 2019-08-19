@@ -135,7 +135,7 @@ public:
      * @details This function requires that T has the operators < and >
      * @param[in] arrayIn is the array to be compared
      * @param[in] limit is the number of characters that will be checked, starting from the first. 0xFFFFFFFF is the max
-     * @return true if \a arrayIn is the same.
+     * @return 0 if \a arrayIn is the same, -1 is lower 1 if higher. NULL is equal to NULL and  lower than any valid string
      */
     inline int32 CompareContent(const char8 *arrayIn,uint32 limit=0xFFFFFFFF) const;
 
@@ -147,18 +147,32 @@ public:
     inline bool In(const char8& data) const;
 
     /**
-     * @brief Finds the first location in the array that contains T
+     * @brief Finds the first location in the array that contains pattern
      * @param[in] pattern is the substring to be found.
      * @return the position in the array where T is found, 0xFFFFFFFF if not found.
      */
     inline uint32 FindPattern(CCString pattern) const;
 
     /**
-     * @brief Finds the first location in the array that contains T
+     * @brief Finds the first location in the array that contains pattern
      * @param[in] pattern is the substring to be found.
      * @return the substring in the array where T is found, 0xFFFFFFFF if not found.
      */
     inline CCString FindPatternString(CCString pattern) const;
+
+    /**
+     * @brief Finds the first location in the array that contains pattern
+     * @param[in] pattern is the substring to be found.
+     * @return the position in the array where T is found, 0xFFFFFFFF if not found.
+     */
+    inline uint32 Find(char8 c) const;
+
+    /**
+     * @brief Finds the first location in the array that contains pattern
+     * @param[in] pattern is the substring to be found.
+     * @return the substring in the array where T is found, 0xFFFFFFFF if not found.
+     */
+    inline CCString FindString(char8 c) const;
 
 };
 
@@ -235,12 +249,15 @@ uint32 CCString::FindPattern(CCString pattern) const{
 }
 
 CCString CCString::FindPatternString(CCString pattern) const{
-	uint32 ix = FindPattern(pattern);
-	CCString ret = emptyString;
-	if (ix != 0xFFFFFFFFu){
-		ret = GetList()+ix;
-	}
-	return ret;
+	return ZeroTerminatedArray<const char8>::FindPatternString(pattern.GetList()).GetList();
+}
+
+uint32 CCString::Find(char8 c) const{
+	return ZeroTerminatedArray<const char8>::Find(c);
+}
+
+CCString CCString::FindString(char8 c) const{
+	return ZeroTerminatedArray<const char8>::FindString(c).GetList();
 }
 
 }
