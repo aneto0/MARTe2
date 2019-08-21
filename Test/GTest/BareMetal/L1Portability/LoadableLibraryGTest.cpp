@@ -44,37 +44,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//#define PIPPO(x) QUOTE(x ## _DLL)
-
-/*
-const char *Windows_DLL = "msvcr120.dll";
-const char *Linux_DLL = "libm.so";
-#define NAME_DLL(x) QUOTE(x ## _DLL)
-
-#define MARTeTest::testDLL NAME_DLL(ENVIRONMENT)
-
-#define str(x) #x
-
-MARTe::CCString GetLibName(){
-	printf("%s\n",PIPPO(ENVIRONMENT));
-
-	MARTe::CCString platform;
-	MARTe::CCString MARTeTest::testDLL;
-	platform = str(ENVIRONMENT);
-
-	if (platform == "Windows"){
-		MARTeTest::testDLL == "msvcr120.dll";
-	} else
-	if (platform == "Linux"){
-		MARTeTest::testDLL == "libm.so";
-	}
-
-	return MARTeTest::testDLL;
-}
-
-#define MARTeTest::testDLL GetLibName()
-
-*/
 
 TEST(LoadableLibraryGTest,TestConstructor) {
     LoadableLibraryTest loadablelibrarytest;
