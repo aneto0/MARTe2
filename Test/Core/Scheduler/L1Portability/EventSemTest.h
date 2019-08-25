@@ -33,7 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSem.h"
-#include "MutexSem.h"
+
+#include "../../../../Source/Core/Scheduler/L1Portability/MutexSem.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/

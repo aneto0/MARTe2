@@ -69,7 +69,7 @@ ErrorManagement::ErrorType PlaformMultipleEventSem::Wait(const MilliSeconds &tim
 				REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned WAIT_FAILED");
 			} else {
 				ret.internalSetupError = true;
-				COMPOSITE_REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned unexpected value: ",reason);
+				COMPOSITE_REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned unexpected value: ",static_cast<uint32>(reason));
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 /**
- * @file PlatformMultipleEventSem.h
- * @brief Header file for class AnyType
- * @date 21 Aug 2019
+ * @file MutexSem2.h
+ * @brief Header file for class MutexSem
+ * @date 23/08/2019
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AnyType
+ * @details This header file contains the declaration of the class MutexSem
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
-*/
+ */
 
-#ifndef PLATFORMMULTIPLEEVENTSEM_H_
-#define PLATFORMMULTIPLEEVENTSEM_H_
+#ifndef MUTEXSEM2_H_
+#define MUTEXSEM2_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,9 +32,12 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticList.h"
+#include "GeneralDefinitions.h"
+#include "ErrorType.h"
 #include "ErrorManagement.h"
-#include "EventSource.h"
+#include "Synchronizer.h"
+#include "FastPollingMutexSem.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -43,42 +46,76 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe{
+namespace MARTe {
 
 /**
- *
+ * @brief Mutual exclusion semaphore.
  */
-class PlaformMultipleEventSem{
+class DLL_API MutexSem2: public Synchronizer {
+
 public:
-	/**
-	 *
-	 */
-    ErrorManagement::ErrorType AddEvent(const EventSource &event);
 
     /**
-     *
+     * @brief Initialises the semaphore operating system specific properties.
      */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
+    MutexSem2();
 
     /**
-     *
+     * @brief If it was not already closed, the destructor closes the semaphore.
      */
-	StaticList<HANDLE> handles;
+    ~MutexSem2();
+
+    /**
+     * @brief Opens the semaphore with a given initial state.
+     * @param[in] recursive specifies if the mutex is to be set recursive.
+     * A recursive semaphore does not dead-lock if two consecutive locks are issued by the
+     * same thread.
+     * @return true if the operating system call returns with no errors.
+     */
+    bool Create(const bool &recursive = false);
+
+    /**
+     * @brief Closes the semaphore handle.
+     * @return true if the operating system call returns with no errors.
+     */
+    bool Close();
+
+    /**
+     * @brief Locks the semaphore up to a maximum period defined by the timeout.
+     * @param[in] timeout the maximum time up until when the semaphore will be locked.
+     * @return ErrorManagement::NoError if the operating system call returns with no errors or
+     * Timeout if the time waiting in the Lock (from when the function was called)
+     * was greater than the specified timeout.
+     * @pre the semaphore was successfully created.
+     */
+    ErrorManagement::ErrorType Lock(const MilliSeconds &timeout);
+
+    /**
+     * @brief Unlocks the semaphore.
+     * @return true if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
+     */
+    bool UnLock();
+
+    /**
+     * @brief Checks if the semaphore is closed.
+     * @return true if the semaphore is closed.
+     */
+    bool IsClosed() const;
+
 
 private:
-	/**
-	 * disable copy
-	 */
-	void operator=(const PlaformMultipleEventSem &sem){}
+
+    /**
+     * Operating system specific properties to be used by the operating system specific implementation
+     */
+    MutexSemHandle handle;
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-} // MARTe
+}
+#endif /* MUTEXSEM_H_ */
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_WINDOWS_PLATFORMMULTIPLEEVENTSEM_H_ */

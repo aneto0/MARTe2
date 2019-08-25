@@ -1,5 +1,5 @@
 /**
- * @file MultipleEventSem.h
+ * @file EventSource.h
  * @brief Header file for class AnyType
  * @date 21 Aug 2019
  * @author Filippo Sartori
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef MULTIPLEEVENTSEM_H_
-#define MULTIPLEEVENTSEM_H_
+#ifndef EVENTSOURCE_H_
+#define EVENTSOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,10 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,PlatformMultipleEventSem.h)
-#include "EventSource.h"
-#include "MilliSeconds.h"
-#include "FastPollingMutexSem.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,PlatformEventSource.h)
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,86 +45,15 @@
 
 namespace MARTe{
 
-
 /**
- * @brief this object allows waiting on a list of EventSources.
- *
- * @details It is implemented with WaitForMultipleObjectEx or poll()
- * It support sockets, event sems, mutex sems, console input...
- *
- * */
-class MultipleEventSem{
-public:
-	/**
-	 *
-	 */
-	inline MultipleEventSem();
-
-	/**
-	 *
-	 */
-	inline ~MultipleEventSem();
-
-    /**
-     * @brief Waits for an event, limited by the timeout time.
-     * while the list is waited upon, the APIS of this objects are disabled --> return ErrorAccessDenied
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     */
-    inline ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
-    /**
-     * @briefs adds the passed event to the list of events to wait for.
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     */
-    inline ErrorManagement::ErrorType AddEvent(const EventSource &event);
-
-private:
-    /**
-     * protects the object
-     */
-    FastPollingMutexSem mux;
-
-    /**
-     *
-     */
-    PlaformMultipleEventSem event;
-
-};
+ * actual implementation is platform specific and is held in PlatformEventSource
+ */
+class EventSource;
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-MultipleEventSem::MultipleEventSem(){
-	mux.Create(false);
-}
-
-MultipleEventSem::~MultipleEventSem(){
-}
-
-ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
-	ErrorManagement::ErrorType ret;
-	ret.errorAccessDenied = !mux.FastTryLock();
-	if (ret){
-		ret = event.Wait(timeout);
-
-		mux.FastUnLock();
-	}
-	return ret;
-}
-
-ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
-	ErrorManagement::ErrorType ret;
-	ret.errorAccessDenied = !mux.FastTryLock();
-	if (ret){
-		ret = event.AddEvent(event);
-
-		mux.FastUnLock();
-	}
-	return ret;
-}
-
-
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_MULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_EVENTSOURCE_H_ */

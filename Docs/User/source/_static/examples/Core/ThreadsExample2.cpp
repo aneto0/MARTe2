@@ -28,10 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "../../../../../../Source/Core/Scheduler/L1Portability/MutexSem.h"
 #include "AdvancedErrorManagement.h"
 #include "ErrorLoggerExample.h"
 #include "EventSem.h"
-#include "MutexSem.h"
 #include "Sleep.h"
 #include "StreamString.h"
 #include "Threads.h"

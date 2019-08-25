@@ -34,7 +34,8 @@
 #include "EventSem.h"
 #include "ExecutionInfo.h"
 #include "MultiClientServiceTest.h"
-#include "MutexSem.h"
+
+#include "../../../../Source/Core/Scheduler/L1Portability/MutexSem.h"
 #include "Threads.h"
 
 /*---------------------------------------------------------------------------*/

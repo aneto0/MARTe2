@@ -48,6 +48,7 @@ namespace MARTe{
  * a special handle that can be used in WaiForMultipleObjectEx
  */
 class EventSource{
+
 public:
 
 	HANDLE handle;

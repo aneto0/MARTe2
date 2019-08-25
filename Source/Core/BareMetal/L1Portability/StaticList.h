@@ -159,6 +159,11 @@ private:
      */
     StaticListHolder slh;
 
+    /**
+     * do not allow copying!
+     */
+    void operator=(const StaticList<elementType,listAllocationGranularity> &list){}
+
 };
 
 }

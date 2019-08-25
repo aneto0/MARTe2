@@ -192,6 +192,7 @@ namespace MARTe {
          */
         SelectProperties selectProperties;
 
+        void operator=(const Select &){}
 
     };
 

@@ -43,8 +43,7 @@
 
 //#include "HighResolutionTimerCalibrator.h"
 #include "HighResolutionTimer.h"
-#include "StringHelper.h"
-#include "../../TimeCalibration.h"
+#include "TimeCalibration.h"
 #include "ErrorManagement.h"
 #include "StartupManager.h"
 /*---------------------------------------------------------------------------*/

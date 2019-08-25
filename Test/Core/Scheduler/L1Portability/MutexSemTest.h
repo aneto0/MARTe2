@@ -31,7 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "MutexSem.h"
+#include "../../../../Source/Core/Scheduler/L1Portability/MutexSem.h"
+
 #include "EventSem.h"
 #include "Threads.h"
 using namespace MARTe;

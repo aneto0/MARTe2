@@ -286,9 +286,10 @@ const bool SaturatedInteger<baseType>::TTCompareCodeMap[4][4] = {
 };
 
 
+
 template<typename baseType>
 uint8 SaturatedInteger<baseType>::GetCode() const {
-	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
+//	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
 	uint8 ret = valid;
 	if (data > maxRawValue){
 		// valid because there are only a few possible values above maxRawValue
@@ -299,7 +300,7 @@ uint8 SaturatedInteger<baseType>::GetCode() const {
 
 template<typename baseType>
 void SaturatedInteger<baseType>::SetCode(uint8 code)  {
-	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
+//	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
 
 	data = maxRawValue;
 	data += (baseType)code;

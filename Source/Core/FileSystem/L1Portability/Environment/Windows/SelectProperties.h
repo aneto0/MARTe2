@@ -123,6 +123,8 @@ namespace MARTe {
 
         HandleFlags GetProperties(HANDLE handle) const;
 
+    private:
+        void operator=(const SelectProperties &p){}
 
     };
 

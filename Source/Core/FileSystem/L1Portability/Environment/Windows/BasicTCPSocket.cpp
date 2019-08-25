@@ -36,7 +36,6 @@
 #include "BasicTCPSocket.h"
 #include "ErrorManagement.h"
 #include "Select.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

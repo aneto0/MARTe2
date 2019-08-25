@@ -30,10 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSemTest.h"
+
+#include "../../../../Source/Core/Scheduler/L1Portability/MutexSem.h"
 #include "Threads.h"
 #include "Sleep.h"
 #include "HighResolutionTimer.h"
-#include "MutexSem.h"
 #include "Seconds.h"
 #include "ErrorManagement.h"
 #include "CompositeErrorManagement.h"

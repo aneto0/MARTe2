@@ -1,7 +1,7 @@
 /**
- * @file MultipleEventSem.h
+ * @file Synchronizer.h
  * @brief Header file for class AnyType
- * @date 21 Aug 2019
+ * @date 23 Aug 2019
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,10 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef MULTIPLEEVENTSEM_H_
-#define MULTIPLEEVENTSEM_H_
+#ifndef SYNCHRONIZER_H_
+#define SYNCHRONIZER_H_
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,12 +33,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "TypeCharacteristics.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,PlatformMultipleEventSem.h)
+#include "GeneralDefinitions.h"
 #include "EventSource.h"
-#include "MilliSeconds.h"
-#include "FastPollingMutexSem.h"
+#include "ErrorType.h"
+#include "ErrorManagement.h"
+#include "Ticks.h"
+#include "HighResolutionTimer.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SynchronizerData.h)
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,49 +51,57 @@
 
 namespace MARTe{
 
-
-/**
- * @brief this object allows waiting on a list of EventSources.
- *
- * @details It is implemented with WaitForMultipleObjectEx or poll()
- * It support sockets, event sems, mutex sems, console input...
- *
- * */
-class MultipleEventSem{
+/* @details The Synchronizer offer the possibility to block any number of threads in
+* a barrier. This barrier is lowered by calling the Reset method and raised
+* by the Post method. Threads are blocked in the barrier by calling one of the Wait methods.
+* Once the barrier is raised all the threads are allowed to concurrently proceed.
+* */
+class DLL_API Synchronizer: public EventSource{
 public:
 	/**
-	 *
+	 * Creates the waitable handle
 	 */
-	inline MultipleEventSem();
+	ErrorManagement::ErrorType Open();
+
+	/**
+	 * Closes the waitable handle
+	 */
+	ErrorManagement::ErrorType Close();
+
+	/**
+	 * Opens the lock
+	 */
+	ErrorManagement::ErrorType Post();
+
+	/**
+	 * Closes the lock
+	 */
+	ErrorManagement::ErrorType Reset();
+
+	/**
+	 * Waits for the lock to open
+	 */
+	inline ErrorManagement::ErrorType WaitUpdate(MilliSeconds &timeout);
+
+	/**
+	 * Waits for the lock to open
+	 */
+	ErrorManagement::ErrorType Wait(MilliSeconds timeout);
 
 	/**
 	 *
 	 */
-	inline ~MultipleEventSem();
+	Synchronizer();
 
-    /**
-     * @brief Waits for an event, limited by the timeout time.
-     * while the list is waited upon, the APIS of this objects are disabled --> return ErrorAccessDenied
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     */
-    inline ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
-    /**
-     * @briefs adds the passed event to the list of events to wait for.
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     */
-    inline ErrorManagement::ErrorType AddEvent(const EventSource &event);
-
+	/**
+	 *
+	 */
+	~Synchronizer();
 private:
-    /**
-     * protects the object
-     */
-    FastPollingMutexSem mux;
-
-    /**
-     *
-     */
-    PlaformMultipleEventSem event;
+	/**
+	 * platform specifc
+	 */
+	SynchronizerData data;
 
 };
 
@@ -98,36 +109,29 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-MultipleEventSem::MultipleEventSem(){
-	mux.Create(false);
-}
-
-MultipleEventSem::~MultipleEventSem(){
-}
-
-ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
+ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
-	ret.errorAccessDenied = !mux.FastTryLock();
-	if (ret){
-		ret = event.Wait(timeout);
 
-		mux.FastUnLock();
+	if (timeout == MilliSeconds::Infinite){
+		ret = Wait(timeout);
+	} else {
+		Ticks tickStart = HighResolutionTimer::GetTicks();
+		ret = Wait(timeout);
+		Ticks ticksEnd = HighResolutionTimer::GetTicks();
+		Ticks elapsed = ticksEnd - tickStart;
+		MilliSeconds elapsedMs = elapsed;
+
+		if (elapsedMs < timeout){
+			timeout = timeout = elapsedMs;
+		} else {
+			timeout = MilliSeconds(0,Units::ms);
+		}
 	}
 	return ret;
 }
 
-ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
-	ErrorManagement::ErrorType ret;
-	ret.errorAccessDenied = !mux.FastTryLock();
-	if (ret){
-		ret = event.AddEvent(event);
-
-		mux.FastUnLock();
-	}
-	return ret;
-}
 
 
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_MULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_SYNCHRONIZER_H_ */
