@@ -49,28 +49,12 @@ namespace MARTe{
 /**
  *
  */
-class PlaformMultipleEventSem{
-public:
-	/**
-	 *
-	 */
-    ErrorManagement::ErrorType AddEvent(const EventSource &event);
-
-    /**
-     *
-     */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
+struct MultipleEventSemData{
     /**
      *
      */
 	StaticList<HANDLE> handles;
 
-private:
-	/**
-	 * disable copy
-	 */
-	void operator=(const PlaformMultipleEventSem &sem){}
 };
 
 

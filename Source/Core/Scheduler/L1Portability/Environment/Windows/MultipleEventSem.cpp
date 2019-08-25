@@ -1,5 +1,5 @@
 /**
- * @file PlaformMultipleEventSem.cpp
+ * @file MultipleEventSem.cpp
  * @brief
  * @date 21 Aug 2019
  * @author Filippo Sartori
@@ -21,25 +21,25 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "PlatformMultipleEventSem.h"
 #include "CompositeErrorManagement.h"
+#include "MultipleEventSem.h"
 
 namespace MARTe{
 
-ErrorManagement::ErrorType PlaformMultipleEventSem::AddEvent(const EventSource &event){
+ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
 	ErrorManagement::ErrorType ret;
 
-	ret.unsupportedFeature = (handles.GetSize() >= MAXIMUM_WAIT_OBJECTS);
+	ret.unsupportedFeature = (data.handles.GetSize() >= MAXIMUM_WAIT_OBJECTS);
 	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",MAXIMUM_WAIT_OBJECTS, " event sources");
 
 	if (ret){
-		handles.Add(event.handle);
+		data.handles.Add(event.handle);
 	}
 
 	return ret;
 }
 
-ErrorManagement::ErrorType PlaformMultipleEventSem::Wait(const MilliSeconds &timeout){
+ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
 	DWORD dwMilliseconds = timeout.GetTimeRaw();
 	uint32 index = 0;
@@ -52,7 +52,7 @@ ErrorManagement::ErrorType PlaformMultipleEventSem::Wait(const MilliSeconds &tim
 	}
 
 	if (ret){
-		DWORD reason = WaitForMultipleObjectsEx(handles.GetSize(),handles.GetAllocatedMemoryConst(),FALSE,dwMilliseconds,FALSE);
+		DWORD reason = WaitForMultipleObjectsEx(data.handles.GetSize(),data.handles.GetAllocatedMemoryConst(),FALSE,dwMilliseconds,FALSE);
 
 		if (reason > WAIT_OBJECT_0 ){
 			index = reason - WAIT_OBJECT_0;

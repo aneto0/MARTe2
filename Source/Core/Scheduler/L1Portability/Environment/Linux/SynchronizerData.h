@@ -1,7 +1,7 @@
 /**
- * @file PlatformMultipleEventSem.h
+ * @file SynchronizerData.h
  * @brief Header file for class AnyType
- * @date 21 Aug 2019
+ * @date 25 Aug 2019
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,22 +21,16 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PLATFORMMULTIPLEEVENTSEM_H_
-#define PLATFORMMULTIPLEEVENTSEM_H_
+#ifndef SYNCHRONIZERDATA_H_
+#define SYNCHRONIZERDATA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <poll.h>
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "StaticList.h"
-#include "ErrorManagement.h"
-#include "EventSource.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,34 +42,13 @@
 
 namespace MARTe{
 
-/**
- *
- */
-class PlaformMultipleEventSem{
-public:
-
-	PlaformMultipleEventSem();
-	/**
-	 *
-	 */
-    ErrorManagement::ErrorType AddEvent(const EventSource &event);
+struct SynchronizerData{
 
     /**
-     *
+     * Event Handle
      */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
-    /**
-     *
-     */
-	StaticList<struct pollfd> handles;
-
-	/**
-	 * number of pollfd elements that have a registered event
-	 */
-	uint32 			pending;
+    int eventfd;
 };
-
 
 
 /*---------------------------------------------------------------------------*/
@@ -84,4 +57,4 @@ public:
 
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_WINDOWS_PLATFORMMULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_ENVIRONMENT_WINDOWS_SYNCHRONIZERDATA_H_ */

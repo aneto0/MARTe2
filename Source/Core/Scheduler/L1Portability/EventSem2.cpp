@@ -23,7 +23,7 @@
 #define DLL_API
 
 
-#include <intrin.h>
+//#include <intrin.h>
 #include "EventSem2.h"
 #include "CompositeErrorManagement.h"
 #include "Atomic.h"
