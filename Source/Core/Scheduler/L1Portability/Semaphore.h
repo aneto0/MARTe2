@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EVENTSEM2_H_
-#define EVENTSEM2_H_
+#ifndef Semaphore_H_
+#define Semaphore_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -51,22 +51,26 @@
 namespace MARTe {
 
 /**
- * @brief Event semaphore.
- *
- * @details An optimised and resource-full Synchronizer
- * the handling of the semaphore is mainly in user space.
+ * @brief Flexible Semaphore able to perform different synchronisation functions
+ * @details the handling of the semaphore is mainly in user space.
  * the cpu is yielded and kernel calls are performed only when the semaphore is red
+ * Performs the following functions:
+ * 1) simple event semaphore: (Latching): Take() waits if red(0) exits immediately if green (1)
+ * 2) serializer (AutoResetting): Take() waits if red(0) and if green(1) exits after turning the semaphore red
+ * 3) counting (Counting): Take() waits if semaphore is <=0. if >0 decrements and exits.
+ * 4) recursive mutex (Mutex): as AutoResetting, but allows multiple Take() by the owner thread. Reset is disabled and Set is accessible only by the owner.
  */
-class DLL_API EventSem2: public Synchronizer {
+class DLL_API Semaphore: public Synchronizer {
 
 public:
 	/**
 	 *
 	 */
-	enum EventMode{
+	enum SemaphoreMode{
 		Latching = 0,
 		AutoResetting = 1,
 		Counting = 2,
+		Mutex = 3,
 		Invalid = 15,
 		Exit = 31
 	};
@@ -75,18 +79,18 @@ public:
     /**
      * @brief Initializes the semaphore operating system specific properties.
      */
-    EventSem2();
+    Semaphore();
 
     /**
      * @brief If it was not already closed, the destructor closes the semaphore.
      */
-    virtual ~EventSem2();
+    virtual ~Semaphore();
 
     /**
      * @brief Creates the semaphore.
      * @return true if the operating system call returns with no errors.
      */
-    ErrorManagement::ErrorType Open(EventMode mode);
+    ErrorManagement::ErrorType Open(SemaphoreMode mode);
 
     /**
      * @brief Closes the semaphore.
@@ -104,7 +108,7 @@ public:
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout,bool resetBeforeWait);
+    ErrorManagement::ErrorType Take(const MilliSeconds &timeout,bool resetBeforeWait);
 
     /**
      * @brief Resets the semaphore (raises the barrier).
@@ -118,7 +122,7 @@ public:
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Post(uint32 count);
+    ErrorManagement::ErrorType Set(uint32 count);
 
     /**
      * @brief Checks if the semaphore is closed.
@@ -143,7 +147,12 @@ private:
      * mode = 1 --> status is 0 or 1. 1 means green. AutoResets on each thread exit.
      * mode = 2 --> status is -max to max. <=0 means red. Upon exit status--; Post => status++; reset => status = 0;
      */
-    EventMode mode;
+    SemaphoreMode mode;
+
+    /**
+     * used for recursive mutexes
+     */
+    ThreadIdentifier owner;
 
     /**
      *	protects the critical variables

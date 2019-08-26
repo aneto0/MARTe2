@@ -1,5 +1,6 @@
+
 /**
- * @file EventSem2.cpp
+ * @file Semaphore.cpp
  * @brief Header file for class AnyType
  * @date 22 Aug 2019
  * @author Filippo Sartori
@@ -24,23 +25,26 @@
 
 
 //#include <intrin.h>
-#include "EventSem2.h"
+#include "Semaphore.h"
 #include "CompositeErrorManagement.h"
 #include "Atomic.h"
+#include "Threads.h"
+
 
 
 namespace MARTe{
 
-EventSem2::EventSem2(){
+Semaphore::Semaphore(){
 	mode = Invalid;
 	status = 0;
+	owner = 0;
 }
 
-EventSem2::~EventSem2(){
+Semaphore::~Semaphore(){
 	Close();
 }
 
-ErrorManagement::ErrorType EventSem2::Open(EventMode mode){
+ErrorManagement::ErrorType Semaphore::Open(SemaphoreMode mode){
 	ErrorManagement::ErrorType ret;
 
 	ret = lockHev.Open();
@@ -61,7 +65,7 @@ ErrorManagement::ErrorType EventSem2::Open(EventMode mode){
  * @brief Closes the semaphore.
  * @return true if the operating system call returns with no errors.
  */
-ErrorManagement::ErrorType EventSem2::Close(){
+ErrorManagement::ErrorType Semaphore::Close(){
 	ErrorManagement::ErrorType ret;
 
 	status = 0xFFFF;
@@ -85,7 +89,7 @@ ErrorManagement::ErrorType EventSem2::Close(){
 }
 
 
-ErrorManagement::ErrorType EventSem2::Lock(MilliSeconds &timeout){
+ErrorManagement::ErrorType Semaphore::Lock(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
 
 	Atomic::Increment(&waiters);
@@ -99,7 +103,7 @@ ErrorManagement::ErrorType EventSem2::Lock(MilliSeconds &timeout){
 }
 
 
-ErrorManagement::ErrorType EventSem2::UnLock(){
+ErrorManagement::ErrorType Semaphore::UnLock(){
 	ErrorManagement::ErrorType ret;
 
 	lock.FastUnLock();
@@ -108,11 +112,10 @@ ErrorManagement::ErrorType EventSem2::UnLock(){
 	return ret;
 }
 
-ErrorManagement::ErrorType EventSem2::Wait(const MilliSeconds &timeout,bool resetBeforeWait){
+ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout,bool resetBeforeWait){
 	ErrorManagement::ErrorType ret;
 	MilliSeconds timeoutCopy(timeout);
 	Atomic::Increment(&waiters);
-
 
 	int32 sampledStatus = 0;
 
@@ -135,6 +138,19 @@ ErrorManagement::ErrorType EventSem2::Wait(const MilliSeconds &timeout,bool rese
 				if (status > 0){
 					sampledStatus = 1;
 					status--;
+				}
+			}break;
+			case Mutex:{
+				// locked
+				if (status <= 0){
+					if (Threads::Id() == owner){
+						sampledStatus = 1;
+						status--;
+					}
+				} else {
+					sampledStatus = 1;
+					status = 0;
+					owner = Threads::Id();
 				}
 			}break;
 			case Exit:{
@@ -175,7 +191,7 @@ ErrorManagement::ErrorType EventSem2::Wait(const MilliSeconds &timeout,bool rese
 }
 
 
-ErrorManagement::ErrorType EventSem2::Reset(){
+ErrorManagement::ErrorType Semaphore::Reset(){
 	ErrorManagement::ErrorType ret;
 	MilliSeconds timeoutCopy(MilliSeconds::Infinite);
 
@@ -183,7 +199,18 @@ ErrorManagement::ErrorType EventSem2::Reset(){
 	REPORT_ERROR(ret,"Lock failed ");
 
 	if (ret){
-		status = 0;
+		if (mode == Mutex){
+			ret.illegalOperation = (Threads::Id() != owner);
+			REPORT_ERROR(ret,"ReSet is invalid for non-owner of mutex");
+
+			if (ret){
+				if (status > 0){
+					status--;
+				}
+			}
+		} else {
+			status = 0;
+		}
 	}
 
 	if (lock.Locked()){
@@ -194,7 +221,7 @@ ErrorManagement::ErrorType EventSem2::Reset(){
 
 }
 
-ErrorManagement::ErrorType EventSem2::Post(uint32 count){
+ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 	ErrorManagement::ErrorType ret;
 	MilliSeconds timeoutCopy(MilliSeconds::Infinite);
 
@@ -211,6 +238,10 @@ ErrorManagement::ErrorType EventSem2::Post(uint32 count){
 		}break;
 		case Counting:{
 			status += count;
+		}break;
+		case Mutex:{
+			ret.invalidOperation = true;
+			REPORT_ERROR(ret,"Set is invalid for Mutex");
 		}break;
 		default:{
 			ret.unsupportedFeature = true;

@@ -37,7 +37,6 @@
 #include "ProcessorType.h"
 #include "CCString.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
@@ -238,8 +237,7 @@ DLL_API uint32 NumberOfThreads();
  * @param[in] n is the threads index, if it is <0 is ignored.
  * @return true if the requested element is in the database, false otherwise.
  */
-DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
-                               const uint32 &n);
+DLL_API bool GetThreadInfoCopy(ThreadInformation & copy, const uint32 &n);
 
 /**
  * @brief Get a copy of the thread information stored in the database.
@@ -247,8 +245,7 @@ DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
  * @param[in] threadId is the thread identifier.
  * @return true if the requested element is in the database, false otherwise.
  */
-DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
-                               const ThreadIdentifier &threadId);
+DLL_API bool GetThreadInfoCopy(ThreadInformation & copy, const ThreadIdentifier &threadId);
 
 /**
  * @brief Search the thread with the specified name.

@@ -35,6 +35,7 @@
 #include "Threads.h"
 #include "ThreadsDatabase.h"
 
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,6 +43,7 @@
 namespace MARTe {
 
 namespace Threads {
+
 
 /**
  * @brief The function called when a thread is created.
@@ -116,6 +118,10 @@ uint64 GetCPUs(const ThreadIdentifier &threadId) {
 }
 
 ThreadIdentifier Id() {
+	/**
+	 * implemented in the TLS as THREAD_SELF wich is a
+	 *
+	 */
     return pthread_self();
 }
 
