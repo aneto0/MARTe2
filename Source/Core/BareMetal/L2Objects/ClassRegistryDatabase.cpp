@@ -104,7 +104,7 @@ ClassRegistryItem *Find(CCString className) {
 	if (cri == NULL){
 
 		// search class within container container::class
-		CCString classOnlyPartName = className.FindPatternString("::");//StringHelper::SearchString(className, "::");
+		CCString classOnlyPartName = className.FindPatternString("::");
 		if (classOnlyPartName.GetSize() > 0){
 			cri = FindClassName(classOnlyPartName.GetList()+2);
 

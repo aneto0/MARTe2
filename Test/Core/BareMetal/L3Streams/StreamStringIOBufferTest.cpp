@@ -32,7 +32,6 @@
 
 #include "StreamStringIOBufferTest.h"
 
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

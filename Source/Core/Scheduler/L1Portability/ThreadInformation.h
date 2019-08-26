@@ -67,7 +67,7 @@ public:
 
     /**
      * @brief Copy a thread information into this.
-     * @details memory for name is allocated using StringHelper::StringDup.
+     * @details memory for name is allocated .
      * @details startThreadSynchSem is not copied
      * @details userData pointer is copied, memory is not duplicated
      * @param[in] threadInfo source ThreadInformation object.

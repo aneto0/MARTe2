@@ -32,7 +32,6 @@
 #include "ThreadsDatabase.h"
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
-//#include "StringHelper.h"
 #include "ErrorManagement.h"
 #include "FastPollingMutexSem.h"
 

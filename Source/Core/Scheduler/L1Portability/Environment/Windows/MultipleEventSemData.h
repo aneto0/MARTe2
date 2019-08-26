@@ -49,12 +49,15 @@ namespace MARTe{
 /**
  *
  */
-struct MultipleEventSemData{
+class MultipleEventSemData{
+public:
     /**
      *
      */
 	StaticList<HANDLE> handles;
 
+private:
+	void operator=(const MultipleEventSemData & x){}
 };
 
 

@@ -32,7 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManager.h"
-#include "StringHelper.h"
 #include "CLASSREGISTER.h"
 #include "CLASSMEMBERREGISTER.h"
 #include "TestObjectHelper3.h"

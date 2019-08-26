@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CharBufferTest.h"
-#include "StringHelper.h"
 
 using namespace MARTe;
 

@@ -41,7 +41,7 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief A class to test StringHelper functions.
+ * @brief A class to test CCString functions.
  */
 namespace  StringsTest {
 
@@ -91,7 +91,7 @@ namespace  StringsTest {
     bool TestFindXXX(CCString string, CCString pattern, uint32 expectedPosition, bool toBeFound=true);
 
     /**
-      * @brief Test StringHelper::TokenizeByChars() function.
+      * @brief Test Tokenize() function.
       * @details Given a long string tokenize it using different delimiters. The test check the returned
       * pointer, the result where the token is buffered and checks the behaviour using a NULL string.
       * @return true if the string is tokenized and the returned pointer points to the next part of

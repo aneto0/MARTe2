@@ -36,7 +36,6 @@
 #include "DirectoryScanner.h"
 #include "Directory.h"
 #include "GlobalObjectsDatabase.h"
-#include "StringHelper.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/

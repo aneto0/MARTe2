@@ -30,7 +30,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StringHelper.h"
 #include "MemoryOperators.h"
 #include "DynamicCString.h"
 #include "MemoryCheck.h"

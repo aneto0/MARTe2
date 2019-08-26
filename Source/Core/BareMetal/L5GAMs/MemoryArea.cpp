@@ -34,7 +34,6 @@
 
 #include "MemoryOperators.h"
 #include "MemoryArea.h"
-#include "StringHelper.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 #include "ObjectTestHelper.h"
 //#include "IntrospectionT.h"
-//#include "StringHelper.h"
 #include "CLASSMEMBERREGISTER.h"
 
 

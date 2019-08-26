@@ -71,7 +71,6 @@ void ErrorCodeToStream(const ErrorType &errorCode,StreamI &stream) {
             }
 
             // TODO  why +1
-//            size = StringHelper::Length(errorTypeLookup[i].name) + 1u;
             size = errorTypeLookup[i].name.GetSize();
             if (ok) {
                 ok = stream.Write(errorTypeLookup[i].name.GetList(), size);

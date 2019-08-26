@@ -37,7 +37,6 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
 #include "CompositeErrorManagement.h"
-#include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "DynamicCString.h"
 #include "AnyType.h"

@@ -33,7 +33,6 @@
 #include "IntrospectionTools.h"
 #include "Object.h"
 #include "AnyType.h"
-#include "StringHelper.h"
 #include "HeapI.h"
 #include "ReferenceContainer.h"
 #include "MemoryOperators.h"

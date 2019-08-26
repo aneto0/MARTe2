@@ -31,7 +31,6 @@
 
 #include "HeapManagerTest.h"
 //#include <GlobalObjectsDatabase.h>
-//#include "StringHelper.h"
 #include "HeapManager.h"
 #include "HeapI.h"
 #include "ErrorManagement.h"

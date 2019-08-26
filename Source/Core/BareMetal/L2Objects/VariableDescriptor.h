@@ -38,7 +38,6 @@
 #include "ClassRegistryDatabase.h"
 #include "FractionalInteger.h"
 #include "Matrix.h"
-#include "StringHelper.h"
 #include "ZeroTerminatedArray.h"
 #include "DynamicZeroTerminatedArray.h"
 #include "StaticZeroTerminatedArray.h"

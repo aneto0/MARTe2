@@ -34,7 +34,6 @@
 #include "Object.h"
 #include "CString.h"
 #include "Message.h"
-#include "StringHelper.h"
 #include "ReferenceT.h"
 
 

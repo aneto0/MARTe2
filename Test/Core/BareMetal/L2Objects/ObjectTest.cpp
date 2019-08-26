@@ -130,16 +130,7 @@ bool ObjectTest::TestGetUniqueName(CCString name) {
 
     Object myObj;
     uintp ptr = (uintp) &myObj;
-/*
-    const uint32 stringSize = StringHelper::Length(name) + 2;
 
-    const uint32 size = 128;
-
-    char buffer[size];
-    for (uint32 i = 0; i < size; i++) {
-        buffer[i] = 0;
-    }
-*/
     myObj.SetName(name);
 
     DynamicCString uniqueName;

@@ -36,7 +36,6 @@
 #include "ClassRegistryDatabase.h"
 #include "CompositeErrorManagement.h"
 #include "ObjectBuilder.h"
-#include "StringHelper.h"
 #include "AnyType.h"
 #include "DynamicCString.h"
 

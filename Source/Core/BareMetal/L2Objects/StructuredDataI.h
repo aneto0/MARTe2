@@ -134,7 +134,7 @@ public:
      * @return true if the AnyType is successfully stored.
      * @pre
      *   name != NULL &&
-     *   StringHelper::Length(name) > 0
+     *   name.GetSize() > 0
      */
     virtual ErrorManagement::ErrorType Write(CCString name, const AnyType &value) = 0;
 

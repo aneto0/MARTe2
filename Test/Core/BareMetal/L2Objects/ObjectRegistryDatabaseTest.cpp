@@ -240,6 +240,5 @@ bool ObjectRegistryDatabaseTest::TestFindTooManyBackSteps() {
 }
 
 //bool ObjectRegistryDatabaseTest::TestGetClassName() {
-//    return StringHelper::Compare(ObjectRegistryDatabase::GetClassName(), "ObjectRegistryDatabase") == 0;
 //}
 

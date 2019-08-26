@@ -150,7 +150,7 @@ CCString  DynamicCString::Tokenize( CCString  const string,
         ret = stringP;
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "StringHelper: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "Tokenize: invalid input arguments");
     }
     return ret;
 

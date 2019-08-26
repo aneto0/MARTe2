@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AnyObjectTest.h"
-#include "StringHelper.h"
 #include "StreamString.h"
 #include "Reference.h"
 using namespace MARTe;

@@ -32,8 +32,6 @@
 #include "AnyTypeTest.h"
 #include "TestObjectHelper1.h"
 #include "CLASSMEMBERREGISTER.h"
-//#include "StringHelper.h"
-//#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

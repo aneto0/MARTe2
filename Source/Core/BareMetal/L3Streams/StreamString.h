@@ -36,7 +36,6 @@
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "BufferedStreamI.h"
-#include "StringHelper.h"
 #include "AnyType.h"
 #include "StreamStringIOBuffer.h"
 
@@ -80,7 +79,7 @@ public:
      *   CanWrite() &&
      *   CanSeek() &&
      *   Position() == 0 &&
-     *   Size() == StringHelper::Length(initialisationString)
+     *   Size() == initialisationString.GetSize()
      */
     StreamString(CCString const initialisationString);
 

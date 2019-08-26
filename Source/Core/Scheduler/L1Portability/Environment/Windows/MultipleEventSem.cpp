@@ -57,8 +57,8 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 		if (reason > WAIT_OBJECT_0 ){
 			index = reason - WAIT_OBJECT_0;
 
-			ret.internalSetupError = (index >=handles.GetSize());
-			COMPOSITE_REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned too large index into event sources: ",index, " greater than ", handles.GetSize());
+			ret.internalSetupError = (index >=data.handles.GetSize());
+			COMPOSITE_REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned too large index into event sources: ",index, " greater than ", data.handles.GetSize());
 
 		} else {
 			if (reason == WAIT_TIMEOUT){

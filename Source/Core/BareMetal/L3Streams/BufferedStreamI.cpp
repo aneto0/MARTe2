@@ -32,7 +32,6 @@
 
 #include "BufferedStreamI.h"
 #include "AdvancedErrorManagement.h"
-#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

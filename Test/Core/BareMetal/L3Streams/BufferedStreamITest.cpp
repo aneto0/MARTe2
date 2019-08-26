@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BufferedStreamITest.h"
-#include "StringHelper.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/

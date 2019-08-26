@@ -32,7 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManager.h"
-#include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
 
 /*---------------------------------------------------------------------------*/
