@@ -50,7 +50,7 @@ public:
      * The event semaphore object
      */
     EventSem eventSem;
-    int32    sharedVariable1;
+    volatile int32    sharedVariable1;
 
     /**
      * @brief Constructor.

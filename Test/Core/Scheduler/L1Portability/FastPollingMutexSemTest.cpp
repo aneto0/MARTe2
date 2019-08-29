@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../Scheduler/L1Portability/FastPollingMutexSemTest.h"
+#include "FastPollingMutexSemTest.h"
 
 #include "Sleep.h"
 #include "Atomic.h"

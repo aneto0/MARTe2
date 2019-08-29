@@ -37,6 +37,7 @@
 #include "Seconds.h"
 #include "ErrorManagement.h"
 #include "CompositeErrorManagement.h"
+#include "Atomic.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -117,12 +118,13 @@ bool EventSemTest::TestIsClosed() {
     result = result && target.IsClosed();
     return result;
 }
-
 void ThreadLocked(EventSemTest *tt) {
+	ErrorManagement::ErrorType ret;
 //    MilliSeconds time(500,Units::ms);
-    tt->sharedVariable1++;
-    tt->eventSem.Wait(MilliSeconds(500,Units::ms));
-    tt->sharedVariable1--;
+    Atomic::Increment(&tt->sharedVariable1);
+    ret = tt->eventSem.Wait(MilliSeconds(5000,Units::ms));
+    REPORT_ERROR(ret,"Timeout");
+    Atomic::Decrement(&tt->sharedVariable1);
     Threads::EndThread();
 }
 
