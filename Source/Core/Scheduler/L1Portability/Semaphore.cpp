@@ -35,30 +35,54 @@
 namespace MARTe{
 
 Semaphore::Semaphore(){
-	mode = Invalid;
+	mode = Closed;
 	status = 0;
 	owner = 0;
+	waiters = 0;
 }
 
 Semaphore::~Semaphore(){
 	Close();
 }
 
+int32 Semaphore::Status() const{
+	return status;
+}
+
+int32 Semaphore::Waiters() const{
+	return waiters;
+}
+
+Semaphore::SemaphoreMode Semaphore::Mode() const{
+	return mode;
+}
+
 ErrorManagement::ErrorType Semaphore::Open(SemaphoreMode mode){
 	ErrorManagement::ErrorType ret;
 
-	ret = lockHev.Open();
+	ret.illegalOperation =  (this->mode != Closed);
+	REPORT_ERROR(ret,"Open(): Semaphore already opened ");
+
+	if (ret){
+		ret = lockHev.Open();
+		REPORT_ERROR(ret,"Open(): failed opening lockHev");
+	}
 
 	if (ret){
 		ret = this->Synchronizer::Open();
+		REPORT_ERROR(ret,"Open(): failed opening main Synchronizer");
 	}
 
 	if (ret){
 		this->mode = mode;
+
+		if (mode == Mutex){
+			status = 1;  // no taken
+			owner  = 0;
+		}
 	}
 
 	return ret;
-
 }
 
 /**
@@ -68,21 +92,32 @@ ErrorManagement::ErrorType Semaphore::Open(SemaphoreMode mode){
 ErrorManagement::ErrorType Semaphore::Close(){
 	ErrorManagement::ErrorType ret;
 
-	status = 0xFFFF;
-	mode = Exit;
-	ret = this->Synchronizer::Post();
-	REPORT_ERROR(ret,"Close(): Synchronizer::Post failed ");
+	ret.invalidOperation = ((mode == Invalid) || (mode == Closed));
 
-	ret = lockHev.Post();
-	REPORT_ERROR(ret,"Close(): lockHev.Post failed ");
+	if (ret){
 
-	//	todo check on waiters == 0
+		status = 0xFFFF;
+		mode = Exit;
+		ret = this->Synchronizer::Post();
+		REPORT_ERROR(ret,"Close(): Synchronizer::Post failed ");
 
-	ret = this->Synchronizer::Close();
-	REPORT_ERROR(ret,"Close(): Synchronizer::Close failed ");
+		ret = lockHev.Post();
+		REPORT_ERROR(ret,"Close(): lockHev.Post failed ");
 
-	ret = lockHev.Close();
-	REPORT_ERROR(ret,"Close(): lockHev.Close failed ");
+		//	todo check on waiters == 0
+
+		ret = this->Synchronizer::Close();
+		REPORT_ERROR(ret,"Close(): Synchronizer::Close failed ");
+
+		ret = lockHev.Close();
+		REPORT_ERROR(ret,"Close(): lockHev.Close failed ");
+
+		if (ret){
+			mode = Closed;
+		} else {
+			mode = Invalid;
+		}
+	}
 
 	return ret;
 
@@ -91,14 +126,9 @@ ErrorManagement::ErrorType Semaphore::Close(){
 
 ErrorManagement::ErrorType Semaphore::Lock(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
-
-	Atomic::Increment(&waiters);
-
 	while (!lock.FastTryLock() && ret){
 		ret = lockHev.Wait(timeout);
 	}
-
-	Atomic::Decrement(&waiters);
 	return ret;
 }
 
@@ -112,11 +142,11 @@ ErrorManagement::ErrorType Semaphore::UnLock(){
 	return ret;
 }
 
-ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout,bool resetBeforeWait){
+ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
-	MilliSeconds timeoutCopy(timeout);
 	Atomic::Increment(&waiters);
 
+	MilliSeconds timeoutCopy(timeout);
 	int32 sampledStatus = 0;
 
 	do {
@@ -175,7 +205,9 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout,bool rese
 
 			if (ret){
 				ret = this->Synchronizer::WaitUpdate(timeoutCopy);
-				REPORT_ERROR(ret,"Synchronizer::Wait failed ");
+				if (ret.timeout == false){
+					REPORT_ERROR(ret,"Synchronizer::Wait failed ");
+				}
 			}
 		}
 
@@ -204,8 +236,11 @@ ErrorManagement::ErrorType Semaphore::Reset(){
 			REPORT_ERROR(ret,"ReSet is invalid for non-owner of mutex");
 
 			if (ret){
-				if (status > 0){
-					status--;
+				if (status <= 0){
+					status++;
+				}
+				if (status == 1){
+					owner = 0;
 				}
 			}
 		} else {
@@ -213,12 +248,16 @@ ErrorManagement::ErrorType Semaphore::Reset(){
 		}
 	}
 
+	if (ret && (waiters > 0) && (status > 0)){
+		ret = this->Post();
+		REPORT_ERROR(ret,"Synchronizer Post failed");
+	}
+
 	if (lock.Locked()){
 		ret = UnLock();
 	}
 
 	return ret;
-
 }
 
 ErrorManagement::ErrorType Semaphore::Set(uint32 count){
@@ -250,12 +289,17 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 		}
 	}
 
+	if (ret && (waiters > 0) && (status > 0)){
+		ret = this->Post();
+		REPORT_ERROR(ret,"Synchronizer Post failed");
+	}
+
 	if (lock.Locked()){
 		ret = UnLock();
+		REPORT_ERROR(ret,"Unlock failed");
 	}
 
 	return ret;
-
 }
 
 

@@ -218,7 +218,8 @@ private:
 	static const uint8 TTSubtractionCodeMap[4][4];
 	static const uint8 TTAdditionCodeMap[4][4];
 	static const bool  TTCompareCodeMap[4][4];
-	static const baseType maxRawValue;
+	// was a constant - but it needs to be a function as it depends on other constant may be initialised in the wrong order
+	inline const baseType MaxRawValue() const;
 };
 
 #if 0 // removed as causes recursion
@@ -253,7 +254,9 @@ template<typename baseType>
 const baseType SaturatedInteger<baseType>::spareCodes = 3;
 
 template<typename baseType>
-const baseType SaturatedInteger<baseType>::maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
+const baseType SaturatedInteger<baseType>::MaxRawValue() const {
+	return  static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
+}
 
 /*
  *  Maps Code combination to code for subtractions
@@ -291,9 +294,9 @@ template<typename baseType>
 uint8 SaturatedInteger<baseType>::GetCode() const {
 //	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
 	uint8 ret = valid;
-	if (data > maxRawValue){
+	if (data > MaxRawValue()){
 		// valid because there are only a few possible values above maxRawValue
-		ret = static_cast<uint8>(data - maxRawValue);
+		ret = static_cast<uint8>(data - MaxRawValue());
 	}
 	return ret;
 }
@@ -302,7 +305,7 @@ template<typename baseType>
 void SaturatedInteger<baseType>::SetCode(uint8 code)  {
 //	static const baseType maxRawValue = static_cast<baseType>(TypeCharacteristics<baseType>::MaxValue() - 3);
 
-	data = maxRawValue;
+	data = MaxRawValue();
 	data += (baseType)code;
 }
 
@@ -353,7 +356,7 @@ SaturatedInteger<baseType>::SaturatedInteger(const inputType & x){
 			SetCode(positiveInf);
 		}
 	} else {
-		if (data > maxRawValue){
+		if (data > MaxRawValue()){
 			SetCode(positiveInf);
 		}
 	}
@@ -435,17 +438,17 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator+=(const Saturat
 			const baseType signBit = static_cast<baseType>(static_cast<baseType>(1u) << (sizeof(baseType)*8u-1u));
 			if ( (((data ^ x.data) & signBit) == 0u) && (((data ^ temp) & signBit) != 0u)){
 				if ((data & signBit) == 0u){
-					temp = maxRawValue;
+					temp = MaxRawValue();
 					temp += (baseType)positiveInf;
 				} else {
-					temp = maxRawValue;
+					temp = MaxRawValue();
 					temp += (baseType)negativeInf;
 				}
 			}
 			// for unsigned the result is smaller than one of them
 		} else {
 			if ((temp < data ) && (temp < x.data)){
-				temp = maxRawValue;
+				temp = MaxRawValue();
 				temp += (baseType)positiveInf;
 			}
 		}

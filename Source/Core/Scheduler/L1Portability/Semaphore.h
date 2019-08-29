@@ -67,12 +67,13 @@ public:
 	 *
 	 */
 	enum SemaphoreMode{
-		Latching = 0,
-		AutoResetting = 1,
-		Counting = 2,
-		Mutex = 3,
-		Invalid = 15,
-		Exit = 31
+		Latching,
+		AutoResetting,
+		Counting,
+		Mutex,
+		Invalid,
+		Exit,
+		Closed
 	};
 
 
@@ -99,36 +100,46 @@ public:
     ErrorManagement::ErrorType Close();
 
     /**
-     * @brief Waits for a post event, limited by the timeout time.
-     * @details Calling this function on a semaphore that was not reset will
-     * not block the calling thread.
+     * @brief Waits for semaphore status to be green and then affects the status depending on the mode.
+     * @details Behaviour depends on the mode.
      * @param[in] timeout the maximum time that the barrier will be set.
      * @return ErrorManagement::NoError if the operating system call returns with no errors or
      * Timeout if the time waiting in the barrier (from when the function was called)
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Take(const MilliSeconds &timeout,bool resetBeforeWait);
+    ErrorManagement::ErrorType Take(const MilliSeconds &timeout= MilliSeconds::Infinite);
 
     /**
-     * @brief Resets the semaphore (raises the barrier).
+     * @brief Resets the semaphore: status to green
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType Reset();
 
     /**
-     * @brief Posts the semaphore (lowers the barrier).
+     * @brief Posts the semaphore: status
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
-    ErrorManagement::ErrorType Set(uint32 count);
+    ErrorManagement::ErrorType Set(uint32 count=1);
 
     /**
      * @brief Checks if the semaphore is closed.
      * @return true if the semaphore is closed.
      */
-    uint32 Status() const;
+    int32 Status() const;
+
+    /**
+     * The chosen semaphore mode
+     */
+    SemaphoreMode Mode() const;
+
+    /**
+     * The number of threads waiting
+     */
+    int32 Waiters() const;
+
 
 private:
     /**
@@ -173,6 +184,11 @@ private:
      *
      */
     ErrorManagement::ErrorType UnLock();
+
+    /**
+     * disallow copying
+     */
+    void operator=(const Semaphore &s);
 
 };
 
