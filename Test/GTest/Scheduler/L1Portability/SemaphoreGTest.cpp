@@ -1,8 +1,8 @@
 /**
- * @file StringHelperExtras_Generic.cpp
- * @brief Source file for module StringHelper
- * @date 13/08/2015
- * @author Filippo Sartori
+ * @file MemoryGTest.cpp
+ * @brief Source file for class MemoryGTest
+ * @date 29/06/2015
+ * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -11,27 +11,28 @@
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * @warning Unless required by applicable law or agreed to in writing, 
+ * @warning Unless required by applicable law or agreed to in writing,
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module StringHelper (public, protected, and private). Be aware that some
+ * the class MemoryGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../StringHelper.h"
-#include "DynamicCString.h"
-
+#include "TestSupport.h"
+#include "SemaphoreTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,15 +40,48 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-#define NULLS NULL_PTR(char8 *)
-
-namespace MARTe{
-
-namespace StringHelper {
-
-
+TEST(SemaphoreGTest,TestConstructor) {
+    ASSERT_TRUE(SemaphoreTest::TestConstructor());
 }
 
+TEST(SemaphoreGTest,TestDestructor) {
+    ASSERT_TRUE(SemaphoreTest::TestDestructor());
 }
+
+TEST(SemaphoreGTest,TestCreate) {
+    ASSERT_TRUE(SemaphoreTest::TestCreate());
+}
+
+TEST(SemaphoreGTest,TestClose) {
+    ASSERT_TRUE(SemaphoreTest::TestClose());
+}
+
+TEST(SemaphoreGTest,TestTake_Latching) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Latching(MilliSeconds(100,Units::ms)));
+}
+
+TEST(SemaphoreGTest,TestSet_Latching) {
+    ASSERT_TRUE(SemaphoreTest::TestSet_Latching());
+}
+
+TEST(SemaphoreGTest,TestReset_Latching) {
+    ASSERT_TRUE(SemaphoreTest::TestReset_Latching());
+}
+
+TEST(SemaphoreGTest,TestTake_Latching_Timeout) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Latching(MilliSeconds(500,Units::ms)));
+}
+
+TEST(SemaphoreGTest,TestTake_Latching_Threads) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Latching_Threads(32,MilliSeconds(500,Units::ms)));
+}
+
+TEST(SemaphoreGTest,TestTake_Latching_Threads_InfTO) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Latching_Threads(32,MilliSeconds::Infinite));
+}
+
+TEST(SemaphoreGTest,TestTake_Latching_Threads_0TO) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Latching_Threads(32,MilliSeconds(1,Units::ms))==false);
+}
+
+

@@ -23,14 +23,10 @@
 */
 #define DLL_API
 
-
-//#include <intrin.h>
 #include "Semaphore.h"
 #include "CompositeErrorManagement.h"
 #include "Atomic.h"
 #include "Threads.h"
-
-
 
 namespace MARTe{
 
