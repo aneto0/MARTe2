@@ -115,8 +115,24 @@ namespace SemaphoreTest {
      */
     bool TestTake_Latching_Threads(uint32 nOfThreads,MilliSeconds timeout);
 
+    /**
+     * @brief Tests the Semaphore::Take function.
+     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set().
+     * @return true if the count is ok
+     */
+    bool TestTake_AutoResetting_Threads(uint32 nOfThreads,MilliSeconds timeout);
+
+    /**
+     * @brief Tests the Semaphore::Take function.
+     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set(). It will unblock 3 threads at a time
+     * @return true if the count is ok
+     */
+    bool TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds timeout);
+
 
 };
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -138,14 +138,16 @@ ErrorManagement::ErrorType Semaphore::UnLock(){
 	return ret;
 }
 
+//#include <stdio.h>
 ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
 	Atomic::Increment(&waiters);
 
 	MilliSeconds timeoutCopy(timeout);
 	int32 sampledStatus = 0;
-
 	do {
+		sampledStatus = 0;
+
 		ret = Lock(timeoutCopy);
 		REPORT_ERROR(ret,"Lock failed ");
 
@@ -156,14 +158,18 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 			}break;
 			case AutoResetting:{
 				if (status > 0){
+//printf("*");
 					sampledStatus = 1;
 					status = 0;
+				} else {
+//printf(".");
 				}
 			}break;
 			case Counting:{
 				if (status > 0){
 					sampledStatus = 1;
 					status--;
+//printf("%i ",status);
 				}
 			}break;
 			case Mutex:{
@@ -190,7 +196,6 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 		}
 
 		if (ret && (sampledStatus == 0)){
-
 			ret = this->Synchronizer::Reset();
 			REPORT_ERROR(ret,"Synchronizer::Reset failed ");
 
@@ -286,6 +291,7 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 	}
 
 	if (ret && (waiters > 0) && (status > 0)){
+//		printf("!");
 		ret = this->Post();
 		REPORT_ERROR(ret,"Synchronizer Post failed");
 	}

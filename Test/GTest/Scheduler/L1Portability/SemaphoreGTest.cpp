@@ -84,4 +84,11 @@ TEST(SemaphoreGTest,TestTake_Latching_Threads_0TO) {
     ASSERT_TRUE(SemaphoreTest::TestTake_Latching_Threads(32,MilliSeconds(1,Units::ms))==false);
 }
 
+TEST(SemaphoreGTest,TestTake_AutoResetting_Threads) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_AutoResetting_Threads(32,MilliSeconds(50,Units::s)));
+}
+
+TEST(SemaphoreGTest,TestTake_Counting_Threads) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Counting_Threads(32,MilliSeconds(50,Units::s)));
+}
 

@@ -108,9 +108,10 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
+//#include <stdio.h>
 ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
+	//printf("(%i-->",timeout.GetTimeRaw());
 
 	if (timeout == MilliSeconds::Infinite){
 		ret = Wait(timeout);
@@ -122,11 +123,12 @@ ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 		MilliSeconds elapsedMs = elapsed;
 
 		if (elapsedMs < timeout){
-			timeout = timeout = elapsedMs;
+			timeout = timeout - elapsedMs;
 		} else {
 			timeout = MilliSeconds(0,Units::ms);
 		}
 	}
+	//printf("(%i",timeout.GetTimeRaw());
 	return ret;
 }
 
