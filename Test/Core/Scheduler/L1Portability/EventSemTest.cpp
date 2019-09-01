@@ -229,17 +229,18 @@ bool EventSemTest::TestWait() {
             break;
         }
     }
-    return (err == ErrorManagement::NoError);
+    return err;
 }
 
 bool EventSemTest::TestResetWait() {
     sharedVariable = 0;
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
-    ErrorManagement::ErrorType err = eventSem.ResetWait(MilliSeconds::Infinite);
+    ErrorManagement::ErrorType ret = eventSem.ResetWait(MilliSeconds::Infinite);
+    REPORT_ERROR(ret,"ResetWait failed");
 
-    if (sharedVariable == 0) {
-        //Too fast wait has failed for sure...
-        err = ErrorManagement::FatalError;
+    if (ret){
+    	ret.fatalError = (sharedVariable == 0);
+        REPORT_ERROR(ret,"sharedVariable still 0");
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -253,7 +254,7 @@ bool EventSemTest::TestResetWait() {
             break;
         }
     }
-    return (err == ErrorManagement::NoError);
+    return ret;
 }
 
 void MultiThreadedTestWaitCallback(EventSemTest *eventSemTest) {

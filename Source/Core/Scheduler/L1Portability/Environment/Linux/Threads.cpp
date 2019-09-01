@@ -34,6 +34,7 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
+#include "CompositeErrorManagement.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -298,7 +299,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         if (ok) {
             ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
+                COMPOSITE_REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_setstacksize(",stacksize,")");
             }
         }
 

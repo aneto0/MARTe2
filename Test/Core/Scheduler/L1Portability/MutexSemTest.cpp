@@ -32,6 +32,7 @@
 #include "MutexSemTest.h"
 #include "Sleep.h"
 #include "Atomic.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -104,6 +105,10 @@ void TestLockCallback(MutexSemTest *mt) {
     mt->synchSem.Wait();
     while (!mt->stop) {
         ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
+        if (mt->testMutexTimeout.GetTimeRaw() > 30){
+        	COMPOSITE_REPORT_ERROR(ret,"Mutex Lock(",mt->testMutexTimeout.GetTimeRaw(),") failed\n");
+        }
+
         mt->failed |= (err != ErrorManagement::NoError);
         int32 state = mt->sharedVariable;
         mt->sharedVariable++;
@@ -134,7 +139,9 @@ void TestUnLockCallback(MutexSemTest *mt) {
 
     while (!mt->stop) {
         ErrorManagement::ErrorType ret = mt->testMutex.Lock(mt->testMutexTimeout);
-        REPORT_ERROR(ret,"Mutex Lock failed\n");
+        if (mt->testMutexTimeout.GetTimeRaw() > 30){
+        	COMPOSITE_REPORT_ERROR(ret,"Mutex Lock(",mt->testMutexTimeout.GetTimeRaw(),") failed\n");
+        }
 
         if (ret){
             int32 state = mt->sharedVariable;

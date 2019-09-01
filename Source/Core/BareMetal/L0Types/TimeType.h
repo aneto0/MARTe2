@@ -332,7 +332,7 @@ template<typename baseType,class unitType>
 template<typename bT, class uT>
 bool TimeType<baseType,unitType>::operator==(const TimeType<bT,uT> &tt) const{
 	TimeType<baseType,unitType> t(tt);
-	return (time==t.time) && t.IsValid();
+	return (time==t.time)/* && t.IsValid()*/;
 }
 
 template<typename baseType,class unitType>

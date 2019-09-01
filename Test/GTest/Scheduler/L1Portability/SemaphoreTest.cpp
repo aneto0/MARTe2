@@ -241,7 +241,9 @@ void ThreadLocked(LocalSharedData *tt) {
 
 	Atomic::Increment(&tt->sharedVariable);
     ret = tt->sem.Take(tt->timeout);
-	REPORT_ERROR(ret," ThreadLocked exiting with timeout");
+    if (tt->timeout.GetTimeRaw() > 30){
+    	REPORT_ERROR(ret," ThreadLocked exiting with timeout");
+    }
 	Atomic::Decrement(&tt->sharedVariable);
     Threads::EndThread();
 }

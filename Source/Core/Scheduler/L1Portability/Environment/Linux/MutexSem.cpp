@@ -227,7 +227,7 @@ ErrorManagement::ErrorType MutexSem::Lock() {
 ErrorManagement::ErrorType MutexSem::Lock(const MilliSeconds &timeout) {
     bool ok = !handle->closed;
     ErrorManagement::ErrorType err = ErrorManagement::OSError;
-    if (timeout == MilliSeconds::Infinite) {
+    if (timeout.IsInfinite()) {
         err = Lock();
     }
     else {
@@ -237,16 +237,16 @@ ErrorManagement::ErrorType MutexSem::Lock(const MilliSeconds &timeout) {
             ok = (ftime(&tb) == 0);
 
             if (ok) {
-            	uint32 ms = timeout.GetTimeRaw();
+            	uint32 ms = timeout.GetTimeRaw()+tb.millitm;
             	uint32 s = ms/1000U;
             	ms = ms - (s * 1000U);
-                timesValues.tv_sec  = static_cast<int32>(s);
+                timesValues.tv_sec  = static_cast<int32>(s+tb.time);
                 timesValues.tv_nsec = static_cast<int32>(ms * 1000000U);
 
                 ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
                 if (!ok) {
                     err = ErrorManagement::Timeout;
-                    REPORT_ERROR(err, "Information: timeout occurred");
+//                    REPORT_ERROR(err, "Information: timeout occurred");
                 }
                 else {
                     err = ErrorManagement::NoError;

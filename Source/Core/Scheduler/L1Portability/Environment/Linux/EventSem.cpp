@@ -224,13 +224,14 @@ ErrorManagement::ErrorType EventSem::Wait() {
 
     return err;
 }
+
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
 ErrorManagement::ErrorType EventSem::Wait(const MilliSeconds &timeout) {
     bool ok = !handle->closed;
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    if (timeout == MilliSeconds::Infinite) {
-        err = Wait();
+    if (timeout.IsInfinite()) {
+    	err = Wait();
     }
     else {
         if (ok) {
@@ -297,20 +298,21 @@ bool EventSem::Reset() {
     bool ok = false;
     if (!handle->closed) {
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
+        handle->stop = true;
         bool okUnLock = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
         ok = (okLock && okUnLock);
-        handle->stop = true;
     }
     return ok;
 }
 
 ErrorManagement::ErrorType EventSem::ResetWait(const MilliSeconds &timeout) {
-    bool ok = Reset();
-    ErrorManagement::ErrorType err = ErrorManagement::OSError;
-    if (ok) {
-        err = Wait(timeout);
+	ErrorManagement::ErrorType ret;
+    ret.OSError = !Reset();
+    REPORT_ERROR(ret,"Reset failed");
+    if (ret) {
+        ret = Wait(timeout);
     }
-    return err;
+    return ret;
 }
 
 EventSemProperties *EventSem::GetProperties() {
