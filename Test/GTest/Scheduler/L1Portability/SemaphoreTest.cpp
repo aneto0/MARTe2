@@ -222,7 +222,7 @@ bool SemaphoreTest::TestTake_Latching_Thread() {
     }
     if (tid != InvalidThreadIdentifier){
     	shared.sharedVariable = 2;
-    	int counter;
+    	int counter=0;
         while (Threads::IsAlive(tid)) {
             Sleep::Short(100,Units::ms);;
             if (counter++ > 10) {
