@@ -106,7 +106,7 @@ void TestLockCallback(MutexSemTest *mt) {
     while (!mt->stop) {
         ErrorManagement::ErrorType err = mt->testMutex.Lock(mt->testMutexTimeout);
         if (mt->testMutexTimeout.GetTimeRaw() > 30){
-        	COMPOSITE_REPORT_ERROR(ret,"Mutex Lock(",mt->testMutexTimeout.GetTimeRaw(),") failed\n");
+        	COMPOSITE_REPORT_ERROR(err,"Mutex Lock(",mt->testMutexTimeout.GetTimeRaw(),") failed\n");
         }
 
         mt->failed |= (err != ErrorManagement::NoError);

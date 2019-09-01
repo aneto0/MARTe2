@@ -21,13 +21,14 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#include "Synchronizer.h"
-#include "TypeCharacteristics.h"
 #include <sys/eventfd.h>
 #include <unistd.h>
 #include <errno.h>
 #include <poll.h>
+#include <stdio.h>
 
+#include "Synchronizer.h"
+#include "TypeCharacteristics.h"
 
 
 namespace MARTe{

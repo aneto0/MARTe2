@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <stdio.h>
 
 #include "MutexSem.h"
 #include "Threads.h"
@@ -178,6 +179,9 @@ class LocalSharedData{
 public:
 	volatile int32 sharedVariable;
 	Semaphore sem;
+	Semaphore sem2;
+	Semaphore sem3;
+
 	MilliSeconds timeout;
 private:
 	void operator=(const LocalSharedData &lsd){}
@@ -268,7 +272,7 @@ bool SemaphoreTest::TestTake_Latching_Threads(uint32 nOfThreads,MilliSeconds tim
     	for (uint32 i = 0U;i < nOfThreads;i++){
     		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadLocked, &shared);
     	}
-    	Sleep::Short(100,Units::ms);
+    	Sleep::Short(133,Units::ms);
 
     	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
     	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
@@ -294,7 +298,6 @@ bool SemaphoreTest::TestTake_Latching_Threads(uint32 nOfThreads,MilliSeconds tim
     return ret;
 }
 
-//#include <stdio.h>
 bool SemaphoreTest::TestTake_AutoResetting_Threads(uint32 nOfThreads,MilliSeconds timeout) {
 	ErrorManagement::ErrorType ret;
 	LocalSharedData shared;
@@ -315,27 +318,27 @@ bool SemaphoreTest::TestTake_AutoResetting_Threads(uint32 nOfThreads,MilliSecond
     	for (uint32 i = 0U;i < nOfThreads;i++){
     		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadLocked, &shared);
     	}
-    	Sleep::Short(300,Units::ms);
+    	Sleep::Short(166,Units::ms);
 
     	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
     	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
     }
 
+//printf("\nbegin\n");
     if (ret){
 		int32 oldSharedVariable = shared.sharedVariable;
     	while ((shared.sharedVariable > 0) && ret){
-//printf("%i\n",oldSharedVariable);
+//printf("%i step\n",oldSharedVariable);
         	ret = shared.sem.Set();
-        	Sleep::Short(50,Units::ms);
-//printf("?");
+        	Sleep::Short(25,Units::ms);
     		oldSharedVariable--;
         	int32 newSharedVariable = shared.sharedVariable;
         	ret.fatalError = (newSharedVariable != oldSharedVariable);
         	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to ",oldSharedVariable," instead it's value is ",newSharedVariable );
     	}
     }
+//printf("\nend\n");
 
-//    Sleep::Short(100,Units::ms);;
 	for (uint32 i = 0;i < nOfThreads;i++){
 		if (tid[i] != InvalidThreadIdentifier){
 	        if (Threads::IsAlive(tid[i])) {
@@ -362,8 +365,10 @@ bool SemaphoreTest::TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds tim
 	}
 
     ret = shared.sem.Open(Semaphore::Counting);
+    REPORT_ERROR(ret,"sem.Open(Counting)");
     if (ret){
     	ret = shared.sem.Reset();
+        REPORT_ERROR(ret,"sem.Reset()");
     }
     if (ret){
     	for (uint32 i = 0U;i < nOfThreads;i++){
@@ -379,7 +384,95 @@ bool SemaphoreTest::TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds tim
 		int32 oldSharedVariable = shared.sharedVariable;
     	while ((shared.sharedVariable > 0) && ret){
         	ret = shared.sem.Set(3);
+            REPORT_ERROR(ret,"sem.Set()");
+
         	Sleep::Short(50,Units::ms);
+    		oldSharedVariable-=3;
+    		if (oldSharedVariable < 0) {
+    			oldSharedVariable = 0;
+    		}
+        	int32 newSharedVariable = shared.sharedVariable;
+        	ret.fatalError = (newSharedVariable != oldSharedVariable);
+        	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to ",oldSharedVariable," instead it's value is ",newSharedVariable );
+    	}
+    }
+
+//    Sleep::Short(100,Units::ms);;
+	for (uint32 i = 0;i < nOfThreads;i++){
+		if (tid[i] != InvalidThreadIdentifier){
+	        if (Threads::IsAlive(tid[i])) {
+                Threads::Kill(tid[i]);
+	        }
+		}
+	}
+
+    shared.sem.Close();
+    return ret;
+}
+
+void ThreadCombined(LocalSharedData *tt) {
+	ErrorManagement::ErrorType ret;
+    ret = tt->sem2.Set();
+
+	Atomic::Increment(&tt->sharedVariable);
+    ret = tt->sem.Take(tt->timeout);
+    if (tt->timeout.GetTimeRaw() > 30){
+    	REPORT_ERROR(ret," ThreadLocked exiting with timeout");
+    }
+	Atomic::Decrement(&tt->sharedVariable);
+    ret = tt->sem3.Set();
+
+	Threads::EndThread();
+}
+
+
+bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,MilliSeconds timeout) {
+return false;
+	ErrorManagement::ErrorType ret;
+	LocalSharedData shared;
+	shared.sharedVariable = 0;
+	shared.timeout = timeout;
+
+	Vector<ThreadIdentifier> tid(nOfThreads);
+
+	for (uint32 i = 0U;i < nOfThreads;i++){
+		tid[i] = InvalidThreadIdentifier;
+	}
+
+    ret = shared.sem.Open(Semaphore::Counting);
+    if (ret){
+    	ret = shared.sem.Reset();
+    }
+    if (ret){
+    	ret = shared.sem2.Open(Semaphore::MultiLock);
+    }
+    if (ret){
+    	ret = shared.sem2.Reset(nOfThreads);
+    }
+    if (ret){
+    	ret = shared.sem3.Open(Semaphore::AutoResetting);
+    }
+    if (ret){
+    	ret = shared.sem3.Reset();
+    }
+    if (ret){
+    	for (uint32 i = 0U;i < nOfThreads;i++){
+    		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadCombined, &shared);
+    	}
+    	ret = shared.sem2.Take(timeout);
+//    	Sleep::Short(300,Units::ms);
+
+    	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
+    	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
+    }
+
+    if (ret){
+		int32 oldSharedVariable = shared.sharedVariable;
+    	while ((shared.sharedVariable > 0) && ret){
+        	ret = shared.sem.Set(3);
+        	ret = shared.sem3.Take(timeout);
+
+//        	Sleep::Short(50,Units::ms);
     		oldSharedVariable-=3;
     		if (oldSharedVariable < 0) {
     			oldSharedVariable = 0;

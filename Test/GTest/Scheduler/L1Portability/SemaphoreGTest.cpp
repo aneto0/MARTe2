@@ -85,10 +85,13 @@ TEST(SemaphoreGTest,TestTake_Latching_Threads_0TO) {
 }
 
 TEST(SemaphoreGTest,TestTake_AutoResetting_Threads) {
-    ASSERT_TRUE(SemaphoreTest::TestTake_AutoResetting_Threads(32,MilliSeconds(50,Units::s)));
+    ASSERT_TRUE(SemaphoreTest::TestTake_AutoResetting_Threads(32,MilliSeconds(500,Units::s)));
 }
 
 TEST(SemaphoreGTest,TestTake_Counting_Threads) {
-    ASSERT_TRUE(SemaphoreTest::TestTake_Counting_Threads(32,MilliSeconds(50,Units::s)));
+    ASSERT_TRUE(SemaphoreTest::TestTake_Counting_Threads(32,MilliSeconds(500,Units::s)));
 }
 
+TEST(SemaphoreGTest,TestTake_Combined_Threads) {
+    ASSERT_TRUE(SemaphoreTest::TestTake_Combined_Threads(32,MilliSeconds(500,Units::s)));
+}

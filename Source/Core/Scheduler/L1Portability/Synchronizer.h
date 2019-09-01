@@ -108,12 +108,10 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-//#include <stdio.h>
 ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
-	//printf("(%i-->",timeout.GetTimeRaw());
 
-	if (timeout == MilliSeconds::Infinite){
+	if (timeout.IsInfinite()){
 		ret = Wait(timeout);
 	} else {
 		Ticks tickStart = HighResolutionTimer::GetTicks();
@@ -121,6 +119,7 @@ ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 		Ticks ticksEnd = HighResolutionTimer::GetTicks();
 		Ticks elapsed = ticksEnd - tickStart;
 		MilliSeconds elapsedMs = elapsed;
+printf("(%i)",elapsedMs.GetTimeRaw());
 
 		if (elapsedMs < timeout){
 			timeout = timeout - elapsedMs;
@@ -128,7 +127,6 @@ ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 			timeout = MilliSeconds(0,Units::ms);
 		}
 	}
-	//printf("(%i",timeout.GetTimeRaw());
 	return ret;
 }
 

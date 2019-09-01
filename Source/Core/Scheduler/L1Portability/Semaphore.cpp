@@ -23,6 +23,8 @@
 */
 #define DLL_API
 
+#include <stdio.h>
+
 #include "Semaphore.h"
 #include "CompositeErrorManagement.h"
 #include "Atomic.h"
@@ -123,6 +125,7 @@ ErrorManagement::ErrorType Semaphore::Close(){
 ErrorManagement::ErrorType Semaphore::Lock(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
 	while (!lock.FastTryLock() && ret){
+		lockHev.Reset();
 		ret = lockHev.Wait(timeout);
 	}
 	return ret;
@@ -138,7 +141,6 @@ ErrorManagement::ErrorType Semaphore::UnLock(){
 	return ret;
 }
 
-//#include <stdio.h>
 ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
 	Atomic::Increment(&waiters);
@@ -153,12 +155,12 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 
 		if (ret){
 			switch (mode){
+			case MultiLock:
 			case Latching:{
 				sampledStatus = status;
 			}break;
 			case AutoResetting:{
 				if (status > 0){
-//printf("*");
 					sampledStatus = 1;
 					status = 0;
 				} else {
@@ -224,7 +226,7 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 }
 
 
-ErrorManagement::ErrorType Semaphore::Reset(){
+ErrorManagement::ErrorType Semaphore::Reset(uint32 count){
 	ErrorManagement::ErrorType ret;
 	MilliSeconds timeoutCopy(MilliSeconds::Infinite);
 
@@ -232,6 +234,13 @@ ErrorManagement::ErrorType Semaphore::Reset(){
 	REPORT_ERROR(ret,"Lock failed ");
 
 	if (ret){
+		if (mode == MultiLock){
+			if (status > 0){
+				status = 0;
+			} else {
+				status--;
+			}
+		} else
 		if (mode == Mutex){
 			ret.illegalOperation = (Threads::Id() != owner);
 			REPORT_ERROR(ret,"ReSet is invalid for non-owner of mutex");
@@ -276,6 +285,11 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 		case AutoResetting:{
 			status = 1;
 		}break;
+		case MultiLock:{
+			if (status <= 0){
+				status++;
+			}
+		}break;
 		case Counting:{
 			status += count;
 		}break;
@@ -291,7 +305,6 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 	}
 
 	if (ret && (waiters > 0) && (status > 0)){
-//		printf("!");
 		ret = this->Post();
 		REPORT_ERROR(ret,"Synchronizer Post failed");
 	}
