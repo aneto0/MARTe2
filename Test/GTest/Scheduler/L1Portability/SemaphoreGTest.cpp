@@ -95,6 +95,6 @@ TEST(SemaphoreGTest,TestTake_Counting_Threads) {
 TEST(SemaphoreGTest,TestTake_Combined_Threads) {
 	for (int32 i = 3;i<250;i++){
 	    printf("\015[256 - % 2i]:",i);
-	    ASSERT_TRUE(SemaphoreTest::TestTake_Combined_Threads(256,i,MilliSeconds(10000,Units::ms)));
+	    ASSERT_TRUE(SemaphoreTest::TestTake_Combined_Threads(256,i,MilliSeconds(10000,Units::ms),getTestDetailsFile()));
 	}
 }

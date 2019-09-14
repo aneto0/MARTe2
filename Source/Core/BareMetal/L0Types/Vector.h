@@ -144,6 +144,7 @@ public:
      * @return the element at position \a idx.
      */
     T &operator [](uint32 idx);
+    T &operator [](int32 idx);
 
     /**
      * @brief Returns the value at position \a idx.
@@ -151,6 +152,7 @@ public:
      * @return the value at position \a idx.
      */
     T operator [](uint32 idx) const;
+    T operator [](int32 idx) const;
 
     /**
      * @brief Gets the number of elements in the vector.
@@ -276,6 +278,18 @@ T &Vector<T>::operator [](uint32 idx) {
 
 template<typename T>
 T Vector<T>::operator [](uint32 idx) const {
+    T* array = reinterpret_cast<T*>(dataPointer);
+    return array[idx];
+}
+
+template<typename T>
+T &Vector<T>::operator [](int32 idx) {
+    T* array = reinterpret_cast<T*>(dataPointer);
+    return array[idx];
+}
+
+template<typename T>
+T Vector<T>::operator [](int32 idx) const {
     T* array = reinterpret_cast<T*>(dataPointer);
     return array[idx];
 }

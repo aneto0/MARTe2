@@ -43,93 +43,75 @@
 
 
 TEST(ThreadsGTest,TestBeginThread) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
+    ASSERT_TRUE(ThreadsTest::TestBeginThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
 }
 
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
-    ThreadsTest myUnitTest;
-    ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 32));
+    ASSERT_FALSE(ThreadsTest::TestBeginThread("hello", 0, 1));
 }
 
 TEST(ThreadsGTest,TestBeginThreadNullFunction) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThreadNullFunction("hello"));
+    ASSERT_TRUE(ThreadsTest::TestBeginThreadNullFunction("hello"));
 }
 
 TEST(ThreadsGTest,TestIsAlive) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestIsAlive(32));
+    ASSERT_TRUE(ThreadsTest::TestIsAlive(32));
 }
 
 TEST(ThreadsGTest,TestIsAliveAfterkill) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestIsAlive(32));
+    ASSERT_TRUE(ThreadsTest::TestIsAlive(32));
 }
 
 TEST(ThreadsGTest,TestKillInvalidID) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestKillInvalidID());
+    ASSERT_TRUE(ThreadsTest::TestKillInvalidID());
 }
 
 TEST(ThreadsGTest,TestKill) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestKill(32));
+    ASSERT_TRUE(ThreadsTest::TestKill(32));
 }
 
 // Failure where the thread state is supported!
 TEST(ThreadsGTest,TestGetState) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestGetState());
+    ASSERT_TRUE(ThreadsTest::TestGetState());
 }
 
 TEST(ThreadsGTest,TestId) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestId(32));
+    ASSERT_TRUE(ThreadsTest::TestId(32));
 }
 
 TEST(ThreadsGTest,TestGetCPUs) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestGetCPUs());
+    ASSERT_TRUE(ThreadsTest::TestGetCPUs());
 }
 
 TEST(ThreadsGTest,TestName) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestName("Hello", 10));
+    ASSERT_TRUE(ThreadsTest::TestName("Hello", 10));
 }
 
 TEST(ThreadsGTest,TestNameNull) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestNameNull());
+    ASSERT_TRUE(ThreadsTest::TestNameNull());
 }
 
 TEST(ThreadsGTest,TestNumberOfThreads) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestNumberOfThreads(32));
+    ASSERT_TRUE(ThreadsTest::TestNumberOfThreads(32));
 }
 
 TEST(ThreadsGTest,TestFindByIndex) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestFindByIndex());
+    ASSERT_TRUE(ThreadsTest::TestFindByIndex());
 }
 
 TEST(ThreadsGTest,TestGetThreadInfoCopy) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(32, "Hello"));
+    ASSERT_TRUE(ThreadsTest::TestGetThreadInfoCopy(32, "Hello"));
 }
 
 TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopyInvalidID());
+    ASSERT_TRUE(ThreadsTest::TestGetThreadInfoCopyInvalidID());
 }
 
 TEST(ThreadsGTest,TestFindByName) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestFindByName(10, "Hello", 2));
+    ASSERT_TRUE(ThreadsTest::TestFindByName(10, "Hello", 2));
 }
 
 TEST(ThreadsGTest,TestPriority) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriority());
+    ASSERT_TRUE(ThreadsTest::TestPriority());
 }
 

@@ -125,7 +125,7 @@ public:
     	return true;
     }
 
-    virtual void UserStartThread(uint32 index);
+    virtual bool UserStartThread(uint32 index);
 
 };
 
@@ -141,8 +141,9 @@ static void DummyFunction(ThreadTestEngine *tt) {
     Threads::EndThread();
 }
 
-void ThreadTestEngine::UserStartThread(uint32 index){
+bool  ThreadTestEngine::UserStartThread(uint32 index){
     tids[index] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, tidN[index]);
+    return (tids[index] != InvalidThreadIdentifier);
 }
 
 /**
@@ -164,14 +165,23 @@ bool ThreadTestEngine::StandardTest(){
 
 	InitCounters();
 
-	//Calls the thread callback.
-    for (int32 i = 0; (i < nOfThreads) ; i++) {
-    	UserStartThread(static_cast<uint32>(i));
+    for (uint32 i = 0; (i < (uint32)nOfThreads) ; i++) {
+        tids[i] = InvalidThreadIdentifier;
     }
 
-    if (!WaitCounter(nOfThreads)){
-    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting threads: started ",actionCounter, " out of ", nOfThreads);
-        ret = false;
+	//Calls the thread callback.
+    for (uint32 i = 0; (i < (uint32)nOfThreads) && ret ; i++) {
+    	ret = UserStartThread(i);
+    	if (!ret){
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting thread:" ,i);
+    	}
+    }
+
+    if (ret){
+        if (!WaitCounter(nOfThreads)){
+        	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"failed starting threads: started ",actionCounter, " out of ", nOfThreads);
+            ret = false;
+        }
     }
 
     if (ret){
@@ -426,8 +436,9 @@ public:
 	virtual ~TI_ThreadTestEngine(){}
 	TI_ThreadTestEngine(): ThreadTestEngine(1){
 	}
-    void UserStartThread(uint32 index){
+    bool UserStartThread(uint32 index){
         tids[static_cast<uint32>(index)] = Threads::BeginThread((ThreadFunctionType) TestIdFunction, this);
+        return (tids[static_cast<uint32>(index)] != InvalidThreadIdentifier);
     }
 };
 
@@ -448,11 +459,13 @@ public:
 	virtual ~GC_ThreadTestEngine(){}
 	GC_ThreadTestEngine(): ThreadTestEngine(Processor::Available()){
 	}
-    virtual void UserStartThread(uint32 index){
+    virtual bool UserStartThread(uint32 index){
     	ProcessorType pt(0);
     	pt.AddCPU(static_cast<uint32>(index+1));
         tids[static_cast<uint32>(index)] = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, emptyString, ExceptionHandler::NotHandled, pt);
+        return (tids[static_cast<uint32>(index)] != InvalidThreadIdentifier);
     }
+
     virtual bool UserCheckFunction(){
     	bool failed = false;
     	for (int i =0;i<nOfThreads;i++){

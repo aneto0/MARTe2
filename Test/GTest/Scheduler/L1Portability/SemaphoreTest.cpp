@@ -42,7 +42,6 @@
 #include "CompositeErrorManagement.h"
 #include "SemaphoreTest.h"
 #include "Vector.h"
-#include "TestSupport.h"
 
 
 
@@ -518,7 +517,7 @@ void ThreadCombined(LocalSharedData *tt) {
 }
 
 
-bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,int32 stepRelease,MilliSeconds timeout) {
+bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,int32 stepRelease,MilliSeconds timeout,FILE *errorDetails) {
 //return false;
 	ErrorManagement::ErrorType ret;
 	LocalSharedData shared;
@@ -609,7 +608,7 @@ bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,int32 stepReleas
     	printf("OK! ");
     } else {
     	printf("NO! ");
-    	logger.OutputReport(getTestDetailsFile());
+    	logger.OutputReport(errorDetails);
     }
 
     Sleep::Short(50,Units::ms);;

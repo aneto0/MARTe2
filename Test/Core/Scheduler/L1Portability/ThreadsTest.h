@@ -42,9 +42,7 @@ using namespace MARTe;
 /**
  * @brief A class to test the Threads functions.
  */
-class ThreadsTest {
-public:
-
+namespace ThreadsTest {
     /**
      * @brief Tests the Threads::BeginThread and Threads::EndThread function.
      * @details nOfThreads are lunched by the test function.
