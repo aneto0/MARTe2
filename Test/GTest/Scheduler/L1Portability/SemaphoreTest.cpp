@@ -29,6 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include <intrin.h>
+#include <windows.h>
+
 
 #include "MutexSem.h"
 #include "Threads.h"
@@ -39,6 +42,8 @@
 #include "CompositeErrorManagement.h"
 #include "SemaphoreTest.h"
 #include "Vector.h"
+#include "TestSupport.h"
+
 
 
 /*---------------------------------------------------------------------------*/
@@ -410,24 +415,111 @@ bool SemaphoreTest::TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds tim
     return ret;
 }
 
+
+class RTEventLogger{
+	struct EventRecord{
+		uint32 actorId;
+		CCString constantMessage;
+		MicroSeconds delay;
+
+	};
+
+public:
+
+	RTEventLogger(int32 nEventsIn){
+		maxEvents = nEventsIn;
+		buffer = static_cast<EventRecord*>(malloc(nEventsIn*sizeof(EventRecord)));
+		Start();
+	}
+	void Start(){
+		lastRecord = -1;
+		startTime = HighResolutionTimer::GetTicks();
+	}
+	/**
+	 * note message must be persistent
+	 */
+	void RecordEvent(uint32 id,CCString constantMessage){
+		if (lastRecord < maxEvents){
+			int32 record = Atomic::Increment(&lastRecord);
+			if (record < maxEvents){
+				Ticks eventTime = HighResolutionTimer::GetTicks();
+				Ticks deltaT = eventTime - startTime;
+				buffer[record].delay = deltaT;
+				buffer[record].actorId = id;
+				buffer[record].constantMessage = constantMessage;
+			}
+		}
+	}
+
+	void OutputReport(FILE *f){
+		for (int i = 0;(i<=lastRecord) && (i < maxEvents);i++){
+			fprintf (f,"@%i(us) actor%i %s\n",buffer[i].delay.GetTimeRaw(),buffer[i].actorId,buffer[i].constantMessage.GetList());
+		}
+	}
+private:
+	Ticks startTime;
+	volatile int32 lastRecord;
+	int32 maxEvents;
+	EventRecord *buffer;
+};
+
+RTEventLogger logger(1000);
+
+
+#if 0
+char eventBuffer[4096];
+volatile long int eventBufferPosition = 0;
+inline void EventReport(char c1,char c2){
+	if (eventBufferPosition < (sizeof(eventBuffer)-4)){
+		long int index = Atomic::Add(&eventBufferPosition,3);
+//		long int index = InterlockedAdd (&eventBufferPosition,3);
+		index -= 3;
+		eventBuffer[index] = c1;
+		eventBuffer[index+1] = c2;
+		eventBuffer[index+2] = ' ';
+	}
+//	return;
+};
+
+inline void EventReset(){
+	eventBufferPosition = 0;
+}
+#endif
+
+
+//	MemoryBarrier();
+
 void ThreadCombined(LocalSharedData *tt) {
 	ErrorManagement::ErrorType ret;
     ret = tt->sem2.Set();
 
-	Atomic::Increment(&tt->sharedVariable);
+	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
+
+	logger.RecordEvent(id," sem2.Set() done,  sem.Take...");
+
     ret = tt->sem.Take(tt->timeout);
-    if (tt->timeout.GetTimeRaw() > 30){
-    	REPORT_ERROR(ret," ThreadLocked exiting with timeout");
+	logger.RecordEvent(id," sem taken");
+
+	if (tt->timeout.GetTimeRaw() > 30){
+    	REPORT_ERROR(ret," ThreadCombined timeout sem.Take");
     }
-	Atomic::Decrement(&tt->sharedVariable);
-    ret = tt->sem3.Set();
+
+    if (ret){
+    	Atomic::Decrement(&tt->sharedVariable);
+
+    	logger.RecordEvent(id,"sem3.Set...");
+        ret = tt->sem3.Set();
+        logger.RecordEvent(id,"sem3.Set done");
+    	REPORT_ERROR(ret," ThreadCombined failed sem3.Set");
+    }
 
 	Threads::EndThread();
+    logger.RecordEvent(id," end of thread");
 }
 
 
-bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,MilliSeconds timeout) {
-return false;
+bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,int32 stepRelease,MilliSeconds timeout) {
+//return false;
 	ErrorManagement::ErrorType ret;
 	LocalSharedData shared;
 	shared.sharedVariable = 0;
@@ -438,52 +530,90 @@ return false;
 	for (uint32 i = 0U;i < nOfThreads;i++){
 		tid[i] = InvalidThreadIdentifier;
 	}
-
     ret = shared.sem.Open(Semaphore::Counting);
     if (ret){
     	ret = shared.sem.Reset();
+    	REPORT_ERROR(ret,"shared.sem.Reset() failed");
     }
     if (ret){
     	ret = shared.sem2.Open(Semaphore::MultiLock);
+    	REPORT_ERROR(ret,"shared.sem2.Open(Semaphore::MultiLock) failed");
     }
     if (ret){
     	ret = shared.sem2.Reset(nOfThreads);
+    	REPORT_ERROR(ret,"shared.sem2.Reset() failed");
     }
     if (ret){
-    	ret = shared.sem3.Open(Semaphore::AutoResetting);
+    	ret = shared.sem3.Open(Semaphore::MultiLock);
+    	REPORT_ERROR(ret,"shared.sem3.Open(Semaphore::MultiLock) failed");
     }
     if (ret){
-    	ret = shared.sem3.Reset();
+    	ret = shared.sem3.Reset((uint32)stepRelease);
+    	REPORT_ERROR(ret,"shared.sem3.Reset(stepRelease) failed");
     }
     if (ret){
+    	logger.Start();
+    	logger.RecordEvent(0,"starting threads");
     	for (uint32 i = 0U;i < nOfThreads;i++){
     		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadCombined, &shared);
     	}
+    	logger.RecordEvent(0,"threads started - waiting on sem2");
     	ret = shared.sem2.Take(timeout);
-//    	Sleep::Short(300,Units::ms);
+    	logger.RecordEvent(0,"sem2 taken");
+    	COMPOSITE_REPORT_ERROR(ret,"shared.sem2.Take(",timeout.GetTimeRaw(),") failed");
 
-    	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
-    	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
-    }
-
-    if (ret){
-		int32 oldSharedVariable = shared.sharedVariable;
-    	while ((shared.sharedVariable > 0) && ret){
-        	ret = shared.sem.Set(3);
-        	ret = shared.sem3.Take(timeout);
-
-//        	Sleep::Short(50,Units::ms);
-    		oldSharedVariable-=3;
-    		if (oldSharedVariable < 0) {
-    			oldSharedVariable = 0;
-    		}
-        	int32 newSharedVariable = shared.sharedVariable;
-        	ret.fatalError = (newSharedVariable != oldSharedVariable);
-        	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to ",oldSharedVariable," instead it's value is ",newSharedVariable );
+    	if (ret){
+        	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
+        	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
     	}
     }
 
-//    Sleep::Short(100,Units::ms);;
+    if (ret){
+		volatile int32 oldSharedVariable = shared.sharedVariable;
+    	while ((shared.sharedVariable > 0) && ret){
+    		ret = shared.sem.Set((uint32)stepRelease);
+    		COMPOSITE_REPORT_ERROR(ret,"shared.sem.Set(",stepRelease,") failed");
+
+        	logger.RecordEvent(0,"sem set(stepRelease) done");
+        	ret = shared.sem3.Take(timeout);
+        	COMPOSITE_REPORT_ERROR(ret,"shared.sem3.Take(",timeout.GetTimeRaw(),") failed");
+
+        	oldSharedVariable-=stepRelease;
+        	if (oldSharedVariable < 0) {
+        		oldSharedVariable = 0;
+        	}
+
+        	logger.RecordEvent(0,"sem3 taken");
+
+        	uint32 toReset = (uint32)stepRelease;
+    		if (oldSharedVariable < stepRelease) {
+    			toReset = (uint32)oldSharedVariable;
+    		}
+
+        	if (ret){
+            	ret = shared.sem3.Reset(toReset);
+            	logger.RecordEvent(0,"sem3 reset");
+   				COMPOSITE_REPORT_ERROR(ret,"shared.sem3.Reset(",toReset,") failed");
+        	}
+
+        	if (ret){
+        		int32 newSharedVariable = shared.sharedVariable;
+//        		int32 newSharedVariable = _InterlockedOr(reinterpret_cast<volatile long *>(&shared.sharedVariable),0);
+        		ret.fatalError = (newSharedVariable != oldSharedVariable);
+        		COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to ",oldSharedVariable," instead it's value is ",newSharedVariable );
+        	}
+    	}
+    }
+
+    if (ret){
+    	printf("OK! ");
+    } else {
+    	printf("NO! ");
+    	logger.OutputReport(getTestDetailsFile());
+    }
+
+    Sleep::Short(50,Units::ms);;
+
 	for (uint32 i = 0;i < nOfThreads;i++){
 		if (tid[i] != InvalidThreadIdentifier){
 	        if (Threads::IsAlive(tid[i])) {

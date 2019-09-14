@@ -70,6 +70,9 @@ namespace testing{
 	class Test{};
 };
 
+#define TS_LOG(s,...)\
+fprintf(getTestDetailsFile(),s,__VA_ARGS__);
+
 #define TEST(test_group_name,test_name)\
 	class test_group_name ##  test_name ## TestInstance: public TestInstance{  \
 	public:\

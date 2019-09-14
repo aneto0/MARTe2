@@ -22,7 +22,7 @@
 */
 
 #define DLL_API
-
+#include <stdio.h>
 #include "Synchronizer.h"
 
 namespace MARTe{
@@ -67,7 +67,8 @@ ErrorManagement::ErrorType Synchronizer::Close(){
 	ErrorManagement::ErrorType ret;
 
 	ret.invalidOperation = (data.eventHandle == NULL);
-	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
+	// do not report this. It would flood the logs
+//	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
 
 	if (ret){
 		ret.OSError = (CloseHandle(data.eventHandle)==0);

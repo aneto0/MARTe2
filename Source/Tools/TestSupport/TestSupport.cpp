@@ -62,7 +62,7 @@ FILE *getTestDetailsFile(){
 
 void RunAllTests(){
 	FILE *testResultsFile 	= getTestResultsFile();
-	FILE *testListFile 		= getTestListFile();
+	FILE *testListFile 	= getTestListFile();
 	FILE *testDetailsFile 	= getTestDetailsFile();
 
 	TestInstance *test = TestRoot;

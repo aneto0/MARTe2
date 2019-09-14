@@ -129,7 +129,7 @@ namespace SemaphoreTest {
      */
     bool TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds timeout);
 
-    bool TestTake_Combined_Threads(uint32 nOfThreads,MilliSeconds timeout);
+    bool TestTake_Combined_Threads(uint32 nOfThreads,int32 stepRelease,MilliSeconds timeout);
 };
 
 

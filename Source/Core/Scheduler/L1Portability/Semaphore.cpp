@@ -124,9 +124,18 @@ ErrorManagement::ErrorType Semaphore::Close(){
 
 ErrorManagement::ErrorType Semaphore::Lock(MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
+
+	// in case the lock was cleared just before we reset the lockHev
+	// we perform the Reset Wait in two steps
+	bool resetStage = true;
 	while (!lock.FastTryLock() && ret){
-		lockHev.Reset();
-		ret = lockHev.Wait(timeout);
+		if (resetStage){
+			lockHev.Reset();
+			resetStage = false;
+		} else {
+			ret = lockHev.WaitUpdate(timeout);
+			resetStage = true;
+		}
 	}
 	return ret;
 }
@@ -197,7 +206,7 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 			}
 		}
 
-		if (ret && (sampledStatus == 0)){
+		if (ret && (sampledStatus <= 0)){
 			ret = this->Synchronizer::Reset();
 			REPORT_ERROR(ret,"Synchronizer::Reset failed ");
 
@@ -235,11 +244,7 @@ ErrorManagement::ErrorType Semaphore::Reset(uint32 count){
 
 	if (ret){
 		if (mode == MultiLock){
-			if (status > 0){
-				status = 0;
-			} else {
-				status--;
-			}
+			status = 1 - static_cast<int32>(count);
 		} else
 		if (mode == Mutex){
 			ret.illegalOperation = (Threads::Id() != owner);

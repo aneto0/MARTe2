@@ -46,18 +46,28 @@ namespace MARTe {
     namespace Atomic {
 
         /**
-         * @brief Atomically increments a 32 bit integer in memory.
-         * @param[in,out] p the pointer to the 32 bit variable to increment.
+         * @brief Atomically increments a 64 bit integer in memory.
+         * @param[in,out] p the pointer to the 64 bit variable to increment.
+         * @return the value after increment
          * @pre p != NULL.
          */
-        inline void Increment (volatile int32 *p );
+        inline int64 Increment (volatile int64 *p );
+
+        /**
+         * @brief Atomically increments a 32 bit integer in memory.
+         * @param[in,out] p the pointer to the 32 bit variable to increment.
+         * @return the value after increment
+         * @pre p != NULL.
+         */
+        inline int32 Increment (volatile int32 *p );
 
         /**
          * @brief Atomically increments a 16 bit integer in memory.
          * @param[in,out] p the pointer to the 16 bit variable to increment.
+         * @return the value after increment
          * @pre p != NULL.
          */
-        inline void Increment (volatile int16 *p);
+        inline int16 Increment (volatile int16 *p);
 
         /**
          * @brief Atomically increments a 8 bit integer in memory.
@@ -67,18 +77,28 @@ namespace MARTe {
         inline void Increment (volatile int8 *p);
 
         /**
-         * @brief Atomically decrements a 32 bit integer in memory.
-         * @param[in,out] p the pointer to the 32 bit variable to decrement.
+         * @brief Atomically decrements a 64 bit integer in memory.
+         * @param[in,out] p the pointer to the 64 bit variable to decrement.
+         * @return the value after decrement
          * @pre p != NULL.
          */
-        inline void Decrement (volatile int32 *p);
+        inline int64 Decrement (volatile int64 *p);
+
+        /**
+         * @brief Atomically decrements a 32 bit integer in memory.
+         * @param[in,out] p the pointer to the 32 bit variable to decrement.
+         * @return the value after decrement
+         * @pre p != NULL.
+         */
+        inline int32 Decrement (volatile int32 *p);
 
         /**
          * @brief Atomically decrements a 16 bit integer in memory.
          * @param[in,out] p the pointer to the 16 bit variable to decrement.
+         * @return the value after decrement
          * @pre p != NULL.
          */
-        inline void Decrement (volatile int16 *p);
+        inline int16 Decrement (volatile int16 *p);
 
         /**
          * @brief Atomically decrements a 8 bit integer in memory.
@@ -124,16 +144,36 @@ namespace MARTe {
          * @param[in,out] p the pointer to the variable which must be incremented.
          * @param[in] value the value to add to *p.
          * @pre p != NULL.
+          * @return the value after increment
          */
-        inline void Add (volatile int32 *p, int32 value);
+        inline int64 Add (volatile int64 *p, int64 value);
 
         /**
          * @brief Atomically subtracts two 32 bit integers.
          * @param[in,out] p the pointer to the variable which must be decremented.
          * @param[in] value the value to subtract to *p.
          * @pre p != NULL.
+         * @return the value after increment
          */
-        inline void Sub (volatile int32 *p, int32 value);
+        inline int64 Sub (volatile int64 *p, int64 value);
+
+        /**
+         * @brief Atomically adds two 32 bit integers.
+         * @param[in,out] p the pointer to the variable which must be incremented.
+         * @param[in] value the value to add to *p.
+         * @pre p != NULL.
+         * @return the value after increment
+         */
+        inline int32 Add (volatile int32 *p, int32 value);
+
+        /**
+         * @brief Atomically subtracts two 32 bit integers.
+         * @param[in,out] p the pointer to the variable which must be decremented.
+         * @param[in] value the value to subtract to *p.
+         * @pre p != NULL.
+         * @return the value after increment
+         */
+        inline int32 Sub (volatile int32 *p, int32 value);
 
     }
 

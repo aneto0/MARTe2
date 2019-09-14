@@ -119,7 +119,7 @@ ErrorManagement::ErrorType Synchronizer::WaitUpdate(MilliSeconds &timeout){
 		Ticks ticksEnd = HighResolutionTimer::GetTicks();
 		Ticks elapsed = ticksEnd - tickStart;
 		MilliSeconds elapsedMs = elapsed;
-printf("(%i)",elapsedMs.GetTimeRaw());
+//printf("(%i)",elapsedMs.GetTimeRaw());
 
 		if (elapsedMs < timeout){
 			timeout = timeout - elapsedMs;

@@ -28,6 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <windows.h>
 #include <intrin.h>
 
 /*---------------------------------------------------------------------------*/
@@ -45,14 +46,19 @@ namespace MARTe {
 
 namespace Atomic {
 
-inline void Increment(volatile int32 *p) {
-    volatile long* pp = (volatile long *) p;
-    _InterlockedIncrement(pp);
+inline int64 Increment(volatile int64 *p) {
+    volatile LONGLONG* pp = (volatile LONGLONG *) p;
+    return InterlockedIncrement64(pp);
 }
 
-inline void Increment(volatile int16 *p) {
+inline int32 Increment(volatile int32 *p) {
+    volatile long* pp = (volatile long *) p;
+    return _InterlockedIncrement(pp);
+}
+
+inline int16 Increment(volatile int16 *p) {
     volatile short* pp = (volatile short*) p;
-    _InterlockedIncrement16(pp);
+    return _InterlockedIncrement16(pp);
 }
 
 inline void Increment(volatile int8 *p) {
@@ -61,14 +67,19 @@ inline void Increment(volatile int8 *p) {
     _InterlockedExchangeAdd8(pp, 1);
 }
 
-inline void Decrement(volatile int32 *p) {
-    volatile long* pp = (volatile long *) p;
-    _InterlockedDecrement(pp);
+inline int64 Decrement(volatile int64 *p) {
+    volatile LONGLONG* pp = (volatile LONGLONG *) p;
+    return InterlockedDecrement64(pp);
 }
 
-inline void Decrement(volatile int16 *p) {
+inline int32 Decrement(volatile int32 *p) {
+    volatile long* pp = (volatile long *) p;
+    return _InterlockedDecrement(pp);
+}
+
+inline int16 Decrement(volatile int16 *p) {
     volatile short* pp = (volatile short *) p;
-    _InterlockedDecrement16(pp);
+    return _InterlockedDecrement16(pp);
 }
 
 inline void Decrement(volatile int8 *p) {
@@ -76,8 +87,7 @@ inline void Decrement(volatile int8 *p) {
     _InterlockedExchangeAdd8(pp, -1);
 }
 
-inline int32 Exchange(volatile int32 *p,
-                      int32 v) {
+inline int32 Exchange(volatile int32 *p,int32 v) {
     volatile long* pp = (volatile long *) p;
     return _InterlockedExchange(pp, v);
 }
@@ -101,17 +111,24 @@ inline bool TestAndSet(volatile int8 *p) {
     return _InterlockedCompareExchange8(pp, 1, 0) == 0;
 }
 
-inline void Add(volatile int32 *p,
-                int32 value) {
-
+inline int32 Add(volatile int32 *p,int32 value) {
     volatile long* pp = (volatile long *) p;
-    _InterlockedExchangeAdd(pp, value);
+    return InterlockedAdd(pp, value);
 }
 
-inline void Sub(volatile int32 *p,
-                int32 value) {
+inline int64 Add(volatile int64 *p,int64 value) {
+    volatile LONG64* pp = (volatile LONG64 *) p;
+    return InterlockedAdd64(pp, value);
+}
+
+inline int32 Sub(volatile int32 *p,int32 value) {
     volatile long* pp = (volatile long *) p;
-    _InterlockedExchangeAdd(pp, -value);
+    return InterlockedAdd(pp, -value);
+}
+
+inline int64 Sub(volatile int64 *p,int64 value) {
+    volatile LONG64* pp = (volatile LONG64 *) p;
+    return InterlockedAdd64(pp, -value);
 }
 
 }
