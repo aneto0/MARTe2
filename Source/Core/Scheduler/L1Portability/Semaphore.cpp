@@ -223,7 +223,7 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 			}
 		}
 
-	} while(ret && (sampledStatus == 0));
+	} while(ret && (sampledStatus <= 0));
 
 	if (lock.Locked()){
 		ret = UnLock();
@@ -247,17 +247,10 @@ ErrorManagement::ErrorType Semaphore::Reset(uint32 count){
 			status = 1 - static_cast<int32>(count);
 		} else
 		if (mode == Mutex){
-			ret.illegalOperation = (Threads::Id() != owner);
-			REPORT_ERROR(ret,"ReSet is invalid for non-owner of mutex");
 
-			if (ret){
-				if (status <= 0){
-					status++;
-				}
-				if (status == 1){
-					owner = 0;
-				}
-			}
+			ret.invalidOperation = true;
+			REPORT_ERROR(ret,"Set is invalid for Mutex");
+
 		} else {
 			status = 0;
 		}
@@ -299,8 +292,17 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 			status += count;
 		}break;
 		case Mutex:{
-			ret.invalidOperation = true;
-			REPORT_ERROR(ret,"Set is invalid for Mutex");
+			ret.illegalOperation = (Threads::Id() != owner);
+			REPORT_ERROR(ret,"ReSet is invalid for non-owner of mutex");
+
+			if (ret){
+				if (status <= 0){
+					status++;
+				}
+				if (status == 1){
+					owner = 0;
+				}
+			}
 		}break;
 		default:{
 			ret.unsupportedFeature = true;

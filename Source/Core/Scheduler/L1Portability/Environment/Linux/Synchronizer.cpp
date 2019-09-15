@@ -44,7 +44,9 @@ Synchronizer::Synchronizer(){
  *
  */
 Synchronizer::~Synchronizer(){
-	Close();
+	if (data.eventfd != -1){
+		Close();
+	}
 }
 
 

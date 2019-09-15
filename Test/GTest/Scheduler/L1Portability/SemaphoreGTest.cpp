@@ -93,8 +93,18 @@ TEST(SemaphoreGTest,TestTake_Counting_Threads) {
 }
 
 TEST(SemaphoreGTest,TestTake_Combined_Threads) {
+
 	for (int32 i = 3;i<250;i++){
 	    printf("\015[256 - % 2i]:",i);
+	    fflush(stdout);
 	    ASSERT_TRUE(SemaphoreTest::TestTake_Combined_Threads(256,i,MilliSeconds(10000,Units::ms),getTestDetailsFile()));
+	}
+}
+
+TEST(SemaphoreGTest,TestTake_Mutex_Threads) {
+	for (int32 i = 32;i<256;i++){
+	    printf("\015[256 - % 2i]:",i);
+	    fflush(stdout);
+	    ASSERT_TRUE(SemaphoreTest::TestTake_Mutex_Threads(i,MilliSeconds(2,Units::s),getTestDetailsFile()));
 	}
 }

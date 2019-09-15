@@ -44,18 +44,29 @@ namespace MARTe {
 
 namespace Atomic {
 
-inline void Increment(volatile int32 *p) {
-    asm volatile(
+inline int64 Increment(volatile int64 *p) {
+	return __sync_add_and_fetch (p, 1);
+}
+
+
+inline int32 Increment(volatile int32 *p) {
+	return __sync_add_and_fetch (p, 1);
+/*
+	asm volatile(
             "lock incl (%0)\n"
             : : "r" (p)
     );
+    */
 }
 
-inline void Increment(volatile int16 *p) {
-    asm volatile(
+inline int16 Increment(volatile int16 *p) {
+	return __sync_add_and_fetch (p, 1);
+/*
+	asm volatile(
             "lock incw (%0)\n"
             : : "r" (p)
     );
+    */
 }
 
 inline void Increment(volatile int8 *p) {
@@ -65,18 +76,28 @@ inline void Increment(volatile int8 *p) {
     );
 }
 
-inline void Decrement(volatile int32 *p) {
-    asm volatile(
+inline int64 Decrement(volatile int64 *p) {
+	return __sync_sub_and_fetch (p, 1);
+}
+
+inline int32 Decrement(volatile int32 *p) {
+	return __sync_sub_and_fetch (p, 1);
+/*
+	asm volatile(
             "lock decl (%0)\n"
             : : "r" (p)
     );
+    */
 }
 
-inline void Decrement(volatile int16 *p) {
+inline int16 Decrement(volatile int16 *p) {
+	return __sync_sub_and_fetch (p, 1);
+/*
     asm volatile(
             "lock decw (%0)\n"
             : : "r" (p)
     );
+    */
 }
 
 inline void Decrement(volatile int8 *p) {
@@ -122,22 +143,34 @@ inline bool TestAndSet(volatile int8 *p) {
     return (out == 0);
 }
 
-inline void Add(volatile int32 *p,
-                int32 value) {
+inline int64 Add(volatile int64 *p, int64 value) {
+	return __sync_add_and_fetch (p, value);
+}
+
+inline int64 Sub(volatile int64 *p, int64 value) {
+	return __sync_sub_and_fetch(p,value);
+}
+
+inline int32 Add(volatile int32 *p, int32 value) {
+	return __sync_add_and_fetch (p, value);
+#if 0
     asm volatile (
             "lock addl %1, (%0)"
             : /* output */
             :"r" (p), "ir" (value) /* input */
     );
+#endif
 }
 
-inline void Sub(volatile int32 *p,
-                int32 value) {
+inline int32 Sub(volatile int32 *p, int32 value) {
+	return __sync_sub_and_fetch(p,value);
+#if 0
     asm volatile (
             "lock subl %1, (%0)"
             : /* output */
             :"r" (p), "ir" (value) /* input */
     );
+#endif
 }
 
 }

@@ -55,7 +55,7 @@ namespace MARTe {
  * @details the handling of the semaphore is mainly in user space.
  * the cpu is yielded and kernel calls are performed only when the semaphore is red
  * Performs the following functions:
- * 1) simple event semaphore: (Latching): Take() waits if red(0) exits immediately if green (1)
+ * 1) simple event semaphore: (Latching): Take() waits if red(0) exits immediately if green (1). Set -> Green Reset ->Red
  * 2) serializer (AutoResetting): Take() waits if red(0) and if green(1) exits after turning the semaphore red
  * 3) counting (Counting): Take() waits if semaphore is <=0. if >0 decrements and exits.
  * 4) recursive mutex (Mutex): as AutoResetting, but allows multiple Take() by the owner thread. Reset is disabled and Set is accessible only by the owner.
@@ -113,21 +113,21 @@ public:
     ErrorManagement::ErrorType Take(const MilliSeconds &timeout= MilliSeconds::Infinite);
 
     /**
-     * @brief Resets the semaphore: status to green
+     * @brief Decreases the Status towards locked/reset/red.Behaviour depends on mode.
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType Reset(uint32 count=1);
 
     /**
-     * @brief Posts the semaphore: status
+     * @brief Increases/Sets the Status. Behaviour depends on mode.
      * @return true if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
     ErrorManagement::ErrorType Set(uint32 count=1);
 
     /**
-     * @brief Checks if the semaphore is closed.
+     * @brief Checks if the semaphore is closed. >1 is free/posted/green <=0 is locked/reset/red
      * @return true if the semaphore is closed.
      */
     int32 Status() const;

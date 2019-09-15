@@ -109,27 +109,40 @@ namespace SemaphoreTest {
     bool TestTake_Latching_Thread();
 
     /**
-     * @brief Tests the Semaphore::Take function.
+     * @brief Tests the Semaphore(Latching) functionality.
      * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set().
      * @return true if the count is ok
      */
     bool TestTake_Latching_Threads(uint32 nOfThreads,MilliSeconds timeout);
 
     /**
-     * @brief Tests the Semaphore::Take function.
-     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set().
+     * @brief Tests the Semaphore(AutoResetting) functionality.
+     * @details A number of threads wait on a AutoResetting semaphore. the functions checks the amount of threads waiting before and after Set().
      * @return true if the count is ok
      */
     bool TestTake_AutoResetting_Threads(uint32 nOfThreads,MilliSeconds timeout);
 
     /**
-     * @brief Tests the Semaphore::Take function.
-     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set(). It will unblock 3 threads at a time
+     * @brief Tests the Semaphore(MultiLock) functionality.
+     * @details A number of threads wait on a Counting semaphore. the functions checks the amount of threads waiting before and after Set(). It will unblock 3 threads at a time
      * @return true if the count is ok
      */
     bool TestTake_Counting_Threads(uint32 nOfThreads,MilliSeconds timeout);
 
+    /**
+     * @brief Tests the Semaphore(Mutex) functionality.
+     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set(). It will unblock stepRelease threads at a time
+     * @return true if the count is ok
+     */
     bool TestTake_Combined_Threads(uint32 nOfThreads,int32 stepRelease,MilliSeconds timeout,FILE *errorDetails);
+
+    /**
+     * @brief Tests the Semaphore(Mutex) functionality.
+     * @details A number of threads wait on a latching semaphore. the functions checks the amount of threads waiting before and after Set(). It will unblock all threads at a time
+     * @return true if the count is ok
+     */
+    bool TestTake_Mutex_Threads(uint32 nOfThreads,MilliSeconds timeout,FILE *errorDetails);
+
 };
 
 
