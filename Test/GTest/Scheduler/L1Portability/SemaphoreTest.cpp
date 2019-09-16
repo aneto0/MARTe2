@@ -692,10 +692,6 @@ bool SemaphoreTest::TestTake_Mutex_Threads(uint32 nOfThreads,MilliSeconds timeou
 	}
     ret = shared.sem.Open(Semaphore::Mutex);
     if (ret){
-    	ret = shared.sem.Reset();
-    	REPORT_ERROR(ret,"shared.sem.Reset() failed");
-    }
-    if (ret){
     	ret = shared.sem4.Open(Semaphore::Latching);
     	REPORT_ERROR(ret,"shared.sem4.Open(Semaphore::Latching) failed");
     }

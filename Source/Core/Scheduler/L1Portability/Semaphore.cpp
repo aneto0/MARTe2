@@ -162,6 +162,8 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 		ret = Lock(timeoutCopy);
 		REPORT_ERROR(ret,"Lock failed ");
 
+		bool wasLocked = (status <= 0);
+
 		if (ret){
 			switch (mode){
 			case MultiLock:
@@ -172,15 +174,12 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 				if (status > 0){
 					sampledStatus = 1;
 					status = 0;
-				} else {
-//printf(".");
 				}
 			}break;
 			case Counting:{
 				if (status > 0){
 					sampledStatus = 1;
 					status--;
-//printf("%i ",status);
 				}
 			}break;
 			case Mutex:{
@@ -206,9 +205,13 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 			}
 		}
 
+		if (ret){
+			ret = UpdateLockHev(wasLocked);
+		}
+
 		if (ret && (sampledStatus <= 0)){
-			ret = this->Synchronizer::Reset();
-			REPORT_ERROR(ret,"Synchronizer::Reset failed ");
+//			ret = this->Synchronizer::Reset();
+//			REPORT_ERROR(ret,"Synchronizer::Reset failed ");
 
 			if (ret){
 				ret = UnLock();
@@ -234,6 +237,23 @@ ErrorManagement::ErrorType Semaphore::Take(const MilliSeconds &timeout){
 	return ret;
 }
 
+ErrorManagement::ErrorType Semaphore::UpdateLockHev(bool wasLocked){
+	ErrorManagement::ErrorType ret;
+
+	bool isLocked = (status <= 0);
+	if (isLocked != wasLocked){
+		if (isLocked){
+			ret = this->Synchronizer::Reset();
+			REPORT_ERROR(ret,"Synchronizer::Reset failed ");
+		} else {
+			ret = this->Post();
+			REPORT_ERROR(ret,"Synchronizer Post failed");
+		}
+	}
+
+	return ret;
+}
+
 
 ErrorManagement::ErrorType Semaphore::Reset(uint32 count){
 	ErrorManagement::ErrorType ret;
@@ -242,24 +262,31 @@ ErrorManagement::ErrorType Semaphore::Reset(uint32 count){
 	ret = Lock(timeoutCopy);
 	REPORT_ERROR(ret,"Lock failed ");
 
+	// to avoid Resetting before waiting
+	bool wasLocked = (status <= 0);
+
 	if (ret){
 		if (mode == MultiLock){
 			status = 1 - static_cast<int32>(count);
 		} else
 		if (mode == Mutex){
-
 			ret.invalidOperation = true;
-			REPORT_ERROR(ret,"Set is invalid for Mutex");
-
+			REPORT_ERROR(ret,"Reset is invalid for Mutex");
 		} else {
 			status = 0;
 		}
 	}
 
+#if 1
+	if (ret){
+		ret = UpdateLockHev(wasLocked);
+	}
+#else
 	if (ret && (waiters > 0) && (status > 0)){
 		ret = this->Post();
 		REPORT_ERROR(ret,"Synchronizer Post failed");
 	}
+#endif
 
 	if (lock.Locked()){
 		ret = UnLock();
@@ -274,6 +301,9 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 
 	ret = Lock(timeoutCopy);
 	REPORT_ERROR(ret,"Lock failed ");
+
+	// to avoid Resetting before waiting
+	bool wasLocked = (status <= 0);
 
 	if (ret){
 		switch (mode){
@@ -311,10 +341,16 @@ ErrorManagement::ErrorType Semaphore::Set(uint32 count){
 		}
 	}
 
+#if 1
+	if (ret){
+		ret = UpdateLockHev(wasLocked);
+	}
+#else
 	if (ret && (waiters > 0) && (status > 0)){
 		ret = this->Post();
 		REPORT_ERROR(ret,"Synchronizer Post failed");
 	}
+#endif
 
 	if (lock.Locked()){
 		ret = UnLock();

@@ -145,6 +145,10 @@ public:
 
 private:
     /**
+     */
+    ErrorManagement::ErrorType UpdateLockHev(bool wasLocked);
+
+    /**
      * Number of threads waiting
      */
     volatile int32  waiters;
