@@ -44,6 +44,7 @@
 #include "Vector.h"
 #include "StaticCString.h"
 #include "CString.h"
+#include "MultipleEventSem.h"
 
 
 
@@ -188,6 +189,7 @@ public:
 	Semaphore sem2;
 	Semaphore sem3;
 	Semaphore sem4;
+	MultipleEventSem msem;
 
 	MilliSeconds timeout;
 private:
@@ -720,6 +722,141 @@ bool SemaphoreTest::TestTake_Mutex_Threads(uint32 nOfThreads,MilliSeconds timeou
     	logger.RecordEvent(0,"starting threads");
     	for (uint32 i = 0U;i < nOfThreads;i++){
     		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadMutex, &shared);
+    	}
+    	logger.RecordEvent(0,"threads started - waiting on sem2");
+    	ret = shared.sem2.Take(timeout);
+    	logger.RecordEvent(0,"sem2 taken");
+    	COMPOSITE_REPORT_ERROR(ret,"shared.sem2.Take(",timeout.GetTimeRaw(),") failed");
+
+    	if (ret){
+        	ret.fatalError = (shared.sharedVariable != static_cast<int32>(nOfThreads));
+        	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
+    	}
+    }
+    if (ret){
+    	logger.RecordEvent(0,"sem4 setting now ....");
+    	ret = shared.sem4.Set();
+    	logger.RecordEvent(0,"sem4 set()");
+    	REPORT_ERROR(ret,"shared.sem4.Set() failed");
+    }
+    if (ret){
+    	ret = shared.sem3.Take(timeout);
+    	logger.RecordEvent(0,"sem3 Taken");
+    	COMPOSITE_REPORT_ERROR(ret,"shared.sem3.Take(",timeout.GetTimeRaw(),") failed");
+    }
+    if (ret){
+    	ret.fatalError = (shared.sharedVariable  != 0);
+		COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to 0 instead it's value is ",shared.sharedVariable );
+    }
+
+    if (ret){
+    	printf("OK! ");
+    } else {
+    	printf("NO! ");
+    	logger.OutputReport(errorDetails);
+    }
+
+    Sleep::Short(50,Units::ms);;
+
+	for (uint32 i = 0;i < nOfThreads;i++){
+		if (tid[i] != InvalidThreadIdentifier){
+	        if (Threads::IsAlive(tid[i])) {
+                Threads::Kill(tid[i]);
+	        }
+		}
+	}
+
+    shared.sem.Close();
+    return ret;
+}
+
+
+void ThreadMultiWait(LocalSharedData *tt) {
+	ErrorManagement::ErrorType ret;
+    ret = tt->sem2.Set();
+	REPORT_ERROR(ret," ThreadMutex error sem2.Set");
+
+	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
+
+	// wait go trigger!
+	if (ret){
+		logger.RecordEvent(id," sem2.Set() done,  sem4.Take...");
+	    ret = tt->sem4.Take(tt->timeout);
+		logger.RecordEvent(id," sem4.Taken");
+	}
+
+	if (ret){
+	    ret = tt->sem.Take(tt->timeout);
+		logger.RecordEvent(id," sem taken");
+    	REPORT_ERROR(ret," ThreadMutex timeout sem.Take");
+	}
+
+	if (ret){
+		// overall is -1
+		for (int i = 0;i<10000;i++){
+			tt->sharedVariable ++;
+		}
+		for (int i = 0;i<10001;i++){
+			tt->sharedVariable --;
+		}
+		ret = tt->sem.Set();
+		logger.RecordEvent(id," sem Set");
+    	REPORT_ERROR(ret," ThreadMutex error sem.Set");
+	}
+
+    if (ret){
+        ret = tt->sem3.Set();
+        logger.RecordEvent(id,"sem3.Set done");
+    	REPORT_ERROR(ret," ThreadMutex failed sem3.Set");
+    }
+
+	Threads::EndThread();
+    logger.RecordEvent(id," end of thread");
+}
+
+
+bool SemaphoreTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout,FILE *errorDetails) {
+//return false;
+	ErrorManagement::ErrorType ret;
+	LocalSharedData shared;
+	shared.sharedVariable = 0;
+	shared.timeout = timeout;
+
+	Vector<ThreadIdentifier> tid(nOfThreads);
+
+	for (uint32 i = 0U;i < nOfThreads;i++){
+		tid[i] = InvalidThreadIdentifier;
+	}
+    ret = shared.sem.Open(Semaphore::Mutex);
+    if (ret){
+    	ret = shared.sem4.Open(Semaphore::Latching);
+    	REPORT_ERROR(ret,"shared.sem4.Open(Semaphore::Latching) failed");
+    }
+    if (ret){
+    	ret = shared.sem4.Reset();
+    	REPORT_ERROR(ret,"shared.sem4.Reset() failed");
+    }
+    if (ret){
+    	ret = shared.sem2.Open(Semaphore::MultiLock);
+    	REPORT_ERROR(ret,"shared.sem2.Open(Semaphore::MultiLock) failed");
+    }
+    if (ret){
+    	ret = shared.sem2.Reset(nOfThreads);
+    	REPORT_ERROR(ret,"shared.sem2.Reset() failed");
+    }
+    if (ret){
+    	ret = shared.sem3.Open(Semaphore::MultiLock);
+    	REPORT_ERROR(ret,"shared.sem3.Open(Semaphore::MultiLock) failed");
+    }
+    if (ret){
+    	ret = shared.sem3.Reset(nOfThreads);
+    	REPORT_ERROR(ret,"shared.sem3.Reset(stepRelease) failed");
+    }
+    if (ret){
+    	logger.Start();
+    	logger.RecordEvent(0,"starting threads");
+    	for (uint32 i = 0U;i < nOfThreads;i++){
+    		tid[i] = Threads::BeginThread((ThreadFunctionType) ThreadMultiWait, &shared);
     	}
     	logger.RecordEvent(0,"threads started - waiting on sem2");
     	ret = shared.sem2.Take(timeout);
