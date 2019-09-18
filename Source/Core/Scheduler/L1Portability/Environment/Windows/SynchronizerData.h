@@ -47,7 +47,7 @@ struct SynchronizerData{
     /**
      * Event Handle
      */
-    HANDLE eventHandle;
+//    HANDLE eventHandle;
 };
 
 

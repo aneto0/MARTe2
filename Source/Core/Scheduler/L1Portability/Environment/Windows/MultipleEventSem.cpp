@@ -26,6 +26,16 @@
 
 namespace MARTe{
 
+MultipleEventSem::MultipleEventSem(){
+
+}
+
+MultipleEventSem::~MultipleEventSem(){
+
+}
+
+//#include <stdio.h>
+
 ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
 	ErrorManagement::ErrorType ret;
 
@@ -34,10 +44,12 @@ ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
 
 	if (ret){
 		data.handles.Add(event.handle);
+//		printf("\n %p\n",event.handle,data.handles[0]);
 	}
 
 	return ret;
 }
+
 
 ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 	ErrorManagement::ErrorType ret;
@@ -52,9 +64,16 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 	}
 
 	if (ret){
-		DWORD reason = WaitForMultipleObjectsEx(data.handles.GetSize(),data.handles.GetAllocatedMemoryConst(),FALSE,dwMilliseconds,FALSE);
+		const HANDLE *handles = data.handles.GetAllocatedMemoryConst();
+		DWORD reason = WaitForMultipleObjectsEx(data.handles.GetSize(),handles,FALSE,dwMilliseconds,FALSE);
 
-		if (reason > WAIT_OBJECT_0 ){
+		if (reason == (DWORD)0xFFFFFFFF){
+			uint32 errorDetails = GetLastError();
+//			printf("\n %i %i %i %i %p\n",reason,data.handles.GetSize(),dwMilliseconds,errorDetails,handles[0]);
+			ret.OSError = true;
+			COMPOSITE_REPORT_ERROR(ret,"WaitForMultipleObjectsEx returned error : ",errorDetails);
+		} else
+		if (reason < WAIT_ABANDONED_0  ){
 			index = reason - WAIT_OBJECT_0;
 
 			ret.internalSetupError = (index >=data.handles.GetSize());

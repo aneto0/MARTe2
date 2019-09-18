@@ -190,8 +190,13 @@ public:
 	Semaphore sem3;
 	Semaphore sem4;
 	MultipleEventSem msem;
+	Semaphore *semP;
 
 	MilliSeconds timeout;
+
+	LocalSharedData(){
+		semP = NULL;
+	}
 private:
 	void operator=(const LocalSharedData &lsd){}
 };
@@ -431,7 +436,7 @@ class RTEventLogger{
 
 public:
 
-	RTEventLogger(int32 nEventsIn):buffer(nEventsIn){
+	RTEventLogger(int32 nEventsIn):buffer((uint32)nEventsIn){
 		maxEvents = nEventsIn;
 //		buffer = static_cast<EventRecord*>(HeapManager::Malloc(nEventsIn*sizeof(EventRecord)));
 		Start();
@@ -496,9 +501,10 @@ RTEventLogger logger(4096);
 
 void ThreadCombined(LocalSharedData *tt) {
 	ErrorManagement::ErrorType ret;
-    ret = tt->sem2.Set();
 
 	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
+
+	ret = tt->sem2.Set();
 
 	logger.RecordEvent(id," sem2.Set() done,  sem.Take...");
 
@@ -638,10 +644,10 @@ bool SemaphoreTest::TestTake_Combined_Threads(uint32 nOfThreads,int32 stepReleas
 
 void ThreadMutex(LocalSharedData *tt) {
 	ErrorManagement::ErrorType ret;
-    ret = tt->sem2.Set();
-	REPORT_ERROR(ret," ThreadMutex error sem2.Set");
-
 	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
+
+	ret = tt->sem2.Set();
+	REPORT_ERROR(ret," ThreadMutex error sem2.Set");
 
 	// wait go trigger!
 	if (ret){
@@ -773,41 +779,62 @@ bool SemaphoreTest::TestTake_Mutex_Threads(uint32 nOfThreads,MilliSeconds timeou
 
 void ThreadMultiWait(LocalSharedData *tt) {
 	ErrorManagement::ErrorType ret;
-    ret = tt->sem2.Set();
-	REPORT_ERROR(ret," ThreadMutex error sem2.Set");
+	// NOTIFY of start completed
+
+	Semaphore localSem;
+	ret = localSem.Open(Semaphore::Latching);
+	REPORT_ERROR(ret," ThreadMultiWait error localSem.Open");
+
+	if (ret){
+		ret = localSem.Reset();
+		REPORT_ERROR(ret," ThreadMultiWait error localSem.Open");
+	}
+
+	if (ret){
+		ret = tt->msem.AddEvent(localSem);
+		REPORT_ERROR(ret," ThreadMultiWait error msem.AddEvent(localSem)");
+	}
 
 	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
 
-	// wait go trigger!
+	// wake up main thread
 	if (ret){
-		logger.RecordEvent(id," sem2.Set() done,  sem4.Take...");
-	    ret = tt->sem4.Take(tt->timeout);
-		logger.RecordEvent(id," sem4.Taken");
+	    ret = tt->sem2.Set();
+		logger.RecordEvent(id," sem2.Set() done");
+		REPORT_ERROR(ret," ThreadMultiWait error sem2.Set");
 	}
 
+	// wait go trigger!
+	if (ret){
+		logger.RecordEvent(id," sem4.Take...");
+	    ret = tt->sem4.Take(tt->timeout);
+		logger.RecordEvent(id," sem4.Taken");
+    	REPORT_ERROR(ret," ThreadMultiWait failed sem4.Take");
+	}
+
+	tt->sharedVariable = (int32)id;
+	tt->semP = &localSem;
+//	Sleep::Short(10,Units::ms);
+
+	// wake up main thread
+	if (ret){
+	    ret = localSem.Set();
+		logger.RecordEvent(id," localSem Set");
+    	REPORT_ERROR(ret," ThreadMultiWait localSem.Set()");
+	}
+
+	// wait end trigger
 	if (ret){
 	    ret = tt->sem.Take(tt->timeout);
 		logger.RecordEvent(id," sem taken");
-    	REPORT_ERROR(ret," ThreadMutex timeout sem.Take");
+    	REPORT_ERROR(ret," ThreadMultiWait timeout sem.Take");
 	}
 
-	if (ret){
-		// overall is -1
-		for (int i = 0;i<10000;i++){
-			tt->sharedVariable ++;
-		}
-		for (int i = 0;i<10001;i++){
-			tt->sharedVariable --;
-		}
-		ret = tt->sem.Set();
-		logger.RecordEvent(id," sem Set");
-    	REPORT_ERROR(ret," ThreadMutex error sem.Set");
-	}
-
+	// notify termination
     if (ret){
-        ret = tt->sem3.Set();
-        logger.RecordEvent(id,"sem3.Set done");
-    	REPORT_ERROR(ret," ThreadMutex failed sem3.Set");
+        ret = tt->sem2.Set();
+        logger.RecordEvent(id,"sem2.Set done");
+    	REPORT_ERROR(ret," ThreadMultiWait failed sem3.Set");
     }
 
 	Threads::EndThread();
@@ -827,10 +854,14 @@ bool SemaphoreTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout
 	for (uint32 i = 0U;i < nOfThreads;i++){
 		tid[i] = InvalidThreadIdentifier;
 	}
-    ret = shared.sem.Open(Semaphore::Mutex);
+    ret = shared.sem.Open(Semaphore::Latching);
     if (ret){
-    	ret = shared.sem4.Open(Semaphore::Latching);
-    	REPORT_ERROR(ret,"shared.sem4.Open(Semaphore::Latching) failed");
+    	ret = shared.sem.Reset();
+    	REPORT_ERROR(ret,"shared.sem.Reset() failed");
+    }
+    if (ret){
+    	ret = shared.sem4.Open(Semaphore::AutoResetting);
+    	REPORT_ERROR(ret,"shared.sem4.Open(Semaphore::AutoResetting) failed");
     }
     if (ret){
     	ret = shared.sem4.Reset();
@@ -843,14 +874,6 @@ bool SemaphoreTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout
     if (ret){
     	ret = shared.sem2.Reset(nOfThreads);
     	REPORT_ERROR(ret,"shared.sem2.Reset() failed");
-    }
-    if (ret){
-    	ret = shared.sem3.Open(Semaphore::MultiLock);
-    	REPORT_ERROR(ret,"shared.sem3.Open(Semaphore::MultiLock) failed");
-    }
-    if (ret){
-    	ret = shared.sem3.Reset(nOfThreads);
-    	REPORT_ERROR(ret,"shared.sem3.Reset(stepRelease) failed");
     }
     if (ret){
     	logger.Start();
@@ -868,20 +891,54 @@ bool SemaphoreTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout
         	COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have reached the value ",nOfThreads," instead it's value is ",shared.sharedVariable );
     	}
     }
-    if (ret){
-    	logger.RecordEvent(0,"sem4 setting now ....");
-    	ret = shared.sem4.Set();
-    	logger.RecordEvent(0,"sem4 set()");
-    	REPORT_ERROR(ret,"shared.sem4.Set() failed");
+
+    for (uint32 i = 0U;(i < nOfThreads) && ret;i++){
+    	// trigger random thread
+        if (ret){
+        	logger.RecordEvent(0,"sem4 setting now ....");
+        	ret = shared.sem4.Set();
+        	logger.RecordEvent(0,"sem4 set()");
+        	REPORT_ERROR(ret,"shared.sem4.Set() failed");
+        }
+
+        // wait thread
+        if (ret){
+        	logger.RecordEvent(0,"msem wait()");
+        	ret = shared.msem.Wait(timeout);
+        	if (ret){
+        		int32 triggered = (int32)ret.GetNonErrorCode();
+            	logger.GetEventBuffer(0).Append("triggered=").Append(triggered);
+
+            	ret.fatalError = (triggered != shared.sharedVariable);
+            	COMPOSITE_REPORT_ERROR(ret,"mismatch between triggering thread:",shared.sharedVariable," and triggered semaphore:",triggered);
+        	} else {
+            	logger.GetEventBuffer(0).Append("timeout <=").Append(shared.sharedVariable);
+            	REPORT_ERROR(ret,"msem.Wait failed");
+        	}
+        }
+
+        // reset thread semaphore
+        if (ret){
+        	shared.semP->Reset();
+        }
     }
+
     if (ret){
-    	ret = shared.sem3.Take(timeout);
-    	logger.RecordEvent(0,"sem3 Taken");
-    	COMPOSITE_REPORT_ERROR(ret,"shared.sem3.Take(",timeout.GetTimeRaw(),") failed");
+    	ret = shared.sem2.Reset(nOfThreads);
+    	REPORT_ERROR(ret,"shared.sem2.Reset() failed");
     }
+
     if (ret){
-    	ret.fatalError = (shared.sharedVariable  != 0);
-		COMPOSITE_REPORT_ERROR(ret,"sharedVariable should have returned to 0 instead it's value is ",shared.sharedVariable );
+    	logger.RecordEvent(0,"sem setting now ....");
+    	ret = shared.sem.Set();
+    	logger.RecordEvent(0,"sem set()");
+    	REPORT_ERROR(ret,"shared.sem.Set() failed");
+    }
+
+    if (ret){
+    	ret = shared.sem2.Take(timeout);
+    	logger.RecordEvent(0,"sem2 Taken");
+    	COMPOSITE_REPORT_ERROR(ret,"shared.sem2.Take(",timeout.GetTimeRaw(),") failed");
     }
 
     if (ret){

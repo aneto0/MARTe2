@@ -143,6 +143,8 @@ namespace SemaphoreTest {
      */
     bool TestTake_Mutex_Threads(uint32 nOfThreads,MilliSeconds timeout,FILE *errorDetails);
 
+    bool TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout,FILE *errorDetails);
+
 };
 
 

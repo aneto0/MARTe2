@@ -31,7 +31,7 @@ namespace MARTe{
  *
  */
 Synchronizer::Synchronizer(){
-	data.eventHandle = NULL;
+	this->handle = NULL;
 }
 
 /**
@@ -48,12 +48,12 @@ Synchronizer::~Synchronizer(){
 ErrorManagement::ErrorType Synchronizer::Open(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle != NULL);
+	ret.invalidOperation = (handle != NULL);
 	REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
 
 	if (ret){
-		data.eventHandle = CreateEvent(NULL, TRUE, FALSE, NULL);
-		ret.OSError = (data.eventHandle == NULL);
+		handle = CreateEvent(NULL, TRUE, FALSE, NULL);
+		ret.OSError = (handle == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Open failed");
 	}
 
@@ -66,14 +66,14 @@ ErrorManagement::ErrorType Synchronizer::Open(){
 ErrorManagement::ErrorType Synchronizer::Close(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
+	ret.invalidOperation = (handle == NULL);
 	// do not report this. It would flood the logs
 //	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
 
 	if (ret){
-		ret.OSError = (CloseHandle(data.eventHandle)==0);
+		ret.OSError = (CloseHandle(handle)==0);
 		REPORT_ERROR(ret,"Synchronyzer::Close() failed");
-		data.eventHandle = NULL;
+		handle = NULL;
 	}
 
 	return ret;
@@ -85,11 +85,11 @@ ErrorManagement::ErrorType Synchronizer::Close(){
 ErrorManagement::ErrorType Synchronizer::Post(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
+	ret.invalidOperation = (handle == NULL);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
-		ret.OSError = (SetEvent(data.eventHandle)==0);
+		ret.OSError = (SetEvent(handle)==0);
 		REPORT_ERROR(ret,"Synchronyzer::Post() failed");
 	}
 
@@ -102,11 +102,11 @@ ErrorManagement::ErrorType Synchronizer::Post(){
 ErrorManagement::ErrorType Synchronizer::Reset(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
+	ret.invalidOperation = (handle == NULL);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
-		ret.OSError = (ResetEvent(data.eventHandle)==0);
+		ret.OSError = (ResetEvent(handle)==0);
 		REPORT_ERROR(ret,"Synchronyzer::Reset() failed");
 	}
 
@@ -127,11 +127,11 @@ ErrorManagement::ErrorType Synchronizer::Wait(MilliSeconds timeout){
 		}
 	}
 
-	ret.invalidOperation = (data.eventHandle == NULL);
+	ret.invalidOperation = (handle == NULL);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
-	    DWORD wret = WaitForSingleObject(data.eventHandle, time);
+	    DWORD wret = WaitForSingleObject(handle, time);
 
 	    ret.OSError = (wret == WAIT_FAILED);
 		REPORT_ERROR(ret,"Synchronyzer::Wait() failed");
