@@ -33,6 +33,7 @@
 
 #include "TestSupport.h"
 #include "SemaphoreTest.h"
+#include "MultipleEventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -111,10 +112,14 @@ TEST(SemaphoreGTest,TestTake_Mutex_Threads) {
 
 
 TEST(SemaphoreGTest,TestMultiWait_Threads) {
-	for (int32 i = 2;i<=64;i++){
+	uint32 max = MultipleEventSem::MaxEventsSupported();
+	if (max > 64){
+		max = 64;
+	}
+	for (uint32 i = 2;i<=max;i++){
 	    printf("\015[% 2i]:",i);
 	    fflush(stdout);
-	    ASSERT_TRUE(SemaphoreTest::TestMultiWait_Threads((uint32)i,MilliSeconds(2,Units::s),getTestDetailsFile()));
+	    ASSERT_TRUE(SemaphoreTest::TestMultiWait_Threads((uint32)i,MilliSeconds(1,Units::s),getTestDetailsFile()));
 	}
 }
 

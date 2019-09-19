@@ -86,11 +86,12 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
 	ErrorManagement::ErrorType ret;
 
-	ret.unsupportedFeature = (data.handles.GetSize() >= RLIMIT_NOFILE );
-	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",RLIMIT_NOFILE," event sources");
+	ret.unsupportedFeature = (data.handles.GetSize() >= MaxEventsSupported() );
+	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",MaxEventsSupported()," event sources");
 
 	if (ret){
-		data.handles.Add(event.pfd);
+		ret.fatalError = !data.handles.Add(event.pfd);
+		COMPOSITE_REPORT_ERROR(ret,"AddEvent StaticList.Add failed after ",data.handles.GetSize()," elements");
 	}
 
 	return ret;
@@ -103,6 +104,13 @@ ErrorManagement::ErrorType MultipleEventSem::Reset(){
 	return ret;
 }
 
+uint32 MultipleEventSem::MaxEventsSupported(){
+	ErrorManagement::ErrorType ret;
+	struct rlimit rl;
+	ret.OSError = (getrlimit(RLIMIT_NOFILE,&rl)!=0);
+	REPORT_ERROR(ret,"getrlimit(RLIMIT_NOFILE,) failed ");
+	return rl.rlim_cur;
+}
 
 
 } //MARTe

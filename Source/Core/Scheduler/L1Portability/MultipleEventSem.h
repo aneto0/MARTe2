@@ -88,6 +88,11 @@ public:
      */
     ErrorManagement::ErrorType Reset();
 
+    /**
+     * @return max number of events supported under this platform
+     */
+    static uint32 MaxEventsSupported();
+
 private:
 
     /**

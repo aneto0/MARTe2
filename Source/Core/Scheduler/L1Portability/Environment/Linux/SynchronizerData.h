@@ -47,7 +47,7 @@ struct SynchronizerData{
     /**
      * Event Handle
      */
-    int eventfd;
+    //int eventfd;
 };
 
 
