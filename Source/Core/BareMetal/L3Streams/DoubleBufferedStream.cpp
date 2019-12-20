@@ -125,21 +125,16 @@ bool DoubleBufferedStream::Read(char8 * const output, uint32 & size) {
 
             // decide whether to use the buffer again or just to read directly
             if ((toRead * calibReadParam) < readBuffer.MaxUsableAmount()) {
-                if (!Refill()) {
-                    ret = false;
-                }
+                ret = Refill();
 
                 uint32 readBytes = size;
                 while ((toRead > 0u) && (ret)) {
                     uint32 nRead = toRead;
-                    if (!readBuffer.Read(&output[readBytes], nRead)) {
-                        ret = false;
-                    }
-                    if (nRead != toRead) {
-                        if (!Refill()) {
-                            ret = false;
+                    ret = readBuffer.Read(&output[readBytes], nRead);
+                    if (ret) {
+                        if (nRead != toRead) {
+                            ret = Refill();
                         }
-
                     }
                     if (ret) {
                         toRead -= nRead;

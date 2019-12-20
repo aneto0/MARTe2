@@ -32,14 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListHolder.h"
 #include "FastPollingMutexSem.h"
-#include "TimeoutType.h"
+#include "LinkedListHolder.h"
 #include "Object.h"
 #include "Reference.h"
-#include "BinaryTree.h"
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainerNode.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

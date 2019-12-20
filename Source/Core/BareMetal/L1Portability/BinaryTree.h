@@ -85,14 +85,14 @@ public:
      * @param[in] position the position of the element in the list
      * @return the value of the element at \a position  within the list
      */
-    T& operator[](const uint32 position);
+    T operator[](const uint32 position);
 
     /**
      * @brief Retrieves the required element value.
      * @param[in] id the element identifier
      * @return the value of the required element
      */
-    T& operator[](const char8 * const id);
+    T operator[](const char8 * const id);
 
     /**
      * @brief Empties the list
@@ -179,12 +179,12 @@ bool BinaryTree<T, HashObject>::Search(const char8 * const id, uint32 &index) {
 }
 
 template<typename T, typename HashObject>
-T& BinaryTree<T, HashObject>::operator[](const uint32 position) {
+T BinaryTree<T, HashObject>::operator[](const uint32 position) {
     return myList[position];
 }
 
 template<typename T, typename HashObject>
-T& BinaryTree<T, HashObject>::operator[](const char8 * const id) {
+T BinaryTree<T, HashObject>::operator[](const char8 * const id) {
     uint32 key = hashFun.Compute(id, 0u);
 
     uint32 index = 0u;
@@ -199,8 +199,6 @@ T& BinaryTree<T, HashObject>::operator[](const char8 * const id) {
 
 template<typename T, typename HashObject>
 void BinaryTree<T, HashObject>::Reset() {
-    myList.Reset();
-
 }
 
 template<typename T, typename HashObject>

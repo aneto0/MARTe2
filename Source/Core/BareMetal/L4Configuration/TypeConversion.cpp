@@ -758,6 +758,13 @@ static bool ScalarBasicTypeConvert(const AnyType &destination, const AnyType &so
             else if (sourceDescriptor.type == BT_CCString) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
+            else if (sourceDescriptor.type == CArray) {
+                uint32 copySize = source.GetByteSize();
+                if (source.GetNumberOfDimensions() > 0u) {
+                    copySize *= source.GetNumberOfElements(0u);
+                }
+                ret = MemoryOperationsHelper::Copy(destinationPointer, sourcePointer, copySize);
+            }
             else if (sourceDescriptor.type == Pointer) {
                 REPORT_ERROR_STATIC(ErrorManagement::UnsupportedFeature, "ScalarBasicTypeConvert: Conversion to pointer unsupported. Try to cast the pointer to uintp");
             }

@@ -33,11 +33,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyObject.h"
-#include "TypeConversion.h"
-#include "StructuredDataI.h"
+#include "ConfigurationDatabaseNode.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
 #include "ReferenceContainerFilterObjectName.h"
+#include "StructuredDataI.h"
+#include "TypeConversion.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -204,7 +205,7 @@ ConfigurationDatabase    ();
      * @brief Gets a reference to the current node as a ReferenceContainer.
      * @return a reference to the current node as a ReferenceContainer.
      */
-    ReferenceT<ReferenceContainer> GetCurrentNode() const;
+    Reference GetCurrentNode() const;
 
     /**
      * @brief Sets the current node as the root node.
@@ -229,12 +230,12 @@ private:
     /**
      * The current node to where the database is pointing.
      */
-    ReferenceT<ReferenceContainer> currentNode;
+    ReferenceT<ConfigurationDatabaseNode> currentNode;
 
     /**
      * The root node of the database.
      */
-    ReferenceT<ReferenceContainer> rootNode;
+    ReferenceT<ConfigurationDatabaseNode> rootNode;
 
     /**
      * The shared mutex semaphore.
