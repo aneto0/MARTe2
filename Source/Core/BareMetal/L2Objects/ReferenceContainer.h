@@ -37,7 +37,7 @@
 #include "TimeoutType.h"
 #include "Object.h"
 #include "Reference.h"
-#include "LinkedListable.h"
+#include "BinaryTree.h"
 #include "ReferenceContainerFilter.h"
 #include "ReferenceContainerNode.h"
 
@@ -315,6 +315,11 @@ private:
      */
     LinkedListHolderT<ReferenceContainerNode> list;
 
+    /**
+     * Binary tree containing indexes
+     */
+    BinaryTree<uint32, Fnv1aHashFunction> indexes;
+    
     /**
      * Protects multiple access to the internal resources
      */

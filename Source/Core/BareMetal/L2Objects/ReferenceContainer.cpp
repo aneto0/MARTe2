@@ -132,10 +132,18 @@ bool ReferenceContainer::Insert(Reference ref, const int32 &position) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
         if (newItem->SetReference(ref)) {
             if (position == -1) {
+                uint32 index = list.ListSize();
                 list.ListAdd(newItem);
+                if (ok) {
+                    //add the index to the list to find it faster!
+                    ok = (indexes.Insert(ref->GetName(), index) != 0xFFFFFFFFu);
+                }
             }
             else {
                 list.ListInsert(newItem, static_cast<uint32>(position));
+                if (ok) {
+                    ok = (indexes.Insert(ref->GetName(), static_cast<uint32>(position)) != 0xFFFFFFFFu);
+                }
             }
         }
         else {
@@ -159,8 +167,10 @@ bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(
+                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(
+                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -261,7 +271,9 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
 
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+            while ((!filter.IsFinished())
+                    && ((filter.IsReverse() && (index > -1))
+                            || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
                 Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
@@ -275,19 +287,30 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                             if (filter.IsRemove()) {
                                 //Only delete the exact node index
                                 if (list.ListDelete(currentNode)) {
-                                    //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
-                                    if (!filter.IsReverse()) {
-                                        index--;
-                                        currentNode = (list.ListPeek(static_cast<uint32>(index)));
+                                    if (indexes.Remove(currentNodeReference->GetName())) {
+                                        for (uint32 k = 0u; k < indexes.GetSize(); k++) {
+                                            //adjust the index
+                                            uint32 *indexTemp = &indexes[k];
+                                            if ((*indexTemp) > static_cast<uint32>(index)) {
+                                                (*indexTemp)--;
+                                            }
+                                        }
+                                        //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
+                                        if (!filter.IsReverse()) {
+                                            index--;
+                                            currentNode = (list.ListPeek(static_cast<uint32>(index)));
+                                        }
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                                          "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                                  "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -324,7 +347,8 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
+                                              "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {
