@@ -47,12 +47,14 @@ ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
     originallySetOccurrence = 0;
     mode = 0u;
+    failed = false;
 }
 
 ReferenceContainerFilter::ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy) {
     occurrence = filterCopy.occurrence;
     originallySetOccurrence = filterCopy.originallySetOccurrence;
     mode = 0u;
+    failed = filterCopy.failed;
     SetMode(filterCopy.GetMode());
 }
 
@@ -61,6 +63,7 @@ ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber
     occurrence = occurrenceNumber;
     originallySetOccurrence = occurrenceNumber;
     mode = 0u;
+    failed = false;
     SetMode(modeToSet);
 }
 
@@ -126,6 +129,10 @@ void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
         }
         mode |= ReferenceContainerFilterMode::RECURSIVE;
     }
+}
+
+bool ReferenceContainerFilter::IsFailed() {
+    return failed;
 }
 
 }

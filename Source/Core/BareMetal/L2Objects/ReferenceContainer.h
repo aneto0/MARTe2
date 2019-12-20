@@ -130,7 +130,7 @@ ReferenceContainer    ();
     bool Delete(const char8 * const path);
 
     /**
-     * @brief Finds on or more elements in the container.
+     * @brief Finds one or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
      * stored in the \a result container.
      * @param[in,out] result container where to store the elements found (which may include a path to a given container).
@@ -315,10 +315,6 @@ private:
      */
     LinkedListHolderT<ReferenceContainerNode> list;
 
-    /**
-     * Binary tree containing indexes
-     */
-    BinaryTree<uint32, Fnv1aHashFunction> indexes;
     
     /**
      * Protects multiple access to the internal resources

@@ -132,18 +132,10 @@ bool ReferenceContainer::Insert(Reference ref, const int32 &position) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
         if (newItem->SetReference(ref)) {
             if (position == -1) {
-                uint32 index = list.ListSize();
                 list.ListAdd(newItem);
-                if (ok) {
-                    //add the index to the list to find it faster!
-                    ok = (indexes.Insert(ref->GetName(), index) != 0xFFFFFFFFu);
-                }
             }
             else {
                 list.ListInsert(newItem, static_cast<uint32>(position));
-                if (ok) {
-                    ok = (indexes.Insert(ref->GetName(), static_cast<uint32>(position)) != 0xFFFFFFFFu);
-                }
             }
         }
         else {
@@ -267,14 +259,13 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                 index = static_cast<int32>(list.ListSize()) - 1;
             }
 
-            ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
-
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished())
+            while ((!filter.IsFinished()) && (!filter.IsFailed())
                     && ((filter.IsReverse() && (index > -1))
                             || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
+                ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 Reference const & currentNodeReference = currentNode->GetReference();
                 //Check if the current node meets the filter criteria
                 bool found = filter.Test(result, currentNodeReference);
@@ -287,19 +278,9 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                             if (filter.IsRemove()) {
                                 //Only delete the exact node index
                                 if (list.ListDelete(currentNode)) {
-                                    if (indexes.Remove(currentNodeReference->GetName())) {
-                                        for (uint32 k = 0u; k < indexes.GetSize(); k++) {
-                                            //adjust the index
-                                            uint32 *indexTemp = &indexes[k];
-                                            if ((*indexTemp) > static_cast<uint32>(index)) {
-                                                (*indexTemp)--;
-                                            }
-                                        }
-                                        //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
-                                        if (!filter.IsReverse()) {
-                                            index--;
-                                            currentNode = (list.ListPeek(static_cast<uint32>(index)));
-                                        }
+                                    //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
+                                    if (!filter.IsReverse()) {
+                                        index--;
                                     }
                                 }
                                 else {
@@ -353,13 +334,9 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                 }
                 if (!filter.IsReverse()) {
                     index++;
-                    if (currentNode != NULL_PTR(ReferenceContainerNode *)) {
-                        currentNode = dynamic_cast<ReferenceContainerNode *>(currentNode->Next());
-                    }
                 }
                 else {
                     index--;
-                    currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 }
             }
         }
