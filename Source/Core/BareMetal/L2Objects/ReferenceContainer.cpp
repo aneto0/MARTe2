@@ -159,10 +159,8 @@ bool ReferenceContainer::Insert(const char8 * const path, Reference ref) {
         else {
             bool created = false;
             ReferenceContainer* currentNode = this;
-            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
-            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(
-                    static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *token = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
+            char8 *nextToken = reinterpret_cast<char8*>(HeapManager::Malloc(static_cast<uint32>(sizeof(char8) * StringHelper::Length(path))));
 
             const char8* toTokenize = path;
             const char8* next = StringHelper::TokenizeByChars(toTokenize, ".", token);
@@ -261,9 +259,7 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
 
             //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
             //lint -e{9007} no side-effects on the right of the && operator
-            while ((!filter.IsFinished()) && (!filter.IsFailed())
-                    && ((filter.IsReverse() && (index > -1))
-                            || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
+            while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
                 ReferenceContainerNode *currentNode = (list.ListPeek(static_cast<uint32>(index)));
                 Reference const & currentNodeReference = currentNode->GetReference();
@@ -284,14 +280,12 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                                     }
                                 }
                                 else {
-                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                          "ReferenceContainer: Failed StaticList::Delete()");
+                                    REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Delete()");
                                 }
                             }
                         }
                         else {
-                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                                  "ReferenceContainer: Failed StaticList::Insert()");
+                            REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                         }
                     }
                 }
@@ -314,13 +308,22 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         UnLock();
                         currentNodeContainer->Find(result, filter);
                         if (Lock()) {
+                            //Recursion was aborted. Remove all the elements from the test results
+                            if (!filter.IsRecursive()) {
+                                while (result.list.ListSize() > 0u) {
+                                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                                    delete node;
+                                }
+                            }
                             //Something was found if the result size has changed
-                            if (sizeBeforeBranching == result.list.ListSize()) {
+                            else if (sizeBeforeBranching == result.list.ListSize()) {
                                 //Nothing found. Remove the stored path (which led to nowhere).
                                 if (filter.IsStorePath()) {
                                     LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
                                     delete node;
                                 }
+                            }
+                            else {
                             }
                         }
                         else {
@@ -328,8 +331,7 @@ void ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
                         }
                     }
                     else {
-                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError,
-                                              "ReferenceContainer: Failed StaticList::Insert()");
+                        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
                 if (!filter.IsReverse()) {

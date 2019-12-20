@@ -253,10 +253,9 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
                 SetMode(GetMode() | ReferenceContainerFilterMode::PATH);
             }
             else {
-                /*uint32 modeTemp = GetMode();
+                uint32 modeTemp = GetMode();
                 modeTemp &= ~(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
-                SetMode(modeTemp);*/
-                failed = true;
+                SetMode(modeTemp);
             }
         }
     }

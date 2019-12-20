@@ -206,11 +206,6 @@ public:
      */
     void SetOriginalSetOccurrence(const int32 occurrenceToSet);
 
-    /**
-     * TODO
-     */
-    bool IsFailed();
-
 protected:
     /**
      * Ordinal occurrence number of the finding (i.e. the first, second, ...) or -1 to look for all occurrences.
@@ -221,11 +216,6 @@ protected:
      * The originally set number of occurrences
      */
     int32 originallySetOccurrence;
-
-    /**
-     *
-     */
-    bool failed;
 
 private:
 
