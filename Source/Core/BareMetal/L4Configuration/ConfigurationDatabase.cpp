@@ -101,7 +101,6 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
             }
         }
         if (ok) {
-
             ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
             ok = objToWrite.IsValid();
             if (ok) {
@@ -122,7 +121,7 @@ bool ConfigurationDatabase::Write(const char8 * const name, const AnyType &value
 AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     AnyType retType;
     if (currentNode.IsValid()) {
-        ReferenceT <AnyObject> objToRead = currentNode->Find(name);
+        ReferenceT<AnyObject> objToRead = currentNode->FindLeaf(name);
         if (objToRead.IsValid()) {
             retType = objToRead->GetType();
         }
@@ -201,7 +200,7 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
         ok = currentNode.IsValid();
         if (ok) {
             //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
-            ReferenceT <AnyObject> objToRead = currentNode->Find(name);
+            ReferenceT<AnyObject> objToRead = currentNode->FindLeaf(name);
             ok = objToRead.IsValid();
             if (ok) {
                 ok = TypeConvert(value, objToRead->GetType());
@@ -214,7 +213,7 @@ bool ConfigurationDatabase::Read(const char8 * const name, const AnyType &value)
 
 bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
     //Invalidate move to leafs
-    ReferenceT < ReferenceContainer > container = rootNode->Find(path);
+    ReferenceT<ConfigurationDatabaseNode> container = rootNode->Find(path);
     bool ok = container.IsValid();
     if (ok) {
         currentNode = container;
@@ -225,7 +224,7 @@ bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
 bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
-    ReferenceT < ReferenceContainer > container = currentNode->Find(path);
+    ReferenceT<ConfigurationDatabaseNode> container = currentNode->Find(path);
     bool ok = container.IsValid();
     if (ok) {
         currentNode = container;
@@ -237,7 +236,7 @@ bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 bool ConfigurationDatabase::MoveToChild(const uint32 childIdx) {
     bool ok = (childIdx < currentNode->Size());
     if (ok) {
-        ReferenceT < ReferenceContainer > temp = currentNode->Get(childIdx);
+        ReferenceT<ConfigurationDatabaseNode> temp = currentNode->Get(childIdx);
         ok = temp.IsValid();
         if (ok) {
             currentNode = temp;
@@ -283,7 +282,7 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
         ok = (token.Size() > 0u);
         if (ok) {
             //Check if a node with this name already exists
-            Reference foundReference = currentNode->Find(token.Buffer());
+            Reference foundReference = currentNode->FindLeaf(token.Buffer());
             if (foundReference.IsValid()) {
                 currentNode = foundReference;
             }
@@ -326,7 +325,7 @@ bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
 }
 
 bool ConfigurationDatabase::Delete(const char8 * const name) {
-    Reference foundReference = currentNode->Find(name);
+    Reference foundReference = currentNode->FindLeaf(name);
     bool ok = (foundReference.IsValid());
     if (ok) {
         ok = currentNode->Delete(foundReference);

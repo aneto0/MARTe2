@@ -199,6 +199,12 @@ T BinaryTree<T, HashObject>::operator[](const char8 * const id) {
 
 template<typename T, typename HashObject>
 void BinaryTree<T, HashObject>::Reset() {
+    while (myList.GetSize() > 0u) {
+        myList.Remove(0u);
+    }
+    while (myKeyList.GetSize() > 0u) {
+        myKeyList.Remove(0u);
+    }
 }
 
 template<typename T, typename HashObject>

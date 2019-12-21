@@ -571,7 +571,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabase(Configurati
 
             if (ret) {
                 uint32 numberOfSignals = signalDatabase.GetNumberOfChildren();
-                ReferenceT<ReferenceContainer> signalList = signalDatabase.GetCurrentNode();
+                ReferenceT<ConfigurationDatabaseNode> signalList = signalDatabase.GetCurrentNode();
                 uint32 j = 0u;
                 //...then for each signal...
                 while ((j < numberOfSignals) && (ret)) {
@@ -650,12 +650,13 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
     if (!signalTypeDefined) {
         uint32 numberOfElements = signalDatabase.GetNumberOfChildren();
         uint32 n;
-        ReferenceT<ReferenceContainer> elementsList = signalDatabase.GetCurrentNode();
+        ReferenceT<ConfigurationDatabaseNode> elementsList = signalDatabase.GetCurrentNode();
         for (n = 0u; (n < numberOfElements); n++) {
             StreamString elementName = signalDatabase.GetChildName(n);
             //If this element is a node then recurse
             // "MemberAliases" and "Defaults" the only node can be found in a signal. Mark it as a keyword.
-            if (elementsList->Get(n)->IsReferenceContainer()) {
+            ReferenceT<ConfigurationDatabaseNode> elementN = elementsList->Get(n);
+            if (elementN.IsValid()) {
                 ConfigurationDatabase signalDatabaseBeforeMove = signalDatabase;
                 ret = signalDatabase.MoveToChild(n);
                 if (StringHelper::Compare(elementName.Buffer(), "MemberAliases") != 0) {

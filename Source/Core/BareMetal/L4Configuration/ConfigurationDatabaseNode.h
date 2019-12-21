@@ -96,6 +96,11 @@ ConfigurationDatabaseNode    ();
     /**
      * TODO
      */
+    Reference FindLeaf(const char8 * const name);
+
+    /**
+     * TODO
+     */
     bool Delete(Reference ref);
 
     /**

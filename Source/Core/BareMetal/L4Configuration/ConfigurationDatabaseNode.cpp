@@ -86,6 +86,7 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
     //find the first name
     StreamString token;
     StreamString toTokenize = path;
+    (void) toTokenize.Seek(0LLU);
     char8 term;
 
     if (toTokenize.GetToken(token, ".", term)) {
@@ -95,8 +96,14 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
             if (term == '.') {
                 ReferenceT<ConfigurationDatabaseNode> container = refContainer.Get(binTree[index]);
                 if (container.IsValid()) {
-                    //continue only for the path
-                    ret = Find(&toTokenize.Buffer()[token.Size() + 1u]);
+                    StreamString next = &toTokenize.Buffer()[token.Size() + 1u];
+                    if (next.Size() > 0u) {
+                        //continue only for the path
+                        ret = container->Find(next.Buffer());
+                    }
+                    else {
+                        ret = container;
+                    }
                 }
             }
             else {
@@ -104,8 +111,16 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
             }
         }
     }
+    return ret;
+}
 
-
+Reference ConfigurationDatabaseNode::FindLeaf(const char8 * const name) {
+    Reference ret;
+    uint32 index;
+    //binary search
+    if (binTree.Search(name, index)) {
+        ret = refContainer.Get(binTree[index]);
+    }
     return ret;
 }
 
@@ -116,6 +131,14 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
     }
     if (ok) {
         ok = refContainer.Delete(ref);
+    }
+    //Need to remap...
+    uint32 size = refContainer.Size();
+    binTree.Reset();
+    uint32 i;
+    for (i=0u; (i<size) && (ok); i++) {
+        Reference eRef = refContainer.Get(i);
+        ok = (binTree.Insert(eRef->GetName(), static_cast<uint32>(i)) != 0xFFFFFFFFu);
     }
     return ok;
 }
