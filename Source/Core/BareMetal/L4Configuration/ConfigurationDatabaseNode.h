@@ -42,11 +42,10 @@
 namespace MARTe {
 
 /**
- * @brief A ReferenceContainer like implementation optimised for the ConfigurationDatabase implementation.
+ * @brief A ReferenceContainer like node implementation optimised for the ConfigurationDatabase.
  * @details With respect to the ReferenceContainer, the ConfigurationDatabaseNode offers an optimised Find method,
  * based on the BinaryTree and allows to directly navigate to the parent Container.
  *
- * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
 class DLL_API ConfigurationDatabaseNode: public Object {
 
@@ -64,69 +63,85 @@ ConfigurationDatabaseNode    ();
     virtual ~ConfigurationDatabaseNode();
 
     /**
-     * TODO
+     * @brief Purges the internal containers.
+     * @see ReferenceContainer::Purge
      */
     void Purge();
 
     /**
-     * TODO
+     * @brief Purges the internal containers.
+     * @see ReferenceContainer::Purge
      */
     void Purge(ReferenceContainer &purgeList);
 
     /**
-     * TODO
+     * @brief Inserts a reference to this node.
+     * @param[in] ref the reference to be added.
+     * @param[in] position the position where to add in the list.
+     * @return true if the reference is sucessfully added.
      */
     bool Insert(Reference ref, const int32 &position = -1);
 
     /**
-     * TODO
+     * @brief Gets the number of references held by this node.
+     * @return the number of references held by this node.
      */
     uint32 Size();
 
     /**
-     * TODO
+     * @brief Gets the reference in position \a idx.
+     * @param[in] idx the index to be retrieved.
+     * @return the reference in position \a idx.
      */
-    Reference Get(uint32 idx);
+    Reference Get(const uint32 idx);
 
     /**
-     * TODO
+     * @brief Recursively finds a Reference against a given \a path.
+     * @param[in] path the path leading to the Reference. The path is dot separated (A.B.C).
+     * @return the Reference at the provided path, or an invalid Reference if the path is not valid (or if the node does not exist).
      */
     Reference Find(const char8 * const path);
 
     /**
-     * TODO
+     * @brief Gets the Reference against a given \a name (which must be a leaf of this node).
+     * @param[in] name the name of the leaf.
+     * @return the Reference with the requested name, or an invalid Reference if the leaf does not exist.
      */
     Reference FindLeaf(const char8 * const name);
 
     /**
-     * TODO
+     * @brief Deletes the reference from this node.
+     * @param[in] ref the Reference to be deleted.
+     * @return true if the Reference was successfully deleted.
      */
     bool Delete(Reference ref);
 
     /**
-     * TODO
+     * @brief Gets the parent node.
+     * @return the parent node.
      */
     ReferenceT<ConfigurationDatabaseNode> GetParent();
 
     /**
-     * TODO
+     * @brief Sets the parent node.
+     * @param[in] parentIn the parent node to be set.
      */
     void SetParent(ReferenceT<ConfigurationDatabaseNode> parentIn);
 
 private:
 
     /**
-     * TODO
+     * The reference container holding all the nodes directly underneath this node.
      */
     ReferenceContainer refContainer;
 
     /**
-     * Binary tree containing indexes
+     * Binary tree containing the indexes of the elements in the refContainer.
      */
     BinaryTree<uint32, Fnv1aHashFunction> binTree;
 
     /**
-     * The father node
+     * The parent node
      */
     ReferenceT<ConfigurationDatabaseNode> parent;
 };
