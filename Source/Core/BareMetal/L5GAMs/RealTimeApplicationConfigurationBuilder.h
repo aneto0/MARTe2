@@ -1,8 +1,8 @@
 /**
  * @file RealTimeApplicationConfigurationBuilder.h
  * @brief Header file for class RealTimeApplicationConfigurationBuilder
- * @date 23/06/2016
- * @author Andre Neto
+ * @date 11/12/2019
+ * @author Giuesppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,8 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
+#include "RealTimeApplication.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -66,8 +67,15 @@ class RealTimeApplication;
  *   +|, i.e NAME|NAME = VALUE, the NAME may exist. If it exists the | rules apply.
  * </pre>
  */
-class DLL_API RealTimeApplicationConfigurationBuilder {
+class DLL_API RealTimeApplicationConfigurationBuilder : public Object {
 public:
+
+    CLASS_REGISTER_DECLARATION();
+
+    /**
+     * @brief Default Constructor
+     */
+    RealTimeApplicationConfigurationBuilder();
 
     /**
      * @brief Constructor for RealTimeApplicationConfigurationBuilders which should work over an already existing RealTimeApplication.
@@ -78,7 +86,7 @@ public:
      *   defaultDataSourceName = defaultDataSourceNameIn
      */
     RealTimeApplicationConfigurationBuilder(RealTimeApplication &realTimeApplicationIn,
-                                            const char8 * const defaultDataSourceNameIn);
+                                          const char8 * const defaultDataSourceNameIn);
 
     /**
      * @brief Constructor for RealTimeApplicationConfigurationBuilders which should work over a ConfigurationDatabase (i.e. without needing to access live objects).
@@ -89,7 +97,13 @@ public:
      *   defaultDataSourceName = defaultDataSourceNameIn
      */
     RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn,
-                                            const char8 * const defaultDataSourceNameIn);
+                                          const char8 * const defaultDataSourceNameIn);
+
+    /**
+     * @see ApplicationBuilderI::SetParameters
+     */
+    void SetParameters(RealTimeApplication &realTimeApplicationIn,const char8 * const defaultDataSourceNameIn);
+
 
     /**
      * @brief Adds all the GAM signals to the Functions database and adds all the DataSource signals to the DataSource database.
@@ -217,239 +231,7 @@ public:
      */
     bool FlattenSignalsDatabases();
 
-    /**
-     * @brief Merges all the signals from the Functions into the corresponding DataSource.
-     * @details For each signal (where the Type is defined) in every function, merge the signal to the corresponding DataSource.
-     * If the signal does not exist in the DataSource it will be created.
-     * Every signal property will be copied from the function signal definition into the DataSource. If the signal property already exists in
-     *  the DataSource, the two properties must be consistent.
-     * @return true if all the signals from the Functions can be merged into the corresponding DataSource.
-     * @pre
-     *   FlattenSignalsDatabases()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER = {
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 +FullType = BasicType
-     *                 +NumberOfDimensions = 0|1|2
-     *                 +NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              FullType = BasicType (including nested path to the variable if it belongs to a structure). The type must be known at this stage.
-     *              +NumberOfDimensions = 0|1|2
-     *              +NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *            }
-     *          }
-     *        }
-     *        NUMBER = {
-     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
-     *          IsTimingDataSource = +1
-     *          Signals = {
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool ResolveDataSources();
 
-    /**
-     * @brief Verify that for every signal in every DataSource, the Type is defined.
-     * @details Add the default values for NumberOfElements=+1 and NumberOfDimensions=+0 if needed.
-     * @return true if the Type is defined for all the signals in all the DataSource elements.
-     * @pre
-     *   ResolveDataSources()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER ={
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 +Type = BasicType
-     *                 +NumberOfDimensions = 0|1|2
-     *                 +NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *       *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              FullType = BasicType (including nested path to the variable if it belongs to a structure). The type must be known at this stage.
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              ByteSize = NUMBER > 0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *            }
-     *          }
-     *        }
-     *      }
-     *      NUMBER = {
-     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
-     *          IsTimingDataSource = +1
-     *          Signals = {
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool VerifyDataSourcesSignals();
-
-    /**
-     * @brief Final merge of signals from the DataSources to the Functions.
-     * @details For every signal in every Function merges it with the corresponding DataSource signal.
-     * If the signal type was not originally defined in the Function it will get defined by the DataSource.
-     * If incompatibilities are found in the signal definition in the DataSource or in the Function an error will be returned.
-     * If the signal name is a subset of a nested structure (e.g. A.B in a structure that has A.B.C and A.B.D defined) all the subset will be copied (both
-     * A.B.C and A.B.D in the previous example).
-     * @return true if all the signals can be successfully merged.
-     * @pre
-     *   VerifyDataSourcesSignals()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER = {
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 FullType = BasicType
-     *                 NumberOfDimensions = 0|1|2
-     *                 NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              FullType = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *            }
-     *          }
-     *        }
-     *      }
-     *      NUMBER = {
-     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
-     *          IsTimingDataSource = +1
-     *          Signals = {
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool ResolveFunctionSignals();
-
-    /**
-     * @brief Verifies that for every signal in every function all the properties are defined.
-     * @return true if the Type, the NumberOfDimensions and the NumberOfElements are defined for every signal in every Function.
-     * @pre
-     *   ResolveFunctionSignals()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER = {
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 FullType = BasicType
-     *                 NumberOfDimensions = 0|1|2
-     *                 NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap)
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              FullType = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *            }
-     *          }
-     *        }
-     *      }
-     *      NUMBER = {
-     *          QualifiedName = "Name of the Timing DataSource as specified by the Scheduler"
-     *          IsTimingDataSource = +1
-     *          Signals = {
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool VerifyFunctionSignals();
 
     /**
      * @brief Declare all the states where a given Function is executed.
@@ -512,93 +294,28 @@ public:
     bool ResolveStates();
 
     /**
-     * @brief As ResolveStates but using a ConfigurationDatabase as the data source (see ConfigureBeforeInitialision).
-     * @return As in ResolveStates.
-     */
-    bool ResolveStatesFromConfiguration();
-
-    /**
-     * @brief Checks that every GAM has been called in at least one thread.
-     * @return true if every GAM has been called in at least one thread.
-     */
-    bool VerifyStates();
-
-    /**
-     * @brief For every signal in every DataSource set the Consumer and Producer Functions.
-     * @return true if for every signal in every DataSource the Consumer and Producer Functions can be successfully added.
+     * @brief Merges all the signals from the Functions into the corresponding DataSource.
+     *
+     * @details For each signal (where the Type is defined) in every function, merge the signal to the corresponding DataSource.
+     * If the signal does not exist in the DataSource it will be created.
+     * Every signal property will be copied from the function signal definition into the DataSource. If the signal property already exists in
+     * the DataSource, the two properties must be consistent.
+     *
+     * @details Computes the amount of memory grouped by DataSource and includes any signal specific ByteOffset information.
+     *
+     * @details For every signal in every DataSource set the Consumer and Producer Functions.
+     *
+     * @details For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
+     * The memory size is given by sizeof(Type) multiplied by all the Ranges. Illegal Ranges definitions are trapped at this stage.
+     *
+     * @details For every DataSource adds the memory information about each Function that interacts with the DataSource
+     * add the corresponding memory information.
+     *
+     * @details For each GAM signal, the DataSource writes the name of the BrokerI to be used.
+     *
+     * @return true if all the signals from the Functions can be merged into the corresponding DataSource.
      * @pre
-     *   ResolveStates()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *              *NUMBER = {
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
-     *                 NumberOfDimensions = 0|1|2
-     *                 NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *         States = {
-     *           +*StateNameN = "ThreadNameN"
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *              +States = {
-     *                *StateN = {
-     *                  GAMConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
-     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
-     *                  SignalConsumers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
-     *                  GAMProducers = { "0" ... "N" }, where 0 ... N are the indices of the Function as defined in the Functions node
-     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }, where NAME1...NAMEN are the names of the functions
-     *                  SignalProducers = { "0" ... "N" }, where 0 ... N are the indices of the Signals in the respective function
-     *                }
-     *              }
-     *            }
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool ResolveConsumersAndProducers();
-
-    /**
-     * @brief Verify that there is at most one producer for each signal Range and that no no producing signals are declared in the TimingDataSource.
-     * @return true if there is at most one producer for each signal Range and that no producing signals are declared in the TimingDataSource.
-     */
-    bool VerifyConsumersAndProducers();
-
-    /**
-     * @brief For every signal in every Function compute the memory size and the memory offset (if Ranges are defined).
-     * @details The memory size is given by sizeof(Type) multiplied by all the Ranges. Illegal Ranges definitions (see post condition).
-     * are trapped at this stage.
-     * If the Ranges are defined, the memory offset is also computed and stored directly in bytes.
-     * @return true if all the Ranges definitions are correctly defined and if the memory size can be successfully computed.
-     * @pre
-     *   VerifyConsumersAndProducers()
+     *   ResolveStates() or ResolveStatesFromConfiguration()
      * @post
      * <pre>
      *   functionsDatabase =
@@ -615,73 +332,8 @@ public:
      *                 NumberOfDimensions = 0|1|2
      *                 NumberOfElements = NUMBER>0
      *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
-     *                 ByteSize = NUMBER > 0
-     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
-     *                 +Samples = NUMBER > 0
-     *                 +Frequency = NUMBER>0
-     *                 +Trigger = 0|1
-     *               }
-     *            }
-     *         }
-     *         States = {
-     *           +*StateNameN = "ThreadNameN"
-     *         }
-     *       }
-     *    }
-     *    dataSourcesDatabase =
-     *      Data = {
-     *        *NUMBER = {
-     *          QualifiedName = "x.y.DATASOURCENAME"
-     *          Signals = {
-     *            *NUMBER = {
-     *              QualifiedName = "QualifiedName of the signal"
-     *              Type = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              +Frequency = -1|NUMBER>0
-     *              +Trigger = 0|1
-     *              +States = {
-     *                *StateN = {
-     *                  GAMConsumers = { "0" ... "N" }
-     *                  GAMNamesConsumers = { "NAME1" ... "NAMEN" }
-     *                  SignalConsumers = { "0" ... "N" }
-     *                  GAMProducers = { "0" ... "N" }
-     *                  GAMNamesProducers = { "NAME1" ... "NAMEN" }
-     *                  SignalProducers = { "0" ... "N" }
-     *                }
-     *              }
-     *            }
-     *          }
-     *        }
-     *      }
-     * </pre>
-     */
-    bool ResolveFunctionSignalsMemorySize();
-
-    /**
-     * @brief For every Function compute the memory size and the memory offset for each DataSource which interfaces to the Function.
-     * @details Computes the amount of memory grouped by DataSource and includes any signal specific ByteOffset information.
-     * @return true if the total amount of memory can be successfully computed.
-     * @pre
-     *   ResolveFunctionSignalsMemorySize()
-     * @post
-     * <pre>
-     *   functionsDatabase =
-     *     Functions = {
-     *       *NUMBER = {
-     *         QualifiedName = "x.y.GAMNAME"
-     *         Signals = {
-     *            InputSignals|OutputSignals = {
-     *               *NUMBER  ={
-     *                 QualifiedName = "QualifiedName of the signal"
-     *                 DataSource = "QualifiedName of the DataSource"
-     *                 +Alias = "Path.In.Data.Source (Otherwise SignalName = NAME)"
-     *                 Type = BasicType
-     *                 NumberOfDimensions = 0|1|2
-     *                 NumberOfElements = NUMBER>0
-     *                 +Ranges = {{min_idx:max_idx} {min_idx:max_idx} ...} (min_idx<=max_idx indexes may not overlap) (max_idx<NumberOfElements)
      *                 ByteSize = NUMBER>0
-     *                 +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
+     *                 ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ...}
      *                 +Samples = NUMBER > 0
      *                 +Frequency = NUMBER>0
      *                 +Trigger = 0|1
@@ -696,13 +348,14 @@ public:
      *             +*NUMBER = {
      *               DataSource = "QualifiedName of the DataSource"
      *               ByteSize = NUMBER>0
+     *               GAMMemoryOffset = NUMBER>0
      *               Signals = {
      *                 *NUMBER = {
      *                   QualifiedName = "QualifiedName of the Signal"
      *                   +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                   Frequency = -1|NUMBER>0
      *                   Trigger = 0|1
-     *                   Samples = |NUMBER>0
+     *                   Samples = -1|NUMBER>0
      *                 }
      *               }
      *             }
@@ -715,14 +368,13 @@ public:
      *        *NUMBER = {
      *          QualifiedName = "x.y.DATASOURCENAME"
      *          Signals = {
-     *            *NUMBER = {
+     *            *NUMBER={
      *              QualifiedName = "QualifiedName of the signal"
      *              Type = BasicType
-     *              NumberOfDimensions = 0|1|2
-     *              NumberOfElements = NUMBER>0
-     *              Frequency = -1|NUMBER>0
-     *              Trigger = 0|1
-     *              Samples = -1|NUMBER>0
+     *              +NumberOfDimensions = 0|1|2
+     *              +NumberOfElements = NUMBER>0
+     *              +Frequency = -1|NUMBER>0
+     *              +Trigger = 0|1
      *              +States = {
      *                *StateN = {
      *                  GAMConsumers = { "0" ... "N" }
@@ -733,20 +385,37 @@ public:
      *                  SignalProducers = { "0" ... "N" }
      *                }
      *              }
-     *            }
+     *              Functions+ = {
+     *                *NUMBER = {
+     *                  QualifiedName = "QualifiedName of the Function"
+     *                  ByteSize = NUMBER>0
+     *                  GAMMemoryOffset = NUMBER>0
+     *                  Signals = {
+     *                    *NUMBER = {
+     *                      QualifiedName = "QualifiedName of the Signal"
+     *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
+     *                       Frequency = -1|NUMBER>0
+     *                       Trigger = 0|1
+     *                       Samples = -1|NUMBER>0
+     *                       Broker = "Name of the Broker returned by the DataSource"
+     *                    }
+     *                 }
+     *               }
+     *             }
      *          }
      *        }
-     *      }
+     *     }
      * </pre>
      */
-    bool ResolveFunctionsMemory();
+    bool ResolveDataSources();
 
     /**
-     * @brief For every DataSource add the memory information about each Function that interacts with the DataSource
-     *  add the corresponding memory information.
-     * @return true if the memory information can be successfully added to each DataSource definition.
+     * @brief Verify that for every signal in every DataSource, the Type is defined.
+     * @details Add the default values for NumberOfElements=+1 and NumberOfDimensions=+0 if needed. For every signal
+     * in the data source, adds also its ByteSize with its size in byte of.
+     * @return true if the Type is defined for all the signals in all the DataSource elements.
      * @pre
-     *   CalculateFunctionsMemory()
+     *   ResolveDataSources()
      * @post
      * <pre>
      *   functionsDatabase =
@@ -804,6 +473,7 @@ public:
      *              Type = BasicType
      *              NumberOfDimensions = 0|1|2
      *              NumberOfElements = NUMBER>0
+     *              ByteSize = NUMBER>0
      *              +Frequency = -1|NUMBER>0
      *              +Trigger = 0|1
      *              +States = {
@@ -826,8 +496,9 @@ public:
      *                      QualifiedName = "QualifiedName of the Signal"
      *                      +ByteOffset = { { min_idx_bytes range_bytes } { min_idx_bytes range_bytes } ... }
      *                       Frequency = -1|NUMBER>0
-     *                       Samples = -1|NUMBER>0
      *                       Trigger = 0|1
+     *                       Samples = -1|NUMBER>0
+     *                       Broker = "Name of the Broker returned by the DataSource"
      *                    }
      *                 }
      *               }
@@ -837,7 +508,22 @@ public:
      *     }
      * </pre>
      */
-    bool AssignFunctionsMemoryToDataSource();
+    bool VerifyDataSourcesSignals();
+
+
+    /**
+     * @brief As ResolveStates but using a ConfigurationDatabase as the data source (see ConfigureBeforeInitialision).
+     * @return As in ResolveStates.
+     */
+    bool ResolveStatesFromConfiguration();
+
+
+    /**
+     * @brief Verify that there is at most one producer for each signal Range and that no no producing signals are declared in the TimingDataSource.
+     * @return true if there is at most one producer for each signal Range and that no producing signals are declared in the TimingDataSource.
+     */
+    bool VerifyConsumersAndProducers();
+
 
     /**
      * @brief For each GAM signal, the DataSource will write the name of the BrokerI to be used.
@@ -1098,30 +784,13 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the calls to AddSignalToDataSource are successful.
      */
-    bool ResolveDataSources(const SignalDirection direction);
 
     /**
      * @brief @see ResolveFunctionSignals()
      * @param[in] direction can be either InputSignals or OutputSignals.
      * @return @see ResolveFunctionSignals()
      */
-    bool ResolveFunctionSignals(const SignalDirection direction);
 
-    /**
-     * @brief Recursively adds a signal with an unknown type in the Function definition
-     * @details If the type is not known in the Function definition this is obtained from the DataSource.
-     * @param[in] signalName the name of the signal to be resolved.
-     * @param[in] functionName the name of the Function to which this signal belongs to.
-     * @param[in] dataSourceName the name of the DataSource to which this signal belongs to.
-     * @param[in] numberOfFunctionSignals the number of signals that currently exist in the Function with name \a functionName.
-     * @return true if the signal can be successfully resolved (which might include createing the signal).
-     */
-    bool ResolveFunctionSignal(const char8 * const signalName,
-                               const char8 * const aliasName,
-                               const char8 * const functionName,
-                               const char8 * const dataSourceName,
-                               uint32 &numberOfFunctionSignals,
-                               bool &deleted);
     /**
      * @brief Final merge of signals from the DataSources to the Functions.
      * @details For every signal in every Function merge with the corresponding DataSource signal.
@@ -1130,14 +799,17 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return true if all the signals can be successfully merged.
      */
-    bool VerifyFunctionSignals(const SignalDirection direction);
 
     /**
      * @brief @see ResolveConsumersAndProducers()
      * @param[in] consumers true if the function is being called to add Consumers, false if the function is being called to add Producers.
      * @return @see ResolveConsumersAndProducers()
      */
-    bool ResolveConsumersAndProducers(const bool consumers);
+    bool ResolveConsumersAndProducers(const bool consumers,
+                                      Vector<StreamString> &states,
+                                      const char8 * const functionId,
+                                      const char8 * const functionName,
+                                      const char8 * const signalId);
 
     /**
      * @brief Allows to distribute the same Producer across different ranges, i.e. the same Signal might have more than one
@@ -1157,21 +829,25 @@ private:
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionSignalsMemorySize()
      */
-    bool ResolveFunctionSignalsMemorySize(const SignalDirection direction);
+    bool ResolveFunctionSignalsMemorySize(const char8 * const functionName);
 
     /**
      * @brief @see ResolveFunctionsMemory()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see ResolveFunctionsMemory()
      */
-    bool ResolveFunctionsMemory(const SignalDirection direction);
+    bool ResolveFunctionsMemory(const SignalDirection direction,
+                                const ConfigurationDatabase &functionsDatabaseAfterMove,
+                                uint32 &totalByteSize,
+                                uint32 &allocatedByteSize,
+                                const char8 * const functionName);
 
     /**
      * @brief @see AssignFunctionsMemoryToDataSource()
      * @param[in] direction can be either InputSignals or OutputSignals
      * @return @see AssignFunctionsMemoryToDataSource()
      */
-    bool AssignFunctionsMemoryToDataSource(const SignalDirection direction);
+    bool AssignFunctionsMemoryToDataSource(const SignalDirection direction, const char8 * const functionName);
 
     /**
      * @brief @see AssignBrokersToSignals()
@@ -1182,16 +858,6 @@ private:
     bool AssignBrokersToSignals(const SignalDirection direction,
                                 ReferenceT<DataSourceI> dataSource);
 
-    /**
-     * @brief Finds a signal with the name \a signalName in \a database.
-     * @details Looks for a signal with a QualifiedName=signalName and leaves the database
-     * pointing at node where the signal is found.
-     * @param[in] signalName the name of the signal to be found.
-     * @param[in] database the database where to look for the signal.
-     * @return true if the signal is found.
-     */
-    bool FindSignalName(StreamString signalName,
-                        ConfigurationDatabase &database) const;
     /**
      * @brief Find the unique number associated to the DataSource with name = \a dataSourceName.
      * @param[in] dataSourceName the fully qualified name of the DataSource to search.
@@ -1350,10 +1016,15 @@ private:
      */
     bool CheckTimeSignalInfo();
 
+    /*lint -e{1712} this class does not have a default constructor because either
+     * the ConfigurationDatabase or the RealTimeApplication must be defined in construction.
+     */
 
-/*lint -e{1712} this class does not have a default constructor because either
- * the ConfigurationDatabase or the RealTimeApplication must be defined in construction.
- */
+    /**
+     * Specifies if the initialisation must be executed after or before the initialisation
+     * of the MARTe environment
+     */
+    bool initialiseAfterInitialisation;
 };
 
 }

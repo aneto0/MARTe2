@@ -26,14 +26,16 @@
 /*---------------------------------------------------------------------------*/
 
 #include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticListTest.h"
 #include "GeneralDefinitions.h"
-#include "gtest/gtest.h"
+#include "StaticListTest.h"
+#include "StreamString.h"
+
 
 using namespace MARTe;
 
@@ -174,5 +176,5 @@ TEST(BareMetal_L1Portability_StaticListGTest,TestSquareOperatorInvalidPosition) 
 
 TEST(BareMetal_L1Portability_StaticListGTest,TestSet) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
-    ASSERT_TRUE(tester.TestSet<5u>(2u));
+    ASSERT_TRUE(tester.TestSet<5u> (2u));
 }

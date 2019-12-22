@@ -131,7 +131,7 @@ ErrorManagement::ErrorType RealTimeLoader::Stop() {
         for (uint32 i = 0u; (ret.ErrorsCleared()) && (i < nApps); i++) {
             ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
             ret = rtApp->StopCurrentStateExecution();
-            if (ret.ErrorsCleared()) {
+            if (!ret.ErrorsCleared()) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to StopCurrentStateExecution");
             }
         }

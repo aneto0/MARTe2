@@ -1,7 +1,7 @@
 /**
  * @file RealTimeApplicationConfigurationBuilderTest.h
  * @brief Header file for class RealTimeApplicationConfigurationBuilderTest
- * @date 13/07/2016
+ * @date 22/08/2019
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_
-#define REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_
+#ifndef TEST_CORE_BAREMETAL_L5GAMS_REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_
+#define TEST_CORE_BAREMETAL_L5GAMS_REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,23 +31,19 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "RealTimeApplicationConfigurationBuilder.h"
 #include "GAMTestHelper.h"
+#include "RealTimeApplicationConfigurationBuilder.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
-/**
- * @brief Tests all the RealTimeApplicationConfigurationBuilder functions.
- */
-class RealTimeApplicationConfigurationBuilderTest {
+namespace MARTe {
 
+class RealTimeApplicationConfigurationBuilderTest {
 public:
-    /**
-     * Constructor
-     */
     RealTimeApplicationConfigurationBuilderTest();
+    virtual ~RealTimeApplicationConfigurationBuilderTest();
 
     /**
      * @brief Tests the InitialiseSignalsDatabase method.
@@ -193,6 +189,52 @@ public:
      * @brief Tests the FlattenSignalsDatabases method with an unregistered type.
      */
     bool TestFlattenSignalsDatabases_UnregisteredType();
+
+    /**
+     * @brief Tests the ResolveStates method.
+     */
+    bool TestResolveStates(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with same gam in more states.
+     */
+    bool TestResolveStates2(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with gam groups.
+     */
+    bool TestResolveStates_FunctionGroups(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with more threads per state.
+     */
+    bool TestResolveStates_MoreThreads(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with the same GAM in more than one thread in the same state.
+     */
+    bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
+    bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
+    bool TestResolveStatesFalse_MoreSyncs2(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with more than one sync point in a thread.
+     */
+    bool TestResolveStatesFalse_MoreSyncs3(bool fromConfig);
+
+    /**
+     * @brief Tests the ResolveStates method with an invalid application.
+     */
+    bool TestResolveStatesFalse_InvalidApplication();
+
 
     /**
      * @brief Tests the ResolveDataSources method.
@@ -350,11 +392,6 @@ public:
     bool TestVerifyDataSourcesSignalsFalse_NoType();
 
     /**
-     * @brief Tests the VerifyDataSourcesSignals method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False();
-
-    /**
      * @brief Tests the VerifyDataSourcesSignals method with no type.
      */
     bool TestVerifyDataSourcesSignalsFalse_NoType2();
@@ -375,141 +412,6 @@ public:
     bool TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray();
 
     /**
-     * @brief Tests the ResolveFunctionSignals.
-     */
-    bool TestResolveFunctionSignals1();
-
-    /**
-     * @brief Tests the ResolveFunctionSignals.
-     */
-    bool TestResolveFunctionSignals2();
-
-    /**
-     * @brief Tests the ResolveFunctionSignals.
-     */
-    bool TestResolveFunctionSignals3();
-
-    /**
-     * @brief Tests the ResolveFunctionSignals method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_ResolveFunctionSignals_False();
-
-    /**
-     * @brief Tests VerifyFunctionSignals method.
-     */
-    bool TestVerifyFunctionSignals();
-
-    /**
-     * @brief Tests the VerifyFunctionSignals method with with no type.
-     */
-    bool TestVerifyFunctionSignalsFalse_FalseNoType();
-
-    /**
-     * @brief Tests the VerifyFunctionSignals method with no #elements.
-     */
-    bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfElements();
-
-    /**
-     * @brief Tests the VerifyFunctionSignals method with no #dimensions.
-     */
-    bool TestVerifyFunctionSignalsFalse_FalseNoNumberOfDimensions();
-
-    /**
-     * @brief Tests the VerifyFunctionSignals method with no qualified name.
-     */
-    bool TestVerifyFunctionSignalsFalse_FalseNoQualifiedName();
-
-    /**
-     * @brief Tests the VerifyFunctionSignals method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_VerifyFunctionSignals_False();
-
-    /**
-     * @brief Tests the ResolveStates method.
-     */
-    bool TestResolveStates(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with same gam in more states.
-     */
-    bool TestResolveStates2(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with gam groups.
-     */
-    bool TestResolveStates_FunctionGroups(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with more threads per state.
-     */
-    bool TestResolveStates_MoreThreads(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with the same GAM in more than one thread in the same state.
-     */
-    bool TestResolveStatesFalse_SameGAMInMoreThreads(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with more than one sync point in a thread.
-     */
-    bool TestResolveStatesFalse_MoreSyncs1(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with more than one sync point in a thread.
-     */
-    bool TestResolveStatesFalse_MoreSyncs2(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with more than one sync point in a thread.
-     */
-    bool TestResolveStatesFalse_MoreSyncs3(bool fromConfig);
-
-    /**
-     * @brief Tests the ResolveStates method with an invalid application.
-     */
-    bool TestResolveStatesFalse_InvalidApplication();
-
-    /**
-     * @brief Tests the ResolveStates method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_ResolveStates_False();
-
-    /**
-     * @brief Tests the VerifyStates method.
-     */
-    bool TestVerifyStates();
-
-    /**
-     * @brief Tests the VerifyStates method with a GAM that is never called.
-     */
-    bool TestVerifyStatesFalse_GAMNeverCalled();
-
-    /**
-     * @brief Tests the ResolveConsumersAndProducers method.
-     */
-    bool TestResolveConsumersAndProducers();
-
-    /**
-     * @brief Tests the ResolveConsumersAndProducers method with more gam signals.
-     */
-    bool TestResolveConsumersAndProducers_MoreSignalsSameGAM();
-
-    /**
-     * @brief Tests the ResolveConsumersAndProducers method with more threads.
-     */
-    bool TestResolveConsumersAndProducers_MoreThreads();
-
-    /**
-     * @brief Tests the ResolveConsumersAndProducers method with more states.
-     */
-    bool TestResolveConsumersAndProducers_MoreStates();
-
-    /**
-     * @brief Tests the ResolveConsumersAndProducers method with more producers.
-     */
-    bool TestResolveConsumersAndProducers_MoreProducers();
-
-    /**
      * @brief Tests the VerifyConsumersAndProducers method.
      */
     bool TestVerifyConsumersAndProducers();
@@ -518,16 +420,6 @@ public:
      * @brief Tests the VerifyConsumersAndProducers method with ranges.
      */
     bool TestVerifyConsumersAndProducers_Ranges();
-
-    /**
-     * @brief Tests the VerifyConsumersAndProducers method with ranges in structure.
-     */
-    bool TestVerifyConsumersAndProducers_Ranges2();
-
-    /**
-     * @brief Tests the VerifyConsumersAndProducers method with ranges overlap (but in input).
-     */
-    bool TestVerifyConsumersAndProducers_Ranges3();
 
     /**
      * @brief Tests the VerifyConsumersAndProducers method with merging of timing signals.
@@ -558,111 +450,6 @@ public:
      * @brief Tests the VerifyConsumersAndProducers method with producer in timing signals.
      */
     bool TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals();
-
-    /**
-     * @brief Tests the VerifyConsumersProducers method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_VerifyConsumersProducers_False();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize.
-     */
-    bool TestResolveFunctionSignalsMemorySize();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize method with ranges.
-     */
-    bool TestResolveFunctionSignalsMemorySize_Ranges();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges min>max.
-     */
-    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges max>#elements.
-     */
-    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize method with invalid ranges field 3 columns.
-     */
-    bool TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method.
-     */
-    bool TestResolveFunctionsMemory();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method with samples.
-     */
-    bool TestResolveFunctionsMemory_Samples();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method with interleaved DataSource.
-     */
-    bool TestResolveFunctionsMemory_InterleavedDs();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method with samples and blocks.
-     */
-    bool TestResolveFunctionsMemory_SamplesAndBlocks();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method with Samples =0.
-     */
-    bool TestResolveFunctionsMemoryFalse_InvalidSamples();
-
-    /**
-     * @brief Tests the ResolveFunctionsMemory method on the ConfigureBeforeInitialisation context.
-     */
-    bool TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False();
-
-    /**
-     * @brief Tests the AssignFunctionsMemoryToDataSource.
-     */
-    bool TestAssignFunctionsMemoryToDataSource();
-
-    /**
-     * @brief Tests the AssignFunctionsMemoryToDataSource method with the same gam as producer and consumer
-     */
-    bool TestAssignFunctionsMemoryToDataSource_GamIO();
-
-    /**
-     * @brief Tests the ResolveFunctionSignalsMemorySize with a structure aligned with unused memory.
-     */
-    bool TestAssignFunctionsMemoryToDataSource_AlignedStruct();
-
-    /**
-     * @brief Tests the AssignBrokersToFunctions.
-     */
-    bool TestAssignBrokersToFunctions();
-
-    /**
-     * @brief Tests the AssignBrokersToFunctions method with an unregistered DataSource and initialised from configuration.
-     */
-    bool TestAssignBrokersToFunctionsFalse_UnregisteredDataSource();
-
-    /**
-     * @brief Tests the AssignBrokersToFunctions method with an  unsupported broker.
-     */
-    bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker();
-
-    /**
-     * @brief Tests the AssignBrokersToFunctions method with an  unsupported broker for output signals.
-     */
-    bool TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output();
-
-    /**
-     * @brief Tests the AssignBrokersToFunctions method with an invalid application.
-     */
-    bool TestAssignBrokersToFunctionsFalse_InvalidApplication();
 
     /**
      * @brief Tests the Set method.
@@ -700,9 +487,49 @@ public:
     bool TestConfigureAfterInitialisation();
 
     /**
+     * @brief Tests the ResolveStates method on the ConfigureAfterInitialisation context.
+     */
+    bool TestConfigureAfterInitialisation_ResolveStates_False();
+
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method on the ConfigureAfterInitialisation context.
+     */
+    bool TestConfigureAfterInitialisation_VerifyDataSourcesSignals_False();
+
+    /**
+     * @brief Tests the VerifyConsumersProducers method on the ConfigureAfterInitialisation context.
+     */
+    bool TestConfigureAfterInitialisation_VerifyConsumersProducers_False();
+
+    /**
+     * @brief Tests the ConfigureAfterInitialisation method without putting a Functions section.
+     */
+    bool TestConfigureAfterInitialisation_False_NoFunctions();
+
+    /**
+     * @brief Tests the ConfigureAfterInitialisation method without putting a Data section.
+     */
+    bool TestConfigureAfterInitialisation_False_NoData();
+
+    /**
      * @brief Tests the ConfigureBeforeInitialisation method.
      */
     bool TestConfigureBeforeInitialisation();
+
+    /**
+     * @brief Tests the ResolveStates method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_ResolveStates_False();
+
+    /**
+     * @brief Tests the VerifyDataSourcesSignals method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False();
+
+    /**
+     * @brief Tests the VerifyConsumersProducers method on the ConfigureBeforeInitialisation context.
+     */
+    bool TestConfigureBeforeInitialisation_VerifyConsumersProducers_False();
 
     /**
      * @brief Tests the ConfigureBeforeInitialisation method without putting a Functions section.
@@ -731,9 +558,11 @@ public:
 
 };
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_ */
+#endif /* TEST_CORE_BAREMETAL_L5GAMS_REALTIMEAPPLICATIONCONFIGURATIONBUILDERTEST_H_ */
 

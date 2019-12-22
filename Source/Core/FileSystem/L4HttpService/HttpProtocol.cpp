@@ -47,7 +47,7 @@ namespace MARTe {
 HttpProtocol::HttpProtocol(DoubleBufferedStream &outputStreamIn) :
         ConfigurationDatabase() {
     httpCommand = HttpDefinition::HSHCNone;
-    httpVersion = 1000u;
+    httpVersion = 1100u;
     httpErrorCode = 200;
     keepAlive = true;
     outputStream = &outputStreamIn;
@@ -67,7 +67,10 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
     bool ret = true;
     //This way we can change the falsely undefined content-length when this is called from Write Header
     //complete the read only when the body is completed from the other part
-    if ((streamout == NULL) && (unreadInput < 0)) {
+    bool streamNull=(streamout == NULL);
+    bool unreadInputBool=(unreadInput < 0);
+    bool noMsecTimeout=(msecTimeout==0u);
+    if ((streamNull) && (unreadInputBool||noMsecTimeout)) {
         unreadInput = -1;
     }
     else {
@@ -190,7 +193,7 @@ bool HttpProtocol::ReadHeader(const uint32 bufferReadSize) {
                     fVersion = 0.0F;
                 }
                 if (fVersion <= 0.0F) {
-                    httpVersion = 1000u;
+                    httpVersion = 1100u;
                 }
                 else {
                     /*lint -e{9122} allowed cast from float to integer*/
@@ -484,7 +487,7 @@ bool HttpProtocol::RetrieveHttpCommand(StreamString &command, StreamString &line
 
         //convert the version
         if (fVersion <= 0.0F) {
-            httpVersion = 1000u;
+            httpVersion = 1100u;
         }
         else {
             /*lint -e{9122} allowed cast from float to integer*/

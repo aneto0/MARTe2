@@ -25,6 +25,7 @@
 
 OBJSX=  AtomicGTest.x \
 	BasicConsoleGTest.x \
+	BinaryTreeGTest.x\
 	CircularStaticListGTest.x \
 	EndianityGTest.x \
 	ErrorManagementGTest.x \

@@ -28,8 +28,10 @@ OBJSX=  BasicTypeTest.x \
 		BitBooleanTest.x\
 		BitRangeTest.x \
 		CRCTest.x \
+		DjbHashFunctionTest.x\
 		DoubleIntegerTest.x \
 		ErrorTypeTest.x \
+		Fnv1aHashFunctionTest.x \
 		FractionalIntegerTest.x \
 		LinkedListHolderTest.x \
 		LinkedListableTest.x \

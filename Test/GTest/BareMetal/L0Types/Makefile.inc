@@ -27,8 +27,10 @@ OBJSX=  BasicTypeGTest.x \
 		BitBooleanGTest.x \
 		BitRangeGTest.x \
 		CRCGTest.x \
+		DjbHashFunctionGTest.x\
 		DoubleIntegerGTest.x \
 		ErrorTypeGTest.x \
+		Fnv1aHashFunctionGTest.x\
 		FractionalIntegerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \

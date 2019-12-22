@@ -11,6 +11,7 @@ BasicSocket.cpp
 BasicTCPSocket.cpp
 BasicType.h
 BasicUDPSocket.cpp
+BinaryTree.h
 BitBoolean.h
 BitRange.h
 BitSetToInteger.h
@@ -33,6 +34,7 @@ CircularBufferThreadInputDataSource.cpp
 CircularStaticList.h
 CompilerTypes.h
 ConfigurationDatabase.cpp
+ConfigurationDatabaseNode.cpp
 ConsoleLogger.cpp
 CRC.h
 CString.h
@@ -40,6 +42,7 @@ DataSourceI.cpp
 Directory.cpp
 DirectoryCore.h
 DirectoryScanner.cpp
+DjbHashFunction.cpp
 DoubleBufferedStream.cpp
 DoubleInteger.h
 EmbeddedServiceMethodBinderI.cpp
@@ -60,6 +63,7 @@ FastPollingEventSem.cpp
 FastPollingMutexSem.cpp
 FastResourceContainer.cpp
 FlagsType.h
+Fnv1aHashFunction.cpp
 FloatToInteger.cpp
 FormatDescriptor.cpp
 FractionalInteger.h
@@ -72,6 +76,7 @@ GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp
 GrammarInfo.h
+HashFunction.h
 HandleI.h
 HeapI.h
 HeapManager.cpp
