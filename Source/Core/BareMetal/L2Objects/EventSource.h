@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef EVENTSOURCE_DATA_H_
-#define EVENTSOURCE_DATA_H_
+#ifndef EVENTSOURCE_H_
+#define EVENTSOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
-#include "Atomic.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,PlatformEventSource.h)
 
 /*---------------------------------------------------------------------------*/
@@ -46,61 +45,10 @@
 
 namespace MARTe{
 
-class  EventSourceData;
-
 /**
- *
+ * actual implementation is platform specific and is held in PlatformEventSource
  */
-class EventSource{
-
-	/**
-	 * builds an empty EventSource
-	 */
-	EventSource(){
-		data = new EventSourceData ;
-		data->counter = 1;
-	}
-
-	/**
-	 * copy constructor. Allows sharing the object
-	 */
-	EventSource(const EventSource & sourceIn){
-		*this = sourceIn;
-	}
-
-	/**
-	 * copy operator. Allows sharing the object
-	 */
-	EventSource operator= (const EventSource & sourceIn){
-		data = sourceIn.data;
-		if (data != NULL){
-			Atomic::Increment(&data->counter);
-		}
-		return *this;
-	}
-
-	/**
-	 * destroys the referenced object only if no references are left
-	 */
-	~EventSource(){
-		if (Atomic::Decrement(&data->counter) == 0){
-			delete data;
-		}
-	}
-
-	/**
-	 * Allows access to the important data
-	 */
-	EventSourceData *GetData() const{
-		return data;
-	}
-private:
-	/**
-	 * The actual information to help event handling
-	 */
-	EventSourceData *data;
-};
-
+class EventSource;
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

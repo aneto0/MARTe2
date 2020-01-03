@@ -36,14 +36,14 @@ MultipleEventSem::~MultipleEventSem(){
 
 //#include <stdio.h>
 
-ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
+ErrorManagement::ErrorType MultipleEventSem::AddEvent(EventSource event){
 	ErrorManagement::ErrorType ret;
 
 	ret.unsupportedFeature = (data.handles.GetSize() >= MAXIMUM_WAIT_OBJECTS);
 	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",MAXIMUM_WAIT_OBJECTS, " event sources");
 
 	if (ret){
-		data.handles.Add(event.handle);
+		data.handles.Add(event.GetHandle());
 //		printf("\n %p\n",event.handle,data.handles[0]);
 	}
 

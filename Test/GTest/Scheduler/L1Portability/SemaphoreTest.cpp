@@ -516,7 +516,7 @@ void ThreadCombined(LocalSharedData *tt) {
     }
 
     if (ret){
-    	uint32 updated = Atomic::Decrement(&tt->sharedVariable);
+    	uint32 updated = (uint32)Atomic::Decrement(&tt->sharedVariable);
     	logger.GetEventBuffer(id).Append("shared = ").Append(updated);
 
         ret = tt->sem3.Set();
@@ -791,7 +791,7 @@ void ThreadMultiWait(LocalSharedData *tt) {
 	}
 
 	if (ret){
-		ret = tt->msem.AddEvent(localSem);
+		ret = tt->msem.AddEvent(localSem.GetEventSource());
 		REPORT_ERROR(ret," ThreadMultiWait error msem.AddEvent(localSem)");
 	}
 

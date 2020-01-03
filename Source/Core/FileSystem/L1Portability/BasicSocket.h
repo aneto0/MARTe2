@@ -33,8 +33,8 @@
 /*---------------------------------------------------------------------------*/
 #include "StreamI.h"
 #include "InternetHost.h"
-#include "HandleI.h"
 #include "MilliSeconds.h"
+#include "EventSource.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -51,8 +51,18 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public StreamI/*, public HandleI*/ {
+    class DLL_API BasicSocket: public StreamI {
     public:
+    	enum Events{
+    		readEvent = 0x1,
+			writeEvent = 0x2,
+			exceptionEvent = 0x4,
+			acceptEvent = 0x8,
+			connectionEvent = 0x10,
+			closeEvent = 0x20
+    	};
+
+
         /**
          * @brief Default constructor.
          */
@@ -115,29 +125,19 @@ namespace MARTe {
         /**
          * @brief Checks if the socket handle is valid or not.
          */
-        virtual bool IsValid() const;
+        bool IsValid() const;
 
         /**
          *
          */
         inline SocketCore GetSocket() const;
 
-
-#if 0
         /**
-         * @brief Queries the read socked handle.
-         * @details For the BasicSocket the read handle and the write handle are the same,
-         * however the BasicConsol has two different handles: one for read and one for write.
+         *
          */
-        virtual Handle GetReadHandle() const;
+        EventSource GetEvent(Events eventMask) const;
 
-        /**
-         * @brief Queries the write socked handle.
-         * @details For the BasicSocket the read handle and the write handle are the same,
-         * however the BasicConsol has two different handles: one for read and one for write.
-         */
-        virtual Handle GetWriteHandle() const;
-#endif
+
     protected:
 
         /**
@@ -155,14 +155,11 @@ namespace MARTe {
          */
         SocketCore connectionSocket;
 
-    private:
-
         /**
          *  TODO
          */
         bool isBlocking;
 
-    protected:
         /**
          * TODO
          */

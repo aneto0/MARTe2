@@ -58,24 +58,6 @@
 /*---------------------------------------------------------------------------*/
 
 
-class LocalSharedData{
-public:
-	volatile int32 sharedVariable;
-	Semaphore sem;
-	Semaphore sem2;
-	Semaphore sem3;
-	Semaphore sem4;
-	MultipleEventSem msem;
-	Semaphore *semP;
-
-	MilliSeconds timeout;
-
-	LocalSharedData(){
-		semP = NULL;
-	}
-private:
-	void operator=(const LocalSharedData &lsd){}
-};
 
 
 #define RTEventLoggerChars 16
@@ -133,8 +115,9 @@ public:
 				return message();
 			}
 		}
-		static CString dummy;
-		return dummy();
+//		static CString dummy;
+//		return dummy();
+		return CStringTool(NULL,NULL,0);
 	}
 
 	void OutputReport(FILE *f){
@@ -177,7 +160,7 @@ public:
 	/**
 	 * allows retrieving the handle to the event
 	 */
-	virtual operator EventSource();
+	virtual operator EventSource&()=0;
 
 private:
 };
@@ -239,23 +222,26 @@ public:
 	/**
 	 * allows retrieving the handle to the event
 	 */
-	virtual operator EventSource(){
-		return sem;
+	virtual operator EventSource&() {
+		EventSource es = sem.GetEventSource();
+		return es;
 	}
 
 private:
 
 	Semaphore sem;
+
+	void operator=(const Semaphore_STO &s){}
 };
 
 
 
 class UDPSocket_STO: public SyncTestObject{
 
-	const uint32 testingPort;
+	const uint16 testingPort;
 public:
 
-	UDPSocket_STO(uint32 port=49152): testingPort(port){
+	UDPSocket_STO(uint16 port=49152): testingPort(port){
 	}
 
 
@@ -281,6 +267,12 @@ public:
 		    ret.OSError = !socketSend.Open();
 			REPORT_ERROR(ret," Semaphore_STO error socketSend.Open");
 		}
+
+		if (ret){
+		    ret.OSError = !socketSend.SetBlocking(false);
+			REPORT_ERROR(ret," Semaphore_STO error socketSend.SetBlocking(false)");
+		}
+
 
 		if (ret){
 		    ret.OSError = !socketSend.Connect("127.0.0.1",testingPort);
@@ -320,14 +312,37 @@ public:
 	/**
 	 * allows retrieving the handle to the event
 	 */
-	virtual operator EventSource(){
-		return socketSend.GetReadEvent();
+	virtual operator EventSource&(){
+		EventSource es = socketSend.GetEvent(BasicSocket::readEvent);
+		return es;
 	}
 
 private:
 
 	BasicUDPSocket socketRecv;
 	BasicUDPSocket socketSend;
+
+	void operator=(const UDPSocket_STO &u){}
+
+};
+
+class LocalSharedData{
+public:
+	volatile int32 sharedVariable;
+	Semaphore sem;
+	Semaphore sem2;
+	Semaphore sem3;
+	Semaphore sem4;
+	MultipleEventSem msem;
+	SyncTestObject *stoP;
+
+	MilliSeconds timeout;
+
+	LocalSharedData(){
+		stoP = NULL;
+	}
+private:
+	void operator=(const LocalSharedData &lsd){}
 };
 
 
@@ -335,21 +350,28 @@ static void ThreadMultiWait(LocalSharedData *tt) {
 	ErrorManagement::ErrorType ret;
 	// NOTIFY of start completed
 
-	Semaphore localSem;
-	ret = localSem.Open(Semaphore::Latching);
-	REPORT_ERROR(ret," ThreadMultiWait error localSem.Open");
+	uint16 id = (uint16)Atomic::Increment(&tt->sharedVariable);
+
+	SyncTestObject *sto;
+	if (id < 16){
+		sto = new Semaphore_STO();
+	} else {
+		sto = new UDPSocket_STO((uint16)49152+id);
+	}
+
+	ret = sto->Initialise();
+	REPORT_ERROR(ret," ThreadMultiWait error SyncTestObject->Initialise()");
 
 	if (ret){
-		ret = localSem.Reset();
-		REPORT_ERROR(ret," ThreadMultiWait error localSem.Open");
+		ret = sto->ResetEvent();
+		REPORT_ERROR(ret," ThreadMultiWait error SyncTestObject->ResetEvent");
 	}
 
 	if (ret){
-		ret = tt->msem.AddEvent(localSem);
+		ret = tt->msem.AddEvent(*sto);
 		REPORT_ERROR(ret," ThreadMultiWait error msem.AddEvent(localSem)");
 	}
 
-	uint32 id = (uint32)Atomic::Increment(&tt->sharedVariable);
 
 	// wake up main thread
 	if (ret){
@@ -367,14 +389,14 @@ static void ThreadMultiWait(LocalSharedData *tt) {
 	}
 
 	tt->sharedVariable = (int32)id;
-	tt->semP = &localSem;
+	tt->stoP = sto;
 //	Sleep::Short(10,Units::ms);
 
 	// wake up main thread
 	if (ret){
-	    ret = localSem.Set();
-		logger.RecordEvent(id," localSem Set");
-    	REPORT_ERROR(ret," ThreadMultiWait localSem.Set()");
+	    ret = sto->CreateEvent();
+		logger.RecordEvent(id," SyncTestObject->CreateEvent");
+    	REPORT_ERROR(ret," ThreadMultiWait SyncTestObject->CreateEvent()");
 	}
 
 	// wait end trigger
@@ -390,6 +412,8 @@ static void ThreadMultiWait(LocalSharedData *tt) {
         logger.RecordEvent(id,"sem2.Set done");
     	REPORT_ERROR(ret," ThreadMultiWait failed sem3.Set");
     }
+
+    delete sto;
 
 	Threads::EndThread();
     logger.RecordEvent(id," end of thread");
@@ -473,7 +497,7 @@ bool MultipleEventSemTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds 
 
         // reset thread semaphore
         if (ret){
-        	shared.semP->Reset();
+        	shared.stoP->ResetEvent();
         }
     }
 

@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include <poll.h>
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -48,12 +49,26 @@ namespace MARTe{
 /**
  * a special handle that can be used in WaiForMultipleObjectEx
  */
-class EventSource{
+class EventSourceData{
 public:
+	/**
+	 *
+	 */
+	EventSourceData(){
+		counter = 0;
+		pfd.events = 0;
+		pfd.events = 0;
+		pfd.revents = 0;
+	}
+
 	/**
 	 * a struct to manage poll
 	 */
 	struct pollfd pfd;
+
+	/// how many handles ?
+	int32 counter;
+
 };
 
 

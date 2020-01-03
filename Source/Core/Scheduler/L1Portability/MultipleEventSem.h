@@ -80,8 +80,9 @@ public:
      * @briefs adds the passed event to the list of events to wait for.
      * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
      * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
+     * Note the EventSource information is copied in an internal structure and any resource associated with the EventSource is deallocated at object destruction.
      */
-    ErrorManagement::ErrorType AddEvent(const EventSource &event);
+    ErrorManagement::ErrorType AddEvent(EventSource event);
 
     /**
      * @briefs clears all history of events not yet reported. (effective only under linux)
@@ -94,6 +95,11 @@ private:
      *
      */
     MultipleEventSemData data;
+
+    /**
+     * cannot be used
+     */
+    void operator=(const MultipleEventSem &data){}
 
 };
 

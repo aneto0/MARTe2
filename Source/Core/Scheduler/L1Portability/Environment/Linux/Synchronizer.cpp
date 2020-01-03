@@ -50,6 +50,16 @@ Synchronizer::~Synchronizer(){
 }
 
 
+EventSource Synchronizer::GetEventSource(){
+	EventSource es;
+	EventSourceData *esd = es.GetData();
+	if (esd != NULL_PTR(EventSourceData)){
+		esd->pfd.fd = data.eventfd;
+	}
+	return es;
+}
+
+
 /**
  * Creates the waitable handle
  */

@@ -123,15 +123,47 @@ bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
 
-/*
+EventSource BasicSocket::GetEvent(Events eventMask) const{
+	ErrorManagement::ErrorType ret;
+	long OSEvents = 0;
 
-Handle BasicSocket::GetReadHandle() const {
-    return (Handle) connectionSocket;
+	if (eventMask && readEvent){
+		OSEvents |= FD_READ;
+	}
+	if (eventMask && writeEvent){
+		OSEvents |= FD_WRITE;
+	}
+	if (eventMask && exceptionEvent){
+		OSEvents |= (FD_ACCEPT | FD_CONNECT | FD_CLOSE);
+	}
+	if (eventMask && acceptEvent){
+		OSEvents |= FD_ACCEPT;
+	}
+	if (eventMask && connectionEvent){
+		OSEvents |= FD_CONNECT;
+	}
+	if (eventMask && closeEvent){
+		OSEvents |= FD_CLOSE;
+	}
+
+	HANDLE hEvent;
+	if (ret){
+		hEvent = WSACreateEvent();
+		ret.OSError = (hEvent == NULL);
+		REPORT_ERROR(ret," WSACreateEvent failed");
+	}
+
+	if (ret){
+		ret.OSError = (WSAEventSelect(connectionSocket,hEvent,OSEvents)!=0);
+		REPORT_ERROR(ret,"WSAEventSelect failed");
+	}
+
+	EventSource ev(hEvent,false);
+
+	return ev;
 }
 
-Handle BasicSocket::GetWriteHandle() const {
-    return (Handle) connectionSocket;
-}
-*/
+
+
 }
 

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -47,11 +48,48 @@ namespace MARTe{
 /**
  * a special handle that can be used in WaiForMultipleObjectEx
  */
-class EventSource{
+class EventSourceData{
 
 public:
 
+	inline EventSourceData(){
+		handle = NULL;
+		counter = 0;
+		closeAtDestruction = false;
+	}
+
+	inline ~EventSourceData(){
+		SetHandle();
+	}
+
+	inline const HANDLE GetHandle() const{
+		return handle;
+	}
+
+	inline ErrorManagement::ErrorType SetHandle(HANDLE h=NULL,bool closeAtDestructionIn=false){
+		ErrorManagement::ErrorType ret;
+		if ((handle != NULL) && (!closeAtDestruction)){
+			ret.OSError = !CloseHandle(handle);
+		}
+		handle = h;
+		closeAtDestruction = closeAtDestructionIn;
+		return ret;
+	}
+
+	/// how many references to this?
+	int32 counter;
+
+private:
+
+	/// OS handle
 	HANDLE handle;
+
+	///
+	bool closeAtDestruction;
+
+
+	void operator=(EventSource &toCopyFrom){}
+	inline EventSourceData(const EventSourceData & data){}
 
 };
 
