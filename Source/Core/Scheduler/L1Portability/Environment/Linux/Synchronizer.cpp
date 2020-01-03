@@ -37,14 +37,14 @@ namespace MARTe{
  *
  */
 Synchronizer::Synchronizer(){
-	data.eventfd = -1;
+	pfd.fd = -1;
 }
 
 /**
  *
  */
 Synchronizer::~Synchronizer(){
-	if (data.eventfd != -1){
+	if (pfd.fd != -1){
 		Close();
 	}
 }
@@ -66,12 +66,12 @@ EventSource Synchronizer::GetEventSource(){
 ErrorManagement::ErrorType Synchronizer::Open(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventfd >= 0);
+	ret.invalidOperation = (pfd.fd >= 0);
 	REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
 
 	if (ret){
-		data.eventfd = eventfd(0UL, EFD_SEMAPHORE | EFD_NONBLOCK);
-		ret.OSError = (data.eventfd < 0);
+		pfd.fd = eventfd(0UL, EFD_SEMAPHORE | EFD_NONBLOCK);
+		ret.OSError = (pfd.fd < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Open failed");
 	}
 
@@ -84,13 +84,13 @@ ErrorManagement::ErrorType Synchronizer::Open(){
 ErrorManagement::ErrorType Synchronizer::Close(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventfd < 0);
+	ret.invalidOperation = (pfd.fd < 0);
 	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
 
 	if (ret){
-		ret.OSError = (close(data.eventfd) < 0);
+		ret.OSError = (close(pfd.fd) < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Close() failed");
-		data.eventfd = -1;
+		pfd.fd = -1;
 	}
 
 	return ret;
@@ -102,12 +102,12 @@ ErrorManagement::ErrorType Synchronizer::Close(){
 ErrorManagement::ErrorType Synchronizer::Post(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventfd < 0);
+	ret.invalidOperation = (pfd.fd < 0);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
 		uint64 number = 1UL;
-		ret.OSError = (write(data.eventfd,&number,sizeof(number)) < 0);
+		ret.OSError = (write(pfd.fd,&number,sizeof(number)) < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Post() failed");
 	}
 
@@ -120,12 +120,12 @@ ErrorManagement::ErrorType Synchronizer::Post(){
 ErrorManagement::ErrorType Synchronizer::Reset(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventfd < 0);
+	ret.invalidOperation = (pfd.fd < 0);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
 		uint64 number = 1UL;
-		int readRet = read(data.eventfd,&number,sizeof(number));
+		int readRet = read(pfd.fd,&number,sizeof(number));
 		if (readRet < 0){
 			ret.OSError = (errno != EAGAIN);
 			REPORT_ERROR(ret,"Synchronyzer::Reset() failed");
@@ -154,12 +154,12 @@ ErrorManagement::ErrorType Synchronizer::Wait(MilliSeconds timeout){
 		}
 	}
 
-	ret.invalidOperation = (data.eventfd < 0);
+	ret.invalidOperation = (pfd.fd < 0);
 	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 
 	if (ret){
-		struct pollfd pfd;
-		pfd.fd = data.eventfd;
+//		struct pollfd pfd;
+//		pfd.fd = pfd.fd;
 		pfd.events = POLLIN;
 		pfd.revents = 0;
 

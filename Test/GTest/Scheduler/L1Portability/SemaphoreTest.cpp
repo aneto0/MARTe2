@@ -190,7 +190,7 @@ public:
 	Semaphore sem3;
 	Semaphore sem4;
 	MultipleEventSem msem;
-	Semaphore *semP;
+	Semaphore * volatile semP;
 
 	MilliSeconds timeout;
 
@@ -917,9 +917,18 @@ bool SemaphoreTest::TestMultiWait_Threads(uint32 nOfThreads,MilliSeconds timeout
         	}
         }
 
+        Semaphore * semPtr = shared.semP;
         // reset thread semaphore
         if (ret){
-        	shared.semP->Reset();
+        	ret.fatalError = (semPtr == NULL);
+        	REPORT_ERROR(ret,"semP is NULL");
+        }
+
+        if (ret){
+        	logger.RecordEvent(0,"semP Reset ...");
+        	if (semPtr != NULL)	semPtr->Reset();
+        	logger.RecordEvent(0,"semP = NULL ...");
+           	shared.semP = NULL;
         }
     }
 

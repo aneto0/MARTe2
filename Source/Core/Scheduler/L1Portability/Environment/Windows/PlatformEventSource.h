@@ -1,5 +1,5 @@
 /**
- * @file MultipleEventSem.h
+ * @file PlatformEventSource.h
  * @brief Header file for class AnyType
  * @date 21 Aug 2019
  * @author Filippo Sartori
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef MULTIPLEEVENTSEM_H_
-#define MULTIPLEEVENTSEM_H_
+#ifndef PLATFORMEVENTSOURCE_H_
+#define PLATFORMEVENTSOURCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,10 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,MultipleEventSemData.h)
-#include "EventSource.h"
-#include "MilliSeconds.h"
-#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,72 +44,22 @@
 
 namespace MARTe{
 
-
 /**
- * @brief this object allows waiting on a list of EventSources.
- *
- * @details It is implemented with WaitForMultipleObjectEx or poll()
- * It support sockets, event sems, mutex sems, console input...
- *
- * */
-class MultipleEventSem{
+ * a special handle that can be used in WaiForMultipleObjectEx
+ */
+class EventSource{
+
 public:
-	/**
-	 *
-	 */
-	MultipleEventSem();
 
-	/**
-	 *
-	 */
-	~MultipleEventSem();
-
-    /**
-     * @brief Waits for an event, limited by the timeout time.
-     * while the list is waited upon, the APIS of this objects are disabled --> return ErrorAccessDenied
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
-    /**
-     * @briefs adds the passed event to the list of events to wait for.
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     * Note the EventSource information is copied in an internal structure and any resource associated with the EventSource is deallocated at object destruction.
-     */
-    ErrorManagement::ErrorType AddEvent(EventSource event);
-
-    /**
-     * @briefs clears all history of events not yet reported. (effective only under linux)
-     */
-    ErrorManagement::ErrorType Reset();
-
-    /**
-     * @return max number of events supported under this platform
-     */
-    static uint32 MaxEventsSupported();
-
-private:
-
-    /**
-     *
-     */
-    MultipleEventSemData data;
-
-    /**
-     * cannot be used
-     */
-    void operator=(const MultipleEventSem &data){}
+	HANDLE handle;
 
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_MULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_ENVIRONMENT_WINDOWS_PLATFORMEVENTSOURCE_H_ */
