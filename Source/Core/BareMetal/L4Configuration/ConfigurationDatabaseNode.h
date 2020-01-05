@@ -77,10 +77,9 @@ ConfigurationDatabaseNode    ();
     /**
      * @brief Inserts a reference to this node.
      * @param[in] ref the reference to be added.
-     * @param[in] position the position where to add in the list.
-     * @return true if the reference is sucessfully added.
+     * @return true if the reference is successfully added.
      */
-    bool Insert(Reference ref, const int32 &position = -1);
+    bool Insert(Reference ref);
 
     /**
      * @brief Gets the number of references held by this node.
@@ -131,12 +130,49 @@ ConfigurationDatabaseNode    ();
 private:
 
     /**
-     * The reference container holding all the nodes directly underneath this node.
+     * @brief Locks the internal spin-lock mutex.
+     * @return true if the lock succeeds.
      */
-    ReferenceContainer refContainer;
+    bool Lock();
 
     /**
-     * Binary tree containing the indexes of the elements in the refContainer.
+     * @brief Unlocks the internal spin-lock mutex.
+     */
+    void UnLock();
+
+    /**
+     * The container holding all the nodes directly underneath this node.
+     */
+    Reference *container;
+
+    /**
+     * TODO
+     */
+    uint32 granularity;
+
+    /**
+     * TODO
+     */
+    uint32 size;
+
+    /**
+     * TODO
+     */
+    uint32 maxSize;
+
+    /**
+     * Protects multiple access to the internal resources
+     */
+    FastPollingMutexSem mux;
+
+    /**
+     * Timeout
+     */
+    TimeoutType muxTimeout;
+
+
+    /**
+     * Binary tree containing the indexes of the elements in the container.
      */
     BinaryTree<uint32, Fnv1aHashFunction> binTree;
 

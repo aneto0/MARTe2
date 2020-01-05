@@ -721,6 +721,16 @@ private:
     ConfigurationDatabase cachedDatabase;
 
     /**
+     * Allows to cache the DataSource indexes
+     */
+    ConfigurationDatabase dataSourcesIndexesCache;
+
+    /**
+     * Cache the datasource signal index
+     */
+    ConfigurationDatabase dataSourcesSignalIndexCache;
+
+    /**
      * The default DataSource name to be used if this is not defined in any of the signals.
      */
     StreamString defaultDataSourceName;
