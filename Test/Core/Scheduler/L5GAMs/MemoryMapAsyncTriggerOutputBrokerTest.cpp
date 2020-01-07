@@ -1824,13 +1824,23 @@ bool MemoryMapAsyncTriggerOutputBrokerTest::TestExecute_Buffer_Overrun() {
 
     ReferenceContainer brokers;
     char8 *fakeMem = new char8[1024];
+    uint32 n;
+    for (n=0u; n<1024; n++) {
+        fakeMem[n] = 1;
+    }
     dataSource->GetOutputBrokers(brokers, "GAM1", fakeMem);
     ReferenceT<MemoryMapAsyncTriggerOutputBroker> broker = brokers.Get(0);
     if (ok) {
         ok = broker->Execute();
     }
     if (ok) {
+        uint32 nOfTries = 20u;
         ok = !broker->Execute();
+        while ((!ok) && (nOfTries > 0u)) {
+            ok = !broker->Execute();
+            nOfTries--;
+        }
+
     }
     delete fakeMem;
 
