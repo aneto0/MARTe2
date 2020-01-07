@@ -146,17 +146,17 @@ private:
     Reference *container;
 
     /**
-     * TODO
+     * Number of elements to add to the array when it gets out of space.
      */
     uint32 granularity;
 
     /**
-     * TODO
+     * Current actual size of the array.
      */
     uint32 size;
 
     /**
-     * TODO
+     * Maximum size of the array without requiring a realloc.
      */
     uint32 maxSize;
 
