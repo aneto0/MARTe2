@@ -120,6 +120,7 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureAfterInitialisation() {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
+    CleanCaches();
     return ret;
 }
 
@@ -165,6 +166,7 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureBeforeInitialisation() {
             REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "Failed to VerifyConsumersAndProducers");
         }
     }
+    CleanCaches();
     return ret;
 
 }
@@ -291,6 +293,9 @@ bool RealTimeApplicationConfigurationBuilder::InitialiseSignalsDatabase() {
                 }
                 if (ret) {
                     ret = functionsDatabaseToModify.Write("QualifiedName", qualifiedName.Buffer());
+                }
+                if (ret) {
+                    ret = functionsIndexesCache.Write(qualifiedName.Buffer(), functionN.Buffer());
                 }
                 if (ret) {
                     //functionsDatabaseToModify = functionsDatabase;
@@ -607,12 +612,12 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
 
     ConfigurationDatabase &signalDatabase = (isFunctionsDatabase) ? (functionsDatabase) : (dataSourcesDatabase);
 
-// a node does not have the field Type specified and must contain at least another node (namespace or signal)
+    //A node does not have the field Type specified and must contain at least another node (namespace or signal)
     bool signalTypeDefined = signalDatabase.Read("Type", signalType);
     if (signalTypeDefined) {
         signalTypeDefined = (signalType.Size() > 0u);
     }
-//Check if it is a pure node (i.e. a nested namespace which contains other signals)
+    //Check if it is a pure node (i.e. a nested namespace which contains other signals)
     bool foundANode = false;
     if (!signalTypeDefined) {
         uint32 numberOfElements = signalDatabase.GetNumberOfChildren();
@@ -645,7 +650,7 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignal(const bool isFunctio
             }
         }
     }
-//Namespace resolved. Working at signal level
+    //Namespace resolved. Working at signal level
     ConfigurationDatabase signalDatabaseBeforeChanges = signalDatabase;
     if (ret && (!foundANode)) {
         bool isStructuredData = false;
@@ -1027,30 +1032,6 @@ bool RealTimeApplicationConfigurationBuilder::ResolveDataSources() {
 }
 
 bool RealTimeApplicationConfigurationBuilder::FindDataSourceNumber(StreamString dataSourceName, StreamString &dataSourceNumber) {
-    /*bool ret = dataSourcesDatabase.MoveAbsolute("Data");
-     if (ret) {
-     uint32 numberOfDataSources = dataSourcesDatabase.GetNumberOfChildren();
-     bool done = false;
-     uint32 n;
-     ConfigurationDatabase dataSourcesDatabaseBeforeMove = dataSourcesDatabase;
-     for (n = 0u; (n < numberOfDataSources) && (ret) && (!done); n++) {
-     dataSourcesDatabase = dataSourcesDatabaseBeforeMove;
-     ret = dataSourcesDatabase.MoveToChild(n);
-     dataSourceNumber = dataSourcesDatabase.GetName();
-     StreamString qualifiedName;
-     if (ret) {
-     ret = dataSourcesDatabase.Read("QualifiedName", qualifiedName);
-     }
-     if (ret) {
-     //todo binary research here
-     done = (StringHelper::Compare(qualifiedName.Buffer(), dataSourceName.Buffer()) == 0);
-     }
-     }
-     if (ret) {
-     ret = done;
-     }
-     }
-     return ret;*/
     bool ret = dataSourcesIndexesCache.Read(dataSourceName.Buffer(), dataSourceNumber);
     return ret;
 }
@@ -2577,39 +2558,38 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
             ret = functionsDatabase.CreateRelative(signalDirection);
         }
     }
+    //Check if a DataSource with this name already exists..
     if (ret) {
-        //Check if a DataSource with this name already exists..
         uint32 numberOfDataSources = functionsDatabase.GetNumberOfChildren();
         bool found = false;
-        StreamString dataSourceId;
-        ConfigurationDatabase functionsDatabaseBeforeMoveToDataSource = functionsDatabase;
-        for (uint32 d = 0u; (d < numberOfDataSources) && (ret) && (!found); d++) {
-            //functionsDatabase = functionsDatabaseBeforeMoveToDataSource;
-            ret = functionsDatabase.MoveToChild(d);
-            dataSourceId = functionsDatabase.GetName();
-            StreamString thisDataSourceName;
-            if (ret) {
-                ret = functionsDatabase.Read("DataSource", thisDataSourceName);
-            }
-            if (ret) {
-                //todo maybe also here binary research
-                found = (StringHelper::Compare(thisDataSourceName.Buffer(), dataSourceName.Buffer()) == 0);
-            }
-            //Move to the next DataSource
-            if (!found) {
-                functionsDatabase = functionsDatabaseBeforeMoveToDataSource;
+        found = functionsMemoryIndexesCache.MoveAbsolute(functionName);
+        if (found) {
+            found = functionsMemoryIndexesCache.MoveRelative(signalDirection);
+        }
+        if (found) {
+            StreamString dataSourceIdx;
+            found = functionsMemoryIndexesCache.Read(dataSourceName.Buffer(), dataSourceIdx);
+            if (found) {
+                ret = functionsDatabase.MoveRelative(dataSourceIdx.Buffer());
             }
         }
-        if (ret) {
-            if (!found) {
-                StreamString newDataSourceId;
-                ret = newDataSourceId.Printf("%d", numberOfDataSources);
-                if (ret) {
-                    ret = functionsDatabase.CreateRelative(newDataSourceId.Buffer());
+        if (!found) {
+            StreamString newDataSourceId;
+            ret = newDataSourceId.Printf("%d", numberOfDataSources);
+            if (ret) {
+                ret = functionsDatabase.CreateRelative(newDataSourceId.Buffer());
+            }
+            if (ret) {
+                ret = functionsDatabase.Write("DataSource", dataSourceName.Buffer());
+            }
+            if (ret) {
+                if (!functionsMemoryIndexesCache.MoveAbsolute(functionName)) {
+                    ret = functionsMemoryIndexesCache.CreateAbsolute(functionName);
                 }
-                if (ret) {
-                    ret = functionsDatabase.Write("DataSource", dataSourceName.Buffer());
+                if (!functionsMemoryIndexesCache.MoveRelative(signalDirection)) {
+                    ret = functionsMemoryIndexesCache.CreateRelative(signalDirection);
                 }
+                ret = functionsMemoryIndexesCache.Write(dataSourceName.Buffer(), newDataSourceId.Buffer());
             }
         }
     }
@@ -2719,28 +2699,26 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
             if (ret) {
                 ret = FindDataSourceNumber(dataSourceName.Buffer(), dataSourceIdInDataSourceDatabase);
             }
+            StreamString dsName;
             ReferenceT<DataSourceI> dataSource;
             if (ret) {
                 ret = dataSourcesDatabase.MoveAbsolute("Data");
-                if (ret) {
-                    ret = dataSourcesDatabase.MoveRelative(dataSourceIdInDataSourceDatabase.Buffer());
-                }
-                if (ret) {
-                    StreamString dsName;
-                    if (ret) {
-                        ret = dataSourcesDatabase.Read("QualifiedName", dsName);
-                    }
-                    if (initialiseAfterInitialisation) {
-                        if (ret) {
-                            StreamString fullDsPath = "Data.";
-                            fullDsPath += dsName;
-                            /*lint -e{613} NULL pointer checking done before entering here */
-                            dataSource = realTimeApplication->Find(fullDsPath.Buffer());
-                            ret = dataSource.IsValid();
-                            if (!ret) {
-                                REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "%s is not a valid DataSourceI", fullDsPath.Buffer());
-                            }
-                        }
+            }
+            if (ret) {
+                ret = dataSourcesDatabase.MoveRelative(dataSourceIdInDataSourceDatabase.Buffer());
+            }
+            if (ret) {
+                ret = dataSourcesDatabase.Read("QualifiedName", dsName);
+            }
+            if (ret) {
+                if (initialiseAfterInitialisation) {
+                    StreamString fullDsPath = "Data.";
+                    fullDsPath += dsName;
+                    /*lint -e{613} NULL pointer checking done before entering here */
+                    dataSource = realTimeApplication->Find(fullDsPath.Buffer());
+                    ret = dataSource.IsValid();
+                    if (!ret) {
+                        REPORT_ERROR_STATIC(ErrorManagement::ParametersError, "%s is not a valid DataSourceI", fullDsPath.Buffer());
                     }
                 }
             }
@@ -2752,12 +2730,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
 
             if (ret) {
                 //Check if this function name already exists
-                uint32 n;
-                uint32 numberOfDataSourceFunctions = dataSourcesDatabase.GetNumberOfChildren();
-                StreamString functionId;
                 bool found = false;
-                ConfigurationDatabase dataSourceDatabaseBeforeFunctionMove = dataSourcesDatabase;
-
+                /*ConfigurationDatabase dataSourceDatabaseBeforeFunctionMove = dataSourcesDatabase;
                 for (n = 0u; (n < numberOfDataSourceFunctions) && (ret) && (!found); n++) {
                     dataSourcesDatabase = dataSourceDatabaseBeforeFunctionMove;
                     ret = dataSourcesDatabase.MoveToChild(n);
@@ -2776,17 +2750,30 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                     if (!found) {
                         dataSourcesDatabase = dataSourceDatabaseBeforeFunctionMove;
                     }
+                }*/
+                StreamString functionIdIdx;
+                found = dataSourcesFunctionIndexesCache.MoveAbsolute(dsName.Buffer());
+                if (found) {
+                    found = dataSourcesFunctionIndexesCache.Read(functionName, functionIdIdx);
                 }
-                if (ret) {
-                    if (!found) {
-                        StreamString newFunctionId;
-                        ret = newFunctionId.Printf("%d", numberOfDataSourceFunctions);
-                        if (ret) {
-                            ret = dataSourcesDatabase.CreateRelative(newFunctionId.Buffer());
+                if (found) {
+                    ret = dataSourcesDatabase.MoveRelative(functionIdIdx.Buffer());
+                }
+                if (!found) {
+                    StreamString newFunctionId;
+                    uint32 numberOfDataSourceFunctions = dataSourcesDatabase.GetNumberOfChildren();
+                    ret = newFunctionId.Printf("%d", numberOfDataSourceFunctions);
+                    if (ret) {
+                        ret = dataSourcesDatabase.CreateRelative(newFunctionId.Buffer());
+                    }
+                    if (ret) {
+                        ret = dataSourcesDatabase.Write("QualifiedName", functionName);
+                    }
+                    if (ret) {
+                        if (!dataSourcesFunctionIndexesCache.MoveAbsolute(dsName.Buffer())) {
+                            ret = dataSourcesFunctionIndexesCache.CreateAbsolute(dsName.Buffer());
                         }
-                        if (ret) {
-                            ret = dataSourcesDatabase.Write("QualifiedName", functionName);
-                        }
+                        ret = dataSourcesFunctionIndexesCache.Write(functionName, newFunctionId.Buffer());
                     }
                 }
             }
@@ -3075,30 +3062,7 @@ bool RealTimeApplicationConfigurationBuilder::Set(ConfigurationDatabase &functio
 }
 
 bool RealTimeApplicationConfigurationBuilder::FindFunctionNumber(StreamString functionName, StreamString &functionNumber) {
-    bool ret = functionsDatabase.MoveAbsolute("Functions");
-    if (ret) {
-        uint32 numberOfFunctions = functionsDatabase.GetNumberOfChildren();
-        uint32 n;
-        bool done = false;
-        ConfigurationDatabase functionsDatabaseBeforeMove = functionsDatabase;
-        for (n = 0u; (n < numberOfFunctions) && (ret) && (!done); n++) {
-            functionsDatabase = functionsDatabaseBeforeMove;
-            ret = functionsDatabase.MoveToChild(n);
-            StreamString qualifiedName;
-            if (ret) {
-                functionNumber = functionsDatabase.GetName();
-                ret = functionsDatabase.Read("QualifiedName", qualifiedName);
-            }
-            if (ret) {
-                //todo maybe also here binary research
-                done = (StringHelper::Compare(qualifiedName.Buffer(), functionName.Buffer()) == 0);
-            }
-        }
-        if (ret) {
-            ret = done;
-        }
-    }
-    return ret;
+    return functionsIndexesCache.Read(functionName.Buffer(), functionNumber);
 }
 
 bool RealTimeApplicationConfigurationBuilder::CheckTypeCompatibility(StreamString &fullType, StreamString &otherFullType, StreamString &signalName, StreamString &dataSourceSignalName) const {
@@ -3459,6 +3423,9 @@ bool RealTimeApplicationConfigurationBuilder::SearchGAMs(ConfigurationDatabase &
                 ret = outputDatabase.Write("QualifiedName", fullPath.Buffer());
             }
             if (ret) {
+                ret = functionsIndexesCache.Write(fullPath.Buffer(), functionN.Buffer());
+            }
+            if (ret) {
                 ret = outputDatabase.CreateRelative("Signals");
                 if (ret) {
                     if (inputDatabase.MoveRelative("InputSignals")) {
@@ -3684,6 +3651,15 @@ bool RealTimeApplicationConfigurationBuilder::ConfigureThreads() const {
 
     return ret;
 }
+
+void RealTimeApplicationConfigurationBuilder::CleanCaches() {
+    dataSourcesIndexesCache.Purge();
+    functionsIndexesCache.Purge();
+    dataSourcesSignalIndexCache.Purge();
+    dataSourcesFunctionIndexesCache.Purge();
+    functionsMemoryIndexesCache.Purge();
+}
+
 CLASS_REGISTER(RealTimeApplicationConfigurationBuilder, "1.0");
 
 }

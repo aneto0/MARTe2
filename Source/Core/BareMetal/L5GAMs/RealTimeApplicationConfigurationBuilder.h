@@ -726,9 +726,24 @@ private:
     ConfigurationDatabase dataSourcesIndexesCache;
 
     /**
+     * Allows to cache the Functions indexes
+     */
+    ConfigurationDatabase functionsIndexesCache;
+
+    /**
      * Cache the datasource signal index
      */
     ConfigurationDatabase dataSourcesSignalIndexCache;
+
+    /**
+     * Cache the datasource function index
+     */
+    ConfigurationDatabase dataSourcesFunctionIndexesCache;
+
+    /**
+     * Allows to cache the Functions Memirt indexes
+     */
+    ConfigurationDatabase functionsMemoryIndexesCache;
 
     /**
      * The default DataSource name to be used if this is not defined in any of the signals.
@@ -1025,6 +1040,11 @@ private:
      * @return true if all the TimingDataSource signals have the correct properties.
      */
     bool CheckTimeSignalInfo();
+
+    /**
+     * Clear the caches,
+     */
+    void CleanCaches();
 
     /*lint -e{1712} this class does not have a default constructor because either
      * the ConfigurationDatabase or the RealTimeApplication must be defined in construction.
