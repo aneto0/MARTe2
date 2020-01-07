@@ -53,6 +53,7 @@ ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
 ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
     binTree.Reset();
     if (container != NULL_PTR(Reference *)) {
+        parent = Reference();
         delete [] container;
     }
 }
@@ -60,6 +61,7 @@ ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
 void ConfigurationDatabaseNode::Purge() {
     if (Lock()) {
         if (container != NULL_PTR(Reference *)) {
+            parent = Reference();
             delete [] container;
             container = NULL_PTR(Reference *);
             size = 0u;
@@ -73,6 +75,7 @@ void ConfigurationDatabaseNode::Purge() {
 void ConfigurationDatabaseNode::Purge(ReferenceContainer &purgeList) {
     if (Lock()) {
         if (container != NULL_PTR(Reference *)) {
+            parent = Reference();
             uint32 n;
             for (n = 0u; n<size; n++) {
                 purgeList.Insert(container[n]);
