@@ -73,6 +73,8 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         int32 i;
         for (i = 1; (i < (argc - 1)); i += 2) {
             argsConfiguration.Write(argv[i], argv[i + 1]);
+            //Also write them into the loaderParameters so that they can be use generally by any loader
+            loaderParameters.Write(argv[i], argv[i + 1]);
         }
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Arguments:\n%!", argsConfiguration);
     }
@@ -96,6 +98,25 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
             REPORT_ERROR_STATIC(ret, arguments);
         }
     }
+    if (ret) {
+        StreamString precompiledRealTimeFunctionsFilename;
+        if (argsConfiguration.Read("-pf", precompiledRealTimeFunctionsFilename)) {
+            ret.parametersError = !loaderParameters.Write("PrecompiledFunctions", precompiledRealTimeFunctionsFilename.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString precompiledRealTimeDataFilename;
+        if (argsConfiguration.Read("-pd", precompiledRealTimeDataFilename)) {
+            ret.parametersError = !loaderParameters.Write("PrecompiledData", precompiledRealTimeDataFilename.Buffer());
+        }
+    }
+    if (ret) {
+        uint32 precompileRealTimeApp = 0;
+        if (argsConfiguration.Read("-pc", precompileRealTimeApp)) {
+            ret.parametersError = !loaderParameters.Write("PrecompileRealTimeApp", precompileRealTimeApp);
+        }
+    }
+
     if (ret) {
         uint32 defaultCPUs = 0x1;
         (void) argsConfiguration.Read("-c", defaultCPUs);
