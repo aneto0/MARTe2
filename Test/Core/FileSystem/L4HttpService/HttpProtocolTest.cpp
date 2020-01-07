@@ -1288,10 +1288,6 @@ bool HttpProtocolTest::TestReadHeader_IncompatibleHTTPVersion() {
         ret = (path == "");
     }
 
-    if (ret) {
-        ret = !test.KeepAlive();
-    }
-
     newSocket.Close();
     socket.Close();
     return ret;
@@ -1351,10 +1347,6 @@ bool HttpProtocolTest::TestReadHeader_IncompatibleHTTPVersionNoReply() {
     HttpProtocol test(newSocket);
     bool ret = test.ReadHeader();
     eventSem.Wait();
-
-    if (ret) {
-        ret = !test.KeepAlive();
-    }
 
     newSocket.Close();
     socket.Close();

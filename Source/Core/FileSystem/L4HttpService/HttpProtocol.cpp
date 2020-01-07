@@ -67,9 +67,9 @@ bool HttpProtocol::CompleteReadOperation(BufferedStreamI * const streamout, Time
     bool ret = true;
     //This way we can change the falsely undefined content-length when this is called from Write Header
     //complete the read only when the body is completed from the other part
-    bool streamNull=(streamout == NULL);
-    bool unreadInputBool=(unreadInput < 0);
-    bool noMsecTimeout=(msecTimeout==0u);
+    bool streamNull = (streamout == NULL);
+    bool unreadInputBool = (unreadInput < 0);
+    bool noMsecTimeout = (msecTimeout==0u);
     if ((streamNull) && (unreadInputBool||noMsecTimeout)) {
         unreadInput = -1;
     }
@@ -224,7 +224,6 @@ bool HttpProtocol::ReadHeader(const uint32 bufferReadSize) {
             else {
 
             }
-
         }
         if (!Read("Content-Length", unreadInput)) {
             unreadInput = HttpDefinition::HTTPNoContentLengthSpecified;
@@ -338,7 +337,6 @@ bool HttpProtocol::WriteHeader(const bool isMessageCompleted, const int32 comman
     if (!CompleteReadOperation(NULL_PTR(BufferedStreamI*))) {
         REPORT_ERROR(ErrorManagement::Warning, "Failed CompleteReadOperation");
     }
-
     // if it is a reply get errorCode
     // otherwise mark the httpCommand as none
     bool isReply = HttpDefinition::IsReplyCode(command, httpErrorCode);
