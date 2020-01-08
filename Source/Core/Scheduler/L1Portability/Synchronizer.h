@@ -93,7 +93,7 @@ public:
 	/**
 	 * Creates an event source (implements EventInterface)
 	 */
-	virtual EventSource GetEventSource();
+	virtual EventSource GetEventSource(EventInterface::Event ev= noEvent) const;
 
 	/**
 	 *
@@ -110,6 +110,10 @@ private:
 	 */
 	SynchronizerData data;
 
+	/**
+	 * disallow the use of operator =
+	 */
+	void operator=(Synchronizer &s){}
 };
 
 /*---------------------------------------------------------------------------*/

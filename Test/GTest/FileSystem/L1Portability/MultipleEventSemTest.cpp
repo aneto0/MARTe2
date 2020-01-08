@@ -136,7 +136,7 @@ private:
 static RTEventLogger logger(4096);
 
 
-class SyncTestObject {
+class SyncTestObject: public EventInterface {
 public:
 
 	virtual ~SyncTestObject(){}
@@ -157,12 +157,11 @@ public:
 	 */
 	virtual ErrorManagement::ErrorType ResetEvent()=0;
 
-	/**
-	 * allows retrieving the handle to the event
-	 */
-	virtual operator EventSource&()=0;
-
 private:
+	/**
+	 * disable use of operator =
+	 */
+	void operator=(SyncTestObject &s){}
 };
 
 
@@ -220,11 +219,10 @@ public:
 	}
 
 	/**
-	 * allows retrieving the handle to the event
+	 *
 	 */
-	virtual operator EventSource&() {
-		EventSource es = sem.GetEventSource();
-		return es;
+	virtual EventSource GetEventSource(EventInterface::Event eventMask= noEvent)const {
+		return sem.GetEventSource(eventMask);
 	}
 
 private:
@@ -309,13 +307,14 @@ public:
 		return ret;
 	}
 
+
 	/**
-	 * allows retrieving the handle to the event
+	 *
 	 */
-	virtual operator EventSource&(){
-		EventSource es = socketSend.GetEvent(BasicSocket::readEvent);
-		return es;
+	virtual EventSource GetEventSource(EventInterface::Event eventMask= noEvent)const {
+		return socketSend.GetEventSource(BasicSocket::readEvent);
 	}
+
 
 private:
 
@@ -356,7 +355,8 @@ static void ThreadMultiWait(LocalSharedData *tt) {
 	if (id < 16){
 		sto = new Semaphore_STO();
 	} else {
-		sto = new UDPSocket_STO((uint16)49152+id);
+		uint16 port = 49152U+id;
+		sto = new UDPSocket_STO(port);
 	}
 
 	ret = sto->Initialise();
@@ -368,7 +368,7 @@ static void ThreadMultiWait(LocalSharedData *tt) {
 	}
 
 	if (ret){
-		ret = tt->msem.AddEvent(*sto);
+		ret = tt->msem.AddEvent(sto->GetEventSource());
 		REPORT_ERROR(ret," ThreadMultiWait error msem.AddEvent(localSem)");
 	}
 

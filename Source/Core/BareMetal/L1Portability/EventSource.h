@@ -52,7 +52,7 @@ class  EventSourceData;
  *
  */
 class EventSource{
-
+public:
 	/**
 	 * builds an empty EventSource
 	 */

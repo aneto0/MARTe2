@@ -41,6 +41,14 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+const EventInterface::Event BasicSocket::readEvent(0x1);
+const EventInterface::Event BasicSocket::writeEvent(0x2);
+const EventInterface::Event BasicSocket::exceptionEvent(0x4);
+const EventInterface::Event BasicSocket::acceptEvent(0x8);
+const EventInterface::Event BasicSocket::connectionEvent(0x10);
+const EventInterface::Event BasicSocket::closeEvent(0x20);
+
 BasicSocket::BasicSocket() :
         StreamI()/*,
         HandleI() */{
@@ -123,30 +131,30 @@ bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
 
-EventSource BasicSocket::GetEvent(Events eventMask) const{
+EventSource BasicSocket::GetEventSource(EventInterface::Event eventMask) const{
 	ErrorManagement::ErrorType ret;
 	long OSEvents = 0;
 
-	if (eventMask && readEvent){
+	if (eventMask.In(readEvent)){
 		OSEvents |= FD_READ;
 	}
-	if (eventMask && writeEvent){
+	if (eventMask.In(writeEvent)){
 		OSEvents |= FD_WRITE;
 	}
-	if (eventMask && exceptionEvent){
+	if (eventMask.In(exceptionEvent)){
 		OSEvents |= (FD_ACCEPT | FD_CONNECT | FD_CLOSE);
 	}
-	if (eventMask && acceptEvent){
+	if (eventMask.In(acceptEvent)){
 		OSEvents |= FD_ACCEPT;
 	}
-	if (eventMask && connectionEvent){
+	if (eventMask.In(connectionEvent)){
 		OSEvents |= FD_CONNECT;
 	}
-	if (eventMask && closeEvent){
+	if (eventMask.In(closeEvent)){
 		OSEvents |= FD_CLOSE;
 	}
 
-	HANDLE hEvent;
+	HANDLE hEvent = NULL;
 	if (ret){
 		hEvent = WSACreateEvent();
 		ret.OSError = (hEvent == NULL);
@@ -156,11 +164,22 @@ EventSource BasicSocket::GetEvent(Events eventMask) const{
 	if (ret){
 		ret.OSError = (WSAEventSelect(connectionSocket,hEvent,OSEvents)!=0);
 		REPORT_ERROR(ret,"WSAEventSelect failed");
+
+		if (!ret){
+			CloseHandle(hEvent);
+			hEvent = NULL;
+		}
 	}
 
-	EventSource ev(hEvent,false);
+	EventSource es;
+	if (ret){
+		EventSourceData *esd = es.GetData();
+		if (esd != NULL_PTR(EventSourceData *)){
+			esd->SetHandle(hEvent,true);
+		}
+	}
+	return es;
 
-	return ev;
 }
 
 

@@ -88,7 +88,7 @@ private:
 	bool closeAtDestruction;
 
 
-	void operator=(EventSource &toCopyFrom){}
+	void operator=(EventSourceData &toCopyFrom){}
 	inline EventSourceData(const EventSourceData & data){}
 
 };

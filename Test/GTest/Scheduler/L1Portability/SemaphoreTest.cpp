@@ -479,8 +479,7 @@ public:
 				return message();
 			}
 		}
-		static CString dummy;
-		return dummy();
+		return CStringTool(NULL,NULL,0);
 	}
 
 	void OutputReport(FILE *f){

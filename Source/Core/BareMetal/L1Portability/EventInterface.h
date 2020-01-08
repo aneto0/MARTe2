@@ -46,10 +46,58 @@
 namespace MARTe{
 
 
-// abstract class
+/**
+ * Interface for classes that allow synchronisation on a MultipleEventSem
+ */
 class EventInterface {
 
 public:
+
+	/**
+	 * The event that one would like to capture
+	 */
+	class Event{
+	public:
+		/**
+		 * Initialise with the event code
+		 */
+		inline Event(uint64 code=0){
+			this->code = code;
+		}
+		/**
+		 * Copy constructor
+		 */
+		inline Event(const Event &ev){
+			this->code = ev.code;
+		}
+		/**
+		 * To allow comparison
+		 */
+		inline bool operator==(const Event &ev){
+			return (code == ev.code);
+		}
+		/**
+		 * To allow mask handling
+		 */
+		inline bool In(const Event &evMask){
+			return ((evMask.code & code) != 0);
+		}
+
+
+	private:
+		uint64 code;
+	};
+
+	/**
+	 * No specific event
+	 */
+	static const Event noEvent;
+
+	/**
+	 *
+	 */
+	EventInterface();
+
 	/**
 	 *
 	 */
@@ -58,16 +106,21 @@ public:
 	/**
 	 *
 	 */
-	virtual EventSource GetEventSource()=0;
+	virtual EventSource GetEventSource(EventInterface::Event eventMask= noEvent)const =0 ;
+
+private:
+	/**
+	 * Disallow copy
+	 */
+	void operator=(EventInterface & ev);
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-EventInterface::~EventInterface(){
 
-}
 
 
 } // MARTe

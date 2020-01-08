@@ -23,6 +23,7 @@
 
 #include "CompositeErrorManagement.h"
 #include "MultipleEventSem.h"
+#include "EventSource.h"
 
 namespace MARTe{
 
@@ -43,7 +44,8 @@ ErrorManagement::ErrorType MultipleEventSem::AddEvent(EventSource event){
 	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",MAXIMUM_WAIT_OBJECTS, " event sources");
 
 	if (ret){
-		data.handles.Add(event.GetHandle());
+		const EventSourceData * esd = event.GetData();
+		data.handles.Add(esd->GetHandle());
 //		printf("\n %p\n",event.handle,data.handles[0]);
 	}
 
@@ -100,5 +102,9 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 	return ret;
 }
 
+uint32 MultipleEventSem::MaxEventsSupported(){
+
+	return 255;
+}
 
 } //MARTe

@@ -34,7 +34,7 @@
 #include "StreamI.h"
 #include "InternetHost.h"
 #include "MilliSeconds.h"
-#include "EventSource.h"
+#include "EventInterface.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -51,8 +51,19 @@ namespace MARTe {
      * + Setting and querying the configuration of the destination host.
      * + Setting and querying the blocking status of the socket itself.
      */
-    class DLL_API BasicSocket: public StreamI {
+    class DLL_API BasicSocket: public StreamI, public EventInterface {
     public:
+
+	/**
+	 * No specific event
+	 */
+	static const Event readEvent;
+	static const Event writeEvent;
+	static const Event exceptionEvent;
+	static const Event acceptEvent;
+	static const Event connectionEvent;
+	static const Event closeEvent;
+/**
     	enum Events{
     		readEvent = 0x1,
 			writeEvent = 0x2,
@@ -61,7 +72,7 @@ namespace MARTe {
 			connectionEvent = 0x10,
 			closeEvent = 0x20
     	};
-
+*/
 
         /**
          * @brief Default constructor.
@@ -135,8 +146,7 @@ namespace MARTe {
         /**
          *
          */
-        EventSource GetEvent(Events eventMask) const;
-
+        EventSource GetEventSource(EventInterface::Event eventMask) const;
 
     protected:
 
@@ -165,6 +175,11 @@ namespace MARTe {
          */
         inline void MS2TV(const MilliSeconds &timeout, struct timeval & timeoutVal);
 
+    private:
+        /**
+         *
+         */
+        void operator=(BasicSocket &s){}
     };
 
 /*---------------------------------------------------------------------------*/

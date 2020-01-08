@@ -68,6 +68,9 @@ public:
 
 	/// how many handles ?
 	int32 counter;
+private:
+	void operator=(EventSourceData &toCopyFrom){}
+	inline EventSourceData(const EventSourceData & data){}
 
 };
 

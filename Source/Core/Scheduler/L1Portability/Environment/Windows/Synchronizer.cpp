@@ -41,12 +41,11 @@ Synchronizer::~Synchronizer(){
 	Close();
 }
 
-EventSource Synchronizer::GetEventSource(){
+EventSource Synchronizer::GetEventSource(EventInterface::Event ev) const{
 	EventSource es;
 	EventSourceData *esd = es.GetData();
-	if (esd != NULL_PTR(EventSourceData)){
-		esd->closeAtDestruction = false;
-		esd->handle = data.eventHandle;
+	if (esd != NULL_PTR(EventSourceData *)){
+		esd->SetHandle(data.eventHandle,false);
 	}
 	return es;
 }
