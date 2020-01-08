@@ -70,8 +70,9 @@ class RealTimeApplication;
 class DLL_API RealTimeApplicationConfigurationBuilder : public Object {
 public:
 
+    /*lint -save -e19 false positive*/
     CLASS_REGISTER_DECLARATION();
-
+    /*lint -restore */
     /**
      * @brief Default Constructor
      */

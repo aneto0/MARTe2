@@ -47,18 +47,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder() {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder() : Object() {
     realTimeApplication = NULL_PTR(RealTimeApplication*);
     initialiseAfterInitialisation = true;
 }
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication & realTimeApplicationIn, const char8 * const defaultDataSourceNameIn) {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(RealTimeApplication & realTimeApplicationIn, const char8 * const defaultDataSourceNameIn) : Object() {
     defaultDataSourceName = defaultDataSourceNameIn;
     realTimeApplication = &realTimeApplicationIn;
     initialiseAfterInitialisation = true;
 }
 
-RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn, const char8 * const defaultDataSourceNameIn) {
+RealTimeApplicationConfigurationBuilder::RealTimeApplicationConfigurationBuilder(ConfigurationDatabase &globalDatabaseIn, const char8 * const defaultDataSourceNameIn) : Object() {
     defaultDataSourceName = defaultDataSourceNameIn;
     bool ret = globalDatabaseIn.Copy(globalDatabase);
     if (ret) {
@@ -479,7 +479,8 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
                         ret = dataSourcesDatabase.Read("QualifiedName", qname);
                     }
                     if (ret) {
-                        ret = dataSourcesSignalIndexCache.Write(qname.Buffer(), s);
+                        const uint32 ss = s;
+                        ret = dataSourcesSignalIndexCache.Write(qname.Buffer(), ss);
                     }
                     if (ret) {
                         ret = dataSourcesDatabase.MoveToAncestor(1u);
@@ -2022,10 +2023,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveConsumersAndProducers(const
     }
     //suppose to be already into the signal!!
     bool ret = true;
-    if (ret) {
-        if (!dataSourcesDatabase.MoveRelative("States")) {
-            ret = dataSourcesDatabase.CreateRelative("States");
-        }
+    if (!dataSourcesDatabase.MoveRelative("States")) {
+        ret = dataSourcesDatabase.CreateRelative("States");
     }
 
     //For all the states
@@ -2561,8 +2560,7 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
     //Check if a DataSource with this name already exists..
     if (ret) {
         uint32 numberOfDataSources = functionsDatabase.GetNumberOfChildren();
-        bool found = false;
-        found = functionsMemoryIndexesCache.MoveAbsolute(functionName);
+        bool found = functionsMemoryIndexesCache.MoveAbsolute(functionName);
         if (found) {
             found = functionsMemoryIndexesCache.MoveRelative(signalDirection);
         }
@@ -2589,6 +2587,8 @@ bool RealTimeApplicationConfigurationBuilder::ResolveFunctionsMemory(const Signa
                 if (!functionsMemoryIndexesCache.MoveRelative(signalDirection)) {
                     ret = functionsMemoryIndexesCache.CreateRelative(signalDirection);
                 }
+            }
+            if (ret) {
                 ret = functionsMemoryIndexesCache.Write(dataSourceName.Buffer(), newDataSourceId.Buffer());
             }
         }
@@ -2730,29 +2730,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
 
             if (ret) {
                 //Check if this function name already exists
-                bool found = false;
-                /*ConfigurationDatabase dataSourceDatabaseBeforeFunctionMove = dataSourcesDatabase;
-                for (n = 0u; (n < numberOfDataSourceFunctions) && (ret) && (!found); n++) {
-                    dataSourcesDatabase = dataSourceDatabaseBeforeFunctionMove;
-                    ret = dataSourcesDatabase.MoveToChild(n);
-                    if (ret) {
-                        functionId = dataSourcesDatabase.GetName();
-                    }
-                    StreamString thisFunctionName;
-                    if (ret) {
-                        ret = dataSourcesDatabase.Read("QualifiedName", thisFunctionName);
-                    }
-
-                    if (ret) {
-                        found = (StringHelper::Compare(thisFunctionName.Buffer(), functionName) == 0);
-                    }
-                    //Move to the next DataSource
-                    if (!found) {
-                        dataSourcesDatabase = dataSourceDatabaseBeforeFunctionMove;
-                    }
-                }*/
+                bool found = dataSourcesFunctionIndexesCache.MoveAbsolute(dsName.Buffer());
                 StreamString functionIdIdx;
-                found = dataSourcesFunctionIndexesCache.MoveAbsolute(dsName.Buffer());
                 if (found) {
                     found = dataSourcesFunctionIndexesCache.Read(functionName, functionIdIdx);
                 }
@@ -2773,6 +2752,8 @@ bool RealTimeApplicationConfigurationBuilder::AssignFunctionsMemoryToDataSource(
                         if (!dataSourcesFunctionIndexesCache.MoveAbsolute(dsName.Buffer())) {
                             ret = dataSourcesFunctionIndexesCache.CreateAbsolute(dsName.Buffer());
                         }
+                    }
+                    if (ret) {
                         ret = dataSourcesFunctionIndexesCache.Write(functionName, newFunctionId.Buffer());
                     }
                 }

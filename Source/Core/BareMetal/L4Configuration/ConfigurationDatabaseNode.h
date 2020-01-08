@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "BinaryTree.h"
+#include "Fnv1aHashFunction.h"
 #include "Object.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
@@ -119,7 +120,7 @@ ConfigurationDatabaseNode    ();
      * @brief Gets the parent node.
      * @return the parent node.
      */
-    ReferenceT<ConfigurationDatabaseNode> GetParent();
+    ReferenceT<ConfigurationDatabaseNode> GetParent() const;
 
     /**
      * @brief Sets the parent node.
@@ -153,7 +154,7 @@ private:
     /**
      * Current actual size of the array.
      */
-    uint32 size;
+    uint32 containerSize;
 
     /**
      * Maximum size of the array without requiring a realloc.

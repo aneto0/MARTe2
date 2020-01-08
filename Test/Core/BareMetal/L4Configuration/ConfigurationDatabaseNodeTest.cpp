@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationDatabaseNodeGTest.cpp
- * @brief Source file for class ConfigurationDatabaseNodeGTest
+ * @file ConfigurationDatabase.cpp
+ * @brief Source file for class ConfigurationDatabase
  * @date 08/01/2020
  * @author Andre Neto
  *
@@ -17,20 +17,19 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ConfigurationDatabaseNodeGTest (public, protected, and private). Be aware that some
+ * the class ConfigurationDatabase (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabaseNodeTest.h"
+#include "ConfigurationDatabaseNode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,7 +38,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(BareMetal_L4Configuration_ConfigurationDatabaseNodeGTest,TestConstructor) {
-    ConfigurationDatabaseNodeTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestDefaultConstructor());
+bool ConfigurationDatabaseNodeTest::TestDefaultConstructor() {
+    using namespace MARTe;
+    ConfigurationDatabaseNode cdbn;
+    return true;
 }
+

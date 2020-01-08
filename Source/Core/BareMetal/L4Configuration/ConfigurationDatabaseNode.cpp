@@ -44,12 +44,13 @@ namespace MARTe {
 ConfigurationDatabaseNode::ConfigurationDatabaseNode() :
         Object() {
     granularity = 16u;
-    size = 0u;
+    containerSize = 0u;
     maxSize = 0u;
     container = NULL_PTR(Reference *);
     muxTimeout = TTInfiniteWait;
 }
 
+/*lint -e{1551} by design memory if freed in the destructor.*/
 ConfigurationDatabaseNode::~ConfigurationDatabaseNode() {
     binTree.Reset();
     if (container != NULL_PTR(Reference *)) {
@@ -64,7 +65,7 @@ void ConfigurationDatabaseNode::Purge() {
             parent = Reference();
             delete [] container;
             container = NULL_PTR(Reference *);
-            size = 0u;
+            containerSize = 0u;
             maxSize = 0u;
             binTree.Reset();
         }
@@ -77,12 +78,13 @@ void ConfigurationDatabaseNode::Purge(ReferenceContainer &purgeList) {
         if (container != NULL_PTR(Reference *)) {
             parent = Reference();
             uint32 n;
-            for (n = 0u; n<size; n++) {
-                purgeList.Insert(container[n]);
+            bool ok = true;
+            for (n = 0u; (n<containerSize) && (ok); n++) {
+                ok = purgeList.Insert(container[n]);
             }
             delete [] container;
             container = NULL_PTR(Reference *);
-            size = 0u;
+            containerSize = 0u;
             maxSize = 0u;
             binTree.Reset();
         }
@@ -93,9 +95,9 @@ void ConfigurationDatabaseNode::Purge(ReferenceContainer &purgeList) {
 bool ConfigurationDatabaseNode::Insert(Reference ref) {
     bool ok = Lock();
     if (ok) {
-        uint32 index = size;
+        uint32 index = containerSize;
         if (index >= maxSize) {
-            if (size < granularity) {
+            if (containerSize < granularity) {
                 maxSize++;
             }
             else {
@@ -104,8 +106,8 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
             Reference *oldContainer = container;
             container = new Reference[maxSize];
             uint32 n;
-            //oldContainer == NULL => size == 0
-            for (n=0u; n<size; n++) {
+            //oldContainer == NULL => containerSize == 0
+            for (n=0u; n<containerSize; n++) {
                 container[n] = oldContainer[n];
             }
             if (oldContainer != NULL_PTR(Reference *)) {
@@ -116,7 +118,7 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
         ok = (binTree.Insert(ref->GetName(), index) != 0xFFFFFFFFu);
     }
     if (ok) {
-        size++;
+        containerSize++;
     }
     UnLock();
     return ok;
@@ -125,16 +127,16 @@ bool ConfigurationDatabaseNode::Insert(Reference ref) {
 uint32 ConfigurationDatabaseNode::Size() {
     uint32 ssize = 0u;
     if (Lock()) {
-        ssize = size;
+        ssize = containerSize;
     }
     UnLock();
     return ssize;
 }
 
-Reference ConfigurationDatabaseNode::Get(uint32 idx) {
+Reference ConfigurationDatabaseNode::Get(const uint32 idx) {
     Reference ref;
     if (Lock()) {
-        if (idx < size) {
+        if (idx < containerSize) {
             ref = container[idx];
         }
     }
@@ -156,7 +158,7 @@ Reference ConfigurationDatabaseNode::Find(const char8 * const path) {
         if (Lock()) {
             if (binTree.Search(token.Buffer(), bindex)) {
                 uint32 index = binTree[bindex];
-                if (index < size) {
+                if (index < containerSize) {
                     if (term == '.') {
                         ReferenceT<ConfigurationDatabaseNode> containerI;
                         containerI = container[index];
@@ -197,7 +199,7 @@ Reference ConfigurationDatabaseNode::FindLeaf(const char8 * const name) {
     if (Lock()) {
         if (binTree.Search(name, bindex)) {
             uint32 index = binTree[bindex];
-            if (index < size) {
+            if (index < containerSize) {
                 ret = container[index];
             }
         }
@@ -210,35 +212,36 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
     bool ok = Lock();
     if (ok) {
         ok = ref.IsValid();
-        uint32 index;
+        uint32 index = 0u;
         //binary search
         if (ok) {
             uint32 bindex;
             if (binTree.Search(ref->GetName(), bindex)) {
                 index = binTree[bindex];
-                ok = (index < size);
+                ok = (index < containerSize);
             }
         }
         if (ok) {
-            size--;
-            if (size < granularity) {
+            containerSize--;
+            if (containerSize < granularity) {
                 maxSize--;
             }
             else {
-                if ((size % granularity) == 0) {
+                if ((containerSize % granularity) == 0u) {
                     maxSize -= granularity;
                 }
             }
-            if (size > 0u) {
+            if (containerSize > 0u) {
                 Reference *oldContainer = container;
                 container = new Reference[maxSize];
                 uint32 n;
-                //oldContainer == NULL => size == 0
+                //oldContainer == NULL => containerSize == 0
                 for (n=0u; n<index; n++) {
                     container[n] = oldContainer[n];
                 }
-                for (n=index; n<size; n++) {
-                    container[n] = oldContainer[n + 1];
+                for (n=index; n<containerSize; n++) {
+                    /*lint -e{679} no truncation*/
+                    container[n] = oldContainer[n + 1u];
                 }
                 if (oldContainer != NULL_PTR(Reference *)) {
                     delete [] oldContainer;
@@ -253,7 +256,8 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
         if (ok) {
             binTree.Reset();
             uint32 i;
-            for (i=0u; (i<size) && (ok); i++) {
+            for (i=0u; (i<containerSize) && (ok); i++) {
+                /*lint -e{613} containerSize > 0 => container != NULL*/
                 Reference eRef = container[i];
                 ok = (binTree.Insert(eRef->GetName(), static_cast<uint32>(i)) != 0xFFFFFFFFu);
             }
@@ -263,7 +267,7 @@ bool ConfigurationDatabaseNode::Delete(Reference ref) {
     return ok;
 }
 
-ReferenceT<ConfigurationDatabaseNode> ConfigurationDatabaseNode::GetParent() {
+ReferenceT<ConfigurationDatabaseNode> ConfigurationDatabaseNode::GetParent() const {
     return parent;
 }
 

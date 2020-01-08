@@ -1,6 +1,6 @@
 /**
- * @file ConfigurationDatabaseNodeGTest.cpp
- * @brief Source file for class ConfigurationDatabaseNodeGTest
+ * @file ConfigurationDatabaseNodeTest.h
+ * @brief Header file for class ConfigurationDatabaseNodeTest
  * @date 08/01/2020
  * @author Andre Neto
  *
@@ -16,30 +16,39 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ConfigurationDatabaseNodeGTest (public, protected, and private). Be aware that some
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class ConfigurationDatabaseNodeTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+#ifndef CONFIGURATIONDATABASENODETEST_H_
+#define CONFIGURATIONDATABASENODETEST_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-#include "ConfigurationDatabaseNodeTest.h"
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-TEST(BareMetal_L4Configuration_ConfigurationDatabaseNodeGTest,TestConstructor) {
-    ConfigurationDatabaseNodeTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestDefaultConstructor());
-}
+#include "ConfigurationDatabase.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+/**
+ * @brief Tests the ConfigurationDatabase functions.
+ */
+class ConfigurationDatabaseNodeTest {
+public:
+    /**
+     * @brief Tests the default constructor.
+     */
+    bool TestDefaultConstructor();
+
+};
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* CONFIGURATIONDATABASENODETEST_H_ */
+

@@ -31,8 +31,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "StaticList.h"
-#include "DjbHashFunction.h"
-#include "Fnv1aHashFunction.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,7 +43,7 @@ namespace MARTe {
  * The element and the computed key are inserted keeping the list sorted by keys. This allows to speed up the search operation to log(N) using
  * the binary search.
  */
-template<typename T, typename HashObject = DjbHashFunction>
+template<typename T, typename HashObject>
 class BinaryTree {
 public:
 
@@ -257,4 +256,3 @@ bool BinaryTree<T, HashObject>::BinarySearch(const uint32 key, uint32 &index) {
 /*---------------------------------------------------------------------------*/
 
 #endif /* BINARYTREE_H_ */
-
