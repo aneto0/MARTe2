@@ -58,7 +58,7 @@ public:
      * @see HashFunction::Compute
      */
     virtual uint32 Compute(const char8 * const in,
-                           const uint32 size = 0u);
+                           const uint32 size);
 
 };
 
