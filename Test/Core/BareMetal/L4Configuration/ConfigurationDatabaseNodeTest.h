@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ConfigurationDatabase.h"
+#include "ConfigurationDatabaseNode.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,6 +44,56 @@ public:
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Purge method.
+     */
+    bool TestPurge();
+
+    /**
+     * @brief Test the Purge method with a ReferenceContainer
+     */
+    bool TestPurge_ReferenceContainer();
+
+    /**
+     * @brief Tests the Insert method.
+     */
+    bool TestInsert();
+
+    /**
+     * @brief Tests the Size method.
+     */
+    bool TestSize();
+
+    /**
+     * @brief Tests the Get method.
+     */
+    bool TestGet();
+
+    /**
+     * @brief Tests the Find method.
+     */
+    bool TestFind();
+
+    /**
+     * @brief Tests the FindLeaf method.
+     */
+    bool TestFindLeaf();
+
+    /**
+     * @brief Test the Delete method.
+     */
+    bool TestDelete();
+
+    /**
+     * @brief Tests the GetParent method.
+     */
+    bool TestGetParent();
+
+    /**
+     * @brief Tests the SetParent method.
+     */
+    bool TestSetParent();
 
 };
 /*---------------------------------------------------------------------------*/
