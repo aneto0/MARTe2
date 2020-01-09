@@ -144,11 +144,10 @@ template<typename T, typename HashObject>
 uint32 BinaryTree<T, HashObject>::Insert(const char8 * const id, const T value) {
     uint32 key = hashFun.Compute(id, 0u);
     uint32 index = 0u;
-    if (BinarySearch(key, index)) {
-        //TODO
+    bool ret = !BinarySearch(key, index);
+    if (ret) {
+        ret = myKeyList.Insert(index, key);
     }
-
-    bool ret = myKeyList.Insert(index, key);
     if (ret) {
         ret = myList.Insert(index, value);
     }

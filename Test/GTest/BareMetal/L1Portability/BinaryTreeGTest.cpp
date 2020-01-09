@@ -35,6 +35,7 @@
 #include "BinaryTreeTest.h"
 #include "DjbHashFunction.h"
 #include "Fnv1aHashFunction.h"
+#include "Reference.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -775,4 +776,16 @@ TEST(BareMetal_L1Portability_BinaryTreeGTest,TestSet_float64) {
     x1 &= test.TestInsert(t, "elem3", -3.23);
     x1 &= test.TestInsert(t, "elem4", -4.23);
     ASSERT_TRUE(x1);
+}
+
+TEST(BareMetal_L1Portability_BinaryTreeGTest,TestReset) {
+    BinaryTreeTest<float64, Fnv1aHashFunction> test;
+    BinaryTree<float64, Fnv1aHashFunction> t;
+    ASSERT_TRUE(test.TestReset(t));
+}
+
+TEST(BareMetal_L1Portability_BinaryTreeGTest,TestSquareOperatorNonExistendId) {
+    BinaryTreeTest<Reference, Fnv1aHashFunction> test;
+    BinaryTree<Reference, Fnv1aHashFunction> t;
+    ASSERT_TRUE(test.TestSquareOperatorNonExistendId(t));
 }

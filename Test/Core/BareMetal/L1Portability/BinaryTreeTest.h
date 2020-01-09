@@ -81,6 +81,11 @@ public:
      */
     bool TestReset(BinaryTree<T, HashFunction> &test);
 
+    /**
+     * @brief Tests the [] method with a non-existent id.
+     */
+    bool TestSquareOperatorNonExistendId(BinaryTree<T, HashFunction> &test);
+
 };
 
 }
@@ -138,6 +143,11 @@ bool BinaryTreeTest<T, HashFunction>::TestReset(BinaryTree<T, HashFunction> &tes
     return (test.GetSize() == 0u);
 }
 
+template<typename T, typename HashFunction>
+bool BinaryTreeTest<T, HashFunction>::TestSquareOperatorNonExistendId(BinaryTree<T, HashFunction> &test) {
+    T t = test["NOTEXISTENT"];
+    return (!t.IsValid());
+}
 }
 
 #endif /* TEST_CORE_BAREMETAL_L1PORTABILITY_BINARYTREETEST_H_ */
