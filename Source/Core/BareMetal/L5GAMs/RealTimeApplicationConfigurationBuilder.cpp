@@ -441,18 +441,21 @@ bool RealTimeApplicationConfigurationBuilder::FlattenSignalsDatabases() {
     bool ret = functionsDatabase.MoveAbsolute("Functions");
 
     if (ret) {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Flattening functions input signals");
         ret = FlattenSignalsDatabase(functionsDatabase, InputSignals);
     }
     if (ret) {
         ret = functionsDatabase.MoveAbsolute("Functions");
     }
     if (ret) {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Flattening functions output signals");
         ret = FlattenSignalsDatabase(functionsDatabase, OutputSignals);
     }
     if (ret) {
         ret = dataSourcesDatabase.MoveAbsolute("Data");
     }
     if (ret) {
+        REPORT_ERROR_STATIC(ErrorManagement::Information, "Flattening data sources signals");
         ret = FlattenSignalsDatabase(dataSourcesDatabase, None);
     }
     if (ret) {
