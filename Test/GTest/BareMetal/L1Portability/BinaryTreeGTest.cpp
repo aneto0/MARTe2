@@ -33,6 +33,9 @@
 
 #include "gtest/gtest.h"
 #include "BinaryTreeTest.h"
+#include "DjbHashFunction.h"
+#include "Fnv1aHashFunction.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
