@@ -114,9 +114,8 @@ public:
     /**
      * @brief Bitwise and operator.
      * @param[in,out] n is the DoubleInteger argument.
-     * @return the bitwised result.
      */
-    void operator&=(const DoubleInteger<T> &n);
+    void operator &=(const DoubleInteger<T> &n);
 
     /**
      * @brief Bitwise or operator.
@@ -148,7 +147,7 @@ public:
      * @param[in,out] n is the DoubleInteger argument.
      * @return the result of the bitwise and between this and n.
      */
-    DoubleInteger<T> operator&(const DoubleInteger<T> &n) const;
+    DoubleInteger<T> operator &(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Bitwise or.

@@ -110,6 +110,7 @@ bool PrintJsonCloseVector(IOBuffer &iobuff) {
 /**
  * @brief Prints the Json open block separator.
  * @param[in] iobuff the IOBuffer where to print to.
+ * @param[in] blockName the name of the block (structure) to output.
  */
 bool PrintJsonOpenBlock(IOBuffer &iobuff, const char8 * const blockName) {
     AnyType at[] = { blockName, voidAnyType };

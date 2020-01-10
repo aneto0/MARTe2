@@ -44,10 +44,10 @@ namespace MARTe {
 /*lint -e{9158} -e{9159} -e{9021} -e{123} allow to use #define for this implementation, but this should be revisited*/
 namespace Md5Encrypt {
 
-/*
- * 32-bit integer manipulation macros (little endian)
- */
 #ifndef MDS5_GET_UINT32_LE
+/**
+ * @brief 32-bit integer manipulation macros (little endian getter)
+ */
 #define MDS5_GET_UINT32_LE(n,b,i)                              \
 {                                                         \
     (n) = ( static_cast<osulong> ((b)[(i)    ])        )  \
@@ -58,6 +58,9 @@ namespace Md5Encrypt {
 #endif
 
 #ifndef MDS5_PUT_UINT32_LE
+/**
+ * @brief 32-bit integer manipulation macros (little endian putter)
+ */
 #define MDS5_PUT_UINT32_LE(n,b,i)                            \
 {                                                       \
     (b)[(i)    ] = static_cast<uint8> ( (n)       );    \
@@ -67,17 +70,34 @@ namespace Md5Encrypt {
 }
 #endif
 
-
+/**
+ * @brief 32-bit Md5 S function.
+ */
 #define S(x,n) ((x << n) | ((x & 0xFFFFFFFFu) >> (32u - n)))
 
+/**
+ * @brief 32-bit Md5 F1 function.
+ */
 #define MDS5_F1(x,y,z) (z ^ (x & (y ^ z)))
 
+/**
+ * @brief 32-bit Md5 F2 function.
+ */
 #define MDS5_F2(x,y,z) (y ^ (z & (x ^ y)))
 
+/**
+ * @brief 32-bit Md5 F3 function.
+ */
 #define MDS5_F3(x,y,z) (x ^ y ^ z)
 
+/**
+ * @brief 32-bit Md5 F4 function.
+ */
 #define MDS5_F4(x,y,z) (y ^ (x | ~z))
 
+/**
+ * @brief 32-bit Md5 P function.
+ */
 #define MDS5_P(F,a,b,c,d,k,s,t)                    \
 {                                                  \
 a += F(b,c,d) + X[k] + t; a = S(a,s) + b;          \
@@ -87,7 +107,7 @@ static const uint8 md5_padding[64] = { 0x80u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u
         0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 
 /**
- * Helper class to compute the Md5 hash.
+ * @brief Helper class to compute the Md5 hash.
  */
 class Md5Context {
 public:
@@ -102,8 +122,8 @@ public:
      */    
     ~Md5Context();
 
-    /*
-     * @brief MD5 context setup
+    /**
+     * @brief MD5 context setup.
      */
     void Starts();
 
@@ -115,19 +135,19 @@ public:
     void Update(uint8 *input,
                 uint32 ilen);
 
-    /*
+    /**
      * @brief MD5 computation final step.
      * @param[out] output the computed data.
      */
     void Finish(uint8 *output);
 
-    /*
+    /**
      * @brief MD5 computation.
      * @param[in] data the data.
      */
     void Md5Process(const uint8 data[64]);
 
-    /*
+    /**
      * @brief MD5 HMAC context setup
      * @param[in] key the key.
      * @param[in] keylen key length.
@@ -135,7 +155,7 @@ public:
     void HmacStarts(const uint8 * const key,
                     const uint32 keylen);
 
-    /*
+    /**
      * @brief MD5 HMAC process buffer
      * @param[in] input the data.
      * @param[in] ilen input length.
@@ -143,7 +163,7 @@ public:
     void HmacUpdate(uint8 * const input,
                     const uint32 ilen);
 
-    /*
+    /**
      * @brief MD5 HMAC final digest
      * @param[out] output MD5 output.
      */

@@ -445,7 +445,7 @@ bool IntrospectionStructure::RegisterStructuredDataIPriv(StructuredDataI &in, Co
     }
     return ok;
 }
-
+/**Ignore doxygen false positive*/
 CLASS_REGISTER(IntrospectionStructure, "1.0");
 }
 

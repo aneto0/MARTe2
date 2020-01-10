@@ -158,7 +158,7 @@ private:
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
      */
-    virtual ReferenceT<T>* operator&();
+    virtual ReferenceT<T>* operator &();
 
     /**
      * @brief Set thes internal pointers to NULL.

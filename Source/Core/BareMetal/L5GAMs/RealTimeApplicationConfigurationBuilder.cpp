@@ -3643,7 +3643,7 @@ void RealTimeApplicationConfigurationBuilder::CleanCaches() {
     dataSourcesFunctionIndexesCache.Purge();
     functionsMemoryIndexesCache.Purge();
 }
-
+/**Ignore doxygen false positive*/
 CLASS_REGISTER(RealTimeApplicationConfigurationBuilder, "1.0");
 
 }

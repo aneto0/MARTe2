@@ -69,7 +69,7 @@ class RealTimeApplication;
  */
 class DLL_API RealTimeApplicationConfigurationBuilder : public Object {
 public:
-
+    /**Ignore doxygen false positive*/
     /*lint -save -e19 false positive*/
     CLASS_REGISTER_DECLARATION();
     /*lint -restore */

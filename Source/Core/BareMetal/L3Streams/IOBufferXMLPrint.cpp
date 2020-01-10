@@ -93,6 +93,7 @@ bool PrintXMLCloseVector(IOBuffer &iobuff) {
 /**
  * @brief Prints the XML open block separator.
  * @param[in] iobuff the IOBuffer where to print to.
+ * @param[in] blockName the name of the block (structure) to output.
  */
 bool PrintXMLOpenBlock(IOBuffer &iobuff,
                        const char8* const blockName) {
@@ -103,6 +104,7 @@ bool PrintXMLOpenBlock(IOBuffer &iobuff,
 /**
  * @brief Prints the XML close block separator.
  * @param[in] iobuff the IOBuffer where to print to.
+ * @param[in] blockName the name of the block (structure) to output.
  */
 bool PrintXMLCloseBlock(IOBuffer &iobuff,
                         const char8* const blockName) {
@@ -113,6 +115,7 @@ bool PrintXMLCloseBlock(IOBuffer &iobuff,
 /**
  * @brief Prints the XML open assignment separator.
  * @param[in] iobuff the IOBuffer where to print to.
+ * @param[in] varName the name of the \<variable\>.
  */
 bool PrintXMLOpenAssignment(IOBuffer &iobuff,
                             const char8* const varName) {

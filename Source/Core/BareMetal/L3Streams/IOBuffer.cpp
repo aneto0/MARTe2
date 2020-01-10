@@ -135,6 +135,12 @@ extern bool PrintXMLCloseAssignment(IOBuffer &iobuff, const char8 * const varNam
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Prints the symbol associated to the opening of a matrix.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintOpenMatrix(IOBuffer &iobuff, const FormatDescriptor &fd) {
     bool ret = false;
     if (fd.desiredGrammar == PrintInStandardGrammar) {
@@ -152,6 +158,12 @@ bool PrintOpenMatrix(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the closing of a matrix.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintCloseMatrix(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -170,6 +182,12 @@ bool PrintCloseMatrix(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the separation of a scalar.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintScalarSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -188,6 +206,12 @@ bool PrintScalarSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the separation of a vector.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintVectorSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -206,6 +230,12 @@ bool PrintVectorSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the separation of a generic variable.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintVariableSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -224,6 +254,12 @@ bool PrintVariableSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the separation of a block.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintBlockSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -242,6 +278,12 @@ bool PrintBlockSeparator(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the opening of a vector.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintOpenVector(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -260,6 +302,12 @@ bool PrintOpenVector(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the closure of a vector.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintCloseVector(IOBuffer &iobuff, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -278,6 +326,13 @@ bool PrintCloseVector(IOBuffer &iobuff, const FormatDescriptor &fd) {
     return ret;
 }
 
+/**
+ * @brief Prints the symbol associated to the opening of a block.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] blockName the name of the block (structure).
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintOpenBlock(IOBuffer &iobuff, const char8 * const blockName, const FormatDescriptor &fd) {
     bool ret = false;
     if (fd.desiredGrammar == PrintInStandardGrammar) {
@@ -296,6 +351,13 @@ bool PrintOpenBlock(IOBuffer &iobuff, const char8 * const blockName, const Forma
 
 }
 
+/**
+ * @brief Prints the symbol associated to the closure of a block.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] varName the name of the variable.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintCloseBlock(IOBuffer &iobuff, const char8 * const varName, const FormatDescriptor &fd) {
     bool ret = false;
     if (fd.desiredGrammar == PrintInStandardGrammar) {
@@ -314,6 +376,13 @@ bool PrintCloseBlock(IOBuffer &iobuff, const char8 * const varName, const Format
 
 }
 
+/**
+ * @brief Prints the symbol associated to the assignment of a value.
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] varName the name of the variable.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintOpenAssignment(IOBuffer &iobuff, const char8 * const varName, const FormatDescriptor &fd) {
 
     bool ret = false;
@@ -333,6 +402,13 @@ bool PrintOpenAssignment(IOBuffer &iobuff, const char8 * const varName, const Fo
 
 }
 
+/**
+ * @brief Prints the symbol associated to the assignment of a value (closure).
+ * @param[out] iobuff output buffer where to print the symbol.
+ * @param[in] varName the name of the variable.
+ * @param[in] fd defines the desired grammar.
+ * @return true if the grammar exists and the symbol can be successfully printed.
+ */
 bool PrintCloseAssignment(IOBuffer &iobuff, const char8 * const varName, const FormatDescriptor &fd) {
 
     bool ret = false;
