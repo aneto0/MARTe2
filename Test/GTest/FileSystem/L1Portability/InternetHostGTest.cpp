@@ -106,7 +106,7 @@ TEST(FileSystem_L1Portability_InternetHostGTest,TestGetAddress) {
 TEST(FileSystem_L1Portability_InternetHostGTest,TestGetHostName) {
     InternetHostTest internetHostTest;
     const char8 *table[][2]={
-            {"8.8.8.8","google-public-dns-a.google.com"},
+            {"8.8.8.8","dns.google"},
             {0,0}
     };
 
