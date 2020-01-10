@@ -37,7 +37,7 @@ MAKEDEFAULTDIR=MakeDefaults
 ROOT_DIR=.
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) core test
+all: $(OBJS) gtest core test
 	echo  $(OBJS)
 
 core: $(SUBPROJCORE)
