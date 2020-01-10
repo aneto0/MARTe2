@@ -540,7 +540,6 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
     className* actual = dynamic_cast<className *>(object);
     err.unsupportedFeature = (actual == static_cast<className*>(0));
-    err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
     argType1 param1;
     argType2 param2;
@@ -630,7 +629,6 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
     ErrorManagement::ErrorType err(true);
     className* actual = dynamic_cast<className *>(object);
     err.unsupportedFeature = (actual == static_cast<className*>(0));
-    err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
     argType1 param1;
     argType2 param2;
@@ -707,7 +705,6 @@ ErrorManagement::ErrorType ClassMethodCallerT<className, MethodPointer, argType1
 
     className* actual = dynamic_cast<className *>(object);
     err.unsupportedFeature = (actual == static_cast<className*>(0));
-    err.parametersError = (&parameters == NULL_PTR(StructuredDataI *));
 
     argType1 param1;
     argType2 param2;
