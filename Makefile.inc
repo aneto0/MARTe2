@@ -43,9 +43,13 @@ all: $(OBJS) core test
 core: $(SUBPROJCORE)
 	echo  $(SUBPROJCORE)
 
+gtest:
+	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+
 test: $(SUBPROJTEST)
 	echo  $(SUBPROJTEST)
 
 clean: $(SUBPROJCOREC) $(SUBPROJTESTC)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
