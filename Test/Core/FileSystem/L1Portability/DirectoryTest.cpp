@@ -43,11 +43,12 @@ using namespace MARTe;
 static const char8 * const BASE_PATH = "GTestDirectoryTest";
 
 DirectoryTest::DirectoryTest() {
-
+    Delete_Directory();
+    Create_Directory();
 }
 
 DirectoryTest::~DirectoryTest() {
-
+    Delete_Directory();
 }
 
 bool DirectoryTest::TestDirectoryTest(const char8 * pathin) {
@@ -299,14 +300,15 @@ bool DirectoryTest::TestCreate(const char8 *pathin,
 
 bool DirectoryTest::TestDelete(const char8 * pathin,
                                bool isFile) {
-    char8 path[128];
-    DirectoryCreateN(path, pathin);
-    Directory dir(path);
-    dir.Create(isFile);
     if ((pathin != NULL) && (StringHelper::Compare(pathin, "") != 0)) {
+        char8 path[128];
+        DirectoryCreateN(path, pathin);
+        Directory dir(path);
+        dir.Create(isFile);
         return dir.Delete();
     }
     else {
+        Directory dir;
         return !dir.Delete();
     }
 }

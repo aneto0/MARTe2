@@ -42,28 +42,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class DirectoryGTest: public ::testing::Test {
-
-protected:
-    // Per-test-case set-up.
-    // Called before the first test in this test case.
-    // Can be omitted if not needed.
-    static void SetUpTestCase() {
-        DirectoryTest myClassTest;
-        myClassTest.Delete_Directory();
-        myClassTest.Create_Directory();
-    }
-
-    // Per-test-case tear-down.
-    // Called after the last test in this test case.
-    // Can be omitted if not needed.
-    static void TearDownTestCase() {
-        DirectoryTest myClassTest;
-        myClassTest.Delete_Directory();
-    }
-};
-
-
 TEST(FileSystem_L1Portability_DirectoryGTest, TestDirectoryTest) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestDirectoryTest("TestDirectoryTest"));

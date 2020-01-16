@@ -35,8 +35,8 @@
 #include "IteratorT.h"
 #include "LinkedListable.h"
 #include "LinkedListHolder.h"
-#include "SortFilterT.h"
-#include "SearchFilterT.h"
+#include "SortFilter.h"
+#include "SearchFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -96,7 +96,7 @@ public:
      * @brief @see LinkedListHolder::ListInsert()
      */
     inline void ListInsert(T * const p,
-                           SortFilterT<T> * const sorter);
+                           SortFilter * const sorter);
 
     /**
      * @brief @see LinkedListHolder::ListInsert()
@@ -121,7 +121,7 @@ public:
     /**
      * @brief @see LinkedListHolder::ListSearch()
      */
-    inline T *ListSearch(SearchFilterT<T> * const filter);
+    inline T *ListSearch(SearchFilter * const filter);
 
     /**
      * @brief @see LinkedListHolder::ListExtract()
@@ -131,7 +131,7 @@ public:
     /**
      * @brief @see LinkedListHolder::ListExtract()
      */
-    inline T *ListExtract(SearchFilterT<T> * const filter);
+    inline T *ListExtract(SearchFilter * const filter);
 
     /**
      * @brief @see LinkedListHolder::ListDelete()
@@ -141,17 +141,17 @@ public:
     /**
      * @brief @see LinkedListHolder::ListDelete()
      */
-    inline bool ListDelete(SearchFilterT<T> * const filter);
+    inline bool ListDelete(SearchFilter * const filter);
 
     /**
      * @brief @see LinkedListHolder::ListSafeDelete()
      */
-    inline bool ListSafeDelete(SearchFilterT<T> * const filter);
+    inline bool ListSafeDelete(SearchFilter * const filter);
 
     /**
      * @brief @see LinkedListHolder::ListBSort()
      */
-    inline void ListBSort(SortFilterT<T> * const sorter);
+    inline void ListBSort(SortFilter * const sorter);
 
     /**
      * @brief @see LinkedListHolder::ListPeek()
@@ -219,7 +219,7 @@ void LinkedListHolderT<T, canDestroy>::ListInsert(T * const p) {
 
 template <class T, bool canDestroy>
 void LinkedListHolderT<T, canDestroy>::ListInsert(T * const p,
-                                   SortFilterT<T> * const sorter) {
+                                   SortFilter * const sorter) {
     LinkedListHolder::ListInsert(p, sorter);
 }
 
@@ -245,7 +245,7 @@ bool LinkedListHolderT<T, canDestroy>::ListSearch(const T * const p) {
 }
 
 template <class T, bool canDestroy>
-T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilterT<T> * const filter) {
+T *LinkedListHolderT<T, canDestroy>::ListSearch(SearchFilter * const filter) {
     LinkedListable *ll = LinkedListHolder::ListSearch(filter);
     return static_cast<T*>(ll);
 }
@@ -256,7 +256,7 @@ bool LinkedListHolderT<T, canDestroy>::ListExtract(T * const p) {
 }
 
 template <class T, bool canDestroy>
-T *LinkedListHolderT<T, canDestroy>::ListExtract(SearchFilterT<T> * const filter) {
+T *LinkedListHolderT<T, canDestroy>::ListExtract(SearchFilter * const filter) {
     return static_cast<T*>(LinkedListHolder::ListExtract(filter));
 }
 
@@ -266,17 +266,17 @@ bool LinkedListHolderT<T, canDestroy>::ListDelete(T * const p) {
 }
 
 template <class T, bool canDestroy>
-bool LinkedListHolderT<T, canDestroy>::ListDelete(SearchFilterT<T> * const filter) {
+bool LinkedListHolderT<T, canDestroy>::ListDelete(SearchFilter * const filter) {
     return LinkedListHolder::ListDelete(filter);
 }
 
 template <class T, bool canDestroy>
-bool LinkedListHolderT<T, canDestroy>::ListSafeDelete(SearchFilterT<T> * const filter) {
+bool LinkedListHolderT<T, canDestroy>::ListSafeDelete(SearchFilter * const filter) {
     return LinkedListHolder::ListSafeDelete(filter);
 }
 
 template <class T, bool canDestroy>
-void LinkedListHolderT<T, canDestroy>::ListBSort(SortFilterT<T> * const sorter) {
+void LinkedListHolderT<T, canDestroy>::ListBSort(SortFilter * const sorter) {
     LinkedListHolder::ListBSort(sorter);
 }
 
