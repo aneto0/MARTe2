@@ -43,7 +43,9 @@
 namespace MARTe {
 
 CircularBufferThreadInputDataSource::CircularBufferThreadInputDataSource() :
-        MemoryDataSourceI(), EmbeddedServiceMethodBinderI(), executor(*this) {
+        MemoryDataSourceI(),
+        EmbeddedServiceMethodBinderI(),
+        executor(*this) {
     mutex.Create();
     currentBuffer = NULL_PTR(uint32 *);
     sleepInMutexSec = 1e-6F;
@@ -67,7 +69,10 @@ CircularBufferThreadInputDataSource::CircularBufferThreadInputDataSource() :
     numberOfInterleavedSignalMembers = NULL_PTR(uint32 *);
     interleavedPacketMemberByteSize = NULL_PTR(uint32 *);
 
+    headerSize = NULL_PTR(uint32 *);
+
     signalDefinitionInterleaved = false;
+    getFirst = false;
 
 }
 
@@ -109,6 +114,10 @@ CircularBufferThreadInputDataSource::~CircularBufferThreadInputDataSource() {
     if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
         delete[] interleavedPacketMemberByteSize;
     }
+    if (headerSize != NULL_PTR(uint32 *)) {
+        delete[] headerSize;
+    }
+
 }
 
 void CircularBufferThreadInputDataSource::Purge(ReferenceContainer &purgeList) {
@@ -164,6 +173,15 @@ bool CircularBufferThreadInputDataSource::Initialise(StructuredDataI &data) {
         }
     }
 
+    if (ret) {
+        uint8 getFirstTemp = 0u;
+        if (!data.Read("GetFirst", getFirstTemp)) {
+            getFirstTemp = 0u;
+        }
+        getFirst = (getFirstTemp > 0u);
+
+    }
+
     return ret;
 }
 /*lint -e{613} null pointer checked before.*/
@@ -202,23 +220,25 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
     lastReadBuffer_1[syncSignal] = lastReadBuffer[syncSignal];
 
     uint32 nStepsForward = 0u;
-    //always go to the end
 
-    //roll on consuming the circular buffer until the last written
-    while (nStepsForward < numberOfBuffers) {
-        uint32 lastReadBufTemp = (lastReadBuffer[syncSignal] + 1u);
-        if (lastReadBufTemp >= numberOfBuffers) {
-            lastReadBufTemp = 0u;
-        }
-        (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
-        uint32 index = (lastReadBufTemp * numberOfSignals) + syncSignal;
-        if (isRefreshed[index] == 0u) {
+    if (!getFirst) {
+        //always go to the end
+        //roll on consuming the circular buffer until the last written
+        while (nStepsForward < numberOfBuffers) {
+            uint32 lastReadBufTemp = (lastReadBuffer[syncSignal] + 1u);
+            if (lastReadBufTemp >= numberOfBuffers) {
+                lastReadBufTemp = 0u;
+            }
+            (void) mutex.FastLock(TTInfiniteWait, sleepInMutexSec);
+            uint32 index = (lastReadBufTemp * numberOfSignals) + syncSignal;
+            if (isRefreshed[index] == 0u) {
+                mutex.FastUnLock();
+                break;
+            }
             mutex.FastUnLock();
-            break;
+            lastReadBuffer[syncSignal] = lastReadBufTemp;
+            nStepsForward++;
         }
-        mutex.FastUnLock();
-        lastReadBuffer[syncSignal] = lastReadBufTemp;
-        nStepsForward++;
     }
 
     bool ret = (nStepsForward < numberOfBuffers);
@@ -261,7 +281,8 @@ bool CircularBufferThreadInputDataSource::Synchronise() {
     return ret;
 }
 
-const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI &data,
+                                                                const SignalDirection direction) {
 
     const char8 *brokerName = NULL_PTR(const char8 *);
     if (direction == InputSignals) {
@@ -283,7 +304,9 @@ const char8 *CircularBufferThreadInputDataSource::GetBrokerName(StructuredDataI 
 }
 
 /*lint -e{715} the default implementation returns false (only input supported).*/
-bool CircularBufferThreadInputDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers, const char8* const functionName, void * const gamMemPtr) {
+bool CircularBufferThreadInputDataSource::GetOutputBrokers(ReferenceContainer &outputBrokers,
+                                                           const char8* const functionName,
+                                                           void * const gamMemPtr) {
     return false;
 }
 
@@ -320,7 +343,7 @@ bool CircularBufferThreadInputDataSource::SetConfiguredDatabase(StructuredDataI 
                 if (ret) {
                     if (signalName == "ErrorCheck") {
                         errorCheckSignalIndex = i;
-                        //check the type of the time stamp signal
+//check the type of the time stamp signal
                         TypeDescriptor td = GetSignalType(errorCheckSignalIndex);
                         ret = (td == UnsignedInteger32Bit);
                         if (!ret) {
@@ -428,9 +451,13 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
     if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
         delete[] interleavedPacketMemberByteSize;
     }
+    if (headerSize != NULL_PTR(uint32 *)) {
+        delete[] headerSize;
+    }
     numberOfInterleavedSamples = new uint32[numberOfSignals];
     interleavedSignalByteSize = new uint32[numberOfSignals];
     numberOfInterleavedSignalMembers = new uint32[numberOfSignals];
+    headerSize = new uint32[numberOfSignals];
 
     uint32 totalNumberOfInputChunkSizes = 0u;
 
@@ -454,6 +481,10 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
             if (!at.IsVoid()) {
                 numberOfInterleavedSignalMembers[i] = at.GetNumberOfElements(0u);
                 totalNumberOfInputChunkSizes += numberOfInterleavedSignalMembers[i];
+            }
+            //read the header size
+            if (!signalsDatabase.Read("HeaderSize", headerSize[i])) {
+                headerSize[i] = 0u;
             }
         }
     }
@@ -485,6 +516,7 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
         if (ret) {
             ret = GetSignalByteSize(i, interleavedSignalByteSize[i]);
             if (ret) {
+                interleavedSignalByteSize[i] -= headerSize[i];
                 uint32 packetSize = 0u;
                 //check that the byte size is consistent with the packet configuration
                 for (uint32 j = 0u; j < numberOfInterleavedSignalMembers[i]; j++) {
@@ -499,9 +531,9 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
                 if (ret) {
                     ret = ((interleavedSignalByteSize[i] % packetSize) == 0u);
                     if (ret) {
-                        //How many times is the PacketMemberSizes repeated inside the memory
+//How many times is the PacketMemberSizes repeated inside the memory
                         numberOfInterleavedSamples[i] = fakeSamples;
-                        //What is the size of the PacketMemberSizes, i.e. the size of each packet?
+//What is the size of the PacketMemberSizes, i.e. the size of each packet?
                         interleavedSignalByteSize[i] /= fakeSamples;
                     }
                     else {
@@ -537,9 +569,14 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
     if (interleavedPacketMemberByteSize != NULL_PTR(uint32 *)) {
         delete[] interleavedPacketMemberByteSize;
     }
+    if (headerSize != NULL_PTR(uint32 *)) {
+        delete[] headerSize;
+    }
+
     numberOfInterleavedSamples = new uint32[1u];
     interleavedSignalByteSize = new uint32[1u];
     numberOfInterleavedSignalMembers = new uint32[1u];
+    headerSize = new uint32[1u];
 
     //The packet is defined by the number of signals
     numberOfInterleavedSignalMembers[0u] = numberOfChannels;
@@ -552,6 +589,7 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
     //The number of samples must be the same for all signals
     uint32 nOfSamples = 0u;
     uint32 nOfFunctions = GetNumberOfFunctions();
+
     for (uint32 i = 0u; (i < nOfFunctions) && (ret); i++) {
         uint32 nOfFunctionSignals = 1u;
         ret = GetFunctionNumberOfSignals(InputSignals, i, nOfFunctionSignals);
@@ -573,6 +611,11 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
                     if (ret) {
                         if (nOfSamples == 0u) {
                             nOfSamples = nOfSamplesRead;
+                        }
+                        if (nOfSamples == 1u) {
+                            if (headerSize[0] == 0u) {
+                                ret = GetSignalByteSize(signalIdx, headerSize[0]);
+                            }
                         }
                         ret = (nOfSamples == nOfSamplesRead);
                         if (!ret) {
@@ -607,7 +650,10 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
 
 /*lint -e{715} the behavior of this function is independent of the currentStateName and nextStateName.*/
 /*lint -e{613} null pointer checked before.*/
-bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
+bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const currentStateName,
+                                                           const char8 * const nextStateName) {
+    REPORT_ERROR(ErrorManagement::FatalError, "CircularBufferThreadInputDataSource::PrepareNextState");
+
     bool ret = true;
     syncSignal = numberOfSignals;
 
@@ -687,7 +733,9 @@ bool CircularBufferThreadInputDataSource::PrepareNextState(const char8 * const c
 }
 
 /*lint -e{613} null pointer checked before.*/
-bool CircularBufferThreadInputDataSource::GetInputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+bool CircularBufferThreadInputDataSource::GetInputOffset(const uint32 signalIdx,
+                                                         const uint32 numberOfSamples,
+                                                         uint32 &offset) {
 
     offset = ((lastReadBuffer[signalIdx] - numberOfSamples) + 1u);
     if (offset >= numberOfBuffers) {
@@ -699,12 +747,15 @@ bool CircularBufferThreadInputDataSource::GetInputOffset(const uint32 signalIdx,
 }
 
 /*lint -e{715} Default implementation is not implemented.*/
-bool CircularBufferThreadInputDataSource::GetOutputOffset(const uint32 signalIdx, const uint32 numberOfSamples, uint32 &offset) {
+bool CircularBufferThreadInputDataSource::GetOutputOffset(const uint32 signalIdx,
+                                                          const uint32 numberOfSamples,
+                                                          uint32 &offset) {
     return false;
 }
 
 /*lint -e{613} null pointer checked before.*/
 ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(ExecutionInfo & info) {
+
     ErrorManagement::ErrorType err;
 
     if (info.GetStage() == ExecutionInfo::MainStage) {
@@ -721,14 +772,14 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
                 uint32 memoryIndex = signalOffsets[i] + (currentBuffer[i] * signalSize[i]);
                 if (DriverRead(reinterpret_cast<char8*>(&(memory[memoryIndex])), readBytes, i)) {
                     if (readBytes == signalSize[i]) {
-                        //save the timestamp
+//save the timestamp
                         if (timeStampSignalIndex != 0xFFFFFFFFu) {
                             uint32 index1 = (currentBuffer[timeStampSignalIndex] * (numberOfChannels));
                             uint32 timeMemIndex = (signalOffsets[timeStampSignalIndex] + ((index1 + cnt) * static_cast<uint32>(sizeof(uint64))));
                             void *timerPtr = &memory[timeMemIndex];
                             *(reinterpret_cast<uint64 *>(timerPtr)) = HighResolutionTimer::Counter();
                         }
-                        //the DriverRead returns the size read
+//the DriverRead returns the size read
                         uint32 index = ((currentBuffer[i] * (numberOfSignals)) + i);
 
                         if (errorCheckSignalIndex != 0xFFFFFFFFu) {
@@ -845,7 +896,9 @@ ErrorManagement::ErrorType CircularBufferThreadInputDataSource::Execute(Executio
 
 /*lint -e{715} the offset and the numberOfSamples are not required for the default implementation.*/
 /*lint -e{613} null pointer checked before.*/
-bool CircularBufferThreadInputDataSource::TerminateInputCopy(const uint32 signalIdx, const uint32 offset, const uint32 numberOfSamples) {
+bool CircularBufferThreadInputDataSource::TerminateInputCopy(const uint32 signalIdx,
+                                                             const uint32 offset,
+                                                             const uint32 numberOfSamples) {
 
     nBrokerOpPerSignalCounter[signalIdx]--;
 

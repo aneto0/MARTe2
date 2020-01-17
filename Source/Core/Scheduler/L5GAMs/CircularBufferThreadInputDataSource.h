@@ -71,6 +71,7 @@ namespace MARTe {
  *     *CpuMask = 0x1 (the cpus where the internal thread is allowed to run: default is 0xFFFF)
  *     *ReceiverThreadPriority = 0-31 (the priority of the internal thread, default is 31)
  *     *ReceiverThreadStackSize = 0-31 (the stack size of the internal thread, default is THREADS_DEFAULT_STACKSIZE)
+ *     *GetFirst = 0/1 (if 0, default, do not wait for the first valid buffer to arrive)
  *     Signals = {
  *         *InternalTimeStamp = {
  *             Type = uint64
@@ -315,11 +316,18 @@ protected:
      */
     uint32 *interleavedPacketMemberByteSize;
 
+
+    uint32 *headerSize;
+
     /**
      * If true the signal definition is considered to be interleaved.
      */
     bool signalDefinitionInterleaved;
 
+    /**
+     * If true 
+     */
+    bool getFirst;
 private:
     /**
      * @brief Helper function to create the interleaved accelerators
