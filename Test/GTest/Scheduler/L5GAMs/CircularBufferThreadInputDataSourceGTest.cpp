@@ -124,6 +124,11 @@ TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfigured
     ASSERT_TRUE(test.TestSetConfiguredDatabase_SignalDefinitionInterleaved());
 }
 
+TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_PacketMemberSizes_HeaderSize) {
+    CircularBufferThreadInputDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_PacketMemberSizes_HeaderSize());
+}
+
 TEST(Scheduler_L5GAMs_CircularBufferThreadInputDataSourceGTest,TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples) {
     CircularBufferThreadInputDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_SignalDefinitionInterleaved_NOfSamples());

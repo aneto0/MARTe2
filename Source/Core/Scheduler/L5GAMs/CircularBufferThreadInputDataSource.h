@@ -57,6 +57,7 @@ namespace MARTe {
  *
  * This data source also allows to specify signals as being "interleaved". In order to achieve this, each signal must declared a field named PacketMemberSizes which describes its structure.
  * As an example PacketMemberSizes={4,2,2,8} would mean that the signal (whose NumberOfElements shall be 16 for an uint8 type) is composed of an uint32, followed by 2 uint16 and finally followed by an uint64.
+ * Furthermore, for each signal, a number of header bytes can skipped from the source signal when interleaving (this is specified with the parameter HeaderBytes).
  * A series of protected accelerators (see numberOfInterleavedSamples, numberOfInterleavedSignalMembers and memberByteSize) allow specialised classes to use this information, together with the number of samples, to go from an interleaved memory representation to a non-interleaved representation (where each signal contains N consecutive samples of its type).
  *
  * If the parameter SignalDefinitionInterleaved is = 1, it is assumed that the defined signals form part of a packet that is interleaved (and replicated for N samples).
@@ -88,6 +89,7 @@ namespace MARTe {
  *             NumberOfDimensions = 1
  *             NumberOfElements = 16
  *             PacketMemberSizes={4,2,2,8} //Optional and only relevant for interleaved signals.
+ *             HeaderSize = 0 //Optional. If specified, HeaderSize bytes will be skipped from the signal when interleaving.
  *             Samples = 5 //Unpack the interleaved memory representation into individual signals.
  *         }
  *         ....
@@ -316,7 +318,9 @@ protected:
      */
     uint32 *interleavedPacketMemberByteSize;
 
-
+    /**
+     * The size of the packet header.
+     */
     uint32 *headerSize;
 
     /**

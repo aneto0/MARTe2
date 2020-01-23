@@ -531,9 +531,9 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
                 if (ret) {
                     ret = ((interleavedSignalByteSize[i] % packetSize) == 0u);
                     if (ret) {
-//How many times is the PacketMemberSizes repeated inside the memory
+                        //How many times is the PacketMemberSizes repeated inside the memory
                         numberOfInterleavedSamples[i] = fakeSamples;
-//What is the size of the PacketMemberSizes, i.e. the size of each packet?
+                        //What is the size of the PacketMemberSizes, i.e. the size of each packet?
                         interleavedSignalByteSize[i] /= fakeSamples;
                     }
                     else {
@@ -617,6 +617,8 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAcceleratorsSigna
                                 ret = GetSignalByteSize(signalIdx, headerSize[0]);
                             }
                         }
+                    }
+                    if (ret) {
                         ret = (nOfSamples == nOfSamplesRead);
                         if (!ret) {
                             REPORT_ERROR(ErrorManagement::InitialisationError,
