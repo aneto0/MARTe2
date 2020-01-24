@@ -458,13 +458,13 @@ bool CircularBufferThreadInputDataSource::GenererateInterleavedAccelerators() {
     interleavedSignalByteSize = new uint32[numberOfSignals];
     numberOfInterleavedSignalMembers = new uint32[numberOfSignals];
     headerSize = new uint32[numberOfSignals];
-
     uint32 totalNumberOfInputChunkSizes = 0u;
 
     bool ret = true;
     //Look for all the "PacketMemberSizes". Each signal is potentially a packet
     for (uint32 i = 0u; (i < numberOfSignals) && (ret); i++) {
         numberOfInterleavedSignalMembers[i] = 0u;
+        headerSize[i] = 0u;
 
         StreamString signalName;
         ret = GetSignalName(i, signalName);

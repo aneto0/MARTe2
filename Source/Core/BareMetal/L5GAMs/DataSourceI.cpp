@@ -101,7 +101,7 @@ bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
             ret = configuredDatabase.Read("QualifiedName", signalName);
         }
         if (ret) {
-            uint32 nn;
+            uint32 nn = n;
             ret = signalNameCache.Write(signalName.Buffer(), nn);
         }
         if (ret) {
