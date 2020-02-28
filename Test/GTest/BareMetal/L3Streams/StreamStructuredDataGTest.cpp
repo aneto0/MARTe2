@@ -499,6 +499,21 @@ TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorXML) {
     ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestor(&arg));
 }
 
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorBug450StandardPrinter) {
+    StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
+    ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestorBug450());
+}
+
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorBug450JsonPrinter) {
+    StreamStructuredDataTest<JsonPrinter> myStreamStructuredDataTest;
+    ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestorBug450());
+}
+
+TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveToAncestorBug450XMLPrinter) {
+    StreamStructuredDataTest<XMLPrinter> myStreamStructuredDataTest;
+    ASSERT_TRUE(myStreamStructuredDataTest.TestMoveToAncestorBug450());
+}
+
 TEST(BareMetal_L3Streams_StreamStructuredDataGTest, TestMoveAbsoluteStandard) {
     StreamStructuredDataTest<StandardPrinter> myStreamStructuredDataTest;
 

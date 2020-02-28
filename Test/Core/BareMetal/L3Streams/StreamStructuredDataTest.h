@@ -120,6 +120,11 @@ public:
     bool TestMoveToAncestor(StreamStructuredDataTestAddToCurrentNodeStruct *table);
 
     /**
+     * @brief Tests the MoveToAncestor against the bug report on the Story 450
+     */
+    bool TestMoveToAncestorBug450();
+
+    /**
      * @brief Tests the MoveAbsolute method
      */
     bool TestMoveAbsolute(StreamStructuredDataTestAddToCurrentNodeStruct *table);
@@ -294,6 +299,24 @@ bool StreamStructuredDataTest<Printer>::TestMoveToAncestor(StreamStructuredDataT
         ret = (string == table->desResult);
     }
     printf("|%s||%s|\n", string.Buffer(), table->desResult.Buffer());
+
+    return ret;
+}
+
+template<class Printer>
+bool StreamStructuredDataTest<Printer>::TestMoveToAncestorBug450() {
+    StreamString string;
+    StreamStructuredData<Printer> test(string);
+    bool ret = test.CreateAbsolute("A.B.C");
+    ret &= test.MoveToAncestor(1u);
+    ret &= test.MoveAbsolute("A");
+    ret &= test.CreateRelative("D.E");
+    ret &= test.MoveToAncestor(1u);
+    ret &= test.CreateRelative("F");
+    ret &= test.MoveToAncestor(2u);
+    ret &= test.CreateAbsolute("A.G");
+    ret &= test.MoveToAncestor(1u);
+    ret &= test.CreateRelative("H");
 
     return ret;
 }

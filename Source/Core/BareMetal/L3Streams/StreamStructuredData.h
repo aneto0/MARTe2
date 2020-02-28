@@ -401,16 +401,16 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
         StreamString currentPathTmp = "";
         currentPath.Seek(0u);
         for (uint32 i = 0u; (i < pathSize) && (ret); i++) {
-
             if (i < goodOnes) {
                 StreamString token;
                 char8 terminator;
                 ret = currentPath.GetToken(token, ".", terminator);
                 if (ret) {
                     ret = (terminator == '.');
-                    if (ret) {
-                        currentPathTmp += token;
-                    }
+                }
+                if (ret) {
+                    currentPathTmp += token;
+                    currentPathTmp += ".";
                 }
             }
             else {
@@ -419,10 +419,10 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
                 if (ret) {
                     ref->isClosed = 1u;
                     ret = stream->Printf("%s", "\n\r");
-                    if (ret) {
-                        ret = printer.PrintCloseBlock(ref->GetName());
-                        blockCloseState = true;
-                    }
+                }
+                if (ret) {
+                    ret = printer.PrintCloseBlock(ref->GetName());
+                    blockCloseState = true;
                 }
             }
         }
@@ -434,6 +434,11 @@ bool StreamStructuredData<Printer>::MoveToAncestor(uint32 generations) {
                 currentNode = treeDescriptor;
             }
             currentPath = currentPathTmp;
+            if (currentPath.Size() > 0u) {
+                if (currentPath[currentPath.Size() - 1u] == '.') {
+                    currentPath.SetSize(currentPath.Size() - 1u);
+                }
+            }
         }
         if (ret) {
             stream->Flush();
@@ -578,21 +583,18 @@ bool StreamStructuredData<Printer>::MoveToChild(const uint32 childIdx) {
     }
     if (ret) {
         ret = stream->Printf("%s", "\n\r");
-        if (ret) {
-            ret = printer.PrintOpenBlock(child->GetName());
-            currentNode->needsSeparatorBeforeNextWrite = true;
-            blockCloseState = false;
-        }
-        if (ret) {
-            currentPath += child->GetName();
-            currentNode = child;
-        }
-        if (ret) {
-            if (ret) {
-                stream->Flush();
-            }
-        }
     }
+    if (ret) {
+        ret = printer.PrintOpenBlock(child->GetName());
+        currentNode->needsSeparatorBeforeNextWrite = true;
+        blockCloseState = false;
+    }
+    if (ret) {
+        currentPath += child->GetName();
+        currentNode = child;
+        stream->Flush();
+    }
+
     return ret;
 }
 
