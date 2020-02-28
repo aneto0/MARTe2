@@ -62,11 +62,20 @@ GAMSchedulerI::GAMSchedulerI() :
 
 GAMSchedulerI::~GAMSchedulerI() {
     if (states != NULL) {
-        if (states->threads != NULL) {
-            if (states->threads->executables != NULL) {
-                delete[] states->threads->executables;
+        if (numberOfStates > 0u) {
+            uint32 s;
+            for (s=0u; s<numberOfStates; s++) {
+                uint32 numberOfThreads = states[s].numberOfThreads;
+                uint32 t;
+                if (states[s].threads != NULL_PTR(ScheduledThread *)) {
+                    for (t=0u; t<numberOfThreads; t++) {
+                        if (states[s].threads[t].executables != NULL_PTR(ExecutableI **)) {
+                            delete [] states[s].threads[t].executables;
+                        }
+                    }
+                }
+                delete [] states[s].threads;
             }
-            delete[] states->threads;
         }
         delete[] states;
     }
