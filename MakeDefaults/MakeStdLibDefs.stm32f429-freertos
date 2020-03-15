@@ -1,0 +1,81 @@
+#############################################################
+#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http://ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
+#############################################################
+
+BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
+
+TARGET_BASE=gcc
+ENVIRONMENT=FreeRTOS
+ARCHITECTURE=arm_cort_m4_stm
+EXEEXT=.o
+DLLEXT=.so
+LIBEXT=.a
+OBJEXT=.o
+ASMEXT=.s
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+GCOVEXT=.gcov
+HEXEXT=.hex
+LSTEXT=.lst
+SYMEXT=.sym
+ELFEXT=.elf
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+
+SUBPROJ = $(SPB:%.x=%.spb)
+SUBPROJT = $(SPBT:%.x=%.spb)
+SUBPROJGT = $(SPBGT:%.x=%.spb)
+SUBPROJC = $(SPB:%.x=%.spc)
+
+CROSS_COMPILER = arm-none-eabi
+COMPILER = $(CROSS_COMPILER)-g++
+CCOMPILER = $(CROSS_COMPILER)-gcc
+LINKER = $(CROSS_COMPILER)-ld
+OBJCOPY = $(CROSS_COMPILER)-objcopy
+OBJDUMP = $(CROSS_COMPILER)-objdump
+NM = $(COMPILER_BASE)-nm
+MAKE     = make
+
+DEBUG = -g 
+OPTIM = -Os
+
+FREE_RTOS_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS
+PORT_MACRO_H_DIRECTORY=$(STM_CUBE_FW_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+CMSIS_DIRECTORY=$(FREE_RTOS_DIRECTORY)/Source/CMSIS_RTOS/
+
+#You have to give in YOUR environment variables the location of the FreeRTOSConfig.h and set it FREE_RTOS_CONFIG_DIRECTORY
+INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) -I$(FREE_RTOS_CONFIG_DIRECTORY) -I$(CMSIS_DIRECTORY)
+LFLAGS =-mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -falign-functions=16 -lm -lgcc -lc -lnosys -specs=nosys.specs -Wl,--gc-section -g 
+
+CFLAGS +=  -DSTM32F429xx -MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -g -Wall 
+#Explicitly set space separated directories with -I (e.g. "-IDIR1 -IDIR2 ")  
+
+CPPFLAGS = $(CFLAGS) 
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_FREERTOS
+  
+.SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
+
