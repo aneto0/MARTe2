@@ -164,7 +164,7 @@ bool BasicTCPSocket::Connect(CCString address,const uint16 port,
                 fd_set writeFDS;
 
                 FD_ZERO(&writeFDS);
-                FD_SET(connectionSocket, &writeFDS);
+                FD_SET((SOCKET)connectionSocket, &writeFDS);
 
                 timeval timeWait;
                 if (wasBlocking) {
@@ -257,7 +257,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const MilliSeconds &timeout,Basic
                 if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
                     fd_set readFDS;
                     FD_ZERO(&readFDS);
-                    FD_SET(connectionSocket, &readFDS);
+                    FD_SET((SOCKET)connectionSocket, &readFDS);
                     timeval timeWait;
                 	MS2TV(timeout,timeWait);
                     int32 readySockets = select(256, &readFDS, &readFDS, static_cast<fd_set*>(NULL), &timeWait);

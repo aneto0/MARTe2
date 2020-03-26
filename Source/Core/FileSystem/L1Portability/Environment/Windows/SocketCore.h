@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SOCKETCORE_H_
-		#define 		SOCKETCORE_H_
+#ifndef SOCKETCORE_H_
+#define SOCKETCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

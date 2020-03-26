@@ -34,7 +34,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "EventSource.h"
+#include "EventInterface.h"
 #include "ErrorType.h"
 #include "ErrorManagement.h"
 #include "Ticks.h"
@@ -56,7 +56,7 @@ namespace MARTe{
 * by the Post method. Threads are blocked in the barrier by calling one of the Wait methods.
 * Once the barrier is raised all the threads are allowed to concurrently proceed.
 * */
-class DLL_API Synchronizer: public EventSource{
+class DLL_API Synchronizer: public EventInterface{
 public:
 	/**
 	 * Creates the waitable handle
@@ -80,13 +80,20 @@ public:
 
 	/**
 	 * Waits for the lock to open
+	 * @param[in,out] the max amount of time to wait, returns the time left from the given budget.
 	 */
 	inline ErrorManagement::ErrorType WaitUpdate(MilliSeconds &timeout);
 
 	/**
 	 * Waits for the lock to open
+	 * @param[in] the max amount of time to wait.
 	 */
 	ErrorManagement::ErrorType Wait(MilliSeconds timeout);
+
+	/**
+	 * Creates an event source (implements EventInterface)
+	 */
+	virtual EventSource GetEventSource(EventInterface::Event ev= noEvent) const;
 
 	/**
 	 *
@@ -103,6 +110,10 @@ private:
 	 */
 	SynchronizerData data;
 
+	/**
+	 * disallow the use of operator =
+	 */
+	void operator=(Synchronizer &s){}
 };
 
 /*---------------------------------------------------------------------------*/

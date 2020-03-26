@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L0Types/StreamI.h"
+#include "StreamI.h"
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "ClassRegistryItem.h"

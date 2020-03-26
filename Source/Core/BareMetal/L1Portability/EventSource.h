@@ -1,5 +1,5 @@
 /**
- * @file MultipleEventSem.h
+ * @file EventSource.h
  * @brief Header file for class AnyType
  * @date 21 Aug 2019
  * @author Filippo Sartori
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef MULTIPLEEVENTSEM_H_
-#define MULTIPLEEVENTSEM_H_
+#ifndef EVENTSOURCE_DATA_H_
+#define EVENTSOURCE_DATA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,10 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristics.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,MultipleEventSemData.h)
-#include "EventSource.h"
-#include "MilliSeconds.h"
-#include "FastPollingMutexSem.h"
+#include "Atomic.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,PlatformEventSource.h)
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -48,72 +46,66 @@
 
 namespace MARTe{
 
+class  EventSourceData;
 
 /**
- * @brief this object allows waiting on a list of EventSources.
  *
- * @details It is implemented with WaitForMultipleObjectEx or poll()
- * It support sockets, event sems, mutex sems, console input...
- *
- * */
-class MultipleEventSem{
+ */
+class EventSource{
 public:
 	/**
-	 *
+	 * builds an empty EventSource
 	 */
-	MultipleEventSem();
+	EventSource(){
+		data = new EventSourceData ;
+		data->counter = 1;
+	}
 
 	/**
-	 *
+	 * copy constructor. Allows sharing the object
 	 */
-	~MultipleEventSem();
+	EventSource(const EventSource & sourceIn){
+		*this = sourceIn;
+	}
 
-    /**
-     * @brief Waits for an event, limited by the timeout time.
-     * while the list is waited upon, the APIS of this objects are disabled --> return ErrorAccessDenied
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
+	/**
+	 * copy operator. Allows sharing the object
+	 */
+	EventSource operator= (const EventSource & sourceIn){
+		data = sourceIn.data;
+		if (data != NULL){
+			Atomic::Increment(&data->counter);
+		}
+		return *this;
+	}
 
-    /**
-     * @briefs adds the passed event to the list of events to wait for.
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     * Note the EventSource information is copied in an internal structure and any resource associated with the EventSource is deallocated at object destruction.
-     */
-    ErrorManagement::ErrorType AddEvent(EventSource event);
+	/**
+	 * destroys the referenced object only if no references are left
+	 */
+	~EventSource(){
+		if (Atomic::Decrement(&data->counter) == 0){
+			delete data;
+		}
+	}
 
-    /**
-     * @briefs clears all history of events not yet reported. (effective only under linux)
-     */
-    ErrorManagement::ErrorType Reset();
-
-    /**
-     * @return max number of events supported under this platform
-     */
-    static uint32 MaxEventsSupported();
-
+	/**
+	 * Allows access to the important data
+	 */
+	EventSourceData *GetData() const{
+		return data;
+	}
 private:
-
-    /**
-     *
-     */
-    MultipleEventSemData data;
-
-    /**
-     * cannot be used
-     */
-    void operator=(const MultipleEventSem &data){}
-
+	/**
+	 * The actual information to help event handling
+	 */
+	EventSourceData *data;
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_MULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_EVENTSOURCE_H_ */

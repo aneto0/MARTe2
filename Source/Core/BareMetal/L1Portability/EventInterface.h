@@ -1,7 +1,7 @@
 /**
- * @file MultipleEventSem.h
+ * @file EventInterface.h
  * @brief Header file for class AnyType
- * @date 21 Aug 2019
+ * @date 3 Jan 2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,8 +21,9 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef MULTIPLEEVENTSEM_H_
-#define MULTIPLEEVENTSEM_H_
+#ifndef EVENTINTERFACE_H_
+#define EVENTINTERFACE_H_
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,11 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeCharacteristics.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,MultipleEventSemData.h)
 #include "EventSource.h"
-#include "MilliSeconds.h"
-#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -50,61 +47,72 @@ namespace MARTe{
 
 
 /**
- * @brief this object allows waiting on a list of EventSources.
- *
- * @details It is implemented with WaitForMultipleObjectEx or poll()
- * It support sockets, event sems, mutex sems, console input...
- *
- * */
-class MultipleEventSem{
+ * Interface for classes that allow synchronisation on a MultipleEventSem
+ */
+class EventInterface {
+
 public:
+
+	/**
+	 * The event that one would like to capture
+	 */
+	class Event{
+	public:
+		/**
+		 * Initialise with the event code
+		 */
+		inline Event(uint64 code=0){
+			this->code = code;
+		}
+		/**
+		 * Copy constructor
+		 */
+		inline Event(const Event &ev){
+			this->code = ev.code;
+		}
+		/**
+		 * To allow comparison
+		 */
+		inline bool operator==(const Event &ev){
+			return (code == ev.code);
+		}
+		/**
+		 * To allow mask handling
+		 */
+		inline bool In(const Event &evMask){
+			return ((evMask.code & code) != 0);
+		}
+
+
+	private:
+		uint64 code;
+	};
+
+	/**
+	 * No specific event
+	 */
+	static const Event noEvent;
+
 	/**
 	 *
 	 */
-	MultipleEventSem();
+	EventInterface();
 
 	/**
 	 *
 	 */
-	~MultipleEventSem();
+	virtual ~EventInterface();
 
-    /**
-     * @brief Waits for an event, limited by the timeout time.
-     * while the list is waited upon, the APIS of this objects are disabled --> return ErrorAccessDenied
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     */
-    ErrorManagement::ErrorType Wait(const MilliSeconds &timeout);
-
-    /**
-     * @briefs adds the passed event to the list of events to wait for.
-     * @return on success the index of the event in the internal list is encoded in the ErrorrType. use GetNonErrorCode to retrieve it
-     * Note that the call is not multi-thread safe. Use a mutex to allow multiple threads to add events
-     * Note the EventSource information is copied in an internal structure and any resource associated with the EventSource is deallocated at object destruction.
-     */
-    ErrorManagement::ErrorType AddEvent(EventSource event);
-
-    /**
-     * @briefs clears all history of events not yet reported. (effective only under linux)
-     */
-    ErrorManagement::ErrorType Reset();
-
-    /**
-     * @return max number of events supported under this platform
-     */
-    static uint32 MaxEventsSupported();
+	/**
+	 *
+	 */
+	virtual EventSource GetEventSource(EventInterface::Event eventMask= noEvent)const =0 ;
 
 private:
-
-    /**
-     *
-     */
-    MultipleEventSemData data;
-
-    /**
-     * cannot be used
-     */
-    void operator=(const MultipleEventSem &data){}
+	/**
+	 * Disallow copy
+	 */
+	void operator=(EventInterface & ev);
 
 };
 
@@ -114,6 +122,7 @@ private:
 
 
 
+
 } // MARTe
 
-#endif /* SOURCE_CORE_SCHEDULER_L1PORTABILITY_MULTIPLEEVENTSEM_H_ */
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_EVENTINTERFACE_H_ */
