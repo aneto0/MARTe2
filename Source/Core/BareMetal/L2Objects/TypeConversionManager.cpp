@@ -36,7 +36,7 @@ namespace TypeConversionManager{
      */
     SimpleStaticListT<TypeConversionFactoryI*,MaximumNumberOfFactories> factories;
 
-    const TypeConversionOperatorI *TypeConversionManager::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) {
+    const TypeConversionOperatorI *GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare) {
     	uint32 ix = 0;
     	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
     	while ( (ix < factories.NumberOfUsedElements()) && (tco == NULL)){
@@ -48,7 +48,7 @@ namespace TypeConversionManager{
     	return tco;
     }
 
-    bool TypeConversionManager::Register(TypeConversionFactoryI *factory){
+    bool Register(TypeConversionFactoryI *factory){
     	bool ret = false;
     	uint32 n = factories.NumberOfUsedElements();
     	if (n < factories.NumberOfElements()){

@@ -130,7 +130,7 @@ TypeDescriptor Type2TypeDescriptor(char8 c, const TypeDescriptor &tdIn){
    	return td;
 }
 
-uint32 VariableDescriptorLib::Type2Size(char8 c,const TypeDescriptor &tdIn) {
+uint32 Type2Size(char8 c,const TypeDescriptor &tdIn) {
 	const CCString matrixS = "Mm";
 	const CCString vectorS = "Vv";
 	const CCString pointerS = "FfSDZPsdzp";

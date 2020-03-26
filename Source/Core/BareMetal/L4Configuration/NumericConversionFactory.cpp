@@ -396,16 +396,16 @@ public:
 		case TDF_UnsignedInteger:{
 			switch(td.basicTypeSize){
 			case Size8bit:{
-				tco = T3::Do<T2,uint8>(td2,td,isCompare);
+				tco =  T3::template Do<T2,uint8>(td2,td,isCompare);
 			}break;
 			case Size16bit:{
-				tco = T3::Do<T2,uint16>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint16>(td2,td,isCompare);
 			}break;
 			case Size32bit:{
-				tco = T3::Do<T2,uint32>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint32>(td2,td,isCompare);
 			}break;
 			case Size64bit:{
-				tco = T3::Do<T2,uint64>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint64>(td2,td,isCompare);
 			}break;
 			default:{
 			}
@@ -414,16 +414,16 @@ public:
 		case TDF_SignedInteger:{
 			switch(td.basicTypeSize){
 			case Size8bit:{
-				tco = T3::Do<T2,int8>(td2,td,isCompare);
+				tco = T3::template Do<T2,int8>(td2,td,isCompare);
 			}break;
 			case Size16bit:{
-				tco = T3::Do<T2,int16>(td2,td,isCompare);
+				tco = T3::template Do<T2,int16>(td2,td,isCompare);
 			}break;
 			case Size32bit:{
-				tco = T3::Do<T2,int32>(td2,td,isCompare);
+				tco = T3::template Do<T2,int32>(td2,td,isCompare);
 			}break;
 			case Size64bit:{
-				tco = T3::Do<T2,int64>(td2,td,isCompare);
+				tco = T3::template Do<T2,int64>(td2,td,isCompare);
 			}break;
 
 			default:{
@@ -433,10 +433,10 @@ public:
 		case TDF_Float:{
 			switch(td.basicTypeSize){
 			case Size32bit:{
-				tco = T3::Do<T2,float>(td2,td,isCompare);
+				tco = T3::template Do<T2,float>(td2,td,isCompare);
 			}break;
 			case Size64bit:{
-				tco = T3::Do<T2,double>(td2,td,isCompare);
+				tco = T3::template Do<T2,double>(td2,td,isCompare);
 			}break;
 			default:{
 			}
@@ -466,16 +466,16 @@ public:
 		case TDF_UnsignedInteger:{
 			switch(td.basicTypeSize){
 			case Size8bit:{
-				tco = T3::Do<T2,uint8>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint8>(td2,td,isCompare);
 			}break;
 			case Size16bit:{
-				tco = T3::Do<T2,uint16>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint16>(td2,td,isCompare);
 			}break;
 			case Size32bit:{
-				tco = T3::Do<T2,uint32>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint32>(td2,td,isCompare);
 			}break;
 			case Size64bit:{
-				tco = T3::Do<T2,uint64>(td2,td,isCompare);
+				tco = T3::template Do<T2,uint64>(td2,td,isCompare);
 			}break;
 			default:{
 			}
@@ -484,16 +484,16 @@ public:
 		case TDF_SignedInteger:{
 			switch(td.basicTypeSize){
 			case Size8bit:{
-				tco = T3::Do<T2,int8>(td2,td,isCompare);
+				tco = T3::template Do<T2,int8>(td2,td,isCompare);
 			}break;
 			case Size16bit:{
-				tco = T3::Do<T2,int16>(td2,td,isCompare);
+				tco = T3::template Do<T2,int16>(td2,td,isCompare);
 			}break;
 			case Size32bit:{
-				tco = T3::Do<T2,int32>(td2,td,isCompare);
+				tco = T3::template Do<T2,int32>(td2,td,isCompare);
 			}break;
 			case Size64bit:{
-				tco = T3::Do<T2,int64>(td2,td,isCompare);
+				tco = T3::template Do<T2,int64>(td2,td,isCompare);
 			}break;
 
 			default:{
@@ -573,15 +573,15 @@ TypeConversionOperatorI *NumericConversionFactory::GetOperator(const TypeDescrip
 	if (!destTd.SameTypeAndSizeAs(sourceTd))
 		if (destTd.IsBasicType() && sourceTd.IsBasicType()){
 			if (!destTd.IsBitType() && !sourceTd.IsBitType()){
-				tco = FullSelectTCO<FullSelectTCO<N2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+				tco = FullSelectTCO<FullSelectTCO<N2N_SelectTCO> >::Do<void,void>(destTd,sourceTd,isCompare);
 			} else
 			if (destTd.IsBitType() && sourceTd.IsBitType()){
-				tco = IntSelectTCO<IntSelectTCO<B2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+				tco = IntSelectTCO<IntSelectTCO<B2B_SelectTCO> >::Do<void,void>(destTd,sourceTd,isCompare);
 			} else
 			if (destTd.IsBitType() ){
-				tco = IntSelectTCO<FullSelectTCO<N2B_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+				tco = IntSelectTCO<FullSelectTCO<N2B_SelectTCO> >::Do<void,void>(destTd,sourceTd,isCompare);
 			} else {
-				tco = FullSelectTCO<IntSelectTCO<B2N_SelectTCO>>::Do<void,void>(destTd,sourceTd,isCompare);
+				tco = FullSelectTCO<IntSelectTCO<B2N_SelectTCO> >::Do<void,void>(destTd,sourceTd,isCompare);
 			}
 		}
 

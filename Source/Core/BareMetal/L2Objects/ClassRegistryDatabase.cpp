@@ -38,6 +38,7 @@
 #include "LoadableLibrary.h"
 #include "ClassRegistryDatabase.h"
 #include "ErrorManagement.h"
+#include "TypeDescriptor.h"
 
  
 /*---------------------------------------------------------------------------*/
@@ -169,7 +170,7 @@ const ClassRegistryItem *Peek(const uint32 &idx) {
     return cri;
 }
 
-ClassRegistryItem *ClassRegistryDatabase::Find(const TypeDescriptor &targetTd) {
+ClassRegistryItem *Find(const TypeDescriptor &targetTd) {
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
 	if (targetTd.isStructuredData && (classDatabase != NULL_PTR(ClassRegistryIndex *))){

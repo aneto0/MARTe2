@@ -32,10 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L0Types/StreamI.h"
+#include "StreamI.h"
 #include "GrammarInfo.h"
 #include "StaticList.h"
 #include "Token.h"
+#include "CCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -180,7 +181,7 @@ private:
     /**
      * Terminal characters
      */
-    CCString const terminals;
+    CCString  terminals;
 
     /**
      * The begin of single line comment pattern.

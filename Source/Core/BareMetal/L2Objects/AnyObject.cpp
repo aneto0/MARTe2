@@ -29,7 +29,7 @@
 
 #define CHECKANDMAKE(size)									\
 		if (sizeToCopy <= size){							\
-			ReferenceT<AnyObjectT<size>> ao(HeapManager::standardHeapId);\
+			ReferenceT<AnyObjectT<size> > ao(HeapManager::standardHeapId);\
 			if (ao.IsValid()){								\
 				ao->Setup(sizeToCopy,pointer,descriptor);	\
 				reference = ao;								\

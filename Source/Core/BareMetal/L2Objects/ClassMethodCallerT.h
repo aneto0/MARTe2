@@ -33,8 +33,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassMethodCaller.h"
-//#include "ReferenceContainer.h"
 #include "ReferenceT.h"
+#include "ReferenceContainer.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

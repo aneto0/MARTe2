@@ -337,13 +337,15 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
 								 CCString const oneLineCommentBeginIn,
 								 CCString const multipleLineCommentBeginIn,
 								 CCString const multipleLineCommentEndIn):
-	terminals(terminalsIn),
     separators(separatorsIn),
+	terminals(terminalsIn),
     oneLineCommentBegin(oneLineCommentBeginIn),
     multipleLineCommentBegin(multipleLineCommentBeginIn),
     multipleLineCommentEnd(multipleLineCommentEndIn),
 	inputStream(stream)
 	{
+	terminals = terminalsIn;
+
     token = static_cast<Token *>(NULL);
 //    inputStream = &stream;
     lineNumber = 1u;
@@ -477,7 +479,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         }
 
         // the token
-        StreamString tokenString = "";
+        StreamString tokenString = emptyString;
         uint32 bufferIndex = 1u;
         bufferSize--;
 
