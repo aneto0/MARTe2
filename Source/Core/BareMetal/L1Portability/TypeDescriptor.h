@@ -341,6 +341,11 @@ public:
     inline bool IsBasicType() const ;
 
     /**
+     * @brief whether it is a number (int or float, no fractional integers)
+     */
+    inline bool IsNumericType() const ;
+
+    /**
      * @brief whether it is a character string/stream of sort
      */
     inline bool IsCharStreamType() const ;
@@ -508,6 +513,10 @@ bool TypeDescriptor::IsStructuredData() const {
 bool TypeDescriptor::IsBasicType() const {
     return ( !isStructuredData && ((fullType & TDF_Category) == TDF_BasicType) );
 };
+
+bool TypeDescriptor::IsNumericType() const {
+    return ( !isStructuredData && ((fullType == TDF_Float) || (fullType == TDF_SignedInteger) || (fullType == TDF_UnsignedInteger)) );
+}
 
 bool TypeDescriptor::IsBitType() const {
     return hasBitSize;

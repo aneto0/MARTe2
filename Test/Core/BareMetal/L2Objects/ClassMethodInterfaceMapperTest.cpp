@@ -135,7 +135,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_C() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -153,7 +153,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_R() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -171,7 +171,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_C_W() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -191,7 +191,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_C() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -209,7 +209,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_R() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -227,7 +227,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_R_W() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -247,7 +247,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_C() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -267,7 +267,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_R() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -287,7 +287,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_TwoParameters_W_W() {
     SimpleStructuredData parameters;
     uint32 param1 = 3;
     parameters.Write("param1", param1);
-    DynamicCString param2 = "KO";
+    DynamicCString param2 ("KO");
     parameters.Write("param2", param2);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -331,7 +331,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -351,7 +351,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -371,7 +371,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_C_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -393,7 +393,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -413,7 +413,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -433,7 +433,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_R_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -455,7 +455,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -477,7 +477,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -499,7 +499,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_C_W_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -523,7 +523,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -543,7 +543,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -563,7 +563,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_C_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -585,7 +585,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -605,7 +605,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -625,7 +625,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_R_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -647,7 +647,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -669,7 +669,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -691,7 +691,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_R_W_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -715,7 +715,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -737,7 +737,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -759,7 +759,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_C_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -783,7 +783,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -805,7 +805,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -827,7 +827,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_R_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -851,7 +851,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_C() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -875,7 +875,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_R() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -899,7 +899,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_ThreeParameters_W_W_W() {
     parameters.Write("param1", param1);
     float32 param2 = 2.0;
     parameters.Write("param2", param2);
-    DynamicCString param3 = "KO";
+    DynamicCString param3 ("KO");
     parameters.Write("param3", param3);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -927,7 +927,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -949,7 +949,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -971,7 +971,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -995,7 +995,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1017,7 +1017,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1039,7 +1039,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1063,7 +1063,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1087,7 +1087,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1111,7 +1111,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_C_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1137,7 +1137,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1159,7 +1159,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1181,7 +1181,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1205,7 +1205,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1227,7 +1227,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1249,7 +1249,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1273,7 +1273,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1297,7 +1297,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1321,7 +1321,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_R_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1347,7 +1347,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1371,7 +1371,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1395,7 +1395,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1421,7 +1421,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1445,7 +1445,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1469,7 +1469,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1495,7 +1495,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1521,7 +1521,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1547,7 +1547,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_C_W_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1575,7 +1575,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1597,7 +1597,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1619,7 +1619,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1643,7 +1643,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1665,7 +1665,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1687,7 +1687,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1711,7 +1711,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1735,7 +1735,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1759,7 +1759,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_C_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1785,7 +1785,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1807,7 +1807,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1829,7 +1829,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1853,7 +1853,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1875,7 +1875,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1897,7 +1897,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1921,7 +1921,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1945,7 +1945,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1969,7 +1969,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_R_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -1995,7 +1995,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2019,7 +2019,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2043,7 +2043,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2069,7 +2069,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2093,7 +2093,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2117,7 +2117,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2143,7 +2143,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2169,7 +2169,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2195,7 +2195,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_R_W_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2223,7 +2223,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2247,7 +2247,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2271,7 +2271,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2297,7 +2297,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2321,7 +2321,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2345,7 +2345,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2371,7 +2371,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2397,7 +2397,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2423,7 +2423,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_C_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2451,7 +2451,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2475,7 +2475,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2499,7 +2499,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2525,7 +2525,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2549,7 +2549,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2573,7 +2573,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2599,7 +2599,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2625,7 +2625,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2651,7 +2651,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_R_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2679,7 +2679,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2705,7 +2705,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2731,7 +2731,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_C_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2759,7 +2759,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2785,7 +2785,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2811,7 +2811,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_R_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2839,7 +2839,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_C() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2867,7 +2867,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_R() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {
@@ -2895,7 +2895,7 @@ bool ClassMethodInterfaceMapperTest::TestConstructor_FourParameters_W_W_W_W() {
     parameters.Write("param2", param2);
     float64 param3 = -9.0;
     parameters.Write("param3", param3);
-    DynamicCString param4 = "KO";
+    DynamicCString param4 ("KO");
     parameters.Write("param4", param4);
     result &= (mapper.GetMethodCaller() != NULL);
     if (result) {

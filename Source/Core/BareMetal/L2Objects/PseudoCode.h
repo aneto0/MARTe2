@@ -106,6 +106,7 @@ public:
 		stack = NULL_PTR(MemoryElement*);
 		stackStart = NULL_PTR(MemoryElement*);
 		stackMax = NULL_PTR(MemoryElement*);
+		sizeOfConstantsArea=0;
 	}
 
 	/**
@@ -117,6 +118,11 @@ public:
 		uint64 initialisation;
 		VariableInformation(){
 			type = VoidType;
+			initialisation = 0;
+		}
+		VariableInformation(const VariableInformation &in){
+			name = in.name;
+			type = in.type;
 			initialisation = 0;
 		}
 	};
@@ -132,22 +138,33 @@ public:
 	 * Checks existence of name using FindInputVariable
 	 * If not found add new variable
 	 */
-	ErrorManagement::ErrorType AddInputVariable(CCString name);
+	inline ErrorManagement::ErrorType AddInputVariable(CCString name);
 
-	ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *variableInformation);
+	/**
+	 * Looks for a variable of a given name
+	 */
+	inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
+
+	/**
+	 * Looks for a variable at a given location
+	 */
+	inline ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
 	 * Checks existence of name using FindOutputVariable
 	 * If not found add new variable
 	 */
-	ErrorManagement::ErrorType AddOutputVariable(CCString name);
-
-	ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *variableInformation);
+	inline ErrorManagement::ErrorType AddOutputVariable(CCString name);
 
 	/**
-	 * accesses the variable information database
+	 * Looks for a variable of a given name
 	 */
-	VariableInformation BrowseVariables(uint32 index);
+	inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
+
+	/**
+	 * Looks for a variable at a given location
+	 */
+	inline ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
 	 * Cleans memory
@@ -175,6 +192,20 @@ private:
 	MemoryElement *stack;
 	MemoryElement *stackStart;
 	MemoryElement *stackMax;
+	/// how many MemoryElement are used for constants
+	uint32 sizeOfConstantsArea;
+
+	/**
+	 * allows searching for a variable with a given name
+	 */
+	class VariableFinder: public GenericIterator<VariableInformation>{
+	public:
+		VariableFinder(CCString name);
+	    virtual IteratorAction Do(VariableInformation &data,uint32 depth=0);
+	    VariableInformation *variable;
+	private:
+	    DynamicCString variableName;
+	};
 
 	/**
 	 * stack and variable are allocated here
@@ -195,85 +226,17 @@ private:
 	 * the output variable names
 	 */
 	List<VariableInformation> outputVariableInfo;
+
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType AddVariable2DB(CCString name,List<VariableInformation> &db);
+
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 };
-
-template<typename T>
-void Context::Pop(T &value){
-	if (stack ){
-		// adds granularity-1 so that also 1 byte uses 1 slot
-		// stack points to the next free value. so one need to step back of the variable size
-		stack -= (sizeof(T)+sizeof(MemoryElement)-1)/sizeof(MemoryElement);
-		value = *((T *)stack);
-	}
-}
-
-template<typename T>
-void Context::Push(T &value){
-	if (stack ){
-		*((T *)stack) = value;
-		// adds granularity-1 so that also 1 byte uses 1 slot
-		stack += (sizeof(T)+sizeof(MemoryElement)-1)/sizeof(MemoryElement);
-	}
-}
-
-template<typename T>
-T &Context::Variable(PCode variableIndex){
-	// note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
-	return (T&)variablesMemoryPtr[variableIndex];
-}
-
-
-ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
-	ErrorManagement::ErrorType ret;
-
-	// divide RPNCode into lines
-	// extract up to two tokens per line
-	bool finished = false;
-	while (!finished  && ret){
-		DynamicCString line;
-		uint32 limit;
-		RPNCode.DynamicCString::Tokenize(RPNCode,line,limit,"\n","\r",false);
-		finished = (line.GetSize()==0);
-
-		// extract command and parameter
-		DynamicCString command;
-		DynamicCString parameter;
-		if (!finished){
-			CCString lineP = line;
-			lineP = RPNCode.DynamicCString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-			RPNCode.DynamicCString::Tokenize(lineP,parameter,limit," \t,"," \t,",false);
-		}
-
-		// now analyse the command
-		if (command.GetSize() > 0){
-			bool hasParameter = (parameter.GetSize()> 0);
-
-			if (command == "READ"){
-				ret.invalidOperation = !hasParameter;
-				REPORT_ERROR(ret,"READ without variable name");
-				if (ret){
-					ret = AddInputVariable(parameter);
-					COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable",parameter);
-				}
-			}
-			if (command == "WRITE"){
-				ret.invalidOperation = !hasParameter;
-				REPORT_ERROR(ret,"WRITE without variable name");
-				if (ret){
-					ret = AddOutputVariable(parameter);
-					COMPOSITE_REPORT_ERROR(ret,"Failed Adding output variable",parameter);
-				}
-			}
-			if (command == "CONST"){
-
-			}
-		}
-
-	}
-
-	return ret;
-}
-
 
 /** the type of the PCode function */
 typedef void (*Function)(Context & context);
@@ -314,26 +277,11 @@ struct FunctionRecord{
 
 };
 
-/**
- * max number of registered functions
- */
-const uint32 maxFunctions = 16384;
-/**
- * actually available functions
- */
-uint32 availableFunctions = 0;
-/**
- * the database of functions
- */
-FunctionRecord functionRecords[maxFunctions];
+
 /**
  * to register a function
  */
-void RegisterFunction(const FunctionRecord &record){
-	if (availableFunctions < maxFunctions){
-		functionRecords[availableFunctions++] = record;
-	}
-}
+void RegisterFunction(const FunctionRecord &record);
 
 /**
  * generates boiler plate code to register a function
@@ -348,34 +296,6 @@ void RegisterFunction(const FunctionRecord &record){
 		}\
 	} name ## subName ## _RegisterClassInstance;
 
-template <typename T> void Addition(Context &context){
-	T result;
-	T addendum1;
-	T addendum2;
-
-	context.Pop(addendum1);
-	context.Pop(addendum2);
-	result = addendum1+addendum2;
-	context.Push(result);
-}
-
-template <typename T> void Read(Context &context){
-	PCode index;
-	index = context.GetPseudoCode();
-	context.Push(context.Variable<T>(index));
-}
-
-template <typename T> void Write(Context &context){
-	PCode index;
-	index = context.GetPseudoCode();
-	context.Pop(context.Variable<T>(index));
-}
-
-
-REGISTER_PCODE_FUNCTION(ADD,float,2,1,0,Addition<float>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(ADD,double,2,1,0,Addition<double>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(READ,double,0,1,1,Read<double>,Float64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,double,1,0,1,Write<double>,Float64Bit)
 
 
 
@@ -383,6 +303,56 @@ REGISTER_PCODE_FUNCTION(WRITE,double,1,0,1,Write<double>,Float64Bit)
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+static inline uint32 ByteSizeToMemorySize(uint32 byteSize){
+	return (byteSize+sizeof(MemoryElement)-1)/sizeof(MemoryElement);
+}
+
+template<typename T>
+void Context::Pop(T &value){
+	if (stack ){
+		// adds granularity-1 so that also 1 byte uses 1 slot
+		// stack points to the next free value. so one need to step back of the variable size
+		stack -= ByteSizeToMemorySize(sizeof(T));
+		value = *((T *)stack);
+	}
+}
+
+template<typename T>
+void Context::Push(T &value){
+	if (stack ){
+		*((T *)stack) = value;
+		// adds granularity-1 so that also 1 byte uses 1 slot
+		stack += ByteSizeToMemorySize(sizeof(T));
+	}
+}
+
+template<typename T>
+T &Context::Variable(PCode variableIndex){
+	// note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
+	return (T&)variablesMemoryPtr[variableIndex];
+}
+
+
+
+ErrorManagement::ErrorType Context::AddInputVariable(CCString name){
+	return AddVariable2DB(name,inputVariableInfo);
+}
+
+ErrorManagement::ErrorType Context::FindInputVariable(CCString name,VariableInformation *&variableInformation){
+	return FindVariableinDB(name,variableInformation,inputVariableInfo);
+}
+
+ErrorManagement::ErrorType Context::AddOutputVariable(CCString name){
+	return AddVariable2DB(name,outputVariableInfo);
+}
+
+ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
+	return FindVariableinDB(name,variableInformation,outputVariableInfo);
+}
+
+
 
 } //PseudoCode
 

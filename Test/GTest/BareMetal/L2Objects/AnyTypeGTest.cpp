@@ -146,11 +146,11 @@ TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
 }
 
 TEST(AnyTypeGTest, TestAnyType_Char8) {
-    ASSERT_TRUE(AnyTypeTest::ATVerify<char8>(NULL,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
+    ASSERT_TRUE(AnyTypeTest::ATVerify<char8>(0,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
 }
 
 TEST(AnyTypeGTest, TestAnyType_ConstChar8) {
-    ASSERT_TRUE(AnyTypeTest::ATVerify<const char8>(NULL,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
+    ASSERT_TRUE(AnyTypeTest::ATVerify<const char8>(0,TDRANGE(fullType,TDF_Char) | TDRANGE(basicTypeSize,Size8bit) | TDRANGE(dataIsConstant,1)));
 }
 
 TEST(AnyTypeGTest, TestAnyType_Object) {
