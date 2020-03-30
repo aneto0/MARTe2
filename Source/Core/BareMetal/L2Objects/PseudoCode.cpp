@@ -32,14 +32,17 @@ namespace PseudoCode{
  * max number of registered functions
  */
 const uint32 maxFunctions = 16384;
+
 /**
  * actually available functions
  */
 uint32 availableFunctions = 0;
+
 /**
  * the database of functions
  */
 FunctionRecord functionRecords[maxFunctions];
+
 /**
  * to register a function
  */

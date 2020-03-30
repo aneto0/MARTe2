@@ -264,8 +264,7 @@ bool BasicFile::CanSeek() const {
     return IsOpen();
 }
 
-bool BasicFile::Open(const char8 * const pathname,
-                     const uint32 flags) {
+bool BasicFile::Open(CCString pathname, const uint32 flags) {
     bool retVal = true;
 
     if (!IsOpen()) {
@@ -273,7 +272,7 @@ bool BasicFile::Open(const char8 * const pathname,
         uint32 flagsChecked = CheckFlags(flags);
         uint32 linuxFlags = ConvertToLinuxFlags(flagsChecked);
         /*lint -e{9130} Signed value*/
-        properties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
+        properties.identifier = open(pathname.GetList(), static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
         if (!IsOpen()) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
             retVal = false;
@@ -314,8 +313,7 @@ bool BasicFile::Close() {
     return retVal;
 }
 
-bool BasicFile::Read(char8* const output,
-                     uint32 & size) {
+bool BasicFile::Read(char8 * const output, uint32 & size) {
     bool retVal = true;
     if (CanRead()) {
         size = static_cast<uint32>(read(properties.identifier, output, static_cast<size_t>(size)));
@@ -330,14 +328,10 @@ bool BasicFile::Read(char8* const output,
     return retVal;
 }
 
-bool BasicFile::Read(char8 * const output,
-                     uint32 & size,
-                     const TimeoutType &msecTimeout) {
-    bool retVal;
-    fd_set set1;
-    struct timeval timeout;
-    int32 retSelect;
+bool BasicFile::Read(char8 * const  output, uint32 & size, const MilliSeconds &msecTimeout) {
+    bool retVal = false;
     if (CanRead()) {
+        fd_set set1;
         /*lint -e{529} symbol subsequently not used*/
         /*lint -e{1960} violates MISRA 17-0-2*/
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
@@ -351,12 +345,20 @@ bool BasicFile::Read(char8 * const output,
         /*lint -e{703} Shift left of a signed quantity*/
         /*lint -e{1924} C-style cast*/
         FD_SET(properties.identifier, &set1);
-        /*lint -e{9114} implicit conversion of integer cvalue expression*/
-        uint32 secs = msecTimeout.GetTimeoutMSec() / 1000u;
-        uint32 usecs = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-        timeout.tv_sec = static_cast<int64>(secs);
-        timeout.tv_usec = static_cast<int64>(usecs);
-        retSelect = select((properties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
+
+        struct timeval timeout, *pTimeout = NULL;
+        if (msecTimeout.IsValid()){
+            /*lint -e{9114} implicit conversion of integer cvalue expression*/
+            uint32 secs = msecTimeout.GetTimeRaw() / 1000u;
+            uint32 usecs = (msecTimeout.GetTimeRaw() % 1000u) * 1000u;
+            timeout.tv_sec = static_cast<int64>(secs);
+            timeout.tv_usec = static_cast<int64>(usecs);
+        	pTimeout = &timeout;
+        }
+
+        int32 retSelect;
+        retSelect = select((properties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), pTimeout);
+
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
             retVal = false;
@@ -369,14 +371,10 @@ bool BasicFile::Read(char8 * const output,
             retVal = BasicFile::Read(output, size);
         }
     }
-    else {
-        retVal = false;
-    }
     return retVal;
 }
 
-bool BasicFile::Write(const char8 * const input,
-                      uint32 & size) {
+bool BasicFile::Write(const char8 * const input, uint32 & size) {
     bool retVal = true;
     if (CanWrite()) {
         size = static_cast<uint32>(write(properties.identifier, input, static_cast<size_t>(size)));
@@ -391,33 +389,36 @@ bool BasicFile::Write(const char8 * const input,
     return retVal;
 }
 
-bool BasicFile::Write(const char8 * const input,
-                      uint32 & size,
-                      const TimeoutType &msecTimeout) {
-    bool retVal;
-    fd_set set;
-    struct timeval timeout;
-    int32 retSelect;
+bool BasicFile::Write(const char8 * const input, uint32 & size, const MilliSeconds  &msecTimeout) {
+    bool retVal = false;
     if (CanWrite()) {
+
+        fd_set set1;
         /*lint -e{529} symbol subsequently not used*/
         /*lint -e{1960} violates MISRA 17-0-2*/
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
         /*lint -e{717} while(0)*/
         /*lint -e{9146} multiple declaration in a declaration*/
         /*lint -e{909} Implicit conversion*/
-        FD_ZERO(&set);
+        FD_ZERO(&set1);
         /*lint -e{530} Symbol not initialized*/
         /*lint -e{9130} bitwise operator applied to signed underlying type*/
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
         /*lint -e{703} Shift left of a signed quantity*/
         /*lint -e{1924} C-style cast*/
-        FD_SET(properties.identifier, &set);
-        /*lint -e{9114} implicit conversion of integer cvalue expression*/
-        uint32 secs = msecTimeout.GetTimeoutMSec() / 1000u;
-        uint32 usecs = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-        timeout.tv_sec = static_cast<int64>(secs);
-        timeout.tv_usec = static_cast<int64>(usecs);
-        retSelect = select(properties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
+        FD_SET(properties.identifier, &set1);
+
+        struct timeval timeout, *pTimeout = NULL;
+        if (msecTimeout.IsValid()){
+            /*lint -e{9114} implicit conversion of integer cvalue expression*/
+            uint32 secs = msecTimeout.GetTimeRaw() / 1000u;
+            uint32 usecs = (msecTimeout.GetTimeRaw() % 1000u) * 1000u;
+            timeout.tv_sec = static_cast<int64>(secs);
+            timeout.tv_usec = static_cast<int64>(usecs);
+        	pTimeout = &timeout;
+        }
+        int32 retSelect;
+        retSelect = select(properties.identifier + 1, static_cast<fd_set *>(NULL), &set1, static_cast<fd_set *>(NULL), pTimeout);
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write. Error while waiting to write a file");
             retVal = false;
@@ -430,9 +431,7 @@ bool BasicFile::Write(const char8 * const input,
             retVal = BasicFile::Write(input, size);
         }
     }
-    else {
-        retVal = false;
-    }
+
     return retVal;
 }
 
@@ -547,7 +546,7 @@ bool BasicFile::SetSize(const uint64 size) {
     return retVal;
 }
 
-StreamString BasicFile::GetPathName() const {
+CCString BasicFile::GetPathName() const {
     return properties.pathName;
 }
 

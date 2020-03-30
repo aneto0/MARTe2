@@ -47,8 +47,7 @@
 namespace MARTe {
 
 BasicSocket::BasicSocket() :
-        StreamI(),
-        HandleI() {
+        StreamI() {
     connectionSocket = -1;
     isBlocking = true;
 }
@@ -118,14 +117,6 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 
 bool BasicSocket::IsValid() const {
     return (connectionSocket >= 0);
-}
-
-Handle BasicSocket::GetReadHandle() const {
-    return connectionSocket;
-}
-
-Handle BasicSocket::GetWriteHandle() const {
-    return connectionSocket;
 }
 
 bool BasicSocket::IsBlocking() const {

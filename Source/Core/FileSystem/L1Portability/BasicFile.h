@@ -67,7 +67,7 @@ namespace MARTe {
      * @invariant
      *    Size() >= 0;
      */
-    class DLL_API BasicFile: public StreamI, public HandleI {
+    class DLL_API BasicFile: public StreamI,public HandleI {
 
     public:
 
@@ -242,9 +242,7 @@ namespace MARTe {
          *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
          * @return false if the read fails.
          **/
-        virtual bool Read(char8 * const output,
-                uint32 & size,
-                const MilliSeconds &msecTimeout);
+        virtual bool Read(char8 * const output, uint32 & size,const MilliSeconds &msecTimeout);
 
         /**
          * @brief Writes size characters to a file and updates the position and the size.
@@ -283,9 +281,7 @@ namespace MARTe {
          *    ((size > 0) && (this'old->Position() + size > this'old->Size())) => Size() == this'old->Position() + size
          * @return false if the write fails.
          **/
-        virtual bool Write(const char8 * const input,
-                uint32 & size,
-                const MilliSeconds &msecTimeout);
+        virtual bool Write(const char8 * const input, uint32 & size, const MilliSeconds &msecTimeout);
 
         /**
          * @brief Queries the size.

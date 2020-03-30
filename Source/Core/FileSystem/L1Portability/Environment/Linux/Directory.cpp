@@ -34,7 +34,9 @@
 
 #include "Directory.h"
 #include "HeapManager.h"
-#include "MemoryOperationsHelper.h"
+#include "CompositeErrorManagement.h"
+#include "MemoryOperators.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,73 +46,29 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-Directory::Directory(const char8 * const path) :
-        LinkedListable() {
-
-    if (path != NULL) {
-        fname = StringHelper::StringDup(path);
-
-        // fill the struct with the file informations
-        if (stat(path, &directoryHandle) != 0) {
-            //errno = 2 => No such file or directory
-            if (errno != 2) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
-            }
-        }
+Directory::Directory(CCString path) : LinkedListable() {
+	ErrorManagement::ErrorType ret;
+    if (path.GetSize() > 0) {
+    	ret.OSError = (stat(path.GetList(), &directoryHandle) != 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: Failed stat() in initialization: ",errno);
+    } else
+    {
+        ret = Memory::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)));
+        REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
     }
-    else {
-        MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)));
-        if(!MemoryOperationsHelper::Set(&directoryHandle, '\0', static_cast<uint32>(sizeof(DirectoryCore)))) {
-            REPORT_ERROR(ErrorManagement::Warning, "Failed initialization of directory handle");
-        }
-        fname=NULL_PTR(char8*);
-    }
-    /*
-     directoryHandle.st_dev = 0u; // ID of device containing file
-     directoryHandle.st_ino = 0u; // inode number
-     directoryHandle.st_mode = 0u; // protection
-     directoryHandle.st_nlink = 0u; // number of hard links
-     directoryHandle.st_uid = 0u; // user ID of owner
-     directoryHandle.st_gid = 0u; // group ID of owner
-     directoryHandle.st_rdev = 0u; // device ID (if special file)
-     directoryHandle.st_size = 0; // total size, in bytes
-     directoryHandle.st_blksize = 0; // blocksize for filesystem I/O
-     directoryHandle.st_blocks = 0; // number of 512B blocks allocated
-     directoryHandle.st_atime = 0; // time of last access
-     directoryHandle.st_mtime = 0; // time of last modification
-     directoryHandle.st_ctime = 0; // time of last status change
-     */
 }
 
 Directory::~Directory() {
-    if (fname != NULL) {
-        /*lint -e{1551} .Justification: Remove the warning "Function may throw exception '...' in destructor".*/
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-
-        }
-    }
-    fname = static_cast<char8 *>(NULL);
 }
 
-bool Directory::SetByName(const char8 * const path) {
-    bool ret = (path != NULL);
-    if (fname != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            ret = false;
-        }
-    }
-    if (ret) {
-        fname = StringHelper::StringDup(path);
-        if (stat(path, &directoryHandle) != 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
-            ret = false;
-        }
-    }
-    return ret;
+
+bool Directory::SetByName(CCString path) {
+	fileName = path;
+    return true;
 }
 
-const char8 *Directory::GetName() const {
-    return fname;
+CCString Directory::GetName() const {
+    return fileName.GetList();
 }
 
 bool Directory::IsDirectory() const {
@@ -163,30 +121,31 @@ TimeStamp Directory::GetLastAccessTime() {
 }
 
 bool Directory::Create(const bool isFile) {
-    bool ret = (fname != NULL_PTR(char8 *));
+	ErrorManagement::ErrorType ret;
 
-    if (ret) {
-        if (isFile) {
-            /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-21]  [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-            int32 fd = open(fname, static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC));
-            if (fd < 0) {
-                ret = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
-            }
-            else {
-                if (close(fd) < 0) {
-                    ret = false;
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
-                }
-            }
-        }
-        else {
-            ret = (mkdir(fname, static_cast<mode_t>(0777)) == 0);
-        }
+	ret.parametersError = (fileName.GetSize() > 0);
+    REPORT_ERROR(ret, "Error: directory/file name is empty");
 
-        if (stat(fname, &directoryHandle) != 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+    if (ret && isFile) {
+        /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-21]  [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
+        int32 fd = open(fileName.GetList(), static_cast<mode_t>(00777 | O_EXCL | O_CREAT | O_WRONLY | O_TRUNC));
+        ret.OSError = (fd < 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: Failed open(",fileName,")");
+
+        if (ret){
+            ret.OSError = (close(fd) < 0);
+            REPORT_ERROR(ret, "Error: Failed close()");
         }
+    }
+
+    if (ret && !isFile) {
+    	ret.OSError = (mkdir(fileName.GetList(), static_cast<mode_t>(0777)) != 0);
+        COMPOSITE_REPORT_ERROR(ret, "Error: Failed mkdir(",fileName,")");
+    }
+
+    if (ret){
+        ret.OSError =  (stat(fileName.GetList(), &directoryHandle) != 0);
+        REPORT_ERROR(ret, "Error: Failed stat() in initialization");
     }
     return ret;
 }
@@ -195,7 +154,7 @@ bool Directory::Create(const bool isFile) {
  * Justification: Operating system APIs are not linted. In other operating systems Exists() might not be constant.*/
 bool Directory::Exists() {
     struct stat fileStats;
-    bool ok = (stat(fname, &fileStats) == 0);
+    bool ok = (stat(fileName.GetList(), &fileStats) == 0);
     bool isDir = S_ISDIR(fileStats.st_mode);
     bool isFile = S_ISREG(fileStats.st_mode);
     return (ok) ? (isDir || isFile) : (false);
@@ -203,10 +162,10 @@ bool Directory::Exists() {
 
 /*lint -e{1762} [MISRA C++ Rule 9-3-3] in other operating systems Delete() might not be constant*/
 bool Directory::Delete() {
-    bool ok = (fname != NULL_PTR(char8 *));
+    bool ok = (fileName.GetSize() > 0);
     if (ok) {
         /*lint -e{668} fname cannot be NULL (checked in line above)*/
-        ok = (remove(fname) == 0);
+        ok = (remove(fileName.GetList()) == 0);
     }
     return ok;
 }

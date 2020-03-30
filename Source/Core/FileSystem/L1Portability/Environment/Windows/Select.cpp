@@ -88,7 +88,7 @@ Select::~Select() {
 }
 
 #if 0
-static inline bool AddHandle(const HandleI &handle, SetIdentifier &handlesint32 eventMask){
+static inline bool AddHandle(const Handle &handle, SetIdentifier &handlesint32 eventMask){
 
 	ErrorManagement::ErrorType ret;
 
@@ -133,7 +133,7 @@ static inline bool AddHandle(const HandleI &handle, SetIdentifier &handlesint32 
 	return ret;
 }
 
-static inline bool RemoveHandle(const HandleI &handle, SetIdentifier &handles,int32 &highestHandle){
+static inline bool RemoveHandle(const Handle &handle, SetIdentifier &handles,int32 &highestHandle){
 	ErrorManagement::ErrorType ret;
 
     Handle hSocket = handle.GetReadHandle();
@@ -372,9 +372,9 @@ HandleFlags SelectProperties::GetProperties(HANDLE handle) const{
 	return ret;
 }
 
-bool Select::Add(const HandleI &handle,bool readEvent,bool writeEvent,bool exceptEvent){
+bool Select::Add(const Handle &handle,bool readEvent,bool writeEvent,bool exceptEvent){
 	ErrorManagement::ErrorType ret;
-	HANDLE h = handle.GetReadHandle();
+	HANDLE h = handle;
 	ret.internalSetupError = ((h==NULL) || (h == INVALID_HANDLE_VALUE));
 	REPORT_ERROR(ret,"invalid Handle ");
 
@@ -393,9 +393,9 @@ bool Select::Add(const BasicSocket &socket,bool readEvent,bool writeEvent,bool e
 	return ret;
 }
 
-bool Select::Remove(const HandleI &handle,bool readEvent,bool writeEvent,bool exceptEvent){
+bool Select::Remove(const Handle &handle,bool readEvent,bool writeEvent,bool exceptEvent){
 	ErrorManagement::ErrorType ret;
-	HANDLE h = handle.GetReadHandle();
+	HANDLE h = handle;
 	ret = 	selectProperties.Remove(h,HandleFlags(readEvent,writeEvent,exceptEvent));
 	REPORT_ERROR(ret,"selectProperties.Remove(h,readFlag) failed");
 	return ret;
@@ -409,7 +409,7 @@ bool Select::Remove(const BasicSocket &socket,bool readEvent,bool writeEvent,boo
 }
 
 #if 0
-bool Select::AddReadHandle(const HandleI &handle) {
+bool Select::AddReadHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetReadHandle();
 	ret = 	selectProperties.Add(h,readFlag);
@@ -464,7 +464,7 @@ bool Select::AddReadHandle(const HandleI &handle) {
 */
 }
 
-bool Select::AddWriteHandle(const HandleI &handle) {
+bool Select::AddWriteHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetWriteHandle();
 	ret = 	selectProperties.Add(h,writeFlag);
@@ -518,7 +518,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
     */
 }
 
-bool Select::AddExceptionHandle(const HandleI &handle) {
+bool Select::AddExceptionHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetReadHandle();
 	ret =selectProperties.Add(h,exceptionFlag);
@@ -571,7 +571,7 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
 }
 
 
-bool Select::RemoveReadHandle(const HandleI &handle) {
+bool Select::RemoveReadHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetReadHandle();
 	ret = 	selectProperties.Remove(h);
@@ -604,7 +604,7 @@ bool Select::RemoveReadHandle(const HandleI &handle) {
     */
 }
 
-bool Select::RemoveWriteHandle(const HandleI &handle) {
+bool Select::RemoveWriteHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetWriteHandle();
 	ret = 	selectProperties.Remove(h);
@@ -636,7 +636,7 @@ bool Select::RemoveWriteHandle(const HandleI &handle) {
     */
 }
 
-bool Select::RemoveExceptionHandle(const HandleI &handle) {
+bool Select::RemoveExceptionHandle(const Handle &handle) {
 	ErrorManagement::ErrorType ret;
 	Handle h = handle.GetReadHandle();
 	ret = 	selectProperties.Remove(h);
@@ -689,9 +689,8 @@ void Select::ClearAllHandles() {
     return;
 }
 
-bool Select::IsSet(const HandleI &handle) const {
-	Handle h = handle.GetReadHandle();
-	HandleFlags hf = selectProperties.GetProperties(h);
+bool Select::IsSet(const Handle &handle) const {
+	HandleFlags hf = selectProperties.GetProperties(handle);
 	return  hf.hasBeenSelected;
 }
 

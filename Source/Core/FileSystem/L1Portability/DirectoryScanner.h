@@ -80,9 +80,7 @@ public:
      * @param[in] sorter specifies the desired sort of the elements in the list.
      * @return false in case of errors, true otherwise.
      */
-    bool Scan(CCString path,
-              CCString fileMask = "*",
-              SortFilter * const sorter = NULL);
+    bool Scan(CCString path, CCString fileMask = "*", SortFilter * const sorter = NULL);
 
     /**
      * @brief Gets the directory absolute path.

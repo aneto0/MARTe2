@@ -38,6 +38,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
+
 typedef fd_set SetIdentifier;
 
 /**
@@ -65,7 +67,7 @@ struct SelectProperties{
          */
         int32 highestHandle;
 
-}
+};
 
 
 }

@@ -116,9 +116,7 @@ bool BasicTCPSocket::Listen(const uint16 port,
     return ret;
 }
 
-bool BasicTCPSocket::Connect(const char8 * const address,
-                             const uint16 port,
-                             const TimeoutType &timeout) {
+bool BasicTCPSocket::Connect(CCString address, const uint16 port, const MilliSeconds &timeout) {
     destination.SetPort(port);
     bool ret = IsValid();
     bool wasBlocking = IsBlocking();
@@ -132,7 +130,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
         }
         if (ret) {
             source = destination;
-            if (timeout.IsFinite()) {
+            if (timeout.IsValid()) {
                 //set as unblocking if the timeout is finite.
                 if (wasBlocking) {
                     ret = SetBlocking(false);
@@ -154,7 +152,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                     }
                         break;
                     case (EINPROGRESS): {
-                        if (timeout.IsFinite() || (!wasBlocking)) {
+                        if (timeout.IsValid() || (!wasBlocking)) {
                             Select sel;
                             ret = sel.AddWriteHandle(*this);
                             if (ret) {
@@ -162,7 +160,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                                     ret = (sel.WaitUntil(timeout) > 0);
                                 }
                                 else {
-                                    ret = (sel.WaitUntil(0u) > 0);
+                                    ret = (sel.WaitUntil(MilliSeconds(0u,Units::ms)) > 0);
                                 }
                             }
                             if (ret) {
@@ -198,7 +196,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                 }
             }
 
-            if (timeout.IsFinite()) {
+            if (timeout.IsValid()) {
                 if (wasBlocking) {
                     if (!SetBlocking(true)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Socket reset to blocking mode failed");
@@ -235,8 +233,7 @@ bool BasicTCPSocket::IsConnected() const {
 
 }
 
-BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
-                                               BasicTCPSocket *client) {
+BasicTCPSocket *BasicTCPSocket::WaitConnection(const MilliSeconds &timeout, BasicTCPSocket *client) {
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
 
     if (IsValid()) {
@@ -244,7 +241,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
         bool wasBlocking = IsBlocking();
 
         bool ok=true;
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             if(wasBlocking) {
                 if(!SetBlocking(false)) {
                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Socket set to non-block mode failed.");
@@ -273,7 +270,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             }
             else {
                 if (wasBlocking) {
-                    if (timeout.IsFinite()) {
+                    if (timeout.IsValid()) {
                         int32 errorCode;
                         errorCode = sock_errno();
                         if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
@@ -299,7 +296,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
 
             }
         }
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             if(wasBlocking) {
                 if(!SetBlocking(true)) {
                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Socket reset to non-block mode failed.");
@@ -338,8 +335,7 @@ bool BasicTCPSocket::Peek(char8* const buffer,
     return (ret > 0);
 }
 
-bool BasicTCPSocket::Read(char8* const output,
-                          uint32 &size) {
+bool BasicTCPSocket::Read(char8* const output,uint32 &size) {
     uint32 sizetoRead = size;
     size = 0u;
     int32 readBytes = 0;
@@ -369,8 +365,7 @@ bool BasicTCPSocket::Read(char8* const output,
     return (readBytes > 0);
 }
 
-bool BasicTCPSocket::Write(const char8* const input,
-                           uint32 &size) {
+bool BasicTCPSocket::Write(const char8* const input,  uint32 &size) {
     int32 writtenBytes = 0;
     uint32 sizeToWrite = size;
     size = 0u;
@@ -401,18 +396,18 @@ bool BasicTCPSocket::Write(const char8* const input,
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size,
-                          const TimeoutType &timeout) {
+                          const MilliSeconds &timeout) {
 
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
 
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeRaw() / 1000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeRaw() % 1000u) * 1000u);
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
@@ -442,19 +437,17 @@ bool BasicTCPSocket::Read(char8* const output,
     return (size > 0u);
 }
 
-bool BasicTCPSocket::Write(const char8* const input,
-                           uint32 &size,
-                           const TimeoutType &timeout) {
+bool BasicTCPSocket::Write(const char8* const input, uint32 &size, const MilliSeconds &timeout) {
 
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
+            timeoutVal.tv_sec = timeout.GetTimeRaw() / 1000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+            timeoutVal.tv_usec = (timeout.GetTimeRaw() % 1000u) * 1000u;
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {

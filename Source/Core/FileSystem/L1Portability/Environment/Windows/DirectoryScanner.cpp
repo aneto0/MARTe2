@@ -108,6 +108,7 @@ bool DirectoryScanner::Scan(CCString path,
                 else {
                     ListInsert(entry,sorter);
                 }
+                size += entry->GetSize();
         	}
         }
         while(ret && FindNextFile(h, &lpFindFileData));

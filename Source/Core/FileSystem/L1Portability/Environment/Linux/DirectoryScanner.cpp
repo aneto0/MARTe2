@@ -35,9 +35,8 @@
 
 #include "DirectoryScanner.h"
 #include "Directory.h"
-#include "GlobalObjectsDatabase.h"
 #include "HeapManager.h"
-#include "MemoryOperationsHelper.h"
+#include "CompositeErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,185 +64,89 @@ DirectoryScanner::DirectoryScanner() :
 }
 
 void DirectoryScanner::CleanUp() {
+    size = 0;
     LinkedListHolder::CleanUp();
-    size = 0u;
-    if (basePath != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-
-        }
-        basePath = static_cast<char8 *>(NULL);
-    }
 }
 
-/*lint -e{429} . Justification: The pointer will be freed by LinkedListHolder::CleanUp in the destructor.*/
-bool DirectoryScanner::Scan(const char8 * const path,
-                            const char8 *fileMask,
-                            SortFilter * const sorter) {
-
+bool DirectoryScanner::Scan(CCString path, CCString fileMask, SortFilter * const sorter){
+    ErrorManagement::ErrorType ret;
     CleanUp();
-    bool ret = true;
 
-    // if path is not null it is copied into basePath
-    uint32 addressLen = StringHelper::Length(path);
-
-    if ((path != NULL) && (addressLen > 0u)) {
-        basePath = static_cast<char8 *>(HeapManager::Malloc(addressLen + 2u));
-
-        if (!StringHelper::Copy(basePath, path)) {
-            ret = false;
-        }
+    basePath = path;
+    if (basePath.GetSize()==0){
+    	ret = basePath().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
 
-    if (ret) {
-        // if basePath is still NULL it becomes "\" (root)
-        if (basePath == NULL) {
-            basePath = static_cast<char8 *>(HeapManager::Malloc(2u));
-            if (basePath != NULL) {
-                basePath[0] = DIRECTORY_SEPARATOR;
-                basePath[1] = '\0';
-            }
-            else {
-                ret = false;
-            }
-        }
-        else {
-            // otherwise append the separator at the end of basePath
-            uint32 baseAddressLen = StringHelper::Length(basePath);
-            if (baseAddressLen > 0u) {
-                uint32 index = baseAddressLen - 1u;
-                /*lint -e{613} . Justification: The NULL pointer condition is handled*/
-                if (path[index] != DIRECTORY_SEPARATOR) {
-                    basePath[baseAddressLen] = DIRECTORY_SEPARATOR;
-                    index = baseAddressLen + 1u;
-                    basePath[index] = '\0';
-                }
-            }
-            else {
-                ret = false;
-            }
-        }
+    if (ret && (basePath[basePath.GetSize()-1] != DIRECTORY_SEPARATOR)){
+    	ret = basePath().Append((char8)DIRECTORY_SEPARATOR);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
     }
 
-    if (ret) {
-
-        // if the file mask is NULL it becomes * (all the files)
-        if (fileMask == NULL) {
-            fileMask = "*";
-        }
-
-        // copy fileMask in fileFilterSearchMask
-
-        fileFilterSearchMask = static_cast<char8 *>(HeapManager::Malloc(StringHelper::Length(fileMask) + 1u));
-
-        if (!StringHelper::Copy(fileFilterSearchMask, fileMask)) {
-            ret = false;
-        }
-
+    if (fileMask.GetSize()==0){
+    	fileMask = "*";
     }
-    if (ret) {
-        uint32 pathSize = 512u;
-        char8 statAddr[512];
+    DynamicCString searchMask;
+    if (ret){
+    	ret = searchMask().Append(basePath).Append(fileMask);
+        REPORT_ERROR(ret, "Error: Failed appending strings");
+    }
 
-        struct dirent **namelist;
-
+    int32 nOfFiles = 0;
+    struct dirent **namelist = NULL;
+    if (ret){
         // mallocs the filenames matched in basePath into nameList
         /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
-        int32 n = scandir(basePath, &namelist, &fileFilter, &alphasort);
+    	nOfFiles = scandir(basePath.GetList(), &namelist, &fileFilter, &alphasort);
 
-        if (n < 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed scandir()");
-            ret = false;
-        }
-        else {
-            n--;
-            while (n >= 0) {
-                Directory *entry = new Directory();
+    	ret.OSError = (nOfFiles < 0);
+        REPORT_ERROR(ret, "Error: Failed scandir()");
+    }
 
-                // empties statAddr
-                MemoryOperationsHelper::Set(&statAddr[0], '\0', pathSize);
-                if (ret) {
-                    // put in statAddr the base path
-                    if (!StringHelper::Concatenate(&statAddr[0], basePath)) {
-                        ret = false;
-                    }
-                    // put the separator
-                    //if (!StringHelper::Concatenate(&statAddr[0], &DIRECTORY_SEPARATOR)) {
-                    //    ret = false;
-                    //}
-                }
+	// skip last file
+    nOfFiles--;
+    while ((nOfFiles >= 0) && ret) {
 
-                if (ret) {
-                    // concatenate it with the file name to create the full path
-                    if (!StringHelper::Concatenate(&statAddr[0], &(namelist[n]->d_name[0]))) {
-                        ret = false;
-                    }
-                }
+    	CCString fileName(&namelist[nOfFiles]->d_name[0]);
+    	DynamicCString fullPath(basePath);
+    	ret = fullPath().Append(fileName);
 
-                if (ret) {
-
-                    // store the file name
-                    if (!entry->SetByName(&statAddr[0])) {
-                        ret = false;
-                    }
-
-                }
-
-                if (ret) {
-                    if (sorter == NULL) {
-                        ListInsert(entry);
-                    }
-                    else {
-                        ListInsert(entry, sorter);
-                    }
-                }
-                else {
-                    delete entry;
-                    break;
-                }
-
-                bool testOneDot = (StringHelper::Compare(&(namelist[n]->d_name[0]), ".") != 0);
-                bool testTwoDots = (StringHelper::Compare(&(namelist[n]->d_name[0]), "..") != 0);
-                if (testOneDot && testTwoDots) {
-                    size += entry->GetSize();
-                }
-
-                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist[n]));
-                n--;
+    	if (ret && !fileName.IsSameAs(".") && !fileName.IsSameAs("..")){
+            Directory *entry = new Directory(fullPath);
+            if (sorter == NULL) {
+                ListInsert(entry);
             }
-            if (namelist != NULL_PTR(struct dirent **)) {
-                /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
-                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void*&>(namelist));
+            else {
+                ListInsert(entry,sorter);
             }
-        }
+            size += entry->GetSize();
+    	}
+
+        nOfFiles--;
+    }
+
+    if (namelist != NULL_PTR(struct dirent **)) {
+        /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
+        HeapManager::Free(reinterpret_cast<void*&>(namelist));
     }
 
     if (!ret) {
         CleanUp();
     }
 
-    if (!HeapManager::Free(reinterpret_cast<void *&>(fileFilterSearchMask))) {
-
-    }
     return ret;
 }
 
 DirectoryScanner::~DirectoryScanner() {
-    size = 0u;
-    if (basePath != NULL) {
-        /*lint -e{1551} .Justification: Remove the warning "Function may throw exception '...' in destructor".*/
-        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-
-        }
-        basePath = static_cast<char8 *>(NULL);
-    }
+    CleanUp();
 }
 
 uint64 DirectoryScanner::DirectorySize() const {
     return size;
 }
 
-const char8* DirectoryScanner::BasePath() const {
-    return basePath;
+CCString DirectoryScanner::BasePath() const {
+    return basePath.GetList();
 }
 
 }
