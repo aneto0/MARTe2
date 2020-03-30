@@ -95,54 +95,54 @@ SelectTest::~SelectTest() {
 bool SelectTest::TestDefaultConstructor() {
     BasicConsole bc1;
     bc1.Open(BasicConsoleMode::Default);
-    bool ok = (!sel.IsSet(bc1));
+    bool ok = (!sel.IsSet(bc1.GetWriteHandle()));
     bc1.Close();
     return ok;
 }
 
 bool SelectTest::TestAddReadHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddReadHandle(bc);
+    retVal = sel.AddReadHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddReadHandle_SameHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddReadHandle(bc);
-    retVal &= !sel.AddReadHandle(bc);
+    retVal = sel.AddReadHandle(bc.GetReadHandle());
+    retVal &= !sel.AddReadHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddReadHandle_InvalidHandle() {
-    retVal &= !sel.AddReadHandle(bf);
+    retVal &= !sel.AddReadHandle(bf.GetReadHandle());
     return retVal;
 }
 
 bool SelectTest::TestAddWriteHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddWriteHandle(bc);
+    retVal = sel.AddWriteHandle(bc.GetWriteHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddWritedHandle_SameHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddWriteHandle(bc);
-    retVal &= !sel.AddWriteHandle(bc);
+    retVal = sel.AddWriteHandle(bc.GetWriteHandle());
+    retVal &= !sel.AddWriteHandle(bc.GetWriteHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddWritedHandle_InvalidHandle() {
-    retVal = !sel.AddWriteHandle(bf);
+    retVal = !sel.AddReadHandle(bf.GetReadHandle());
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle() {
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddExceptionHandle(bc);
+    retVal = sel.AddExceptionHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
@@ -150,23 +150,23 @@ bool SelectTest::TestAddExceptionHandle() {
 bool SelectTest::TestAddExceptionHandle_SameHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    retVal = sel.AddExceptionHandle(bc);
-    retVal &= !sel.AddExceptionHandle(bc);
+    retVal = sel.AddExceptionHandle(bc.GetReadHandle());
+    retVal &= !sel.AddExceptionHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle_Invalidle() {
 	BasicFile bf;
-    return !sel.AddExceptionHandle(bf);
+    return !sel.AddExceptionHandle(bf.GetReadHandle());
 }
 
 bool SelectTest::TestRemoveReadHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddReadHandle(bc);
-    retVal = sel.RemoveReadHandle(bc);
-    retVal &= !sel.IsSet(bc);
+    sel.AddReadHandle(bc.GetReadHandle());
+    retVal = sel.RemoveReadHandle(bc.GetReadHandle());
+    retVal &= !sel.IsSet(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
@@ -174,24 +174,24 @@ bool SelectTest::TestRemoveReadHandle() {
 bool SelectTest::TestRemoveReadHandle_SameHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddReadHandle(bc);
-    sel.RemoveReadHandle(bc);
-    retVal = !sel.RemoveReadHandle(bc);
+    sel.AddReadHandle(bc.GetReadHandle());
+    sel.RemoveReadHandle(bc.GetReadHandle());
+    retVal = !sel.RemoveReadHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveReadHandle_InvalidHandle() {
 	BasicFile bf;
-    return !sel.RemoveReadHandle(bf);
+    return !sel.RemoveReadHandle(bf.GetReadHandle());
 }
 
 bool SelectTest::TestRemoveWriteHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddWriteHandle(bc);
-    retVal = sel.RemoveWriteHandle(bc);
-    retVal &= !sel.IsSet(bc);
+    sel.AddWriteHandle(bc.GetWriteHandle());
+    retVal = sel.RemoveWriteHandle(bc.GetWriteHandle());
+    retVal &= !sel.IsSet(bc.GetWriteHandle());
     bc.Close();
     return retVal;
 }
@@ -199,24 +199,24 @@ bool SelectTest::TestRemoveWriteHandle() {
 bool SelectTest::TestRemoveWriteHandle_SameHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddWriteHandle(bc);
-    sel.RemoveWriteHandle(bc);
-    retVal = !sel.RemoveWriteHandle(bc);
+    sel.AddWriteHandle(bc.GetWriteHandle());
+    sel.RemoveWriteHandle(bc.GetWriteHandle());
+    retVal = !sel.RemoveWriteHandle(bc.GetWriteHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveWriteHandle_InvalidHandle() {
 	BasicFile bf;
-    return !sel.RemoveWriteHandle(bf);
+    return !sel.RemoveWriteHandle(bf.GetWriteHandle());
 }
 
 bool SelectTest::TestRemoveExceptionHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddExceptionHandle(bc);
-    retVal = sel.RemoveExceptionHandle(bc);
-    retVal &= !sel.IsSet(bc);
+    sel.AddExceptionHandle(bc.GetReadHandle());
+    retVal = sel.RemoveExceptionHandle(bc.GetReadHandle());
+    retVal &= !sel.IsSet(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
@@ -224,15 +224,15 @@ bool SelectTest::TestRemoveExceptionHandle() {
 bool SelectTest::TestRemoveExceptionHandle_SameHandle() {
 	BasicConsole bc;
     bc.Open(BasicConsoleMode::Default);
-    sel.AddExceptionHandle(bc);
-    sel.RemoveExceptionHandle(bc);
-    retVal = !sel.RemoveExceptionHandle(bc);
+    sel.AddExceptionHandle(bc.GetReadHandle());
+    sel.RemoveExceptionHandle(bc.GetReadHandle());
+    retVal = !sel.RemoveExceptionHandle(bc.GetReadHandle());
     bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
-    retVal = !sel.RemoveExceptionHandle(bf);
+    retVal = !sel.RemoveExceptionHandle(bf.GetReadHandle());
     return retVal;
 }
 
@@ -252,27 +252,27 @@ bool SelectTest::TestClearAllHandles() {
         ret.OSError= !fopened;
     }
     if (ret) {
-    	ret.OSError = !sel.AddReadHandle(bc);
+    	ret.OSError = !sel.AddReadHandle(bc.GetReadHandle());
         REPORT_ERROR(ret,"AddReadHandle failed");
     }
     if (ret) {
-    	ret.OSError = !sel.AddReadHandle(bf);
+    	ret.OSError = !sel.AddReadHandle(bf.GetReadHandle());
         REPORT_ERROR(ret,"AddReadHandle failed");
     }
     if (ret) {
-    	ret.OSError = !sel.AddWriteHandle(bc);
+    	ret.OSError = !sel.AddWriteHandle(bc.GetWriteHandle());
         REPORT_ERROR(ret,"AddWriteHandle failed");
     }
     if (ret) {
-    	ret.OSError = !sel.AddWriteHandle(bf);
+    	ret.OSError = !sel.AddReadHandle(bf.GetReadHandle());
         REPORT_ERROR(ret,"AddWriteHandle failed");
     }
     if (ret) {
-    	ret.OSError = !sel.AddExceptionHandle(bc);
+    	ret.OSError = !sel.AddExceptionHandle(bc.GetReadHandle());
         REPORT_ERROR(ret,"AddExceptionHandle failed");
     }
     if (ret) {
-    	ret.OSError = !sel.AddExceptionHandle(bf);
+    	ret.OSError = !sel.AddExceptionHandle(bf.GetReadHandle());
         REPORT_ERROR(ret,"AddExceptionHandle failed");
     }
     if (ret) {
@@ -280,12 +280,22 @@ bool SelectTest::TestClearAllHandles() {
     }
 
     if (ret) {
-    	ret.internalSetupError = sel.IsSet(bc);
+    	ret.internalSetupError = sel.IsSet(bc.GetReadHandle());
         REPORT_ERROR(ret,"IsSet succeeded");
     }
 
     if (ret) {
-    	ret.internalSetupError = sel.IsSet(bf);
+    	ret.internalSetupError = sel.IsSet(bf.GetReadHandle());
+        REPORT_ERROR(ret,"IsSet succeeded");
+    }
+
+    if (ret) {
+    	ret.internalSetupError = sel.IsSet(bc.GetWriteHandle());
+        REPORT_ERROR(ret,"IsSet succeeded");
+    }
+
+    if (ret) {
+    	ret.internalSetupError = sel.IsSet(bf.GetWriteHandle());
         REPORT_ERROR(ret,"IsSet succeeded");
     }
 
@@ -302,10 +312,10 @@ bool SelectTest::TestIsSet() {
     Directory d;
     BasicFile bf;
     bf.Open("Test.txt", BasicFile::ACCESS_MODE_W | BasicFile::FLAG_CREAT);
-    retVal &= sel.AddReadHandle(bf);
+    retVal &= sel.AddReadHandle(bf.GetReadHandle());
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWriteFile, &bf);
     sel.WaitUntil(defaultTo);
-    retVal &= sel.IsSet(bf);
+    retVal &= sel.IsSet(bf.GetReadHandle());
     while (Threads::IsAlive(tid)) {
         MilliSeconds(1,Units::ms);
     }
@@ -329,7 +339,7 @@ bool SelectTest::TestWaitUntil_waitTimeout() {
     bc.Read(buffer,size);
 
     if (ret){
-        ret.fatalError = !sel.AddReadHandle(bc);
+        ret.fatalError = !sel.AddReadHandle(bc.GetSocket());
         REPORT_ERROR(ret,"AddReadHandle failed");
     }
 

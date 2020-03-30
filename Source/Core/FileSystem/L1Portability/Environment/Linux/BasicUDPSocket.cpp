@@ -186,19 +186,17 @@ bool BasicUDPSocket::CanSeek() const {
     return false;
 }
 
-bool BasicUDPSocket::Read(char8 * const output,
-                          uint32 & size,
-                          const TimeoutType &timeout) {
+bool BasicUDPSocket::Read(char8 * const output, uint32 & size,const MilliSeconds &timeout) {
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
 
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeRaw() / 1000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeRaw() % 1000u) * 1000u);
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
@@ -228,19 +226,17 @@ bool BasicUDPSocket::Read(char8 * const output,
     return (size > 0u);
 }
 
-bool BasicUDPSocket::Write(const char8 * const input,
-                           uint32 & size,
-                           const TimeoutType &timeout) {
+bool BasicUDPSocket::Write(const char8 * const input,uint32 & size,const MilliSeconds &timeout) {
     uint32 sizeToWrite = size;
     size = 0u;
     if (IsValid()) {
-        if (timeout.IsFinite()) {
+        if (timeout.IsValid()) {
 
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
+            timeoutVal.tv_sec = timeout.GetTimeRaw() / 1000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+            timeoutVal.tv_usec = (timeout.GetTimeRaw() % 1000u) * 1000u;
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 

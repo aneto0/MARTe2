@@ -46,6 +46,13 @@
 
 namespace MARTe {
 
+const EventInterface::Event BasicSocket::readEvent(0x1);
+const EventInterface::Event BasicSocket::writeEvent(0x2);
+const EventInterface::Event BasicSocket::exceptionEvent(0x4);
+const EventInterface::Event BasicSocket::acceptEvent(0x8);
+const EventInterface::Event BasicSocket::connectionEvent(0x10);
+const EventInterface::Event BasicSocket::closeEvent(0x20);
+
 BasicSocket::BasicSocket() :
         StreamI() {
     connectionSocket = -1;
@@ -122,5 +129,43 @@ bool BasicSocket::IsValid() const {
 bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
+
+// TODO check flags
+EventSource BasicSocket::GetEventSource(EventInterface::Event eventMask) const{
+	ErrorManagement::ErrorType ret;
+	uint16 OSEvents = 0;
+
+	if (eventMask.In(readEvent)){
+		OSEvents |= POLLIN;
+	}
+	if (eventMask.In(writeEvent)){
+		OSEvents |= POLLOUT;
+	}
+	if (eventMask.In(exceptionEvent)){
+		OSEvents |= (POLLRDHUP | POLLPRI );
+	}
+	if (eventMask.In(acceptEvent)){
+		OSEvents |= POLLPRI;
+	}
+	if (eventMask.In(connectionEvent)){
+		OSEvents |= POLLPRI;
+	}
+	if (eventMask.In(closeEvent)){
+		OSEvents |= POLLRDHUP;
+	}
+
+
+	EventSource es;
+	if (ret){
+		EventSourceData *esd = es.GetData();
+		if (esd != NULL_PTR(EventSourceData *)){
+			esd->pfd.fd = connectionSocket;
+			esd->pfd.events = OSEvents;
+		}
+	}
+	return es;
+
+}
+
 
 }
