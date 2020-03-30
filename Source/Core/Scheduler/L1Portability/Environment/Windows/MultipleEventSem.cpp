@@ -95,6 +95,7 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 		}
 	}
 
+	// on sucess return the index of the element that woke up the semaphore
 	if (ret){
 		ret.SetNonErrorCode(index);
 	}

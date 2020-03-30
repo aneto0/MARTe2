@@ -172,6 +172,11 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 }
 
 
+PCode Context::GetPseudoCode(){
+	return 0;
+}
+
+
 /***********************************************************************************************/
 
 template <typename T> void Addition(Context &context){

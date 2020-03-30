@@ -83,14 +83,19 @@ ErrorManagement::ErrorType MultipleEventSem::Wait(const MilliSeconds &timeout){
 	return ret;
 }
 
-ErrorManagement::ErrorType MultipleEventSem::AddEvent(const EventSource &event){
+ErrorManagement::ErrorType MultipleEventSem::AddEvent(EventSource event){
 	ErrorManagement::ErrorType ret;
 
 	ret.unsupportedFeature = (data.handles.GetSize() >= MaxEventsSupported() );
 	COMPOSITE_REPORT_ERROR(ret,"AddEvent supports up to ",MaxEventsSupported()," event sources");
 
 	if (ret){
-		ret.fatalError = !data.handles.Add(event.pfd);
+		ret.fatalError = (event.GetData() == NULL_PTR(EventSourceData*));
+		REPORT_ERROR(ret,"AddEvent(event) with event.data = NULL");
+	}
+
+	if (ret){
+		ret.fatalError = !data.handles.Add(event.GetData()->pfd);
 		COMPOSITE_REPORT_ERROR(ret,"AddEvent StaticList.Add failed after ",data.handles.GetSize()," elements");
 	}
 

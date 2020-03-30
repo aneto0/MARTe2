@@ -320,6 +320,7 @@ AnyType::AnyType(const AnyType &x):variableDescriptor(x.variableDescriptor) {
     /*lint -e{1554} the pointer2Variable is to be shared with the copied AnyType.*/
     this->pointer2Variable = x.pointer2Variable;
 }
+
 #if 0
 AnyType::AnyType(Reference &reference):AnyType(){
 	reference.ToAnyType(*this);

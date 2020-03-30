@@ -31,7 +31,6 @@ namespace MARTe{
  *
  */
 Synchronizer::Synchronizer(){
-	data.eventHandle = NULL;
 }
 
 /**
@@ -42,11 +41,6 @@ Synchronizer::~Synchronizer(){
 }
 
 EventSource Synchronizer::GetEventSource(EventInterface::Event ev) const{
-	EventSource es;
-	EventSourceData *esd = es.GetData();
-	if (esd != NULL_PTR(EventSourceData *)){
-		esd->SetHandle(data.eventHandle,false);
-	}
 	return es;
 }
 
@@ -57,12 +51,18 @@ EventSource Synchronizer::GetEventSource(EventInterface::Event ev) const{
 ErrorManagement::ErrorType Synchronizer::Open(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle != NULL);
-	REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		data.eventHandle = CreateEvent(NULL, TRUE, FALSE, NULL);
-		ret.OSError = (data.eventHandle == NULL);
+		ret.invalidOperation = (esd->handle != NULL);
+		REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
+	}
+
+	if (ret){
+		esd->handle = CreateEvent(NULL, TRUE, FALSE, NULL);
+		ret.OSError = (esd->handle == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Open failed");
 	}
 
@@ -70,20 +70,13 @@ ErrorManagement::ErrorType Synchronizer::Open(){
 }
 
 /**
- * Closes the waitable handle
+ * Closes the writable handle
  */
 ErrorManagement::ErrorType Synchronizer::Close(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
-	// do not report this. It would flood the logs
-//	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
-
-	if (ret){
-		ret.OSError = !CloseHandle(data.eventHandle);
-		REPORT_ERROR(ret,"SetHandle(NULL) => CloseHandle failed");
-		data.eventHandle = NULL;
-	}
+	// detaches or deletes the EventSourceData
+	es.NewSource(new EventSourceData());
 
 	return ret;
 }
@@ -94,11 +87,17 @@ ErrorManagement::ErrorType Synchronizer::Close(){
 ErrorManagement::ErrorType Synchronizer::Post(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.OSError = (SetEvent(data.eventHandle)==0);
+		ret.invalidOperation = (esd->handle == NULL);
+		REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	}
+
+	if (ret){
+		ret.OSError = (SetEvent(esd->handle)==0);
 		REPORT_ERROR(ret,"Synchronyzer::Post() failed");
 	}
 
@@ -111,11 +110,17 @@ ErrorManagement::ErrorType Synchronizer::Post(){
 ErrorManagement::ErrorType Synchronizer::Reset(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (data.eventHandle == NULL);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.OSError = (ResetEvent(data.eventHandle)==0);
+		ret.invalidOperation = (esd->handle == NULL);
+		REPORT_ERROR(ret,"Synchronyzer::Reset() not opened");
+	}
+
+	if (ret){
+		ret.OSError = (ResetEvent(esd->handle)==0);
 		REPORT_ERROR(ret,"Synchronyzer::Reset() failed");
 	}
 
@@ -136,11 +141,17 @@ ErrorManagement::ErrorType Synchronizer::Wait(MilliSeconds timeout){
 		}
 	}
 
-	ret.invalidOperation = (data.eventHandle == NULL);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-	    DWORD wret = WaitForSingleObject(data.eventHandle, time);
+		ret.invalidOperation = (esd->handle == NULL);
+		REPORT_ERROR(ret,"Synchronyzer::Wait() not opened");
+	}
+
+	if (ret){
+	    DWORD wret = WaitForSingleObject(esd->handle, time);
 
 	    ret.OSError = (wret == WAIT_FAILED);
 		REPORT_ERROR(ret,"Synchronyzer::Wait() failed");

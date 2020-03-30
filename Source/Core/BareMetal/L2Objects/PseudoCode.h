@@ -84,6 +84,7 @@ public:
 
 	PCode GetPseudoCode();
 
+
 	/**
     * @brief Context will maintain a single error flag. This function allows setting it
     * @param[in] err is the value to set

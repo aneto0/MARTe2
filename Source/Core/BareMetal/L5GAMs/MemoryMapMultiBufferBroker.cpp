@@ -31,7 +31,7 @@
 
 #include "AdvancedErrorManagement.h"
 #include "MemoryMapMultiBufferBroker.h"
-#include "MemoryOperationsHelper.h"
+//#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

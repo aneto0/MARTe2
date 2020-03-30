@@ -25,6 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -219,10 +220,10 @@ void PrepareTestObject(){
     test1Class.int64PArr[0]= &arr1;
     test1Class.int64PArr[4]= &arr1;
 
-    static int16 (*int16AAPAAp)[mypPAA1*mypPAA2][mypPAA1*mypPAA2] ;
+//    static int16 (*int16AAPAAp)[mypPAA1*mypPAA2][mypPAA1*mypPAA2] ;
 
     {
-    	uint32 i,j;
+    	uint32 i;
     	int16 *pdummy = &int16AAPAA[0][0][0][0];
     	for (i=0;i<mypPAA1*mypPAA2*mypPAA1*mypPAA2;i++) {
     		pdummy[i] = rand();
@@ -316,7 +317,7 @@ static void PrintType(AnyType at){
     DynamicCString string;
 
     err = at.ToString(string);
-	printf("%s",string);
+	printf("%s",string.GetList());
 }
 
 
@@ -602,12 +603,13 @@ static inline void NumSet(DynamicCString &dest,uint64 &source) {
  *
  */
 
-template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
+//template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
+template <typename T, int size1, int size2,int minSize2,typename T2>
 ErrorManagement::ErrorType Check4(ProgressiveTypeCreator &pfstc,TypeDescriptor td){
 	// remapped types for type comparison - in case T is for storing only
 	typedef  T (TA)[size1][size2];
-	typedef  T (*(TB)[size1])[size2];
-	typedef  Vector<T>(TC)[size1];
+//	typedef  T (*(TB)[size1])[size2];
+//	typedef  Vector<T>(TC)[size1];
 	typedef  T2 (TAu)[size1][size2];
 	typedef  T2 (*(TBu)[size1])[size2];
 	typedef  Vector<T2>(TCu)[size1];
@@ -747,7 +749,7 @@ void TestSafeN2N(T1 value)
     double tst = out;
     if (!ret) printf("sat   "); else printf("no sat ");
     ss.Printf("%!(%?) --> %!(%?) !! %!(%?) \n",in,in,out,out,tst,tst);
-    printf("%s",ss.Buffer());
+    printf("%s",ss.Buffer().GetList());
 }
 
 template <typename T1>
@@ -784,7 +786,7 @@ void TestSatInteger(int64 mul1,int64 mul2, int64 sum1, int64 sub1,SaturatedInteg
 	} else {
 		ss.Printf("%i\n",expected.GetData());
 	}
-    printf("%s",ss.Buffer());
+    printf("%s",ss.Buffer().GetList());
 
 }
 
@@ -797,7 +799,7 @@ ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCStrin
 
 	{
 		uint8 *p = reinterpret_cast<uint8 *> (&data);
-		for (int i = 0; i< sizeof(data);i++){
+		for (uint32 i = 0; i< sizeof(data);i++){
 			p[i] = i*i+1;
 		}
 	}
@@ -834,7 +836,7 @@ ErrorManagement::ErrorType CopyCheck(bool expectSuccess, CCString type1S,CCStrin
 
 	ss.Printf(" (%s)x copy to (%s)y and compare y to x:",dataCS,dataCopyCS);
 
-    printf("%s\n",ss.Buffer());
+    printf("%s\n",ss.Buffer().GetList());
     return ret;
 }
 
@@ -889,13 +891,13 @@ REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4S(type1, size1, size2,typeId)\
 MEM_SAVE()\
-ok = Check4<type1,size1,size2> (pfstc,typeId);\
+ok = Check4<type1,size1,size2,size2,type1> (pfstc,typeId);\
 MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
 #define CHECK4R(type1, size1, size2,minSize2,typeId)\
 MEM_SAVE()\
-ok = Check4<type1,size1,size2,minSize2> (pfstc,typeId);\
+ok = Check4<type1,size1,size2,minSize2,type1> (pfstc,typeId);\
 MEM_CHECK()\
 REPORT_ERROR(ok,"*****Check4<>(" #type1 ")Failed\n");
 
@@ -1096,7 +1098,7 @@ void Test(){
     COPY_CHECK_OK(uint32_4_8, uint32_4_8);
     COPY_CHECK_OK(uint32_4_8, Matrix<uint32>);
     COPY_CHECK_OK(uint32_4_8, Matrix<uint64>);
-    COPY_CHECK_NOK(uint32_4_8, Vector<Matrix<uint64>>);
+    COPY_CHECK_NOK(uint32_4_8, Vector<Matrix<uint64> >);
 
     COPY_CHECK_NOK(uint32_4_8_6, uint32);
     COPY_CHECK_NOK(uint32_4_8_6, uint32_4_8);
@@ -1104,16 +1106,16 @@ void Test(){
     COPY_CHECK_NOK(uint32_4_8_6, Matrix<uint32>);
     COPY_CHECK_OK(uint32_4_8_6, uint32_4_8_6);
 
-    COPY_CHECK_OK(uint32_4_8_6, Vector<Matrix<uint32>>);
-    COPY_CHECK_OK(uint32_4_8_6, Matrix<Vector<uint32>>);
+    COPY_CHECK_OK(uint32_4_8_6, Vector<Matrix<uint32> >);
+    COPY_CHECK_OK(uint32_4_8_6, Matrix<Vector<uint32> >);
 
-    COPY_CHECK_NOK(uint32_4_8_6_5, Vector<Matrix<uint32>>);
-    COPY_CHECK_NOK(uint32_4_8_6_5, Matrix<Vector<uint32>>);
-    COPY_CHECK_OK(uint32_4_8_6_5, Matrix<Matrix<uint32>>);
-    COPY_CHECK_OK(uint32_4_8_6_5, Vector<Vector<Matrix<uint32>>>);
+    COPY_CHECK_NOK(uint32_4_8_6_5, Vector<Matrix<uint32> >);
+    COPY_CHECK_NOK(uint32_4_8_6_5, Matrix<Vector<uint32> >);
+    COPY_CHECK_OK(uint32_4_8_6_5, Matrix<Matrix<uint32> >);
+    COPY_CHECK_OK(uint32_4_8_6_5, Vector<Vector<Matrix<uint32> > >);
 
-    COPY_CHECK_NOK(uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32>>>);
-    COPY_CHECK_OK(uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32>>>);
+    COPY_CHECK_NOK(uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32> > >);
+    COPY_CHECK_OK(uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32> > >);
 #endif
 	TestSafeN2N<float,int20>(1e6);
     TestSafeN2N<float,int21>(1e6);
@@ -1142,19 +1144,19 @@ void Test(){
 	Reference zz;
 
 	PrintType(temp);printf("\n");
-	PrintType(zz);printf("\n");
+	PrintType(zz.operator MARTe::AnyType());printf("\n");
 	PrintType(xx);printf("\n");
 
 	xx = temp;
 	PrintType(xx);printf("\n");
 
-	ReferenceT<AnyObjectT<9>> ao8(HeapManager::standardHeapId);
+	ReferenceT<AnyObjectT<9> > ao8(HeapManager::standardHeapId);
 	ao8->Setup(sizeof(temp),&temp,VariableDescriptor(&temp));
 
-	xx = ao8;
+	xx = ao8.operator MARTe::AnyType();
 	PrintType(xx);printf("\n");
         zz = ao8;
-        xx = zz;
+        xx = zz.operator MARTe::AnyType();
 	PrintType(xx);printf("\n");
 
 	printf("test of GetVariableInformation\n");
@@ -1199,32 +1201,26 @@ void Test(){
 
 	}
 
-        {
-    static CCString pippo[5] = {
-            CCString("uno"),
-            CCString("duo"),
-            CCString("tre"),
-            CCString("quattro"),
-            CCString("cinque")
-    };
+    {
+        static CCString pippo[5] = {
+                CCString("uno"),
+                CCString("duo"),
+                CCString("tre"),
+                CCString("quattro"),
+                CCString("cinque")
+        };
 
-    Vector<DynamicCString> pluto;
-    AnyType pippoAT(pippo);
+        Vector<DynamicCString> pluto;
+        AnyType pippoAT(pippo);
 
-    ErrorManagement::ErrorType ret = pippoAT.CopyTo(pluto);
-    REPORT_ERROR(ret,"CopyTo failed");
-    if (ret){
-        for (int i = 0;i< pluto.GetNumberOfElements();i++){
-            printf("%s\n",pluto[i]);
+        ErrorManagement::ErrorType ret = pippoAT.CopyTo(pluto);
+        REPORT_ERROR(ret,"CopyTo failed");
+        if (ret){
+            for (uint32 i = 0;i< pluto.GetNumberOfElements();i++){
+                printf("%s\n",pluto[i].GetList());
         }
     }
-
-
-
-
-
-
-        }
+  }
 }
 }
 
@@ -1238,7 +1234,7 @@ int main(int argc, char **argv){
 	MARTe::PrepareTestObject();
     MARTe::Test();
 
-    MARTe::Vector<float> *p = new MARTe::Vector<float>[4];
+//    MARTe::Vector<float> *p = new MARTe::Vector<float>[4];
     void *q = malloc(sizeof(MARTe::Vector<float>)*4);
 	((MARTe::Vector<float> *)q)[0].InitVector(NULL,0);
 	((MARTe::Vector<float> *)q)[1].InitVector(NULL,0);

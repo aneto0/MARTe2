@@ -275,7 +275,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-ProgressiveTypeCreator::PTCState x;
+//ProgressiveTypeCreator::PTCState x;
 /**
  * Any of the finished states or error
  */
