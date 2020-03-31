@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AdvancedErrorManagement.h"
+#include "BrokerI.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAM.h"
@@ -66,18 +67,19 @@ GAMSchedulerI::~GAMSchedulerI() {
             uint32 s;
             for (s=0u; s<numberOfStates; s++) {
                 uint32 numberOfThreads = states[s].numberOfThreads;
-                uint32 t;
                 if (states[s].threads != NULL_PTR(ScheduledThread *)) {
+                    uint32 t;
                     for (t=0u; t<numberOfThreads; t++) {
                         if (states[s].threads[t].executables != NULL_PTR(ExecutableI **)) {
                             delete [] states[s].threads[t].executables;
                         }
                     }
+                    delete [] states[s].threads;
                 }
-                delete [] states[s].threads;
             }
         }
         delete[] states;
+        states = NULL_PTR(ScheduledState *);
     }
 }
 
@@ -116,6 +118,10 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
     if (ret) {
         numberOfStates = statesContainer->Size();
         states = new ScheduledState[numberOfStates];
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            states[i].numberOfThreads = 0u;
+            states[i].threads = NULL_PTR(ScheduledThread *);
+        }
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> stateElement = statesContainer->Get(i);
             ret = stateElement.IsValid();
@@ -395,6 +401,18 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
             ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
+        }
+        else {
+            BrokerI *broker = dynamic_cast<BrokerI *>(executables[i]);
+            if (broker != NULL_PTR(BrokerI *)) {
+                REPORT_ERROR (ErrorManagement::Warning, "BrokerI %s failed, owner function %s, owner data source %s", broker->GetName(), broker->GetOwnerFunctionName().Buffer(), broker->GetOwnerDataSourceName().Buffer());
+            }
+            else {
+                Object *obj = dynamic_cast<Object *>(executables[i]);
+                if (obj != NULL_PTR(Object *)) {
+                    REPORT_ERROR (ErrorManagement::Warning, "ExecutableI %s failed", obj->GetName());
+                }
+            }
         }
     }
 

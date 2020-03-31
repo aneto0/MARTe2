@@ -68,3 +68,14 @@ TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetFunctionPointer) {
     BrokerITest test;
     ASSERT_TRUE(test.TestGetFunctionPointer());
 }
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetOwnerFunctionName) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetOwnerFunctionName());
+}
+
+TEST(BareMetal_L5GAMs_BrokerIGTest,TestGetOwnerDataSourceName) {
+    BrokerITest test;
+    ASSERT_TRUE(test.TestGetOwnerDataSourceName());
+}
+

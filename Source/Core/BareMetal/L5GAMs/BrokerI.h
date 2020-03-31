@@ -114,6 +114,18 @@ public:
      */
     void *GetFunctionPointer(const uint32 copyIdx) const;
 
+    /**
+     * @brief Gets the name of the function that owns the Broker.
+     * @return the name of the function that owns the Broker.
+     */
+    StreamString GetOwnerFunctionName() const;
+
+    /**
+     * @brief Gets the name of the data source that owns the Broker.
+     * @return the name of the data source that owns the Broker.
+     */
+    StreamString GetOwnerDataSourceName() const;
+
 protected:
     /**
      * @brief Helper function which retrieves from the \a dataSource all the copy information related to the GAM.
@@ -149,6 +161,16 @@ private:
      * Base address of each copy operation in the GAM memory (functionSignalPointers[numberOfCopies]).
      */
     void **functionSignalPointers;
+
+    /**
+     * The data source holder
+     */
+    StreamString ownerDataSourceName;
+
+    /**
+     * The function name
+     */
+    StreamString ownerFunctionName;
 
 };
 
