@@ -405,7 +405,13 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
         else {
             BrokerI *broker = dynamic_cast<BrokerI *>(executables[i]);
             if (broker != NULL_PTR(BrokerI *)) {
-                REPORT_ERROR (ErrorManagement::Warning, "BrokerI %s failed, owner function %s, owner data source %s", broker->GetName(), broker->GetOwnerFunctionName().Buffer(), broker->GetOwnerDataSourceName().Buffer());
+                StreamString ownerFunctionName = broker->GetOwnerFunctionName();
+                StreamString ownerDataSourceName = broker->GetOwnerDataSourceName();
+                StreamString brokerName = "unnamed";
+                if (broker->GetName() != NULL_PTR(const char8 * const)) {
+                    brokerName = broker->GetName();
+                }
+                REPORT_ERROR (ErrorManagement::Warning, "BrokerI %s failed, owner function: %s, owner DataSource: %s", brokerName.Buffer(), ownerFunctionName.Buffer(), ownerDataSourceName.Buffer());
             }
             else {
                 Object *obj = dynamic_cast<Object *>(executables[i]);

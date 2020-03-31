@@ -32,11 +32,56 @@
 #include "GAMSchedulerITest.h"
 #include "GAMTestHelper.h"
 #include "GAMGroup.h"
+#include "MemoryDataSourceI.h"
 #include "RealTimeApplication.h"
 #include "ObjectRegistryDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+class GAMSchedulerIDataSourceTest: public MemoryDataSourceI {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+GAMSchedulerIDataSourceTest    () : MemoryDataSourceI() {
+
+    }
+
+    virtual ~GAMSchedulerIDataSourceTest() {
+
+    }
+
+    virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction) {
+        return "MemoryMapSynchronisedInputBroker";
+    }
+
+    virtual bool Synchronise() {
+        return false;
+    }
+
+    virtual bool PrepareNextState(const char8 * const currentStateName, const char8 * const nextStateName) {
+        return true;
+    }
+
+    virtual bool GetInputBrokers(ReferenceContainer &inputBrokers, const char8* const functionName, void * const gamMemPtr) {
+        bool ok = MemoryDataSourceI::GetInputBrokers(inputBrokers, functionName, gamMemPtr);
+        if (ok) {
+            ok = (inputBrokers.Size() > 0u);
+        }
+        ReferenceT<BrokerI> broker;
+        if (ok) {
+            broker = inputBrokers.Get(0u);
+            ok = broker.IsValid();
+        }
+        if (ok) {
+            broker->SetName("TestBroker");
+        }
+        return ok;
+    }
+};
+
+CLASS_REGISTER(GAMSchedulerIDataSourceTest, "1.0")
+
 class DummyScheduler: public GAMSchedulerI {
 public:
 
@@ -44,11 +89,11 @@ public:
 
 DummyScheduler    ();
 
-    virtual MARTe::ErrorManagement::ErrorType  StartNextStateExecution();
+    virtual MARTe::ErrorManagement::ErrorType StartNextStateExecution();
 
-    virtual MARTe::ErrorManagement::ErrorType  StopCurrentStateExecution();
+    virtual MARTe::ErrorManagement::ErrorType StopCurrentStateExecution();
 
-    void ExecuteThreadCycle(uint32 threadId);
+    bool ExecuteThreadCycle(uint32 threadId);
 
     virtual bool ConfigureScheduler(Reference realTimeApp);
 
@@ -63,7 +108,7 @@ DummyScheduler::DummyScheduler() :
         GAMSchedulerI() {
     scheduledStates = NULL_PTR(ScheduledState * const *);
 }
-MARTe::ErrorManagement::ErrorType  DummyScheduler::StartNextStateExecution() {
+MARTe::ErrorManagement::ErrorType DummyScheduler::StartNextStateExecution() {
     return MARTe::ErrorManagement::NoError;
 }
 
@@ -75,9 +120,9 @@ bool DummyScheduler::ConfigureScheduler(Reference realTimeApp) {
     return ret;
 }
 
-void DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
+bool DummyScheduler::ExecuteThreadCycle(uint32 threadId) {
     ReferenceT<RealTimeApplication> realTimeAppT = realTimeApp;
-    ExecuteSingleCycle(scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].executables,
+    return ExecuteSingleCycle(scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].executables,
                        scheduledStates[realTimeAppT->GetIndex()]->threads[threadId].numberOfExecutables);
 
 }
@@ -85,10 +130,9 @@ MARTe::ErrorManagement::ErrorType DummyScheduler::StopCurrentStateExecution() {
     return MARTe::ErrorManagement::NoError;
 }
 
-void DummyScheduler::CustomPrepareNextState(){
+void DummyScheduler::CustomPrepareNextState() {
 
 }
-
 
 CLASS_REGISTER(DummyScheduler, "1.0")
 /*---------------------------------------------------------------------------*/
@@ -601,4 +645,111 @@ bool GAMSchedulerITest::TestPrepareNextState() {
 
 bool GAMSchedulerITest::TestExecuteSingleCycle() {
     return TestPrepareNextState();
+}
+
+bool GAMSchedulerITest::TestExecuteSingleCycle_False() {
+    static StreamString config = ""
+            "$TestExecuteSingleCycle_False = {"
+            "    Class = RealTimeApplication"
+            "    +Functions = {"
+            "        Class = ReferenceContainer"
+            "        +GAMA = {"
+            "            Class = GAM1"
+            "            InputSignals = {"
+            "                SignalIn1 = {"
+            "                    DataSource = GAMSchedulerIDataSourceTest"
+            "                    Type = uint32"
+            "                    Default = 1"
+            "                }"
+            "            }"
+            "            OutputSignals = {"
+            "                SignalOut = {"
+            "                    DataSource = DDB1"
+            "                    Alias = add1"
+            "                    Type = uint32"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Data = {"
+            "        Class = ReferenceContainer"
+            "        DefaultDataSource = DDB1"
+            "        +DDB1 = {"
+            "            Class = GAMDataSource"
+            "        }"
+            "        +GAMSchedulerIDataSourceTest = {"
+            "            Class = GAMSchedulerIDataSourceTest"
+            "        }"
+            "        +Timings = {"
+            "            Class = TimingDataSource"
+            "        }"
+            "    }"
+            "    +States = {"
+            "        Class = ReferenceContainer"
+            "        +State1 = {"
+            "            Class = RealTimeState"
+            "            +Threads = {"
+            "                Class = ReferenceContainer"
+            "                +Thread1 = {"
+            "                    Class = RealTimeThread"
+            "                    Functions = {GAMA}"
+            "                }"
+            "            }"
+            "        }"
+            "    }"
+            "    +Scheduler = {"
+            "        Class = DummyScheduler"
+            "        TimingDataSource = Timings"
+            "    }"
+            "}";
+
+    config.Seek(0ull);
+    ConfigurationDatabase cdb;
+    StandardParser parser(config, cdb);
+    bool ok = parser.Parse();
+    if (!ok) {
+        printf("\nFAILED PARSING\n");
+    }
+
+    cdb.MoveToRoot();
+    ObjectRegistryDatabase::Instance()->Purge();
+    if (ok) {
+        ok = ObjectRegistryDatabase::Instance()->Initialise(cdb);
+        if (!ok) {
+            printf("\nFAILED INITIALISATION\n");
+        }
+
+    }
+    ReferenceT<RealTimeApplication> app;
+    if (ok) {
+        app = ObjectRegistryDatabase::Instance()->Find("TestExecuteSingleCycle_False");
+        ok = app.IsValid();
+    }
+
+    if (ok) {
+        ok = app->ConfigureApplication();
+    }
+
+    ReferenceT<DummyScheduler> scheduler;
+    if (ok) {
+        scheduler = app->Find("Scheduler");
+        ok = scheduler.IsValid();
+    }
+
+    if (ok) {
+        ok = scheduler->ConfigureScheduler(app);
+    }
+
+    if (ok) {
+        ok = scheduler->PrepareNextState("", "State1");
+    }
+
+    if (ok) {
+        ok = app->StartNextStateExecution();
+    }
+
+    if (ok) {
+        ok = !scheduler->ExecuteThreadCycle(0);
+    }
+    return ok;
 }

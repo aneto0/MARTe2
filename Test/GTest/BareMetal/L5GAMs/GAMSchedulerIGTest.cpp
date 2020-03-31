@@ -71,3 +71,8 @@ TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestExecuteSingleCycle());
 }
+
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle_False) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestExecuteSingleCycle_False());
+}

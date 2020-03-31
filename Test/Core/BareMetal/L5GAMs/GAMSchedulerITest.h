@@ -87,6 +87,11 @@ public:
      */
     bool TestExecuteSingleCycle();
 
+    /**
+     * @brief Tests that the ExecuteSingleCycle fails if a broker returns false (increase the coverage).
+     */
+    bool TestExecuteSingleCycle_False();
+
 };
 
 /*---------------------------------------------------------------------------*/
