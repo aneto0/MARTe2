@@ -73,9 +73,7 @@ public:
     /**
      * @brief Tests that readSize bytes can be successfully read from the stream.
      */
-    bool TestRead_Timeout(MARTe::uint32 bufferSize,
-                          MARTe::uint32 readSize,
-                          MARTe::TimeoutType timeout);
+    bool TestRead_Timeout(MARTe::uint32 bufferSize,  MARTe::uint32 readSize,  MARTe::MilliSeconds timeout);
 
     /**
      * @brief Tests that writeSize bytes can be successfully written to the stream.
@@ -86,9 +84,7 @@ public:
     /**
      * @brief Tests that writeSize bytes can be successfully written to the stream.
      */
-    bool TestWrite_Timeout(MARTe::uint32 bufferSize,
-                           MARTe::uint32 writeSize,
-                           MARTe::TimeoutType timeout);
+    bool TestWrite_Timeout(MARTe::uint32 bufferSize,  MARTe::uint32 writeSize,  MARTe::MilliSeconds timeout);
 
     /**
      * @brief Tests that the Read function returns false when CanRead() == false

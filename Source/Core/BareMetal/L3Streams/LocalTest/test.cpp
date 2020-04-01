@@ -436,11 +436,12 @@ struct RefNameKey{
     static int8 CompareToKey(Reference &ref, const BalancedTreeNodeKey &K){
         const char8* Ks = static_cast<const char8 *> (K);
         CCString key(Ks);
-        return StringHelper::Compare(ref->GetName(),key );
+
+        return ref->GetName().CompareContent(key);
     }
 
     static int8 Compare(Reference &ref, Reference &ref2){
-        return StringHelper::Compare(ref->GetName(),ref2->GetName());
+        return ref->GetName().CompareContent(ref2->GetName());
     }
 };
 

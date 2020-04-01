@@ -24,6 +24,8 @@
 #include "PseudoCode.h"
 #include <stdio.h>
 #include "StaticStack.h"
+#include "AnyType.h"
+
 
 
 namespace MARTe{
@@ -85,7 +87,7 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		TypeDescriptor type;
 		ret = typeStack.Peek(index++,type);
 		if (ret){
-			ret = (type == types[numberOfInputs]);
+			ret = (type.SameAs(types[numberOfInputs]));
 		}
 	}
 
@@ -94,7 +96,7 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		TypeDescriptor type;
 		ret = typeStack.Peek(index++,type);
 		if (ret){
-			ret = (type == types[i]);
+			ret = (type.SameAs(types[i]));
 		}
 	}
 
@@ -220,6 +222,21 @@ IteratorAction VariableFinder::Do(Context::VariableInformation &data,uint32 dept
 		ret.SetActionCode(noAction);
 	}
 	return ret;
+}
+
+
+
+/*************************************************************************/
+
+Context::Context(){
+	variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
+	variablesMaxIndex = 0;
+	codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
+	codeMaxIndex = 0;
+
+	stackPtr = NULL_PTR(DataMemoryElement*);
+	stackStartPtr = NULL_PTR(DataMemoryElement*);
+	stackMaxPtr = NULL_PTR(DataMemoryElement*);
 }
 
 ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
@@ -364,6 +381,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 			var->location = variablesMaxIndex;
 			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
 		}
+		index++;
 	}
 
 	index = 0;
@@ -375,15 +393,21 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 			var->location = variablesMaxIndex;
 			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
 		}
+		index++;
 	}
 
+	// already
 	dataMemory.SetSize(variablesMaxIndex);
-	variablesMemoryPtr = dataMemory.GetDataPointer();
+	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
 
 	// initialise compilation memory
 	StaticStack<TypeDescriptor,32> typeStack;
-	DataMemoryAddress maxDataStackSize = 0;
+	DataMemoryAddress maxDataStackSize = 0;    // max value of dataStackSize
+	DataMemoryAddress dataStackSize = 0;       // current simulated value of data stack size
+	DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
+
+    // clean all the memory
 	codeMemory.Clean();
 
 
@@ -393,6 +417,8 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 		uint32 limit;
 		// divide RPNCode into lines
 		RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+
+printf("new line: %s\n",line.GetList());
 
 		finished = (line.GetSize()==0);
 		// extract command and parameter
@@ -409,13 +435,11 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 		// now analyze the command
 		if (command.GetSize() > 0){
-			CodeMemoryElement code;
 			// assign invalid value
-			CodeMemoryElement code2= TypeCharacteristics<CodeMemoryElement>::MaxValue();
+			CodeMemoryElement code2 = TypeCharacteristics<CodeMemoryElement>::MaxValue();
 			bool matchOutput = false;
 
 			bool hasParameter1 = (parameter1.GetSize()> 0);
-
 
 			// PROCESS CAST command
 			// PUSH type(parameter1) --> TypeStack
@@ -432,7 +456,11 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 					COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
 
 					if (ret){
-						typeStack.Push(td);
+						ret.fatalError = !typeStack.Push(td);
+						REPORT_ERROR(ret,"failed to push type into stack");
+					}
+
+					if (ret){
 						matchOutput = true;
 					}
 				}
@@ -450,20 +478,26 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 				VariableInformation *variableInformation;
 				if (ret){
-					ret = FindInputVariable(parameter1,variableInformation);
+					ret = FindOutputVariable(parameter1,variableInformation);
 					COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
 				}
 
+				TypeDescriptor td;
 				if (ret){
-					TypeDescriptor td;
 					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
 					COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
 				}
 
 				if (ret){
-					typeStack.Push(td);
+					ret.fatalError = !typeStack.Push(td);
+					REPORT_ERROR(ret,"failed to push type into stack");
+				}
+
+				if (ret){
 					matchOutput = true;
+					code2 = variableInformation->location;
+					variableInformation->variableUsed = true;
 				}
 
 			} else
@@ -478,34 +512,41 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 			if (command == readToken){
 				ret.invalidOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
+
+				VariableInformation *variableInformation;
 				if (ret){
-					ret = AddInputVariable(parameter);
-					if (ret.invalidOperation == true){
-						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
-						ret.invalidOperation = false; // mask out the case that we already registered this variable
-
+					// try find an output variable with this name
+					ret = FindOutputVariable(parameter1,variableInformation);
+					if (ret){
+						// not set yet - cannot use
+						ret.notCompleted = (variableInformation->variableUsed != true);
 					}
-					COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
+					// try to see if there is an input variable
+					if (!ret){
+						ret = FindInputVariable(parameter1,variableInformation);
+						COMPOSITE_REPORT_ERROR(ret,"input variable ",parameter1, " not found");
+					}
 				}
-			} else
-			if (command == constToken){
-				ret.invalidOperation = !hasParameter;
-				COMPOSITE_REPORT_ERROR(ret,constToken," without type name");
 
-				// transform the type name into a TypeDescriptor
-				// check it is one of the supported types
 				TypeDescriptor td;
 				if (ret){
-					td = TypeDescriptor(parameter);
+					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
-					COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " is not a numeric supported format");
+					COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
 				}
-				// if supported add up the memory needs
-				if (ret){
-					variablesMaxIndex += ByteSizeToDataMemorySize(td.StorageSize());
-				}
-			}
 
+				if (ret){
+					ret.fatalError = !typeStack.Push(td);
+					REPORT_ERROR(ret,"failed to push type into stack");
+				}
+
+				if (ret){
+					matchOutput = true;
+					code2 = variableInformation->location;
+				}
+
+
+			} else
 
 			// PROCESS CONST command
 			// PUSH type(parameter1) --> TypeStack
@@ -513,34 +554,95 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 			// create AnyType and convert constant from string to variable memory
 			// assign code2 to address of constant
 			// command = READ
+			if (command == constToken){
+				bool hasParameter2 = (parameter2.GetSize()> 0);
 
-			CodeMemoryElement code;
-			DataMemoryAddress dataStackSize;
-			ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
+				ret.invalidOperation = !hasParameter1 || !hasParameter2;
+				COMPOSITE_REPORT_ERROR(ret,constToken," without type name and value");
 
+				// transform the type name into a TypeDescriptor
+				// check it is one of the supported types
+				TypeDescriptor td;
+				if (ret){
+					td = TypeDescriptor(parameter1);
+					ret.unsupportedFeature = !td.IsNumericType();
+					COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
+				}
+
+				// convert and save constant into memory
+				if (ret){
+					//nextConstantAddress
+					AnyType src(parameter2);
+					AnyType dest(td,&variablesMemoryPtr[nextConstantAddress]);
+					ret = src.CopyTo(dest);
+					REPORT_ERROR(ret,"CopyTo failed ");
+				}
+
+				if (ret){
+					ret.fatalError = !typeStack.Push(td);
+					REPORT_ERROR(ret,"failed to push type into stack");
+				}
+
+				if (ret){
+					matchOutput = true;
+					code2 = nextConstantAddress;
+					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
+				}
+			}
+
+			CodeMemoryElement code = 0;
 			if (ret){
+				ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
+			}
+
+			// finally compile!
+			if (ret){
+				// update stackSize
 				if (dataStackSize > maxDataStackSize){
 					maxDataStackSize = dataStackSize;
 				}
 
-				// PUSH CODE
-				// PUSH CODE2
+				ret.fatalError = !codeMemory.Add(code);
+				REPORT_ERROR(ret,"failed to add instruction to code");
+
+				if (ret && (code2 != TypeCharacteristics<CodeMemoryElement>::MaxValue())){
+					ret.fatalError = !codeMemory.Add(code2);
+					REPORT_ERROR(ret,"failed to add instruction to code");
+				}
 			}
-
-
-
 		}
 
-
 	}
+
+	// check that the TypeStack is empty
+	if (ret){
+		ret.internalSetupError = (typeStack.GetSize() > 0);
+		REPORT_ERROR(ret,"operation sequence is incomplete - data left in stack");
+	}
+
+	// final checks
+	if (ret){
+
+		// variables are already done
+
+		// assign the code pointer
+		codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
+		codeMaxIndex  = codeMemory.GetSize();
+
+		// size the stack
+		stack.SetSize(maxDataStackSize);
+		stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
+		stackStartPtr = stackPtr;
+		stackMaxPtr = stackPtr + maxDataStackSize;
+	}
+
+
 	return ret;
 }
 
 
 
 /***********************************************************************************************/
-
-
 
 
 /**
@@ -551,9 +653,9 @@ void RegisterFunction(const FunctionRecord &record);
 /**
  * generates boiler plate code to register a function
  */
-#define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,nParams,function,...)\
+#define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
 	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,nParams,name ## subName ## _FunctionTypes,&function}; \
+	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
 	static const class name ## subName ## RegisterClass { \
 	public:\
 	void name ## subName ## _RegisterClass(){\
@@ -574,22 +676,22 @@ template <typename T> void Addition(Context &context){
 }
 
 template <typename T> void Read(Context &context){
-	PCode index;
+	CodeMemoryElement index;
 	index = context.GetPseudoCode();
 	context.Push(context.Variable<T>(index));
 }
 
 template <typename T> void Write(Context &context){
-	PCode index;
+	CodeMemoryElement index;
 	index = context.GetPseudoCode();
 	context.Pop(context.Variable<T>(index));
 }
 
 
-REGISTER_PCODE_FUNCTION(ADD,float,2,1,0,Addition<float>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(ADD,double,2,1,0,Addition<double>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(READ,double,0,1,1,Read<double>,Float64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,double,1,0,1,Write<double>,Float64Bit)
+REGISTER_PCODE_FUNCTION(ADD,float,2,1,Addition<float>,Float32Bit,Float32Bit,Float32Bit)
+REGISTER_PCODE_FUNCTION(ADD,double,2,1,Addition<double>,Float64Bit,Float64Bit,Float64Bit)
+REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<double>,Float64Bit)
+REGISTER_PCODE_FUNCTION(WRITE,double,1,0,Write<double>,Float64Bit)
 
 
 } //PseudoCode

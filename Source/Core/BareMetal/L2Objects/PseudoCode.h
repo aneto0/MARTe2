@@ -109,17 +109,7 @@ public:
 	/**
 	 *
 	 */
-	Context(){
-		variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
-		variablesMaxIndex = 0;
-		pCodePtr = NULL_PTR(CodeMemoryElement*);
-		codeMaxIndex = 0;
-
-		stackPtr = NULL_PTR(DataMemoryElement*);
-		stackStartPtr = NULL_PTR(DataMemoryElement*);
-		stackMaxPtr = NULL_PTR(DataMemoryElement*);
-		stackMaxIndex = 0;
-	}
+	Context();
 
 	/**
 	 *  element for the list of variables
@@ -129,21 +119,32 @@ public:
 		 *
 		 */
 		DynamicCString name;
+
 		/**
 		 *
 		 */
 		TypeDescriptor type;
+
 		/**
 		 *
 		 */
 		DataMemoryAddress location;
+
+		/**
+		 * set when during compilation to mark that this output variable has already been written
+		 *
+		 */
+		bool variableUsed;
+
 		/**
 		 *
 		 */
 		VariableInformation(){
 			type = VoidType;
 			location = 0;
+			variableUsed = false;
 		}
+
 		/**
 		 *
 		 */
@@ -151,6 +152,7 @@ public:
 			name = in.name;
 			type = in.type;
 			location = 0;
+			variableUsed = false;
 		}
 	};
 
@@ -207,6 +209,11 @@ public:
 	 */
 	Vector<DataMemoryElement> dataMemory;
 
+	/**
+	 * stack and variable are allocated here
+	 */
+	Vector<DataMemoryElement> stack;
+
 	/*
 	 * MEMORY MAP
 	 *
@@ -222,7 +229,6 @@ public:
 	DataMemoryElement *stackPtr;
 	DataMemoryElement *stackStartPtr;
 	DataMemoryElement *stackMaxPtr;
-	DataMemoryAddress stackMaxIndex;
 	/**
 	 * how many MemoryElement are used for constants
 	 */
@@ -241,7 +247,7 @@ public:
 	/**
 	 *
 	 */
-	CodeMemoryElement *codeMemoryPtr;
+	const CodeMemoryElement *codeMemoryPtr;
 
 private:
 

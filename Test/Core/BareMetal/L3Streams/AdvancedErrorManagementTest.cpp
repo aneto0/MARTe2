@@ -34,6 +34,7 @@
 #include "ReferenceT.h"
 #include "Object.h"
 #include "StreamString.h"
+#include "HeapManager.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -58,37 +59,37 @@ public:
     }
 
     bool TestLogging_NoParameters() {
-        MARTe::StreamString logText = "AdvancedErrorManagementTest::TestLogging";
-        REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.Buffer());
+        MARTe::DynamicCString logText("AdvancedErrorManagementTest::TestLogging");
+        REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.GetList());
         MARTe::int32 lineNumber = __LINE__ - 1;
         bool ok = (lastErrorDescription == logText);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.className, "AdvancedErrorManagementTestHelper") == 0);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.objectName, "AdvancedErrorManagementTestHelper.0") == 0);
+        ok &= (lastErrorInfo.className == MARTe::CCString("AdvancedErrorManagementTestHelper"));
+        ok &= (lastErrorInfo.objectName == MARTe::CCString("AdvancedErrorManagementTestHelper.0"));
         ok &= (lastErrorInfo.objectPointer != NULL_PTR(void *));
         ok &= (lastErrorInfo.hrtTime > 0u);
         ok &= (lastErrorInfo.header.isObject == true);
         ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
         ok &= (lastErrorInfo.header.lineNumber == lineNumber);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.fileName, "AdvancedErrorManagementTest.cpp") == 0);
-        ok &= (MARTe::StringHelper::SearchString(lastErrorInfo.functionName, "TestLogging_NoParameters") != NULL_PTR(MARTe::char8 *));
+        ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp") );
+        ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestLogging_NoParameters"))!= 0xFFFFFFFF);
 
         return ok;
     }
 
     bool TestLogging_Parameters() {
-        MARTe::StreamString logText = "AdvancedErrorManagementTest::TestLogging";
-        REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.Buffer());
+        MARTe::DynamicCString logText("AdvancedErrorManagementTest::TestLogging");
+        REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.GetList());
         MARTe::int32 lineNumber = __LINE__ - 1;
         bool ok = (lastErrorDescription == logText);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.className, "AdvancedErrorManagementTestHelper") == 0);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.objectName, "AdvancedErrorManagementTestHelper.0") == 0);
+        ok &= (lastErrorInfo.className == MARTe::CCString("AdvancedErrorManagementTestHelper"));
+        ok &= (lastErrorInfo.objectName == MARTe::CCString("AdvancedErrorManagementTestHelper.0"));
         ok &= (lastErrorInfo.objectPointer != NULL_PTR(void *));
         ok &= (lastErrorInfo.hrtTime > 0u);
         ok &= (lastErrorInfo.header.isObject == true);
         ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
         ok &= (lastErrorInfo.header.lineNumber == lineNumber);
-        ok &= (MARTe::StringHelper::Compare(lastErrorInfo.fileName, "AdvancedErrorManagementTest.cpp") == 0);
-        ok &= (MARTe::StringHelper::SearchString(lastErrorInfo.functionName, "TestLogging_Parameters") != NULL_PTR(MARTe::char8 *));
+        ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp") );
+        ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestLogging_Parameters"))!= 0xFFFFFFFF);
 
         return ok;
     }
@@ -132,19 +133,20 @@ bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters() {
     ok &= (lastErrorInfo.header.isObject == false);
     ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
     ok &= (lastErrorInfo.header.lineNumber == lineNumber);
-    ok &= (MARTe::StringHelper::Compare(lastErrorInfo.fileName, "AdvancedErrorManagementTest.cpp") == 0);
-    ok &= (MARTe::StringHelper::SearchString(lastErrorInfo.functionName, "TestREPORT_ERROR_STATIC_Parameters") != NULL_PTR(MARTe::char8 *));
+    ok &= (lastErrorInfo.fileName == MARTe::CCString("AdvancedErrorManagementTest.cpp"));
+    ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestREPORT_ERROR_STATIC_Parameters"))!=0xFFFFFFFF );
 
     return ok;
 }
 
 bool AdvancedErrorManagementTest::TestREPORT_ERROR_NoParameters() {
-    MARTe::ReferenceT<AdvancedErrorManagementTestHelper> test(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    MARTe::ReferenceT<AdvancedErrorManagementTestHelper> test(MARTe::HeapManager::standardHeapId);
     return test->TestLogging_NoParameters();
 }
 
 bool AdvancedErrorManagementTest::TestREPORT_ERROR_Parameters() {
-    MARTe::ReferenceT<AdvancedErrorManagementTestHelper> test(MARTe::GlobalObjectsDatabase::Instance()->GetStandardHeap());
+
+	MARTe::ReferenceT<AdvancedErrorManagementTestHelper> test(MARTe::HeapManager::standardHeapId);
     return test->TestLogging_Parameters();
 }
 
