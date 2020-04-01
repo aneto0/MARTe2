@@ -36,6 +36,7 @@
 
 #include "CompilerTypes.h"
 #include "StaticList.h"
+#include "Vector.h"
 #include "List.h"
 #include "CCString.h"
 #include "TypeDescriptor.h"
@@ -56,8 +57,10 @@ namespace MARTe{
 
 namespace PseudoCode{
 
-typedef uint16 PCode;
-typedef uint32 MemoryElement;
+typedef uint16 CodeMemoryElement;
+typedef uint32 DataMemoryElement;
+typedef uint16 DataMemoryAddress;
+typedef uint16 CodeMemoryAddress;
 
 /**
  *
@@ -79,11 +82,16 @@ public:
 	template<typename T>
 	inline void Peek(T &value);
 
+	/**
+	 * Reads from code memory
+	 */
+	inline CodeMemoryElement GetPseudoCode();
+
+	/**
+	 * Reads from Data Memory
+	 */
 	template<typename T>
 	T &Variable(uint16 variableIndex);
-
-	PCode GetPseudoCode();
-
 
 	/**
     * @brief Context will maintain a single error flag. This function allows setting it
@@ -102,29 +110,47 @@ public:
 	 *
 	 */
 	Context(){
-		variablesMemoryPtr = NULL_PTR(MemoryElement*);
+		variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
 		variablesMaxIndex = 0;
-		stack = NULL_PTR(MemoryElement*);
-		stackStart = NULL_PTR(MemoryElement*);
-		stackMax = NULL_PTR(MemoryElement*);
-		sizeOfConstantsArea=0;
+		pCodePtr = NULL_PTR(CodeMemoryElement*);
+		codeMaxIndex = 0;
+
+		stackPtr = NULL_PTR(DataMemoryElement*);
+		stackStartPtr = NULL_PTR(DataMemoryElement*);
+		stackMaxPtr = NULL_PTR(DataMemoryElement*);
+		stackMaxIndex = 0;
 	}
 
 	/**
 	 *  element for the list of variables
 	 */
-	struct VariableInformation{
+	struct VariableInformation {
+		/**
+		 *
+		 */
 		DynamicCString name;
+		/**
+		 *
+		 */
 		TypeDescriptor type;
-		uint64 initialisation;
+		/**
+		 *
+		 */
+		DataMemoryAddress location;
+		/**
+		 *
+		 */
 		VariableInformation(){
 			type = VoidType;
-			initialisation = 0;
+			location = 0;
 		}
+		/**
+		 *
+		 */
 		VariableInformation(const VariableInformation &in){
 			name = in.name;
 			type = in.type;
-			initialisation = 0;
+			location = 0;
 		}
 	};
 
@@ -136,36 +162,14 @@ public:
 	ErrorManagement::ErrorType ExtractVariables(CCString RPNCode);
 
 	/**
-	 * Checks existence of name using FindInputVariable
-	 * If not found add new variable
+	 * Looks for a variable at a given location
 	 */
-	inline ErrorManagement::ErrorType AddInputVariable(CCString name);
-
-	/**
-	 * Looks for a variable of a given name
-	 */
-	inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
+	ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
 	 * Looks for a variable at a given location
 	 */
-	inline ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
-
-	/**
-	 * Checks existence of name using FindOutputVariable
-	 * If not found add new variable
-	 */
-	inline ErrorManagement::ErrorType AddOutputVariable(CCString name);
-
-	/**
-	 * Looks for a variable of a given name
-	 */
-	inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
-
-	/**
-	 * Looks for a variable at a given location
-	 */
-	inline ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
+	ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
 	 * Cleans memory
@@ -184,39 +188,85 @@ public:
 	/**
 	 * executes every command in codeMemory
 	 */
-	ErrorManagement::ErrorType Executes(CCString RPNCode);
+	ErrorManagement::ErrorType Execute();
+
+public:
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType  runtimeError;
+
+
+	/**
+	 * stack and variable are allocated here
+	 */
+	StaticList<CodeMemoryElement,32> codeMemory;
+
+	/**
+	 * stack and variable are allocated here
+	 */
+	Vector<DataMemoryElement> dataMemory;
+
+	/*
+	 * MEMORY MAP
+	 *
+	 * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
+	 *                            CONSTANTS
+	 *                            INPUTS
+	 *                            OUTPUTS
+	 * sizeOfCode              PCODE list  --> pCodePtr             : stackStartPtr
+	 * sizeOfStack             STACK       --> stackStartPtr    	: stackMaxPtr
+	 *
+	 */
+
+	DataMemoryElement *stackPtr;
+	DataMemoryElement *stackStartPtr;
+	DataMemoryElement *stackMaxPtr;
+	DataMemoryAddress stackMaxIndex;
+	/**
+	 * how many MemoryElement are used for constants
+	 */
+	DataMemoryAddress variablesMaxIndex;
+
+	/**
+	 *
+	 */
+	DataMemoryElement *variablesMemoryPtr;
+
+	/**
+	 *
+	 */
+	CodeMemoryAddress codeMaxIndex;
+
+	/**
+	 *
+	 */
+	CodeMemoryElement *codeMemoryPtr;
 
 private:
-	ErrorManagement::ErrorType  error;
-	MemoryElement *variablesMemoryPtr;
-	MemoryElement variablesMaxIndex;
-	MemoryElement *stack;
-	MemoryElement *stackStart;
-	MemoryElement *stackMax;
-	/// how many MemoryElement are used for constants
-	uint32 sizeOfConstantsArea;
 
 	/**
-	 * allows searching for a variable with a given name
+	 * Checks existence of name using FindInputVariable
+	 * If not found add new variable
 	 */
-	class VariableFinder: public GenericIterator<VariableInformation>{
-	public:
-		VariableFinder(CCString name);
-	    virtual IteratorAction Do(VariableInformation &data,uint32 depth=0);
-	    VariableInformation *variable;
-	private:
-	    DynamicCString variableName;
-	};
+	inline ErrorManagement::ErrorType AddInputVariable(CCString name);
 
 	/**
-	 * stack and variable are allocated here
+	 * Looks for a variable of a given name
 	 */
-	StaticList<MemoryElement,32> dataMemory;
+	inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
 
 	/**
-	 * stack and variable are allocated here
+	 * Checks existence of name using FindOutputVariable
+	 * If not found add new variable
 	 */
-	StaticList<MemoryElement,32> codeMemory;
+	inline ErrorManagement::ErrorType AddOutputVariable(CCString name);
+
+	/**
+	 * Looks for a variable of a given name
+	 */
+	inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
+
 
 	/**
 	 * the input variable names
@@ -239,64 +289,6 @@ private:
 	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 };
 
-/** the type of the PCode function */
-typedef void (*Function)(Context & context);
-
-/**
- * records information necessary to be able to use it during compilation
- */
-struct FunctionRecord{
-	/**
-	 *	The name of the functions as used in the RPN code
-	 */
-	CCString name;
-
-	/**
-	 * How many stack elements it will consume
-	 */
-	uint16 numberOfInputs;
-
-	/**
-	 * How many stack elements it will produce
-	 */
-	uint16 numberOfOutputs;
-
-	/**
-	 * How many parameters to read from the PseudoCode section
-	 */
-	uint16 numberOfParameters;
-
-	/**
-	 * array of types one for each input and output
-	 */
-	const TypeDescriptor *types;
-
-	/**
-	 * The function code itself
-	 */
-	Function function;
-
-};
-
-
-/**
- * to register a function
- */
-void RegisterFunction(const FunctionRecord &record);
-
-/**
- * generates boiler plate code to register a function
- */
-#define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,nParams,function,...)\
-	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,nParams,name ## subName ## _FunctionTypes,&function}; \
-	static const class name ## subName ## RegisterClass { \
-	public:\
-	void name ## subName ## _RegisterClass(){\
-			RegisterFunction(name ## subName ## _FunctionRecord);\
-		}\
-	} name ## subName ## _RegisterClassInstance;
-
 
 
 
@@ -306,36 +298,38 @@ void RegisterFunction(const FunctionRecord &record);
 /*---------------------------------------------------------------------------*/
 
 
-static inline uint32 ByteSizeToMemorySize(uint32 byteSize){
-	return (byteSize+sizeof(MemoryElement)-1)/sizeof(MemoryElement);
+static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
+	return (byteSize+sizeof(DataMemoryElement)-1)/sizeof(DataMemoryElement);
 }
 
 template<typename T>
 void Context::Pop(T &value){
-	if (stack ){
+	if (stackPtr){
 		// adds granularity-1 so that also 1 byte uses 1 slot
 		// stack points to the next free value. so one need to step back of the variable size
-		stack -= ByteSizeToMemorySize(sizeof(T));
-		value = *((T *)stack);
+		stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
+		value = *((T *)stackPtr);
 	}
 }
 
 template<typename T>
 void Context::Push(T &value){
-	if (stack ){
-		*((T *)stack) = value;
+	if (stackPtr ){
+		*((T *)stackPtr) = value;
 		// adds granularity-1 so that also 1 byte uses 1 slot
-		stack += ByteSizeToMemorySize(sizeof(T));
+		stackPtr += ByteSizeToDataMemorySize(sizeof(T));
 	}
 }
 
 template<typename T>
-T &Context::Variable(PCode variableIndex){
+T &Context::Variable(DataMemoryAddress variableIndex){
 	// note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
 	return (T&)variablesMemoryPtr[variableIndex];
 }
 
-
+CodeMemoryElement Context::GetPseudoCode(){
+	return *codeMemoryPtr++;
+}
 
 ErrorManagement::ErrorType Context::AddInputVariable(CCString name){
 	return AddVariable2DB(name,inputVariableInfo);
@@ -352,7 +346,6 @@ ErrorManagement::ErrorType Context::AddOutputVariable(CCString name){
 ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
 	return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
-
 
 
 } //PseudoCode

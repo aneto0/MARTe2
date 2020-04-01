@@ -25,8 +25,8 @@
 
 namespace MARTe{
 
-SimpleStream::SimpleStream(CCString init){
-	Init(init);
+SimpleStream::SimpleStream(CCString init):DynamicCString(init){
+	index = 0;
 }
 void SimpleStream::Init(CCString init){
 	index = 0;

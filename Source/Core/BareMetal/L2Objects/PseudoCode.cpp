@@ -22,11 +22,107 @@
 */
 
 #include "PseudoCode.h"
+#include <stdio.h>
+#include "StaticStack.h"
+
 
 namespace MARTe{
 
 namespace PseudoCode{
 
+/** the type of the PCode function */
+typedef void (*Function)(Context & context);
+
+/**
+ * records information necessary to be able to use it during compilation
+ */
+struct FunctionRecord{
+	/**
+	 *	The name of the functions as used in the RPN code
+	 */
+	CCString name;
+
+	/**
+	 * How many stack elements it will consume
+	 * !NOTE that for CONST
+	 */
+	uint16  numberOfInputs;
+
+	/**
+	 * How many stack elements it will produce
+	 */
+	uint16 numberOfOutputs;
+
+	/**
+	 * array of types one for each input and output
+	 */
+	const TypeDescriptor *types;
+
+
+	/**
+	 * The function code itself
+	 */
+	Function function;
+
+	/**
+	 * returns true if the name and types matches
+	 * on success replaces the type on the stack with the result type
+	 * also simulates variations on the dataStack
+	 */
+	bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+
+};
+
+bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
+	bool ret = false;
+
+	// match function name
+	ret = (name == nameIn);
+
+	// match first output if matchOutput is set
+	uint32 index = 0U;
+	if (ret && matchOutput){
+		TypeDescriptor type;
+		ret = typeStack.Peek(index++,type);
+		if (ret){
+			ret = (type == types[numberOfInputs]);
+		}
+	}
+
+	// match inputs types
+	for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+		TypeDescriptor type;
+		ret = typeStack.Peek(index++,type);
+		if (ret){
+			ret = (type == types[i]);
+		}
+	}
+
+	// found! commit changes
+	if (ret){
+
+		// remove first output type
+		if (matchOutput){
+			TypeDescriptor type;
+			typeStack.Pop(type);
+		}
+
+		// remove inputs types
+		for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+			TypeDescriptor type;
+			typeStack.Pop(type);
+			dataStackSize -= ByteSizeToDataMemorySize(type.StorageSize());
+		}
+
+		// insert output types
+		for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
+			typeStack.Push(types[i+numberOfInputs]);
+			dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].StorageSize());
+		}
+	}
+
+	return ret;
+}
 
 /**
  * max number of registered functions
@@ -52,13 +148,72 @@ void RegisterFunction(const FunctionRecord &record){
 	}
 }
 
+/**
+ * find the correct PCode and updates the type in the typestack
+ */
+bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress dataStackSize){
 
-Context::VariableFinder::VariableFinder(CCString name){
-	variable = NULL_PTR(VariableInformation*);
+	uint32 i = 0;
+	bool ret = true;
+
+	for (i=0;ret && (i < availableFunctions);i++ ){
+		ret = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+	}
+
+	if (ret){
+		code = i;
+	}
+
+	return ret;
+}
+
+
+
+/*************************************************************************************************************************/
+/*************************************************************************************************************************/
+
+
+/**
+ * The only 4 standard tokens
+ */
+const CCString readToken("READ");
+const CCString writeToken("WRITE");
+const CCString constToken("CONST");
+const CCString castToken("CAST");
+
+
+
+/**
+ * allows searching for a variable with a given name
+ */
+class VariableFinder: public GenericIterator<Context::VariableInformation>{
+public:
+	/**
+	 *
+	 */
+	VariableFinder(CCString name);
+	/**
+	 *
+	 */
+    virtual IteratorAction Do(Context::VariableInformation &data,uint32 depth=0);
+    /**
+     *
+     */
+    Context::VariableInformation *variable;
+private:
+    /**
+     *
+     */
+    DynamicCString variableName;
+};
+
+
+VariableFinder::VariableFinder(CCString name){
+	variable = NULL_PTR(Context::VariableInformation*);
 	variableName = name;
 }
 
-IteratorAction Context::VariableFinder::Do(VariableInformation &data,uint32 depth){
+IteratorAction VariableFinder::Do(Context::VariableInformation &data,uint32 depth){
 	IteratorAction ret;
 	if (data.name == variableName){
 		variable = &data;
@@ -67,6 +222,20 @@ IteratorAction Context::VariableFinder::Do(VariableInformation &data,uint32 dept
 	return ret;
 }
 
+ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
+	ErrorManagement::ErrorType ret;
+
+	VariableFinder finder(name);
+	ret = db.Iterate(finder);
+	REPORT_ERROR(ret,"Iteration failed");
+
+	variableInformation = NULL;
+	if (ret){
+		variableInformation = finder.variable;
+		ret.unsupportedFeature = (variableInformation == NULL);
+	}
+	return ret;
+}
 
 ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableInformation> &db){
 	ErrorManagement::ErrorType ret;
@@ -86,18 +255,17 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableIn
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
+ErrorManagement::ErrorType Context::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
 	ErrorManagement::ErrorType ret;
+	variableInformation = inputVariableInfo[index];
+	ret.outOfRange = (variableInformation == NULL);
+	return ret;
+}
 
-	VariableFinder finder(name);
-	ret = db.Iterate(finder);
-	REPORT_ERROR(ret,"Iteration failed");
-
-	variableInformation = NULL;
-	if (ret){
-		variableInformation = finder.variable;
-		ret.unsupportedFeature = (variableInformation == NULL);
-	}
+ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation){
+	ErrorManagement::ErrorType ret;
+	variableInformation = outputVariableInfo[index];
+	ret.outOfRange = (variableInformation == NULL);
 	return ret;
 }
 
@@ -105,14 +273,16 @@ ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInfor
 ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 	ErrorManagement::ErrorType ret;
 
+	variablesMaxIndex = 0;
+
 	bool finished = false;
 	while (!finished  && ret){
 		DynamicCString line;
 		uint32 limit;
 		// divide RPNCode into lines
-		DynamicCString::Tokenize(RPNCode,line,limit,"\n","\r",false);
+		RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
 		finished = (line.GetSize()==0);
-
+//printf("LINE = %s\n",line.GetList());
 		// extract command and parameter
 		DynamicCString command;
 		DynamicCString parameter;
@@ -127,21 +297,23 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 		if (command.GetSize() > 0){
 			bool hasParameter = (parameter.GetSize()> 0);
 
-			if (command == "READ"){
+			if (command == readToken){
 				ret.invalidOperation = !hasParameter;
-				REPORT_ERROR(ret,"READ without variable name");
+				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 				if (ret){
 					ret = AddInputVariable(parameter);
 					if (ret.invalidOperation == true){
-						COMPOSITE_REPORT_ERROR(ret,"variable",parameter,"already registered");
+						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
 						ret.invalidOperation = false; // mask out the case that we already registered this variable
+
 					}
 					COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
 				}
 			} else
-			if (command == "WRITE"){
+			if (command == writeToken){
 				ret.invalidOperation = !hasParameter;
-				REPORT_ERROR(ret,"WRITE without variable name");
+				COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
+
 				if (ret){
 					ret = AddOutputVariable(parameter);
 					if (ret.invalidOperation == true){
@@ -151,9 +323,9 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 					COMPOSITE_REPORT_ERROR(ret,"Failed Adding output variable ",parameter);
 				}
 			} else
-			if (command == "CONST"){
+			if (command == constToken){
 				ret.invalidOperation = !hasParameter;
-				REPORT_ERROR(ret,"CONST without type name");
+				COMPOSITE_REPORT_ERROR(ret,constToken," without type name");
 
 				// transform the type name into a TypeDescriptor
 				// check it is one of the supported types
@@ -161,11 +333,11 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 				if (ret){
 					td = TypeDescriptor(parameter);
 					ret.unsupportedFeature = !td.IsNumericType();
-					COMPOSITE_REPORT_ERROR(ret,"Failed Adding constant of type ",parameter);
+					COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " is not a numeric supported format");
 				}
 				// if supported add up the memory needs
 				if (ret){
-					sizeOfConstantsArea = ByteSizeToMemorySize(td.StorageSize());
+					variablesMaxIndex += ByteSizeToDataMemorySize(td.StorageSize());
 				}
 			}
 		}
@@ -175,12 +347,220 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 }
 
 
-PCode Context::GetPseudoCode(){
-	return 0;
+
+
+ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
+	ErrorManagement::ErrorType ret;
+
+	// check that all variables have a type and allocate variables + constants
+
+	uint32 index = 0;
+	PseudoCode::Context::VariableInformation *var;
+	while(BrowseInputVariable(index,var) && ret){
+		ret.unsupportedFeature = !var->type.IsNumericType();
+		COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
+
+		if (ret){
+			var->location = variablesMaxIndex;
+			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
+		}
+	}
+
+	index = 0;
+	while(BrowseOutputVariable(index,var)){
+		ret.unsupportedFeature = !var->type.IsNumericType();
+		COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
+
+		if (ret){
+			var->location = variablesMaxIndex;
+			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
+		}
+	}
+
+	dataMemory.SetSize(variablesMaxIndex);
+	variablesMemoryPtr = dataMemory.GetDataPointer();
+
+
+	// initialise compilation memory
+	StaticStack<TypeDescriptor,32> typeStack;
+	DataMemoryAddress maxDataStackSize = 0;
+	codeMemory.Clean();
+
+
+	bool finished = false;
+	while (!finished  && ret){
+		DynamicCString line;
+		uint32 limit;
+		// divide RPNCode into lines
+		RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+
+		finished = (line.GetSize()==0);
+		// extract command and parameter
+		DynamicCString command;
+		DynamicCString parameter1;
+		DynamicCString parameter2;
+		if (!finished){
+			CCString lineP = line;
+			// extract up to two tokens per line
+			lineP = DynamicCString::Tokenize(lineP,command,limit," \t,"," \t,",false);
+			lineP = DynamicCString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
+			DynamicCString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
+		}
+
+		// now analyze the command
+		if (command.GetSize() > 0){
+			CodeMemoryElement code;
+			// assign invalid value
+			CodeMemoryElement code2= TypeCharacteristics<CodeMemoryElement>::MaxValue();
+			bool matchOutput = false;
+
+			bool hasParameter1 = (parameter1.GetSize()> 0);
+
+
+			// PROCESS CAST command
+			// PUSH type(parameter1) --> TypeStack
+			// matchOutput = true;
+			if (command == castToken){
+				ret.invalidOperation = !hasParameter1;
+				COMPOSITE_REPORT_ERROR(ret,command," without type name");
+				if (ret){
+					// transform the type name into a TypeDescriptor
+					// check it is one of the supported types
+					TypeDescriptor td;
+					td = TypeDescriptor(parameter1);
+					ret.unsupportedFeature = !td.IsNumericType();
+					COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
+
+					if (ret){
+						typeStack.Push(td);
+						matchOutput = true;
+					}
+				}
+			} else
+
+			// PROCESS WRITE command
+			// find_variable(parameter1) on outputs
+			//    mark variable as already written
+			// PUSH variable.type --> TypeStack
+			// matchOutput = true;
+			// assign code2 to address of variable
+			if (command == writeToken){
+				ret.invalidOperation = !hasParameter1;
+				COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
+
+				VariableInformation *variableInformation;
+				if (ret){
+					ret = FindInputVariable(parameter1,variableInformation);
+					COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
+				}
+
+				if (ret){
+					TypeDescriptor td;
+					td = variableInformation->type;
+					ret.unsupportedFeature = !td.IsNumericType();
+					COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
+				}
+
+				if (ret){
+					typeStack.Push(td);
+					matchOutput = true;
+				}
+
+			} else
+
+			// PROCESS READ command
+			// find_variable(parameter1)
+			//    search first on outputs if already written
+			//    search then on inputs
+			// PUSH variable.type --> TypeStack
+			// matchOutput = true;
+			// assign code2 to address of variable
+			if (command == readToken){
+				ret.invalidOperation = !hasParameter1;
+				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
+				if (ret){
+					ret = AddInputVariable(parameter);
+					if (ret.invalidOperation == true){
+						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
+						ret.invalidOperation = false; // mask out the case that we already registered this variable
+
+					}
+					COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
+				}
+			} else
+			if (command == constToken){
+				ret.invalidOperation = !hasParameter;
+				COMPOSITE_REPORT_ERROR(ret,constToken," without type name");
+
+				// transform the type name into a TypeDescriptor
+				// check it is one of the supported types
+				TypeDescriptor td;
+				if (ret){
+					td = TypeDescriptor(parameter);
+					ret.unsupportedFeature = !td.IsNumericType();
+					COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " is not a numeric supported format");
+				}
+				// if supported add up the memory needs
+				if (ret){
+					variablesMaxIndex += ByteSizeToDataMemorySize(td.StorageSize());
+				}
+			}
+
+
+			// PROCESS CONST command
+			// PUSH type(parameter1) --> TypeStack
+			// matchOutput = true;
+			// create AnyType and convert constant from string to variable memory
+			// assign code2 to address of constant
+			// command = READ
+
+			CodeMemoryElement code;
+			DataMemoryAddress dataStackSize;
+			ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
+
+			if (ret){
+				if (dataStackSize > maxDataStackSize){
+					maxDataStackSize = dataStackSize;
+				}
+
+				// PUSH CODE
+				// PUSH CODE2
+			}
+
+
+
+		}
+
+
+	}
+	return ret;
 }
 
 
+
 /***********************************************************************************************/
+
+
+
+
+/**
+ * to register a function
+ */
+void RegisterFunction(const FunctionRecord &record);
+
+/**
+ * generates boiler plate code to register a function
+ */
+#define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,nParams,function,...)\
+	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
+	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,nParams,name ## subName ## _FunctionTypes,&function}; \
+	static const class name ## subName ## RegisterClass { \
+	public:\
+	void name ## subName ## _RegisterClass(){\
+			RegisterFunction(name ## subName ## _FunctionRecord);\
+		}\
+	} name ## subName ## _RegisterClassInstance;
+
 
 template <typename T> void Addition(Context &context){
 	T result;
