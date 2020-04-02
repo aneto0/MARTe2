@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "CharBufferTest.h"
+#include "DynamicCString.h"
 
 using namespace MARTe;
 
@@ -126,10 +127,9 @@ bool CharBufferTest::TestSetBufferSize(uint32 size,
     return (ret == expected);
 }
 
-bool CharBufferTest::TestSetBufferReferenceConst(const char8* bufferIn,
-                                                 uint32 size) {
+bool CharBufferTest::TestSetBufferReferenceConst(const char8* bufferIn, uint32 size) {
 
-    uint32 inputSize = StringHelper::Length(bufferIn);
+    uint32 inputSize = CCString(bufferIn).GetSize();
     CharBuffer myCharBuffer;
 
     myCharBuffer.SetBufferReference(bufferIn, size);
@@ -149,19 +149,18 @@ bool CharBufferTest::TestSetBufferReferenceConst(const char8* bufferIn,
         size = inputSize;
     }
 
-    return (StringHelper::CompareN(bufferIn, myCharBuffer.Buffer(), size) == 0);
+    return (CCString(bufferIn).CompareContent(myCharBuffer.Buffer(), size) == 0);
 
 }
 
-bool CharBufferTest::TestSetBufferReferenceNonConst(const char8* bufferIn,
-                                                    uint32 size) {
+bool CharBufferTest::TestSetBufferReferenceNonConst(const char8* bufferIn, uint32 size) {
 
-    char8 buffer[32];
-    StringHelper::Copy(buffer, bufferIn);
-    uint32 inputSize = StringHelper::Length(bufferIn);
+    DynamicCString buffer(bufferIn);
+
+    uint32 inputSize = CCString(bufferIn).GetSize();
     CharBuffer myCharBuffer;
 
-    myCharBuffer.SetBufferReference(buffer, size);
+    myCharBuffer.SetBufferReference(buffer.GetList(), size);
 
     if (myCharBuffer.Size() != size) {
         return false;
@@ -178,7 +177,7 @@ bool CharBufferTest::TestSetBufferReferenceNonConst(const char8* bufferIn,
         size = inputSize;
     }
 
-    return (StringHelper::CompareN(bufferIn, myCharBuffer.Buffer(), size) == 0);
+    return (CCString(bufferIn).CompareContent(myCharBuffer.Buffer(), size) == 0);
 
 }
 
@@ -189,11 +188,10 @@ bool CharBufferTest::TestBuffer() {
         return false;
     }
 
-    char8 bufferIn[32];
-    StringHelper::Copy(bufferIn, "HelloWorld");
-    myCharBuffer.SetBufferReference(bufferIn, 1u);
+    DynamicCString bufferIn("HelloWorld");
+    myCharBuffer.SetBufferReference(bufferIn.GetList(), 1u);
 
-    return (StringHelper::Compare(bufferIn, myCharBuffer.Buffer()) == 0);
+    return (bufferIn == myCharBuffer.Buffer());
 }
 
 bool CharBufferTest::TestBufferReference() {
@@ -203,15 +201,14 @@ bool CharBufferTest::TestBufferReference() {
         return false;
     }
 
-    char8 bufferIn[32];
-    StringHelper::Copy(bufferIn, "HelloWorld");
-    myCharBuffer.SetBufferReference(bufferIn, 1u);
+    DynamicCString bufferIn("HelloWorld");
+    myCharBuffer.SetBufferReference(bufferIn.GetList(), 1u);
 
     //write access
     char8 *ret = myCharBuffer.BufferReference();
-    ret[10] = '!';
-    ret[11] = '\0';
-    return (StringHelper::Compare(ret, "HelloWorld!") == 0);
+
+    bufferIn().Append('!');
+    return (CCString(ret) == "HelloWorld!");
 
 }
 
@@ -260,7 +257,7 @@ bool CharBufferTest::TestIsAllocated() {
 
     myCharBuffer.SetBufferSize(10);
 
-    return (myCharBuffer.IsAllocated()) && (StringHelper::Compare(bufferIn, "HelloWorld") == 0);
+    return (myCharBuffer.IsAllocated()) && (CCString(bufferIn) == "HelloWorld") ;
 
 }
 
@@ -293,15 +290,14 @@ bool CharBufferTest::TestCanWrite() {
         return false;
     }
 
-    char8 bufferIn2[32];
-    StringHelper::Copy(bufferIn2, bufferIn);
+    DynamicCString bufferIn2(bufferIn);
 
-    myCharBuffer.SetBufferReference(bufferIn2, 10);
+    myCharBuffer.SetBufferReference(bufferIn2.GetList(), 10);
 
     if (!myCharBuffer.CanWrite()) {
         return false;
     }
 
-    return (StringHelper::Compare(bufferIn, "HelloWorld") == 0);
+    return (CCString(bufferIn) ==  "HelloWorld") ;
 
 }

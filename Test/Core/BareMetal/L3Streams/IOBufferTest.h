@@ -486,7 +486,9 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
         Clear(ioBuffer);
         for (uint32 j = 0u; j < ndims; j++) {
         	StaticCString<64> s(buffer[j]);
-        	s = table[i].vectorInput[j];
+        	s().SetSize(0);
+        	s().Append(table[i].vectorInput[j]);
+
 //            StringHelper::Copy(&buffer[j][0], table[i].vectorInput[j]);
         }
         AnyType at(buffer);
@@ -505,8 +507,7 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     while (table[i].expected != NULL) {
         Clear(ioBuffer);
         for (uint32 j = 0u; j < ndims; j++) {
-        	StaticCString<64> s(&bufferHeap[j][0]);
-        	s = table[i].vectorInput[j];
+        	Memory::Copy(bufferHeap[j].GetDataPointer(),table[i].vectorInput[j], CCString(table[i].vectorInput[j]).GetSize()+1);
         }
         AnyType at(bufferHeap);
 
@@ -536,8 +537,9 @@ bool IOBufferTest::TestPrintCArrayMatrix(const TestPrintFormattedTableMatrix<con
         Clear(ioBuffer);
         for (uint32 j = 0u; j < nRows; j++) {
             for (uint32 k = 0u; k < nCols; k++) {
-            	StaticCString<64> s(&buffer[j][k][0]);
-            	s = table[i].matrixInput[j][k];
+            	StaticCString<64> s(buffer[j][k]);
+            	s().SetSize(0);
+            	s().Append(table[i].matrixInput[j][k]);
             }
         }
         AnyType at(buffer);

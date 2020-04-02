@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BufferedStreamITest.h"
+#include "StreamString.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -40,15 +41,15 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 bool BufferedStreamITest::TestDefaultConstructor() {
     DummySingleBufferedStream myStream;
-    return (myStream.GetTimeout() == TTInfiniteWait);
+    return (myStream.GetTimeout().IsInfinite());
 }
 
 bool BufferedStreamITest::TestAnyType() {
     DummySingleBufferedStream myStream;
     AnyType anyStream = myStream;
-    bool ok = anyStream.GetDataPointer() == &myStream;
-    ok = !anyStream.GetTypeDescriptor().isConstant;
-    ok = (anyStream.GetTypeDescriptor().numberOfBits == 0u);
+    bool ok = anyStream.GetVariablePointer() == &myStream;
+    ok = !anyStream.GetFullVariableDescriptor().GetSummaryTypeDescriptor().dataIsConstant;
+    ok = (anyStream.GetFullVariableDescriptor().GetSummaryTypeDescriptor().IsSpecialType());
     return ok;
 }
 
@@ -69,14 +70,16 @@ bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
 
     while (result && (row->toTokenize != NULL)) {
         myStream.Clear();
-        StringHelper::Copy(myStream.buffer, row->toTokenize);
-        const uint32 bufferSize = 32;
-        char buffer[bufferSize];
+        uint32 size = CCString(row->toTokenize).GetSize();
+        myStream.Write(row->toTokenize,size);
+//        const uint32 bufferSize = 32;
+//        char buffer[bufferSize];
         char saveTerminator;
         uint32 t = 0u;
+        StreamString buffer;
 
-        while (myStream.GetToken(buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
-            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+        while (myStream.GetToken(buffer, row->terminators, saveTerminator, row->skipCharacters)) {
+            if (buffer != row->expectedResult[t]) {
                 result = false;
             }
             if (row->saveTerminatorResult[t] != saveTerminator) {
@@ -94,8 +97,7 @@ bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
     return result;
 }
 
-bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
-                                      const TokenTestTableRow *table) {
+bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -105,7 +107,8 @@ bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
 
     while (result && (row->toTokenize != NULL)) {
         myStream.Clear();
-        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        uint32 size = CCString(row->toTokenize).GetSize();
+        myStream.Write(row->toTokenize,size);
         char saveTerminator;
         uint32 t = 0u;
 
@@ -116,7 +119,7 @@ bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
 
         while (myStream.GetToken(outputStream, row->terminators, saveTerminator, row->skipCharacters)) {
             outputStream.FlushAndResync();
-            if (StringHelper::Compare(outputStream.Buffer(), row->expectedResult[t]) != 0) {
+            if (CCString(outputStream.Buffer()) != row->expectedResult[t]) {
                 result = false;
             }
             if (row->saveTerminatorResult[t] != saveTerminator) {
@@ -136,8 +139,7 @@ bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
     return result;
 }
 
-bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
-                                 const SkipTokensTestTableRow *table) {
+bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,   const SkipTokensTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -147,16 +149,24 @@ bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
 
     while (result && (row->toTokenize != NULL)) {
         myStream.Clear();
-        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        uint32 size = CCString(row->toTokenize).GetSize();
+        myStream.Write(row->toTokenize,size);
+
         myStream.SkipTokens(row->nOfSkipTokens, row->terminators);
 
-        const uint32 bufferSize = 32;
-        char buffer[bufferSize];
+//        const uint32 bufferSize = 32;
+//       char buffer[bufferSize];
         uint32 t = 0u;
         while (row->expectedResult[t] != NULL) {
             char saveTerminator;
-            myStream.GetToken(buffer, row->terminators, bufferSize, saveTerminator, NULL);
-            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+
+            DummySingleBufferedStream buffer;
+            buffer.SetBufferSize(bufferSize);
+            buffer.Seek(0);
+            buffer.Clear();
+
+            myStream.GetToken(buffer, row->terminators, saveTerminator, emptyString);
+            if (CCString(buffer.Buffer()) != row->expectedResult[t]) {
                 result = false;
             }
             t++;
@@ -167,85 +177,87 @@ bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
     return result;
 }
 
-bool BufferedStreamITest::TestGetLine(uint32 bufferSize,
-                              bool skipCharacter) {
+bool BufferedStreamITest::TestGetLine(uint32 bufferSize, bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
     const char8 *lines[] = { "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", " Aenean commodo ligula eget dolor.",
             "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
             "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.", };
-    char8 line[512];
-    line[0] = '\0';
 
-    StringHelper::Concatenate(line, lines[0]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[1]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[2]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[3]);
 
-    StringHelper::Copy(myStream.buffer, line);
+//    char8 line[512];
+//    line[0] = '\0';
+    DynamicCString line;
 
-    bufferSize = 128;
-    char8 buffer[128];
+    line().Append(lines[0]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[1]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[2]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[3]);
+
+    uint32 size = line.GetSize();
+    myStream.Write(line.GetList(),size);
+
     uint32 i;
     for (i = 0; i < 4; i++) {
-        myStream.GetLine(buffer, bufferSize, skipCharacter);
-        result &= (StringHelper::Compare(buffer, lines[i]) == 0);
+    	//TODO use a CString here --> enable GetToken to DynamicCString
+    	StreamString testline;
+        myStream.GetLine(testline, skipCharacter);
+        result &= (testline ==  lines[i]);
     }
     return result;
 }
 
-bool BufferedStreamITest::TestGetLine_Stream(uint32 bufferSize,
-                                     bool skipCharacter) {
+bool BufferedStreamITest::TestGetLine_Stream(uint32 bufferSize, bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
     const char8 *lines[] = { "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", " Aenean commodo ligula eget dolor.",
             "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
             "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.", };
-    char8 line[512];
-    line[0] = '\0';
 
-    StringHelper::Concatenate(line, lines[0]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[1]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[2]);
-    if (skipCharacter) {
-        StringHelper::Concatenate(line, "\r");
-    }
-    StringHelper::Concatenate(line, "\n");
-    StringHelper::Concatenate(line, lines[3]);
 
-    StringHelper::Copy(myStream.buffer, line);
+//    char8 line[512];
+//    line[0] = '\0';
+    DynamicCString line;
 
-    bufferSize = 128;
-    DummySingleBufferedStream output;
-    output.SetBufferSize(bufferSize);
+    line().Append(lines[0]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[1]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[2]);
+    if (skipCharacter) {
+        line().Append('\r');
+    }
+    line().Append('\n');
+    line().Append(lines[3]);
+
+    uint32 size = line.GetSize();
+    myStream.Write(line.GetList(),size);
+
     uint32 i;
     for (i = 0; i < 4; i++) {
-        output.Clear();
-        myStream.GetLine(output, skipCharacter);
-        output.FlushAndResync();
-        result &= (StringHelper::Compare(output.Buffer(), lines[i]) == 0);
+    	StreamString testline;
+        myStream.GetLine(testline, skipCharacter);
+        result &= (testline ==  lines[i]);
     }
     return result;
 }
@@ -257,7 +269,7 @@ bool BufferedStreamITest::TestCopy(uint32 bufferSize) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     myStream.Copy(line);
-    return (StringHelper::Compare(myStream.buffer, line) == 0);
+    return (CCString(myStream.buffer) ==  line);
 }
 
 bool BufferedStreamITest::TestCopy_Stream(uint32 bufferSize) {
@@ -270,11 +282,12 @@ bool BufferedStreamITest::TestCopy_Stream(uint32 bufferSize) {
     source.SetBufferSize(bufferSize);
     myStream.Clear();
     source.Clear();
-    StringHelper::Copy(source.buffer, line);
+    uint32 size = CCString(line).GetSize()+1;
+    source.Write(line,size);
 
     myStream.Copy(source);
     myStream.FlushAndResync();
-    return (StringHelper::Compare(myStream.Buffer(), line) == 0);
+    return (CCString(myStream.Buffer()) ==  line);
 }
 
 bool BufferedStreamITest::TestPrintFormatted(uint32 bufferSize,
@@ -282,12 +295,12 @@ bool BufferedStreamITest::TestPrintFormatted(uint32 bufferSize,
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     uint32 i = 0;
-    while (StringHelper::Compare(testTable[i].format, "") != 0) {
+    while (CCString(testTable[i].format).GetSize()> 0) {
         myStream.Clear();
 
         myStream.PrintFormatted(testTable[i].format, testTable[i].inputs);
         myStream.FlushAndResync();
-        if (StringHelper::Compare(testTable[i].expectedResult, myStream.Buffer()) != 0) {
+        if (CCString(testTable[i].expectedResult) != myStream.Buffer())  {
             return false;
         }
         i++;
@@ -317,7 +330,7 @@ bool BufferedStreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
 
     stream1.FlushAndResync();
     stream2.FlushAndResync();
-    if (StringHelper::Compare(stream1.Buffer(), stream2.Buffer()) != 0) {
+    if (CCString(stream1.Buffer()) != stream2.Buffer()) {
         return false;
     }
 
@@ -341,7 +354,7 @@ bool BufferedStreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
     }
     stream1.FlushAndResync();
     stream2.FlushAndResync();
-    if (StringHelper::Compare(stream1.Buffer(), stream2.Buffer()) != 0) {
+    if (CCString(stream1.Buffer()) != stream2.Buffer())  {
         return false;
     }
 
@@ -353,23 +366,23 @@ bool BufferedStreamITest::TestPrintf() {
     myStream.Clear();
     myStream.Printf("%d", 8);
     myStream.FlushAndResync();
-    bool result = (StringHelper::Compare("8", myStream.Buffer()) == 0);
+    bool result = (CCString("8") == myStream.Buffer()) ;
     myStream.Clear();
     myStream.Printf("%d.%s", 8, "hello");
     myStream.FlushAndResync();
-    result &= (StringHelper::Compare("8.hello", myStream.Buffer()) == 0);
+    result &= (CCString("8.hello") == myStream.Buffer()) ;
     myStream.Clear();
     myStream.Printf("%d.%s", 8, "hello");
     myStream.FlushAndResync();
-    result &= (StringHelper::Compare("8.hello", myStream.Buffer()) == 0);
+    result &= (CCString("8.hello") == myStream.Buffer()) ;
     myStream.Clear();
     myStream.Printf("%d.%s:%d", 8, "hello", 7);
     myStream.FlushAndResync();
-    result &= (StringHelper::Compare("8.hello:7", myStream.Buffer()) == 0);
+    result &= (CCString("8.hello:7") == myStream.Buffer());
     myStream.Clear();
     myStream.Printf("%d.%s:%d----%s", 8, "hello", 7, "world");
     myStream.FlushAndResync();
-    result &= (StringHelper::Compare("8.hello:7----world", myStream.Buffer()) == 0);
+    result &= (CCString("8.hello:7----world") == myStream.Buffer());
 
     return result;
 }
@@ -386,7 +399,7 @@ bool BufferedStreamITest::TestPrintFormatted_CCString(uint32 bufferSize) {
         AnyType toPrint = printfCStringTable[i][1];
         if (myStream.PrintFormatted(printfCStringTable[i][0], &toPrint)) {
             myStream.FlushAndResync();
-            if (StringHelper::Compare(myStream.Buffer(), printfCStringTable[i][2]) != 0) {
+            if (CCString(myStream.Buffer()) != printfCStringTable[i][2]) {
                 printf("\n%s %s %d\n", myStream.Buffer(), printfCStringTable[i][2], i);
                 return false;
             }
@@ -420,20 +433,21 @@ bool BufferedStreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) 
 
         for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
             //source and shift are automatically modified by the function.
-            TypeDescriptor td(false, UnsignedInteger, size);
-            AnyType toPrint(td, myShift, source);
+            TypeDescriptor td = UnsignedBitSet_number(uint64,size,myShift);
+            AnyType toPrint(td, source);
 
             myStream.Clear();
             myStream.PrintFormatted("%0x", &toPrint);
             myStream.FlushAndResync();
-            char buffer[128];
 
             end = sizeStr - myShift / 4;
             beg = (end - (size / 4)) + 1;
-            StringHelper::Substr(beg, end, streamString, buffer);
-            //  printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
+//            StringHelper::Substr(beg, end, streamString, buffer);
 
-            if (StringHelper::Compare(buffer, myStream.Buffer()) != 0) {
+            DynamicCString buffer;
+            buffer().Append(&streamString[beg],size/4);
+
+            if (buffer != CCString(myStream.Buffer())) {
                 printf("\n%d %d\n", myShift, size);
                 return false;
             }
@@ -468,39 +482,39 @@ bool BufferedStreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
         for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
             //source and shift are automatically modified by the function.
-            TypeDescriptor td(false, SignedInteger, size);
-            AnyType toPrint(td, myShift, source);
+            TypeDescriptor td = SignedBitSet_number(uint64,size,myShift);
+            AnyType toPrint(td, source);
 
             myStream.Clear();
             myStream.PrintFormatted("%0x", &toPrint);
             myStream.FlushAndResync();
-            char buffer[128];
 
             end = sizeStr - myShift / 4;
             beg = (end - (size / 4)) + 1;
-            StringHelper::Substr(beg, end, streamString, buffer);
+//            StringHelper::Substr(beg, end, streamString, buffer);
+            DynamicCString buffer;
+            buffer().Append(&streamString[beg],size/4);
 
             //the number is negative
             if (buffer[0] > ('0' + 7)) {
                 uint8 numberSize = 2;
                 uint32 index = 0;
-                char8 prefix[32];
+                DynamicCString prefix;
                 while (numberSize < (size / 4)) {
                     numberSize *= 2;
                 }
                 for (uint32 k = index; k < (numberSize - (size / 4)); k++) {
-                    prefix[k] = 'F';
+                    prefix().Append('F');
                     index++;
                 }
                 prefix[index] = '\0';
-                char result[32];
-                StringHelper::Concatenate(prefix, buffer, result);
-                StringHelper::Copy(buffer, result);
+                prefix().Append(buffer);
+                buffer = prefix;
             }
 
             //     printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
 
-            if (StringHelper::Compare(buffer, myStream.Buffer()) != 0) {
+            if (buffer != myStream.Buffer())  {
                 printf("\n%d %d\n", myShift, size);
                 return false;
             }

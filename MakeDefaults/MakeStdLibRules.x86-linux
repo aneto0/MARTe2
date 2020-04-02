@@ -75,7 +75,7 @@ $(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : createLibrary  $(OBJS)
-	$(COMPILER) $(LFLAGS)  $(OBJS) $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o  $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 
 ifneq ("$(wildcard Environment/Linux/*.c*)","")
