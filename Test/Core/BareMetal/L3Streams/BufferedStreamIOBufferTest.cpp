@@ -64,7 +64,7 @@ bool BufferedStreamIOBufferTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (buffered.GetTimeout() != TTInfiniteWait) {
+    if (!buffered.GetTimeout().IsInfinite()) {
         return false;
     }
     return buffered.UndoLevel() == 0;
@@ -96,7 +96,7 @@ bool BufferedStreamIOBufferTest::TestFullConstructor() {
         return false;
     }
 
-    if (buffered.GetTimeout() != TTInfiniteWait) {
+    if (!buffered.GetTimeout().IsInfinite()) {
         return false;
     }
 
@@ -105,14 +105,14 @@ bool BufferedStreamIOBufferTest::TestFullConstructor() {
 }
 
 bool BufferedStreamIOBufferTest::TestGetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     BufferedStreamIOBuffer buffered;
     buffered.SetTimeout(tt);
     return (buffered.GetTimeout() == tt);
 }
 
 bool BufferedStreamIOBufferTest::TestSetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     BufferedStreamIOBuffer buffered;
     buffered.SetTimeout(tt);
     return (buffered.GetTimeout() == tt);
@@ -126,16 +126,16 @@ bool BufferedStreamIOBufferTest::TestRefill() {
     uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
-    const char8* toWrite = "HelloWorldThisIsATest";
+    CCString toWrite = "HelloWorldThisIsATest";
 
-    uint32 writeSize = StringHelper::Length(toWrite);
+    uint32 writeSize = toWrite.GetSize();
 
     buffered.WriteAll(toWrite, writeSize);
     stream.Seek(0);
 
     //try to trick with a non empty buffer
-    const char8 *trick = "trick";
-    uint32 trickSize = StringHelper::Length(trick);
+    CCString trick("trick");
+    uint32 trickSize = trick.GetSize();
     buffered.Write(trick, trickSize);
 
     buffered.Refill();
@@ -144,7 +144,7 @@ bool BufferedStreamIOBufferTest::TestRefill() {
         return false;
     }
 
-    return StringHelper::CompareN(buffered.Buffer(), toWrite, bufferSize) == 0;
+    return (toWrite.CompareContent(buffered.Buffer(),bufferSize) == 0);
 }
 
 bool BufferedStreamIOBufferTest::TestRefill_NULL_Stream() {
@@ -171,8 +171,8 @@ bool BufferedStreamIOBufferTest::TestFlush() {
     uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
-    const char8* toWrite = "Hello";
-    uint32 writeSize = StringHelper::Length(toWrite);
+    CCString toWrite("Hello");
+    uint32 writeSize = toWrite.GetSize();
 
     buffered.Write(toWrite, writeSize);
 
@@ -182,7 +182,7 @@ bool BufferedStreamIOBufferTest::TestFlush() {
         return false;
     }
 
-    return StringHelper::Compare(stream.Buffer(), toWrite) == 0;
+    return (toWrite.CompareContent(stream.Buffer()) == 0);
 }
 
 bool BufferedStreamIOBufferTest::TestFlush_NULL_Stream() {
@@ -210,9 +210,9 @@ bool BufferedStreamIOBufferTest::TestResync() {
     uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
-    const char8* toWrite = "HelloWorldThisIsATest";
+    CCString toWrite("HelloWorldThisIsATest");
 
-    uint32 writeSize = StringHelper::Length(toWrite);
+    uint32 writeSize = toWrite.GetSize();
 
     buffered.WriteAll(toWrite, writeSize);
 

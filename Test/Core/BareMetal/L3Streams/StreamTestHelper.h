@@ -387,7 +387,7 @@ public:
     virtual ~DummyDoubleBufferedStream() {
     }
 
-    uint64 OSSize() {
+    uint64 OSSize() const{
         return DummyOSStream::Size();
     }
 
@@ -399,7 +399,7 @@ public:
         return DummyOSStream::RelativeSeek(delta);
     }
 
-    uint64 OSPosition() {
+    uint64 OSPosition() const{
         return DummyOSStream::Position();
     }
 

@@ -42,12 +42,12 @@
  * Latest log received
  */
 static MARTe::ErrorManagement::ErrorInformation lastErrorInfo;
-static MARTe::StreamString lastErrorDescription;
+static MARTe::DynamicCString lastErrorDescription;
 
 /**
  * Call back to check the error messages triggered by the methods below
  */
-void AdvancedErrorManagementTestProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, const char * const errorDescription) {
+void AdvancedErrorManagementTestProcessFunction(const MARTe::ErrorManagement::ErrorInformation &errorInfo, MARTe::CCString errorDescription) {
     lastErrorInfo = errorInfo;
     lastErrorDescription = errorDescription;
 }
@@ -59,7 +59,7 @@ public:
     }
 
     bool TestLogging_NoParameters() {
-        MARTe::DynamicCString logText("AdvancedErrorManagementTest::TestLogging");
+        MARTe::CCString logText("AdvancedErrorManagementTest::TestLogging");
         REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.GetList());
         MARTe::int32 lineNumber = __LINE__ - 1;
         bool ok = (lastErrorDescription == logText);
@@ -77,7 +77,7 @@ public:
     }
 
     bool TestLogging_Parameters() {
-        MARTe::DynamicCString logText("AdvancedErrorManagementTest::TestLogging");
+        MARTe::CCString logText("AdvancedErrorManagementTest::TestLogging");
         REPORT_ERROR(MARTe::ErrorManagement::Debug, logText.GetList());
         MARTe::int32 lineNumber = __LINE__ - 1;
         bool ok = (lastErrorDescription == logText);
@@ -103,8 +103,12 @@ CLASS_REGISTER(AdvancedErrorManagementTestHelper, "1.0")
 
 bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_NoParameters() {
     SetErrorProcessFunction(&AdvancedErrorManagementTestProcessFunction);
-    MARTe::StreamString logText = "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters 1 2 A B";
-    REPORT_ERROR_STATIC(MARTe::ErrorManagement::Debug, "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters %d %d %s %s", 1, 2, "A", "B");
+    MARTe::CCString logText("AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters 1 2 A B");
+    MARTe::uint8 i8 = 1;
+    MARTe::uint32 i32 = 2;
+    MARTe::char8 c8 = 'A';
+    MARTe::CCString s1("B");
+    COMPOSITE_REPORT_ERROR(MARTe::ErrorManagement::Debug, "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters ",i8," ",i32," ",c8," ",s1);
     MARTe::int32 lineNumber = __LINE__ - 1;
     bool ok = (lastErrorDescription == logText);
     ok &= (lastErrorInfo.className == NULL_PTR(MARTe::char8 *));
@@ -114,16 +118,20 @@ bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_NoParameters() {
     ok &= (lastErrorInfo.header.isObject == false);
     ok &= (lastErrorInfo.header.errorType == MARTe::ErrorManagement::Debug);
     ok &= (lastErrorInfo.header.lineNumber == lineNumber);
-    ok &= (MARTe::StringHelper::Compare(lastErrorInfo.fileName, "AdvancedErrorManagementTest.cpp") == 0);
-    ok &= (MARTe::StringHelper::SearchString(lastErrorInfo.functionName, "TestREPORT_ERROR_STATIC_NoParameters") != NULL_PTR(MARTe::char8 *));
+    ok &= (lastErrorInfo.fileName == "AdvancedErrorManagementTest.cpp");
+    ok &= (lastErrorInfo.functionName.FindPattern(MARTe::CCString("TestREPORT_ERROR_STATIC_NoParameters")) != 0xFFFFFFFF);
 
     return ok;
 }
 
 bool AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters() {
     SetErrorProcessFunction(&AdvancedErrorManagementTestProcessFunction);
-    MARTe::StreamString logText = "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters 1 2 A B";
-    REPORT_ERROR_STATIC(MARTe::ErrorManagement::Debug, "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters %d %d %s %s", 1, 2, "A", "B");
+    MARTe::CCString logText("AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters 1 2 A B");
+    MARTe::uint8 i8 = 1;
+    MARTe::uint32 i32 = 2;
+    MARTe::char8 c8 = 'A';
+    MARTe::CCString s1("B");
+    COMPOSITE_REPORT_ERROR(MARTe::ErrorManagement::Debug, "AdvancedErrorManagementTest::TestREPORT_ERROR_STATIC_Parameters ",i8," ",i32," ",c8," ",s1);
     MARTe::int32 lineNumber = __LINE__ - 1;
     bool ok = (lastErrorDescription == logText);
     ok &= (lastErrorInfo.className == NULL_PTR(MARTe::char8 *));

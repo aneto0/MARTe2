@@ -29,11 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ClassRegistryItemT.h"
 #include "IOBufferTest.h"
-#include "IntrospectionT.h"
-#include "IntrospectionEntry.h"
-#include "ConfigurationDatabase.h"
+#include "StreamString.h"
+#include "CLASSMEMBERREGISTER.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -51,33 +50,6 @@ struct TestIOBufferIntrospectionStructure {
     TestIOBufferIntrospectionNestedStructure member5;
 };
 
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember1, uint32, "", "");
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionNestedStructure, nestedMember2, string, "", "");
-
-static const IntrospectionEntry* nestedFields[] = { &TestIOBufferIntrospectionNestedStructure_nestedMember1_introspectionEntry,
-        &TestIOBufferIntrospectionNestedStructure_nestedMember2_introspectionEntry, 0 };
-
-DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionNestedStructure, nestedFields);
-//INTROSPECTION_REGISTER(TestIOBufferIntrospectionNestedStructure, "1.0", TestIOBufferIntrospectionNestedStructure_introspection);
-
-static IntrospectionEntry member1Field("member1", "uint32", "", "", INTROSPECTION_MEMBER_SIZE(TestIOBufferIntrospectionStructure, member1),
-                                       INTROSPECTION_MEMBER_INDEX(TestIOBufferIntrospectionStructure, member1));
-
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member2, float32, "*", "");
-
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member3, float64, "[32]", "");
-
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member4, string, "[2][2]", "");
-
-DECLARE_CLASS_MEMBER(TestIOBufferIntrospectionStructure, member5, TestIOBufferIntrospectionNestedStructure, "", "");
-
-static const IntrospectionEntry* fields[] = { &member1Field, &TestIOBufferIntrospectionStructure_member2_introspectionEntry,
-        &TestIOBufferIntrospectionStructure_member3_introspectionEntry, &TestIOBufferIntrospectionStructure_member4_introspectionEntry,
-        &TestIOBufferIntrospectionStructure_member5_introspectionEntry, 0 };
-
-DECLARE_STRUCT_INTROSPECTION(TestIOBufferIntrospectionStructure, fields);
-//INTROSPECTION_REGISTER(TestIOBufferIntrospectionStructure, "1.0", TestIOBufferIntrospectionStructure_introspection);
-
 class TestIOBufferNotIntrospectable: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -87,10 +59,17 @@ public:
     const char8 * member4[2][2];
 };
 
-CLASS_REGISTER(TestIOBufferNotIntrospectable,"1.0")
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionNestedStructure,nestedMember1);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionNestedStructure,nestedMember2);
 
-//static ClassProperties TestIOBufferNotIntrospectable_prop("TestIOBufferNotIntrospectable", "TestIOBufferNotIntrospectable", "1.0");
-//static ClassRegistryItem TestIOBufferNotIntrospectable_item(TestIOBufferNotIntrospectable_prop, (ObjectBuildFn*) NULL);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionStructure,member1);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionStructure,member2);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionStructure,member3);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionStructure,member4);
+CLASS_MEMBER_REGISTER(TestIOBufferIntrospectionStructure,member5);
+
+CLASS_REGISTER(TestIOBufferNotIntrospectable,"1.0");
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -268,11 +247,10 @@ bool IOBufferTest::TestBuffer() {
         return false;
     }
 
-    char8 bufferIn[32];
-    StringHelper::Copy(bufferIn, "HelloWorld");
+    char8 bufferIn[32] = "HelloWorld";
     ioBuffer.SetBufferReferencedMemory(bufferIn, 1u, 0u);
 
-    return (StringHelper::Compare(bufferIn, ioBuffer.Buffer()) == 0);
+    return (CCString("HelloWorld") == CCString(ioBuffer.Buffer()) );
 }
 
 bool IOBufferTest::TestBufferReference() {
@@ -282,15 +260,14 @@ bool IOBufferTest::TestBufferReference() {
         return false;
     }
 
-    char8 bufferIn[32];
-    StringHelper::Copy(bufferIn, "HelloWorld");
+    char8 bufferIn[32] = "HelloWorld";
     ioBuffer.SetBufferReferencedMemory(bufferIn, 1u, 0u);
 
     //write access
     char8 *ret = ioBuffer.BufferReference();
     ret[10] = '!';
     ret[11] = '\0';
-    return (StringHelper::Compare(ret, "HelloWorld!") == 0);
+    return (CCString("HelloWorld!") == CCString(ioBuffer.Buffer()) );
 
 }
 
@@ -330,8 +307,8 @@ bool IOBufferTest::TestPosition() {
     ioBuffer.SetBufferReferencedMemory(buffer, size, 0);
     //the write change the position
 
-    const char8 *toWrite = "HelloWorld";
-    uint32 expectedPosition = StringHelper::Length(toWrite);
+    CCString toWrite("HelloWorld");
+    uint32 expectedPosition = toWrite.GetSize();
     ioBuffer.Write(toWrite, expectedPosition);
     if (ioBuffer.Position() != expectedPosition) {
         return false;
@@ -453,7 +430,7 @@ bool IOBufferTest::TestSetBufferHeapMemory(uint32 size,
         return false;
     }
 
-    return (StringHelper::Compare(initialMemory, "Untouchable") == 0) && (ioBuffer.Position() == 0);
+    return (CCString(initialMemory) ==  CCString("Untouchable") ) && (ioBuffer.Position() == 0);
 }
 
 bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
@@ -468,9 +445,8 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
         return false;
     }
 
-    char8 buffer[16];
-    StringHelper::Copy(buffer, "Hello");
-    uint32 fillSize = 16;
+    char8 buffer[16] = "Hello";
+    uint32 fillSize = sizeof(buffer);
 
     ioBuffer.Write(buffer, fillSize);
 
@@ -515,7 +491,7 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
         return false;
     }
 
-    return (StringHelper::Compare(ioBuffer.Buffer(), "Hello") == 0);
+    return (CCString ("Hello") == CCString(ioBuffer.Buffer()) ) ;
 }
 
 bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
@@ -530,9 +506,8 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
         return false;
     }
 
-    char8 buffer[16];
-    StringHelper::Copy(buffer, "Hello");
-    uint32 fillSize = 16;
+    char8 buffer[16] = "Hello";
+    uint32 fillSize = sizeof(buffer);
 
     ioBuffer.Write(buffer, fillSize);
 
@@ -577,13 +552,13 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
         return false;
     }
 
-    return (StringHelper::Compare(ioBuffer.Buffer(), "Hello") == 0);
+    return (CCString ("Hello") == CCString(ioBuffer.Buffer()) ) ;
 }
 
 bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
 
-    const char8* bufferIn = "HelloWorld";
-    uint32 size = StringHelper::Length(bufferIn);
+    CCString bufferIn("HelloWorld");
+    uint32 size = bufferIn.GetSize();
     uint32 endSpace = 0;
     IOBuffer ioBuffer;
 
@@ -591,7 +566,7 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
     ioBuffer.PutC('a');
 
     // the set by memory reference should empties the buffer
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, endSpace);
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn.GetList(), size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
         return false;
@@ -614,7 +589,7 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
     endSpace += 3;
 
     // the set by memory reference should empties the buffer
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, endSpace);
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn.GetList(), size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
         return false;
@@ -637,7 +612,7 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
     size -= 3;
 
     // the set by memory reference should empties the buffer
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, endSpace);
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn.GetList(), size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
         return false;
@@ -660,9 +635,8 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
 
 bool IOBufferTest::TestSetBufferReferencedMemory() {
 
-    char8 bufferIn[32];
-    StringHelper::Copy(bufferIn, "HelloWorld");
-    uint32 size = StringHelper::Length(bufferIn);
+    char8 bufferIn[32] = "HelloWorld";
+    uint32 size = CCString(&bufferIn[0]).GetSize();
     uint32 endSpace = 0;
     IOBuffer ioBuffer;
 
@@ -823,7 +797,7 @@ bool IOBufferTest::TestPutC_Heap() {
         }
         bufferTest[i] = 'a';
     }
-    if (StringHelper::CompareN(bufferTest, ioBuffer.Buffer(), size) != 0) {
+    if (CCString(&bufferTest[0]).CompareContent(ioBuffer.Buffer(), size) != 0) {
         return false;
     }
     //size is finished
@@ -848,7 +822,7 @@ bool IOBufferTest::TestPutC_MemoryReference() {
         }
         bufferTest[i] = 'a';
     }
-    if (StringHelper::CompareN(bufferTest, ioBuffer.Buffer(), size) != 0) {
+    if (CCString(&bufferTest[0]).CompareContent(ioBuffer.Buffer(), size) != 0) {
         return false;
     }
     //size is finished
@@ -881,9 +855,9 @@ bool IOBufferTest::TestGetC_Heap() {
         return false;
     }
 
-    const char8 *toWrite = "HelloWorld";
-    uint32 usedSize = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, usedSize);
+    CCString toWrite = "HelloWorld";
+    uint32 usedSize = toWrite.GetSize();
+    ioBuffer.Write(toWrite.GetList(), usedSize);
 
     ioBuffer.Seek(0);
     for (uint32 i = 0; i < usedSize; i++) {
@@ -910,9 +884,9 @@ bool IOBufferTest::TestGetC_MemoryReference() {
         return false;
     }
 
-    const char8 *toWrite = "HelloWorld";
-    uint32 usedSize = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, usedSize);
+    CCString toWrite = "HelloWorld";
+    uint32 usedSize = toWrite.GetSize();
+    ioBuffer.Write(toWrite.GetList(), usedSize);
 
     ioBuffer.Seek(0);
     for (uint32 i = 0; i < usedSize; i++) {
@@ -929,10 +903,9 @@ bool IOBufferTest::TestGetC_MemoryReference() {
 bool IOBufferTest::TestGetC_MemoryReferenceRO() {
     IOBuffer ioBuffer;
 
-    const char8 *bufferIn = "HelloWorld";
-    const uint32 size = StringHelper::Length(bufferIn);
-
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, 0);
+    CCString bufferIn = "HelloWorld";
+    uint32 size = bufferIn.GetSize();
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn.GetList(), size, 0);
 
     char8 ret;
     if (ioBuffer.GetC(ret)) {
@@ -963,9 +936,9 @@ bool IOBufferTest::TestUnPutC() {
         return false;
     }
 
-    const char8 *toWrite = "HelloWorld";
-    uint32 usedSize = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, usedSize);
+    CCString toWrite = "HelloWorld";
+    uint32 usedSize = toWrite.GetSize();
+    ioBuffer.Write(toWrite.GetList(), usedSize);
 
     for (uint32 i = 0; i < usedSize; i++) {
         if (!ioBuffer.UnPutC()) {
@@ -983,9 +956,10 @@ bool IOBufferTest::TestUnGetC() {
 
     IOBuffer ioBuffer;
 
-    const char8 *bufferIn = "HelloWorld";
-    uint32 size = StringHelper::Length(bufferIn);
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, 0);
+    CCString bufferIn = "HelloWorld";
+    uint32 size = bufferIn.GetSize();
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn.GetList(), size, 0);
+
 
     ioBuffer.SetUsedSize(size);
 
@@ -1029,11 +1003,10 @@ bool IOBufferTest::TestWrite_Heap(uint32 allocationSize,
 
     uint32 compareSize = (allocationSize > writeSize) ? (writeSize) : (allocationSize);
 
-    return StringHelper::CompareN(ioBuffer.Buffer(), string, compareSize) == 0;
+    return CCString(ioBuffer.Buffer()).CompareContent( string, compareSize) == 0;
 }
 
-bool IOBufferTest::TestWrite_Memoryreference(const char8 *string,
-                                             uint32 writeSize) {
+bool IOBufferTest::TestWrite_Memoryreference(const char8 *string,uint32 writeSize) {
 
     IOBuffer ioBuffer;
 
@@ -1051,7 +1024,7 @@ bool IOBufferTest::TestWrite_Memoryreference(const char8 *string,
         return false;
     }
 
-    return StringHelper::CompareN(ioBuffer.Buffer(), string, compareSize) == 0;
+    return CCString(ioBuffer.Buffer()).CompareContent(string, compareSize) == 0;
 }
 
 bool IOBufferTest::TestWrite_MemoryreferenceRO() {
@@ -1062,9 +1035,9 @@ bool IOBufferTest::TestWrite_MemoryreferenceRO() {
     const char8 *bufferIn = "HelloWorld";
     ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, 0);
 
-    const char8* string = "HelloWorld";
-    uint32 writeSize = StringHelper::Length(string);
-    return !ioBuffer.Write(string, writeSize);
+    CCString toWrite = "HelloWorld";
+    uint32 writeSize = toWrite.GetSize();
+    return !ioBuffer.Write(toWrite, writeSize);
 }
 
 bool IOBufferTest::TestWrite_NULL_Buffer() {
@@ -1138,18 +1111,18 @@ bool IOBufferTest::TestRead_MemoryReference() {
     readSize = 5;
     ioBuffer.Read(bufferOut, readSize);
 
-    return StringHelper::Compare(bufferOut, "aaaaa") == 0;
+    return CCString(&bufferOut[0]) == CCString("aaaaa") ;
 }
 
 bool IOBufferTest::TestRead_NULL_Buffer() {
 
-    const char8 *bufferIn = "Hello";
     IOBuffer ioBuffer;
     uint32 allocSize = 16;
 
     ioBuffer.SetBufferHeapMemory(allocSize, 0);
 
-    uint32 writeSize = StringHelper::Length(bufferIn);
+    CCString bufferIn("Hello") ;
+    uint32 writeSize = bufferIn.GetSize();
     ioBuffer.Write(bufferIn, writeSize);
 
     ioBuffer.Seek(0);
@@ -1177,7 +1150,7 @@ bool IOBufferTest::TestWriteAll(uint32 allocationSize,
         writeSize = allocationSize;
     }
 
-    return StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) == 0;
+    return CCString(ioBuffer.Buffer()).CompareContent(string, writeSize) == 0;
 }
 
 bool IOBufferTest::TestEmpty() {
@@ -1196,8 +1169,8 @@ bool IOBufferTest::TestEmpty() {
     }
 
     // put something in the buffer
-    const char8 *toWrite = "HelloWorld";
-    uint32 writeSize = StringHelper::Length(toWrite);
+    CCString toWrite("HelloWorld") ;
+    uint32 writeSize = toWrite.GetSize();
     ioBuffer.Write(toWrite, writeSize);
 
     if (ioBuffer.Position() != writeSize) {
@@ -1236,19 +1209,18 @@ void IOBufferTest::Clear(IOBuffer &ioBuffer) {
     ioBuffer.Seek(0);
 }
 
-bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
-                                      const PrintfNode testTable[]) {
+bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity, const PrintfNode testTable[]) {
 
     IOBuffer ioBuffer;
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
     uint32 i = 0;
-    while (StringHelper::Compare(testTable[i].format, "") != 0) {
+    while (CCString(testTable[i].format).GetSize() > 0 ) {
         Clear(ioBuffer);
 
-        ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
-        if (StringHelper::CompareN(testTable[i].expectedResult, ioBuffer.Buffer(), ioBuffer.MaxUsableAmount()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,CCString(testTable[i].format), testTable[i].inputs);
+        if (CCString(testTable[i].expectedResult).CompareContent(ioBuffer.Buffer(), ioBuffer.MaxUsableAmount()) != 0) {
             printf("\r\n|%s| |%s|\r\n", testTable[i].expectedResult, ioBuffer.Buffer());
             return false;
         }
@@ -1268,8 +1240,8 @@ bool IOBufferTest::TestPrintFormatted_CCString() {
     while (printfCStringTable[i][0] != NULL) {
         Clear(ioBuffer);
         AnyType toPrint = printfCStringTable[i][1];
-        if (ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint)) {
-            if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
+        if (IOBuffer::PrintFormatted(ioBuffer,printfCStringTable[i][0], &toPrint)) {
+            if (CCString(ioBuffer.Buffer()) != CCString(printfCStringTable[i][2])) {
                 return false;
             }
         }
@@ -1299,10 +1271,10 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     AnyType toPrintChar = charPointer;
     uint64 UIntPointer = (uint64) charPointer;
     AnyType toPrintUInt64 = UIntPointer;
-    ioBuffer1.PrintFormatted("%x", &toPrintChar);
-    ioBuffer2.PrintFormatted("%x", &toPrintUInt64);
+    IOBuffer::PrintFormatted(ioBuffer1,"%x", &toPrintChar);
+    IOBuffer::PrintFormatted(ioBuffer2,"%x", &toPrintUInt64);
 
-    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+    if (CCString(ioBuffer1.Buffer()) != ioBuffer2.Buffer()) {
         return false;
     }
 
@@ -1310,9 +1282,9 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     AnyType toPrintPointer = pointer;
 
     Clear(ioBuffer1);
-    ioBuffer1.PrintFormatted("%f", &toPrintPointer);
+    IOBuffer::PrintFormatted(ioBuffer1,"%f", &toPrintPointer);
 
-    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+    if (CCString(ioBuffer1.Buffer()) != ioBuffer2.Buffer()) {
         return false;
     }
 
@@ -1321,23 +1293,23 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     //%p format as the complete 32 bit pointer with header
 
     if (sizeof(void*) == 8) {
-        ioBuffer1.PrintFormatted("%p", &toPrintPointer);
-        ioBuffer2.PrintFormatted("% #0x", &toPrintUInt64);
+        IOBuffer::PrintFormatted(ioBuffer1,"%p", &toPrintPointer);
+        IOBuffer::PrintFormatted(ioBuffer2,"% #0x", &toPrintUInt64);
     }
     if (sizeof(void*) == 4) {
         AnyType toPrintUInt32 = (uint32) UIntPointer;
-        ioBuffer1.PrintFormatted("%p", &toPrintPointer);
-        ioBuffer2.PrintFormatted("% #0x", &toPrintUInt32);
+        IOBuffer::PrintFormatted(ioBuffer1,"%p", &toPrintPointer);
+        IOBuffer::PrintFormatted(ioBuffer2,"% #0x", &toPrintUInt32);
     }
 
-    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+    if (CCString(ioBuffer1.Buffer()) !=  ioBuffer2.Buffer())  {
         return false;
     }
 
     Clear(ioBuffer1);
-    ioBuffer1.PrintFormatted("%?", &toPrintPointer);
+    IOBuffer::PrintFormatted(ioBuffer1,"%?", &toPrintPointer);
 
-    if (StringHelper::Compare(ioBuffer1.Buffer(), "Pointer") != 0) {
+    if (CCString(ioBuffer1.Buffer()) !=  "Pointer") {
         return false;
     }
 
@@ -1357,16 +1329,16 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
     while (printfStreamTable[i][0] != NULL) {
         Clear(ioBuffer);
         stream.Clear();
-        const char8 * toWrite = printfStreamTable[i][1];
+        CCString toWrite(printfStreamTable[i][1]);
 
-        uint32 writeSize = StringHelper::Length(toWrite);
+        uint32 writeSize = toWrite.GetSize();
         stream.Write(toWrite, writeSize);
         stream.FlushAndResync();
         stream.Seek(0);
 
         AnyType toPrint = stream;
-        ioBuffer.PrintFormatted(printfStreamTable[i][0], &toPrint);
-        if (StringHelper::Compare(ioBuffer.Buffer(), printfStreamTable[i][2]) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,printfStreamTable[i][0], &toPrint);
+        if (CCString(ioBuffer.Buffer()) !=  printfStreamTable[i][2]) {
             return false;
         }
         stream.FlushAndResync();
@@ -1391,9 +1363,9 @@ bool IOBufferTest::TestPrintFormatted_TooBigStream() {
     stream.SetFakeSize(10001);
 
     AnyType toPrint = stream;
-    ioBuffer.PrintFormatted("%s", &toPrint);
+    IOBuffer::PrintFormatted(ioBuffer,"%s", &toPrint);
 
-    return StringHelper::Compare(ioBuffer.Buffer(), "!! too big > 10000 characters!!") == 0;
+    return CCString(ioBuffer.Buffer()) ==  "!! too big > 10000 characters!!";
 }
 
 bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
@@ -1408,9 +1380,9 @@ bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
     stream.SetBufferSize(32);
 
     AnyType toPrint = stream;
-    ioBuffer.PrintFormatted("%s", &toPrint);
+    IOBuffer::PrintFormatted(ioBuffer,"%s", &toPrint);
 
-    return StringHelper::Compare(ioBuffer.Buffer(), "!!stream !seek!!") == 0;
+    return CCString(ioBuffer.Buffer()) == "!!stream !seek!!";
 }
 
 bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
@@ -1433,19 +1405,16 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
 
         for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
             //source and shift are automatically modified by the function.
-            TypeDescriptor td(false, UnsignedInteger, size);
-            AnyType toPrint(td, myShift, source);
-
-            ioBuffer.PrintFormatted("%0x", &toPrint);
-            char buffer[128];
+            TypeDescriptor td = UnsignedBitSet(64,size,myShift);
+            AnyType toPrint(td, source);
+            IOBuffer::PrintFormatted(ioBuffer,"%0x", &toPrint);
 
             end = sizeStr - myShift / 4;
             beg = (end - (size / 4)) + 1;
-            StringHelper::Substr(beg, end, streamString, buffer);
-            //  printf("\r\n|%s| |%s|\r\n", buffer, ioBuffer.Buffer());
+            DynamicCString buffer;
+            buffer().Append(&streamString[beg],size/4);
 
-            if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
-                //printf("\r\n%d %d\r\n", myShift, size);
+            if (CCString(buffer) != ioBuffer.Buffer()) {
                 return false;
             }
             Clear(ioBuffer);
@@ -1481,38 +1450,35 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
 
         for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
             //source and shift are automatically modified by the function.
-            TypeDescriptor td(false, SignedInteger, size);
-            AnyType toPrint(td, myShift, source);
+            TypeDescriptor td = UnsignedBitSet(64,size,myShift);
+            AnyType toPrint(td, source);
 
-            ioBuffer.PrintFormatted("%0x", &toPrint);
-            char buffer[128];
+            IOBuffer::PrintFormatted(ioBuffer,"%0x", &toPrint);
+
 
             end = sizeStr - myShift / 4;
             beg = (end - (size / 4)) + 1;
-            StringHelper::Substr(beg, end, streamString, buffer);
+            DynamicCString buffer;
+            buffer().Append(&streamString[beg],size/4);
 
             //the number is negative
             if (buffer[0] > ('0' + 7)) {
                 uint8 numberSize = 2;
                 uint32 index = 0;
-                char8 prefix[32];
                 while (numberSize < (size / 4)) {
                     numberSize *= 2;
                 }
+                DynamicCString result;
                 for (uint32 k = index; k < (numberSize - (size / 4)); k++) {
-                    prefix[k] = 'F';
+                    result().Append('F');
                     index++;
                 }
-                prefix[index] = '\0';
-                char result[32];
-                StringHelper::Concatenate(prefix, buffer, result);
-                StringHelper::Copy(buffer, result);
+                result().Append(buffer);
+                buffer = result;
             }
 
-            //     printf("\r\n|%s| |%s|\r\n", buffer, ioBuffer.Buffer());
 
-            if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
-                //printf("\r\n%d %d\r\n", myShift, size);
+            if (CCString(buffer) != ioBuffer.Buffer()) {
                 return false;
             }
             Clear(ioBuffer);
@@ -1526,7 +1492,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
 
     return true;
 }
-
+#if 0
 bool IOBufferTest::TestGetToken_ConstCharOutput(const TokenTestTableRow *table) {
 
     IOBuffer ioBuffer;
@@ -1542,7 +1508,7 @@ bool IOBufferTest::TestGetToken_ConstCharOutput(const TokenTestTableRow *table) 
 
     while (result && (row->toTokenize != NULL)) {
         Clear(ioBuffer);
-        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        uint32 inputSize = CCString(row->toTokenize).GetSize() + 1;
         ioBuffer.Write(row->toTokenize, inputSize);
         ioBuffer.Seek(0);
         const uint32 bufferSize = 32;
@@ -1550,7 +1516,7 @@ bool IOBufferTest::TestGetToken_ConstCharOutput(const TokenTestTableRow *table) 
         char saveTerminator;
         uint32 t = 0u;
 
-        while (ioBuffer.GetToken(buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
+        while (IOBuffer::GetToken(ioBuffer,buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
             if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
                 result = false;
             }
@@ -1570,6 +1536,8 @@ bool IOBufferTest::TestGetToken_ConstCharOutput(const TokenTestTableRow *table) 
 
 }
 
+
+
 bool IOBufferTest::GetToken_ConstCharOutput_ClipSize() {
 
     IOBuffer ioBuffer;
@@ -1586,10 +1554,10 @@ bool IOBufferTest::GetToken_ConstCharOutput_ClipSize() {
     const uint32 outSize = 8;
     char8 outBuffer[outSize];
     char8 saveTerminator;
-    ioBuffer.GetToken(outBuffer, ".", outSize, saveTerminator, "");
+    IOBuffer::GetToken(ioBuffer,outBuffer, ".", outSize, saveTerminator, "");
     return StringHelper::Compare(outBuffer, "HelloWo") == 0;
 }
-
+#endif
 bool IOBufferTest::TestGetToken_IOBufferOutput(const TokenTestTableRow *table) {
     IOBuffer ioBuffer;
 
@@ -1608,16 +1576,16 @@ bool IOBufferTest::TestGetToken_IOBufferOutput(const TokenTestTableRow *table) {
 
     while (result && (row->toTokenize != NULL)) {
         Clear(ioBuffer);
-        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        uint32 inputSize = CCString(row->toTokenize).GetSize() + 1;
         ioBuffer.Write(row->toTokenize, inputSize);
         ioBuffer.Seek(0);
 
         char saveTerminator;
         uint32 t = 0u;
 
-        while (ioBuffer.GetToken(outBuffer, row->terminators, saveTerminator, row->skipCharacters)) {
+        while (IOBuffer::GetToken(ioBuffer,outBuffer, row->terminators, saveTerminator, row->skipCharacters)) {
 
-            if (StringHelper::Compare(outBuffer.Buffer(), row->expectedResult[t]) != 0) {
+            if (CCString(outBuffer.Buffer()) != row->expectedResult[t])  {
                 result = false;
             }
             if (row->saveTerminatorResult[t] != saveTerminator) {
@@ -1653,18 +1621,20 @@ bool IOBufferTest::TestSkipToken(const SkipTokensTestTableRow *table) {
 
     while (result && (row->toTokenize != NULL)) {
         Clear(ioBuffer);
-        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        uint32 inputSize = CCString(row->toTokenize).GetSize() + 1;
         ioBuffer.Write(row->toTokenize, inputSize);
         ioBuffer.Seek(0);
-        ioBuffer.SkipTokens(row->nOfSkipTokens, row->terminators);
+        IOBuffer::SkipTokens(ioBuffer,row->nOfSkipTokens, row->terminators);
 
-        const uint32 bufferSize = 32;
-        char buffer[bufferSize];
         uint32 t = 0u;
         while (row->expectedResult[t] != NULL) {
             char saveTerminator;
-            ioBuffer.GetToken(buffer, row->terminators, bufferSize, saveTerminator, NULL);
-            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+            IOBuffer outBuffer;
+            outBuffer.SetBufferHeapMemory(allocationSize, 0);
+            Clear(outBuffer);
+
+            IOBuffer::GetToken(ioBuffer,outBuffer, row->terminators, saveTerminator, emptyString);
+            if (CCString(outBuffer.Buffer()) !=  row->expectedResult[t])  {
                 result = false;
             }
             t++;
@@ -1679,29 +1649,27 @@ bool IOBufferTest::TestSkipToken(const SkipTokensTestTableRow *table) {
 bool IOBufferTest::TestPrintTooMuchDimensions() {
 
     int32 x[1][1][1] = { { { 1 } } };
-    AnyType at(SignedInteger32Bit, 0u, &x);
+    AnyType at(x);
 
-    at.SetNumberOfDimensions(3);
     IOBuffer ioBuffer;
     uint32 allocationSize = 32;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
 
-    return !ioBuffer.PrintFormatted("%d", &at);
+    return !IOBuffer::PrintFormatted(ioBuffer,"%d", &at);
 }
 
 bool IOBufferTest::TestPrintFormattedIntrospection() {
     TestIOBufferIntrospectionStructure myStruct;
-    //TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
-    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
-    myType.isConstant = false;
+    TypeDescriptor myType = ClassRegistryDatabase::Find("TestIOBufferIntrospectionStructure")->GetTypeDescriptor();
+//    myType.isConstant = false;
 
-    AnyType at(myType, 0, (void*) &myStruct);
+    AnyType at(myType, (void*) &myStruct);
     IOBuffer ioBuffer;
     uint32 allocationSize = 600;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
-    ioBuffer.PrintFormatted("%?", &at);
+    IOBuffer::PrintFormatted(ioBuffer,"%?", &at);
     const char8* test = "\r\nTestIOBufferIntrospectionStructure = {\r\n"
             "    member1 = {\r\n"
             "        type = uint32\r\n"
@@ -1730,7 +1698,7 @@ bool IOBufferTest::TestPrintFormattedIntrospection() {
             "    }\r\n"
             "}\r\n";
 
-    return StringHelper::Compare(ioBuffer.Buffer(), test) == 0;
+    return CCString (ioBuffer.Buffer()) == test;
 }
 
 bool IOBufferTest::TestPrintFormattedObject() {
@@ -1747,20 +1715,20 @@ bool IOBufferTest::TestPrintFormattedObject() {
     myStruct.member4[1][1] = "7";
     myStruct.member5.nestedMember1 = 5;
     myStruct.member5.nestedMember2 = "Hello";
-    //TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetUniqueIdentifier());
-    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
-    myType.isConstant = false;
 
-    AnyType at(myType, 0, (void*) &myStruct);
+    TypeDescriptor myType = ClassRegistryDatabase::Find("TestIOBufferIntrospectionStructure")->GetTypeDescriptor();
+//    myType.isConstant = false;
+
+    AnyType at(myType, (void*) &myStruct);
     IOBuffer ioBuffer;
     uint32 allocationSize = 600;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
-    ioBuffer.PrintFormatted("%@", &at);
+    IOBuffer::PrintFormatted(ioBuffer,"%@", &at);
 
-    StreamString test = "\r\nClass = TestIOBufferIntrospectionStructure\r\n"
+    StreamString test = CCString("\r\nClass = TestIOBufferIntrospectionStructure\r\n"
             "member1 = 1\r\n"
-            "member2 = ";
+            "member2 = ");
     test.Printf("%x\r\n", ((void*) myStruct.member2));
     test +=
             "member3 = { 0 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 7.000000 8.000000 9.000000 10.000000 11.000000 12.000000 13.000000 14.000000 15.000000 16.000000 17.000000 18.000000 19.000000 20.000000 21.000000 22.000000 23.000000 24.000000 25.000000 26.000000 27.000000 28.000000 29.000000 30.000000 31.000000 } \r\n"
@@ -1773,9 +1741,10 @@ bool IOBufferTest::TestPrintFormattedObject() {
 
                     "}\r\n";
 
-    return StringHelper::Compare(ioBuffer.Buffer(), test.Buffer()) == 0;
+    return test == ioBuffer.Buffer();
 }
 
+#if 0
 bool IOBufferTest::TestPrintStructuredDataInterface() {
     ConfigurationDatabase cdb;
     cdb.CreateAbsolute("A.B");
@@ -1791,7 +1760,7 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
     AnyType toPrint(cdb);
-    ioBuffer.PrintFormatted("%s", &toPrint);
+    IOBuffer::PrintFormatted(ioBuffer,"%s", &toPrint);
     const char8* test = "A = {\r\n"
             "B = {\r\n"
             "x = +1\r\n"
@@ -1806,35 +1775,35 @@ bool IOBufferTest::TestPrintStructuredDataInterface() {
 
     return StringHelper::Compare(test, ioBuffer.Buffer()) == 0;
 }
+#endif
 
 bool IOBufferTest::TestPrintFormattedIntrospection_NotIntrospectable() {
     TestIOBufferNotIntrospectable x;
-//    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
-    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
-    myType.isConstant = false;
+    TypeDescriptor myType = ClassRegistryDatabase::Find("TestIOBufferIntrospectionStructure")->GetTypeDescriptor();
+//    myType.isConstant = false;
 
-    AnyType at(myType, 0, &x);
+    AnyType at(myType, &x);
     IOBuffer ioBuffer;
     uint32 allocationSize = 32;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
 
-    return !ioBuffer.PrintFormatted("%?", &at);
+    return !IOBuffer::PrintFormatted(ioBuffer,"%?", &at);
 }
 
 bool IOBufferTest::TestPrintFormattedObject_NotIntrospectable() {
     TestIOBufferNotIntrospectable x;
-//    TypeDescriptor myType(false, ClassRegistryDatabase::Instance()->Find("TestIOBufferNotIntrospectable")->GetClassProperties()->GetUniqueIdentifier());
-    TypeDescriptor myType = ClassRegistryDatabase::Instance()->Find("TestIOBufferIntrospectionStructure")->GetClassProperties()->GetTypeDescriptor();
-    myType.isConstant = false;
 
-    AnyType at(myType, 0, &x);
+    TypeDescriptor myType = ClassRegistryDatabase::Find("TestIOBufferIntrospectionStructure")->GetTypeDescriptor();
+//    myType.isConstant = false;
+
+    AnyType at(myType,&x);
     IOBuffer ioBuffer;
     uint32 allocationSize = 32;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(ioBuffer);
 
-    return !ioBuffer.PrintFormatted("%?", &at);
+    return !IOBuffer::PrintFormatted(ioBuffer,"%?", &at);
 }
 
 bool IOBufferTest::TestPrintPointerVector() {
@@ -1855,11 +1824,11 @@ bool IOBufferTest::TestPrintPointerVector() {
     Clear(ioBuffer2);
 
     AnyType toPrint(test);
-    ioBuffer.PrintFormatted("%p", &toPrint);
+    IOBuffer::PrintFormatted(ioBuffer,CCString("%p"), &toPrint);
     AnyType toPrint2(test2);
-    ioBuffer2.PrintFormatted("%p", &toPrint2);
+    IOBuffer::PrintFormatted(ioBuffer2,CCString("%p"), &toPrint2);
 
-    return StringHelper::Compare(ioBuffer.Buffer(), ioBuffer2.Buffer()) == 0;
+    return CCString(ioBuffer.Buffer()) == ioBuffer2.Buffer();
 }
 
 bool IOBufferTest::TestPrintPointerMatrix() {
@@ -1882,11 +1851,11 @@ bool IOBufferTest::TestPrintPointerMatrix() {
     Clear(ioBuffer2);
 
     AnyType toPrint(test);
-    ioBuffer.PrintFormatted("%p", &toPrint);
+    IOBuffer::PrintFormatted(ioBuffer,CCString("%p"), &toPrint);
     AnyType toPrint2(test2);
-    ioBuffer2.PrintFormatted("%p", &toPrint2);
+    IOBuffer::PrintFormatted(ioBuffer2,CCString("%p"), &toPrint2);
 
-    return StringHelper::Compare(ioBuffer.Buffer(), ioBuffer2.Buffer()) == 0;
+    return CCString(ioBuffer.Buffer()) == ioBuffer2.Buffer();
 }
 
 

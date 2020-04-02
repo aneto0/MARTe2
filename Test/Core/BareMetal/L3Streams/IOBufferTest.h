@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "IOBuffer.h"
 #include "StreamTestHelper.h"
+#include "StaticCString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -420,8 +421,8 @@ bool IOBufferTest::TestPrintVector(const TestPrintFormattedTableVector<T, ndims>
     while (table[i].expected != NULL) {
         Clear(ioBuffer);
         AnyType at(table[i].vectorInput);
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }
@@ -441,8 +442,8 @@ bool IOBufferTest::TestPrintMatrix(const TestPrintFormattedTableMatrix<T, nRows,
     while (table[i].expected != NULL) {
         Clear(ioBuffer);
         AnyType at(table[i].matrixInput);
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }
@@ -460,8 +461,8 @@ bool IOBufferTest::TestPrintMatrix(const TestPrintFormattedTableMatrix<T, nRows,
         }
 
         AnyType at(bufferHeap);
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }
@@ -484,12 +485,14 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     while (table[i].expected != NULL) {
         Clear(ioBuffer);
         for (uint32 j = 0u; j < ndims; j++) {
-            StringHelper::Copy(&buffer[j][0], table[i].vectorInput[j]);
+        	StaticCString<64> s(buffer[j]);
+        	s = table[i].vectorInput[j];
+//            StringHelper::Copy(&buffer[j][0], table[i].vectorInput[j]);
         }
         AnyType at(buffer);
 
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }
@@ -502,12 +505,13 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     while (table[i].expected != NULL) {
         Clear(ioBuffer);
         for (uint32 j = 0u; j < ndims; j++) {
-            StringHelper::Copy(&bufferHeap[j][0], table[i].vectorInput[j]);
+        	StaticCString<64> s(&bufferHeap[j][0]);
+        	s = table[i].vectorInput[j];
         }
         AnyType at(bufferHeap);
 
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }
@@ -517,8 +521,8 @@ bool IOBufferTest::TestPrintCArrayVector(const TestPrintFormattedTableVector<con
     Clear(ioBuffer);
     char8 bufferInfo[32];
     AnyType at(bufferInfo);
-    ioBuffer.PrintFormatted("%?", &at);
-    return StringHelper::Compare(ioBuffer.Buffer(), "Char Array")==0;
+    IOBuffer::PrintFormatted(ioBuffer,"%?", &at);
+    return CCString(ioBuffer.Buffer()) == "Char Array";
 }
 
 template<uint32 nRows, uint32 nCols>
@@ -532,12 +536,13 @@ bool IOBufferTest::TestPrintCArrayMatrix(const TestPrintFormattedTableMatrix<con
         Clear(ioBuffer);
         for (uint32 j = 0u; j < nRows; j++) {
             for (uint32 k = 0u; k < nCols; k++) {
-                StringHelper::Copy(&buffer[j][k][0], table[i].matrixInput[j][k]);
+            	StaticCString<64> s(&buffer[j][k][0]);
+            	s = table[i].matrixInput[j][k];
             }
         }
         AnyType at(buffer);
-        ioBuffer.PrintFormatted(table[i].format, &at);
-        if (StringHelper::Compare(table[i].expected, ioBuffer.Buffer()) != 0) {
+        IOBuffer::PrintFormatted(ioBuffer,table[i].format, &at);
+        if (CCString(table[i].expected) != CCString(ioBuffer.Buffer())) {
             printf("\n%s %s\n", table[i].expected, ioBuffer.Buffer());
             return false;
         }

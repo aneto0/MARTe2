@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "StreamTestHelper.h"
 #include "DoubleBufferedStream.h"
-#include "../../../../Source/Core/BareMetal/L0Types/GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -89,7 +88,7 @@ public:
      */
     bool TestRead_Timeout(MARTe::uint32 bufferSize,
                           MARTe::uint32 readSize,
-                          MARTe::TimeoutType timeout);
+                          MARTe::MilliSeconds timeout);
 
 
     /**
@@ -103,7 +102,7 @@ public:
      */
     bool TestWrite_Timeout(MARTe::uint32 bufferSize,
                            MARTe::uint32 writeSize,
-                           MARTe::TimeoutType timeout);
+                           MARTe::MilliSeconds timeout);
 
 
     /**

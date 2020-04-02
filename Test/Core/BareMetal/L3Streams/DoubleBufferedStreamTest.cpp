@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStreamTest.h"
 
-#include "../../../../Source/Core/BareMetal/L0Types/StreamI.h"
+#include "StreamI.h"
 #include "StreamTestHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -43,7 +43,7 @@ using namespace MARTe;
 
 bool DoubleBufferedStreamTest::TestDefaultConstructor() {
     DummyDoubleBufferedStream stream;
-    bool ok = (stream.GetTimeout() == TTInfiniteWait);
+    bool ok = (stream.GetTimeout().IsInfinite());
     ok &= (stream.GetReadBufferSize() == 32u);
     ok &= (stream.GetWriteBufferSize() == 32u);
     return ok;
@@ -51,21 +51,21 @@ bool DoubleBufferedStreamTest::TestDefaultConstructor() {
 
 bool DoubleBufferedStreamTest::TestConstructor_Timeout() {
     DummyDoubleBufferedStream stream(1u);
-    bool ok = (stream.GetTimeout() == 1);
+    bool ok = (stream.GetTimeout() == MilliSeconds(1,Units::ms));
     ok &= (stream.GetReadBufferSize() == 32u);
     ok &= (stream.GetWriteBufferSize() == 32u);
     return ok;
 }
 
 bool DoubleBufferedStreamTest::TestGetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     DummyDoubleBufferedStream myStream;
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
 }
 
 bool DoubleBufferedStreamTest::TestSetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     DummyDoubleBufferedStream myStream;
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
@@ -92,7 +92,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     uint32 n = 0;
     while (n < 2) {
         uint32 size = readSize;
-        char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
+        char8 *bufferWrite = (char8 *) HeapManager::Malloc(readSize);
         uint32 i = 0;
         for (i = 0; i < readSize; i++) {
             bufferWrite[i] = i * i;
@@ -107,7 +107,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
         }
         stream.Seek(0);
 
-        char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
+        char8 *bufferRead = (char8 *) HeapManager::Malloc(readSize);
         size = readSize;
 
         start = 0;
@@ -120,10 +120,10 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
 
         bufferRead[readSize - 1] = '\0';
         bufferWrite[readSize - 1] = '\0';
-        ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+        ok = CCString(bufferRead) == bufferWrite;
 
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
+        HeapManager::Free(reinterpret_cast<void *&>(bufferRead));
+        HeapManager::Free(reinterpret_cast<void *&>(bufferWrite));
         n++;
     }
     return ok;
@@ -131,7 +131,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
 
 bool DoubleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize,
                                                 MARTe::uint32 readSize,
-                                                MARTe::TimeoutType timeout) {
+                                                MARTe::MilliSeconds timeout) {
 
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize, bufferSize);
@@ -153,7 +153,7 @@ bool DoubleBufferedStreamTest::TestWrite(uint32 bufferSize,
 
 bool DoubleBufferedStreamTest::TestWrite_Timeout(MARTe::uint32 bufferSize,
                                                  MARTe::uint32 writeSize,
-                                                 MARTe::TimeoutType timeout) {
+                                                 MARTe::MilliSeconds timeout) {
 
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize, bufferSize);
@@ -170,7 +170,7 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize, bufferSize);
 
-    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
+    char8 *bufferWrite = (char8 *) HeapManager::Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -189,7 +189,7 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     }
 
     stream.Seek(0);
-    char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
+    char8 *bufferRead = (char8 *) HeapManager::Malloc(writeSize);
     size = writeSize;
     start = 0;
     while ((size > 0) && (stream.Read(bufferRead + start, size))) {
@@ -201,10 +201,10 @@ bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
 
     bufferRead[writeSize - 1] = '\0';
     bufferWrite[writeSize - 1] = '\0';
-    bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+    bool ok = CCString(bufferRead) == bufferWrite;
 
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
+    HeapManager::Free(reinterpret_cast<void *&>(bufferRead));
+    HeapManager::Free(reinterpret_cast<void *&>(bufferWrite));
     return ok;
 }
 
@@ -261,9 +261,9 @@ bool DoubleBufferedStreamTest::TestFlush(uint32 bufferSize) {
     stream.SetBufferSize(bufferSize, bufferSize);
     stream.Clear();
     stream.Printf("%d", 8);
-    bool ok = (StringHelper::Compare("8", stream.Buffer()) != 0);
+    bool ok = CCString(stream.Buffer()) != "8";
     ok &= stream.Flush();
-    ok &= (StringHelper::Compare("8", stream.Buffer()) == 0);
+    ok &= CCString(stream.Buffer()) == "8";
     return ok;
 }
 
@@ -281,6 +281,7 @@ bool DoubleBufferedStreamTest::TestWrite_NotCanWrite() {
     return !stream.Write(buffer, size);
 }
 
+#if 0 //GetToken only for Buffered Streams
 bool DoubleBufferedStreamTest::TestGetToken(uint32 bufferSize,
                                             const TokenTestTableRow *table) {
     DummyDoubleBufferedStream myStream;
@@ -296,11 +297,13 @@ bool DoubleBufferedStreamTest::TestGetToken(uint32 bufferSize,
 
     while (result && (row->toTokenize != NULL)) {
         myStream.Clear();
-        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        uint32 size = CCString(row->toTokenize).GetSize()+1;
+        myStream.OSWrite(row->toTokenize,size);
         const uint32 bufferSize = 32;
         char buffer[bufferSize];
         char saveTerminator;
         uint32 t = 0u;
+
 
         while (myStream.GetToken(buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
             if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
@@ -320,3 +323,5 @@ bool DoubleBufferedStreamTest::TestGetToken(uint32 bufferSize,
     }
     return result;
 }
+
+#endif
