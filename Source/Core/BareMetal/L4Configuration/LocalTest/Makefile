@@ -37,12 +37,16 @@ INCLUDES += -I..
 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/*$(OBJEXT)
-#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/VariableDescriptorLib/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L3Streams/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L4Configuration/*$(OBJEXT)
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
-BUILD_PRODUCT = $(BUILD_DIR)/test2$(EXEEXT)
+
+
+BUILD_PRODUCT = $(BUILD_DIR)/TestPseudoCode$(EXEEXT) $(BUILD_DIR)/test2$(EXEEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

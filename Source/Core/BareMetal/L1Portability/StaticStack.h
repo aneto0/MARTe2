@@ -148,7 +148,7 @@ uint32 StaticStack<elementType, listAllocationGranularity>::GetSize(void) const 
 
 template<typename elementType, uint32 listAllocationGranularity>
 bool StaticStack<elementType, listAllocationGranularity>::Peek(const uint32 position,  elementType &value) const {
-    return slh.Peek(slh.GetSize()-position, static_cast<void *>(&value));
+    return slh.Peek(slh.GetSize()-position-1, static_cast<void *>(&value));
 }
 
 template<typename elementType, uint32 listAllocationGranularity>

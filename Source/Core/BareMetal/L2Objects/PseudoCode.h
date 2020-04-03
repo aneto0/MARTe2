@@ -44,6 +44,8 @@
 
 
 
+
+
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
 /*---------------------------------------------------------------------------*/
@@ -68,6 +70,7 @@ typedef uint16 CodeMemoryAddress;
 class Context{
 
 public:
+
 	/**
     * @brief Get the top of the stack and then move the pointer.
     * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
@@ -317,6 +320,17 @@ void Context::Pop(T &value){
 		value = *((T *)stackPtr);
 	}
 }
+
+template<typename T>
+void Context::Peek(T &value){
+	if (stackPtr){
+		// adds granularity-1 so that also 1 byte uses 1 slot
+		// stack points to the next free value. so one need to step back of the variable size
+		DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
+		value = *((T *)p);
+	}
+}
+
 
 template<typename T>
 void Context::Push(T &value){
