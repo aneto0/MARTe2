@@ -46,6 +46,7 @@ OBJSX=  AtomicGTest.x \
 	SleepGTest.x\
 	StandardHeap_GenericGTest.x \
 	StaticListGTest.x \
+	StaticStackGTest.x \
 	StringHelperGTest.x \
 	StringPortableGTest.x \
 	TimeStampGTest.x \
