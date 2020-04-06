@@ -41,10 +41,7 @@
 #include "CCString.h"
 #include "TypeDescriptor.h"
 #include "CompositeErrorManagement.h"
-
-
-
-
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -63,6 +60,8 @@ typedef uint16 CodeMemoryElement;
 typedef uint32 DataMemoryElement;
 typedef uint16 DataMemoryAddress;
 typedef uint16 CodeMemoryAddress;
+
+#define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
 
 /**
  *
@@ -96,18 +95,12 @@ public:
 	template<typename T>
 	T &Variable(uint16 variableIndex);
 
-	/**
-    * @brief Context will maintain a single error flag. This function allows setting it
-    * @param[in] err is the value to set
-    * @return .
-   */
-	inline void SetErrorFlag(ErrorManagement::ErrorType err);
 
 	/**
-    * @brief Context will maintain a single error flag. This function allows getting it
+    * @brief Context will maintain a single error flag. This function allows accessing it
     * @return the error flag.
    */
-	inline ErrorManagement::ErrorType GetErrorFlag();
+	inline ErrorManagement::ErrorType &GetErrorFlag();
 
 	/**
 	 *
@@ -192,46 +185,60 @@ public:
 
 	/**
 	 * executes every command in codeMemory
+	 * note that the inputs need to be loaded before calling execute
+	 * returns the combination of error flags reported by all the functions that were executed
 	 */
 	ErrorManagement::ErrorType Execute();
+
+	/**
+	 * Reconstruct the RPNCode with type information
+	 */
+	ErrorManagement::ErrorType DeCompile(DynamicCString &RPNCode);
 
 public:
 	/**
 	 *
 	 */
-	ErrorManagement::ErrorType  runtimeError;
+	ErrorManagement::ErrorType  		runtimeError;
 
 
 	/**
 	 * stack and variable are allocated here
 	 */
-	StaticList<CodeMemoryElement,32> codeMemory;
+	StaticList<CodeMemoryElement,32> 	codeMemory;
 
 	/**
-	 * stack and variable are allocated here
-	 */
-	Vector<DataMemoryElement> dataMemory;
-
-	/**
-	 * stack and variable are allocated here
-	 */
-	Vector<DataMemoryElement> stack;
-
-	/*
+	 * variable and constants are allocated here
 	 * MEMORY MAP
 	 *
 	 * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
 	 *                            CONSTANTS
 	 *                            INPUTS
 	 *                            OUTPUTS
-	 * sizeOfCode              PCODE list  --> pCodePtr             : stackStartPtr
-	 * sizeOfStack             STACK       --> stackStartPtr    	: stackMaxPtr
+	 */
+	Vector<DataMemoryElement> 			dataMemory;
+
+	/**
+	 * address of first variable (after constants)
+	 */
+	DataMemoryAddress 					startOfVariables;
+
+	/**
+	 * stack is allocated here
+	 */
+	Vector<DataMemoryElement> 			stack;
+
+	/**
+	 * used during runtime
+	 */
+	DataMemoryElement *stackPtr;
+	DataMemoryElement *stackMaxPtr;
+
+	/**
 	 *
 	 */
+	DataMemoryElement *variablesMemoryPtr;
 
-	DataMemoryElement *stackPtr;
-	DataMemoryElement *stackStartPtr;
-	DataMemoryElement *stackMaxPtr;
 	/**
 	 * how many MemoryElement are used for constants
 	 */
@@ -240,17 +247,12 @@ public:
 	/**
 	 *
 	 */
-	DataMemoryElement *variablesMemoryPtr;
+	const CodeMemoryElement *codeMemoryPtr;
 
 	/**
 	 *
 	 */
 	CodeMemoryAddress codeMaxIndex;
-
-	/**
-	 *
-	 */
-	const CodeMemoryElement *codeMemoryPtr;
 
 private:
 
@@ -276,6 +278,10 @@ private:
 	 */
 	inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
 
+	/**
+	 * Looks for a variable of a given name
+	 */
+	ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
 	/**
 	 * the input variable names
@@ -365,6 +371,11 @@ ErrorManagement::ErrorType Context::AddOutputVariable(CCString name){
 
 ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
 	return FindVariableinDB(name,variableInformation,outputVariableInfo);
+}
+
+
+ErrorManagement::ErrorType &Context::GetErrorFlag(){
+	return runtimeError;
 }
 
 

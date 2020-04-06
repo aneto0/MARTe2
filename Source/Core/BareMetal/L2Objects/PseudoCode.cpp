@@ -106,17 +106,19 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		if (ret){
 //printf("%s in checking %x vs %x\n",name.GetList(),type.all,types[i].all);
 			ret = (type.SameAs(types[i]));
+
 		}
 	}
 
 	// found! commit changes
 	if (ret){
+printf("%s\n",name.GetList());
 
 		// remove first output type
 		if (matchOutput){
 			TypeDescriptor type;
 			typeStack.Pop(type);
-//printf("POP t\n");
+printf("POP t\n");
 		}
 
 		// remove inputs types
@@ -124,14 +126,14 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 			TypeDescriptor type;
 			typeStack.Pop(type);
 			dataStackSize -= ByteSizeToDataMemorySize(type.StorageSize());
-//printf("POP\n");
+printf("POP\n");
 		}
 
 		// insert output types
 		for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
 			typeStack.Push(types[i+numberOfInputs]);
 			dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].StorageSize());
-//printf("PUSH\n");
+printf("PUSH\n");
 		}
 	}
 
@@ -171,20 +173,16 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
 	uint32 i = 0;
 //printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
 
-	bool toContinue = true;
-	for (i=0; toContinue && (i < availableFunctions);i++ ){
-//printf("scan %i \n",i);
-		toContinue = !functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
-	}
-
-	bool found = !toContinue;
-	if (found){
-		code = i;
+	bool found = false;
+	for (i=0; (!found) && (i < availableFunctions);i++ ){
+		found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+		if (found){
+			code = i;
+		}
 	}
 
 	return found;
 }
-
 
 
 /*************************************************************************************************************************/
@@ -213,6 +211,10 @@ public:
 	/**
 	 *
 	 */
+	VariableFinder(DataMemoryAddress address);
+	/**
+	 *
+	 */
     virtual IteratorAction Do(Context::VariableInformation &data,uint32 depth=0);
     /**
      *
@@ -223,19 +225,40 @@ private:
      *
      */
     DynamicCString variableName;
+
+    /**
+     *
+     */
+    DataMemoryAddress variableAddress;
+
 };
 
 
 VariableFinder::VariableFinder(CCString name){
 	variable = NULL_PTR(Context::VariableInformation*);
 	variableName = name;
+	variableAddress = MAXDataMemoryAddress;
 }
+
+VariableFinder::VariableFinder(DataMemoryAddress address){
+	variable = NULL_PTR(Context::VariableInformation*);
+	variableAddress = address;
+}
+
 
 IteratorAction VariableFinder::Do(Context::VariableInformation &data,uint32 depth){
 	IteratorAction ret;
-	if (data.name == variableName){
-		variable = &data;
-		ret.SetActionCode(noAction);
+	if (variableName.GetSize() > 0){
+		if (data.name == variableName){
+			variable = &data;
+			ret.SetActionCode(noAction);
+		}
+	} else
+	if (variableAddress < MAXDataMemoryAddress){
+		if (data.location == variableAddress){
+			variable = &data;
+			ret.SetActionCode(noAction);
+		}
 	}
 	return ret;
 }
@@ -251,8 +274,8 @@ Context::Context(){
 	codeMaxIndex = 0;
 
 	stackPtr = NULL_PTR(DataMemoryElement*);
-	stackStartPtr = NULL_PTR(DataMemoryElement*);
 	stackMaxPtr = NULL_PTR(DataMemoryElement*);
+	startOfVariables = 0;
 }
 
 ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
@@ -287,6 +310,31 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableIn
 
 	return ret;
 }
+
+ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation){
+	ErrorManagement::ErrorType ret;
+
+	VariableFinder finder(address);
+
+	ret = outputVariableInfo.Iterate(finder);
+
+	variableInformation = NULL;
+	if (ret){
+		variableInformation = finder.variable;
+		ret.unsupportedFeature = (variableInformation == NULL);
+	}
+
+	if (!ret){
+		ret = inputVariableInfo.Iterate(finder);
+		if (ret){
+			variableInformation = finder.variable;
+			ret.unsupportedFeature = (variableInformation == NULL);
+		}
+	}
+
+	return ret;
+}
+
 
 ErrorManagement::ErrorType Context::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
 	ErrorManagement::ErrorType ret;
@@ -366,6 +414,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 					td = TypeDescriptor(parameter);
 					ret.unsupportedFeature = !td.IsNumericType();
 					COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " is not a numeric supported format");
+//printf("const type = %x\n",td.all);
 				}
 				// if supported add up the memory needs
 				if (ret){
@@ -416,7 +465,8 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	StaticStack<TypeDescriptor,32> typeStack;
 	DataMemoryAddress maxDataStackSize = 0;    // max value of dataStackSize
 	DataMemoryAddress dataStackSize = 0;       // current simulated value of data stack size
-	DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
+	startOfVariables = 0;                      // for now no constants - so variables start at 0
+//	DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
 
     // clean all the memory
 	codeMemory.Clean();
@@ -544,7 +594,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 					ret.unsupportedFeature = !td.IsNumericType();
 					COMPOSITE_REPORT_ERROR(ret,"variable ",parameter1, "does not have a numeric supported format");
 				}
-
+//printf("read %s type = %x  type = %x\n",variableInformation->name.GetList(),td.all,variableInformation->type.all);
 				if (ret){
 					ret.fatalError = !typeStack.Push(td);
 					REPORT_ERROR(ret,"failed to push type into stack");
@@ -554,7 +604,6 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 					matchOutput = true;
 					code2 = variableInformation->location;
 				}
-
 
 			} else
 
@@ -583,7 +632,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 				if (ret){
 					//nextConstantAddress
 					AnyType src(parameter2);
-					AnyType dest(td,&variablesMemoryPtr[nextConstantAddress]);
+					AnyType dest(td,&variablesMemoryPtr[startOfVariables]);
 					ret = src.CopyTo(dest);
 					REPORT_ERROR(ret,"CopyTo failed ");
 				}
@@ -595,8 +644,8 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 				if (ret){
 					matchOutput = true;
-					code2 = nextConstantAddress;
-					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
+					code2 = startOfVariables;
+					startOfVariables += ByteSizeToDataMemorySize(td.StorageSize());
 					command = readToken;
 				}
 			}
@@ -642,13 +691,6 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 				}
 			}
 		}
-
-	}
-
-	// check that the TypeStack is empty
-	if (ret){
-		ret.internalSetupError = (typeStack.GetSize() > 0);
-		COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete - ",typeStack.GetSize()," data left in stack");
 	}
 
 	// final checks
@@ -662,39 +704,85 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 		// size the stack
 		stack.SetSize(maxDataStackSize);
-		stackStartPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
-		stackPtr = stackStartPtr;
+		stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
 		stackMaxPtr = stackPtr + maxDataStackSize;
 	}
 
+	// check that the TypeStack is empty
+	if (ret){
+		ret.internalSetupError = (typeStack.GetSize() > 0);
+		COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete - ",typeStack.GetSize()," data left in stack");
+	}
 
 	return ret;
 }
 
-
-
-/**
- * executes every command in codeMemory
- */
 ErrorManagement::ErrorType Context::Execute(){
-	ErrorManagement::ErrorType ret ;
 
+	stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
+	stackMaxPtr = stackPtr + stack.GetNumberOfElements();
 
-	stackPtr = stackStartPtr;
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
 	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
 	while(codeMemoryPtr < codeMemoryMaxPtr){
 		CodeMemoryElement pCode = GetPseudoCode();
-//		printf ("executing %s\n",functionRecords[pCode].name.GetList());
 		functionRecords[pCode].function(*this);
 	}
 
+	return this->runtimeError;
+}
+
+ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode){
+	ErrorManagement::ErrorType ret ;
+
+	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
+	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
+	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
+	CStringTool cst = RPNCode();
+
+	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
+		CodeMemoryElement pCode = GetPseudoCode();
+		cst.Append(functionRecords[pCode].name).Append(' ');
+
+		if ((functionRecords[pCode].name == readToken) || (functionRecords[pCode].name == writeToken)){
+			CodeMemoryElement pCode2 = GetPseudoCode();
+			if (pCode2 < startOfVariables){
+				cst.Append("constant");
+			} else {
+				VariableInformation *vi;
+				ret = FindVariable(pCode2,vi);
+				if (vi != NULL){
+					cst.Append(vi->name);
+				}
+			}
+		}
+
+		cst.Append('(');
+		for(uint32 i=0;(i<functionRecords[pCode].numberOfInputs) && ret;i++){
+			if (i!=0) {
+				cst.Append(',');
+			}
+			ret.fatalError = !functionRecords[pCode].types[i].ToString(cst);
+		}
+		if (functionRecords[pCode].numberOfOutputs > 0){
+			cst.Append(" => ");
+		}
+		for(uint32 i=0;(i<functionRecords[pCode].numberOfOutputs) && ret;i++){
+			if (i!=0) {
+				cst.Append(',');
+			}
+			ret.fatalError = !functionRecords[pCode].types[i+functionRecords[pCode].numberOfInputs].ToString(cst);
+		}
+		cst.Append(')');
+
+		cst.Append('\n');
+
+	}
 
 	return ret;
 }
-
 
 
 /***********************************************************************************************/
@@ -716,40 +804,6 @@ void RegisterFunction(const FunctionRecord &record);
 			RegisterFunction(name ## subName ## _FunctionRecord);\
 		}\
 	} name ## subName ## RegisterClassInstance;
-
-
-template <typename T> void Addition(Context &context){
-	T result;
-	T addendum1;
-	T addendum2;
-
-	context.Pop(addendum1);
-	context.Pop(addendum2);
-	result = addendum1+addendum2;
-	context.Push(result);
-}
-
-template <typename T> void Subtraction(Context &context){
-	T result;
-	T addendum1;
-	T addendum2;
-
-	context.Pop(addendum1);
-	context.Pop(addendum2);
-	result = addendum1-addendum2;
-	context.Push(result);
-}
-
-template <typename T> void Multiplication(Context &context){
-	T result;
-	T addendum1;
-	T addendum2;
-
-	context.Pop(addendum1);
-	context.Pop(addendum2);
-	result = addendum1*addendum2;
-	context.Push(result);
-}
 
 template <typename T> void Read(Context &context){
 	CodeMemoryElement index;
@@ -781,40 +835,6 @@ REGISTER_PCODE_FUNCTION(DUP,int16,1,2,Duplication<int16>,SignedInteger16Bit,Sign
 REGISTER_PCODE_FUNCTION(DUP,uint8,1,2,Duplication<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
 REGISTER_PCODE_FUNCTION(DUP,int8,1,2,Duplication<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
 
-REGISTER_PCODE_FUNCTION(ADD,float,2,1,Addition<float64>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(ADD,double,2,1,Addition<float64>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(ADD,uint64,2,1,Addition<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(ADD,int64,2,1,Addition<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(ADD,uint32,2,1,Addition<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(ADD,int32,2,1,Addition<int32>,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(ADD,uint16,2,1,Addition<uint16>,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(ADD,int16,2,1,Addition<int16>,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(ADD,uint8,2,1,Addition<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(ADD,int8,2,1,Addition<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
-REGISTER_PCODE_FUNCTION(SUB,float,2,1,Subtraction<float64>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(SUB,double,2,1,Subtraction<float64>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(SUB,uint64,2,1,Subtraction<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(SUB,int64,2,1,Subtraction<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(SUB,uint32,2,1,Subtraction<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(SUB,int32,2,1,Subtraction<int32>,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(SUB,uint16,2,1,Subtraction<uint16>,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(SUB,int16,2,1,Subtraction<int16>,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(SUB,uint8,2,1,Subtraction<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(SUB,int8,2,1,Subtraction<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
-
-REGISTER_PCODE_FUNCTION(MUL,float,2,1,Multiplication<float64>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(MUL,double,2,1,Multiplication<float64>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(MUL,uint64,2,1,Multiplication<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(MUL,int64,2,1,Multiplication<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(MUL,uint32,2,1,Multiplication<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(MUL,int32,2,1,Multiplication<int32>,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(MUL,uint16,2,1,Multiplication<uint16>,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(MUL,int16,2,1,Multiplication<int16>,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(MUL,uint8,2,1,Multiplication<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(MUL,int8,2,1,Multiplication<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
 REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<float64>,Float64Bit)
 REGISTER_PCODE_FUNCTION(READ,float,0,1,Read<float32>,Float32Bit)
 REGISTER_PCODE_FUNCTION(READ,uint64,0,1,Read<uint64>,UnsignedInteger64Bit)
@@ -837,19 +857,64 @@ REGISTER_PCODE_FUNCTION(WRITE,int16,1,0,Write<int16>   ,SignedInteger16Bit  ,Sig
 REGISTER_PCODE_FUNCTION(WRITE,uint8,1,0,Write<uint8>   ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
 REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
 
+#define REGISTER_CAST_FUNCTION(name,type1,type2,nInputs,nOutputs,function,...)\
+	static const TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {__VA_ARGS__}; \
+	static const FunctionRecord name ## type1 ## type2 ## _FunctionRecord={#name,nInputs,nOutputs,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>}; \
+	static class name ## type1 ## type2 ## RegisterClass { \
+	public: name ## type1 ## type2 ## RegisterClass(){\
+			RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\
+		}\
+	} name ## type1 ## type2 ## RegisterClassInstance;
 
-template <typename T> void Power(Context &context){
-	T x,exp,res;
-	context.Pop(x);
-	context.Pop(exp);
-	res = pow(x,exp);
-	context.Push(res);
+template <typename T1,typename T2> void Casting(Context &context){
+	T1 x1;
+	T2 x2;
+	bool ret;
+	context.Peek(x1);
+	ret = SafeNumber2Number(x1,x2);
+	context.Push(x2);
+	if (!ret){
+		context.GetErrorFlag().outOfRange = true;
+	}
 }
 
-REGISTER_PCODE_FUNCTION(POW,float32,2,1,Power<float32>,Float32Bit,Float32Bit,Float32Bit)  // TOS ^ TOS(-1)
-REGISTER_PCODE_FUNCTION(POW,float64,2,1,Power<float64>,Float64Bit,Float64Bit,Float64Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,float64,1,1,Casting,Float64Bit          ,Float64Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,float32,1,1,Casting,Float64Bit          ,Float32Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,uint64 ,1,1,Casting,UnsignedInteger64Bit,UnsignedInteger64Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int64  ,1,1,Casting,SignedInteger64Bit  ,SignedInteger64Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint32 ,1,1,Casting,UnsignedInteger32Bit,UnsignedInteger32Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int32  ,1,1,Casting,SignedInteger32Bit  ,SignedInteger32Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint16 ,1,1,Casting,UnsignedInteger16Bit,UnsignedInteger16Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int16  ,1,1,Casting,SignedInteger16Bit  ,SignedInteger16Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint8  ,1,1,Casting,UnsignedInteger8Bit ,UnsignedInteger8Bit )
+REGISTER_CAST_FUNCTION(CAST,float64,int8   ,1,1,Casting,SignedInteger8Bit   ,SignedInteger8Bit   )
 
-#define REGISTER_UNARY_FUNCTION(name,fname)	    							\
+#define REGISTER_OPERATOR(name,oper,fname)	    							        \
+		template <typename T> void function ## fname ## ication (Context &context){ \
+			T x1,x2,x3;													     		\
+			context.Pop(x1);                                                        \
+			context.Pop(x2);                                                        \
+			x3 = x1 oper x2;                                                        \
+			context.Push(x3);                                                       \
+		}                                                                           \
+		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
+		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit) \
+		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit) \
+		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit) \
+		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
+		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
+
+REGISTER_OPERATOR(ADD, + ,Addition)
+REGISTER_OPERATOR(SUB, - ,Subtract)
+REGISTER_OPERATOR(MUL, * ,Multipl)
+REGISTER_OPERATOR(DIV, / ,Division)
+
+
+#define REGISTER_1_FUNCTION(name,fname)	    							\
 		template <typename T> void function ## fname ## ication (Context &context){ \
 			T x,res;													     		\
 			context.Pop(x);                                                         \
@@ -859,12 +924,67 @@ REGISTER_PCODE_FUNCTION(POW,float64,2,1,Power<float64>,Float64Bit,Float64Bit,Flo
 		REGISTER_PCODE_FUNCTION(name,float32,1,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
 		REGISTER_PCODE_FUNCTION(name,float64,1,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit)
 
-REGISTER_UNARY_FUNCTION(SIN,sin)
-REGISTER_UNARY_FUNCTION(COS,cos)
-REGISTER_UNARY_FUNCTION(TAN,tan)
-REGISTER_UNARY_FUNCTION(EXP,exp)
-REGISTER_UNARY_FUNCTION(LOG,log)
-REGISTER_UNARY_FUNCTION(LOG10,log10)
+REGISTER_1_FUNCTION(SIN,sin)
+REGISTER_1_FUNCTION(COS,cos)
+REGISTER_1_FUNCTION(TAN,tan)
+REGISTER_1_FUNCTION(EXP,exp)
+REGISTER_1_FUNCTION(LOG,log)
+REGISTER_1_FUNCTION(LOG10,log10)
+
+#define REGISTER_2_FUNCTION(name,fname)	    							\
+		template <typename T> void function ## fname ## ication (Context &context){ \
+			T x1,x2,res;	     										     		\
+			context.Pop(x1);                                                        \
+			context.Pop(x2);                                                        \
+			res = fname (x1,x2);                                                    \
+			context.Push(res);                                                      \
+		}                                                                           \
+		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)
+
+REGISTER_2_FUNCTION(POW,pow)
+
+#define REGISTER_COMPARE_OPERATOR(name,oper,fname)	    						    \
+		template <typename T> void function ## fname ## ication (Context &context){ \
+			T x1,x2;													     		\
+			bool ret;													     		\
+			context.Pop(x1);                                                        \
+			context.Pop(x2);                                                        \
+			ret = x1 oper x2;                                                       \
+			context.Push(ret);                                                      \
+		}                                                                           \
+		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,UnsignedInteger8Bit)  \
+		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,UnsignedInteger8Bit)  \
+		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,UnsignedInteger8Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,UnsignedInteger8Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,UnsignedInteger8Bit)       \
+		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
+		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,UnsignedInteger8Bit)
+
+REGISTER_COMPARE_OPERATOR(EQ, == ,Equal)
+REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
+REGISTER_COMPARE_OPERATOR(GT, > ,Greater)
+REGISTER_COMPARE_OPERATOR(LT, < ,Smaller)
+REGISTER_COMPARE_OPERATOR(GTE, >= ,Great)
+REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
+
+#define REGISTER_LOGICAL_OPERATOR(name,oper,fname)	    						    \
+		void function ## fname ## ication (Context &context){                       \
+			bool x1,x2,ret;													        \
+			context.Pop(x1);                                                        \
+			context.Pop(x2);                                                        \
+			ret = x1 oper x2;                                                       \
+			context.Push(ret);                                                      \
+		}                                                                           \
+      	REGISTER_PCODE_FUNCTION(name,boolean,2,1,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
+
+REGISTER_LOGICAL_OPERATOR(AND, && ,And)
+REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
+REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
+
 
 
 } //PseudoCode

@@ -467,6 +467,7 @@ private:
 #define  PointerType                 TypeDescriptor(TDRANGE(fullType,TDF_Pointer)          | TDRANGE(basicTypeSize,SizePointer) )
 #define  ConstPointerType            TypeDescriptor(TDRANGE(fullType,TDF_Pointer)          | TDRANGE(basicTypeSize,SizePointer) | TDRANGE(dataIsConstant,1))
 #define  GenericPointer              TypeDescriptor(TDRANGE(fullType,TDF_GenericPointer)   | TDRANGE(basicTypeSize,SizePointer) )
+#define  BooleanType                 UnsignedInteger8Bit;
 
 
 /***  !BASIC TYPES */
