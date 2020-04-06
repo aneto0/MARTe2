@@ -44,6 +44,11 @@ bool CStringTool::Write(const char8 * const input,uint32 & size,const MilliSecon
 	return Write(input,size);
 }
 
+bool CStringTool::SetSize(uint64 size){
+	return Truncate(size).ret;
+}
+
+
 /*
 bool CStringTool::StreamOutTo(StreamI &stream) const{
 	uint32 size = this->index * this->elementSize;

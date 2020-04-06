@@ -112,13 +112,13 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 
 	// found! commit changes
 	if (ret){
-printf("%s\n",name.GetList());
+//printf("%s\n",name.GetList());
 
 		// remove first output type
 		if (matchOutput){
 			TypeDescriptor type;
 			typeStack.Pop(type);
-printf("POP t\n");
+//printf("POP t\n");
 		}
 
 		// remove inputs types
@@ -126,14 +126,14 @@ printf("POP t\n");
 			TypeDescriptor type;
 			typeStack.Pop(type);
 			dataStackSize -= ByteSizeToDataMemorySize(type.StorageSize());
-printf("POP\n");
+//printf("POP\n");
 		}
 
 		// insert output types
 		for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
 			typeStack.Push(types[i+numberOfInputs]);
 			dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].StorageSize());
-printf("PUSH\n");
+//printf("PUSH\n");
 		}
 	}
 
@@ -269,12 +269,8 @@ IteratorAction VariableFinder::Do(Context::VariableInformation &data,uint32 dept
 
 Context::Context(){
 	variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
-	variablesMaxIndex = 0;
 	codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
-	codeMaxIndex = 0;
-
 	stackPtr = NULL_PTR(DataMemoryElement*);
-	stackMaxPtr = NULL_PTR(DataMemoryElement*);
 	startOfVariables = 0;
 }
 
@@ -293,9 +289,8 @@ ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInfor
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableInformation> &db){
+ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
 	ErrorManagement::ErrorType ret;
-
 	VariableInformation *variableInfo;
 	ret = FindVariableinDB(name,variableInfo,db);
 
@@ -303,6 +298,9 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableIn
 	if (ret.unsupportedFeature){
 		VariableInformation variableInfo;
 		variableInfo.name = name;
+		variableInfo.type = td;
+		variableInfo.location = location;
+//printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
 		ret = db.Insert(variableInfo );
 	} else {
 		ret.invalidOperation = true;
@@ -353,7 +351,7 @@ ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableIn
 ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 	ErrorManagement::ErrorType ret;
 
-	variablesMaxIndex = 0;
+	DataMemoryAddress nextConstantAddress = 0;
 
 	bool finished = false;
 	while (!finished  && ret){
@@ -418,10 +416,19 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 				}
 				// if supported add up the memory needs
 				if (ret){
-					variablesMaxIndex += ByteSizeToDataMemorySize(td.StorageSize());
+					DynamicCString constantName;
+					constantName().Append("Constant").Append('@').Append(nextConstantAddress);
+					ret = AddInputVariable(constantName,td,nextConstantAddress);
+				}
+				if (ret){
+					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
 				}
 			}
 		}
+	}
+
+	if (ret){
+		startOfVariables = nextConstantAddress;
 	}
 
 	return ret;
@@ -430,6 +437,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	ErrorManagement::ErrorType ret;
 
+	DataMemoryAddress nextVariableAddress = startOfVariables;
 	// check that all variables have a type and allocate variables + constants
 
 	uint32 index = 0;
@@ -438,9 +446,10 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 		ret.unsupportedFeature = !var->type.IsNumericType();
 		COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
 
-		if (ret){
-			var->location = variablesMaxIndex;
-			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
+		// skip constants are already allocated
+		if (ret && (var->location == MAXDataMemoryAddress)){
+			var->location = nextVariableAddress;
+			nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
 		}
 		index++;
 	}
@@ -451,22 +460,22 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 		COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
 
 		if (ret){
-			var->location = variablesMaxIndex;
-			variablesMaxIndex += ByteSizeToDataMemorySize(var->type.StorageSize());
+			var->location = nextVariableAddress;
+			nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
 		}
 		index++;
 	}
 
 	// already
-	dataMemory.SetSize(variablesMaxIndex);
+	dataMemory.SetSize(nextVariableAddress);
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
 	// initialise compilation memory
 	StaticStack<TypeDescriptor,32> typeStack;
 	DataMemoryAddress maxDataStackSize = 0;    // max value of dataStackSize
 	DataMemoryAddress dataStackSize = 0;       // current simulated value of data stack size
-	startOfVariables = 0;                      // for now no constants - so variables start at 0
-//	DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
+//	startOfVariables = 0;                      // for now no constants - so variables start at 0
+	DataMemoryAddress nextConstantAddress = 0; // pointer to next constant memory area
 
     // clean all the memory
 	codeMemory.Clean();
@@ -628,11 +637,11 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 					COMPOSITE_REPORT_ERROR(ret,"type ",parameter1, " is not a numeric supported format");
 				}
 
-				// convert and save constant into memory
+				// convert string to number and save value into memory
 				if (ret){
 					//nextConstantAddress
 					AnyType src(parameter2);
-					AnyType dest(td,&variablesMemoryPtr[startOfVariables]);
+					AnyType dest(td,&variablesMemoryPtr[nextConstantAddress]);
 					ret = src.CopyTo(dest);
 					REPORT_ERROR(ret,"CopyTo failed ");
 				}
@@ -644,8 +653,9 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 				if (ret){
 					matchOutput = true;
-					code2 = startOfVariables;
-					startOfVariables += ByteSizeToDataMemorySize(td.StorageSize());
+					code2 = nextConstantAddress;
+					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
+					// the actual command is a READ from the constant area
 					command = readToken;
 				}
 			}
@@ -696,16 +706,14 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	// final checks
 	if (ret){
 
-		// variables are already done
-
 		// assign the code pointer
 		codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
-		codeMaxIndex  = codeMemory.GetSize();
 
 		// size the stack
 		stack.SetSize(maxDataStackSize);
 		stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
-		stackMaxPtr = stackPtr + maxDataStackSize;
+
+		variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 	}
 
 	// check that the TypeStack is empty
@@ -717,68 +725,160 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::Execute(){
+/**
+ * expands the variableInformation into a readable text
+ * if more pCode is required it will get it from context
+ */
+ErrorManagement::ErrorType Context::FunctionRecord2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly){
 
-	stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
-	stackMaxPtr = stackPtr + stack.GetNumberOfElements();
+	 ErrorManagement::ErrorType ret;
 
-	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
-	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
-	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
-	while(codeMemoryPtr < codeMemoryMaxPtr){
-		CodeMemoryElement pCode = GetPseudoCode();
-		functionRecords[pCode].function(*this);
+	if ((functionInformation.name == readToken) || (functionInformation.name == writeToken)){
+		CodeMemoryElement pCode2 = GetPseudoCode();
+		if (peekOnly){
+			codeMemoryPtr--;
+		}
+
+		Context::VariableInformation *vi;
+		ret = FindVariable(pCode2,vi);
+		COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
+
+		if (ret){
+			if (pCode2 < startOfVariables){
+				// Converts the value to a string
+				DynamicCString value;
+				AnyType dest(value);
+				AnyType src(vi->type,&variablesMemoryPtr[pCode2]);
+				ret = src.CopyTo(dest);
+				REPORT_ERROR(ret,"CopyTo failed ");
+				if (ret){
+					cst.Append(value);
+				}
+			} else {
+				cst.Append(vi->name);
+			}
+		}
 	}
 
-	return this->runtimeError;
+	cst.Append('(');
+	for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
+		if (i!=0) {
+			cst.Append(',');
+		}
+		ret.fatalError = !functionInformation.types[i].ToString(cst);
+	}
+	if (functionInformation.numberOfOutputs > 0){
+		cst.Append(" => ");
+	}
+	for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
+		if (i!=0) {
+			cst.Append(',');
+		}
+		ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
+	}
+	cst.Append(')');
+
+	return ret;
+
+}
+
+
+ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStream,uint32 step){
+
+	stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
+
+	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
+	CodeMemoryAddress codeMaxIndex  = codeMemory.GetSize();
+	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
+
+	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
+	runtimeError = ErrorManagement::ErrorType(true);
+
+	switch (mode){
+	case fastMode:{
+		while(codeMemoryPtr < codeMemoryMaxPtr){
+			CodeMemoryElement pCode = GetPseudoCode();
+			functionRecords[pCode].function(*this);
+		}
+	}break;
+	case safeMode:{
+		DataMemoryElement *stackMinPtr = stackPtr;
+		DataMemoryElement *stackMaxPtr = stackPtr + stack.GetNumberOfElements();
+		while ((codeMemoryPtr < codeMemoryMaxPtr) /*&& (runtimeError.ErrorsCleared())*/){
+			CodeMemoryElement pCode = GetPseudoCode();
+			functionRecords[pCode].function(*this);
+			// note that the syackPtr will reach the max value - as it points to the next value to write
+			runtimeError.outOfRange = ((stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
+			COMPOSITE_REPORT_ERROR(runtimeError,"stack over/under flow ", (int64)(stackPtr-stackMinPtr), " [0 - ", (int64)(stackMaxPtr- stackMinPtr), "]");
+		}
+		runtimeError.notCompleted = (codeMemoryPtr < codeMemoryMaxPtr);
+		REPORT_ERROR(runtimeError,"code execution interrupted");
+	}break;
+	case debugMode:
+	default:{
+		if (debugStream == NULL_PTR(StreamI *)){
+			runtimeError.parametersError = true;
+			REPORT_ERROR(runtimeError,"debugMode requested with debugStream set to NULL");
+		} else {
+			DynamicCString debugMessage;
+			CStringTool cst = debugMessage();
+
+			int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+			int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
+			cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
+			printf ("%s",debugMessage.GetList());
+
+			while(codeMemoryPtr < codeMemoryMaxPtr){
+				CodeMemoryElement pCode = GetPseudoCode();
+
+				// show update info
+				cst.SetSize(0);
+     			cst.Append(functionRecords[pCode].name).Append(' ');
+				FunctionRecord2String(functionRecords[pCode],cst,true);
+				cst.Append('\n');
+
+				// executes code
+				functionRecords[pCode].function(*this);
+
+				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
+				cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
+
+				uint32 size = debugMessage.GetSize();
+				debugStream->Write(debugMessage.GetList(),size);
+			}
+		}
+	}
+	}
+
+	if (stackPtr != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
+		runtimeError.internalSetupError = true;
+		int64 offset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+		COMPOSITE_REPORT_ERROR(runtimeError,"stack pointer not back to origin : ",offset, " elements left");
+	}
+
+	return runtimeError;
 }
 
 ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode){
 	ErrorManagement::ErrorType ret ;
 
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
+	CodeMemoryAddress codeMaxIndex  = codeMemory.GetSize();
 	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
+
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
+
 	CStringTool cst = RPNCode();
 
 	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
 		CodeMemoryElement pCode = GetPseudoCode();
 		cst.Append(functionRecords[pCode].name).Append(' ');
 
-		if ((functionRecords[pCode].name == readToken) || (functionRecords[pCode].name == writeToken)){
-			CodeMemoryElement pCode2 = GetPseudoCode();
-			if (pCode2 < startOfVariables){
-				cst.Append("constant");
-			} else {
-				VariableInformation *vi;
-				ret = FindVariable(pCode2,vi);
-				if (vi != NULL){
-					cst.Append(vi->name);
-				}
-			}
-		}
-
-		cst.Append('(');
-		for(uint32 i=0;(i<functionRecords[pCode].numberOfInputs) && ret;i++){
-			if (i!=0) {
-				cst.Append(',');
-			}
-			ret.fatalError = !functionRecords[pCode].types[i].ToString(cst);
-		}
-		if (functionRecords[pCode].numberOfOutputs > 0){
-			cst.Append(" => ");
-		}
-		for(uint32 i=0;(i<functionRecords[pCode].numberOfOutputs) && ret;i++){
-			if (i!=0) {
-				cst.Append(',');
-			}
-			ret.fatalError = !functionRecords[pCode].types[i+functionRecords[pCode].numberOfInputs].ToString(cst);
-		}
-		cst.Append(')');
+		ret = FunctionRecord2String(functionRecords[pCode],cst);
 
 		cst.Append('\n');
-
 	}
 
 	return ret;
@@ -786,7 +886,6 @@ ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode){
 
 
 /***********************************************************************************************/
-
 
 /**
  * to register a function
@@ -824,8 +923,8 @@ template <typename T> void Duplication(Context &context){
 }
 
 
-REGISTER_PCODE_FUNCTION(DUP,float,1,2,Duplication<float64>,Float32Bit,Float32Bit,Float32Bit)
 REGISTER_PCODE_FUNCTION(DUP,double,1,2,Duplication<float64>,Float64Bit,Float64Bit,Float64Bit)
+REGISTER_PCODE_FUNCTION(DUP,float,1,2,Duplication<float32>,Float32Bit,Float32Bit,Float32Bit)
 REGISTER_PCODE_FUNCTION(DUP,uint64,1,2,Duplication<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
 REGISTER_PCODE_FUNCTION(DUP,int64,1,2,Duplication<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
 REGISTER_PCODE_FUNCTION(DUP,uint32,1,2,Duplication<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)

@@ -64,6 +64,11 @@ typedef uint16 CodeMemoryAddress;
 #define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
 
 /**
+ * used internally to describe and register functions
+ */
+struct FunctionRecord;
+
+/**
  *
  */
 class Context{
@@ -108,7 +113,7 @@ public:
 	Context();
 
 	/**
-	 *  element for the list of variables
+	 *  Element for the list of variables
 	 */
 	struct VariableInformation {
 		/**
@@ -147,7 +152,7 @@ public:
 		VariableInformation(const VariableInformation &in){
 			name = in.name;
 			type = in.type;
-			location = 0;
+			location = in.location;
 			variableUsed = false;
 		}
 	};
@@ -170,6 +175,16 @@ public:
 	ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
+	 * allow choosing how to run the code
+	 */
+	enum executionMode {
+		fastMode,
+		safeMode,
+		debugMode,
+		singleStep
+	};
+
+	/**
 	 * Cleans memory
 	 * Allocates inputVariables
 	 * Allocates outputVariables
@@ -188,14 +203,15 @@ public:
 	 * note that the inputs need to be loaded before calling execute
 	 * returns the combination of error flags reported by all the functions that were executed
 	 */
-	ErrorManagement::ErrorType Execute();
+	ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),uint32 step=0);
 
 	/**
 	 * Reconstruct the RPNCode with type information
 	 */
 	ErrorManagement::ErrorType DeCompile(DynamicCString &RPNCode);
 
-public:
+// PUBLIC VARIABLES
+
 	/**
 	 *
 	 */
@@ -219,7 +235,7 @@ public:
 	Vector<DataMemoryElement> 			dataMemory;
 
 	/**
-	 * address of first variable (after constants)
+	 * address of first variable (after constants) or how many MemoryElement are used for constants
 	 */
 	DataMemoryAddress 					startOfVariables;
 
@@ -231,28 +247,19 @@ public:
 	/**
 	 * used during runtime
 	 */
-	DataMemoryElement *stackPtr;
-	DataMemoryElement *stackMaxPtr;
+	DataMemoryElement *					stackPtr;
 
 	/**
 	 *
 	 */
-	DataMemoryElement *variablesMemoryPtr;
+	DataMemoryElement *					variablesMemoryPtr;
 
-	/**
-	 * how many MemoryElement are used for constants
-	 */
-	DataMemoryAddress variablesMaxIndex;
 
 	/**
 	 *
 	 */
-	const CodeMemoryElement *codeMemoryPtr;
+	const CodeMemoryElement *			codeMemoryPtr;
 
-	/**
-	 *
-	 */
-	CodeMemoryAddress codeMaxIndex;
 
 private:
 
@@ -260,7 +267,7 @@ private:
 	 * Checks existence of name using FindInputVariable
 	 * If not found add new variable
 	 */
-	inline ErrorManagement::ErrorType AddInputVariable(CCString name);
+	inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = InvalidType(0),DataMemoryAddress location = MAXDataMemoryAddress);
 
 	/**
 	 * Looks for a variable of a given name
@@ -271,7 +278,7 @@ private:
 	 * Checks existence of name using FindOutputVariable
 	 * If not found add new variable
 	 */
-	inline ErrorManagement::ErrorType AddOutputVariable(CCString name);
+	inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = InvalidType(0),DataMemoryAddress location = MAXDataMemoryAddress);
 
 	/**
 	 * Looks for a variable of a given name
@@ -284,6 +291,24 @@ private:
 	ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
 	/**
+	 *
+	 */
+	ErrorManagement::ErrorType AddVariable2DB(CCString name,List<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
+
+	/**
+	 *
+	 */
+	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
+
+	/**
+	 * expands the variableInformation into a readable text
+	 * if more pCode is required for the decoding it will get it from context.
+	 * it will access DataMemory as well to decode constants
+	 * if peekOnly = true does not change the codeMemoryPtr
+	 */
+	ErrorManagement::ErrorType FunctionRecord2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=false);
+
+	/**
 	 * the input variable names
 	 */
 	List<VariableInformation> inputVariableInfo;
@@ -293,15 +318,6 @@ private:
 	 */
 	List<VariableInformation> outputVariableInfo;
 
-	/**
-	 *
-	 */
-	ErrorManagement::ErrorType AddVariable2DB(CCString name,List<VariableInformation> &db);
-
-	/**
-	 *
-	 */
-	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 };
 
 
@@ -357,16 +373,16 @@ CodeMemoryElement Context::GetPseudoCode(){
 	return *codeMemoryPtr++;
 }
 
-ErrorManagement::ErrorType Context::AddInputVariable(CCString name){
-	return AddVariable2DB(name,inputVariableInfo);
+ErrorManagement::ErrorType Context::AddInputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+	return AddVariable2DB(name,inputVariableInfo,td,location);
 }
 
 ErrorManagement::ErrorType Context::FindInputVariable(CCString name,VariableInformation *&variableInformation){
 	return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
-ErrorManagement::ErrorType Context::AddOutputVariable(CCString name){
-	return AddVariable2DB(name,outputVariableInfo);
+ErrorManagement::ErrorType Context::AddOutputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+	return AddVariable2DB(name,outputVariableInfo,td,location);
 }
 
 ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){

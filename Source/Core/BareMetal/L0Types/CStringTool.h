@@ -162,6 +162,11 @@ public:
             uint32 & size,
             const MilliSeconds &timeout);
 
+    /**
+     * @see StreamI
+     */
+    virtual bool SetSize(uint64 size);
+
 protected:
     /**
      *
