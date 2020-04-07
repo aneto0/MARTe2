@@ -1,7 +1,7 @@
 /**
  * @file EventInterface.cpp
  * @brief Header file for class AnyType
- * @date Mar 30, 2020
+ * @date 7 Jan 2020
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -19,15 +19,25 @@
  * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
-*/
+*/ 
 
 #include "EventInterface.h"
 
 namespace MARTe{
 
+EventInterface::~EventInterface(){
 
-const EventInterface::Event EventInterface::noEvent = 0;
+}
 
-EventInterface::~EventInterface(){}
+
+EventInterface::EventInterface(){
+
+}
+
+void EventInterface::operator=(EventInterface & ev){
+
+}
+
+const EventInterface::Event EventInterface::noEvent(0);
 
 } //MARTe
