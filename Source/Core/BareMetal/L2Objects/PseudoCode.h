@@ -69,7 +69,7 @@ typedef uint16 CodeMemoryAddress;
 struct FunctionRecord;
 
 /**
- *
+ *  The context required to execute a PCode. It is the result of a compilation of a RPN Code
  */
 class Context{
 
@@ -83,9 +83,19 @@ public:
 	template<typename T>
 	inline void Pop(T &value);
 
+	/**
+    * @brief Add to the top of the stack and then move the pointer.
+    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+    * @return .
+   */
 	template<typename T>
 	inline void Push(T &value);
 
+	/**
+    * @brief Get the top of the stack and do not move the pointer.
+    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+    * @return .
+   */
 	template<typename T>
 	inline void Peek(T &value);
 
@@ -301,12 +311,28 @@ private:
 	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 
 	/**
-	 * expands the variableInformation into a readable text
+	 * expands the functionInformation into a readable text
 	 * if more pCode is required for the decoding it will get it from context.
 	 * it will access DataMemory as well to decode constants
 	 * if peekOnly = true does not change the codeMemoryPtr
 	 */
 	ErrorManagement::ErrorType FunctionRecord2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=false);
+
+	/**
+	 * expands function information input description into readable text
+	 * if more pCode is required for the decoding it will peek it from context. It will consume the PCode only if peekOnly=false
+	 * it will access DataMemory as well to decode constants
+	 * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
+	 */
+	ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=true,bool showData=true);
+
+	/**
+	 * expands function information output description into readable text
+	 * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true
+	 * it will access DataMemory as well to decode constants
+	 * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
+	 */
+	ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true);
 
 	/**
 	 * the input variable names
@@ -319,9 +345,6 @@ private:
 	List<VariableInformation> outputVariableInfo;
 
 };
-
-
-
 
 
 /*---------------------------------------------------------------------------*/

@@ -61,6 +61,7 @@ int main(){
 		}
 	}
 
+	printf ("COMPILE\n");
 	if (ret){
 		ret = context.Compile(RPNCode);
 		printf("size of constant area = %i\n",context.startOfVariables);
@@ -69,11 +70,30 @@ int main(){
 		printf("size of stack area = %i\n",context.stack.GetNumberOfElements());
 	}
 
+	printf ("ASSIGN INPUTS\n");
 	if (ret){
 		int32 index = 0;
 		PseudoCode::Context::VariableInformation *var;
 
-		printf ("VAR ALLOCATION RESULT\n");
+		printf ("VAR SCAN RESULT\n");
+		while(context.BrowseInputVariable(index,var)){
+			index++;
+			if (var->name == "A"){
+				float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+				*x = 1.0;
+			}
+			if (var->name == "B"){
+				float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+				*x = 2.0;
+			}
+		}
+	}
+
+	printf ("VAR ALLOCATION RESULT\n");
+	if (ret){
+		int32 index = 0;
+		PseudoCode::Context::VariableInformation *var;
+
 		while(context.BrowseInputVariable(index,var)){
 			printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.GetList());
 			index++;
@@ -95,7 +115,9 @@ int main(){
 		CStringTool cst = dcs();
 //		BasicConsole console;
 		ret = context.Execute(PseudoCode::Context::debugMode,&cst,0);
-		printf("%s\n",dcs.GetList());
+		if (dcs.GetSize() > 0){
+			printf("%s\n",dcs.GetList());
+		}
 	}
 
 	printf ("FAST MODE EXECUTION \n");

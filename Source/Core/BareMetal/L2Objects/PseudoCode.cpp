@@ -733,7 +733,6 @@ ErrorManagement::ErrorType Context::FunctionRecord2String(FunctionRecord &functi
 
 	 ErrorManagement::ErrorType ret;
 
-
 	if ((functionInformation.name == readToken) || (functionInformation.name == writeToken)){
 		CodeMemoryElement pCode2 = GetPseudoCode();
 		if (peekOnly){
@@ -780,7 +779,124 @@ ErrorManagement::ErrorType Context::FunctionRecord2String(FunctionRecord &functi
 	cst.Append(')');
 
 	return ret;
+}
 
+ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly,bool showData){
+	 ErrorManagement::ErrorType ret;
+
+	 const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
+
+	 if (functionInformation.name == writeToken){
+		 CodeMemoryElement pCode2 = GetPseudoCode();
+
+		 Context::VariableInformation *vi;
+		 ret = FindVariable(pCode2,vi);
+		 COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
+
+		 if (ret){
+			cst.Append(vi->name);
+		 }
+	 }
+
+	 DataMemoryAddress dataStackIndex = 0;
+
+	 for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
+		 if (i!=0) {
+			 cst.Append(',');
+		 } else {
+			 cst.Append('(');
+		 }
+		 if (showData){
+			 cst.Append('(');
+		 }
+		 ret.fatalError = !functionInformation.types[i].ToString(cst);
+		 if (showData){
+			cst.Append(')');
+
+			dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+			DynamicCString value;
+			AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
+			AnyType dest(value);
+			ret = src.CopyTo(dest);
+
+			cst.Append(value.GetList());
+
+			if (i == (functionInformation.numberOfInputs-1U)){
+				cst.Append(')');
+			}
+		 }
+	 }
+
+	 // restore any used data
+	 if (peekOnly){
+		 codeMemoryPtr 	= saveCodeMemoryPtr;
+	 }
+
+	 return ret;
+}
+
+ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack,bool showData){
+	ErrorManagement::ErrorType ret;
+
+	if (functionInformation.name == readToken) {
+		CodeMemoryElement pCode2;
+		if (lookBack){
+			pCode2 = codeMemoryPtr[-1];
+		} else {
+			pCode2 = codeMemoryPtr[0];
+		}
+
+		Context::VariableInformation *vi;
+		ret = FindVariable(pCode2,vi);
+		COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
+
+		if (ret){
+			if (pCode2 < startOfVariables){
+				// Converts the value to a string
+				DynamicCString value;
+				AnyType dest(value);
+				AnyType src(vi->type,&variablesMemoryPtr[pCode2]);
+				ret = src.CopyTo(dest);
+				REPORT_ERROR(ret,"CopyTo failed ");
+				if (ret){
+					cst.Append(value);
+				}
+			} else {
+				cst.Append(vi->name);
+			}
+		}
+	}
+
+	DataMemoryAddress dataStackIndex = 0;
+
+	cst.Append('(');
+	if (functionInformation.numberOfOutputs > 0){
+		cst.Append(" => ");
+	}
+	for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
+		if (i!=0) {
+			cst.Append(',');
+		}
+
+		if (showData){
+			cst.Append('(');
+		}
+		ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
+		if (showData){
+			cst.Append(')');
+
+			dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+			DynamicCString value;
+			AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
+			AnyType dest(value);
+			ret = src.CopyTo(dest);
+
+			cst.Append(value.GetList());
+		}
+	}
+	cst.Append(')');
+
+	return ret;
 }
 
 
@@ -805,7 +921,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	case safeMode:{
 		DataMemoryElement *stackMinPtr = stackPtr;
 		DataMemoryElement *stackMaxPtr = stackPtr + stack.GetNumberOfElements();
-		while ((codeMemoryPtr < codeMemoryMaxPtr) /*&& (runtimeError.ErrorsCleared())*/){
+		while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError.ErrorsCleared())){
 			CodeMemoryElement pCode = GetPseudoCode();
 			functionRecords[pCode].function(*this);
 			// note that the syackPtr will reach the max value - as it points to the next value to write
@@ -829,30 +945,48 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
 			printf ("%s",debugMessage.GetList());
 
-			while(codeMemoryPtr < codeMemoryMaxPtr){
+			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
 				CodeMemoryElement pCode = GetPseudoCode();
+
+				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
 				cst.SetSize(0);
-     			cst.Append(functionRecords[pCode].name).Append(' ');
-				FunctionRecord2String(functionRecords[pCode],cst,true);
+     			cst.Append(fr.name).Append(' ');
+//				runtimeError = FunctionRecord2String(fr,cst,true);
+//				cst.Append('\n');
+
+				if (runtimeError.ErrorsCleared()){
+					// show inputs
+					runtimeError = FunctionRecordInputs2String(fr,cst,true,true);
+				}
+
+				if (runtimeError.ErrorsCleared()){
+					// executes code
+					fr.function(*this);
+				}
+
+				if (runtimeError.ErrorsCleared()){
+					// show outputs
+					runtimeError = FunctionRecordOutputs2String(fr,cst,true,true);
+				}
 				cst.Append('\n');
 
-				// executes code
-				functionRecords[pCode].function(*this);
+				if (runtimeError.ErrorsCleared()){
+					int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+					int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
+					cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
 
-				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
-				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-				cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
-
-				uint32 size = debugMessage.GetSize();
-				debugStream->Write(debugMessage.GetList(),size);
+//					uint32 size = debugMessage.GetSize();
+//					debugStream->Write(debugMessage.GetList(),size);
+					printf("%s",debugMessage.GetList());
+				}
 			}
 		}
 	}
 	}
 
-	if (stackPtr != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
+	if (stackPtr  != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
 		runtimeError.internalSetupError = true;
 		int64 offset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 		COMPOSITE_REPORT_ERROR(runtimeError,"stack pointer not back to origin : ",offset, " elements left");
