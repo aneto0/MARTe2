@@ -95,6 +95,11 @@ public:
     inline bool operator==(const CCString &s) const;
 
     /**
+     * @Brief compare content
+     */
+    inline bool operator!=(const CCString &s) const;
+
+    /**
      * @Brief copies one string to another.
      * Necessary to avoid default copy operator use!
      */
@@ -177,6 +182,10 @@ DynamicCString::operator CCString() const{
 
 bool DynamicCString::operator==(const CCString &s) const{
 	return DynamicZeroTerminatedArray<char8>::IsSameAs(s.GetList());
+}
+
+bool DynamicCString::operator!=(const CCString &s) const{
+	return !DynamicZeroTerminatedArray<char8>::IsSameAs(s.GetList());
 }
 
 void DynamicCString::operator=(const DynamicCString &s) {

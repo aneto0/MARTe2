@@ -36,7 +36,7 @@
 #include "ReferenceContainer.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "Milliseconds.h"
+#include "MilliSeconds.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/

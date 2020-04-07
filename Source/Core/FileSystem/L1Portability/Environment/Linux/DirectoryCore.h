@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-typedef struct stat DirectoryCore;
+	typedef struct stat DirectoryCore;
 
 }
 

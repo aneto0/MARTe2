@@ -30,7 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include <poll.h>
+#include <unistd.h>
 #include "TypeCharacteristics.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -57,8 +59,16 @@ public:
 	EventSourceData(){
 		counter = 0;
 		pfd.events = 0;
-		pfd.events = 0;
 		pfd.revents = 0;
+		pfd.fd = 0;
+	}
+
+	~EventSourceData(){
+		if (pfd.fd !=-1){
+			ErrorManagement::ErrorType ret;
+			ret.OSError = (close(pfd.fd) < 0);
+			REPORT_ERROR(ret,"EventSourceData::Close() failed");
+		}
 	}
 
 	/**

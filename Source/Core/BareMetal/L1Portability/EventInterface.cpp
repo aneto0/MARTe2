@@ -19,7 +19,7 @@
  * @details This header file contains the declaration of the class AnyType
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
-*/
+*/ 
 
 #include "EventInterface.h"
 

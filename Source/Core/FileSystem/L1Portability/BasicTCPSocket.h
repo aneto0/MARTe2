@@ -194,8 +194,7 @@ public:
      * @return false in case of errors.
      * @remark If the socket is in non-block mode, the timeout has no meaning.
      */
-    bool Connect(CCString address,const uint16 port,
-                 const MilliSeconds &timeout = MilliSeconds::Infinite);
+    bool Connect(CCString address,const uint16 port, const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     /**
      * @brief Returns true if the client is connected to a server, false otherwise
@@ -210,8 +209,7 @@ public:
      * @remark If the socket is in non-block mode, the timeout has no meaning.\n
      * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
      */
-    BasicTCPSocket *WaitConnection(const MilliSeconds &timeout = MilliSeconds::Infinite,
-                                   BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
+    BasicTCPSocket *WaitConnection(const MilliSeconds &timeout = MilliSeconds::Infinite,  BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
 };
 

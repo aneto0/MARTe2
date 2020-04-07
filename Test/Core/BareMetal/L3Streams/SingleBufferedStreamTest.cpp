@@ -42,27 +42,27 @@ using namespace MARTe;
 
 bool SingleBufferedStreamTest::TestDefaultConstructor() {
     DummySingleBufferedStream stream;
-    bool ok = (stream.GetTimeout() == TTInfiniteWait);
+    bool ok = stream.GetTimeout().IsInfinite();
     ok &= (stream.GetBufferSize() == 32u);
     return ok;
 }
 
 bool SingleBufferedStreamTest::TestConstructor_Timeout() {
     DummySingleBufferedStream stream(1u);
-    bool ok = (stream.GetTimeout() == 1);
+    bool ok = (stream.GetTimeout() == MilliSeconds(1,Units::ms));
     ok &= (stream.GetBufferSize() == 32u);
     return ok;
 }
 
 bool SingleBufferedStreamTest::TestGetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     DummySingleBufferedStream myStream;
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
 }
 
 bool SingleBufferedStreamTest::TestSetTimeout() {
-    TimeoutType tt = 1;
+    MilliSeconds tt(1,Units::ms);
     DummySingleBufferedStream myStream;
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
@@ -88,7 +88,7 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
     while (n < 2) {
         stream.Seek(0);
         uint32 size = readSize;
-        char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
+        char8 *bufferWrite = (char8 *) HeapManager::Malloc(readSize);
         uint32 i = 0;
         for (i = 0; i < readSize; i++) {
             bufferWrite[i] = i * i;
@@ -104,7 +104,7 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
         ok &= (stream.Position() == readSize);
         stream.Seek(0);
 
-        char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(readSize);
+        char8 *bufferRead = (char8 *) HeapManager::Malloc(readSize);
         size = readSize;
 
         start = 0;
@@ -117,19 +117,19 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
 
         bufferRead[readSize - 1] = '\0';
         bufferWrite[readSize - 1] = '\0';
-        ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+        CCString br(bufferRead);
+        CCString bw(bufferWrite);
+        ok &= (br == bw);
         ok &= (stream.Position() == readSize);
 
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
+        HeapManager::Free(reinterpret_cast<void *&>(bufferRead));
+        HeapManager::Free(reinterpret_cast<void *&>(bufferWrite));
         n++;
     }
     return ok;
 }
 
-bool SingleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize,
-                                                MARTe::uint32 readSize,
-                                                MARTe::TimeoutType timeout) {
+bool SingleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize, MARTe::uint32 readSize, MARTe::MilliSeconds timeout) {
 
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
@@ -144,14 +144,11 @@ bool SingleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize,
 
 }
 
-bool SingleBufferedStreamTest::TestWrite(uint32 bufferSize,
-                                         uint32 writeSize) {
+bool SingleBufferedStreamTest::TestWrite(uint32 bufferSize, uint32 writeSize) {
     return TestRead(bufferSize, writeSize);
 }
 
-bool SingleBufferedStreamTest::TestWrite_Timeout(MARTe::uint32 bufferSize,
-                                                 MARTe::uint32 writeSize,
-                                                 MARTe::TimeoutType timeout) {
+bool SingleBufferedStreamTest::TestWrite_Timeout(MARTe::uint32 bufferSize, MARTe::uint32 writeSize,  MARTe::MilliSeconds timeout) {
 
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
@@ -168,7 +165,7 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
 
-    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
+    char8 *bufferWrite = (char8 *) HeapManager::Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -188,7 +185,7 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
 
     bool ok = (stream.Position() == writeSize);
     stream.Seek(0);
-    char8 *bufferRead = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
+    char8 *bufferRead = (char8 *) HeapManager::Malloc(writeSize);
     size = writeSize;
     start = 0;
     while ((size > 0) && (stream.Read(bufferRead + start, size))) {
@@ -200,11 +197,13 @@ bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSiz
 
     bufferRead[writeSize - 1] = '\0';
     bufferWrite[writeSize - 1] = '\0';
-    ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+    CCString br(bufferRead);
+    CCString bw(bufferWrite);
+    ok &= (br == bw);
     ok &= (stream.Position() == writeSize);
 
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferRead));
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
+    HeapManager::Free(reinterpret_cast<void *&>(bufferRead));
+    HeapManager::Free(reinterpret_cast<void *&>(bufferWrite));
     return ok;
 }
 
@@ -339,9 +338,10 @@ bool SingleBufferedStreamTest::TestFlushAndResync(uint32 bufferSize) {
     stream.SetBufferSize(bufferSize);
     stream.Clear();
     stream.Printf("%d", 8);
-    bool ok = (StringHelper::Compare("8", stream.Buffer()) != 0);
+
+    bool ok = CCString(stream.Buffer()) != CCString("8");
     ok &= stream.FlushAndResync();
-    ok &= (StringHelper::Compare("8", stream.Buffer()) == 0);
+    ok &= CCString(stream.Buffer()) == CCString("8");
     return ok;
 }
 
@@ -364,7 +364,7 @@ bool SingleBufferedStreamTest::TestRelativeSeek_OverflowInternalBuffer(uint32 bu
     DummySingleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize);
 
-    char8 *bufferWrite = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(writeSize);
+    char8 *bufferWrite = (char8 *) HeapManager::Malloc(writeSize);
     uint32 i = 0;
     for (i = 0; i < writeSize; i++) {
         bufferWrite[i] = i * i;
@@ -384,6 +384,6 @@ bool SingleBufferedStreamTest::TestRelativeSeek_OverflowInternalBuffer(uint32 bu
         stream.RelativeSeek(-1);
     }
 
-    GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(bufferWrite));
+    HeapManager::Free(reinterpret_cast<void *&>(bufferWrite));
     return (stream.Position() == writeSize);
 }

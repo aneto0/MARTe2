@@ -171,6 +171,7 @@ public:
 	inline TimeType<baseType,unitType> &operator=(const TimeType<bT,uT> &tt);
 
 	/**
+	 * A valid number: not infinite nor indetermnate
 	 * 0 to Max-4
 	 */
 	bool IsValid() const;

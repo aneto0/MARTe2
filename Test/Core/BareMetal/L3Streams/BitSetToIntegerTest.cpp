@@ -49,7 +49,8 @@ bool BitSetToIntegerTest::TestBitSetToInteger_64() {
 
     uint8 sourceShift = 0;
     uint8 sourceSize = 64;
-    uint32 *sPointer = source;
+    const uint32 *sPointer = source;
+
 
     //Copy a signed 32 bit number.
     BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
@@ -115,7 +116,7 @@ bool BitSetToIntegerTest::TestBitSetToInteger_32() {
 
     uint8 sourceShift = 0;
     uint8 sourceSize = 32;
-    uint32 *sPointer = source;
+    const uint32 *sPointer = source;
 
     //Copy a signed 32 bit number.
     BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
@@ -166,7 +167,7 @@ bool BitSetToIntegerTest::TestBitSetToInteger_16() {
 
     uint8 sourceShift = 65;
     uint8 sourceSize = 8;
-    uint32* sPointer = source;
+    const uint32* sPointer = source;
     //Sign padding for signed source.
     BitSetToInteger(sDest16, sPointer, sourceShift, sourceSize, true);
     if (sDest16 != (int16) 0xff99) {
@@ -230,7 +231,7 @@ bool BitSetToIntegerTest::TestBitSetToInteger_8() {
 
     uint8 sourceShift = 32;
     uint8 sourceSize = 5;
-    uint32 *sPointer = source;
+    const uint32 *sPointer = source;
     //Sign padding for signed source.
     BitSetToInteger(sDest8, sPointer, sourceShift, sourceSize, true);
     if (sDest8 != (int8) 0xf1) {

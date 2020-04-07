@@ -96,12 +96,13 @@ public:
 	/**
 	 *
 	 */
-	EventInterface();
+	inline EventInterface();
 
 	/**
 	 *
 	 */
-	virtual ~EventInterface();
+	~EventInterface();
+
 
 	/**
 	 *
@@ -120,6 +121,9 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+EventInterface::EventInterface(){
+
+}
 
 
 

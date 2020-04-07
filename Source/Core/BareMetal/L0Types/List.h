@@ -118,7 +118,7 @@ loadClass *List<loadClass>::operator[](const uint32 index) const{
 		ListNodeT<loadClass> *ptr = reinterpret_cast<ListNodeT<loadClass> *>(next);
 		while ((ix > 0) && (ptr!=NULL)){
 			ix--;
-			ptr = ptr->next;
+			ptr = ptr->Next();
 		}
 		if ((ptr !=NULL) && (ix == 0)){
 			ret = &ptr->load;
@@ -134,7 +134,7 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 		IteratorAction ia;
 		ListNode *current = this;
 
-		ret.illegalOperation = (current->next == NULL);
+//	no reason to be an error!	ret.illegalOperation = (current->next == NULL);
 		while (ret && (current->next !=NULL)){
 
 			// recover original ListNodeT type

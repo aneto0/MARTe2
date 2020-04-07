@@ -25,7 +25,7 @@
 #include "DynamicCString.h"
 #include "MemoryPageFile.h"
 
-//#include <stdio.h>  //TODO
+#include <stdlib.h>  //TODO
 
 namespace MARTe{
 
@@ -60,7 +60,7 @@ ErrorManagement::ErrorType 	MemoryPage::StealAndJoinAtEnd  (MemoryPage &stealFro
 void MemoryPage::Clean(){
 	while (firstPage != NULL_PTR(MemoryPageHeader *)){
 		MemoryPageHeader * memoryP = firstPage->next;
-		free(firstPage);
+		::free(firstPage);
 		firstPage = memoryP;
 	}
 }
@@ -110,7 +110,7 @@ uint32 MemoryPageFile::FreeSizeLeftBytes(){
 ErrorManagement::ErrorType  MemoryPageFile::Allocate(uint32 size){
 	ErrorManagement::ErrorType ret;
 	MemoryPageHeader *newPage;
-	newPage = reinterpret_cast<MemoryPageHeader *>(malloc(size+sizeof (MemoryPageHeader)));
+	newPage = reinterpret_cast<MemoryPageHeader *>(::malloc(size+sizeof (MemoryPageHeader)));
 
 	ret.outOfMemory = (newPage == NULL_PTR(MemoryPageHeader *));
 	COMPOSITE_REPORT_ERROR(ret,"Allocate(",size,") failed");
@@ -148,7 +148,7 @@ ErrorManagement::ErrorType  MemoryPageFile::ReSize(uint32 newSize){
 	}
 
 	if (ret){
-		newPage = reinterpret_cast<MemoryPageHeader *>(realloc(reinterpret_cast<MemoryPageHeader *>(currentWritePage),actualSize));
+		newPage = reinterpret_cast<MemoryPageHeader *>(::realloc(reinterpret_cast<MemoryPageHeader *>(currentWritePage),actualSize));
 
 		ret.outOfMemory = (newPage == NULL_PTR(MemoryPageHeader *));
 		COMPOSITE_REPORT_ERROR(ret,"Realloc(",actualSize,") failed");

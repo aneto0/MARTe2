@@ -31,7 +31,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "TestSupport.h"
 #include "IOBufferTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -485,6 +485,7 @@ TEST(IOBufferGTest, TestPrintFormattedMultiple) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted(64, GeneratePrintFormattedGenericTable()));
 }
 
+#if 0
 TEST(IOBufferGTest, TestGetToken_ConstCharOutput_TableTerminators) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput(&TokenTestTableTerminators[0]));
@@ -500,6 +501,7 @@ TEST(IOBufferGTest, GetToken_ConstCharOutput_ClipSize) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.GetToken_ConstCharOutput_ClipSize());
 }
+#endif
 
 TEST(IOBufferGTest, TestGetToken_IOBufferOutput_TableTerminators) {
     IOBufferTest myIOBufferTest;
@@ -521,10 +523,12 @@ TEST(IOBufferGTest, TestPrintFormattedObject) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedObject());
 }
 
+#if 0
 TEST(IOBufferGTest, TestPrintStructuredDataInterface) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintStructuredDataInterface());
 }
+#endif
 
 TEST(IOBufferGTest, TestPrintFormattedIntrospection) {
     IOBufferTest myIOBufferTest;

@@ -219,7 +219,7 @@ ErrorManagement::ErrorType  ConfigurationDatabase::Copy(StructuredDataI &destina
         }
         else {
             Reference foundLeaf = currentNode->Get(i);
-            ret = destination.Write(foundLeaf->GetName(), foundLeaf);
+            ret = destination.Write(foundLeaf->GetName(), foundLeaf.operator MARTe::AnyType());
         }
     }
     return ret;
@@ -355,8 +355,8 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
     DynamicCString token;
     bool created = false;
     ReferenceT < ReferenceContainer > currentNodeOld = currentNode;
-
-    path = DynamicCString::Tokenize(path, token,".","");
+    uint32 limit;
+    path = DynamicCString::Tokenize(path, token,limit,".","");
     while ((token.GetSize() > 0) && ret){
 
         bool found = false;
@@ -387,7 +387,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::CreateNodes(CCString path) {
         }
 
     	if (ret && (path.GetSize()>0)){
-            path = DynamicCString::Tokenize(path, token,".","");
+            path = DynamicCString::Tokenize(path, token,limit,".","");
     	} else {
     		token = "";
     	}
@@ -451,12 +451,12 @@ ErrorManagement::ErrorType  ConfigurationDatabase::AddToCurrentNode(Reference no
 }
 
 CCString ConfigurationDatabase::GetName() {
-    return (currentNode.IsValid()) ? (currentNode->GetName()) : (NULL_PTR(const char8*));
+    return (currentNode.IsValid()) ? (currentNode->GetName()) : (emptyString);
 }
 
 CCString ConfigurationDatabase::GetChildName(const uint32 index) {
     Reference foundReference = currentNode->Get(index);
-    return (foundReference.IsValid()) ? (foundReference->GetName()) : (NULL_PTR(const char8*));
+    return (foundReference.IsValid()) ? (foundReference->GetName()) : (emptyString);
 }
 
 uint32 ConfigurationDatabase::GetNumberOfChildren() {

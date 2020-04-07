@@ -423,6 +423,11 @@ StreamString& StreamString::operator=(const StreamString &s) {
     return *this;
 }
 
+inline bool StreamString::operator=(const char8 c){
+    return Set(c);
+}
+
+
 bool StreamString::operator+=(const char8 c) {
     return Append(c);
 }

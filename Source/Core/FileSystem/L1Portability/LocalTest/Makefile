@@ -48,7 +48,7 @@ SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
          $(ROOT_DIR)/Source/Tools/TestSupport.x
 
 
-BUILD_PRODUCT = $(BUILD_DIR)/test$(EXEEXT)
+BUILD_PRODUCT = $(BUILD_DIR)/localTest$(EXEEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

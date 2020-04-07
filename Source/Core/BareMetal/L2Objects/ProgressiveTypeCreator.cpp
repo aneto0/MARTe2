@@ -23,7 +23,7 @@
 
 #define DLL_API
 
-#include <new.h>
+//#include <new.h>
 #include "ProgressiveTypeCreator.h"
 #include "TypeConversionManager.h"
 #include "MemoryOperators.h"

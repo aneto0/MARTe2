@@ -63,12 +63,12 @@ public:
     ~LocalHostInfo() {
     }
     //
-    CCString GetLocalHostName() const {
+    CCString GetLocalHostName() /*const*/ {
         Init();
         return localHostName.GetList();
     }
     ///
-    CCString GetIpAddress() const {
+    CCString GetIpAddress() /*const*/ {
         Init();
         return ipAddress.GetList();
     }
@@ -132,28 +132,32 @@ private:
 
 };
 
-CCString InternetHost::GetHostName() const {
+bool InternetHost::GetHostName(DynamicCString &hostName) const{
+	ErrorManagement::ErrorType ret;
 
-    if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+
+    ret = hostnameFastSem.FastLock();
+    REPORT_ERROR(ret, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+
+    if (ret){
+    	GetAddress(hostName);
     }
-    StreamString hostName = GetAddress();
 
-    struct hostent *h = gethostbyaddr((&address.sin_addr.s_addr), 4u, AF_INET);
+    struct hostent *h = NULL;
+    if (ret){
 
-// what's the point ??
-// and it crashes if h is NULL
-//       ia.address.sin_addr.s_addr = *((int *)(h->h_addr_list[0]));
+        h = gethostbyaddr((&address.sin_addr.s_addr), 4u, AF_INET);
 
-    if (h != NULL) {
+        ret.OSError = (h == NULL);
+        REPORT_ERROR(ret,"InternetHost: Failed gethostbyaddr()");
+    }
+    if (ret){
         hostName = h->h_name;
     }
-    else {
-        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
-    }
+
     hostnameFastSem.FastUnLock();
 
-    return (hostName.Size() == 0u) ? (static_cast<CCString >(NULL)):(hostName);
+    return ret.ErrorsCleared();
 }
 
 CCString InternetHost::GetLocalHostName() {
@@ -191,9 +195,8 @@ uint16 InternetHost::GetPort() const {
     return htons(address.sin_port);
 }
 
-StreamString InternetHost::GetAddress() const {
-    StreamString dotName(inet_ntoa(address.sin_addr));
-    return dotName;
+void InternetHost::GetAddress(DynamicCString &addrAsString) const{
+	addrAsString = inet_ntoa(address.sin_addr);
 }
 
 /**  returns the host number associated to this InternetHost*/
@@ -212,7 +215,7 @@ bool InternetHost::SetAddress(CCString  const addr) {
     bool ret = (addr != NULL);
 
     if (ret) {
-        uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
+        uint32 iaddr = inet_addr(const_cast<char8 *>(addr.GetList()));
 
         if (iaddr != 0xFFFFFFFFu) {
             address.sin_addr.s_addr = iaddr;
@@ -229,9 +232,10 @@ bool InternetHost::SetAddressByHostName(CCString  hostName) {
     bool ret = false;
     //  hostName can be NULL meaning localhost
 
-    if (hostName == NULL) {
+    if (hostName.GetSize()==0) {
         hostName = "localhost";
     }
+
     struct hostent *h = gethostbyname(hostName);
 
     if (h != NULL) {

@@ -34,12 +34,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "EventSource.h"
 #include "EventInterface.h"
 #include "ErrorType.h"
 #include "ErrorManagement.h"
 #include "Ticks.h"
 #include "HighResolutionTimer.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SynchronizerData.h)
+//#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SynchronizerData.h)
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -108,7 +109,7 @@ private:
 	/**
 	 * platform specifc
 	 */
-	SynchronizerData data;
+	EventSource es;
 
 	/**
 	 * disallow the use of operator =

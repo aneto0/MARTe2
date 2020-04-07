@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StreamMemoryReferenceTest.h"
+#include "StaticCString.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -106,33 +108,33 @@ bool StreamMemoryReferenceTest::TestDestructor() {
 
 bool StreamMemoryReferenceTest::TestAnyTypeOperator(const char8* initializationString) {
 
-    const uint32 size = StringHelper::Length(initializationString);
+    const uint32 size = CCString(initializationString).GetSize();
 
     StreamMemoryReference sMR(initializationString, size);
 
     AnyType test = sMR;
 
-    TypeDescriptor td = test.GetTypeDescriptor();
+    TypeDescriptor td = test.GetFullVariableDescriptor().GetSummaryTypeDescriptor();
 
     if (td.isStructuredData) {
         return false;
     }
 
-    if (!td.isConstant) {
+    if (!td.dataIsConstant) {
         return false;
     }
 
-    if (td.type != BT_CCString) {
-        return false;
-    }
+//    if (td.type != BT_CCString) {
+//        return false;
+//    }
     if (td.numberOfBits != (sizeof(const char8*) * 8)) {
         return false;
     }
 
-    if (test.GetDataPointer() != sMR.Buffer()) {
+    if (test.GetVariablePointer() != sMR.Buffer()) {
         return false;
     }
-    return test.GetBitAddress() == 0;
+    return true;
 }
 
 bool StreamMemoryReferenceTest::TestCanWrite() {
@@ -187,14 +189,14 @@ bool StreamMemoryReferenceTest::TestRead(const char8 *string,
 
     char8 bufferIn[64];
     StreamMemoryReference sMR(bufferIn, bufferSize);
-    uint32 writeSize=StringHelper::Length(string);
+    uint32 writeSize=CCString(string).GetSize();
     sMR.Write(string, writeSize);
 
     char8 bufferOut[64];
     sMR.Read(bufferOut, readSize);
     uint32 compareSize = (bufferSize > readSize) ? (readSize) : (bufferSize);
 
-    return StringHelper::CompareN(bufferOut, sMR.Buffer(), compareSize) == 0;
+    return CCString(bufferOut).CompareContent(sMR.Buffer(), compareSize) == 0;
 }
 
 bool StreamMemoryReferenceTest::TestReadTimeout(const char8 *string,
@@ -203,14 +205,14 @@ bool StreamMemoryReferenceTest::TestReadTimeout(const char8 *string,
 
     char8 bufferIn[64];
     StreamMemoryReference sMR(bufferIn, bufferSize);
-    uint32 writeSize=StringHelper::Length(string);
+    uint32 writeSize=CCString(string).GetSize();
     sMR.Write(string, writeSize);
 
     char8 bufferOut[64];
-    sMR.Read(bufferOut, readSize, 1);
+    sMR.Read(bufferOut, readSize, MilliSeconds(1,Units::ms));
     uint32 compareSize = (bufferSize > readSize) ? (readSize) : (bufferSize);
 
-    return StringHelper::CompareN(bufferOut, sMR.Buffer(), compareSize) == 0;
+    return CCString(bufferOut).CompareContent(sMR.Buffer(), compareSize) == 0;
 
 }
 
@@ -232,7 +234,7 @@ bool StreamMemoryReferenceTest::TestWrite(const char8 *string,
         return false;
     }
 
-    return StringHelper::CompareN(sMR.Buffer(), string, compareSize) == 0;
+    return CCString(string).CompareContent(sMR.Buffer(), compareSize) == 0;
 
 }
 
@@ -243,7 +245,7 @@ bool StreamMemoryReferenceTest::TestWriteTimeout(const char8 *string,
 
     StreamMemoryReference sMR(bufferIn, bufferSize);
 
-    if (!sMR.Write(string, writeSize, 1)) {
+    if (!sMR.Write(string, writeSize, MilliSeconds(1,Units::ms))) {
         return false;
     }
 
@@ -253,19 +255,19 @@ bool StreamMemoryReferenceTest::TestWriteTimeout(const char8 *string,
         return false;
     }
 
-    return StringHelper::CompareN(sMR.Buffer(), string, compareSize) == 0;
+    return CCString(string).CompareContent(sMR.Buffer(), compareSize) == 0;
 
 }
 
 bool StreamMemoryReferenceTest::TestWrite_RO() {
 
     const char8 *bufferIn = "HelloWorld";
-    const uint32 size = StringHelper::Length(bufferIn);
+    const uint32 size = CCString(bufferIn).GetSize();
 
     StreamMemoryReference sMR(bufferIn, size);
 
     const char8* string = "Nothing";
-    uint32 writeSize = StringHelper::Length(string);
+    uint32 writeSize = CCString(string).GetSize();
 
     return !sMR.Write(string, writeSize);
 }
@@ -284,7 +286,7 @@ bool StreamMemoryReferenceTest::TestSize(const char8 *input,
     char8 bufferIn[64];
     StreamMemoryReference sMR(bufferIn, bufferSize);
 
-    uint32 inputSize = StringHelper::Length(input);
+    uint32 inputSize = CCString(input).GetSize();
 
     sMR.Write(input, inputSize);
 
@@ -375,7 +377,7 @@ bool StreamMemoryReferenceTest::TestRelativeSeek(const uint32 bufferSize,
 bool StreamMemoryReferenceTest::TestRelativeSeek_OutOfInt32Range(){
 
     const char8 *bufferIn = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-    const uint32 size = StringHelper::Length(bufferIn);
+    const uint32 size = CCString(bufferIn).GetSize();
 
     StreamMemoryReference sMR(bufferIn, size);
 
@@ -452,15 +454,15 @@ bool StreamMemoryReferenceTest::TestPrintFormatted(uint32 bufferSize,
     StreamMemoryReference smr(bufferIn, bufferSize);
 
     uint32 i = 0;
-    while (StringHelper::Compare(testTable[i].format, "") != 0) {
+    while (CCString(testTable[i].format).GetSize() > 0) {
         smr.Seek(0);
 
         smr.PrintFormatted(testTable[i].format, testTable[i].inputs);
         uint32 termSize = 1;
         smr.Write("\0", termSize);
-        if (StringHelper::CompareN(testTable[i].expectedResult, smr.Buffer(), bufferSize) != 0) {
+        if (CCString(testTable[i].expectedResult).CompareContent( smr.Buffer(), bufferSize) != 0) {
             AnyType data = testTable[i].inputs[i];
-            printf("\n%s %s %d %d\n", smr.Buffer(), testTable[i].expectedResult, i, *((uint8*) data.GetDataPointer()));
+            printf("\n%s %s %d %d\n", smr.Buffer(), testTable[i].expectedResult, i, *((uint8*) data.GetVariablePointer()));
             return false;
         }
         i++;
@@ -479,16 +481,18 @@ bool StreamMemoryReferenceTest::TestGetToken(uint32 bufferSize,
     bool result = true;
 
     while (result && (row->toTokenize != NULL)) {
-        StringHelper::Copy(myStream.BufferReference(), row->toTokenize);
+    	StaticCString<64> ss(inBuff);
+    	ss().SetSize(0);
+    	ss().Append(row->toTokenize);
+
         myStream.Seek(0);
         char saveTerminator;
         uint32 t = 0u;
 
-        uint32 outBuffSize = 64;
-        char8 outputBuff[64] = { 0 };
+        StreamString outputBuff;
 
-        while (myStream.GetToken(outputBuff, row->terminators, outBuffSize, saveTerminator, row->skipCharacters)) {
-            if (StringHelper::CompareN(outputBuff, row->expectedResult[t], bufferSize) != 0) {
+        while (myStream.GetToken(outputBuff, row->terminators, saveTerminator, row->skipCharacters)) {
+            if (outputBuff.Buffer().CompareContent( row->expectedResult[t], bufferSize) != 0) {
                 result = false;
             }
             if (row->saveTerminatorResult[t] != saveTerminator) {

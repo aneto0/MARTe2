@@ -37,7 +37,7 @@
 #include "Threads.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
-    h = NULL;
+    h = HeapManager::standardHeapId;
     tree = GenerateTestTree();
     spinLock = 0;
 }
@@ -1000,8 +1000,8 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
 //    char8 *name = new char[len];
 //    MemoryOperationsHelper::Set(name, '\0', len);
     DynamicCString name;
-    uint32 i;
-    uint32 j = 0;
+    uint32 i = 0;
+//    uint32 j = 0;
     for (i = 0; i < (len - 1); i++) {
         if (str[i] == '.') {
             ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
@@ -1011,7 +1011,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
             if (resultSingle.Size() > 0) {
                 result.Insert(resultSingle.Get(0));
             }
-            j = 0;
+//            j = 0;
         	name = "";
 //            MemoryOperationsHelper::Set(name, '\0', len);
         }
@@ -1040,13 +1040,13 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
 //    MemoryOperationsHelper::Set(name, '\0', len);
     DynamicCString name;
     uint32 i;
-    uint32 j = 0;
+//    uint32 j = 0;
     for (i = 0; i < (len - 1); i++) {
         if (str[i] == '.') {
             ReferenceT<ReferenceContainer> node("ReferenceContainer");
             node->SetName(name);
             result.Insert(node);
-            j = 0;
+//            j = 0;
 //            MemoryOperationsHelper::Set(name, '\0', len);
             name = "";
         }

@@ -46,7 +46,6 @@
 
 namespace MARTe{
 
-class  EventSourceData;
 
 /**
  *
@@ -57,25 +56,23 @@ public:
 	 * builds an empty EventSource
 	 */
 	EventSource(){
-		data = new EventSourceData ;
-		data->counter = 1;
+		data = NULL;
+		NewSource(new EventSourceData);
 	}
 
 	/**
 	 * copy constructor. Allows sharing the object
 	 */
 	EventSource(const EventSource & sourceIn){
-		*this = sourceIn;
+		data = NULL;
+		NewSource(sourceIn.data);
 	}
 
 	/**
 	 * copy operator. Allows sharing the object
 	 */
 	EventSource operator= (const EventSource & sourceIn){
-		data = sourceIn.data;
-		if (data != NULL){
-			Atomic::Increment(&data->counter);
-		}
+		NewSource(sourceIn.data);
 		return *this;
 	}
 
@@ -83,9 +80,7 @@ public:
 	 * destroys the referenced object only if no references are left
 	 */
 	~EventSource(){
-		if (Atomic::Decrement(&data->counter) == 0){
-			delete data;
-		}
+		NewSource(NULL);
 	}
 
 	/**
@@ -94,9 +89,26 @@ public:
 	EventSourceData *GetData() const{
 		return data;
 	}
+
+	/**
+	 *
+	 */
+    void NewSource(EventSourceData *ns){
+    	if (data != NULL){
+    		if (Atomic::Decrement(&data->counter) == 0){
+    			delete data;
+    		}
+    	}
+		data = ns ;
+		if (data != NULL){
+			Atomic::Increment(&data->counter);
+		}
+    }
+
 private:
 	/**
 	 * The actual information to help event handling
+	 * cannot be statically allocated to allow sharing one counter
 	 */
 	EventSourceData *data;
 };

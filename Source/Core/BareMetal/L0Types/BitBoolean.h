@@ -116,7 +116,7 @@ void BitBoolean<baseType, bitOffset>::operator=(const bool flag) {
         value |= mask;
     }
     else {
-        value &= notMask;
+        value = value & notMask;
     }
 }
 

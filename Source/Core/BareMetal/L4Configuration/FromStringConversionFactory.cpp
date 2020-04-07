@@ -209,7 +209,7 @@ public:
 			ok.internalSetupError = true;
 			REPORT_ERROR(ok,"reader == NULL");
 		}
-		for (int i = 0 ; (i < numberOfElements) && ok; i++){
+		for (uint32 i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;
@@ -265,7 +265,7 @@ public:
 			ok.internalSetupError = true;
 			REPORT_ERROR(ok,"reader == NULL");
 		}
-		for (int i = 0 ; (i < numberOfElements) && ok; i++){
+		for (uint32 i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;
@@ -332,7 +332,7 @@ public:
 			ok.internalSetupError = true;
 			REPORT_ERROR(ok,"reader == NULL");
 		}
-		for (int i = 0 ; (i < numberOfElements) && ok; i++){
+		for (uint32 i = 0 ; (i < numberOfElements) && ok; i++){
 			CCString token = reader->GetToken(source,i);
 			if (token.GetSize() == 0){
 				ok.illegalOperation = true;

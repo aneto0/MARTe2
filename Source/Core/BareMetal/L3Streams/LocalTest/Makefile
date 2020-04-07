@@ -37,18 +37,18 @@ INCLUDES += -I$(ROOT_DIR)/Source/Tools/TestSupport
 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/L1Portability/*$(OBJEXT) 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/L1Portability/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/*$(OBJEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L2Objects/VariableDescriptorLib/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L3Streams/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L3Streams/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
 SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
-         $(ROOT_DIR)/Test/GTest/BareMetal/L1Portability.x \
+         $(ROOT_DIR)/Test/GTest/BareMetal/L3Streams.x \
          $(ROOT_DIR)/Source/Tools/TestSupport.x
 
-
-BUILD_PRODUCT = $(BUILD_DIR)/test$(EXEEXT)
+BUILD_PRODUCT = $(BUILD_DIR)/TestPseudoCode$(EXEEXT) $(BUILD_DIR)/test$(EXEEXT) 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

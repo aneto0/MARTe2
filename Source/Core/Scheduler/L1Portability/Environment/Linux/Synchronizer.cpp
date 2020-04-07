@@ -33,32 +33,17 @@
 
 namespace MARTe{
 
-/**
- *
- */
 Synchronizer::Synchronizer(){
-	pfd.fd = -1;
 }
 
-/**
- *
- */
 Synchronizer::~Synchronizer(){
-	if (pfd.fd != -1){
-		Close();
-	}
+	Close();
 }
 
 
-EventSource Synchronizer::GetEventSource(){
-	EventSource es;
-	EventSourceData *esd = es.GetData();
-	if (esd != NULL_PTR(EventSourceData)){
-		esd->pfd.fd = data.eventfd;
-	}
+EventSource Synchronizer::GetEventSource(EventInterface::Event ev) const{
 	return es;
 }
-
 
 /**
  * Creates the waitable handle
@@ -66,12 +51,18 @@ EventSource Synchronizer::GetEventSource(){
 ErrorManagement::ErrorType Synchronizer::Open(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (pfd.fd >= 0);
-	REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		pfd.fd = eventfd(0UL, EFD_SEMAPHORE | EFD_NONBLOCK);
-		ret.OSError = (pfd.fd < 0);
+		ret.invalidOperation = (esd->pfd.fd >= 0);
+		REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
+	}
+
+	if (ret){
+		esd->pfd.fd = eventfd(0UL, EFD_SEMAPHORE | EFD_NONBLOCK);
+		ret.OSError = (esd->pfd.fd < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Open failed");
 	}
 
@@ -84,14 +75,8 @@ ErrorManagement::ErrorType Synchronizer::Open(){
 ErrorManagement::ErrorType Synchronizer::Close(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (pfd.fd < 0);
-	REPORT_ERROR(ret,"Synchronyzer::Close() not opened");
-
-	if (ret){
-		ret.OSError = (close(pfd.fd) < 0);
-		REPORT_ERROR(ret,"Synchronyzer::Close() failed");
-		pfd.fd = -1;
-	}
+	// detaches or deletes the EventSourceData
+	es.NewSource(new EventSourceData());
 
 	return ret;
 }
@@ -102,12 +87,18 @@ ErrorManagement::ErrorType Synchronizer::Close(){
 ErrorManagement::ErrorType Synchronizer::Post(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (pfd.fd < 0);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
+
+	if (ret){
+		ret.invalidOperation = (esd->pfd.fd < 0);
+		REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	}
 
 	if (ret){
 		uint64 number = 1UL;
-		ret.OSError = (write(pfd.fd,&number,sizeof(number)) < 0);
+		ret.OSError = (write(esd->pfd.fd,&number,sizeof(number)) < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Post() failed");
 	}
 
@@ -120,12 +111,18 @@ ErrorManagement::ErrorType Synchronizer::Post(){
 ErrorManagement::ErrorType Synchronizer::Reset(){
 	ErrorManagement::ErrorType ret;
 
-	ret.invalidOperation = (pfd.fd < 0);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
+
+	if (ret){
+		ret.invalidOperation = (esd->pfd.fd < 0);
+		REPORT_ERROR(ret,"Synchronyzer::Reset() not opened");
+	}
 
 	if (ret){
 		uint64 number = 1UL;
-		int readRet = read(pfd.fd,&number,sizeof(number));
+		int readRet = read(esd->pfd.fd,&number,sizeof(number));
 		if (readRet < 0){
 			ret.OSError = (errno != EAGAIN);
 			REPORT_ERROR(ret,"Synchronyzer::Reset() failed");
@@ -154,16 +151,20 @@ ErrorManagement::ErrorType Synchronizer::Wait(MilliSeconds timeout){
 		}
 	}
 
-	ret.invalidOperation = (pfd.fd < 0);
-	REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
+	EventSourceData *esd = es.GetData();
+	ret.internalSetupError = (esd == NULL);
+	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-//		struct pollfd pfd;
-//		pfd.fd = pfd.fd;
-		pfd.events = POLLIN;
-		pfd.revents = 0;
+		ret.invalidOperation = (esd->pfd.fd < 0);
+		REPORT_ERROR(ret,"Synchronyzer::Wait() not opened");
+	}
 
-		int wret = poll(&pfd, 1, time);
+	if (ret){
+		esd->pfd.events = POLLIN;
+		esd->pfd.revents = 0;
+
+		int wret = poll(&esd->pfd, 1, time);
 
 	    ret.OSError = (wret < 0);
 		REPORT_ERROR(ret,"Synchronyzer::Wait() failed");

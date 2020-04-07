@@ -66,7 +66,7 @@ bool RealTimeState::AddStatefuls(ReferenceContainer &statefulsIn) {
             }
         }
         else{
-	    	REPORT_ERROR(ErrorManagement::FatalError,"Trying to add a not StatefulI object in RealTimeState %s", GetName());
+	    	COMPOSITE_REPORT_ERROR(ErrorManagement::FatalError,"Trying to add a not StatefulI object in RealTimeState ", GetName());
         }
     }
     return ret;

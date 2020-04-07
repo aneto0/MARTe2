@@ -250,7 +250,7 @@ public:
 	 * Finally it compares the type and the content of the chosen object and the dynamically created object.
 	 *
 	 */
-	template <typename T, int size1, int size2,int minSize2=size2,typename T2=T>
+	template <typename T, int size1, int size2,int minSize2,typename T2>
 	ErrorManagement::ErrorType AutoGenObjectTAndCheckContent(TypeDescriptor td);
 
 	/**
@@ -283,7 +283,7 @@ private:
 	/**
 	 * hidden constructor
 	 */
-	TestEnvironment::TestEnvironment():at(test1Class),pfstc(1024){
+	TestEnvironment():pfstc(1024),at(test1Class){
 		MARTe::StartupManager::Initialise();
 		PrepareTestObject();
 	}
@@ -351,7 +351,7 @@ void TestEnvironment::PrepareTestObject(){
     test1Class.int64PArr[0]= &arr1;
     test1Class.int64PArr[4]= &arr1;
 
-    static int16 (*int16AAPAAp)[mypPAA1*mypPAA2][mypPAA1*mypPAA2] ;
+//    static int16 (*int16AAPAAp)[mypPAA1*mypPAA2][mypPAA1*mypPAA2] ;
 
     {
     	uint32 i;
@@ -427,6 +427,7 @@ ErrorManagement::ErrorType CheckType(AnyType at,CCString typeCheck,CStringTool m
     return err;
 }
 
+#if 0
 static void PrintType(AnyType at,DynamicCString &message ){
     ErrorManagement::ErrorType err;
     DynamicCString string;
@@ -434,6 +435,7 @@ static void PrintType(AnyType at,DynamicCString &message ){
     err = at.ToString(string);
 	printf("%s",string);
 }
+#endif
 
 static ErrorManagement::ErrorType CompareType(AnyType at1,AnyType at2,CStringTool &message ){
     ErrorManagement::ErrorType err;
@@ -738,8 +740,8 @@ ErrorManagement::ErrorType TestEnvironment::AutoGenObjectTAndCheckContent(TypeDe
 
 	// remapped types for type comparison - in case T is for storing only
 	typedef  T (TA)[size1][size2];
-	typedef  T (*(TB)[size1])[size2];
-	typedef  Vector<T>(TC)[size1];
+//	typedef  T (*(TB)[size1])[size2];
+//	typedef  Vector<T>(TC)[size1];
 	typedef  T2 (TAu)[size1][size2];
 	typedef  T2 (*(TBu)[size1])[size2];
 	typedef  Vector<T2>(TCu)[size1];
@@ -949,7 +951,7 @@ ErrorManagement::ErrorType TestEnvironment::CopyToAndCompareWith(bool expectSucc
 
 	{
 		uint8 *p = reinterpret_cast<uint8 *> (&data);
-		for (int i = 0; i< sizeof(data);i++){
+		for (uint32 i = 0; i< sizeof(data);i++){
 			p[i] = static_cast<uint8>(i*i+1);
 		}
 	}
@@ -1071,7 +1073,7 @@ ASSERT_TRUE(ok);\
 TEST(IntrospectionGTest, RANDOM_2D_COPY_CHECK ## type1 ## _ ## size1 ## _ ## size2) {\
 ErrorManagement::ErrorType ok;\
 MEM_SAVE()\
-ok = te.AutoGenObjectTAndCheckContent<type1,size1,size2> (typeId);\
+ok = te.AutoGenObjectTAndCheckContent<type1,size1,size2,size2,type1> (typeId);\
 MEM_CHECK()\
 REPORT_ERROR(ok,"*****RANDOM_2D_COPY_CHECK<>(" #type1 ")Failed\n");\
 ASSERT_TRUE(ok);\
@@ -1081,7 +1083,7 @@ ASSERT_TRUE(ok);\
 TEST(IntrospectionGTest, RANDOM_2D_COPY_CHECKR ## type1 ## _ ## size1 ## _ ## size2 ## _ ## minSize2) {\
 ErrorManagement::ErrorType ok;\
 MEM_SAVE()\
-ok = te.AutoGenObjectTAndCheckContent<type1,size1,size2,minSize2> (typeId);\
+ok = te.AutoGenObjectTAndCheckContent<type1,size1,size2,minSize2,type1> (typeId);\
 MEM_CHECK()\
 REPORT_ERROR(ok,"*****RANDOM_2D_COPY_CHECKR<>(" #type1 ")Failed\n");\
 ASSERT_TRUE(ok);\
@@ -1275,22 +1277,22 @@ COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8, Matrix<uint8>,uint32_4_8_
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8, uint32_4_8,uint32_4_8_uint32_4_8);
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8, Matrix<uint32>,uint32_4_8_Muint32);
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8, Matrix<uint64>,uint32_4_8_Muint64);
-COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8, Vector<Matrix<uint64>>,uint32_4_8_VMuint64);
+COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8, Vector<Matrix<uint64> >,uint32_4_8_VMuint64);
 
 COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6, uint32,uint32_4_8_6_uint32);
 COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6, uint32_4_8,uint32_4_8_6_uint32_4_8);
 COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6, Vector<uint32>,uint32_4_8_6_Vuint32);
 COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6, Matrix<uint32>,uint32_4_8_6_Muint32);
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6, uint32_4_8_6,uint32_4_8_6_uint32_4_8_6);
-COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6, Vector<Matrix<uint32>>,uint32_4_8_6_VMuint32);
-COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6, Matrix<Vector<uint32>>,uint32_4_8_6_MVuint32);
+COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6, Vector<Matrix<uint32> >,uint32_4_8_6_VMuint32);
+COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6, Matrix<Vector<uint32> >,uint32_4_8_6_MVuint32);
 
-COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5, Vector<Matrix<uint32>>,uint32_4_8_6_5_VMuint32);
-COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5, Matrix<Vector<uint32>>,uint32_4_8_6_5_MVuint32);
-COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5, Matrix<Matrix<uint32>>,uint32_4_8_6_5_MMuint32);
-COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5, Vector<Vector<Matrix<uint32>>>,uint32_4_8_6_5_VVMuint32);
+COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5, Vector<Matrix<uint32> >,uint32_4_8_6_5_VMuint32);
+COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5, Matrix<Vector<uint32> >,uint32_4_8_6_5_MVuint32);
+COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5, Matrix<Matrix<uint32> >,uint32_4_8_6_5_MMuint32);
+COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5, Vector<Vector<Matrix<uint32> > >,uint32_4_8_6_5_VVMuint32);
 
-COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32>>>,uint32_4_8_6_5_3_VVMuint32);
-COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32>>>,uint32_4_8_6_5_3_VMMuint32);
+COPY_CHECK_NOK(TestEnvironment::Instance(),uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32> > >,uint32_4_8_6_5_3_VVMuint32);
+COPY_CHECK_OK(TestEnvironment::Instance(),uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32> > >,uint32_4_8_6_5_3_VMMuint32);
 
 }//MARTe  namespace

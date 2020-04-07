@@ -216,7 +216,7 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
        		if (IsBitType()){  // uint5 bitranges
        			stringt.Append(constString);
        			stringt.Append("BitRange<");
-    			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
+    			uint32 bits = 8 * SizeFromTDBasicTypeSize(basicTypeSize);
        			TYPENAME_CORE()
     			stringt.Append(',');
        			uint32 numberOfBitsR = static_cast<uint32>(numberOfBits);
@@ -227,7 +227,7 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
        			stringt.Append('>');
        		}
        		else {// not bit type
-    			uint32 bits = 8*SizeFromTDBasicTypeSize(basicTypeSize);
+    			uint32 bits = 8 * SizeFromTDBasicTypeSize(basicTypeSize);
        			TYPENAME_CORE()
        		}
        	}

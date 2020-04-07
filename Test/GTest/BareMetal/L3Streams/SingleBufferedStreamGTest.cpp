@@ -32,7 +32,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "SingleBufferedStreamTest.h"
-#include "gtest/gtest.h"
+#include "TestSupport.h"
+#include "MilliSeconds.h"
 
 
 
@@ -133,12 +134,12 @@ TEST(SingleBufferedStreamGTest,TestRead_Size_1024) {
 
 TEST(SingleBufferedStreamGTest,TestRead_Size_8_timeout) {
     SingleBufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestRead_Timeout(0, 1, 500));
-    ASSERT_TRUE(streamtest.TestRead_Timeout(1, 8, 500));
-    ASSERT_TRUE(streamtest.TestRead_Timeout(2, 8, 500));
-    ASSERT_TRUE(streamtest.TestRead_Timeout(8, 8, 500));
-    ASSERT_TRUE(streamtest.TestRead_Timeout(64, 8, 500));
-    ASSERT_TRUE(streamtest.TestRead_Timeout(1024, 8, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(0, 1, MARTe::MilliSeconds(500,MARTe::Units::ms)));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(1, 8, MARTe::MilliSeconds(500,MARTe::Units::ms)));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(2, 8, MARTe::MilliSeconds(500,MARTe::Units::ms)));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(8, 8, MARTe::MilliSeconds(500,MARTe::Units::ms)));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(64, 8, MARTe::MilliSeconds(500,MARTe::Units::ms)));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(1024, 8, MARTe::MilliSeconds(500,MARTe::Units::ms)));
 }
 
 
@@ -199,7 +200,7 @@ TEST(SingleBufferedStreamGTest,TestWrite_Size_1024) {
 
 TEST(SingleBufferedStreamGTest,TestWrite_Size_8_timeout) {
     SingleBufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestWrite_Timeout(8, 64, 500));
+    ASSERT_TRUE(streamtest.TestWrite_Timeout(8, 64, MARTe::MilliSeconds(500,MARTe::Units::ms)));
 }
 
 TEST(SingleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {

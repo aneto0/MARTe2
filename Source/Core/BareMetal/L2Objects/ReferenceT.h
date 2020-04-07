@@ -153,8 +153,7 @@ public:
      * @param[in] initOnly if true the object is supposed to be already created.
      * @return true if the object was successfully created and initialized.
      */
-    virtual bool Initialise(StructuredDataI &data,
-                            const bool &initOnly);
+    virtual bool Initialise(StructuredDataI &data, const bool &initOnly);
 
     /**
      * @brief Provides access to the underlying object by mean of his AnyType

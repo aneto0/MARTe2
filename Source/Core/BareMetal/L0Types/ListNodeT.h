@@ -63,18 +63,31 @@ public:
 
 	}
 
+	/**
+	 *
+	 */
+	inline ListNodeT<loadClass> *Next();
+
 public:
 
 	/**
 	 * the payload
 	 */
 	loadClass load;
+
 };
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template <class loadClass>
+ListNodeT<loadClass> *ListNodeT<loadClass>::Next(){
+
+	return static_cast<ListNodeT<loadClass> *>(next);
+}
+
 
 }
 #endif /* LISTNODET_H_ */

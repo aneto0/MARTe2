@@ -163,7 +163,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
             uint32 index;
             toTokenize = DynamicCString::Tokenize(toTokenize, token,index,CCString("."), CCString("."));
 
-            bool created = false;
+//            bool created = false;
             bool done = false;
             while ((token[0] != '\0') && (ret) && (!done)) {
             	ret.notCompleted = !(token.GetSize() > 0u);
@@ -191,7 +191,7 @@ bool ReferenceContainer::Insert(CCString const path,  Reference ref) {
                         // insert the reference
                         if (nextToken.GetSize()== 0u) {
                             ref->SetName(token.GetList());
-                            created = currentNode->Insert(ref);
+//                            created = currentNode->Insert(ref);
                             done = true; // !! LOOP good exit condition
                         }
                         // create a node

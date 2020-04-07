@@ -104,6 +104,43 @@ public:
 	 */
 	inline uint32 DefaultPageSize();
 
+	/**
+	 *
+	 */
+	 enum PTCState {
+		// no data yet
+		started 			= 0x0000,
+		// one data
+		scalar 				= 0x0001,
+		// more than one
+		vector 				= 0x0002,
+		// end of first vector reached
+		vectorEnd 			= 0x0003,
+		// nth vector data in. all vectors same size so far
+		matrixRow 	    	= 0x0004,
+		// end of nth vector. all vectors same size
+		matrixRowEnd    	= 0x0005,
+		// nth vector data in. at least one vector has different size
+		sparseMatrixRow		= 0x0006,
+		// end of nth vector
+		sparseMatrixRE 		= 0x0007,
+		// finished as a scalar
+		finishedS 			= 0x00E0,
+		// finished as a vector
+		finishedV 			= 0x00E1,
+		// finished as a matrix
+		finishedM 			= 0x00E2,
+		// finished as a sparse matrix
+		finishedSM 			= 0x00E3,
+		//
+		notStarted          = 0x00F0,
+		// some error encountered
+		error 				= 0x00FF,
+		//
+		statusMask		    = 0x00F0
+	};
+
+
 private:
 
 	/**
@@ -140,41 +177,6 @@ private:
 
 	};
 
-	/**
-	 *
-	 */
-	enum PTCState {
-		// no data yet
-		started 			= 0x0000,
-		// one data
-		scalar 				= 0x0001,
-		// more than one
-		vector 				= 0x0002,
-		// end of first vector reached
-		vectorEnd 			= 0x0003,
-		// nth vector data in. all vectors same size so far
-		matrixRow 	    	= 0x0004,
-		// end of nth vector. all vectors same size
-		matrixRowEnd    	= 0x0005,
-		// nth vector data in. at least one vector has different size
-		sparseMatrixRow		= 0x0006,
-		// end of nth vector
-		sparseMatrixRE 		= 0x0007,
-		// finished as a scalar
-		finishedS 			= 0x00E0,
-		// finished as a vector
-		finishedV 			= 0x00E1,
-		// finished as a matrix
-		finishedM 			= 0x00E2,
-		// finished as a sparse matrix
-		finishedSM 			= 0x00E3,
-		//
-		notStarted          = 0x00F0,
-		// some error encountered
-		error 				= 0x00FF,
-		//
-		mask				= 0x00F0
-	};
 
 	/**
 	 *
@@ -273,13 +275,13 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
+//ProgressiveTypeCreator::PTCState x;
 /**
  * Any of the finished states or error
  */
 bool ProgressiveTypeCreator::Finished(){
-	const uint32 mask 			= static_cast<uint32>(PTCState::mask);
-	const uint32 finishedMask 	= static_cast<uint32>(PTCState::finishedS);
+	const uint32 mask 			= static_cast<uint32>(statusMask);
+	const uint32 finishedMask 	= static_cast<uint32>(finishedS);
 	uint32 statusAsInt = static_cast<uint32>(status);
 	return ((statusAsInt & mask) == finishedMask);
 }
@@ -288,8 +290,8 @@ bool ProgressiveTypeCreator::Finished(){
  * Any of the start,
  */
 bool ProgressiveTypeCreator::Started(){
-	const uint32 mask 			= static_cast<uint32>(PTCState::mask);
-	const uint32 startedMask 	= static_cast<uint32>(PTCState::started);
+	const uint32 mask 			= static_cast<uint32>(statusMask);
+	const uint32 startedMask 	= static_cast<uint32>(started);
 	uint32 statusAsInt = static_cast<uint32>(status);
 	return ((statusAsInt & mask) == startedMask);
 }

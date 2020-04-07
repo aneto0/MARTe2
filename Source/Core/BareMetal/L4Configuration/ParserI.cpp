@@ -287,7 +287,11 @@ ErrorManagement::ErrorType ParserI::Parse() {
                         }
                     }
                     else {
-                        (token == 0u) ? (isEOF = true) : (parseStatus.ok.invalidOperation = true);
+                    	if (token == 0u) {
+                    		isEOF = true;
+                    	} else {
+                    		parseStatus.ok.invalidOperation = true;
+                    	}
                         if (!parseStatus.ok) {
                             PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                         }
@@ -295,7 +299,11 @@ ErrorManagement::ErrorType ParserI::Parse() {
                     }
                 }
                 else {
-                    (token == 0u) ? (isEOF = true) : (parseStatus.ok.invalidOperation = true);
+                	if (token == 0u) {
+                		isEOF = true;
+                	} else {
+                		parseStatus.ok.invalidOperation = true;
+                	}
                     if (!parseStatus.ok) {
                         PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                     }

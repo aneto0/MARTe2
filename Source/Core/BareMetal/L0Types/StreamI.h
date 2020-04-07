@@ -168,9 +168,7 @@ public:
      * @param[in,out] size is the desired number of bytes to read.
      * @param[in] timeout is the desired timeout.
      */
-    virtual bool Read(char8 * const output,
-            uint32 & size,
-            const MilliSeconds &timeout) = 0;
+    virtual bool Read(char8 * const output,  uint32 & size, const MilliSeconds &timeout) = 0;
 
     /**
      * @brief Writes from a const char8* buffer to the stream.

@@ -82,6 +82,11 @@ public:
      */
     inline bool operator==(const CCString &s) const;
 
+    /**
+     * @Brief compare content
+     */
+    inline bool operator!=(const CCString &s) const;
+
 };
 
 
@@ -94,6 +99,10 @@ bool CString::operator==(const CCString &s) const{
 	return ZeroTerminatedArray<char8>::IsSameAs(s.GetList());
 }
 
+bool CString::operator!=(const CCString &s) const{
+	return !ZeroTerminatedArray<char8>::IsSameAs(s.GetList());
+}
+
 
 CString::CString (CString const &s):ZeroTerminatedArray<char8>(s){}
 
@@ -104,9 +113,6 @@ CStringTool CString::operator()(){
 
 CString::CString (char8 * const &s):ZeroTerminatedArray<char8>(s){}
 
-//CString::operator const char8*() const{
-//    return ZeroTerminatedArray<char8>::array;
-//}
 
 char8 &
 CString::operator[](uint32 index) const{

@@ -34,7 +34,6 @@
 
 #include "GeneralDefinitions.h"
 #include "MilliSeconds.h"
-#include "HandleI.h"
 #include "BasicSocket.h"
 
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
@@ -165,14 +164,14 @@ namespace MARTe {
          * @param[in] handle indicates the handle to be search for.
          * @return True if the handle is set.
          */
-        bool IsSet(const HandleI &handle) const;
+        bool IsSet(const Handle &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true) const;
 
         /**
          * @brief Queries if the handle is set in one of the three modes.
          * @param[in] handle indicates the handle to be search for.
          * @return True if the handle is set.
          */
-        bool IsSet(const BasicSocket &socket) const;
+        bool IsSet(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true) const;
 
         /**
          * @brief Blocks until an I/O event occurs in one of the added handles, or the function timeouts.
@@ -182,9 +181,9 @@ namespace MARTe {
         int32 WaitUntil(const MilliSeconds &timeout = MilliSeconds::Infinite);
 
     private:
-        bool Add(const HandleI &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
+        bool Add(const Handle &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
         bool Add(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
-        bool Remove(const HandleI &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
+        bool Remove(const Handle &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
         bool Remove(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
 
         /**

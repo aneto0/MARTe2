@@ -141,7 +141,7 @@ bool StreamStringIOBufferTest::TestWrite(uint32 writeSize,
         return false;
     }
 
-    return StringHelper::CompareN(stringBuffer.Buffer(), string, writeSize) == 0;
+    return CCString(stringBuffer.Buffer()).CompareContent(string, writeSize) == 0;
 }
 
 bool StreamStringIOBufferTest::TestWrite_NULL_Buffer() {
@@ -157,21 +157,19 @@ bool StreamStringIOBufferTest::TestTerminate(uint32 writeSize,
 
     StreamStringIOBuffer stringBuffer;
 
-    char8 buffer[32];
+    DynamicCString buffer(string);
 
-    StringHelper::Copy(buffer, string);
-
-    if (!stringBuffer.Write(buffer, writeSize)) {
+    if (!stringBuffer.Write(buffer.GetList(), writeSize)) {
         return false;
     }
 
     uint32 filledSize = stringBuffer.UsedSize();
     stringBuffer.Terminate();
-    if (writeSize < StringHelper::Length(string)) {
+    if (writeSize < buffer.GetSize()) {
         buffer[writeSize] = '\0';
     }
 
-    return (StringHelper::Compare(stringBuffer.Buffer(), buffer) == 0) && (filledSize == stringBuffer.UsedSize());
+    return ( buffer == stringBuffer.Buffer()) && (filledSize == stringBuffer.UsedSize());
 
 }
 
@@ -184,6 +182,6 @@ bool StreamStringIOBufferTest::TestWriteAll(uint32 writeSize,
         return false;
     }
 
-    return StringHelper::CompareN(stringBuffer.Buffer(), string, writeSize) == 0;
+    return CCString(stringBuffer.Buffer()).CompareContent(string, writeSize) == 0;
 
 }

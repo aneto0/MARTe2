@@ -32,8 +32,11 @@
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStream.h"
 #include "SingleBufferedStream.h"
-#include "MemoryOperationsHelper.h"
 #include "AnyType.h"
+#include "HeapManager.h"
+#include "MemoryOperators.h"
+
+
 #include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
@@ -119,17 +122,17 @@ public:
         writable = canWrite;
         size = 0;
         usedTimeout = false;
-        buffer = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(MAX_STREAM_DIMENSION);
+        buffer = (char8 *) HeapManager::Malloc(MAX_STREAM_DIMENSION);
         for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
             buffer[i] = 0;
         }
     }
 
     ~DummyOSStream() {
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(buffer));
+        HeapManager::Free(reinterpret_cast<void *&>(buffer));
     }
 
-    uint64 Size() {
+    uint64 Size() const {
         return size;
     }
 
@@ -143,7 +146,7 @@ public:
         return true;
     }
 
-    uint64 Position() {
+    uint64 Position() const {
         return position;
     }
 
@@ -157,11 +160,9 @@ public:
         return true;
     }
 
-    bool Read(char8 * const outBuffer,
-              uint32 &inSize,
-              const TimeoutType &timeout) {
+    bool Read(char8 * const outBuffer, uint32 &inSize,  const MilliSeconds &timeout) {
 
-        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+        if (timeout.IsValid()) {
             usedTimeout = true;
         }
         else {
@@ -172,7 +173,7 @@ public:
             inSize = MAX_STREAM_DIMENSION - position - 1;
         }
 
-        if (!MemoryOperationsHelper::Copy(outBuffer, &buffer[position], inSize)) {
+        if (!Memory::Copy(outBuffer, &buffer[position], inSize)) {
             return false;
         }
 
@@ -181,11 +182,9 @@ public:
 
     }
 
-    bool Write(const char8 * const inBuffer,
-               uint32 &outSize,
-               const TimeoutType &timeout) {
+    bool Write(const char8 * const inBuffer, uint32 &outSize, const MilliSeconds &timeout) {
 
-        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+        if (timeout.IsValid()) {
             usedTimeout = true;
         }
         else {
@@ -194,7 +193,7 @@ public:
         if ((size + outSize) >= MAX_STREAM_DIMENSION) {
             outSize = MAX_STREAM_DIMENSION - size - 1;
         }
-        if (!MemoryOperationsHelper::Copy(&buffer[position], inBuffer, outSize)) {
+        if (!Memory::Copy(&buffer[position], inBuffer, outSize)) {
             return false;
         }
 
@@ -261,9 +260,7 @@ public:
 class DummySingleBufferedStream: public DummyOSStream, public SingleBufferedStream {
 public:
 
-    DummySingleBufferedStream(uint32 timeout) :
-            DummyOSStream(true),
-            SingleBufferedStream(timeout) {
+    DummySingleBufferedStream(uint32 timeout) : DummyOSStream(true),  SingleBufferedStream(MilliSeconds(timeout,Units::ms)) {
     }
 
     DummySingleBufferedStream(bool canSeek = true,
@@ -276,7 +273,7 @@ public:
     virtual ~DummySingleBufferedStream() {
     }
 
-    uint64 OSSize() {
+    uint64 OSSize() const {
         return DummyOSStream::Size();
     }
 
@@ -288,7 +285,7 @@ public:
         return DummyOSStream::RelativeSeek(delta);
     }
 
-    uint64 OSPosition() {
+    uint64 OSPosition() const {
         return DummyOSStream::Position();
     }
 
@@ -319,17 +316,17 @@ public:
 
     bool Read(char8 * const outBuffer,
               uint32 &inSize,
-              const TimeoutType &timeout) {
+              const MilliSeconds &timeout) {
         return SingleBufferedStream::Read(outBuffer, inSize, timeout);
     }
 
     bool Write(const char8 * const outBuffer,
                uint32 &inSize,
-               const TimeoutType &timeout) {
+               const MilliSeconds &timeout) {
         return SingleBufferedStream::Write(outBuffer, inSize, timeout);
     }
 
-    uint64 Size() {
+    uint64 Size() const {
         return SingleBufferedStream::Size();
     }
 
@@ -341,7 +338,7 @@ public:
         return SingleBufferedStream::RelativeSeek(deltaPos);
     }
 
-    uint64 Position() {
+    uint64 Position() const {
         return SingleBufferedStream::Position();
     }
 
@@ -377,9 +374,7 @@ public:
 class DummyDoubleBufferedStream: public DummyOSStream, public DoubleBufferedStream {
 public:
 
-    DummyDoubleBufferedStream(uint32 timeout) :
-            DummyOSStream(true),
-            DoubleBufferedStream(timeout) {
+    DummyDoubleBufferedStream(uint32 timeout) :  DummyOSStream(true), DoubleBufferedStream(MilliSeconds(timeout,Units::ms)) {
     }
 
     DummyDoubleBufferedStream(bool canSeek = true,
@@ -392,7 +387,7 @@ public:
     virtual ~DummyDoubleBufferedStream() {
     }
 
-    uint64 OSSize() {
+    uint64 OSSize() const{
         return DummyOSStream::Size();
     }
 
@@ -404,7 +399,7 @@ public:
         return DummyOSStream::RelativeSeek(delta);
     }
 
-    uint64 OSPosition() {
+    uint64 OSPosition() const{
         return DummyOSStream::Position();
     }
 
@@ -433,15 +428,11 @@ public:
         return DoubleBufferedStream::Write(outBuffer, inSize);
     }
 
-    bool Read(char8 * const outBuffer,
-              uint32 &inSize,
-              const TimeoutType &timeout) {
+    bool Read(char8 * const outBuffer,uint32 &inSize, const MilliSeconds &timeout) {
         return DoubleBufferedStream::Read(outBuffer, inSize, timeout);
     }
 
-    bool Write(const char8 * const outBuffer,
-               uint32 &inSize,
-               const TimeoutType &timeout) {
+    bool Write(const char8 * const outBuffer, uint32 &inSize, const MilliSeconds &timeout) {
         return DoubleBufferedStream::Write(outBuffer, inSize, timeout);
     }
 
