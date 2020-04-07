@@ -104,7 +104,7 @@ public:
 	/**
 	 *
 	 */
-	~Synchronizer();
+	virtual ~Synchronizer();
 private:
 	/**
 	 * platform specifc

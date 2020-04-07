@@ -28,7 +28,7 @@ int main(){
 	ret = context.ExtractVariables(RPNCode);
 
 	if (ret){
-		int32 index = 0;
+		uint32 index = 0;
 		PseudoCode::Context::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
@@ -52,14 +52,14 @@ int main(){
 			}
 		}
 
-		printf("size of constant area = %i\n",context.variablesMaxIndex);
+		printf("size of constant area = %i\n",context.startOfVariables);
 
 	}
 
 	if (ret){
 		ret = context.Compile(RPNCode);
-		printf("size of constant area = %i\n",context.variablesMaxIndex);
-		printf("size of code area = %i\n",context.codeMaxIndex);
+		printf("size of data area = %i\n",context.dataMemory.GetNumberOfElements());
+		printf("size of code area = %i\n",context.codeMemory.GetSize());
 		printf("size of stack area = %i\n",context.stack.GetNumberOfElements());
 	}
 

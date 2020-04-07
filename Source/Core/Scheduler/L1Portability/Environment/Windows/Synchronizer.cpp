@@ -56,13 +56,13 @@ ErrorManagement::ErrorType Synchronizer::Open(){
 	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.invalidOperation = (esd->handle != NULL);
+		ret.invalidOperation = (esd->GetHandle() != NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Open() already opened");
 	}
 
 	if (ret){
-		esd->handle = CreateEvent(NULL, TRUE, FALSE, NULL);
-		ret.OSError = (esd->handle == NULL);
+		esd->SetHandle(CreateEvent(NULL, TRUE, FALSE, NULL));
+		ret.OSError = (esd->GetHandle() == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Open failed");
 	}
 
@@ -92,12 +92,12 @@ ErrorManagement::ErrorType Synchronizer::Post(){
 	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.invalidOperation = (esd->handle == NULL);
+		ret.invalidOperation = (esd->GetHandle() == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Post() not opened");
 	}
 
 	if (ret){
-		ret.OSError = (SetEvent(esd->handle)==0);
+		ret.OSError = (SetEvent(esd->GetHandle())==0);
 		REPORT_ERROR(ret,"Synchronyzer::Post() failed");
 	}
 
@@ -115,12 +115,12 @@ ErrorManagement::ErrorType Synchronizer::Reset(){
 	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.invalidOperation = (esd->handle == NULL);
+		ret.invalidOperation = (esd->GetHandle() == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Reset() not opened");
 	}
 
 	if (ret){
-		ret.OSError = (ResetEvent(esd->handle)==0);
+		ret.OSError = (ResetEvent(esd->GetHandle())==0);
 		REPORT_ERROR(ret,"Synchronyzer::Reset() failed");
 	}
 
@@ -146,12 +146,12 @@ ErrorManagement::ErrorType Synchronizer::Wait(MilliSeconds timeout){
 	REPORT_ERROR(ret,"EventSource::GetData() returns NULL");
 
 	if (ret){
-		ret.invalidOperation = (esd->handle == NULL);
+		ret.invalidOperation = (esd->GetHandle() == NULL);
 		REPORT_ERROR(ret,"Synchronyzer::Wait() not opened");
 	}
 
 	if (ret){
-	    DWORD wret = WaitForSingleObject(esd->handle, time);
+	    DWORD wret = WaitForSingleObject(esd->GetHandle(), time);
 
 	    ret.OSError = (wret == WAIT_FAILED);
 		REPORT_ERROR(ret,"Synchronyzer::Wait() failed");

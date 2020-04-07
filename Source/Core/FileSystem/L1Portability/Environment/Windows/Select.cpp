@@ -393,6 +393,13 @@ bool Select::Add(const BasicSocket &socket,bool readEvent,bool writeEvent,bool e
 	return ret;
 }
 
+bool Select::Add(const SocketCore &socket,bool readEvent,bool writeEvent,bool exceptEvent){
+	ErrorManagement::ErrorType ret;
+	ret = 	selectProperties.AddSocket(socket,HandleFlags(readEvent,writeEvent,exceptEvent));
+	REPORT_ERROR(ret,"selectProperties.AddSocket(h,readFlag) failed");
+	return ret;
+}
+
 bool Select::Remove(const Handle &handle,bool readEvent,bool writeEvent,bool exceptEvent){
 	ErrorManagement::ErrorType ret;
 	HANDLE h = handle;
@@ -689,12 +696,12 @@ void Select::ClearAllHandles() {
     return;
 }
 
-bool Select::IsSet(const Handle &handle) const {
+bool Select::IsSet(const Handle &handle,bool readEvent,bool writeEvent,bool exceptEvent) const {
 	HandleFlags hf = selectProperties.GetProperties(handle);
 	return  hf.hasBeenSelected;
 }
 
-bool Select::IsSet(const BasicSocket &socket) const {
+bool Select::IsSet(const BasicSocket &socket,bool readEvent,bool writeEvent,bool exceptEvent) const {
 	ErrorManagement::ErrorType ret;
 
 	uint32 index = selectProperties.SocketFind(socket.GetSocket());

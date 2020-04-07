@@ -339,7 +339,7 @@ bool SelectTest::TestWaitUntil_waitTimeout() {
     bc.Read(buffer,size);
 
     if (ret){
-        ret.fatalError = !sel.AddReadHandle(bc.GetSocket());
+    	ret.fatalError = !sel.AddReadHandle(bc.GetSocket());
         REPORT_ERROR(ret,"AddReadHandle failed");
     }
 

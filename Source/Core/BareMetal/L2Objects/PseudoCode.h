@@ -330,7 +330,7 @@ private:
 
 
 static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
-	return (byteSize+sizeof(DataMemoryElement)-1)/sizeof(DataMemoryElement);
+	return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
 }
 
 template<typename T>
