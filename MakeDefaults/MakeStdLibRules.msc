@@ -104,9 +104,8 @@ $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
 
 #Note that the / is used here in the /%.exe as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.exe : $(OBJS) $(BUILD_DIR)\%.obj  createLibrary
-	$(COMPILER)  -MT -DSFML_STATIC $(DEBUG) $(OBJS) $(BUILD_DIR)\$*.obj $(LIBRARIES)  -Fe$@ $(LFLAGS) 
+	$(COMPILER)  -MT -DSFML_STATIC $(DEBUG)  $(BUILD_DIR)\$*.obj $(LIBRARIES)  -Fe$@ $(LFLAGS) 
 	@if exist createLibrary rm -f createLibrary
-	
 
 #Note that the / is used here in the /%. as the target in the file.inc is specified as such
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)\%.obj $(OBJS)   %.def
