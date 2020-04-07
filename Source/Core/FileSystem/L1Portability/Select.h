@@ -183,7 +183,6 @@ namespace MARTe {
     private:
         bool Add(const Handle &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
         bool Add(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
-        bool Add(const SocketCore &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
         bool Remove(const Handle &handle,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
         bool Remove(const BasicSocket &socket,bool readEvent=true,bool writeEvent=true,bool exceptEvent=true);
 

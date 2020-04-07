@@ -393,13 +393,6 @@ bool Select::Add(const BasicSocket &socket,bool readEvent,bool writeEvent,bool e
 	return ret;
 }
 
-bool Select::Add(const SocketCore &socket,bool readEvent,bool writeEvent,bool exceptEvent){
-	ErrorManagement::ErrorType ret;
-	ret = 	selectProperties.AddSocket(socket,HandleFlags(readEvent,writeEvent,exceptEvent));
-	REPORT_ERROR(ret,"selectProperties.AddSocket(h,readFlag) failed");
-	return ret;
-}
-
 bool Select::Remove(const Handle &handle,bool readEvent,bool writeEvent,bool exceptEvent){
 	ErrorManagement::ErrorType ret;
 	HANDLE h = handle;
