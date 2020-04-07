@@ -218,7 +218,7 @@ public:
 	/**
 	 * Reconstruct the RPNCode with type information
 	 */
-	ErrorManagement::ErrorType DeCompile(DynamicCString &RPNCode);
+	ErrorManagement::ErrorType DeCompile(DynamicCString &RPNCode,bool showTypes);
 
 // PUBLIC VARIABLES
 
@@ -253,22 +253,6 @@ public:
 	 * stack is allocated here
 	 */
 	Vector<DataMemoryElement> 			stack;
-
-	/**
-	 * used during runtime
-	 */
-	DataMemoryElement *					stackPtr;
-
-	/**
-	 *
-	 */
-	DataMemoryElement *					variablesMemoryPtr;
-
-
-	/**
-	 *
-	 */
-	const CodeMemoryElement *			codeMemoryPtr;
 
 
 private:
@@ -311,38 +295,46 @@ private:
 	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 
 	/**
-	 * expands the functionInformation into a readable text
-	 * if more pCode is required for the decoding it will get it from context.
-	 * it will access DataMemory as well to decode constants
-	 * if peekOnly = true does not change the codeMemoryPtr
-	 */
-	ErrorManagement::ErrorType FunctionRecord2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=false);
-
-	/**
 	 * expands function information input description into readable text
 	 * if more pCode is required for the decoding it will peek it from context. It will consume the PCode only if peekOnly=false
 	 * it will access DataMemory as well to decode constants
 	 * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
 	 */
-	ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=true,bool showData=true);
+	ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
 
 	/**
 	 * expands function information output description into readable text
-	 * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true
+	 * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true otherwise it will consume next
 	 * it will access DataMemory as well to decode constants
 	 * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
 	 */
-	ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true);
+	ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
 	/**
 	 * the input variable names
 	 */
-	List<VariableInformation> inputVariableInfo;
+	List<VariableInformation> 			inputVariableInfo;
 
 	/**
 	 * the output variable names
 	 */
-	List<VariableInformation> outputVariableInfo;
+	List<VariableInformation> 			outputVariableInfo;
+
+	/**
+	 * used by Push/Pop/Peek
+	 */
+	DataMemoryElement *					stackPtr;
+
+	/**
+	 * used by Variable()
+	 */
+	DataMemoryElement *					variablesMemoryPtr;
+
+
+	/**
+	 * used by GetPseudoCode()
+	 */
+	const CodeMemoryElement *			codeMemoryPtr;
 
 };
 

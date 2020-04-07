@@ -11,15 +11,21 @@ CCString RPNCode=
 		"READ A\n"
 		"READ B\n"
 		"SUB\n"
-		"CONST float32 3.14\n"
+		"CONST float32 3.140000\n"
 		"MUL\n"
 		"DUP\n"
 		"WRITE C\n"
-		"CONST float32 0.5\n"
-//		"DIV\n"
+		"CONST float32 0.500000\n"
 		"POW\n"
 		"TAN\n"
+		"CAST int32\n"
+		"DUP\n"
 		"WRITE D\n"
+		"READ C\n"
+		"LOG\n"
+		"CAST int32\n"
+		"GT\n"
+		"WRITE E\n"
 ;
 
 int main(){
@@ -56,26 +62,32 @@ int main(){
 				var->type = TypeDescriptor("float32");
 			}
 			if (var->name == "D"){
-				var->type = TypeDescriptor("float32");
+				var->type = TypeDescriptor("int32");
+			}
+			if (var->name == "E"){
+				var->type = TypeDescriptor("uint8");
 			}
 		}
 	}
 
-	printf ("COMPILE\n");
 	if (ret){
+		printf ("COMPILE\n");
 		ret = context.Compile(RPNCode);
+	}
+
+	if (ret){
+		printf("SUCCESSFUL\n");
 		printf("size of constant area = %i\n",context.startOfVariables);
 		printf("size of data area = %i\n",context.dataMemory.GetNumberOfElements());
 		printf("size of code area = %i\n",context.codeMemory.GetSize());
 		printf("size of stack area = %i\n",context.stack.GetNumberOfElements());
 	}
 
-	printf ("ASSIGN INPUTS\n");
 	if (ret){
+		printf ("ASSIGN INPUTS\n");
 		int32 index = 0;
 		PseudoCode::Context::VariableInformation *var;
 
-		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
 			index++;
 			if (var->name == "A"){
@@ -89,8 +101,8 @@ int main(){
 		}
 	}
 
-	printf ("VAR ALLOCATION RESULT\n");
 	if (ret){
+		printf ("VAR ALLOCATION RESULT\n");
 		int32 index = 0;
 		PseudoCode::Context::VariableInformation *var;
 
@@ -106,9 +118,9 @@ int main(){
 		}
 	}
 
-	printf ("DEBUG MODE EXECUTION \n");
 
 	if (ret){
+		printf ("DEBUG MODE EXECUTION \n");
 		// let stdout catch up..
 		fflush(stdout);
 		DynamicCString dcs;
@@ -120,9 +132,9 @@ int main(){
 		}
 	}
 
-	printf ("FAST MODE EXECUTION \n");
-	printf ("Executes 1 Million times ");
 	{
+		printf ("FAST MODE EXECUTION \n");
+		printf ("Executes 1 Million times ");
 		Ticks t1,t2;
 		t1 = HighResolutionTimer::GetTicks();
 		if (ret){
@@ -140,9 +152,9 @@ int main(){
 		fflush(stdout);
 	}
 
-	printf ("SAFE MODE EXECUTION \n");
-	printf ("Executes 1 Million times ");
 	{
+		printf ("SAFE MODE EXECUTION \n");
+		printf ("Executes 1 Million times ");
 		Ticks t1,t2;
 		t1 = HighResolutionTimer::GetTicks();
 		if (ret){
@@ -161,16 +173,29 @@ int main(){
 
 	}
 
-	printf ("DECOMPILE pCode\n");
 	if (ret){
+		printf ("DECOMPILE showing types pCode\n");
 		DynamicCString RPNCodeRev;
-		ret = context.DeCompile(RPNCodeRev);
+		ret = context.DeCompile(RPNCodeRev,true);
 
 		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
 	}
 
+	if (ret){
+		printf ("DECOMPILE not showing types pCode\n");
+		DynamicCString RPNCodeRev;
+		ret = context.DeCompile(RPNCodeRev,false);
+
+		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
+		if (RPNCode == RPNCodeRev){
+			printf("identical to the original source\n");
+		} else {
+			printf("not identical to the original source\n");
+		}
+	}
+
 	if (!ret){
-		printf ("Failed somewhere\n");
+		printf ("FAILED - see log\n");
 	}
 
  	StartupManager::Terminate();

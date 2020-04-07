@@ -106,7 +106,6 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		if (ret){
 //printf("%s in checking %x vs %x\n",name.GetList(),type.all,types[i].all);
 			ret = (type.SameAs(types[i]));
-
 		}
 	}
 
@@ -294,7 +293,7 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableIn
 	VariableInformation *variableInfo;
 	ret = FindVariableinDB(name,variableInfo,db);
 
-	// if it is already there we cannot add
+	// if it is already there we do not need to add
 	if (ret.unsupportedFeature){
 		VariableInformation variableInfo;
 		variableInfo.name = name;
@@ -303,6 +302,9 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableIn
 //printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
 		ret = db.Insert(variableInfo );
 	} else {
+
+		// it would be an error if this is an output variable
+		// as we do not allow to override an output
 		ret.invalidOperation = true;
 	}
 
@@ -329,10 +331,8 @@ ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,Varia
 			ret.unsupportedFeature = (variableInformation == NULL);
 		}
 	}
-
 	return ret;
 }
-
 
 ErrorManagement::ErrorType Context::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
 	ErrorManagement::ErrorType ret;
@@ -379,13 +379,21 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 				ret.invalidOperation = !hasParameter;
 				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 				if (ret){
-					ret = AddInputVariable(parameter);
-					if (ret.invalidOperation == true){
-						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
-						ret.invalidOperation = false; // mask out the case that we already registered this variable
+					// if an output variable of this name is already present
+					// it means it would have already been loaded
+					// so no need to fetch an external input
+					VariableInformation *variableInformation;
+					ret = FindOutputVariable(parameter,variableInformation);
 
+					if (!ret){
+						ret = AddInputVariable(parameter);
+						if (ret.invalidOperation == true){
+							COMPOSITE_REPORT_ERROR(ErrorManagement::Information,"variable ",parameter," already registered");
+							// mask out the case that we already registered this variable
+							ret.invalidOperation = false;
+						}
+						COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
 					}
-					COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
 				}
 			} else
 			if (command == writeToken){
@@ -396,7 +404,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 					ret = AddOutputVariable(parameter);
 					if (ret.invalidOperation == true){
 						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
-						ret.invalidOperation = false; // mask out the case that we already registered this variable
+						// the error remains as we do not allow overwriting outputs
 					}
 					COMPOSITE_REPORT_ERROR(ret,"Failed Adding output variable ",parameter);
 				}
@@ -719,69 +727,13 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	// check that the TypeStack is empty
 	if (ret){
 		ret.internalSetupError = (typeStack.GetSize() > 0);
-		COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete - ",typeStack.GetSize()," data left in stack");
+		COMPOSITE_REPORT_ERROR(ret,"operation sequence is incomplete: ",typeStack.GetSize()," data left in stack");
 	}
 
 	return ret;
 }
 
-/**
- * expands the variableInformation into a readable text
- * if more pCode is required it will get it from context
- */
-ErrorManagement::ErrorType Context::FunctionRecord2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly){
-
-	 ErrorManagement::ErrorType ret;
-
-	if ((functionInformation.name == readToken) || (functionInformation.name == writeToken)){
-		CodeMemoryElement pCode2 = GetPseudoCode();
-		if (peekOnly){
-			codeMemoryPtr--;
-		}
-
-		Context::VariableInformation *vi;
-		ret = FindVariable(pCode2,vi);
-		COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
-
-		if (ret){
-			if (pCode2 < startOfVariables){
-				// Converts the value to a string
-				DynamicCString value;
-				AnyType dest(value);
-				AnyType src(vi->type,&variablesMemoryPtr[pCode2]);
-				ret = src.CopyTo(dest);
-				REPORT_ERROR(ret,"CopyTo failed ");
-				if (ret){
-					cst.Append(value);
-				}
-			} else {
-				cst.Append(vi->name);
-			}
-		}
-	}
-
-	cst.Append('(');
-	for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
-		if (i!=0) {
-			cst.Append(',');
-		}
-		ret.fatalError = !functionInformation.types[i].ToString(cst);
-	}
-	if (functionInformation.numberOfOutputs > 0){
-		cst.Append(" => ");
-	}
-	for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
-		if (i!=0) {
-			cst.Append(',');
-		}
-		ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
-	}
-	cst.Append(')');
-
-	return ret;
-}
-
-ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly,bool showData){
+ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly,bool showData,bool showTypes){
 	 ErrorManagement::ErrorType ret;
 
 	 const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
@@ -794,33 +746,38 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 		 COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
 
 		 if (ret){
-			cst.Append(vi->name);
+			cst.Append(' ').Append(vi->name);
 		 }
 	 }
 
 	 DataMemoryAddress dataStackIndex = 0;
 
-	 for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
-		 if (i!=0) {
-			 cst.Append(',');
-		 } else {
-			 cst.Append('(');
-		 }
-		 if (showData){
-			 cst.Append('(');
-		 }
-		 ret.fatalError = !functionInformation.types[i].ToString(cst);
-		 if (showData){
-			cst.Append(')');
+	if (showData || showTypes){
+		for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
+			if (i!=0) {
+				cst.Append(',');
+			} else {
+				cst.Append('(');
+			}
+			if (showData && showTypes){
+				cst.Append('(');
+			}
+			if (showTypes){
+				 ret.fatalError = !functionInformation.types[i].ToString(cst);
+			}
+			if (showData && showTypes){
+				cst.Append(')');
+			}
+			if (showData){
+				dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+				DynamicCString value;
+				AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
+				AnyType dest(value);
+				ret = src.CopyTo(dest);
 
-			dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
-			DynamicCString value;
-			AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
-			AnyType dest(value);
-			ret = src.CopyTo(dest);
+				cst.Append(value.GetList());
 
-			cst.Append(value.GetList());
-
+			}
 			if (i == (functionInformation.numberOfInputs-1U)){
 				cst.Append(')');
 			}
@@ -835,15 +792,20 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 	 return ret;
 }
 
-ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack,bool showData){
+ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack,bool showData,bool showTypes){
 	ErrorManagement::ErrorType ret;
 
+	// if already showing the types do not show the parameter of the CAST
+	if ((functionInformation.name == castToken) && (!showTypes)) {
+		cst.Append(' ');
+		ret.fatalError = !functionInformation.types[functionInformation.numberOfInputs].ToString(cst);
+	} else
 	if (functionInformation.name == readToken) {
 		CodeMemoryElement pCode2;
 		if (lookBack){
 			pCode2 = codeMemoryPtr[-1];
 		} else {
-			pCode2 = codeMemoryPtr[0];
+			pCode2 = GetPseudoCode();
 		}
 
 		Context::VariableInformation *vi;
@@ -852,6 +814,11 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 
 		if (ret){
 			if (pCode2 < startOfVariables){
+
+				cst.Append(' ');
+				ret.fatalError = !vi->type.ToString(cst);
+				cst.Append(' ');
+
 				// Converts the value to a string
 				DynamicCString value;
 				AnyType dest(value);
@@ -862,43 +829,46 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 					cst.Append(value);
 				}
 			} else {
-				cst.Append(vi->name);
+				cst.Append(' ').Append(vi->name);
 			}
 		}
 	}
 
 	DataMemoryAddress dataStackIndex = 0;
 
-	cst.Append('(');
-	if (functionInformation.numberOfOutputs > 0){
-		cst.Append(" => ");
+	if (showData || showTypes){
+		for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
+			if (i!=0) {
+				cst.Append(',');
+			} else {
+				cst.Append(" => (");
+			}
+			if (showData && showTypes){
+				cst.Append('(');
+			}
+			if (showTypes){
+				ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
+			}
+			if (showData && showTypes){
+				cst.Append(')');
+			}
+			if (showData){
+				dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+				DynamicCString value;
+				AnyType src(functionInformation.types[i+functionInformation.numberOfInputs],stackPtr - dataStackIndex);
+				AnyType dest(value);
+				ret = src.CopyTo(dest);
+
+				cst.Append(value.GetList());
+			}
+			if (i == (functionInformation.numberOfOutputs-1U)){
+				cst.Append(')');
+			}
+		}
 	}
-	for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
-		if (i!=0) {
-			cst.Append(',');
-		}
-
-		if (showData){
-			cst.Append('(');
-		}
-		ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
-		if (showData){
-			cst.Append(')');
-
-			dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
-			DynamicCString value;
-			AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
-			AnyType dest(value);
-			ret = src.CopyTo(dest);
-
-			cst.Append(value.GetList());
-		}
-	}
-	cst.Append(')');
 
 	return ret;
 }
-
 
 ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStream,uint32 step){
 
@@ -940,25 +910,22 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			DynamicCString debugMessage;
 			CStringTool cst = debugMessage();
 
-			int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
-			int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-			cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
-			printf ("%s",debugMessage.GetList());
-
+			cst.Append("[stackPtr]-[codePtr] :: [CODE] stack-in => stack-out\n");
 			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
+				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
+				cst.Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: ");
+
 				CodeMemoryElement pCode = GetPseudoCode();
 
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-				cst.SetSize(0);
      			cst.Append(fr.name).Append(' ');
-//				runtimeError = FunctionRecord2String(fr,cst,true);
-//				cst.Append('\n');
 
 				if (runtimeError.ErrorsCleared()){
 					// show inputs
-					runtimeError = FunctionRecordInputs2String(fr,cst,true,true);
+					runtimeError = FunctionRecordInputs2String(fr,cst,true,true,true);
 				}
 
 				if (runtimeError.ErrorsCleared()){
@@ -968,19 +935,24 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 
 				if (runtimeError.ErrorsCleared()){
 					// show outputs
-					runtimeError = FunctionRecordOutputs2String(fr,cst,true,true);
+					runtimeError = FunctionRecordOutputs2String(fr,cst,true,true,true);
 				}
 				cst.Append('\n');
 
 				if (runtimeError.ErrorsCleared()){
-					int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
-					int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-					cst.Append("stackPtr: ").Append(stackOffset).Append(" codePtr: ").Append(codeOffset).Append("\n");
-
-//					uint32 size = debugMessage.GetSize();
-//					debugStream->Write(debugMessage.GetList(),size);
-					printf("%s",debugMessage.GetList());
+					uint32 size = debugMessage.GetSize();
+					debugStream->Write(debugMessage.GetList(),size);
 				}
+				// reset line
+				cst.SetSize(0);
+			}
+			if (runtimeError.ErrorsCleared()){
+				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
+				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
+				cst.Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: END");
+
+				uint32 size = debugMessage.GetSize();
+				debugStream->Write(debugMessage.GetList(),size);
 			}
 		}
 	}
@@ -995,7 +967,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	return runtimeError;
 }
 
-ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode){
+ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode,bool showTypes){
 	ErrorManagement::ErrorType ret ;
 
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
@@ -1008,10 +980,19 @@ ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode){
 
 	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
 		CodeMemoryElement pCode = GetPseudoCode();
-		cst.Append(functionRecords[pCode].name).Append(' ');
+		FunctionRecord &fr = functionRecords[pCode];
 
-		ret = FunctionRecord2String(functionRecords[pCode],cst);
+		if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
+			cst.Append(constToken);
+		} else {
+			cst.Append(fr.name);
+		}
 
+		ret = FunctionRecordInputs2String(fr,cst,false,false,showTypes);
+
+		if (ret){
+			ret = FunctionRecordOutputs2String(fr,cst,false,false,showTypes);
+		}
 		cst.Append('\n');
 	}
 
@@ -1055,7 +1036,6 @@ template <typename T> void Duplication(Context &context){
 	context.Peek(var);
 	context.Push(var);
 }
-
 
 REGISTER_PCODE_FUNCTION(DUP,double,1,2,Duplication<float64>,Float64Bit,Float64Bit,Float64Bit)
 REGISTER_PCODE_FUNCTION(DUP,float,1,2,Duplication<float32>,Float32Bit,Float32Bit,Float32Bit)
@@ -1103,7 +1083,7 @@ template <typename T1,typename T2> void Casting(Context &context){
 	T1 x1;
 	T2 x2;
 	bool ret;
-	context.Peek(x1);
+	context.Pop(x1);
 	ret = SafeNumber2Number(x1,x2);
 	context.Push(x2);
 	if (!ret){
@@ -1111,16 +1091,26 @@ template <typename T1,typename T2> void Casting(Context &context){
 	}
 }
 
-REGISTER_CAST_FUNCTION(CAST,float64,float64,1,1,Casting,Float64Bit          ,Float64Bit)
 REGISTER_CAST_FUNCTION(CAST,float64,float32,1,1,Casting,Float64Bit          ,Float32Bit)
-REGISTER_CAST_FUNCTION(CAST,float64,uint64 ,1,1,Casting,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_CAST_FUNCTION(CAST,float64,int64  ,1,1,Casting,SignedInteger64Bit  ,SignedInteger64Bit  )
-REGISTER_CAST_FUNCTION(CAST,float64,uint32 ,1,1,Casting,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_CAST_FUNCTION(CAST,float64,int32  ,1,1,Casting,SignedInteger32Bit  ,SignedInteger32Bit  )
-REGISTER_CAST_FUNCTION(CAST,float64,uint16 ,1,1,Casting,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_CAST_FUNCTION(CAST,float64,int16  ,1,1,Casting,SignedInteger16Bit  ,SignedInteger16Bit  )
-REGISTER_CAST_FUNCTION(CAST,float64,uint8  ,1,1,Casting,UnsignedInteger8Bit ,UnsignedInteger8Bit )
-REGISTER_CAST_FUNCTION(CAST,float64,int8   ,1,1,Casting,SignedInteger8Bit   ,SignedInteger8Bit   )
+REGISTER_CAST_FUNCTION(CAST,float64,uint64 ,1,1,Casting,Float64Bit          ,UnsignedInteger64Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int64  ,1,1,Casting,Float64Bit          ,SignedInteger64Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint32 ,1,1,Casting,Float64Bit          ,UnsignedInteger32Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int32  ,1,1,Casting,Float64Bit          ,SignedInteger32Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint16 ,1,1,Casting,Float64Bit          ,UnsignedInteger16Bit)
+REGISTER_CAST_FUNCTION(CAST,float64,int16  ,1,1,Casting,Float64Bit          ,SignedInteger16Bit  )
+REGISTER_CAST_FUNCTION(CAST,float64,uint8  ,1,1,Casting,Float64Bit          ,UnsignedInteger8Bit )
+REGISTER_CAST_FUNCTION(CAST,float64,int8   ,1,1,Casting,Float64Bit          ,SignedInteger8Bit   )
+
+REGISTER_CAST_FUNCTION(CAST,float32,float64,1,1,Casting,Float32Bit          ,Float64Bit)
+REGISTER_CAST_FUNCTION(CAST,float32,uint64 ,1,1,Casting,Float32Bit          ,UnsignedInteger64Bit)
+REGISTER_CAST_FUNCTION(CAST,float32,int64  ,1,1,Casting,Float32Bit          ,SignedInteger64Bit  )
+REGISTER_CAST_FUNCTION(CAST,float32,uint32 ,1,1,Casting,Float32Bit          ,UnsignedInteger32Bit)
+REGISTER_CAST_FUNCTION(CAST,float32,int32  ,1,1,Casting,Float32Bit          ,SignedInteger32Bit  )
+REGISTER_CAST_FUNCTION(CAST,float32,uint16 ,1,1,Casting,Float32Bit          ,UnsignedInteger16Bit)
+REGISTER_CAST_FUNCTION(CAST,float32,int16  ,1,1,Casting,Float32Bit          ,SignedInteger16Bit  )
+REGISTER_CAST_FUNCTION(CAST,float32,uint8  ,1,1,Casting,Float32Bit          ,UnsignedInteger8Bit )
+REGISTER_CAST_FUNCTION(CAST,float32,int8   ,1,1,Casting,Float32Bit          ,SignedInteger8Bit   )
+
 
 #define REGISTER_OPERATOR(name,oper,fname)	    							        \
 		template <typename T> void function ## fname ## ication (Context &context){ \
@@ -1186,16 +1176,16 @@ REGISTER_2_FUNCTION(POW,pow)
 			ret = x1 oper x2;                                                       \
 			context.Push(ret);                                                      \
 		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,UnsignedInteger8Bit)  \
-		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,UnsignedInteger8Bit)  \
-		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,UnsignedInteger8Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,UnsignedInteger8Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,UnsignedInteger8Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
-		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,UnsignedInteger8Bit)
+		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit			,Float64Bit				,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit			,Float32Bit				,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit	,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit	,SignedInteger64Bit		,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit	,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit	,SignedInteger32Bit		,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit	,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit	,SignedInteger16Bit		,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit		,UnsignedInteger8Bit) \
+		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit	,SignedInteger8Bit		,UnsignedInteger8Bit)
 
 REGISTER_COMPARE_OPERATOR(EQ, == ,Equal)
 REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
