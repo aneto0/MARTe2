@@ -39,8 +39,8 @@ int main(){
 	ret = context.ExtractVariables(RPNCode);
 
 	if (ret){
-		int32 index = 0;
-		PseudoCode::Context::VariableInformation *var;
+		uint32 index = 0U;
+		PseudoCode::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
@@ -86,7 +86,7 @@ int main(){
 	if (ret){
 		printf ("ASSIGN INPUTS\n");
 		int32 index = 0;
-		PseudoCode::Context::VariableInformation *var;
+		PseudoCode::VariableInformation *var;
 
 		while(context.BrowseInputVariable(index,var)){
 			index++;
@@ -103,8 +103,8 @@ int main(){
 
 	if (ret){
 		printf ("VAR ALLOCATION RESULT\n");
-		int32 index = 0;
-		PseudoCode::Context::VariableInformation *var;
+		uint32 index = 0;
+		PseudoCode::VariableInformation *var;
 
 		while(context.BrowseInputVariable(index,var)){
 			printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.GetList());

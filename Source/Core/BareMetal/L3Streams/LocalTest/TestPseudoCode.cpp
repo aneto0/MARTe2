@@ -28,7 +28,7 @@ int main(){
 
 	if (ret){
 		int32 index = 0;
-		PseudoCode::Context::VariableInformation *var;
+		PseudoCode::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){

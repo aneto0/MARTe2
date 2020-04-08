@@ -169,7 +169,7 @@ void RegisterFunction(const FunctionRecord &record){
  */
 bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 
-	uint32 i = 0;
+	CodeMemoryElement i = 0;
 //printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
 
 	bool found = false;
@@ -201,7 +201,7 @@ const CCString castToken("CAST");
 /**
  * allows searching for a variable with a given name
  */
-class VariableFinder: public GenericIterator<Context::VariableInformation>{
+class VariableFinder: public GenericIterator<VariableInformation>{
 public:
 	/**
 	 *
@@ -214,11 +214,11 @@ public:
 	/**
 	 *
 	 */
-    virtual IteratorAction Do(Context::VariableInformation &data,uint32 depth=0);
+    virtual IteratorAction Do(VariableInformation &data,uint32 depth=0);
     /**
      *
      */
-    Context::VariableInformation *variable;
+    VariableInformation *variable;
 private:
     /**
      *
@@ -234,18 +234,18 @@ private:
 
 
 VariableFinder::VariableFinder(CCString name){
-	variable = NULL_PTR(Context::VariableInformation*);
+	variable = NULL_PTR(VariableInformation*);
 	variableName = name;
 	variableAddress = MAXDataMemoryAddress;
 }
 
 VariableFinder::VariableFinder(DataMemoryAddress address){
-	variable = NULL_PTR(Context::VariableInformation*);
+	variable = NULL_PTR(VariableInformation*);
 	variableAddress = address;
 }
 
 
-IteratorAction VariableFinder::Do(Context::VariableInformation &data,uint32 depth){
+IteratorAction VariableFinder::Do(VariableInformation &data,uint32 depth){
 	IteratorAction ret;
 	if (variableName.GetSize() > 0){
 		if (data.name == variableName){
@@ -271,6 +271,9 @@ Context::Context(){
 	codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
 	stackPtr = NULL_PTR(DataMemoryElement*);
 	startOfVariables = 0;
+}
+
+Context::~Context(){
 }
 
 ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
@@ -449,7 +452,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 	// check that all variables have a type and allocate variables + constants
 
 	uint32 index = 0;
-	PseudoCode::Context::VariableInformation *var;
+	PseudoCode::VariableInformation *var;
 	while(BrowseInputVariable(index,var) && ret){
 		ret.unsupportedFeature = !var->type.IsNumericType();
 		COMPOSITE_REPORT_ERROR(ret,"input variable ",var->name," has incompatible non-numeric type ");
@@ -551,13 +554,13 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 				ret.invalidOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
-				VariableInformation *variableInformation;
+				VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 				if (ret){
 					ret = FindOutputVariable(parameter1,variableInformation);
 					COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
 				}
 
-				TypeDescriptor td;
+				TypeDescriptor td = InvalidType(0);
 				if (ret){
 					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
@@ -590,7 +593,8 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 				ret.invalidOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 
-				VariableInformation *variableInformation;
+				VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
+
 				if (ret){
 					// try find an output variable with this name
 					ret = FindOutputVariable(parameter1,variableInformation);
@@ -605,7 +609,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 					}
 				}
 
-				TypeDescriptor td;
+				TypeDescriptor td = InvalidType(0);
 				if (ret){
 					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
@@ -741,7 +745,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 	 if (functionInformation.name == writeToken){
 		 CodeMemoryElement pCode2 = GetPseudoCode();
 
-		 Context::VariableInformation *vi;
+		 VariableInformation *vi;
 		 ret = FindVariable(pCode2,vi);
 		 COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
 
@@ -808,7 +812,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 			pCode2 = GetPseudoCode();
 		}
 
-		Context::VariableInformation *vi;
+		VariableInformation *vi;
 		ret = FindVariable(pCode2,vi);
 		COMPOSITE_REPORT_ERROR(ret,"No variable or constant @ ",pCode2);
 
@@ -870,12 +874,13 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStream,uint32 step){
+ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStream,CodeMemoryAddress *step){
 
 	stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
 
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
-	CodeMemoryAddress codeMaxIndex  = codeMemory.GetSize();
+	CodeMemoryAddress codeMaxIndex  = static_cast<CodeMemoryAddress>(codeMemory.GetSize());
+
 	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
@@ -971,7 +976,7 @@ ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode,bool showT
 	ErrorManagement::ErrorType ret ;
 
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
-	CodeMemoryAddress codeMaxIndex  = codeMemory.GetSize();
+	CodeMemoryAddress codeMaxIndex  = static_cast<CodeMemoryAddress>(codeMemory.GetSize());
 	const CodeMemoryElement *codeMemoryMaxPtr = codeMemoryPtr + codeMaxIndex;
 
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
@@ -1087,7 +1092,7 @@ template <typename T1,typename T2> void Casting(Context &context){
 	ret = SafeNumber2Number(x1,x2);
 	context.Push(x2);
 	if (!ret){
-		context.GetErrorFlag().outOfRange = true;
+		context.runtimeError.outOfRange = true;
 	}
 }
 
@@ -1111,13 +1116,13 @@ REGISTER_CAST_FUNCTION(CAST,float32,int16  ,1,1,Casting,Float32Bit          ,Sig
 REGISTER_CAST_FUNCTION(CAST,float32,uint8  ,1,1,Casting,Float32Bit          ,UnsignedInteger8Bit )
 REGISTER_CAST_FUNCTION(CAST,float32,int8   ,1,1,Casting,Float32Bit          ,SignedInteger8Bit   )
 
-
+// TODO - implement without casting. promote all results between u/int16 and u/int8 to int32 as the compiler would do
 #define REGISTER_OPERATOR(name,oper,fname)	    							        \
 		template <typename T> void function ## fname ## ication (Context &context){ \
 			T x1,x2,x3;													     		\
 			context.Pop(x1);                                                        \
 			context.Pop(x2);                                                        \
-			x3 = x1 oper x2;                                                        \
+			x3 = static_cast<T>(x1 oper x2);                                        \
 			context.Push(x3);                                                       \
 		}                                                                           \
 		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \

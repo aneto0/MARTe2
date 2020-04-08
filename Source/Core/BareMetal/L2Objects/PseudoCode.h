@@ -41,7 +41,7 @@
 #include "CCString.h"
 #include "TypeDescriptor.h"
 #include "CompositeErrorManagement.h"
-#include "TypeCharacteristics.h"
+#include "PseudoCodeVariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -56,13 +56,6 @@ namespace MARTe{
 
 namespace PseudoCode{
 
-typedef uint16 CodeMemoryElement;
-typedef uint32 DataMemoryElement;
-typedef uint16 DataMemoryAddress;
-typedef uint16 CodeMemoryAddress;
-
-#define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
-
 /**
  * used internally to describe and register functions
  */
@@ -74,6 +67,15 @@ struct FunctionRecord;
 class Context{
 
 public:
+	/**
+	 * constructor
+	 */
+	Context();
+
+	/**
+	 * destructor
+	 */
+	~Context();
 
 	/**
     * @brief Get the top of the stack and then move the pointer.
@@ -81,7 +83,7 @@ public:
     * @return .
    */
 	template<typename T>
-	inline void Pop(T &value);
+	inline void 				Pop(T &value);
 
 	/**
     * @brief Add to the top of the stack and then move the pointer.
@@ -89,7 +91,7 @@ public:
     * @return .
    */
 	template<typename T>
-	inline void Push(T &value);
+	inline void 				Push(T &value);
 
 	/**
     * @brief Get the top of the stack and do not move the pointer.
@@ -97,76 +99,25 @@ public:
     * @return .
    */
 	template<typename T>
-	inline void Peek(T &value);
+	inline void 				Peek(T &value);
 
 	/**
 	 * Reads from code memory
 	 */
-	inline CodeMemoryElement GetPseudoCode();
+	inline CodeMemoryElement 	GetPseudoCode();
 
 	/**
 	 * Reads from Data Memory
 	 */
-	template<typename T>
-	T &Variable(uint16 variableIndex);
+	template<typename T>T &		Variable(uint16 variableIndex);
 
-
+#if 0
 	/**
-    * @brief Context will maintain a single error flag. This function allows accessing it
+    * @brief Context will maintain a single error flag to check the result of the execution. This function allows accessing it
     * @return the error flag.
    */
 	inline ErrorManagement::ErrorType &GetErrorFlag();
-
-	/**
-	 *
-	 */
-	Context();
-
-	/**
-	 *  Element for the list of variables
-	 */
-	struct VariableInformation {
-		/**
-		 *
-		 */
-		DynamicCString name;
-
-		/**
-		 *
-		 */
-		TypeDescriptor type;
-
-		/**
-		 *
-		 */
-		DataMemoryAddress location;
-
-		/**
-		 * set when during compilation to mark that this output variable has already been written
-		 *
-		 */
-		bool variableUsed;
-
-		/**
-		 *
-		 */
-		VariableInformation(){
-			type = VoidType;
-			location = 0;
-			variableUsed = false;
-		}
-
-		/**
-		 *
-		 */
-		VariableInformation(const VariableInformation &in){
-			name = in.name;
-			type = in.type;
-			location = in.location;
-			variableUsed = false;
-		}
-	};
-
+#endif
 	/**
 	 * Cleans inputVariableInfo
 	 * Cleans outputVariableInfo
@@ -185,16 +136,6 @@ public:
 	ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
 	/**
-	 * allow choosing how to run the code
-	 */
-	enum executionMode {
-		fastMode,
-		safeMode,
-		debugMode,
-		singleStep
-	};
-
-	/**
 	 * Cleans memory
 	 * Allocates inputVariables
 	 * Allocates outputVariables
@@ -209,11 +150,39 @@ public:
 	ErrorManagement::ErrorType Compile(CCString RPNCode);
 
 	/**
+	 * allow choosing how to run the code
+	 */
+	enum executionMode {
+		/**
+		 * fastMode: executes with minimal checks - assumes compilation was correct and function description was truthful
+		 */
+		fastMode,
+
+		/**
+		 * safeMode: checks stack,errors, and code pointer at every step
+		 */
+		safeMode,
+
+		/**
+		 * debugMode: produces a step by step evolution of the stack following each function execution
+		 */
+		debugMode,
+
+		/**
+		 * allows single step execution
+		 * external step counter must be maintained
+		 */
+		singleStep
+	};
+
+	/**
 	 * executes every command in codeMemory
 	 * note that the inputs need to be loaded before calling execute
 	 * returns the combination of error flags reported by all the functions that were executed
+	 * debugStream is only used in debugMode. after every command execution a report is written to the stream
+	 * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
 	 */
-	ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),uint32 step=0);
+	ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),CodeMemoryAddress *step=NULL);
 
 	/**
 	 * Reconstruct the RPNCode with type information
@@ -223,10 +192,9 @@ public:
 // PUBLIC VARIABLES
 
 	/**
-	 *
+	 * the errors produced by the functions and the checks during runtime
 	 */
 	ErrorManagement::ErrorType  		runtimeError;
-
 
 	/**
 	 * stack and variable are allocated here
@@ -285,12 +253,12 @@ private:
 	ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
 	/**
-	 *
+	 * implements AddOutputVariable and AddInputVariable
 	 */
 	ErrorManagement::ErrorType AddVariable2DB(CCString name,List<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
 
 	/**
-	 *
+	 * implements FindOutputVariable
 	 */
 	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
 
@@ -330,12 +298,10 @@ private:
 	 */
 	DataMemoryElement *					variablesMemoryPtr;
 
-
 	/**
 	 * used by GetPseudoCode()
 	 */
 	const CodeMemoryElement *			codeMemoryPtr;
-
 };
 
 
@@ -345,7 +311,8 @@ private:
 
 
 static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
-	return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
+	return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
+//	return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1U)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
 }
 
 template<typename T>
@@ -403,12 +370,6 @@ ErrorManagement::ErrorType Context::AddOutputVariable(CCString name,TypeDescript
 ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
 	return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
-
-
-ErrorManagement::ErrorType &Context::GetErrorFlag(){
-	return runtimeError;
-}
-
 
 } //PseudoCode
 
