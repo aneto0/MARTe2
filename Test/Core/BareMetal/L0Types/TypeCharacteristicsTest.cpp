@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "TypeCharacteristicsTest.h"
+#include "FractionalInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,7 +42,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe::TypeCharacteristics;
 using namespace MARTe;
 
 
@@ -50,75 +50,74 @@ TypeCharacteristicsTest::TypeCharacteristicsTest() {
 }
 
 bool TypeCharacteristicsTest::TestIsSignedInt8(){
-
-    retVal = IsSigned<int8>();
+    retVal = TypeCharacteristics<int8>::IsSigned();
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestIsSignedUInt32(){
-    retVal = !IsSigned<uint32>();
+    retVal = !TypeCharacteristics<uint32>::IsSigned();
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueInt8(){
-    retVal = (MaxValue<int8>() == 127);
+    retVal = (TypeCharacteristics<int8>::MaxValue() == 127);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueInt8BZ2(){
-    retVal = (MaxValue<int8, 2>() == 1);
+    retVal = (TypeCharacteristics<FractionalInteger<int8, 2> >::MaxValue() == 1);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueUInt32(){
     uint32 maxUInt = 4294967295; //(2^32)-1
-    retVal = (MaxValue<uint32>() == maxUInt);
+    retVal = (TypeCharacteristics<uint32>::MaxValue() == maxUInt);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueUInt32BZ2(){
     uint32 maxUInt = 3; //(2^2)-1
-    retVal = (MaxValue<uint32, 2>() == maxUInt);
+    retVal = (TypeCharacteristics<FractionalInteger<uint32, 2> >::MaxValue() == maxUInt);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueInt8(){
-    retVal = (MinValue<int8>() == -128);
+    retVal = (TypeCharacteristics<int8>::MinValue() == -128);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueInt8BZ2(){
-    retVal = (MinValue<int8, 2>() == -2);
+    retVal = (TypeCharacteristics<FractionalInteger<int8, 2> >::MinValue() == -2);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueUInt32(){
-    retVal = (MinValue<uint32>() == 0);
+    retVal = (TypeCharacteristics<uint32>::MinValue() == 0);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueUInt32BZ2(){
-    retVal = (MinValue<uint32, 2>() == 0);
+    retVal = (TypeCharacteristics<FractionalInteger<uint32, 2> >::MinValue() == 0);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeInt8(){
-    retVal = (UsableBitSize<int8>() == 7);
+    retVal = (TypeCharacteristics<int8>::UsableBitSize() == 7);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeInt8BZ(){
-    retVal = (UsableBitSize<int8,2>() == 1);
+    retVal = (TypeCharacteristics<FractionalInteger<int8,2> >::UsableBitSize() == 1);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeUInt32(){
-    retVal = (UsableBitSize<uint32>() == 32);
+    retVal = (TypeCharacteristics<uint32>::UsableBitSize() == 32);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeUInt32BZ2(){
-    retVal = (UsableBitSize<uint32,2>() == 2);
+    retVal = (TypeCharacteristics<FractionalInteger<uint32,2> >::UsableBitSize() == 2);
     return retVal;
 }
 
