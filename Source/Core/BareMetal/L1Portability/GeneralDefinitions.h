@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CompilerTypes.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
