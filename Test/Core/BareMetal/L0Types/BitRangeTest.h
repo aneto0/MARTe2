@@ -149,7 +149,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     BitRange<T, minorSize, half> myBitRange;
 
-    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
 
     // max and min values of the input
     T2 maxValue = 0;
@@ -167,7 +167,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics<T>::IsSigned();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -213,7 +213,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     BitRange<T, majorSize, half> myBitRange;
 
-    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics<T2>::IsSigned();
     T2 maxValue = 0;
     T2 minValue = 0;
     if (isInputSigned) {
@@ -228,7 +228,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     }
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics<T>::IsSigned();
 
     myBitRange = maxValue;
 
