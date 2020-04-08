@@ -109,15 +109,8 @@ public:
 	/**
 	 * Reads from Data Memory
 	 */
-	template<typename T>T &		Variable(uint16 variableIndex);
+	template<typename T>T &		Variable(DataMemoryAddress variableIndex);
 
-#if 0
-	/**
-    * @brief Context will maintain a single error flag to check the result of the execution. This function allows accessing it
-    * @return the error flag.
-   */
-	inline ErrorManagement::ErrorType &GetErrorFlag();
-#endif
 	/**
 	 * Cleans inputVariableInfo
 	 * Cleans outputVariableInfo

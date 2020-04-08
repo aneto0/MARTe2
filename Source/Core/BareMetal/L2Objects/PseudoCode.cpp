@@ -20,18 +20,19 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
-
-#include "PseudoCode.h"
 #include <stdio.h>
 #include <math.h>
+
+#include "PseudoCode.h"
+#include "Private/PseudoCodeFunctions.h"
 #include "StaticStack.h"
 #include "AnyType.h"
-
-
 
 namespace MARTe{
 
 namespace PseudoCode{
+
+#if 0
 
 /** the type of the PCode function */
 typedef void (*Function)(Context & context);
@@ -183,6 +184,7 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
 	return found;
 }
 
+#endif
 
 /*************************************************************************************************************************/
 /*************************************************************************************************************************/
@@ -1006,7 +1008,7 @@ ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode,bool showT
 
 
 /***********************************************************************************************/
-
+#if 0
 /**
  * to register a function
  */
@@ -1213,7 +1215,7 @@ REGISTER_LOGICAL_OPERATOR(AND, && ,And)
 REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
 REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
 
-
+#endif
 
 } //PseudoCode
 } //MARTe
