@@ -77,7 +77,7 @@ static inline bool IsSigned() {
 
 /**
  * @brief Returns the maximum possible value of the template integer/float type.
- * @tparam T An integer/float type
+ * @pre T != FractionalInteger (see the templated version of MaxValue for fractional integers)
  * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
  */
 static inline const T MaxValue() {
@@ -85,8 +85,40 @@ static inline const T MaxValue() {
 }
 
 /**
+ * @brief Returns the maximum possible value of the template type with the specified bit size.
+ * @tparam bitSize The bit size of type T
+ * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ */
+template<uint8 bitSize>
+static inline const T MaxValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T maxValue =
+            (IsSigned()) ?
+                static_cast<T>((static_cast<int64>(1) << (bitSize - 1u)) - 1) :
+                static_cast<T>(static_cast<uint64>(-1) >> ((sizeof(uint64) * 8u) - bitSize));
+
+    return maxValue;
+}
+
+/**
+ * @brief Returns the minimum possible value of the template type with the specified bit size.
+ * @tparam bitSize The bit size of type T
+ * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+ */
+template<uint8 bitSize>
+static inline const T MinValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T minValue =
+            (IsSigned()) ?
+                static_cast<T>(static_cast<int64>(-1) << (bitSize - 1u)) :
+                static_cast<T>(0);
+
+    return minValue;
+}
+
+/**
  * @brief Returns the minimum possible value of the template integer type.
- * @tparam T An integer/float type
+ * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
  * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
  */
 static inline const T MinValue() {
@@ -97,13 +129,27 @@ static inline const T MinValue() {
 /**
  * @brief Returns the type usable bit size.
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
- * @tparam T An integer type
+ * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
  * @return the type usable bit size.
  */
 static inline const uint16 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
     const uint16 nOfBits = (IsFloat()) ? static_cast<uint16>((sizeof(T)==8)? (DBL_MAX_EXP) : (FLT_MAX_EXP)) :
     		((IsSigned()) ? static_cast<uint16>(sizeof(T) * 8u - 1u) : static_cast<uint16>(sizeof(T) * 8u));
+    return nOfBits;
+}
+
+
+/**
+ * @brief Returns the type usable bit size with the specified bit size.
+ * @tparam bitSize The bit size of type T
+ * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @return the type usable bit size.
+ */
+template<uint8 bitSize>
+static inline const uint8 UsableBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsSigned() ? (bitSize - 1u) : bitSize);
     return nOfBits;
 }
 
