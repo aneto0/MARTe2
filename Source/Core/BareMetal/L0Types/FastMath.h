@@ -133,18 +133,77 @@ namespace MARTe {
         /*lint -e(762) This declaration is redundant. */
         inline float32 Sin(const float32 angle);
 
-	inline uint8  Mul(uint8  x1,uint8  x2,uint8  &high);
-	inline uint16 Mul(uint16 x1,uint16 x2,uint16 &high);
-	inline uint32 Mul(uint32 x1,uint32 x2,uint32 &high);
-	inline uint64 Mul(uint64 x1,uint64 x2,uint64 &high);
-	inline int8  Mul(int8  x1,int8  x2,int8  &high);
-	inline int16 Mul(int16 x1,int16 x2,int16 &high);
-	inline int32 Mul(int32 x1,int32 x2,int32 &high);
-	inline int64 Mul(int64 x1,int64 x2,int64 &high);
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline uint8  CompleteMultiply(uint8  x1,uint8  x2,uint8  &high);
 
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline uint16 CompleteMultiply(uint16 x1,uint16 x2,uint16 &high);
 
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline uint32 CompleteMultiply(uint32 x1,uint32 x2,uint32 &high);
 
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline uint64 CompleteMultiply(uint64 x1,uint64 x2,uint64 &high);
 
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline int8  CompleteMultiply(int8  x1,int8  x2,int8  &high);
+
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline int16 CompleteMultiply(int16 x1,int16 x2,int16 &high);
+
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline int32 CompleteMultiply(int32 x1,int32 x2,int32 &high);
+
+        /**
+         * @brief Computes the product of two integers into two numbers of the same type.
+         * @param[in] x1 first  multiplicand
+         * @param[in] x2 second multiplicand
+         * @param[out] high the high word of the result
+         * @return the normal product of two numbers
+         */
+        inline int64 CompleteMultiply(int64 x1,int64 x2,int64 &high);
 
     }
 

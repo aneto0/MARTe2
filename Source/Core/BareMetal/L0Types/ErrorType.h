@@ -59,10 +59,26 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
  * the interpretation depends from the context (see genericIterator for instance)
  * FatalError is used as a generic error
  * RecoverableError notifies that also a non fatal error has occurred (used to qualify error messages)
- * Warning notifies that also a warning flag has been set (used to qualify error messages)
+ * InitialisationError
+ * OSError
+ * ParametersError
+ * IllegalOperation
+ * ErrorSharing
+ * ErrorAccessDenied
+ * Exception
+ * Timeout
+ * CommunicationError
+ * SyntaxError
+ * UnsupportedFeature
+ * InternalSetupError
+ * Debug
  * Information notifies that also some info flag has been set (used to qualify error messages)
+ * Warning notifies that also a warning flag has been set (used to qualify error messages)
  * Completed notifies that also a positive outcome has occurred (all was done)
  * NotCompleted notifies that also not all actions in a list have been done
+ * Overflow notifies that an operation yielded a result larger than possible / expected
+ * Underflow notifies that an operation yielded a result smaller than possible / expected
+ *
  * Any other flag represent a specific fatal error
  */
 #define ERROR_CONSTANT_MACRO(macrofun) 						      \
@@ -90,6 +106,8 @@ static const uint32 errorIntegerFormatBitSize(sizeof(ErrorIntegerFormat) * 8);
 		macrofun(OutOfMemory,           outOfMemory,           21u)\
 		macrofun(ComparisonFailure,     comparisonFailure,	   22u)\
 		macrofun(InternalStateError,    internalStateError,	   23u)\
+		macrofun(Overflow,				overflow,	           24u)\
+		macrofun(Underflow,	       		underflow,  	       25u)\
 		macrofun(NotAnErrorCode,        notAnErrorCode,        31u)
 
 

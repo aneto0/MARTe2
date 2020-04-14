@@ -222,7 +222,7 @@ private:
 	inline const baseType MaxRawValue() const;
 };
 
-#if 0 // removed as causes recursion
+#if 0 // removed as causes recursion  // kept to remember not to add it again
 /**
  * defines the TypeCharacteristics for the SaturatedInteger<baseType> so that one can use the TypeCharacteristics functions
  */
@@ -430,6 +430,9 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator+=(const Saturat
 	if (!IsValid() || !x.IsValid()){
 		SetCode(TTAdditionCodeMap[GetCode()][x.GetCode()]);
 	} else {
+		/*
+		 * TODO replace with SafeMath::Addition()
+		 */
 		baseType temp = static_cast<baseType>(data + x.data);
 		// check saturation
 		if (TypeCharacteristics<baseType>::IsSigned()){
@@ -463,6 +466,9 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator-=(const Saturat
 	if (!IsValid() || !x.IsValid()){
 		SetCode(TTSubtractionCodeMap[GetCode()][x.GetCode()]);
 	} else {
+		/*
+		 * TODO replace with SafeMath::Subtraction()
+		 */
 		baseType temp = static_cast<baseType>(data - x.data);
 		// check saturation
 		if (TypeCharacteristics<baseType>::IsSigned()){
@@ -495,13 +501,17 @@ SaturatedInteger<baseType> &SaturatedInteger<baseType>::operator*=(const Saturat
 	if (!IsValid() || !x.IsValid()){
 		SetCode(indeterminate);
 	} else {
+		/*
+		 * TODO replace with SafeMath::Multiplication()
+		 */
+
 		baseType overflow;
-		baseType result = FastMath::Mul(data,x.data,overflow);
+		baseType result = FastMath::CompleteMultiply(data,x.data,overflow);
 
 		//check overflow for signed numbers
 		if (TypeCharacteristics<baseType>::IsSigned()){
 			if (overflow >= 0){
-				if ((overflow == 0) && (result > 0)){
+				if ((overflow == 0) && (result >= 0)){
 					data = result;
 				} else {
 					SetCode(positiveInf);

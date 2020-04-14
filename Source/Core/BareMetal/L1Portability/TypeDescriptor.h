@@ -492,6 +492,36 @@ private:
  */
 #define SizeFromTDBasicTypeSize(x)	(x==0?0u:(1u << (x-1)))
 
+/**
+ * @return returns the TypeDescriptor from a type
+ * support only integers and floats
+ */
+template <typename T> const TypeDescriptor Type2TypeDescriptor();
+
+/**
+ * @return for the unsupported types just report the size
+ */
+template <typename T> static inline const TypeDescriptor Type2TypeDescriptor(){
+	return InvalidType(sizeof(T));
+}
+template <> inline const TypeDescriptor Type2TypeDescriptor<int8>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int16>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<int64>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint8>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint16>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<uint64>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<float32>();
+template <> inline const TypeDescriptor Type2TypeDescriptor<float64>();
+
+/*
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
+template <> const TypeDescriptor Type2TypeDescriptor<BitRange<baseType,numberOfBits,bitOffset> >(){
+	return TypeCharacteristics<baseType>::IsSigned()?:SignedBitSet_number(baseType,numberOfBits,bitOffset),UnsignedBitSet_number(baseType,numberOfBits,bitOffset);
+}
+*/
+
 
 #define  UnsignedBitSet_number(base,bits,offset) \
 	TDRANGE(fullType,TDF_UnsignedInteger) | TDRANGE(hasBitSize,1) | TDRANGE(basicTypeSize,TDBasicTypeSizeOf(base)) | TDRANGE(numberOfBits,bits) | TDRANGE(bitOffset,offset)
@@ -591,6 +621,37 @@ bool TypeDescriptor::SameTypeAs(const TypeDescriptor &td) const {
 		ret = (ft == ft2);
 	}
 	return ret;
+}
+
+template <> const TypeDescriptor Type2TypeDescriptor<int8>(){
+	return SignedInteger8Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int16>(){
+	return SignedInteger16Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int32>(){
+	return SignedInteger32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<int64>(){
+	return SignedInteger64Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint8>(){
+	return UnsignedInteger8Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint16>(){
+	return UnsignedInteger16Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint32>(){
+	return UnsignedInteger32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<uint64>(){
+	return UnsignedInteger64Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<float32>(){
+	return Float32Bit;
+}
+template <> const TypeDescriptor Type2TypeDescriptor<float64>(){
+	return Float64Bit;
 }
 
 

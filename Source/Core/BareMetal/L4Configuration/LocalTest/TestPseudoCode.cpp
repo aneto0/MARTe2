@@ -26,6 +26,14 @@ CCString RPNCode=
 		"CAST int32\n"
 		"GT\n"
 		"WRITE E\n"
+		"READ N1\n"
+		"READ N2\n"
+		"READ N3\n"
+		"READ N4\n"
+		"ADD\n"
+		"MUL\n"
+		"SUB\n"
+		"WRITE N5\n"
 ;
 
 int main(){
@@ -52,6 +60,18 @@ int main(){
 			if (var->name == "B"){
 				var->type = TypeDescriptor("float32");
 			}
+			if (var->name == "N1"){
+				var->type = TypeDescriptor("int8");
+			}
+			if (var->name == "N2"){
+				var->type = TypeDescriptor("int8");
+			}
+			if (var->name == "N3"){
+				var->type = TypeDescriptor("int8");
+			}
+			if (var->name == "N4"){
+				var->type = TypeDescriptor("int8");
+			}
 		}
 
 		index = 0;
@@ -66,6 +86,9 @@ int main(){
 			}
 			if (var->name == "E"){
 				var->type = TypeDescriptor("uint8");
+			}
+			if (var->name == "N5"){
+				var->type = TypeDescriptor("int8");
 			}
 		}
 	}
@@ -97,6 +120,22 @@ int main(){
 			if (var->name == "B"){
 				float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
 				*x = 2.0;
+			}
+			if (var->name == "N1"){
+				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+				*x = 1;
+			}
+			if (var->name == "N2"){
+				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+				*x = 2;
+			}
+			if (var->name == "N3"){
+				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+				*x = 3;
+			}
+			if (var->name == "N4"){
+				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+				*x = 4;
 			}
 		}
 	}
@@ -132,7 +171,7 @@ int main(){
 		}
 	}
 
-	{
+	if (ret){
 		printf ("FAST MODE EXECUTION \n");
 		printf ("Executes 1 Million times ");
 		Ticks t1,t2;
@@ -152,7 +191,7 @@ int main(){
 		fflush(stdout);
 	}
 
-	{
+	if (ret){
 		printf ("SAFE MODE EXECUTION \n");
 		printf ("Executes 1 Million times ");
 		Ticks t1,t2;
