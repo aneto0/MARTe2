@@ -50,25 +50,24 @@ namespace MARTe {
 #undef min
 
 /**
- * @brief Remaps and extends <limits>
+ * @brief Class that remaps and extends <limits> for the specified type
+ * @tparam T type whose characteristics will be provided
  */
 template<typename T>
 class  TypeCharacteristics {
 
 public:
 /**
- *  @brief Returns true if the type is a float, false otherwise.
- *  @tparam T a float/integer type
- *  @return true if the type is a float, false otherwise.
+ *  @brief Returns true if type T is a float, false otherwise.
+ *  @return true if type T is a float, false otherwise.
  */
 static inline bool IsFloat() {
     /*lint -e{???}   Operator '!=' always evaluates to True\False. Justification: it depends by the template instance. */
     return ((static_cast<T>(0.1F)) != static_cast<T>(0));
 }
 /**
- *  @brief Returns true if the integer type is signed, false otherwise.
- *  @tparam T An integer type
- *  @return true if the type is signed, false otherwise.
+ *  @brief Returns true if type T is signed, false otherwise.
+ *  @return true if type T is signed, false otherwise.
  */
 static inline bool IsSigned() {
     /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
@@ -76,18 +75,18 @@ static inline bool IsSigned() {
 }
 
 /**
- * @brief Returns the maximum possible value of the template integer/float type.
- * @pre T != FractionalInteger (see the templated version of MaxValue for fractional integers)
- * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ * @brief Returns the maximum possible value of type T.
+ * @pre T != FractionalInteger (see the templated version of MaxValue for fractional integer type)
+ * @return 0xffff...f if type T is unsigned, 0x7fff...f if it is signed.
  */
 static inline const T MaxValue() {
 	return std::numeric_limits<T>::max();
 }
 
 /**
- * @brief Returns the maximum possible value of the template type with the specified bit size.
+ * @brief Returns the maximum possible value of type T with the specified bit size.
  * @tparam bitSize The bit size of type T
- * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ * @return 0xffff...f if type T is unsigned, 0x7fff...f if it is signed.
  */
 template<uint8 bitSize>
 static inline const T MaxValue() {
@@ -101,9 +100,19 @@ static inline const T MaxValue() {
 }
 
 /**
- * @brief Returns the minimum possible value of the template type with the specified bit size.
+ * @brief Returns the minimum possible value of type T.
+ * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
+ * @return 0x00...0 if type T is unsigned, 0x80...0 is if it is signed
+ */
+static inline const T MinValue() {
+    T ret = std::numeric_limits<T>::min();
+    return ret;
+}
+
+/**
+ * @brief Returns the minimum possible value of type T with the specified bit size.
  * @tparam bitSize The bit size of type T
- * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+ * @return 0x00...0 if type T is unsigned, 0x80...0 is if it is signed
  */
 template<uint8 bitSize>
 static inline const T MinValue() {
@@ -117,20 +126,10 @@ static inline const T MinValue() {
 }
 
 /**
- * @brief Returns the minimum possible value of the template integer type.
- * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
- * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
- */
-static inline const T MinValue() {
-	T ret = std::numeric_limits<T>::min();
-	return ret;
-}
-
-/**
- * @brief Returns the type usable bit size.
+ * @brief Returns the usable bit size of type T
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1). For floats it is the exponent size
  * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
- * @return the type usable bit size.
+ * @return usable bit size of type T
  */
 static inline const uint16 UsableBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
@@ -141,10 +140,10 @@ static inline const uint16 UsableBitSize() {
 
 
 /**
- * @brief Returns the type usable bit size with the specified bit size.
+ * @brief Returns the usable bit size of type T with the specified bit size
  * @tparam bitSize The bit size of type T
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
- * @return the type usable bit size.
+ * @return usable bit size of type T
  */
 template<uint8 bitSize>
 static inline const uint8 UsableBitSize() {
@@ -154,10 +153,9 @@ static inline const uint8 UsableBitSize() {
 }
 
 /**
- * @brief Returns the type usable bit size in the negative range.
+ * @brief Returns the usable bit size of type T in the negative range.
  * @details For unsigned types the usable bit size is 0, for signed types is (sizeof(T)*8-1). For floats it is the exponent size
- * @tparam T An integer type
- * @return the type usable bit size.
+ * @return usable bit size of type T
  */
 static inline const uint16 UsableNegativeBitSize() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
@@ -180,8 +178,8 @@ inline const double TypeCharacteristics<double>::MinValue(){
 
 /**
  * @briefs converts any number to any other number saturating the conversion. The function works with any type for which TypeCharacteristics is implemented
- * @tparam outputType Any number for which TypeCharacteristics is implemented
  * @tparam inputType Any number for which TypeCharacteristics is implemented
+ * @tparam outputType Any number for which TypeCharacteristics is implemented
  * @param src is the number to copy
  * @param dest is the number to be copied to
  * @return false if saturation was necessary
