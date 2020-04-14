@@ -141,8 +141,8 @@ static inline const uint16 UsableBitSize() {
 
 /**
  * @brief Returns the usable bit size of type T with the specified bit size
- * @tparam bitSize The bit size of type T
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @tparam bitSize The bit size of type T
  * @return usable bit size of type T
  */
 template<uint8 bitSize>
@@ -155,6 +155,7 @@ static inline const uint8 UsableBitSize() {
 /**
  * @brief Returns the usable bit size of type T in the negative range.
  * @details For unsigned types the usable bit size is 0, for signed types is (sizeof(T)*8-1). For floats it is the exponent size
+ * @pre T != FractionalInteger (see the templated version of MinValue for fractional integers)
  * @return usable bit size of type T
  */
 static inline const uint16 UsableNegativeBitSize() {
@@ -177,33 +178,35 @@ inline const double TypeCharacteristics<double>::MinValue(){
 }
 
 /**
- * @briefs converts any number to any other number saturating the conversion. The function works with any type for which TypeCharacteristics is implemented
+ * @brief converts any number to any other number saturating the conversion
  * @tparam inputType Any number for which TypeCharacteristics is implemented
  * @tparam outputType Any number for which TypeCharacteristics is implemented
  * @param src is the number to copy
  * @param dest is the number to be copied to
+ * @pre (inputType != FractionalInteger) && (outputType != FractionalInteger)
  * @return false if saturation was necessary
  */
 template <typename inputType,typename outputType>
 inline bool SafeNumber2Number(inputType src,outputType &dest){
 	 bool ret = true;
-	 // more bits in the input format. Might need to saturate
-	 if (TypeCharacteristics<inputType>::UsableBitSize()>TypeCharacteristics<outputType>::UsableBitSize()){
-		 const inputType maxSource = static_cast<inputType>(TypeCharacteristics<outputType>::MaxValue());
-		 if (src > maxSource) {
-			 src = maxSource;
+     // more bits in the input format. Might need to saturate
+     if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<outputType>::UsableBitSize()){
+         const inputType maxSource = static_cast<inputType>(TypeCharacteristics<outputType>::MaxValue());
+         if (src > maxSource) {
+             dest = TypeCharacteristics<outputType>::MaxValue();
 			 ret = false;
 		 }
 	 }
-	 if (TypeCharacteristics<inputType>::UsableNegativeBitSize()>TypeCharacteristics<outputType>::UsableNegativeBitSize()){
+     if (TypeCharacteristics<inputType>::UsableNegativeBitSize() > TypeCharacteristics<outputType>::UsableNegativeBitSize()){
 		 const inputType minSource = static_cast<inputType>(TypeCharacteristics<outputType>::MinValue());
-		 if (src < minSource) {
-			 src = minSource;
+         if (src < minSource) {
+             dest = TypeCharacteristics<outputType>::MinValue();
 			 ret = false;
 		 }
-	 }
-
-	 dest = static_cast<outputType>(src);
+     }
+     if (ret) {
+        dest = static_cast<outputType>(src);
+     }
 
 	 return ret;
 }

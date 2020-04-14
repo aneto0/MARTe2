@@ -42,6 +42,23 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsFloatInt8) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestIsFloatInt8());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsFloatFloat32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestIsFloatFloat32());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsFloatFloat64) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestIsFloatFloat64());
+}
+
 TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestIsSignedInt8) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestIsSignedInt8());
@@ -110,6 +127,61 @@ TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeUInt32) {
 TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableBitSizeUInt32BZ2) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeUInt32BZ2());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableNegativeBitSizeInt8) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableNegativeBitSizeInt8());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableNegativeBitSizeInt32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableNegativeBitSizeInt32());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableNegativeBitSizeUInt32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableNegativeBitSizeUInt32());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestUsableNegativeBitSizeFloat32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableNegativeBitSizeFloat32());
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberNoChangesSameType) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<uint32, uint32>(10, true, 10)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberNoChangesDifferentType) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<uint32, int16>(10, true, 10)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberNoChangesFromFloat32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<float32, uint16>(10, true, 10)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberSaturateToMax) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<uint32, uint16>(MAX_UINT32, false, MAX_UINT16)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberSaturateToMin) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<int32, int16>(MIN_INT32, false, MIN_INT16)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberSaturateToUnsigned) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<int32, uint32>(-5, false, 0)));
+}
+
+TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSafeNumber2NumberSaturateFromFloat32) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE((myTypeCharacteristicsTest.TestSafeNumber2Number<float32, uint64>(MAX_FLOAT32, false, MAX_UINT64)));
 }
 
 TEST(BareMetal_L0Types_TypeCharacteristicsGTest,TestSaturableIntegerNoChanges) {

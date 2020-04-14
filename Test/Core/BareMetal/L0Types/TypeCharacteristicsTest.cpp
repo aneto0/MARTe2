@@ -49,6 +49,21 @@ TypeCharacteristicsTest::TypeCharacteristicsTest() {
     retVal = false;
 }
 
+bool TypeCharacteristicsTest::TestIsFloatInt8(){
+    retVal = !TypeCharacteristics<int8>::IsFloat();
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestIsFloatFloat32(){
+    retVal = TypeCharacteristics<float32>::IsFloat();
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestIsFloatFloat64(){
+    retVal = TypeCharacteristics<float64>::IsFloat();
+    return retVal;
+}
+
 bool TypeCharacteristicsTest::TestIsSignedInt8(){
     retVal = TypeCharacteristics<int8>::IsSigned();
     return retVal;
@@ -118,6 +133,26 @@ bool TypeCharacteristicsTest::TestUsableBitSizeUInt32(){
 
 bool TypeCharacteristicsTest::TestUsableBitSizeUInt32BZ2(){
     retVal = (TypeCharacteristics<FractionalInteger<uint32,2> >::UsableBitSize<2>() == 2);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestUsableNegativeBitSizeInt8(){
+    retVal = (TypeCharacteristics<int8>::UsableNegativeBitSize() == 7);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestUsableNegativeBitSizeInt32(){
+    retVal = (TypeCharacteristics<int32>::UsableNegativeBitSize() == 31);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestUsableNegativeBitSizeUInt32(){
+    retVal = (TypeCharacteristics<uint32>::UsableNegativeBitSize() == 0);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestUsableNegativeBitSizeFloat32(){
+    retVal = (TypeCharacteristics<float32>::UsableNegativeBitSize() == FLT_MAX_EXP);
     return retVal;
 }
 
