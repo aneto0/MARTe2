@@ -41,7 +41,8 @@ OBJSX=	AnyObject.x \
 		ParserI.x \
 		StandardParser.x \
 		ValidateBasicType.x \
-		XMLParser.x
+		XMLParser.x \
+		MathExpressionParser.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
