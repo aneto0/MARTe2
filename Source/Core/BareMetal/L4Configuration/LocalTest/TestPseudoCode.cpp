@@ -28,12 +28,17 @@ CCString RPNCode=
 		"WRITE E\n"
 		"READ N1\n"
 		"READ N2\n"
+		"SUB\n"
+		"DUP\n"
 		"READ N3\n"
 		"READ N4\n"
+		"DIV\n"
 		"ADD\n"
-		"MUL\n"
-		"SUB\n"
+		"DUP\n"
 		"WRITE N5\n"
+		"CAST int64\n"
+		"GT\n"
+		"WRITE F\n"
 ;
 
 int main(){
@@ -87,6 +92,9 @@ int main(){
 			if (var->name == "E"){
 				var->type = TypeDescriptor("uint8");
 			}
+			if (var->name == "F"){
+				var->type = TypeDescriptor("uint8");
+			}
 			if (var->name == "N5"){
 				var->type = TypeDescriptor("int8");
 			}
@@ -123,19 +131,19 @@ int main(){
 			}
 			if (var->name == "N1"){
 				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
-				*x = 1;
+				*x = 31;
 			}
 			if (var->name == "N2"){
 				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
-				*x = 2;
+				*x = 22;
 			}
 			if (var->name == "N3"){
 				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
-				*x = 3;
+				*x = 13;
 			}
 			if (var->name == "N4"){
 				int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
-				*x = 4;
+				*x = 127;
 			}
 		}
 	}
@@ -157,6 +165,27 @@ int main(){
 		}
 	}
 
+	if (ret){
+		printf ("DECOMPILE showing types pCode\n");
+		DynamicCString RPNCodeRev;
+		ret = context.DeCompile(RPNCodeRev,true);
+
+		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
+	}
+
+	if (ret){
+		printf ("DECOMPILE not showing types pCode\n");
+		DynamicCString RPNCodeRev;
+		ret = context.DeCompile(RPNCodeRev,false);
+
+		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
+		if (RPNCode == RPNCodeRev){
+			printf("identical to the original source\n");
+		} else {
+			printf("not identical to the original source\n");
+		}
+	}
+
 
 	if (ret){
 		printf ("DEBUG MODE EXECUTION \n");
@@ -171,6 +200,7 @@ int main(){
 		}
 	}
 
+	//for (int kk = 0;(kk<1000) && ret;kk++)
 	if (ret){
 		printf ("FAST MODE EXECUTION \n");
 		printf ("Executes 1 Million times ");
@@ -212,26 +242,6 @@ int main(){
 
 	}
 
-	if (ret){
-		printf ("DECOMPILE showing types pCode\n");
-		DynamicCString RPNCodeRev;
-		ret = context.DeCompile(RPNCodeRev,true);
-
-		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
-	}
-
-	if (ret){
-		printf ("DECOMPILE not showing types pCode\n");
-		DynamicCString RPNCodeRev;
-		ret = context.DeCompile(RPNCodeRev,false);
-
-		printf("Decompiled:\n%s\n",RPNCodeRev.GetList());
-		if (RPNCode == RPNCodeRev){
-			printf("identical to the original source\n");
-		} else {
-			printf("not identical to the original source\n");
-		}
-	}
 
 	if (!ret){
 		printf ("FAILED - see log\n");

@@ -599,6 +599,8 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 
 	if (showData || showTypes){
 		for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
+			TypeDescriptor td = functionInformation.types[i];
+
 			if (i!=0) {
 				cst.Append(',');
 			} else {
@@ -608,15 +610,15 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 				cst.Append('(');
 			}
 			if (showTypes){
-				 ret.fatalError = !functionInformation.types[i].ToString(cst);
+				 ret.fatalError = !td.ToString(cst);
 			}
 			if (showData && showTypes){
 				cst.Append(')');
 			}
 			if (showData){
-				dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
 				DynamicCString value;
-				AnyType src(functionInformation.types[i],stackPtr - dataStackIndex);
+				AnyType src(td,stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
@@ -683,6 +685,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 
 	if (showData || showTypes){
 		for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
+			TypeDescriptor td = functionInformation.types[i+functionInformation.numberOfInputs];
 			if (i!=0) {
 				cst.Append(',');
 			} else {
@@ -692,15 +695,16 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 				cst.Append('(');
 			}
 			if (showTypes){
-				ret.fatalError = !functionInformation.types[i+functionInformation.numberOfInputs].ToString(cst);
+				ret.fatalError = !td.ToString(cst);
 			}
 			if (showData && showTypes){
 				cst.Append(')');
 			}
 			if (showData){
-				dataStackIndex += ByteSizeToDataMemorySize(functionInformation.types[i].StorageSize());
+				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
+//cst.Append('[').Append(dataStackIndex).Append(']');
 				DynamicCString value;
-				AnyType src(functionInformation.types[i+functionInformation.numberOfInputs],stackPtr - dataStackIndex);
+				AnyType src(td,stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
@@ -756,11 +760,12 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			DynamicCString debugMessage;
 			CStringTool cst = debugMessage();
 
-			cst.Append("[stackPtr]-[codePtr] :: [CODE] stack-in => stack-out\n");
+			cst.Append("[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n");
+			int32 lineCounter = 1;
 			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-				cst.Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: ");
+				cst.Append(lineCounter).Append(" - ").Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: ");
 
 				CodeMemoryElement pCode = GetPseudoCode();
 
@@ -769,28 +774,35 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 				// show update info
      			cst.Append(fr.name).Append(' ');
 
-				if (runtimeError.ErrorsCleared()){
-					// show inputs
-					runtimeError = FunctionRecordInputs2String(fr,cst,true,true,true);
-				}
+     			// errors due to debugging
+     			ErrorManagement::ErrorType ret;
 
-				if (runtimeError.ErrorsCleared()){
-					// executes code
-					fr.function(*this);
-				}
+     			// show inputs
+				ret = FunctionRecordInputs2String(fr,cst,true,true,true);
+				REPORT_ERROR(ret,"analysing input side of function call");
 
-				if (runtimeError.ErrorsCleared()){
+				// executes code
+				fr.function(*this);
+
+				if (ret){
 					// show outputs
-					runtimeError = FunctionRecordOutputs2String(fr,cst,true,true,true);
+					ret = FunctionRecordOutputs2String(fr,cst,true,true,true);
+					REPORT_ERROR(ret,"analysing input side of function call");
 				}
+
+				if (!runtimeError.ErrorsCleared()){
+					cst.Append(" <ERROR> ");
+				}
+
 				cst.Append('\n');
 
-				if (runtimeError.ErrorsCleared()){
-					uint32 size = debugMessage.GetSize();
-					debugStream->Write(debugMessage.GetList(),size);
-				}
+				uint32 size = debugMessage.GetSize();
+				debugStream->Write(debugMessage.GetList(),size);
+
 				// reset line
 				cst.SetSize(0);
+				lineCounter++;
+
 			}
 			if (runtimeError.ErrorsCleared()){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
@@ -803,6 +815,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 		}
 	}
 	}
+	REPORT_ERROR(runtimeError,"Execution error");
 
 	if (stackPtr  != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
 		runtimeError.internalSetupError = true;
