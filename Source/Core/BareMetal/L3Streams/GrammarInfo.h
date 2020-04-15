@@ -118,6 +118,8 @@ struct GrammarInfo {
      * Allows to get the terminals as a C-string.
      */
     char8 terminal;
+    
+    char8 spare[64];
 
 };
 
@@ -137,6 +139,11 @@ static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', 
  * The lexical elements for MARTe configuration streams encoded in XML language.
  */
 static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
+
+/**
+ * Lexical elements for infix mathematical expressions.
+ */
+static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/", '=', '+', '/', '-', '*', '(', ')', '(', ')', '^', "|><^!\0" };
 
 }
 
