@@ -49,13 +49,13 @@ void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation 
     StreamString errorCodeStr;
     ErrorManagement::ErrorCodeToStream(errorInfo.header.errorType, errorCodeStr);
     if (errorInfo.header.errorType == ErrorManagement::Information) {
-        printf(GRN);
+        printf("%s", GRN);
     }
     else if (errorInfo.header.errorType == ErrorManagement::NoError) {
-        printf(GRN);
+        printf("%s", GRN);
     }
     else {
-        printf(RED);
+        printf("%s", RED);
     }
     if (errorInfo.objectName) {
         printf("[%s - %s:%d - %s]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorInfo.objectName, errorDescription);
@@ -63,5 +63,5 @@ void ErrorProcessExampleFunction(const MARTe::ErrorManagement::ErrorInformation 
     else {
         printf("[%s - %s:%d]: %s\n", errorCodeStr.Buffer(), errorInfo.fileName, errorInfo.header.lineNumber, errorDescription);
     }
-    printf(RST);
+    printf("%s", RST);
 }
