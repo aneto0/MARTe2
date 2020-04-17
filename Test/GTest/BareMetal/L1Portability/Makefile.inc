@@ -43,6 +43,7 @@ OBJSX=  AtomicGTest.x \
 	MemoryCheckGTest.x\
 	MemoryOperationsHelperGTest.x\
 	ProcessorTypeGTest.x \
+	SafeMathGTest.x \
 	SleepGTest.x\
 	StandardHeap_GenericGTest.x \
 	StaticListGTest.x \
