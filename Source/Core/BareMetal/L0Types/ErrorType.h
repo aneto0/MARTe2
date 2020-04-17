@@ -167,9 +167,21 @@ static const uint32 notCompletedBit(18u);
 static const uint32 NotCompletedBit(notCompletedBit);
 
 /**
+ * Bit to communicate that an operation yielded a result larger than possible / expected.
+ */
+static const uint32 overflowBit(19u);
+static const uint32 OverflowBit(overflowBit);
+
+/**
+ * Bit to communicate that an operation yielded a result smaller than possible / expected.
+ */
+static const uint32 underflowBit(20u);
+static const uint32 UnderflowBit(underflowBit);
+
+/**
  * Last used Bit.
  */
-static const uint32 lastErrorBit(19u);
+static const uint32 lastErrorBit(21u);
 static const uint32 LastErrorBit(lastErrorBit);
 
 /**
@@ -281,6 +293,16 @@ GENERATE_ERROR_CONSTANTS(Completed)
  * ErrorManagement::NotCompleted.
  */
 GENERATE_ERROR_CONSTANTS(NotCompleted)
+
+/**
+ * ErrorManagement::Overflow.
+ */
+GENERATE_ERROR_CONSTANTS(Overflow)
+
+/**
+ * ErrorManagement::Underflow.
+ */
+GENERATE_ERROR_CONSTANTS(Underflow)
 
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
@@ -463,9 +485,19 @@ public:
         GENERATE_ERROR_BITRANGE(completed)
 
         /**
-         * Operation completed.
+         * Operation not completed.
          */
         GENERATE_ERROR_BITRANGE(notCompleted)
+
+        /**
+         * Overflow.
+         */
+        GENERATE_ERROR_BITRANGE(overflow)
+
+        /**
+         * Underflow.
+         */
+        GENERATE_ERROR_BITRANGE(underflow)
 
         /**
          * unmapped bits
