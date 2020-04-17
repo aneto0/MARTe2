@@ -52,6 +52,17 @@ namespace MARTe{
  *          the actual lexical elements and parsing rules for interpreting
  *          a mathematical expression in infix form.
  * 
+ * The parser requires a mathematical expression in the form:
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15))
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * @warning Because of a still unsolved bug the expression cannot end
+ *          with a string token. Temporary workaround: enclose the
+ *          right-hand side between parenthesis if last element is
+ *          a variable.
+ * 
  * The mathematical expression must be provided to the parser at
  * construction time. The instance of the parser is then bound to that
  * specific expression. 
@@ -63,11 +74,10 @@ namespace MARTe{
  * @li an output stream of characters where the parser will write all
  *     the errors found on the input stream of characters.
  * 
- * To make the parser parse the expression, users should call the
- * MathExpressionParser::Parse() method. Provided that the 
- * MathExpressionParser::Parse() method was called, the expression in
- * stack machine form is then availabe as the output of the
- * MathExpressionParser::GetStackMachineExpression() method.
+ * To make the parser parse the expression, users should call the Parse()
+ * method. Provided that the Parse() method was
+ * called, the expression in stack machine form is then availabe as the
+ * output of the GetStackMachineExpression() method.
  * 
  * All the instances of the parser use the lexical elements defined
  * in MARTe::MathGrammar and apply the parsing rules of the following
@@ -101,39 +111,39 @@ protected:
      */
     //@{
 		/**
-		 * @brief   Pushes an operator to the top of the operator stack.
+		 * @brief   Pushes an operator to the top of the #operatorStack.
 		 * @details This method gets called whenever the parser hits
 		 *          an operator. The operator is then stored in the 
-		 *          operatorStack and later appended by PopOperator().
+		 *          #operatorStack and later appended by PopOperator().
 		 */
 		virtual void PushOperator();
 		
 		/**
-		 * @brief   Pops an operator from the top of the operator stack.
+		 * @brief   Pops an operator from the top of the #operatorStack.
 		 * @details This method gets called whenever the parser hits
 		 *          the end of an infix operation. The operation operator
 		 *          previously stored by PushOperator() is then popped 
-		 *          from the operatorStack and appended to the stack
-		 *          machine expression StackMachineExpr.
+		 *          from the #operatorStack and appended to the stack
+		 *          machine expression #StackMachineExpr.
 		 */
 		virtual void PopOperator();
 		
 		/**
-		 * @brief   Pushes a typecast type to the top of the typecastStack.
+		 * @brief   Pushes a typecast type to the top of the #typecastStack.
 		 * @details This method gets called whenever the parser hits
-		 *          a typecast operation in the syntax <pre>(type)</pre>.
-		 *          The typecast type is then stored in the typecastStack
+		 *          a typecast operation in the syntax `(type)`.
+		 *          The typecast type is then stored in the #typecastStack
 		 *          and later appended by PopTypecast().
 		 */
 		virtual void PushTypecast();
 		
 		/**
-		 * @brief   Pops a typecast type from the top of the typecastStack.
+		 * @brief   Pops a typecast type from the top of the #typecastStack.
 		 * @details This method gets called whenever the parser hits
 		 *          the end of a typecast operation. The typecast type
 		 *          previously stored by PushTypecast() is then popped 
 		 *          from the typecastStack and appended to the stack
-		 *          machine expression StackMachineExpr.
+		 *          machine expression #StackMachineExpr.
 		 */
 		virtual void PopTypecast();
 		
@@ -142,10 +152,10 @@ protected:
 		 *          to the output expression.
 		 * @details This method gets called whenever the parser hits an
 		 *          operand (that is, an isolated STRING or NUMBER token).
-		 *          The operand is immediatly added to the StackMachineExpr
+		 *          The operand is immediatly added to the #StackMachineExpr
 		 *          in the syntax required by the expression evaluator
-		 *          engine (that is, as <pre>READ STRING</per> for STRING
-		 *          tokens and as <pre>CONST NUMBER</pre> for NUMBER tokens.
+		 *          engine (that is, as `READ STRING` for STRING
+		 *          tokens and as `CONST NUMBER` for NUMBER tokens.
 		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
 		 */
 		virtual void AddOperand();
@@ -154,11 +164,12 @@ protected:
 		 * @brief   Append an encountered constant to the output expression.
 		 * @details This method gets called whenever the parser hits an
 		 *          isolated NUMBER token for which store type has been
-		 *          specified in the format <pre> (float32) 1.52 .
-		 *          The consant is immediatly added to the StackMachineExpr
+		 *          specified in the format `(type) CONSTANT` (e.g. 
+		 *          `(float32) 1.52`).
+		 *          The constant is immediatly added to the #StackMachineExpr
 		 *          in the syntax required by the expression evaluator
-		 *          engine (that is, as <pre>READ STRING</per> for STRING
-		 *          tokens and as <pre>CONST NUMBER</pre> for NUMBER tokens.
+		 *          engine (that is, as `READ STRING` for STRING
+		 *          tokens and as `CONST type NUMBER` for NUMBER tokens.
 		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
 		 */
 		virtual void AddOperandTypecast();
@@ -167,14 +178,14 @@ protected:
 		 * @brief   Stores the name of the variable before the equal sign.
 		 * @details This method gets called when the left-hand side of a
 		 *          mathematical expression is hit bt the parser. The STRING
-		 *          token befor the assignment operator is stored and
-		 *          then printed at the end of the StackMachineExpr by
+		 *          token before the assignment operator is stored and
+		 *          then printed at the end of the #StackMachineExpr by
 		 *          the End() method. For example in:
 		 *          
 		 *          <pre> ret = A + B </pre>
 		 * 
-		 *          ret is stored, and later written in the end of the 
-		 *          stack machine expression as
+		 *          ret is stored, and later written at the end of the 
+		 *          #StackMachineExpr as
 		 * 
 		 *          <pre> WRITE ret </pre>
 		 */
@@ -185,7 +196,7 @@ protected:
 		 * @details The method executes all operations required when
 		 *          the parser hits the end of the mathematical
 		 *          expression under analysis. In particular, this
-		 *          method is responsible for appending the <pre>WRITE</pre>
+		 *          method is responsible for appending the `WRITE`
 		 *          statement required by the expression evaluation engine.
 		 */
 		virtual void End();
@@ -193,11 +204,23 @@ protected:
     
     /**
      * @brief   Translates an operator from infix mathematical syntax
-     *          to the form requierd by PseudoCode.h .
+     *          to the form requierd by PseudoCode.h.
+     * @param[in]  operatorIn Operator in infix form (`+`, `-` ...)
+     * @returns Operator in the form required by PseudoCode.h (`SUM`, `POW` ...) 
      * @details The stack machine expression is required to express
      *          operators as uppercase postfix string. This method 
-     *          transforms <pre>+</pre> in <pre>SUM</pre>, <pre>sin</pre>
-     *          in <pre>SIN</pre> and so on.
+     *          transforms infix operators as follows:
+     * 
+     *          Infix  | Stack
+	 *          -----: | :-----
+	 *          +      | SUM 
+	 *          -      | MIN 
+	 *          *      | MUL
+	 *          /      | DIV
+	 *          ^      | POW
+	 *          sin    | SIN
+	 *          tan    | TAN
+	 *          ...    | ...
      */
     const char8* OperatorLookupTable(const char8* operatorIn);
 
@@ -218,7 +241,7 @@ protected:
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
     
 	/**
-     * @see ParserI::Execute(*).
+     * @see ParserI::Execute().
      */
 	virtual void Execute(const uint32 number);
 	
