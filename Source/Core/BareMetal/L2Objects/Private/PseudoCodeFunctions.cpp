@@ -684,7 +684,7 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(Context &conte
 		result = y1 > y2;
 	} else {
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
 	}
 	context.Push(result);
 }
@@ -703,7 +703,7 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(Context &context
 		result = y1 < y2;
 	} else {
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
 	}
 	context.Push(result);
 }
@@ -722,7 +722,7 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(Context 
 		result = y1 >= y2;
 	} else {
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
 	}
 	context.Push(result);
 }
@@ -741,7 +741,7 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(Context &c
 		result = y1 <= y2;
 	} else {
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
 	}
 	context.Push(result);
 }
@@ -779,7 +779,7 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(Context &con
 		result = y1 == y2;
 	} else {
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
 	}
 	context.Push(result);
 }
@@ -841,7 +841,7 @@ template <typename Tin,typename Tout> void Write_2T(Context &context){
 	ret = SafeNumber2Number(x1,x2);
 	if (!ret){
 		context.runtimeError.outOfRange = true;
-		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
 	}
 	context.Variable<Tout>(index) = x2;
 }

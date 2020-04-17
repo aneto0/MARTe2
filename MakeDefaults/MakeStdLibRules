@@ -35,8 +35,10 @@ build:
         
 .PHONY: do_showInfo
 do_showInfo:
-#	@echo $(SRCS) 
-#	@echo $(OBJSX) 
+	@echo $(SRCS0) 
+	@echo To compile: $(OBJSX1) 
+	@echo To optimize: $(OBJSX2) 
+	@echo To delete: $(OBJSXDEL) 
 	@echo choose among 
 	@echo 1\) make build     to build libraries
 	@echo 2\) make clean     to remove any produced file
@@ -69,22 +71,22 @@ DEPENDS = do_showInfo
 endif
 
 ifeq (BUILD,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJ) $(BUILD_PRODUCT)
+DEPENDS = do_cleanopt $(OBJS) $(SUBPROJ) $(BUILD_PRODUCT)
 include $(DEPEND_INCLUDE)
 endif
 
 ifeq (TEST,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJT) $(BUILD_PRODUCT)
+DEPENDS = do_cleanopt $(OBJS) $(SUBPROJT) $(BUILD_PRODUCT)
 include $(DEPEND_INCLUDE)
 endif
 
 ifeq (LOCALTEST,$(MAKEMODE))
-DEPENDS = $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT) $(SUBPROJLT2)
+DEPENDS = do_cleanopt $(OBJS) $(SUBPROJLT) $(BUILD_PRODUCT) $(SUBPROJLT2)
 include $(DEPEND_INCLUDE)
 endif
 
 ifeq (ALL,$(MAKEMODE))
-DEPENDS = $(OBJS)  $(SUBPROJLT) $(SUBPROJT) $(BUILD_PRODUCT)
+DEPENDS = do_cleanopt $(OBJS)  $(SUBPROJLT) $(SUBPROJT) $(BUILD_PRODUCT)
 include $(DEPEND_INCLUDE)
 endif
 		

@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 
-#include "../L0Types/StreamI.h"
+#include "StreamI.h"
 #include "StructuredDataI.h"
 #include "ErrorManagement.h"
 

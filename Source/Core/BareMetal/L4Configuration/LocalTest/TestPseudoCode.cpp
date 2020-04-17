@@ -3,6 +3,7 @@
 #include "PseudoCode.h"
 #include "HighResolutionTimer.h"
 #include "BasicConsole.h"
+#include "MicroSeconds.h"
 
 
 using namespace MARTe;
@@ -40,6 +41,24 @@ CCString RPNCode=
 		"GT\n"
 		"WRITE F\n"
 ;
+
+uint16 data1[20000];
+uint16 data2[20000];
+uint64 accum[100];
+
+void LucaTest(){
+	for (int j1 = 0;j1<10;j1++)
+	for (int j2 = 0;j2<10;j2++) {
+		uint16 *d1 = &data1[j1*1000];
+		uint16 *d2 = &data2[j2*1000];
+		uint64 acc = 0;
+		for (int k = 0;k<2000;k++) {
+			uint32 r = d1[k]*d2[k];
+			acc+= r;
+		}
+		accum[j1+10*j2]=acc;
+	}
+}
 
 int main(){
 
@@ -241,6 +260,14 @@ int main(){
 		fflush(stdout);
 
 	}
+
+	Ticks t1,t2;
+	t1 = HighResolutionTimer::GetTicks();
+	LucaTest();
+	t2 = HighResolutionTimer::GetTicks();
+	MicroSeconds dT = t2-t1;
+	printf (" in %i microSeconds %lli\n",dT.GetTimeRaw(),accum[0]);
+	fflush(stdout);
 
 
 	if (!ret){

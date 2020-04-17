@@ -26,6 +26,8 @@ PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+OPTIMIZE=
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
 INCLUDES+=-I.
@@ -38,15 +40,15 @@ BUILD_PRODUCT = $(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/*$(OBJEXT) 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L1Portability/*$(OBJEXT) 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/*$(OBJEXT) 
+#LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/*$(OBJEXT) 
 #LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/GTest/BareMetal/L1Portability/*$(OBJEXT) 
 #LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 
-OBJSX2 =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
-$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
+#OBJSX2 =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) \
+#$(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp))) 
 
 
 

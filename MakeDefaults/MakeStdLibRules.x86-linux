@@ -32,18 +32,28 @@ ctags : %.cpp %.c %.h
 createLibrary :
 	touch createLibrary
 
+# new
+$(BUILD_DIR)/%_opt.o : %.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*_opt.o
+#	$(COMPILER) -S $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
-#	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
+	$(COMPILER) -c $(noOPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+#	$(COMPILER) -S $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : Environment/$(ENVIRONMENT)/%.cpp
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Environment/$(ENVIRONMENT)/$*.cpp -o $(BUILD_DIR)/$*.o
+	$(COMPILER) -c $(noOPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Environment/$(ENVIRONMENT)/$*.cpp -o $(BUILD_DIR)/$*.o
+
+$(BUILD_DIR)/%_opt.o : Private/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Private/$*.cpp -o $(BUILD_DIR)/$*_opt.o
 
 $(BUILD_DIR)/%.o : Private/%.cpp
 	mkdir -p $(BUILD_DIR)
-	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Private/$*.cpp -o $(BUILD_DIR)/$*.o
+	$(COMPILER) -c $(noOPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  Private/$*.cpp -o $(BUILD_DIR)/$*.o
 
 
 $(BUILD_DIR)/%.o : %.c
@@ -74,8 +84,13 @@ $(BUILD_DIR)/%.exe : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : createLibrary  $(OBJS)
+$(BUILD_DIR)/%.ex : createLibrary  $(OBJS) $(BUILD_DIR)/%.o
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o  $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
+	rm -f createLibrary
+
+# new
+$(BUILD_DIR)/%.ex : createLibrary  $(OBJS) $(BUILD_DIR)/%_opt.o
+	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*_opt.o  $(LIBRARIES) $(LIBRARIES_STATIC) -o $(BUILD_DIR)/$*.ex
 	rm -f createLibrary
 
 ifneq ("$(wildcard Environment/Linux/*.c*)","")
@@ -117,3 +132,7 @@ do_cleandir:
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 
+#new
+.PHONY: do_cleanopt
+do_cleanopt:
+	@rm -f $(OBJSDEL)

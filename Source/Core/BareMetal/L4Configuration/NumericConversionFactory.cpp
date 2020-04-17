@@ -27,7 +27,6 @@
 #include "TypeConversionManager.h"
 #include "StreamString.h"
 #include "BitSetToInteger.h"
-#include "StringToNumber.h"
 #include "CompositeErrorManagement.h"
 
 namespace MARTe{

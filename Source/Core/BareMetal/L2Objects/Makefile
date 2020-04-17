@@ -28,6 +28,9 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 # to allow horizontal naviagtion in the tree. Generates subprojects associated to the HTEARS
 SPBLT= $(patsubst %,%.x,$(foreach toCheck,$(foreach hPath, $(HTEARS), $(subst BareMetal,$(hPath),$(CURDIR))),$(wildcard $(toCheck))))
 
+OPTIMIZE=PseudoCodeFunctions.x
+OPTIM=-O4  -march=amdfam10 
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
 INCLUDES+=-I. -I../L1Portability -I../L0Types -IVariableDescriptorLib

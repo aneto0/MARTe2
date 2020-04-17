@@ -26,6 +26,8 @@ PACKAGE=Core/BareMetal/L4Configuration
 ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+OPTIMIZE=TestPseudoCode.x
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs
 
 INCLUDES += -I../../L2Objects
@@ -44,7 +46,9 @@ LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L3Streams/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L4Configuration/*$(OBJEXT)
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Tools/TestSupport/*$(OBJEXT) 
 
-
+OPTIM=-O4  -march=amdfam10 
+#-mdump-tune-features
+#-ftree-vectorize -fopt-info-vec-all
 
 BUILD_PRODUCT = $(BUILD_DIR)/TestPseudoCode$(EXEEXT) $(BUILD_DIR)/test2$(EXEEXT)
 

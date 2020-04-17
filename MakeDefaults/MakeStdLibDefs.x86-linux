@@ -67,4 +67,4 @@ LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 # calculates the build directory by combining $ROOT_DIR "Build" $PACKAGE Current_Directory
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%$(OBJEXT)) 
-
+OBJSDEL=  $(wildcard  $(OBJSXDEL:%.x=$(BUILD_DIR)/%$(OBJEXT))) 

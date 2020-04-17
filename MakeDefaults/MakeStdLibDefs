@@ -65,9 +65,30 @@ ifeq (windows32,$(UNAME))
 TARGET = msc
 endif
 
-SRCS  = $(wildcard *.c) $(wildcard *.cpp) $(wildcard Environment/$(ENVIRONMENT)/*.cpp) $(wildcard Private/*.cpp) 
-OBJSX =  $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,.x,$(subst .cpp,.x,$(SRCS)))))
-#OBJSX =  $(subst .c,.x,$(wildcard *.c)) $(subst .cpp,.x,$(wildcard *.cpp)) $(subst .cpp,.x,$(subst Environment/$(ENVIRONMENT)/,,$(wildcard Environment/$(ENVIRONMENT)/*.cpp)))  $(subst .cpp,.x,$(subst Private/,,$(wildcard Private/*.cpp))) 
+#
+# identify files to compile, files to compile and optimize, files to delete
+#
+SRCS0 = $(wildcard *.c) $(wildcard *.cpp) $(wildcard Environment/$(ENVIRONMENT)/*.cpp) $(wildcard Private/*.cpp) 
+# flatten and replace suffix with .x
+OBJSX0 = $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,.x,$(subst .cpp,.x,$(SRCS0)))))
+#identify those to optimise and those not
+OBJSX1 = $(filter-out $(OPTIMIZE),$(OBJSX0) )
+OBJSX2 = $(subst .x,_opt.x,$(filter $(OPTIMIZE),$(OBJSX0)))
+OBJSX  = $(OBJSX1) $(OBJSX2)  
+OBJSX3 = $(filter $(OPTIMIZE),$(OBJSX0) )
+OBJSX4 = $(subst .x,_opt.x,$(filter-out $(OPTIMIZE),$(OBJSX0)))
+OBJSXDEL = $(OBJSX3) $(OBJSX4)
+
+
+#SRCS1  = $(filter-out $(OPTIMIZE),$(SRCS0) )
+#SRCS2  = $(filter     $(OPTIMIZE),$(SRCS0) )
+#OBJSX1 = $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,.x,$(subst .cpp,.x,$(SRCS1)))))
+#OBJSX2 = $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,_opt.x,$(subst .cpp,_opt.x,$(SRCS2)))))
+#OBJSX = $(OBJSX1) $(OBJSX2)  
+# mark for delete any file that is optimised and should not be and viceversa
+#OBJSX3 = $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,_opt.x,$(subst .cpp,_opt.x,$(SRCS1)))))
+#OBJSX4 = $(subst Environment/$(ENVIRONMENT)/,,$(subst Private/,,$(subst .c,.x,$(subst .cpp,.x,$(SRCS2)))))
+#OBJSXDEL = $(OBJSX3) $(OBJSX4)
 
 SUBPROJ    = $(SPB:%.x=%.spb)
 SUBPROJLT  = $(SPB:%.x=%.spb)  $(subst Test,Test.spb,$(wildcard LocalTest)) 
