@@ -1,6 +1,6 @@
 /**
  * @file SafeMath.h
- * @brief Header file for class AnyType
+ * @brief Header file for class SafeMath
  * @date Apr 14, 2020
  * @author Filippo Sartori
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AnyType
+ * @details This header file contains the declaration of the class SafeMath
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
@@ -37,157 +37,247 @@
 #include "TypeCharacteristics.h"
 #include "ErrorManagement.h"
 
-
 /*---------------------------------------------------------------------------*/
-/*                          Forward declarations                             */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
 
-namespace SafeMath{
+    namespace SafeMath{
 
+        /**
+         * @brief Generic template implementation to find the sign bit of number type.
+         * @tparam T the type whose sign bit is required.
+         * @return sign bit mask of type T.
+         */
+        template <typename T> inline const T SignBit();
 
-/**
- *  calculates the sign bit for each type
- *  compatible only for integer types
- */
-template <typename T>
-const T SignBit(){
-	return  0;
-}
+        /**
+         * @brief Template specialization for int8.
+         */
+        template <> inline const int8 SignBit<int8>();
 
-template <> const int8 SignBit<int8>(){
-	return 0x80U;
-}
+        /**
+         * @brief Template specialization for int16.
+         */
+        template <> inline const int16 SignBit<int16>();
 
-template <> const int16 SignBit<int16>(){
-	return 0x8000U;
-}
+        /**
+         * @brief Template specialization for int32.
+         */
+        template <> inline const int32 SignBit<int32>();
 
-template <> const int32 SignBit<int32>(){
-	return 0x80000000U;
-}
+        /**
+         * @brief Template specialization for int64.
+         */
+        template <> inline const int64 SignBit<int64>();
 
-template <> const int64 SignBit<int64>(){
-	return 0x8000000000000000ULL;
-}
+        /**
+         * @brief Generic template implementation that returns a number of type T with all bits set.
+         * @tparam T the type of number to return.
+         * @return number of type T with all bits set.
+         */
+        template <typename T> inline const T AllOnes();
 
-template <typename T>
-const T AllOnes(){
-	return  0;
-}
+        /**
+         * @brief Template specialization for int8.
+         */
+        template <> inline const int8 AllOnes<int8>();
 
-template <> const int8 AllOnes<int8>(){
-	return 0xFFU;
-}
+        /**
+         * @brief Template specialization for int16.
+         */
+        template <> inline const int16 AllOnes<int16>();
 
-template <> const int16 AllOnes<int16>(){
-	return 0xFFFFU;
-}
+        /**
+         * @brief Template specialization for int32.
+         */
+        template <> inline const int32 AllOnes<int32>();
 
-template <> const int32 AllOnes<int32>(){
-	return 0xFFFFFFFFU;
-}
+        /**
+         * @brief Template specialization for int64.
+         */
+        template <> inline const int64 AllOnes<int64>();
 
-template <> const int64 AllOnes<int64>(){
-	return 0xFFFFFFFFFFFFFFFFULL;
-}
+        /**
+         * @brief Generic template implementation to compute addition of two numbers.
+         * @tparam T type of numbers receiving operation.
+         * @param[in] a1 is first operation argument.
+         * @param[in] a2 is second operation argument.
+         * @param[out] sum is the operation result.
+         * @return ErrorManagement::NoError|ErrorManagement::Overflow|ErrorManagement::Underflow depending on operation result is within T type range.
+         */
+        template <typename T> ErrorManagement::ErrorType Addition(T a1, T a2, T &sum);
 
+        /**
+         * @brief Generic template implementation to compute subtraction of two numbers.
+         * @tparam T type of numbers receiving operation.
+         * @param[in] a1 is first operation argument.
+         * @param[in] a2 is second operation argument.
+         * @param[out] sum is the operation result.
+         * @return ErrorManagement::NoError|ErrorManagement::Overflow|ErrorManagement::Underflow depending on operation result is within T type range.
+         */
+        template <typename T> ErrorManagement::ErrorType Subtraction(T a1, T a2, T &sum);
 
-template <typename T>
-ErrorManagement::ErrorType Addition(T a1, T a2, T &sum){
-	ErrorManagement::ErrorType ret;
+        /**
+         * @brief Generic template implementation to compute multiplication of two numbers.
+         * @tparam T type of numbers receiving operation.
+         * @param[in] a1 is first operation argument.
+         * @param[in] a2 is second operation argument.
+         * @param[out] product is the operation result.
+         * @return ErrorManagement::NoError|ErrorManagement::Overflow|ErrorManagement::Underflow depending on operation result is within T type range.
+         */
+        template <typename T> ErrorManagement::ErrorType Multiplication(T a1, T a2, T &product);
 
-	sum = static_cast<T>(a1 + a2);
-	// check saturation
-	if (TypeCharacteristics<T>::IsSigned()){
-		// for signed numbers overflows happens on the sign bit:
-		// this means only happens if signs were the same and if result has flipped sign
-//		const T signBit = static_cast<T>(static_cast<T>(1u) << (sizeof(T)*8u-1u));
-		const T signBit = SignBit<T>();
-		if ( (((a1 ^ a2) & signBit) == 0u) && (((a1 ^ sum) & signBit) != 0u)){
-			if ((a1 & signBit) == 0u){
-				ret = ErrorManagement::Overflow;
-			} else {
-				ret = ErrorManagement::Underflow;
-			}
-		}
-		// for unsigned the result is smaller than one of them
-	} else {
-		if ((sum < a1 ) && (sum < a2)){
-			ret = ErrorManagement::Overflow;
-		}
-	}
+    } // SafeMath
 
-	return ret;
-}
-
-
-template <typename T>
-ErrorManagement::ErrorType Subtraction(T a1, T a2, T &sum){
-	ErrorManagement::ErrorType ret;
-
-	sum = static_cast<T>(a1 - a2);
-	// check saturation
-	if (TypeCharacteristics<T>::IsSigned()){
-		// for signed numbers overflows happens on the sign bit:
-		// this means only happens if signs were the same and if result has flipped sign
-//		const T signBit = static_cast<T>(static_cast<T>(1u) << (sizeof(T)*8u-1u));
-		const T signBit = SignBit<T>();
-		if ( (((a1 ^ a2) & signBit) != 0u) && (((a1 ^ sum) & signBit) != 0u)){
-			if ((a1 & signBit) == 0u){
-				ret = ErrorManagement::Overflow;
-			} else {
-				ret = ErrorManagement::Underflow;
-			}
-		}
-		// for unsigned the result is smaller than one of them
-	} else {
-		if (a2 > a1){
-			ret = ErrorManagement::Underflow;
-		}
-	}
-
-	return ret;
-}
-
-template <typename T>
-ErrorManagement::ErrorType Multiplication(T a1, T a2, T &product){
-	ErrorManagement::ErrorType ret;
-
-	T overflow;
-	product = FastMath::CompleteMultiply(a1,a2,overflow);
-
-	//check overflow for signed numbers
-	if (TypeCharacteristics<T>::IsSigned()){
-		               /* positive ovf */
-		ret.overflow  =  (overflow > 0)            ||
-					   /* change in sign --> positive overflow into the sign bit of product*/
-				        ((overflow == 0) && (product < 0));
-					   /* negative ovf - allones() would be sign extension */
-		ret.underflow =  (overflow < AllOnes<T>()) ||
-					   /* product should be negative - overflow into sign bit of product */
-				        ((overflow == AllOnes<T>()) && (product >= 0));
-	} else {
-        /* positive ovf */
-		ret.overflow  =  (overflow != 0);
-	}
-
-	return ret;
-}
-
+} // MARTe
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-} // SafeMath
+namespace MARTe{
+
+    namespace SafeMath{
+
+        template <typename T>
+        inline const T SignBit(){
+            return  0;
+        }
+
+        template <>
+        inline const int8 SignBit<int8>(){
+            return 0x80U;
+        }
+
+        template <>
+        inline const int16 SignBit<int16>(){
+            return 0x8000U;
+        }
+
+        template <>
+        inline const int32 SignBit<int32>(){
+            return 0x80000000U;
+        }
+
+        template <>
+        inline const int64 SignBit<int64>(){
+            return 0x8000000000000000ULL;
+        }
+
+        template <typename T>
+        inline const T AllOnes(){
+            return  0;
+        }
+
+        template <>
+        inline const int8 AllOnes<int8>(){
+            return 0xFFU;
+        }
+
+        template <>
+        inline const int16 AllOnes<int16>(){
+            return 0xFFFFU;
+        }
+
+        template <>
+        inline const int32 AllOnes<int32>(){
+            return 0xFFFFFFFFU;
+        }
+
+        template <>
+        inline const int64 AllOnes<int64>(){
+            return 0xFFFFFFFFFFFFFFFFULL;
+        }
+
+
+        template <typename T>
+        ErrorManagement::ErrorType Addition(T a1, T a2, T &sum){
+            ErrorManagement::ErrorType ret;
+
+            sum = static_cast<T>(a1 + a2);
+            // check saturation
+            if (TypeCharacteristics<T>::IsSigned()){
+                // for signed numbers overflows happens on the sign bit:
+                // this means only happens if signs were the same and if result has flipped sign
+        //		const T signBit = static_cast<T>(static_cast<T>(1u) << (sizeof(T)*8u-1u));
+                const T signBit = SignBit<T>();
+                if ( (((a1 ^ a2) & signBit) == 0u) && (((a1 ^ sum) & signBit) != 0u)){
+                    if ((a1 & signBit) == 0u){
+                        ret = ErrorManagement::Overflow;
+                    } else {
+                        ret = ErrorManagement::Underflow;
+                    }
+                }
+                // for unsigned the result is smaller than one of them
+            } else {
+                if ((sum < a1 ) && (sum < a2)){
+                    ret = ErrorManagement::Overflow;
+                }
+            }
+
+            return ret;
+        }
+
+
+        template <typename T>
+        ErrorManagement::ErrorType Subtraction(T a1, T a2, T &sum){
+            ErrorManagement::ErrorType ret;
+
+            sum = static_cast<T>(a1 - a2);
+            // check saturation
+            if (TypeCharacteristics<T>::IsSigned()){
+                // for signed numbers overflows happens on the sign bit:
+                // this means only happens if signs were the same and if result has flipped sign
+        //		const T signBit = static_cast<T>(static_cast<T>(1u) << (sizeof(T)*8u-1u));
+                const T signBit = SignBit<T>();
+                if ( (((a1 ^ a2) & signBit) != 0u) && (((a1 ^ sum) & signBit) != 0u)){
+                    if ((a1 & signBit) == 0u){
+                        ret = ErrorManagement::Overflow;
+                    } else {
+                        ret = ErrorManagement::Underflow;
+                    }
+                }
+                // for unsigned the result is smaller than one of them
+            } else {
+                if (a2 > a1){
+                    ret = ErrorManagement::Underflow;
+                }
+            }
+
+            return ret;
+        }
+
+        template <typename T>
+        ErrorManagement::ErrorType Multiplication(T a1, T a2, T &product){
+            ErrorManagement::ErrorType ret;
+
+            T overflow;
+            product = FastMath::CompleteMultiply(a1,a2,overflow);
+
+            //check overflow for signed numbers
+            if (TypeCharacteristics<T>::IsSigned()){
+                               /* positive ovf */
+                ret.overflow  =  (overflow > 0)            ||
+                               /* change in sign --> positive overflow into the sign bit of product*/
+                                ((overflow == 0) && (product < 0));
+                               /* negative ovf - allones() would be sign extension */
+                ret.underflow =  (overflow < AllOnes<T>()) ||
+                               /* product should be negative - overflow into sign bit of product */
+                                ((overflow == AllOnes<T>()) && (product >= 0));
+            } else {
+                /* positive ovf */
+                ret.overflow  =  (overflow != 0);
+            }
+
+            return ret;
+        }
+
+    } // SafeMath
 
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L0TYPES_SAFEMATH_H_ */
+
+#endif /* SOURCE_CORE_BAREMETAL_L1PORTABILITY_SAFEMATH_H_ */
