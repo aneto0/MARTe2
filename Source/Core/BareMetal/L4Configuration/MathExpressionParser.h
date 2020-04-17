@@ -44,7 +44,43 @@
 
 namespace MARTe{
 
+/**
+ * @brief Parser of mathematical expressions in infix form. The expression
+ *        can be converted into stack machine form or RPN.
+ *
+ * @details This class is a concrete class for MARTe::ParserI providing
+ *          the actual lexical elements and parsing rules for interpreting
+ *          a mathematical expression in infix form.
+ * 
+ * The mathematical expression must be provided to the parser at
+ * construction time. The instance of the parser is then bound to that
+ * specific expression. 
+ * 
+ * Constructor requires:
+ * @li an input stream of characters containing the mathematical
+ *     expression in infix form,
+ * @li an output foo structured data, (TODO this is not necessary and will be removed)
+ * @li an output stream of characters where the parser will write all
+ *     the errors found on the input stream of characters.
+ * 
+ * To make the parser parse the expression, users should call the
+ * MathExpressionParser::Parse() method. Provided that the 
+ * MathExpressionParser::Parse() method was called, the expression in
+ * stack machine form is then availabe as the output of the
+ * MathExpressionParser::GetStackMachineExpression() method.
+ * 
+ * All the instances of the parser use the lexical elements defined
+ * in MARTe::MathGrammar and apply the parsing rules of the following
+ * grammar:
+ *
+ * @todo insert grammar here
+ *
+ * Note: This grammar is written in the SLK language and refers to functions
+ * declared in this parser.
+ */
+
 class MathExpressionParser {
+
 public:
     MathExpressionParser(StreamI &stream,
                          StructuredDataI &databaseIn,
@@ -61,7 +97,7 @@ public:
 protected:
     
     /**
-     * @name Methods called by the parser
+     * @name Math expression-specific methods
      */
     //@{
 		/**
@@ -180,26 +216,40 @@ protected:
     virtual uint32 GetConstant(const uint32 index) const;
 
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
-
+    
+	/**
+     * @see ParserI::Execute(*).
+     */
+	virtual void Execute(const uint32 number);
+	
+	/**
+     * @see ParserI::GetNextTokenType().
+     */
     virtual uint32 GetNextTokenType();
-
+	
+	/**
+     * @see ParserI::PeekNextTokenType().
+     */
     virtual uint32 PeekNextTokenType(const uint32 position);
 
+	/**
+     * @see ParserI::StackPush().
+     */
     inline void StackPush(const uint32 symbol,
                           const uint32 * const stack,
                           uint32* &top) const;
-
+    
+	/**
+     * @see ParserI::StackPop().
+     */
     inline uint32 StackPop(uint32* &top) const;
-
-    virtual void Execute(const uint32 number);
-
-    Token *currentToken;
+	
+    Token *currentToken;                       //!< @see ParserI::currentToken.
     
-    StreamString StackMachineExpr;
+    StreamString StackMachineExpr;             //!< @brief Holds the mathematical expression in stack machine form while parsing.
     
-    StaticList<StreamString*> operatorStack;
-    
-    StaticList<StreamString*> typecastStack;
+    StaticList<StreamString*> operatorStack;   //!< @brief Stack where operators are pushed to and popped from while parsing.
+    StaticList<StreamString*> typecastStack;   //!< @brief Stack where typecast types are pushed to and popped from while parsing.
 
 private:
 
@@ -212,7 +262,6 @@ private:
     bool isError;
 
     LexicalAnalyzer tokenProducer;
-    //ExpressionAnalyzer tokenProducer;
     
     uint32 numberOfColumns;
 
@@ -231,10 +280,6 @@ private:
     GrammarInfo grammar;
 
     void (MathExpressionParser::*Action[10])(void);
-
-    //char8 operatorStack[512];
-
-    //uint32 stackTop;
     
 };
 
