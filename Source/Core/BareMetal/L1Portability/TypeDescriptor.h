@@ -56,17 +56,22 @@ namespace MARTe {
  * @remark The TypeDescriptor is internally represented as a 32-bit bitfield-like union with one of the following structures (depending on the type
  * described, if a basic one, or a structured one):
  *
+ *
  * | isStructuredData |dataIsConstant| structuredDataIdCode                                                   |
  * | :----:           | :----:       | :----:                                                                 |
  * |  1  (=1)         | 1            | 30                                                                     |
  *
  * | isStructuredData |dataIsConstant| fulltype | basicTypeSize | hasBitSize | sp | bitOffset | numberOfBits             |
  * | :----:           | :----:       | :----:   | :---------:   | :---------:|    | :----:    | :----:                   |
- * |  1  (=0)         | 1            | 6        | 4             |  1         | 3  | 8         | 8                        |
+ * |  1  (=0)         | 1            | 6=0x0*   | 4             |  1         | 3  | 8         | 8                        |
+ *
+ * | isStructuredData |dataIsConstant| fulltype | format      |
+ * | :----:           | :----:       | :----:   | :---------: |
+ * |  1  (=0)         | 1            | 6=0x1*   | 24          |
  *
  * | isStructuredData |dataIsConstant| fulltype | objectSize  |
  * | :----:           | :----:       | :----:   | :---------: |
- * |  1  (=0)         | 1            | 6        | 24          |
+ * |  1  (=0)         | 1            | 6=0x2*   | 24          |
  */
 
 // used to encode fullType in the TypeDescriptor
@@ -130,6 +135,7 @@ const TD_FullType TDF_Char 				= TDF_BasicType + 3u;
  */
 const TD_FullType  TDF_Pointer 			= TDF_BasicType + 4u;
 
+
 /*****  CHAR STREAM TYPES *****/
 
 /**
@@ -138,7 +144,7 @@ const TD_FullType  TDF_Pointer 			= TDF_BasicType + 4u;
 const TD_FullType  TDF_SString 			= TDF_CharStreamType + 0u;
 
 /**
- * @brief The type is a StreamInterface class.
+ * @brief The type is a StreamInterface class. // storage size unavailable
  */
 const TD_FullType  TDF_Stream 			= TDF_CharStreamType + 1u;
 
@@ -156,6 +162,9 @@ const TD_FullType  TDF_CString 		    = TDF_CharStreamType + 3u;
  * @brief  The DynamicCString : can be written to
  */
 const TD_FullType  TDF_DynamicCString 	= TDF_CharStreamType + 4u;
+
+
+
 
 /*****  SPECIAL TYPES *****/
 
@@ -190,6 +199,11 @@ const TD_FullType  TDF_Void				= TDF_SummaryType + 2u;
  * @brief  Pointer to ZTA, Pointer to [], Vector or Matrix
  */
 const TD_FullType  TDF_GenericPointer   = TDF_SummaryType + 3u;
+
+/**
+ * @brief  returned when asking for the FullType of a structure...
+ */
+const TD_FullType  TDF_Structure        = TDF_SummaryType + 4u;
 
 
 /**
@@ -271,7 +285,9 @@ const TDBasicTypeSize SizePointer = (sizeof(void*)==8) ? Size64bit : (sizeof(voi
 	    rangeFun(structuredDataIdCode,30   , 2,numberType)   \
 	    /*  For isStructuredData = false   */                \
 	    rangeFun(fullType            , 6   , 2,numberType)   \
-		/* For type != int uint float char (void)  */        \
+		/* For type char streams  */        \
+	    rangeFun(format              ,24   , 8,numberType)   \
+		/* For type =special                       */        \
 	    rangeFun(objectSize          ,24   , 8,numberType)   \
 	    /*  For type = int uint float char (void)    */      \
 	    rangeFun(basicTypeSize       , 4   , 8,numberType)   \
@@ -296,7 +312,11 @@ TYPE_DESCRIPTOR_RANGE_CONST(dataIsConstant,Constant,1, TYPE_DESCRIPTOR_TYPE )
  *
  */
 class DLL_API TypeDescriptor {
-public:
+
+	/**
+	 * allow access to internals only to the test class
+	 */
+	friend class TypeDescriptorTest;
 
     /**
      * A structure for type informations storing.
@@ -307,6 +327,8 @@ public:
 
 		TYPE_DESCRIPTOR_TYPE all;
     };
+
+public:
 
     TypeDescriptor();
 
@@ -336,6 +358,45 @@ public:
     TypeDescriptor(CCString typeName);
 
     /**
+     * @brief allows accessing the full code;
+     */
+    inline TYPE_DESCRIPTOR_TYPE GetFullCode() const;
+
+    /**
+     * @brief allows accessing the full type code
+     * returns TDF_Structure if isStructureData is true
+     */
+    inline TD_FullType GetFullTypeCode() const;
+
+    /**
+     * @brief allows accessing the id code of a structure;
+     */
+    inline uint32 GetStructuredDataIdCode() const;
+
+    /**
+     * @brief allows accessing the size in bits of a bitrange
+     * use StorageSize() to get size of integer/floats
+     * returns -1 for non bitrange
+     */
+    inline int32 GetNumericBitSize() const;
+
+    /**
+     * @brief allows accessing the offset in bits of a bitrange
+     * returns -1 for non numeric
+     */
+    inline int32 GetNumericBitOffset() const;
+
+    /**
+     * @brief sets the dataIsConstant flag;
+     */
+    inline void  SetDataConstant(bool dataIsConstant);
+
+    /**
+     * @brief whether it is an basic type
+     */
+    inline bool DataIsConstant() const ;
+
+    /**
      * @brief whether it is an basic type
      */
     inline bool IsBasicType() const ;
@@ -359,6 +420,11 @@ public:
      * @brief whether it is a form of char *
      */
     inline bool IsCharString() const ;
+
+    /**
+     * @brief whether it is a StreamString
+     */
+    inline bool IsStreamString() const ;
 
     /**
      * @brief whether it is any of the special types
@@ -414,7 +480,9 @@ public:
     CCString GetNameOfClassFromStructureId() const;
 
     /**
-     * @brief gets name of class from structuredDataIdCode
+     * @brief Sets the global function to translate a TypeDescriptor containing a structure id to String.
+     * not to be used
+     * TODO Move to private header
      */
     static bool SetNameOfClassFromIdFunction(CCString (*fun)(TypeDescriptor));
 
@@ -423,6 +491,12 @@ public:
      *
      */
     bool ToString(CStringTool &string) const;
+
+    /**
+     * @brief converts a 1-4 byte string into a 24 bit code that can be used as format
+     */
+    static uint32 String2FormatNumber(CCString formatString);
+
 private:
 
     /**
@@ -444,6 +518,10 @@ private:
     inline bool operator!=(const TypeDescriptor &typeDescriptor) const;
 
 };
+
+/*** REGISTERED STRUCTURES */
+#define  StructuredDataType(id)           TypeDescriptor(TDRANGE(isStructuredData,true)    | TDRANGE(structuredDataIdCode,id)    )
+
 
 /***  BASIC TYPES */
 #define  Character8Bit_number        TDRANGE(fullType,TDF_Char)  | TDRANGE(basicTypeSize,Size8bit)
@@ -470,16 +548,26 @@ private:
 #define  BooleanType                 UnsignedInteger8Bit;
 
 
-/***  !BASIC TYPES */
-#define  StreamStringType(size)      TypeDescriptor(TDRANGE(fullType,TDF_SString) | TDRANGE(objectSize,size))
-#define  ConstCharString(size)       TypeDescriptor(TDRANGE(fullType,TDF_CCString) | TDRANGE(objectSize,size))
-#define  CharString           		 TypeDescriptor(TDRANGE(fullType,TDF_CString) | TDRANGE(objectSize,sizeof(CString)))
-#define  DynamicCharString           TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString) | TDRANGE(objectSize,sizeof(DynamicCString)))
-#define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,0))
-#define  StreamType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Stream) | TDRANGE(objectSize,size))
-#define  StructuredDataType(size)    TypeDescriptor(TDRANGE(fullType,TDF_StructuredDataI) | TDRANGE(objectSize,size))
+/***  STREAM TYPES and FORMATTED STREAMS*/
+#define  CharString(size)       	 TypeDescriptor(TDRANGE(fullType,TDF_CString)       | TDRANGE(objectSize,size))
+// these can have a format attribute
+#define  ConstCharString             TypeDescriptor(TDRANGE(fullType,TDF_CCString)      | TDRANGE(format,0))
+#define  StreamStringType            TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDRANGE(format,0))
+#define  DynamicCharString           TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDRANGE(format,0))
+#define  StreamType                  TypeDescriptor(TDRANGE(fullType,TDF_Stream)        | TDRANGE(format,0))
+const CCString cdbFormat("CDB");
+const CCString jsonFormat("JSON");
+const CCString xmlFormat("XML");
+#define  FormattedCCString(f)        TypeDescriptor(TDRANGE(fullType,TDF_CCString)      | TDRANGE(format,TypeDescriptor::String2FormatNumber(f)))
+#define  FormattedDynString(f)       TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDRANGE(format,String2FormatNumber(f)))
+#define  FormattedSString(f)  	     TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDRANGE(format,String2FormatNumber(f)))
+
+
+/** OTHER */
+#define  StructuredDataIType(size)   TypeDescriptor(TDRANGE(fullType,TDF_StructuredDataI) | TDRANGE(objectSize,size))
 #define  ObjectType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Object)| TDRANGE(objectSize,size))
 #define  InvalidType(size)           TypeDescriptor(TDRANGE(fullType,TDF_Invalid)| TDRANGE(objectSize,size))
+#define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,0))
 
 /**
  * @return returns the TDBasicTypeSize of any type
@@ -537,6 +625,52 @@ template <> const TypeDescriptor Type2TypeDescriptor<BitRange<baseType,numberOfB
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+void TypeDescriptor::SetDataConstant(bool dataIsConstant){
+	this->dataIsConstant = dataIsConstant;
+}
+
+bool TypeDescriptor::DataIsConstant() const {
+    return dataIsConstant;
+}
+
+TYPE_DESCRIPTOR_TYPE TypeDescriptor::GetFullCode() const{
+	return all;
+}
+
+TD_FullType TypeDescriptor::GetFullTypeCode() const{
+	TD_FullType ret = fullType;
+	if (isStructuredData){
+		ret = TDF_Structure;
+	}
+	return ret;
+}
+
+
+uint32 TypeDescriptor::GetStructuredDataIdCode() const{
+	uint32 ret = this->structuredDataIdCode;
+	if (!IsStructuredData()){
+		ret = 0xFFFFFFFF;  // invalid as will never be in the database
+	}
+	return ret;
+}
+
+int32 TypeDescriptor::GetNumericBitSize() const{
+	int32 ret = -1;
+	if (IsBitType()) {
+		ret = numberOfBits;
+	}
+	return ret;
+}
+
+int32 TypeDescriptor::GetNumericBitOffset() const{
+	int32 ret = -1;
+	if (IsBitType()) {
+		ret = this->bitOffset;
+	}
+	return ret;
+}
+
+
 bool TypeDescriptor::IsStructuredData() const {
     return isStructuredData;
 }
@@ -559,6 +693,10 @@ bool TypeDescriptor::IsCharStreamType() const {
 
 bool TypeDescriptor::IsCharString() const {
 	return (!isStructuredData && ((fullType == TDF_CCString) || (fullType == TDF_CString) || (fullType == TDF_DynamicCString)))   ;
+}
+
+bool TypeDescriptor::IsStreamString() const {
+	return (!isStructuredData && (fullType == TDF_SString));
 }
 
 bool TypeDescriptor::IsSpecialType() const {

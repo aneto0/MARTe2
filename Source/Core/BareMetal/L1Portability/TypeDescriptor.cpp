@@ -63,7 +63,27 @@ uint32 TypeDescriptor::StorageSize() const{
 	    if (IsBasicType()){
 			size = static_cast<uint32>(SizeFromTDBasicTypeSize(basicTypeSize));
 	    } else {
-			size = objectSize;
+	    	if (IsCharStreamType()){
+	    		switch (this->fullType){
+	    		case TDF_DynamicCString:
+	    		case TDF_CString:
+	    		case TDF_CCString:{
+	    			/**
+	    			 * always stored  as char *
+	    			 */
+	    			size = sizeof (char8 *);
+	    		}break;
+	    		/**
+	    		 * we cannot know here. so it is stored in objectSize
+	    		 */
+	    		case TDF_Stream:
+	    		case TDF_SString:
+	    		default:
+					size = 0;
+	    		}
+	    	} else {
+				size = objectSize;
+	    	}
 	    }
 	}
 	return size;
@@ -149,6 +169,53 @@ static CCString BasicTypeName(TD_FullType tdf){
 	return name;
 }
 
+
+uint32 TypeDescriptor::String2FormatNumber(CCString formatString){
+	uint32 value = 0;
+	uint32 size = formatString.GetSize();
+
+	if (size > 0) {
+		value += (static_cast<uint8>(formatString[0]) - 32) & 0x3F;
+	}
+	value <<=6;
+	if (size > 1) {
+		value += (static_cast<uint8>(formatString[1]) - 32) & 0x3F;
+	}
+	value <<=6;
+	if (size > 2) {
+		value += (static_cast<uint8>(formatString[2]) - 32) & 0x3F;
+	}
+	value <<=6;
+	if (size > 3) {
+		value += (static_cast<uint8>(formatString[3]) - 32) & 0x3F;
+	}
+	return value;
+}
+
+static void FormatNumber2String(uint32 format, CStringTool &formatString){
+
+	if (format & 0x00fC0000) {
+		uint32 value =  ((format & 0x00fC0000) >> 18U);
+		formatString.Append(static_cast<char8>(value));
+
+		if (format & 0x0003F000) {
+			value =  ((format & 0x0003F000) >> 12U);
+			formatString.Append(static_cast<char8>(value));
+
+			if (format & 0x00000FC0) {
+				value =  ((format & 0x00000FC0) >> 6U);
+				formatString.Append(static_cast<char8>(value));
+
+				if (format & 0x0000003F) {
+					value =  (format & 0x00000003F);
+					formatString.Append(static_cast<char8>(value));
+				}
+			}
+		}
+	}
+}
+
+
 /**
  * @brief gets name of class from structuredDataIdCode
  */
@@ -190,7 +257,7 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
     if (dataIsConstant){
     	constString = constString2;
     }
-
+    // handles registered structures
     if (isStructuredData){
     	stringt.Append(constString);
     	CCString className = GetNameOfClassFromStructureId();
@@ -204,13 +271,26 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
     		stringt.Append(className);
     	}
     }
-    else {// !isStructuredData
+    else
+    {// !isStructuredData
+    	// all but numbers pointers and chars
        	if (!IsBasicType()){  //Stream,StructuredData,..
        		stringt.Append(constString);
        		TD_FullType ft = static_cast<TD_FullType>(fullType);
        		stringt.Append(BasicTypeName(ft));
+
+       		// handles formatted streams
+       		if (IsCharStreamType()){
+       			uint32 format = this->format;
+       			if (format != 0){
+       	       		stringt.Append('(');
+       	       		FormatNumber2String(format,stringt);
+       	       		stringt.Append(')');
+       			}
+       		}
        	}
-       	else { //!IsComplexType()
+       	else
+       	{ // basic types
        		TD_FullType ft = static_cast<TD_FullType>(fullType);
        		CCString typeName = BasicTypeName(ft);
        		if (IsBitType()){  // uint5 bitranges
@@ -226,7 +306,8 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
        			stringt.Append(bitOffsetR);
        			stringt.Append('>');
        		}
-       		else {// not bit type
+       		else
+       		{// not bit type
     			uint32 bits = 8 * SizeFromTDBasicTypeSize(basicTypeSize);
        			TYPENAME_CORE()
        		}
@@ -235,7 +316,7 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
 	return ret;
 }
 
-static const CCString seps = " \n\r\t";
+static const CCString seps = " \n\r\t<>()";
 static const CCString nums = "0123456789";
 static bool isSep(char8 c){  return (seps.In(c)); }
 static bool isNum(char8 c){  return (nums.In(c)); }
@@ -271,10 +352,10 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 	GetToken(typeName,token);
 
 	if (token.IsSameAs("CString")){
-		*this = CharString;
+		*this = CharString(0);
 	} else
 	if (token.IsSameAs("CCString")){
-		*this = ConstCharString(sizeof(CCString));
+		*this = ConstCharString;
 	} else
 	if (token.IsSameAs("DynamicCString")){
 		*this = DynamicCharString;
@@ -299,13 +380,63 @@ TypeDescriptor::TypeDescriptor(CCString typeName){
 		ft = TDF_SignedInteger;
 		numericPart = token.GetList()+3;
 	} else
-	if (token.IsSameAs("BitRange<",3)){
-		// TODO add error message
-		// TODO complete
+	if (token.IsSameAs("BitRange")){
+		uint32 basenumber = 0;
+		DynamicCString token2;
+		GetToken(typeName,token2);
+
+		if (token2.IsSameAs("uint",4)){
+			ft = TDF_UnsignedInteger;
+			numericPart = token.GetList()+4;
+			basenumber = ToNumber(numericPart);
+		} else
+		if (token2.IsSameAs("int",3)){
+			ft = TDF_SignedInteger;
+			numericPart = token.GetList()+3;
+			basenumber = ToNumber(numericPart);
+		}
+		if (basenumber == 8){
+			basenumber = Size8bit;
+		} else
+			if  (basenumber == 16){
+				basenumber = Size16bit;
+			} else
+				if  (basenumber == 32){
+					basenumber = Size32bit;
+				} else
+					if  (basenumber == 64){
+						basenumber = Size64bit;
+					} else {
+						basenumber = SizeUnknown;
+					}
+
+		// check multiple of 8
+		if (basenumber != SizeUnknown) {
+			DynamicCString offsetPart;
+			DynamicCString bitSizePart;
+			GetToken(typeName,bitSizePart);
+			GetToken(typeName,offsetPart);
+
+			if ((bitSizePart.GetSize() > 0) && (offsetPart.GetSize() > 0)){
+
+				all = TDRANGE(fullType,ft) | TDRANGE(basicTypeSize,basenumber) | TDRANGE(hasBitSize,1u) | TDRANGE(numberOfBits,ToNumber(bitSizePart.GetList())) | TDRANGE(bitOffset,ToNumber(offsetPart.GetList()));
+			}
+		}
+
 	} else {
 		*this = ClassRegistryIndex::Instance()->GetTypeDescriptor(token);
 	}
 
+	// check for expression like CCString(CDB)
+	if (IsCharStreamType()){
+		DynamicCString token2;
+		GetToken(typeName,token2);
+		// simply encode the format string as a number
+		if (token2.GetSize() > 0){
+			this->format = String2FormatNumber(token2.GetList());
+		}
+
+	} else
 	if (numericPart != NULL){
 		uint32 num = ToNumber(numericPart);
 		if (num > 64u){

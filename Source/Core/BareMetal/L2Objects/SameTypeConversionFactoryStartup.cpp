@@ -132,7 +132,7 @@ TypeConversionOperatorI *SameTypeConversionFactory::GetOperator(const TypeDescri
 	// this way if the test passes we are also sure that we can write to
 	// also the test works whatever the const status of the source
 	TypeDescriptor td = sourceTd;
-	td.dataIsConstant = false;
+	td.SetDataConstant(false);
 
 	//compare source and dest
 	if (destTd.SameTypeAndSizeAs(td)){

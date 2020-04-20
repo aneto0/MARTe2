@@ -68,12 +68,14 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn,
     className = typeidName;
     classVersion = "";
 //    static uint32 classId = 0;
-    typeDescriptor.isStructuredData = true;
+//    typeDescriptor.isStructuredData = true;
 
     ClassRegistryIndex* cri = ClassRegistryIndex::Instance();
     if (cri != NULL_PTR(ClassRegistryIndex*)) {
-        typeDescriptor.structuredDataIdCode = cri->Add(this,sizeOfClassIn);
+//        typeDescriptor.structuredDataIdCode = cri->Add(this,sizeOfClassIn);
+        typeDescriptor = StructuredDataType(cri->Add(this,sizeOfClassIn));
     }
+
 }
 
 void ClassRegistryItem::SetClassDetails(CCString classNameIn,CCString classVersionIn){

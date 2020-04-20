@@ -943,16 +943,16 @@ void Test(){
     DEREF_CLONE_CHECKCONTENT(at,".int32Var","int32","132",sizeof(int32),0);
     DEREF_CLONE_CHECKCONTENT(at,".uint32Var","uint32","132",sizeof(uint32),0);
     DEREF_CLONE_CHECKCONTENT(at,".int64Var","int64","164",sizeof(int64),0);  // MC
-    DEREF_CLONE_CHECKCONTENT(at,".floatVar","float","10.100001",sizeof(float),0);
-    DEREF_CLONE_CHECKCONTENT(at,".doubleVar","double","11100000000.000000",sizeof(double),0);
+    DEREF_CLONE_CHECKCONTENT(at,".floatVar","float32","10.100001",sizeof(float32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".doubleVar","float64","11100000000.000000",sizeof(double),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.char8Var","char8","c",sizeof(char8),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.int8Var","int8","8",sizeof(int8),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.int16Var","int16","16",sizeof(int16),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.int32Var","int32","32",sizeof(int32),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.uint32Var","uint32","32",sizeof(uint32),0);
     DEREF_CLONE_CHECKCONTENT(at,".test2.int64Var","int64","64",sizeof(int64),0);
-    DEREF_CLONE_CHECKCONTENT(at,".test2.floatVar","float","0.100000",sizeof(float),0);
-    DEREF_CLONE_CHECKCONTENT(at,".test2.doubleVar","double","1100000000.000000",sizeof(double),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.floatVar","float32","0.100000",sizeof(float32),0);
+    DEREF_CLONE_CHECKCONTENT(at,".test2.doubleVar","float64","1100000000.000000",sizeof(double),0);
     DEREF_CLONE_CHECKCONTENT(at,".test3.bitset1","BitRange<uint32,1,0>","1",sizeof(uint32),0);
     DEREF_CLONE_CHECKCONTENT(at,".test3.bitset2","BitRange<uint32,2,1>","2",sizeof(uint32),0);
     DEREF_CLONE_CHECKCONTENT(at,".test3.bitset3","BitRange<uint32,3,3>","3",sizeof(uint32),0);
@@ -1000,12 +1000,12 @@ void Test(){
     DEREF_CHECK(at,".int64PArr[4]","int64( *)[21]",176,8); // cannot clone pointers
     DEREF_CHECK(at,".int32PVar","int32 *",8,0);  // cannot clone pointers
     DEREF_CHECK(at,".VCharVar","Vector<char8>",16,16/* clone creates only const structures*/);
-    DEREF_CHECK(at,".MFloatVar","Matrix<float>",24,24/* clone creates only const structures*/);
+    DEREF_CHECK(at,".MFloatVar","Matrix<float32>",24,24/* clone creates only const structures*/);
     DEREF_CHECK(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56/* clone converts ZTA to vector */);
     DEREF_CHECK(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712/* cloning changes type*/);
     DEREF_CHECK(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
     DEREF_CHECK(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24);
-    DEREF_CHECK(at,".MFloat10","Matrix<float( *)[10]>",864,824);
+    DEREF_CHECK(at,".MFloat10","Matrix<float32( *)[10]>",864,824);
     DEREF_CHECK(at,".pStreamI","StreamI *",8,0/* pointers not supporte by clone */); // treat as a pointer
     DEREF_CHECK(at,".myStream","StreamI",72,72);
 
@@ -1023,12 +1023,12 @@ void Test(){
     DEREF_CLONE_CHECK(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
     DEREF_CLONE_CHECK(at,".int32PVar*","int32",4,0);
     DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",16,16/* clone creates only const structures*/);
-    DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float>",24,24);
+    DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float32>",24,24);
     DEREF_CLONE_CHECK(at,".CStringZTAVar","const Vector<CCString>",83,56/* clone converts ZTA to vector */);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656/* cloning changes to const Vector*/);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144/* cloning changes to const Vector*/);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24);
-    DEREF_CLONE_CHECK(at,".MFloat10","const Matrix<float( * const)[10]>",864,824);
+    DEREF_CLONE_CHECK(at,".MFloat10","const Matrix<float32( * const)[10]>",864,824);
 
 
 //return;
@@ -1063,13 +1063,13 @@ void Test(){
 	CHECK4S(uint32 ,27,17,UnsignedInteger32Bit);
 	CHECK4R(uint32 ,4,45,5,UnsignedInteger32Bit);
 	CHECK4R(uint64 ,141,532,5,UnsignedInteger64Bit);
-	CHECK4(DynamicCString ,1,1,1,CCString,ConstCharString(sizeof(CCString)));
+	CHECK4(DynamicCString ,1,1,1,CCString,ConstCharString);
 //	return;
-	CHECK4(DynamicCString ,1,6,6,CCString,ConstCharString(sizeof(CCString)));
-	CHECK4(DynamicCString ,2,2,2,CCString,ConstCharString(sizeof(CCString)));
-	CHECK4(DynamicCString ,5,5,5,CCString,ConstCharString(sizeof(CCString)));
-	CHECK4(DynamicCString ,10,35,5,CCString,ConstCharString(sizeof(CCString)));
-	CHECK4(DynamicCString ,515,235,5,CCString,ConstCharString(sizeof(CCString)));
+	CHECK4(DynamicCString ,1,6,6,CCString,ConstCharString);
+	CHECK4(DynamicCString ,2,2,2,CCString,ConstCharString);
+	CHECK4(DynamicCString ,5,5,5,CCString,ConstCharString);
+	CHECK4(DynamicCString ,10,35,5,CCString,ConstCharString);
+	CHECK4(DynamicCString ,515,235,5,CCString,ConstCharString);
 //	return;
 
     typedef uint32 uint32_4[4];
@@ -1117,17 +1117,17 @@ void Test(){
     COPY_CHECK_NOK(uint32_4_8_6_5_3, Vector<Vector<Matrix<uint32> > >);
     COPY_CHECK_OK(uint32_4_8_6_5_3, Vector<Matrix<Matrix<uint32> > >);
 #endif
-	TestSafeN2N<float,int20>(1e6);
-    TestSafeN2N<float,int21>(1e6);
-    TestSafeN2N<float,uint19>(1e6);
-    TestSafeN2N<float,uint20>(1e6);
-    TestSafeN2N<float,int20>(-1e6);
-    TestSafeN2N<float,int21>(-1e6);
+	TestSafeN2N<float32,int20>(1e6);
+    TestSafeN2N<float32,int21>(1e6);
+    TestSafeN2N<float32,uint19>(1e6);
+    TestSafeN2N<float32,uint20>(1e6);
+    TestSafeN2N<float32,int20>(-1e6);
+    TestSafeN2N<float32,int21>(-1e6);
     TestSafeN2N<uint30,int27>(1000000000);
     TestSafeN2N<uint35,int32>(4000000000);
     TestSafeN2N<uint35,uint32>(4000000000);
     TestSafeN2N<int35 ,uint32>(4000000000);
-    TestSafeN2N<int35 ,float>(4000000000);
+    TestSafeN2N<int35 ,float32>(4000000000);
     TestSafeN2N<int35 ,double>(4000000000);
     TestSafeN2N<double,uint17>(4000000000);
 
@@ -1135,7 +1135,7 @@ void Test(){
     TestSatInteger(1e4,1e4,5000,4000,SaturatedInteger<uint16>(uint32(100001000)));
 
     printf ("%i %i %le \n",TypeCharacteristics<double>::UsableBitSize(),DBL_MAX_EXP,TypeCharacteristics<double>::MaxValue());
-    printf ("%i %le \n",TypeCharacteristics<float>::UsableBitSize(),TypeCharacteristics<float>::MaxValue());
+    printf ("%i %le \n",TypeCharacteristics<float32>::UsableBitSize(),TypeCharacteristics<float32>::MaxValue());
     printf ("%i %i \n",TypeCharacteristics<uint17>::UsableBitSize(),TypeCharacteristics<uint17>::MaxValue());
 
 
@@ -1185,12 +1185,12 @@ void Test(){
 		pippuAT.GetVariableInformation(td,maxDim,&dimension[0]);
 		printf("DynamicCString ==> nDim=%i size = %i\n",maxDim,dimension[0]);
 
-		float (*pippx[5])[6];
+		float32 (*pippx[5])[6];
 		AnyType pippxAT(pippx);
 		maxDim = 3;
 		dimension[0] = 0;
 		pippxAT.GetVariableInformation(td,maxDim,dimension);
-		printf("float (*[5])[6] ==> nDim=%i size = %i,%i,%i\n",maxDim,dimension[0],dimension[1],dimension[2]);
+		printf("float32 (*[5])[6] ==> nDim=%i size = %i,%i,%i\n",maxDim,dimension[0],dimension[1],dimension[2]);
 
 		ZeroTerminatedArray<int [5]> pippy[7];
 		AnyType pippyAT(pippy);
@@ -1234,7 +1234,7 @@ int main(int argc, char **argv){
 	MARTe::PrepareTestObject();
     MARTe::Test();
 
-//    MARTe::Vector<float> *p = new MARTe::Vector<float>[4];
+//    MARTe::Vector<float32> *p = new MARTe::Vector<float32>[4];
     void *q = malloc(sizeof(MARTe::Vector<float>)*4);
 	((MARTe::Vector<float> *)q)[0].InitVector(NULL,0);
 	((MARTe::Vector<float> *)q)[1].InitVector(NULL,0);

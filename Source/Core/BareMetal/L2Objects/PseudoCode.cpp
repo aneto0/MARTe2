@@ -273,7 +273,11 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 					ret = AddInputVariable(constantName,td,nextConstantAddress);
 				}
 				if (ret){
-					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
+					uint32 size = td.StorageSize();
+					ret.unsupportedFeature = (size == 0);
+					COMPOSITE_REPORT_ERROR(ret,"type ",parameter, " has 0 storgaSize");
+
+					nextConstantAddress += ByteSizeToDataMemorySize(size);
 				}
 			}
 		}

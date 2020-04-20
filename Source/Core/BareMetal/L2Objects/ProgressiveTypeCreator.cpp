@@ -97,6 +97,8 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 	type 				= typeIn;
 	objectSize 			= typeIn.StorageSize();
 	isString 			= typeIn.IsCharString();
+
+	// will trip on StreamsI and other virtual types for which storage location may be distinct from access
 	ret.parametersError = (objectSize == 0);
 	REPORT_ERROR(ret,"Type with 0 size");
 
@@ -105,7 +107,7 @@ ErrorManagement::ErrorType ProgressiveTypeCreator::Start(TypeDescriptor typeIn){
 		REPORT_ERROR(ret,"Unsupported type. Must be CString or BasicType");
 	}
 	if (ret && !isString){
-		converter 			= TypeConversionManager::GetOperator(type,ConstCharString(sizeof(CString)),false);
+		converter 			= TypeConversionManager::GetOperator(type,ConstCharString,false);
 		ret.unsupportedFeature = (converter == NULL);
 		REPORT_ERROR(ret,"Cannot find type converter");
 	}

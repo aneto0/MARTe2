@@ -1252,12 +1252,12 @@ RANDOM_2D_COPY_CHECK(TestEnvironment::Instance(),uint16 ,72,4,UnsignedInteger16B
 RANDOM_2D_COPY_CHECK(TestEnvironment::Instance(),uint32 ,27,17,UnsignedInteger32Bit);
 RANDOM_2D_COPY_CHECKR(TestEnvironment::Instance(),uint32 ,4,45,5,UnsignedInteger32Bit);
 RANDOM_2D_COPY_CHECKR(TestEnvironment::Instance(),uint64 ,141,532,5,UnsignedInteger64Bit);
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,1,1,1,CCString,ConstCharString(sizeof(CCString)));
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,1,6,6,CCString,ConstCharString(sizeof(CCString)));
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,2,2,2,CCString,ConstCharString(sizeof(CCString)));
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,5,5,5,CCString,ConstCharString(sizeof(CCString)));
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,10,35,5,CCString,ConstCharString(sizeof(CCString)));
-RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,515,235,5,CCString,ConstCharString(sizeof(CCString)));
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,1,1,1,CCString,ConstCharString);
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,1,6,6,CCString,ConstCharString);
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,2,2,2,CCString,ConstCharString);
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,5,5,5,CCString,ConstCharString);
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,10,35,5,CCString,ConstCharString);
+RANDOM_2D_CONVERT_CHECK(TestEnvironment::Instance(),DynamicCString ,515,235,5,CCString,ConstCharString);
 
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32, uint32,uint32_uint32);
 COPY_CHECK_OK(TestEnvironment::Instance(),uint32, Vector<uint32>,uint32_Vuint32);

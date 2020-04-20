@@ -283,6 +283,7 @@ ErrorManagement::ErrorType IOBufferWrapperStream::Next(){
 		stream = reinterpret_cast<StreamI *>(pointer);
 	} else {
 		ret.illegalOperation = true;
+        REPORT_ERROR(ErrorManagement::FatalError, "size is not known. cannot handle arrays of StreamI");
 	}
 	// do not know how to skip to next object
 	return ret;
@@ -846,9 +847,9 @@ ErrorManagement::ErrorType CharToStringTCO::Convert(uint8 *dest, const uint8 *so
 }
 
 BitSetToStringTCO::BitSetToStringTCO(IOBufferWrapper *writerIn,TypeDescriptor td,bool isSignedIn): StringTCO(writerIn){
-	numberBitSize  = static_cast<uint8>(td.numberOfBits);
-	numberBitShift = static_cast<uint8>(td.bitOffset);
-	byteSize 	   = SizeFromTDBasicTypeSize(td.basicTypeSize);
+	numberBitSize  = static_cast<uint8>(td.GetNumericBitSize());
+	numberBitShift = static_cast<uint8>(td.GetNumericBitOffset());
+	byteSize 	   = td.StorageSize();
 	isSigned       = isSignedIn;
 }
 
@@ -1146,15 +1147,15 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 	IOBufferWrapper *wrapper = NULL_PTR(IOBufferWrapper *);
 	if (isCompare){
 		if (destTd.SameAs(DynamicCharString) ||
-			destTd.SameTypeAs(ConstCharString(sizeof(CCString))) ||
-		    destTd.SameTypeAs(CharString)){
+			destTd.SameTypeAs(ConstCharString) ||
+		    destTd.SameTypeAs(CharString(0))){
 			wrapper = new IOBufferCStringCompareWrapper();
 		}
 	} else {
-		if (destTd.SameTypeAs(StreamType(0))){
-			wrapper = new IOBufferWrapperStream(destTd.objectSize);
+		if (destTd.SameTypeAs(StreamType)){
+			wrapper = new IOBufferWrapperStream(destTd.StorageSize());
 		} else
-		if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
+		if (destTd.SameAs(StreamStringType) ){
 			wrapper = new IOBufferWrapperSString();
 		} else
 		if (destTd.SameAs(DynamicCharString)){
@@ -1164,10 +1165,11 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (wrapper != NULL){
-		uint32 fullType = sourceTd.fullType;
-		uint32 basicTypeSize = sourceTd.basicTypeSize;
-		bool hasBitSize = sourceTd.hasBitSize;
-		bool isStructuredData = sourceTd.isStructuredData;
+		TD_FullType fullType = sourceTd.GetFullTypeCode();
+//		uint32 basicTypeSize = sourceTd.basicTypeSize;
+		uint32 storageSize = sourceTd.StorageSize();
+		bool hasBitSize = sourceTd.IsBitType();
+		bool isStructuredData = sourceTd.IsStructuredData();
 		if (!isStructuredData){
 			switch(fullType){
 			case TDF_Char:{
@@ -1175,17 +1177,17 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 			}break;
 			case TDF_UnsignedInteger:{
 				if (!hasBitSize){
-					switch(basicTypeSize){
-					case Size8bit:{
+					switch(storageSize){
+					case 1:{
 						tco = new IntegerToStringTCO<uint8>(wrapper);
 					}break;
-					case Size16bit:{
+					case 2:{
 						tco = new IntegerToStringTCO<uint16>(wrapper);
 					}break;
-					case Size32bit:{
+					case 4:{
 						tco = new IntegerToStringTCO<uint32>(wrapper);
 					}break;
-					case Size64bit:{
+					case 8:{
 						tco = new IntegerToStringTCO<uint64>(wrapper);
 					}break;
 
@@ -1199,17 +1201,17 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 			}break;
 			case TDF_SignedInteger:{
 				if (!hasBitSize){
-					switch(basicTypeSize){
-					case Size8bit:{
+					switch(storageSize){
+					case 1:{
 						tco = new IntegerToStringTCO<int8>(wrapper);
 					}break;
-					case Size16bit:{
+					case 2:{
 						tco = new IntegerToStringTCO<int16>(wrapper);
 					}break;
-					case Size32bit:{
+					case 4:{
 						tco = new IntegerToStringTCO<int32>(wrapper);
 					}break;
-					case Size64bit:{
+					case 8:{
 						tco = new IntegerToStringTCO<int64>(wrapper);
 					}break;
 					default:{
@@ -1220,11 +1222,11 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 				}
 			}break;
 			case TDF_Float:{
-				switch(basicTypeSize){
-				case Size32bit:{
+				switch(storageSize){
+				case 4:{
 					tco = new FloatToStringTCO<float>(wrapper);
 				}break;
-				case Size64bit:{
+				case 8:{
 					tco = new FloatToStringTCO<double>(wrapper);
 				}break;
 				default:{

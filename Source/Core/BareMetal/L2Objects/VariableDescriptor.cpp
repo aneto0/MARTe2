@@ -65,22 +65,22 @@ void VariableDescriptor::AddModifiersLayerConst(char8 modifier, uint64 size){
 	if (modifier != 'O'){
 		switch (modifier){
 		case 'V':{
-			if (typeDescriptor.dataIsConstant){
+			if (typeDescriptor.DataIsConstant()){
 				modifier = 'v';
 			}
-			typeDescriptor.dataIsConstant = false;
+			typeDescriptor.SetDataConstant(false);
 		}break;
 		case 'M':{
-			if (typeDescriptor.dataIsConstant){
+			if (typeDescriptor.DataIsConstant()){
 				modifier = 'm';
 			}
-			typeDescriptor.dataIsConstant = false;
+			typeDescriptor.SetDataConstant(false);
 		}break;
 		case 'P':{
-			if (typeDescriptor.dataIsConstant){
+			if (typeDescriptor.DataIsConstant()){
 				modifier = 'p';
 			}
-			typeDescriptor.dataIsConstant = false;
+			typeDescriptor.SetDataConstant(false);
 		}break;
 		default:{
 
@@ -683,6 +683,25 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	 	}break;
 	 	case 'O':{
 	 		if (typeDescriptor.IsCharStreamType()){
+
+	 			if (typeDescriptor.IsCharString()){
+	 				CCString *string = reinterpret_cast<CCString *>(const_cast<uint8 *>(pointer));
+	 				uint32 size = string->GetSize();
+	 				ret.outOfRange = (size <= index);
+ 			        REPORT_ERROR(ret, "index >= string size");
+	 				if (ret){
+	 					pointer = reinterpret_cast<const uint8 *>(string->GetList()+index);
+
+	 					// remove the DynamicCstring information
+	 					if (!typeDescriptor.SameTypeAs(ConstCharacter8Bit)){
+	 						typeDescriptor = Character8Bit;
+	 					}
+	 				}
+	 			} else {
+			 		ret.illegalOperation = true;
+			        REPORT_ERROR(ret, "can only redirect Zero Term Char streams");
+	 			}
+#if 0
 	 			TD_FullType fullType = static_cast<TD_FullType>(typeDescriptor.fullType);
 	 			switch (fullType){
 	 			case TDF_DynamicCString:
@@ -694,7 +713,8 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
  			        REPORT_ERROR(ret, "index >= string size");
 	 				if (ret){
 	 					pointer = reinterpret_cast<const uint8 *>(string->GetList()+index);
-		 				if (fullType == TDF_CCString){
+
+	 					if (fullType == TDF_CCString){
 			 				typeDescriptor = ConstCharacter8Bit;
 		 				} else {
 			 				typeDescriptor = Character8Bit;
@@ -707,6 +727,8 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 			        REPORT_ERROR(ret, "can only redirect Zero Term Char streams");
 	 			} break;
 	 			}
+#endif
+
 	 		} else {
 		 		ret.illegalOperation = true;
 		        REPORT_ERROR(ret, "cannot redirect a basic type");

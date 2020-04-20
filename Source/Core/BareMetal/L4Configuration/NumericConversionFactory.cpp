@@ -106,11 +106,11 @@ public:
 	 * @brief constructor
 	 */
 	BitSet2BitSetTCO(TypeDescriptor sourceTd,TypeDescriptor destTd,bool isCompare): compare(isCompare){
-		srcNumberBitSize  = static_cast<uint8>(sourceTd.numberOfBits);
-		srcNumberBitShift = static_cast<uint8>(sourceTd.bitOffset);
+		srcNumberBitSize  = static_cast<uint8>(sourceTd.GetNumericBitSize());
+		srcNumberBitShift = static_cast<uint8>(sourceTd.GetNumericBitOffset());
 		srcIsSigned       = sourceTd.IsSigned();
-		dstNumberBitSize  = static_cast<uint8>(destTd.numberOfBits);
-		dstNumberBitShift = static_cast<uint8>(destTd.bitOffset);
+		dstNumberBitSize  = static_cast<uint8>(destTd.GetNumericBitSize());
+		dstNumberBitShift = static_cast<uint8>(destTd.GetNumericBitOffset());
 		dstIsSigned       = destTd.IsSigned();
 	}
 
@@ -186,8 +186,8 @@ public:
 	 * @brief constructor
 	 */
 	BitSet2NumberTCO(TypeDescriptor td,bool isCompare): compare(isCompare){
-		numberBitSize  = static_cast<uint8>(td.numberOfBits);
-		numberBitShift = static_cast<uint8>(td.bitOffset);
+		numberBitSize  = static_cast<uint8>(td.GetNumericBitSize());
+		numberBitShift = static_cast<uint8>(td.GetNumericBitOffset());
 		isSigned = td.IsSigned();
 	}
 
@@ -271,8 +271,8 @@ public:
 	 * @brief constructor
 	 */
 	Number2BitSetTCO(TypeDescriptor td,bool isCompare): compare(isCompare){
-		numberBitSize  = static_cast<uint8>(td.numberOfBits);
-		numberBitShift = static_cast<uint8>(td.bitOffset);
+		numberBitSize  = static_cast<uint8>(td.GetNumericBitSize());
+		numberBitShift = static_cast<uint8>(td.GetNumericBitOffset());
 		isSigned = td.IsSigned();
 	}
 
@@ -391,19 +391,21 @@ public:
 	static inline TypeConversionOperatorI *Do(const TypeDescriptor td,const TypeDescriptor td2,bool isCompare){
 		TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
-		switch(td.fullType){
+		TD_FullType fullType = td.GetFullTypeCode();
+		uint32 storageSize = td.StorageSize();
+		switch(fullType){
 		case TDF_UnsignedInteger:{
-			switch(td.basicTypeSize){
-			case Size8bit:{
+			switch(storageSize){
+			case 1:{
 				tco =  T3::template Do<T2,uint8>(td2,td,isCompare);
 			}break;
-			case Size16bit:{
+			case 2:{
 				tco = T3::template Do<T2,uint16>(td2,td,isCompare);
 			}break;
-			case Size32bit:{
+			case 4:{
 				tco = T3::template Do<T2,uint32>(td2,td,isCompare);
 			}break;
-			case Size64bit:{
+			case 8:{
 				tco = T3::template Do<T2,uint64>(td2,td,isCompare);
 			}break;
 			default:{
@@ -411,17 +413,17 @@ public:
 			}
 		}break;
 		case TDF_SignedInteger:{
-			switch(td.basicTypeSize){
-			case Size8bit:{
+			switch(storageSize){
+			case 1:{
 				tco = T3::template Do<T2,int8>(td2,td,isCompare);
 			}break;
-			case Size16bit:{
+			case 2:{
 				tco = T3::template Do<T2,int16>(td2,td,isCompare);
 			}break;
-			case Size32bit:{
+			case 4:{
 				tco = T3::template Do<T2,int32>(td2,td,isCompare);
 			}break;
-			case Size64bit:{
+			case 8:{
 				tco = T3::template Do<T2,int64>(td2,td,isCompare);
 			}break;
 
@@ -430,11 +432,11 @@ public:
 			}
 		}break;
 		case TDF_Float:{
-			switch(td.basicTypeSize){
-			case Size32bit:{
+			switch(storageSize){
+			case 4:{
 				tco = T3::template Do<T2,float>(td2,td,isCompare);
 			}break;
-			case Size64bit:{
+			case 8:{
 				tco = T3::template Do<T2,double>(td2,td,isCompare);
 			}break;
 			default:{
@@ -461,19 +463,22 @@ public:
 	static inline TypeConversionOperatorI *Do(const TypeDescriptor td,const TypeDescriptor td2,bool isCompare){
 		TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
 
-		switch(td.fullType){
+		TD_FullType fullType = td.GetFullTypeCode();
+		uint32 storageSize = td.StorageSize();
+
+		switch(fullType){
 		case TDF_UnsignedInteger:{
-			switch(td.basicTypeSize){
-			case Size8bit:{
+			switch(storageSize){
+			case 1:{
 				tco = T3::template Do<T2,uint8>(td2,td,isCompare);
 			}break;
-			case Size16bit:{
+			case 2:{
 				tco = T3::template Do<T2,uint16>(td2,td,isCompare);
 			}break;
-			case Size32bit:{
+			case 4:{
 				tco = T3::template Do<T2,uint32>(td2,td,isCompare);
 			}break;
-			case Size64bit:{
+			case 8:{
 				tco = T3::template Do<T2,uint64>(td2,td,isCompare);
 			}break;
 			default:{
@@ -481,17 +486,17 @@ public:
 			}
 		}break;
 		case TDF_SignedInteger:{
-			switch(td.basicTypeSize){
-			case Size8bit:{
+			switch(storageSize){
+			case 1:{
 				tco = T3::template Do<T2,int8>(td2,td,isCompare);
 			}break;
-			case Size16bit:{
+			case 2:{
 				tco = T3::template Do<T2,int16>(td2,td,isCompare);
 			}break;
-			case Size32bit:{
+			case 4:{
 				tco = T3::template Do<T2,int32>(td2,td,isCompare);
 			}break;
-			case Size64bit:{
+			case 8:{
 				tco = T3::template Do<T2,int64>(td2,td,isCompare);
 			}break;
 

@@ -48,7 +48,7 @@ bool BufferedStreamITest::TestAnyType() {
     DummySingleBufferedStream myStream;
     AnyType anyStream = myStream;
     bool ok = anyStream.GetVariablePointer() == &myStream;
-    ok = !anyStream.GetFullVariableDescriptor().GetSummaryTypeDescriptor().dataIsConstant;
+    ok = !anyStream.GetFullVariableDescriptor().GetSummaryTypeDescriptor().DataIsConstant();
     ok = (anyStream.GetFullVariableDescriptor().GetSummaryTypeDescriptor().IsSpecialType());
     return ok;
 }

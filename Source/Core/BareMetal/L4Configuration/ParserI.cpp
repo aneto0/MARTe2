@@ -235,7 +235,7 @@ void ParserI::ParseStatus::Init(){
 	nodeName().Truncate(0);
 	ok = true;
 	parseElStatus = ParseStatus::parseElFinished;
-	td = ConstCharString(sizeof(CCString));
+	td = ConstCharString;
 }
 
 ErrorManagement::ErrorType ParserI::Parse() {

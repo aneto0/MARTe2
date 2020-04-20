@@ -90,7 +90,7 @@ uint32 ClassRegistryIndex::GetClassSize (uint32 classRegistrationNo){
 
 TypeDescriptor ClassRegistryIndex::GetTypeDescriptor(CCString name){
 	TypeDescriptor td = InvalidType(0);
-	for (uint32 i = 0u; (i < NumberOfRegisteredClasses()) && (td.all == InvalidType(0).all); i++){
+	for (uint32 i = 0u; (i < NumberOfRegisteredClasses()) && (td.SameAs(InvalidType(0))); i++){
 		ClassRegistryItemI *crii =  (*this)[i];
 		if (crii != NULL){
 			CCString className = crii->GetClassName();

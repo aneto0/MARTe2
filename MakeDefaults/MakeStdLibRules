@@ -39,6 +39,7 @@ do_showInfo:
 	@echo To compile: $(OBJSX1) 
 	@echo To optimize: $(OBJSX2) 
 	@echo To delete: $(OBJSXDEL) 
+	@echo Depends: $(DEPEND_INCLUDE) 
 	@echo choose among 
 	@echo 1\) make build     to build libraries
 	@echo 2\) make clean     to remove any produced file
@@ -49,12 +50,9 @@ do_showInfo:
 	@echo choose targer by adding -D TARGET  {msc x86-linux ...}
 	@echo current target is $(TARGET)
 
-
-
-
 DEPEND_INCLUDE=  depends.$(TARGET)
 
-ifeq ($(SRCS),)
+ifeq ($(SRCS0),)
 DEPEND_INCLUDE=  
 endif
 

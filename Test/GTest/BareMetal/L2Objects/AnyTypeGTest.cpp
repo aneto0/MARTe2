@@ -159,7 +159,7 @@ TEST(AnyTypeGTest, TestAnyType_Object) {
 
 TEST(AnyTypeGTest, TestAnyType_ConstObject) {
 	TypeDescriptor td = ClassRegistryItem::Instance<TestObjectHelper1>()->GetTypeDescriptor();
-	td.dataIsConstant = true;
+	td.SetDataConstant(true);
     ASSERT_TRUE(AnyTypeTest::ATVerify<TestObjectHelper1 * const >(NULL,td,"P"));
 }
 

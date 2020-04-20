@@ -76,7 +76,7 @@ ErrorManagement::ErrorType  AnyType::Dereference (CCString field){
 	// check if type is a structure
 	TypeDescriptor td = variableDescriptor.GetSummaryTypeDescriptor();
 	if (ret){
-		ret.invalidOperation = !td.isStructuredData;
+		ret.invalidOperation = !td.IsStructuredData();
 		COMPOSITE_REPORT_ERROR(ret,"cannot switch to ",field," in a non structured variable");
 	}
 

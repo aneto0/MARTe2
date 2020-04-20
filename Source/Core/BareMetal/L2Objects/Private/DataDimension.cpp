@@ -68,7 +68,7 @@ DataDimension::DataDimension(const TypeDescriptor &td): Dimension(){
 	endStack = this;
 	this->td = td;
 	flags = isBreak | isFinal;
-	if (td.dataIsConstant){
+	if (td.DataIsConstant()){
 		flags |= isConstant;
 	}
 }

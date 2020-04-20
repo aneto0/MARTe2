@@ -173,8 +173,8 @@ const ClassRegistryItem *Peek(const uint32 &idx) {
 ClassRegistryItem *Find(const TypeDescriptor &targetTd) {
 	ClassRegistryItem *cri = NULL_PTR(ClassRegistryItem *);
 	ClassRegistryIndex *classDatabase = ClassRegistryIndex::Instance();
-	if (targetTd.isStructuredData && (classDatabase != NULL_PTR(ClassRegistryIndex *))){
-		cri = classDatabase->GetClassRegistryItem(targetTd.structuredDataIdCode);
+	if (targetTd.IsStructuredData() && (classDatabase != NULL_PTR(ClassRegistryIndex *))){
+		cri = classDatabase->GetClassRegistryItem(targetTd.GetStructuredDataIdCode());
 	}
     return cri;
 }

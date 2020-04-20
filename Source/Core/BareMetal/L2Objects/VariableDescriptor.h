@@ -623,27 +623,27 @@ void VariableDescriptor::Match(StaticZeroTerminatedArray<T,sz> * vec){
 }
 
 void VariableDescriptor::Match(DynamicCString *s){
-	bool isConstant = typeDescriptor.dataIsConstant;
+	bool isConstant = typeDescriptor.DataIsConstant();
 	if (isConstant){
-		FinaliseCode(ConstCharString(sizeof(DynamicCString)));
+		FinaliseCode(ConstCharString);
 	} else {
-		typeDescriptor.dataIsConstant = false;
+		typeDescriptor.SetDataConstant(false);
 		FinaliseCode(DynamicCharString);
 	}
 }
 
 void VariableDescriptor::Match(CString *s){
-	FinaliseCode(CharString);
+	FinaliseCode(CharString(0));
 }
 
 void VariableDescriptor::Match(CCString *s){
-	FinaliseCode(ConstCharString(sizeof(CString)));
+	FinaliseCode(ConstCharString);
 }
 
 // TODO wrong. this is not a pointer!
 template <uint32 sz>
 void VariableDescriptor::Match(StaticCString<sz> *s){
-	FinaliseCode(ConstCharString(sz));
+	FinaliseCode(CharString(sz));
 }
 
 template <class T,unsigned int n>
@@ -675,7 +675,7 @@ inline void VariableDescriptor::Match(T ** x){
 
 template <class T>
 inline void VariableDescriptor::Match(T * const * x){
-	typeDescriptor.dataIsConstant = true;
+	typeDescriptor.SetDataConstant(true);;
     T ** pp=NULL;
     Match(pp);
 }
@@ -690,14 +690,14 @@ inline void VariableDescriptor::Match(T const * * x){
 
 template <class T>
 inline void VariableDescriptor::Match(T const * const * x){
-	typeDescriptor.dataIsConstant = true;
+	typeDescriptor.SetDataConstant(true);
     T const * * pp=NULL;
     Match(pp);
 }
 
 template <class T>
 void VariableDescriptor::Match(T const * x){
-	typeDescriptor.dataIsConstant = true;
+	typeDescriptor.SetDataConstant(true);
     T * pp=NULL;
     Match(pp);
 }
@@ -709,7 +709,7 @@ inline void VariableDescriptor::Match(T * x){
 
 template <class T>
 void VariableDescriptor::Match(StreamString *s){
-	FinaliseCode(StreamStringType(sizeof(T)));
+	FinaliseCode(StreamStringType);
 }
 
 template <class T>
@@ -725,17 +725,17 @@ void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(Stre
 
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StreamI,T) && !isSame(StreamString,T), T>::type *x){
-	FinaliseCode(StreamType(sizeof(T)));
+	FinaliseCode(StreamType);
 }
 
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSame(StreamString,T), T>::type *x){
-	FinaliseCode(StreamStringType(sizeof(T)));
+	FinaliseCode(StreamStringType);
 }
 
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StructuredDataI,T), T>::type *x){
-	FinaliseCode(StructuredDataType(sizeof(T)));
+	FinaliseCode(StructuredDataIType(sizeof(T)));
 }
 
 #if 0 // Object knows how to generate AnyType
@@ -799,7 +799,7 @@ void VariableDescriptor::Match(void * p) {
 }
 
 void VariableDescriptor::Match(StructuredDataI *s){
-	FinaliseCode(StructuredDataType(0));
+	FinaliseCode(StructuredDataIType(0));
 }
 
 
@@ -819,9 +819,9 @@ void VariableDescriptor::Match(FractionalInteger<baseType, bitSize> * fractional
 }
 
 void VariableDescriptor::FinaliseCode(TypeDescriptor td){
-	bool isConst = typeDescriptor.dataIsConstant;
+	bool isConst = typeDescriptor.DataIsConstant();
 	typeDescriptor = td;
-	if (isConst) typeDescriptor.dataIsConstant = true;
+	if (isConst) typeDescriptor.SetDataConstant(true);
 }
 
 const char8 *VariableDescriptor::GetModifiers() const{

@@ -128,18 +128,12 @@ bool StreamStringTest::TestAnyTypeOperator(const char8* initializationString) {
 
     TypeDescriptor td = test.GetFullVariableDescriptor().GetSummaryTypeDescriptor();
 
-    if (td.isStructuredData) {
+
+    if (td.DataIsConstant()) {
         return false;
     }
 
-    if (td.dataIsConstant) {
-        return false;
-    }
-
-    if (td.fullType != TDF_CCString) {
-        return false;
-    }
-    if (td.numberOfBits != (sizeof(StreamString) * 8)) {
+    if (!td.IsStreamString()) {
         return false;
     }
 

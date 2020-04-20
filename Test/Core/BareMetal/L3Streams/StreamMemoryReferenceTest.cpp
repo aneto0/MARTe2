@@ -116,18 +116,15 @@ bool StreamMemoryReferenceTest::TestAnyTypeOperator(const char8* initializationS
 
     TypeDescriptor td = test.GetFullVariableDescriptor().GetSummaryTypeDescriptor();
 
-    if (td.isStructuredData) {
+    if (td.IsStructuredData()) {
         return false;
     }
 
-    if (!td.dataIsConstant) {
+    if (!td.DataIsConstant()) {
         return false;
     }
 
-//    if (td.type != BT_CCString) {
-//        return false;
-//    }
-    if (td.numberOfBits != (sizeof(const char8*) * 8)) {
+    if (!td.IsCharString()) {
         return false;
     }
 
