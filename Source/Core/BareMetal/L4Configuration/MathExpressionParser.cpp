@@ -25,14 +25,12 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <iostream>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "MathExpressionParser.h"
-#include "TypeConversion.h"
-#include "AdvancedErrorManagement.h"
+#include "AdvancedErrorManagement.h" // DEBUG remove this
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -106,55 +104,18 @@ static const char8 *GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
 }
 
-static void PrintErrorOnStream(const char8 * const format,
-                               const uint32 lineNumber,
-                               BufferedStreamI * const err) {
-    if (err != NULL) {
-        if (!err->Printf(format, lineNumber)) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
-        }
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, format, lineNumber);
-    }
-}
-
-static const char8* GetCurrentTokenData(Token * const token) {
-
-    return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
-}
-
-//static uint32 GetCurrentTokenId(const Token * const token) {
-    //return (token != NULL)?(token->GetId()):(ERROR_TOKEN);
-//}
-
-static uint32 GetCurrentTokenLineNumber(const Token * const token) {
-    return (token != NULL)?(token->GetLineNumber()):0u;
-}
-
 }
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//const MARTe::char8* allOperators = "+-*/^=";
-
 namespace MARTe {
 
 MathExpressionParser::MathExpressionParser(StreamI &stream,
                                            StructuredDataI &databaseIn,
                                            BufferedStreamI * const err) :
-    tokenProducer(stream, &(MathGrammar.assignment), MathGrammar.separators, MathGrammar.beginOneLineComment, MathGrammar.beginMultipleLinesComment, MathGrammar.endMultipleLinesComment),
-    memory(1u) {
-        numberOfColumns = 0u;
-        firstNumberOfColumns = 0u;
-        numberOfRows = 0u;
-        database = &databaseIn;
-        errorStream = err;
-        tokenType = 0u;
-        numberOfDimensions = 0u;
-        grammar = MathGrammar;
-        currentToken = static_cast<Token*>(NULL);
-        isError = false;
+    ParserI(stream, databaseIn, err, MathGrammar) {
 		
 		//tokenProducer.TokenizeInput();
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Acquired terminals:: %s", &(MathGrammar.assignment));
@@ -169,60 +130,16 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 6 ] = &MathExpressionParser::PopTypecast;
     Action [ 7 ] = &MathExpressionParser::AddOperand;
     Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
+    
+    //for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
+	//{
+		//REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-5s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
+	//}
 }
 
 MathExpressionParser::~MathExpressionParser() {
 // Auto-generated destructor stub for MathExpressionParser
 // TODO Verify if manual additions are needed
-}
-
-uint32 MathExpressionParser::GetNextTokenType()
-{
-	uint32 ret = 0u;
-
-	currentToken = tokenProducer.GetToken();
-
-	uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL); //StringHelper::Length(terminals)+2u;
-	const char8* toCompare = static_cast<const char8 *>(NULL);
-
-	// if it is a terminal use the data
-	if (currentToken->GetId() == TERMINAL_TOKEN) {
-		toCompare = currentToken->GetData();
-	}
-	// otherwise use the description
-	else {
-		toCompare = currentToken->GetDescription();
-	}
-	// return the slk token number
-	for (uint32 i = 0u; i < endTokendId; i++) {
-		if (StringHelper::Compare(toCompare, GetSymbolName(i)) == 0) {
-			ret = i;
-		}
-	}
-	return ret;
-}
-
-uint32 MathExpressionParser::PeekNextTokenType(const uint32 position)
-{
-	uint32 ret = 0u;
-
-	Token* tok = tokenProducer.PeekToken(position);
-	uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL);
-	const char8* toCompare = static_cast<const char8 *>(NULL);
-
-	if (tok->GetId() == TERMINAL_TOKEN) {
-		toCompare = tok->GetData();
-	}
-	else {
-		toCompare = tok->GetDescription();
-	}
-	for (uint32 i = 0u; i < endTokendId; i++) {
-		if (StringHelper::Compare(toCompare, GetSymbolName(i)) == 0) {
-			ret = i;
-		}
-	}
-
-	return ret;
 }
 
 const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
@@ -272,9 +189,9 @@ void MathExpressionParser::End()
 	REPORT_ERROR_STATIC(ErrorManagement::Information, "END");
 	
 	// Write in the stack machine expression
-	StackMachineExpr += "WRITE ";
-    StackMachineExpr += assignmentVarName.Buffer();
-    StackMachineExpr += "\n";
+	stackMachineExpr += "WRITE ";
+    stackMachineExpr += assignmentVarName.Buffer();
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::PushOperator()
@@ -293,8 +210,8 @@ void MathExpressionParser::PopOperator()
 	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
 	
 	// Write in the stack machine expression
-	StackMachineExpr += OperatorLookupTable(operat->Buffer());
-	StackMachineExpr += "\n";
+	stackMachineExpr += OperatorLookupTable(operat->Buffer());
+	stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::PushTypecast()
@@ -308,12 +225,13 @@ void MathExpressionParser::PopTypecast()
 {
 	uint32 top = typecastStack.GetSize() - 1;
 	StreamString* operat;
+	
 	typecastStack.Extract(top, operat);
 	
 	// Write in the stack machine expression
-	StackMachineExpr += "CAST ";
-	StackMachineExpr += operat->Buffer();
-	StackMachineExpr += "\n";
+	stackMachineExpr += "CAST ";
+	stackMachineExpr += operat->Buffer();
+	stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::AddOperand()
@@ -322,13 +240,13 @@ void MathExpressionParser::AddOperand()
 
     // Write in the stack machine expression
     if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0)
-		StackMachineExpr += "READ ";
+		stackMachineExpr += "READ ";
 		
 	else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0)
-		StackMachineExpr += "CONST ";
+		stackMachineExpr += "CONST ";
 	
-	StackMachineExpr += currentToken->GetData();
-	StackMachineExpr += "\n";
+	stackMachineExpr += currentToken->GetData();
+	stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::AddOperandTypecast()
@@ -338,185 +256,67 @@ void MathExpressionParser::AddOperandTypecast()
 	typecastStack.Extract(top, operat);
 	
     // Write in the stack machine expression
-    StackMachineExpr += "CONST<";
-	StackMachineExpr += operat->Buffer();
-	StackMachineExpr += ">";
-	StackMachineExpr += currentToken->GetData();
-	StackMachineExpr += "\n";
+    stackMachineExpr += "CONST<";
+	stackMachineExpr += operat->Buffer();
+	stackMachineExpr += ">";
+	stackMachineExpr += currentToken->GetData();
+	stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::StoreAssignment()
 {
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "StoreAssignment");
+	REPORT_ERROR_STATIC(ErrorManagement::Debug, "StoreAssignment %s", currentToken->GetData());
 	
 	assignmentVarName = currentToken->GetData();
 }
 
 void MathExpressionParser::Execute(const uint32 number) {
-(this->*Action[number])();
+	(this->*Action[number])();
 }
 
 const char8 *MathExpressionParser::GetSymbolName(const uint32 symbol) const {
-const char8 *symbolName = static_cast<const char8 *>(NULL);
+	const char8 *symbolName = static_cast<const char8 *>(NULL);
 
-if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
-    symbolName=GetTerminalName(symbol);
-}
-else {
-    symbolName="not a symbol";
-}
-return symbolName;
+	if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
+		symbolName=GetTerminalName(symbol);
+	}
+	else {
+		symbolName="not a symbol";
+	}
+	return symbolName;
 }
 
 uint32 &MathExpressionParser::GetProduction(const uint32 index) const {
-return Production[index];
+	return Production[index];
 }
 
 uint32 MathExpressionParser::GetProductionRow(const uint32 index) const {
-return Production_row[index];
+	return Production_row[index];
 }
 
 uint32 MathExpressionParser::GetParse(const uint32 index) const {
-return ParseArray[index];
+	return ParseArray[index];
 }
 
 uint32 MathExpressionParser::GetParseRow(const uint32 index) const {
-return Parse_row[index];
+	return Parse_row[index];
 }
 
 uint32 MathExpressionParser::GetConflict(const uint32 index) const {
-return Conflict[index];
+	return Conflict[index];
 }
 
 uint32 MathExpressionParser::GetConflictRow(const uint32 index) const {
-return Conflict_row[index];
+	return Conflict_row[index];
 }
 
 uint32 MathExpressionParser::GetConstant(const uint32 index) const {
-return Constants[index];
+	return Constants[index];
 }
 
 StreamString MathExpressionParser::GetStackMachineExpression()
 {
-	return StackMachineExpr;
-}
-
-bool MathExpressionParser::Parse() {
-typeName = defaultTypeName;
-
-for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
-	{
-		REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-5s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
-	}
-
-bool isEOF = false;
-
-while ((!isError) && (!isEOF)) {
-    
-    uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
-    uint32 *stack = &stackArray[0];
-
-    uint32 *top = &stackArray[ParserConstant::PARSE_STACK_SIZE - 1u];
-    *top = 0u;
-    uint32 start_symbol = GetConstant(ParserConstant::START_SYMBOL);
-
-    StackPush(start_symbol, stack, top);
-    uint32 token = GetNextTokenType();
-    uint32 new_token = token;
-
-    for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);)
-    {
-		// It's an action
-        if (symbol >= GetConstant(ParserConstant::START_ACTION))
-        {
-            Execute(symbol - (GetConstant(ParserConstant::START_ACTION) - 1u));
-
-        }
-        
-        // It's a symbol
-        else if (symbol >= GetConstant(ParserConstant::START_SYMBOL))
-        {
-            uint32 level = 0u; // before was 1
-            
-            // Look for it among those defined in the grammar
-            uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
-            index += token;
-            uint32 entry = GetParse(index);
-            while (entry >= GetConstant(ParserConstant::START_CONFLICT))
-            {
-                index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
-                index += PeekNextTokenType(level);
-                entry = GetConflict(index);
-                ++level;
-            }
-            
-            if (entry > 0u)
-            {
-                uint32 *production = &GetProduction(GetProductionRow(entry));
-                uint32 production_length = *production - 1u;
-                production = &production[1];
-                /*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-                if (*production == symbol) {
-                    /*lint -e{661} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-                    for (; production_length > 0u; production_length--) {
-                        /*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-                        uint32 toPush = production[production_length];
-                        StackPush(toPush, stack, top);
-                    }
-                }
-                else {
-                    (token == 0u) ? (isEOF = true) : (isError = true);
-                    if (isError) {
-                        PrintErrorOnStream("\nInvalid Token! [%d], %s", GetCurrentTokenLineNumber(currentToken), errorStream);
-                        std::cout << GetCurrentTokenData(currentToken) << " err1 (syntax error: valid token but invalid positioning (?)) \n";
-					}
-                    new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-                }
-            }
-            
-            // This particular token was not found among those defined in the grammar, so it's invalid
-            else
-            {
-                (token == 0u) ? (isEOF = true) : (isError = true);
-                if (isError) {
-                    PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-                    std::cout << GetCurrentTokenData(currentToken) << " " << (tokenProducer.PeekToken(0))->GetData() << " err2 (token was not found among those defined in the grammar(?))\n";
-                }
-                new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-            }
-        }
-        else {
-            if (symbol > 0u) {
-                if (symbol == token) {
-                    token = GetNextTokenType();
-                    new_token = token;
-                }
-                else {
-                    isError = true;
-                    PrintErrorOnStream("\nInvalid Expression! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-                    new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-                }
-            }
-        }
-        if (token != new_token) {
-            if (new_token > 0u) {
-                token = new_token;
-            }
-            if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
-                continue;
-            }
-        }
-        symbol = StackPop(top);
-    }
-    if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
-        PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-REPORT_ERROR_STATIC(ErrorManagement::Debug, "PARSED!");
-
-return !isError;
+	return stackMachineExpr;
 }
 
 }
