@@ -28,16 +28,12 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Token.h"
-#include "StructuredDataI.h"
-#include "StreamString.h"
-#include "AnyTypeCreator.h"
-#include "LexicalAnalyzer.h"
-#include "ParserI.h"
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "ParserI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -89,7 +85,7 @@ namespace MARTe{
  * declared in this parser.
  */
 
-class MathExpressionParser {
+class DLL_API MathExpressionParser : public ParserI {
 
 public:
     MathExpressionParser(StreamI &stream,
@@ -97,12 +93,8 @@ public:
                          BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
 
     virtual ~MathExpressionParser();
-
-    bool Parse();
     
     StreamString GetStackMachineExpression();
-
-    GrammarInfo GetGrammarInfo() const;
 
 protected:
     
@@ -124,7 +116,7 @@ protected:
 		 *          the end of an infix operation. The operation operator
 		 *          previously stored by PushOperator() is then popped 
 		 *          from the #operatorStack and appended to the stack
-		 *          machine expression #StackMachineExpr.
+		 *          machine expression #stackMachineExpr.
 		 */
 		virtual void PopOperator();
 		
@@ -143,7 +135,7 @@ protected:
 		 *          the end of a typecast operation. The typecast type
 		 *          previously stored by PushTypecast() is then popped 
 		 *          from the typecastStack and appended to the stack
-		 *          machine expression #StackMachineExpr.
+		 *          machine expression #stackMachineExpr.
 		 */
 		virtual void PopTypecast();
 		
@@ -152,7 +144,7 @@ protected:
 		 *          to the output expression.
 		 * @details This method gets called whenever the parser hits an
 		 *          operand (that is, an isolated STRING or NUMBER token).
-		 *          The operand is immediatly added to the #StackMachineExpr
+		 *          The operand is immediatly added to the #stackMachineExpr
 		 *          in the syntax required by the expression evaluator
 		 *          engine (that is, as `READ STRING` for STRING
 		 *          tokens and as `CONST NUMBER` for NUMBER tokens.
@@ -166,7 +158,7 @@ protected:
 		 *          isolated NUMBER token for which store type has been
 		 *          specified in the format `(type) CONSTANT` (e.g. 
 		 *          `(float32) 1.52`).
-		 *          The constant is immediatly added to the #StackMachineExpr
+		 *          The constant is immediatly added to the #stackMachineExpr
 		 *          in the syntax required by the expression evaluator
 		 *          engine (that is, as `READ STRING` for STRING
 		 *          tokens and as `CONST type NUMBER` for NUMBER tokens.
@@ -179,13 +171,13 @@ protected:
 		 * @details This method gets called when the left-hand side of a
 		 *          mathematical expression is hit bt the parser. The STRING
 		 *          token before the assignment operator is stored and
-		 *          then printed at the end of the #StackMachineExpr by
+		 *          then printed at the end of the #stackMachineExpr by
 		 *          the End() method. For example in:
 		 *          
 		 *          <pre> ret = A + B </pre>
 		 * 
 		 *          ret is stored, and later written at the end of the 
-		 *          #StackMachineExpr as
+		 *          #stackMachineExpr as
 		 * 
 		 *          <pre> WRITE ret </pre>
 		 */
@@ -240,67 +232,15 @@ protected:
 
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
     
-	/**
-     * @see ParserI::Execute().
-     */
 	virtual void Execute(const uint32 number);
 	
-	/**
-     * @see ParserI::GetNextTokenType().
-     */
-    virtual uint32 GetNextTokenType();
+	StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
+	StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
 	
-	/**
-     * @see ParserI::PeekNextTokenType().
-     */
-    virtual uint32 PeekNextTokenType(const uint32 position);
-
-	/**
-     * @see ParserI::StackPush().
-     */
-    inline void StackPush(const uint32 symbol,
-                          const uint32 * const stack,
-                          uint32* &top) const;
+    StaticList<StreamString*> operatorStack;     //!< @brief Stack where operators are pushed to and popped from while parsing.
+    StaticList<StreamString*> typecastStack;     //!< @brief Stack where typecast types are pushed to and popped from while parsing.
     
-	/**
-     * @see ParserI::StackPop().
-     */
-    inline uint32 StackPop(uint32* &top) const;
-	
-    Token *currentToken;                       //!< @see ParserI::currentToken.
-    
-    StreamString StackMachineExpr;             //!< @brief Holds the mathematical expression in stack machine form while parsing.
-    
-    StaticList<StreamString*> operatorStack;   //!< @brief Stack where operators are pushed to and popped from while parsing.
-    StaticList<StreamString*> typecastStack;   //!< @brief Stack where typecast types are pushed to and popped from while parsing.
-
 private:
-
-    StreamString typeName;
-
-    StreamString assignmentVarName;
-
-    StructuredDataI *database;
-
-    bool isError;
-
-    LexicalAnalyzer tokenProducer;
-    
-    uint32 numberOfColumns;
-
-    uint32 firstNumberOfColumns;
-
-    uint32 numberOfRows;
-
-    AnyTypeCreator memory;
-
-    BufferedStreamI *errorStream;
-
-    uint32 tokenType;
-
-    uint8 numberOfDimensions;
-
-    GrammarInfo grammar;
 
     void (MathExpressionParser::*Action[10])(void);
     
@@ -314,29 +254,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
-namespace MARTe {
-
-void MathExpressionParser::StackPush(const uint32 symbol,
-                        const uint32 * const stack,
-                        uint32 *&top) const {
-    /*lint -e{946} [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17]. Justification: stack implementation requires operational applied to pointer. */
-    if (top > stack) {
-        /*lint -e{165} , [MISRA C++ Rule 5-0-18]. Justification: stack implementation requires subtraction applied to pointer. */
-        top--;
-        *top = symbol;
-    }
-}
-
-uint32 MathExpressionParser::StackPop(uint32 * &top) const {
-    uint32 ret = 0u;
-    if (*top != 0u) {
-        ret = *top;
-        top++;
-    }
-    return ret;
-}
-
-}
 #endif /* MATHEXPRESSIONPARSER_H_ */
 
