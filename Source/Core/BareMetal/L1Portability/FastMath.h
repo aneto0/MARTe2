@@ -195,6 +195,13 @@ namespace MARTe {
         template<> inline int64 SquareRoot<int64>(const int64 x);
 
         /**
+         * @brief Template implementation for float32.
+         * @details If applied to a negative float, the function typecasts
+         * it to unsigned and computes the square root of the casted float.
+         */
+        template<> inline float32 SquareRoot<float32>(const float32 x);
+
+        /**
          * @brief Computes the product of two integers into two numbers of the same type.
          * @param[in] x1 first  multiplicand
          * @param[in] x2 second multiplicand
@@ -459,6 +466,19 @@ inline int64 SquareRoot<int64>(const int64 x) {
     int64 res = static_cast<int64>(SquareRoot<uint64>(tmp));
 
     return res;
+}
+
+template<>
+inline float32 SquareRoot(const float32 x) {
+
+    float32 tmp = x;
+
+    if (tmp < 0.0F) {
+        REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "SquareRoot<float32> of negative number");
+        tmp *= -1.0F;
+    }
+
+    return sqrtf(tmp);
 }
 
 } /* namespace FastMath */
