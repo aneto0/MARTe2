@@ -181,6 +181,7 @@ ReferenceContainerNode.cpp
 ReferenceT.h
 RegisteredMethodsMessageFilter.cpp
 ReplyMessageCatcherMessageFilter.cpp
+SafeMath.h
 SearchFilter.h
 SearchFilterT.h
 Select.cpp
