@@ -38,7 +38,8 @@ OBJSX=	AnyObjectTest.x \
 	TokenInfoTest.x \
 	TokenTest.x \
 	ValidateBasicTypeTest.x\
-	XMLParserTest.x
+	XMLParserTest.x\
+	MathExpressionParserTest.x
 					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
