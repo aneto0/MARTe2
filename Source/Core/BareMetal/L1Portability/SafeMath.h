@@ -149,22 +149,22 @@ namespace MARTe{
 
         template <>
         inline const int8 SignBit<int8>(){
-            return 0x80U;
+            return static_cast<int8>(0x80);
         }
 
         template <>
         inline const int16 SignBit<int16>(){
-            return 0x8000U;
+            return static_cast<int16>(0x8000);
         }
 
         template <>
         inline const int32 SignBit<int32>(){
-            return 0x80000000U;
+            return static_cast<int32>(0x80000000LL);
         }
 
         template <>
         inline const int64 SignBit<int64>(){
-            return 0x8000000000000000ULL;
+            return static_cast<int64>(0x8000000000000000ULL);
         }
 
         template <typename T>
@@ -174,22 +174,22 @@ namespace MARTe{
 
         template <>
         inline const int8 AllOnes<int8>(){
-            return 0xFFU;
+            return static_cast<int8>(0xFF);
         }
 
         template <>
         inline const int16 AllOnes<int16>(){
-            return 0xFFFFU;
+            return static_cast<int16>(0xFFFF);
         }
 
         template <>
         inline const int32 AllOnes<int32>(){
-            return 0xFFFFFFFFU;
+            return static_cast<int32>(0xFFFFFFFFLL);
         }
 
         template <>
         inline const int64 AllOnes<int64>(){
-            return 0xFFFFFFFFFFFFFFFFULL;
+            return static_cast<int64>(0xFFFFFFFFFFFFFFFFULL);
         }
 
 
