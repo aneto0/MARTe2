@@ -256,9 +256,9 @@ void MathExpressionParser::AddOperandTypecast()
 	typecastStack.Extract(top, operat);
 	
     // Write in the stack machine expression
-    stackMachineExpr += "CONST<";
+    stackMachineExpr += "CONST ";
 	stackMachineExpr += operat->Buffer();
-	stackMachineExpr += ">";
+	stackMachineExpr += " ";
 	stackMachineExpr += currentToken->GetData();
 	stackMachineExpr += "\n";
 }
