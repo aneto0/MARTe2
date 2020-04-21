@@ -52,10 +52,25 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+#include <cxxabi.h>
+
+
 namespace MARTe {
 
 class Introspection;
 
+//#include <stdio.h>
+
+
+// TODO move into private area for linux
+void demangle(CCString name,DynamicCString &demangled) {
+
+    int status = -4; // some arbitrary value to eliminate the compiler warning
+    demangled = CCString ( abi::__cxa_demangle(name.GetList(), NULL, NULL, &status) );
+    return ;
+}
+
+// TODO make a demangle for Windows that removes class struct etc....
 
 ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn,const ObjectBuilder * const objectBuilderIn):classMethods() {
 
@@ -65,9 +80,13 @@ ClassRegistryItem::ClassRegistryItem(CCString typeidNameIn,uint32 sizeOfClassIn,
 
     sizeOfClass = sizeOfClassIn;
     typeidName = typeidNameIn;
-    className = typeidName;
+//    className = typeidName;
+    demangle(typeidNameIn,className);
     classVersion = "";
-//    static uint32 classId = 0;
+
+//printf("Registering %s %s\n",typeidName.GetList(),className.GetList());
+
+    //    static uint32 classId = 0;
 //    typeDescriptor.isStructuredData = true;
 
     ClassRegistryIndex* cri = ClassRegistryIndex::Instance();

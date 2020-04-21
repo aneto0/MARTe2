@@ -110,6 +110,8 @@ uint32 ZTADimension::GetOverHead() const {
 	return overHead;
 }
 
+//#include <stdio.h>  /// TODO remove
+
 ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 			const uint8 *&	ptr,
 			uint32 &		numberOfColumns,
@@ -134,6 +136,7 @@ ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 	    REPORT_ERROR(ok, "elementSize is infinite/indefinite");
 	}
 
+
 	if (ok){
 	// note ZTA do not allow null so NULL is trapped by RedirectP
 	// calculate actual size of each ZTA
@@ -142,7 +145,17 @@ ErrorManagement::ErrorType ZTADimension::UpdatePointerAndSizeEx(
 			numberOfColumns = ZeroTerminatedArrayStaticTools::ZTAGetSize(ptr, nextElementSize);
 		}
 	}
-
+/*
+printf("Redirecting a ZTA of element size %i and N= %i at address %p\n",nextElementSize,numberOfColumns,ptr);  //TODO remove
+{
+void **pp = (void **)ptr;
+for (int i=0;i<64;){
+	for (int j=0;j<8;j++)
+		printf("%p ",pp[i++]);  //TODO remove
+	printf("\n ");  //TODO remove
+}
+}
+*/
 	return ok;
 }
 

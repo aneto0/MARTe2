@@ -67,7 +67,7 @@ namespace MARTe {
  *
  * | isStructuredData |dataIsConstant| fulltype | format      |
  * | :----:           | :----:       | :----:   | :---------: |
- * |  1  (=0)         | 1            | 6=0x1*   | 24          |
+ * |  1  (=0)         | 1            | 6=0x18*  | 24          |
  *
  * | isStructuredData |dataIsConstant| fulltype | objectSize  |
  * | :----:           | :----:       | :----:   | :---------: |
@@ -93,6 +93,11 @@ const TD_FullType TDF_BasicType 	= 0x00u;
  * @details a basic type that can be copied by character streaming
  */
 const TD_FullType TDF_CharStreamType= 0x10u;
+
+/**
+ * @brief  bits that apply to all STREAM types and disable the size information and enables the format information
+ */
+const TD_FullType TDF_HasFormatInfo = 0x08u;
 
 /**
  * @brief const to mark a type that is none of the above.
@@ -162,8 +167,6 @@ const TD_FullType  TDF_CString 		    = TDF_CharStreamType + 3u;
  * @brief  The DynamicCString : can be written to
  */
 const TD_FullType  TDF_DynamicCString 	= TDF_CharStreamType + 4u;
-
-
 
 
 /*****  SPECIAL TYPES *****/
@@ -330,6 +333,9 @@ class DLL_API TypeDescriptor {
 
 public:
 
+    /**
+     *
+     */
     TypeDescriptor();
 
     /**
@@ -410,6 +416,11 @@ public:
      * @brief whether it is a character string/stream of sort
      */
     inline bool IsCharStreamType() const ;
+
+    /**
+     * @brief whether it is a character string/stream of sort and has format information (CDB,XML etc..)
+     */
+    inline bool IsFormattedCharStreamType() const;
 
     /**
      * @brief whether it is a structure
@@ -493,6 +504,12 @@ public:
     bool ToString(CStringTool &string) const;
 
     /**
+     * @brief retrieves the format of the formatted char stream
+     * only valid if IsFormattedCharStreamType
+     */
+    bool GetStreamFormat(CStringTool &string) const;
+
+    /**
      * @brief converts a 1-4 byte string into a 24 bit code that can be used as format
      */
     static uint32 String2FormatNumber(CCString formatString);
@@ -548,26 +565,26 @@ private:
 #define  BooleanType                 UnsignedInteger8Bit;
 
 
-/***  STREAM TYPES and FORMATTED STREAMS*/
+/**  STREAM TYPES */
 #define  CharString(size)       	 TypeDescriptor(TDRANGE(fullType,TDF_CString)       | TDRANGE(objectSize,size))
-// these can have a format attribute
-#define  ConstCharString             TypeDescriptor(TDRANGE(fullType,TDF_CCString)      | TDRANGE(format,0))
-#define  StreamStringType            TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDRANGE(format,0))
-#define  DynamicCharString           TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDRANGE(format,0))
-#define  StreamType                  TypeDescriptor(TDRANGE(fullType,TDF_Stream)        | TDRANGE(format,0))
+#define  ConstCharString             TypeDescriptor(TDRANGE(fullType,TDF_CCString)      | TDRANGE(objectSize,0))
+#define  StreamStringType(size)      TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDRANGE(objectSize,size))
+#define  DynamicCharString           TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDRANGE(objectSize,0))
+#define  StreamIType(size)           TypeDescriptor(TDRANGE(fullType,TDF_Stream)        | TDRANGE(objectSize,size))
+
+/**  FORMATTED STREAM TYPES */
 const CCString cdbFormat("CDB");
 const CCString jsonFormat("JSON");
 const CCString xmlFormat("XML");
-#define  FormattedCCString(f)        TypeDescriptor(TDRANGE(fullType,TDF_CCString)      | TDRANGE(format,TypeDescriptor::String2FormatNumber(f)))
-#define  FormattedDynString(f)       TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDRANGE(format,String2FormatNumber(f)))
-#define  FormattedSString(f)  	     TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDRANGE(format,String2FormatNumber(f)))
-
+#define  FormattedConstCharString(f)   TypeDescriptor(TDRANGE(fullType,TDF_CCString       | TDF_HasFormatInfo) | TDRANGE(format,TypeDescriptor::String2FormatNumber(f)))
+#define  FormattedDynamicCharString(f) TypeDescriptor(TDRANGE(fullType,TDF_DynamicCString)| TDF_HasFormatInfo) | TDRANGE(format,TypeDescriptor::String2FormatNumber(f)))
+#define  FormattedStreamStringType(f)  TypeDescriptor(TDRANGE(fullType,TDF_SString)       | TDF_HasFormatInfo) | TDRANGE(format,TypeDescriptor::String2FormatNumber(f)))
 
 /** OTHER */
 #define  StructuredDataIType(size)   TypeDescriptor(TDRANGE(fullType,TDF_StructuredDataI) | TDRANGE(objectSize,size))
-#define  ObjectType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Object)| TDRANGE(objectSize,size))
-#define  InvalidType(size)           TypeDescriptor(TDRANGE(fullType,TDF_Invalid)| TDRANGE(objectSize,size))
-#define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray) | TDRANGE(objectSize,0))
+#define  ObjectType(size)            TypeDescriptor(TDRANGE(fullType,TDF_Object)          | TDRANGE(objectSize,size))
+#define  InvalidType(size)           TypeDescriptor(TDRANGE(fullType,TDF_Invalid)         | TDRANGE(objectSize,size))
+#define  GenericArray                TypeDescriptor(TDRANGE(fullType,TDF_GenericArray)    | TDRANGE(objectSize,0))
 
 /**
  * @return returns the TDBasicTypeSize of any type
@@ -691,12 +708,18 @@ bool TypeDescriptor::IsCharStreamType() const {
     return ( !isStructuredData && ((fullType & TDF_Category) == TDF_CharStreamType) );
 };
 
+bool TypeDescriptor::IsFormattedCharStreamType() const {
+    return ( !isStructuredData && ((fullType & TDF_Category) == TDF_CharStreamType) && ((fullType & TDF_HasFormatInfo)!=0));
+};
+
 bool TypeDescriptor::IsCharString() const {
-	return (!isStructuredData && ((fullType == TDF_CCString) || (fullType == TDF_CString) || (fullType == TDF_DynamicCString)))   ;
+	uint32 ft = fullType & (~TDF_HasFormatInfo);
+	return (!isStructuredData && ((ft == TDF_CCString) || (ft == TDF_CString) || (ft == TDF_DynamicCString)))   ;
 }
 
 bool TypeDescriptor::IsStreamString() const {
-	return (!isStructuredData && (fullType == TDF_SString));
+	// mask out TDF_HasFormatInfo
+	return (!isStructuredData && ((fullType == TDF_SString) || (fullType == (TDF_SString | TDF_HasFormatInfo))));
 }
 
 bool TypeDescriptor::IsSpecialType() const {

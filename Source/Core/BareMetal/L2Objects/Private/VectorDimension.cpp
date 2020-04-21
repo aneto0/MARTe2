@@ -80,6 +80,8 @@ char8 VectorDimension::TypeChar() const {
 	return ret;
 }
 
+//#include <stdio.h>   // TODO remove
+
 ErrorManagement::ErrorType VectorDimension::UpdatePointerAndSizeEx(
 			const uint8 *&	ptr,
 			uint32 &		numberOfColumns,
@@ -95,6 +97,8 @@ ErrorManagement::ErrorType VectorDimension::UpdatePointerAndSizeEx(
 		// if 0 element the Vector will probably have NULL PTR
 		allowNULL = true;
 	}
+
+//printf("Redirecting a Vector of size %i at address %p\n",numberOfColumns,ptr);  //TODO remove
 
 	// all need to redirect
 	// it works as vector is descendant of Pointer class

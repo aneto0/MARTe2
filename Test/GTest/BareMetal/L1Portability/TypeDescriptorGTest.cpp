@@ -67,7 +67,7 @@ TEST(TypeDescriptorGTest,TestIsEqualOperatorPT) {
 
 TEST(TypeDescriptorGTest,TestIsEqualOperator) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator(FormattedCCString(cdbFormat),ConstCharString,false,true,false));
+    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator(FormattedConstCharString(cdbFormat),ConstCharString,false,true,false));
 }
 
 #if 0

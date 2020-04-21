@@ -71,6 +71,7 @@ public:
      * @brief Add missing details.
      */
     void SetClassDetails(CCString classNameIn,CCString classVersionIn);
+
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
      */
@@ -236,7 +237,7 @@ private:
     /**
      * The name of the class.
      */
-    CCString                  className;
+    DynamicCString            className;
 
     /**
      * The name of the class as returned by typeid.

@@ -71,24 +71,20 @@ ErrorManagement::ErrorType VariableCloner::DoCreateR(
 		// handle the simple scalar type
 		// consider the numberOfElements to be copied
 		if (inputType == 'O'){
-    		ret.unsupportedFeature = (handler.GetTypeDescriptor().StorageSize() == 0);
+
+			uint32 storageSize = handler.GetTypeDescriptor().StorageSize();
+    		ret.unsupportedFeature = (storageSize == 0);
         	REPORT_ERROR(ret, "unknown size object ");
 
 			uint32 totalSize;
-			VariableDescriptorLib::DimensionSize totalSizeD;
 
 			if (ret){
 				// calculate total Size needed to store final layer
 				// multiply the numberOfElements by each size
-				totalSizeD = numberOfElementsD * handler.GetTypeDescriptor().StorageSize();
+				VariableDescriptorLib::DimensionSize totalSizeD = numberOfElementsD * storageSize;
 				ret = totalSizeD.ToNumber(totalSize);
 	        	REPORT_ERROR(ret, "Overflow");
 			}
-
-        	if (ret){
-        		ret.unsupportedFeature = (handler.GetTypeDescriptor().StorageSize() == 0);
-            	REPORT_ERROR(ret, "unknown size object ");
-        	}
 
         	if (ret){
     			// reserve space either for the constant size data or for the string pointers

@@ -79,7 +79,12 @@ uint32 TypeDescriptor::StorageSize() const{
 	    		case TDF_Stream:
 	    		case TDF_SString:
 	    		default:
-					size = 0;
+	    			// formatted stream trade size info for format info
+	    			if (this->IsFormattedCharStreamType()){
+						size = 0;
+	    			} else {
+	    				size = objectSize;
+	    			}
 	    		}
 	    	} else {
 				size = objectSize;
@@ -248,7 +253,6 @@ stringt.Append(typeName).Append(bits); 		\
 #define TEMPLATED_TYPENAME_CORE(className)       \
 		stringt.Append(#className "<").Append(constString).Append(typeName).Append(bits).Append('>');
 
-
 bool TypeDescriptor::ToString(CStringTool &stringt) const{
 	bool ret= true;
 
@@ -280,7 +284,7 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
        		stringt.Append(BasicTypeName(ft));
 
        		// handles formatted streams
-       		if (IsCharStreamType()){
+       		if (this->IsFormattedCharStreamType()){
        			uint32 format = this->format;
        			if (format != 0){
        	       		stringt.Append('(');
@@ -315,6 +319,15 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
     }
 	return ret;
 }
+
+bool TypeDescriptor::GetStreamFormat(CStringTool &string) const{
+	bool ret = IsFormattedCharStreamType();
+	if (ret){
+  		FormatNumber2String(format,string);
+	}
+	return ret;
+}
+
 
 static const CCString seps = " \n\r\t<>()";
 static const CCString nums = "0123456789";

@@ -709,7 +709,7 @@ inline void VariableDescriptor::Match(T * x){
 
 template <class T>
 void VariableDescriptor::Match(StreamString *s){
-	FinaliseCode(StreamStringType);
+	FinaliseCode(StreamStringType(sizeof(T)));
 }
 
 template <class T>
@@ -725,12 +725,12 @@ void VariableDescriptor::MatchFinal(T *y,typename enable_if<!isSameOrBaseOf(Stre
 
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSameOrBaseOf(StreamI,T) && !isSame(StreamString,T), T>::type *x){
-	FinaliseCode(StreamType);
+	FinaliseCode(StreamIType(sizeof(T)));
 }
 
 template <class T>
 void VariableDescriptor::MatchFinal(T *y,typename enable_if<isSame(StreamString,T), T>::type *x){
-	FinaliseCode(StreamStringType);
+	FinaliseCode(StreamStringType(sizeof(T)));
 }
 
 template <class T>

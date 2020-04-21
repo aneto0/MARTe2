@@ -157,6 +157,15 @@
         GetClassRegistryItem_Static()->DecrementNumberOfInstances();                                                   \
     }                                                                                                                  \
 
+#if 0
+#define SIMPLE_CLASS_REGISTER(className,ver)                                                                           \
+	static class className ## _Initializer_{                                                                           \
+    	public: className ## _Initializer_(){                                                                          \
+    		MARTe::ClassRegistryItem *cri = MARTe::ClassRegistryItem::Instance<className>();					       \
+		    cri->SetClassDetails(MARTe::CCString(#className),MARTe::CCString(#ver));                                   \
+		};                                                                                                             \
+    } className ## _Initializer_Instance;
+#endif
 
 /*lint -restore */
 

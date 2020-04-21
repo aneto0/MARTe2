@@ -693,8 +693,10 @@ ErrorManagement::ErrorType VariableDescriptor::Redirect(const uint8 *&pointer,ui
 	 					pointer = reinterpret_cast<const uint8 *>(string->GetList()+index);
 
 	 					// remove the DynamicCstring information
-	 					if (!typeDescriptor.SameTypeAs(ConstCharacter8Bit)){
+	 					if (!typeDescriptor.SameTypeAs(ConstCharString)){
 	 						typeDescriptor = Character8Bit;
+	 					} else {
+	 						typeDescriptor = ConstCharacter8Bit;
 	 					}
 	 				}
 	 			} else {

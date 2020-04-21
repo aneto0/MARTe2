@@ -1152,10 +1152,10 @@ TypeConversionOperatorI *ToStringConversionFactory::GetOperator(const TypeDescri
 			wrapper = new IOBufferCStringCompareWrapper();
 		}
 	} else {
-		if (destTd.SameTypeAs(StreamType)){
+		if (destTd.SameTypeAs(StreamIType(0))){
 			wrapper = new IOBufferWrapperStream(destTd.StorageSize());
 		} else
-		if (destTd.SameAs(StreamStringType) ){
+		if (destTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 			wrapper = new IOBufferWrapperSString();
 		} else
 		if (destTd.SameAs(DynamicCharString)){

@@ -41,6 +41,7 @@
 #include "MemoryCheck.h"
 #include "TypeDescriptor.h"
 #include "CLASSMEMBERREGISTER.h"
+#include "CLASSREGISTER.h"
 #include "AnyObjectT.h"
 #include "SaturatedInteger.h"
 #include "ProgressiveTypeCreator.h"
@@ -121,6 +122,7 @@ public:
 
     Test2ClassTemplate(varDeclSubTemplate,arrayDeclSubTemplate,Test2Class)
 } ;
+
 
 /// register Test2Class
 Test2ClassTemplate(memberDeclSubTemplate,memberDeclSubTemplate,Test2Class)
@@ -257,8 +259,21 @@ void PrepareTestObject(){
     static Vector<CCString> vv1[4] = {a1,a2,a3,a4};
     static Vector<CCString> vv2[4] = {a1,a2,a3,a4};
     static Vector<CCString> vv3[4] = {a1,a2,a3,a4};
-    static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{0,0,0,0}};
+    static Vector<CCString> vvx[4];
+    static Vector<CCString> vv4[][4] = {{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},{a1,a2,a3,a4},vvx};
+
     test1Class.CStringVAZTAVar = ZeroTerminatedArray<Vector<CCString>[4]>(vv4);
+
+#if 0
+    {  // TODO remove
+        void **pp = (void **)test1Class.CStringVAZTAVar.GetList();
+        for (int i=0;i<64;){
+        	for (int j=0;j<8;j++)
+        		printf("%p ",pp[i++]);  //TODO remove
+        	printf("\n ");  //TODO remove
+        }
+    }
+#endif
 
     static float (*arrayP10[10][10])[10];
     for (int i=0;i<10;i++) for (int j=0;j<10;j++) {
@@ -272,6 +287,7 @@ void PrepareTestObject(){
     test1Class.SString = "succhiarriello";
     test1Class.pStreamI = &test1Class.SString;
     test1Class.SString.Seek(8);
+
 
 }
 
@@ -451,6 +467,9 @@ MARK
 	printf("%s", expression.GetList());
 	ok = at.MultipleDereference(expression);
 	REPORT_ERROR(ok,"MultipleDereference error");
+
+//printf("Is constant : %i\n",at.GetFullVariableDescriptor().GetSummaryTypeDescriptor().DataIsConstant());
+
 MARK
 	Reference atc;
 MARK
@@ -964,6 +983,7 @@ void Test(){
     DEREF_CLONE_CHECKCONTENT(at,".int16Arr[11]","int16","176",sizeof(test1Class.int16Arr[11]),0);
     DEREF_CLONE_CHECKCONTENT(at,".int64PArr[4][5]","int64","6",8,0);
     DEREF_CLONE_CHECKCONTENT(at,".CCStringVar","CCString","pippo",14,8);
+    DEREF_CHECKCONTENT(at,".CCStringVar[0]","const char8","p",1,0);
     DEREF_CLONE_CHECKCONTENT(at,".CCStringVar[0]","const char8","p",1,0);
     DEREF_CLONE_CHECKCONTENT(at,".CStringVar","CString","mizzega",16,8);
     DEREF_CLONE_CHECKCONTENT(at,".CStringVar[2]","char8","z",1,0);
@@ -1002,7 +1022,7 @@ void Test(){
     DEREF_CHECK(at,".VCharVar","Vector<char8>",16,16/* clone creates only const structures*/);
     DEREF_CHECK(at,".MFloatVar","Matrix<float32>",24,24/* clone creates only const structures*/);
     DEREF_CHECK(at,".CStringZTAVar","ZeroTerminatedArray<CCString>",83,56/* clone converts ZTA to vector */);
-    DEREF_CHECK(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",968,712/* cloning changes type*/);
+    DEREF_CHECK(at,".CStringVAZTAVar","ZeroTerminatedArray<Vector<CCString>[4]>",904,648/* cloning changes type*/);
     DEREF_CHECK(at,".CStringVAZTAVar[1]","Vector<CCString>[4]",208,144);
     DEREF_CHECK(at,".CStringVAZTAVar[1][2]","Vector<CCString>",29,24);
     DEREF_CHECK(at,".MFloat10","Matrix<float32( *)[10]>",864,824);
@@ -1017,15 +1037,15 @@ void Test(){
      * then checks data size against fourth string
      * then checks overhead storage size against 5th string
      */
-    DEREF_CLONE_CHECK(at,".test2","class MARTe::Test2Class",sizeof(Test2Class),0);   //
-    DEREF_CLONE_CHECK(at,".test3","union MARTe::Test3Class",sizeof(uint32),0);
+    DEREF_CLONE_CHECK(at,".test2","MARTe::Test2Class",sizeof(Test2Class),0);   //
+    DEREF_CLONE_CHECK(at,".test3","MARTe::Test3Class",sizeof(uint32),0);
     DEREF_CLONE_CHECK(at,".int16Arr","int16[12]",sizeof(test1Class.int16Arr),0);     //
     DEREF_CLONE_CHECK(at,".int64Arr","int64[12][25]",sizeof(test1Class.int64Arr),0);
     DEREF_CLONE_CHECK(at,".int32PVar*","int32",4,0);
     DEREF_CLONE_CHECK(at,".VCharVar","const Vector<char8>",16,16/* clone creates only const structures*/);
     DEREF_CLONE_CHECK(at,".MFloatVar","const Matrix<float32>",24,24);
     DEREF_CLONE_CHECK(at,".CStringZTAVar","const Vector<CCString>",83,56/* clone converts ZTA to vector */);
-    DEREF_CLONE_CHECK(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",912,656/* cloning changes to const Vector*/);
+    DEREF_CLONE_CHECK(at,".CStringVAZTAVar","const Vector<const Vector<CCString>[4]>",848,592/* cloning changes to const Vector*/);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1]","const Vector<CCString>[4]",208,144/* cloning changes to const Vector*/);
     DEREF_CLONE_CHECK(at,".CStringVAZTAVar[1][2]","const Vector<CCString>",29,24);
     DEREF_CLONE_CHECK(at,".MFloat10","const Matrix<float32( * const)[10]>",864,824);

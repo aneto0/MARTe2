@@ -168,11 +168,16 @@ VariableDescriptorLib::DimensionSize LayerSize(CCString modifierString,TypeDescr
 	return ds;
 }
 
+//#include <stdio.h>  // TODO remove
+
 ErrorManagement::ErrorType RedirectP(const uint8* &ptr,bool allowNULL){
 	ErrorManagement::ErrorType ret;
 	const uint8 **pp = (const uint8 **)(ptr);
 	const uint8 *p = *pp;
-	if ((p == NULL) && (allowNULL)){
+
+//printf("redirecting %p -> %p\n",ptr,p);   //TODO remove
+
+if ((p == NULL) && (allowNULL)){
 		ptr = p;
 	} else
 	if ((p == NULL) || (!MemoryCheck::Check(p))){

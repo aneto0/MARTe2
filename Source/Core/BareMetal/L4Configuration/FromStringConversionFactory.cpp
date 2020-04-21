@@ -392,10 +392,10 @@ TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDesc
 
 
 	StringReader *reader = NULL_PTR(StringReader *);
-	if (sourceTd.SameTypeAs(StreamType)){
+	if (sourceTd.SameTypeAs(StreamIType(0))){
 		reader = new StreamReader(destTd.StorageSize());
 	} else
-	if (sourceTd.SameAs(StreamStringType) ){
+	if (sourceTd.SameAs(StreamStringType(sizeof(StreamString))) ){
 		reader = new SStringReader();
 	} else
 	if (sourceTd.SameAs(DynamicCharString) ||
