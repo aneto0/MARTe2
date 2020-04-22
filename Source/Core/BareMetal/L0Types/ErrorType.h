@@ -179,9 +179,15 @@ static const uint32 underflowBit(20u);
 static const uint32 UnderflowBit(underflowBit);
 
 /**
+ * Bit for OutOfRange error.
+ */
+static const uint32 outOfRangeBit(21u);
+static const uint32 OutOfRangeBit(outOfRangeBit);
+
+/**
  * Last used Bit.
  */
-static const uint32 lastErrorBit(21u);
+static const uint32 lastErrorBit(22u);
 static const uint32 LastErrorBit(lastErrorBit);
 
 /**
@@ -303,6 +309,11 @@ GENERATE_ERROR_CONSTANTS(Overflow)
  * ErrorManagement::Underflow.
  */
 GENERATE_ERROR_CONSTANTS(Underflow)
+
+/**
+ * ErrorManagement::OutOfRange.
+ */
+GENERATE_ERROR_CONSTANTS(OutOfRange)
 
 /**
  * @brief Provides an alternative to bool as return type from functions, allowing to add extra information.
@@ -498,6 +509,11 @@ public:
          * Underflow.
          */
         GENERATE_ERROR_BITRANGE(underflow)
+
+        /**
+         * OutOfRange.
+         */
+        GENERATE_ERROR_BITRANGE(outOfRange)
 
         /**
          * unmapped bits
