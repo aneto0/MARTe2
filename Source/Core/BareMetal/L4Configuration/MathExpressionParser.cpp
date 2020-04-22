@@ -176,9 +176,6 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
 	if (StringHelper::Compare(operatorIn, "log") == 0)
 		ret = "LOG";
 		
-	if (StringHelper::Compare(operatorIn, "(") == 0)
-		ret = "CAST";
-		
 	return ret;
 	
 } // OperatorLookupTable()
