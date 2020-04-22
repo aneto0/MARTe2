@@ -36,6 +36,8 @@ OBJSX=  AnyType.x \
 		IntrospectionEntry.x \
 		Object.x \
 		ObjectRegistryDatabase.x \
+		PseudoCode.x \
+		PseudoCodeFunctions.x \
 		Reference.x \
 		ReferenceContainer.x \
 		ReferenceContainerNode.x \
