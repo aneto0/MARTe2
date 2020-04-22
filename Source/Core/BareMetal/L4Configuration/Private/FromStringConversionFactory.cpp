@@ -28,9 +28,11 @@
 #include "StreamString.h"
 #include "BitSetToInteger.h"
 #include "StringToNumber.h"
+#include "StringReaders.h"
 
 namespace MARTe{
 
+#if 0
 /**
  * @brief interface definition
  */
@@ -143,7 +145,7 @@ public:
 		return ccs[index];
 	}
 };
-
+#endif
 
 /************************************************************************/
 /**                  Type Convertors                                   */
@@ -389,21 +391,21 @@ FromStringConversionFactory::~FromStringConversionFactory(){
 
 TypeConversionOperatorI *FromStringConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-
-
 	StringReader *reader = NULL_PTR(StringReader *);
-	if (sourceTd.SameTypeAs(StreamIType(0))){
-		reader = new StreamReader(destTd.StorageSize());
-	} else
-	if (sourceTd.SameAs(StreamStringType(sizeof(StreamString))) ){
-		reader = new SStringReader();
-	} else
-	if (sourceTd.SameAs(DynamicCharString) ||
-		sourceTd.SameTypeAs(ConstCharString) ||
-		sourceTd.SameTypeAs(CharString(0))){
-		reader = new CCStringReader();
-	}
 
+	if (sourceTd.IsCharStreamType() && !sourceTd.IsFormattedCharStreamType()){
+		if (sourceTd.SameTypeAs(StreamIType(0))){
+			reader = new StreamReader(destTd.StorageSize());
+		} else
+		if (sourceTd.SameAs(StreamStringType(sizeof(StreamString))) ){
+			reader = new SStringReader();
+		} else
+		if (sourceTd.SameAs(DynamicCharString) ||
+			sourceTd.SameAs(ConstCharString) ||
+			sourceTd.SameTypeAs(CharString(0))){
+			reader = new CCStringReader();
+		}
+	}
 
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
 	if (reader != NULL){
