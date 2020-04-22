@@ -153,6 +153,28 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Variable
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_ExpressionWithFunctions)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = (sin(A) + cos(B + foo))^tan(log(D))";
+    const char8* expectedOutput = "READ A\n"
+                                  "SIN\n"
+                                  "READ B\n"
+                                  "READ foo\n"
+                                  "SUM\n"
+                                  "COS\n"
+                                  "SUM\n"
+                                  "READ D\n"
+                                  "LOG\n"
+                                  "TAN\n"
+                                  "POW\n"
+                                  "WRITE ret\n";
+
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_CompleteExpression_1)
 {
     MathExpressionParserTest parserTest;
@@ -173,6 +195,31 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
                                   "TAN\n"
                                   "MUL\n"
                                   "COMP\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_CompleteExpression_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A+ (B*C-(D/E^F)*G)*H";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "MUL\n"
+                                  "READ D\n"
+                                  "READ E\n"
+                                  "READ F\n"
+                                  "POW\n"
+                                  "DIV\n"
+                                  "READ G\n"
+                                  "MUL\n"
+                                  "MIN\n"
+                                  "READ H\n"
+                                  "MUL\n"
+                                  "SUM\n"
                                   "WRITE ret\n";
             
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
