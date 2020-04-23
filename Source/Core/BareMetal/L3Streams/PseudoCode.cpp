@@ -24,6 +24,7 @@
 
 #include "PseudoCode.h"
 #include "PseudoCodeFunctions.h"
+#include "IteratorT.h"
 #include "StaticStack.h"
 #include "AnyType.h"
 
@@ -42,7 +43,7 @@ const CCString castToken("CAST");
 /**
  * allows searching for a variable with a given name
  */
-class VariableFinder: public GenericIterator<VariableInformation>{
+class VariableFinder: public IteratorT<VariableInformation>{
 public:
 	/**
 	 *
@@ -55,7 +56,7 @@ public:
 	/**
 	 *
 	 */
-    virtual IteratorAction Do(VariableInformation &data,uint32 depth=0);
+    virtual void Do(VariableInformation *data);
     /**
      *
      */
@@ -86,21 +87,17 @@ VariableFinder::VariableFinder(DataMemoryAddress address){
 }
 
 
-IteratorAction VariableFinder::Do(VariableInformation &data,uint32 depth){
-	IteratorAction ret;
+void VariableFinder::Do(VariableInformation *data){
     if (variableName.Size() > 0){
-		if (data.name == variableName){
-			variable = &data;
-			ret.SetActionCode(noAction);
+        if (data->name == variableName){
+            variable = data;
 		}
 	} else
 	if (variableAddress < MAXDataMemoryAddress){
-		if (data.location == variableAddress){
-			variable = &data;
-			ret.SetActionCode(noAction);
+        if (data->location == variableAddress){
+            variable = data;
 		}
-	}
-	return ret;
+    }
 }
 
 

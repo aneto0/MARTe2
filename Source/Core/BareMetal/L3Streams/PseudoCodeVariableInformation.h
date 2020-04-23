@@ -33,6 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "LinkedListable.h"
 #include "StreamString.h"
 #include "TypeCharacteristics.h"
 #include "TypeDescriptor.h"
@@ -77,7 +78,7 @@ typedef uint16 DataMemoryAddress;
 /**
  *  Element for the list of variables
  */
-struct VariableInformation {
+struct VariableInformation: public LinkedListable {
 	/**
 	 * name of the variable
 	 */
