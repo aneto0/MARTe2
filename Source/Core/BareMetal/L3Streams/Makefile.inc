@@ -37,6 +37,8 @@ OBJSX=	BufferedStreamI.x \
 		IOBufferXMLPrint.x \
 		JsonPrinter.x\
 		PrinterI.x\
+		PseudoCode.x \
+		PseudoCodeFunctions.x \
 		ReferenceContainer.x \
 		SingleBufferedStream.x \
 		StandardPrinter.x\
