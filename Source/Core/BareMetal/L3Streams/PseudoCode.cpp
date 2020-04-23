@@ -117,7 +117,7 @@ Context::Context(){
 Context::~Context(){
 }
 
-ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db){
+ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
 	ErrorManagement::ErrorType ret;
 
 	VariableFinder finder(name);
@@ -132,7 +132,7 @@ ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInfor
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,List<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
 	ErrorManagement::ErrorType ret;
 	VariableInformation *variableInfo;
 	ret = FindVariableinDB(name,variableInfo,db);
