@@ -80,7 +80,7 @@ struct VariableInformation {
 	/**
 	 * name of the variable
 	 */
-	DynamicCString name;
+    DynamicCString name;
 
 	/**
 	 * type of the variable. Only simple and numeric types are possible
