@@ -33,6 +33,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "StreamString.h"
 #include "TypeCharacteristics.h"
 #include "TypeDescriptor.h"
 
@@ -80,7 +81,7 @@ struct VariableInformation {
 	/**
 	 * name of the variable
 	 */
-    DynamicCString name;
+    StreamString name;
 
 	/**
 	 * type of the variable. Only simple and numeric types are possible
