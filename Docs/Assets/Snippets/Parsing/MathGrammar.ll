@@ -47,7 +47,7 @@ operator3:
 
 operation4:
     operation5
-//    __PushOperator STRING operation5 __PopOperator
+    __PushOperator STRING operation5 __PopOperator
 
 // ********** Typecast ****************************
 
@@ -67,7 +67,6 @@ typecast_operand:
 operand:
     __AddOperand STRING
     __AddOperand NUMBER
-    __ImHere __AddOperand STRING STRING
 
 //operation5:
 //    [ ( types ) ] primary
