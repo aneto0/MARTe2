@@ -192,28 +192,23 @@ ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableIn
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
+ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 	ErrorManagement::ErrorType ret;
 
 	DataMemoryAddress nextConstantAddress = 0;
 
-	bool finished = false;
-	while (!finished  && ret){
-        StreamString line;
-		uint32 limit;
-		// divide RPNCode into lines
-        RPNCode = StreamString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
-		finished = (line.GetSize()==0);
-//printf("LINE = %s\n",line.GetList());
+    StreamString line;
+    char8 terminator;
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret){
+
 		// extract command and parameter
         StreamString command;
         StreamString parameter;
-		if (!finished){
-			CCString lineP = line;
-			// extract up to two tokens per line
-            lineP = StreamString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-            StreamString::Tokenize(lineP,parameter,limit," \t,"," \t,",false);
-		}
+
+        // extract up to two tokens per line
+        line.Seek(0u);
+        line.GetToken(command, " \t,", terminator," \t,");
+        line.GetToken(parameter, " \t,", terminator," \t,");
 
 		// now analyse the command
 		if (command.GetSize() > 0){
@@ -290,7 +285,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
+ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 	ErrorManagement::ErrorType ret;
 
 	DataMemoryAddress nextVariableAddress = startOfVariables;
@@ -336,25 +331,20 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
     // clean all the memory
 	codeMemory.Clean();
 
-	bool finished = false;
-	while ((!finished)  && ret){
-        StreamString line;
-		uint32 limit;
-		// divide RPNCode into lines
-        RPNCode = StreamString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+    StreamString line;
+    char8 terminator;
+    while (RPNCode.GetToken(line, "\n", terminator, "\n\r") && ret){
 
-		finished = (line.GetSize()==0);
 		// extract command and parameter
         StreamString command;
         StreamString parameter1;
         StreamString parameter2;
-		if (!finished){
-			CCString lineP = line;
-			// extract up to two tokens per line
-            lineP = StreamString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-            lineP = StreamString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
-            StreamString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
-		}
+
+        // extract up to three tokens per line
+        line.Seek(0u);
+        line.GetToken(command, " \t,", terminator, " \t,");
+        line.GetToken(parameter1, " \t,", terminator, " \t,");
+        line.GetToken(parameter2, " \t,", terminator, " \t,");
 
 		// now analyze the command
 		if (command.GetSize() > 0){
