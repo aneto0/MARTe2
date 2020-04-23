@@ -177,7 +177,7 @@ public:
 	/**
 	 * Reconstruct the RPNCode with type information
 	 */
-	ErrorManagement::ErrorType DeCompile(DynamicCString &RPNCode,bool showTypes);
+    ErrorManagement::ErrorType DeCompile(StreamString &RPNCode,bool showTypes);
 
 // PUBLIC VARIABLES
 
