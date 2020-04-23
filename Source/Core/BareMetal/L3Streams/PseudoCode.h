@@ -219,7 +219,7 @@ private:
 	 * Checks existence of name using FindInputVariable
 	 * If not found add new variable
 	 */
-	inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = InvalidType(0),DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = InvalidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
 	/**
 	 * Looks for a variable of a given name
@@ -230,7 +230,7 @@ private:
 	 * Checks existence of name using FindOutputVariable
 	 * If not found add new variable
 	 */
-	inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = InvalidType(0),DataMemoryAddress location = MAXDataMemoryAddress);
+    inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = InvalidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
 	/**
 	 * Looks for a variable of a given name
@@ -258,7 +258,7 @@ private:
 	 * it will access DataMemory as well to decode constants
 	 * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
 	 */
-	ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
 
 	/**
 	 * expands function information output description into readable text
@@ -266,7 +266,7 @@ private:
 	 * it will access DataMemory as well to decode constants
 	 * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
 	 */
-	ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
 	/**
 	 * the input variable names

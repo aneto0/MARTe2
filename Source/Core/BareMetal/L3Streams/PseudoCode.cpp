@@ -512,7 +512,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 				ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
 				if (!ret){
                     StreamString typeList;
-					CStringTool cst = typeList();
+                    StreamString cst = typeList();
 					uint32 n2scan = 2;
 					if (matchOutput) {
 						n2scan++;
@@ -572,7 +572,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool peekOnly,bool showData,bool showTypes){
+ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,StreamString &cst,bool peekOnly,bool showData,bool showTypes){
 	 ErrorManagement::ErrorType ret;
 
 	 const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
@@ -633,7 +633,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 	 return ret;
 }
 
-ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,CStringTool &cst,bool lookBack,bool showData,bool showTypes){
+ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
 	ErrorManagement::ErrorType ret;
 
 	// if already showing the types do not show the parameter of the CAST
@@ -752,7 +752,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			REPORT_ERROR(runtimeError,"debugMode requested with debugStream set to NULL");
 		} else {
             StreamString debugMessage;
-			CStringTool cst = debugMessage();
+            StreamString cst = debugMessage();
 
 			cst.Append("[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n");
 			int32 lineCounter = 1;
@@ -829,7 +829,7 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
-	CStringTool cst = RPNCode();
+    StreamString cst = RPNCode();
 
 	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
 		CodeMemoryElement pCode = GetPseudoCode();
