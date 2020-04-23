@@ -64,7 +64,7 @@ private:
     /**
      *
      */
-    DynamicCString variableName;
+    StreamString variableName;
 
     /**
      *
@@ -199,20 +199,20 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 
 	bool finished = false;
 	while (!finished  && ret){
-		DynamicCString line;
+        StreamString line;
 		uint32 limit;
 		// divide RPNCode into lines
-		RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+        RPNCode = StreamString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
 		finished = (line.GetSize()==0);
 //printf("LINE = %s\n",line.GetList());
 		// extract command and parameter
-		DynamicCString command;
-		DynamicCString parameter;
+        StreamString command;
+        StreamString parameter;
 		if (!finished){
 			CCString lineP = line;
 			// extract up to two tokens per line
-			lineP = DynamicCString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-			DynamicCString::Tokenize(lineP,parameter,limit," \t,"," \t,",false);
+            lineP = StreamString::Tokenize(lineP,command,limit," \t,"," \t,",false);
+            StreamString::Tokenize(lineP,parameter,limit," \t,"," \t,",false);
 		}
 
 		// now analyse the command
@@ -268,7 +268,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(CCString RPNCode){
 				}
 				// if supported add up the memory needs
 				if (ret){
-					DynamicCString constantName;
+                    StreamString constantName;
 					constantName().Append("Constant").Append('@').Append(nextConstantAddress);
 					ret = AddInputVariable(constantName,td,nextConstantAddress);
 				}
@@ -338,22 +338,22 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 
 	bool finished = false;
 	while ((!finished)  && ret){
-		DynamicCString line;
+        StreamString line;
 		uint32 limit;
 		// divide RPNCode into lines
-		RPNCode = DynamicCString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
+        RPNCode = StreamString::Tokenize(RPNCode,line,limit,"\n","\n\r",false);
 
 		finished = (line.GetSize()==0);
 		// extract command and parameter
-		DynamicCString command;
-		DynamicCString parameter1;
-		DynamicCString parameter2;
+        StreamString command;
+        StreamString parameter1;
+        StreamString parameter2;
 		if (!finished){
 			CCString lineP = line;
 			// extract up to two tokens per line
-			lineP = DynamicCString::Tokenize(lineP,command,limit," \t,"," \t,",false);
-			lineP = DynamicCString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
-			DynamicCString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
+            lineP = StreamString::Tokenize(lineP,command,limit," \t,"," \t,",false);
+            lineP = StreamString::Tokenize(lineP,parameter1,limit," \t,"," \t,",false);
+            StreamString::Tokenize(lineP,parameter2,limit," \t,"," \t,",false);
 		}
 
 		// now analyze the command
@@ -521,7 +521,7 @@ ErrorManagement::ErrorType Context::Compile(CCString RPNCode){
 			if (ret){
 				ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
 				if (!ret){
-					DynamicCString typeList;
+                    StreamString typeList;
 					CStringTool cst = typeList();
 					uint32 n2scan = 2;
 					if (matchOutput) {
@@ -621,7 +621,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 			}
 			if (showData){
 				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
-				DynamicCString value;
+                StreamString value;
 				AnyType src(td,stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
@@ -671,7 +671,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 				cst.Append(' ');
 
 				// Converts the value to a string
-				DynamicCString value;
+                StreamString value;
 				AnyType dest(value);
 				AnyType src(vi->type,&variablesMemoryPtr[pCode2]);
 				ret = src.CopyTo(dest);
@@ -707,7 +707,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 			if (showData){
 				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
 //cst.Append('[').Append(dataStackIndex).Append(']');
-				DynamicCString value;
+                StreamString value;
 				AnyType src(td,stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
@@ -761,7 +761,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			runtimeError.parametersError = true;
 			REPORT_ERROR(runtimeError,"debugMode requested with debugStream set to NULL");
 		} else {
-			DynamicCString debugMessage;
+            StreamString debugMessage;
 			CStringTool cst = debugMessage();
 
 			cst.Append("[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n");
@@ -830,7 +830,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	return runtimeError;
 }
 
-ErrorManagement::ErrorType Context::DeCompile(DynamicCString &RPNCode,bool showTypes){
+ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTypes){
 	ErrorManagement::ErrorType ret ;
 
 	codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
