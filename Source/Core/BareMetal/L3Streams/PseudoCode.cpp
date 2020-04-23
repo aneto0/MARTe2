@@ -88,7 +88,7 @@ VariableFinder::VariableFinder(DataMemoryAddress address){
 
 IteratorAction VariableFinder::Do(VariableInformation &data,uint32 depth){
 	IteratorAction ret;
-	if (variableName.GetSize() > 0){
+    if (variableName.Size() > 0){
 		if (data.name == variableName){
 			variable = &data;
 			ret.SetActionCode(noAction);
@@ -211,8 +211,8 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
         line.GetToken(parameter, " \t,", terminator," \t,");
 
 		// now analyse the command
-		if (command.GetSize() > 0){
-			bool hasParameter = (parameter.GetSize()> 0);
+        if (command.Size() > 0){
+            bool hasParameter = (parameter.Size()> 0);
 
 			if (command == readToken){
 				ret.invalidOperation = !hasParameter;
@@ -347,12 +347,12 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
         line.GetToken(parameter2, " \t,", terminator, " \t,");
 
 		// now analyze the command
-		if (command.GetSize() > 0){
+        if (command.Size() > 0){
 			// assign invalid value
 			CodeMemoryElement code2 = TypeCharacteristics<CodeMemoryElement>::MaxValue();
 			bool matchOutput = false;
 
-			bool hasParameter1 = (parameter1.GetSize()> 0);
+            bool hasParameter1 = (parameter1.Size()> 0);
 
 			// PROCESS CAST command
 			// PUSH type(parameter1) --> TypeStack
@@ -470,7 +470,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			// assign code2 to address of constant
 			// command = READ
 			if (command == constToken){
-				bool hasParameter2 = (parameter2.GetSize()> 0);
+                bool hasParameter2 = (parameter2.Size()> 0);
 
 				ret.invalidOperation = !hasParameter1 || !hasParameter2;
 				COMPOSITE_REPORT_ERROR(ret,constToken," without type name and value");
@@ -790,7 +790,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 
 				cst.Append('\n');
 
-				uint32 size = debugMessage.GetSize();
+                uint32 size = debugMessage.Size();
 				debugStream->Write(debugMessage.GetList(),size);
 
 				// reset line
@@ -803,7 +803,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
 				cst.Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: END");
 
-				uint32 size = debugMessage.GetSize();
+                uint32 size = debugMessage.Size();
 				debugStream->Write(debugMessage.GetList(),size);
 			}
 		}
