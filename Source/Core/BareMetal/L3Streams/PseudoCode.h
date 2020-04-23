@@ -36,6 +36,7 @@
 
 #include "CompilerTypes.h"
 #include "StaticList.h"
+#include "LinkedListHolderT.h"
 #include "Vector.h"
 #include "TypeDescriptor.h"
 #include "PseudoCodeVariableInformation.h"
@@ -245,12 +246,12 @@ private:
 	/**
 	 * implements AddOutputVariable and AddInputVariable
 	 */
-	ErrorManagement::ErrorType AddVariable2DB(CCString name,List<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
+    ErrorManagement::ErrorType AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
 
 	/**
 	 * implements FindOutputVariable
 	 */
-	ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,List<VariableInformation> &db);
+    ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
 
 	/**
 	 * expands function information input description into readable text
@@ -271,12 +272,12 @@ private:
 	/**
 	 * the input variable names
 	 */
-	List<VariableInformation> 			inputVariableInfo;
+    LinkedListHolderT<VariableInformation> 			inputVariableInfo;
 
 	/**
 	 * the output variable names
 	 */
-	List<VariableInformation> 			outputVariableInfo;
+    LinkedListHolderT<VariableInformation> 			outputVariableInfo;
 
 	/**
 	 * used by Push/Pop/Peek
