@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 #include "PseudoCode.h"
-#include "Private/PseudoCodeFunctions.h"
+#include "PseudoCodeFunctions.h"
 #include "StaticStack.h"
 #include "AnyType.h"
 

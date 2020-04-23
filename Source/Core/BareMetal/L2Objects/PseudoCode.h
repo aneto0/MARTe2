@@ -37,10 +37,7 @@
 #include "CompilerTypes.h"
 #include "StaticList.h"
 #include "Vector.h"
-#include "List.h"
-#include "CCString.h"
 #include "TypeDescriptor.h"
-#include "CompositeErrorManagement.h"
 #include "PseudoCodeVariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
