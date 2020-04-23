@@ -113,7 +113,7 @@ public:
 	 * Cleans outputVariableInfo
 	 * Scans RPNCode looking for READ, WRITE and CONST functions
 	 */
-	ErrorManagement::ErrorType ExtractVariables(CCString RPNCode);
+    ErrorManagement::ErrorType ExtractVariables(StreamString RPNCode);
 
 	/**
 	 * Looks for a variable at a given location
