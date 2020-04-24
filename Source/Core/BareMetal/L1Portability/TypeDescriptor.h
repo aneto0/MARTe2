@@ -198,6 +198,8 @@ public:
      */
     static const char8 *GetTypeNameFromStaticTable(const uint32 index);
 
+    bool IsNumericType() const;
+
 };
 
 /**
