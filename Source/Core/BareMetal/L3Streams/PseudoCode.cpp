@@ -263,7 +263,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 				// check it is one of the supported types
 				TypeDescriptor td;
 				if (ret){
-					td = TypeDescriptor(parameter);
+                    td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter.Buffer());
 					ret.unsupportedFeature = !td.IsNumericType();
                     REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter.Buffer());
 //printf("const type = %x\n",td.all);
