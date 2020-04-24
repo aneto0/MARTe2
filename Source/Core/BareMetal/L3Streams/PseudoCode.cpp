@@ -271,7 +271,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 				// if supported add up the memory needs
 				if (ret){
                     StreamString constantName;
-					constantName().Append("Constant").Append('@').Append(nextConstantAddress);
+                    constantName.Printf("Constant@%u", nextConstantAddress);
                     ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
 				}
 				if (ret){
@@ -592,7 +592,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
          REPORT_ERROR_STATIC(ret,"No variable or constant @ %u",pCode2);
 
 		 if (ret){
-			cst.Append(' ').Append(vi->name);
+            cst.Printf("%s %s", cst, vi->name);
 		 }
 	 }
 
@@ -603,18 +603,18 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 			TypeDescriptor td = functionInformation.types[i];
 
 			if (i!=0) {
-				cst.Append(',');
+                cst += ',';
 			} else {
-				cst.Append('(');
+                cst += '(';
 			}
 			if (showData && showTypes){
-				cst.Append('(');
+                cst += '(';
 			}
 			if (showTypes){
 				 ret.fatalError = !td.ToString(cst);
 			}
 			if (showData && showTypes){
-				cst.Append(')');
+                cst += ')';
 			}
 			if (showData){
 				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
@@ -623,11 +623,11 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
-				cst.Append(value.GetList());
+                cst = cst + value;
 
 			}
 			if (i == (functionInformation.numberOfInputs-1U)){
-				cst.Append(')');
+                cst += ')';
 			}
 		 }
 	 }
@@ -645,7 +645,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 
 	// if already showing the types do not show the parameter of the CAST
 	if ((functionInformation.name == castToken) && (!showTypes)) {
-		cst.Append(' ');
+        cst += ' ';
 		ret.fatalError = !functionInformation.types[functionInformation.numberOfInputs].ToString(cst);
 	} else
 	if (functionInformation.name == readToken) {
@@ -663,9 +663,9 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 		if (ret){
 			if (pCode2 < startOfVariables){
 
-				cst.Append(' ');
+                cst += ' ';
 				ret.fatalError = !vi->type.ToString(cst);
-				cst.Append(' ');
+                cst += ' ';
 
 				// Converts the value to a string
                 StreamString value;
@@ -674,10 +674,10 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 				ret = src.CopyTo(dest);
                 REPORT_ERROR_STATIC(ret,"CopyTo failed ");
 				if (ret){
-					cst.Append(value);
+                    cst += value;
 				}
 			} else {
-				cst.Append(' ').Append(vi->name);
+                cst.Printf("%s %s", cst, vi->name);
 			}
 		}
 	}
@@ -688,18 +688,18 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 		for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
 			TypeDescriptor td = functionInformation.types[i+functionInformation.numberOfInputs];
 			if (i!=0) {
-				cst.Append(',');
+                cst += ',';
 			} else {
-				cst.Append(" => (");
+                cst += " => (";
 			}
 			if (showData && showTypes){
-				cst.Append('(');
+                cst += '(';
 			}
 			if (showTypes){
 				ret.fatalError = !td.ToString(cst);
 			}
 			if (showData && showTypes){
-				cst.Append(')');
+                cst += ')';
 			}
 			if (showData){
 				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
@@ -709,10 +709,10 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
-				cst.Append(value.GetList());
+                cst += value;
 			}
 			if (i == (functionInformation.numberOfOutputs-1U)){
-				cst.Append(')');
+                cst += ')';
 			}
 		}
 	}
@@ -761,19 +761,19 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
             StreamString debugMessage;
             StreamString cst = debugMessage();
 
-			cst.Append("[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n");
+            cst += "[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n";
 			int32 lineCounter = 1;
 			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-				cst.Append(lineCounter).Append(" - ").Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: ");
+                cst.Printf("%s%i - %i - %i :: ", cst, lineCounter, stackOffset, codeOffset);
 
 				CodeMemoryElement pCode = GetPseudoCode();
 
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-     			cst.Append(fr.name).Append(' ');
+                cst.Printf("%s%s ", cst, fr.name.GetList());
 
      			// errors due to debugging
      			ErrorManagement::ErrorType ret;
@@ -792,10 +792,10 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 				}
 
 				if (!runtimeError.ErrorsCleared()){
-					cst.Append(" <ERROR> ");
+                    cst += " <ERROR> ";
 				}
 
-				cst.Append('\n');
+                cst += '\n';
 
                 uint32 size = debugMessage.Size();
 				debugStream->Write(debugMessage.GetList(),size);
@@ -808,7 +808,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			if (runtimeError.ErrorsCleared()){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-				cst.Append(stackOffset).Append(" - ").Append(codeOffset).Append(" :: END");
+                cst.Printf("%s%i - %i :: END", cst, stackOffset, codeOffset);
 
                 uint32 size = debugMessage.Size();
 				debugStream->Write(debugMessage.GetList(),size);
@@ -843,9 +843,9 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 		FunctionRecord &fr = functionRecords[pCode];
 
 		if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
-			cst.Append(constToken);
+            cst += constToken;
 		} else {
-			cst.Append(fr.name);
+            cst += fr.name.GetList();
 		}
 
 		ret = FunctionRecordInputs2String(fr,cst,false,false,showTypes);
@@ -853,7 +853,7 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 		if (ret){
 			ret = FunctionRecordOutputs2String(fr,cst,false,false,showTypes);
 		}
-		cst.Append('\n');
+        cst += '\n';
 	}
 
 	return ret;
