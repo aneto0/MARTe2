@@ -56,11 +56,16 @@ public:
 	/**
 	 *
 	 */
-    virtual void Do(VariableInformation *data);
+    void Do(VariableInformation *data);
     /**
      *
      */
     VariableInformation *variable;
+    /**
+     *
+     */
+    ErrorManagement::ErrorType error;
+
 private:
     /**
      *
@@ -71,7 +76,6 @@ private:
      *
      */
     DataMemoryAddress variableAddress;
-
 };
 
 
@@ -91,11 +95,13 @@ void VariableFinder::Do(VariableInformation *data){
     if (variableName.Size() > 0){
         if (data->name == variableName){
             variable = data;
+            error = ErrorManagement::NoError;
 		}
 	} else
 	if (variableAddress < MAXDataMemoryAddress){
         if (data->location == variableAddress){
             variable = data;
+            error = ErrorManagement::NoError;
 		}
     }
 }
@@ -118,15 +124,16 @@ ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInfor
 	ErrorManagement::ErrorType ret;
 
 	VariableFinder finder(name);
-	ret = db.Iterate(finder);
-	REPORT_ERROR(ret,"Iteration failed");
+    db.ListIterate(&finder);
+    ret = finder.error;
+    REPORT_ERROR(ret, "Iteration failed");
 
-	variableInformation = NULL;
-	if (ret){
-		variableInformation = finder.variable;
-		ret.unsupportedFeature = (variableInformation == NULL);
-	}
-	return ret;
+    variableInformation = NULL;
+    if (ret){
+        variableInformation = finder.variable;
+        ret.unsupportedFeature = (variableInformation == NULL);
+    }
+    return ret;
 }
 
 ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
@@ -157,7 +164,8 @@ ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,Varia
 
 	VariableFinder finder(address);
 
-	ret = outputVariableInfo.Iterate(finder);
+    outputVariableInfo.ListIterate(&finder);
+    ret = finder.error;
 
 	variableInformation = NULL;
 	if (ret){
@@ -166,7 +174,8 @@ ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,Varia
 	}
 
 	if (!ret){
-		ret = inputVariableInfo.Iterate(finder);
+        inputVariableInfo.ListIterate(&finder);
+        ret = finder.error;
 		if (ret){
 			variableInformation = finder.variable;
 			ret.unsupportedFeature = (variableInformation == NULL);
