@@ -186,14 +186,14 @@ ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,Varia
 
 ErrorManagement::ErrorType Context::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
 	ErrorManagement::ErrorType ret;
-	variableInformation = inputVariableInfo[index];
+    variableInformation = inputVariableInfo.ListPeek(index);
 	ret.outOfRange = (variableInformation == NULL);
 	return ret;
 }
 
 ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation){
 	ErrorManagement::ErrorType ret;
-	variableInformation = outputVariableInfo[index];
+    variableInformation = outputVariableInfo.ListPeek(index);
 	ret.outOfRange = (variableInformation == NULL);
 	return ret;
 }
