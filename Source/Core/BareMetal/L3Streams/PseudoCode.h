@@ -138,7 +138,7 @@ public:
 	 *    checks type consistency
 	 *    grow stack to required size
 	 */
-	ErrorManagement::ErrorType Compile(CCString RPNCode);
+    ErrorManagement::ErrorType Compile(StreamString RPNCode);
 
 	/**
 	 * allow choosing how to run the code
