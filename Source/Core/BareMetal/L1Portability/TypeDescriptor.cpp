@@ -105,6 +105,10 @@ bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
     return ret;
 }
 
+bool TypeDescriptor::IsNumericType() const {
+    return ( !isStructuredData && ((type == Float) || (type == SignedInteger) || (type == UnsignedInteger)) );
+}
+
 TypeDescriptor TypeDescriptor::GetTypeDescriptorFromTypeName(const char8 * const typeName){
     uint32 typeIndex = 0u;
     while (basicTypeInfo[typeIndex].castName != NULL) {
