@@ -148,7 +148,7 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolde
 		variableInfo.type = td;
 		variableInfo.location = location;
 //printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
-		ret = db.Insert(variableInfo );
+        db.ListInsert(&variableInfo);
 	} else {
 
 		// it would be an error if this is an output variable
