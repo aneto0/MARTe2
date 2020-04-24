@@ -275,7 +275,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
                     ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
 				}
 				if (ret){
-					uint32 size = td.StorageSize();
+                    uint32 size = td.numberOfBits * 8u;
 					ret.unsupportedFeature = (size == 0);
                     REPORT_ERROR_STATIC(ret,"type %s has 0 storageSize", parameter.Buffer());
 
@@ -307,7 +307,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 		// skip constants are already allocated
 		if (ret && (var->location == MAXDataMemoryAddress)){
 			var->location = nextVariableAddress;
-			nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits * 8u);
 		}
 		index++;
 	}
@@ -319,7 +319,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 
 		if (ret){
 			var->location = nextVariableAddress;
-			nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits * 8u);
 		}
 		index++;
 	}
@@ -508,7 +508,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 				if (ret){
 					matchOutput = true;
 					code2 = nextConstantAddress;
-					nextConstantAddress += ByteSizeToDataMemorySize(td.StorageSize());
+                    nextConstantAddress += ByteSizeToDataMemorySize(td.numberOfBits * 8u);
 					// the actual command is a READ from the constant area
 					command = readToken;
 				}
@@ -617,7 +617,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
                 cst += ')';
 			}
 			if (showData){
-				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
+                dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits * 8u);
                 StreamString value;
 				AnyType src(td,stackPtr - dataStackIndex);
 				AnyType dest(value);
@@ -702,7 +702,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 cst += ')';
 			}
 			if (showData){
-				dataStackIndex += ByteSizeToDataMemorySize(td.StorageSize());
+                dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits * 8u);
 //cst.Append('[').Append(dataStackIndex).Append(']');
                 StreamString value;
 				AnyType src(td,stackPtr - dataStackIndex);
