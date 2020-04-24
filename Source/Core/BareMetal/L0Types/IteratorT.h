@@ -60,11 +60,24 @@ public:
      * @param[in] data is a generic template type.
      */
     virtual void Do(T *data)=0;
+
+    void Do(LinkedListable *data);
 };
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+template<typename T>
+void IteratorT<T>::Do(LinkedListable *data){
+    T *Tdata = dynamic_cast<T*>(data);
+    Do(Tdata);
+}
+
+}
 
 #endif /* ITERATORT_H_ */
 
