@@ -153,7 +153,7 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolde
 
 		// it would be an error if this is an output variable
 		// as we do not allow to override an output
-		ret.invalidOperation = true;
+        ret.illegalOperation = true;
 	}
 
 	return ret;
@@ -221,7 +221,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
             bool hasParameter = (parameter.Size()> 0);
 
 			if (command == readToken){
-				ret.invalidOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter;
 				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 				if (ret){
 					// if an output variable of this name is already present
@@ -232,22 +232,22 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 
 					if (!ret){
 						ret = AddInputVariable(parameter);
-						if (ret.invalidOperation == true){
+                        if (ret.illegalOperation == true){
 							COMPOSITE_REPORT_ERROR(ErrorManagement::Information,"variable ",parameter," already registered");
 							// mask out the case that we already registered this variable
-							ret.invalidOperation = false;
+                            ret.illegalOperation = false;
 						}
 						COMPOSITE_REPORT_ERROR(ret,"Failed Adding input variable ",parameter);
 					}
 				}
 			} else
 			if (command == writeToken){
-				ret.invalidOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter;
 				COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
 				if (ret){
 					ret = AddOutputVariable(parameter);
-					if (ret.invalidOperation == true){
+                    if (ret.illegalOperation == true){
 						COMPOSITE_REPORT_ERROR(ret,"variable ",parameter," already registered");
 						// the error remains as we do not allow overwriting outputs
 					}
@@ -255,7 +255,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 				}
 			} else
 			if (command == constToken){
-				ret.invalidOperation = !hasParameter;
+                ret.illegalOperation = !hasParameter;
 				COMPOSITE_REPORT_ERROR(ret,constToken," without type name");
 
 				// transform the type name into a TypeDescriptor
@@ -364,7 +364,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			// PUSH type(parameter1) --> TypeStack
 			// matchOutput = true;
 			if (command == castToken){
-				ret.invalidOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,command," without type name");
 				if (ret){
 					// transform the type name into a TypeDescriptor
@@ -392,7 +392,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			// matchOutput = true;
 			// assign code2 to address of variable
 			if (command == writeToken){
-				ret.invalidOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,writeToken," without variable name");
 
 				VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
@@ -431,7 +431,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			// matchOutput = true;
 			// assign code2 to address of variable
 			if (command == readToken){
-				ret.invalidOperation = !hasParameter1;
+                ret.illegalOperation = !hasParameter1;
 				COMPOSITE_REPORT_ERROR(ret,readToken," without variable name");
 
 				VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
@@ -478,7 +478,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			if (command == constToken){
                 bool hasParameter2 = (parameter2.Size()> 0);
 
-				ret.invalidOperation = !hasParameter1 || !hasParameter2;
+                ret.illegalOperation = !hasParameter1 || !hasParameter2;
 				COMPOSITE_REPORT_ERROR(ret,constToken," without type name and value");
 
 				// transform the type name into a TypeDescriptor
