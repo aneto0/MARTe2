@@ -229,10 +229,10 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 					// it means it would have already been loaded
 					// so no need to fetch an external input
 					VariableInformation *variableInformation;
-					ret = FindOutputVariable(parameter,variableInformation);
+                    ret = FindOutputVariable(parameter.Buffer(),variableInformation);
 
 					if (!ret){
-						ret = AddInputVariable(parameter);
+                        ret = AddInputVariable(parameter.Buffer());
                         if (ret.illegalOperation == true){
                             REPORT_ERROR_STATIC(ErrorManagement::Information,"variable %s already registered", parameter.Buffer());
 							// mask out the case that we already registered this variable
@@ -247,7 +247,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
                 REPORT_ERROR_STATIC(ret, "%s without variable name", command.Buffer());
 
 				if (ret){
-					ret = AddOutputVariable(parameter);
+                    ret = AddOutputVariable(parameter.Buffer());
                     if (ret.illegalOperation == true){
                         REPORT_ERROR_STATIC(ret,"variable %s already registered", parameter.Buffer());
 						// the error remains as we do not allow overwriting outputs
@@ -272,7 +272,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
 				if (ret){
                     StreamString constantName;
 					constantName().Append("Constant").Append('@').Append(nextConstantAddress);
-					ret = AddInputVariable(constantName,td,nextConstantAddress);
+                    ret = AddInputVariable(constantName.Buffer(),td,nextConstantAddress);
 				}
 				if (ret){
 					uint32 size = td.StorageSize();
@@ -821,7 +821,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	if (stackPtr  != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
 		runtimeError.internalSetupError = true;
 		int64 offset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
-        REPORT_ERROR_STATIC(runtimeError,"stack pointer not back to origin : %i elements left", offset);
+        REPORT_ERROR_STATIC(runtimeError,"stack pointer not back to origin : %i elements left");
 	}
 
 	return runtimeError;
