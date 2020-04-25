@@ -52,72 +52,28 @@ struct GrammarInfo {
     /**
      * List of separator characters.
      */
-    const char8 *separators;
+    CCString separators;
 
     /**
      * One line comment begin pattern.
      */
-    const char8 *beginOneLineComment;
+    CCString beginOneLineComment;
 
     /**
      * Multiple line comment begin pattern.
      */
-    const char8 *beginMultipleLinesComment;
+    CCString beginMultipleLinesComment;
 
     /**
      * Multiple line comment end pattern.
      */
-    const char8 *endMultipleLinesComment;
+    CCString endMultipleLinesComment;
 
     /**
      * Assignment operator
      */
-    char8 assignment;
+    CCString terminals;
 
-    /**
-     * Specifies that a block begins
-     */
-    char8 openBlock;
-
-    /**
-     * Specifies that a block ends
-     */
-    char8 closeBlock;
-
-    /**
-     * Specifies that a vector begins
-     */
-    char8 openVector;
-
-    /**
-     * Specifies that a vector ends
-     */
-    char8 closeVector;
-
-    /**
-     * Specifies that a matrix begins
-     */
-    char8 openMatrix;
-
-    /**
-     * Specifies that a matrix ends
-     */
-    char8 closeMatrix;
-
-    /**
-     * Specifies that a type cast expression begins
-     */
-    char8 openTypeCast;
-
-    /**
-     * Specifies that a type cast expression ends
-     */
-    char8 closeTypeCast;
-
-    /**
-     * Allows to get the terminals as a C-string.
-     */
-    char8 terminal;
 
 };
 

@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ParserI.h"
+#include "StructuredDataParserI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +41,12 @@ namespace MARTe {
 /**
  * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
  */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
+static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", 	"={}()" };
+
+namespace StandardParserData{
+	extern const ParserData parserData;
+}
+
 
 /**
  * @brief Concrete class for MARTe::ParserI abstract class, configured
@@ -92,7 +97,7 @@ static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', 
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API StandardParser: public ParserI {
+class DLL_API StandardParser: public StructuredDataParserI {
 
 public:
 
@@ -111,54 +116,17 @@ public:
      */
     virtual ~StandardParser();
 
-protected:
-
-    /**
-     * @see ParserI::GetProduction(*).
-     */
-    virtual uint32 &GetProduction(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetProductionRow(*).
-     */
-    virtual uint32 GetProductionRow(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetParse(*).
-     */
-    virtual uint32 GetParse(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetParseRow(*).
-     */
-    virtual uint32 GetParseRow(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetConflict(*).
-     */
-    virtual uint32 GetConflict(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetConflictRow(*).
-     */
-    virtual uint32 GetConflictRow(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetConstant(*).
-     */
-    virtual uint32 GetConstant(const uint32 index) const;
-
-    /**
-     * @see ParserI::GetSymbolName(*).
-     */
-    virtual CCString GetSymbolName(const uint32 symbol) const;
+private:
 
     /**
      * @see ParserI::Execute(*).
      */
     virtual void Execute(const uint32 number);
 
-private:
+    /**
+     * implemented in XMLParserData.cpp
+     */
+	void MapMethods();
 
     /**
      * The array of functions needed by the parser.

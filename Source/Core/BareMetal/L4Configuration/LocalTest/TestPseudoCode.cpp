@@ -4,9 +4,14 @@
 #include "HighResolutionTimer.h"
 #include "BasicConsole.h"
 #include "MicroSeconds.h"
+#include "MathExpressionParser.h"
+#include "ConfigurationDatabase.h"
+#include "StreamMemoryReference.h"
 
 
 using namespace MARTe;
+
+CCString MATHExpr= "X=5+B*(float)C*!(X-Y)";
 
 CCString RPNCode=
 		"READ A\n"
@@ -63,6 +68,17 @@ void LucaTest(){
 int main(){
 
 	StartupManager::Initialise();
+
+	StreamString err;
+	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
+	MathExpressionParser mexp(smr,&err);
+	mexp.Parse();
+
+	printf(">>\n%s\n<<\n",mexp.GetStackMachineExpression().GetList());
+	printf(">>\n%s\n<<\n",err.Buffer().GetList());
+
+	return 0;
+
 
 	PseudoCode::Context context;
 

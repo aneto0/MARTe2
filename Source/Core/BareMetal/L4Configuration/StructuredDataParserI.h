@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PARSERI_H_
-#define PARSERI_H_
+#ifndef STRUCTURED_DATA_PARSERI_H_
+#define STRUCTURED_DATA_PARSERI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -36,9 +36,8 @@
 #include "StructuredDataI.h"
 #include "DynamicCString.h"
 #include "LexicalAnalyzer.h"
-#include "ParserData.h"
 #include "ProgressiveTypeCreator.h"
-
+#include "ParserI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,7 +45,6 @@
 
 
 namespace MARTe {
-
 
 /**
  * @brief Abstract parser which allows to transform a stream of characters
@@ -86,7 +84,7 @@ namespace MARTe {
  * - The error messages printed on the \a err stream are in the format
  * "error description [line number]".
  */
-class DLL_API ParserI {
+class DLL_API StructuredDataParserI:public ParserI {
 
 public:
 
@@ -94,13 +92,15 @@ public:
      * @brief Constructor which initializes the instance with all the items
      * involved into the parsing (input, output, and grammar configuration).
      * @param[in] stream is the stream to be read and parsed.
+     * @param[in,out] databaseIn is the StructuredData in output.
      * @param[out] err is a stream where parse error messages are written into.
      * @param[in] grammarIn contains the comments patterns, the separator and
      * terminal characters.
      * @post
      *   GetGrammar() == grammarIn
      */
-    ParserI(StreamI &stream,
+    StructuredDataParserI(StreamI &stream,
+            StructuredDataI &databaseIn,
             BufferedStreamI * const err,
             const GrammarInfo &grammarIn,
 			const ParserData & constantsIn);
@@ -108,7 +108,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~ParserI();
+    virtual ~StructuredDataParserI();
 
     /**
      * @brief Parses the stream in input and builds the configuration database
@@ -119,167 +119,104 @@ public:
      */
     ErrorManagement::ErrorType Parse();
 
-private:
-
     /**
      * @brief Retrieves the grammar used by this parser.
      * @return the grammar used by this parser.
      */
-    GrammarInfo GetGrammarInfo() const;
-
-    /**
-     * @brief Retrieves the next expected token identifiers to be
-     * pushed on the stack.
-     * @param[in] index is the production row.
-     * @return the next expected tokens identifiers to be pushed
-     * on the stack.
-     */
-    const uint32 &GetProduction(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the index of the productions array.
-     * @param[in] index is the expected token identifier.
-     * @return the index of the productions array.
-     */
-    uint32 GetProductionRow(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the next token identifier.
-     * @param[in] index is the parse row.
-     * @return the next token identifier.
-     */
-    uint32 GetParse(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the index of the parse array.
-     * @param[in] index is the expected token identifier.
-     * @return the index of the parse array.
-     */
-    uint32 GetParseRow(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the conflict number.
-     * @param[in] index is the conflict row.
-     * @return the conflict number.
-     */
-    uint32 GetConflict(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the conflict array index.
-     * @param[in] index is the expected token identifier.
-     */
-    uint32 GetConflictRow(const uint32 index) const;
-
-    /**
-     * @brief Retrieves the name associated to the token.
-     * @param[in] symbol is the expected token identifier.
-     */
-    CCString GetSymbolName(const uint32 symbol) const;
-
-    /**
-     * @brief Retrieves the name associated to the token.
-     * @param[in] symbol is the expected token identifier.
-     */
-    CCString GetProductionName(const uint32 production) const ;
-
-    /**
-     * @brief Retrieves the identifier of the next token produced by the
-     * lexical analyzer.
-     * @return the identifier of the next token produced by the lexical
-     * analyzer.
-     */
-    uint32 GetNextTokenType();
-
-    /**
-     * @brief Peeks in the token stack produced by the lexical analyzer,
-     * retrieves the identifier of the token in the next \a position index.
-     * @return the identifier of the token in the next \a position index.
-     */
-    uint32 PeekNextTokenType(const uint32 position);
-
-    /**
-     * @brief Pushes the expected token to the stack.
-     * @param[in] symbol is the expected token.
-     * @param[in] stack is the internal token stack.
-     * @param[in, out] top is a pointer to the stack head.
-     */
-    inline void StackPush(const uint32 symbol,
-                          const uint32 * const stack,
-                          uint32* &top) const;
-
-    /**
-     * @brief Pops the expected token from the internal stack.
-     * @param[out] top is a pointer to the stack head.
-     */
-    inline uint32 StackPop(uint32* &top) const;
-
-    /**
-     * @brief Executes the specified function.
-     * @param[in] number if the number of the callback to be executed.
-     */
-    virtual void Execute(const uint32 number)=0;
-
+    //GrammarInfo GetGrammarInfo() const;
 
 protected:
 
+// Callbacks from SLK engine
     /**
-     * A pointer to the last token produced by the lexical analyzer.
+     * @brief Moves into the built structured data to the root.
      */
-    Token *					currentToken;
-
-
-    /**  CONSTANTS set by the PARSER generator*/
-    /** to be correctly initalised by the initialiser of the specific specialisation */
-    const ParserData &		constants;
+    virtual void End();
 
     /**
-     * The parse Error State
+     * @brief Gets the node or the variable name.
      */
-    ErrorManagement::ErrorType ok;
+    virtual void GetNodeName();
 
     /**
-     * The lexical analyzer reading the stream and providing the tokens.
+     * @brief Adds a leaf in the StructuredData.
      */
-    LexicalAnalyzer 		tokenProducer;
+    virtual void AddLeaf();
 
     /**
-     * The stream to print the error messages.
+     * @brief Gets the variable type.
      */
-    BufferedStreamI *		errorStream;
+    virtual void GetTypeCast();
 
     /**
-     * Stores the information about the language to be parsed.
+     * @brief Creates a new node in the StructuredData.
      */
-    GrammarInfo 			grammar;
+    virtual void CreateNode();
+
+    /**
+     * @brief Stores a read scalar in the memory.
+     */
+    virtual void AddScalar();
+
+    /**
+     * @brief Sets the number of dimensions to one and checks if
+     * the matrix is well formed.
+     */
+    virtual void EndVector();
+
+    /**
+     * @brief Sets the number of dimensions to two.
+     */
+    virtual void EndMatrix();
+
+    /**
+     * @brief Moves into the structuredData to the father.
+     */
+    virtual void BlockEnd();
+
+
+private:
+
+    struct ParseStatus{
+
+        /**
+         * The type name.
+         */
+        TypeDescriptor 			td;
+
+        /**
+         * The StructuredData node or leaf name.
+         */
+        DynamicCString 			nodeName;
+
+        /**
+         * Status of a variable element parsing
+         */
+        enum {
+        	parseElFinished,
+			parseElStarted
+        }						parseElStatus;
+
+        void Init();
+
+    } parseStatus;
+
+// PARSING STATUS
+
+// PARSER COMPONENTS
+    /**
+     * The StructuredData to be built
+     */
+    StructuredDataI *		database;
+
+    /**
+     * The object used to store the read element and create the AnyType leaf.
+     */
+    ProgressiveTypeCreator 	memory;
 
 };
 
 
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-
-void ParserI::StackPush(const uint32 symbol,
-                        const uint32 * const stack,
-                        uint32 *&top) const {
-    /*lint -e{946} [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17]. Justification: stack implementation requires operational applied to pointer. */
-    if (top > stack) {
-        /*lint -e{165} , [MISRA C++ Rule 5-0-18]. Justification: stack implementation requires subtraction applied to pointer. */
-        top--;
-        *top = symbol;
-    }
-}
-
-uint32 ParserI::StackPop(uint32 * &top) const {
-    uint32 ret = 0u;
-    if (*top != 0u) {
-        ret = *top;
-        top++;
-    }
-    return ret;
-}
 
 }
 
