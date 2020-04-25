@@ -47,7 +47,7 @@ namespace MARTe {
 StandardParser::StandardParser(StreamI &stream,
                                StructuredDataI &databaseIn,
                                BufferedStreamI * const err) :
-		StructuredDataParserI(stream, databaseIn, err, StandardGrammar,StandardParserData::parserData)
+		StructuredDataParserI(stream, databaseIn, err, StandardParserData::parserData)
 {
 
 	MapMethods();
@@ -58,8 +58,9 @@ StandardParser::~StandardParser() {
 }
 
 
-void StandardParser::Execute(const uint32 number) {
-    (this->*Action[number])();
+
+void StandardParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
+	(this->*Action[number])(currentToken,errorStream);
 }
 
 

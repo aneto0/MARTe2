@@ -102,7 +102,6 @@ public:
     StructuredDataParserI(StreamI &stream,
             StructuredDataI &databaseIn,
             BufferedStreamI * const err,
-            const GrammarInfo &grammarIn,
 			const ParserData & constantsIn);
 
     /**
@@ -131,48 +130,48 @@ protected:
     /**
      * @brief Moves into the built structured data to the root.
      */
-    virtual void End();
+    virtual void End(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Gets the node or the variable name.
      */
-    virtual void GetNodeName();
+    virtual void GetNodeName(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Adds a leaf in the StructuredData.
      */
-    virtual void AddLeaf();
+    virtual void AddLeaf(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Gets the variable type.
      */
-    virtual void GetTypeCast();
+    virtual void GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Creates a new node in the StructuredData.
      */
-    virtual void CreateNode();
+    virtual void CreateNode(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Stores a read scalar in the memory.
      */
-    virtual void AddScalar();
+    virtual void AddScalar(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Sets the number of dimensions to one and checks if
      * the matrix is well formed.
      */
-    virtual void EndVector();
+    virtual void EndVector(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Sets the number of dimensions to two.
      */
-    virtual void EndMatrix();
+    virtual void EndMatrix(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Moves into the structuredData to the father.
      */
-    virtual void BlockEnd();
+    virtual void BlockEnd(const Token *currentToken,BufferedStreamI *errorStream);
 
 
 private:

@@ -24,8 +24,44 @@
 #include "MathExpressionParser.h"
 #include "ParserData.h"
 
+#if 1
+
+#include "SimpleGrammar4.inc"
+
+#else
 namespace MARTe{
 
+
+/*************************************************************************************************
+
+lexical parameters
+
+*************************************************************************************************/
+
+
+static const char * separators                = "\n\r\t, ";
+
+/**
+ * One line comment begin pattern.
+ */
+static const char * beginOneLineComment       = "//" ;
+
+/**
+ * Multiple line comment begin pattern.
+ */
+static const char * beginMultipleLinesComment = "/*";
+
+/**
+ * Multiple line comment end pattern.
+ */
+static const char * endMultipleLinesComment   = "*/";
+
+/**
+ * Assignment operator
+ */
+static const char * terminals                 = "=+/-*()><^!";
+
+/*************************************************************************************************/
 
 /**
  * name of the PaserClass ## Data
@@ -179,6 +215,11 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
+		separators,
+		beginOneLineComment,
+		beginMultipleLinesComment,
+		endMultipleLinesComment,
+		terminals,
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -211,7 +252,7 @@ extern const ParserData parserData(
 
 void MathExpressionParser::MapMethods(){
 
-	Action[0] = static_cast<void (MathExpressionParser::*)(void)>(NULL);
+	Action[0] = static_cast<void (MathExpressionParser::*)(const Token *,BufferedStreamI *)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp
@@ -235,3 +276,5 @@ void MathExpressionParser::MapMethods(){
 
 
 } //MARTe
+
+#endif

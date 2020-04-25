@@ -41,10 +41,6 @@
 
 namespace MARTe{
 
-/**
- * Lexical elements for infix mathematical expressions.
- */
-static const GrammarInfo MathGrammar = { "\n\r\t " , "//", "/*"  , "*/" , "=+/-*()><^!" };
 
 namespace MathExpressionParserData{
 	extern const ParserData parserData;
@@ -118,7 +114,7 @@ protected:
 		 *          an operator. The operator is then stored in the 
 		 *          #operatorStack and later appended by PopOperator().
 		 */
-		virtual void PushOperator();
+		virtual void PushOperator(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Pops an operator from the top of the #operatorStack.
@@ -128,7 +124,7 @@ protected:
 		 *          from the #operatorStack and appended to the stack
 		 *          machine expression #stackMachineExpr.
 		 */
-		virtual void PopOperator();
+		virtual void PopOperator(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Pushes a typecast type to the top of the #typecastStack.
@@ -137,7 +133,7 @@ protected:
 		 *          The typecast type is then stored in the #typecastStack
 		 *          and later appended by PopTypecast().
 		 */
-		virtual void PushTypecast();
+		virtual void PushTypecast(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Pops a typecast type from the top of the #typecastStack.
@@ -147,7 +143,7 @@ protected:
 		 *          from the typecastStack and appended to the stack
 		 *          machine expression #stackMachineExpr.
 		 */
-		virtual void PopTypecast();
+		virtual void PopTypecast(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Append an encountered operand (constant or variable)
@@ -160,7 +156,7 @@ protected:
 		 *          tokens and as `CONST NUMBER` for NUMBER tokens.
 		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
 		 */
-		virtual void AddOperand();
+		virtual void AddOperand(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Append an encountered constant to the output expression.
@@ -174,7 +170,7 @@ protected:
 		 *          tokens and as `CONST type NUMBER` for NUMBER tokens.
 		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
 		 */
-		virtual void AddOperandTypecast();
+		virtual void AddOperandTypecast(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Stores the name of the variable before the equal sign.
@@ -191,7 +187,7 @@ protected:
 		 * 
 		 *          <pre> WRITE ret </pre>
 		 */
-		virtual void StoreAssignment();
+		virtual void StoreAssignment(const Token *currentToken,BufferedStreamI *errorStream);
 		
 		/**
 		 * @brief   Called when the parser hits the end of the expression.
@@ -201,7 +197,7 @@ protected:
 		 *          method is responsible for appending the `WRITE`
 		 *          statement required by the expression evaluation engine.
 		 */
-		virtual void End();
+		virtual void End(const Token *currentToken,BufferedStreamI *errorStream);
     //@}
     
     /**
@@ -236,8 +232,7 @@ protected:
     
 private:
 
-	virtual void Execute(const uint32 number);
-
+	virtual void Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * implemented in MathExpressionParserData.cpp
@@ -245,7 +240,7 @@ private:
 	void MapMethods();
 
 
-    void (MathExpressionParser::*Action[10])(void);
+    void (MathExpressionParser::*Action[10])(const Token *,BufferedStreamI *);
     
 };
 

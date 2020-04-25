@@ -49,9 +49,36 @@ namespace MARTe{
 
 class  ParserData{
 public:
-	/*
-    * The index of initial expected token identifier.
+
+
+	/**
+    * List of separator characters.
     */
+   CCString separators;
+
+   /**
+    * One line comment begin pattern.
+    */
+   CCString beginOneLineComment;
+
+   /**
+    * Multiple line comment begin pattern.
+    */
+   CCString beginMultipleLinesComment;
+
+   /**
+    * Multiple line comment end pattern.
+    */
+   CCString endMultipleLinesComment;
+
+   /**
+    * Assignment operator
+    */
+   CCString terminals;
+
+   /*
+   * The index of initial expected token identifier.
+   */
    uint32 StartSymbol;
 
    /**
@@ -154,7 +181,13 @@ public:
    /**
     *
     */
-   ParserData(	uint32              startSymbolIn,
+   ParserData(
+		   	    const char *        separatorsIn,
+			    const char *        beginOneLineCommentIn,
+			    const char *        beginMultipleLinesCommentIn,
+			    const char *        endMultipleLinesCommentIn,
+			    const char *        terminalsIn,
+		   	    uint32              startSymbolIn,
 		   	   	uint32              endOfFileIn,
 				uint32              startStateIn,
 				uint32              startConflictIn,
@@ -178,22 +211,26 @@ public:
 				const char **		Production_nameIn,
 				uint32				Production_name_size
    ):
-	   StartSymbol    (startSymbolIn   ),
-	   EndOfFile      (endOfFileIn     ),
-	   StartState     (startStateIn    ),
-	   StartConflict  (startConflictIn ),
-	   EndConflict    (endConflictIn   ),
-	   StartAction    (startActionIn   ),
-	   EndAction      (endActionIn     ),
-	   TotalConflicts (totalConflictsIn),
-	   StackSize      (stackSizeIn     ),
-	   Production     (ProductionIn    ),
-
-	   Production_row (Production_rowIn),
-	   Parse          (ParseIn         ),
-	   Parse_row      (Parse_rowIn     ),
-	   Conflict       (ConflictIn      ),
-	   Conflict_row   (Conflict_rowIn  ),
+	   separators                (separatorsIn               ),
+	   beginOneLineComment       (beginOneLineCommentIn      ),
+	   beginMultipleLinesComment (beginMultipleLinesCommentIn),
+	   endMultipleLinesComment   (endMultipleLinesCommentIn  ),
+	   terminals                 (terminalsIn                ),
+	   StartSymbol               (startSymbolIn              ),
+	   EndOfFile                 (endOfFileIn                ),
+	   StartState                (startStateIn               ),
+	   StartConflict             (startConflictIn            ),
+	   EndConflict               (endConflictIn              ),
+	   StartAction               (startActionIn              ),
+	   EndAction                 (endActionIn                ),
+	   TotalConflicts            (totalConflictsIn           ),
+	   StackSize                 (stackSizeIn                ),
+	   Production                (ProductionIn               ),
+	   Production_row            (Production_rowIn           ),
+	   Parse                     (ParseIn                    ),
+	   Parse_row                 (Parse_rowIn                ),
+	   Conflict                  (ConflictIn                 ),
+	   Conflict_row              (Conflict_rowIn             ),
        Nonterminal_name(reinterpret_cast<CCString *>(&Nonterminal_nameIn[0]),Nonterminal_name_size),
    	   Terminal_name   (reinterpret_cast<CCString *>(&Terminal_nameIn[0])	,Terminal_name_size),
 	   Action_name     (reinterpret_cast<CCString *>(&Action_nameIn[0])		,Action_name_size),

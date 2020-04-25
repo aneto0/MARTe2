@@ -47,11 +47,11 @@ namespace MARTe {
 
 MathExpressionParser::MathExpressionParser(StreamI &stream,
                                            BufferedStreamI * const err) :
-    ParserI(stream, err, MathGrammar,MathExpressionParserData::parserData) {
+    ParserI(stream, err, MathExpressionParserData::parserData) {
 		
 
 		//tokenProducer.TokenizeInput();
-    COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Acquired terminals:: ", MathGrammar.terminals);
+//    COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Acquired terminals:: ", MathGrammar.terminals);
 //    COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Acquired string: ", (dynamic_cast<StreamString&>(stream)).Buffer());
 
     MapMethods();
@@ -101,7 +101,7 @@ CCString MathExpressionParser::OperatorLookupTable(CCString operatorIn)
 	
 } // OperatorLookupTable()
 
-void MathExpressionParser::End()
+void MathExpressionParser::End(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "WRITE ", assignmentVarName.Buffer());
 	COMPOSITE_REPORT_ERROR(ErrorManagement::Information, "END");
@@ -112,14 +112,14 @@ void MathExpressionParser::End()
     stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::PushOperator()
+void MathExpressionParser::PushOperator(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	StreamString* operat = new StreamString(currentToken->GetData());
 	
 	operatorStack.Add(operat);
 }
 
-void MathExpressionParser::PopOperator()
+void MathExpressionParser::PopOperator(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	uint32 top = operatorStack.GetSize() - 1;
 	StreamString* operat;
@@ -132,14 +132,14 @@ void MathExpressionParser::PopOperator()
 	stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::PushTypecast()
+void MathExpressionParser::PushTypecast(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	StreamString* operat = new StreamString(currentToken->GetData());
 	
 	typecastStack.Add(operat);
 }
 
-void MathExpressionParser::PopTypecast()
+void MathExpressionParser::PopTypecast(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	uint32 top = typecastStack.GetSize() - 1;
 	StreamString* operat;
@@ -152,7 +152,7 @@ void MathExpressionParser::PopTypecast()
 	stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::AddOperand()
+void MathExpressionParser::AddOperand(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Add Operand  ", currentToken->GetData());
 
@@ -167,7 +167,7 @@ void MathExpressionParser::AddOperand()
 	stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::AddOperandTypecast()
+void MathExpressionParser::AddOperandTypecast(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	uint32 top = typecastStack.GetSize() - 1;
 	StreamString* operat;
@@ -181,15 +181,15 @@ void MathExpressionParser::AddOperandTypecast()
 	stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::StoreAssignment()
+void MathExpressionParser::StoreAssignment(const Token *currentToken,BufferedStreamI *errorStream)
 {
 	COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "StoreAssignment ", currentToken->GetData());
 	
 	assignmentVarName = currentToken->GetData();
 }
 
-void MathExpressionParser::Execute(const uint32 number) {
-	(this->*Action[number])();
+void MathExpressionParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
+	(this->*Action[number])(currentToken,errorStream);
 }
 
 

@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StreamI.h"
-#include "GrammarInfo.h"
 #include "StaticList.h"
 #include "Token.h"
 #include "CCString.h"

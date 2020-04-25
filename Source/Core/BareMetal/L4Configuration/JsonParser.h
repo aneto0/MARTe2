@@ -40,10 +40,6 @@
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in JSON language.
- */
-static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ":{}[]"};
 
 namespace JsonParserData{
 	extern const ParserData parserData;
@@ -122,7 +118,7 @@ private:
     /**
      * @see ParserI::Execute(*)
      */
-    virtual void Execute(const uint32 number);
+    virtual void Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
 
     /*
      *
@@ -132,7 +128,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (JsonParser::*Action[10])(void);
+    void (JsonParser::*Action[10])(const Token *,BufferedStreamI *);
 
 };
 

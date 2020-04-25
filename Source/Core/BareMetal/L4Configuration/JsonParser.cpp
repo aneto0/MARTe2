@@ -48,7 +48,7 @@ namespace MARTe {
 JsonParser::JsonParser(StreamI &stream,
                        StructuredDataI &databaseIn,
                        BufferedStreamI * const err) :
-        StructuredDataParserI(stream, databaseIn, err, JsonGrammar,JsonParserData::parserData)
+        StructuredDataParserI(stream, databaseIn, err, JsonParserData::parserData)
 {
 MapMethods();
 }
@@ -58,8 +58,8 @@ JsonParser::~JsonParser() {
 
 }
 
-void JsonParser::Execute(const uint32 number) {
-    (this->*Action[number])();
+void JsonParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
+	(this->*Action[number])(currentToken,errorStream);
 }
 
 

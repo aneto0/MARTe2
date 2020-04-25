@@ -38,10 +38,6 @@
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
- */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", 	"={}()" };
 
 namespace StandardParserData{
 	extern const ParserData parserData;
@@ -121,7 +117,7 @@ private:
     /**
      * @see ParserI::Execute(*).
      */
-    virtual void Execute(const uint32 number);
+    virtual void Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * implemented in XMLParserData.cpp
@@ -131,7 +127,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (StandardParser::*Action[10])(void);
+    void (StandardParser::*Action[10])(const Token *,BufferedStreamI *);
 
 };
 

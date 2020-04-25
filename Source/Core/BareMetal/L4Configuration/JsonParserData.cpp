@@ -28,6 +28,38 @@
 
 namespace MARTe{
 
+
+/*************************************************************************************************
+
+lexical parameters
+
+*************************************************************************************************/
+
+
+static const char * separators                = "\n\r\t, ";
+
+/**
+ * One line comment begin pattern.
+ */
+static const char * beginOneLineComment       = "" ;
+
+/**
+ * Multiple line comment begin pattern.
+ */
+static const char * beginMultipleLinesComment = "";
+
+/**
+ * Multiple line comment end pattern.
+ */
+static const char * endMultipleLinesComment   = "";
+
+/**
+ * Assignment operator
+ */
+static const char * terminals                 = ":{}[]";
+
+
+
 /**
  * name of the PaserClass ## Data
  */
@@ -168,6 +200,11 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
+		separators,
+		beginOneLineComment,
+		beginMultipleLinesComment,
+		endMultipleLinesComment,
+		terminals,
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -194,13 +231,14 @@ extern const ParserData parserData(
 );
 
 
+
 } //JsonParserData
 
 #define SlkAction JsonParser
 
 void JsonParser::MapMethods(){
 
-	Action[0] = static_cast<void (JsonParser::*)(void)>(NULL);
+	Action[0] = static_cast<void (JsonParser::*)(const Token *,BufferedStreamI *)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp

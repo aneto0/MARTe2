@@ -102,7 +102,6 @@ public:
      */
     ParserI(StreamI &stream,
             BufferedStreamI * const err,
-            const GrammarInfo &grammarIn,
 			const ParserData & constantsIn);
 
     /**
@@ -120,12 +119,6 @@ public:
     ErrorManagement::ErrorType Parse();
 
 private:
-
-    /**
-     * @brief Retrieves the grammar used by this parser.
-     * @return the grammar used by this parser.
-     */
-    GrammarInfo GetGrammarInfo() const;
 
     /**
      * @brief Retrieves the next expected token identifiers to be
@@ -183,12 +176,24 @@ private:
     CCString GetProductionName(const uint32 production) const ;
 
     /**
+     * @brief Retrieves the name associated to the token.
+     * @param[in] symbol is the expected token identifier.
+     */
+    CCString GetProductionNameWithConflicts(const uint32 production) const ;
+
+    /**
      * @brief Retrieves the identifier of the next token produced by the
      * lexical analyzer.
      * @return the identifier of the next token produced by the lexical
      * analyzer.
      */
     uint32 GetNextTokenType();
+
+    /**
+     * @brief maps the input token into the grammar expected tokens
+     * @return a token code understood by the grammar.
+     */
+    uint32 TokenToCode(const Token *token);
 
     /**
      * @brief Peeks in the token stack produced by the lexical analyzer,
@@ -217,25 +222,24 @@ private:
      * @brief Executes the specified function.
      * @param[in] number if the number of the callback to be executed.
      */
-    virtual void Execute(const uint32 number)=0;
-
+    virtual void Execute(const uint32 number,const Token *token,BufferedStreamI *errorStream)=0;
 
 protected:
+    /**
+     * The parse Error State
+     */
+    ErrorManagement::ErrorType ok;
 
+
+private:
     /**
      * A pointer to the last token produced by the lexical analyzer.
      */
     Token *					currentToken;
 
-
     /**  CONSTANTS set by the PARSER generator*/
     /** to be correctly initalised by the initialiser of the specific specialisation */
     const ParserData &		constants;
-
-    /**
-     * The parse Error State
-     */
-    ErrorManagement::ErrorType ok;
 
     /**
      * The lexical analyzer reading the stream and providing the tokens.
@@ -246,11 +250,6 @@ protected:
      * The stream to print the error messages.
      */
     BufferedStreamI *		errorStream;
-
-    /**
-     * Stores the information about the language to be parsed.
-     */
-    GrammarInfo 			grammar;
 
 };
 

@@ -11,7 +11,8 @@
 
 using namespace MARTe;
 
-CCString MATHExpr= "X=5+B*(float)C*!(X-Y)";
+CCString MATHExpr= "X=Z,Y=B \n X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z \n";
+//CCString MATHExpr= "X=Z,Y=B,";
 
 CCString RPNCode=
 		"READ A\n"

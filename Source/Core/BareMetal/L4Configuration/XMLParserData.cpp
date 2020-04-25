@@ -32,8 +32,39 @@ namespace MARTe{
  */
 namespace XMLParserData{
 
-#define slk_size_t uint32
+/*************************************************************************************************
 
+lexical parameters
+
+*************************************************************************************************/
+
+
+static const char * separators                = "\n\r\t, ";
+
+/**
+ * One line comment begin pattern.
+ */
+static const char * beginOneLineComment       = "" ;
+
+/**
+ * Multiple line comment begin pattern.
+ */
+static const char * beginMultipleLinesComment = "<!--";
+
+/**
+ * Multiple line comment end pattern.
+ */
+static const char * endMultipleLinesComment   = "-->";
+
+/**
+ * Assignment operator
+ */
+static const char * terminals                 = "<>{}/()";
+
+/*************************************************************************************************/
+
+
+#define slk_size_t uint32
 
 /*************************************************************************************************
 
@@ -187,6 +218,11 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
+		separators,
+		beginOneLineComment,
+		beginMultipleLinesComment,
+		endMultipleLinesComment,
+		terminals,
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -219,10 +255,10 @@ extern const ParserData parserData(
 
 void XMLParser::MapMethods(){
 
-	Action[0] = static_cast<void (XMLParser::*)(void)>(NULL);
+	Action[0] = static_cast<void (XMLParser::*)(const Token *,BufferedStreamI *)>(NULL);
 /*************************************************************************************************
 
-	PASTE HERE FROM SlkString.cpp
+	PASTE HERE FROM SlkTables.cpp
 	use the name of the final class instead of SlkAction
 
 *************************************************************************************************/
