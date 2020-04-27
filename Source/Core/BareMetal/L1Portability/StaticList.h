@@ -136,6 +136,11 @@ public:
     elementType operator[](uint32 pos);
 
     /**
+     * @see StaticListHolder::GetAllocatedMemoryConst()
+     */
+    inline const elementType* GetAllocatedMemoryConst() const;
+
+    /**
      * @see StaticListHolder::Clean()
      */
     inline void Clean();
@@ -160,6 +165,11 @@ namespace MARTe {
 template<typename elementType, uint32 listAllocationGranularity>
 StaticList<elementType, listAllocationGranularity>::StaticList() :
         slh(sizeof(elementType), listAllocationGranularity) {
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+inline const elementType* StaticList<elementType, listAllocationGranularity>::GetAllocatedMemoryConst() const{
+    return static_cast<const elementType*>(slh.GetAllocatedMemoryConst());
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
