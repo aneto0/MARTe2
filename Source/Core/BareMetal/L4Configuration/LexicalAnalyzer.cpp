@@ -570,7 +570,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
 
         if (isEOF) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-            Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
+            //Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
+            Token *toAdd = new Token(0, "END_OF_SLK_INPUT", "END_OF_SLK_INPUT", lineNumber);
             if (!tokenQueue.Add(toAdd)) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }

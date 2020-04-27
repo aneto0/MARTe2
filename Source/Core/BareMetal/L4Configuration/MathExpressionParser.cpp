@@ -40,53 +40,59 @@ namespace MARTe {
 
 static uint32 Production[] = {0
 
-,6,14,32,1,2,15,33 ,3,15,17,28 ,2,16,3 ,2,16,4 
-,3,17,19,29 ,2,18,5 ,2,18,6 ,3,19,21,30 ,2,20,7 
-,2,20,8 ,3,21,23,31 ,2,22,9 ,2,23,24 ,5,23,34,1,24,35 
-,3,24,10,25 ,2,24,27 ,5,25,36,1,11,26 ,3,25,15,11 
-,5,26,10,15,11,37 ,4,26,38,1,37 ,3,26,39,12 ,3,27,38,1 
-,3,27,38,12 ,6,28,34,16,17,35,28 ,1,28 ,6,29,34,18,19,35,29 
-,1,29 ,6,30,34,20,21,35,30 ,1,30 ,6,31,34,22,23,35,31 
-,1,31 
+,3,17,18,32 ,7,18,37,1,2,20,19,38 ,2,19,3 ,2,19,4 
+,3,20,22,33 ,2,21,5 ,2,21,6 ,3,22,24,34 ,2,23,7 
+,2,23,8 ,3,24,26,35 ,2,25,9 ,2,25,10 ,3,26,28,36 
+,2,27,11 ,2,28,30 ,5,28,39,29,30,40 ,2,29,12 ,2,30,31 
+,3,30,41,13 ,7,30,14,42,1,15,31,43 ,7,30,14,42,1,15,44,13 
+,4,31,14,20,15 ,3,31,41,1 ,7,31,39,1,14,20,15,40 
+,3,32,18,32 ,1,32 ,6,33,39,21,22,40,33 ,1,33 ,6,34,39,23,24,40,34 
+,1,34 ,6,35,39,25,26,40,35 ,1,35 ,6,36,39,27,28,40,36 
+,1,36 
 ,0};
 
 static uint32 Production_row[] = {0
 
-,1,8,12,15,18,22,25,28,32,35,38,42,45,48,54,58
-,61,67,71,77,82,86,90,94,101,103,110,112,119,121,128
+,1,5,13,16,19,23,26,29,33,36,39,43,46,49,53,56
+,59,65,68,71,75,83,91,96,100,108,112,114,121,123,130,132
+,139,141,148
 ,0};
 
 static uint32 ParseArray[] = {
 
-0,0,2,1,31,31,31,31,31,31,30,2,31,2,31,29,29,29,29
-,28,28,3,4,29,5,29,27,27,26,26,24,24,8,5,27,5,27,11,25
-,12,25,8,32,8,22,16,11,0,11,33,20,13,0,13,15,23,16,0,18
-,19,18,21,6,7,9,10,0,0,0,0,0
+0,0,5,1,35,35,35,35,35,35,35,35,34,5,5,5,35,33,33
+,33,33,33,33,32,32,29,29,28,28,33,31,31,31,31,30,30,8,29,2
+,11,3,4,31,14,6,7,16,8,8,8,11,11,11,19,14,14,14,17,16
+,16,9,10,12,13,37,20,36,26,15,18,0,0,0,0,0,0,0,23,0
+,0,0,0,27
 };
 
 static uint32 Parse_row[] = {0
 
-,2,1,18,23,57,31,57,36,30,41,44,48,49,43,27,23
-,12,1
+,2,37,37,1,39,35,53,38,53,42,57,45,57,52,63,66
+,22,27,14,1
 ,0};
 
 static uint32 Conflict[] = {
 
-0,0,14,0,13,13,13,13,13,13,13,14,13,14,18,0,18,18,18
-,18,18,18,18,18,34,18,17,0,18,18,18,18,18,18,18,17,18,17
+0,0,38,0,0,0,0,0,0,0,0,0,0,19,19,19,24,24,24
+,24,24,24,24,24,24,0,0,25,24,19,19,19,19,19,19,19,0,0,19
+,39,21,0,19,19,19,19,19,19,19,19,19,0,22,21,19
 };
 
 static uint32 Conflict_row[] = {0
 
-,1,13,25
+,1,13,24,39
 ,0};
 
-static const uint32 Constants[] = { 14, 13, 0, 32, 35, 32, 40, 3 };
+static const uint32 Constants[] = { 17, 16, 0, 36, 40, 37, 45, 4, 512 };
 
 static const char8 * Terminal_name[] ={"0"
 
 ,"STRING"
 ,"="
+,";"
+,","
 ,">"
 ,"<"
 ,"+"
@@ -94,9 +100,10 @@ static const char8 * Terminal_name[] ={"0"
 ,"*"
 ,"/"
 ,"^"
+,"!"
+,"NUMBER"
 ,"("
 ,")"
-,"NUMBER"
 ,"END_OF_SLK_INPUT"
 };
 
@@ -123,18 +130,13 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
         
         Action[0] = static_cast<void (MathExpressionParser::*)(void)>(NULL);
     Action [ 1 ] = &MathExpressionParser::StoreAssignment;
-    Action [ 2 ] = &MathExpressionParser::End;
+    Action [ 2 ] = &MathExpressionParser::PopAssignment;
     Action [ 3 ] = &MathExpressionParser::PushOperator;
     Action [ 4 ] = &MathExpressionParser::PopOperator;
-    Action [ 5 ] = &MathExpressionParser::PushTypecast;
-    Action [ 6 ] = &MathExpressionParser::PopTypecast;
-    Action [ 7 ] = &MathExpressionParser::AddOperand;
+    Action [ 5 ] = &MathExpressionParser::AddOperand;
+    Action [ 6 ] = &MathExpressionParser::PushTypecast;
+    Action [ 7 ] = &MathExpressionParser::PopTypecast;
     Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
-    
-    //for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
-	//{
-		//REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-5s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
-	//}
 }
 
 MathExpressionParser::~MathExpressionParser() {
@@ -175,6 +177,9 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
 	
 	if (StringHelper::Compare(operatorIn, "log") == 0)
 		ret = "LOG";
+		
+	if (StringHelper::Compare(operatorIn, "!") == 0)
+		ret = "FACT";
 		
 	return ret;
 	
