@@ -143,7 +143,7 @@ static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>',
 /**
  * Lexical elements for infix mathematical expressions.
  */
-static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/", '=', '+', '/', '-', '*', '(', ')', '(', ')', '^', "|><^!\0" };
+static const GrammarInfo MathGrammar = { "\n\r\t ", "//", "/*", "*/", '=', '+', '/', '-', '*', '(', ')', '(', ')', '^', "|><^!,;\0" };
 
 }
 
