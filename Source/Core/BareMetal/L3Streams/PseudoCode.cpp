@@ -402,7 +402,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
                     REPORT_ERROR_STATIC(ret,"output variable %s not found", parameter1.Buffer());
 				}
 
-				TypeDescriptor td = InvalidType(0);
+                TypeDescriptor td = InvalidType;
 				if (ret){
 					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
@@ -451,7 +451,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 					}
 				}
 
-				TypeDescriptor td = InvalidType(0);
+                TypeDescriptor td = InvalidType;
 				if (ret){
 					td = variableInformation->type;
 					ret.unsupportedFeature = !td.IsNumericType();
