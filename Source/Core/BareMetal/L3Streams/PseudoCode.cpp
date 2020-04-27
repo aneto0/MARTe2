@@ -495,7 +495,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 				if (ret){
 					//nextConstantAddress
 					AnyType src(parameter2);
-					AnyType dest(td,&variablesMemoryPtr[nextConstantAddress]);
+                    AnyType dest(td, 0,&variablesMemoryPtr[nextConstantAddress]);
 					ret = src.CopyTo(dest);
                     REPORT_ERROR_STATIC(ret,"CopyTo failed ");
 				}
@@ -619,7 +619,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 			if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits * 8u);
                 StreamString value;
-				AnyType src(td,stackPtr - dataStackIndex);
+                AnyType src(td, 0, stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
@@ -670,7 +670,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 				// Converts the value to a string
                 StreamString value;
 				AnyType dest(value);
-				AnyType src(vi->type,&variablesMemoryPtr[pCode2]);
+                AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
 				ret = src.CopyTo(dest);
                 REPORT_ERROR_STATIC(ret,"CopyTo failed ");
 				if (ret){
@@ -705,7 +705,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits * 8u);
 //cst.Append('[').Append(dataStackIndex).Append(']');
                 StreamString value;
-				AnyType src(td,stackPtr - dataStackIndex);
+                AnyType src(td, 0, stackPtr - dataStackIndex);
 				AnyType dest(value);
 				ret = src.CopyTo(dest);
 
