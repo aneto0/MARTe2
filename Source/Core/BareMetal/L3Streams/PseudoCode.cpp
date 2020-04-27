@@ -609,7 +609,12 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
                 cst += '(';
 			}
 			if (showTypes){
-				 ret.fatalError = !td.ToString(cst);
+                 CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
+                 if (typeName != NULL) {
+                    cst += typeName.GetList();
+                 } else {
+                    ret.fatalError = true;
+                 }
 			}
 			if (showData && showTypes){
                 cst += ')';
@@ -644,7 +649,13 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 	// if already showing the types do not show the parameter of the CAST
 	if ((functionInformation.name == castToken) && (!showTypes)) {
         cst += ' ';
-		ret.fatalError = !functionInformation.types[functionInformation.numberOfInputs].ToString(cst);
+        CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionInformation.types[functionInformation.numberOfInputs]);
+        if (typeName != NULL) {
+            cst += typeName.GetList();
+        } else {
+            ret.fatalError = true;
+        }
+
 	} else
 	if (functionInformation.name == readToken) {
 		CodeMemoryElement pCode2;
@@ -662,7 +673,14 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 			if (pCode2 < startOfVariables){
 
                 cst += ' ';
-				ret.fatalError = !vi->type.ToString(cst);
+
+                CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(vi->type);
+                if (typeName != NULL) {
+                    cst += typeName.GetList();
+                } else {
+                    ret.fatalError = true;
+                }
+
                 cst += ' ';
 
 				// Converts the value to a string
@@ -694,7 +712,12 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 cst += '(';
 			}
 			if (showTypes){
-				ret.fatalError = !td.ToString(cst);
+                CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
+                if (typeName != NULL) {
+                    cst += typeName.GetList();
+                } else {
+                    ret.fatalError = true;
+                }
 			}
 			if (showData && showTypes){
                 cst += ')';
