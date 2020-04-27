@@ -47,7 +47,7 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		TypeDescriptor type;
 		ret = typeStack.Peek(index++,type);
 		if (ret){
-			ret = (type.SameAs(types[numberOfInputs]));
+            ret = (type == types[numberOfInputs]);
 		}
 	}
 
@@ -56,7 +56,7 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		TypeDescriptor type;
 		ret = typeStack.Peek(index++,type);
 		if (ret){
-			ret = (type.SameAs(types[i]));
+            ret = (type == types[i]);
 		}
 	}
 
