@@ -398,7 +398,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 
 				VariableInformation *variableInformation = NULL_PTR(VariableInformation *);
 				if (ret){
-					ret = FindOutputVariable(parameter1,variableInformation);
+                    ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
                     REPORT_ERROR_STATIC(ret,"output variable %s not found", parameter1.Buffer());
 				}
 
@@ -439,14 +439,14 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 
 				if (ret){
 					// try find an output variable with this name
-					ret = FindOutputVariable(parameter1,variableInformation);
+                    ret = FindOutputVariable(parameter1.Buffer(),variableInformation);
 					if (ret){
 						// not set yet - cannot use
 						ret.notCompleted = (variableInformation->variableUsed != true);
 					}
 					// try to see if there is an input variable
 					if (!ret){
-						ret = FindInputVariable(parameter1,variableInformation);
+                        ret = FindInputVariable(parameter1.Buffer(),variableInformation);
                         REPORT_ERROR_STATIC(ret,"input variable %s not found", parameter1.Buffer());
 					}
 				}
