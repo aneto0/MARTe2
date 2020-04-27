@@ -73,13 +73,13 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 		for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
 			TypeDescriptor type;
 			typeStack.Pop(type);
-			dataStackSize -= ByteSizeToDataMemorySize(type.StorageSize());
+            dataStackSize -= ByteSizeToDataMemorySize(type.numberOfBits * 8u);
 		}
 
 		// insert output types
 		for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
 			typeStack.Push(types[i+numberOfInputs]);
-			dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].StorageSize());
+            dataStackSize += ByteSizeToDataMemorySize(types[i+numberOfInputs].numberOfBits * 8u);
 		}
 	}
 
