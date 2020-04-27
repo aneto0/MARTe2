@@ -245,24 +245,69 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
     
     const char8* expression     = "ret = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
     const char8* expectedOutput = "CONST 5\n"
-                                   "READ B\n"
-                                   "READ C\n"
-                                   "CAST float\n"
-                                   "MUL\n"
-                                   "READ X\n"
-                                   "READ Y\n"
-                                   "MIN\n"
-                                   "FACT\n"
-                                   "MUL\n"
-                                   "SUM\n"
-                                   "READ X\n"
-                                   "READ Y\n"
-                                   "SUM\n"
-                                   "SIN\n"
-                                   "SUM\n"
-                                   "READ Z\n"
-                                   "SUM\n"
-                                   "WRITE ret\n";
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "CAST float\n"
+                                  "MUL\n"
+                                  "READ X\n"
+                                  "READ Y\n"
+                                  "MIN\n"
+                                  "FACT\n"
+                                  "MUL\n"
+                                  "SUM\n"
+                                  "READ X\n"
+                                  "READ Y\n"
+                                  "SUM\n"
+                                  "SIN\n"
+                                  "SUM\n"
+                                  "READ Z\n"
+                                  "SUM\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_MultipleExpressions_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A +b; ret = C;";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ b\n"
+                                  "SUM\n"
+                                  "WRITE ret\n"
+                                  "READ C\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_MultipleExpressions_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "Z = (float)12; X = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
+    const char8* expectedOutput = "CONST float 12\n"
+                                  "WRITE Z\n"
+                                  "CONST 5\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "CAST float\n"
+                                  "MUL\n"
+                                  "READ X\n"
+                                  "READ Y\n"
+                                  "MIN\n"
+                                  "FACT\n"
+                                  "MUL\n"
+                                  "SUM\n"
+                                  "READ X\n"
+                                  "READ Y\n"
+                                  "SUM\n"
+                                  "SIN\n"
+                                  "SUM\n"
+                                  "READ Z\n"
+                                  "SUM\n"
+                                  "WRITE X\n";
             
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
@@ -271,7 +316,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Ass
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "(A + b)";
+    const char8* expression     = "(A + b);";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
@@ -280,7 +325,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Ass
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret + b = A";
+    const char8* expression     = "ret + b = A;";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
@@ -289,7 +334,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Unb
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (A + b";
+    const char8* expression     = "ret = (A + b;";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
@@ -298,7 +343,52 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Unb
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A + b)";
+    const char8* expression     = "ret = A + b);";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_NoSemicolon_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A + b";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_NoSemicolon_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A + (B*C - (D/E^F)*G)*H";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_NoSemicolon_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = (A + b) C = (float)12;";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_MultipleDelimiters_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = (A + b);;";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_MultipleDelimiters_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = (A + b);; C = (float)12;";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
@@ -307,16 +397,25 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Und
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (A b)";
+    const char8* expression     = "ret = (A b);";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
 
-TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_EmptyParentheses)
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_EmptyParentheses_1)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = ()";
+    const char8* expression     = "ret = ();";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_EmptyParentheses_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A + ()*B;";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
@@ -325,7 +424,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Inv
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = 12A";
+    const char8* expression     = "ret = 12A;";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
