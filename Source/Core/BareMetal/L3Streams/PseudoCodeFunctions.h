@@ -57,7 +57,7 @@ struct FunctionRecord{
 	/**
 	 *	The name of the functions as used in the RPN code
 	 */
-	CCString 				name;
+    StreamString			name;
 
 	/**
 	 * How many stack elements it will consume

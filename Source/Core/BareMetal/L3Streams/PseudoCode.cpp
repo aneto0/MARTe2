@@ -771,7 +771,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-                cst.Printf("%s%s ", cst, fr.name.GetList());
+                cst.Printf("%s%s ", cst, fr.name.Buffer());
 
      			// errors due to debugging
      			ErrorManagement::ErrorType ret;
@@ -843,7 +843,7 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 		if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
             cst += constToken;
 		} else {
-            cst += fr.name.GetList();
+            cst += fr.name;
 		}
 
 		ret = FunctionRecordInputs2String(fr,cst,false,false,showTypes);
