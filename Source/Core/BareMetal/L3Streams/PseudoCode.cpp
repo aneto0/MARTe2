@@ -516,23 +516,22 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 			CodeMemoryElement code = 0;
 			if (ret){
                 ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command.Buffer(),typeStack,matchOutput,dataStackSize);
-				if (!ret){
+                if (!ret){
                     StreamString typeList;
-                    StreamString cst = typeList();
 					uint32 n2scan = 2;
 					if (matchOutput) {
 						n2scan++;
 					}
-					cst.Append('[');
+                    typeList += '[';
 					for(uint32 index = 0;index < n2scan;index++){
 						if (index > 0){
-							cst.Append('|');
+                            typeList += '|';
 						}
 						TypeDescriptor td;
 						typeStack.Peek(index,td);
-						td.ToString(cst);
+                        typeList += TypeDescriptor::GetTypeNameFromTypeDescriptor(td);
 					}
-					cst.Append(']');
+                    typeList += ']';
                     REPORT_ERROR_STATIC(ret,"command %s(%s) not found", command.Buffer(), typeList.Buffer());
 				}
 //printf("after %s %i elements in dataStack\n ",command.GetList(),dataStackSize);
