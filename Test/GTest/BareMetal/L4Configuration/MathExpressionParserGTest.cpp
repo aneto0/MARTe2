@@ -55,7 +55,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Sum)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A + b";
+    const char8* expression     = "ret = A + b;";
     const char8* expectedOutput = "READ A\n"
                                   "READ b\n"
                                   "SUM\n"
@@ -68,7 +68,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Product)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A * b";
+    const char8* expression     = "ret = A * b;";
     const char8* expectedOutput = "READ A\n"
                                   "READ b\n"
                                   "MUL\n"
@@ -81,7 +81,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Power)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A^b";
+    const char8* expression     = "ret = A^b;";
     const char8* expectedOutput = "READ A\n"
                                   "READ b\n"
                                   "POW\n"
@@ -94,7 +94,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Parenthe
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (A + b)";
+    const char8* expression     = "ret = (A + b);";
     const char8* expectedOutput = "READ A\n"
                                   "READ b\n"
                                   "SUM\n"
@@ -107,7 +107,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Unary)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = sin(A)";
+    const char8* expression     = "ret = sin(A);";
     const char8* expectedOutput = "READ A\n"
                                   "SIN\n"
                                   "WRITE ret\n";
@@ -119,7 +119,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Typecast
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A + (float32) 0.99";
+    const char8* expression     = "ret = A + (float32) 0.99;";
     const char8* expectedOutput = "READ A\n"
                                   "CONST float32 0.99\n"
                                   "SUM\n"
@@ -132,7 +132,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Constant
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A + 0.99";
+    const char8* expression     = "ret = A + 0.99;";
     const char8* expectedOutput = "READ A\n"
                                   "CONST 0.99\n"
                                   "SUM\n"
@@ -145,7 +145,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Variable
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (bool) A";
+    const char8* expression     = "ret = (bool) A;";
     const char8* expectedOutput = "READ A\n"
                                   "CAST bool\n"
                                   "WRITE ret\n";
@@ -157,7 +157,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Typecast
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (bool)A*B";
+    const char8* expression     = "ret = (bool)A*B;";
     const char8* expectedOutput = "READ A\n"
                                   "CAST bool\n"
                                   "READ B\n"
@@ -171,7 +171,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Expressi
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (sin(A) + cos(B + foo))^tan(log(D))";
+    const char8* expression     = "ret = (sin(A) + cos(B + foo))^tan(log(D));";
     const char8* expectedOutput = "READ A\n"
                                   "SIN\n"
                                   "READ B\n"
@@ -193,7 +193,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15))";
+    const char8* expression     = "ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15));";
     const char8* expectedOutput = "READ A\n"
                                   "READ B\n"
                                   "SUM\n"
@@ -218,7 +218,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = A+ (B*C-(D/E^F)*G)*H";
+    const char8* expression     = "ret = A+ (B*C-(D/E^F)*G)*H;";
     const char8* expectedOutput = "READ A\n"
                                   "READ B\n"
                                   "READ C\n"
@@ -243,7 +243,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z";
+    const char8* expression     = "ret = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
     const char8* expectedOutput = "CONST 5\n"
                                    "READ B\n"
                                    "READ C\n"
