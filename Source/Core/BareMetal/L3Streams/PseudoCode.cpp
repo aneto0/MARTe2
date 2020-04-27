@@ -841,7 +841,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	if (stackPtr  != static_cast<DataMemoryElement*>(stack.GetDataPointer())){
 		runtimeError.internalSetupError = true;
 		int64 offset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
-        REPORT_ERROR_STATIC(runtimeError,"stack pointer not back to origin : %i elements left");
+        REPORT_ERROR_STATIC(runtimeError,"stack pointer not back to origin : %i elements left", offset);
 	}
 
 	return runtimeError;
