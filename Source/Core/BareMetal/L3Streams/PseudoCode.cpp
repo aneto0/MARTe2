@@ -496,8 +496,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 					//nextConstantAddress
 					AnyType src(parameter2);
                     AnyType dest(td, 0,&variablesMemoryPtr[nextConstantAddress]);
-					ret = src.CopyTo(dest);
-                    REPORT_ERROR_STATIC(ret,"CopyTo failed ");
+                    dest = src;
 				}
 
 				if (ret){
@@ -621,7 +620,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
                 StreamString value;
                 AnyType src(td, 0, stackPtr - dataStackIndex);
 				AnyType dest(value);
-				ret = src.CopyTo(dest);
+                dest = src;
 
                 cst = cst + value;
 
@@ -671,7 +670,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 StreamString value;
 				AnyType dest(value);
                 AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
-				ret = src.CopyTo(dest);
+                dest = src;
                 REPORT_ERROR_STATIC(ret,"CopyTo failed ");
 				if (ret){
                     cst += value;
@@ -707,7 +706,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 StreamString value;
                 AnyType src(td, 0, stackPtr - dataStackIndex);
 				AnyType dest(value);
-				ret = src.CopyTo(dest);
+                dest = src;
 
                 cst += value;
 			}
