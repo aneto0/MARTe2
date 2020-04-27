@@ -515,7 +515,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 
 			CodeMemoryElement code = 0;
 			if (ret){
-				ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command,typeStack,matchOutput,dataStackSize);
+                ret.unsupportedFeature = !FindPCodeAndUpdateTypeStack(code,command.Buffer(),typeStack,matchOutput,dataStackSize);
 				if (!ret){
                     StreamString typeList;
                     StreamString cst = typeList();
