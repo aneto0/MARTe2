@@ -39,7 +39,7 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
 	bool ret = false;
 
 	// match function name
-	ret = (name == nameIn);
+    ret = (name == nameIn.GetList());
 
 	// match first output if matchOutput is set
 	uint32 index = 0U;
