@@ -262,7 +262,7 @@ bool ParserI::Parse() {
 
     bool isEOF = false;
 
-    while ((!isError) && (!isEOF)) {
+    //while ((!isError) && (!isEOF)) {
 
         uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
         uint32 *stack = &stackArray[0];
@@ -344,11 +344,11 @@ bool ParserI::Parse() {
             }
             symbol = StackPop(top);
         }
-        if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
-            PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
+        //if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
+            //PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+            //isError = true;
+        //}
+    //}
 
     return !isError;
 }
