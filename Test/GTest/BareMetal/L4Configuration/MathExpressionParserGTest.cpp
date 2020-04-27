@@ -153,6 +153,20 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Variable
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_TypecastAsOperand)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = (bool)A*B";
+    const char8* expectedOutput = "READ A\n"
+                                  "CAST bool\n"
+                                  "READ B\n"
+                                  "MUL\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_ExpressionWithFunctions)
 {
     MathExpressionParserTest parserTest;
@@ -221,6 +235,34 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
                                   "MUL\n"
                                   "SUM\n"
                                   "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_CompleteExpression_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z";
+    const char8* expectedOutput = "CONST 5\n"
+                                   "READ B\n"
+                                   "READ C\n"
+                                   "CAST float\n"
+                                   "MUL\n"
+                                   "READ X\n"
+                                   "READ Y\n"
+                                   "MIN\n"
+                                   "FACT\n"
+                                   "MUL\n"
+                                   "SUM\n"
+                                   "READ X\n"
+                                   "READ Y\n"
+                                   "SUM\n"
+                                   "SIN\n"
+                                   "SUM\n"
+                                   "READ Z\n"
+                                   "SUM\n"
+                                   "WRITE ret\n";
             
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
