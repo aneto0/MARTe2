@@ -180,7 +180,7 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
 	
 } // OperatorLookupTable()
 
-void MathExpressionParser::End()
+void MathExpressionParser::PopAssignment()
 {
 	REPORT_ERROR_STATIC(ErrorManagement::Debug, "WRITE %s", assignmentVarName.Buffer());
 	REPORT_ERROR_STATIC(ErrorManagement::Information, "END");
