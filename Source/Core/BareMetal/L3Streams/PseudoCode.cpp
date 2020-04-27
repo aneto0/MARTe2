@@ -626,7 +626,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 				AnyType dest(value);
                 dest = src;
 
-                cst = cst + value;
+                cst += value;
 
 			}
 			if (i == (functionInformation.numberOfInputs-1U)){
@@ -780,27 +780,26 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
             REPORT_ERROR_STATIC(runtimeError,"debugMode requested with debugStream set to NULL");
 		} else {
             StreamString debugMessage;
-            StreamString cst = debugMessage();
 
-            cst += "[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n";
+            debugMessage += "[line]-[stackPtr]-[codePtr]::[CODE] stack-in => stack-out\n";
 			int32 lineCounter = 1;
 			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                cst.Printf("%s%i - %i - %i :: ", cst, lineCounter, stackOffset, codeOffset);
+                debugMessage.Printf("%s%i - %i - %i :: ", debugMessage, lineCounter, stackOffset, codeOffset);
 
 				CodeMemoryElement pCode = GetPseudoCode();
 
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-                cst.Printf("%s%s ", cst, fr.name.Buffer());
+                debugMessage.Printf("%s%s ", debugMessage, fr.name.Buffer());
 
      			// errors due to debugging
      			ErrorManagement::ErrorType ret;
 
      			// show inputs
-				ret = FunctionRecordInputs2String(fr,cst,true,true,true);
+                ret = FunctionRecordInputs2String(fr,debugMessage,true,true,true);
                 REPORT_ERROR_STATIC(ret,"analysing input side of function call");
 
 				// executes code
@@ -808,31 +807,31 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 
 				if (ret){
 					// show outputs
-					ret = FunctionRecordOutputs2String(fr,cst,true,true,true);
+                    ret = FunctionRecordOutputs2String(fr,debugMessage,true,true,true);
                     REPORT_ERROR_STATIC(ret,"analysing input side of function call");
 				}
 
 				if (!runtimeError.ErrorsCleared()){
-                    cst += " <ERROR> ";
+                    debugMessage += " <ERROR> ";
 				}
 
-                cst += '\n';
+                debugMessage += '\n';
 
                 uint32 size = debugMessage.Size();
-				debugStream->Write(debugMessage.GetList(),size);
+                debugStream->Write(debugMessage.Buffer(),size);
 
 				// reset line
-				cst.SetSize(0);
+                debugMessage.SetSize(0);
 				lineCounter++;
 
 			}
 			if (runtimeError.ErrorsCleared()){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                cst.Printf("%s%i - %i :: END", cst, stackOffset, codeOffset);
+                debugMessage.Printf("%s%i - %i :: END", debugMessage, stackOffset, codeOffset);
 
                 uint32 size = debugMessage.Size();
-				debugStream->Write(debugMessage.GetList(),size);
+                debugStream->Write(debugMessage.Buffer(),size);
 			}
 		}
 	}
@@ -857,24 +856,22 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 
 	variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
 
-    StreamString cst = RPNCode();
-
 	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
 		CodeMemoryElement pCode = GetPseudoCode();
 		FunctionRecord &fr = functionRecords[pCode];
 
 		if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
-            cst += constToken;
+            RPNCode += constToken;
 		} else {
-            cst += fr.name;
+            RPNCode += fr.name;
 		}
 
-		ret = FunctionRecordInputs2String(fr,cst,false,false,showTypes);
+        ret = FunctionRecordInputs2String(fr,RPNCode,false,false,showTypes);
 
 		if (ret){
-			ret = FunctionRecordOutputs2String(fr,cst,false,false,showTypes);
+            ret = FunctionRecordOutputs2String(fr,RPNCode,false,false,showTypes);
 		}
-        cst += '\n';
+        RPNCode += '\n';
 	}
 
 	return ret;
