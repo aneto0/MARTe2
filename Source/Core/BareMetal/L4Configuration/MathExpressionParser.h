@@ -191,7 +191,7 @@ protected:
 		 *          method is responsible for appending the `WRITE`
 		 *          statement required by the expression evaluation engine.
 		 */
-		virtual void End();
+		virtual void PopAssignment();
     //@}
     
     /**
