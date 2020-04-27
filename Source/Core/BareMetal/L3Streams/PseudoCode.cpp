@@ -371,7 +371,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 					// transform the type name into a TypeDescriptor
 					// check it is one of the supported types
 					TypeDescriptor td;
-					td = TypeDescriptor(parameter1);
+                    td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
 					ret.unsupportedFeature = !td.IsNumericType();
                     REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
 
@@ -486,7 +486,7 @@ ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
 				// check it is one of the supported types
 				TypeDescriptor td;
 				if (ret){
-					td = TypeDescriptor(parameter1);
+                    td = TypeDescriptor::GetTypeDescriptorFromTypeName(parameter1.Buffer());
 					ret.unsupportedFeature = !td.IsNumericType();
                     REPORT_ERROR_STATIC(ret,"type %s is not a numeric supported format", parameter1.Buffer());
 				}
