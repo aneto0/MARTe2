@@ -169,10 +169,6 @@ static const uint32 ERROR_TOKEN = 3u;
  */
 static const uint32 TERMINAL_TOKEN = 4u;
 
-/**
- * Indicates an element that separates parts of the phrase
- */
-static const uint32 SEPARATOR_TOKEN = 5u;
 
 }
 

@@ -200,7 +200,7 @@ private:
     /**
      * Default token types
      */
-    TokenInfo tokenInfo[6];
+    TokenInfo 		tokenInfo[5];
 
     /**
      * The last token returned

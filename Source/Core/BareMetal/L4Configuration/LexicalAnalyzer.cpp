@@ -349,11 +349,13 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
     token = static_cast<Token *>(NULL);
 //    inputStream = &stream;
     lineNumber = 1u;
-    tokenInfo[0].Set(EOF_TOKEN, "EOF");
-    tokenInfo[1].Set(STRING_TOKEN, "STRING");
-    tokenInfo[2].Set(NUMBER_TOKEN, "NUMBER");
-    tokenInfo[3].Set(ERROR_TOKEN, "ERROR");
-    tokenInfo[4].Set(TERMINAL_TOKEN, "TERMINAL");
+
+    tokenInfo[EOF_TOKEN]     .Set(EOF_TOKEN     , "EOF");
+    tokenInfo[STRING_TOKEN]  .Set(STRING_TOKEN  , "STRING");
+    tokenInfo[NUMBER_TOKEN]  .Set(NUMBER_TOKEN  , "NUMBER");
+    tokenInfo[ERROR_TOKEN]   .Set(ERROR_TOKEN   , "ERROR");
+    tokenInfo[TERMINAL_TOKEN].Set(TERMINAL_TOKEN, "TERMINAL");
+
 }
 
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
