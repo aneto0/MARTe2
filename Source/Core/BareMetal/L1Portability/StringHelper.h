@@ -121,6 +121,20 @@ DLL_API int32 CompareNoCaseSensN(const char8* const string1,
                                  const uint32 size);
 
 /**
+ * @brief Converts all lowercase characters in a string to uppercase.
+ * @param[in,out] string the string to be converted.
+ * @return true if everything went fine.
+ */
+DLL_API bool ToUpper(char8* const string);
+
+/**
+ * @brief Converts all uppercase characters in a string to lowercase.
+ * @param[in,out] string the string to be converted.
+ * @return true if everything went fine.
+ */
+DLL_API bool ToLower(char8* const string);
+
+/**
  * @brief Copies the source into the destination.
  * @param[out] destination the destination string.
  * @param[in] source the string to copy into the destination.
