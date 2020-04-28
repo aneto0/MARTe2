@@ -151,35 +151,31 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
 	if (StringHelper::Compare(operatorIn, "+") == 0)
 		ret = "SUM";
 		
-	if (StringHelper::Compare(operatorIn, "*") == 0)
+	else if (StringHelper::Compare(operatorIn, "*") == 0)
 		ret = "MUL";
 	
-	if (StringHelper::Compare(operatorIn, ">") == 0)
+	else if (StringHelper::Compare(operatorIn, ">") == 0)
 		ret = "COMP";
 		
-	if (StringHelper::Compare(operatorIn, "/") == 0)
+	else if (StringHelper::Compare(operatorIn, "/") == 0)
 		ret = "DIV";
 		
-	if (StringHelper::Compare(operatorIn, "^") == 0)
+	else if (StringHelper::Compare(operatorIn, "^") == 0)
 		ret = "POW";
 		
-	if (StringHelper::Compare(operatorIn, "-") == 0)
+	else if (StringHelper::Compare(operatorIn, "-") == 0)
 		ret = "MIN";
 	
-	if (StringHelper::Compare(operatorIn, "sin") == 0)
-		ret = "SIN";
-	
-	if (StringHelper::Compare(operatorIn, "cos") == 0)
-		ret = "COS";
-	
-	if (StringHelper::Compare(operatorIn, "tan") == 0)
-		ret = "TAN";
-	
-	if (StringHelper::Compare(operatorIn, "log") == 0)
-		ret = "LOG";
-		
-	if (StringHelper::Compare(operatorIn, "!") == 0)
+	else if (StringHelper::Compare(operatorIn, "!") == 0)
 		ret = "FACT";
+	
+	else
+	{
+		char8* uppercaseOp = StringHelper::StringDup(operatorIn);
+		StringHelper::ToUpper(uppercaseOp);
+		
+		ret = uppercaseOp;
+	}
 		
 	return ret;
 	
@@ -208,7 +204,7 @@ void MathExpressionParser::PopOperator()
 	uint32 top = operatorStack.GetSize() - 1;
 	StreamString* operat;
 	operatorStack.Extract(top, operat);
-
+	
 	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
 	
 	// Write in the stack machine expression
