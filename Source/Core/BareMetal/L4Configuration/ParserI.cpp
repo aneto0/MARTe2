@@ -45,11 +45,17 @@ static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
     if (err != NULL) {
-        if (!err->Printf(format, lineNumber)) {
+		
+		char8 errorString[256] = "\n";
+		
+		StringHelper::Concatenate(errorString, format);
+		
+        if (!err->Printf(errorString, lineNumber)) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, format, lineNumber);
     }
+    
+    REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
 static const char8* GetCurrentTokenData(Token * const token) {
@@ -155,14 +161,14 @@ void ParserI::GetTypeCast() {
 
 void ParserI::BlockEnd() {
     if (!database->MoveToAncestor(1u)) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("Failed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
 
 void ParserI::CreateNode() {
     if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
-        PrintErrorOnStream("\nFailed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("Failed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
@@ -186,12 +192,12 @@ void ParserI::AddLeaf() {
     if (ret) {
         ret = database->Write(nodeName.Buffer(), element);
         if (!ret) {
-            PrintErrorOnStream("\nFailed adding a leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+            PrintErrorOnStream("Failed adding a leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
     }
     else {
-        PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("Possible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
     typeName = defaultTypeName;
@@ -219,12 +225,12 @@ void ParserI::AddScalar() {
             firstNumberOfColumns++;
         }
         else {
-            PrintErrorOnStream("\nFailed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+            PrintErrorOnStream("Failed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
     }
     else {
-        PrintErrorOnStream("\nCannot mix different types in a vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("Cannot mix different types in a vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
@@ -235,7 +241,7 @@ void ParserI::EndVector() {
     }
     else {
         if (numberOfColumns != firstNumberOfColumns) {
-            PrintErrorOnStream("\nIncorrect matrix format! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+            PrintErrorOnStream("Incorrect matrix format! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
     }
@@ -252,7 +258,7 @@ void ParserI::EndMatrix() {
 
 void ParserI::End() {
     if (!database->MoveToRoot()) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("Failed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
@@ -308,7 +314,7 @@ bool ParserI::Parse() {
                     else {
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
-                            PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                            PrintErrorOnStream("Syntax err[1]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
                         }
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
@@ -316,7 +322,7 @@ bool ParserI::Parse() {
                 else {
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
-                        PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax err[2]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
                     }
                     new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                 }
@@ -329,7 +335,7 @@ bool ParserI::Parse() {
                     }
                     else {
                         isError = true;
-                        PrintErrorOnStream("\nInvalid Expression! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        PrintErrorOnStream("Syntax err[3]. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
                     }
                 }
