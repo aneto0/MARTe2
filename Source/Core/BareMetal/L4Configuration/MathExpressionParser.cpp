@@ -2,7 +2,7 @@
  * @file MathExpressionParser.cpp
  * @brief Source file for class MathExpressionParser
  * @date Apr 7, 2020
- * @author Giuseppe Ferrò, RFX
+ * @author RFX
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,9 +43,10 @@ static uint32 Production[] = {0
 ,3,17,18,32 ,7,18,37,1,2,20,19,38 ,2,19,3 ,2,19,4 
 ,3,20,22,33 ,2,21,5 ,2,21,6 ,3,22,24,34 ,2,23,7 
 ,2,23,8 ,3,24,26,35 ,2,25,9 ,2,25,10 ,3,26,28,36 
-,2,27,11 ,2,28,30 ,5,28,39,29,30,40 ,2,29,12 ,2,30,31 
-,3,30,41,13 ,7,30,14,42,1,15,31,43 ,7,30,14,42,1,15,44,13 
-,4,31,14,20,15 ,3,31,41,1 ,7,31,39,1,14,20,15,40 
+,2,27,11 ,2,28,30 ,5,28,39,8,30,41 ,5,28,39,7,30,41 
+,5,28,39,29,30,40 ,2,29,12 ,2,30,31 ,3,30,42,13 
+,7,30,14,43,1,15,31,44 ,7,30,14,43,1,15,45,13 
+,4,31,14,20,15 ,3,31,42,1 ,7,31,39,1,14,20,15,40 
 ,3,32,18,32 ,1,32 ,6,33,39,21,22,40,33 ,1,33 ,6,34,39,23,24,40,34 
 ,1,34 ,6,35,39,25,26,40,35 ,1,35 ,6,36,39,27,28,40,36 
 ,1,36 
@@ -54,30 +55,30 @@ static uint32 Production[] = {0
 static uint32 Production_row[] = {0
 
 ,1,5,13,16,19,23,26,29,33,36,39,43,46,49,53,56
-,59,65,68,71,75,83,91,96,100,108,112,114,121,123,130,132
-,139,141,148
+,59,65,71,77,80,83,87,95,103,108,112,120,124,126,133,135
+,142,144,151,153,160
 ,0};
 
 static uint32 ParseArray[] = {
 
-0,0,5,1,35,35,35,35,35,35,35,35,34,5,5,5,35,33,33
-,33,33,33,33,32,32,29,29,28,28,33,31,31,31,31,30,30,8,29,2
-,11,3,4,31,14,6,7,16,8,8,8,11,11,11,19,14,14,14,17,16
-,16,9,10,12,13,37,20,36,26,15,18,0,0,0,0,0,0,0,23,0
-,0,0,0,27
+0,0,21,1,37,37,37,37,37,37,37,37,36,2,22,38,37,35,35
+,35,35,35,35,34,34,3,4,6,7,35,33,33,33,33,32,32,15,5,9
+,10,8,20,33,5,5,39,8,8,5,5,5,8,8,8,11,12,13,14,25
+,0,11,11,0,14,14,11,11,11,14,14,14,16,28,31,31,30,30,18,17
+,0,0,0,19,16,16,31,0,29
 };
 
 static uint32 Parse_row[] = {0
 
-,2,37,37,1,39,35,53,38,53,42,57,45,57,52,63,66
-,22,27,14,1
+,2,12,22,36,22,39,31,53,46,56,25,70,29,1,44,71
+,70,27,14,1
 ,0};
 
 static uint32 Conflict[] = {
 
-0,0,38,0,0,0,0,0,0,0,0,0,0,19,19,19,24,24,24
-,24,24,24,24,24,24,0,0,25,24,19,19,19,19,19,19,19,0,0,19
-,39,21,0,19,19,19,19,19,19,19,19,19,0,22,21,19
+0,0,40,0,0,0,0,0,21,21,0,0,0,21,21,21,26,26,26
+,26,26,26,26,26,26,0,0,27,26,21,21,21,21,21,21,21,0,0,21
+,41,23,0,21,21,21,21,21,21,21,21,21,0,24,23,21
 };
 
 static uint32 Conflict_row[] = {0
@@ -85,7 +86,7 @@ static uint32 Conflict_row[] = {0
 ,1,13,24,39
 ,0};
 
-static const uint32 Constants[] = { 17, 16, 0, 36, 40, 37, 45, 4, 512 };
+static const uint32 Constants[] = { 17, 16, 0, 38, 42, 37, 46, 4, 512 };
 
 static const char8 * Terminal_name[] ={"0"
 
@@ -133,10 +134,11 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 2 ] = &MathExpressionParser::PopAssignment;
     Action [ 3 ] = &MathExpressionParser::PushOperator;
     Action [ 4 ] = &MathExpressionParser::PopOperator;
-    Action [ 5 ] = &MathExpressionParser::AddOperand;
-    Action [ 6 ] = &MathExpressionParser::PushTypecast;
-    Action [ 7 ] = &MathExpressionParser::PopTypecast;
-    Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
+    Action [ 5 ] = &MathExpressionParser::PopOperatorAlternate;
+    Action [ 6 ] = &MathExpressionParser::AddOperand;
+    Action [ 7 ] = &MathExpressionParser::PushTypecast;
+    Action [ 8 ] = &MathExpressionParser::PopTypecast;
+    Action [ 9 ] = &MathExpressionParser::AddOperandTypecast;
 }
 
 MathExpressionParser::~MathExpressionParser() {
@@ -210,6 +212,26 @@ void MathExpressionParser::PopOperator()
 	// Write in the stack machine expression
 	stackMachineExpr += OperatorLookupTable(operat->Buffer());
 	stackMachineExpr += "\n";
+}
+
+void MathExpressionParser::PopOperatorAlternate()
+{
+	uint32 top = operatorStack.GetSize() - 1;
+	StreamString* operat;
+	operatorStack.Extract(top, operat);
+
+	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
+	
+	if (StringHelper::Compare(operat->Buffer(), "+") == 0)
+	{
+		// nothing
+	}
+	else if (StringHelper::Compare(operat->Buffer(), "-") == 0)
+	{
+		stackMachineExpr += "NEG";
+		stackMachineExpr += "\n";
+	}
+	
 }
 
 void MathExpressionParser::PushTypecast()

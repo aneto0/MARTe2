@@ -1,5 +1,15 @@
+system:
+    assignment { assignment }
+
+// *********** Complete assignment **********************
+
 assignment:
-   __StoreAssignment STRING = operation0 __End EOF
+   __StoreAssignment STRING = operation0 delimitator __PopAssignment
+   
+delimitator:
+    ;
+    ,
+    \n
 
 // *********** Comparisons **********************
 
@@ -49,8 +59,8 @@ operator4:
 
 operation5:
     operation6
-    __AddOperand NUMBER      // NUMBER must be treated differently to prevent conflicts (see comments below)
-    ( __PushTypecast STRING ) operation6 __PopTypecast
+    __AddOperand NUMBER                                      // NUMBER must be treated differently to prevent conflicts (see comments below)
+    ( __PushTypecast STRING ) operation6    __PopTypecast
     ( __PushTypecast STRING ) __AddOperandTypecast NUMBER
 
 // ********** Functions ****************************
