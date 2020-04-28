@@ -2,7 +2,7 @@
  * @file MathExpressionParser.h
  * @brief Header file for class MathExpressionParser
  * @date Apr 7, 2020
- * @author Giuseppe Ferrò, RFX
+ * @author RFX
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -118,6 +118,15 @@ protected:
 		 *          machine expression #stackMachineExpr.
 		 */
 		virtual void PopOperator();
+		
+		/**
+		 * @brief   Pops alternative forms of operators.
+		 * @details Alternative version of PopOperator() in case of
+		 *          operators that have more than one meaning (e.g.
+		 *          prefix `+` must be ignored, prefix `-` has a
+		 *          different meaning with respect to infix `-` etc).
+		 */
+		virtual void PopOperatorAlternate();
 		
 		/**
 		 * @brief   Pushes a typecast type to the top of the #typecastStack.

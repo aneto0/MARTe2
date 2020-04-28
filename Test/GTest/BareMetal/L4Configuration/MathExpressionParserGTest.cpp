@@ -167,6 +167,61 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Typecast
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixPlusSign_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = + A;";
+    const char8* expectedOutput = "READ A\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixPlusSign_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = + A*(+C + B);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ C\n"
+                                  "READ B\n"
+                                  "SUM\n"
+                                  "MUL\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixMinusSign_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = - A;";
+    const char8* expectedOutput = "READ A\n"
+                                  "NEG\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixMinusSign_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = - A*(-C + B);";
+    const char8* expectedOutput = "READ A\n"
+                                  "NEG\n"
+                                  "READ C\n"
+                                  "NEG\n"
+                                  "READ B\n"
+                                  "SUM\n"
+                                  "MUL\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_ExpressionWithFunctions)
 {
     MathExpressionParserTest parserTest;
