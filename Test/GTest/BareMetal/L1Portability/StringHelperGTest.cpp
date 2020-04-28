@@ -55,6 +55,16 @@ TEST(BareMetal_L1Portability_StringHelperGTest,TestCompareN) {
     ASSERT_TRUE(mystringhelper.TestCompareN());
 }
 
+TEST(BareMetal_L1Portability_StringHelperGTest,TestToUpper) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestToUpper());
+}
+
+TEST(BareMetal_L1Portability_StringHelperGTest,TestToLower) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestToLower());
+}
+
 TEST(BareMetal_L1Portability_StringHelperGTest,TestCopy) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopy("Hello"));

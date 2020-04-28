@@ -119,6 +119,62 @@ bool StringHelperTest::TestCompareN() {
             && StringHelper::CompareN(NULL, string2, size) == -1);
 }
 
+bool StringHelperTest::TestToUpper() {
+	
+	// Check conversion to uppercase
+	char8 string1[] = "helloworld";
+	const char8* result1 = "HELLOWORLD";
+	
+	StringHelper::ToUpper(string1);
+	
+	if (StringHelper::Compare(string1, result1) != 0)
+		return false;
+	
+	// Check if uppercase and special characters are left as they are
+	char8 string2[] = "HelloWorld123 !£$%&()=?^\n";
+	const char8* result2 = "HELLOWORLD123 !£$%&()=?^\n";
+	
+	StringHelper::ToUpper(string2);
+	
+	if (StringHelper::Compare(string2, result2) != 0)
+		return false;
+	
+	// Check return false in case of NULL argument
+	if (StringHelper::ToUpper(NULL) != false)
+		return false;
+	
+	return true;
+
+}
+
+bool StringHelperTest::TestToLower() {
+	
+	// Check conversion to uppercase
+	char8 string1[] = "HELLOWORLD";
+	const char8* result1 = "helloworld";
+	
+	StringHelper::ToLower(string1);
+	
+	if (StringHelper::Compare(string1, result1) != 0)
+		return false;
+	
+	// Check if lowercase and special characters are left as they are
+	char8 string2[] = "hELLOwORLD123 !£$%&()=?^\n";
+	const char8* result2 = "helloworld123 !£$%&()=?^\n";
+	
+	StringHelper::ToLower(string2);
+	
+	if (StringHelper::Compare(string2, result2) != 0)
+		return false;
+	
+	// Check return false in case of NULL argument
+	if (StringHelper::ToLower(NULL) != false)
+		return false;
+	
+	return true;
+
+}
+
 bool StringHelperTest::TestCompareNoCaseSensN() {
 
     const char8 *string1 = "HelloWorld";

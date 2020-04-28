@@ -73,7 +73,17 @@ public:
      * string1 < string2 and 2 if string1 > string2).
      */
     bool TestCompareN();
-
+	
+	/**
+     * @brief Tests the StringHelper::ToUpper() function.
+     */
+	bool TestToUpper();
+	
+	/**
+     * @brief Tests the StringHelper::ToLower() function.
+     */
+	bool TestToLower();
+	
     /**
      * @brief Tests the StringHelper::CompareNoCaseSensN() function.
      */
