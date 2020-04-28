@@ -41,23 +41,22 @@
 namespace MARTe{
 
 /**
- * @brief Parser of mathematical expressions in infix form. The expression
- *        can be converted into stack machine form or RPN.
+ * @brief Parser of mathematical expressions in infix form. The
+ *        expression can be converted into stack machine form or RPN.
  *
  * @details This class is a concrete class for MARTe::ParserI providing
  *          the actual lexical elements and parsing rules for interpreting
  *          a mathematical expression in infix form.
  * 
- * The parser requires a mathematical expression in the form:
+ * The parser accepts mathematical expressions in the form:
  * 
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15))
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15));
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
- * @warning Because of a still unsolved bug the expression cannot end
- *          with a string token. Temporary workaround: enclose the
- *          right-hand side between parenthesis if last element is
- *          a variable.
+ * Each expression must be terminated with a comma or a semicolon.
+ * Multiple expressions are allowed (provided that each is terminated
+ * with a comma or semicolon).
  * 
  * The mathematical expression must be provided to the parser at
  * construction time. The instance of the parser is then bound to that
@@ -71,18 +70,18 @@ namespace MARTe{
  *     the errors found on the input stream of characters.
  * 
  * To make the parser parse the expression, users should call the Parse()
- * method. Provided that the Parse() method was
- * called, the expression in stack machine form is then availabe as the
- * output of the GetStackMachineExpression() method.
+ * method. Provided that the Parse() method was called, the expression
+ * in stack machine form is then availabe as the output of the
+ * GetStackMachineExpression() method.
  * 
- * All the instances of the parser use the lexical elements defined
- * in MARTe::MathGrammar and apply the parsing rules of the following
- * grammar:
+ * All the instances of this parser use the lexical elements defined
+ * in the MathGrammar of MARTe::GrammarInfo and apply the parsing rules
+ * of the following grammar:
  *
  * @todo insert grammar here
  *
- * Note: This grammar is written in the SLK language and refers to functions
- * declared in this parser.
+ * Note: This grammar is written in the SLK language and refers to
+ * functions declared in this parser.
  */
 
 class DLL_API MathExpressionParser : public ParserI {
