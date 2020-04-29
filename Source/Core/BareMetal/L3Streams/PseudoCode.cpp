@@ -288,7 +288,10 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString &RPNCode){
 				}
 			}
 		}
-	}
+
+        line = "";
+
+    }
 
 	if (ret){
 		startOfVariables = nextConstantAddress;
