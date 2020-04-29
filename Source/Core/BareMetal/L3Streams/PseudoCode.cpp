@@ -300,7 +300,7 @@ ErrorManagement::ErrorType Context::ExtractVariables(StreamString &RPNCode){
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::Compile(StreamString RPNCode){
+ErrorManagement::ErrorType Context::Compile(StreamString &RPNCode){
 	ErrorManagement::ErrorType ret;
 
 	DataMemoryAddress nextVariableAddress = startOfVariables;
