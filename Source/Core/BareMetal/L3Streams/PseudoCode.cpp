@@ -561,7 +561,10 @@ ErrorManagement::ErrorType Context::Compile(StreamString &RPNCode){
 				}
 			}
 		}
-	}
+
+        line = "";
+
+    }
 
 	// final checks
 	if (ret){
