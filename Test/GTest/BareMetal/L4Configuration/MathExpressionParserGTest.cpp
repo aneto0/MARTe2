@@ -51,6 +51,36 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestGetGrammarInfo) {
     ASSERT_TRUE(parserTest.TestGetGrammarInfo());
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Logic)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A & (B | C);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "OR\n"
+                                  "AND\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparisons)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A > (B < C);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "LT\n"
+                                  "GT\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Sum)
 {
     MathExpressionParserTest parserTest;
@@ -193,6 +223,27 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixPl
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixPlusSign_AsArgument)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = pow(+A,+B); ret= A*pow(B,+pow(X,Z));";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "POW\n"
+                                  "WRITE ret\n"
+                                  "READ A\n"
+                                  "READ B\n"
+                                  "READ X\n"
+                                  "READ Z\n"
+                                  "POW\n"
+                                  "POW\n"
+                                  "MUL\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixMinusSign_1)
 {
     MathExpressionParserTest parserTest;
@@ -222,11 +273,85 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixMi
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
-TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_ExpressionWithFunctions)
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_PrefixMinusSign_AsArgument)
 {
     MathExpressionParserTest parserTest;
     
-    const char8* expression     = "ret = (sin(A) + cos(B + foo))^tan(log(D));";
+    const char8* expression     = "ret = pow(-A,-B); ret= A*pow(B,-pow(X,Z));";
+    const char8* expectedOutput = "READ A\n"
+                                  "NEG\n"
+                                  "READ B\n"
+                                  "NEG\n"
+                                  "POW\n"
+                                  "WRITE ret\n"
+                                  "READ A\n"
+                                  "READ B\n"
+                                  "READ X\n"
+                                  "READ Z\n"
+                                  "POW\n"
+                                  "NEG\n"
+                                  "POW\n"
+                                  "MUL\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Functions_1)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = sin(A); ret = (cos(B + foo) + tan(log(D)));";
+    const char8* expectedOutput = "READ A\n"
+                                  "SIN\n"
+                                  "WRITE ret\n"
+                                  "READ B\n"
+                                  "READ foo\n"
+                                  "SUM\n"
+                                  "COS\n"
+                                  "READ D\n"
+                                  "LOG\n"
+                                  "TAN\n"
+                                  "SUM\n"
+                                  "WRITE ret\n";
+
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Functions_2)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = mean(A, -B, C); ret = mean(A, -tan(B), -log(pow(C,-D)));";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "NEG\n"
+                                  "READ C\n"
+                                  "MEAN\n"
+                                  "WRITE ret\n"
+                                  "READ A\n"
+                                  "READ B\n"
+                                  "TAN\n"
+                                  "NEG\n"
+                                  "READ C\n"
+                                  "READ D\n"
+                                  "NEG\n"
+                                  "POW\n"
+                                  "LOG\n"
+                                  "NEG\n"
+                                  "MEAN\n"
+                                  "WRITE ret\n";
+
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Functions_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = pow((sin(A) + cos(B + foo)),-tan(log(D)));";
     const char8* expectedOutput = "READ A\n"
                                   "SIN\n"
                                   "READ B\n"
@@ -237,6 +362,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Expressi
                                   "READ D\n"
                                   "LOG\n"
                                   "TAN\n"
+                                  "NEG\n"
                                   "POW\n"
                                   "WRITE ret\n";
 
@@ -263,7 +389,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
                                   "SUM\n"
                                   "TAN\n"
                                   "MUL\n"
-                                  "COMP\n"
+                                  "GT\n"
                                   "WRITE ret\n";
             
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
