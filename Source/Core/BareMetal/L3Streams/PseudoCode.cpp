@@ -93,17 +93,21 @@ VariableFinder::VariableFinder(DataMemoryAddress address){
 
 
 void VariableFinder::Do(VariableInformation *data){
-    if (variableName.Size() > 0){
-        if (data->name == variableName){
-            variable = data;
-            error = ErrorManagement::NoError;
-		}
-	} else
-	if (variableAddress < MAXDataMemoryAddress){
-        if (data->location == variableAddress){
-            variable = data;
-            error = ErrorManagement::NoError;
-		}
+    if (data == NULL_PTR(VariableInformation *)){
+        error = ErrorManagement::FatalError;
+    } else {
+        if (variableName.Size() > 0){
+            if (data->name == variableName){
+                variable = data;
+                error = ErrorManagement::NoError;
+            }
+        } else
+        if (variableAddress < MAXDataMemoryAddress){
+            if (data->location == variableAddress){
+                variable = data;
+                error = ErrorManagement::NoError;
+            }
+        }
     }
 }
 
@@ -144,12 +148,13 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolde
 
 	// if it is already there we do not need to add
 	if (ret.unsupportedFeature){
-		VariableInformation variableInfo;
-		variableInfo.name = name;
-		variableInfo.type = td;
-		variableInfo.location = location;
+        VariableInformation *variableInfo = new VariableInformation;
+        variableInfo->name = name;
+        variableInfo->type = td;
+        variableInfo->location = location;
 //printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
-        db.ListInsert(&variableInfo);
+        db.ListAdd(variableInfo);
+        ret.unsupportedFeature = false;
 	} else {
 
 		// it would be an error if this is an output variable
