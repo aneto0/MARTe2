@@ -199,7 +199,7 @@ ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableIn
 	return ret;
 }
 
-ErrorManagement::ErrorType Context::ExtractVariables(StreamString RPNCode){
+ErrorManagement::ErrorType Context::ExtractVariables(StreamString &RPNCode){
 	ErrorManagement::ErrorType ret;
 
 	DataMemoryAddress nextConstantAddress = 0;
