@@ -601,7 +601,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
          REPORT_ERROR_STATIC(ret,"No variable or constant @ %u",pCode2);
 
 		 if (ret){
-            cst.Printf("%s %s", cst, vi->name);
+            cst.Printf(" %s", vi->name.Buffer());
 		 }
 	 }
 
@@ -704,7 +704,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                     cst += value;
 				}
 			} else {
-                cst.Printf("%s %s", cst, vi->name);
+                cst.Printf(" %s", vi->name.Buffer());
 			}
 		}
 	}
@@ -797,14 +797,14 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError)){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                debugMessage.Printf("%s%i - %i - %i :: ", debugMessage, lineCounter, stackOffset, codeOffset);
+                debugMessage.Printf("%i - %i - %i :: ", lineCounter, stackOffset, codeOffset);
 
 				CodeMemoryElement pCode = GetPseudoCode();
 
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-                debugMessage.Printf("%s%s ", debugMessage, fr.name.Buffer());
+                debugMessage.Printf("%s ", fr.name.Buffer());
 
      			// errors due to debugging
      			ErrorManagement::ErrorType ret;
@@ -839,7 +839,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 			if (runtimeError.ErrorsCleared()){
 				int64 stackOffset = stackPtr - static_cast<DataMemoryElement*>(stack.GetDataPointer());
 				int64 codeOffset  = codeMemoryPtr - codeMemory.GetAllocatedMemoryConst();
-                debugMessage.Printf("%s%i - %i :: END", debugMessage, stackOffset, codeOffset);
+                debugMessage.Printf("%i - %i :: END", stackOffset, codeOffset);
 
                 uint32 size = debugMessage.Size();
                 debugStream->Write(debugMessage.Buffer(),size);
