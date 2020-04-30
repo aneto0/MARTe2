@@ -1,14 +1,3 @@
-// Works with three levels of precedence and with assignment statement
-// Also typecast works http://hypertextbookshop.com/transPL/Contents/01_Topics/03_Parsing/05_Section_5/02_page_2_-_LL(1)_Table_Conflicts.html (it's quite ugly although)
-// version07: works with functions (typecast not tested yet), provided that all the expression is enclosed between
-//            parenthesis (maybe because operation4 expects something after a STRING token, and if no parenthesis is
-//            given then ret = A + B results in STRING EOF which operation4 can't handle) 
-// version08: works with functions and typecasts, but with the same problem as version07
-// version10: everything works, a little tidier than version09
-// version11: tidied up, there's a problem when a typecast is followed by an operation
-// version12: solved typecast problem, added multiargument function
-
-
 system:
     assignment { assignment }
 
@@ -29,6 +18,9 @@ operation0:
 logic_op:
     &
     |
+    ||
+    &&
+    ^
 
 // *********** Comparisons **********************
 
@@ -38,6 +30,9 @@ operation1:
 comp_op:
     >
     <
+    >=
+    <=
+    ==
 
 // *********** Addition, subtraction ************
 
@@ -51,19 +46,12 @@ add_op:
 // *********** Multiplication, division **********
 
 operation3:
-    operation4 { __PushOperator mul_op operation4 __PopOperator }
+    operation5 { __PushOperator mul_op operation5 __PopOperator }
 
 mul_op:
     *
     /
 
-// *********** Power *******************************
-
-operation4:
-    operation5 { __PushOperator pow_op operation5 __PopOperator }
-
-pow_op:
-    ^
 
 // *********** Unary expresion ******************* (prefix operator: !, ... )
 
@@ -79,7 +67,7 @@ unary_op_alt:
     +
     -
 
-// ****** Typecast
+// *********** Typecast *******************
 
 operation6:
     operation7
