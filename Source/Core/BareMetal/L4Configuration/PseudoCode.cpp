@@ -693,17 +693,11 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 } else {
                     ret.fatalError = true;
                 }
+                REPORT_ERROR_STATIC(ret,"GetTypeNameFromTypeDescriptor failed ");
 
-                cst += ' ';
-
-				// Converts the value to a string
-                StreamString value;
-				AnyType dest(value);
-                AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
-                dest = src;
-                REPORT_ERROR_STATIC(ret,"CopyTo failed ");
-				if (ret){
-                    cst += value;
+                if (ret){
+                    AnyType src(vi->type, 0, &variablesMemoryPtr[pCode2]);
+                    cst.Printf(" %!", src);
 				}
 			} else {
                 cst.Printf(" %s", vi->name.Buffer());
