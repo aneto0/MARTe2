@@ -269,7 +269,7 @@ protected:
      */
     Token *currentToken;
 
-//private:
+private:
 
     /**
      * The type name.
