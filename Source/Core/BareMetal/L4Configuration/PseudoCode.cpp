@@ -27,6 +27,7 @@
 #include "IteratorT.h"
 #include "StaticStack.h"
 #include "AnyType.h"
+#include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
 
 namespace MARTe{
@@ -502,9 +503,10 @@ ErrorManagement::ErrorType Context::Compile(StreamString &RPNCode){
 				// convert string to number and save value into memory
 				if (ret){
 					//nextConstantAddress
-					AnyType src(parameter2);
                     AnyType dest(td, 0,&variablesMemoryPtr[nextConstantAddress]);
-                    dest = src;
+                    ret.fatalError = !TypeConvert(dest, parameter2.Buffer());
+                    REPORT_ERROR_STATIC(ret,"TypeConvert failed ");
+
 				}
 
 				if (ret){
