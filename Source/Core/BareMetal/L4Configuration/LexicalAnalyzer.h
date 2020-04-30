@@ -34,7 +34,7 @@
 
 #include "GrammarInfo.h"
 #include "StaticList.h"
-#include "StreamI.h"
+#include "BufferedStreamI.h"
 #include "Token.h"
 
 /*---------------------------------------------------------------------------*/
@@ -125,7 +125,7 @@ public:
      */
     Token *PeekToken(const uint32 position);
 
-//private:
+private:
 
     /*
      * Implementation details of the class:
