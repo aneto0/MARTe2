@@ -132,6 +132,21 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparis
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparison_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A == (B ^ C);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "XOR\n"
+                                  "EQ\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Sum)
 {
     MathExpressionParserTest parserTest;
@@ -587,6 +602,24 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Multiple
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_MultipleExpressions_3)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A +b; ret = C; X = sin(B);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ b\n"
+                                  "SUM\n"
+                                  "WRITE ret\n"
+                                  "READ C\n"
+                                  "WRITE ret\n"
+                                  "READ B\n"
+                                  "SIN\n"
+                                  "WRITE X\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Assignment_NoStatement)
 {
     MathExpressionParserTest parserTest;
@@ -619,6 +652,15 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_Unb
     MathExpressionParserTest parserTest;
     
     const char8* expression     = "ret = A + b);";
+            
+    ASSERT_TRUE(parserTest.TestExpressionError(expression));
+}
+
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpressionError_WrongAssignmentOperator)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret == (A + b);";
             
     ASSERT_TRUE(parserTest.TestExpressionError(expression));
 }
