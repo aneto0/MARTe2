@@ -7,9 +7,88 @@
 #include "MathExpressionParser.h"
 #include "ConfigurationDatabase.h"
 #include "StreamMemoryReference.h"
+#include "RegularExpression.h"
 
 
 using namespace MARTe;
+
+
+
+/**
+ *
+ */
+struct LexicalAnalyzerRule{
+	/**
+	 *
+	 */
+	CCString  			rule;
+
+	/**
+	 *
+	 */
+	CCString 			ruleName;
+
+	/**
+	 *
+	 */
+	uint32 				ruleId;
+
+	/**
+	 *
+	 */
+	bool 				skip;
+};
+
+namespace ruleSet{
+
+const uint32 commentElement    = 1;
+
+const uint32 spaceElement      = 2;
+
+const uint32 identifierElement = 3;
+
+const uint32 stringElement     = 4;
+
+const uint32 numberElement     = 5;
+
+const uint32 operators         = 6;
+
+
+/*
+ */
+const LexicalAnalyzerRule rules[]={
+	    {"//!*[^\n]\n"                                               ,"line comment"     , commentElement       ,true},
+	    {"/\\*!*?\\a\\*/"                                            ,"multiline comment", commentElement       ,true},
+	    {"+[ \n\t,;]"                                                ,"separator"        , spaceElement         ,true},
+	    {"&&"                                                        ,"AND operator"     , operators            ,false},
+	    {"\\|\\|"                                                    ,"AND operator"     , operators            ,false},
+	    {"\\^"                                                       ,"AND operator"     , operators            ,false},
+	    {"\\+="                                                      ,"AND operator"     , operators            ,false},
+	    {"\\-="                                                      ,"AND operator"     , operators            ,false},
+	    {"<="                                                        ,"AND operator"     , operators            ,false},
+	    {">="                                                        ,"AND operator"     , operators            ,false},
+	    {"\\+"                                                       ,"AND operator"     , operators            ,false},
+	    {"\\-"                                                       ,"AND operator"     , operators            ,false},
+	    {"\\*"                                                       ,"AND operator"     , operators            ,false},
+	    {"/"                                                         ,"AND operator"     , operators            ,false},
+	    {"="                                                         ,"AND operator"     , operators            ,false},
+	    {"\\("                                                       ,"AND operator"     , operators            ,false},
+	    {"\\)"                                                       ,"AND operator"     , operators            ,false},
+	    {"[\\w_]*[\\d\\w_]"                                          ,"identifier"	     , identifierElement    ,false},
+		{"\"*[^\"]\""                                                ,"string"		     , stringElement		,false},
+	    {"(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)"               ,"number"		     , numberElement        ,false},
+		{emptyString												 ,emptyString	     , 0					,false}
+};
+
+}
+
+
+
+CCString Database=
+		"expression = \"X=Z,Y=B \n X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \" "
+		"RPN = \"READ X \" "
+		"X = (int32) 3";
+
 
 CCString MATHExpr= "X=Z,Y=B \n X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z \n";
 //CCString MATHExpr= "X=Z,Y=B,";
@@ -48,32 +127,89 @@ CCString RPNCode=
 		"WRITE F\n"
 ;
 
-uint16 data1[20000];
-uint16 data2[20000];
-uint64 accum[100];
 
-void LucaTest(){
-	for (int j1 = 0;j1<10;j1++)
-	for (int j2 = 0;j2<10;j2++) {
-		uint16 *d1 = &data1[j1*1000];
-		uint16 *d2 = &data2[j2*1000];
-		uint64 acc = 0;
-		for (int k = 0;k<2000;k++) {
-			uint32 r = d1[k]*d2[k];
-			acc+= r;
-		}
-		accum[j1+10*j2]=acc;
-	}
+const LexicalAnalyzerRule *Parse(CCString &line,DynamicCString &content){
+    int ruleNo = 0;
+    ErrorManagement::ErrorType match;
+    while((ruleSet::rules[ruleNo].rule.GetSize()> 0) && match){
+        CCString pattern = ruleSet::rules[ruleNo].rule;
+        CCString lineSave = line;
+        match = RegularExpression::Match(line,pattern);
+        int size = line-lineSave;
+        if (match){
+        	content().SetSize(0);
+        	content().Append(lineSave,size);
+//printf("matched %s %i\n",pattern.GetList(),ruleNo);
+        	return &ruleSet::rules[ruleNo];
+        } else {
+        	match.comparisonFailure = false; // reset this error to allow continuation
+        	if (match.outOfRange){
+printf("error reading input\n");
+        	}
+        	if (match.notCompleted){
+printf("error not completed\n");
+        	}
+        	if (match.syntaxError){
+printf("syntaxError\n");
+        	}
+
+            line = lineSave;
+        }
+        ruleNo++;
+    }
+    return NULL;
 }
+
+CCString line =
+" 121 ALPHA \"BIRRA\" // pip\tpo\n"
+" 122.5 _ALPha   \"BIRRA\"\"\" // pippo\n"
+"/* 123 ALPHA \"BIRRA\" // pippo\n"
+" 124 ALPHA \"BIRRA\" // */ ;pippo\n"
+" .124 126E4 12.7E-5 231.32E97 .165E3 \n"
+" (A + B) * C >= (D+X)/ 6\n";
 
 int main(){
 
+//char *p = const_cast<char *>(line.GetList());
+
+CCString lineP = line;
+while (lineP[0]!= 0){
+	DynamicCString content;
+	const LexicalAnalyzerRule *q = Parse(lineP,content);
+
+	if (q){
+		if (!q->skip){
+			printf("%s [%s]\n",q->ruleName.GetList(),content.GetList());
+			fflush(stdout);
+		}
+	} else {
+		printf("UNMATCHED %s\n",lineP.GetList());
+		break;
+	}
+}
+//oo
+
+return 0;
+
 	StartupManager::Initialise();
+
+	ConfigurationDatabase cdb;
+
+	AnyType at(Database);
+
+	at.SetFormattedStreamType("CDB");
+	at.CopyTo(cdb);
+
+return 0;
+
+
+
+
 
 	StreamString err;
 	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
-	MathExpressionParser mexp(smr,&err);
-	mexp.Parse();
+	MathExpressionParser mexp;
+	mexp.Parse(smr,&err);
 
 	printf(">>\n%s\n<<\n",mexp.GetStackMachineExpression().GetList());
 	printf(">>\n%s\n<<\n",err.Buffer().GetList());
@@ -277,14 +413,6 @@ int main(){
 		fflush(stdout);
 
 	}
-
-	Ticks t1,t2;
-	t1 = HighResolutionTimer::GetTicks();
-	LucaTest();
-	t2 = HighResolutionTimer::GetTicks();
-	MicroSeconds dT = t2-t1;
-	printf (" in %i microSeconds %lli\n",dT.GetTimeRaw(),accum[0]);
-	fflush(stdout);
 
 
 	if (!ret){

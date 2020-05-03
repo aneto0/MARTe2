@@ -47,6 +47,25 @@
 
 namespace MARTe {
 
+#define PARSER_DIAGNOSTIC_REPORT(errorStream,level,format,...) 			\
+if (debugLevel >=level){                                    \
+	StreamString s;								 			\
+	s.Printf(format,__VA_ARGS__);      						\
+	if (errorStream) errorStream->Printf("%s\n",s.Buffer());  \
+	else {                          						\
+		REPORT_ERROR(ErrorManagement::Debug,s.Buffer()); 	\
+	}			 										 	\
+}
+
+#define PARSER_ERROR_REPORT(errorStream,ret,format,...)    	\
+if (!ret){                                                  \
+	StreamString s;								 			\
+	s.Printf(format,__VA_ARGS__);      		        	    \
+	if (errorStream) errorStream->Printf("%s\n",s.Buffer());\
+	REPORT_ERROR(ret,s.Buffer()); 	                        \
+}
+
+
 
 /**
  * @brief Abstract parser which allows to transform a stream of characters
@@ -100,9 +119,7 @@ public:
      * @post
      *   GetGrammar() == grammarIn
      */
-    ParserI(StreamI &stream,
-            BufferedStreamI * const err,
-			const ParserData & constantsIn);
+    ParserI(const ParserData & constantsIn);
 
     /**
      * @brief Destructor.
@@ -115,8 +132,9 @@ public:
      * @return true if the stream in input is parsed correctly, false otherwise.
      * In case of failure, the error causing the failure is printed on the
      * \a err stream in input (if it is not NULL).
+     * @brief debugLevel  0 = onlyErrors 1=    2=
      */
-    ErrorManagement::ErrorType Parse();
+    ErrorManagement::ErrorType Parse(StreamI &stream,BufferedStreamI *	errorStream=NULL_PTR(BufferedStreamI *),uint32 debugLevel = 0);
 
 private:
 
@@ -187,7 +205,7 @@ private:
      * @return the identifier of the next token produced by the lexical
      * analyzer.
      */
-    uint32 GetNextTokenType();
+//    uint32 GetNextTokenType();
 
     /**
      * @brief maps the input token into the grammar expected tokens
@@ -200,7 +218,7 @@ private:
      * retrieves the identifier of the token in the next \a position index.
      * @return the identifier of the token in the next \a position index.
      */
-    uint32 PeekNextTokenType(const uint32 position);
+//    uint32 PeekNextTokenType(const uint32 position);
 
     /**
      * @brief Pushes the expected token to the stack.
@@ -222,34 +240,14 @@ private:
      * @brief Executes the specified function.
      * @param[in] number if the number of the callback to be executed.
      */
-    virtual void Execute(const uint32 number,const Token *token,BufferedStreamI *errorStream)=0;
-
-protected:
-    /**
-     * The parse Error State
-     */
-    ErrorManagement::ErrorType ok;
-
+    virtual ErrorManagement::ErrorType Execute(const uint32 number,const Token *token,BufferedStreamI *errorStream)=0;
 
 private:
-    /**
-     * A pointer to the last token produced by the lexical analyzer.
-     */
-    Token *					currentToken;
 
     /**  CONSTANTS set by the PARSER generator*/
     /** to be correctly initalised by the initialiser of the specific specialisation */
     const ParserData &		constants;
 
-    /**
-     * The lexical analyzer reading the stream and providing the tokens.
-     */
-    LexicalAnalyzer 		tokenProducer;
-
-    /**
-     * The stream to print the error messages.
-     */
-    BufferedStreamI *		errorStream;
 
 };
 

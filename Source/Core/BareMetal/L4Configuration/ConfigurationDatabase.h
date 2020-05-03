@@ -93,7 +93,7 @@ public:
      * @details It is possible read directly a structure or a class if
      * the node with the \a name provided has a compatible structure.
      * In this case the class must be introspectable and registered into
-     * the ConfigurationDatabase.
+     * the ClassDatabase.
      */
     virtual ErrorManagement::ErrorType Read(CCString path,const AnyType &value);
 

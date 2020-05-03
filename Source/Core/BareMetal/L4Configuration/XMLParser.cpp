@@ -43,10 +43,8 @@
 
 namespace MARTe {
 
-XMLParser::XMLParser(StreamI &stream,
-                     StructuredDataI &databaseIn,
-                     BufferedStreamI * const err) :
-        StructuredDataParserI(stream, databaseIn, err, XMLParserData::parserData)
+XMLParser::XMLParser(StructuredDataI &databaseIn) :
+        StructuredDataParserI(databaseIn, XMLParserData::parserData)
 
 {
 	MapMethods();
@@ -56,8 +54,8 @@ XMLParser::~XMLParser() {
 
 }
 
-void XMLParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
-	(this->*Action[number])(currentToken,errorStream);
+ErrorManagement::ErrorType XMLParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
+	return (this->*Action[number])(currentToken,errorStream);
 }
 
 

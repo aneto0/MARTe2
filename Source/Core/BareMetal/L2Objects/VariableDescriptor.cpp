@@ -56,6 +56,15 @@
 
 namespace MARTe{
 
+ErrorManagement::ErrorType VariableDescriptor::SetFormattedStreamType(CCString format){
+	ErrorManagement::ErrorType ret;
+
+	ret.unsupportedFeature = !this->typeDescriptor.SetFormattedStreamType(format);
+	REPORT_ERROR(ret, "Incompatible format");
+
+	return ret;
+}
+
 /**
  * TODO: Change this to fit the specific needs of the platform
  */
@@ -317,7 +326,12 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	if (ret){
 		tco = TypeConversionManager::GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
     	ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
-    	REPORT_ERROR(ret, "Conversion Operator not found");
+    	DynamicCString s1,s2;
+    	CStringTool cst1= s1();
+    	CStringTool cst2= s2();
+    	destVd.typeDescriptor.ToString(cst2);
+		this->typeDescriptor.ToString(cst1);
+    	COMPOSITE_REPORT_ERROR(ret, "Conversion Operator from ",s1," to ",s2," not found");
 	}
 
 	if (ret){

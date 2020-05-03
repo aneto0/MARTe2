@@ -148,15 +148,20 @@ const struct {
 		{"void"		      ,  TDF_Void           },
         {"StreamString"	  ,  TDF_SString        },
 		{"StreamI"		  ,  TDF_Stream         },
-		{"StructuredDataI",  TDF_StructuredDataI},
-		{"Object"		  ,  TDF_Object         },
 		{"CCString"       ,  TDF_CCString       },
 		{"CString"        ,  TDF_CString        },
 		{"DynamicCString" ,  TDF_DynamicCString },
+        {"StreamString"	  ,  TDF_SString  | TDF_HasFormatInfo       },
+		{"StreamI"		  ,  TDF_Stream   | TDF_HasFormatInfo       },
+		{"CCString"       ,  TDF_CCString | TDF_HasFormatInfo       },
+		{"CString"        ,  TDF_CString  | TDF_HasFormatInfo       },
+		{"DynamicCString" ,  TDF_DynamicCString | TDF_HasFormatInfo },
 		{"void*" 	      ,  TDF_Pointer        },
 		{"void[]" 	      ,  TDF_GenericArray   },
 		{"invalid"	 	  ,  TDF_Invalid        },
 		{"?*"             ,  TDF_GenericPointer },
+		{"StructuredDataI",  TDF_StructuredDataI},
+		{"Object"		  ,  TDF_Object         },
 		{""               ,  0 },
 		};
 
@@ -174,6 +179,7 @@ static CCString BasicTypeName(TD_FullType tdf){
 	return name;
 }
 
+//#include <stdio.h>
 
 uint32 TypeDescriptor::String2FormatNumber(CCString formatString){
 	uint32 value = 0;
@@ -194,32 +200,61 @@ uint32 TypeDescriptor::String2FormatNumber(CCString formatString){
 	if (size > 3) {
 		value += (static_cast<uint8>(formatString[3]) - 32) & 0x3F;
 	}
+
+//printf("%s -->%i\n",formatString.GetList(),value);
 	return value;
 }
 
 static void FormatNumber2String(uint32 format, CStringTool &formatString){
-
+	char buffer[5] = { '\0','\0','\0','\0','\0' };
 	if (format & 0x00fC0000) {
 		uint32 value =  ((format & 0x00fC0000) >> 18U);
-		formatString.Append(static_cast<char8>(value));
+		buffer[0] = static_cast<char8>(value + 32U);
 
 		if (format & 0x0003F000) {
 			value =  ((format & 0x0003F000) >> 12U);
-			formatString.Append(static_cast<char8>(value));
+			buffer[1] = static_cast<char8>(value + 32U);
 
 			if (format & 0x00000FC0) {
 				value =  ((format & 0x00000FC0) >> 6U);
-				formatString.Append(static_cast<char8>(value));
+				buffer[2] = static_cast<char8>(value + 32U);
 
 				if (format & 0x0000003F) {
 					value =  (format & 0x00000003F);
-					formatString.Append(static_cast<char8>(value));
+					buffer[3] = static_cast<char8>(value + 32U);
 				}
 			}
 		}
 	}
+	formatString.Append(CCString(&buffer[0]));
+//printf("%i -->%s\n",format,buffer);
+
 }
 
+bool TypeDescriptor::GetStreamFormat(CStringTool &string) const{
+	bool ret = IsFormattedCharStreamType();
+	if (ret){
+  		FormatNumber2String(format,string);
+	}
+	return ret;
+}
+
+/**
+ * @brief switches a CharStreamType to a FormattedCharStreamType.
+ * Sets the format
+ * @return false if the type is neither CharStreamType not FormattedCharStreamType
+ */
+bool TypeDescriptor::SetFormattedStreamType(CCString format){
+	bool ret=true;
+	if (IsCharStreamType() || IsFormattedCharStreamType()){
+		uint32 ft = this->fullType;
+		objectSize  = 0;
+		ft |= TDF_HasFormatInfo;
+		this->fullType = ft;
+		this->format = TypeDescriptor::String2FormatNumber(format);
+	}
+	return ret;
+}
 
 /**
  * @brief gets name of class from structuredDataIdCode
@@ -320,13 +355,8 @@ bool TypeDescriptor::ToString(CStringTool &stringt) const{
 	return ret;
 }
 
-bool TypeDescriptor::GetStreamFormat(CStringTool &string) const{
-	bool ret = IsFormattedCharStreamType();
-	if (ret){
-  		FormatNumber2String(format,string);
-	}
-	return ret;
-}
+
+
 
 
 static const CCString seps = " \n\r\t<>()";

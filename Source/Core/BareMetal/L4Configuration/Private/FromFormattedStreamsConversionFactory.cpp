@@ -88,13 +88,13 @@ public:
 
 			ParserI *parser = NULL_PTR(ParserI *);
 			if (format == "XML"){
-			    parser = new XMLParser(*sourceSI,*destSI);
+			    parser = new XMLParser(*destSI);
 			} else
 			if (format == "JSON"){
-			    parser = new JsonParser(*sourceSI,*destSI);
+			    parser = new JsonParser(*destSI);
 			} else
 			if ((format == "CDB") || (format.GetSize()==0)){
-				parser = new StandardParser (*sourceSI,*destSI);
+				parser = new StandardParser (*destSI);
 			} else {
 				ret.unsupportedFeature = true;
 				COMPOSITE_REPORT_ERROR(ret,"unsupported stream structure format ",format);
@@ -104,7 +104,7 @@ public:
 			COMPOSITE_REPORT_ERROR(ret,"unsupported stream structure format ",format);
 
 			if (ret){
-				ret = parser->Parse();
+				ret = parser->Parse(*sourceSI);
 				REPORT_ERROR(ret,"Parse error");
 			}
 
@@ -244,19 +244,22 @@ FromFormattedStreamsConversionFactory::FromFormattedStreamsConversionFactory(){
 FromFormattedStreamsConversionFactory::~FromFormattedStreamsConversionFactory(){
 }
 
-
+//#include <stdio.h>
 TypeConversionOperatorI *FromFormattedStreamsConversionFactory::GetOperator(const TypeDescriptor &destTd,const TypeDescriptor &sourceTd,bool isCompare){
 	ErrorManagement::ErrorType  ret;
 
 	TypeConversionOperatorI *tco = NULL_PTR(TypeConversionOperatorI *);
-
+//REPORT_ERROR(ErrorManagement::FatalError,"came here");
+//printf ("%i %i %i ",destTd.SameTypeAs(StructuredDataIType(0)),sourceTd.IsFormattedCharStreamType(),(isCompare == false));
 	// this implies SString,Stream,DynamicCString and excludes ConstCharString
-	if (destTd.IsStructuredData() && sourceTd.IsFormattedCharStreamType() && (isCompare == false)){
+	if (destTd.SameTypeAs(StructuredDataIType(0)) && sourceTd.IsFormattedCharStreamType() && (isCompare == false)){
 		DynamicCString format;
 		CStringTool cs = format();
 
 		ret.fatalError = !sourceTd.GetStreamFormat(cs);
 		REPORT_ERROR(ret,"GetStreamFormat failed");
+
+//REPORT_ERROR(ErrorManagement::FatalError,"came here");
 
 		if (ret && sourceTd.IsCharString()){
 			tco = new CStringToStructuredDataITCO(format,destTd.StorageSize());

@@ -34,7 +34,7 @@
 #include "VariableDescriptor.h"
 #include "MemoryCheck.h"
 #include "ClassMember.h"
-#include "../L1Portability/CompositeErrorManagement.h"
+#include "CompositeErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -47,6 +47,15 @@
 //#include "Windows.h"
 
 namespace MARTe {
+
+ErrorManagement::ErrorType AnyType::SetFormattedStreamType(CCString format){
+	ErrorManagement::ErrorType ret;
+
+	ret.unsupportedFeature = !this->variableDescriptor.SetFormattedStreamType(format);
+	REPORT_ERROR(ret, "Incompatible format");
+
+	return ret;
+}
 
 
 ErrorManagement::ErrorType AnyType::Dereference (uint32 index){

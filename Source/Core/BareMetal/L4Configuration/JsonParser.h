@@ -104,9 +104,7 @@ public:
      * @param[out] databaseIn is the built StructuredData in output.
      * @param[out] err is the stream where error messages are printed to.
      */
-    JsonParser(StreamI &stream,
-               StructuredDataI &databaseIn,
-               BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
+    JsonParser(StructuredDataI &databaseIn);
 
     /**
      * @brief Destructor.
@@ -118,7 +116,7 @@ private:
     /**
      * @see ParserI::Execute(*)
      */
-    virtual void Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
+    virtual ErrorManagement::ErrorType  Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
 
     /*
      *
@@ -128,7 +126,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (JsonParser::*Action[10])(const Token *,BufferedStreamI *);
+    ErrorManagement::ErrorType  (JsonParser::*Action[10])(const Token *,BufferedStreamI *);
 
 };
 

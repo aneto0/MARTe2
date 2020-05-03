@@ -255,7 +255,7 @@ extern const ParserData parserData(
 
 void XMLParser::MapMethods(){
 
-	Action[0] = static_cast<void (XMLParser::*)(const Token *,BufferedStreamI *)>(NULL);
+	Action[0] = static_cast<ErrorManagement::ErrorType  (XMLParser::*)(const Token *,BufferedStreamI *)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkTables.cpp

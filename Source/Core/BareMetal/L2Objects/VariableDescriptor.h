@@ -131,6 +131,12 @@ public:
     ErrorManagement::ErrorType Redirect(const uint8 *&pointer,uint32 index,CCString modifierString=emptyString) ;
 
     /**
+     * @see TypeDescriptor::SetFormattedStreamType
+     * @return unsupportedFeature if type is not compatible
+     */
+    ErrorManagement::ErrorType SetFormattedStreamType(CCString format) ;
+
+    /**
     * @brief creates an object clone of the variable
     * @details:
     * The functions also copies complex arrays where dimensions are linked by pointers and maybe of variable size

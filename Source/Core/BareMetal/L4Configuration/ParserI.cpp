@@ -32,7 +32,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ParserI.h"
-#include "AdvancedErrorManagement.h"
+#include "CompositeErrorManagement.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,97 +41,33 @@
 
 namespace MARTe {
 
-
-
-static void PrintErrorOnStream(CCString const format,
-                               const uint32 lineNumber,
-                               BufferedStreamI * const err) {
-    if (err != NULL) {
-        if (!err->Printf(format, lineNumber)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
-        }
-
-//TODO FIX THIS
-//        REPORT_ERROR(ErrorManagement::FatalError, format, lineNumber);
-    }
-}
-
-static uint32 GetCurrentTokenLineNumber(const Token * const token) {
-    return (token != NULL)?(token->GetLineNumber()):0u;
-}
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 
-ParserI::ParserI(StreamI &stream,BufferedStreamI * const err,const MARTe::ParserData & constantsIn):
-		constants(constantsIn),
-        tokenProducer(stream, constantsIn.terminals, constantsIn.separators, constantsIn.beginOneLineComment,constantsIn.beginMultipleLinesComment,constantsIn.endMultipleLinesComment){
-
-	ok = ErrorManagement::NoError;
-
-    errorStream = err;
-    currentToken = static_cast<Token*>(NULL);
+ParserI::ParserI(const MARTe::ParserData & constantsIn):
+		constants(constantsIn){
 }
+
 
 ParserI::~ParserI() {
-    currentToken = static_cast<Token*>(NULL);
-    errorStream=static_cast<BufferedStreamI*>(NULL);
 }
 
-uint32 ParserI::GetNextTokenType() {
-//    uint32 ret = 0u;
-
-    currentToken = tokenProducer.GetToken();
-
-    return TokenToCode(currentToken);
 /*
-    CCString toCompare;
+uint32 ParserI::GetNextTokenType() {
+    return TokenToCode(tokenProducer.GetToken());
 
-    // if it is a terminal use the data
-    if (currentToken->GetId() == TERMINAL_TOKEN) {
-        toCompare = currentToken->GetData();
-    }
-    // otherwise use the description
-    else {
-        toCompare = currentToken->GetDescription();
-    }
-    // return the slk token number
-    for (uint32 i = 0u; i < constants.StartSymbol; i++) {
-        if (toCompare == GetSymbolName(i)) {
-            ret = i;
-        }
-    }
-    return ret;
-*/
 }
 
 uint32 ParserI::PeekNextTokenType(const uint32 position) {
-//    uint32 ret = 0u;
 
     Token* tok = tokenProducer.PeekToken(position);
 
     return TokenToCode(tok);
-/*
-    CCString toCompare = static_cast<const char8 *>(NULL);
-
-    if (tok->GetId() == TERMINAL_TOKEN) {
-        toCompare = tok->GetData();
-    }
-    else {
-        toCompare = tok->GetDescription();
-    }
-    for (uint32 i = 0u; i < constants.StartSymbol; i++) {
-        if (toCompare == GetSymbolName(i)) {
-            ret = i;
-        }
-    }
-
-    return ret;
-*/
 }
+*/
+
 
 uint32 ParserI::TokenToCode(const Token *token){
     uint32 ret = 0;
@@ -154,8 +91,6 @@ uint32 ParserI::TokenToCode(const Token *token){
 }
 
 
-
-
 CCString ParserI::GetSymbolName(const uint32 symbol) const
 {
 	CCString symbolName("not a symbol");
@@ -169,10 +104,9 @@ CCString ParserI::GetSymbolName(const uint32 symbol) const
 	if ( symbol > 0   ) {
 		symbolName = constants.Terminal_name [symbol];
 	}
-
 	return symbolName;
-
 }
+
 
 CCString ParserI::GetProductionName(const uint32 production) const{
 	CCString ret = "???";
@@ -184,51 +118,60 @@ CCString ParserI::GetProductionName(const uint32 production) const{
 			ret = constants.Action_name[action];
 		}
 	}
-
 	return ret;
 }
+
 
 CCString ParserI::GetProductionNameWithConflicts(const uint32 production) const{
 	CCString ret = "conflict";
 	if (production < constants.Production_name.GetNumberOfElements()){
 		ret = constants.Production_name[production];
 	}
-
 	return ret;
 }
-
 
 
 const uint32 &ParserI::GetProduction(const uint32 index)const  {
     return constants.Production[index];
 }
 
+
 uint32 ParserI::GetProductionRow(const uint32 index)const  {
     return constants.Production_row[index];
 }
+
 
 uint32 ParserI::GetParse(const uint32 index)const  {
     return constants.Parse[index];
 }
 
+
 uint32 ParserI::GetParseRow(const uint32 index)const  {
     return constants.Parse_row[index];
 }
 
+
 uint32 ParserI::GetConflict(const uint32 index)const  {
     return constants.Conflict[index];
 }
+
 
 uint32 ParserI::GetConflictRow(const uint32 index)const  {
     return constants.Conflict_row[index];
 }
 
 
-ErrorManagement::ErrorType ParserI::Parse() {
-	ok = ErrorManagement::NoError;
+
+ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	errorStream,uint32 debugLevel) {
+	ErrorManagement::ErrorType ret;
+    Token *currentToken = static_cast<Token*>(NULL);
+    /**
+     * The lexical analyzer reading the stream and providing the tokens.
+     */
+    LexicalAnalyzer tokenProducer(stream, constants.terminals, constants.separators, constants.beginOneLineComment,constants.beginMultipleLinesComment,constants.endMultipleLinesComment);
 
     bool isEOF = false;
-    while ((ok) && (!isEOF)) {
+    while ((ret) && (!isEOF)) {
 
         uint32 stackArray[constants.StackSize];
         uint32 *stack = &stackArray[0];
@@ -238,24 +181,29 @@ ErrorManagement::ErrorType ParserI::Parse() {
         uint32 start_symbol = constants.StartSymbol;
 
         StackPush(start_symbol, stack, top);
-printf("Push %s (=%i)\n",GetSymbolName(start_symbol).GetList(),start_symbol); // TODO
 
-        uint32 token = GetNextTokenType();
+        PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Push %s (=%i)\n",GetSymbolName(start_symbol).GetList(),start_symbol);
+
+		currentToken = tokenProducer.GetToken();
+		uint32 token = TokenToCode(currentToken);
+//        uint32 token = GetNextTokenType();
         uint32 new_token = token;
-printf("Token= [%s](%s) \n",GetSymbolName(token).GetList(),currentToken->GetData().GetList()); // TODO
+        PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token= [%s](%s) \n",GetSymbolName(token).GetList(),currentToken->GetData().GetList());
 
 		uint32 symbol = StackPop(top);
-printf("Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol).GetList(),symbol,top); // TODO
-        for (; (symbol > 0u) && (ok);) {
+		PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol).GetList(),symbol,top);
+        for (; (symbol > 0u) && (ret);) {
 
         	/// from StartAction to EndAction
             if (symbol >= constants.StartAction) {
-printf("Execute %s \n",GetSymbolName(symbol).GetList()); // TODO
-                Execute(symbol - (constants.StartAction - 1u),currentToken,errorStream);
+            	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Execute %s \n",GetSymbolName(symbol).GetList());
+                ret = Execute(symbol - (constants.StartAction - 1u),currentToken,errorStream);
             } /// from StartSymbol to EndSymbol
+
             else
+
             if (symbol >= constants.StartSymbol) {
-printf("Rule %s \n",GetSymbolName(symbol).GetList()); // TODO
+            	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Rule %s \n",GetSymbolName(symbol).GetList());
 
 				// used by Peek - depth of forward peeking
                 uint32 level = 0u; // it is 1 in original code
@@ -272,27 +220,26 @@ printf("Rule %s \n",GetSymbolName(symbol).GetList()); // TODO
                 }
 #endif
 
-
                 if ( entry == 0 ) {
 					uint32 index = 0;
                 	index = GetParseRow(symbol - (constants.StartSymbol - 1u));
                     index += token;
                     entry = GetParse(index);
-printf("Parse: [%s] + [%s] = [%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList(),GetProductionNameWithConflicts(entry).GetList()); // TODO
+                    PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Parse: [%s] + [%s] = [%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList(),GetProductionNameWithConflicts(entry).GetList());
                 }  // entry = 0
-
 
                 // the next entry is a conflict.
                 // move ahead in the conflict tables
                 while (entry >= constants.StartConflict) {
-                	uint32 index = 0;
                 	uint32 oldEntry = entry;
-                    index = GetConflictRow(entry - (constants.StartConflict - 1u));
-                    uint32 token = PeekNextTokenType(level);
-printf("PeekToken(%i)= [%s] \n",level,GetSymbolName(token).GetList()); // TODO
+                    uint32 index = GetConflictRow(entry - (constants.StartConflict - 1u));
+                    Token* tok = tokenProducer.PeekToken(level);
+                    uint32 token = TokenToCode(tok);
+//                    uint32 token = PeekNextTokenType(level);
+                    PARSER_DIAGNOSTIC_REPORT(errorStream,2,"PeekToken(%i)= [%s] \n",level,GetSymbolName(token).GetList());
                     index += token;
                     entry = GetConflict(index);
-printf("Conflict: [%s] + [%s] = [%s] \n",GetProductionNameWithConflicts(oldEntry).GetList(),GetSymbolName(token).GetList(),GetProductionNameWithConflicts(entry).GetList()); // TODO
+                    PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Conflict: [%s] + [%s] = [%s] \n",GetProductionNameWithConflicts(oldEntry).GetList(),GetSymbolName(token).GetList(),GetProductionNameWithConflicts(entry).GetList());
                     ++level;
                 } // while
 
@@ -300,11 +247,11 @@ printf("Conflict: [%s] + [%s] = [%s] \n",GetProductionNameWithConflicts(oldEntry
                 	const uint32 *production = &GetProduction(GetProductionRow(entry));
                     uint32 production_length = *production - 1u;
                     production++;
-printf("Try produce [%s]\n",GetProductionName(entry).GetList()); // TODO
+                    PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Try produce [%s]\n",GetProductionName(entry).GetList());
 
                     /*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                     if (*production == symbol) {
-printf("Match %s\n",GetSymbolName(symbol).GetList()); // TODO
+                    	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Match %s\n",GetSymbolName(symbol).GetList());
 
                     	//action->predict(entry);  // predictive production for custom appications
 
@@ -315,61 +262,76 @@ printf("Match %s\n",GetSymbolName(symbol).GetList()); // TODO
                             /*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                             uint32 toPush = *production;
                             StackPush(toPush, stack, top);
-printf("Push %s (=%i)\n",GetSymbolName(toPush).GetList(),toPush); // TODO
+                            PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Push %s (=%i)\n",GetSymbolName(toPush).GetList(),toPush);
                             production--;
                         } // for
                     } // production = symbol
-                    else {
+
+                    else
+
+                    {
                     	// new_token = no_entry ( error, symbol, token, level-1 );
-printf ( "Unmatch symbol=[%s]  token= [%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
-                        GetNextTokenType();  // consume
+                    	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Unmatch symbol=[%s]  token= [%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
+//                        GetNextTokenType();  // consume and throw away
+                		currentToken = tokenProducer.GetToken();
 
                     } // production != symbol
                 } // entry != 0
+
                 else
+
                 { // entry = 0
-printf ( "No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
-					GetNextTokenType();  // consume
+                	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
+//					GetNextTokenType();  // consume
+            		currentToken = tokenProducer.GetToken(); // consume and throw away
                 } // entry = 0
     	    } // symbol >= constants.StartSymbol
-            else {
+
+            else
+
+            {
             	if (symbol > 0u) {
                     if (symbol == token) {
-printf ("Symbol matches token \n");
-                    	token = GetNextTokenType();
-printf("Token= [%s](%s) \n",GetSymbolName(token).GetList(),currentToken->GetData().GetList()); // TODO
+                    	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Symbol %2 matches token \n",GetSymbolName(token).GetList());
+                    	//token = GetNextTokenType();
+                		currentToken = tokenProducer.GetToken();
+                		token = TokenToCode(currentToken);
+                		PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token= [%s](%s) \n",GetSymbolName(token).GetList(),currentToken->GetData().GetList());
                         new_token = token;
                     }
-                    else {
-printf ( "Expecting '%s' but found '%s' \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
+                    else
+                    {
+                    	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Expecting '%s' but found '%s' \n",GetSymbolName(symbol).GetList(),GetSymbolName(token).GetList());
 						new_token = token;
                     }
                 }
             }
 
             if (token != new_token) {
-printf ( "Token != new_token \n");
+            	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token != new_token(%s) \n",GetSymbolName(new_token).GetList());
                 if (new_token > 0u) {
                     token = new_token;
                 }
+
                 if (token != constants.EndOfFile) {
                     continue;
                 }
             }
             symbol = StackPop(top);
-printf("Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol).GetList(),symbol,top); // TODO
+            PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol).GetList(),symbol,top);
         }
 
         if (token != constants.EndOfFile) {
-            PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            ok.internalSetupError = true;
+            ret.internalSetupError = true;
+            PARSER_ERROR_REPORT(errorStream,ret,"leftover token %s in stack",GetSymbolName(symbol).GetList());
+//            PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         }
 
-printf("Loop\n"); // TODO
+        PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Looping %s\n","around");
 
     } // for
 
-    return ok;
+    return ret;
 }
 
 }

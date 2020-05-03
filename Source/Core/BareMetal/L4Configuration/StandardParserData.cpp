@@ -244,7 +244,7 @@ extern const ParserData parserData(
 
 void StandardParser::MapMethods(){
 
-	Action[0] = static_cast<void (StandardParser::*)(const Token *,BufferedStreamI *)>(0);
+	Action[0] = static_cast<ErrorManagement::ErrorType  (StandardParser::*)(const Token *,BufferedStreamI *)>(0);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp

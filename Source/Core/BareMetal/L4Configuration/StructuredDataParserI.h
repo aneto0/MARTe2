@@ -99,10 +99,7 @@ public:
      * @post
      *   GetGrammar() == grammarIn
      */
-    StructuredDataParserI(StreamI &stream,
-            StructuredDataI &databaseIn,
-            BufferedStreamI * const err,
-			const ParserData & constantsIn);
+    StructuredDataParserI(StructuredDataI &databaseIn,const ParserData & constantsIn);
 
     /**
      * @brief Destructor.
@@ -116,7 +113,10 @@ public:
      * In case of failure, the error causing the failure is printed on the
      * \a err stream in input (if it is not NULL).
      */
-    ErrorManagement::ErrorType Parse();
+    ErrorManagement::ErrorType Parse(
+    		StreamI &			stream,
+            BufferedStreamI * 	const err,
+			uint32 				debugLevel);
 
     /**
      * @brief Retrieves the grammar used by this parser.
@@ -130,48 +130,48 @@ protected:
     /**
      * @brief Moves into the built structured data to the root.
      */
-    virtual void End(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType End(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Gets the node or the variable name.
      */
-    virtual void GetNodeName(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType GetNodeName(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Adds a leaf in the StructuredData.
      */
-    virtual void AddLeaf(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType AddLeaf(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Gets the variable type.
      */
-    virtual void GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Creates a new node in the StructuredData.
      */
-    virtual void CreateNode(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType CreateNode(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Stores a read scalar in the memory.
      */
-    virtual void AddScalar(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType AddScalar(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Sets the number of dimensions to one and checks if
      * the matrix is well formed.
      */
-    virtual void EndVector(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType EndVector(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Sets the number of dimensions to two.
      */
-    virtual void EndMatrix(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType EndMatrix(const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * @brief Moves into the structuredData to the father.
      */
-    virtual void BlockEnd(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType BlockEnd(const Token *currentToken,BufferedStreamI *errorStream);
 
 
 private:

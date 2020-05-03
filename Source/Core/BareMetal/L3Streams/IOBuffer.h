@@ -399,7 +399,6 @@ public:
      */
     static bool PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars[]);
 
-#if 0
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
      * @details Extracts a token from the buffer into a string data until a
@@ -425,13 +424,12 @@ public:
      * @returns true if some data was read before any error or file
      * termination, false only on error and no data available.
      */
-    static bool GetToken(IOBuffer &iob,
-    		char8 * outputBuffer,
-            const char8 * terminator,
-            uint32 outputBufferSize,
-            char8 &saveTerminator,
-            const char8 * skipCharacters);
-#endif
+    static bool GetToken(
+    		IOBuffer &  inputBuffer,
+    		CStringTool outputBuffer,
+            CCString  	terminator,
+            char8 &     saveTerminator,
+            CCString    skipCharacters);
 
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.

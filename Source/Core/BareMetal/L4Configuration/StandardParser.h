@@ -103,9 +103,7 @@ public:
      * @param[out] databaseIn is the built StructuredData in output.
      * @param[out] err is the stream where error messages are printed to.
      */
-    StandardParser(StreamI &stream,
-                   StructuredDataI &databaseIn,
-                   BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
+    StandardParser(StructuredDataI &databaseIn);
 
     /**
      * @brief Destructor.
@@ -117,7 +115,7 @@ private:
     /**
      * @see ParserI::Execute(*).
      */
-    virtual void Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
+    virtual ErrorManagement::ErrorType  Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
 
     /**
      * implemented in XMLParserData.cpp
@@ -127,7 +125,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-    void (StandardParser::*Action[10])(const Token *,BufferedStreamI *);
+	ErrorManagement::ErrorType  (StandardParser::*Action[10])(const Token *,BufferedStreamI *);
 
 };
 

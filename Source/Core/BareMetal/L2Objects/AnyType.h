@@ -197,6 +197,12 @@ public:
     ErrorManagement::ErrorType  	Dereference (CCString field);
 
     /**
+     * @see TypeDescriptor::SetFormattedStreamType
+     * @return unsupportedFeature if type is not compatible
+     */
+    ErrorManagement::ErrorType 		SetFormattedStreamType(CCString format) ;
+
+    /**
      * @brief evaluates a C like dereferencing expression and moves the pointer
      * @param[in] CExpresssion is the expression: it is a sequence of dereference commands.
      * commands can be: "*" for pointer dereferencing;

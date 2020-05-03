@@ -353,30 +353,28 @@ static bool PrintToStream(IOBuffer & iobuff,
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#if 0
-bool IOBuffer::GetToken(
-						char8 * const outputBuffer,
-                        const char8 * const terminator,
-                        uint32 outputBufferSize,
-                        char8 &saveTerminator,
-                        const char8 * skipCharacters) {
+
+bool IOBuffer::GetToken(IOBuffer &	inputBuffer,
+		                CStringTool outputBuffer,
+			            CCString  	terminator,
+                        char8 		&saveTerminator,
+                        CCString 	skipCharacters) {
 
     bool ret = true;
     bool quit = false;
 // need space for trailing 0
-    outputBufferSize--;
 
-    if (skipCharacters == NULL) {
+    if (skipCharacters.GetSize() ==0 ) {
         skipCharacters = terminator;
     }
 
     uint32 tokenSize = 0u;
     while (!quit) {
         char8 c;
-        if (!GetC(c)) {
+        if (!inputBuffer.GetC(c)) {
 
             // 0 terminated string
-            outputBuffer[tokenSize] = '\0';
+//            outputBuffer[tokenSize] = '\0';
 
             saveTerminator = '\0';
 
@@ -399,7 +397,7 @@ bool IOBuffer::GetToken(
                 // quit only if some data was read, otw just skip separator block
                 if ((tokenSize != 0u) || (!isSkip)) {
                     // 0 terminated string
-                    outputBuffer[tokenSize] = '\0';
+  //                  outputBuffer[tokenSize] = '\0';
 
                     saveTerminator = c;
 
@@ -410,8 +408,14 @@ bool IOBuffer::GetToken(
             else {
                 if (!isSkip) {
 
-                    outputBuffer[tokenSize] = c;
+                	ErrorManagement::ErrorType ok = outputBuffer.Append(c);
+                	if (!ok){
+                        saveTerminator = c;
+                        quit = true;
+                        ret = false;
+                	}
                     tokenSize++;
+/*
                     if (tokenSize >= outputBufferSize) {
                         // 0 terminated string
                         outputBuffer[tokenSize] = '\0';
@@ -420,6 +424,7 @@ bool IOBuffer::GetToken(
 
                         quit = true;
                     }
+*/
                 }
             }
         }
@@ -427,9 +432,6 @@ bool IOBuffer::GetToken(
 
     return ret;
 }
-#endif
-
-
 
 bool IOBuffer::GetToken(
     		IOBuffer &inputBuffer,

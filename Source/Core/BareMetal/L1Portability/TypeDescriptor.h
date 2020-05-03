@@ -427,6 +427,7 @@ public:
      */
     inline bool IsStructuredData() const ;
 
+
     /**
      * @brief whether it is a form of char *
      */
@@ -508,6 +509,13 @@ public:
      * only valid if IsFormattedCharStreamType
      */
     bool GetStreamFormat(CStringTool &string) const;
+
+    /**
+     * @brief switches a CharStreamType to a FormattedCharStreamType.
+     * Sets the format
+     * @return false if the type is neither CharStreamType not FormattedCharStreamType
+     */
+    bool SetFormattedStreamType(CCString format) ;
 
     /**
      * @brief converts a 1-4 byte string into a 24 bit code that can be used as format

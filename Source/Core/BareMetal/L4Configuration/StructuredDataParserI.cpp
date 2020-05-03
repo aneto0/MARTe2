@@ -40,6 +40,7 @@
 
 namespace MARTe {
 
+#if 0
 static void PrintErrorOnStream(CCString const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
@@ -64,15 +65,16 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 }
 
 }
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+//namespace MARTe {
 
-StructuredDataParserI::StructuredDataParserI(StreamI &stream,StructuredDataI &databaseIn,BufferedStreamI * const err,const ParserData & constantsIn):
-		ParserI(stream,err,constantsIn),
+StructuredDataParserI::StructuredDataParserI(StructuredDataI &databaseIn,const ParserData & constantsIn):
+		ParserI(constantsIn),
 		memory(1024*1024) {
 
 	parseStatus.Init();
@@ -85,96 +87,137 @@ StructuredDataParserI::~StructuredDataParserI() {
 }
 
 
+ErrorManagement::ErrorType StructuredDataParserI::GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
 
-void StructuredDataParserI::GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream) {
-	if ((currentToken != NULL_PTR(Token *)) && (ParserI::ok)){
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
 		parseStatus.td = TypeDescriptor(currentToken->GetData());
 	}
+	return ret;
 }
 
-void StructuredDataParserI::BlockEnd(const Token *currentToken,BufferedStreamI *errorStream) {
-    if (!database->MoveToAncestor(1u)) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		ParserI::ok.fatalError = true;
+ErrorManagement::ErrorType StructuredDataParserI::BlockEnd(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		ret = database->MoveToAncestor(1u);
+        PARSER_ERROR_REPORT(errorStream,ret,"Failed StructuredDataI::MoveToAncestor(1)! [%d]", currentToken->GetLineNumber());
     }
+	return ret;
 }
 
-void StructuredDataParserI::CreateNode(const Token *currentToken,BufferedStreamI *errorStream) {
-    if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
-        PrintErrorOnStream("\nFailed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		ParserI::ok.fatalError = true;
+ErrorManagement::ErrorType  StructuredDataParserI::CreateNode(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		ret.fatalError =  database->CreateRelative(currentToken->GetData());
+    	PARSER_ERROR_REPORT(errorStream,ret,"Failed StructuredDataI::CreateRelative(*)! [%d]", currentToken->GetLineNumber());
     }
+	return ret;
 }
 
-void StructuredDataParserI::AddLeaf(const Token *currentToken,BufferedStreamI *errorStream) {
+ErrorManagement::ErrorType  StructuredDataParserI::AddLeaf(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
 	Reference ref;
 
-	if (ParserI::ok){
-		ParserI::ok = memory.End();
-		if (!ParserI::ok){
-	        PrintErrorOnStream("\n Failed ending construction of object[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		}
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		ret  = memory.End();
+		PARSER_ERROR_REPORT(errorStream,ret,"Failed ending construction of object [%d]", currentToken->GetLineNumber());
 	}
 
-	if (ParserI::ok){
-		ParserI::ok = memory.GetReference(ref);
-		if (!ref.IsValid()){
-			ParserI::ok.fatalError = true;
-		}
-		if (!ParserI::ok){
-	        PrintErrorOnStream("\n Failed creating object[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		}
+	if (ret){
+		ret = memory.GetReference(ref);
+		PARSER_ERROR_REPORT(errorStream,ret,"obtaining a reference from Memory [%d]", currentToken->GetLineNumber());
 	}
 
-	if (ParserI::ok){
+	if (ret){
+		ret.fatalError = !ref.IsValid();
+		PARSER_ERROR_REPORT(errorStream,ret,"invalid reference from Memory [%d]", currentToken->GetLineNumber());
+	}
+
+	if (ret){
 		ref->SetName(parseStatus.nodeName);
 
 		// no errors if ref is valid. which must be since we got here
-        database->Write(ref);
+        ret = database->Write(ref);
+		PARSER_ERROR_REPORT(errorStream,ret,"eriting %s [%d]", parseStatus.nodeName, currentToken->GetLineNumber());
 	}
 
 	parseStatus.Init();
-
+	return ret;
 }
 
-void StructuredDataParserI::GetNodeName(const Token *currentToken,BufferedStreamI *errorStream) {
-	if ((currentToken != NULL_PTR(Token *)) && (ParserI::ok)){
+ErrorManagement::ErrorType  StructuredDataParserI::GetNodeName(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
 		parseStatus.nodeName = currentToken->GetData().GetList();
 	}
+	return ret;
 }
 
-void StructuredDataParserI::AddScalar(const Token *currentToken,BufferedStreamI *errorStream) {
-	if ((currentToken != NULL_PTR(Token *)) && (ParserI::ok)){
+ErrorManagement::ErrorType  StructuredDataParserI::AddScalar(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
 
 		// restart parsing
 		if (parseStatus.parseElStatus == ParseStatus::parseElFinished){
 			memory.Start(parseStatus.td);
 		}
 
-		ParserI::ok = memory.AddElement(currentToken->GetData());
-		if (!ParserI::ok){
-	        PrintErrorOnStream("\n Failed adding element[%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		}
+		ret = memory.AddElement(currentToken->GetData());
+		PARSER_ERROR_REPORT(errorStream,ret," Failed adding element[%d]",currentToken->GetLineNumber());
 	}
+	return ret;
 }
 
-void StructuredDataParserI::EndVector(const Token *currentToken,BufferedStreamI *errorStream) {
-	if (ParserI::ok){
-		ParserI::ok = memory.EndVector();
-		if (!ParserI::ok){
-	        PrintErrorOnStream("\n Failed ending vector [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-		}
+ErrorManagement::ErrorType  StructuredDataParserI::EndVector(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		ret = memory.EndVector();
+		PARSER_ERROR_REPORT(errorStream,ret,"Failed ending vector [%d]", currentToken->GetLineNumber());
 	}
+	return ret;
 }
 
-void StructuredDataParserI::EndMatrix(const Token *currentToken,BufferedStreamI *errorStream) {
+ErrorManagement::ErrorType  StructuredDataParserI::EndMatrix(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+	return ret;
 }
 
-void StructuredDataParserI::End(const Token *currentToken,BufferedStreamI *errorStream) {
-    if (!database->MoveToRoot()) {
-        PrintErrorOnStream("\nFailed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        ParserI::ok.fatalError = true;
+ErrorManagement::ErrorType  StructuredDataParserI::End(const Token *currentToken,BufferedStreamI *errorStream) {
+
+	ErrorManagement::ErrorType ret;
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		ret = database->MoveToRoot();
+		PARSER_ERROR_REPORT(errorStream,ret,"Failed StructuredDataI::MoveToRoot() at the end! [%d]", currentToken->GetLineNumber());
     }
+	return ret;
 }
 
 void StructuredDataParserI::ParseStatus::Init(){
@@ -184,11 +227,13 @@ void StructuredDataParserI::ParseStatus::Init(){
 }
 
 
-ErrorManagement::ErrorType StructuredDataParserI::Parse() {
-	ParserI::ok = ErrorManagement::NoError;
-	parseStatus.Init();
+ErrorManagement::ErrorType StructuredDataParserI::Parse(
+		StreamI &			stream,
+        BufferedStreamI * 	const err,
+		uint32 				debugLevel) {
 
-	return ParserI::Parse();
+	parseStatus.Init();
+	return ParserI::Parse(stream,err,debugLevel);
 }
 
 

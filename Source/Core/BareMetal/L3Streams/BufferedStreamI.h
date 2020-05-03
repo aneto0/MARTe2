@@ -125,6 +125,7 @@ public:
      * @return an AnyType representation of the stream.
      */
     inline operator AnyType();
+#endif
 
     /**
      * @brief Reads a token from the stream into a character buffer.
@@ -145,11 +146,10 @@ public:
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    virtual bool GetToken(DynamicCString &     token,
+    virtual bool GetToken(CStringTool          token,
                           CCString const       delimiters,
                           char8 &              saveTerminator,
 						  CCString const       skip = NULL_PTR(const char8 *));
-#endif
 
 
     /**
@@ -175,6 +175,7 @@ public:
                          CCString const       delimiters,
                          char8 &              saveTerminator,
       		             CCString const       skip = NULL_PTR(const char8 *));
+
 
     /**
      * @brief Skips a series of tokens delimited by terminators or \0.

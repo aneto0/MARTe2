@@ -49,19 +49,18 @@ BufferedStreamI::BufferedStreamI() :
 BufferedStreamI::~BufferedStreamI() {
 }
 
-#if 0
-bool BufferedStreamI::GetToken(char8 * const outputBuffer,
-                               const char8 * const terminator,
-                               const uint32 outputBufferSize,
+#if 1
+bool BufferedStreamI::GetToken(CStringTool token,
+                               CCString terminator,
                                char8 &saveTerminator,
-                               const char8 * const skipCharacters) {
+                               CCString skipCharacters) {
 
     bool retval = false;
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetReadBuffer();
     if (inputIOBuffer != NULL) {
         if(CanRead()) {
-            retval = inputIOBuffer->GetToken(outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
+            retval = IOBuffer::GetToken(*inputIOBuffer,token, terminator, saveTerminator, skipCharacters);
         }
     }
     return retval;
