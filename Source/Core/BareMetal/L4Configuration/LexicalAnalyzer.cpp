@@ -635,13 +635,17 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     char8 nextChar = '\0';
                     uint32 charSize = 1u;
                     
-                    uint64 pos = inputStream->Position();
-                    inputStream->Read(&nextChar, charSize);
+                    uint64  pos = inputStream->Position();
+                    bool readOk = inputStream->Read(&nextChar, charSize);
+                    if (!readOk) {
+                        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Read() while looking ahead in input stream.");
+                    }
                     
                     multiCharToken = "";
                     multiCharToken += terminal;
-                    if (nextChar != ' ')               // since space is used as separator in MathGrammar.keywords
+                    if (nextChar != ' ') {              // since space is used as separator in MathGrammar.keywords
                         multiCharToken += nextChar;
+                    }
                     
                     if (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
                         AddTerminal(multiCharToken.Buffer());
@@ -649,7 +653,10 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     // if the terminal is alone, just add it (and reset the stream pointer)
                     else {
                         AddTerminal(terminal);
-                        inputStream->Seek(pos);
+                        bool seekOk = inputStream->Seek(pos);
+                        if (!seekOk) {
+                            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed Seek() while restoring pointer to current position.");
+                        }
                     }
                 }
         }
