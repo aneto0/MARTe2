@@ -120,6 +120,7 @@ Loader.cpp
 Logger.cpp
 LoggerConsumerI.cpp
 LoggerService.cpp
+MathExpressionParser.cpp
 Matrix.h
 Md5Encrypt.cpp
 MemoryArea.cpp
