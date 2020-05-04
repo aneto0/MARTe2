@@ -634,13 +634,8 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 			}
 			if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
-                StreamString value;
                 AnyType src(td, 0, stackPtr - dataStackIndex);
-				AnyType dest(value);
-                dest = src;
-
-                cst += value;
-
+                cst.Printf("%!", src);
 			}
 			if (i == (functionInformation.numberOfInputs-1U)){
                 cst += ')';
@@ -731,13 +726,8 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 			}
 			if (showData){
                 dataStackIndex += ByteSizeToDataMemorySize(td.numberOfBits/8u);
-//cst.Append('[').Append(dataStackIndex).Append(']');
-                StreamString value;
                 AnyType src(td, 0, stackPtr - dataStackIndex);
-				AnyType dest(value);
-                dest = src;
-
-                cst += value;
+                cst.Printf("%!", src);
 			}
 			if (i == (functionInformation.numberOfOutputs-1U)){
                 cst += ')';
