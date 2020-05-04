@@ -81,9 +81,10 @@ bool ToUpper(char8* const string) {
                 string[i] = static_cast<char8>(c);
             }
             
-            if (string[i] == '\0')
+            if (string[i] == '\0') {
                 end = true;
-
+            }
+            
             i++;
             
         }
@@ -117,9 +118,10 @@ bool ToLower(char8* const string) {
                 string[i] = static_cast<char8>(c);
             }
             
-            if (string[i] == '\0')
+            if (string[i] == '\0') {
                 end = true;
-
+            }
+            
             i++;
             
         }
