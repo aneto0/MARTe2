@@ -101,128 +101,106 @@ protected:
      * @name Math expression-specific methods
      */
     //@{
-		/**
-		 * @brief   Pushes an operator to the top of the #operatorStack.
-		 * @details This method gets called whenever the parser hits
-		 *          an operator. The operator is then stored in the 
-		 *          #operatorStack and later appended by PopOperator().
-		 */
-		virtual void PushOperator();
-		
-		/**
-		 * @brief   Pops an operator from the top of the #operatorStack.
-		 * @details This method gets called whenever the parser hits
-		 *          the end of an infix operation. The operation operator
-		 *          previously stored by PushOperator() is then popped 
-		 *          from the #operatorStack and appended to the stack
-		 *          machine expression #stackMachineExpr.
-		 */
-		virtual void PopOperator();
-		
-		/**
-		 * @brief   Pops alternative forms of operators.
-		 * @details Alternative version of PopOperator() in case of
-		 *          operators that have more than one meaning (e.g.
-		 *          prefix `+` must be ignored, prefix `-` has a
-		 *          different meaning with respect to infix `-` etc).
-		 */
-		virtual void PopOperatorAlternate();
-		
-		/**
-		 * @brief   Pushes a typecast type to the top of the #typecastStack.
-		 * @details This method gets called whenever the parser hits
-		 *          a typecast operation in the syntax `(type)`.
-		 *          The typecast type is then stored in the #typecastStack
-		 *          and later appended by PopTypecast().
-		 */
-		virtual void PushTypecast();
-		
-		/**
-		 * @brief   Pops a typecast type from the top of the #typecastStack.
-		 * @details This method gets called whenever the parser hits
-		 *          the end of a typecast operation. The typecast type
-		 *          previously stored by PushTypecast() is then popped 
-		 *          from the typecastStack and appended to the stack
-		 *          machine expression #stackMachineExpr.
-		 */
-		virtual void PopTypecast();
-		
-		/**
-		 * @brief   Append an encountered operand (constant or variable)
-		 *          to the output expression.
-		 * @details This method gets called whenever the parser hits an
-		 *          operand (that is, an isolated STRING or NUMBER token).
-		 *          The operand is immediatly added to the #stackMachineExpr
-		 *          in the syntax required by the expression evaluator
-		 *          engine (that is, as `READ STRING` for STRING
-		 *          tokens and as `CONST NUMBER` for NUMBER tokens.
-		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
-		 */
-		virtual void AddOperand();
-		
-		/**
-		 * @brief   Append an encountered constant to the output expression.
-		 * @details This method gets called whenever the parser hits an
-		 *          isolated NUMBER token for which store type has been
-		 *          specified in the format `(type) CONSTANT` (e.g. 
-		 *          `(float32) 1.52`).
-		 *          The constant is immediatly added to the #stackMachineExpr
-		 *          in the syntax required by the expression evaluator
-		 *          engine (that is, as `READ STRING` for STRING
-		 *          tokens and as `CONST type NUMBER` for NUMBER tokens.
-		 * @warning NUMBER tokens should be handled by AddOperandTypecast().
-		 */
-		virtual void AddOperandTypecast();
-		
-		/**
-		 * @brief   Stores the name of the variable before the equal sign.
-		 * @details This method gets called when the left-hand side of a
-		 *          mathematical expression is hit bt the parser. The STRING
-		 *          token before the assignment operator is stored and
-		 *          then printed at the end of the #stackMachineExpr by
-		 *          the End() method. For example in:
-		 *          
-		 *          <pre> ret = A + B </pre>
-		 * 
-		 *          ret is stored, and later written at the end of the 
-		 *          #stackMachineExpr as
-		 * 
-		 *          <pre> WRITE ret </pre>
-		 */
-		virtual void StoreAssignment();
-		
-		/**
-		 * @brief   Called when the parser hits the end of the expression.
-		 * @details The method executes all operations required when
-		 *          the parser hits the end of the mathematical
-		 *          expression under analysis. In particular, this
-		 *          method is responsible for appending the `WRITE`
-		 *          statement required by the expression evaluation engine.
-		 */
-		virtual void PopAssignment();
+        /**
+         * @brief   Pushes an operator to the top of the #operatorStack.
+         * @details This method gets called whenever the parser hits
+         *          an operator. The operator is then stored in the 
+         *          #operatorStack and later appended by PopOperator().
+         */
+        virtual void PushOperator();
+        
+        /**
+         * @brief   Pops an operator from the top of the #operatorStack.
+         * @details This method gets called whenever the parser hits
+         *          the end of an infix operation. The operation operator
+         *          previously stored by PushOperator() is then popped 
+         *          from the #operatorStack and appended to the stack
+         *          machine expression #stackMachineExpr.
+         */
+        virtual void PopOperator();
+        
+        /**
+         * @brief   Pops alternative forms of operators.
+         * @details Alternative version of PopOperator() in case of
+         *          operators that have more than one meaning (e.g.
+         *          prefix `+` must be ignored, prefix `-` has a
+         *          different meaning with respect to infix `-` etc).
+         */
+        virtual void PopOperatorAlternate();
+        
+        /**
+         * @brief   Pushes a typecast type to the top of the #typecastStack.
+         * @details This method gets called whenever the parser hits
+         *          a typecast operation in the syntax `(type)`.
+         *          The typecast type is then stored in the #typecastStack
+         *          and later appended by PopTypecast().
+         */
+        virtual void PushTypecast();
+        
+        /**
+         * @brief   Pops a typecast type from the top of the #typecastStack.
+         * @details This method gets called whenever the parser hits
+         *          the end of a typecast operation. The typecast type
+         *          previously stored by PushTypecast() is then popped 
+         *          from the typecastStack and appended to the stack
+         *          machine expression #stackMachineExpr.
+         */
+        virtual void PopTypecast();
+        
+        /**
+         * @brief   Append an encountered operand (constant or variable)
+         *          to the output expression.
+         * @details This method gets called whenever the parser hits an
+         *          operand (that is, an isolated STRING or NUMBER token).
+         *          The operand is immediatly added to the #stackMachineExpr
+         *          in the syntax required by the expression evaluator
+         *          engine (that is, as `READ STRING` for STRING
+         *          tokens and as `CONST NUMBER` for NUMBER tokens.
+         * @warning NUMBER tokens should be handled by AddOperandTypecast().
+         */
+        virtual void AddOperand();
+        
+        /**
+         * @brief   Append an encountered constant to the output expression.
+         * @details This method gets called whenever the parser hits an
+         *          isolated NUMBER token for which store type has been
+         *          specified in the format `(type) CONSTANT` (e.g. 
+         *          `(float32) 1.52`).
+         *          The constant is immediatly added to the #stackMachineExpr
+         *          in the syntax required by the expression evaluator
+         *          engine (that is, as `READ STRING` for STRING
+         *          tokens and as `CONST type NUMBER` for NUMBER tokens.
+         * @warning NUMBER tokens should be handled by AddOperandTypecast().
+         */
+        virtual void AddOperandTypecast();
+        
+        /**
+         * @brief   Stores the name of the variable before the equal sign.
+         * @details This method gets called when the left-hand side of a
+         *          mathematical expression is hit bt the parser. The STRING
+         *          token before the assignment operator is stored and
+         *          then printed at the end of the #stackMachineExpr by
+         *          the End() method. For example in:
+         *          
+         *          <pre> ret = A + B </pre>
+         * 
+         *          ret is stored, and later written at the end of the 
+         *          #stackMachineExpr as
+         * 
+         *          <pre> WRITE ret </pre>
+         */
+        virtual void StoreAssignment();
+        
+        /**
+         * @brief   Called when the parser hits the end of the expression.
+         * @details The method executes all operations required when
+         *          the parser hits the end of the mathematical
+         *          expression under analysis. In particular, this
+         *          method is responsible for appending the `WRITE`
+         *          statement required by the expression evaluation engine.
+         */
+        virtual void PopAssignment();
     //@}
-    
-    /**
-     * @brief   Translates an operator from infix mathematical syntax
-     *          to the form requierd by PseudoCode.h.
-     * @param[in]  operatorIn Operator in infix form (`+`, `-` ...)
-     * @returns Operator in the form required by PseudoCode.h (`SUM`, `POW` ...) 
-     * @details The stack machine expression is required to express
-     *          operators as uppercase postfix string. This method 
-     *          transforms infix operators as follows:
-     * 
-     *          Infix  | Stack
-	 *          -----: | :-----
-	 *          +      | SUM 
-	 *          -      | MIN 
-	 *          *      | MUL
-	 *          /      | DIV
-	 *          ^      | POW
-	 *          sin    | SIN
-	 *          tan    | TAN
-	 *          ...    | ...
-     */
-    const char8* OperatorLookupTable(const char8* operatorIn);
 
     virtual uint32 &GetProduction(const uint32 index) const;
 
@@ -240,15 +218,37 @@ protected:
 
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
     
-	virtual void Execute(const uint32 number);
-	    
+    virtual void Execute(const uint32 number);
+        
 private:
 
     void (MathExpressionParser::*Action[10])(void);
     
+    /**
+     * @brief   Translates an operator from infix mathematical syntax
+     *          to the form requierd by PseudoCode.h.
+     * @param[in]  operatorIn Operator in infix form (`+`, `-` ...)
+     * @returns Operator in the form required by PseudoCode.h (`SUM`, `POW` ...) 
+     * @details The stack machine expression is required to express
+     *          operators as uppercase postfix string. This method 
+     *          transforms infix operators as follows:
+     * 
+     *          Infix  | Stack
+     *          -----: | :-----
+     *          +      | SUM 
+     *          -      | MIN 
+     *          *      | MUL
+     *          /      | DIV
+     *          ^      | POW
+     *          sin    | SIN
+     *          tan    | TAN
+     *          ...    | ...
+     */
+    const char8* OperatorLookupTable(const char8* operatorIn);
+    
     StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
-	StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
-	
+    StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
+    
     StaticList<StreamString*> operatorStack;       //!< @brief Stack where operators are pushed to and popped from while parsing.
     StaticList<StreamString*> typecastStack;       //!< @brief Stack where typecast types are pushed to and popped from while parsing.
     
