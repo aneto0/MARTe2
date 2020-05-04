@@ -136,8 +136,8 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
                                            StructuredDataI &databaseIn,
                                            BufferedStreamI * const err) :
     ParserI(stream, databaseIn, err, MathGrammar) {
-		
-		//tokenProducer.TokenizeInput();
+        
+        //tokenProducer.TokenizeInput();
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Acquired terminals:: %s", &(MathGrammar.assignment));
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Acquired string: %s", (dynamic_cast<StreamString&>(stream)).Buffer());
         
@@ -160,134 +160,134 @@ MathExpressionParser::~MathExpressionParser() {
 
 const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn)
 {
-	const char8* ret = operatorIn;
-	
-	if (StringHelper::Compare(operatorIn, "+") == 0) {
-		ret = "SUM";
-	}
-	else if (StringHelper::Compare(operatorIn, "*") == 0) {
-		ret = "MUL";
-	}
-	else if (StringHelper::Compare(operatorIn, "/") == 0) {
-		ret = "DIV";
-	}
-	else if (StringHelper::Compare(operatorIn, "-") == 0) {
-		ret = "MIN";
-	}
-	else if (StringHelper::Compare(operatorIn, "!") == 0) {
-		ret = "FACT";
-	}	
-	else if (StringHelper::Compare(operatorIn, "&") == 0) {
-		ret = "BAND";
-	}	
-	else if (StringHelper::Compare(operatorIn, "|") == 0) {
-		ret = "BOR";
-	}
-	else if (StringHelper::Compare(operatorIn, "&&") == 0) {
-		ret = "AND";
-	}	
-	else if (StringHelper::Compare(operatorIn, "||") == 0) {
-		ret = "OR";
-	}	
+    const char8* ret = operatorIn;
+    
+    if (StringHelper::Compare(operatorIn, "+") == 0) {
+        ret = "SUM";
+    }
+    else if (StringHelper::Compare(operatorIn, "*") == 0) {
+        ret = "MUL";
+    }
+    else if (StringHelper::Compare(operatorIn, "/") == 0) {
+        ret = "DIV";
+    }
+    else if (StringHelper::Compare(operatorIn, "-") == 0) {
+        ret = "MIN";
+    }
+    else if (StringHelper::Compare(operatorIn, "!") == 0) {
+        ret = "FACT";
+    }
+    else if (StringHelper::Compare(operatorIn, "&") == 0) {
+        ret = "BAND";
+    }
+    else if (StringHelper::Compare(operatorIn, "|") == 0) {
+        ret = "BOR";
+    }
+    else if (StringHelper::Compare(operatorIn, "&&") == 0) {
+        ret = "AND";
+    }
+    else if (StringHelper::Compare(operatorIn, "||") == 0) {
+        ret = "OR";
+    }
     else if (StringHelper::Compare(operatorIn, "^") == 0) {
-		ret = "XOR";
-	}	
-	else if (StringHelper::Compare(operatorIn, "<") == 0) {
-		ret = "LT";
-	}	
-	else if (StringHelper::Compare(operatorIn, ">") == 0) {
-		ret = "GT";	
-	}	
-	else if (StringHelper::Compare(operatorIn, "<=") == 0) {
-		ret = "LE";
-	}	
-	else if (StringHelper::Compare(operatorIn, ">=") == 0) {
-		ret = "GE";	
-	}	
-	else if (StringHelper::Compare(operatorIn, "==") == 0) {
-		ret = "EQ";	
-	}
-	else
-	{
-		char8* uppercaseOp = StringHelper::StringDup(operatorIn);
-		StringHelper::ToUpper(uppercaseOp);
-		
-		ret = uppercaseOp;
-	}
-		
-	return ret;
-	
+        ret = "XOR";
+    }
+    else if (StringHelper::Compare(operatorIn, "<") == 0) {
+        ret = "LT";
+    }
+    else if (StringHelper::Compare(operatorIn, ">") == 0) {
+        ret = "GT"; 
+    }
+    else if (StringHelper::Compare(operatorIn, "<=") == 0) {
+        ret = "LE";
+    }
+    else if (StringHelper::Compare(operatorIn, ">=") == 0) {
+        ret = "GE"; 
+    }
+    else if (StringHelper::Compare(operatorIn, "==") == 0) {
+        ret = "EQ"; 
+    }
+    else
+    {
+        char8* uppercaseOp = StringHelper::StringDup(operatorIn);
+        StringHelper::ToUpper(uppercaseOp);
+        
+        ret = uppercaseOp;
+    }
+    
+    return ret;
+    
 } // OperatorLookupTable()
 
 void MathExpressionParser::PopAssignment()
 {
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "WRITE %s", assignmentVarName.Buffer());
-	REPORT_ERROR_STATIC(ErrorManagement::Information, "END");
-	
-	// Write in the stack machine expression
-	stackMachineExpr += "WRITE ";
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "WRITE %s", assignmentVarName.Buffer());
+    REPORT_ERROR_STATIC(ErrorManagement::Information, "END");
+    
+    // Write in the stack machine expression
+    stackMachineExpr += "WRITE ";
     stackMachineExpr += assignmentVarName.Buffer();
     stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::PushOperator()
 {
-	StreamString* operat = new StreamString(currentToken->GetData());
-	
-	operatorStack.Add(operat);
+    StreamString* operat = new StreamString(currentToken->GetData());
+    
+    operatorStack.Add(operat);
 }
 
 void MathExpressionParser::PopOperator()
 {
-	uint32 top = operatorStack.GetSize() - 1;
-	StreamString* operat;
-	operatorStack.Extract(top, operat);
-	
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
-	
-	// Write in the stack machine expression
-	stackMachineExpr += OperatorLookupTable(operat->Buffer());
-	stackMachineExpr += "\n";
+    uint32 top = operatorStack.GetSize() - 1u;
+    StreamString* operat;
+    operatorStack.Extract(top, operat);
+    
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
+    
+    // Write in the stack machine expression
+    stackMachineExpr += OperatorLookupTable(operat->Buffer());
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::PopOperatorAlternate()
 {
-	uint32 top = operatorStack.GetSize() - 1;
-	StreamString* operat;
-	operatorStack.Extract(top, operat);
+    uint32 top = operatorStack.GetSize() - 1u;
+    StreamString* operat;
+    operatorStack.Extract(top, operat);
 
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
-	
-	if (StringHelper::Compare(operat->Buffer(), "+") == 0) {
-		// nothing
-	}
-	else if (StringHelper::Compare(operat->Buffer(), "-") == 0) {
-		stackMachineExpr += "NEG\n";
-	}
-	else {
-		stackMachineExpr += "ERR\n";
-	}
-	
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
+    
+    if (StringHelper::Compare(operat->Buffer(), "+") == 0) {
+        // nothing
+    }
+    else if (StringHelper::Compare(operat->Buffer(), "-") == 0) {
+        stackMachineExpr += "NEG\n";
+    }
+    else {
+        stackMachineExpr += "ERR\n";
+    }
+    
 }
 
 void MathExpressionParser::PushTypecast()
 {
-	StreamString* operat = new StreamString(currentToken->GetData());
-	
-	typecastStack.Add(operat);
+    StreamString* operat = new StreamString(currentToken->GetData());
+    
+    typecastStack.Add(operat);
 }
 
 void MathExpressionParser::PopTypecast()
 {
-	uint32 top = typecastStack.GetSize() - 1;
-	StreamString* operat;
-	
-	typecastStack.Extract(top, operat);
-	
-	// Write in the stack machine expression
-	stackMachineExpr += "CAST ";
-	stackMachineExpr += operat->Buffer();
-	stackMachineExpr += "\n";
+    uint32 top = typecastStack.GetSize() - 1u;
+    StreamString* operat;
+    
+    typecastStack.Extract(top, operat);
+    
+    // Write in the stack machine expression
+    stackMachineExpr += "CAST ";
+    stackMachineExpr += operat->Buffer();
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::AddOperand()
@@ -296,83 +296,86 @@ void MathExpressionParser::AddOperand()
 
     // Write in the stack machine expression
     if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0) {
-		stackMachineExpr += "READ ";
-	}
-	else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0) {
-		stackMachineExpr += "CONST ";
-	}
-	stackMachineExpr += currentToken->GetData();
-	stackMachineExpr += "\n";
+        stackMachineExpr += "READ ";
+    }
+    else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0) {
+        stackMachineExpr += "CONST ";
+    }
+    else {
+        stackMachineExpr += "ERR ";
+    }
+    stackMachineExpr += currentToken->GetData();
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::AddOperandTypecast()
 {
-	uint32 top = typecastStack.GetSize() - 1;
-	StreamString* operat;
-	typecastStack.Extract(top, operat);
-	
+    uint32 top = typecastStack.GetSize() - 1u;
+    StreamString* operat;
+    typecastStack.Extract(top, operat);
+    
     // Write in the stack machine expression
     stackMachineExpr += "CONST ";
-	stackMachineExpr += operat->Buffer();
-	stackMachineExpr += " ";
-	stackMachineExpr += currentToken->GetData();
-	stackMachineExpr += "\n";
+    stackMachineExpr += operat->Buffer();
+    stackMachineExpr += " ";
+    stackMachineExpr += currentToken->GetData();
+    stackMachineExpr += "\n";
 }
 
 void MathExpressionParser::StoreAssignment()
 {
-	REPORT_ERROR_STATIC(ErrorManagement::Debug, "StoreAssignment %s", currentToken->GetData());
-	
-	assignmentVarName = currentToken->GetData();
+    REPORT_ERROR_STATIC(ErrorManagement::Debug, "StoreAssignment %s", currentToken->GetData());
+    
+    assignmentVarName = currentToken->GetData();
 }
 
 void MathExpressionParser::Execute(const uint32 number) {
-	(this->*Action[number])();
+    (this->*Action[number])();
 }
 
 const char8 *MathExpressionParser::GetSymbolName(const uint32 symbol) const {
-	const char8 *symbolName = static_cast<const char8 *>(NULL);
+    const char8 *symbolName = static_cast<const char8 *>(NULL);
 
-	if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
-		symbolName=GetTerminalName(symbol);
-	}
-	else {
-		symbolName="not a symbol";
-	}
-	return symbolName;
+    if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
+        symbolName=GetTerminalName(symbol);
+    }
+    else {
+        symbolName="not a symbol";
+    }
+    return symbolName;
 }
 
 uint32 &MathExpressionParser::GetProduction(const uint32 index) const {
-	return Production[index];
+    return Production[index];
 }
 
 uint32 MathExpressionParser::GetProductionRow(const uint32 index) const {
-	return Production_row[index];
+    return Production_row[index];
 }
 
 uint32 MathExpressionParser::GetParse(const uint32 index) const {
-	return ParseArray[index];
+    return ParseArray[index];
 }
 
 uint32 MathExpressionParser::GetParseRow(const uint32 index) const {
-	return Parse_row[index];
+    return Parse_row[index];
 }
 
 uint32 MathExpressionParser::GetConflict(const uint32 index) const {
-	return Conflict[index];
+    return Conflict[index];
 }
 
 uint32 MathExpressionParser::GetConflictRow(const uint32 index) const {
-	return Conflict_row[index];
+    return Conflict_row[index];
 }
 
 uint32 MathExpressionParser::GetConstant(const uint32 index) const {
-	return Constants[index];
+    return Constants[index];
 }
 
 StreamString MathExpressionParser::GetStackMachineExpression()
 {
-	return stackMachineExpr;
+    return stackMachineExpr;
 }
 
 }

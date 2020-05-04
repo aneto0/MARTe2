@@ -241,16 +241,16 @@ protected:
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
     
 	virtual void Execute(const uint32 number);
-	
-	StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
-	StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
-	
-    StaticList<StreamString*> operatorStack;     //!< @brief Stack where operators are pushed to and popped from while parsing.
-    StaticList<StreamString*> typecastStack;     //!< @brief Stack where typecast types are pushed to and popped from while parsing.
-    
+	    
 private:
 
     void (MathExpressionParser::*Action[10])(void);
+    
+    StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
+	StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
+	
+    StaticList<StreamString*> operatorStack;       //!< @brief Stack where operators are pushed to and popped from while parsing.
+    StaticList<StreamString*> typecastStack;       //!< @brief Stack where typecast types are pushed to and popped from while parsing.
     
 };
 
