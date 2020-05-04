@@ -64,75 +64,75 @@ char8 *StringDup(const char8 * const s) {
 }
 
 bool ToUpper(char8* const string) {
-	
-	bool ret = false;
-	
-	if (string != NULL) {
+    
+    bool ret = false;
+    
+    if (string != NULL) {
 
-		bool end = false;
-		uint32 i = 0u;
-		
-		while (!end) {
-			
-			uint8 c = static_cast<uint8>(string[i]);
+        bool end = false;
+        uint32 i = 0u;
+        
+        while (!end) {
+            
+            uint8 c = static_cast<uint8>(string[i]);
             
             if(( c >= static_cast<uint8>('a') ) && ( c <= static_cast<uint8>('z') )) {
                 c -= 32u;
                 string[i] = static_cast<char8>(c);
-			}
+            }
             
-			if (string[i] == '\0')
+            if (string[i] == '\0')
                 end = true;
 
             i++;
-			
-		}
-		
-		ret = true;
-		
-	}
-	else {
-		REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToUpper: Invalid input argument.");
-	}
-	
-	return ret;
-	
+            
+        }
+        
+        ret = true;
+        
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToUpper: Invalid input argument.");
+    }
+    
+    return ret;
+    
 }
 
 bool ToLower(char8* const string) {
-	
-	bool ret = false;
-	
-	if (string != NULL) {
+    
+    bool ret = false;
+    
+    if (string != NULL) {
 
-		bool end = false;
-		uint32 i = 0u;
-		
-		while (!end) {
-			
-			uint8 c = static_cast<uint8>(string[i]);
+        bool end = false;
+        uint32 i = 0u;
+        
+        while (!end) {
+            
+            uint8 c = static_cast<uint8>(string[i]);
             
             if(( c >= static_cast<uint8>('A') ) && ( c <= static_cast<uint8>('Z') )) {
                 c += 32u;
                 string[i] = static_cast<char8>(c);
-			}
+            }
             
-			if (string[i] == '\0')
+            if (string[i] == '\0')
                 end = true;
 
             i++;
-			
-		}
-		
-		ret = true;
-		
-	}
-	else {
-		REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToLower: Invalid input argument.");
-	}
-	
-	return ret;
-	
+            
+        }
+        
+        ret = true;
+        
+    }
+    else {
+        REPORT_ERROR_STATIC_0(ErrorManagement::FatalError, "StringHelper::ToLower: Invalid input argument.");
+    }
+    
+    return ret;
+    
 }
 
 }
