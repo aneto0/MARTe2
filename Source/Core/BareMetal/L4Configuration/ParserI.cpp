@@ -260,104 +260,103 @@ void ParserI::End() {
 
 bool ParserI::Parse() {
     typeName = defaultTypeName;
-
+    
     bool isEOF = false;
+    
+    //for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
+    //{
+        //REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-10s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
+    //}
+    
+    while ((!isError) && (!isEOF)) {
+        
+        uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
+        uint32 *stack = &stackArray[0];
+        
+        uint32 *top = &stackArray[ParserConstant::PARSE_STACK_SIZE - 1u];
+        *top = 0u;
+        uint32 start_symbol = GetConstant(ParserConstant::START_SYMBOL);
+        
+        StackPush(start_symbol, stack, top);
+        uint32 token = GetNextTokenType();
+        uint32 new_token = token;
+        
+        for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);) {
+            if (symbol >= GetConstant(ParserConstant::START_ACTION)) {
+                Execute(symbol - (GetConstant(ParserConstant::START_ACTION) - 1u));
 
-	//for (uint32 i = 0; ((tokenProducer.PeekToken(i))->GetId()) != 0; i++)
-	//{
-		//REPORT_ERROR_STATIC(ErrorManagement::Debug, "op: %-10s %-10s %-2u", (tokenProducer.PeekToken(i))->GetDescription(), (tokenProducer.PeekToken(i))->GetData(), (tokenProducer.PeekToken(i))->GetId());
-	//}
-	
-	while ((!isError) && (!isEOF)) {
-	
-		uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
-		uint32 *stack = &stackArray[0];
+            }
+            else if (symbol >= GetConstant(ParserConstant::START_SYMBOL)) {
+                uint32 level = 0u; // before was 1
 
-		uint32 *top = &stackArray[ParserConstant::PARSE_STACK_SIZE - 1u];
-		*top = 0u;
-		uint32 start_symbol = GetConstant(ParserConstant::START_SYMBOL);
-
-		StackPush(start_symbol, stack, top);
-		uint32 token = GetNextTokenType();
-		uint32 new_token = token;
-
-		for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);) {
-			if (symbol >= GetConstant(ParserConstant::START_ACTION)) {
-				Execute(symbol - (GetConstant(ParserConstant::START_ACTION) - 1u));
-
-			}
-			else if (symbol >= GetConstant(ParserConstant::START_SYMBOL)) {
-				uint32 level = 0u; // before was 1
-
-				uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
-				index += token;
-				uint32 entry = GetParse(index);
-				while (entry >= GetConstant(ParserConstant::START_CONFLICT)) {
-					index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
-					index += PeekNextTokenType(level);
-					entry = GetConflict(index);
-					++level;
-				}
-				if (entry > 0u) {
-					uint32 *production = &GetProduction(GetProductionRow(entry));
-					uint32 production_length = *production - 1u;
-					production = &production[1];
-					/*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-					if (*production == symbol) {
-						/*lint -e{661} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-						for (; production_length > 0u; production_length--) {
-							/*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
-							uint32 toPush = production[production_length];
-							StackPush(toPush, stack, top);
-						}
-					}
-					else {
-						(token == 0u) ? (isEOF = true) : (isError = true);
-						if (isError) {
-							PrintErrorOnStream("Syntax err[1]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-						}
-						new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-					}
-				}
-				else {
-					(token == 0u) ? (isEOF = true) : (isError = true);
-					if (isError) {
-						PrintErrorOnStream("Syntax err[2]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-					}
-					new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-				}
-			}
-			else {
-				if (symbol > 0u) {
-					if (symbol == token) {
-						token = GetNextTokenType();
-						new_token = token;
-					}
-					else {
-						isError = true;
-						PrintErrorOnStream("Syntax err[3]. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
-						new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
-					}
-				}
-			}
-			if (token != new_token) {
-				if (new_token > 0u) {
-					token = new_token;
-				}
-				if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
-					continue;
-				}
-			}
-			symbol = StackPop(top);
-		}
-
-		if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
+                uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
+                index += token;
+                uint32 entry = GetParse(index);
+                while (entry >= GetConstant(ParserConstant::START_CONFLICT)) {
+                    index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
+                    index += PeekNextTokenType(level);
+                    entry = GetConflict(index);
+                    ++level;
+                }
+                if (entry > 0u) {
+                    uint32 *production = &GetProduction(GetProductionRow(entry));
+                    uint32 production_length = *production - 1u;
+                    production = &production[1];
+                    /*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
+                    if (*production == symbol) {
+                        /*lint -e{661} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
+                        for (; production_length > 0u; production_length--) {
+                            /*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
+                            uint32 toPush = production[production_length];
+                            StackPush(toPush, stack, top);
+                        }
+                    }
+                    else {
+                        (token == 0u) ? (isEOF = true) : (isError = true);
+                        if (isError) {
+                            PrintErrorOnStream("Syntax err[1]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        }
+                        new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
+                    }
+                }
+                else {
+                    (token == 0u) ? (isEOF = true) : (isError = true);
+                    if (isError) {
+                        PrintErrorOnStream("Syntax err[2]. Invalid token on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                    }
+                    new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
+                }
+            }
+            else {
+                if (symbol > 0u) {
+                    if (symbol == token) {
+                        token = GetNextTokenType();
+                        new_token = token;
+                    }
+                    else {
+                        isError = true;
+                        PrintErrorOnStream("Syntax err[3]. Invalid expression on line [%d].", GetCurrentTokenLineNumber(currentToken), errorStream);
+                        new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
+                    }
+                }
+            }
+            if (token != new_token) {
+                if (new_token > 0u) {
+                    token = new_token;
+                }
+                if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
+                    continue;
+                }
+            }
+            symbol = StackPop(top);
+        }
+        
+        if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
     }
-
-
+    
     return !isError;
 }
 
