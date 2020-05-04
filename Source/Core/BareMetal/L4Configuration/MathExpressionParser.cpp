@@ -38,60 +38,60 @@
 
 namespace MARTe {
 
-static uint32 Production[] = {0
+static uint32 Production[] = {0u
 
-,3,24,25,40 ,7,25,46,1,2,27,26,47 ,2,26,3 ,2,26,4 
-,3,27,29,41 ,2,28,5 ,2,28,6 ,2,28,7 ,2,28,8 
-,2,28,9 ,3,29,31,42 ,2,30,10 ,2,30,11 ,2,30,12 
-,2,30,13 ,2,30,14 ,3,31,33,43 ,2,32,15 ,2,32,16 
-,3,33,35,44 ,2,34,17 ,2,34,18 ,2,35,38 ,5,35,48,37,38,50 
-,5,35,48,36,38,49 ,2,36,19 ,2,37,15 ,2,37,16 ,2,38,39 
-,7,38,20,51,1,21,39,52 ,3,38,53,22 ,7,38,20,51,1,21,54,22 
-,4,39,20,27,21 ,3,39,53,1 ,8,39,48,1,20,27,45,21,49 
-,3,40,25,40 ,1,40 ,6,41,48,28,29,49,41 ,1,41 ,6,42,48,30,31,49,42 
-,1,42 ,6,43,48,32,33,49,43 ,1,43 ,6,44,48,34,35,49,44 
-,1,44 ,4,45,4,27,45 ,1,45 
-,0};
+,3u,24u,25u,40u ,7u,25u,46u,1u,2u,27u,26u,47u ,2u,26u,3u ,2u,26u,4u 
+,3u,27u,29u,41u ,2u,28u,5u ,2u,28u,6u ,2u,28u,7u ,2u,28u,8u 
+,2u,28u,9u ,3u,29u,31u,42u ,2u,30u,10u ,2u,30u,11u ,2u,30u,12u 
+,2u,30u,13u ,2u,30u,14u ,3u,31u,33u,43u ,2u,32u,15u ,2u,32u,16u 
+,3u,33u,35u,44u ,2u,34u,17u ,2u,34u,18u ,2u,35u,38u ,5u,35u,48u,37u,38u,50u 
+,5u,35u,48u,36u,38u,49u ,2u,36u,19u ,2u,37u,15u ,2u,37u,16u ,2u,38u,39u 
+,7u,38u,20u,51u,1u,21u,39u,52u ,3u,38u,53u,22u ,7u,38u,20u,51u,1u,21u,54u,22u 
+,4u,39u,20u,27u,21u ,3u,39u,53u,1u ,8u,39u,48u,1u,20u,27u,45u,21u,49u 
+,3u,40u,25u,40u ,1u,40u ,6u,41u,48u,28u,29u,49u,41u ,1u,41u ,6u,42u,48u,30u,31u,49u,42u 
+,1u,42u ,6u,43u,48u,32u,33u,49u,43u ,1u,43u ,6u,44u,48u,34u,35u,49u,44u 
+,1u,44u ,4u,45u,4u,27u,45u ,1u,45u 
+,0u};
 
-static uint32 Production_row[] = {0
+static uint32 Production_row[] = {0u
 
-,1,5,13,16,19,23,26,29,32,35,38,42,45,48,51,54
-,57,61,64,67,71,74,77,80,86,92,95,98,101,104,112,116
-,124,129,133,142,146,148,155,157,164,166,173,175,182,184,189
-,0};
+,1u,5u,13u,16u,19u,23u,26u,29u,32u,35u,38u,42u,45u,48u,51u,54u
+,57u,61u,64u,67u,71u,74u,77u,80u,86u,92u,95u,98u,101u,104u,112u,116u
+,124u,129u,133u,142u,146u,148u,155u,157u,164u,166u,173u,175u,182u,184u,189u
+,0u};
 
 static uint32 ParseArray[] = {
 
-0,0,1,2,45,45,45,45,45,45,45,45,45,45,45,45,45,45,44
-,44,3,4,45,43,43,43,43,43,43,43,43,43,43,43,43,42,42,18,19
-,21,22,43,41,41,41,41,41,41,41,40,40,40,40,40,5,6,7,8,9
-,10,41,39,39,38,38,38,38,38,5,5,11,49,5,5,26,5,27,28,17
-,39,0,36,0,0,11,11,20,0,11,11,33,11,17,17,23,0,17,17,0
-,17,20,20,29,37,20,20,0,20,24,24,46,0,25,23,0,23,12,13,14
-,15,16,48,0,31,0,0,0,47,0,0
+0u,0u,1u,2u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,44u
+,44u,3u,4u,45u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,42u,42u,18u,19u
+,21u,22u,43u,41u,41u,41u,41u,41u,41u,41u,40u,40u,40u,40u,40u,5u,6u,7u,8u,9u
+,10u,41u,39u,39u,38u,38u,38u,38u,38u,5u,5u,11u,49u,5u,5u,26u,5u,27u,28u,17u
+,39u,0u,36u,0u,0u,11u,11u,20u,0u,11u,11u,33u,11u,17u,17u,23u,0u,17u,17u,0u
+,17u,20u,20u,29u,37u,20u,20u,0u,20u,24u,24u,46u,0u,25u,23u,0u,23u,12u,13u,14u
+,15u,16u,48u,0u,31u,0u,0u,0u,47u,0u,0u
 };
 
-static uint32 Parse_row[] = {0
+static uint32 Parse_row[] = {0u
 
-,1,2,17,53,50,69,106,77,22,85,22,93,55,61,101,70
-,80,58,39,20,1,106
-,0};
+,1u,2u,17u,53u,50u,69u,106u,77u,22u,85u,22u,93u,55u,61u,101u,70u
+,80u,58u,39u,20u,1u,106u
+,0u};
 
 static uint32 Conflict[] = {
 
-0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0,29,29,0
-,0,29,29,0,29,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34
-,34,0,35,34,29,29,29,29,29,29,29,29,29,29,29,29,29,29,0,29
-,51,30,0,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,0
-,30,29,32
+0u,0u,50u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,29u,29u,0u
+,0u,29u,29u,0u,29u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u
+,34u,0u,35u,34u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,0u,29u
+,51u,30u,0u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,0u
+,30u,29u,32u
 };
 
-static uint32 Conflict_row[] = {0
+static uint32 Conflict_row[] = {0u
 
-,1,21,38,59
-,0};
+,1u,21u,38u,59u
+,0u};
 
-static const uint32 Constants[] = { 24, 23, 0, 48, 52, 46, 55, 4, 512 };
+static const uint32 Constants[] = { 24u, 23u, 0u, 48u, 52u, 46u, 55u, 4u, 512u };
 
 static const char8 * Terminal_name[] ={"0"
 
@@ -158,55 +158,55 @@ MathExpressionParser::~MathExpressionParser() {
 // TODO Verify if manual additions are needed
 }
 
-const char8* MathExpressionParser::OperatorLookupTable(const char8* operatorIn)
+const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn)
 {
 	const char8* ret = operatorIn;
 	
-	if (StringHelper::Compare(operatorIn, "+") == 0)
+	if (StringHelper::Compare(operatorIn, "+") == 0) {
 		ret = "SUM";
-		
-	else if (StringHelper::Compare(operatorIn, "*") == 0)
+	}
+	else if (StringHelper::Compare(operatorIn, "*") == 0) {
 		ret = "MUL";
-		
-	else if (StringHelper::Compare(operatorIn, "/") == 0)
+	}
+	else if (StringHelper::Compare(operatorIn, "/") == 0) {
 		ret = "DIV";
-		
-	else if (StringHelper::Compare(operatorIn, "-") == 0)
+	}
+	else if (StringHelper::Compare(operatorIn, "-") == 0) {
 		ret = "MIN";
-	
-	else if (StringHelper::Compare(operatorIn, "!") == 0)
+	}
+	else if (StringHelper::Compare(operatorIn, "!") == 0) {
 		ret = "FACT";
-		
-	else if (StringHelper::Compare(operatorIn, "&") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "&") == 0) {
 		ret = "BAND";
-		
-	else if (StringHelper::Compare(operatorIn, "|") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "|") == 0) {
 		ret = "BOR";
-	
-	else if (StringHelper::Compare(operatorIn, "&&") == 0)
+	}
+	else if (StringHelper::Compare(operatorIn, "&&") == 0) {
 		ret = "AND";
-		
-	else if (StringHelper::Compare(operatorIn, "||") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "||") == 0) {
 		ret = "OR";
-		
-    else if (StringHelper::Compare(operatorIn, "^") == 0)
+	}	
+    else if (StringHelper::Compare(operatorIn, "^") == 0) {
 		ret = "XOR";
-		
-	else if (StringHelper::Compare(operatorIn, "<") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "<") == 0) {
 		ret = "LT";
-		
-	else if (StringHelper::Compare(operatorIn, ">") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, ">") == 0) {
 		ret = "GT";	
-		
-	else if (StringHelper::Compare(operatorIn, "<=") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "<=") == 0) {
 		ret = "LE";
-		
-	else if (StringHelper::Compare(operatorIn, ">=") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, ">=") == 0) {
 		ret = "GE";	
-		
-	else if (StringHelper::Compare(operatorIn, "==") == 0)
+	}	
+	else if (StringHelper::Compare(operatorIn, "==") == 0) {
 		ret = "EQ";	
-		
+	}
 	else
 	{
 		char8* uppercaseOp = StringHelper::StringDup(operatorIn);
@@ -258,14 +258,14 @@ void MathExpressionParser::PopOperatorAlternate()
 
 	REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
 	
-	if (StringHelper::Compare(operat->Buffer(), "+") == 0)
-	{
+	if (StringHelper::Compare(operat->Buffer(), "+") == 0) {
 		// nothing
 	}
-	else if (StringHelper::Compare(operat->Buffer(), "-") == 0)
-	{
-		stackMachineExpr += "NEG";
-		stackMachineExpr += "\n";
+	else if (StringHelper::Compare(operat->Buffer(), "-") == 0) {
+		stackMachineExpr += "NEG\n";
+	}
+	else {
+		stackMachineExpr += "ERR\n";
 	}
 	
 }
@@ -295,12 +295,12 @@ void MathExpressionParser::AddOperand()
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operand  %s", currentToken->GetData());
 
     // Write in the stack machine expression
-    if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0)
+    if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0) {
 		stackMachineExpr += "READ ";
-		
-	else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0)
+	}
+	else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0) {
 		stackMachineExpr += "CONST ";
-	
+	}
 	stackMachineExpr += currentToken->GetData();
 	stackMachineExpr += "\n";
 }
