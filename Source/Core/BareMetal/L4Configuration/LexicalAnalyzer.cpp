@@ -519,8 +519,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         
         // Lexer starts building the next token and will stop when a single-character terminal is found
         while (ok) {
-			
-			//std::cout << tokenString.Buffer() << "\n";
+            
+            //std::cout << tokenString.Buffer() << "\n";
             if ((StringHelper::SearchChar(separatorsUsed.Buffer(), c) != NULL) && (!escape)) {
                 // this means that a string is found! Read everything until another " is found
                 if (isString1) {
@@ -602,63 +602,63 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 }
             }
         }
-		
-		// The lexer stopped because it found a sigle-character terminal
-		
-		// So now we have a trail of characters (tokenSring) ended by a terminal (trail + terminal)
-		StreamString multiCharToken = tokenString.Buffer();
-		multiCharToken += terminal;
-		
-		// If the trail of characters + terminal is a keyword
-		if (tokenString.Size() != 0u &&  StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
-			AddTerminal(multiCharToken.Buffer());
-			tokenString="";
-			terminal='\0';
-		}
-		
-		// If trail + terminal is not a keyword, we handle them separately
-		else {
-			// Trail:
-				// if trail alone is a keyword
-				if (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL && StringHelper::Compare("", tokenString.Buffer()) != 0) {
-					AddTerminal(tokenString.BufferReference());
-				}
-				// if trail alone is not a keyword
-				else {
-					AddToken(tokenString.BufferReference(), isString1);
-				}
-			
-			// Terminal:
-				if (terminal != '\0') {
-					
-					// terminal may be followed by another terminal and their combination may be a keyword, so:
-					char8 nextChar = '\0';
-					uint32 charSize = 1u;
-					
-					uint64 pos = inputStream->Position();
-					inputStream->Read(&nextChar, charSize);
-					
-					multiCharToken = "";
-					multiCharToken += terminal;
-					if (nextChar != ' ')               // since space is used as separator in MathGrammar.keywords
-						multiCharToken += nextChar;
-					
-					if (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
-						AddTerminal(multiCharToken.Buffer());
-					}
-					// if the terminal is alone, just add it (and reset the stream pointer)
-					else {
-						AddTerminal(terminal);
-						inputStream->Seek(pos);
-					}
-				}
-		}
-		
-		//AddToken(tokenString.BufferReference(), isString1);
-		//if (terminal != '\0') {
-			//AddTerminal(terminal);
-		//}
-		
+        
+        // The lexer stopped because it found a sigle-character terminal
+        
+        // So now we have a trail of characters (tokenSring) ended by a terminal (trail + terminal)
+        StreamString multiCharToken = tokenString.Buffer();
+        multiCharToken += terminal;
+        
+        // If the trail of characters + terminal is a keyword
+        if (tokenString.Size() != 0u &&  StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
+            AddTerminal(multiCharToken.Buffer());
+            tokenString="";
+            terminal='\0';
+        }
+        
+        // If trail + terminal is not a keyword, we handle them separately
+        else {
+            // Trail:
+                // if trail alone is a keyword
+                if (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL && StringHelper::Compare("", tokenString.Buffer()) != 0) {
+                    AddTerminal(tokenString.BufferReference());
+                }
+                // if trail alone is not a keyword
+                else {
+                    AddToken(tokenString.BufferReference(), isString1);
+                }
+            
+            // Terminal:
+                if (terminal != '\0') {
+                    
+                    // terminal may be followed by another terminal and their combination may be a keyword, so:
+                    char8 nextChar = '\0';
+                    uint32 charSize = 1u;
+                    
+                    uint64 pos = inputStream->Position();
+                    inputStream->Read(&nextChar, charSize);
+                    
+                    multiCharToken = "";
+                    multiCharToken += terminal;
+                    if (nextChar != ' ')               // since space is used as separator in MathGrammar.keywords
+                        multiCharToken += nextChar;
+                    
+                    if (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
+                        AddTerminal(multiCharToken.Buffer());
+                    }
+                    // if the terminal is alone, just add it (and reset the stream pointer)
+                    else {
+                        AddTerminal(terminal);
+                        inputStream->Seek(pos);
+                    }
+                }
+        }
+        
+        //AddToken(tokenString.BufferReference(), isString1);
+        //if (terminal != '\0') {
+            //AddTerminal(terminal);
+        //}
+        
         if (isEOF) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
