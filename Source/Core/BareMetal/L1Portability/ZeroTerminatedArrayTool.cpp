@@ -50,11 +50,12 @@ namespace MARTe{
  */
 #define DZTA_APPEND_GRANULARITY 32u
 
-
+#include <stdio.h>
 void ZeroTerminatedArrayTool::Truncate(uint32 newIndex){
 	if (dataPointer != NULL){
+//printf("T0{%p %p %i %i %i}\n",dataPointer,dataPointerAddress,index,maxIndex,ret.format_as_integer);  //TODO
 	    if (ret){
-		    ret.invalidOperation = (newIndex >= index);
+		    ret.invalidOperation = (newIndex > index);
 		}
 	    if (ret){
 			/// shrink storage if too large
@@ -68,8 +69,10 @@ void ZeroTerminatedArrayTool::Truncate(uint32 newIndex){
 		        	dataPointer = p;
 		            if (!ret){
 		            	maxIndex = 0;
+//printf("failed:");   //TODO
 		            }
 		    	}
+//printf("T{%p %p %i %i %i}\n",dataPointer,dataPointerAddress,index,maxIndex,ret.format_as_integer); TODO
 			}
 	    	Terminate(newIndex);
 	    	index = newIndex;
@@ -78,6 +81,7 @@ void ZeroTerminatedArrayTool::Truncate(uint32 newIndex){
 }
 
 void ZeroTerminatedArrayTool::Append(const uint8 *data,uint32 dataSize){
+//printf("{A}:");
 	if ((data != NULL_PTR(const uint8 *))&& (dataSize > 0) && ret){
 
 		uint32 temp = index + dataSize;
@@ -93,6 +97,7 @@ void ZeroTerminatedArrayTool::Append(const uint8 *data,uint32 dataSize){
 			if (dataPointerAddress != NULL){
 				/** add some margin to reduce reallocation frequency*/
 				maxIndex = static_cast<int32>(finalIndex + DZTA_APPEND_GRANULARITY);
+//printf("A{%p %p %i %i %i}\n",dataPointer,dataPointerAddress,index,maxIndex,ret.format_as_integer); TODO
 
 				/** malloc or realloc ??*/
 				if (dataPointer != NULL_PTR(uint8 *)){

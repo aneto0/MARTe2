@@ -134,11 +134,14 @@ const LexicalAnalyzerRule *Parse(CCString &line,DynamicCString &content){
     while((ruleSet::rules[ruleNo].rule.GetSize()> 0) && match){
         CCString pattern = ruleSet::rules[ruleNo].rule;
         CCString lineSave = line;
-        match = RegularExpression::Match(line,pattern);
-        int size = line-lineSave;
+        DynamicCString matched;
+        CStringTool matchedT = matched();
+        match = RegularExpression::Match(line,pattern,matchedT);
+//        int size = line-lineSave;
         if (match){
-        	content().SetSize(0);
-        	content().Append(lineSave,size);
+//        	content().SetSize(0);
+//        	content().Append(lineSave,size);
+        	content = matched;
 //printf("matched %s %i\n",pattern.GetList(),ruleNo);
         	return &ruleSet::rules[ruleNo];
         } else {
@@ -160,17 +163,53 @@ printf("syntaxError\n");
     return NULL;
 }
 
+const LexicalAnalyzerRule *Parse2(StreamI &line,DynamicCString &content){
+    int ruleNo = 0;
+    ErrorManagement::ErrorType match;
+    while((ruleSet::rules[ruleNo].rule.GetSize()> 0) && match){
+        CCString pattern = ruleSet::rules[ruleNo].rule;
+        uint64 position = line.Position();
+        DynamicCString matched;
+        CStringTool matchedT = matched();
+        match = RegularExpression::Match(line,pattern,matchedT);
+        if (match){
+        	content = matched;
+        	return &ruleSet::rules[ruleNo];
+        } else {
+        	match.comparisonFailure = false; // reset this error to allow continuation
+        	if (match.outOfRange){
+printf("error reading input\n");
+        	}
+        	if (match.notCompleted){
+printf("error not completed\n");
+        	}
+        	if (match.syntaxError){
+printf("syntaxError\n");
+        	}
+
+            line.Seek(position);
+        }
+        ruleNo++;
+    }
+    return NULL;
+}
+
+
 CCString line =
 " 121 ALPHA \"BIRRA\" // pip\tpo\n"
 " 122.5 _ALPha   \"BIRRA\"\"\" // pippo\n"
 "/* 123 ALPHA \"BIRRA\" // pippo\n"
 " 124 ALPHA \"BIRRA\" // */ ;pippo\n"
-" .124 126E4 12.7E-5 231.32E97 .165E3 \n"
+" .124 126E4 .81 12.7E-5 231.32E97 .165E3 \n"
 " (A + B) * C >= (D+X)/ 6\n";
 
 int main(){
 
+	StartupManager::Initialise();
+
 //char *p = const_cast<char *>(line.GetList());
+
+#if 1
 
 CCString lineP = line;
 while (lineP[0]!= 0){
@@ -187,11 +226,28 @@ while (lineP[0]!= 0){
 		break;
 	}
 }
+
+StreamString lineS = line;
+lineS.Seek(0);
+const LexicalAnalyzerRule *q=NULL;
+do{
+	DynamicCString content;
+	q = Parse2(lineS,content);
+
+	if (q){
+		if (!q->skip){
+			printf("%s [%s]\n",q->ruleName.GetList(),content.GetList());
+			fflush(stdout);
+		}
+	} else {
+		printf("UNMATCHED %s\n",lineP.GetList());
+	}
+} while (q != NULL);
+
 //oo
 
 return 0;
 
-	StartupManager::Initialise();
 
 	ConfigurationDatabase cdb;
 
@@ -205,7 +261,6 @@ return 0;
 
 
 
-
 	StreamString err;
 	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
 	MathExpressionParser mexp;
@@ -215,6 +270,8 @@ return 0;
 	printf(">>\n%s\n<<\n",err.Buffer().GetList());
 
 	return 0;
+
+#endif
 
 
 	PseudoCode::Context context;

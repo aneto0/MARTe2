@@ -50,7 +50,7 @@ BufferedStreamI::~BufferedStreamI() {
 }
 
 #if 1
-bool BufferedStreamI::GetToken(CStringTool token,
+bool BufferedStreamI::GetToken(CStringTool &token,
                                CCString terminator,
                                char8 &saveTerminator,
                                CCString skipCharacters) {

@@ -426,7 +426,7 @@ public:
      */
     static bool GetToken(
     		IOBuffer &  inputBuffer,
-    		CStringTool outputBuffer,
+    		CStringTool &outputBuffer,
             CCString  	terminator,
             char8 &     saveTerminator,
             CCString    skipCharacters);

@@ -113,12 +113,12 @@ the [... ... ...] matches optionally a set of patterns:
  *          NotCompleted if the pattern matched but was not completed
  *          not error on match
  */
-ErrorManagement::ErrorType Match(BufferedStreamI &input,CCString &pattern);
+ErrorManagement::ErrorType Match(StreamI &input,CCString &pattern,CStringTool &matched);
 
 /**
  * @see Match(BufferedStreamI &input,CCString &pattern);
  */
-ErrorManagement::ErrorType Match(CCString &input,CCString &pattern);
+ErrorManagement::ErrorType Match(CCString &input,CCString &pattern,CStringTool &matched);
 
 
 

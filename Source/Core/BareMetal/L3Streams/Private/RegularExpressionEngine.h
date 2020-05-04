@@ -163,7 +163,7 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
     char8 minAscii = 0;
 
     char8 lastCharacter = 0;
-    uint32 savePosition = input.Position();
+    uint32 savePosition   = input.Position();
 
     // check for NULL or empty
     if (pattern.GetSize() > 0){
@@ -237,13 +237,12 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                         logic = !logic;
                         // restart sequence
                         if (status > PatternNotSet){
-
+                        	status = PatternNotSet;
                         	if (!input.Seek(savePosition)){
                             	ret.outOfRange = true;
                         		status = Error;
-                        	} else {
-                            	status = PatternNotSet;
                         	}
+
                         }
                         minAscii = 0;
                 	}
@@ -256,11 +255,10 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                 	// open ended range 0 - n
                 	if (status == PatternNotSet){
                         minAscii = 0;
+                    	status = PatternRange;
                         if (!input.GetC(lastCharacter)){
                         	ret.outOfRange = true;
                     		status = Error;
-                    	} else {
-                        	status = PatternRange;
                     	}
                 	}
                 } break;
@@ -268,11 +266,10 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                 default:{
                 	if (status < Matched){
                         if (status == PatternNotSet){
+                        	status = PatternSet;
                             if (!input.GetC(lastCharacter)){
                             	ret.outOfRange = true;
                         		status = Error;
-                        	} else {
-                            	status = PatternSet;
                         	}
                         }
 
@@ -301,11 +298,11 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                             	ret.comparisonFailure = !logic;
                             	//result = logic;
                         	} else {
+                        		status = PatternNotSet;
                         		// go forward 1 step Get again the lastCharacter
                             	if (!input.Seek(savePosition)){
+                                	ret.outOfRange = true;
                             		status = Error;
-                            	} else {
-                                	status = PatternNotSet;
                             	}
                         	}
                         }
@@ -448,7 +445,8 @@ ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
             } break;
             case allRange:{
             	char8 lastCharacter;
-           		if (!input.GetC(lastCharacter)){
+           		if (input.GetC(lastCharacter)){
+           		} else {
             		ret.outOfRange = true;
            		}
         	} break;
@@ -489,7 +487,7 @@ template <class T>
 ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
 	ErrorManagement::ErrorType ret;
 
-//printf ("enter PatternMatch(%s)\n",pattern.GetList());
+//printf ("enter PatternMatch(%s)\n",pattern.GetList());  //TODO
 
     // count the round brackets after having given up()
     int parenCount = 0;
@@ -509,7 +507,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
     } mode = Normal;
 
 
-    uint32 savePosition = input.Position();
+    uint32 savePosition   = input.Position();
 
     // if pattern is empty we have already finished
     // handles also NULL
@@ -522,7 +520,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
 
     	int16 patternElement = GetPatternElement(pattern);
 
-//printf ("M(%i,%c:%i,%s)\n",status,patternElement,patternElement,pattern.GetList());fflush(stdout);
+//printf ("M(%i,%i,%c:%i,%s)\n",status,mode,patternElement,patternElement,pattern.GetList());fflush(stdout);  //TODO
 
         switch (patternElement){
             case allRange:{
@@ -625,6 +623,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                 			ret.outOfRange = true;
                 			status = Error;
                 		}
+//printf("truncate to %i %i\n",saveOutputSize,ret.format_as_integer); fflush(stdout);  //TODO
                 	}
             	}
             } break;
@@ -646,7 +645,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                         minMatches = 0;
                         maxMatches = 1;
                     }
-//printf ("nextPattern =  %s\n",nextPattern.GetList());fflush(stdout);
+//printf ("nextPattern =  %s\n",nextPattern.GetList());fflush(stdout);  //TODO
             	}
 
             	uint32 savePosition = 0;
@@ -658,7 +657,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                 		savePosition = input.Position();
                     	CCString patternCopy  = nextPattern;
 
-//printf ("Try early exit %s\n",patternCopy.GetList());
+//printf ("Try early exit %s\n",patternCopy.GetList());  //TODO
 
                 		ErrorManagement::ErrorType check;
                 		check = PatternMatch(input,patternCopy);
@@ -673,11 +672,12 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                            	if (check.notCompleted){
                            		mode = Locked;
                    				status = NotMatching;
-                           	} else
+                           	}
             				if (!input.Seek(savePosition)){
                         		status = Error;
                         		ret.outOfRange = true;
             				}
+
                 		}
             		}
 
@@ -685,7 +685,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                 		savePosition = input.Position();
                     	CCString patternCopy  = pattern;
                     	// iteration of pattern matching
-//printf ("Try loop %i match %s\n",nMatches,patternCopy.GetList());fflush(stdout);
+//printf ("Try loop %i match %s\n",nMatches,patternCopy.GetList());fflush(stdout);  //TODO
 
 						ErrorManagement::ErrorType check;
 						check = MatchSingle(input,patternCopy);
@@ -709,11 +709,10 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
                         		status = Error;
                         		ret.outOfRange = true;
             				}
-
-//printf ("Failed * match \n");
+//printf ("Failed * match \n");  //TODO
                         } else {
                         	nMatches++;
-//printf ("match ok \n");
+//printf ("match ok \n");  //TODO
                         }
             		}
             	}
@@ -728,6 +727,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
             		if (!input.GetC(lastCharacter)){
             			status = Error;
                 		ret.outOfRange = true;
+            		} else {
             		}
             	}
             	if (status == Matching){
@@ -740,7 +740,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
     }
 
 
-//printf ("exit PatternMatch: %i \n",ret.ErrorsCleared());
+//printf ("exit PatternMatch: %i \n",ret.ErrorsCleared());   //TODO
     return ret;
 }
 

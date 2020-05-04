@@ -146,7 +146,7 @@ public:
      * @pre CanRead() && GetReadBuffer() != NULL
      * @post see brief
      */
-    virtual bool GetToken(CStringTool          token,
+    virtual bool GetToken(CStringTool          &token,
                           CCString const       delimiters,
                           char8 &              saveTerminator,
 						  CCString const       skip = NULL_PTR(const char8 *));

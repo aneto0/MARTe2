@@ -162,6 +162,9 @@ bool SingleBufferedStream::Read(char8 * const output,
 
             }
             else {
+            	// TODO check OSStream position coherency with buffers
+            	// TODO seems OK as we get here when buffer is empty
+            	// TODO next refill will happen with data after this...
                 // if needed read directly from stream
                 if (!OSRead(&output[size], toRead)) {
                     ret = false;
