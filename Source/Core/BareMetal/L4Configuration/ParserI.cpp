@@ -45,12 +45,7 @@ static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
     if (err != NULL) {
-		
-		char8 errorString[256] = "\n";
-		
-		StringHelper::Concatenate(errorString, format);
-		
-        if (!err->Printf(errorString, lineNumber)) {
+        if (!err->Printf(format, lineNumber)) {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on parseError stream");
         }
     }
@@ -356,7 +351,7 @@ bool ParserI::Parse() {
 			symbol = StackPop(top);
 		}
 
-	if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
+		if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
         }
