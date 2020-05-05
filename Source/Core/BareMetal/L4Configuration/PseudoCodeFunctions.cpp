@@ -35,7 +35,7 @@ uint32 availableFunctions = 0;
 FunctionRecord functionRecords[maxFunctions];
 
 FunctionRecord::FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, const TypeDescriptor* typesIn, Function functionIn):
-    name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
+    numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn), name(nameIn)
     {}
 
 bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
