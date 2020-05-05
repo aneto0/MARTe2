@@ -137,11 +137,7 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
                                            BufferedStreamI * const err) :
     ParserI(stream, databaseIn, err, MathGrammar) {
         
-        //tokenProducer.TokenizeInput();
-        REPORT_ERROR_STATIC(ErrorManagement::Debug, "Acquired terminals:: %s", &(MathGrammar.assignment));
-        REPORT_ERROR_STATIC(ErrorManagement::Debug, "Acquired string: %s", (dynamic_cast<StreamString&>(stream)).Buffer());
-        
-        Action[0] = static_cast<void (MathExpressionParser::*)(void)>(NULL);
+    Action[0] = static_cast<void (MathExpressionParser::*)(void)>(NULL);
     Action [ 1 ] = &MathExpressionParser::StoreAssignment;
     Action [ 2 ] = &MathExpressionParser::PopAssignment;
     Action [ 3 ] = &MathExpressionParser::PushOperator;
@@ -154,8 +150,9 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
 }
 
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
- * No exceptions should be thrown given that the memory is managed exclusively by this class.". */
+ * No exceptions should be thrown given that the memory is managed exclusively by this class. */
 MathExpressionParser::~MathExpressionParser() {
+    
     uint32 queueSize = operatorStack.GetSize();
     for (uint32 i = 0u; i < queueSize; i++) {
         StreamString* toDelete;
@@ -163,7 +160,9 @@ MathExpressionParser::~MathExpressionParser() {
             delete toDelete;
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<operat *>: Failed Extract() during garbage collection.");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                "StaticList<currentOperator *>: Failed Extract() during garbage collection."
+                );
         }
     }
     
@@ -174,33 +173,35 @@ MathExpressionParser::~MathExpressionParser() {
             delete toDelete;
         }
         else {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<operat *>: Failed Extract() during garbage collection.");
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                "StaticList<currentOperator *>: Failed Extract() during garbage collection."
+                );
         }
     }
 }
 
-const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn) const {
+const char8* MathExpressionParser::OperatorFormatting(const char8* const operatorIn) const {
 
     const char8* ret = operatorIn;
     
     char8* uppercaseOp = StringHelper::StringDup(operatorIn);
     bool ok = StringHelper::ToUpper(uppercaseOp);
-    if (!ok) {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "OperatorLookupTable(): failed to convert operator %s to uppercase.", operatorIn);
-        ret = "ERR";
+    if (ok) {
+        ret = uppercaseOp;
     }
     else {
-        ret = uppercaseOp;
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+            "OperatorFormatting(): failed to convert operator %s to uppercase.",
+            operatorIn
+            );
+        ret = "ERR";
     }
     
     return ret;
     
-} // OperatorLookupTable()
+}
 
-void MathExpressionParser::PopAssignment()
-{
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "WRITE %s", assignmentVarName.Buffer());
-    REPORT_ERROR_STATIC(ErrorManagement::Information, "END");
+void MathExpressionParser::PopAssignment() {
     
     // Write in the stack machine expression
     stackMachineExpr += "WRITE ";
@@ -209,93 +210,90 @@ void MathExpressionParser::PopAssignment()
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-void MathExpressionParser::PushOperator()
-{
-    StreamString* operat = new StreamString(currentToken->GetData());
+void MathExpressionParser::PushOperator() {
     
-    if (!operatorStack.Add(operat)) {
+    StreamString* currentOperator = new StreamString(currentToken->GetData());
+    
+    if (!operatorStack.Add(currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Add() of the operator to the operator stack."
-                            );
+            "StaticList<currentOperator *>: Failed Add() of the operator to the operator stack."
+            );
     }
 }
 
-void MathExpressionParser::PopOperator()
-{
-    uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* operat;
+void MathExpressionParser::PopOperator() {
     
-    if (!operatorStack.Extract(top, operat)) {
+    uint32 top = operatorStack.GetSize() - 1u;
+    StreamString* currentOperator;
+    
+    if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Extract() of the operator from the operator stack."
-                            );
+            "StaticList<currentOperator *>: Failed Extract() of the operator from the operator stack."
+            );
     }
     
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
-    
     // Write in the stack machine expression
-    stackMachineExpr += OperatorLookupTable(operat->Buffer());
+    stackMachineExpr += OperatorFormatting(currentOperator->Buffer());
     stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::PopOperatorAlternate()
-{
+void MathExpressionParser::PopOperatorAlternate() {
+    
     uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* operat;
+    StreamString* currentOperator;
     
-    if (!operatorStack.Extract(top, operat)) {
+    if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Extract() of the operator from the operator stack."
-                            );
+            "StaticList<currentOperator *>: Failed Extract() of the operator from the operator stack."
+            );
     }
-
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
     
-    if (StringHelper::Compare(operat->Buffer(), "+") == 0) {
+    if (StringHelper::Compare(currentOperator->Buffer(), "+") == 0) {
         // nothing
     }
-    else if (StringHelper::Compare(operat->Buffer(), "-") == 0) {
+    else if (StringHelper::Compare(currentOperator->Buffer(), "-") == 0) {
         stackMachineExpr += "NEG\n";
     }
     else {
         stackMachineExpr += "ERR\n";
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+            "PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer()
+            );
     }
     
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-void MathExpressionParser::PushTypecast()
-{
-    StreamString* operat = new StreamString(currentToken->GetData());
+void MathExpressionParser::PushTypecast() {
     
-    if (!typecastStack.Add(operat)) {
+    StreamString* currentOperator = new StreamString(currentToken->GetData());
+    
+    if (!typecastStack.Add(currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Add() of the typecast type to the typecast stack."
-                            );
+            "StaticList<currentOperator *>: Failed Add() of the typecast type to the typecast stack."
+            );
     }
 }
 
-void MathExpressionParser::PopTypecast()
-{
-    uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* operat;
+void MathExpressionParser::PopTypecast() {
     
-    if (!typecastStack.Extract(top, operat)) {
+    uint32 top = typecastStack.GetSize() - 1u;
+    StreamString* currentOperator;
+    
+    if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Extract() of the typecast type from the typecast stack."
-                            );
+            "StaticList<currentOperator *>: Failed Extract() of the typecast type from the typecast stack."
+            );
     }
     
     // Write in the stack machine expression
     stackMachineExpr += "CAST ";
-    stackMachineExpr += operat->Buffer();
+    stackMachineExpr += currentOperator->Buffer();
     stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::AddOperand()
-{
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operand  %s", currentToken->GetData());
-
+void MathExpressionParser::AddOperand() {
+    
     // Write in the stack machine expression
     if (StringHelper::Compare(currentToken->GetDescription(), "STRING") == 0) {
         stackMachineExpr += "READ ";
@@ -310,28 +308,26 @@ void MathExpressionParser::AddOperand()
     stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::AddOperandTypecast()
-{
-    uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* operat;
+void MathExpressionParser::AddOperandTypecast() {
     
-    if (!typecastStack.Extract(top, operat)) {
+    uint32 top = typecastStack.GetSize() - 1u;
+    StreamString* currentOperator;
+    
+    if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-                            "StaticList<operat *>: Failed Extract() of the typecast type from the typecast stack."
-                            );
+            "StaticList<currentOperator *>: Failed Extract() of the typecast type from the typecast stack."
+            );
     }
     
     // Write in the stack machine expression
     stackMachineExpr += "CONST ";
-    stackMachineExpr += operat->Buffer();
+    stackMachineExpr += currentOperator->Buffer();
     stackMachineExpr += " ";
     stackMachineExpr += currentToken->GetData();
     stackMachineExpr += "\n";
 }
 
-void MathExpressionParser::StoreAssignment()
-{
-    REPORT_ERROR_STATIC(ErrorManagement::Debug, "StoreAssignment %s", currentToken->GetData());
+void MathExpressionParser::StoreAssignment() {
     
     assignmentVarName = currentToken->GetData();
 }
