@@ -62,7 +62,7 @@ public:
     FunctionRecord(){}
 
     /**
-     * constructor
+     * full constructor
      */
     FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, const TypeDescriptor* typesIn, Function functionIn);
 
@@ -73,31 +73,34 @@ public:
      */
     bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
+    StreamString GetName(){return name;}
+
+    /**
+     * How many stack elements it will consume
+     * !NOTE that for CONST
+     */
+    uint16                  numberOfInputs;
+
+    /**
+     * How many stack elements it will produce
+     */
+    uint16                  numberOfOutputs;
+
+    /**
+     * array of types one for each input and output
+     */
+    const TypeDescriptor*   types;
+
+    /**
+     * The function code itself
+     */
+    Function                function;
+
+private:
 	/**
 	 *	The name of the functions as used in the RPN code
 	 */
     StreamString            name;
-
-	/**
-	 * How many stack elements it will consume
-	 * !NOTE that for CONST
-	 */
-    uint16                  numberOfInputs;
-
-	/**
-	 * How many stack elements it will produce
-	 */
-    uint16                  numberOfOutputs;
-
-	/**
-	 * array of types one for each input and output
-	 */
-    const TypeDescriptor*   types;
-
-	/**
-	 * The function code itself
-	 */
-    Function                function;
 
 };
 
