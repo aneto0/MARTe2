@@ -44,46 +44,46 @@ static uint32 Production[] = {0u
 ,3u,27u,29u,41u ,2u,28u,5u ,2u,28u,6u ,2u,28u,7u ,2u,28u,8u 
 ,2u,28u,9u ,3u,29u,31u,42u ,2u,30u,10u ,2u,30u,11u ,2u,30u,12u 
 ,2u,30u,13u ,2u,30u,14u ,3u,31u,33u,43u ,2u,32u,15u ,2u,32u,16u 
-,3u,33u,35u,44u ,2u,34u,17u ,2u,34u,18u ,2u,35u,38u ,5u,35u,48u,37u,38u,50u 
-,5u,35u,48u,36u,38u,49u ,2u,36u,19u ,2u,37u,15u ,2u,37u,16u ,2u,38u,39u 
-,7u,38u,20u,51u,1u,21u,39u,52u ,3u,38u,53u,22u ,7u,38u,20u,51u,1u,21u,54u,22u 
-,4u,39u,20u,27u,21u ,3u,39u,53u,1u ,8u,39u,48u,1u,20u,27u,45u,21u,49u 
-,3u,40u,25u,40u ,1u,40u ,6u,41u,48u,28u,29u,49u,41u ,1u,41u ,6u,42u,48u,30u,31u,49u,42u 
-,1u,42u ,6u,43u,48u,32u,33u,49u,43u ,1u,43u ,6u,44u,48u,34u,35u,49u,44u 
-,1u,44u ,4u,45u,4u,27u,45u ,1u,45u 
+,3u,33u,35u,44u ,2u,34u,17u ,2u,34u,18u ,2u,35u,37u ,5u,35u,48u,32u,37u,50u 
+,5u,35u,48u,36u,37u,49u ,2u,36u,19u ,2u,37u,38u ,7u,37u,20u,51u,1u,21u,38u,52u 
+,7u,37u,20u,51u,1u,21u,53u,22u ,3u,37u,54u,22u ,2u,38u,39u ,8u,38u,48u,1u,20u,27u,45u,21u,49u 
+,4u,39u,20u,27u,21u ,3u,39u,54u,1u ,3u,40u,25u,40u ,1u,40u ,6u,41u,48u,28u,29u,49u,41u 
+,1u,41u ,6u,42u,48u,30u,31u,49u,42u ,1u,42u ,6u,43u,48u,32u,33u,49u,43u 
+,1u,43u ,6u,44u,48u,34u,35u,49u,44u ,1u,44u ,4u,45u,4u,27u,45u 
+,1u,45u 
 ,0u};
 
 static uint32 Production_row[] = {0u
 
 ,1u,5u,13u,16u,19u,23u,26u,29u,32u,35u,38u,42u,45u,48u,51u,54u
-,57u,61u,64u,67u,71u,74u,77u,80u,86u,92u,95u,98u,101u,104u,112u,116u
-,124u,129u,133u,142u,146u,148u,155u,157u,164u,166u,173u,175u,182u,184u,189u
+,57u,61u,64u,67u,71u,74u,77u,80u,86u,92u,95u,98u,106u,114u,118u,121u
+,130u,135u,139u,143u,145u,152u,154u,161u,163u,170u,172u,179u,181u,186u
 ,0u};
 
 static uint32 ParseArray[] = {
 
-0u,0u,1u,2u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,44u
-,44u,3u,4u,45u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,42u,42u,18u,19u
-,21u,22u,43u,41u,41u,41u,41u,41u,41u,41u,40u,40u,40u,40u,40u,5u,6u,7u,8u,9u
-,10u,41u,39u,39u,38u,38u,38u,38u,38u,5u,5u,11u,49u,5u,5u,26u,5u,27u,28u,17u
-,39u,0u,36u,0u,0u,11u,11u,20u,0u,11u,11u,33u,11u,17u,17u,23u,0u,17u,17u,0u
-,17u,20u,20u,29u,37u,20u,20u,0u,20u,24u,24u,46u,0u,25u,23u,0u,23u,12u,13u,14u
-,15u,16u,48u,0u,31u,0u,0u,0u,47u,0u,0u
+0u,0u,1u,2u,44u,44u,44u,44u,44u,44u,44u,44u,44u,44u,44u,44u,44u,44u,43u
+,43u,3u,4u,44u,42u,42u,42u,42u,42u,42u,42u,42u,42u,42u,42u,42u,41u,41u,18u,19u
+,21u,22u,42u,40u,40u,40u,40u,40u,40u,40u,39u,39u,39u,39u,39u,5u,6u,7u,8u,9u
+,10u,40u,38u,38u,37u,37u,37u,37u,37u,5u,5u,11u,48u,5u,5u,26u,5u,34u,0u,17u
+,38u,0u,35u,0u,0u,11u,11u,20u,0u,11u,11u,31u,11u,17u,17u,23u,33u,17u,17u,0u
+,17u,20u,20u,27u,36u,20u,20u,0u,20u,24u,24u,45u,0u,25u,23u,0u,23u,12u,13u,14u
+,15u,16u,47u,0u,30u,0u,0u,0u,46u,0u,0u
 };
 
 static uint32 Parse_row[] = {0u
 
-,1u,2u,17u,53u,50u,69u,106u,77u,22u,85u,22u,93u,55u,61u,101u,70u
+,1u,2u,17u,53u,50u,69u,106u,77u,22u,85u,22u,93u,55u,101u,70u,75u
 ,80u,58u,39u,20u,1u,106u
 ,0u};
 
 static uint32 Conflict[] = {
 
-0u,0u,50u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,29u,29u,0u
-,0u,29u,29u,0u,29u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u,34u
-,34u,0u,35u,34u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,0u,29u
-,51u,30u,0u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,29u,0u
-,30u,29u,32u
+0u,0u,49u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,27u,27u,0u
+,0u,27u,27u,0u,27u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u,31u
+,31u,0u,32u,31u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,0u,27u
+,50u,28u,0u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,27u,0u
+,28u,27u,29u
 };
 
 static uint32 Conflict_row[] = {0u
@@ -91,7 +91,7 @@ static uint32 Conflict_row[] = {0u
 ,1u,21u,38u,59u
 ,0u};
 
-static const uint32 Constants[] = { 24u, 23u, 0u, 48u, 52u, 46u, 55u, 4u, 512u };
+static const uint32 Constants[] = { 24u, 23u, 0u, 47u, 51u, 46u, 55u, 4u, 512u };
 
 static const char8 * Terminal_name[] ={"0"
 
@@ -145,8 +145,8 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 5 ] = &MathExpressionParser::PopOperatorAlternate;
     Action [ 6 ] = &MathExpressionParser::PushTypecast;
     Action [ 7 ] = &MathExpressionParser::PopTypecast;
-    Action [ 8 ] = &MathExpressionParser::AddOperand;
-    Action [ 9 ] = &MathExpressionParser::AddOperandTypecast;
+    Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
+    Action [ 9 ] = &MathExpressionParser::AddOperand;
 }
 
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
