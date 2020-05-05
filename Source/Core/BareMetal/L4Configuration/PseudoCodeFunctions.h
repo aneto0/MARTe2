@@ -75,6 +75,8 @@ public:
 
     StreamString GetName(){return name;}
 
+    void ExecuteFunction(Context &context){function(context);}
+
     /**
      * How many stack elements it will consume
      * !NOTE that for CONST
@@ -91,16 +93,16 @@ public:
      */
     const TypeDescriptor*   types;
 
-    /**
-     * The function code itself
-     */
-    Function                function;
-
 private:
 	/**
 	 *	The name of the functions as used in the RPN code
 	 */
     StreamString            name;
+
+    /**
+     * The function code itself
+     */
+    Function                function;
 
 };
 
