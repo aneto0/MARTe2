@@ -154,8 +154,27 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
 }
 
 MathExpressionParser::~MathExpressionParser() {
-// Auto-generated destructor stub for MathExpressionParser
-// TODO Verify if manual additions are needed
+    uint32 queueSize = operatorStack.GetSize();
+    for (uint32 i = 0u; i < queueSize; i++) {
+        StreamString* toDelete;
+        if (operatorStack.Extract(0, toDelete)) {
+            delete toDelete;
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<operat *>: Failed Extract() during garbage collection.");
+        }
+    }
+    
+    queueSize = typecastStack.GetSize();
+    for (uint32 i = 0u; i < queueSize; i++) {
+        StreamString* toDelete;
+        if (typecastStack.Extract(0, toDelete)) {
+            delete toDelete;
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "StaticList<operat *>: Failed Extract() during garbage collection.");
+        }
+    }
 }
 
 const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn) const {
@@ -236,6 +255,7 @@ void MathExpressionParser::PopAssignment()
     stackMachineExpr += "\n";
 }
 
+/*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushOperator()
 {
     StreamString* operat = new StreamString(currentToken->GetData());
@@ -290,6 +310,7 @@ void MathExpressionParser::PopOperatorAlternate()
     
 }
 
+/*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushTypecast()
 {
     StreamString* operat = new StreamString(currentToken->GetData());

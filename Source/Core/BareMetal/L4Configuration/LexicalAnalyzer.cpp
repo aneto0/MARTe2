@@ -464,6 +464,7 @@ void LexicalAnalyzer::AddTerminal(const char8 terminal) {
     }
 }
 
+/*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void LexicalAnalyzer::AddTerminal(const char8* const terminalBuffer) {
 
     /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
@@ -608,7 +609,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         if ( (tokenString.Size() != 0u) && (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) ) {
             AddTerminal(multiCharToken.Buffer());
             tokenString="";
-            terminal='\0';
         }
         
         // If trail + terminal is not a keyword, we handle them separately
