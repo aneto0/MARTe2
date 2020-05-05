@@ -93,7 +93,7 @@ public:
 
     virtual ~MathExpressionParser();
     
-    StreamString GetStackMachineExpression();
+    StreamString GetStackMachineExpression() const;
 
 protected:
     
@@ -239,12 +239,11 @@ private:
      *          -      | MIN 
      *          *      | MUL
      *          /      | DIV
-     *          ^      | POW
      *          sin    | SIN
      *          tan    | TAN
      *          ...    | ...
      */
-    const char8* OperatorLookupTable(const char8* operatorIn);
+    const char8* OperatorLookupTable(const char8* operatorIn) const;
     
     StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
     StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.

@@ -158,8 +158,8 @@ MathExpressionParser::~MathExpressionParser() {
 // TODO Verify if manual additions are needed
 }
 
-const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn)
-{
+const char8* MathExpressionParser::OperatorLookupTable(const char8* const operatorIn) const {
+
     const char8* ret = operatorIn;
     
     if (StringHelper::Compare(operatorIn, "+") == 0) {
@@ -373,8 +373,8 @@ uint32 MathExpressionParser::GetConstant(const uint32 index) const {
     return Constants[index];
 }
 
-StreamString MathExpressionParser::GetStackMachineExpression()
-{
+StreamString MathExpressionParser::GetStackMachineExpression() const {
+
     return stackMachineExpr;
 }
 
