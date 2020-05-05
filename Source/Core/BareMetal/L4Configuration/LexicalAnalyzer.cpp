@@ -475,6 +475,7 @@ void LexicalAnalyzer::AddTerminal(const char8* const terminalBuffer) {
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
+/*lint --e{9007} StringHelper::SearchString() and StringHelper::Compare() have no side effects*/
 void LexicalAnalyzer::TokenizeInput(const uint32 level) {
 
     bool ok = true;
