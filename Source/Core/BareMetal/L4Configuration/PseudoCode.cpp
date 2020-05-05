@@ -758,8 +758,10 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 	DataMemoryAddress dataStackIndex = 0;
 
 	if (showData || showTypes){
-		for(uint32 i=0;(i<functionInformation.numberOfOutputs) && ret;i++){
-			TypeDescriptor td = functionInformation.types[i+functionInformation.numberOfInputs];
+        Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
+
+        for(uint32 i=0;(i<functionOutputTypes.GetNumberOfElements()) && ret;i++){
+            TypeDescriptor td = functionOutputTypes[i];
 			if (i!=0) {
                 cst += ',';
 			} else {
@@ -784,7 +786,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
                 AnyType src(td, 0, stackPtr - dataStackIndex);
                 cst.Printf("%!", src);
 			}
-			if (i == (functionInformation.numberOfOutputs-1U)){
+            if (i == (functionOutputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
 			}
 		}
