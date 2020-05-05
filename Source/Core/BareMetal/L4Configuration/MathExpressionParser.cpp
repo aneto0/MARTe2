@@ -215,8 +215,10 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* const operat
             REPORT_ERROR_STATIC(ErrorManagement::FatalError, "OperatorLookupTable(): failed to convert operator %s to uppercase.", operatorIn);
             ret = "ERR";
         }
-        
-        ret = uppercaseOp;
+        else {
+            ret = uppercaseOp;
+        }
+    
     }
     
     return ret;
