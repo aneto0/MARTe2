@@ -94,6 +94,11 @@ Vector<TypeDescriptor> FunctionRecord::GetInputTypes(){
     return inputTypes;
 }
 
+Vector<TypeDescriptor> FunctionRecord::GetOutputTypes(){
+    Vector<TypeDescriptor> inputTypes(&(types[numberOfInputs]), numberOfOutputs);
+    return inputTypes;
+}
+
 /**
  * to register a function
  */
