@@ -103,10 +103,12 @@ the [... ... ...] matches optionally a set of patterns:
  * 		   A pattern containing a sequence <A>!<B>|<C><D> is matched if <A><B> or <C><D> are matched,
  * 		   but is also not matched <A> is matched and <B> is not
  *
- * @param[in,out] pattern is a string contianing the pattern to match. see function details.
- * @param[in] input is the stream/string to be parsed to check the match with the pattern.
+ * @param[in] pattern is a string contianing the pattern to match. see function details.
+ * @param[in,out] input is the stream/string to be parsed to check the match with the pattern.
  * 			If the pattern is matched all necessary characters are consumed from the stream/string
- * 			If the pattern is not matched, the stream/string position is at the failing character
+ * 			If the pattern is not matched, or in case of errors, the stream/string position is returned
+ * 			to as before the call
+ * @param[out] matched is were the matched string will be appended on success
  * @return  SyntaxError in case of a malformed expression
  *          OutOfRange  in case of failure in reading more characters
  *          ComparisonFailure if the pattern did not match
@@ -120,6 +122,39 @@ ErrorManagement::ErrorType Match(StreamI &input,CCString &pattern,CStringTool &m
  */
 ErrorManagement::ErrorType Match(CCString &input,CCString &pattern,CStringTool &matched);
 
+/**
+ *
+ */
+struct PatternInformation{
+	/**
+	 *  @see RegularExpression::Match
+	 */
+	CCString  			pattern;
+
+	/**
+	 *
+	 */
+	CCString 			ruleName;
+
+	/**
+	 *
+	 */
+	uint32 				ruleId;
+
+	/**
+	 *
+	 */
+	bool 				skip;
+};
+
+/**
+ * to be used to terminate a Zero Terminated Array of rules
+ */
+static const PatternInformation emptyPattern = {emptyString,emptyString, 0,false};
+
+ErrorManagement::ErrorType MatchRules(StreamI &input,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched);
+
+ErrorManagement::ErrorType MatchRules(CCString &input,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched);
 
 
 /*---------------------------------------------------------------------------*/
@@ -128,4 +163,4 @@ ErrorManagement::ErrorType Match(CCString &input,CCString &pattern,CStringTool &
 } // Regex
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L3STREAMS_REGULAREXPRESSION_H_ */
+#endif /* REGULAREXPRESSION_H_ */

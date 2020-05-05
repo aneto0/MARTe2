@@ -13,7 +13,7 @@
 using namespace MARTe;
 
 
-
+#if 0
 /**
  *
  */
@@ -38,6 +38,7 @@ struct LexicalAnalyzerRule{
 	 */
 	bool 				skip;
 };
+#endif
 
 namespace ruleSet{
 
@@ -56,7 +57,7 @@ const uint32 operators         = 6;
 
 /*
  */
-const LexicalAnalyzerRule rules[]={
+const RegularExpression::PatternInformation rules[]={
 	    {"//!*[^\n]\n"                                               ,"line comment"     , commentElement       ,true},
 	    {"/\\*!*?\\a\\*/"                                            ,"multiline comment", commentElement       ,true},
 	    {"+[ \n\t,;]"                                                ,"separator"        , spaceElement         ,true},
@@ -77,7 +78,8 @@ const LexicalAnalyzerRule rules[]={
 	    {"[\\w_]*[\\d\\w_]"                                          ,"identifier"	     , identifierElement    ,false},
 		{"\"*[^\"]\""                                                ,"string"		     , stringElement		,false},
 	    {"(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)"               ,"number"		     , numberElement        ,false},
-		{emptyString												 ,emptyString	     , 0					,false}
+		RegularExpression::emptyPattern
+//		{emptyString												 ,emptyString	     , 0					,false}
 };
 
 }
@@ -127,7 +129,7 @@ CCString RPNCode=
 		"WRITE F\n"
 ;
 
-
+#if 0
 const LexicalAnalyzerRule *Parse(CCString &line,DynamicCString &content){
     int ruleNo = 0;
     ErrorManagement::ErrorType match;
@@ -193,7 +195,7 @@ printf("syntaxError\n");
     }
     return NULL;
 }
-
+#endif
 
 CCString line =
 " 121 ALPHA \"BIRRA\" // pip\tpo\n"
@@ -210,40 +212,48 @@ int main(){
 //char *p = const_cast<char *>(line.GetList());
 
 #if 1
+{
+		CCString lineP = line;
+		ErrorManagement::ErrorType ret;
+		while ((lineP[0]!= 0) && ret) {
+			DynamicCString content;
+		//	const LexicalAnalyzerRule *q = Parse(lineP,content);
+			const RegularExpression::PatternInformation *selectedRule = NULL;
+			ret = RegularExpression::MatchRules(lineP,ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),selectedRule,content);
 
-CCString lineP = line;
-while (lineP[0]!= 0){
-	DynamicCString content;
-	const LexicalAnalyzerRule *q = Parse(lineP,content);
-
-	if (q){
-		if (!q->skip){
-			printf("%s [%s]\n",q->ruleName.GetList(),content.GetList());
-			fflush(stdout);
+			if (selectedRule){
+				if (!selectedRule->skip){
+					printf("%s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());
+					fflush(stdout);
+				}
+			} else {
+				printf("UNMATCHED %s\n",lineP.GetList());
+				break;
+			}
 		}
-	} else {
-		printf("UNMATCHED %s\n",lineP.GetList());
-		break;
-	}
 }
+{
+		ErrorManagement::ErrorType ret;
+		StreamString lineS = line;
+		lineS.Seek(0);
+		while (ret) {
+			DynamicCString content;
+		//	const LexicalAnalyzerRule *q = Parse(lineP,content);
+			const RegularExpression::PatternInformation *selectedRule = NULL;
+			ret = RegularExpression::MatchRules(lineS,ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),selectedRule,content);
 
-StreamString lineS = line;
-lineS.Seek(0);
-const LexicalAnalyzerRule *q=NULL;
-do{
-	DynamicCString content;
-	q = Parse2(lineS,content);
-
-	if (q){
-		if (!q->skip){
-			printf("%s [%s]\n",q->ruleName.GetList(),content.GetList());
-			fflush(stdout);
+			if (selectedRule){
+				if (!selectedRule->skip){
+					printf("%s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());
+					fflush(stdout);
+				}
+			} else {
+				printf("UNMATCHED \n");
+				break;
+			}
 		}
-	} else {
-		printf("UNMATCHED %s\n",lineP.GetList());
-	}
-} while (q != NULL);
 
+}
 //oo
 
 return 0;

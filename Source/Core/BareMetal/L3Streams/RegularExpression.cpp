@@ -27,7 +27,7 @@
 namespace MARTe{
 namespace RegularExpression{
 
-
+#if 0 //obsolete
 class StreamIBinding{
 public:
 	inline StreamIBinding(StreamI &in,CStringTool     &out): stream(in),output(out){
@@ -70,7 +70,11 @@ private:
 	CStringTool     &output;
 
 };
+#endif
 
+/**
+ * Provides an adequate interface over a stream to be able to use the RegularExpression::PatternMatch
+ */
 class BufferedStreamIBinding{
 public:
 	inline BufferedStreamIBinding(StreamI &in): stream(in),bufferT(buffer()){
@@ -78,8 +82,7 @@ public:
 		relativePosition = 0;
 	}
 
-	~BufferedStreamIBinding(){
-		stream.Seek(startPosition+relativePosition);
+	inline ~BufferedStreamIBinding(){
 	}
 
 	inline bool GetC(char8 & c){
@@ -91,12 +94,10 @@ public:
 			stream.Read(block,size);
 			block[size] = '\0';
 			bufferT.Append(block,size);
-//printf("(+%i> %i \"%s\")",size,bufferT.GetSize(),block);
 		}
 
 		if (relativePosition < bufferT.GetSize()){
 			c = buffer[relativePosition];
-//printf("([%i of %i]:%c)",relativePosition,bufferT.GetSize(),c);
 			relativePosition++;
 		} else {
 			ret = false;
@@ -106,15 +107,15 @@ public:
 	inline uint32 Position(){
 		return relativePosition;
 	}
-	bool Seek(uint32 position){
+	inline bool Seek(uint32 position){
 		bool ret = (position <= relativePosition);
 		if (ret){
 			relativePosition = position;
-//printf("(%i<)",position);
 		}
 		return ret;
 	}
-	void GetResult(CStringTool &output){
+	inline void GetResult(CStringTool &output){
+		stream.Seek(startPosition+relativePosition);
 		output.Append(buffer.GetList(),relativePosition);
 	}
 
@@ -123,36 +124,45 @@ private:
 	 * stream start position
 	 */
 	uint64 				startPosition;
+
 	/**
 	 * relative position to the stream start
+	 * position within the buffer string
 	 */
 	uint32 				relativePosition;
+
+	/**
+	 * the stream to get data from
+	 */
 	StreamI &		   	stream;
+
+	/**
+	 * buffer containing the data read from the stream
+	 */
 	DynamicCString     	buffer;
+
+	/**
+	 * tool to help use the buffer more efficiently
+	 */
 	CStringTool			bufferT;
 
 };
 
-
+/**
+ *
+ */
 class CStringBinding{
 public:
-	inline CStringBinding(CCString in,CStringTool     &out): string(in),output(out){
+	inline CStringBinding(CCString in): string(in){
 		stringSize = string.GetSize();
 		relativePosition = 0;
 	}
 	inline bool GetC(char8 & c){
-//printf("DO"); //TODO
 
 		bool ret = true;
 		if (relativePosition < stringSize){
 			c = string[relativePosition];
 			relativePosition++;
-			ErrorManagement::ErrorType ok = output.Append(c);
-			if (!ok){
-//printf("NOT"); //TODO
-				ret = false;
-			}
-//printf("READ -> %c:%i",c,c);fflush(stdout); //TODO
 		} else {
 			ret = false;
 		}
@@ -161,67 +171,109 @@ public:
 	inline uint32 Position(){
 		return relativePosition;
 	}
-	bool Seek(uint32 newPosition){
+	inline bool Seek(uint32 newPosition){
 		bool ret = true;
 		if (newPosition <= stringSize){
 			relativePosition = newPosition;
-			ErrorManagement::ErrorType ok = output.Truncate(newPosition);
-			if (!ok) {
-//printf("NOT");//TODO
-				ret = false;
-			}
-//printf("SEEK -> %i",relativePosition);fflush(stdout); //TODO
 		} else {
 			ret = false;
 		}
 		return ret;
 	}
 
-private:
-	CCString string;
-	uint32 stringSize;
-	uint32 relativePosition;
-	CStringTool     &output;
+	inline void GetResult(CCString &modifiedInput,CStringTool &output){
+		modifiedInput = string.GetList() + relativePosition;
+		output.Append(string.GetList(),relativePosition);
+	}
 
+private:
+	/**
+	 * the string to parse
+	 */
+	CCString string;
+	/**
+	 * the size of the string to parse
+	 */
+	uint32 stringSize;
+	/**
+	 * the current position within the string
+	 */
+	uint32 relativePosition;
 };
 
-#if 0
+
 ErrorManagement::ErrorType  Match(StreamI &stream,CCString &pattern,CStringTool &matched){
 	ErrorManagement::ErrorType ret;
 
-
-	StreamIBinding sib(stream,matched);
-	ret = PatternMatch(sib,pattern);
-
-	return ret;
-}
-#else
-ErrorManagement::ErrorType  Match(StreamI &stream,CCString &pattern,CStringTool &matched){
-	ErrorManagement::ErrorType ret;
-
-
-//printf ("\nSTART PatternMatch(%s)\n",pattern.GetList());
-	BufferedStreamIBinding sib(stream);
-	ret = PatternMatch(sib,pattern);
+	ret.unsupportedFeature = !stream.CanSeek();
+	REPORT_ERROR(ret,"Unsupported stream");
 	if (ret){
-		sib.GetResult(matched);
+		uint64 position = stream.Position();
+		BufferedStreamIBinding sib(stream);
+		ret = PatternMatch(sib,pattern);
+		if (ret){
+			sib.GetResult(matched);
+		} else {
+			stream.Seek(position);
+		}
 	}
 
 	return ret;
 }
 
-#endif
 
 ErrorManagement::ErrorType  Match(CCString &string,CCString &pattern,CStringTool &matched){
 	ErrorManagement::ErrorType ret;
 
-
-//printf ("START PatternMatch(%s,%s)\n",string.GetList(),pattern.GetList());
-	CStringBinding cb(string,matched);
+	CStringBinding cb(string);
 	ret = PatternMatch(cb,pattern);
-	string = string.GetList()+cb.Position();
+	if (ret){
+		cb.GetResult(string,matched);
+	}
 	return ret;
 }
+
+ErrorManagement::ErrorType MatchRules(StreamI &line,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched){
+    int ruleNo = 0;
+    bool toContinue = true;
+    ErrorManagement::ErrorType ret;
+    while((ruleSet[ruleNo].pattern.GetSize()> 0) && ret && toContinue){
+        CCString pattern = ruleSet[ruleNo].pattern;
+        CStringTool matchedT = matched();
+        ret = RegularExpression::Match(line,pattern,matchedT);
+        if (ret){
+        	selectedRule = &ruleSet[ruleNo];
+        	toContinue = false;
+        } else {
+        	ret.comparisonFailure = false; // reset this error to allow continuation
+		REPORT_ERROR(ret,"Error while Matching a pattern");
+        }
+        ruleNo++;
+    }
+    return ret;
+}
+
+ErrorManagement::ErrorType MatchRules(CCString &line,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched){
+    int ruleNo = 0;
+    bool toContinue = true;
+    ErrorManagement::ErrorType ret;
+    while((ruleSet[ruleNo].pattern.GetSize()> 0) && ret && toContinue){
+        CCString pattern = ruleSet[ruleNo].pattern;
+        CStringTool matchedT = matched();
+        ret = RegularExpression::Match(line,pattern,matchedT);
+        if (ret){
+        	selectedRule = &ruleSet[ruleNo];
+        	toContinue = false;
+        } else {
+        	ret.comparisonFailure = false; // reset this error to allow continuation
+    		REPORT_ERROR(ret,"Error while Matching a pattern");
+        }
+        ruleNo++;
+    }
+    return ret;
+}
+
+
 
 } //RegularExpression
 } //MARTe
