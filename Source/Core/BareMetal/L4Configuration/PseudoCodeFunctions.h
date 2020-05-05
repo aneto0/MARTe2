@@ -79,6 +79,8 @@ public:
 
     Vector<TypeDescriptor> GetInputTypes();
 
+    Vector<TypeDescriptor> GetOutputTypes();
+
     /**
      * How many stack elements it will consume
      * !NOTE that for CONST
