@@ -34,6 +34,9 @@ uint32 availableFunctions = 0;
 
 FunctionRecord functionRecords[maxFunctions];
 
+FunctionRecord::FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, const TypeDescriptor* typesIn, Function functionIn):
+    name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
+    {}
 
 bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 	bool ret = false;
@@ -186,7 +189,7 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
 
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
 	static const TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-	static const FunctionRecord name ## type1 ## type2 ## _FunctionRecord={#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>}; \
+    static const FunctionRecord name ## type1 ## type2 ## _FunctionRecord(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
 	static class name ## type1 ## type2 ## RegisterClass { \
 	public: name ## type1 ## type2 ## RegisterClass(){\
 			RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\
