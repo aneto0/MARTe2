@@ -77,6 +77,9 @@ private:
  */
 class BufferedStreamIBinding{
 public:
+	struct Status{
+		uint32 position;
+	};
 	inline BufferedStreamIBinding(StreamI &in): stream(in),bufferT(buffer()){
 		startPosition = in.Position();
 		relativePosition = 0;
@@ -104,6 +107,19 @@ public:
 		}
 		return ret;
 	}
+
+	inline void SaveStatus(Status &status){
+		status.position = relativePosition;
+	}
+
+	inline bool RestoreStatus(const Status &status){
+		bool ret = (status.position <= relativePosition);
+		if (ret){
+			relativePosition = status.position;
+		}
+		return ret;
+	}
+
 	inline uint32 Position(){
 		return relativePosition;
 	}
@@ -153,6 +169,10 @@ private:
  */
 class CStringBinding{
 public:
+	struct Status{
+		uint32 position;
+	};
+
 	inline CStringBinding(CCString in): string(in){
 		stringSize = string.GetSize();
 		relativePosition = 0;
@@ -163,6 +183,20 @@ public:
 		if (relativePosition < stringSize){
 			c = string[relativePosition];
 			relativePosition++;
+		} else {
+			ret = false;
+		}
+		return ret;
+	}
+
+	inline void SaveStatus(Status &status){
+		status.position = relativePosition;
+	}
+
+	inline bool RestoreStatus(const Status &status){
+		bool ret = true;
+		if (status.position <= stringSize){
+			relativePosition = status.position;
 		} else {
 			ret = false;
 		}
