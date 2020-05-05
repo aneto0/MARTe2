@@ -153,11 +153,13 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 9 ] = &MathExpressionParser::AddOperandTypecast;
 }
 
+/*lint -e{1551} Justification: Memory has to be freed in the destructor.
+ * No exceptions should be thrown given that the memory is managed exclusively by this class.". */
 MathExpressionParser::~MathExpressionParser() {
     uint32 queueSize = operatorStack.GetSize();
     for (uint32 i = 0u; i < queueSize; i++) {
         StreamString* toDelete;
-        if (operatorStack.Extract(0, toDelete)) {
+        if (operatorStack.Extract(0u, toDelete)) {
             delete toDelete;
         }
         else {
@@ -168,7 +170,7 @@ MathExpressionParser::~MathExpressionParser() {
     queueSize = typecastStack.GetSize();
     for (uint32 i = 0u; i < queueSize; i++) {
         StreamString* toDelete;
-        if (typecastStack.Extract(0, toDelete)) {
+        if (typecastStack.Extract(0u, toDelete)) {
             delete toDelete;
         }
         else {
