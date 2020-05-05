@@ -807,7 +807,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 	case fastMode:{
 		while(codeMemoryPtr < codeMemoryMaxPtr){
 			CodeMemoryElement pCode = GetPseudoCode();
-			functionRecords[pCode].function(*this);
+            functionRecords[pCode].ExecuteFunction(*this);
 		}
 	}break;
 	case safeMode:{
@@ -815,7 +815,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 		DataMemoryElement *stackMaxPtr = stackPtr + stack.GetNumberOfElements();
 		while ((codeMemoryPtr < codeMemoryMaxPtr) && (runtimeError.ErrorsCleared())){
 			CodeMemoryElement pCode = GetPseudoCode();
-			functionRecords[pCode].function(*this);
+            functionRecords[pCode].ExecuteFunction(*this);
 			// note that the syackPtr will reach the max value - as it points to the next value to write
 			runtimeError.outOfRange = ((stackPtr > stackMaxPtr) ||  (stackPtr < stackMinPtr));
             if (!runtimeError){
@@ -861,7 +861,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
                 }
 
 				// executes code
-				fr.function(*this);
+                fr.ExecuteFunction(*this);
 
 				if (ret){
 					// show outputs
