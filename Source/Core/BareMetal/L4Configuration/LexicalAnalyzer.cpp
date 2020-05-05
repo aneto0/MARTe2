@@ -358,11 +358,6 @@ LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
                                  const char8 * const keywordsIn) {
     token = static_cast<Token *>(NULL);
     inputStream = &stream;
-    BufferedStreamI* temp = dynamic_cast<BufferedStreamI*>(inputStream);
-    if (temp != NULL) {
-        temp->SetCalibReadParam(0xFFFFFFFF);
-        temp->SetCalibWriteParam(0xFFFFFFFF);
-    }
     lineNumber = 1u;
     terminals = terminalsIn;
     separators = separatorsIn;
