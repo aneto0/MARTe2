@@ -264,7 +264,7 @@ uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Size() {
 
 template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Seek(uint64 pos) {
-    return DoubleBufferedStream::Seek(pos);
+    return bufferedStream::Seek(pos);
 }
 
 template<class bufferedStream, class basicStream>
