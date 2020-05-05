@@ -268,7 +268,7 @@ static bool SkipComment(StreamI &stream,
  * @param[out] c is the character in output.
  * @return true if the character in input matches a known escape sequence, false otherwise.
  */
-bool EscapeChar(char8 &c) {
+static bool EscapeChar(char8 &c) {
     bool ret = true;
     switch (c) {
     case ('n'): {
