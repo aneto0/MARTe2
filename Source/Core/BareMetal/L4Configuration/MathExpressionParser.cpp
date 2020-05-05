@@ -29,8 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
 #include "MathExpressionParser.h"
-#include "AdvancedErrorManagement.h" // DEBUG remove this
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -183,63 +183,14 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* const operat
 
     const char8* ret = operatorIn;
     
-    if (StringHelper::Compare(operatorIn, "+") == 0) {
-        ret = "SUM";
+    char8* uppercaseOp = StringHelper::StringDup(operatorIn);
+    bool ok = StringHelper::ToUpper(uppercaseOp);
+    if (!ok) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError, "OperatorLookupTable(): failed to convert operator %s to uppercase.", operatorIn);
+        ret = "ERR";
     }
-    else if (StringHelper::Compare(operatorIn, "*") == 0) {
-        ret = "MUL";
-    }
-    else if (StringHelper::Compare(operatorIn, "/") == 0) {
-        ret = "DIV";
-    }
-    else if (StringHelper::Compare(operatorIn, "-") == 0) {
-        ret = "MIN";
-    }
-    else if (StringHelper::Compare(operatorIn, "!") == 0) {
-        ret = "FACT";
-    }
-    else if (StringHelper::Compare(operatorIn, "&") == 0) {
-        ret = "BAND";
-    }
-    else if (StringHelper::Compare(operatorIn, "|") == 0) {
-        ret = "BOR";
-    }
-    else if (StringHelper::Compare(operatorIn, "&&") == 0) {
-        ret = "AND";
-    }
-    else if (StringHelper::Compare(operatorIn, "||") == 0) {
-        ret = "OR";
-    }
-    else if (StringHelper::Compare(operatorIn, "^") == 0) {
-        ret = "XOR";
-    }
-    else if (StringHelper::Compare(operatorIn, "<") == 0) {
-        ret = "LT";
-    }
-    else if (StringHelper::Compare(operatorIn, ">") == 0) {
-        ret = "GT"; 
-    }
-    else if (StringHelper::Compare(operatorIn, "<=") == 0) {
-        ret = "LE";
-    }
-    else if (StringHelper::Compare(operatorIn, ">=") == 0) {
-        ret = "GE"; 
-    }
-    else if (StringHelper::Compare(operatorIn, "==") == 0) {
-        ret = "EQ"; 
-    }
-    else
-    {
-        char8* uppercaseOp = StringHelper::StringDup(operatorIn);
-        bool ok = StringHelper::ToUpper(uppercaseOp);
-        if (!ok) {
-            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "OperatorLookupTable(): failed to convert operator %s to uppercase.", operatorIn);
-            ret = "ERR";
-        }
-        else {
-            ret = uppercaseOp;
-        }
-    
+    else {
+        ret = uppercaseOp;
     }
     
     return ret;

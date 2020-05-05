@@ -34,7 +34,7 @@
 
 #include "GrammarInfo.h"
 #include "StaticList.h"
-#include "BufferedStreamI.h"
+#include "StreamI.h"
 #include "Token.h"
 
 /*---------------------------------------------------------------------------*/
