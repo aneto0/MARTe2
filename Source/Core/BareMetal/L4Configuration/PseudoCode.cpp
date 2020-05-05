@@ -645,7 +645,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 
 	 const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
 
-	 if (functionInformation.name == writeToken){
+     if (functionInformation.GetName() == writeToken){
 		 CodeMemoryElement pCode2 = GetPseudoCode();
 
 		 VariableInformation *vi;
@@ -703,9 +703,10 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 
 ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
 	ErrorManagement::ErrorType ret;
+    StreamString functionName = functionInformation.GetName();
 
 	// if already showing the types do not show the parameter of the CAST
-	if ((functionInformation.name == castToken) && (!showTypes)) {
+    if ((functionName == castToken) && (!showTypes)) {
         cst += ' ';
         CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionInformation.types[functionInformation.numberOfInputs]);
         if (typeName != NULL) {
@@ -715,7 +716,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
         }
 
 	} else
-	if (functionInformation.name == readToken) {
+    if (functionName == readToken) {
 		CodeMemoryElement pCode2;
 		if (lookBack){
 			pCode2 = codeMemoryPtr[-1];
@@ -848,7 +849,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 				FunctionRecord &fr = functionRecords[pCode];
 
 				// show update info
-                debugMessage.Printf("%s ", fr.name.Buffer());
+                debugMessage.Printf("%s ", fr.GetName().Buffer());
 
      			// errors due to debugging
      			ErrorManagement::ErrorType ret;
@@ -922,11 +923,12 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &RPNCode,bool showTyp
 	while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
 		CodeMemoryElement pCode = GetPseudoCode();
 		FunctionRecord &fr = functionRecords[pCode];
+        StreamString fName = fr.GetName();
 
-		if ((fr.name == readToken) && (codeMemoryPtr[0] < startOfVariables)){
+        if ((fName == readToken) && (codeMemoryPtr[0] < startOfVariables)){
             RPNCode += constToken;
 		} else {
-            RPNCode += fr.name;
+            RPNCode += fName;
 		}
 
         ret = FunctionRecordInputs2String(fr,RPNCode,false,false,showTypes);
