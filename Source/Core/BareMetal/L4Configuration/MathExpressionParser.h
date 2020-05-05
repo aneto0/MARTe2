@@ -50,13 +50,37 @@ namespace MARTe{
  * 
  * The parser accepts mathematical expressions in the form:
  * 
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * ret = sin(A +B) > ((type)(C+D) * tan((bool)E + (float)15));
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+ * 
+ * ret = sin(A +B) > (pow(C+D,E) * tan((bool)F + (float)15));
+ * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * Each expression must be terminated with a comma or a semicolon.
  * Multiple expressions are allowed (provided that each is terminated
- * with a comma or semicolon).
+ * with a comma or semicolon). Accepted operators are the following:
+ * 
+ * | Operator | Meaning          |
+ * | :------: | :--------------- |
+ * | &        | Bitwise AND      |
+ * | \|       | Bitwise OR       |
+ * | &&       | AND              |
+ * | \|\|     | OR               |
+ * | ^        | Exclusive OR     |
+ * | !        | NOT              |
+ * | <        | Less than        |
+ * | >        | Greater than     |
+ * | <=       | Less ot equal    |
+ * | >=       | Greater or equal |
+ * | +        | Sum              |
+ * | -        | Subtraction      |
+ * | *        | Multiplication   |
+ * | /        | Division         |
+ * 
+ * Functions are also supported in the form `sin(x)`, `pow(x,y)` etc.
+ * However, the function name is passed as-is to the evaluation engine,
+ * so please verify that the evaluation engine (typically MARTe::PseudoCode)
+ * supports the required function.
  * 
  * The mathematical expression must be provided to the parser at
  * construction time. The instance of the parser is then bound to that
@@ -228,20 +252,27 @@ private:
      * @brief   Translates an operator from infix mathematical syntax
      *          to the form requierd by PseudoCode.h.
      * @param[in]  operatorIn Operator in infix form (`+`, `-` ...)
-     * @returns Operator in the form required by PseudoCode.h (`SUM`, `POW` ...) 
+     * @returns Operator in the form required by PseudoCode.h 
      * @details The stack machine expression is required to express
-     *          operators as uppercase postfix string. This method 
-     *          transforms infix operators as follows:
+     *          functions as uppercase postfix string. This method 
+     *          transforms function names to uppercase, while leaving
+     *          operators as they are. As for now this functions is
+     *          a wrapper of StringHelper::ToUpper, but could be useful
+     *          in the future if operators need to be translated from
+     *          one form to another.
      * 
-     *          Infix  | Stack
-     *          -----: | :-----
-     *          +      | SUM 
-     *          -      | MIN 
-     *          *      | MUL
-     *          /      | DIV
-     *          sin    | SIN
-     *          tan    | TAN
-     *          ...    | ...
+     * @example The infix expression `y = sin(x) + cos(x)` is
+     *          translated as:
+     *          
+     *          ~~~~~~~~~
+     *          READ x
+     *          SIN
+     *          READ x
+     *          COS
+     *          +
+     *          WRITE y
+     *          ~~~~~~~~~
+     * 
      */
     const char8* OperatorLookupTable(const char8* operatorIn) const;
     
