@@ -210,7 +210,11 @@ const char8* MathExpressionParser::OperatorLookupTable(const char8* const operat
     else
     {
         char8* uppercaseOp = StringHelper::StringDup(operatorIn);
-        StringHelper::ToUpper(uppercaseOp);
+        bool ok = StringHelper::ToUpper(uppercaseOp);
+        if (!ok) {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError, "OperatorLookupTable(): failed to convert operator %s to uppercase.", operatorIn);
+            ret = "ERR";
+        }
         
         ret = uppercaseOp;
     }
@@ -234,14 +238,23 @@ void MathExpressionParser::PushOperator()
 {
     StreamString* operat = new StreamString(currentToken->GetData());
     
-    operatorStack.Add(operat);
+    if (!operatorStack.Add(operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Add() of the operator to the operator stack."
+                            );
+    }
 }
 
 void MathExpressionParser::PopOperator()
 {
     uint32 top = operatorStack.GetSize() - 1u;
     StreamString* operat;
-    operatorStack.Extract(top, operat);
+    
+    if (!operatorStack.Extract(top, operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Extract() of the operator from the operator stack."
+                            );
+    }
     
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
     
@@ -254,7 +267,12 @@ void MathExpressionParser::PopOperatorAlternate()
 {
     uint32 top = operatorStack.GetSize() - 1u;
     StreamString* operat;
-    operatorStack.Extract(top, operat);
+    
+    if (!operatorStack.Extract(top, operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Extract() of the operator from the operator stack."
+                            );
+    }
 
     REPORT_ERROR_STATIC(ErrorManagement::Debug, "Add Operator %s", operat->Buffer());
     
@@ -274,7 +292,11 @@ void MathExpressionParser::PushTypecast()
 {
     StreamString* operat = new StreamString(currentToken->GetData());
     
-    typecastStack.Add(operat);
+    if (!typecastStack.Add(operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Add() of the typecast type to the typecast stack."
+                            );
+    }
 }
 
 void MathExpressionParser::PopTypecast()
@@ -282,7 +304,11 @@ void MathExpressionParser::PopTypecast()
     uint32 top = typecastStack.GetSize() - 1u;
     StreamString* operat;
     
-    typecastStack.Extract(top, operat);
+    if (!typecastStack.Extract(top, operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Extract() of the typecast type from the typecast stack."
+                            );
+    }
     
     // Write in the stack machine expression
     stackMachineExpr += "CAST ";
@@ -312,7 +338,12 @@ void MathExpressionParser::AddOperandTypecast()
 {
     uint32 top = typecastStack.GetSize() - 1u;
     StreamString* operat;
-    typecastStack.Extract(top, operat);
+    
+    if (!typecastStack.Extract(top, operat)) {
+        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                            "StaticList<operat *>: Failed Extract() of the typecast type from the typecast stack."
+                            );
+    }
     
     // Write in the stack machine expression
     stackMachineExpr += "CONST ";
