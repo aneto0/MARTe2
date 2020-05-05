@@ -251,7 +251,7 @@ private:
     /**
      * @brief   Translates an operator from infix mathematical syntax
      *          to the form requierd by PseudoCode.h.
-     * @param[in]  operatorIn Operator in infix form (`+`, `-` ...)
+     * @param[in]  operatorIn Operator in infix form (`+`, `&&`, `sin()`, ...)
      * @returns Operator in the form required by PseudoCode.h 
      * @details The stack machine expression is required to express
      *          functions as uppercase postfix string. This method 
@@ -274,7 +274,7 @@ private:
      *          ~~~~~~~~~
      * 
      */
-    const char8* OperatorLookupTable(const char8* operatorIn) const;
+    const char8* OperatorFormatting(const char8* operatorIn) const;
     
     StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
     StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
