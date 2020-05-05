@@ -66,6 +66,14 @@ public:
      */
     FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
 
+    StreamString GetName(){return name;}
+
+    Vector<TypeDescriptor> GetInputTypes();
+
+    Vector<TypeDescriptor> GetOutputTypes();
+
+    void ExecuteFunction(Context &context){function(context);}
+
     /**
      * returns true if the name and types matches
      * on success replaces the type on the stack with the result type
@@ -73,13 +81,11 @@ public:
      */
     bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
-    StreamString GetName(){return name;}
-
-    void ExecuteFunction(Context &context){function(context);}
-
-    Vector<TypeDescriptor> GetInputTypes();
-
-    Vector<TypeDescriptor> GetOutputTypes();
+private:
+	/**
+	 *	The name of the functions as used in the RPN code
+	 */
+    StreamString            name;
 
     /**
      * How many stack elements it will consume
@@ -96,12 +102,6 @@ public:
      * array of types one for each input and output
      */
     TypeDescriptor*   types;
-
-private:
-	/**
-	 *	The name of the functions as used in the RPN code
-	 */
-    StreamString            name;
 
     /**
      * The function code itself
