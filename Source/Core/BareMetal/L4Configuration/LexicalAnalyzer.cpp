@@ -605,7 +605,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         multiCharToken += terminal;
         
         // If the trail of characters + terminal is a keyword
-        if (tokenString.Size() != 0u &&  StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
+        if ( (tokenString.Size() != 0u) && (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) ) {
             AddTerminal(multiCharToken.Buffer());
             tokenString="";
             terminal='\0';
@@ -613,9 +613,10 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         
         // If trail + terminal is not a keyword, we handle them separately
         else {
+            
             // Trail:
                 // if trail alone is a keyword
-                if (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL && StringHelper::Compare("", tokenString.Buffer()) != 0) {
+                if ( (StringHelper::SearchString(keywords.Buffer(), tokenString.Buffer()) != NULL) && (StringHelper::Compare("", tokenString.Buffer()) != 0)) {
                     AddTerminal(tokenString.BufferReference());
                 }
                 // if trail alone is not a keyword
@@ -642,7 +643,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                         multiCharToken += nextChar;
                     }
                     
-                    if (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL && StringHelper::Compare("", multiCharToken.Buffer()) != 0) {
+                    if ( (StringHelper::SearchString(keywords.Buffer(), multiCharToken.Buffer()) != NULL) && (StringHelper::Compare("", multiCharToken.Buffer()) != 0) ) {
                         AddTerminal(multiCharToken.Buffer());
                     }
                     // if the terminal is alone, just add it (and reset the stream pointer)
@@ -655,11 +656,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     }
                 }
         }
-        
-        //AddToken(tokenString.BufferReference(), isString1);
-        //if (terminal != '\0') {
-            //AddTerminal(terminal);
-        //}
         
         if (isEOF) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
