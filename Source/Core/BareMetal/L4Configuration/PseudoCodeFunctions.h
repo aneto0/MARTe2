@@ -53,39 +53,51 @@ typedef void (*Function)(Context & context);
 /**
  * records information necessary to be able to use it during compilation
  */
-struct FunctionRecord{
+class FunctionRecord{
+public:
+
+    /**
+     * default constructor
+     */
+    FunctionRecord(){}
+
+    /**
+     * constructor
+     */
+    FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, const TypeDescriptor* typesIn, Function functionIn);
+
+    /**
+     * returns true if the name and types matches
+     * on success replaces the type on the stack with the result type
+     * also simulates variations on the dataStack
+     */
+    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+
 	/**
 	 *	The name of the functions as used in the RPN code
 	 */
-    StreamString			name;
+    StreamString            name;
 
 	/**
 	 * How many stack elements it will consume
 	 * !NOTE that for CONST
 	 */
-	uint16  				numberOfInputs;
+    uint16                  numberOfInputs;
 
 	/**
 	 * How many stack elements it will produce
 	 */
-	uint16 					numberOfOutputs;
+    uint16                  numberOfOutputs;
 
 	/**
 	 * array of types one for each input and output
 	 */
-	const TypeDescriptor *	types;
+    const TypeDescriptor*   types;
 
 	/**
 	 * The function code itself
 	 */
-	Function 				function;
-
-	/**
-	 * returns true if the name and types matches
-	 * on success replaces the type on the stack with the result type
-	 * also simulates variations on the dataStack
-	 */
-	bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+    Function                function;
 
 };
 
@@ -119,7 +131,7 @@ void RegisterFunction(const FunctionRecord &record);
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
 	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
+    static const FunctionRecord name ## subName ## _FunctionRecord(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
 	static class name ## subName ## RegisterClass { \
 	public: name ## subName ## RegisterClass(){\
 			RegisterFunction(name ## subName ## _FunctionRecord);\
