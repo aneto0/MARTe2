@@ -706,11 +706,12 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
 	ErrorManagement::ErrorType ret;
     StreamString functionName = functionInformation.GetName();
+    Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
 
 	// if already showing the types do not show the parameter of the CAST
     if ((functionName == castToken) && (!showTypes)) {
         cst += ' ';
-        CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionInformation.types[functionInformation.numberOfInputs]);
+        CCString typeName = TypeDescriptor::GetTypeNameFromTypeDescriptor(functionOutputTypes[0]);
         if (typeName != NULL) {
             cst += typeName.GetList();
         } else {
@@ -758,7 +759,6 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
 	DataMemoryAddress dataStackIndex = 0;
 
 	if (showData || showTypes){
-        Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
 
         for(uint32 i=0;(i<functionOutputTypes.GetNumberOfElements()) && ret;i++){
             TypeDescriptor td = functionOutputTypes[i];
