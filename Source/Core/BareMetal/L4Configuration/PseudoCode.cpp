@@ -660,8 +660,10 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
 	 DataMemoryAddress dataStackIndex = 0;
 
 	if (showData || showTypes){
-		for(uint32 i=0;(i<functionInformation.numberOfInputs) && ret;i++){
-			TypeDescriptor td = functionInformation.types[i];
+        Vector<TypeDescriptor> functionInputTypes = functionInformation.GetInputTypes();
+
+        for(uint32 i=0;(i<functionInputTypes.GetNumberOfElements()) && ret;i++){
+            TypeDescriptor td = functionInputTypes[i];
 
 			if (i!=0) {
                 cst += ',';
@@ -687,7 +689,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
                 AnyType src(td, 0, stackPtr - dataStackIndex);
                 cst.Printf("%!", src);
 			}
-			if (i == (functionInformation.numberOfInputs-1U)){
+            if (i == (functionInputTypes.GetNumberOfElements()-1U)){
                 cst += ')';
 			}
 		 }

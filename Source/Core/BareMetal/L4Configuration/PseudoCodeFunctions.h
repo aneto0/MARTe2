@@ -64,7 +64,7 @@ public:
     /**
      * full constructor
      */
-    FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, const TypeDescriptor* typesIn, Function functionIn);
+    FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
 
     /**
      * returns true if the name and types matches
@@ -76,6 +76,8 @@ public:
     StreamString GetName(){return name;}
 
     void ExecuteFunction(Context &context){function(context);}
+
+    Vector<TypeDescriptor> GetInputTypes();
 
     /**
      * How many stack elements it will consume
@@ -91,7 +93,7 @@ public:
     /**
      * array of types one for each input and output
      */
-    const TypeDescriptor*   types;
+    TypeDescriptor*   types;
 
 private:
 	/**
@@ -135,7 +137,7 @@ void RegisterFunction(const FunctionRecord &record);
  * generates boiler plate code to register a function
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
-	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
+    static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
     static const FunctionRecord name ## subName ## _FunctionRecord(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
 	static class name ## subName ## RegisterClass { \
 	public: name ## subName ## RegisterClass(){\
