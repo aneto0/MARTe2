@@ -22,9 +22,10 @@
 */
 
 #include <math.h>
+#include "ErrorManagement.h"
 #include "SafeMath.h"
 #include "PseudoCodeFunctions.h"
-#include "ErrorManagement.h"
+
 
 
 namespace MARTe{
@@ -33,6 +34,10 @@ namespace PseudoCode{
 uint32 availableFunctions = 0;
 
 FunctionRecord functionRecords[maxFunctions];
+
+FunctionRecord::FunctionRecord():
+    name(""), numberOfInputs(0), numberOfOutputs(0), types(NULL_PTR(TypeDescriptor*)), function(NULL)
+    {}
 
 FunctionRecord::FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)

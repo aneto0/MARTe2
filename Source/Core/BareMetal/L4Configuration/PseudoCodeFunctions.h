@@ -59,7 +59,7 @@ public:
     /**
      * default constructor
      */
-    FunctionRecord(){}
+    FunctionRecord();
 
     /**
      * full constructor
