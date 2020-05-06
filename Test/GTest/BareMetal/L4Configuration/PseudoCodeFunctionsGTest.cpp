@@ -44,3 +44,17 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDefaultConstructor) 
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
     ASSERT_TRUE(pseudoCodeFunctionsTest.TestDefaultConstructor());
 }
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    StaticList<FunctionTypes*> sinExpectedTypes;
+
+    FunctionTypes types1(Float32Bit, Float32Bit);
+    FunctionTypes types2(Float64Bit, Float64Bit);
+
+    sinExpectedTypes.Add(&types1);
+    sinExpectedTypes.Add(&types2);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("SIN", sinExpectedTypes));
+}
