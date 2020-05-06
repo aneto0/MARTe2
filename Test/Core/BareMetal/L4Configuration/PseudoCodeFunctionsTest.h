@@ -40,6 +40,18 @@
 
 using namespace MARTe;
 
+class FunctionTypes {
+public:
+    FunctionTypes(const TypeDescriptor &inputType, const TypeDescriptor &outputType);
+    FunctionTypes(PseudoCode::FunctionRecord &functionRecord);
+    bool operator==(FunctionTypes *functionTypes);
+
+private:
+    Vector<TypeDescriptor> inputTypes;
+    Vector<TypeDescriptor> outputTypes;
+
+};
+
 /**
  * @brief Tests all the PseudoCodeFunctions functions.
  */
@@ -51,6 +63,16 @@ public:
      * @brief Tests the default constructor.
      */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the registed Read functionRecords.
+     */
+    bool TestFunctionRecordTypes(CCString functionName, StaticList<FunctionTypes*> &expectedTypes);
+
+    /**
+     * @brief Checks if types provided in functionRecord are within provided expectedTypes.
+     */
+    bool RemoveFunctionRecordTypesFromList(PseudoCode::FunctionRecord &functionRecord, StaticList<FunctionTypes*> &expectedTypes);
 
 };
 

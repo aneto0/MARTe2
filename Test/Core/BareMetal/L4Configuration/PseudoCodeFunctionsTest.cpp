@@ -52,3 +52,64 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
 
     return ok;
 }
+
+bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, StaticList<FunctionTypes *> &expectedTypes) {
+
+    bool ok = true;
+
+    for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
+        PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
+
+        if (functionRecord.GetName() == functionName.GetList()) {
+            ok &= RemoveFunctionRecordTypesFromList(functionRecord, expectedTypes);
+        }
+    }
+
+    ok &= (expectedTypes.GetSize() == 0);
+
+    return ok;
+
+}
+
+bool PseudoCodeFunctionsTest::RemoveFunctionRecordTypesFromList(PseudoCode::FunctionRecord &functionRecord, StaticList<FunctionTypes*> &expectedTypes) {
+
+    FunctionTypes functionTypes(functionRecord);
+    bool removed = false;
+
+    for (uint32 i = 0; (i < expectedTypes.GetSize()) && (!removed); ++i) {
+        if (functionTypes == expectedTypes[i]) {
+            removed = true;
+            expectedTypes.Remove(i);
+        }
+    }
+
+    return removed;
+}
+
+FunctionTypes::FunctionTypes(const TypeDescriptor &inputType, const TypeDescriptor &outputType) :
+    inputTypes(1),
+    outputTypes(1) {
+    inputTypes[0] = inputType;
+    outputTypes[0] = outputType;
+}
+
+FunctionTypes::FunctionTypes(PseudoCode::FunctionRecord &functionRecord) :
+    inputTypes(static_cast<TypeDescriptor*>(functionRecord.GetInputTypes().GetDataPointer()), functionRecord.GetInputTypes().GetNumberOfElements()),
+    outputTypes(static_cast<TypeDescriptor*>(functionRecord.GetOutputTypes().GetDataPointer()), functionRecord.GetOutputTypes().GetNumberOfElements()) {
+}
+
+bool FunctionTypes::operator==(FunctionTypes *functionTypes) {
+
+    bool equals = true;
+
+    equals &= inputTypes.GetNumberOfElements() == functionTypes->inputTypes.GetNumberOfElements();
+    equals &= outputTypes.GetNumberOfElements() == functionTypes->outputTypes.GetNumberOfElements();
+    for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
+        equals &= (inputTypes[i] == functionTypes->inputTypes[i]);
+    }
+    for (uint32 i = 0; (equals) && (i < outputTypes.GetNumberOfElements()); ++i) {
+        equals &= (outputTypes[i] == functionTypes->outputTypes[i]);
+    }
+
+    return equals;
+}
