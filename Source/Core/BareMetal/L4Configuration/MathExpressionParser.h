@@ -41,8 +41,8 @@
 namespace MARTe{
 
 /**
- * @brief Parser of mathematical expressions in infix form. The
- *        expression can be converted into stack machine form or RPN.
+ * @brief Parser of mathematical expressions in infix form which can
+ *        also convert them into stack machine form or RPN.
  *
  * @details This class is a concrete class for MARTe::ParserI providing
  *          the actual lexical elements and parsing rules for interpreting
@@ -51,9 +51,7 @@ namespace MARTe{
  * The parser accepts mathematical expressions in the form:
  * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
- * 
  * ret = sin(A +B) > (pow(C+D,E) * tan((bool)F + (float)15));
- * 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * Each expression must be terminated with a comma or a semicolon.
@@ -87,42 +85,98 @@ namespace MARTe{
  * specific expression. 
  * 
  * Constructor requires:
- * @li an input stream of characters containing the mathematical
- *     expression in infix form,
- * @li an output foo structured data, (TODO this is not necessary and will be removed)
- * @li an output stream of characters where the parser will write all
- *     the errors found on the input stream of characters.
+ * - an input stream of characters containing the mathematical
+ *   expression in infix form,
+ * - an output foo structured data, (TODO this is not necessary and will be removed)
+ * - an output stream of characters where the parser will write all
+ *   the errors found on the input stream of characters.
  * 
  * To make the parser parse the expression, users should call the Parse()
  * method. Provided that the Parse() method was called, the expression
  * in stack machine form is then availabe as the output of the
  * GetStackMachineExpression() method.
  * 
+ * Example usage with the following expression:
+ * `retVar = pow(sin(theta), 2) + pow(cos(theta), 2)`
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * #include "MathExpressionParser.h"
+ * 
+ * StreamString expr = "retVar = pow(sin(theta), 2) + pow(cos(theta), 2);"
+ * expr.Seek(0);
+ * 
+ * MathExpressionParser mathParser(expr, fooDatabase, &errStream);
+ * bool parseOk = mathParser.Parse();
+ * 
+ * StreamString outputExpr;
+ * outputExpr = mathParser.GetStackMachineExpression();
+ * 
+ * REPORT_ERROR(ErrorManagement::Information, "\n%s", outputExpr.Buffer());
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * 
+ * This should print:
+ * 
+ * ~~~~~~~~~~~~
+ * READ theta
+ * SIN
+ * CONST 2
+ * POW
+ * READ theta
+ * COS
+ * CONST 2
+ * POW
+ * +
+ * WRITE retVar
+ * ~~~~~~~~~~~~
+ *
  * All the instances of this parser use the lexical elements defined
  * in the MathGrammar of MARTe::GrammarInfo and apply the parsing rules
- * of the following grammar:
- *
- * @todo insert grammar here
- *
- * Note: This grammar is written in the SLK language and refers to
+ * defined in MathGrammar.ll:
+ * 
+ * @include MathGrammar.ll
+ * 
+ * @note This grammar is written in the SLK language and refers to
  * functions declared in this parser.
+ * 
  */
 
 class DLL_API MathExpressionParser : public ParserI {
 
 public:
+
+    /**
+     * @brief Default constructor.
+     * @param[in] stream is the stream containing the expression to be parsed.
+     * @param[out] databaseIn is the built StructuredData in output. (TODO remove)
+     * @param[out] err is the stream where error messages are printed to.
+     */
     MathExpressionParser(StreamI &stream,
                          StructuredDataI &databaseIn,
                          BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
-
+    
+    /**
+     * @brief Destructor.
+     */
     virtual ~MathExpressionParser();
     
+    /**
+     * @brief   Returns the input expression in stack machine form.
+     * @returns the input expression in stack machine form.
+     * @pre     Parse() method must have been called.
+     */
     StreamString GetStackMachineExpression() const;
 
 protected:
     
     /**
-     * @name Math expression-specific methods
+     * @name    Parsing methods
+     * @brief   Methods invoked by the parser during parsing.
+     * @details These methods manage the three stacks of the class:
+     *          #operatorStack, #typecastStack and #assignmentVarName.
+     *          Each time the parser hits an element it pushes it to
+     *          the appropriate stack and is then responsible for popping
+     *          it in the right order into the #stackMachineExpression
+     *          so that the resulting expression is in RPN form.
      */
     //@{
         /**
@@ -176,7 +230,7 @@ protected:
          *          to the output expression.
          * @details This method gets called whenever the parser hits an
          *          operand (that is, an isolated STRING or NUMBER token).
-         *          The operand is immediatly added to the #stackMachineExpr
+         *          The operand is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
          *          engine (that is, as `READ STRING` for STRING
          *          tokens and as `CONST NUMBER` for NUMBER tokens.
@@ -190,7 +244,7 @@ protected:
          *          isolated NUMBER token for which store type has been
          *          specified in the format `(type) CONSTANT` (e.g. 
          *          `(float32) 1.52`).
-         *          The constant is immediatly added to the #stackMachineExpr
+         *          The constant is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
          *          engine (that is, as `READ STRING` for STRING
          *          tokens and as `CONST type NUMBER` for NUMBER tokens.
@@ -225,28 +279,6 @@ protected:
          */
         virtual void PopAssignment();
     //@}
-
-    virtual uint32 &GetProduction(const uint32 index) const;
-
-    virtual uint32 GetProductionRow(const uint32 index) const;
-
-    virtual uint32 GetParse(const uint32 index) const;
-
-    virtual uint32 GetParseRow(const uint32 index) const;
-
-    virtual uint32 GetConflict(const uint32 index) const;
-
-    virtual uint32 GetConflictRow(const uint32 index) const;
-
-    virtual uint32 GetConstant(const uint32 index) const;
-
-    virtual const char8 *GetSymbolName(const uint32 symbol) const;
-    
-    virtual void Execute(const uint32 number);
-        
-private:
-
-    void (MathExpressionParser::*Action[10])(void);
     
     /**
      * @brief   Translates an operator from infix mathematical syntax
@@ -261,8 +293,7 @@ private:
      *          in the future if operators need to be translated from
      *          one form to another.
      * 
-     * @example The infix expression `y = sin(x) + cos(x)` is
-     *          translated as:
+     * The infix expression `y = sin(x) + cos(x)` is translated as:
      *          
      *          ~~~~~~~~~
      *          READ x
@@ -276,11 +307,77 @@ private:
      */
     const char8* OperatorFormatting(const char8* operatorIn) const;
     
-    StreamString              stackMachineExpr;    //!< @brief Holds the mathematical expression in stack machine form while parsing.
-    StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
+    /**
+     * @name Table navigation methods
+     * @see  MARTe::ParserI
+     */
+    //@{
+    /**
+     * @see ParserI::GetProduction(*).
+     */
+    virtual uint32 &GetProduction(const uint32 index) const;
     
-    StaticList<StreamString*> operatorStack;       //!< @brief Stack where operators are pushed to and popped from while parsing.
-    StaticList<StreamString*> typecastStack;       //!< @brief Stack where typecast types are pushed to and popped from while parsing.
+    /**
+     * @see ParserI::GetProductionRow(*).
+     */
+    virtual uint32 GetProductionRow(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetParse(*).
+     */
+    virtual uint32 GetParse(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetParseRow(*).
+     */
+    virtual uint32 GetParseRow(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetConflict(*).
+     */
+    virtual uint32 GetConflict(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetConflictRow(*).
+     */
+    virtual uint32 GetConflictRow(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetConstant(*).
+     */
+    virtual uint32 GetConstant(const uint32 index) const;
+    
+    /**
+     * @see ParserI::GetSymbolName(*).
+     */
+    virtual const char8 *GetSymbolName(const uint32 symbol) const;
+    
+    /**
+     * @see ParserI::Execute(*).
+     */
+    virtual void Execute(const uint32 number);
+    //@}
+    
+    /**
+     * @name Stacks
+     */
+    //@{
+        StreamString              assignmentVarName;   //!< @brief Holds the name of the variable to whom the whole expression is going to be assigned.
+        StaticList<StreamString*> operatorStack;       //!< @brief Stack where operators are pushed to and popped from while parsing.
+        StaticList<StreamString*> typecastStack;       //!< @brief Stack where typecast types are pushed to and popped from while parsing.
+    //@}
+    
+    /**
+     * @brief Holds the mathematical expression in stack machine form while parsing.
+     */
+    StreamString              stackMachineExpr;
+    
+private:
+    
+    /**
+     * The array of functions needed by the parser.
+     */
+    void (MathExpressionParser::*Action[10])(void);
     
 };
 
