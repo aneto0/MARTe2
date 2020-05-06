@@ -27,50 +27,141 @@
 namespace MARTe{
 namespace RegularExpression{
 
-#if 0 //obsolete
-class StreamIBinding{
+/**
+ *
+ */
+class CStringBinding{
 public:
-	inline StreamIBinding(StreamI &in,CStringTool     &out): stream(in),output(out){
-		startPosition = in.Position();
+	struct Status{
+		uint32 position;
+	};
+
+	inline CStringBinding(CCString in,PatternMatchCallBack callBackIn=NULL): string(in){
+		stringSize = string.GetSize();
 		relativePosition = 0;
+		nameLength = 0;
+		valueStart = 0;
+		callBack = callBackIn;
 	}
 
-	inline bool GetC(char8 & c){
-		bool ret = true;
-		uint32 size = 1;
+	/**
+	 * returns error only in case of fault
+	 * at the end of file returns 256
+	 */
+	inline bool GetC(int16 & c){
 
-		ret = stream.Read(&c,size);
-		if (ret){
+//		bool ret = true;
+		if (relativePosition < stringSize){
+			c = string[relativePosition];
 			relativePosition++;
-			output.Append(c);
+		} else {
+//			ret = false;
+			c = 256;
 		}
+//		return ret;
+		return true;
+	}
 
+	inline void SaveStatus(Status &status){
+		status.position = relativePosition;
+//printf("Save to %i : %s\n",status.position,string.GetList()+status.position);
+	}
+
+	inline bool RestoreStatus(const Status &status){
+//printf("Restore to %i : %s\n",status.position,string.GetList()+status.position);
+		bool ret = true;
+		if (status.position <= stringSize){
+			relativePosition = status.position;
+		} else {
+			ret = false;
+		}
 		return ret;
 	}
+
 	inline uint32 Position(){
 		return relativePosition;
-//		return stream.Position();
 	}
-	bool Seek(uint32 position){
-		bool ret = (position <= relativePosition);
-		if (ret){
-			ret = stream.Seek(position+startPosition);
-		}
-		if (ret){
-			relativePosition = position;
-			output.Truncate(position);
+
+	inline bool Seek(uint32 newPosition){
+		bool ret = true;
+		if (newPosition <= stringSize){
+			relativePosition = newPosition;
+		} else {
+			ret = false;
 		}
 		return ret;
+	}
+
+	inline void GetResult(CCString &modifiedInput,CStringTool &output){
+		modifiedInput = string.GetList() + relativePosition;
+		output.Append(string.GetList(),relativePosition);
+	}
+
+	inline void GetResult(CCString &modifiedInput){
+		modifiedInput = string.GetList() + relativePosition;
+		if (callBack){
+			callBack(emptyString,0,string,relativePosition);
+		}
+	}
+
+	inline void StartVariableName(CCString startVarName){
+		nameStart = startVarName;
+	}
+
+	inline void StartVariable(CCString endVarName){
+		nameLength = (endVarName.GetList() - nameStart.GetList());
+		if (nameLength > 0){
+			nameLength--;
+		}
+		valueStart = relativePosition;
+	}
+
+	inline void EndVariable(){
+//printf("%i:%i:%s:",relativePosition,valueStart,string.GetList()+valueStart);
+		if (callBack){
+			callBack(nameStart.GetList(),nameLength,string.GetList()+valueStart,relativePosition-valueStart);
+		}
 	}
 
 private:
-	uint64 startPosition;
-	uint32 relativePosition;
-	StreamI &stream;
-	CStringTool     &output;
+
+	/**
+	 * the string to parse
+	 */
+	CCString 		string;
+
+	/**
+	 * the size of the string to parse
+	 */
+	uint32 			stringSize;
+
+	/**
+	 * the current position within the string
+	 */
+	uint32 			relativePosition;
+
+	/**
+	 * reference to the start of the variable name inside the pattern string
+	 */
+	CCString 		nameStart;
+
+	/**
+	 * length of the segment of pattern that holds the name
+	 */
+	uint32 			nameLength;
+
+	/**
+	 * start position in the input string of the matched value
+	 */
+	uint32 			valueStart;
+
+	/**
+	 *
+	 */
+	PatternMatchCallBack callBack;
 
 };
-#endif
+
 
 /**
  * Provides an adequate interface over a stream to be able to use the RegularExpression::PatternMatch
@@ -80,15 +171,18 @@ public:
 	struct Status{
 		uint32 position;
 	};
-	inline BufferedStreamIBinding(StreamI &in): stream(in),bufferT(buffer()){
-		startPosition = in.Position();
-		relativePosition = 0;
+	inline BufferedStreamIBinding(StreamI &in,PatternMatchCallBack callBackIn=NULL): stream(in),bufferT(buffer()){
+		startPosition 		= in.Position();
+		relativePosition 	= 0;
+		nameLength 			= 0;
+		valueStart 			= 0;
+		callBack 			= callBackIn;
 	}
 
 	inline ~BufferedStreamIBinding(){
 	}
 
-	inline bool GetC(char8 & c){
+	inline bool GetC(int16 & c){
 		bool ret = true;
 
 		if (relativePosition >= bufferT.GetSize()){
@@ -103,7 +197,8 @@ public:
 			c = buffer[relativePosition];
 			relativePosition++;
 		} else {
-			ret = false;
+			//ret = false;
+			c = 256;
 		}
 		return ret;
 	}
@@ -135,7 +230,34 @@ public:
 		output.Append(buffer.GetList(),relativePosition);
 	}
 
+	inline void GetResult(){
+		stream.Seek(startPosition+relativePosition);
+		if (callBack){
+			callBack(emptyString,0,buffer,relativePosition);
+		}
+	}
+
+	inline void StartVariableName(CCString startVarName){
+		nameStart = startVarName;
+	}
+
+	inline void StartVariable(CCString endVarName){
+		nameLength = (endVarName.GetList() - nameStart.GetList());
+		if (nameLength > 0){
+			nameLength--;
+		}
+		valueStart = relativePosition;
+	}
+
+	inline void EndVariable(){
+		if (callBack){
+			callBack(nameStart.GetList(),nameLength,buffer.GetList()+valueStart,relativePosition-valueStart);
+		}
+	}
+
 private:
+
+
 	/**
 	 * stream start position
 	 */
@@ -162,77 +284,27 @@ private:
 	 */
 	CStringTool			bufferT;
 
-};
-
-/**
- *
- */
-class CStringBinding{
-public:
-	struct Status{
-		uint32 position;
-	};
-
-	inline CStringBinding(CCString in): string(in){
-		stringSize = string.GetSize();
-		relativePosition = 0;
-	}
-	inline bool GetC(char8 & c){
-
-		bool ret = true;
-		if (relativePosition < stringSize){
-			c = string[relativePosition];
-			relativePosition++;
-		} else {
-			ret = false;
-		}
-		return ret;
-	}
-
-	inline void SaveStatus(Status &status){
-		status.position = relativePosition;
-	}
-
-	inline bool RestoreStatus(const Status &status){
-		bool ret = true;
-		if (status.position <= stringSize){
-			relativePosition = status.position;
-		} else {
-			ret = false;
-		}
-		return ret;
-	}
-	inline uint32 Position(){
-		return relativePosition;
-	}
-	inline bool Seek(uint32 newPosition){
-		bool ret = true;
-		if (newPosition <= stringSize){
-			relativePosition = newPosition;
-		} else {
-			ret = false;
-		}
-		return ret;
-	}
-
-	inline void GetResult(CCString &modifiedInput,CStringTool &output){
-		modifiedInput = string.GetList() + relativePosition;
-		output.Append(string.GetList(),relativePosition);
-	}
-
-private:
 	/**
-	 * the string to parse
+	 * reference to the start of the variable name inside the pattern string
 	 */
-	CCString string;
+	CCString 			nameStart;
+
 	/**
-	 * the size of the string to parse
+	 * length of the segment of pattern that holds the name
 	 */
-	uint32 stringSize;
+	uint32 				nameLength;
+
 	/**
-	 * the current position within the string
+	 * start position in the input string of the matched value
 	 */
-	uint32 relativePosition;
+	uint32 				valueStart;
+
+	/**
+	 *
+	 */
+	PatternMatchCallBack callBack;
+
+
 };
 
 
@@ -251,7 +323,6 @@ ErrorManagement::ErrorType  Match(StreamI &stream,CCString &pattern,CStringTool 
 			stream.Seek(position);
 		}
 	}
-
 	return ret;
 }
 
@@ -307,6 +378,35 @@ ErrorManagement::ErrorType MatchRules(CCString &line,const ZeroTerminatedArray<c
     return ret;
 }
 
+ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBack callBack){
+    ErrorManagement::ErrorType ret;
+
+	ret.unsupportedFeature = !input.CanSeek();
+	REPORT_ERROR(ret,"Unsupported stream");
+	if (ret){
+		uint64 position = input.Position();
+		BufferedStreamIBinding sib(input,callBack);
+		ret = PatternMatch(sib,pattern);
+		if (ret){
+			sib.GetResult();
+		} else {
+			input.Seek(position);
+		}
+	}
+    return ret;
+}
+
+ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack){
+    ErrorManagement::ErrorType ret;
+
+	CStringBinding cb(input,callBack);
+	ret = PatternMatch(cb,pattern);
+	if (ret){
+		cb.GetResult(input);
+	}
+
+    return ret;
+}
 
 
 } //RegularExpression

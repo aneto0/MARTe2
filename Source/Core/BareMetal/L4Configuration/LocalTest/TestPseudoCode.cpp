@@ -13,32 +13,6 @@
 using namespace MARTe;
 
 
-#if 0
-/**
- *
- */
-struct LexicalAnalyzerRule{
-	/**
-	 *
-	 */
-	CCString  			rule;
-
-	/**
-	 *
-	 */
-	CCString 			ruleName;
-
-	/**
-	 *
-	 */
-	uint32 				ruleId;
-
-	/**
-	 *
-	 */
-	bool 				skip;
-};
-#endif
 
 namespace ruleSet{
 
@@ -58,26 +32,26 @@ const uint32 operators         = 6;
 /*
  */
 const RegularExpression::PatternInformation rules[]={
-	    {"//!*[^\n]\n"                                               ,"line comment"     , commentElement       ,true},
-	    {"/\\*!*?\\a\\*/"                                            ,"multiline comment", commentElement       ,true},
-	    {"+[ \n\t,;]"                                                ,"separator"        , spaceElement         ,true},
-	    {"&&"                                                        ,"AND operator"     , operators            ,false},
-	    {"\\|\\|"                                                    ,"AND operator"     , operators            ,false},
-	    {"\\^"                                                       ,"AND operator"     , operators            ,false},
-	    {"\\+="                                                      ,"AND operator"     , operators            ,false},
-	    {"\\-="                                                      ,"AND operator"     , operators            ,false},
-	    {"<="                                                        ,"AND operator"     , operators            ,false},
-	    {">="                                                        ,"AND operator"     , operators            ,false},
-	    {"\\+"                                                       ,"AND operator"     , operators            ,false},
-	    {"\\-"                                                       ,"AND operator"     , operators            ,false},
-	    {"\\*"                                                       ,"AND operator"     , operators            ,false},
-	    {"/"                                                         ,"AND operator"     , operators            ,false},
-	    {"="                                                         ,"AND operator"     , operators            ,false},
-	    {"\\("                                                       ,"AND operator"     , operators            ,false},
-	    {"\\)"                                                       ,"AND operator"     , operators            ,false},
-	    {"[\\w_]*[\\d\\w_]"                                          ,"identifier"	     , identifierElement    ,false},
-		{"\"*[^\"]\""                                                ,"string"		     , stringElement		,false},
-	    {"(+\\d?(.*\\d)|.*\\d)?([eE]!?[+\\-]{1,5}\\d)"               ,"number"		     , numberElement        ,false},
+	    {"//!*[^\n]\n"                                                                       ,"line comment"     , commentElement       ,true},
+	    {"/\\*!*?\\a\\*/"                                                                    ,"multiline comment", commentElement       ,true},
+	    {"+[ \n\t,;]"                                                                        ,"separator"        , spaceElement         ,true},
+	    {"&&"                                                                                ,"AND operator"     , operators            ,false},
+	    {"\\|\\|"                                                                            ,"OR operator"      , operators            ,false},
+	    {"\\^"                                                                               ,"XOR operator"     , operators            ,false},
+	    {"<="                                                                                ,"LTE operator"     , operators            ,false},
+	    {">="                                                                                ,"GTE operator"     , operators            ,false},
+	    {"\\+"                                                                               ,"SUM operator"     , operators            ,false},
+	    {"\\-"                                                                               ,"SUB operator"     , operators            ,false},
+	    {"\\*"                                                                               ,"MUL operator"     , operators            ,false},
+	    {"/"                                                                                 ,"DIV operator"     , operators            ,false},
+	    {"="                                                                                 ,"EQ  operator"     , operators            ,false},
+	    {">"                                                                                 ,"GT  operator"     , operators            ,false},
+	    {"<"                                                                                 ,"LT  operator"     , operators            ,false},
+	    {"\\("                                                                               ,"open("            , operators            ,false},
+	    {"\\)"                                                                               ,"close)"           , operators            ,false},
+	    {"[\\w_]*[\\d\\w_]"                                                                  ,"identifier"	     , identifierElement    ,false},
+		{"\"*[^\"]\""                                                                        ,"string"		     , stringElement		,false},
+	    {"($BODY(+\\d)$FRACTION(?(.*\\d))|$FRACTION(.*\\d))?([eE]!$EXP(?[+\\-]{1,5}\\d))"    ,"number"		     , numberElement        ,false},
 		RegularExpression::emptyPattern
 //		{emptyString												 ,emptyString	     , 0					,false}
 };
@@ -129,73 +103,7 @@ CCString RPNCode=
 		"WRITE F\n"
 ;
 
-#if 0
-const LexicalAnalyzerRule *Parse(CCString &line,DynamicCString &content){
-    int ruleNo = 0;
-    ErrorManagement::ErrorType match;
-    while((ruleSet::rules[ruleNo].rule.GetSize()> 0) && match){
-        CCString pattern = ruleSet::rules[ruleNo].rule;
-        CCString lineSave = line;
-        DynamicCString matched;
-        CStringTool matchedT = matched();
-        match = RegularExpression::Match(line,pattern,matchedT);
-//        int size = line-lineSave;
-        if (match){
-//        	content().SetSize(0);
-//        	content().Append(lineSave,size);
-        	content = matched;
-//printf("matched %s %i\n",pattern.GetList(),ruleNo);
-        	return &ruleSet::rules[ruleNo];
-        } else {
-        	match.comparisonFailure = false; // reset this error to allow continuation
-        	if (match.outOfRange){
-printf("error reading input\n");
-        	}
-        	if (match.notCompleted){
-printf("error not completed\n");
-        	}
-        	if (match.syntaxError){
-printf("syntaxError\n");
-        	}
 
-            line = lineSave;
-        }
-        ruleNo++;
-    }
-    return NULL;
-}
-
-const LexicalAnalyzerRule *Parse2(StreamI &line,DynamicCString &content){
-    int ruleNo = 0;
-    ErrorManagement::ErrorType match;
-    while((ruleSet::rules[ruleNo].rule.GetSize()> 0) && match){
-        CCString pattern = ruleSet::rules[ruleNo].rule;
-        uint64 position = line.Position();
-        DynamicCString matched;
-        CStringTool matchedT = matched();
-        match = RegularExpression::Match(line,pattern,matchedT);
-        if (match){
-        	content = matched;
-        	return &ruleSet::rules[ruleNo];
-        } else {
-        	match.comparisonFailure = false; // reset this error to allow continuation
-        	if (match.outOfRange){
-printf("error reading input\n");
-        	}
-        	if (match.notCompleted){
-printf("error not completed\n");
-        	}
-        	if (match.syntaxError){
-printf("syntaxError\n");
-        	}
-
-            line.Seek(position);
-        }
-        ruleNo++;
-    }
-    return NULL;
-}
-#endif
 
 CCString line =
 " 121 ALPHA \"BIRRA\" // pip\tpo\n"
@@ -203,7 +111,24 @@ CCString line =
 "/* 123 ALPHA \"BIRRA\" // pippo\n"
 " 124 ALPHA \"BIRRA\" // */ ;pippo\n"
 " .124 126E4 .81 12.7E-5 231.32E97 .165E3 \n"
-" (A + B) * C >= (D+X)/ 6\n";
+" (A + B    ) * Crap >= (D+X)/ 6\n"
+" (A > 2.0E7) &&  (D = X)\n";
+
+void MyCallBack(CCString name, uint32 nameLength, CCString value, uint32 valueLength){
+	if (name.GetSize() >= nameLength ){
+		DynamicCString temp;
+		temp().Append(name.GetList(),nameLength);
+		printf("%s",temp.GetList());
+	}
+	printf("=");
+	if (value.GetSize() >= valueLength ){
+		DynamicCString temp;
+		temp().Append(value.GetList(),valueLength);
+		printf("%s",temp.GetList());
+	}
+	printf("\n");
+}
+
 
 int main(){
 
@@ -252,7 +177,15 @@ int main(){
 				break;
 			}
 		}
+}
+#endif
+#if 1
+{
 
+	ErrorManagement::ErrorType ret;
+	CCString rule = "*(*[ ]\\-(($PARAM(+\\w)*[ ]=*[ ]$VALUE(+\\d))|$COMMAND(bowl)))";
+	CCString line = " -pippo = 3576 -pugnetta = 764 -bowl";
+	ret = RegularExpression::Scan(line,rule,MyCallBack);
 }
 //oo
 

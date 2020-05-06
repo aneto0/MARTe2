@@ -49,16 +49,42 @@
 namespace MARTe{
 namespace RegularExpression{
 
-/*
-syntax:
-matches character to character
-the ( ... ) is a matching block and has to be matched independently
-the *{min,max}... is a recursive matcher: it will match a number of ... bewteen min and max
-? is equivalent to *{0,1}
-the [... ... ...] matches optionally a set of patterns:
-    either simply characters or character ranges x-y or (...) blocks
-    at any time a ! is encountered the successive matching will be negated
-*/
+/**
+ *
+ */
+struct PatternInformation{
+	/**
+	 *  @see RegularExpression::Match
+	 */
+	CCString  			pattern;
+
+	/**
+	 *
+	 */
+	CCString 			ruleName;
+
+	/**
+	 *
+	 */
+	uint32 				ruleId;
+
+	/**
+	 *
+	 */
+	bool 				skip;
+};
+
+/**
+ * to be used to terminate a Zero Terminated Array of rules
+ */
+static const PatternInformation emptyPattern = {emptyString,emptyString, 0,false};
+
+
+/**
+ * @brief callback used by Scan
+ *
+ */
+typedef void (*PatternMatchCallBack)(CCString name, uint32 nameLength, CCString value, uint32 valueLength);
 
 
 /**
@@ -67,9 +93,9 @@ the [... ... ...] matches optionally a set of patterns:
  * @details The Match function compares the data in the input with that of the pattern
  * 		   It will match 1 by 1 characters if are the same as in a standard comparison
  * 		   But some characters sequences enable introduction of regular expressions
- * 		   The following characters are reserved in the pattern string : ()[]{}!^*+-\
+ * 		   The following characters are in general reserved in the pattern string : ()[]{}!^*+-\?
  * 		   Inside the []  only reserved characters are ]^-\
- * 		   Inside the () or main sequence  only reserved characters are ()[]{}!*+\
+ * 		   Inside the () or main sequence  only reserved characters are ()[]{}!*+\?
  * 		   In order to simply match one of these, the pattern must use a sequence \x where x is one of the above
  * 		   Example: \\ is the \ and \+ is the +.
  * 		   Note that when initialising a string in C additional excape charcters must be used
@@ -102,6 +128,9 @@ the [... ... ...] matches optionally a set of patterns:
  *		   an error and is not worth checking for any other match.
  * 		   A pattern containing a sequence <A>!<B>|<C><D> is matched if <A><B> or <C><D> are matched,
  * 		   but is also not matched <A> is matched and <B> is not
+ * 		   The grammar allows also to name an atom using the syntax $text(<atom>)
+ * 		   text is a sequence of any char terminated by the (
+ * 		   *,+,?,{} cannot be used in front of a ?, but you can use *($text(<atom>))
  *
  * @param[in] pattern is a string contianing the pattern to match. see function details.
  * @param[in,out] input is the stream/string to be parsed to check the match with the pattern.
@@ -123,38 +152,30 @@ ErrorManagement::ErrorType Match(StreamI &input,CCString &pattern,CStringTool &m
 ErrorManagement::ErrorType Match(CCString &input,CCString &pattern,CStringTool &matched);
 
 /**
- *
+ * @brief Try matching one by one the rules in ruleSet until success or error.
+ * @see Match(BufferedStreamI &input,CCString &pattern);
+ * @param[in] ruleSet is a zero terminated array of PatterNInformation.
+ * @param[out] selectedRule, upon success contains the rule that was matched.
  */
-struct PatternInformation{
-	/**
-	 *  @see RegularExpression::Match
-	 */
-	CCString  			pattern;
-
-	/**
-	 *
-	 */
-	CCString 			ruleName;
-
-	/**
-	 *
-	 */
-	uint32 				ruleId;
-
-	/**
-	 *
-	 */
-	bool 				skip;
-};
-
-/**
- * to be used to terminate a Zero Terminated Array of rules
- */
-static const PatternInformation emptyPattern = {emptyString,emptyString, 0,false};
-
 ErrorManagement::ErrorType MatchRules(StreamI &input,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched);
 
+/**
+ * @see MatchRules(StreamI &input,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched);
+ */
 ErrorManagement::ErrorType MatchRules(CCString &input,const ZeroTerminatedArray<const PatternInformation> ruleSet,const PatternInformation *&selectedRule,DynamicCString &matched);
+
+/**
+ * @brief allow extracting matched named atoms from a stream
+ *        everytime one is matched the callback is called
+ * @see Match(BufferedStreamI &input,CCString &pattern);
+ * @param[in] pattern needs to have some named atoms
+ */
+ErrorManagement::ErrorType Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack);
+
+/**
+ * @see Scan(CCString &input,CCString &pattern,PatternMatchCallBack callBack)
+ */
+ErrorManagement::ErrorType Scan(StreamI &input,CCString &pattern,PatternMatchCallBack callBack);
 
 
 /*---------------------------------------------------------------------------*/
