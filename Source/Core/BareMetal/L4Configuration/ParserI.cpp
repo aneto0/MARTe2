@@ -93,6 +93,24 @@ ParserI::ParserI(StreamI &stream,
     isError = false;
 }
 
+ParserI::ParserI(StreamI &stream,
+                 BufferedStreamI * const err,
+                 const GrammarInfo &grammarIn) :
+        tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
+                      grammarIn.endMultipleLinesComment, grammarIn.keywords),
+        memory(1u) {
+    numberOfColumns = 0u;
+    firstNumberOfColumns = 0u;
+    numberOfRows = 0u;
+    database = static_cast<StructuredDataI*>(NULL);
+    errorStream = err;
+    tokenType = 0u;
+    numberOfDimensions = 0u;
+    grammar = grammarIn;
+    currentToken = static_cast<Token*>(NULL);
+    isError = false;
+}
+
 ParserI::~ParserI() {
     currentToken = static_cast<Token*>(NULL);
     errorStream=static_cast<BufferedStreamI*>(NULL);
