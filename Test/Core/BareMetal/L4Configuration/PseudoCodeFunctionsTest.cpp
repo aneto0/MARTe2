@@ -53,24 +53,32 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-bool PseudoCodeFunctionsTest::TestTryConsume() {
+bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &inputTypeStack, bool expectedRet, PseudoCode::DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
-    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
-    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 1, &(recordTypes[0]), &MockFunction);
-    StaticStack<TypeDescriptor,32> typeStack;
+
+    //TODO: Consider matchOutput==true case
+
     PseudoCode::DataMemoryAddress dataStackSize = 0;
     TypeDescriptor outputType;
+    Vector<TypeDescriptor> functionInputTypes = functionRecordUT.GetInputTypes();
+    Vector<TypeDescriptor> functionOutputTypes = functionRecordUT.GetOutputTypes();
+    uint32 initialStackSize = inputTypeStack.GetSize();
 
-    typeStack.Push(Float32Bit);
-    typeStack.Push(Float64Bit);
-
-    ok &= functionRecordUT.TryConsume("Test", typeStack, true, dataStackSize);
-    ok &= (typeStack.GetSize() == 1);
-    typeStack.Pop(outputType);
-    ok &= (outputType == Float64Bit);
-    //(dataStackSize = initialDataStackSize - inputDataStackSize + outputDataStackSize)  (sizeOf(DataMemoryElement)==32bits)
-    ok &= (dataStackSize == 1);
+    ok &= (expectedRet == functionRecordUT.TryConsume(inputName, inputTypeStack, false, dataStackSize));
+    if (expectedRet) {
+        ok &= (inputTypeStack.GetSize() == initialStackSize - functionInputTypes.GetNumberOfElements() + functionOutputTypes.GetNumberOfElements());
+        for (uint32 i = 0; ((ok) && (i < functionOutputTypes.GetNumberOfElements())); ++i){
+            inputTypeStack.Pop(outputType);
+            ok &= (outputType == functionOutputTypes[functionOutputTypes.GetNumberOfElements() - i - 1]);
+        }
+        //TODO: Check that remaining stack has not changed
+        ok &= (dataStackSize == expectedDataStackSize);
+    } else {
+        ok &= (inputTypeStack.GetSize() == initialStackSize);
+        //TODO: Check that stack has not changed
+        ok &= (dataStackSize == 0);
+    }
 
     return ok;
 }
