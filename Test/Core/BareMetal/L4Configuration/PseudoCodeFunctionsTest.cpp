@@ -52,3 +52,29 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
 
     return ok;
 }
+
+bool PseudoCodeFunctionsTest::TestTryConsume() {
+
+    bool ok = true;
+    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+    PseudoCode::DataMemoryAddress dataStackSize = 0;
+    TypeDescriptor outputType;
+
+    typeStack.Push(Float32Bit);
+    typeStack.Push(Float64Bit);
+
+    ok &= functionRecordUT.TryConsume("Test", typeStack, true, dataStackSize);
+    ok &= (typeStack.GetSize() == 1);
+    typeStack.Pop(outputType);
+    ok &= (outputType == Float64Bit);
+    //(dataStackSize = initialDataStackSize - inputDataStackSize + outputDataStackSize)  (sizeOf(DataMemoryElement)==32bits)
+    ok &= (dataStackSize == 1);
+
+    return ok;
+}
+
+void MockFunction(PseudoCode::Context &context) {
+    ((void)0);
+}

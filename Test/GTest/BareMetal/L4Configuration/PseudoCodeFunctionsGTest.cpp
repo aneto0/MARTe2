@@ -53,3 +53,9 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTyp
 
     ASSERT_TRUE((pseudoCodeFunctionsTest.TestFunctionRecordTypes<2, 1, 1>("SIN", expectedInputTypes, expectedOutputTypes)));
 }
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsume) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume());
+}

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "PseudoCodeFunctions.h"
+#include "PseudoCode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -59,12 +60,20 @@ public:
     bool TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]);
 
     /**
+     * @brief Tests execution of registered functionRecord.
+     */
+    bool TestTryConsume();
+
+private:
+    /**
      * @brief Checks if types provided are within types lists.
      */
     template<uint8 numberOfInputs, uint8 numberOfOutputs>
     bool FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList);
-
 };
+
+
+void MockFunction(PseudoCode::Context &context);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
