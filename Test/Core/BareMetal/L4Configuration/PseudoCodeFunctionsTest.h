@@ -40,18 +40,6 @@
 
 using namespace MARTe;
 
-class FunctionTypes {
-public:
-    FunctionTypes(const TypeDescriptor &inputType, const TypeDescriptor &outputType);
-    FunctionTypes(PseudoCode::FunctionRecord &functionRecord);
-    bool operator==(FunctionTypes *functionTypes);
-
-private:
-    Vector<TypeDescriptor> inputTypes;
-    Vector<TypeDescriptor> outputTypes;
-
-};
-
 /**
  * @brief Tests all the PseudoCodeFunctions functions.
  */
@@ -65,20 +53,81 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the registed Read functionRecords.
+     * @brief Tests types of registered functionRecords.
      */
-    bool TestFunctionRecordTypes(CCString functionName, StaticList<FunctionTypes*> &expectedTypes);
+    template<uint8 numberOfFunctions, uint8 numberOfInputs, uint8 numberOfOutputs>
+    bool TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]);
 
     /**
-     * @brief Checks if types provided in functionRecord are within provided expectedTypes.
+     * @brief Checks if types provided are within types lists.
      */
-    bool RemoveFunctionRecordTypesFromList(PseudoCode::FunctionRecord &functionRecord, StaticList<FunctionTypes*> &expectedTypes);
+    template<uint8 numberOfInputs, uint8 numberOfOutputs>
+    bool FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList);
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<uint8 numberOfFunctions, uint8 numberOfInputs, uint8 numberOfOutputs>
+bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]) {
+
+    StaticList<TypeDescriptor*> expectedInputTypesList;
+    StaticList<TypeDescriptor*> expectedOutputTypesList;
+    bool ok = true;
+
+    for (uint8 i=0; i < numberOfFunctions; ++i) {
+        expectedInputTypesList.Add(expectedInputTypes[i]);
+        expectedOutputTypesList.Add(expectedOutputTypes[i]);
+    }
+
+    for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
+        PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
+        Vector<TypeDescriptor> inputTypes = functionRecord.GetInputTypes();
+        Vector<TypeDescriptor> outputTypes = functionRecord.GetOutputTypes();
+
+        if ((functionRecord.GetName() == functionName.GetList()) &&
+            (inputTypes.GetNumberOfElements() == numberOfInputs) &&
+            (outputTypes.GetNumberOfElements() == numberOfOutputs)) {
+            uint8 foundIndex;
+
+            ok &= FindTypesInLists<numberOfInputs, numberOfOutputs>(foundIndex, inputTypes, outputTypes, expectedInputTypesList, expectedOutputTypesList);
+            if (ok) {
+                expectedInputTypesList.Remove(foundIndex);
+                expectedOutputTypesList.Remove(foundIndex);
+            }
+        }
+    }
+
+    ok &= (expectedInputTypesList.GetSize() == 0);
+    ok &= (expectedOutputTypesList.GetSize() == 0);
+
+    return ok;
+
+}
+
+template<uint8 numberOfInputs, uint8 numberOfOutputs>
+bool PseudoCodeFunctionsTest::FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList) {
+
+    bool found = false;
+
+    for (foundIndex = 0; (foundIndex < inputTypesList.GetSize()) && (!found); ++foundIndex) {
+        bool equals = true;
+
+        for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
+            equals &= (inputTypes[i] == inputTypesList[foundIndex][i]);
+        }
+        for (uint32 i = 0; (equals) && (i < outputTypes.GetNumberOfElements()); ++i) {
+            equals &= (outputTypes[i] == outputTypesList[foundIndex][i]);
+        }
+
+        found = equals;
+    }
+
+    --foundIndex;
+    return found;
+}
 
 #endif /* PSEUDOCODEFUNCTIONSTEST_H_ */
 
