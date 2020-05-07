@@ -43,11 +43,10 @@ using namespace MARTe;
 bool MathExpressionParserTest::TestConstructor() {
 
     StreamString configString = "";
-    ConfigurationDatabase database;
 
     StreamString err;
 
-    MathExpressionParser myParser(configString, database, &err);
+    MathExpressionParser myParser(configString, &err);
 
     GrammarInfo myGrammar=myParser.GetGrammarInfo();
 
@@ -66,7 +65,6 @@ bool MathExpressionParserTest::TestGetGrammarInfo() {
 
 bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const char8* expectedOutputString)
 {
-    ConfigurationDatabase database;
     StreamString errors;
     
     StreamString exprString = expressionIn;
@@ -75,7 +73,7 @@ bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const c
     exprString.Seek(0);
     compString.Seek(0);
     
-    MathExpressionParser myParser(exprString, database, &errors);
+    MathExpressionParser myParser(exprString, &errors);
     
     if (!myParser.Parse())
         return false;
@@ -91,14 +89,13 @@ bool MathExpressionParserTest::TestExpression(const char8* expressionIn, const c
 
 bool MathExpressionParserTest::TestExpressionError(const char8* expressionIn)
 {
-	ConfigurationDatabase database;
     StreamString errors;
     
     StreamString exprString = expressionIn;
     
     exprString.Seek(0);
 
-    MathExpressionParser myParser(exprString, database, &errors);
+    MathExpressionParser myParser(exprString, &errors);
 	
     bool ret = myParser.Parse();
     

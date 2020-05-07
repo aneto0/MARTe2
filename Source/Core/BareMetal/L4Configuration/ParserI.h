@@ -101,7 +101,15 @@ public:
             StructuredDataI &databaseIn,
             BufferedStreamI * const err,
             const GrammarInfo &grammarIn);
-
+    /**
+     * @brief Alternate constructor when there is no need for an output database.
+     * @post
+     *   GetGrammar() == grammarIn
+     */
+    ParserI(StreamI &stream,
+            BufferedStreamI * const err,
+            const GrammarInfo &grammarIn);
+            
     /**
      * @brief Destructor.
      */

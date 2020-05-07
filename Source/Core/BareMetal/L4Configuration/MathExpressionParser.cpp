@@ -133,9 +133,8 @@ static const char8 *GetTerminalName(const uint32 symbol) {
 namespace MARTe {
 
 MathExpressionParser::MathExpressionParser(StreamI &stream,
-                                           StructuredDataI &databaseIn,
                                            BufferedStreamI * const err) :
-    ParserI(stream, databaseIn, err, MathGrammar) {
+    ParserI(stream, err, MathGrammar) {
         
     Action[0] = static_cast<void (MathExpressionParser::*)(void)>(NULL);
     Action [ 1 ] = &MathExpressionParser::StoreAssignment;
