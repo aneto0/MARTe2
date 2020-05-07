@@ -151,7 +151,6 @@ public:
      * @param[out] err is the stream where error messages are printed to.
      */
     MathExpressionParser(StreamI &stream,
-                         StructuredDataI &databaseIn,
                          BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
     
     /**
