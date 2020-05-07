@@ -1,7 +1,7 @@
 /**
  * @file PseudoCodeFunctionsGTest.cpp
  * @brief Source file for class PseudoCodeFunctionsGTest
- * @date 06/06/2020
+ * @date 06/05/2020
  * @author Didac Magrinya
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -48,13 +48,8 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDefaultConstructor) 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTypes) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
-    StaticList<FunctionTypes*> sinExpectedTypes;
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
 
-    FunctionTypes types1(Float32Bit, Float32Bit);
-    FunctionTypes types2(Float64Bit, Float64Bit);
-
-    sinExpectedTypes.Add(&types1);
-    sinExpectedTypes.Add(&types2);
-
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("SIN", sinExpectedTypes));
+    ASSERT_TRUE((pseudoCodeFunctionsTest.TestFunctionRecordTypes<2, 1, 1>("SIN", expectedInputTypes, expectedOutputTypes)));
 }
