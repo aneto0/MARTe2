@@ -50,7 +50,7 @@ namespace MARTe{
 namespace RegularExpression{
 
 /**
- *
+ * @brief used in MatchRules
  */
 struct PatternInformation{
 	/**
@@ -59,17 +59,17 @@ struct PatternInformation{
 	CCString  			pattern;
 
 	/**
-	 *
+	 * @brief name of the rule
 	 */
 	CCString 			ruleName;
 
 	/**
-	 *
+	 * @brief id of the rule
 	 */
 	uint32 				ruleId;
 
 	/**
-	 *
+	 * @brief is this a separator to be skipped
 	 */
 	bool 				skip;
 };

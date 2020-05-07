@@ -8,6 +8,8 @@
 #include "ConfigurationDatabase.h"
 #include "StreamMemoryReference.h"
 #include "RegularExpression.h"
+#include "ProgrammableLexicalAnalyzer.h"
+
 
 
 using namespace MARTe;
@@ -136,7 +138,28 @@ int main(){
 
 //char *p = const_cast<char *>(line.GetList());
 
-#if 1
+	{
+		ErrorManagement::ErrorType ret;
+		StreamString lineS = line;
+		lineS.Seek(0);
+
+		ProgrammableLexicalAnalyzer lexer(ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),lineS);
+		while (ret) {
+			const ProgrammableLexicalAnalyzer::Token *token;
+		    ret = lexer.GetToken(token);
+			if (ret && (token->matchedRule)){
+				if (!token->matchedRule->skip){
+					printf("%s [%s]\n",token->matchedRule->ruleName.GetList(),token->matchedString.GetList());
+					fflush(stdout);
+				}
+			} else {
+				printf("UNMATCHED \n");
+				break;
+			}
+		}
+	}
+
+#if 0
 {
 		CCString lineP = line;
 		ErrorManagement::ErrorType ret;
