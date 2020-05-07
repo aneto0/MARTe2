@@ -60,9 +60,9 @@ public:
     bool TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]);
 
     /**
-     * @brief Tests execution of registered functionRecord.
+     * @brief Tests TryConsume.
      */
-    bool TestTryConsume();
+    bool TestTryConsume(PseudoCode::FunctionRecord functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &inputTypeStack, bool expectedRet, PseudoCode::DataMemoryAddress expectedDataStackSize);
 
 private:
     /**

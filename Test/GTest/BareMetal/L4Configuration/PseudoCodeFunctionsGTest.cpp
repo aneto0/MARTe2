@@ -54,8 +54,15 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTyp
     ASSERT_TRUE((pseudoCodeFunctionsTest.TestFunctionRecordTypes<2, 1, 1>("SIN", expectedInputTypes, expectedOutputTypes)));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsume) {
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume());
+    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(Float32Bit);
+
+    //(dataStackSize = initialDataStackSize - inputDataStackSize + outputDataStackSize)  (sizeOf(DataMemoryElement)==32bits)
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, 1));
 }
