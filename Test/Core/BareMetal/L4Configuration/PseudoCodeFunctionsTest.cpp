@@ -60,7 +60,7 @@ bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord function
     //TODO: Consider matchOutput==true case
 
     PseudoCode::DataMemoryAddress dataStackSize = 0;
-    TypeDescriptor type;
+    TypeDescriptor type, initialType;
     Vector<TypeDescriptor> functionInputTypes = functionRecordUT.GetInputTypes();
     Vector<TypeDescriptor> functionOutputTypes = functionRecordUT.GetOutputTypes();
     StaticStack<TypeDescriptor,32> initialTypeStack;
@@ -82,7 +82,6 @@ bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord function
         }
 
         for (uint32 i = functionInputTypes.GetNumberOfElements(); ((ok) && (typeStack.GetSize() > 0)); ++i) {
-            TypeDescriptor initialType;
 
             initialTypeStack.Peek(i, initialType);
             typeStack.Pop(type);
@@ -93,7 +92,12 @@ bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord function
         ok &= (dataStackSize == 0);
 
         ok &= (typeStack.GetSize() == initialTypeStack.GetSize());
-        //check that stack has not changed
+        while ((ok) && (initialTypeStack.GetSize() > 0)) {
+
+            initialTypeStack.Pop(initialType);
+            typeStack.Pop(type);
+            ok &= ((initialType == type));
+        }
     }
 
     return ok;
