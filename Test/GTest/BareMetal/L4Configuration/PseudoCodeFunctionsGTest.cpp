@@ -63,7 +63,7 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1));
 }
 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
@@ -76,7 +76,20 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(UnsignedInteger8Bit);
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MatchOutput) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(Float32Bit);
+    typeStack.Push(Float64Bit);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, true, 1));
 }
 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Name) {
@@ -88,5 +101,5 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Nam
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "WrongName", typeStack, false, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "WrongName", typeStack, false, false, 1));
 }
