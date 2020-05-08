@@ -53,31 +53,47 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &inputTypeStack, bool expectedRet, PseudoCode::DataMemoryAddress expectedDataStackSize) {
+bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool expectedRet, PseudoCode::DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
 
     //TODO: Consider matchOutput==true case
 
     PseudoCode::DataMemoryAddress dataStackSize = 0;
-    TypeDescriptor outputType;
+    TypeDescriptor type;
     Vector<TypeDescriptor> functionInputTypes = functionRecordUT.GetInputTypes();
     Vector<TypeDescriptor> functionOutputTypes = functionRecordUT.GetOutputTypes();
-    uint32 initialStackSize = inputTypeStack.GetSize();
+    StaticStack<TypeDescriptor,32> initialTypeStack;
 
-    ok &= (expectedRet == functionRecordUT.TryConsume(inputName, inputTypeStack, false, dataStackSize));
+    for (uint32 i = typeStack.GetSize(); i > 0; --i) {
+        typeStack.Peek(i - 1, type);
+        initialTypeStack.Push(type);
+    }
+
+    ok &= (expectedRet == functionRecordUT.TryConsume(inputName, typeStack, false, dataStackSize));
     if (expectedRet) {
-        ok &= (inputTypeStack.GetSize() == initialStackSize - functionInputTypes.GetNumberOfElements() + functionOutputTypes.GetNumberOfElements());
-        for (uint32 i = 0; ((ok) && (i < functionOutputTypes.GetNumberOfElements())); ++i){
-            inputTypeStack.Pop(outputType);
-            ok &= (outputType == functionOutputTypes[functionOutputTypes.GetNumberOfElements() - i - 1]);
-        }
-        //TODO: Check that remaining stack has not changed
         ok &= (dataStackSize == expectedDataStackSize);
+
+        ok &= (typeStack.GetSize() == initialTypeStack.GetSize() - functionInputTypes.GetNumberOfElements() + functionOutputTypes.GetNumberOfElements());
+
+        for (uint32 i = 0; ((ok) && (i < functionOutputTypes.GetNumberOfElements())); ++i){
+            typeStack.Pop(type);
+            ok &= (type == functionOutputTypes[functionOutputTypes.GetNumberOfElements() - i - 1]);
+        }
+
+        for (uint32 i = functionInputTypes.GetNumberOfElements(); ((ok) && (typeStack.GetSize() > 0)); ++i) {
+            TypeDescriptor initialType;
+
+            initialTypeStack.Peek(i, initialType);
+            typeStack.Pop(type);
+            ok &= ((initialType == type));
+        }
+
     } else {
-        ok &= (inputTypeStack.GetSize() == initialStackSize);
-        //TODO: Check that stack has not changed
         ok &= (dataStackSize == 0);
+
+        ok &= (typeStack.GetSize() == initialTypeStack.GetSize());
+        //check that stack has not changed
     }
 
     return ok;
