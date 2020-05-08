@@ -63,6 +63,18 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    //(dataStackSize = initialDataStackSize - inputDataStackSize + outputDataStackSize)  (sizeOf(DataMemoryElement)==32bits)
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, 1));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(Float64Bit);
+    typeStack.Push(Float32Bit);
+
     ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, 1));
 }
