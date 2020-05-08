@@ -171,6 +171,24 @@ protected:
 		 */
     	ErrorManagement::ErrorType  AddOperandTypecast(const Token *currentToken,BufferedStreamI *errorStream);
 		
+        /**
+         * @brief   Called when the parser hits the end of the expression.
+         * @details The method executes all operations required when
+         *          the parser hits the end of the mathematical
+         *          expression under analysis. In particular, this
+         *          method is responsible for appending the `WRITE`
+         *          statement required by the expression evaluation engine.
+         */
+    	ErrorManagement::ErrorType  PopAssignment(const Token *currentToken,BufferedStreamI *errorStream);
+        /**
+         * @brief   Pops alternative forms of operators.
+         * @details Alternative version of PopOperator() in case of
+         *          operators that have more than one meaning (e.g.
+         *          prefix `+` must be ignored, prefix `-` has a
+         *          different meaning with respect to infix `-` etc).
+         */
+    	ErrorManagement::ErrorType  PopOperatorAlternate(const Token *currentToken,BufferedStreamI *errorStream);
+
 		/**
 		 * @brief   Stores the name of the variable before the equal sign.
 		 * @details This method gets called when the left-hand side of a

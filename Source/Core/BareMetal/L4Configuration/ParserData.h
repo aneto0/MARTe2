@@ -36,6 +36,7 @@
 #include "CompilerTypes.h"
 #include "Vector.h"
 #include "CCString.h"
+#include "RegularExpression.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -179,6 +180,11 @@ public:
    Vector<CCString> Production_name;
 
    /**
+    * defines the lexic and contains the id binding to the SLK grammar
+    */
+   const ZeroTerminatedArray<const RegularExpression::PatternInformation> ruleSet;
+
+   /**
     *
     */
    ParserData(
@@ -209,7 +215,9 @@ public:
 				const char **		Action_nameIn,
 				uint32				Action_name_size,
 				const char **		Production_nameIn,
-				uint32				Production_name_size
+				uint32				Production_name_size,
+				const ZeroTerminatedArray<const RegularExpression::PatternInformation> ruleSetIn
+
    ):
 	   separators                (separatorsIn               ),
 	   beginOneLineComment       (beginOneLineCommentIn      ),
@@ -234,7 +242,8 @@ public:
        Nonterminal_name(reinterpret_cast<CCString *>(&Nonterminal_nameIn[0]),Nonterminal_name_size),
    	   Terminal_name   (reinterpret_cast<CCString *>(&Terminal_nameIn[0])	,Terminal_name_size),
 	   Action_name     (reinterpret_cast<CCString *>(&Action_nameIn[0])		,Action_name_size),
-	   Production_name (reinterpret_cast<CCString *>(&Production_nameIn[0])	,Production_name_size)
+	   Production_name (reinterpret_cast<CCString *>(&Production_nameIn[0])	,Production_name_size),
+	   ruleSet(ruleSetIn)
 
    {
    }

@@ -32,12 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Token.h"
 #include "StructuredDataI.h"
 #include "DynamicCString.h"
 #include "LexicalAnalyzer.h"
 #include "ParserData.h"
-#include "ProgressiveTypeCreator.h"
+#include "RegularExpression.h"
+#include "StaticStack.h"
+#include "List.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -51,7 +52,7 @@ namespace MARTe {
 if (debugLevel >=level){                                    \
 	StreamString s;								 			\
 	s.Printf(format,__VA_ARGS__);      						\
-	if (errorStream) errorStream->Printf("%s\n",s.Buffer());  \
+	if (errorStream) errorStream->Printf("%s",CCString(s.Buffer()));         \
 	else {                          						\
 		REPORT_ERROR(ErrorManagement::Debug,s.Buffer()); 	\
 	}			 										 	\
@@ -61,7 +62,7 @@ if (debugLevel >=level){                                    \
 if (!ret){                                                  \
 	StreamString s;								 			\
 	s.Printf(format,__VA_ARGS__);      		        	    \
-	if (errorStream) errorStream->Printf("%s\n",s.Buffer());\
+	if (errorStream) errorStream->Printf("%s",CCString(s.Buffer()) );        \
 	REPORT_ERROR(ret,s.Buffer()); 	                        \
 }
 
@@ -200,27 +201,6 @@ private:
     CCString GetProductionNameWithConflicts(const uint32 production) const ;
 
     /**
-     * @brief Retrieves the identifier of the next token produced by the
-     * lexical analyzer.
-     * @return the identifier of the next token produced by the lexical
-     * analyzer.
-     */
-//    uint32 GetNextTokenType();
-
-    /**
-     * @brief maps the input token into the grammar expected tokens
-     * @return a token code understood by the grammar.
-     */
-    uint32 TokenToCode(const Token *token);
-
-    /**
-     * @brief Peeks in the token stack produced by the lexical analyzer,
-     * retrieves the identifier of the token in the next \a position index.
-     * @return the identifier of the token in the next \a position index.
-     */
-//    uint32 PeekNextTokenType(const uint32 position);
-
-    /**
      * @brief Pushes the expected token to the stack.
      * @param[in] symbol is the expected token.
      * @param[in] stack is the internal token stack.
@@ -237,10 +217,66 @@ private:
     inline uint32 StackPop(uint32* &top) const;
 
     /**
+     * @brief Consumes one token.
+     * @return outOfRange  if there are no more tokens.
+     */
+	ErrorManagement::ErrorType NextToken();
+
+protected:
+
+
+	/**
+	 *
+	 */
+	class  Token{
+	public:// within the protected scope...
+	    /**
+	     * @brief Retrieves the token identifier.
+	     */
+	    inline uint32 GetId() const;
+
+	    /**
+	     * @brief Retrieves the token description.
+	     * @return the token description.
+	     */
+	    inline CCString GetDescription() const ;
+
+	    /**
+	     * @brief Retrieves the token data.
+	     * @return the token data.
+	     */
+	    inline CCString GetData() const ;
+
+	    /**
+	     * @brief Retrieves the token line number.
+	     * @return the token line number.
+	     */
+	    inline uint32 GetLineNumber() const;
+
+		/**
+		 * the matched rule
+		 */
+		const RegularExpression::PatternInformation *	matchedRule;
+
+		/**
+		 * the text matching the rule
+		 */
+		DynamicCString 									matchedText;
+	};
+
+    /**
+     * @brief Peeks in the token stack produced by the lexical analyzer,
+     * retrieves the identifier of the token in the next \a position index.
+     * Note that the last token is at position 0
+     * @return outOfRange  if there are no more tokens.
+     */
+    ErrorManagement::ErrorType PeekToken(StreamI &stream,const uint32 position, const Token *&token);
+
+    /**
      * @brief Executes the specified function.
      * @param[in] number if the number of the callback to be executed.
      */
-    virtual ErrorManagement::ErrorType Execute(const uint32 number,const Token *token,BufferedStreamI *errorStream)=0;
+    virtual ErrorManagement::ErrorType Execute(const uint32 functionIndex,const ParserI::Token *currentToken,BufferedStreamI *errorStream)=0;
 
 private:
 
@@ -248,7 +284,15 @@ private:
     /** to be correctly initalised by the initialiser of the specific specialisation */
     const ParserData &		constants;
 
+    /**
+     *
+     */
+    StaticStack<uint32>     symbolStack;
 
+    /**
+     * queue of tokens
+     */
+    List<Token>				tokenQueue;
 };
 
 
@@ -277,6 +321,34 @@ uint32 ParserI::StackPop(uint32 * &top) const {
     }
     return ret;
 }
+
+uint32 ParserI::Token::GetId() const{
+	uint32 id = 0;
+	if (matchedRule != NULL){
+		id = matchedRule->ruleId;
+	}
+	return id;
+}
+
+CCString ParserI::Token::GetDescription() const {
+	CCString description;
+	if (matchedRule != NULL){
+		description = matchedRule->ruleName;
+	}
+	return description;
+}
+
+CCString ParserI::Token::GetData() const {
+	CCString data;
+	data = matchedText;
+	return data;
+}
+
+uint32 ParserI::Token::GetLineNumber() const{
+	return 0;  // TODO
+}
+
+
 
 }
 

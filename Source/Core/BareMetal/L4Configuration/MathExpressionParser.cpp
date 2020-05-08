@@ -100,21 +100,17 @@ CCString MathExpressionParser::OperatorLookupTable(CCString operatorIn)
 	
 } // OperatorLookupTable()
 
-ErrorManagement::ErrorType  MathExpressionParser::End(const Token *currentToken,BufferedStreamI *errorStream){
 
-	ErrorManagement::ErrorType ret;
-
-	ret.parametersError = (currentToken == NULL_PTR(Token *));
-	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
-
-	if (ret){
-		// Write in the stack machine expression
-		stackMachineExpr += "WRITE ";
-	    stackMachineExpr += assignmentVarName.Buffer();
-	    stackMachineExpr += "\n";
-	}
-	return ret;
+ErrorManagement::ErrorType   MathExpressionParser::PopAssignment(const Token *currentToken,BufferedStreamI *errorStream) {
+	COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PopAssignment ", currentToken->GetData());
+	ErrorManagement::ErrorType  ret;
+    // Write in the stack machine expression
+    stackMachineExpr += "WRITE ";
+    stackMachineExpr += assignmentVarName.Buffer();
+    stackMachineExpr += "\n";
+    return ret;
 }
+
 
 ErrorManagement::ErrorType  MathExpressionParser::PushOperator(const Token *currentToken,BufferedStreamI *errorStream){
 
@@ -124,10 +120,11 @@ ErrorManagement::ErrorType  MathExpressionParser::PushOperator(const Token *curr
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PushOperator ", currentToken->GetData());
 
-		StreamString* operat = new StreamString(currentToken->GetData());
+		StreamString* currentOperator = new StreamString(currentToken->GetData());
 
-		operatorStack.Add(operat);
+		operatorStack.Add(currentOperator);
 	}
 	return ret;
 }
@@ -141,17 +138,46 @@ ErrorManagement::ErrorType  MathExpressionParser::PopOperator(const Token *curre
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PopOperator ", currentToken->GetData());
 		uint32 top = operatorStack.GetSize() - 1;
-		StreamString* operat;
-		operatorStack.Extract(top, operat);
-
-//		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Add Operator ", operat->Buffer());
+		StreamString* currentOperator;
+		operatorStack.Extract(top, currentOperator);
 
 		// Write in the stack machine expression
-		stackMachineExpr += OperatorLookupTable(operat->Buffer());
+		stackMachineExpr += OperatorLookupTable(currentOperator->Buffer());
 		stackMachineExpr += "\n";
 	}
 	return ret;
+}
+
+
+ErrorManagement::ErrorType   MathExpressionParser::PopOperatorAlternate(const Token *currentToken,BufferedStreamI *errorStream) {
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PopOperatorAlternate ", currentToken->GetData());
+		uint32 top = operatorStack.GetSize() - 1;
+		StreamString* currentOperator;
+		operatorStack.Extract(top, currentOperator);
+
+	    if (*currentOperator== "+") {
+	        // nothing
+	    }
+	    else if (*currentOperator == "-") {
+	        stackMachineExpr += "NEG\n";
+	    }
+	    else {
+	        stackMachineExpr += "ERR\n";
+	        ret.syntaxError = true;
+	    	PARSER_ERROR_REPORT(errorStream,ret,"PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer());
+	    }
+
+	}
+
+    return ret;
 }
 
 ErrorManagement::ErrorType  MathExpressionParser::PushTypecast(const Token *currentToken,BufferedStreamI *errorStream){
@@ -162,12 +188,14 @@ ErrorManagement::ErrorType  MathExpressionParser::PushTypecast(const Token *curr
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
-		StreamString* operat = new StreamString(currentToken->GetData());
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PushTypecast ", currentToken->GetData());
+		StreamString* currentOperator = new StreamString(currentToken->GetData());
 
-		typecastStack.Add(operat);
+		typecastStack.Add(currentOperator);
 	}
 	return ret;
 }
+
 
 ErrorManagement::ErrorType  MathExpressionParser::PopTypecast(const Token *currentToken,BufferedStreamI *errorStream){
 
@@ -177,14 +205,15 @@ ErrorManagement::ErrorType  MathExpressionParser::PopTypecast(const Token *curre
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "PopTypecast ", currentToken->GetData());
 		uint32 top = typecastStack.GetSize() - 1;
-		StreamString* operat;
+		StreamString* currentOperator;
 
-		typecastStack.Extract(top, operat);
+		typecastStack.Extract(top, currentOperator);
 
 		// Write in the stack machine expression
 		stackMachineExpr += "CAST ";
-		stackMachineExpr += operat->Buffer();
+		stackMachineExpr += currentOperator->Buffer();
 		stackMachineExpr += "\n";
 	}
 	return ret;
@@ -198,13 +227,17 @@ ErrorManagement::ErrorType  MathExpressionParser::AddOperand(const Token *curren
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "AddOperand ", currentToken->GetData());
 		//	COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "Add Operand  ", currentToken->GetData());
 	    // Write in the stack machine expression
-	    if (currentToken->GetDescription() == "STRING")
+	    if (currentToken->GetDescription() == "STRING"){
 			stackMachineExpr += "READ ";
-
-		else if (currentToken->GetDescription() == "NUMBER")
+	    }
+		else if (currentToken->GetDescription() == "NUMBER"){
 			stackMachineExpr += "CONST ";
+		} else {
+	        stackMachineExpr += "ERR ";
+		}
 		
 		stackMachineExpr += currentToken->GetData();
 		stackMachineExpr += "\n";
@@ -220,13 +253,14 @@ ErrorManagement::ErrorType  MathExpressionParser::AddOperandTypecast(const Token
 	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
 
 	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "AddOperandTypecast ", currentToken->GetData());
 		uint32 top = typecastStack.GetSize() - 1;
-		StreamString* operat;
-		typecastStack.Extract(top, operat);
+		StreamString* currentOperator;
+		typecastStack.Extract(top, currentOperator);
 
 	    // Write in the stack machine expression
 	    stackMachineExpr += "CONST ";
-		stackMachineExpr += operat->Buffer();
+		stackMachineExpr += currentOperator->Buffer();
 		stackMachineExpr += " ";
 		stackMachineExpr += currentToken->GetData();
 		stackMachineExpr += "\n";
@@ -245,6 +279,24 @@ ErrorManagement::ErrorType  MathExpressionParser::StoreAssignment(const Token *c
 		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "StoreAssignment ", currentToken->GetData());
 
 		assignmentVarName = currentToken->GetData();
+	}
+	return ret;
+}
+
+ErrorManagement::ErrorType  MathExpressionParser::End(const Token *currentToken,BufferedStreamI *errorStream){
+
+	ErrorManagement::ErrorType ret;
+
+	ret.parametersError = (currentToken == NULL_PTR(Token *));
+	PARSER_ERROR_REPORT(errorStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
+
+	if (ret){
+		COMPOSITE_REPORT_ERROR(ErrorManagement::Debug, "End ", currentToken->GetData());
+
+		// Write in the stack machine expression
+		stackMachineExpr += "WRITE ";
+	    stackMachineExpr += assignmentVarName.Buffer();
+	    stackMachineExpr += "\n";
 	}
 	return ret;
 }

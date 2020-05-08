@@ -50,26 +50,37 @@
 namespace MARTe{
 namespace RegularExpression{
 
+
+/**
+ *  used to encode escape sequences
+ */
+static const int16 extendedCode = 512;
+
 /**
  *
  */
-static const int16 endOfPattern = 256;
+static const int16 endOfPattern = 1024 ;
 
 /**
  * indicates the range [0-9]
  */
-static const int16 allRange   = 256  + 'a';
+static const int16 digitRange   = extendedCode  + 'd';
 
 
 /**
- * indicates the range [\0-\377]
+ * 1dindicates the range [\0-\377]
  */
-static const int16 digitRange   = 256  + 'd';
+static const int16 allRange   = extendedCode  + 'a';
 
 /**
- * indicates the range [A-Zaz]
+ * \w indicates the range [A-Zaz]
  */
-static const int16 wordRange   = 256  + 'w';
+static const int16 wordRange   = extendedCode  + 'w';
+
+/**
+ * \e indicates the end of file
+ */
+static const int16 eof         = 256 ;
 
 /**
  * returns logic if c is within the range [minAscii-maxAscii]
@@ -148,10 +159,13 @@ int16 GetPatternElement(CCString &pattern){
 	int16 patternElement = pattern[0];
 	if (patternElement == '\\'){
 		pattern++;
-		patternElement = pattern[0]+endOfPattern;
+		patternElement = pattern[0]+extendedCode;
 	}
-	if ((patternElement == 0) || (patternElement == endOfPattern)){
+	if (patternElement == 0) {
 		patternElement = endOfPattern;
+	} else if (patternElement == extendedCode){
+		patternElement = eof;   // \ followed by \0
+//printf("producing EOF matching token \n");
 	} else {
 		pattern++;
 	}
@@ -184,19 +198,13 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
     // the status of the range matching algorithm
     enum RangeMatchStatus status = PatternNotSet;
 
-    // inputStatus allow unwinding the changes into the context
-//    typename T::Status inputStatus;
-//    input.SaveStatus(inputStatus);
-
     // the character to be matched
     int16 lastCharacter = 0;
 
-#if 1
     if (!input.GetC(lastCharacter)){
-    	ret.outOfRange = true;
+    	ret.fatalError = true;
 		status = Error;
 	}
-#endif
     // check for NULL or empty
     if (pattern.GetSize() > 0){
 
@@ -229,24 +237,9 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                 case digitRange:
             	case wordRange:{
             		HandleOpenRange(status,ret,lastCharacter,minAscii,logic);
-#if 0
-                    if (status == PatternRange){
-                    	if (RangeCheck(lastCharacter,minAscii,255,true)){
-                    		status = Matched;
-                        	ret.comparisonFailure = !logic;
-                    	}
-                    }
-#endif
                 	if (status == PatternNotSet){
                         minAscii = 0;
                 		status = PatternSet;
-#if 0
-//#ifndef OPT1
-                        if (!input.GetC(lastCharacter)){
-                        	ret.outOfRange = true;
-                    		status = Error;
-                    	}
-#endif
                 	}
                 	if (status == PatternSet){
                			bool result = false;
@@ -266,15 +259,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
             		// a sequence n-! indicates an open ended range n-255 and then a logic inversion
             		HandleOpenRange(status,ret,lastCharacter,minAscii,logic);
 
-#if 0
-            		// a sequence n-! indicates an open ended range n-255 and then a logic inversion
-                    if (status == PatternRange){
-                    	if (RangeCheck(lastCharacter,minAscii,255,true)){
-                    		status = Matched;
-                        	ret.comparisonFailure = !logic;
-                    	}
-                    }
-#endif
 
                 	// process only if not match yet
                 	if (status < Matched){
@@ -282,13 +266,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                         // restart sequence
                         if (status > PatternNotSet){
                         	status = PatternNotSet;
-#if 0
-//#ifndef OPT1
-                        	if (!input.RestoreStatus(inputStatus)){
-                            	ret.outOfRange = true;
-                        		status = Error;
-                        	}
-#endif
                         }
                         minAscii = 0;
                 	}
@@ -302,13 +279,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                 	if (status == PatternNotSet){
                         minAscii = 0;
                     	status = PatternRange;
-#if 0
-//#ifndef OPT1
-                    	if (!input.GetC(lastCharacter)){
-                        	ret.outOfRange = true;
-                    		status = Error;
-                    	}
-#endif
                     }
                 } break;
                 // any other character in the pattern
@@ -316,13 +286,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                 	if (status < Matched){
                         if (status == PatternNotSet){
                         	status = PatternSet;
-#if 0
-//#ifndef OPT1
-                        	if (!input.GetC(lastCharacter)){
-                            	ret.outOfRange = true;
-                        		status = Error;
-                        	}
-#endif
                         }
 
                         char8 matchCharacter = static_cast<char8>(patternElement & 0xFF);
@@ -348,22 +311,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
                             // and check lastCharacter against the range
                             if (status == PatternRange){
                         		status = PatternNotSet;
-#if 0
-                            	if (RangeCheck(lastCharacter,minAscii,matchCharacter,true)){
-                                	status = Matched;
-                                	ret.comparisonFailure = !logic;
-                                	//result = logic;
-                            	} else {
-    #if 0
-    //#ifndef OPT1
-                            		// go forward 1 step Get again the lastCharacter
-                                	if (!input.RestoreStatus(inputStatus)){
-                                    	ret.outOfRange = true;
-                                		status = Error;
-                                	}
-    #endif
-                            	}
-#endif
                             }
 
                         }
@@ -373,16 +320,6 @@ ErrorManagement::ErrorType RangeMatch(T &input,CCString &pattern){
             }
         } // pattern size is not 0
     } // while loop
-
-#if 0
-//#ifdef OPT1
-    if (!ret){
-    	if (!input.RestoreStatus(inputStatus)){
-        	ret.outOfRange = true;
-    		status = Error;
-    	}
-    }
-#endif
 
 //printf ("exit RAngeMatch: %i \n",ret.ErrorsCleared());
     return ret;
@@ -490,8 +427,6 @@ static inline void GetBranchParameters(CCString &pattern,int &minMatches,int &ma
     }
 }
 
-
-
 /** called by the *() */
 template <class T>
 ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
@@ -518,7 +453,7 @@ ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
             	int16 lastCharacter;
            		if (input.GetC(lastCharacter)){
            		} else {
-            		ret.outOfRange = true;
+            		ret.fatalError = true;
            		}
         	} break;
         	case wordRange:{
@@ -527,7 +462,7 @@ ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
 //printf("match \\w with %c",lastCharacter);
            			ret.comparisonFailure = !RangeCheck(lastCharacter, 'A', 'Z',true) && !RangeCheck(lastCharacter, 'a', 'z',true) ;
            		} else {
-            		ret.outOfRange = true;
+            		ret.fatalError = true;
            		}
         	} break;
         	case digitRange:{
@@ -535,7 +470,7 @@ ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
            		if (input.GetC(lastCharacter)){
            			ret.comparisonFailure = !RangeCheck(lastCharacter, '0', '9',true);
            		} else {
-            		ret.outOfRange = true;
+            		ret.fatalError = true;
            		}
         	} break;
             default:{
@@ -544,7 +479,7 @@ ErrorManagement::ErrorType MatchSingle(T &input,CCString &pattern){
            		if (input.GetC(lastCharacter)){
            			ret.comparisonFailure = (lastCharacter != matchCharacter);
             	} else {
-            		ret.outOfRange = true;
+            		ret.fatalError = true;
             	}
             }
         }
@@ -557,8 +492,6 @@ static inline bool ScanVariableName(CCString &pattern){
 	char8 c = pattern[0];
 	pattern++;
 	while((c != '\0') && (c != '(')){
-
-
 		c = pattern[0];
 		pattern++;
 	}
@@ -610,7 +543,8 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
             	if (status == Matching){
                 	int16 lastCharacter;
                		if (!input.GetC(lastCharacter)){
-                		ret.outOfRange = true;
+                		ret.fatalError = true;
+                		status = Error;
                		}
             	}
         	} break;
@@ -619,7 +553,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
             	int16 lastCharacter;
             	if (status == Matching){
                		if (!input.GetC(lastCharacter)){
-                		ret.outOfRange = true;
+                		ret.fatalError = true;
                			status = Error;
                		}
             	}
@@ -710,10 +644,11 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
             case endOfPattern:
             case ')':{
         		if ((parenCount == 0) || (patternElement == endOfPattern)){
-            		if (status <= SectionFinish){
+//printf("end of pattern: %i \n",status); fflush(stdout);
+        			if (status <= SectionFinish){
             			status = Matched;
-                	} else
-                   	if (status == NotMatching){
+                	} else {
+//                   	if (status == NotMatching){
                    		ret.notCompleted = (mode == Locked);
                 		ret.comparisonFailure = true;
             			status = NotMatched;
@@ -835,12 +770,13 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
 
             } break;
             default:{
-            	char8 matchCharacter = static_cast<char8>(patternElement & 0xFF);
+            	// 0 to 256 included!
+            	int16 matchCharacter = patternElement & 0x1FF;
             	int16 lastCharacter;
             	if (status == Matching){
             		if (!input.GetC(lastCharacter)){
             			status = Error;
-                		ret.outOfRange = true;
+                		ret.fatalError = true;
             		}
             	}
             	if (status == Matching){
@@ -854,7 +790,7 @@ ErrorManagement::ErrorType PatternMatch(T &input,CCString &pattern){
     }
 
 
-//printf ("exit PatternMatch: %i, ok=%i \n",ret.format_as_integer,ret.ErrorsCleared());   //TODO
+//printf ("exit PatternMatch: errcode = %x, ok=%i \n",ret.format_as_integer,ret.ErrorsCleared());   //TODO
     return ret;
 }
 

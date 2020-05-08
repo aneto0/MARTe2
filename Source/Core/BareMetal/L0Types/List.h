@@ -17,8 +17,6 @@
 namespace MARTe {
 
 
-
-
 /**
  * @brief Simplified implementation of a list.
  * Does not expose internals. user interacts only with payload type loadClass.
@@ -133,9 +131,10 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 		ErrorManagement::ErrorType ret;
 		IteratorAction ia;
 		ListNode *current = this;
+        bool completed = false;
 
 //	no reason to be an error!	ret.illegalOperation = (current->next == NULL);
-		while (ret && (current->next !=NULL)){
+		while (ret && (current->next !=NULL) && !completed){
 
 			// recover original ListNodeT type
 			// can be done on the next! not on the first current as it is of different type
@@ -143,12 +142,14 @@ inline ErrorManagement::ErrorType List<loadClass>::Iterate(GenericIterator<loadC
 				// whether to switch to next for next cycle
 				// after a delete there is no need anymore
 				//bool getNext=true;
-//				ListNodeT<loadClass> *target = reinterpret_cast<ListNodeT<loadClass>*>(current->next);
 				ListNodeT<loadClass> *target = static_cast<ListNodeT<loadClass>*>(current->next);
 
 				ia = iterator.Do(target->load);
 				if (ia.notAnErrorCode){
 					switch(ia.ActionCode()){
+					case isCompleted: {
+						completed = true;
+					} break;
 					case noAction:{
 						current = current->next;
 					}break;

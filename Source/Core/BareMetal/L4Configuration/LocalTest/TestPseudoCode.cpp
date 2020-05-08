@@ -8,7 +8,6 @@
 #include "ConfigurationDatabase.h"
 #include "StreamMemoryReference.h"
 #include "RegularExpression.h"
-#include "ProgrammableLexicalAnalyzer.h"
 
 
 
@@ -36,7 +35,7 @@ const uint32 operators         = 6;
 const RegularExpression::PatternInformation rules[]={
 	    {"//!*[^\n]\n"                                                                       ,"line comment"     , commentElement       ,true},
 	    {"/\\*!*?\\a\\*/"                                                                    ,"multiline comment", commentElement       ,true},
-	    {"+[ \n\t,;]"                                                                        ,"separator"        , spaceElement         ,true},
+	    {"+[ \n\t]"                                                                          ,"separator"        , spaceElement         ,true},
 	    {"&&"                                                                                ,"AND operator"     , operators            ,false},
 	    {"\\|\\|"                                                                            ,"OR operator"      , operators            ,false},
 	    {"\\^"                                                                               ,"XOR operator"     , operators            ,false},
@@ -49,11 +48,15 @@ const RegularExpression::PatternInformation rules[]={
 	    {"="                                                                                 ,"EQ  operator"     , operators            ,false},
 	    {">"                                                                                 ,"GT  operator"     , operators            ,false},
 	    {"<"                                                                                 ,"LT  operator"     , operators            ,false},
+	    {";"                                                                                 ,";  operator"      , operators            ,false},
+	    {","                                                                                 ,",  operator"      , operators            ,false},
+	    {"\\!"                                                                               ,"!  operator"      , operators            ,false},
 	    {"\\("                                                                               ,"open("            , operators            ,false},
 	    {"\\)"                                                                               ,"close)"           , operators            ,false},
 	    {"[\\w_]*[\\d\\w_]"                                                                  ,"identifier"	     , identifierElement    ,false},
 		{"\"*[^\"]\""                                                                        ,"string"		     , stringElement		,false},
 	    {"($BODY(+\\d)$FRACTION(?(.*\\d))|$FRACTION(.*\\d))?([eE]!$EXP(?[+\\-]{1,5}\\d))"    ,"number"		     , numberElement        ,false},
+		{"\\"                                                                                ,"EOF"              , 0                    ,false},
 		RegularExpression::emptyPattern
 //		{emptyString												 ,emptyString	     , 0					,false}
 };
@@ -61,15 +64,15 @@ const RegularExpression::PatternInformation rules[]={
 }
 
 
-
+#if 0
 CCString Database=
-		"expression = \"X=Z,Y=B \n X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \" "
+		"expression = \"X=Z,Y=B , X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \" "
 		"RPN = \"READ X \" "
 		"X = (int32) 3";
+#endif
 
-
-CCString MATHExpr= "X=Z,Y=B \n X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z \n";
-//CCString MATHExpr= "X=Z,Y=B,";
+CCString MATHExpr= "X=Z,Y=B , X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \n";
+//CCString MATHExpr= "pipX=pipZ,A=B;";
 
 CCString RPNCode=
 		"READ A\n"
@@ -112,7 +115,7 @@ CCString line =
 " 122.5 _ALPha   \"BIRRA\"\"\" // pippo\n"
 "/* 123 ALPHA \"BIRRA\" // pippo\n"
 " 124 ALPHA \"BIRRA\" // */ ;pippo\n"
-" .124 126E4 .81 12.7E-5 231.32E97 .165E3 \n"
+" .124 126E4 .81 12.7E-5 231.32E97 .165E3 5\n"
 " (A + B    ) * Crap >= (D+X)/ 6\n"
 " (A > 2.0E7) &&  (D = X)\n";
 
@@ -136,46 +139,33 @@ int main(){
 
 	StartupManager::Initialise();
 
-//char *p = const_cast<char *>(line.GetList());
-
-	{
-		ErrorManagement::ErrorType ret;
-		StreamString lineS = line;
-		lineS.Seek(0);
-
-		ProgrammableLexicalAnalyzer lexer(ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),lineS);
-		while (ret) {
-			const ProgrammableLexicalAnalyzer::Token *token;
-		    ret = lexer.GetToken(token);
-			if (ret && (token->matchedRule)){
-				if (!token->matchedRule->skip){
-					printf("%s [%s]\n",token->matchedRule->ruleName.GetList(),token->matchedString.GetList());
-					fflush(stdout);
-				}
-			} else {
-				printf("UNMATCHED \n");
-				break;
-			}
-		}
-	}
 
 #if 0
 {
-		CCString lineP = line;
+		CCString lineP = MATHExpr;
 		ErrorManagement::ErrorType ret;
-		while ((lineP[0]!= 0) && ret) {
+		while (ret) {
 			DynamicCString content;
 		//	const LexicalAnalyzerRule *q = Parse(lineP,content);
 			const RegularExpression::PatternInformation *selectedRule = NULL;
 			ret = RegularExpression::MatchRules(lineP,ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),selectedRule,content);
 
-			if (selectedRule){
+			if (selectedRule  && (content.GetSize() > 0) && ret){
 				if (!selectedRule->skip){
-					printf("%s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());
-					fflush(stdout);
+					printf("%s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());fflush(stdout);
+				} else {
+					printf("SKIP: %s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());fflush(stdout);
 				}
 			} else {
-				printf("UNMATCHED %s\n",lineP.GetList());
+				if (selectedRule){
+					printf("EMPTY RULE %s\n",selectedRule->ruleName.GetList());
+				} else {
+					if (ret){
+						printf("UNMATCHED %s\n",lineP.GetList());
+					} else {
+						printf("ERROR @ %s\n",lineP.GetList());
+					}
+				}
 				break;
 			}
 		}
@@ -190,19 +180,27 @@ int main(){
 			const RegularExpression::PatternInformation *selectedRule = NULL;
 			ret = RegularExpression::MatchRules(lineS,ZeroTerminatedArray<const RegularExpression::PatternInformation>(&ruleSet::rules[0]),selectedRule,content);
 
-			if (selectedRule){
+			if (selectedRule  && (content.GetSize() > 0)  && ret){
 				if (!selectedRule->skip){
 					printf("%s [%s]\n",selectedRule->ruleName.GetList(),content.GetList());
 					fflush(stdout);
 				}
 			} else {
-				printf("UNMATCHED \n");
+				if (selectedRule){
+					printf("EMPTY RULE %s\n",selectedRule->ruleName.GetList());
+				} else {
+					if (ret){
+						printf("UNMATCHED \n");
+					} else {
+						printf("ERROR \n");
+					}
+				}
 				break;
 			}
 		}
 }
 #endif
-#if 1
+#if 0
 {
 
 	ErrorManagement::ErrorType ret;
@@ -211,35 +209,35 @@ int main(){
 	ret = RegularExpression::Scan(line,rule,MyCallBack);
 }
 //oo
+#endif
 
-return 0;
-
-
+#if 0
+{
 	ConfigurationDatabase cdb;
 
 	AnyType at(Database);
 
 	at.SetFormattedStreamType("CDB");
 	at.CopyTo(cdb);
-
-return 0;
-
-
+}
+#endif
 
 
+#if 1
+{
 	StreamString err;
 	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
 	MathExpressionParser mexp;
-	mexp.Parse(smr,&err);
+	mexp.Parse(smr,&err,2);
 
 	printf(">>\n%s\n<<\n",mexp.GetStackMachineExpression().GetList());
 	printf(">>\n%s\n<<\n",err.Buffer().GetList());
 
-	return 0;
-
+}
 #endif
 
-
+#if 0
+{
 	PseudoCode::Context context;
 
 	ErrorManagement::ErrorType ret;
@@ -441,6 +439,8 @@ return 0;
 	if (!ret){
 		printf ("FAILED - see log\n");
 	}
+}
+#endif
 
  	StartupManager::Terminate();
 

@@ -32,6 +32,9 @@ enum IA_ActionCodes{
 	/** return this in case of no error and no action to do  */
 	insertNodeBefore  = 0x4,
 
+	/** stop iterating, job is done	 */
+	isCompleted       = 0x6,
+
 	/**  it is an error interpret it accordingly */
 	isAnError         = 0x7
 

@@ -310,6 +310,7 @@ bool EscapeChar(char8 &c) {
 Token * LexicalAnalyzer::GetToken() {
     // delete the previous token
     if (token != NULL) {
+//printf("%s\n",token->GetData().GetList()); fflush(stdout);
         delete token;
     }
     TokenizeInput();

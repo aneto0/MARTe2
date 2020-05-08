@@ -33,34 +33,6 @@ namespace MARTe{
 namespace StandardParserData{
 
 
-/*************************************************************************************************
-
-lexical parameters
-
-*************************************************************************************************/
-
-
-static const char * separators                = "\n\r\t, ";
-
-/**
- * One line comment begin pattern.
- */
-static const char * beginOneLineComment       = "//" ;
-
-/**
- * Multiple line comment begin pattern.
- */
-static const char * beginMultipleLinesComment = "/*";
-
-/**
- * Multiple line comment end pattern.
- */
-static const char * endMultipleLinesComment   = "*/";
-
-/**
- * Assignment operator
- */
-static const char * terminals 				  = "{}()";
 
 /*************************************************************************************************/
 
@@ -193,6 +165,62 @@ static const char * Production_name[] ={"0"
 
 /*************************************************************************************************/
 
+/*************************************************************************************************
+
+lexical parameters
+
+*************************************************************************************************/
+
+static inline uint32 findId(CCString symbol){
+	uint32 ret = 0;
+	while((ret < END_OF_SLK_INPUT_) && (symbol != Terminal_name[ret])){
+		ret++;
+	}
+
+	return ret;
+}
+
+
+/*
+ */
+static const RegularExpression::PatternInformation rules[]={
+	    {"//!*[^\n]\n"                                                                       ,"line comment"     , 0       				,true},
+	    {"/\\*!*?\\a\\*/"                                                                    ,"multiline comment", 0       				,true},
+	    {"+[ \r\n\t,;]"                                                                      ,"separator"        , 0	         		,true},
+	    {"\\{"                                                                               ,"open {"           , findId("{")          ,false},
+	    {"\\}"                                                                               ,"close }"          , findId("}")          ,false},
+	    {"="                                                                                 ,"EQ  operator"     , findId("=")          ,false},
+	    {"\\("                                                                               ,"open("            , findId("(")          ,false},
+	    {"\\)"                                                                               ,"close)"           , findId(")")          ,false},
+	    {"[\\w_]*[\\d\\w_]"                                                                  ,"identifier"	     , findId("STRING")     ,false},
+		{"\"*[^\"]\""                                                                        ,"string"		     , findId("STRING")		,false},
+	    {"($BODY(+\\d)$FRACTION(?(.*\\d))|$FRACTION(.*\\d))?([eE]!$EXP(?[+\\-]{1,5}\\d))"    ,"number"		     , findId("NUMBER")     ,false},
+		RegularExpression::emptyPattern
+//		{emptyString												 ,emptyString	     , 0					,false}
+};
+
+
+static const char * separators                = "\n\r\t, ";
+
+/**
+ * One line comment begin pattern.
+ */
+static const char * beginOneLineComment       = "//" ;
+
+/**
+ * Multiple line comment begin pattern.
+ */
+static const char * beginMultipleLinesComment = "/*";
+
+/**
+ * Multiple line comment end pattern.
+ */
+static const char * endMultipleLinesComment   = "*/";
+
+/**
+ * Assignment operator
+ */
+static const char * terminals 				  = "{}()";
 
 
 
@@ -234,7 +262,8 @@ extern const ParserData parserData(
 		Action_name,
 		sizeof(Action_name)/sizeof(char*),
 		Production_name,
-		sizeof(Production_name)/sizeof(char*)
+		sizeof(Production_name)/sizeof(char*),
+		ZeroTerminatedArray<const RegularExpression::PatternInformation>(&rules[0])
 );
 
 

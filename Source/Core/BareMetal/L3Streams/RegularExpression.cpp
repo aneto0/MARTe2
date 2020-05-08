@@ -199,6 +199,7 @@ public:
 		} else {
 			//ret = false;
 			c = 256;
+//printf("producing EOF token\n");
 		}
 		return ret;
 	}
@@ -347,13 +348,19 @@ ErrorManagement::ErrorType MatchRules(StreamI &line,const ZeroTerminatedArray<co
         CStringTool matchedT = matched();
         ret = RegularExpression::Match(line,pattern,matchedT);
         if (ret){
+//printf("matched %s\n",ruleSet[ruleNo].ruleName.GetList());
         	selectedRule = &ruleSet[ruleNo];
         	toContinue = false;
         } else {
+//printf("not matched %s\n",ruleSet[ruleNo].ruleName.GetList());
+
         	ret.comparisonFailure = false; // reset this error to allow continuation
-		REPORT_ERROR(ret,"Error while Matching a pattern");
+        	REPORT_ERROR(ret,"Error while Matching a pattern");
+            ruleNo++;
         }
-        ruleNo++;
+    }
+    if (ret){
+        ret.comparisonFailure = (ruleSet[ruleNo].pattern.GetSize()== 0);
     }
     return ret;
 }
@@ -362,6 +369,7 @@ ErrorManagement::ErrorType MatchRules(CCString &line,const ZeroTerminatedArray<c
     int ruleNo = 0;
     bool toContinue = true;
     ErrorManagement::ErrorType ret;
+
     while((ruleSet[ruleNo].pattern.GetSize()> 0) && ret && toContinue){
         CCString pattern = ruleSet[ruleNo].pattern;
         CStringTool matchedT = matched();
@@ -372,8 +380,12 @@ ErrorManagement::ErrorType MatchRules(CCString &line,const ZeroTerminatedArray<c
         } else {
         	ret.comparisonFailure = false; // reset this error to allow continuation
     		REPORT_ERROR(ret,"Error while Matching a pattern");
+            ruleNo++;
         }
-        ruleNo++;
+    }
+    if (ret){
+//printf ("<%i> \n",ruleSet[ruleNo].pattern.GetSize()) ;
+        ret.comparisonFailure = (ruleSet[ruleNo].pattern.GetSize()== 0);
     }
     return ret;
 }
