@@ -74,6 +74,17 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 
 namespace MARTe {
 
+/**
+     * @brief Constructor which initializes the instance with all the items
+     * involved into the parsing (input, output, and grammar configuration).
+     * @param[in] stream is the stream to be read and parsed.
+     * @param[in,out] databaseIn is the StructuredData in output.
+     * @param[out] err is a stream where parse error messages are written into.
+     * @param[in] grammarIn contains the comments patterns, the separator and
+     * terminal characters.
+     * @post
+     *   GetGrammar() == grammarIn
+     */
 ConfigurationParserI::ConfigurationParserI(StreamI &stream,
                                StructuredDataI &databaseIn,
                                BufferedStreamI * const err,
@@ -87,17 +98,6 @@ ConfigurationParserI::ConfigurationParserI(StreamI &stream,
     database = &databaseIn;
     tokenType = 0u;
     numberOfDimensions = 0u;
-    
-    Action[0] = static_cast<void (ConfigurationParserI::*)(void)>(NULL);
-    Action[1] = &ConfigurationParserI::End;
-    Action[2] = &ConfigurationParserI::GetNodeName;
-    Action[3] = &ConfigurationParserI::AddLeaf;
-    Action[4] = &ConfigurationParserI::GetTypeCast;
-    Action[5] = &ConfigurationParserI::CreateNode;
-    Action[6] = &ConfigurationParserI::AddScalar;
-    Action[7] = &ConfigurationParserI::EndVector;
-    Action[8] = &ConfigurationParserI::EndMatrix;
-    Action[9] = &ConfigurationParserI::BlockEnd;
     
 }
 
