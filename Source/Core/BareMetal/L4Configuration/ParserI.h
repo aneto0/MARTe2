@@ -97,10 +97,7 @@ public:
      * @post
      *   GetGrammar() == grammarIn
      */
-    ParserI(StreamI &stream,
-            StructuredDataI &databaseIn,
-            BufferedStreamI * const err,
-            const GrammarInfo &grammarIn);
+
     /**
      * @brief Alternate constructor when there is no need for an output database.
      * @post
@@ -131,52 +128,6 @@ public:
     GrammarInfo GetGrammarInfo() const;
 
 protected:
-
-    /**
-     * @brief Moves into the built structured data to the root.
-     */
-    virtual void End();
-
-    /**
-     * @brief Gets the node or the variable name.
-     */
-    virtual void GetNodeName();
-
-    /**
-     * @brief Adds a leaf in the StructuredData.
-     */
-    virtual void AddLeaf();
-
-    /**
-     * @brief Gets the variable type.
-     */
-    virtual void GetTypeCast();
-
-    /**
-     * @brief Creates a new node in the StructuredData.
-     */
-    virtual void CreateNode();
-
-    /**
-     * @brief Stores a read scalar in the memory.
-     */
-    virtual void AddScalar();
-
-    /**
-     * @brief Sets the number of dimensions to one and checks if
-     * the matrix is well formed.
-     */
-    virtual void EndVector();
-
-    /**
-     * @brief Sets the number of dimensions to two.
-     */
-    virtual void EndMatrix();
-
-    /**
-     * @brief Moves into the structuredData to the father.
-     */
-    virtual void BlockEnd();
 
     /**
      * @brief Retrieves the next expected token identifiers to be
@@ -276,24 +227,7 @@ protected:
      * A pointer to the last token produced by the lexical analyzer.
      */
     Token *currentToken;
-
-private:
-
-    /**
-     * The type name.
-     */
-    StreamString typeName;
-
-    /**
-     * The StructuredData node or leaf name.
-     */
-    StreamString nodeName;
-
-    /**
-     * The StructuredData to be built
-     */
-    StructuredDataI *database;
-
+    
     /**
      * A flag to specify if an error occurred.
      */
@@ -305,40 +239,10 @@ private:
     LexicalAnalyzer tokenProducer;
 
     /**
-     * The number of columns in case of read of vector.
-     */
-    uint32 numberOfColumns;
-
-    /**
-     * The number of elements read before the vector close terminal.
-     */
-    uint32 firstNumberOfColumns;
-
-    /**
-     * The number of rows in case of read of matrix.
-     */
-    uint32 numberOfRows;
-
-    /**
-     * The object used to store the read element and create the AnyType leaf.
-     */
-    AnyTypeCreator memory;
-
-    /**
      * The stream to print the error messages.
      */
     BufferedStreamI *errorStream;
-
-    /**
-     * The token id.
-     */
-    uint32 tokenType;
-
-    /**
-     * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
-     */
-    uint8 numberOfDimensions;
-
+    
     /**
      * Stores the information about the language to be parsed.
      */
