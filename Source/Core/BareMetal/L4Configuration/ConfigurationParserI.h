@@ -46,14 +46,14 @@
 namespace MARTe {
 
 /**
- * @brief Abstract parser which allows to transform a stream of characters
- * into a structured data store, applying lexical rules set at instance level
- * and parsing rules implemented into subclasses.
+ * @brief Abstract parser which allows to transform MARTe2 configuration
+ * file into a StructuredDataI store, applying lexical rules set at
+ * instance level and parsing rules implemented into subclasses.
  *
  * @details This class is a partial abstract class providing the generic
- * functionality of a parser while expecting subclasses to provide the specific
- * rules for each concrete language (each subclass must implement the pure
- * abstract functions).
+ * functionality of a configuration file parser, while expecting
+ * subclasses to provide the specific rules for each concrete language
+ * (MARTe2 standard configuration language, XML, Json).
  *
  * Each instance of the parser is bound when it is constructed, with all the
  * objects involved in the parsing analysis, as follows:
@@ -91,7 +91,7 @@ public:
      * @brief Constructor which initializes the instance with all the items
      * involved into the parsing (input, output, and grammar configuration).
      * @param[in] stream is the stream to be read and parsed.
-     * @param[in,out] databaseIn is the StructuredData in output.
+     * @param[in,out] databaseIn is the StructuredDataI in output.
      * @param[out] err is a stream where parse error messages are written into.
      * @param[in] grammarIn contains the comments patterns, the separator and
      * terminal characters.
@@ -202,11 +202,6 @@ private:
      * The number of dimensions of the variable (0=scalar, 1=vector, 2=matrix)
      */
     uint8 numberOfDimensions;
-    
-    /**
-     * The array of functions needed by the parser.
-     */
-    void (ConfigurationParserI::*Action[10])(void);
 
 };
 
