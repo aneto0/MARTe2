@@ -106,7 +106,7 @@ static const char8 *GetTerminalName(const uint32 symbol) {
 XMLParser::XMLParser(StreamI &stream,
                      StructuredDataI &databaseIn,
                      BufferedStreamI * const err) :
-        ParserI(stream, databaseIn, err, XMLGrammar) {
+        ConfigurationParserI(stream, databaseIn, err, XMLGrammar) {
     Action[0] = static_cast<void (XMLParser::*)(void)>(NULL);
     Action[1] = &XMLParser::End;
     Action[2] = &XMLParser::GetNodeName;
