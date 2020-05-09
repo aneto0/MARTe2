@@ -53,15 +53,6 @@ static void PrintErrorOnStream(const char8 * const format,
     REPORT_ERROR_STATIC(ErrorManagement::FatalError,  format, lineNumber);
 }
 
-static const char8* GetCurrentTokenData(Token * const token) {
-
-    return (token != NULL)?(token->GetData()):(static_cast<const char8*>(NULL));
-}
-
-static uint32 GetCurrentTokenId(const Token * const token) {
-    return (token != NULL)?(token->GetId()):(ERROR_TOKEN);
-}
-
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
     return (token != NULL)?(token->GetLineNumber()):0u;
 }
@@ -75,37 +66,12 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 namespace MARTe {
 
 ParserI::ParserI(StreamI &stream,
-                 StructuredDataI &databaseIn,
                  BufferedStreamI * const err,
                  const GrammarInfo &grammarIn) :
         tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
-                      grammarIn.endMultipleLinesComment, grammarIn.keywords),
-        memory(1u) {
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    database = &databaseIn;
+                      grammarIn.endMultipleLinesComment, grammarIn.keywords) {
+    
     errorStream = err;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
-    grammar = grammarIn;
-    currentToken = static_cast<Token*>(NULL);
-    isError = false;
-}
-
-ParserI::ParserI(StreamI &stream,
-                 BufferedStreamI * const err,
-                 const GrammarInfo &grammarIn) :
-        tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
-                      grammarIn.endMultipleLinesComment, grammarIn.keywords),
-        memory(1u) {
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    database = static_cast<StructuredDataI*>(NULL);
-    errorStream = err;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
     grammar = grammarIn;
     currentToken = static_cast<Token*>(NULL);
     isError = false;
@@ -114,7 +80,6 @@ ParserI::ParserI(StreamI &stream,
 ParserI::~ParserI() {
     currentToken = static_cast<Token*>(NULL);
     errorStream=static_cast<BufferedStreamI*>(NULL);
-    database=static_cast<StructuredDataI*>(NULL);
 }
 
 uint32 ParserI::GetNextTokenType() {
@@ -168,116 +133,7 @@ GrammarInfo ParserI::GetGrammarInfo() const {
     return grammar;
 }
 
-void ParserI::GetTypeCast() {
-    typeName = GetCurrentTokenData(currentToken);
-}
-
-void ParserI::BlockEnd() {
-    if (!database->MoveToAncestor(1u)) {
-        PrintErrorOnStream("Failed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::CreateNode() {
-    if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
-        PrintErrorOnStream("Failed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::AddLeaf() {
-    // use numberOfRows and numberOfColumns as dimensions # elements
-    if (numberOfDimensions == 1u) {
-        numberOfRows = 1u;
-    }
-    // a scalar
-    if (numberOfDimensions == 0u) {
-        numberOfRows = 1u;
-        numberOfColumns = firstNumberOfColumns;
-    }
-
-    ;
-    uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
-    /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-    AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);
-    bool ret = (element.GetDataPointer() != NULL);
-    if (ret) {
-        ret = database->Write(nodeName.Buffer(), element);
-        if (!ret) {
-            PrintErrorOnStream("Failed adding a leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("Possible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-    typeName = defaultTypeName;
-    numberOfColumns = 0u;
-    firstNumberOfColumns = 0u;
-    numberOfRows = 0u;
-    tokenType = 0u;
-    numberOfDimensions = 0u;
-    memory.CleanUp(1u);
-}
-
-void ParserI::GetNodeName() {
-    nodeName = GetCurrentTokenData(currentToken);
-}
-
-void ParserI::AddScalar() {
-    if (tokenType == 0u) {
-        tokenType = GetCurrentTokenId(currentToken);
-    }
-
-    if (tokenType == GetCurrentTokenId(currentToken)) {
-        bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
-
-        if (ret) {
-            firstNumberOfColumns++;
-        }
-        else {
-            PrintErrorOnStream("Failed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("Cannot mix different types in a vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
-void ParserI::EndVector() {
-    if (numberOfColumns == 0u) {
-        numberOfColumns = firstNumberOfColumns;
-    }
-    else {
-        if (numberOfColumns != firstNumberOfColumns) {
-            PrintErrorOnStream("Incorrect matrix format! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    firstNumberOfColumns = 0u;
-    numberOfRows++;
-    if (numberOfDimensions == 0u) {
-        numberOfDimensions = 1u;
-    }
-}
-
-void ParserI::EndMatrix() {
-    numberOfDimensions = 2u;
-}
-
-void ParserI::End() {
-    if (!database->MoveToRoot()) {
-        PrintErrorOnStream("Failed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-}
-
 bool ParserI::Parse() {
-    typeName = defaultTypeName;
     
     bool isEOF = false;
     
