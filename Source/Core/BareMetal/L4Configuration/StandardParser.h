@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ParserI.h"
+#include "ConfigurationParserI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -88,7 +88,7 @@ namespace MARTe {
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API StandardParser: public ParserI {
+class DLL_API StandardParser: public ConfigurationParserI {
 
 public:
 

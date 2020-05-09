@@ -86,7 +86,8 @@ static const char8 *GetTerminalName(const uint32 symbol) {
 StandardParser::StandardParser(StreamI &stream,
                                StructuredDataI &databaseIn,
                                BufferedStreamI * const err) :
-        ParserI(stream, databaseIn, err, StandardGrammar) {
+        ConfigurationParserI(stream, databaseIn, err, StandardGrammar) {
+    
     Action[0] = static_cast<void (StandardParser::*)(void)>(NULL);
     Action[1] = &StandardParser::End;
     Action[2] = &StandardParser::GetNodeName;
