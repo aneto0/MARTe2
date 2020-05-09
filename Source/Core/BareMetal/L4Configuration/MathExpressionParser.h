@@ -48,11 +48,11 @@ namespace MARTe{
  *          the actual lexical elements and parsing rules for interpreting
  *          a mathematical expression in infix form.
  * 
- * The parser accepts mathematical expressions in the form:
+ * The parser accepts C-like mathematical expressions in the form:
  * 
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
- * ret = sin(A +B) > (pow(C+D,E) * tan((bool)F + (float)15));
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.c}
+ * ret = sin(A + B) > (pow(C + D, E) * tan((bool)F + (float)15));
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
  * Each expression must be terminated with a comma or a semicolon.
  * Multiple expressions are allowed (provided that each is terminated
