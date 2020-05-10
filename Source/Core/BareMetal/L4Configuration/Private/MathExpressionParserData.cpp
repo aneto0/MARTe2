@@ -25,11 +25,6 @@
 #include "ParserData.h"
 #include "RegularExpression.h"
 
-#if 0
-
-#include "SimpleGrammar4.inc"
-
-#else
 namespace MARTe{
 
 
@@ -388,4 +383,3 @@ void MathExpressionParser::MapMethods(){
 
 } //MARTe
 
-#endif

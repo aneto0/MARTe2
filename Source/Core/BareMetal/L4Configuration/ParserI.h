@@ -34,11 +34,11 @@
 
 #include "StructuredDataI.h"
 #include "DynamicCString.h"
-#include "LexicalAnalyzer.h"
 #include "ParserData.h"
 #include "RegularExpression.h"
 #include "StaticStack.h"
 #include "List.h"
+#include "StreamString.h"
 
 
 /*---------------------------------------------------------------------------*/

@@ -32,10 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Token.h"
 #include "StructuredDataI.h"
 #include "DynamicCString.h"
-#include "LexicalAnalyzer.h"
 #include "ProgressiveTypeCreator.h"
 #include "ParserI.h"
 
