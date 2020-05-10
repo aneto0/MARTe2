@@ -226,9 +226,10 @@ inline const char8 *CharBuffer::Buffer() const {
     return buffer;
 }
 inline char8 *CharBuffer::BufferReference() {
-    if (readOnly) {
-       REPORT_ERROR(ErrorManagement::Warning, "The buffer is Read Only");
-    }
+// removed warning as everytime one does a Seek on a IOBuffer over a read-only biffer one would produce this error.
+//    if (readOnly) {
+//       REPORT_ERROR(ErrorManagement::Warning, "The buffer is Read Only");
+//    }
     return buffer;
 }
 

@@ -195,8 +195,8 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 	ErrorManagement::ErrorType ret;
 	const Token * currentToken;
 
-    bool isEOF = false;
-    while ((ret) && (!isEOF)) {
+//    bool isEOF = false;
+//    while ((ret) && (!isEOF)) {
 
         uint32 stackArray[constants.StackSize];
         uint32 *stack = &stackArray[0];
@@ -229,6 +229,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
             if (symbol >= constants.StartAction) {
             	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Execute %s \n",GetSymbolName(symbol));
                 ret = Execute(symbol - (constants.StartAction - 1u),currentToken,errorStream);
+                PARSER_ERROR_REPORT(errorStream,ret,"%s() failed",GetSymbolName(symbol));
             } /// from StartSymbol to EndSymbol
 
             else
@@ -307,26 +308,26 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                     else
 
                     {
-                    	// new_token = no_entry ( error, symbol, token, level-1 );
-                    	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Unmatch symbol=[%s]  token= [%s] \n",GetSymbolName(symbol),GetSymbolName(token));
-
-                    	ret = NextToken();
+                    	// consume token
+                    	NextToken();
                     	currentToken = NULL;
-                        PARSER_ERROR_REPORT(errorStream,ret,"Failed skipping to next token\n",0);
                     	ret.syntaxError = true;
+                    	// new_token = no_entry ( error, symbol, token, level-1 );
+                    	PARSER_ERROR_REPORT(errorStream,ret,"No-entry symbol=[%s]  token= [%s] \n",GetSymbolName(symbol),GetSymbolName(token));
+                    	new_token = 0;
                     } // production != symbol
                 } // entry != 0
 
                 else
 
                 { // entry = 0
-                	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
 
-                	ret = NextToken();
+                	NextToken();
                 	currentToken = NULL;
-                    PARSER_ERROR_REPORT(errorStream,ret,"Failed advancing token Q\n",0);
 
                 	ret.syntaxError = true;
+                	PARSER_ERROR_REPORT(errorStream,ret,"No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
+                	new_token = 0;
 
                 } // entry = 0
     	    } // symbol >= constants.StartSymbol
@@ -356,8 +357,10 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                     }
                     else
                     {
-                    	PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Expecting '%s' but found '%s' \n",GetSymbolName(symbol),GetSymbolName(token));
-						new_token = token;
+						new_token = 0;
+
+						ret.syntaxError = true;
+	                	PARSER_ERROR_REPORT(errorStream,ret,"Mismatch symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
                     }
                 }
             }
@@ -372,6 +375,10 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                     continue;
                 }
             }
+
+//            // exit
+//          isEOF = (token == constants.EndOfFile) ;
+
             symbol = StackPop(top);
             PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol),symbol,top);
         }
@@ -381,10 +388,11 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
             PARSER_ERROR_REPORT(errorStream,ret,"leftover token %s in stack",GetSymbolName(symbol));
         }
 
-        PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Looping %s\n","around");
+//        PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Looping %s\n","around");
 
-    } // for
+//    } // for
 
+    PARSER_ERROR_REPORT(errorStream,ret,"Failed",0);
     return ret;
 }
 

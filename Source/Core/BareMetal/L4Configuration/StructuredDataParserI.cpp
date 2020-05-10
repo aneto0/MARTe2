@@ -149,10 +149,18 @@ ErrorManagement::ErrorType  StructuredDataParserI::AddLeaf(const Token *currentT
 
 	if (ret){
 		ref->SetName(parseStatus.nodeName);
-
+/*
+		{  // TODO remove
+			DynamicCString dcs;
+			AnyType at;
+			ref.ToAnyType(at);
+			at.CopyTo(dcs);
+			printf("dcs=%s\n",dcs.GetList());
+		}
+*/
 		// no errors if ref is valid. which must be since we got here
         ret = database->Write(ref);
-		PARSER_ERROR_REPORT(errorStream,ret,"eriting %s [%d]", parseStatus.nodeName, currentToken->GetLineNumber());
+		PARSER_ERROR_REPORT(errorStream,ret,"writing %s [%d]", parseStatus.nodeName, currentToken->GetLineNumber());
 	}
 
 	parseStatus.Init();

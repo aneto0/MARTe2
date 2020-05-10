@@ -237,7 +237,7 @@ public:
 
 private:
 
-    ErrorManagement::ErrorType FindRelative(CCString path,ReferenceT<ReferenceContainer> &node) const;
+    ErrorManagement::ErrorType FindRelative(CCString path,Reference &node) const;
 
     /**
      * @brief Create nodes relative to the currentNode.

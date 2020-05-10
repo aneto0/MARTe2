@@ -64,7 +64,7 @@ const RegularExpression::PatternInformation rules[]={
 }
 
 
-#if 0
+#if 1
 CCString Database=
 		"expression = \"X=Z,Y=B , X=5+B*(float)C*!(X-Y)+PIPPO(X+Y)+Z; \" "
 		"RPN = \"READ X \" "
@@ -170,6 +170,8 @@ int main(){
 			}
 		}
 }
+#endif
+#if 0
 {
 		ErrorManagement::ErrorType ret;
 		StreamString lineS = line;
@@ -211,7 +213,7 @@ int main(){
 //oo
 #endif
 
-#if 0
+#if 1
 {
 	ConfigurationDatabase cdb;
 
@@ -219,19 +221,30 @@ int main(){
 
 	at.SetFormattedStreamType("CDB");
 	at.CopyTo(cdb);
+
+	cdb.MoveToRoot();
+	cdb.GetNumberOfChildren();
+	printf("cdb has %i nodes\n",cdb.GetNumberOfChildren());
+
+	for (uint32 i =0; i <  cdb.GetNumberOfChildren();i++){
+		DynamicCString test;
+		cdb.Read(cdb.GetChildName(i).GetList(),test);
+		printf("%s = %s\n",cdb.GetChildName(i).GetList(),test.GetList()); fflush(stdout);
+
+	}
 }
 #endif
 
 
 #if 1
 {
-	StreamString err;
+	//StreamString err;
 	StreamMemoryReference smr(MATHExpr.GetList(),MATHExpr.GetSize());
 	MathExpressionParser mexp;
-	mexp.Parse(smr,&err,2);
+	mexp.Parse(smr,NULL/*&err*/,2);
 
 	printf(">>\n%s\n<<\n",mexp.GetStackMachineExpression().GetList());
-	printf(">>\n%s\n<<\n",err.Buffer().GetList());
+//	printf(">>\n%s\n<<\n",err.Buffer().GetList());
 
 }
 #endif

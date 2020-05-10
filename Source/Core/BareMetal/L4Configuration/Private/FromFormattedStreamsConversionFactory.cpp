@@ -104,7 +104,7 @@ public:
 			COMPOSITE_REPORT_ERROR(ret,"unsupported stream structure format ",format);
 
 			if (ret){
-				ret = parser->Parse(*sourceSI);
+				ret = parser->Parse(*sourceSI,NULL,2);
 				REPORT_ERROR(ret,"Parse error");
 			}
 

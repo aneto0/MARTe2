@@ -237,8 +237,7 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
-void ReferenceContainer::Find(ReferenceContainer &result,
-                              ReferenceContainerFilter &filter) {
+void ReferenceContainer::Find(ReferenceContainer &result,ReferenceContainerFilter &filter) {
     int32 index = 0;
     bool ok = Lock();
     if (ok) {
@@ -262,7 +261,19 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                     /*lint -e{9007} filter.IsSearchAll() has no side effects*/
                     if (filter.IsSearchAll() || filter.IsFinished()) {
                         if (result.Insert(currentNodeReference)) {
-                            if (filter.IsRemove()) {
+/*
+                        	{  // TODO remove
+                        		Reference ref = result.Get(0);
+                        		DynamicCString dcs;
+                        		AnyType at;
+                        		ref.ToAnyType(at);
+                        		at.CopyTo(dcs);
+                        		printf("%s=",ref->GetName().GetList());
+                        		if (dcs.GetSize() > 0)  printf("%s",dcs.GetList());
+                        		printf("\n");fflush(stdout);
+                        	}
+*/
+                        	if (filter.IsRemove()) {
                                 //Only delete the exact node index
                                 if (list.ListDelete(currentNode)) {
                                     //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
@@ -333,6 +344,9 @@ void ReferenceContainer::Find(ReferenceContainer &result,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainer: Failed FastLock()");
     }
+
+
+
 
     UnLock();
 }

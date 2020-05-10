@@ -206,8 +206,8 @@ static const RegularExpression::PatternInformation rules[]={
 	    {"[\\w_]*[\\d\\w_]"                                                                  ,"identifier"	     , findId("STRING")     ,false},
 		{"\"*[^\"]\""                                                                        ,"string"		     , findId("STRING")		,false},
 	    {"($BODY(+\\d)$FRACTION(?(.*\\d))|$FRACTION(.*\\d))?([eE]!$EXP(?[+\\-]{1,5}\\d))"    ,"number"		     , findId("NUMBER")     ,false},
+		{"\\"                                                                                ,"EOF"              , findId("END_OF_SLK_INPUT"),false},
 		RegularExpression::emptyPattern
-//		{emptyString												 ,emptyString	     , 0					,false}
 };
 
 

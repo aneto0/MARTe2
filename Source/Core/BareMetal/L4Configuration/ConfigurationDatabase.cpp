@@ -121,16 +121,16 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path,Reference &
 
 //	ret = MoveRelative(path);
 
-	ReferenceT<ReferenceContainer> newNode;
-	ret = FindRelative(path,newNode);
+	Reference leaf;
+	ret = FindRelative(path,leaf);
 	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 
     if (ret) {
     	if (borrow){
-    		object = newNode;
+    		object = leaf;
     	} else {
     		AnyType at;
-    		newNode->ToAnyType(at);
+    		leaf->ToAnyType(at);
 
     		ret = at.Clone(object);
     	}
@@ -148,13 +148,12 @@ ErrorManagement::ErrorType ConfigurationDatabase::Read(CCString path, const AnyT
 
 //	ret = MoveRelative(path);
 
-	ReferenceT<ReferenceContainer> newNode;
-	ret = FindRelative(path,newNode);
-	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
-	AnyType at;
-
+	Reference node;
+	ret = FindRelative(path,node);
+	COMPOSITE_REPORT_ERROR(ret,"Failed retrieving ",path );
     if (ret) {
-   		currentNode->ToAnyType(at);
+    	AnyType at;
+   		node->ToAnyType(at);
    		ret = at.CopyTo(value);
     }
 
@@ -171,7 +170,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::GetVariableInformation(
 
 	ErrorManagement::ErrorType ret;
 
-	ReferenceT<ReferenceContainer> newNode;
+	Reference newNode;
 	ret = FindRelative(path,newNode);
 	COMPOSITE_REPORT_ERROR(ret,"Failed moving to ",path );
 
@@ -257,7 +256,7 @@ ErrorManagement::ErrorType ConfigurationDatabase::MoveAbsolute(CCString path) {
     return ret;
 }
 
-ErrorManagement::ErrorType ConfigurationDatabase::FindRelative(CCString path,ReferenceT<ReferenceContainer> &node)const {
+ErrorManagement::ErrorType ConfigurationDatabase::FindRelative(CCString path,Reference &node) const {
 	ErrorManagement::ErrorType ret;
 
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
@@ -268,44 +267,39 @@ ErrorManagement::ErrorType ConfigurationDatabase::FindRelative(CCString path,Ref
     COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path);
 
     if (ret) {
-        //Invalidate move to leafs
-        ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
-        ret = !container.IsValid();
-        COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node");
-        if (ret) {
-            node = container;
-        }
-    }
+    	node = resultSingle.Get(resultSingle.Size() - 1u);
 
+#if 0
+    	{  // TODO remove
+    		DynamicCString dcs;
+    		AnyType at;
+    		ref.ToAnyType(at);
+    		at.CopyTo(dcs);
+    		printf("%i ",ref.IsValid());
+    		printf("%s=",ref->GetName().GetList());
+    		if (dcs.GetSize() > 0)  printf("%s",dcs.GetList());
+    		printf("\n");fflush(stdout);
+    	}
+#endif
+    }
     return ret;
 }
 
 ErrorManagement::ErrorType ConfigurationDatabase::MoveRelative(CCString path) {
 	ErrorManagement::ErrorType ret;
 
-	ReferenceT<ReferenceContainer> newNode;
+	Reference newNode;
 	ret = FindRelative(path,newNode);
-    if (ret) {
-        currentNode = newNode;
-    }
-#if 0
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::SHALLOW, path);
-    ReferenceContainer resultSingle;
-    currentNode->Find(resultSingle, filter);
-
-    ret.invalidOperation = (resultSingle.Size() == 0u);
-    COMPOSITE_REPORT_ERROR(ret,"Cannot find relative path ",path);
 
     if (ret) {
         //Invalidate move to leafs
-        ReferenceT < ReferenceContainer > container = resultSingle.Get(resultSingle.Size() - 1u);
+        ReferenceT < ReferenceContainer > container = newNode;
         ret = !container.IsValid();
         COMPOSITE_REPORT_ERROR(ret,"Relative path ",path," not found or not a node");
         if (ret) {
-            currentNode = container;
+        	currentNode = container;
         }
     }
-#endif
     return ret;
 }
 

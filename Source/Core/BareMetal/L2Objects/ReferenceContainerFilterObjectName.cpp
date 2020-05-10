@@ -50,9 +50,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
-ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
-                                                                       const uint32 &modeToSet,
-                                                                       CCString const address) :
+ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber, const uint32 &modeToSet, CCString const address) :
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
@@ -69,16 +67,20 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
         //Count the number of dots found. The first and last dot are ignored. Two consecutive dots result
         //in addressNumberNodes = 0
 
+
     	// copy address
-    	addressToSearchWhole().Append(address);
+    	addressToSearchWhole = address;
 
     	// count dots
     	char8 *p = addressToSearchWhole.GetList();
-    	addressNumberNodes = 0;
     	// to skip initial . if present
     	bool start  = true;
     	// to deal with consecutive . --> restart
     	bool justFound = false;
+
+        //there is at least one node
+        addressNumberNodes = 1;
+		addressToSearchArray().Append(addressToSearchWhole);
 
     	while (*p != '\0'){
     		// everytime a . is found is replaced with /0
@@ -117,6 +119,8 @@ void ReferenceContainerFilterObjectName::SetAddress(CCString const address) {
         // IsStorePath returns true
         SetMode(GetMode() | ReferenceContainerFilterMode::PATH);
     }
+
+//printf("-addressNumberNodes = %i\n",addressNumberNodes);
 }
 
 void ReferenceContainerFilterObjectName::GetPath(DynamicCString &path) const{
@@ -188,19 +192,23 @@ bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previously
     return found; 
 }
 
-bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference const &referenceToTest) {
+bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,  Reference const &referenceToTest) {
+//printf("start ");  //TODO remove
     bool found = (addressNumberNodes > 0u);
 
     if (addressNumberNodes > 1u) {
         /*lint -e{9007} no side-effects on TestPath*/
         found = (found && TestPath(previouslyFound));
     }
+//printf("addressNumberNodes = %i ",addressNumberNodes);  //TODO remove
 
     //Check if this is the last node and if it matches the last part of the addressToSearch
     if (found && referenceToTest.IsValid()) {
     	CCString name = referenceToTest->GetName();
-        if ( !name.IsNullPtr()) {
+
+//printf("%s vs %s \n ",name.GetList(),addressToSearchArray[addressNumberNodes - 1u].GetList());  //TODO remove
+
+    	if ( !name.IsNullPtr()) {
             /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
              * and its size cannot be modified in runtime*/
             found = (name ==addressToSearchArray[addressNumberNodes - 1u]);
@@ -213,6 +221,7 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
     if (found) {
         IncrementFound();
     }
+//printf("done \n");  //TODO remove
     return found;
 }
 
