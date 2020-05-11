@@ -82,6 +82,13 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestWriteFunctionRecordT
     ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("WRITE", 1, expectedInputTypesList, 0, expectedOutputTypesList));
 }
 
+//TODO IMPLEMENT THIS
+/*
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCastFunctionRecordTypes) {
+
+}
+*/
+
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTypes) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
@@ -93,6 +100,84 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTyp
     pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
 
     ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("SIN", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCosFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("COS", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTanFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("TAN", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestExpFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("EXP", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLogFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("LOG", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLog10FunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float32Bit}, {Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit}, {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("LOG10", 1, expectedInputTypesList, 1, expectedOutputTypesList));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestPowFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][2]  = {{Float32Bit, Float32Bit}, {Float64Bit, Float64Bit}};
+    TypeDescriptor expectedOutputTypes[][1] = {{Float32Bit},             {Float64Bit}};
+
+    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 2>(expectedInputTypes, expectedInputTypesList);
+    pseudoCodeFunctionsTest.ConstructTypeList<2, 1>(expectedOutputTypes, expectedOutputTypesList);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("POW", 2, expectedInputTypesList, 1, expectedOutputTypesList));
 }
 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful) {
