@@ -65,234 +65,239 @@ struct FunctionRecord;
 class Context{
 
 public:
-	/**
-	 * constructor
-	 */
-	Context();
+    /**
+     * constructor
+     */
+    Context(StreamString &RPNCode);
 
-	/**
-	 * destructor
-	 */
-	~Context();
+    /**
+     * destructor
+     */
+    ~Context();
 
-	/**
+    /**
     * @brief Get the top of the stack and then move the pointer.
     * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
     * @return .
    */
-	template<typename T>
-	inline void 				Pop(T &value);
+    template<typename T>
+    inline void                 Pop(T &value);
 
-	/**
+    /**
     * @brief Add to the top of the stack and then move the pointer.
     * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
     * @return .
    */
-	template<typename T>
-	inline void 				Push(T &value);
+    template<typename T>
+    inline void                 Push(T &value);
 
-	/**
+    /**
     * @brief Get the top of the stack and do not move the pointer.
     * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
     * @return .
    */
-	template<typename T>
-	inline void 				Peek(T &value);
+    template<typename T>
+    inline void                 Peek(T &value);
 
-	/**
-	 * Reads from code memory
-	 */
-	inline CodeMemoryElement 	GetPseudoCode();
+    /**
+     * Reads from code memory
+     */
+    inline CodeMemoryElement    GetPseudoCode();
 
-	/**
-	 * Reads from Data Memory
-	 */
-	template<typename T>T &		Variable(DataMemoryAddress variableIndex);
+    /**
+     * Reads from Data Memory
+     */
+    template<typename T>T &     Variable(DataMemoryAddress variableIndex);
 
-	/**
-	 * Cleans inputVariableInfo
-	 * Cleans outputVariableInfo
-	 * Scans RPNCode looking for READ, WRITE and CONST functions
-	 */
-    ErrorManagement::ErrorType ExtractVariables(StreamString &RPNCode);
+    /**
+     * Cleans inputVariableInfo
+     * Cleans outputVariableInfo
+     * Scans RPNCode looking for READ, WRITE and CONST functions
+     */
+    ErrorManagement::ErrorType ExtractVariables();
 
-	/**
-	 * Looks for a variable at a given location
-	 */
-	ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
+    /**
+     * Looks for a variable at a given location
+     */
+    ErrorManagement::ErrorType BrowseInputVariable(uint32 index,VariableInformation *&variableInformation);
 
-	/**
-	 * Looks for a variable at a given location
-	 */
-	ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
+    /**
+     * Looks for a variable at a given location
+     */
+    ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
 
-	/**
-	 * Cleans memory
-	 * Allocates inputVariables
-	 * Allocates outputVariables
-	 * Allocates constants
-	 * Allocates PCode space
-	 * Scans RPNCode
-	 *    compiles into codeMemory
-	 *    writes constants into dataMemory
-	 *    checks type consistency
-	 *    grow stack to required size
-	 */
-    ErrorManagement::ErrorType Compile(StreamString &RPNCode);
+    /**
+     * Cleans memory
+     * Allocates inputVariables
+     * Allocates outputVariables
+     * Allocates constants
+     * Allocates PCode space
+     * Scans RPNCode
+     *    compiles into codeMemory
+     *    writes constants into dataMemory
+     *    checks type consistency
+     *    grow stack to required size
+     */
+    ErrorManagement::ErrorType Compile();
 
-	/**
-	 * allow choosing how to run the code
-	 */
-	enum executionMode {
-		/**
-		 * fastMode: executes with minimal checks - assumes compilation was correct and function description was truthful
-		 */
-		fastMode,
+    /**
+     * allow choosing how to run the code
+     */
+    enum executionMode {
+        /**
+         * fastMode: executes with minimal checks - assumes compilation was correct and function description was truthful
+         */
+        fastMode,
 
-		/**
-		 * safeMode: checks stack,errors, and code pointer at every step
-		 */
-		safeMode,
+        /**
+         * safeMode: checks stack,errors, and code pointer at every step
+         */
+        safeMode,
 
-		/**
-		 * debugMode: produces a step by step evolution of the stack following each function execution
-		 */
-		debugMode,
+        /**
+         * debugMode: produces a step by step evolution of the stack following each function execution
+         */
+        debugMode,
 
-		/**
-		 * allows single step execution
-		 * external step counter must be maintained
-		 */
-		singleStep
-	};
+        /**
+         * allows single step execution
+         * external step counter must be maintained
+         */
+        singleStep
+    };
 
-	/**
-	 * executes every command in codeMemory
-	 * note that the inputs need to be loaded before calling execute
-	 * returns the combination of error flags reported by all the functions that were executed
-	 * debugStream is only used in debugMode. after every command execution a report is written to the stream
-	 * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
-	 */
-	ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),CodeMemoryAddress *step=NULL);
+    /**
+     * executes every command in codeMemory
+     * note that the inputs need to be loaded before calling execute
+     * returns the combination of error flags reported by all the functions that were executed
+     * debugStream is only used in debugMode. after every command execution a report is written to the stream
+     * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
+     */
+    ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),CodeMemoryAddress *step=NULL);
 
-	/**
-	 * Reconstruct the RPNCode with type information
-	 */
-    ErrorManagement::ErrorType DeCompile(StreamString &RPNCode,bool showTypes);
+    /**
+     * Reconstruct the RPNCode with type information
+     */
+    ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, bool showTypes);
 
 // PUBLIC VARIABLES
 
-	/**
-	 * the errors produced by the functions and the checks during runtime
-	 */
-	ErrorManagement::ErrorType  		runtimeError;
+    /**
+     * the errors produced by the functions and the checks during runtime
+     */
+    ErrorManagement::ErrorType          runtimeError;
 
-	/**
-	 * stack and variable are allocated here
-	 */
-	StaticList<CodeMemoryElement,32> 	codeMemory;
+    /**
+     * stack and variable are allocated here
+     */
+    StaticList<CodeMemoryElement,32>    codeMemory;
 
-	/**
-	 * variable and constants are allocated here
-	 * MEMORY MAP
-	 *
-	 * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
-	 *                            CONSTANTS
-	 *                            INPUTS
-	 *                            OUTPUTS
-	 */
-	Vector<DataMemoryElement> 			dataMemory;
+    /**
+     * variable and constants are allocated here
+     * MEMORY MAP
+     *
+     * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
+     *                            CONSTANTS
+     *                            INPUTS
+     *                            OUTPUTS
+     */
+    Vector<DataMemoryElement>           dataMemory;
 
-	/**
-	 * address of first variable (after constants) or how many MemoryElement are used for constants
-	 */
-	DataMemoryAddress 					startOfVariables;
+    /**
+     * address of first variable (after constants) or how many MemoryElement are used for constants
+     */
+    DataMemoryAddress                   startOfVariables;
 
-	/**
-	 * stack is allocated here
-	 */
-	Vector<DataMemoryElement> 			stack;
+    /**
+     * stack is allocated here
+     */
+    Vector<DataMemoryElement>           stack;
 
 
 private:
 
-	/**
-	 * Checks existence of name using FindInputVariable
-	 * If not found add new variable
-	 */
+    /**
+     * Checks existence of name using FindInputVariable
+     * If not found add new variable
+     */
     inline ErrorManagement::ErrorType AddInputVariable(CCString name,TypeDescriptor td = InvalidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
-	/**
-	 * Looks for a variable of a given name
-	 */
-	inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
+    /**
+     * Looks for a variable of a given name
+     */
+    inline ErrorManagement::ErrorType FindInputVariable(CCString name,VariableInformation *&variableInformation);
 
-	/**
-	 * Checks existence of name using FindOutputVariable
-	 * If not found add new variable
-	 */
+    /**
+     * Checks existence of name using FindOutputVariable
+     * If not found add new variable
+     */
     inline ErrorManagement::ErrorType AddOutputVariable(CCString name,TypeDescriptor td = InvalidType,DataMemoryAddress location = MAXDataMemoryAddress);
 
-	/**
-	 * Looks for a variable of a given name
-	 */
-	inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
+    /**
+     * Looks for a variable of a given name
+     */
+    inline ErrorManagement::ErrorType FindOutputVariable(CCString name,VariableInformation *&variableInformation);
 
-	/**
-	 * Looks for a variable of a given name
-	 */
-	ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
+    /**
+     * Looks for a variable of a given name
+     */
+    ErrorManagement::ErrorType FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation);
 
-	/**
-	 * implements AddOutputVariable and AddInputVariable
-	 */
+    /**
+     * implements AddOutputVariable and AddInputVariable
+     */
     ErrorManagement::ErrorType AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location);
 
-	/**
-	 * implements FindOutputVariable
-	 */
+    /**
+     * implements FindOutputVariable
+     */
     ErrorManagement::ErrorType FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db);
 
-	/**
-	 * expands function information input description into readable text
-	 * if more pCode is required for the decoding it will peek it from context. It will consume the PCode only if peekOnly=false
-	 * it will access DataMemory as well to decode constants
-	 * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
-	 */
+    /**
+     * expands function information input description into readable text
+     * if more pCode is required for the decoding it will peek it from context. It will consume the PCode only if peekOnly=false
+     * it will access DataMemory as well to decode constants
+     * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
+     */
     ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
 
-	/**
-	 * expands function information output description into readable text
-	 * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true otherwise it will consume next
-	 * it will access DataMemory as well to decode constants
-	 * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
-	 */
+    /**
+     * expands function information output description into readable text
+     * if more pCode is required for the decoding it will peek it from context. It will re-read the last pCode if lookBack is true otherwise it will consume next
+     * it will access DataMemory as well to decode constants
+     * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
+     */
     ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
-	/**
-	 * the input variable names
-	 */
-    LinkedListHolderT<VariableInformation> 			inputVariableInfo;
+    /**
+     * the input variable names
+     */
+    LinkedListHolderT<VariableInformation>          inputVariableInfo;
 
-	/**
-	 * the output variable names
-	 */
-    LinkedListHolderT<VariableInformation> 			outputVariableInfo;
+    /**
+     * the output variable names
+     */
+    LinkedListHolderT<VariableInformation>          outputVariableInfo;
 
-	/**
-	 * used by Push/Pop/Peek
-	 */
-	DataMemoryElement *					stackPtr;
+    /**
+     * used by Push/Pop/Peek
+     */
+    DataMemoryElement *                 stackPtr;
 
-	/**
-	 * used by Variable()
-	 */
-	DataMemoryElement *					variablesMemoryPtr;
+    /**
+     * used by Variable()
+     */
+    DataMemoryElement *                 variablesMemoryPtr;
 
-	/**
-	 * used by GetPseudoCode()
-	 */
-	const CodeMemoryElement *			codeMemoryPtr;
+    /**
+     * used by GetPseudoCode()
+     */
+    const CodeMemoryElement *           codeMemoryPtr;
+    
+    /**
+     * RPN code bounded to each instance.
+     */
+    StreamString RPNCode;
 };
 
 
@@ -302,64 +307,64 @@ private:
 
 
 static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
-	return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
-//	return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1U)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
+    return static_cast<DataMemoryAddress>((byteSize + sizeof(DataMemoryElement) - 1U)/sizeof(DataMemoryElement));
+//  return (static_cast<DataMemoryAddress>(byteSize)+static_cast<DataMemoryAddress>(sizeof(DataMemoryElement))-1U)/static_cast<DataMemoryAddress>(sizeof(DataMemoryElement));
 }
 
 template<typename T>
 void Context::Pop(T &value){
-	if (stackPtr){
-		// adds granularity-1 so that also 1 byte uses 1 slot
-		// stack points to the next free value. so one need to step back of the variable size
-		stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
-		value = *((T *)stackPtr);
-	}
+    if (stackPtr){
+        // adds granularity-1 so that also 1 byte uses 1 slot
+        // stack points to the next free value. so one need to step back of the variable size
+        stackPtr -= ByteSizeToDataMemorySize(sizeof(T));
+        value = *((T *)stackPtr);
+    }
 }
 
 template<typename T>
 void Context::Peek(T &value){
-	if (stackPtr){
-		// adds granularity-1 so that also 1 byte uses 1 slot
-		// stack points to the next free value. so one need to step back of the variable size
-		DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
-		value = *((T *)p);
-	}
+    if (stackPtr){
+        // adds granularity-1 so that also 1 byte uses 1 slot
+        // stack points to the next free value. so one need to step back of the variable size
+        DataMemoryElement *p =  stackPtr- ByteSizeToDataMemorySize(sizeof(T));
+        value = *((T *)p);
+    }
 }
 
 
 template<typename T>
 void Context::Push(T &value){
-	if (stackPtr ){
-		*((T *)stackPtr) = value;
-		// adds granularity-1 so that also 1 byte uses 1 slot
-		stackPtr += ByteSizeToDataMemorySize(sizeof(T));
-	}
+    if (stackPtr ){
+        *((T *)stackPtr) = value;
+        // adds granularity-1 so that also 1 byte uses 1 slot
+        stackPtr += ByteSizeToDataMemorySize(sizeof(T));
+    }
 }
 
 template<typename T>
 T &Context::Variable(DataMemoryAddress variableIndex){
-	// note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
-	return (T&)variablesMemoryPtr[variableIndex];
+    // note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
+    return (T&)variablesMemoryPtr[variableIndex];
 }
 
 CodeMemoryElement Context::GetPseudoCode(){
-	return *codeMemoryPtr++;
+    return *codeMemoryPtr++;
 }
 
 ErrorManagement::ErrorType Context::AddInputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
-	return AddVariable2DB(name,inputVariableInfo,td,location);
+    return AddVariable2DB(name,inputVariableInfo,td,location);
 }
 
 ErrorManagement::ErrorType Context::FindInputVariable(CCString name,VariableInformation *&variableInformation){
-	return FindVariableinDB(name,variableInformation,inputVariableInfo);
+    return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
 ErrorManagement::ErrorType Context::AddOutputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
-	return AddVariable2DB(name,outputVariableInfo,td,location);
+    return AddVariable2DB(name,outputVariableInfo,td,location);
 }
 
 ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
-	return FindVariableinDB(name,variableInformation,outputVariableInfo);
+    return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
 
 } //PseudoCode
