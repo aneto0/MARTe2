@@ -30,6 +30,7 @@ comp_op:
     >=
     <=
     ==
+    !=
 
 
 addition_expr:
