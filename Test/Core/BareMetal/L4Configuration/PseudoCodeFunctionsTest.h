@@ -56,8 +56,10 @@ public:
     /**
      * @brief Tests types of registered functionRecords.
      */
-    template<uint8 numberOfFunctions, uint8 numberOfInputs, uint8 numberOfOutputs>
-    bool TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]);
+    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList);
+
+    template<uint8 numberOfFunctions, uint8 numberOfArguments>
+    void ConstructTypeList(TypeDescriptor types[][numberOfArguments], StaticList<TypeDescriptor*> &typeList);
 
     /**
      * @brief Tests TryConsume.
@@ -65,7 +67,6 @@ public:
     bool TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize);
 
 private:
-    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList);
 
     /**
      * @brief Checks if types provided are within types lists.
@@ -80,20 +81,11 @@ void MockFunction(PseudoCode::Context &context);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<uint8 numberOfFunctions, uint8 numberOfInputs, uint8 numberOfOutputs>
-bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]) {
-    StaticList<TypeDescriptor*> expectedInputTypesList;
-    StaticList<TypeDescriptor*> expectedOutputTypesList;
-
+template<uint8 numberOfFunctions, uint8 numberOfArguments>
+void PseudoCodeFunctionsTest::ConstructTypeList(TypeDescriptor types[][numberOfArguments], StaticList<TypeDescriptor *> &typeList) {
     for (uint8 i=0; i < numberOfFunctions; ++i) {
-        if (numberOfInputs > 0) {
-            expectedInputTypesList.Add(expectedInputTypes[i]);
-        }
-        if (numberOfOutputs > 0) {
-            expectedOutputTypesList.Add(expectedOutputTypes[i]);
-        }
+        typeList.Add(types[i]);
     }
-    return TestFunctionRecordTypes(functionName, numberOfInputs, expectedInputTypesList, numberOfOutputs, expectedOutputTypesList);
 }
 
 #endif /* PSEUDOCODEFUNCTIONSTEST_H_ */
