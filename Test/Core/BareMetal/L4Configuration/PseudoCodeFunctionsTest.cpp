@@ -53,11 +53,11 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress expectedDataStackSize) {
+bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
 
-    PseudoCode::DataMemoryAddress dataStackSize = 0;
+    PseudoCode::DataMemoryAddress dataStackSize = initialDataStackSize;
     TypeDescriptor type, initialType;
     Vector<TypeDescriptor> functionInputTypes = functionRecordUT.GetInputTypes();
     Vector<TypeDescriptor> functionOutputTypes = functionRecordUT.GetOutputTypes();
@@ -92,7 +92,7 @@ bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord function
         }
 
     } else {
-        ok &= (dataStackSize == 0);
+        ok &= (dataStackSize == expectedDataStackSize);
 
         ok &= (typeStack.GetSize() == initialTypeStack.GetSize());
         while ((ok) && (initialTypeStack.GetSize() > 0)) {

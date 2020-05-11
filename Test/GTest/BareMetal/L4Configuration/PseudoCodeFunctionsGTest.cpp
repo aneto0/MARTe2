@@ -63,7 +63,54 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1, 2));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_NoInputs) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 0, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 0, 2));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_NoOutputs) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float32Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 0, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(Float32Bit);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1, 0));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MultipleInputs) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float32Bit, UnsignedInteger64Bit, Float64Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 2, 1, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(UnsignedInteger64Bit);
+    typeStack.Push(Float32Bit);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 3, 2));
+}
+
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MultipleOutputs) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit, UnsignedInteger32Bit};
+    PseudoCode::FunctionRecord functionRecordUT("Test", 1, 2, &(recordTypes[0]), &MockFunction);
+    StaticStack<TypeDescriptor,32> typeStack;
+
+    typeStack.Push(Float32Bit);
+
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1, 3));
 }
 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
@@ -76,7 +123,7 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(UnsignedInteger8Bit);
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, false, true, 2, 3));
 }
 
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MatchOutput) {
@@ -89,10 +136,10 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(Float32Bit);
     typeStack.Push(Float64Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, true, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "Test", typeStack, true, true, 1, 2));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Name) {
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_WrongName) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
     TypeDescriptor recordTypes[] = {Float32Bit, Float64Bit};
@@ -101,5 +148,5 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Nam
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "WrongName", typeStack, false, false, 1));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionRecordUT, "WrongName", typeStack, false, false, 1, 1));
 }
