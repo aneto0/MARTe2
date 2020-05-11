@@ -147,6 +147,21 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparis
     ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
 }
 
+TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Comparison_4)
+{
+    MathExpressionParserTest parserTest;
+    
+    const char8* expression     = "ret = A != (B ^ C);";
+    const char8* expectedOutput = "READ A\n"
+                                  "READ B\n"
+                                  "READ C\n"
+                                  "^\n"
+                                  "!=\n"
+                                  "WRITE ret\n";
+            
+    ASSERT_TRUE(parserTest.TestExpression(expression, expectedOutput));
+}
+
 TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Sum)
 {
     MathExpressionParserTest parserTest;
