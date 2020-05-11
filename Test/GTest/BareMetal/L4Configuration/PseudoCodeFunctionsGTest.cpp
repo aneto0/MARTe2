@@ -45,6 +45,15 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDefaultConstructor) 
     ASSERT_TRUE(pseudoCodeFunctionsTest.TestDefaultConstructor());
 }
 
+TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDupFunctionRecordTypes) {
+    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+
+    TypeDescriptor expectedInputTypes[][1]  = {{Float64Bit},             {Float32Bit},             {UnsignedInteger64Bit},                       {SignedInteger64Bit},                     {UnsignedInteger32Bit},                       {SignedInteger32Bit},                     {UnsignedInteger16Bit},                       {SignedInteger16Bit},                     {UnsignedInteger8Bit},                      {SignedInteger8Bit}};
+    TypeDescriptor expectedOutputTypes[][2] = {{Float64Bit, Float64Bit}, {Float32Bit, Float32Bit}, {UnsignedInteger64Bit, UnsignedInteger64Bit}, {SignedInteger64Bit, SignedInteger64Bit}, {UnsignedInteger32Bit, UnsignedInteger32Bit}, {SignedInteger32Bit, SignedInteger32Bit}, {UnsignedInteger16Bit, UnsignedInteger16Bit}, {SignedInteger16Bit, SignedInteger16Bit}, {UnsignedInteger8Bit, UnsignedInteger8Bit}, {SignedInteger8Bit, SignedInteger8Bit}};
+
+    ASSERT_TRUE((pseudoCodeFunctionsTest.TestFunctionRecordTypes<10, 1, 2>("DUP", expectedInputTypes, expectedOutputTypes)));
+}
+
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTypes) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
