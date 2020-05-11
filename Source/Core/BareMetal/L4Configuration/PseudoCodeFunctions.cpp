@@ -44,54 +44,54 @@ FunctionRecord::FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 
     {}
 
 bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
-	bool ret = false;
+    bool ret = false;
 
-	// match function name
+    // match function name
     ret = (name == nameIn.GetList());
 
-	// match first output if matchOutput is set
-	uint32 index = 0U;
-	if (ret && matchOutput){
-		TypeDescriptor type;
-		ret = typeStack.Peek(index++,type);
-		if (ret){
+    // match first output if matchOutput is set
+    uint32 index = 0U;
+    if (ret && matchOutput){
+        TypeDescriptor type;
+        ret = typeStack.Peek(index++,type);
+        if (ret){
             ret = (type == types[numberOfInputs]);
-		}
-	}
+        }
+    }
 
-	// match inputs types
-	for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-		TypeDescriptor type;
-		ret = typeStack.Peek(index++,type);
-		if (ret){
+    // match inputs types
+    for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+        TypeDescriptor type;
+        ret = typeStack.Peek(index++,type);
+        if (ret){
             ret = (type == types[i]);
-		}
-	}
+        }
+    }
 
-	// found! commit changes
-	if (ret){
+    // found! commit changes
+    if (ret){
 
-		// remove first output type
-		if (matchOutput){
-			TypeDescriptor type;
-			typeStack.Pop(type);
-		}
+        // remove first output type
+        if (matchOutput){
+            TypeDescriptor type;
+            typeStack.Pop(type);
+        }
 
-		// remove inputs types
-		for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
-			TypeDescriptor type;
-			typeStack.Pop(type);
+        // remove inputs types
+        for (uint32 i = 0U; ret && (i < numberOfInputs); i++){
+            TypeDescriptor type;
+            typeStack.Pop(type);
             dataStackSize -= ByteSizeToDataMemorySize(type.numberOfBits/8u);
-		}
+        }
 
-		// insert output types
-		for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
-			typeStack.Push(types[i+numberOfInputs]);
+        // insert output types
+        for (uint32 i = 0U; ret && (i < numberOfOutputs); i++){
+            typeStack.Push(types[i+numberOfInputs]);
             dataStackSize += ByteSizeToDataMemorySize((types[i+numberOfInputs].numberOfBits)/8u);
-		}
-	}
+        }
+    }
 
-	return ret;
+    return ret;
 }
 
 Vector<TypeDescriptor> FunctionRecord::GetInputTypes(){
@@ -108,9 +108,9 @@ Vector<TypeDescriptor> FunctionRecord::GetOutputTypes(){
  * to register a function
  */
 void RegisterFunction(const FunctionRecord &record){
-	if (availableFunctions < maxFunctions){
-		functionRecords[availableFunctions++] = record;
-	}
+    if (availableFunctions < maxFunctions){
+        functionRecords[availableFunctions++] = record;
+    }
 }
 
 /**
@@ -118,18 +118,18 @@ void RegisterFunction(const FunctionRecord &record){
  */
 bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
 
-	CodeMemoryElement i = 0;
+    CodeMemoryElement i = 0;
 //printf("looking for %s within %i - %i funs\n",nameIn.GetList(),availableFunctions,maxFunctions);
 
-	bool found = false;
-	for (i=0; (!found) && (i < availableFunctions);i++ ){
-		found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
-		if (found){
-			code = i;
-		}
-	}
+    bool found = false;
+    for (i=0; (!found) && (i < availableFunctions);i++ ){
+        found = functionRecords[i].TryConsume(nameIn,typeStack,matchOutput,dataStackSize);
+        if (found){
+            code = i;
+        }
+    }
 
-	return found;
+    return found;
 }
 
 
@@ -143,21 +143,21 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
 
 
 template <typename T> void Read(Context &context){
-	CodeMemoryElement index;
-	index = context.GetPseudoCode();
-	context.Push(context.Variable<T>(index));
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Push(context.Variable<T>(index));
 }
 
 template <typename T> void Write(Context &context){
-	CodeMemoryElement index;
-	index = context.GetPseudoCode();
-	context.Pop(context.Variable<T>(index));
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Pop(context.Variable<T>(index));
 }
 
 template <typename T> void Duplication(Context &context){
-	T var;
-	context.Peek(var);
-	context.Push(var);
+    T var;
+    context.Peek(var);
+    context.Push(var);
 }
 
 REGISTER_PCODE_FUNCTION(DUP,double,1,2,Duplication<float64>,Float64Bit,Float64Bit,Float64Bit)
@@ -205,23 +205,23 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
     static const FunctionRecord name ## type1 ## type2 ## _FunctionRecord(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
-	static class name ## type1 ## type2 ## RegisterClass { \
-	public: name ## type1 ## type2 ## RegisterClass(){\
-			RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\
-		}\
-	} name ## type1 ## type2 ## RegisterClassInstance;
+    static class name ## type1 ## type2 ## RegisterClass { \
+    public: name ## type1 ## type2 ## RegisterClass(){\
+            RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\
+        }\
+    } name ## type1 ## type2 ## RegisterClassInstance;
 
 template <typename T1,typename T2> void Casting(Context &context){
-	T1 x1;
-	T2 x2;
-	bool ret;
-	context.Pop(x1);
-	ret = SafeNumber2Number(x1,x2);
-	context.Push(x2);
-	if (!ret){
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
+    T1 x1;
+    T2 x2;
+    bool ret;
+    context.Pop(x1);
+    ret = SafeNumber2Number(x1,x2);
+    context.Push(x2);
+    if (!ret){
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
 }
 
 #define REGISTER_CAST_FUNCTION_BLOCK(type1,function)   \
@@ -254,15 +254,15 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
  *********************************************************************************************************
  **********************************************************************************************************/
 
-#define REGISTER_1_FUNCTION(name,fname)	    							\
-		template <typename T> void function ## fname ## ication (Context &context){ \
-			T x,res;													     		\
-			context.Pop(x);                                                         \
-			res = fname (x);                                                        \
-			context.Push(res);                                                      \
-		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float32,1,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
-		REGISTER_PCODE_FUNCTION(name,float64,1,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit)
+#define REGISTER_1_FUNCTION(name,fname)                                 \
+        template <typename T> void function ## fname ## ication (Context &context){ \
+            T x,res;                                                                \
+            context.Pop(x);                                                         \
+            res = fname (x);                                                        \
+            context.Push(res);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float32,1,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float64,1,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit)
 
 REGISTER_1_FUNCTION(SIN,sin)
 REGISTER_1_FUNCTION(COS,cos)
@@ -271,16 +271,16 @@ REGISTER_1_FUNCTION(EXP,exp)
 REGISTER_1_FUNCTION(LOG,log)
 REGISTER_1_FUNCTION(LOG10,log10)
 
-#define REGISTER_2_FUNCTION(name,fname)	    							\
-		template <typename T> void function ## fname ## ication (Context &context){ \
-			T x1,x2,res;	     										     		\
-			context.Pop(x1);                                                        \
-			context.Pop(x2);                                                        \
-			res = fname (x1,x2);                                                    \
-			context.Push(res);                                                      \
-		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
-		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)
+#define REGISTER_2_FUNCTION(name,fname)                                 \
+        template <typename T> void function ## fname ## ication (Context &context){ \
+            T x1,x2,res;                                                            \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            res = fname (x2,x1);                                                    \
+            context.Push(res);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)
 
 REGISTER_2_FUNCTION(POW,pow)
 
@@ -293,25 +293,25 @@ REGISTER_2_FUNCTION(POW,pow)
  *********************************************************************************************************
  **********************************************************************************************************/
 
-#define REGISTER_COMPARE_OPERATOR(name,oper,fname)	    						    \
-		template <typename T> void function ## fname ## ication (Context &context){ \
-			T x1,x2;													     		\
-			bool ret;													     		\
-			context.Pop(x1);                                                        \
-			context.Pop(x2);                                                        \
-			ret = x1 oper x2;                                                       \
-			context.Push(ret);                                                      \
-		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit			,Float64Bit				,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit			,Float32Bit				,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit	,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit	,SignedInteger64Bit		,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit	,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit	,SignedInteger32Bit		,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit	,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit	,SignedInteger16Bit		,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit		,UnsignedInteger8Bit) \
-		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit	,SignedInteger8Bit		,UnsignedInteger8Bit)
+#define REGISTER_COMPARE_OPERATOR(name,oper,fname)                                  \
+        template <typename T> void function ## fname ## ication (Context &context){ \
+            T x1,x2;                                                                \
+            bool ret;                                                               \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            ret = x2 oper x1;                                                       \
+            context.Push(ret);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit          ,Float64Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit          ,Float32Bit             ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit  ,SignedInteger64Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit  ,SignedInteger32Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit   ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit  ,SignedInteger16Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit     ,UnsignedInteger8Bit) \
+        REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit   ,SignedInteger8Bit      ,UnsignedInteger8Bit)
 
 REGISTER_COMPARE_OPERATOR(EQ, == ,Equal)
 REGISTER_COMPARE_OPERATOR(NEQ, != ,Different)
@@ -329,15 +329,15 @@ REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
  **********************************************************************************************************/
 
 
-#define REGISTER_LOGICAL_OPERATOR(name,oper,fname)	    						    \
-		void function ## fname ## ication (Context &context){                       \
-			bool x1,x2,ret;													        \
-			context.Pop(x1);                                                        \
-			context.Pop(x2);                                                        \
-			ret = x1 oper x2;                                                       \
-			context.Push(ret);                                                      \
-		}                                                                           \
-      	REGISTER_PCODE_FUNCTION(name,boolean,2,1,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
+#define REGISTER_LOGICAL_OPERATOR(name,oper,fname)                                  \
+        void function ## fname ## ication (Context &context){                       \
+            bool x1,x2,ret;                                                         \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            ret = x2 oper x1;                                                       \
+            context.Push(ret);                                                      \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,boolean,2,1,function ## fname ## ication,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
 
 REGISTER_LOGICAL_OPERATOR(AND, && ,And)
 REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
@@ -356,16 +356,16 @@ REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
  *********************************************************************************************************
  **********************************************************************************************************/
 
-#define REGISTER_OPERATOR(name,oper,fname)	    							        \
-		template <typename T> void function ## fname ## ication (Context &context){ \
-			T x1,x2,x3;													     		\
-			context.Pop(x1);                                                        \
-			context.Pop(x2);                                                        \
-			x3 = static_cast<T>(x1 oper x2);                                        \
-			context.Push(x3);                                                       \
-		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
-		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+#define REGISTER_OPERATOR(name,oper,fname)                                          \
+        template <typename T> void function ## fname ## ication (Context &context){ \
+            T x1,x2,x3;                                                             \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            x3 = static_cast<T>(x2 oper x1);                                        \
+            context.Push(x3);                                                       \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
 
 REGISTER_OPERATOR(ADD, + ,Addition)
 REGISTER_OPERATOR(SUB, - ,Subtract)
@@ -381,180 +381,180 @@ REGISTER_OPERATOR(DIV, / ,Division)
  **********************************************************************************************************/
 
 template <typename T1,typename T2,typename Tout> void Addition_3T(Context &context){
-	Tout x1,x2,x3;
-	T1 y1;
-	T2 y2;
-	context.Pop(y1);
-	context.Pop(y2);
-	x1 = static_cast<Tout>(y1);
-	x2 = static_cast<Tout>(y2);
-	x3 = static_cast<Tout>(x1 + x2);
-	context.Push(x3);
+    Tout x1,x2,x3;
+    T1 y1;
+    T2 y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    x1 = static_cast<Tout>(y1);
+    x2 = static_cast<Tout>(y2);
+    x3 = static_cast<Tout>(x2 + x1);
+    context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Subtraction_3T(Context &context){
-	Tout x1,x2,x3;
-	T1 y1;
-	T2 y2;
-	context.Pop(y1);
-	context.Pop(y2);
-	x1 = static_cast<Tout>(y1);
-	x2 = static_cast<Tout>(y2);
-	x3 = static_cast<Tout>(x1 - x2);
-	context.Push(x3);
+    Tout x1,x2,x3;
+    T1 y1;
+    T2 y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    x1 = static_cast<Tout>(y1);
+    x2 = static_cast<Tout>(y2);
+    x3 = static_cast<Tout>(x2 - x1);
+    context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Multiplication_3T(Context &context){
-	Tout x1,x2,x3;
-	T1 y1;
-	T2 y2;
-	context.Pop(y1);
-	context.Pop(y2);
-	x1 = static_cast<Tout>(y1);
-	x2 = static_cast<Tout>(y2);
-	x3 = static_cast<Tout>(x1 * x2);
-	context.Push(x3);
+    Tout x1,x2,x3;
+    T1 y1;
+    T2 y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    x1 = static_cast<Tout>(y1);
+    x2 = static_cast<Tout>(y2);
+    x3 = static_cast<Tout>(x2 * x1);
+    context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void Division_3T(Context &context){
-	Tout x1,x2,x3=0;
-	T1 y1;
-	T2 y2;
-	context.Pop(y1);
-	context.Pop(y2);
-	if (y2 != 0) {
-		x1 = static_cast<Tout>(y1);
-		x2 = static_cast<Tout>(y2);
-		x3 = static_cast<Tout>(x1 / x2);
-	} else {
-		context.runtimeError.overflow = true;
-	}
-	context.Push(x3);
+    Tout x1,x2,x3=0;
+    T1 y1;
+    T2 y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    if (y2 != 0) {
+        x1 = static_cast<Tout>(y1);
+        x2 = static_cast<Tout>(y2);
+        x3 = static_cast<Tout>(x2 / x1);
+    } else {
+        context.runtimeError.overflow = true;
+    }
+    context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void SAddition_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		x1 = static_cast<Tout>(y1);
-		x2 = static_cast<Tout>(y2);
-		context.runtimeError = SafeMath::Addition(x1,x2,x3);
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        x1 = static_cast<Tout>(y1);
+        x2 = static_cast<Tout>(y2);
+        context.runtimeError = SafeMath::Addition(x2,x1,x3);
+        context.Push(x3);
+    }
 }
 
 template <typename T1,typename T2,typename Tout> void SSubtraction_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		x1 = static_cast<Tout>(y1);
-		x2 = static_cast<Tout>(y2);
-		context.runtimeError = SafeMath::Subtraction(x1,x2,x3);
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        x1 = static_cast<Tout>(y1);
+        x2 = static_cast<Tout>(y2);
+        context.runtimeError = SafeMath::Subtraction(x2,x1,x3);
+        context.Push(x3);
+    }
 }
 
 template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		x1 = static_cast<Tout>(y1);
-		x2 = static_cast<Tout>(y2);
-		context.runtimeError = SafeMath::Multiplication(x1,x2,x3);
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        x1 = static_cast<Tout>(y1);
+        x2 = static_cast<Tout>(y2);
+        context.runtimeError = SafeMath::Multiplication(x2,x1,x3);
+        context.Push(x3);
+    }
 }
 
 template <typename T1,typename T2,typename Tout> void SDivision_3T(Context &context){
-	Tout x1,x2,x3=0;
-	T1 y1;
-	T2 y2;
-	context.Pop(y1);
-	context.Pop(y2);
-	bool sat1 = SafeNumber2Number(y1,x1);
-	bool sat2 = SafeNumber2Number(y2,x2);
-	if ((y2 != 0) && sat1 && sat2) {
-		x3 = static_cast<Tout>(x1 / x2);
-	} else {
-		context.runtimeError.overflow = true;
-	}
-	context.Push(x3);
+    Tout x1,x2,x3=0;
+    T1 y1;
+    T2 y2;
+    context.Pop(y1);
+    context.Pop(y2);
+    bool sat1 = SafeNumber2Number(y1,x1);
+    bool sat2 = SafeNumber2Number(y2,x2);
+    if ((y2 != 0) && sat1 && sat2) {
+        x3 = static_cast<Tout>(x2 / x1);
+    } else {
+        context.runtimeError.overflow = true;
+    }
+    context.Push(x3);
 }
 
 template <typename T1,typename T2,typename Tout> void SSAddition_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		bool sat1 = SafeNumber2Number(y1,x1);
-		bool sat2 = SafeNumber2Number(y2,x2);
-		if (sat1 && sat2) {
-			context.runtimeError = SafeMath::Addition(x1,x2,x3);
-		} else {
-			context.runtimeError.overflow = true;
-		}
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        bool sat1 = SafeNumber2Number(y1,x1);
+        bool sat2 = SafeNumber2Number(y2,x2);
+        if (sat1 && sat2) {
+            context.runtimeError = SafeMath::Addition(x2,x1,x3);
+        } else {
+            context.runtimeError.overflow = true;
+        }
+        context.Push(x3);
+    }
 }
 
 template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3 = 0;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		bool sat1 = SafeNumber2Number(y1,x1);
-		bool sat2 = SafeNumber2Number(y2,x2);
-		if (sat1 && sat2) {
-			context.runtimeError = SafeMath::Subtraction(x1,x2,x3);
-		} else {
-			context.runtimeError.overflow = true;
-		}
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3 = 0;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        bool sat1 = SafeNumber2Number(y1,x1);
+        bool sat2 = SafeNumber2Number(y2,x2);
+        if (sat1 && sat2) {
+            context.runtimeError = SafeMath::Subtraction(x2,x1,x3);
+        } else {
+            context.runtimeError.overflow = true;
+        }
+        context.Push(x3);
+    }
 }
 
 template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(Context &context){
-	if (context.runtimeError){
-		Tout x1,x2,x3=0;
-		T1 y1;
-		T2 y2;
-		context.Pop(y1);
-		context.Pop(y2);
-		bool sat1 = SafeNumber2Number(y1,x1);
-		bool sat2 = SafeNumber2Number(y2,x2);
-		if (sat1 && sat2) {
-			context.runtimeError = SafeMath::Multiplication(x1,x2,x3);
-		} else {
-			context.runtimeError.overflow = true;
-		}
-		context.Push(x3);
-	}
+    if (context.runtimeError){
+        Tout x1,x2,x3=0;
+        T1 y1;
+        T2 y2;
+        context.Pop(y1);
+        context.Pop(y2);
+        bool sat1 = SafeNumber2Number(y1,x1);
+        bool sat2 = SafeNumber2Number(y2,x2);
+        if (sat1 && sat2) {
+            context.runtimeError = SafeMath::Multiplication(x2,x1,x3);
+        } else {
+            context.runtimeError.overflow = true;
+        }
+        context.Push(x3);
+    }
 }
 
 // register operators with no differences in input types (type1 op type1)==>typeOut
-#define REGISTER_2T_OPERATOR(name,fname,typeIn,typeOut)	    						            \
-	static Function functionP ## fname ## typeIn ## typeIn ## typeOut = & fname ## _3T<typeIn,typeIn,typeOut>;    \
-	REGISTER_PCODE_FUNCTION(name,typeIn ## typeIn ## typeOut,2,1,*functionP ## fname ## typeIn ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+#define REGISTER_2T_OPERATOR(name,fname,typeIn,typeOut)                                         \
+    static Function functionP ## fname ## typeIn ## typeIn ## typeOut = & fname ## _3T<typeIn,typeIn,typeOut>;    \
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeIn ## typeOut,2,1,*functionP ## fname ## typeIn ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 // register operators with differences in input types (type1 op type2)==>typeOut
-#define REGISTER_3T_OPERATOR(name,fname,typeIn1,typeIn2,typeOut)	    						            \
-	static Function functionP ## fname ## typeIn1 ## typeIn2 ## typeOut = & fname ## _3T<typeIn1,typeIn2,typeOut>;    \
-	static Function functionP ## fname ## typeIn2 ## typeIn1 ## typeOut = & fname ## _3T<typeIn2,typeIn1,typeOut>;    \
-	REGISTER_PCODE_FUNCTION(name,typeIn1 ## typeIn2 ## typeOut,2,1,*functionP ## fname ## typeIn1 ## typeIn2 ## typeOut,Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeOut>())   \
-	REGISTER_PCODE_FUNCTION(name,typeIn2 ## typeIn1 ## typeOut,2,1,*functionP ## fname ## typeIn2 ## typeIn1 ## typeOut,Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeOut>())   \
+#define REGISTER_3T_OPERATOR(name,fname,typeIn1,typeIn2,typeOut)                                            \
+    static Function functionP ## fname ## typeIn1 ## typeIn2 ## typeOut = & fname ## _3T<typeIn1,typeIn2,typeOut>;    \
+    static Function functionP ## fname ## typeIn2 ## typeIn1 ## typeOut = & fname ## _3T<typeIn2,typeIn1,typeOut>;    \
+    REGISTER_PCODE_FUNCTION(name,typeIn1 ## typeIn2 ## typeOut,2,1,*functionP ## fname ## typeIn1 ## typeIn2 ## typeOut,Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeOut>())   \
+    REGISTER_PCODE_FUNCTION(name,typeIn2 ## typeIn1 ## typeOut,2,1,*functionP ## fname ## typeIn2 ## typeIn1 ## typeOut,Type2TypeDescriptor<typeIn2>(),Type2TypeDescriptor<typeIn1>(),Type2TypeDescriptor<typeOut>())   \
 
 
 REGISTER_2T_OPERATOR(ADD, Addition,int8  ,int32)
@@ -689,125 +689,125 @@ REGISTER_3T_OPERATOR(DIV, Division,uint32,uint64,uint64)
  **********************************************************************************************************/
 
 template <typename T1,typename T2,typename Ttest> void Greater_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 > y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 > y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Push(result);
 }
 
 template <typename T1,typename T2,typename Ttest> void Lower_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 < y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 < y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Push(result);
 }
 
 template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 >= y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 >= y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Push(result);
 }
 
 template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 <= y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 <= y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Push(result);
 }
 
 template <typename T1,typename T2,typename Ttest> void Same_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 == y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 == y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Push(result);
 }
 
 template <typename T1,typename T2,typename Ttest> void Different_3T(Context &context){
-	T1 x1;
-	T2 x2;
-	Ttest y1,y2;
-	context.Pop(x1);
-	context.Pop(x2);
-	bool result=false;
-	bool ret1,ret2;
-	ret1 = SafeNumber2Number(x1,y1);
-	ret2 = SafeNumber2Number(x2,y2);
-	if (ret1 && ret2){
-		result = y1 == y2;
-	} else {
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
-	}
-	context.Push(result);
+    T1 x1;
+    T2 x2;
+    Ttest y1,y2;
+    context.Pop(x1);
+    context.Pop(x2);
+    bool result=false;
+    bool ret1,ret2;
+    ret1 = SafeNumber2Number(x1,y1);
+    ret2 = SafeNumber2Number(x2,y2);
+    if (ret1 && ret2){
+        result = y2 == y1;
+    } else {
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
+    }
+    context.Push(result);
 }
 
 
 // register compare operators with two input types but (type1 op type1)==>typeOut
-#define REGISTER_2T_COMP_OPERATOR(name,fname,type,typeTest)	    						                             \
-	static Function functionP ## fname ## type ## typeTest ## typeTestR = & fname ## _3T<type,typeTest,typeTest>;    \
+#define REGISTER_2T_COMP_OPERATOR(name,fname,type,typeTest)                                                          \
+    static Function functionP ## fname ## type ## typeTest ## typeTestR = & fname ## _3T<type,typeTest,typeTest>;    \
     static Function functionP ## fname ## typeTest ## type ## typeTestL = & fname ## _3T<typeTest,type,typeTest>;    \
-	REGISTER_PCODE_FUNCTION(name,type ## typeTest ## typeTest,2,1,*functionP ## fname ## type ## typeTest ## typeTestR,Type2TypeDescriptor<type>(),Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<uint8>())\
+    REGISTER_PCODE_FUNCTION(name,type ## typeTest ## typeTest,2,1,*functionP ## fname ## type ## typeTest ## typeTestR,Type2TypeDescriptor<type>(),Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<uint8>())\
     REGISTER_PCODE_FUNCTION(name,typeTest ## type ## typeTest,2,1,*functionP ## fname ## typeTest ## type ## typeTestL,Type2TypeDescriptor<typeTest>(),Type2TypeDescriptor<type>(),Type2TypeDescriptor<uint8>())
 
 #define REGISTER_2T_COMP_OPERATOR_BLOCK(name,fname)                \
@@ -850,26 +850,26 @@ REGISTER_2T_COMP_OPERATOR_BLOCK(NEQ,Different)
 
 
 template <typename Tin,typename Tout> void Write_2T(Context &context){
-	CodeMemoryElement index;
-	index = context.GetPseudoCode();
-	Tin x1;
-	Tout x2;
-	context.Pop(x1);
-	bool ret;
-	ret = SafeNumber2Number(x1,x2);
-	if (!ret){
-		context.runtimeError.outOfRange = true;
-//		COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
-	}
-	context.Variable<Tout>(index) = x2;
+    CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    Tin x1;
+    Tout x2;
+    context.Pop(x1);
+    bool ret;
+    ret = SafeNumber2Number(x1,x2);
+    if (!ret){
+        context.runtimeError.outOfRange = true;
+//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
+    }
+    context.Variable<Tout>(index) = x2;
 }
 
 
 
 // register function with difference between input and outout type   fun(type1)==>typeOut
-#define REGISTER_WRITECONV(name,fname,typeIn,typeOut)	    						            \
-	static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
-	REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+#define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
+    static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
 
 REGISTER_WRITECONV(WRITE,Write,uint64,uint8)
 REGISTER_WRITECONV(WRITE,Write,uint64,uint16)
@@ -895,24 +895,24 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
 #else  // standard operators
 
 // TODO - implement without casting. promote all results between u/int16 and u/int8 to int32 as the compiler would do
-#define REGISTER_OPERATOR(name,oper,fname)	    							        \
-		template <typename T> void function ## fname ## ication (Context &context){ \
-			T x1,x2,x3;													     		\
-			context.Pop(x1);                                                        \
-			context.Pop(x2);                                                        \
-			x3 = static_cast<T>(x1 oper x2);                                        \
-			context.Push(x3);                                                       \
-		}                                                                           \
-		REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
-		REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
-		REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit) \
-		REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit) \
-		REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit) \
-		REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)       \
-		REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
-		REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
+#define REGISTER_OPERATOR(name,oper,fname)                                          \
+        template <typename T> void function ## fname ## ication (Context &context){ \
+            T x1,x2,x3;                                                             \
+            context.Pop(x1);                                                        \
+            context.Pop(x2);                                                        \
+            x3 = static_cast<T>(x2 oper x1);                                        \
+            context.Push(x3);                                                       \
+        }                                                                           \
+        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
+        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
+        REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit) \
+        REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)       \
+        REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit) \
+        REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)       \
+        REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit) \
+        REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)       \
+        REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
+        REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
 
 REGISTER_OPERATOR(ADD, + ,Addition)
 REGISTER_OPERATOR(SUB, - ,Subtract)
