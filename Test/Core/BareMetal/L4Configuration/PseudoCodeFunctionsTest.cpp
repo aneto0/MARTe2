@@ -53,6 +53,56 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
+
+bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList) {
+    bool ok = true;
+
+    for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
+        PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
+        Vector<TypeDescriptor> inputTypes = functionRecord.GetInputTypes();
+        Vector<TypeDescriptor> outputTypes = functionRecord.GetOutputTypes();
+
+        if ((functionRecord.GetName() == functionName.GetList()) &&
+            (inputTypes.GetNumberOfElements() == numberOfInputs) &&
+            (outputTypes.GetNumberOfElements() == numberOfOutputs)) {
+            uint8 foundIndex;
+
+            ok &= FindTypesInLists(foundIndex, inputTypes, outputTypes, expectedInputTypesList, expectedOutputTypesList);
+            if (ok) {
+                expectedInputTypesList.Remove(foundIndex);
+                expectedOutputTypesList.Remove(foundIndex);
+            }
+        }
+    }
+
+    ok &= (expectedInputTypesList.GetSize() == 0);
+    ok &= (expectedOutputTypesList.GetSize() == 0);
+
+    return ok;
+
+}
+
+bool PseudoCodeFunctionsTest::FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList) {
+
+    bool found = false;
+
+    for (foundIndex = 0; (foundIndex < inputTypesList.GetSize()) && (!found); ++foundIndex) {
+        bool equals = true;
+
+        for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
+            equals &= (inputTypes[i] == inputTypesList[foundIndex][i]);
+        }
+        for (uint32 i = 0; (equals) && (i < outputTypes.GetNumberOfElements()); ++i) {
+            equals &= (outputTypes[i] == outputTypesList[foundIndex][i]);
+        }
+
+        found = equals;
+    }
+
+    --foundIndex;
+    return found;
+}
+
 bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;

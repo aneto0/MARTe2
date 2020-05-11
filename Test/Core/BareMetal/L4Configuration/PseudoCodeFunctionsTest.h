@@ -65,10 +65,11 @@ public:
     bool TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize);
 
 private:
+    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList);
+
     /**
      * @brief Checks if types provided are within types lists.
      */
-    template<uint8 numberOfInputs, uint8 numberOfOutputs>
     bool FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList);
 };
 
@@ -81,61 +82,18 @@ void MockFunction(PseudoCode::Context &context);
 
 template<uint8 numberOfFunctions, uint8 numberOfInputs, uint8 numberOfOutputs>
 bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, TypeDescriptor expectedInputTypes[][numberOfInputs], TypeDescriptor expectedOutputTypes[][numberOfOutputs]) {
-
     StaticList<TypeDescriptor*> expectedInputTypesList;
     StaticList<TypeDescriptor*> expectedOutputTypesList;
-    bool ok = true;
 
     for (uint8 i=0; i < numberOfFunctions; ++i) {
-        expectedInputTypesList.Add(expectedInputTypes[i]);
-        expectedOutputTypesList.Add(expectedOutputTypes[i]);
-    }
-
-    for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
-        PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
-        Vector<TypeDescriptor> inputTypes = functionRecord.GetInputTypes();
-        Vector<TypeDescriptor> outputTypes = functionRecord.GetOutputTypes();
-
-        if ((functionRecord.GetName() == functionName.GetList()) &&
-            (inputTypes.GetNumberOfElements() == numberOfInputs) &&
-            (outputTypes.GetNumberOfElements() == numberOfOutputs)) {
-            uint8 foundIndex;
-
-            ok &= FindTypesInLists<numberOfInputs, numberOfOutputs>(foundIndex, inputTypes, outputTypes, expectedInputTypesList, expectedOutputTypesList);
-            if (ok) {
-                expectedInputTypesList.Remove(foundIndex);
-                expectedOutputTypesList.Remove(foundIndex);
-            }
+        if (numberOfInputs > 0) {
+            expectedInputTypesList.Add(expectedInputTypes[i]);
+        }
+        if (numberOfOutputs > 0) {
+            expectedOutputTypesList.Add(expectedOutputTypes[i]);
         }
     }
-
-    ok &= (expectedInputTypesList.GetSize() == 0);
-    ok &= (expectedOutputTypesList.GetSize() == 0);
-
-    return ok;
-
-}
-
-template<uint8 numberOfInputs, uint8 numberOfOutputs>
-bool PseudoCodeFunctionsTest::FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList) {
-
-    bool found = false;
-
-    for (foundIndex = 0; (foundIndex < inputTypesList.GetSize()) && (!found); ++foundIndex) {
-        bool equals = true;
-
-        for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
-            equals &= (inputTypes[i] == inputTypesList[foundIndex][i]);
-        }
-        for (uint32 i = 0; (equals) && (i < outputTypes.GetNumberOfElements()); ++i) {
-            equals &= (outputTypes[i] == outputTypesList[foundIndex][i]);
-        }
-
-        found = equals;
-    }
-
-    --foundIndex;
-    return found;
+    return TestFunctionRecordTypes(functionName, numberOfInputs, expectedInputTypesList, numberOfOutputs, expectedOutputTypesList);
 }
 
 #endif /* PSEUDOCODEFUNCTIONSTEST_H_ */
