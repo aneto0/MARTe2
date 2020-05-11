@@ -79,37 +79,37 @@ typedef uint16 DataMemoryAddress;
  *  Element for the list of variables
  */
 struct VariableInformation: public LinkedListable {
-	/**
-	 * name of the variable
-	 */
+    /**
+     * name of the variable
+     */
     StreamString name;
 
-	/**
-	 * type of the variable. Only simple and numeric types are possible
-	 */
-	TypeDescriptor type;
+    /**
+     * type of the variable. Only simple and numeric types are possible
+     */
+    TypeDescriptor type;
 
-	/**
-	 * location of the variable in the data area.
-	 * if location is below the start of the variables then
-	 * it is a constant
-	 */
-	DataMemoryAddress location;
+    /**
+     * location of the variable in the data area.
+     * if location is below the start of the variables then
+     * it is a constant
+     */
+    DataMemoryAddress location;
 
-	/**
-	 * set when during compilation to mark that this output variable has already been written
-	 */
-	bool variableUsed;
+    /**
+     * set when during compilation to mark that this output variable has already been written
+     */
+    bool variableUsed;
 
-	/**
-	 * initialises data
-	 */
-	inline VariableInformation();
+    /**
+     * initialises data
+     */
+    inline VariableInformation();
 
-	/**
-	 * copies
-	 */
-	inline VariableInformation(const VariableInformation &in);
+    /**
+     * copies
+     */
+    inline VariableInformation(const VariableInformation &in);
 };
 
 
@@ -118,19 +118,19 @@ struct VariableInformation: public LinkedListable {
 /*---------------------------------------------------------------------------*/
 
 inline VariableInformation::VariableInformation(){
-	type = VoidType;
-	location = 0;
-	variableUsed = false;
+    type = VoidType;
+    location = 0;
+    variableUsed = false;
 }
 
 /**
  * copies
  */
 inline VariableInformation::VariableInformation(const VariableInformation &in){
-	name = in.name;
-	type = in.type;
-	location = in.location;
-	variableUsed = false;
+    name = in.name;
+    type = in.type;
+    location = in.location;
+    variableUsed = false;
 }
 
 } // PseudoCode

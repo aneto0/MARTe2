@@ -82,9 +82,9 @@ public:
     bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
 
 private:
-	/**
-	 *	The name of the functions as used in the RPN code
-	 */
+    /**
+     *  The name of the functions as used in the RPN code
+     */
     StreamString            name;
 
     /**
@@ -141,11 +141,11 @@ void RegisterFunction(const FunctionRecord &record);
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
     static const FunctionRecord name ## subName ## _FunctionRecord(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
-	static class name ## subName ## RegisterClass { \
-	public: name ## subName ## RegisterClass(){\
-			RegisterFunction(name ## subName ## _FunctionRecord);\
-		}\
-	} name ## subName ## RegisterClassInstance;
+    static class name ## subName ## RegisterClass { \
+    public: name ## subName ## RegisterClass(){\
+            RegisterFunction(name ## subName ## _FunctionRecord);\
+        }\
+    } name ## subName ## RegisterClassInstance;
 
 
 /*---------------------------------------------------------------------------*/
