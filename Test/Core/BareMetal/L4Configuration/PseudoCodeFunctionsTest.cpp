@@ -86,7 +86,9 @@ bool PseudoCodeFunctionsTest::FindTypesInLists(uint8 &foundIndex, Vector<TypeDes
 
     bool found = false;
 
-    for (foundIndex = 0; (foundIndex < inputTypesList.GetSize()) && (!found); ++foundIndex) {
+    uint8 maxIndex = (inputTypesList.GetSize() != 0) ? inputTypesList.GetSize() : outputTypesList.GetSize();
+
+    for (foundIndex = 0; (foundIndex < maxIndex) && (!found); ++foundIndex) {
         bool equals = true;
 
         for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
