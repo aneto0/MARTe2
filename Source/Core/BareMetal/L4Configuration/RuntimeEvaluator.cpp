@@ -1,5 +1,5 @@
 /**
- * @file PseudoCode.cpp
+ * @file RuntimeEvaluator.cpp
  * @brief Header file for class AnyType
  * @date Mar 26, 2020
  * @author Filippo Sartori
@@ -49,80 +49,6 @@ const CCString readToken("READ");
 const CCString writeToken("WRITE");
 const CCString constToken("CONST");
 const CCString castToken("CAST");
-
-/**
- * allows searching for a variable with a given name
- */
-class VariableFinder: public IteratorT<VariableInformation>{
-public:
-    /**
-     *
-     */
-    VariableFinder(CCString name);
-    /**
-     *
-     */
-    VariableFinder(DataMemoryAddress address);
-    /**
-     *
-     */
-    void Do(VariableInformation *data);
-    /**
-     *
-     */
-    VariableInformation *variable;
-    /**
-     *
-     */
-    ErrorManagement::ErrorType error;
-
-private:
-    /**
-     *
-     */
-    StreamString variableName;
-
-    /**
-     *
-     */
-    DataMemoryAddress variableAddress;
-};
-
-
-VariableFinder::VariableFinder(CCString name){
-    variable = NULL_PTR(VariableInformation*);
-    variableName = name;
-    variableAddress = MAXDataMemoryAddress;
-}
-
-VariableFinder::VariableFinder(DataMemoryAddress address){
-    variable = NULL_PTR(VariableInformation*);
-    variableAddress = address;
-}
-
-
-void VariableFinder::Do(VariableInformation *data){
-    if (data == NULL_PTR(VariableInformation *)){
-        error = ErrorManagement::FatalError;
-    } else {
-        if (variableName.Size() > 0){
-            if (data->name == variableName){
-                variable = data;
-                error = ErrorManagement::NoError;
-            }
-        } else
-        if (variableAddress < MAXDataMemoryAddress){
-            if (data->location == variableAddress){
-                variable = data;
-                error = ErrorManagement::NoError;
-            }
-        }
-    }
-}
-
-
-
-/*************************************************************************/
 
 RuntimeEvaluator::RuntimeEvaluator(StreamString &RPNCodeIn){
     RPNCode = RPNCodeIn;
