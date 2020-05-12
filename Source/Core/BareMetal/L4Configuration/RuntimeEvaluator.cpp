@@ -20,15 +20,25 @@
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
 */
-#include <stdio.h>
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 #include "RuntimeEvaluator.h"
 #include "RuntimeEvaluatorFunctions.h"
-#include "IteratorT.h"
-#include "StaticStack.h"
-#include "AnyType.h"
-#include "TypeConversion.h"
-#include "AdvancedErrorManagement.h"
+
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 

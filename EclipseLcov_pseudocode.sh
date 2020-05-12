@@ -2,7 +2,7 @@
 OUTPUT_DIR=Build
 
 #Build with coverage enabled
-#make -f Makefile.cov clean
+make -f Makefile.cov clean
 make -f Makefile.cov
 
 #Run baseline coverage
