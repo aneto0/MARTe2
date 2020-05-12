@@ -952,5 +952,41 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &DeCompileRPNCode, bo
     return ret;
 }
 
+void* Context::GetInputVariableMemory(StreamString &varNameIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    bool isFound = false;
+    
+    int32 index = 0;
+    PseudoCode::VariableInformation *var;
+
+    while(BrowseInputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return retAddress;
+    
+}
+
+void* Context::GetInputVariableMemory(uint32 &varIndexIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    
+    PseudoCode::VariableInformation *var;
+    
+    if (BrowseInputVariable(varIndexIn,var)) {
+        
+        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+        
+    }
+    
+    return retAddress;
+    
+}
+
 } //PseudoCode
 } //MARTe
