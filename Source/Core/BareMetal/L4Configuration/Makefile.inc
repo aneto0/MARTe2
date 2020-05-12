@@ -35,8 +35,8 @@ OBJSX=	AnyObject.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
 		MathExpressionParser.x \
-		PseudoCode.x \
-		PseudoCodeFunctions.x \
+		RuntimeEvaluator.x \
+		RuntimeEvaluatorFunctions.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \

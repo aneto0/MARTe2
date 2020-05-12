@@ -24,26 +24,25 @@
 #include <math.h>
 #include "ErrorManagement.h"
 #include "SafeMath.h"
-#include "PseudoCodeFunctions.h"
+#include "RuntimeEvaluatorFunctions.h"
 
 
 
-namespace MARTe{
-namespace PseudoCode{
+namespace MARTe {
 
 uint32 availableFunctions = 0;
 
-FunctionRecord functionRecords[maxFunctions];
+RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 
-FunctionRecord::FunctionRecord():
+RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions():
     name(""), numberOfInputs(0), numberOfOutputs(0), types(NULL_PTR(TypeDescriptor*)), function(NULL)
     {}
 
-FunctionRecord::FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
+RuntimeEvaluatorFunctions::RuntimeEvaluatorFunctions(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn):
     name(nameIn), numberOfInputs(numberOfInputsIn), numberOfOutputs(numberOfOutputsIn), types(typesIn), function(functionIn)
     {}
 
-bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
+bool RuntimeEvaluatorFunctions::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize){
     bool ret = false;
 
     // match function name
@@ -94,12 +93,12 @@ bool FunctionRecord::TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &
     return ret;
 }
 
-Vector<TypeDescriptor> FunctionRecord::GetInputTypes(){
+Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetInputTypes(){
     Vector<TypeDescriptor> inputTypes(types, numberOfInputs);
     return inputTypes;
 }
 
-Vector<TypeDescriptor> FunctionRecord::GetOutputTypes(){
+Vector<TypeDescriptor> RuntimeEvaluatorFunctions::GetOutputTypes(){
     Vector<TypeDescriptor> inputTypes(&(types[numberOfInputs]), numberOfOutputs);
     return inputTypes;
 }
@@ -107,7 +106,7 @@ Vector<TypeDescriptor> FunctionRecord::GetOutputTypes(){
 /**
  * to register a function
  */
-void RegisterFunction(const FunctionRecord &record){
+void RegisterFunction(const RuntimeEvaluatorFunctions &record){
     if (availableFunctions < maxFunctions){
         functionRecords[availableFunctions++] = record;
     }
@@ -142,19 +141,19 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
  **********************************************************************************************************/
 
 
-template <typename T> void Read(Context &context){
+template <typename T> void Read(RuntimeEvaluator &context){
     CodeMemoryElement index;
     index = context.GetPseudoCode();
     context.Push(context.Variable<T>(index));
 }
 
-template <typename T> void Write(Context &context){
+template <typename T> void Write(RuntimeEvaluator &context){
     CodeMemoryElement index;
     index = context.GetPseudoCode();
     context.Pop(context.Variable<T>(index));
 }
 
-template <typename T> void Duplication(Context &context){
+template <typename T> void Duplication(RuntimeEvaluator &context){
     T var;
     context.Peek(var);
     context.Push(var);
@@ -204,14 +203,14 @@ REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,Sig
 
 #define REGISTER_CAST_FUNCTION(name,type1,type2,function)\
     static TypeDescriptor name ## type1 ## type2 ## _FunctionTypes[] = {Type2TypeDescriptor<type1>(), Type2TypeDescriptor<type2>()}; \
-    static const FunctionRecord name ## type1 ## type2 ## _FunctionRecord(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
+    static const RuntimeEvaluatorFunctions name ## type1 ## type2 ## _RuntimeEvaluatorFunctions(#name,1,1,name ## type1 ## type2 ## _FunctionTypes,&function<type1,type2>); \
     static class name ## type1 ## type2 ## RegisterClass { \
     public: name ## type1 ## type2 ## RegisterClass(){\
-            RegisterFunction(name ## type1 ## type2 ## _FunctionRecord);\
+            RegisterFunction(name ## type1 ## type2 ## _RuntimeEvaluatorFunctions);\
         }\
     } name ## type1 ## type2 ## RegisterClassInstance;
 
-template <typename T1,typename T2> void Casting(Context &context){
+template <typename T1,typename T2> void Casting(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     bool ret;
@@ -255,7 +254,7 @@ REGISTER_CAST_FUNCTION_BLOCK(int8   ,Casting)
  **********************************************************************************************************/
 
 #define REGISTER_1_FUNCTION(name,fname)                                 \
-        template <typename T> void function ## fname ## ication (Context &context){ \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x,res;                                                                \
             context.Pop(x);                                                         \
             res = fname (x);                                                        \
@@ -272,7 +271,7 @@ REGISTER_1_FUNCTION(LOG,log)
 REGISTER_1_FUNCTION(LOG10,log10)
 
 #define REGISTER_2_FUNCTION(name,fname)                                 \
-        template <typename T> void function ## fname ## ication (Context &context){ \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x1,x2,res;                                                            \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
@@ -294,7 +293,7 @@ REGISTER_2_FUNCTION(POW,pow)
  **********************************************************************************************************/
 
 #define REGISTER_COMPARE_OPERATOR(name,oper,fname)                                  \
-        template <typename T> void function ## fname ## ication (Context &context){ \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x1,x2;                                                                \
             bool ret;                                                               \
             context.Pop(x1);                                                        \
@@ -330,7 +329,7 @@ REGISTER_COMPARE_OPERATOR(LTE, <= ,Small)
 
 
 #define REGISTER_LOGICAL_OPERATOR(name,oper,fname)                                  \
-        void function ## fname ## ication (Context &context){                       \
+        void function ## fname ## ication (RuntimeEvaluator &context){                       \
             bool x1,x2,ret;                                                         \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
@@ -357,7 +356,7 @@ REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
  **********************************************************************************************************/
 
 #define REGISTER_OPERATOR(name,oper,fname)                                          \
-        template <typename T> void function ## fname ## ication (Context &context){ \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x1,x2,x3;                                                             \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
@@ -380,7 +379,7 @@ REGISTER_OPERATOR(DIV, / ,Division)
  *********************************************************************************************************
  **********************************************************************************************************/
 
-template <typename T1,typename T2,typename Tout> void Addition_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void Addition_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
     T1 y1;
     T2 y2;
@@ -392,7 +391,7 @@ template <typename T1,typename T2,typename Tout> void Addition_3T(Context &conte
     context.Push(x3);
 }
 
-template <typename T1,typename T2,typename Tout> void Subtraction_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void Subtraction_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
     T1 y1;
     T2 y2;
@@ -404,7 +403,7 @@ template <typename T1,typename T2,typename Tout> void Subtraction_3T(Context &co
     context.Push(x3);
 }
 
-template <typename T1,typename T2,typename Tout> void Multiplication_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void Multiplication_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3;
     T1 y1;
     T2 y2;
@@ -416,7 +415,7 @@ template <typename T1,typename T2,typename Tout> void Multiplication_3T(Context 
     context.Push(x3);
 }
 
-template <typename T1,typename T2,typename Tout> void Division_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void Division_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3=0;
     T1 y1;
     T2 y2;
@@ -432,7 +431,7 @@ template <typename T1,typename T2,typename Tout> void Division_3T(Context &conte
     context.Push(x3);
 }
 
-template <typename T1,typename T2,typename Tout> void SAddition_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3;
         T1 y1;
@@ -446,7 +445,7 @@ template <typename T1,typename T2,typename Tout> void SAddition_3T(Context &cont
     }
 }
 
-template <typename T1,typename T2,typename Tout> void SSubtraction_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3;
         T1 y1;
@@ -460,7 +459,7 @@ template <typename T1,typename T2,typename Tout> void SSubtraction_3T(Context &c
     }
 }
 
-template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3;
         T1 y1;
@@ -474,7 +473,7 @@ template <typename T1,typename T2,typename Tout> void SMultiplication_3T(Context
     }
 }
 
-template <typename T1,typename T2,typename Tout> void SDivision_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SDivision_3T(RuntimeEvaluator &context){
     Tout x1,x2,x3=0;
     T1 y1;
     T2 y2;
@@ -490,7 +489,7 @@ template <typename T1,typename T2,typename Tout> void SDivision_3T(Context &cont
     context.Push(x3);
 }
 
-template <typename T1,typename T2,typename Tout> void SSAddition_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SSAddition_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3;
         T1 y1;
@@ -508,7 +507,7 @@ template <typename T1,typename T2,typename Tout> void SSAddition_3T(Context &con
     }
 }
 
-template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3 = 0;
         T1 y1;
@@ -526,7 +525,7 @@ template <typename T1,typename T2,typename Tout> void SSSubtraction_3T(Context &
     }
 }
 
-template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(Context &context){
+template <typename T1,typename T2,typename Tout> void SSMultiplication_3T(RuntimeEvaluator &context){
     if (context.runtimeError){
         Tout x1,x2,x3=0;
         T1 y1;
@@ -688,7 +687,7 @@ REGISTER_3T_OPERATOR(DIV, Division,uint32,uint64,uint64)
  *********************************************************************************************************
  **********************************************************************************************************/
 
-template <typename T1,typename T2,typename Ttest> void Greater_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void Greater_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -707,7 +706,7 @@ template <typename T1,typename T2,typename Ttest> void Greater_3T(Context &conte
     context.Push(result);
 }
 
-template <typename T1,typename T2,typename Ttest> void Lower_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void Lower_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -726,7 +725,7 @@ template <typename T1,typename T2,typename Ttest> void Lower_3T(Context &context
     context.Push(result);
 }
 
-template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -745,7 +744,7 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(Context 
     context.Push(result);
 }
 
-template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -764,7 +763,7 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(Context &c
     context.Push(result);
 }
 
-template <typename T1,typename T2,typename Ttest> void Same_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -783,7 +782,7 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(Context &context)
     context.Push(result);
 }
 
-template <typename T1,typename T2,typename Ttest> void Different_3T(Context &context){
+template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvaluator &context){
     T1 x1;
     T2 x2;
     Ttest y1,y2;
@@ -849,7 +848,7 @@ REGISTER_2T_COMP_OPERATOR_BLOCK(NEQ,Different)
  **********************************************************************************************************/
 
 
-template <typename Tin,typename Tout> void Write_2T(Context &context){
+template <typename Tin,typename Tout> void Write_2T(RuntimeEvaluator &context){
     CodeMemoryElement index;
     index = context.GetPseudoCode();
     Tin x1;
@@ -896,7 +895,7 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
 
 // TODO - implement without casting. promote all results between u/int16 and u/int8 to int32 as the compiler would do
 #define REGISTER_OPERATOR(name,oper,fname)                                          \
-        template <typename T> void function ## fname ## ication (Context &context){ \
+        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
             T x1,x2,x3;                                                             \
             context.Pop(x1);                                                        \
             context.Pop(x2);                                                        \
@@ -920,5 +919,5 @@ REGISTER_OPERATOR(MUL, * ,Multipl)
 REGISTER_OPERATOR(DIV, / ,Division)
 
 #endif
-} // PseudoCode
+
 } //MARTe
