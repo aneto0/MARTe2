@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "PseudoCodeFunctions.h"
-#include "PseudoCode.h"
+#include "RuntimeEvaluatorFunctions.h"
+#include "RuntimeEvaluator.h"
 #include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
@@ -65,7 +65,7 @@ public:
     /**
      * @brief Tests TryConsume.
      */
-    bool TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize);
+    bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
 
 private:
     /**
@@ -77,7 +77,7 @@ private:
 };
 
 
-void MockFunction(PseudoCode::Context &context);
+void MockFunction(RuntimeEvaluator &evaluator);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
