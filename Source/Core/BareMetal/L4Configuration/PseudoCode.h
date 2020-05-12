@@ -76,30 +76,6 @@ public:
     ~Context();
 
     /**
-    * @brief Get the top of the stack and then move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-   */
-    template<typename T>
-    inline void                 Pop(T &value);
-
-    /**
-    * @brief Add to the top of the stack and then move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-   */
-    template<typename T>
-    inline void                 Push(T &value);
-
-    /**
-    * @brief Get the top of the stack and do not move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-   */
-    template<typename T>
-    inline void                 Peek(T &value);
-
-    /**
      * Reads from code memory
      */
     inline CodeMemoryElement    GetPseudoCode();
@@ -173,7 +149,7 @@ public:
      * debugStream is only used in debugMode. after every command execution a report is written to the stream
      * step is only used in step mode. step value need to be initialised to 0 and maintained between calls
      */
-    ErrorManagement::ErrorType Execute(executionMode mode = fastMode,StreamI *debugStream=NULL_PTR(StreamI *),CodeMemoryAddress *step=NULL);
+    ErrorManagement::ErrorType Execute(executionMode mode = fastMode, StreamI *debugStream=NULL_PTR(StreamI *), CodeMemoryAddress *step=NULL);
 
     /**
      * Reconstruct the RPNCode with type information
@@ -201,19 +177,39 @@ public:
      *            to the proper type before using it.
      */
     void* GetInputVariableMemory(uint32 &varIndexIn);
+    
+// The following members may be made private in the future
+// but right now they are accessed by PseudoCodeFunctions
 
-// PUBLIC VARIABLES
+    /**
+    * @brief Get the top of the stack and then move the pointer.
+    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+    * @return .
+    */
+    template<typename T>
+    inline void                 Pop(T &value);
 
+    /**
+    * @brief Add to the top of the stack and then move the pointer.
+    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+    * @return .
+    */
+    template<typename T>
+    inline void                 Push(T &value);
+
+    /**
+    * @brief Get the top of the stack and do not move the pointer.
+    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+    * @return .
+    */
+    template<typename T>
+    inline void                 Peek(T &value);
+    
     /**
      * the errors produced by the functions and the checks during runtime
      */
     ErrorManagement::ErrorType          runtimeError;
-
-    /**
-     * stack and variable are allocated here
-     */
-    StaticList<CodeMemoryElement,32>    codeMemory;
-
+    
     /**
      * variable and constants are allocated here
      * MEMORY MAP
@@ -224,19 +220,24 @@ public:
      *                            OUTPUTS
      */
     Vector<DataMemoryElement>           dataMemory;
+    
+    
+private:
 
+    /**
+     * stack and variable are allocated here
+     */
+    StaticList<CodeMemoryElement,32>    codeMemory;
+    
     /**
      * address of first variable (after constants) or how many MemoryElement are used for constants
      */
     DataMemoryAddress                   startOfVariables;
-
+    
     /**
      * stack is allocated here
      */
     Vector<DataMemoryElement>           stack;
-
-
-private:
 
     /**
      * Checks existence of name using FindInputVariable
