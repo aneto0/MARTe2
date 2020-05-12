@@ -88,14 +88,14 @@ bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uin
 
 bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
 
-    bool found = false;
+    bool found = false, moved = false;
 
     for (uint32 i= 0; (i < typesCdb.GetNumberOfChildren()) && (!found); ++i) {
         bool equals = true;
 
         typesCdb.MoveToChild(i);
         foundName = typesCdb.GetName();
-        typesCdb.MoveRelative("Inputs");
+        moved = typesCdb.MoveRelative("Inputs");
 
         for (uint32 j = 0; (equals) && (j < inputTypes.GetNumberOfElements()); ++j) {
             StreamString argumentName, typeName;
@@ -104,9 +104,12 @@ bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDes
             equals &= (inputTypes[j] == TypeDescriptor::GetTypeDescriptorFromTypeName(typeName.Buffer()));
         }
 
-        typesCdb.MoveToAncestor(1);
-        typesCdb.MoveRelative("Outputs");
-        for (uint32 j = 0; (equals) && (j < inputTypes.GetNumberOfElements()); ++j) {
+        if (moved){
+            typesCdb.MoveToAncestor(1);
+        }
+        moved = typesCdb.MoveRelative("Outputs");
+
+        for (uint32 j = 0; (equals) && (j < outputTypes.GetNumberOfElements()); ++j) {
             StreamString argumentName, typeName;
             argumentName.Printf("arg%i", j + 1);
             typesCdb.Read(argumentName.Buffer(), typeName);
@@ -114,7 +117,7 @@ bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDes
         }
 
         found = equals;
-        typesCdb.MoveToAncestor(2);
+        typesCdb.MoveToRoot();
     }
 
     return found;
