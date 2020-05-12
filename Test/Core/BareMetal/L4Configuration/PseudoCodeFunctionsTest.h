@@ -34,6 +34,7 @@
 
 #include "PseudoCodeFunctions.h"
 #include "PseudoCode.h"
+#include "ConfigurationDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -56,10 +57,7 @@ public:
     /**
      * @brief Tests types of registered functionRecords.
      */
-    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList);
-
-    template<uint8 numberOfFunctions, uint8 numberOfArguments>
-    void ConstructTypeList(TypeDescriptor types[][numberOfArguments], StaticList<TypeDescriptor*> &typeList);
+    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes);
 
     /**
      * @brief Tests TryConsume.
@@ -71,7 +69,7 @@ private:
     /**
      * @brief Checks if types provided are within types lists.
      */
-    bool FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList);
+    bool FindTypesInCdb(CCString &foundIndex, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &FunctionTypesCdb);
 };
 
 
@@ -80,13 +78,6 @@ void MockFunction(PseudoCode::Context &context);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<uint8 numberOfFunctions, uint8 numberOfArguments>
-void PseudoCodeFunctionsTest::ConstructTypeList(TypeDescriptor types[][numberOfArguments], StaticList<TypeDescriptor *> &typeList) {
-    for (uint8 i=0; i < numberOfFunctions; ++i) {
-        typeList.Add(types[i]);
-    }
-}
 
 #endif /* PSEUDOCODEFUNCTIONSTEST_H_ */
 
