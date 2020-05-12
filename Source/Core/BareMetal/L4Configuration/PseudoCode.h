@@ -178,49 +178,54 @@ public:
      */
     void* GetInputVariableMemory(uint32 &varIndexIn);
     
-// The following members may be made private in the future
-// but right now they are accessed by PseudoCodeFunctions
-
     /**
-    * @brief Get the top of the stack and then move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-    */
-    template<typename T>
-    inline void                 Pop(T &value);
-
-    /**
-    * @brief Add to the top of the stack and then move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-    */
-    template<typename T>
-    inline void                 Push(T &value);
-
-    /**
-    * @brief Get the top of the stack and do not move the pointer.
-    * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
-    * @return .
-    */
-    template<typename T>
-    inline void                 Peek(T &value);
-    
-    /**
-     * the errors produced by the functions and the checks during runtime
+     * @name    Members required by RuntimeEvaluatorFunctions
+     * @details These members are public since RuntimeEvaluatorFunctions
+     *          need to access them.
+     * @warning These members may be made private in a future release.
+     * @todo    Make these private.
      */
-    ErrorManagement::ErrorType          runtimeError;
-    
-    /**
-     * variable and constants are allocated here
-     * MEMORY MAP
-     *
-     * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
-     *                            CONSTANTS
-     *                            INPUTS
-     *                            OUTPUTS
-     */
-    Vector<DataMemoryElement>           dataMemory;
-    
+    //@{
+        /**
+        * @brief Get the top of the stack and then move the pointer.
+        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+        * @return .
+        */
+        template<typename T>
+        inline void Pop(T &value);
+
+        /**
+        * @brief Add to the top of the stack and then move the pointer.
+        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+        * @return .
+        */
+        template<typename T>
+        inline void Push(T &value);
+
+        /**
+        * @brief Get the top of the stack and do not move the pointer.
+        * @param[in] value reference to the variable and then update stack pointer (note that the stack will have a specific granularity).
+        * @return .
+        */
+        template<typename T>
+        inline void Peek(T &value);
+        
+        /**
+         * the errors produced by the functions and the checks during runtime
+         */
+        ErrorManagement::ErrorType runtimeError;
+        
+        /**
+         * variable and constants are allocated here
+         * MEMORY MAP
+         *
+         * sizeOfVariablesArea     VARIABLES   --> variablesMemoryPtr   : pCodePtr
+         *                            CONSTANTS
+         *                            INPUTS
+         *                            OUTPUTS
+         */
+        Vector<DataMemoryElement> dataMemory;
+    //@}
     
 private:
 
