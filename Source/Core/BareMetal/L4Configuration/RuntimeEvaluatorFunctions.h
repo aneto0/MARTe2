@@ -34,7 +34,7 @@
 
 #include "StaticStack.h"
 #include "RuntimeEvaluator.h"
-#include "PseudoCodeVariableInformation.h"
+#include "VariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
