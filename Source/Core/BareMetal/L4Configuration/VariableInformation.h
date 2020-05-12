@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PSEUDOCODE_VARIABLEINFORMATION_H_
-#define PSEUDOCODE_VARIABLEINFORMATION_H_
+#ifndef VARIABLEINFORMATION_H_
+#define VARIABLEINFORMATION_H_
 
 
 /*---------------------------------------------------------------------------*/
@@ -134,4 +134,4 @@ inline VariableInformation::VariableInformation(const VariableInformation &in){
 
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_PRIVATE_PCODE_VARIABLEINFORMATION_H_ */
+#endif /* VARIABLEINFORMATION_H_ */

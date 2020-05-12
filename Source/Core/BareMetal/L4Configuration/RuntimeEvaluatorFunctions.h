@@ -21,19 +21,23 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PSEUDOCODE_FUNCTIONS_H_
-#define PSEUDOCODE_FUNCTIONS_H_
+#ifndef RUNTIMEEVALUATORFUNCTIONS_H_
+#define RUNTIMEEVALUATORFUNCTIONS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <math.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StaticStack.h"
+#include "ErrorManagement.h"
 #include "RuntimeEvaluator.h"
+#include "SafeMath.h"
+#include "StaticStack.h"
 #include "VariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
@@ -44,7 +48,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /** the type of the PCode function */
 typedef void (*Function)(RuntimeEvaluator & context);

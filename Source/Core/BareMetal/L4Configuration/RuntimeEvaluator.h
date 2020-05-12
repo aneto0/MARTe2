@@ -24,8 +24,6 @@
 #ifndef RUNTIMEEVALUATOR_H_
 #define RUNTIMEEVALUATOR_H_
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -34,12 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "AdvancedErrorManagement.h"
+#include "AnyType.h"
 #include "CompilerTypes.h"
-#include "StaticList.h"
+#include "IteratorT.h"
 #include "LinkedListHolderT.h"
-#include "Vector.h"
+#include "StaticList.h"
+#include "StaticStack.h"
+#include "TypeConversion.h"
 #include "TypeDescriptor.h"
 #include "VariableInformation.h"
+#include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -49,7 +52,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * used internally to describe and register functions
