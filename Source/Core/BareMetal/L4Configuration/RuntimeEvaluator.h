@@ -39,7 +39,7 @@
 #include "LinkedListHolderT.h"
 #include "Vector.h"
 #include "TypeDescriptor.h"
-#include "PseudoCodeVariableInformation.h"
+#include "VariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
