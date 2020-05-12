@@ -58,6 +58,9 @@ public:
      * @brief Tests types of registered functionRecords.
      */
     bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes);
+    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
+
+    void AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName);
 
     /**
      * @brief Tests TryConsume.
@@ -65,11 +68,12 @@ public:
     bool TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize);
 
 private:
-
     /**
      * @brief Checks if types provided are within types lists.
      */
     bool FindTypesInCdb(CCString &foundIndex, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &FunctionTypesCdb);
+
+    ConfigurationDatabase expectedFunctionTypesCdb;
 };
 
 
