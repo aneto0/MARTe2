@@ -46,8 +46,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-namespace PseudoCode{
+namespace MARTe {
 
 /**
  * type used to store 1 PseudoCode element
@@ -133,7 +132,6 @@ inline VariableInformation::VariableInformation(const VariableInformation &in){
     variableUsed = false;
 }
 
-} // PseudoCode
 } // MARTe
 
 #endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_PRIVATE_PCODE_VARIABLEINFORMATION_H_ */

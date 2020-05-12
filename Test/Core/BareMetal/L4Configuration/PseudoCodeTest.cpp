@@ -140,7 +140,7 @@ bool PseudoCodeTest::TestIntegration() {
     StreamString RPNCodeStream(rpnCode);
     RPNCodeStream.Seek(0u);
 
-    PseudoCode::Context context(RPNCodeStream);
+    RuntimeEvaluator context(RPNCodeStream);
 
     ErrorManagement::ErrorType ret;
     ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
@@ -150,7 +150,7 @@ bool PseudoCodeTest::TestIntegration() {
 
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
 
         //VAR SCAN RESULT
         while(context.BrowseInputVariable(index,var)){
@@ -207,7 +207,7 @@ bool PseudoCodeTest::TestIntegration() {
     if (ret){
         //ASSIGN INPUTS
         int32 index = 0;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
 
         while(context.BrowseInputVariable(index,var)){
             index++;
@@ -241,7 +241,7 @@ bool PseudoCodeTest::TestIntegration() {
     if (ret){
         //VAR ALLOCATION RESULT
         uint32 index = 0;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
 
         while(context.BrowseInputVariable(index,var)){
             //printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.Buffer());
@@ -272,7 +272,7 @@ bool PseudoCodeTest::TestIntegration() {
         char8 terminator;
         StreamString expectedDebugStream (expectedDebug);
 
-        ret = context.Execute(PseudoCode::Context::debugMode,&debugStream,0);
+        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
         debugStream.Seek(0u);
         expectedDebugStream.Seek(0u);
 
@@ -301,7 +301,7 @@ bool PseudoCodeTest::TestError() {
     
     StreamString RPNCodeStream(rpnCode);
 
-    PseudoCode::Context context(RPNCodeStream);
+    RuntimeEvaluator context(RPNCodeStream);
 
     ErrorManagement::ErrorType ret;
     ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
@@ -311,7 +311,7 @@ bool PseudoCodeTest::TestError() {
 
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
 
         //VAR SCAN AND TYPE ASSIGNMENT
         printf ("--- Assignment ---\n");
@@ -352,7 +352,7 @@ bool PseudoCodeTest::TestError() {
     if (ret){
         //ASSIGN INPUTS
         int32 index = 0;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         printf ("--- Input values ---\n");
         while(context.BrowseInputVariable(index,var)){
@@ -387,7 +387,7 @@ bool PseudoCodeTest::TestError() {
 
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         printf ("--- Allocation ---\n");
         //AFTER VAR ALLOCATION
@@ -422,7 +422,7 @@ bool PseudoCodeTest::TestError() {
         //char8 terminator;
         //StreamString expectedDebugStream (expectedDebug);
 
-        ret = context.Execute(PseudoCode::Context::debugMode,&debugStream,0);
+        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
         debugStream.Seek(0u);
         //expectedDebugStream.Seek(0u);
         
@@ -442,7 +442,7 @@ bool PseudoCodeTest::TestError() {
     
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         printf ("--- Results ---\n");
         //EXECUTE() RESULTS
@@ -467,7 +467,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
     
     StreamString RPNCodeStream(rpnCode);
     
-    PseudoCode::Context context(RPNCodeStream);
+    RuntimeEvaluator context(RPNCodeStream);
 
     ErrorManagement::ErrorType ret;
     ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
@@ -477,7 +477,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
 
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
 
         //ASSIGN TYPE TO VARIABLES
         while(context.BrowseInputVariable(index,var)){
@@ -508,7 +508,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
     if (ret){
         //ASSIGN VALUES TO VARIABLES
         uint32 index = 0;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         while(context.BrowseInputVariable(index,var)){
             
@@ -530,7 +530,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
     
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         printf ("--- Allocation ---\n");
         //AFTER VAR ALLOCATION
@@ -565,7 +565,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         //char8 terminator;
         //StreamString expectedDebugStream (expectedDebug);
 
-        ret = context.Execute(PseudoCode::Context::debugMode,&debugStream,0);
+        ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
         debugStream.Seek(0u);
         //expectedDebugStream.Seek(0u);
         
@@ -585,7 +585,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
     
     if (ret){
         uint32 index = 0U;
-        PseudoCode::VariableInformation *var;
+        VariableInformation *var;
         
         printf (rpnCode);
         printf ("--- Results ---\n");

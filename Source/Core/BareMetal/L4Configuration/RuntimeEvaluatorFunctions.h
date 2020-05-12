@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticStack.h"
-#include "PseudoCode.h"
+#include "RuntimeEvaluator.h"
 #include "PseudoCodeVariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
@@ -45,26 +45,25 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-namespace PseudoCode{
 
 /** the type of the PCode function */
-typedef void (*Function)(Context & context);
+typedef void (*Function)(RuntimeEvaluator & context);
 
 /**
  * records information necessary to be able to use it during compilation
  */
-class FunctionRecord{
+class RuntimeEvaluatorFunctions{
 public:
 
     /**
      * default constructor
      */
-    FunctionRecord();
+    RuntimeEvaluatorFunctions();
 
     /**
      * full constructor
      */
-    FunctionRecord(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
+    RuntimeEvaluatorFunctions(CCString nameIn, uint16 numberOfInputsIn, uint16 numberOfOutputsIn, TypeDescriptor* typesIn, Function functionIn);
 
     StreamString GetName(){return name;}
 
@@ -72,7 +71,7 @@ public:
 
     Vector<TypeDescriptor> GetOutputTypes();
 
-    void ExecuteFunction(Context &context){function(context);}
+    void ExecuteFunction(RuntimeEvaluator &context){function(context);}
 
     /**
      * returns true if the name and types matches
@@ -123,7 +122,7 @@ extern uint32 availableFunctions;
 /**
  * the database of functions
  */
-extern FunctionRecord functionRecords[maxFunctions];
+extern RuntimeEvaluatorFunctions functionRecords[maxFunctions];
 
 /**
  *
@@ -133,17 +132,17 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
 /**
  * to register a function
  */
-void RegisterFunction(const FunctionRecord &record);
+void RegisterFunction(const RuntimeEvaluatorFunctions &record);
 
 /**
  * generates boiler plate code to register a function
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
     static TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-    static const FunctionRecord name ## subName ## _FunctionRecord(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
+    static const RuntimeEvaluatorFunctions name ## subName ## _RuntimeEvaluatorFunctions(#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function); \
     static class name ## subName ## RegisterClass { \
     public: name ## subName ## RegisterClass(){\
-            RegisterFunction(name ## subName ## _FunctionRecord);\
+            RegisterFunction(name ## subName ## _RuntimeEvaluatorFunctions);\
         }\
     } name ## subName ## RegisterClassInstance;
 
@@ -152,7 +151,6 @@ void RegisterFunction(const FunctionRecord &record);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-} // PseudoCode
 } // MARTe
 
 #endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_PRIVATE_PSEUDOCODEFUNCTIONS_H_ */

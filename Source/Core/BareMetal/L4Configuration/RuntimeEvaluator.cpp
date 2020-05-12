@@ -22,17 +22,15 @@
 */
 #include <stdio.h>
 
-#include "PseudoCode.h"
-#include "PseudoCodeFunctions.h"
+#include "RuntimeEvaluator.h"
+#include "RuntimeEvaluatorFunctions.h"
 #include "IteratorT.h"
 #include "StaticStack.h"
 #include "AnyType.h"
 #include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
 
-namespace MARTe{
-
-namespace PseudoCode{
+namespace MARTe {
 
 /**
  * The only 4 standard tokens
@@ -116,7 +114,7 @@ void VariableFinder::Do(VariableInformation *data){
 
 /*************************************************************************/
 
-Context::Context(StreamString &RPNCodeIn){
+RuntimeEvaluator::RuntimeEvaluator(StreamString &RPNCodeIn){
     RPNCode = RPNCodeIn;
     variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
     codeMemoryPtr = NULL_PTR(CodeMemoryElement*);
@@ -124,10 +122,10 @@ Context::Context(StreamString &RPNCodeIn){
     startOfVariables = 0;
 }
 
-Context::~Context(){
+RuntimeEvaluator::~RuntimeEvaluator(){
 }
 
-ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
+ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,VariableInformation *&variableInformation,LinkedListHolderT<VariableInformation> &db){
     ErrorManagement::ErrorType ret;
 
     variableInformation = NULL;
@@ -144,7 +142,7 @@ ErrorManagement::ErrorType Context::FindVariableinDB(CCString name,VariableInfor
     return ret;
 }
 
-ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,LinkedListHolderT<VariableInformation> &db,TypeDescriptor td,DataMemoryAddress location){
     ErrorManagement::ErrorType ret;
     VariableInformation *variableInfo;
     ret = FindVariableinDB(name,variableInfo,db);
@@ -168,7 +166,7 @@ ErrorManagement::ErrorType Context::AddVariable2DB(CCString name,LinkedListHolde
     return ret;
 }
 
-ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindVariable(DataMemoryAddress address,VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
 
     VariableFinder finder(address);
@@ -193,21 +191,21 @@ ErrorManagement::ErrorType Context::FindVariable(DataMemoryAddress address,Varia
     return ret;
 }
 
-ErrorManagement::ErrorType Context::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::BrowseInputVariable(uint32 index,VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
     variableInformation = inputVariableInfo.ListPeek(index);
     ret.outOfRange = (variableInformation == NULL);
     return ret;
 }
 
-ErrorManagement::ErrorType Context::BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation){
     ErrorManagement::ErrorType ret;
     variableInformation = outputVariableInfo.ListPeek(index);
     ret.outOfRange = (variableInformation == NULL);
     return ret;
 }
 
-ErrorManagement::ErrorType Context::ExtractVariables(){
+ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     ErrorManagement::ErrorType ret;
 
     DataMemoryAddress nextConstantAddress = 0;
@@ -320,14 +318,14 @@ ErrorManagement::ErrorType Context::ExtractVariables(){
     return ret;
 }
 
-ErrorManagement::ErrorType Context::Compile(){
+ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     ErrorManagement::ErrorType ret;
 
     DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
     uint32 index = 0;
-    PseudoCode::VariableInformation *var;
+    VariableInformation *var;
     while(BrowseInputVariable(index,var) && ret){
         ret.unsupportedFeature = !var->type.IsNumericType();
         if (!ret){
@@ -646,7 +644,7 @@ ErrorManagement::ErrorType Context::Compile(){
     return ret;
 }
 
-ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &functionInformation,StreamString &cst,bool peekOnly,bool showData,bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly,bool showData,bool showTypes){
      ErrorManagement::ErrorType ret;
 
      const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
@@ -709,7 +707,7 @@ ErrorManagement::ErrorType Context::FunctionRecordInputs2String(FunctionRecord &
      return ret;
 }
 
-ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack,bool showData,bool showTypes){
     ErrorManagement::ErrorType ret;
     StreamString functionName = functionInformation.GetName();
     Vector<TypeDescriptor> functionOutputTypes = functionInformation.GetOutputTypes();
@@ -801,7 +799,7 @@ ErrorManagement::ErrorType Context::FunctionRecordOutputs2String(FunctionRecord 
     return ret;
 }
 
-ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStream,CodeMemoryAddress *step){
+ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream,CodeMemoryAddress *step){
 
     stackPtr = static_cast<DataMemoryElement*>(stack.GetDataPointer());
 
@@ -856,7 +854,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
 
                 CodeMemoryElement pCode = GetPseudoCode();
 
-                FunctionRecord &fr = functionRecords[pCode];
+                RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
 
                 // show update info
                 debugMessage.Printf("%s ", fr.GetName().Buffer());
@@ -921,7 +919,7 @@ ErrorManagement::ErrorType Context::Execute(executionMode mode,StreamI *debugStr
     return runtimeError;
 }
 
-ErrorManagement::ErrorType Context::DeCompile(StreamString &DeCompileRPNCode, bool showTypes){
+ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRPNCode, bool showTypes){
     ErrorManagement::ErrorType ret ;
     
     codeMemoryPtr = codeMemory.GetAllocatedMemoryConst();
@@ -932,7 +930,7 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &DeCompileRPNCode, bo
 
     while((codeMemoryPtr < codeMemoryMaxPtr) && ret){
         CodeMemoryElement pCode = GetPseudoCode();
-        FunctionRecord &fr = functionRecords[pCode];
+        RuntimeEvaluatorFunctions &fr = functionRecords[pCode];
         StreamString fName = fr.GetName();
 
         if ((fName == readToken) && (codeMemoryPtr[0] < startOfVariables)){
@@ -952,13 +950,13 @@ ErrorManagement::ErrorType Context::DeCompile(StreamString &DeCompileRPNCode, bo
     return ret;
 }
 
-void* Context::GetInputVariableMemory(StreamString &varNameIn) {
+void* RuntimeEvaluator::GetInputVariableMemory(StreamString &varNameIn) {
     
     void* retAddress = NULL_PTR(void*);
     bool isFound = false;
     
     int32 index = 0;
-    PseudoCode::VariableInformation *var;
+    VariableInformation *var;
 
     while(BrowseInputVariable(index,var) && !isFound){
         if (var->name == varNameIn){
@@ -972,11 +970,11 @@ void* Context::GetInputVariableMemory(StreamString &varNameIn) {
     
 }
 
-void* Context::GetInputVariableMemory(uint32 &varIndexIn) {
+void* RuntimeEvaluator::GetInputVariableMemory(uint32 &varIndexIn) {
     
     void* retAddress = NULL_PTR(void*);
     
-    PseudoCode::VariableInformation *var;
+    VariableInformation *var;
     
     if (BrowseInputVariable(varIndexIn,var)) {
         
@@ -988,5 +986,4 @@ void* Context::GetInputVariableMemory(uint32 &varIndexIn) {
     
 }
 
-} //PseudoCode
 } //MARTe
