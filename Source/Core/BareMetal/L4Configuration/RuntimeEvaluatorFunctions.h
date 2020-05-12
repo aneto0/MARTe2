@@ -73,6 +73,9 @@ public:
 
     Vector<TypeDescriptor> GetInputTypes();
 
+    /**
+     * It only includes types of outputs going to stack. It does not include types of outputs going to memory variables
+     */
     Vector<TypeDescriptor> GetOutputTypes();
 
     void ExecuteFunction(RuntimeEvaluator &context){function(context);}
@@ -102,7 +105,7 @@ private:
     uint16                  numberOfOutputs;
 
     /**
-     * array of types one for each input and output
+     * array of types in the following order: stack inputs | stack outputs | memory variables outputs
      */
     TypeDescriptor*   types;
 
