@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "PseudoCodeFunctionsTest.h"
+#include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,8 +55,13 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
 }
 
 
-bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, StaticList<TypeDescriptor*> &expectedInputTypesList, uint8 numberOfOutputs, StaticList<TypeDescriptor*> &expectedOutputTypesList) {
+bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes) {
     bool ok = true;
+
+    expectedFunctionTypes.Seek(0LLU);
+    ConfigurationDatabase expectedFunctionTypesCdb;
+    StandardParser parser(expectedFunctionTypes, expectedFunctionTypesCdb, NULL);
+    ok = parser.Parse();
 
     for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
         PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
@@ -65,43 +71,52 @@ bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uin
         if ((functionRecord.GetName() == functionName.GetList()) &&
             (inputTypes.GetNumberOfElements() == numberOfInputs) &&
             (outputTypes.GetNumberOfElements() == numberOfOutputs)) {
-            uint8 foundIndex;
+            CCString foundName;
 
-            ok &= FindTypesInLists(foundIndex, inputTypes, outputTypes, expectedInputTypesList, expectedOutputTypesList);
+            ok &= FindTypesInCdb(foundName, inputTypes, outputTypes, expectedFunctionTypesCdb);
             if (ok) {
-                expectedInputTypesList.Remove(foundIndex);
-                expectedOutputTypesList.Remove(foundIndex);
+                expectedFunctionTypesCdb.Delete(foundName);
             }
         }
     }
 
-    ok &= (expectedInputTypesList.GetSize() == 0);
-    ok &= (expectedOutputTypesList.GetSize() == 0);
+    ok &= (expectedFunctionTypesCdb.GetNumberOfChildren() == 0);
 
     return ok;
 
 }
 
-bool PseudoCodeFunctionsTest::FindTypesInLists(uint8 &foundIndex, Vector<TypeDescriptor> inputTypes, Vector<TypeDescriptor> outputTypes, StaticList<TypeDescriptor*> &inputTypesList, StaticList<TypeDescriptor*> &outputTypesList) {
+bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
 
     bool found = false;
 
-    uint8 maxIndex = (inputTypesList.GetSize() != 0) ? inputTypesList.GetSize() : outputTypesList.GetSize();
-
-    for (foundIndex = 0; (foundIndex < maxIndex) && (!found); ++foundIndex) {
+    for (uint32 i= 0; (i < typesCdb.GetNumberOfChildren()) && (!found); ++i) {
         bool equals = true;
 
-        for (uint32 i = 0; (equals) && (i < inputTypes.GetNumberOfElements()); ++i) {
-            equals &= (inputTypes[i] == inputTypesList[foundIndex][i]);
+        typesCdb.MoveToChild(i);
+        foundName = typesCdb.GetName();
+        typesCdb.MoveRelative("Inputs");
+
+        for (uint32 j = 0; (equals) && (j < inputTypes.GetNumberOfElements()); ++j) {
+            StreamString argumentName, typeName;
+            argumentName.Printf("arg%i", j + 1);
+            typesCdb.Read(argumentName.Buffer(), typeName);
+            equals &= (inputTypes[j] == TypeDescriptor::GetTypeDescriptorFromTypeName(typeName.Buffer()));
         }
-        for (uint32 i = 0; (equals) && (i < outputTypes.GetNumberOfElements()); ++i) {
-            equals &= (outputTypes[i] == outputTypesList[foundIndex][i]);
+
+        typesCdb.MoveToAncestor(1);
+        typesCdb.MoveRelative("Outputs");
+        for (uint32 j = 0; (equals) && (j < inputTypes.GetNumberOfElements()); ++j) {
+            StreamString argumentName, typeName;
+            argumentName.Printf("arg%i", j + 1);
+            typesCdb.Read(argumentName.Buffer(), typeName);
+            equals &= (outputTypes[j] == TypeDescriptor::GetTypeDescriptorFromTypeName(typeName.Buffer()));
         }
 
         found = equals;
+        typesCdb.MoveToAncestor(2);
     }
 
-    --foundIndex;
     return found;
 }
 
