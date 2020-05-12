@@ -54,14 +54,19 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-
 bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes) {
     bool ok = true;
 
     expectedFunctionTypes.Seek(0LLU);
-    ConfigurationDatabase expectedFunctionTypesCdb;
     StandardParser parser(expectedFunctionTypes, expectedFunctionTypesCdb, NULL);
     ok = parser.Parse();
+
+    return (ok && TestFunctionRecordTypes(functionName, numberOfInputs, numberOfOutputs));
+
+}
+
+bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
+    bool ok = true;
 
     for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
         PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
@@ -121,6 +126,22 @@ bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDes
     }
 
     return found;
+}
+
+void PseudoCodeFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName) {
+    uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
+
+    for (uint32 i = lastExistentFunction + 1; i <= lastExistentFunction + numberOfFunctions; ++i) {
+        StreamString functionName;
+
+        functionName.Printf("Function%i", i);
+        expectedFunctionTypesCdb.CreateRelative(functionName.Buffer());
+
+        expectedFunctionTypesCdb.Write("arg1", typeName);
+        expectedFunctionTypesCdb.MoveToRoot();
+    }
+
+
 }
 
 bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize) {

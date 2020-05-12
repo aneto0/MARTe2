@@ -203,17 +203,22 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestReadFunctionRecordTy
 
 
 }
-/*
+
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestWriteFunctionRecordTypes) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
-    TypeDescriptor expectedInputTypes[][1]  = {{Float64Bit}, {Float32Bit}, {UnsignedInteger64Bit}, {SignedInteger64Bit}, {UnsignedInteger32Bit}, {SignedInteger32Bit}, {UnsignedInteger16Bit}, {SignedInteger16Bit}, {UnsignedInteger8Bit}, {SignedInteger8Bit},
-                                               {UnsignedInteger64Bit}, {UnsignedInteger64Bit}, {UnsignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {SignedInteger64Bit}, {UnsignedInteger32Bit}, {UnsignedInteger32Bit}, {SignedInteger32Bit}, {SignedInteger32Bit}, {SignedInteger32Bit}, {SignedInteger32Bit}, {SignedInteger32Bit}};
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "float64");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "float32");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint16");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "int16");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint8");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "int8");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(4, "uint64");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(8, "int64");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(3, "uint32");
+    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(6, "int32");
 
-    StaticList<TypeDescriptor*> expectedInputTypesList, expectedOutputTypesList;
-    pseudoCodeFunctionsTest.ConstructTypeList<27, 1>(expectedInputTypes, expectedInputTypesList);
-
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("WRITE", 1, expectedInputTypesList, 0, expectedOutputTypesList));
+    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("WRITE", 1, 0));
 }
 
 //TODO IMPLEMENT THIS
@@ -222,7 +227,7 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCastFunctionRecordTy
 
 }
 
-
+/*
 TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionRecordTypes) {
     PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
 
