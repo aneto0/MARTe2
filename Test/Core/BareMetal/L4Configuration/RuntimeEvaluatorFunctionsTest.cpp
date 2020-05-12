@@ -1,6 +1,6 @@
 /**
- * @file PseudoCodeFunctionsTest.cpp
- * @brief Source file for class PseudoCodeFunctionsTest
+ * @file RuntimeEvaluatorFunctionsTest.cpp
+ * @brief Source file for class RuntimeEvaluatorFunctionsTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class PseudoCodeFunctionsTest (public, protected, and private). Be aware that some
+ * the class RuntimeEvaluatorFunctionsTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "PseudoCodeFunctionsTest.h"
+#include "RuntimeEvaluatorFunctionsTest.h"
 #include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,7 +42,7 @@
 
 using namespace MARTe;
 
-bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
+bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
 
     RuntimeEvaluatorFunctions functionUT;
     bool ok;
@@ -54,18 +54,18 @@ bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes) {
+bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes) {
     bool ok = true;
 
     expectedFunctionTypes.Seek(0LLU);
     StandardParser parser(expectedFunctionTypes, expectedFunctionTypesCdb, NULL);
     ok = parser.Parse();
 
-    return (ok && TestFunctionRecordTypes(functionName, numberOfInputs, numberOfOutputs));
+    return (ok && TestFunctionTypes(functionName, numberOfInputs, numberOfOutputs));
 
 }
 
-bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
+bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
     for (uint32 i = 0; (i < availableFunctions) && (ok); ++i) {
@@ -91,7 +91,7 @@ bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uin
 
 }
 
-bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
+bool RuntimeEvaluatorFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDescriptor> &inputTypes, Vector<TypeDescriptor> &outputTypes, ConfigurationDatabase &typesCdb) {
 
     bool found = false, moved = false;
 
@@ -128,7 +128,7 @@ bool PseudoCodeFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<TypeDes
     return found;
 }
 
-void PseudoCodeFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName) {
+void RuntimeEvaluatorFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName) {
     uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
 
     for (uint32 i = lastExistentFunction + 1; i <= lastExistentFunction + numberOfFunctions; ++i) {
@@ -144,7 +144,7 @@ void PseudoCodeFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions
 
 }
 
-bool PseudoCodeFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
+bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
 

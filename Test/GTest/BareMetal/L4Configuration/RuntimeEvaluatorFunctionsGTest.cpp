@@ -1,6 +1,6 @@
 /**
- * @file PseudoCodeFunctionsGTest.cpp
- * @brief Source file for class PseudoCodeFunctionsGTest
+ * @file RuntimeEvaluatorFunctionsGTest.cpp
+ * @brief Source file for class RuntimeEvaluatorFunctionsGTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class PseudoCodeFunctionsGTest (public, protected, and private). Be aware that some
+ * the class RuntimeEvaluatorFunctionsGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "PseudoCodeFunctionsTest.h"
+#include "RuntimeEvaluatorFunctionsTest.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -40,13 +40,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDefaultConstructor) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestDefaultConstructor());
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDefaultConstructor) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestDefaultConstructor());
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDupFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -140,12 +140,12 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestDupFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("DUP", 1, 2, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("DUP", 1, 2, expectedFunctionTypes));
 }
 
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestReadFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -199,34 +199,34 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestReadFunctionfunction
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("READ", 0, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("READ", 0, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestWriteFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "float64");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "float32");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint16");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "int16");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint8");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(1, "int8");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(4, "uint64");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(8, "int64");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(3, "uint32");
-    pseudoCodeFunctionsTest.AddFunctionsWithOnlyInputs(6, "int32");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "float64");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "float32");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint16");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "int16");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(1, "int8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(4, "uint64");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(8, "int64");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(3, "uint32");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithOnlyInputs(6, "int32");
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("WRITE", 1, 0));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("WRITE", 1, 0));
 }
 
 //TODO IMPLEMENT THIS
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCastFunctionfunctionTypes) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
 
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -246,11 +246,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestSinFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("SIN", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("SIN", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCosFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -270,11 +270,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestCosFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("COS", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("COS", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTanFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -294,11 +294,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTanFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("TAN", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("TAN", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestExpFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -318,11 +318,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestExpFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("EXP", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("EXP", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLogFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -342,11 +342,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLogFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("LOG", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("LOG", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLog10FunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -366,11 +366,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestLog10Functionfunctio
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("LOG10", 1, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("LOG10", 1, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestPowFunctionfunctionTypes) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     StreamString expectedFunctionTypes = ""
             "Function1 = {"
@@ -392,11 +392,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestPowFunctionfunctionT
             "    }"
             "}";
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestFunctionRecordTypes("POW", 2, 1, expectedFunctionTypes));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("POW", 2, 1, expectedFunctionTypes));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -404,21 +404,21 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 2));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 2));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_NoInputs) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_NoInputs) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 0, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 0, 2));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 0, 2));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_NoOutputs) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_NoOutputs) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 0, &(functionTypes[0]), &MockFunction);
@@ -426,11 +426,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 0));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 0));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MultipleInputs) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MultipleInputs) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, UnsignedInteger64Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 2, 1, &(functionTypes[0]), &MockFunction);
@@ -439,11 +439,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(UnsignedInteger64Bit);
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 3, 2));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 3, 2));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MultipleOutputs) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MultipleOutputs) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit, UnsignedInteger32Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 2, &(functionTypes[0]), &MockFunction);
@@ -451,11 +451,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 3));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 1, 3));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_StackLeftover) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -464,11 +464,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(UnsignedInteger8Bit);
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 2, 3));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, true, 2, 3));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful_MatchOutput) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful_MatchOutput) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -477,11 +477,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeSuccessful
     typeStack.Push(Float32Bit);
     typeStack.Push(Float64Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, true, 1, 2));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, true, 1, 2));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_WrongName) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_WrongName) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -489,21 +489,21 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Wro
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "WrongName", typeStack, false, false, 1, 1));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "WrongName", typeStack, false, false, 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_MissingInput) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MissingInput) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
     StaticStack<TypeDescriptor,32> typeStack;
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, false, 0, 0));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, false, 0, 0));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_WrongInputType) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_WrongInputType) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -511,12 +511,12 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Wro
 
     typeStack.Push(SignedInteger32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, false, 1, 1));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, false, false, 1, 1));
 }
 
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_MatchOutputMissingOutput) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MatchOutputMissingOutput) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -524,11 +524,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Mat
 
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, false, 1, 1));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, false, 1, 1));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_MatchOutputWrongOutput) {
-    PseudoCodeFunctionsTest pseudoCodeFunctionsTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeFailed_MatchOutputWrongOutput) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
     TypeDescriptor functionTypes[] = {Float32Bit, Float64Bit};
     RuntimeEvaluatorFunctions functionUT("Test", 1, 1, &(functionTypes[0]), &MockFunction);
@@ -537,5 +537,5 @@ TEST(BareMetal_L4Configuration_PseudoCodeFunctionsGTest,TestTryConsumeFailed_Mat
     typeStack.Push(Float32Bit);
     typeStack.Push(Float32Bit);
 
-    ASSERT_TRUE(pseudoCodeFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, false, 2, 2));
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestTryConsume(functionUT, "Test", typeStack, true, false, 2, 2));
 }
