@@ -1,5 +1,5 @@
 /**
- * @file PseudoCodeEngine.h
+ * @file RuntimeEvaluator.h
  * @brief Header file for class PseudoCodeEngine
  * @date Mar 23, 2020
  * @author Filippo Sartori
@@ -42,6 +42,7 @@
 #include "TypeConversion.h"
 #include "TypeDescriptor.h"
 #include "VariableInformation.h"
+#include "VariableFinder.h"
 #include "Vector.h"
 
 /*---------------------------------------------------------------------------*/

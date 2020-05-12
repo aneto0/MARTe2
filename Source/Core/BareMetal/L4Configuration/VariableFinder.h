@@ -1,5 +1,5 @@
 /**
- * @file VariableInformation.h
+ * @file VariableFinder.h
  * @brief Header file for class AnyType
  * @date 8 Apr 2020
  * @author Filippo Sartori
@@ -21,9 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef VARIABLEINFORMATION_H_
-#define VARIABLEINFORMATION_H_
-
+#ifndef VARIABLEFINDER_H_
+#define VARIABLEFINDER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,10 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListable.h"
-#include "StreamString.h"
-#include "TypeCharacteristics.h"
-#include "TypeDescriptor.h"
+#include "VariableInformation.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -49,89 +45,47 @@
 namespace MARTe {
 
 /**
- * type used to store 1 PseudoCode element
+ * allows searching for a variable with a given name
  */
-typedef uint16 CodeMemoryElement;
-
-/**
- * type used to address 1 PseudoCode element
- */
-typedef uint16 CodeMemoryAddress;
-
-/**
- * type used to store 1 Data element inthe stack and data area
- */
-typedef uint32 DataMemoryElement;
-
-/**
- * type used to address 1 Data element
- */
-typedef uint16 DataMemoryAddress;
-
-/**
- * used to mark an address to be invalid
- */
-#define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
-
-
-/**
- *  Element for the list of variables
- */
-struct VariableInformation: public LinkedListable {
+class VariableFinder: public IteratorT<VariableInformation>{
+public:
     /**
-     * name of the variable
+     *
      */
-    StreamString name;
+    VariableFinder(CCString name);
+    /**
+     *
+     */
+    VariableFinder(DataMemoryAddress address);
+    /**
+     *
+     */
+    void Do(VariableInformation *data);
+    /**
+     *
+     */
+    VariableInformation *variable;
+    /**
+     *
+     */
+    ErrorManagement::ErrorType error;
+
+private:
+    /**
+     *
+     */
+    StreamString variableName;
 
     /**
-     * type of the variable. Only simple and numeric types are possible
+     *
      */
-    TypeDescriptor type;
-
-    /**
-     * location of the variable in the data area.
-     * if location is below the start of the variables then
-     * it is a constant
-     */
-    DataMemoryAddress location;
-
-    /**
-     * set when during compilation to mark that this output variable has already been written
-     */
-    bool variableUsed;
-
-    /**
-     * initialises data
-     */
-    inline VariableInformation();
-
-    /**
-     * copies
-     */
-    inline VariableInformation(const VariableInformation &in);
+    DataMemoryAddress variableAddress;
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-inline VariableInformation::VariableInformation(){
-    type = VoidType;
-    location = 0;
-    variableUsed = false;
-}
-
-/**
- * copies
- */
-inline VariableInformation::VariableInformation(const VariableInformation &in){
-    name = in.name;
-    type = in.type;
-    location = in.location;
-    variableUsed = false;
-}
-
 } // MARTe
 
-#endif /* VARIABLEINFORMATION_H_ */
+#endif /* VARIABLEFINDER_H_ */
