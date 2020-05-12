@@ -44,12 +44,12 @@ using namespace MARTe;
 
 bool PseudoCodeFunctionsTest::TestDefaultConstructor() {
 
-    PseudoCode::FunctionRecord functionRecordUT;
+    RuntimeEvaluatorFunctions functionUT;
     bool ok;
 
-    ok = (functionRecordUT.GetName() == "");
-    ok &= (functionRecordUT.GetInputTypes().GetNumberOfElements() == 0);
-    ok &= (functionRecordUT.GetOutputTypes().GetNumberOfElements() == 0);
+    ok = (functionUT.GetName() == "");
+    ok &= (functionUT.GetInputTypes().GetNumberOfElements() == 0);
+    ok &= (functionUT.GetOutputTypes().GetNumberOfElements() == 0);
 
     return ok;
 }
@@ -68,8 +68,8 @@ bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uin
 bool PseudoCodeFunctionsTest::TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
-    for (uint32 i = 0; (i < PseudoCode::availableFunctions) && (ok); ++i) {
-        PseudoCode::FunctionRecord functionRecord = PseudoCode::functionRecords[i];
+    for (uint32 i = 0; (i < availableFunctions) && (ok); ++i) {
+        RuntimeEvaluatorFunctions functionRecord = functionRecords[i];
         Vector<TypeDescriptor> inputTypes = functionRecord.GetInputTypes();
         Vector<TypeDescriptor> outputTypes = functionRecord.GetOutputTypes();
 
@@ -144,11 +144,11 @@ void PseudoCodeFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions
 
 }
 
-bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, PseudoCode::DataMemoryAddress initialDataStackSize, PseudoCode::DataMemoryAddress expectedDataStackSize) {
+bool PseudoCodeFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
 
     bool ok = true;
 
-    PseudoCode::DataMemoryAddress dataStackSize = initialDataStackSize;
+    DataMemoryAddress dataStackSize = initialDataStackSize;
     TypeDescriptor type, initialType;
     Vector<TypeDescriptor> functionInputTypes = functionRecordUT.GetInputTypes();
     Vector<TypeDescriptor> functionOutputTypes = functionRecordUT.GetOutputTypes();
@@ -197,6 +197,6 @@ bool PseudoCodeFunctionsTest::TestTryConsume(PseudoCode::FunctionRecord &functio
     return ok;
 }
 
-void MockFunction(PseudoCode::Context &context) {
+void MockFunction(RuntimeEvaluator &evaluator) {
     ((void)0);
 }
