@@ -1,6 +1,6 @@
 /**
- * @file PseudoCodeFunctionsTest.h
- * @brief Header file for class PseudoCodeFunctionsTest
+ * @file RuntimeEvaluatorFunctionsTest.h
+ * @brief Header file for class RuntimeEvaluatorFunctionsTest
  * @date 06/05/2020
  * @author Didac Magrinya
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class
+ * @details This header file contains the declaration of the class RuntimeEvaluatorFunctionsTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PSEUDOCODEFUNCTIONSTEST_H_
-#define PSEUDOCODEFUNCTIONSTEST_H_
+#ifndef RUNTIMEEVALUATORFUNCTIONSTEST_H_
+#define RUNTIMEEVALUATORFUNCTIONSTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -43,9 +43,9 @@
 using namespace MARTe;
 
 /**
- * @brief Tests all the PseudoCodeFunctions functions.
+ * @brief Tests all the RuntimeEvaluatorFunctions functions.
  */
-class PseudoCodeFunctionsTest {
+class RuntimeEvaluatorFunctionsTest {
 
 public:
 
@@ -55,10 +55,10 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests types of registered functionRecords.
+     * @brief Tests types of registered RuntimeEvaluatorFunctions.
      */
-    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes);
-    bool TestFunctionRecordTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
+    bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes);
+    bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
     void AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName);
 
@@ -83,5 +83,5 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PSEUDOCODEFUNCTIONSTEST_H_ */
+#endif /* RUNTIMEEVALUATORFUNCTIONSTEST_H_ */
 

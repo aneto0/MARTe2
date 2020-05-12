@@ -34,7 +34,7 @@ OBJSX=	AnyObjectTest.x \
 	JsonParserTest.x \
 	LexicalAnalyzerTest.x \
 	RuntimeEvaluatorTest.x \
-	PseudoCodeFunctionsTest.x \
+	RuntimeEvaluatorFunctionsTest.x \
 	StandardParserTest.x \
 	TypeConversionTest.x \
 	TokenInfoTest.x \
