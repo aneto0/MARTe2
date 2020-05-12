@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef SOURCE_CORE_BAREMETAL_L2OBJECTS_PSEUDOCODE_H_
-#define SOURCE_CORE_BAREMETAL_L2OBJECTS_PSEUDOCODE_H_
+#ifndef RUNTIMEEVALUATOR_H_
+#define RUNTIMEEVALUATOR_H_
 
 
 
@@ -51,29 +51,26 @@
 
 namespace MARTe{
 
-
-namespace PseudoCode{
-
 /**
  * used internally to describe and register functions
  */
-struct FunctionRecord;
+struct RuntimeEvaluatorFunctions;
 
 /**
  *  The context required to execute a PCode. It is the result of a compilation of a RPN Code
  */
-class Context{
+class RuntimeEvaluator {
 
 public:
     /**
      * constructor
      */
-    Context(StreamString &RPNCode);
+    RuntimeEvaluator(StreamString &RPNCode);
 
     /**
      * destructor
      */
-    ~Context();
+    ~RuntimeEvaluator();
 
     /**
      * Reads from code memory
@@ -287,7 +284,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode input variables -- assumes that the stack is in the state before calling the function
      */
-    ErrorManagement::ErrorType FunctionRecordInputs2String(FunctionRecord &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordInputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool peekOnly=true,bool showData=true,bool showTypes=true);
 
     /**
      * expands function information output description into readable text
@@ -295,7 +292,7 @@ private:
      * it will access DataMemory as well to decode constants
      * it will access Stack as well to decode output variables -- assumes that the stack has just been updated by the function
      */
-    ErrorManagement::ErrorType FunctionRecordOutputs2String(FunctionRecord &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
+    ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunctions &functionInformation,StreamString &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
     /**
      * the input variable names
@@ -340,7 +337,7 @@ static inline DataMemoryAddress ByteSizeToDataMemorySize(uint32 byteSize){
 }
 
 template<typename T>
-void Context::Pop(T &value){
+void RuntimeEvaluator::Pop(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
@@ -350,7 +347,7 @@ void Context::Pop(T &value){
 }
 
 template<typename T>
-void Context::Peek(T &value){
+void RuntimeEvaluator::Peek(T &value){
     if (stackPtr){
         // adds granularity-1 so that also 1 byte uses 1 slot
         // stack points to the next free value. so one need to step back of the variable size
@@ -361,7 +358,7 @@ void Context::Peek(T &value){
 
 
 template<typename T>
-void Context::Push(T &value){
+void RuntimeEvaluator::Push(T &value){
     if (stackPtr ){
         *((T *)stackPtr) = value;
         // adds granularity-1 so that also 1 byte uses 1 slot
@@ -370,33 +367,31 @@ void Context::Push(T &value){
 }
 
 template<typename T>
-T &Context::Variable(DataMemoryAddress variableIndex){
+T &RuntimeEvaluator::Variable(DataMemoryAddress variableIndex){
     // note that variableIndex is an address to the memory with a granularity of sizeof(MemoryElement)
     return (T&)variablesMemoryPtr[variableIndex];
 }
 
-CodeMemoryElement Context::GetPseudoCode(){
+CodeMemoryElement RuntimeEvaluator::GetPseudoCode(){
     return *codeMemoryPtr++;
 }
 
-ErrorManagement::ErrorType Context::AddInputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddInputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
     return AddVariable2DB(name,inputVariableInfo,td,location);
 }
 
-ErrorManagement::ErrorType Context::FindInputVariable(CCString name,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindInputVariable(CCString name,VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,inputVariableInfo);
 }
 
-ErrorManagement::ErrorType Context::AddOutputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
+ErrorManagement::ErrorType RuntimeEvaluator::AddOutputVariable(CCString name,TypeDescriptor td,DataMemoryAddress location){
     return AddVariable2DB(name,outputVariableInfo,td,location);
 }
 
-ErrorManagement::ErrorType Context::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
+ErrorManagement::ErrorType RuntimeEvaluator::FindOutputVariable(CCString name,VariableInformation *&variableInformation){
     return FindVariableinDB(name,variableInformation,outputVariableInfo);
 }
 
-} //PseudoCode
-
 } // MARTe
 
-#endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_PSEUDOCODE_H_ */
+#endif /* RUNTIMEEVALUATOR_H_ */
