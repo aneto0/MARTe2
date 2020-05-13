@@ -326,6 +326,9 @@ ErrorManagement::ErrorType VariableDescriptor::CopyTo(
 	if (ret){
 		tco = TypeConversionManager::GetOperator(destVd.typeDescriptor,this->typeDescriptor,isCompare);
     	ret.unsupportedFeature = ( tco == NULL_PTR(TypeConversionOperatorI *));
+	}
+
+	if (!ret){
     	DynamicCString s1,s2;
     	CStringTool cst1= s1();
     	CStringTool cst2= s2();

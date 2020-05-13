@@ -1,6 +1,6 @@
 /**
- * @file PseudoCodeFunctions.h
- * @brief Header file for class AnyType
+ * @file RuntimeEvaluatorFunctions.h
+ * @brief Header file for class RuntimeEvaluatorFunctions
  * @date 8 Apr 2020
  * @author Filippo Sartori
  *
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PSEUDOCODE_FUNCTIONS_H_
-#define PSEUDOCODE_FUNCTIONS_H_
+#ifndef RUNTIMEEVALUATORFUNCTIONS_H_
+#define RUNTIMEEVALUATORFUNCTIONS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,8 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticStack.h"
-#include "PseudoCode.h"
-#include "PseudoCodeVariableInformation.h"
+#include "RuntimeEvaluatorInfo.h"
+#include "../RuntimeEvaluator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                          Forward declarations                             */
@@ -45,47 +45,46 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-namespace PseudoCode{
 
 /** the type of the PCode function */
-typedef void (*Function)(Context & context);
+typedef void (*Function)(RuntimeEvaluator & context);
 
 /**
  * records information necessary to be able to use it during compilation
  */
-struct FunctionRecord{
-	/**
-	 *	The name of the functions as used in the RPN code
-	 */
-	CCString 				name;
+struct RuntimeEvaluatorFunction{
+    /**
+     *    The name of the functions as used in the RPN code
+     */
+    CCString                 name;
 
-	/**
-	 * How many stack elements it will consume
-	 * !NOTE that for CONST
-	 */
-	uint16  				numberOfInputs;
+    /**
+     * How many stack elements it will consume
+     * !NOTE that for CONST
+     */
+    uint16                  numberOfInputs;
 
-	/**
-	 * How many stack elements it will produce
-	 */
-	uint16 					numberOfOutputs;
+    /**
+     * How many stack elements it will produce
+     */
+    uint16                     numberOfOutputs;
 
-	/**
-	 * array of types one for each input and output
-	 */
-	const TypeDescriptor *	types;
+    /**
+     * array of types one for each input and output
+     */
+    const TypeDescriptor *    types;
 
-	/**
-	 * The function code itself
-	 */
-	Function 				function;
+    /**
+     * The function code itself
+     */
+    Function                 ExecuteFunction;
 
-	/**
-	 * returns true if the name and types matches
-	 * on success replaces the type on the stack with the result type
-	 * also simulates variations on the dataStack
-	 */
-	bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+    /**
+     * returns true if the name and types matches
+     * on success replaces the type on the stack with the result type
+     * also simulates variations on the dataStack
+     */
+    bool TryConsume(CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
 
 };
 
@@ -102,36 +101,35 @@ extern uint32 availableFunctions;
 /**
  * the database of functions
  */
-extern FunctionRecord functionRecords[maxFunctions];
+extern RuntimeEvaluatorFunction functionRecords[maxFunctions];
 
 /**
  *
  */
-bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,DataMemoryAddress &dataStackSize);
+bool FindPCodeAndUpdateTypeStack(RuntimeEvaluatorInfo::CodeMemoryElement &code, CCString nameIn,StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput,RuntimeEvaluatorInfo::DataMemoryAddress &dataStackSize);
 
 /**
  * to register a function
  */
-void RegisterFunction(const FunctionRecord &record);
+void RegisterFunction(const RuntimeEvaluatorFunction &record);
 
 /**
  * generates boiler plate code to register a function
  */
 #define REGISTER_PCODE_FUNCTION(name,subName,nInputs,nOutputs,function,...)\
-	static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
-	static const FunctionRecord name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
-	static class name ## subName ## RegisterClass { \
-	public: name ## subName ## RegisterClass(){\
-			RegisterFunction(name ## subName ## _FunctionRecord);\
-		}\
-	} name ## subName ## RegisterClassInstance;
+    static const TypeDescriptor name ## subName ## _FunctionTypes[] = {__VA_ARGS__}; \
+    static const RuntimeEvaluatorFunction name ## subName ## _FunctionRecord={#name,nInputs,nOutputs,name ## subName ## _FunctionTypes,&function}; \
+    static class name ## subName ## RegisterClass { \
+    public: name ## subName ## RegisterClass(){\
+            RegisterFunction(name ## subName ## _FunctionRecord);\
+        }\
+    } name ## subName ## RegisterClassInstance;
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-} // PseudoCode
 } // MARTe
 
 #endif /* SOURCE_CORE_BAREMETAL_L2OBJECTS_PRIVATE_PSEUDOCODEFUNCTIONS_H_ */

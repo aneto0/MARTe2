@@ -539,7 +539,6 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                     ret = false;
                     quit = true;
                 }
-//                format = &format[1];
                 format++;
             }
             if (ret) {
@@ -551,7 +550,6 @@ bool IOBuffer::PrintFormatted(IOBuffer &iob, CCString format, const AnyType pars
                 else {
 
                     // consume %
-//                    format = &format[1];
                     format++;
 
                     // if not end then %

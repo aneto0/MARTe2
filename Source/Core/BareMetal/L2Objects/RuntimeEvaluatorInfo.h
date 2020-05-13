@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-#ifndef PSEUDOCODE_VARIABLEINFORMATION_H_
-#define PSEUDOCODE_VARIABLEINFORMATION_H_
+#ifndef RUNTIME_EVALUATOR_VARIABLE_INFORMATION_H_
+#define RUNTIME_EVALUATOR_VARIABLE_INFORMATION_H_
 
 
 /*---------------------------------------------------------------------------*/
@@ -45,7 +45,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe{
-namespace PseudoCode{
+namespace RuntimeEvaluatorInfo{
 
 /**
  * type used to store 1 PseudoCode element
@@ -58,7 +58,7 @@ typedef uint16 CodeMemoryElement;
 typedef uint16 CodeMemoryAddress;
 
 /**
- * type used to store 1 Data element inthe stack and data area
+ * type used to store 1 Data element in the stack and data area
  */
 typedef uint32 DataMemoryElement;
 
@@ -70,8 +70,7 @@ typedef uint16 DataMemoryAddress;
 /**
  * used to mark an address to be invalid
  */
-#define MAXDataMemoryAddress TypeCharacteristics<DataMemoryAddress>::MaxValue()
-
+#define MAXDataMemoryAddress TypeCharacteristics<RuntimeEvaluatorInfo::DataMemoryAddress>::MaxValue()
 
 /**
  *  Element for the list of variables

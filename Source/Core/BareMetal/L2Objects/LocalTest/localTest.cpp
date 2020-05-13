@@ -1,7 +1,7 @@
 
+#include <RuntimeEvaluator.h>
 #include "TestSupport.h"
 #include "StartupManager.h"
-#include "PseudoCode.h"
 
 using namespace MARTe;
 
@@ -21,7 +21,7 @@ int main(){
 
 	StartupManager::Initialise();
 
-	PseudoCode::Context context;
+	RuntimeEvaluator context;
 
 	ErrorManagement::ErrorType ret;
 
@@ -29,7 +29,7 @@ int main(){
 
 	if (ret){
 		uint32 index = 0;
-		PseudoCode::VariableInformation *var;
+		RuntimeEvaluatorInfo::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
@@ -52,15 +52,15 @@ int main(){
 			}
 		}
 
-		printf("size of constant area = %i\n",context.startOfVariables);
+		printf("size of constant area = %i\n",context.GetSizeOfConstants());
 
 	}
 
 	if (ret){
 		ret = context.Compile(RPNCode);
 		printf("size of data area = %i\n",context.dataMemory.GetNumberOfElements());
-		printf("size of code area = %i\n",context.codeMemory.GetSize());
-		printf("size of stack area = %i\n",context.stack.GetNumberOfElements());
+		printf("size of code area = %i\n",context.GetSizeOfCode());
+		printf("size of stack area = %i\n",context.GetSizeOfStack());
 	}
 
 

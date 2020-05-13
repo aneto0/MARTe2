@@ -48,7 +48,7 @@ SPB    = $(ROOT_DIR)/Test/$(PACKAGE).x  \
          $(ROOT_DIR)/Test/GTest/BareMetal/L3Streams.x \
          $(ROOT_DIR)/Source/Tools/TestSupport.x
 
-BUILD_PRODUCT = $(BUILD_DIR)/TestPseudoCode$(EXEEXT) $(BUILD_DIR)/test$(EXEEXT) 
+BUILD_PRODUCT =  $(BUILD_DIR)/test$(EXEEXT) 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules
 

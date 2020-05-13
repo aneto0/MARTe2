@@ -1,6 +1,6 @@
 
+#include <RuntimeEvaluator.h>
 #include "StartupManager.h"
-#include "PseudoCode.h"
 #include "HighResolutionTimer.h"
 #include "BasicConsole.h"
 #include "MicroSeconds.h"
@@ -251,7 +251,7 @@ int main(){
 
 #if 0
 {
-	PseudoCode::Context context;
+	RuntimeEvaluator context;
 
 	ErrorManagement::ErrorType ret;
 
@@ -259,7 +259,7 @@ int main(){
 
 	if (ret){
 		uint32 index = 0U;
-		PseudoCode::VariableInformation *var;
+		RuntimeEvaluatorInfo::VariableInformation *var;
 
 		printf ("VAR SCAN RESULT\n");
 		while(context.BrowseInputVariable(index,var)){
@@ -314,16 +314,16 @@ int main(){
 
 	if (ret){
 		printf("SUCCESSFUL\n");
-		printf("size of constant area = %i\n",context.startOfVariables);
+		printf("size of constant area = %i\n",context.GetSizeOfConstants());
 		printf("size of data area = %i\n",context.dataMemory.GetNumberOfElements());
-		printf("size of code area = %i\n",context.codeMemory.GetSize());
-		printf("size of stack area = %i\n",context.stack.GetNumberOfElements());
+		printf("size of code area = %i\n",context.GetSizeOfCode());
+		printf("size of stack area = %i\n",context.GetSizeOfStack());
 	}
 
 	if (ret){
 		printf ("ASSIGN INPUTS\n");
 		int32 index = 0;
-		PseudoCode::VariableInformation *var;
+		RuntimeEvaluatorInfo::VariableInformation *var;
 
 		while(context.BrowseInputVariable(index,var)){
 			index++;
@@ -357,7 +357,7 @@ int main(){
 	if (ret){
 		printf ("VAR ALLOCATION RESULT\n");
 		uint32 index = 0;
-		PseudoCode::VariableInformation *var;
+		RuntimeEvaluatorInfo::VariableInformation *var;
 
 		while(context.BrowseInputVariable(index,var)){
 			printf ("input  var %2i @%04x = %s \n",index,var->location,var->name.GetList());
@@ -400,7 +400,7 @@ int main(){
 		DynamicCString dcs;
 		CStringTool cst = dcs();
 //		BasicConsole console;
-		ret = context.Execute(PseudoCode::Context::debugMode,&cst,0);
+		ret = context.Execute(RuntimeEvaluator::debugMode,&cst,0);
 		if (dcs.GetSize() > 0){
 			printf("%s\n",dcs.GetList());
 		}
@@ -417,7 +417,7 @@ int main(){
 				printf (".");
 				fflush(stdout);
 				for (int i = 0;(i<100000) && ret;i++) {
-					ret = context.Execute(PseudoCode::Context::fastMode,NULL,0);
+					ret = context.Execute(RuntimeEvaluator::fastMode,NULL,0);
 				}
 			}
 		}
@@ -437,7 +437,7 @@ int main(){
 				printf (".");
 				fflush(stdout);
 				for (int i = 0;(i<100000) && ret;i++) {
-					ret = context.Execute(PseudoCode::Context::safeMode,NULL,0);
+					ret = context.Execute(RuntimeEvaluator::safeMode,NULL,0);
 				}
 			}
 		}
