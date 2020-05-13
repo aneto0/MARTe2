@@ -134,7 +134,7 @@ void RuntimeEvaluatorFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFun
     for (uint32 i = lastExistentFunction + 1; i <= lastExistentFunction + numberOfFunctions; ++i) {
         StreamString functionName;
 
-        functionName.Printf("Function%i", i);
+        functionName.Printf("Function%i.Inputs", i);
         expectedFunctionTypesCdb.CreateRelative(functionName.Buffer());
 
         expectedFunctionTypesCdb.Write("arg1", typeName);
