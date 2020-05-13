@@ -60,7 +60,7 @@ TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_1) {
     
     PseudoCodeTest pseudoCodeTest;
     
-    float values[2] = { 10.0, 4.2 };
+    float values[2] = { 10.0, 8.9 };
     
     CCString rpnCode=
             "READ A\n"
@@ -76,7 +76,7 @@ TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_2) {
     
     PseudoCodeTest pseudoCodeTest;
     
-    float values[2] = { 10.0, 7.2 };
+    float values[2] = { 10.0, 9.9 };
     
     CCString rpnCode=
             "READ A\n"

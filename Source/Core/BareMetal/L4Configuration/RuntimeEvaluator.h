@@ -106,46 +106,106 @@ public:
     /**
      * @brief     Searches the address of an input variable in memory
      *            by variable name.
-     * @returns   the address of the variable in memory.
+     * @returns   the address of the variable in memory. `NULL_PTR(void*)`
+     *            if variable is not found.
      * @param[in] varNameIn the name of the variable to retrieve.
      * @warning   the return address is `void*` and needs to be casted
      *            to the proper type before using it.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
     void* GetInputVariableMemory(StreamString &varNameIn);
     
     /**
      * @brief     Searches the address of an input variable in memory
      *            by variable index.
-     * @returns   the address of the variable in memory.
+     * @returns   the address of the variable in memory. `NULL_PTR(void*)`
+     *            if variable is not found.
      * @param[in] varIndexIn the index of the variable to retrieve.
-     * @details   the index is determined by the order in which
+     *            The index is determined by the order in which
      *            variables appear in the input RPNCode.
      * @warning   the return address is `void*` and needs to be casted
      *            to the proper type before using it.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
     void* GetInputVariableMemory(uint32 &varIndexIn);
     
     /**
      * @brief     Retrieves the address of an output variable in memory
+     *            by variable name.
+     * @returns   the address of the variable in memory. `NULL_PTR(void*)`
+     *            if variable is not found.
+     * @param[in] varNameIn the name of the variable to retrieve.
+     * @warning   the return address is `void*` and needs to be casted
+     *            to the proper type before using it.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    void* GetOutputVariableMemory(StreamString &varNameIn);
+    
+    /**
+     * @brief     Retrieves the address of an output variable in memory
      *            by variable index.
-     * @returns   the address of the variable in memory.
+     * @returns   the address of the variable in memory. `NULL_PTR(void*)`
+     *            if variable is not found.
      * @param[in] varIndexIn the index of the variable to retrieve.
-     * @details   the index is determined by the order in which
+     *            The index is determined by the order in which
      *            variables appear in the input RPNCode.
      * @warning   the return address is `void*` and needs to be casted
      *            to the proper type before usage.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
     void* GetOutputVariableMemory(uint32 &varIndexIn);
     
     /**
-     * @brief     Retrieves the address of an output variable in memory
-     *            by variable name.
-     * @returns   the address of the variable in memory.
+     * @brief     Set the type of an input variable.
+     * @details   RuntimeEvaluator needs to know the types of all
+     *            variables that are present in the input RPNCode to
+     *            allocate the required portion of memory.
+     * @returns   true on success.
      * @param[in] varNameIn the name of the variable to retrieve.
-     * @warning   the return address is `void*` and needs to be casted
-     *            to the proper type before using it.
+     * @param[in] typeIn    the type to set the variable to.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
      */
-    void* GetOutputVariableMemory(StreamString &varNameIn);
+    bool SetInputVariableType(StreamString &varNameIn, TypeDescriptor typeIn);
+    
+    /**
+     * @brief     Set the type of an input variable.
+     * @details   RuntimeEvaluator needs to know the types of all
+     *            variables that are present in the input RPNCode to
+     *            allocate the required portion of memory.
+     * @returns   true on success.
+     * @param[in] varIndexIn the index of the variable to retrieve.
+     *            The index is determined by the order in which
+     *            variables appear in the input RPNCode.
+     * @param[in] typeIn    the type to set the variable to.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetInputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn);
+    
+    /**
+     * @brief     Set the type of an output variable.
+     * @details   RuntimeEvaluator needs to know the types of all
+     *            variables that are present in the input RPNCode to
+     *            allocate the required portion of memory.
+     * @returns   true on success.
+     * @param[in] varNameIn the name of the variable to retrieve.
+     * @param[in] typeIn    the type to set the variable to.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetOutputVariableType(StreamString &varNameIn, TypeDescriptor typeIn);
+    
+    /**
+     * @brief     Set the type of an output variable.
+     * @details   RuntimeEvaluator needs to know the types of all
+     *            variables that are present in the input RPNCode to
+     *            allocate the required portion of memory.
+     * @returns   true on success.
+     * @param[in] varIndexIn the index of the variable to retrieve.
+     *            The index is determined by the order in which
+     *            variables appear in the input RPNCode.
+     * @param[in] typeIn    the type to set the variable to.
+     * @pre       RuntimeEvaluator::ExtractVariables() == true
+     */
+    bool SetOutputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn);
     
     /**
      * Cleans memory
