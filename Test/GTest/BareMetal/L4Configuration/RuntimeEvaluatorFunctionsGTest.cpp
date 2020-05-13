@@ -105,10 +105,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionT
     ASSERT_TRUE(test.TestFunctionTypes("WRITE", 1, 0));
 }
 
-//TODO IMPLEMENT THIS
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+    CCString typeNames[] = {"float64", "float32", "uint64", "int64", "uint32", "int32", "uint16", "int16", "uint8", "int8"};
 
+    for (uint8 i = 0; i < 10; ++i) {
+        for (uint8 j = 0; j < 10; ++j) {
+            test.Add1In1OutFunction(typeNames[i], typeNames[j]);
+        }
+    }
+
+    ASSERT_TRUE(test.TestFunctionTypes("CAST", 1, 1));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
@@ -252,7 +259,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTyp
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
-
 
     test.Add2In1OutFunction("float64",  "float64",  "uint8");
     test.Add2In1OutFunction("float32",  "float32",  "uint8");
