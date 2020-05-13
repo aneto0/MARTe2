@@ -136,13 +136,11 @@ void RuntimeEvaluatorFunctionsTest::Add1InFunction(StreamString inputTypeName) {
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName) {
 
-    StreamString inputs1[] = {input1TypeName, input2TypeName};
-    StreamString inputs2[] = {input2TypeName, input1TypeName};
+    StreamString inputs[] = {inputTypeName};
     StreamString outputs[] = {outputTypeName};
-    AddFunction(2, inputs1, 1, outputs);
-    AddFunction(2, inputs2, 1, outputs);
+    AddFunction(1, inputs, 1, outputs);
 
 }
 
@@ -151,6 +149,16 @@ void RuntimeEvaluatorFunctionsTest::Add2In1OutFunction(StreamString input1TypeNa
     StreamString inputs[] = {input1TypeName, input2TypeName};
     StreamString outputs[] = {outputTypeName};
     AddFunction(2, inputs, 1, outputs);
+
+}
+
+void RuntimeEvaluatorFunctionsTest::AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+
+    StreamString inputs1[] = {input1TypeName, input2TypeName};
+    StreamString inputs2[] = {input2TypeName, input1TypeName};
+    StreamString outputs[] = {outputTypeName};
+    AddFunction(2, inputs1, 1, outputs);
+    AddFunction(2, inputs2, 1, outputs);
 
 }
 

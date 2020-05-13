@@ -61,7 +61,8 @@ public:
 
     bool ParseFunctions(StreamString &expectedFunctionTypes);
     void AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
-    void Add1InFunction(StreamString typeName);
+    void Add1InFunction(StreamString inputTypeName);
+    void Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName);
     void Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
     void AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 
