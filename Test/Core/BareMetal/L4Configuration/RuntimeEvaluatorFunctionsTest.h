@@ -72,6 +72,9 @@ public:
      */
     bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
 
+    template <typename T>
+    bool TestFunctionExecution(CCString rpnCode, uint8 numberOfResults, T expectedResults[]);
+
 private:
     /**
      * @brief Checks if types provided are within types lists.
@@ -87,6 +90,36 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template <typename T>
+bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(CCString rpnCode, uint8 numberOfResults, T expectedResults[]) {
+
+    ErrorManagement::ErrorType ret;
+
+    StreamString RPNCodeStream(rpnCode);
+    RuntimeEvaluator context(RPNCodeStream);
+
+    RPNCodeStream.Seek(0u);
+    ret = context.ExtractVariables();
+
+    RPNCodeStream.Seek(0u);
+    if (ret) {
+        ret = context.Compile();
+    }
+
+    if (ret) {
+        ret = context.Execute(RuntimeEvaluator::fastMode);
+    }
+
+    for (uint8 i = 0; (ret && i < numberOfResults); ++i) {
+        T result = 0;
+
+        context.Pop(result);
+        ret = (result == expectedResults[i]);
+    }
+
+    return ret;
+}
 
 #endif /* RUNTIMEEVALUATORFUNCTIONSTEST_H_ */
 
