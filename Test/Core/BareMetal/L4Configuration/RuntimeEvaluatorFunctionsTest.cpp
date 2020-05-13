@@ -136,6 +136,14 @@ void RuntimeEvaluatorFunctionsTest::Add1InFunction(StreamString inputTypeName) {
 
 }
 
+void RuntimeEvaluatorFunctionsTest::Add1OutFunction(StreamString outputTypeName) {
+
+    StreamString inputs[] = {};
+    StreamString outputs[] = {outputTypeName};
+    AddFunction(0, inputs, 1, outputs);
+
+}
+
 void RuntimeEvaluatorFunctionsTest::Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName) {
 
     StreamString inputs[] = {inputTypeName};
