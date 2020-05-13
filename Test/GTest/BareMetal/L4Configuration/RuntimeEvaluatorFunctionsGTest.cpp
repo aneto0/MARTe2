@@ -240,25 +240,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTy
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("SIN", 1, 1));
 }
@@ -266,25 +249,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("COS", 1, 1));
 }
@@ -292,25 +258,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("TAN", 1, 1));
 }
@@ -318,25 +267,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("EXP", 1, 1));
 }
@@ -344,25 +276,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("LOG", 1, 1));
 }
@@ -370,25 +285,8 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Inputs = {"
-            "        arg1 = float32"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Inputs = {"
-            "        arg1 = float64"
-            "    }"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1In1OutFunction("float32", "float32");
+    test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("LOG10", 1, 1));
 }
