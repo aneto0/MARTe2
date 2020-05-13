@@ -235,6 +235,7 @@ template <typename T1,typename T2> void Casting(RuntimeEvaluator &context){
 }
 
 #define REGISTER_CAST_FUNCTION_BLOCK(type1,function)   \
+  REGISTER_CAST_FUNCTION(CAST,type1,float64,function)  \
   REGISTER_CAST_FUNCTION(CAST,type1,float32,function)  \
   REGISTER_CAST_FUNCTION(CAST,type1,uint64 ,function)  \
   REGISTER_CAST_FUNCTION(CAST,type1,int64  ,function)  \
