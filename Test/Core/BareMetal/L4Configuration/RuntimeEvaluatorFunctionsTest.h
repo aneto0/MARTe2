@@ -59,12 +59,12 @@ public:
      */
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
-    bool ParseFunctions(StreamString &expectedFunctionTypes);
     void AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
     void Add1InFunction(StreamString inputTypeName);
     void Add1OutFunction(StreamString outputTypeName);
     void Add1In1OutFunction(StreamString inputTypeName, StreamString outputTypeName);
     void Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
+    void Add1In2OutFunction(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName);
     void AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 
     /**
