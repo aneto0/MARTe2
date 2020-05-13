@@ -102,7 +102,51 @@ public:
      * Looks for a variable at a given location
      */
     ErrorManagement::ErrorType BrowseOutputVariable(uint32 index,VariableInformation *&variableInformation);
-
+    
+    /**
+     * @brief     Searches the address of an input variable in memory
+     *            by variable name.
+     * @returns   the address of the variable in memory.
+     * @param[in] varNameIn the name of the variable to retrieve.
+     * @warning   the return address is `void*` and needs to be casted
+     *            to the proper type before using it.
+     */
+    void* GetInputVariableMemory(StreamString &varNameIn);
+    
+    /**
+     * @brief     Searches the address of an input variable in memory
+     *            by variable index.
+     * @returns   the address of the variable in memory.
+     * @param[in] varIndexIn the index of the variable to retrieve.
+     * @details   the index is determined by the order in which
+     *            variables appear in the input RPNCode.
+     * @warning   the return address is `void*` and needs to be casted
+     *            to the proper type before using it.
+     */
+    void* GetInputVariableMemory(uint32 &varIndexIn);
+    
+    /**
+     * @brief     Retrieves the address of an output variable in memory
+     *            by variable index.
+     * @returns   the address of the variable in memory.
+     * @param[in] varIndexIn the index of the variable to retrieve.
+     * @details   the index is determined by the order in which
+     *            variables appear in the input RPNCode.
+     * @warning   the return address is `void*` and needs to be casted
+     *            to the proper type before usage.
+     */
+    void* GetOutputVariableMemory(uint32 &varIndexIn);
+    
+    /**
+     * @brief     Retrieves the address of an output variable in memory
+     *            by variable name.
+     * @returns   the address of the variable in memory.
+     * @param[in] varNameIn the name of the variable to retrieve.
+     * @warning   the return address is `void*` and needs to be casted
+     *            to the proper type before using it.
+     */
+    void* GetOutputVariableMemory(StreamString &varNameIn);
+    
     /**
      * Cleans memory
      * Allocates inputVariables
@@ -156,28 +200,6 @@ public:
      * Reconstruct the RPNCode with type information
      */
     ErrorManagement::ErrorType DeCompile(StreamString &DeCompileRPNCode, bool showTypes);
-    
-    /**
-     * @brief     Searches the address of an input variable in memory
-     *            by variable name.
-     * @returns   the address of the variable in memory.
-     * @param[in] varNameIn the name of the variable to retrieve.
-     * @warning   the return address is `void*` and needs to be casted
-     *            to the proper type before using it.
-     */
-    void* GetInputVariableMemory(StreamString &varNameIn);
-    
-    /**
-     * @brief     Searches the address of an input variable in memory
-     *            by variable index.
-     * @returns   the address of the variable in memory.
-     * @param[in] varIndexIn the index of the variable to retrieve.
-     * @details   the index is determined by the order in which
-     *            variables appear in the input RPNCode.
-     * @warning   the return address is `void*` and needs to be casted
-     *            to the proper type before using it.
-     */
-    void* GetInputVariableMemory(uint32 &varIndexIn);
     
     /**
      * @name    Members required by RuntimeEvaluatorFunctions
