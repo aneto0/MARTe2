@@ -50,6 +50,7 @@ An example of a configuration file using the MARTe language:
          H = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
       }
    }
+
    
 Examples
 --------
