@@ -534,6 +534,668 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionType
     ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("EQ", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = float64"
+            "        arg2 = float64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function2 = {"
+            "    Inputs = {"
+            "        arg1 = float32"
+            "        arg2 = float32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function3 = {"
+            "    Inputs = {"
+            "        arg1 = uint64"
+            "        arg2 = uint64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function4 = {"
+            "    Inputs = {"
+            "        arg1 = int64"
+            "        arg2 = int64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function5 = {"
+            "    Inputs = {"
+            "        arg1 = uint32"
+            "        arg2 = uint32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function6 = {"
+            "    Inputs = {"
+            "        arg1 = int32"
+            "        arg2 = int32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function7 = {"
+            "    Inputs = {"
+            "        arg1 = uint16"
+            "        arg2 = uint16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function8 = {"
+            "    Inputs = {"
+            "        arg1 = int16"
+            "        arg2 = int16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function9 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function10 = {"
+            "    Inputs = {"
+            "        arg1 = int8"
+            "        arg2 = int8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint64", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "uint64",   "uint8");
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("NEQ", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = float64"
+            "        arg2 = float64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function2 = {"
+            "    Inputs = {"
+            "        arg1 = float32"
+            "        arg2 = float32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function3 = {"
+            "    Inputs = {"
+            "        arg1 = uint64"
+            "        arg2 = uint64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function4 = {"
+            "    Inputs = {"
+            "        arg1 = int64"
+            "        arg2 = int64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function5 = {"
+            "    Inputs = {"
+            "        arg1 = uint32"
+            "        arg2 = uint32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function6 = {"
+            "    Inputs = {"
+            "        arg1 = int32"
+            "        arg2 = int32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function7 = {"
+            "    Inputs = {"
+            "        arg1 = uint16"
+            "        arg2 = uint16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function8 = {"
+            "    Inputs = {"
+            "        arg1 = int16"
+            "        arg2 = int16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function9 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function10 = {"
+            "    Inputs = {"
+            "        arg1 = int8"
+            "        arg2 = int8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint64", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "uint64",   "uint8");
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("GT", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = float64"
+            "        arg2 = float64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function2 = {"
+            "    Inputs = {"
+            "        arg1 = float32"
+            "        arg2 = float32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function3 = {"
+            "    Inputs = {"
+            "        arg1 = uint64"
+            "        arg2 = uint64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function4 = {"
+            "    Inputs = {"
+            "        arg1 = int64"
+            "        arg2 = int64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function5 = {"
+            "    Inputs = {"
+            "        arg1 = uint32"
+            "        arg2 = uint32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function6 = {"
+            "    Inputs = {"
+            "        arg1 = int32"
+            "        arg2 = int32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function7 = {"
+            "    Inputs = {"
+            "        arg1 = uint16"
+            "        arg2 = uint16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function8 = {"
+            "    Inputs = {"
+            "        arg1 = int16"
+            "        arg2 = int16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function9 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function10 = {"
+            "    Inputs = {"
+            "        arg1 = int8"
+            "        arg2 = int8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint64", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "uint64",   "uint8");
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("LT", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = float64"
+            "        arg2 = float64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function2 = {"
+            "    Inputs = {"
+            "        arg1 = float32"
+            "        arg2 = float32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function3 = {"
+            "    Inputs = {"
+            "        arg1 = uint64"
+            "        arg2 = uint64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function4 = {"
+            "    Inputs = {"
+            "        arg1 = int64"
+            "        arg2 = int64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function5 = {"
+            "    Inputs = {"
+            "        arg1 = uint32"
+            "        arg2 = uint32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function6 = {"
+            "    Inputs = {"
+            "        arg1 = int32"
+            "        arg2 = int32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function7 = {"
+            "    Inputs = {"
+            "        arg1 = uint16"
+            "        arg2 = uint16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function8 = {"
+            "    Inputs = {"
+            "        arg1 = int16"
+            "        arg2 = int16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function9 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function10 = {"
+            "    Inputs = {"
+            "        arg1 = int8"
+            "        arg2 = int8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint64", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "uint64",   "uint8");
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("GTE", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = float64"
+            "        arg2 = float64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function2 = {"
+            "    Inputs = {"
+            "        arg1 = float32"
+            "        arg2 = float32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function3 = {"
+            "    Inputs = {"
+            "        arg1 = uint64"
+            "        arg2 = uint64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function4 = {"
+            "    Inputs = {"
+            "        arg1 = int64"
+            "        arg2 = int64"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function5 = {"
+            "    Inputs = {"
+            "        arg1 = uint32"
+            "        arg2 = uint32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function6 = {"
+            "    Inputs = {"
+            "        arg1 = int32"
+            "        arg2 = int32"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function7 = {"
+            "    Inputs = {"
+            "        arg1 = uint16"
+            "        arg2 = uint16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function8 = {"
+            "    Inputs = {"
+            "        arg1 = int16"
+            "        arg2 = int16"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function9 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}"
+            "Function10 = {"
+            "    Inputs = {"
+            "        arg1 = int8"
+            "        arg2 = int8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int32",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint64", "int64",    "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint32",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int8",   "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int16",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("int32",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint8",  "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint16", "uint64",   "uint8");
+    runtimeEvaluatorFunctionsTest.AddFunctionsWithInputCombination("uint32", "uint64",   "uint8");
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("LTE", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("AND", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("OR", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
+
+    StreamString expectedFunctionTypes = ""
+            "Function1 = {"
+            "    Inputs = {"
+            "        arg1 = uint8"
+            "        arg2 = uint8"
+            "    }"
+            "    Outputs = {"
+            "        arg1 = uint8"
+            "    }"
+            "}";
+
+    runtimeEvaluatorFunctionsTest.ParseFunctions(expectedFunctionTypes);
+
+    ASSERT_TRUE(runtimeEvaluatorFunctionsTest.TestFunctionTypes("XOR", 2, 1));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
     RuntimeEvaluatorFunctionsTest runtimeEvaluatorFunctionsTest;
 
