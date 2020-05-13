@@ -209,16 +209,24 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTy
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    test.AddFunctionsWithOnlyInputs(1, "float64");
-    test.AddFunctionsWithOnlyInputs(1, "float32");
-    test.AddFunctionsWithOnlyInputs(1, "uint16");
-    test.AddFunctionsWithOnlyInputs(1, "int16");
-    test.AddFunctionsWithOnlyInputs(1, "uint8");
-    test.AddFunctionsWithOnlyInputs(1, "int8");
-    test.AddFunctionsWithOnlyInputs(4, "uint64");
-    test.AddFunctionsWithOnlyInputs(8, "int64");
-    test.AddFunctionsWithOnlyInputs(3, "uint32");
-    test.AddFunctionsWithOnlyInputs(6, "int32");
+    test.Add1InFunction("float64");
+    test.Add1InFunction("float32");
+    test.Add1InFunction("uint16");
+    test.Add1InFunction("int16");
+    test.Add1InFunction("uint8");
+    test.Add1InFunction("int8");
+    for (uint8 i = 0; i < 4; ++i) {
+        test.Add1InFunction("uint64");
+    }
+    for (uint8 i = 0; i < 8; ++i) {
+        test.Add1InFunction("int64");
+    }
+    for (uint8 i = 0; i < 3; ++i) {
+        test.Add1InFunction("uint32");
+    }
+    for (uint8 i = 0; i < 6; ++i) {
+        test.Add1InFunction("int32");
+    }
 
     ASSERT_TRUE(test.TestFunctionTypes("WRITE", 1, 0));
 }

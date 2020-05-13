@@ -60,8 +60,8 @@ public:
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
     bool ParseFunctions(StreamString &expectedFunctionTypes);
-    void AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName);
     void AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
+    void Add1InFunction(StreamString typeName);
     void Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
     void AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 

@@ -128,19 +128,11 @@ bool RuntimeEvaluatorFunctionsTest::FindTypesInCdb(CCString &foundName, Vector<T
     return found;
 }
 
-void RuntimeEvaluatorFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName) {
-    uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
+void RuntimeEvaluatorFunctionsTest::Add1InFunction(StreamString inputTypeName) {
 
-    for (uint32 i = lastExistentFunction + 1; i <= lastExistentFunction + numberOfFunctions; ++i) {
-        StreamString functionName;
-
-        functionName.Printf("Function%i.Inputs", i);
-        expectedFunctionTypesCdb.CreateRelative(functionName.Buffer());
-
-        expectedFunctionTypesCdb.Write("arg1", typeName);
-        expectedFunctionTypesCdb.MoveToRoot();
-    }
-
+    StreamString inputs[] = {inputTypeName};
+    StreamString outputs[] = {};
+    AddFunction(1, inputs, 0, outputs);
 
 }
 
