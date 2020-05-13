@@ -144,13 +144,21 @@ void RuntimeEvaluatorFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFun
 
 }
 
-void RuntimeEvaluatorFunctionsTest::AddFunctionsWithInputCombination(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+void RuntimeEvaluatorFunctionsTest::AddInputCombinationFunctions(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
 
     StreamString inputs1[] = {input1TypeName, input2TypeName};
     StreamString inputs2[] = {input2TypeName, input1TypeName};
     StreamString outputs[] = {outputTypeName};
     AddFunction(2, inputs1, 1, outputs);
     AddFunction(2, inputs2, 1, outputs);
+
+}
+
+void RuntimeEvaluatorFunctionsTest::Add2In1OutFunction(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+
+    StreamString inputs[] = {input1TypeName, input2TypeName};
+    StreamString outputs[] = {outputTypeName};
+    AddFunction(2, inputs, 1, outputs);
 
 }
 
