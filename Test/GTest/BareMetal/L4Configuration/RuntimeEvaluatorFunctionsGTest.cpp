@@ -149,59 +149,16 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
-    StreamString expectedFunctionTypes = ""
-            "Function1 = {"
-            "    Outputs = {"
-            "        arg1 = float64"
-            "    }"
-            "}"
-            "Function2 = {"
-            "    Outputs = {"
-            "        arg1 = float32"
-            "    }"
-            "}"
-            "Function3 = {"
-            "    Outputs = {"
-            "        arg1 = uint64"
-            "    }"
-            "}"
-            "Function4 = {"
-            "    Outputs = {"
-            "        arg1 = int64"
-            "    }"
-            "}"
-            "Function5 = {"
-            "    Outputs = {"
-            "        arg1 = uint32"
-            "    }"
-            "}"
-            "Function6 = {"
-            "    Outputs = {"
-            "        arg1 = int32"
-            "    }"
-            "}"
-            "Function7 = {"
-            "    Outputs = {"
-            "        arg1 = uint16"
-            "    }"
-            "}"
-            "Function8 = {"
-            "    Outputs = {"
-            "        arg1 = int16"
-            "    }"
-            "}"
-            "Function9 = {"
-            "    Outputs = {"
-            "        arg1 = uint8"
-            "    }"
-            "}"
-            "Function10 = {"
-            "    Outputs = {"
-            "        arg1 = int8"
-            "    }"
-            "}";
-
-    test.ParseFunctions(expectedFunctionTypes);
+    test.Add1OutFunction("float64");
+    test.Add1OutFunction("float32");
+    test.Add1OutFunction("uint64");
+    test.Add1OutFunction("int64");
+    test.Add1OutFunction("uint32");
+    test.Add1OutFunction("int32");
+    test.Add1OutFunction("uint16");
+    test.Add1OutFunction("int16");
+    test.Add1OutFunction("uint8");
+    test.Add1OutFunction("int8");
 
     ASSERT_TRUE(test.TestFunctionTypes("READ", 0, 1));
 }
