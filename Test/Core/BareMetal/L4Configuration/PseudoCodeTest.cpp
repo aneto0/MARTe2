@@ -480,15 +480,15 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         VariableInformation *var;
 
         //ASSIGN TYPE TO VARIABLES
-        while(context.BrowseInputVariable(index,var)){
+        while(context.BrowseInputVariable(index,var)) {
+            context.SetInputVariableType(index, Float32Bit);
             index++;
-            var->type = Float32Bit;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
+            context.SetOutputVariableType(index, Float32Bit);
             index++;
-            var->type = Float32Bit;
         }
     }
     

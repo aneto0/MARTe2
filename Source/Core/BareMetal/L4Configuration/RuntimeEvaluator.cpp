@@ -326,6 +326,74 @@ void* RuntimeEvaluator::GetOutputVariableMemory(uint32 &varIndexIn) {
     
 }
 
+bool RuntimeEvaluator::SetInputVariableType(StreamString &varNameIn, TypeDescriptor typeIn) {
+    
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseInputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            var->type = typeIn;
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetInputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn) {
+    
+    bool isFound = false;
+    
+    VariableInformation *var;
+    
+    if (BrowseInputVariable(varIndexIn,var)) {
+        var->type = typeIn;
+        isFound = true;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetOutputVariableType(StreamString &varNameIn, TypeDescriptor typeIn) {
+    
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseOutputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            var->type = typeIn;
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return isFound;
+    
+}
+
+bool RuntimeEvaluator::SetOutputVariableType(uint32 &varIndexIn, TypeDescriptor typeIn) {
+    
+    bool isFound = false;
+    
+    VariableInformation *var;
+    
+    if (BrowseOutputVariable(varIndexIn,var)) {
+        var->type = typeIn;
+        isFound = true;
+    }
+    
+    return isFound;
+    
+}
+
 ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     ErrorManagement::ErrorType ret;
 
