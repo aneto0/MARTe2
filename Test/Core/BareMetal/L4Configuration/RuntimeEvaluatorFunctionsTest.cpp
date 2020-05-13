@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "RuntimeEvaluatorFunctionsTest.h"
-#include "StandardParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -52,17 +51,6 @@ bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
     ok &= (functionUT.GetOutputTypes().GetNumberOfElements() == 0);
 
     return ok;
-}
-
-bool RuntimeEvaluatorFunctionsTest::ParseFunctions(StreamString &expectedFunctionTypes) {
-    bool ok = true;
-
-    expectedFunctionTypes.Seek(0LLU);
-    StandardParser parser(expectedFunctionTypes, expectedFunctionTypesCdb, NULL);
-    ok = parser.Parse();
-
-    return ok;
-
 }
 
 bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
@@ -157,6 +145,14 @@ void RuntimeEvaluatorFunctionsTest::Add2In1OutFunction(StreamString input1TypeNa
     StreamString inputs[] = {input1TypeName, input2TypeName};
     StreamString outputs[] = {outputTypeName};
     AddFunction(2, inputs, 1, outputs);
+
+}
+
+void RuntimeEvaluatorFunctionsTest::Add1In2OutFunction(StreamString inputTypeName, StreamString output1TypeName, StreamString output2TypeName) {
+
+    StreamString inputs[] = {inputTypeName};
+    StreamString outputs[] = {output1TypeName, output2TypeName};
+    AddFunction(1, inputs, 2, outputs);
 
 }
 
