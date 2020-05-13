@@ -57,10 +57,12 @@ public:
     /**
      * @brief Tests types of registered RuntimeEvaluatorFunctions.
      */
-    bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes);
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
 
+    bool ParseFunctions(StreamString &expectedFunctionTypes);
     void AddFunctionsWithOnlyInputs(uint8 numberOfFunctions, StreamString typeName);
+    void AddFunctionsWithInputCombination(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName);
+    void AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]);
 
     /**
      * @brief Tests TryConsume.

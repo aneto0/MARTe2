@@ -54,14 +54,14 @@ bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs, StreamString &expectedFunctionTypes) {
+bool RuntimeEvaluatorFunctionsTest::ParseFunctions(StreamString &expectedFunctionTypes) {
     bool ok = true;
 
     expectedFunctionTypes.Seek(0LLU);
     StandardParser parser(expectedFunctionTypes, expectedFunctionTypesCdb, NULL);
     ok = parser.Parse();
 
-    return (ok && TestFunctionTypes(functionName, numberOfInputs, numberOfOutputs));
+    return ok;
 
 }
 
@@ -142,6 +142,45 @@ void RuntimeEvaluatorFunctionsTest::AddFunctionsWithOnlyInputs(uint8 numberOfFun
     }
 
 
+}
+
+void RuntimeEvaluatorFunctionsTest::AddFunctionsWithInputCombination(StreamString input1TypeName, StreamString input2TypeName, StreamString outputTypeName) {
+
+    StreamString inputs1[] = {input1TypeName, input2TypeName};
+    StreamString inputs2[] = {input2TypeName, input1TypeName};
+    StreamString outputs[] = {outputTypeName};
+    AddFunction(2, inputs1, 1, outputs);
+    AddFunction(2, inputs2, 1, outputs);
+
+}
+
+void RuntimeEvaluatorFunctionsTest::AddFunction(uint8 numberOfInputs, StreamString inputs[], uint8 numberOfOutputs,  StreamString outputs[]) {
+    uint32 lastExistentFunction = expectedFunctionTypesCdb.GetNumberOfChildren();
+    StreamString functionName;
+
+    functionName.Printf("Function%i", lastExistentFunction + 1);
+    expectedFunctionTypesCdb.CreateRelative(functionName.Buffer());
+
+    if (numberOfInputs > 0) {
+        expectedFunctionTypesCdb.CreateRelative("Inputs");
+        for (uint8 i = 0; i < numberOfInputs; ++i) {
+            StreamString argName;
+            argName.Printf("arg%i", i + 1);
+            expectedFunctionTypesCdb.Write(argName.Buffer(), inputs[i]);
+        }
+        expectedFunctionTypesCdb.MoveToAncestor(1);
+    }
+
+    if (numberOfOutputs > 0) {
+        expectedFunctionTypesCdb.CreateRelative("Outputs");
+        for (uint8 i = 0; i < numberOfOutputs; ++i) {
+            StreamString argName;
+            argName.Printf("arg%i", i + 1);
+            expectedFunctionTypesCdb.Write(argName.Buffer(), outputs[i]);
+        }
+    }
+
+    expectedFunctionTypesCdb.MoveToRoot();
 }
 
 bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize) {
