@@ -427,7 +427,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("XOR", 2, 1));
 }
 
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -469,6 +468,127 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTyp
     test.AddInputCombinationFunctions("uint32", "uint64",   "uint64");
 
     ASSERT_TRUE(test.TestFunctionTypes("ADD", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    test.Add2In1OutFunction("float64",  "float64",  "float64");
+    test.Add2In1OutFunction("float32",  "float32",  "float32");
+
+    test.Add2In1OutFunction("int8",     "int8",     "int32");
+    test.Add2In1OutFunction("int16",    "int16",    "int32");
+    test.Add2In1OutFunction("int32",    "int32",    "int32");
+    test.Add2In1OutFunction("uint8",    "uint8",    "int32");
+    test.Add2In1OutFunction("uint16",   "uint16",   "int32");
+    test.Add2In1OutFunction("uint32",   "uint32",   "int32");
+
+    test.Add2In1OutFunction("uint64",   "uint64",   "int64");
+    test.Add2In1OutFunction("int64",    "int64",    "int64");
+
+    test.AddInputCombinationFunctions("int8",   "int32",    "int32");
+    test.AddInputCombinationFunctions("int16",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint8",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint16", "int32",    "int32");
+    test.AddInputCombinationFunctions("uint32", "int32",    "int32");
+    test.AddInputCombinationFunctions("uint8",  "uint32",   "int32");
+    test.AddInputCombinationFunctions("uint16", "uint32",   "int32");
+
+    test.AddInputCombinationFunctions("int8",   "int64",    "int64");
+    test.AddInputCombinationFunctions("int16",  "int64",    "int64");
+    test.AddInputCombinationFunctions("int32",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint8",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint16", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint32", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint64", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint8",  "uint64",   "int64");
+    test.AddInputCombinationFunctions("uint16", "uint64",   "int64");
+    test.AddInputCombinationFunctions("uint32", "uint64",   "int64");
+
+    ASSERT_TRUE(test.TestFunctionTypes("SUB", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    test.Add2In1OutFunction("float64", "float64", "float64");
+    test.Add2In1OutFunction("float32", "float32", "float32");
+
+    test.Add2In1OutFunction("int8",   "int8",     "int32");
+    test.Add2In1OutFunction("int16",  "int16",    "int32");
+
+    test.Add2In1OutFunction("int32",  "int32",    "int64");
+    test.Add2In1OutFunction("int64",  "int64",    "int64");
+
+    test.Add2In1OutFunction("uint8",  "uint8",    "uint32");
+    test.Add2In1OutFunction("uint16", "uint16",   "uint32");
+    test.Add2In1OutFunction("uint32", "uint32",   "uint32");
+
+    test.Add2In1OutFunction("uint32", "uint32",   "uint64");
+    test.Add2In1OutFunction("uint64", "uint64",   "uint64");
+
+    test.AddInputCombinationFunctions("int8",   "int32",    "int32");
+    test.AddInputCombinationFunctions("int16",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint8",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint16", "int32",    "int32");
+    test.AddInputCombinationFunctions("uint32", "int32",    "int32");
+
+    test.AddInputCombinationFunctions("int8",   "int64",    "int64");
+    test.AddInputCombinationFunctions("int16",  "int64",    "int64");
+    test.AddInputCombinationFunctions("int32",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint8",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint16", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint32", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint64", "int64",    "int64");
+
+    test.AddInputCombinationFunctions("uint8",  "uint32",   "uint32");
+    test.AddInputCombinationFunctions("uint16", "uint32",   "uint32");
+
+    test.AddInputCombinationFunctions("uint8",  "uint64",   "uint64");
+    test.AddInputCombinationFunctions("uint16", "uint64",   "uint64");
+    test.AddInputCombinationFunctions("uint32", "uint64",   "uint64");
+
+    ASSERT_TRUE(test.TestFunctionTypes("MUL", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTypes) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    test.Add2In1OutFunction("float64", "float64", "float64");
+    test.Add2In1OutFunction("float32", "float32", "float32");
+
+    test.Add2In1OutFunction("int8",   "int8",     "int8");
+    test.Add2In1OutFunction("int16",  "int16",    "int16");
+    test.Add2In1OutFunction("int32",  "int32",    "int32");
+    test.Add2In1OutFunction("int64",  "int64",    "int64");
+
+    test.Add2In1OutFunction("uint8",  "uint8",    "uint8");
+    test.Add2In1OutFunction("uint16", "uint16",   "uint16");
+    test.Add2In1OutFunction("uint32", "uint32",   "uint32");
+    test.Add2In1OutFunction("uint64", "uint64",   "uint64");
+
+    test.AddInputCombinationFunctions("int8",   "int32",    "int32");
+    test.AddInputCombinationFunctions("int16",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint8",  "int32",    "int32");
+    test.AddInputCombinationFunctions("uint16", "int32",    "int32");
+    test.AddInputCombinationFunctions("uint32", "int32",    "int32");
+
+    test.AddInputCombinationFunctions("int8",   "int64",    "int64");
+    test.AddInputCombinationFunctions("int16",  "int64",    "int64");
+    test.AddInputCombinationFunctions("int32",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint8",  "int64",    "int64");
+    test.AddInputCombinationFunctions("uint16", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint32", "int64",    "int64");
+    test.AddInputCombinationFunctions("uint64", "int64",    "int64");
+
+    test.AddInputCombinationFunctions("uint8",  "uint32",   "uint32");
+    test.AddInputCombinationFunctions("uint16", "uint32",   "uint32");
+
+    test.AddInputCombinationFunctions("uint8",  "uint64",   "uint64");
+    test.AddInputCombinationFunctions("uint16", "uint64",   "uint64");
+    test.AddInputCombinationFunctions("uint32", "uint64",   "uint64");
+
+    ASSERT_TRUE(test.TestFunctionTypes("DIV", 2, 1));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
