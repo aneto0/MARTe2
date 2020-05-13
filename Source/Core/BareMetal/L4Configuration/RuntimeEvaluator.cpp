@@ -254,6 +254,78 @@ ErrorManagement::ErrorType RuntimeEvaluator::ExtractVariables(){
     return ret;
 }
 
+void* RuntimeEvaluator::GetInputVariableMemory(StreamString &varNameIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseInputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return retAddress;
+    
+}
+
+void* RuntimeEvaluator::GetInputVariableMemory(uint32 &varIndexIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    
+    VariableInformation *var;
+    
+    if (BrowseInputVariable(varIndexIn,var)) {
+        
+        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+        
+    }
+    
+    return retAddress;
+    
+}
+
+void* RuntimeEvaluator::GetOutputVariableMemory(StreamString &varNameIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    bool isFound = false;
+    
+    int32 index = 0;
+    VariableInformation *var;
+
+    while(BrowseOutputVariable(index,var) && !isFound){
+        if (var->name == varNameIn){
+            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+            isFound = true;
+        }
+        index++;
+    }
+    
+    return retAddress;
+    
+}
+
+void* RuntimeEvaluator::GetOutputVariableMemory(uint32 &varIndexIn) {
+    
+    void* retAddress = NULL_PTR(void*);
+    
+    VariableInformation *var;
+    
+    if (BrowseOutputVariable(varIndexIn,var)) {
+        
+        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
+        
+    }
+    
+    return retAddress;
+    
+}
+
 ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     ErrorManagement::ErrorType ret;
 
@@ -884,42 +956,6 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
     }
 
     return ret;
-}
-
-void* RuntimeEvaluator::GetInputVariableMemory(StreamString &varNameIn) {
-    
-    void* retAddress = NULL_PTR(void*);
-    bool isFound = false;
-    
-    int32 index = 0;
-    VariableInformation *var;
-
-    while(BrowseInputVariable(index,var) && !isFound){
-        if (var->name == varNameIn){
-            retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
-            isFound = true;
-        }
-        index++;
-    }
-    
-    return retAddress;
-    
-}
-
-void* RuntimeEvaluator::GetInputVariableMemory(uint32 &varIndexIn) {
-    
-    void* retAddress = NULL_PTR(void*);
-    
-    VariableInformation *var;
-    
-    if (BrowseInputVariable(varIndexIn,var)) {
-        
-        retAddress  = reinterpret_cast<void*>(&dataMemory[var->location]);
-        
-    }
-    
-    return retAddress;
-    
 }
 
 } //MARTe
