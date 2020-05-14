@@ -14,8 +14,6 @@ logic_expr:
     comparison_expr { __PushOperator logic_op comparison_expr __PopOperator }
 
 logic_op:
-    &
-    |
     ||
     &&
     ^
