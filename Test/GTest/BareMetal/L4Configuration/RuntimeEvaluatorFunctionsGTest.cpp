@@ -378,6 +378,40 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("EQ", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 15.3\n"
+            "CONST float64 15.3\n"
+            "EQ\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqExecution_NotEqual) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 15.3\n"
+            "CONST float64 15.4\n"
+            "EQ\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -414,6 +448,40 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTyp
     test.AddInputCombinationFunctions("uint32", "uint64",   "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("NEQ", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 15.3\n"
+            "CONST float64 15.3\n"
+            "NEQ\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqExecution_NotEqual) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 15.299999\n"
+            "CONST float64 15.3\n"
+            "NEQ\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionTypes) {
@@ -454,6 +522,57 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("GT", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtExecution_Greater) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 27.8\n"
+            "CONST float64 15.3\n"
+            "GT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 27.8\n"
+            "CONST float64 27.8\n"
+            "GT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGtExecution_Lower) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 27.8\n"
+            "CONST float64 30.3\n"
+            "GT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -490,6 +609,57 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtFunctionType
     test.AddInputCombinationFunctions("uint32", "uint64",   "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("LT", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtExecution_Greater) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -10.4\n"
+            "CONST float64 -15.3\n"
+            "LT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -27.8\n"
+            "CONST float64 -27.8\n"
+            "LT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLtExecution_Lower) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -27.8\n"
+            "CONST float64 15.3\n"
+            "LT\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteFunctionTypes) {
@@ -530,6 +700,57 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("GTE", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteExecution_Greater) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 15.10\n"
+            "CONST float64 -4.67\n"
+            "GTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -4.67\n"
+            "CONST float64 -4.67\n"
+            "GTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestGteExecution_Lower) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -14.9\n"
+            "CONST float64 -4.67\n"
+            "GTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -566,6 +787,57 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteFunctionTyp
     test.AddInputCombinationFunctions("uint32", "uint64",   "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("LTE", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteExecution_Greater) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -157.9\n"
+            "CONST float64 -457.9\n"
+            "LTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteExecution_Equal) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -157.9\n"
+            "CONST float64 -157.9\n"
+            "LTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLteExecution_Lower) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 -745.2\n"
+            "CONST float64 -157.9\n"
+            "LTE\n"
+            "WRITE RES1\n";
+
+    uint8 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<uint8>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndFunctionTypes) {
