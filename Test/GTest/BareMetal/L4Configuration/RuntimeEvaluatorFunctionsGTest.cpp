@@ -178,7 +178,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinExecution) 
 
     StreamString rpnCode=
             "CONST float64 1.57079\n"
-            "SIN \n"
+            "SIN\n"
             "WRITE RES1\n";
 
     float64 expectedResults[] = {1};
@@ -198,6 +198,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("COS", 1, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 0\n"
+            "COS\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -205,6 +221,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanFunctionTyp
     test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("TAN", 1, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTanExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 0.78539816339\n"
+            "TAN\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTypes) {
@@ -216,6 +248,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("EXP", 1, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestExpExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 0\n"
+            "EXP\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -223,6 +271,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogFunctionTyp
     test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("LOG", 1, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLogExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 1\n"
+            "LOG\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {0};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionTypes) {
@@ -234,6 +298,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10FunctionT
     ASSERT_TRUE(test.TestFunctionTypes("LOG10", 1, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestLog10Execution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 1000\n"
+            "LOG10\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {3};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -241,6 +321,23 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowFunctionTyp
     test.Add2In1OutFunction("float64",  "float64",  "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("POW", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestPowExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 10.2\n"
+            "CONST float64 3\n"
+            "POW\n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {1061.208};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqFunctionTypes) {
