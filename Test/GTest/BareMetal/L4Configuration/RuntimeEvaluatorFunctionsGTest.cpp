@@ -76,7 +76,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupExecution) 
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
-    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 2, expectedResults));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 2, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
@@ -108,7 +108,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution)
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext<float64>(context, Float64Bit, expectedResults));
-    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 1, expectedResults));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
@@ -148,7 +148,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution
     RuntimeEvaluator context(rpnCode);
 
     ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
-    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 1, expectedResults));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
@@ -171,6 +171,22 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTyp
     test.Add1In1OutFunction("float64", "float64");
 
     ASSERT_TRUE(test.TestFunctionTypes("SIN", 1, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 1.57079\n"
+            "SIN \n"
+            "WRITE RES1\n";
+
+    float64 expectedResults[] = {1};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCosFunctionTypes) {
