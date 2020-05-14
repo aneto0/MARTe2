@@ -78,6 +78,8 @@ public:
     template <typename T>
     bool TestFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]);
 
+    template <typename T>
+    bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType, T inputs[]);
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType);
 
 private:
@@ -95,6 +97,35 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template <typename T>
+bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType, T inputs[]) {
+
+    ErrorManagement::ErrorType ret;
+    VariableInformation *var;
+    T *inputPointer;
+
+    ret = context.ExtractVariables();
+
+    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
+        var->type = resultType;
+    }
+
+    for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
+        var->type = resultType;
+    }
+
+    if (ret) {
+        ret = context.Compile();
+    }
+
+    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
+        inputPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+        *inputPointer = inputs[i];
+    }
+
+    return ret;
+}
 
 template <typename T>
 bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]) {

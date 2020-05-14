@@ -96,6 +96,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTy
     ASSERT_TRUE(test.TestFunctionTypes("READ", 0, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ RES1\n"
+            "WRITE RES2\n";
+
+    int64 expectedResults[] = {-152};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext<int64>(context, SignedInteger64Bit, expectedResults));
+    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
