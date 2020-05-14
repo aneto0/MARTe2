@@ -728,6 +728,35 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndFunctionTyp
     ASSERT_TRUE(test.TestFunctionTypes("AND", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAndExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "AND\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit, UnsignedInteger8Bit));
+
+    uint8 inputs00[] = {0, 0};
+
+    test.SetInputs(context, inputs00);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+
+    uint8 inputs10[] = {1, 0};
+
+    test.SetInputs(context, inputs10);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+
+    uint8 inputs11[] = {1, 1};
+
+    test.SetInputs(context, inputs11);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
@@ -736,12 +765,70 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrFunctionType
     ASSERT_TRUE(test.TestFunctionTypes("OR", 2, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestOrExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "OR\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit, UnsignedInteger8Bit));
+
+    uint8 inputs00[] = {0, 0};
+
+    test.SetInputs(context, inputs00);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+
+    uint8 inputs10[] = {1, 0};
+
+    test.SetInputs(context, inputs10);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+
+    uint8 inputs11[] = {1, 1};
+
+    test.SetInputs(context, inputs11);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
     test.Add2In1OutFunction("uint8", "uint8", "uint8");
 
     ASSERT_TRUE(test.TestFunctionTypes("XOR", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestXorExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "XOR\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, UnsignedInteger8Bit, UnsignedInteger8Bit));
+
+    uint8 inputs00[] = {0, 0};
+
+    test.SetInputs(context, inputs00);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+
+    uint8 inputs10[] = {1, 0};
+
+    test.SetInputs(context, inputs10);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+
+    uint8 inputs11[] = {1, 1};
+
+    test.SetInputs(context, inputs11);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFunctionTypes) {
