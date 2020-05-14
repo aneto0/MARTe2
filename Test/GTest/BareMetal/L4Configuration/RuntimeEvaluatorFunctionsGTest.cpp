@@ -66,17 +66,17 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupExecution) 
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
-            "CONST int64 -152\n"
+            "CONST float64 -152.3\n"
             "DUP\n"
             "WRITE RES1\n"
             "WRITE RES2\n";
 
-    int64 expectedResults[] = {-152, -152};
+    float64 expectedResults[] = {-152.3, -152.3};
 
     RuntimeEvaluator context(rpnCode);
 
-    ASSERT_TRUE(test.PrepareContext(context, SignedInteger64Bit));
-    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 2, expectedResults));
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 2, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
@@ -103,12 +103,12 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution)
             "READ RES1\n"
             "WRITE RES2\n";
 
-    int64 expectedResults[] = {-152};
+    float64 expectedResults[] = {-152.3};
 
     RuntimeEvaluator context(rpnCode);
 
-    ASSERT_TRUE(test.PrepareContext<int64>(context, SignedInteger64Bit, expectedResults));
-    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 1, expectedResults));
+    ASSERT_TRUE(test.PrepareContext<float64>(context, Float64Bit, expectedResults));
+    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionTypes) {
@@ -140,15 +140,15 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
-            "CONST int64 -152\n"
+            "CONST float64 -152.3\n"
             "WRITE RES1\n";
 
-    int64 expectedResults[] = {-152};
+    float64 expectedResults[] = {-152.3};
 
     RuntimeEvaluator context(rpnCode);
 
-    ASSERT_TRUE(test.PrepareContext(context, SignedInteger64Bit));
-    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 1, expectedResults));
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    ASSERT_TRUE(test.TestFunctionExecution<float64>(context, 1, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
