@@ -248,15 +248,19 @@ bool RuntimeEvaluatorFunctionsTest::TestTryConsume(RuntimeEvaluatorFunctions &fu
     return ok;
 }
 
-bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType) {
+bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor varType) {
 
     ErrorManagement::ErrorType ret;
     VariableInformation *var;
 
     ret = context.ExtractVariables();
 
+    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
+        var->type = varType;
+    }
+
     for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
-        var->type = resultType;
+        var->type = varType;
     }
 
     if (ret) {
