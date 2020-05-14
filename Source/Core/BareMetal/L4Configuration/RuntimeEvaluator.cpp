@@ -50,7 +50,7 @@ const CCString writeToken("WRITE");
 const CCString constToken("CONST");
 const CCString castToken("CAST");
 
-RuntimeEvaluator::RuntimeEvaluator(StreamString &RPNCodeIn){
+RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
     RPNCode = RPNCodeIn;
     variablesMemoryPtr = NULL_PTR(DataMemoryElement*);
     codeMemoryPtr = NULL_PTR(CodeMemoryElement*);

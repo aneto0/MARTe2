@@ -206,35 +206,35 @@ bool PseudoCodeTest::TestIntegration() {
 
     if (ret){
         //ASSIGN INPUTS
-        int32 index = 0;
+        uint32 index = 0;
         VariableInformation *var;
 
         while(context.BrowseInputVariable(index,var)){
-            index++;
             if (var->name == "A"){
-                float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+                float *x  = (float*)context.GetInputVariableMemory(index);
                 *x = 2.0;
             }
             if (var->name == "B"){
-                float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+                float *x  = (float*)context.GetInputVariableMemory(index);
                 *x = 1.0;
             }
             if (var->name == "N1"){
-                int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+                int8 *x  = (int8*)context.GetInputVariableMemory(index);
                 *x = 22;
             }
             if (var->name == "N2"){
-                int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+                int8 *x  = (int8*)context.GetInputVariableMemory(index);
                 *x = 31;
             }
             if (var->name == "N3"){
-                int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+                int8 *x  = (int8*)context.GetInputVariableMemory(index);
                 *x = 127;
             }
             if (var->name == "N4"){
-                int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
+                int8 *x  = (int8*)context.GetInputVariableMemory(index);
                 *x = 13;
             }
+            index++;
         }
     }
 
@@ -351,18 +351,17 @@ bool PseudoCodeTest::TestError() {
 
     if (ret){
         //ASSIGN INPUTS
-        int32 index = 0;
+        uint32 index = 0;
         VariableInformation *var;
         
         printf ("--- Input values ---\n");
         while(context.BrowseInputVariable(index,var)){
-            index++;
             if (var->name == "A"){
-                float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+                float *x  = (float*)context.GetInputVariableMemory(index);
                 *x = 10.0;
             }
             if (var->name == "B"){
-                float *x  = reinterpret_cast<float *>(&context.dataMemory[var->location]);
+                float *x  = (float*)context.GetInputVariableMemory(index);
                 *x = 2.0;
                 printf("B: %f\n", *x);
             }
@@ -382,6 +381,7 @@ bool PseudoCodeTest::TestError() {
                 //int8 *x  = reinterpret_cast<int8 *>(&context.dataMemory[var->location]);
                 //*x = 127;
             //}
+            index++;
         }
     }
 
@@ -392,13 +392,13 @@ bool PseudoCodeTest::TestError() {
         printf ("--- Allocation ---\n");
         //AFTER VAR ALLOCATION
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
@@ -447,13 +447,13 @@ bool PseudoCodeTest::TestError() {
         printf ("--- Results ---\n");
         //EXECUTE() RESULTS
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
@@ -535,13 +535,13 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         printf ("--- Allocation ---\n");
         //AFTER VAR ALLOCATION
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
@@ -591,13 +591,13 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         printf ("--- Results ---\n");
         //EXECUTE() RESULTS
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*(reinterpret_cast<float *>(&context.dataMemory[var->location])));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
