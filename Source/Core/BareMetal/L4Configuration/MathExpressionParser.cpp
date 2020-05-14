@@ -40,59 +40,57 @@ namespace MARTe {
 
 static uint32 Production[] = {0u
 
-,3u,25u,26u,41u ,7u,26u,47u,1u,2u,28u,27u,48u ,2u,27u,3u ,2u,27u,4u 
-,3u,28u,30u,42u ,2u,29u,5u ,2u,29u,6u ,2u,29u,7u ,2u,29u,8u 
-,2u,29u,9u ,3u,30u,32u,43u ,2u,31u,10u ,2u,31u,11u ,2u,31u,12u 
-,2u,31u,13u ,2u,31u,14u ,2u,31u,15u ,3u,32u,34u,44u ,2u,33u,16u 
-,2u,33u,17u ,3u,34u,36u,45u ,2u,35u,18u ,2u,35u,19u ,2u,36u,38u 
-,5u,36u,49u,33u,38u,51u ,5u,36u,49u,37u,38u,50u ,2u,37u,20u ,2u,38u,39u 
-,7u,38u,21u,52u,1u,22u,39u,53u ,7u,38u,21u,52u,1u,22u,54u,23u 
-,3u,38u,55u,23u ,2u,39u,40u ,8u,39u,49u,1u,21u,28u,46u,22u,50u 
-,4u,40u,21u,28u,22u ,3u,40u,55u,1u ,3u,41u,26u,41u ,1u,41u ,6u,42u,49u,29u,30u,50u,42u 
-,1u,42u ,6u,43u,49u,31u,32u,50u,43u ,1u,43u ,6u,44u,49u,33u,34u,50u,44u 
-,1u,44u ,6u,45u,49u,35u,36u,50u,45u ,1u,45u ,4u,46u,4u,28u,46u 
-,1u,46u 
+,3u,23u,24u,39u ,7u,24u,45u,1u,2u,26u,25u,46u ,2u,25u,3u ,2u,25u,4u 
+,3u,26u,28u,40u ,2u,27u,5u ,2u,27u,6u ,2u,27u,7u ,3u,28u,30u,41u 
+,2u,29u,8u ,2u,29u,9u ,2u,29u,10u ,2u,29u,11u ,2u,29u,12u ,2u,29u,13u 
+,3u,30u,32u,42u ,2u,31u,14u ,2u,31u,15u ,3u,32u,34u,43u ,2u,33u,16u 
+,2u,33u,17u ,2u,34u,36u ,5u,34u,47u,31u,36u,49u ,5u,34u,47u,35u,36u,48u 
+,2u,35u,18u ,2u,36u,37u ,7u,36u,19u,50u,1u,20u,37u,51u ,7u,36u,19u,50u,1u,20u,52u,21u 
+,3u,36u,53u,21u ,2u,37u,38u ,8u,37u,47u,1u,19u,26u,44u,20u,48u 
+,4u,38u,19u,26u,20u ,3u,38u,53u,1u ,3u,39u,24u,39u ,1u,39u ,6u,40u,47u,27u,28u,48u,40u 
+,1u,40u ,6u,41u,47u,29u,30u,48u,41u ,1u,41u ,6u,42u,47u,31u,32u,48u,42u 
+,1u,42u ,6u,43u,47u,33u,34u,48u,43u ,1u,43u ,4u,44u,4u,26u,44u 
+,1u,44u 
 ,0u};
 
 static uint32 Production_row[] = {0u
 
-,1u,5u,13u,16u,19u,23u,26u,29u,32u,35u,38u,42u,45u,48u,51u,54u
-,57u,60u,64u,67u,70u,74u,77u,80u,83u,89u,95u,98u,101u,109u,117u,121u
-,124u,133u,138u,142u,146u,148u,155u,157u,164u,166u,173u,175u,182u,184u,189u
+,1u,5u,13u,16u,19u,23u,26u,29u,32u,36u,39u,42u,45u,48u,51u,54u
+,58u,61u,64u,68u,71u,74u,77u,83u,89u,92u,95u,103u,111u,115u,118u,127u
+,132u,136u,140u,142u,149u,151u,158u,160u,167u,169u,176u,178u,183u
 ,0u};
 
 static uint32 ParseArray[] = {
 
-0u,0u,1u,2u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u,45u
-,44u,44u,3u,4u,45u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,42u,42u
-,19u,20u,22u,23u,43u,41u,41u,41u,41u,41u,41u,41u,40u,40u,40u,40u,40u,40u,5u,6u
-,7u,8u,9u,10u,41u,39u,39u,38u,38u,38u,38u,38u,11u,5u,5u,27u,0u,5u,5u,0u
-,5u,36u,0u,0u,39u,0u,18u,11u,11u,49u,28u,11u,11u,35u,11u,12u,13u,14u,15u,16u
-,17u,18u,18u,21u,37u,18u,18u,0u,18u,32u,48u,24u,31u,34u,46u,0u,0u,0u,21u,21u
-,0u,0u,21u,21u,0u,21u,25u,25u,0u,0u,26u,24u,47u,24u,0u
+0u,0u,1u,2u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,43u,42u,42u
+,3u,4u,43u,41u,41u,41u,41u,41u,41u,41u,41u,41u,41u,41u,40u,40u,6u,7u,8u,5u
+,41u,39u,39u,39u,39u,39u,38u,38u,38u,38u,38u,38u,5u,5u,9u,47u,5u,5u,39u,5u
+,10u,11u,12u,13u,14u,15u,16u,9u,9u,17u,18u,9u,9u,30u,9u,19u,26u,20u,21u,16u
+,16u,44u,33u,16u,16u,22u,16u,25u,19u,19u,34u,0u,19u,19u,46u,19u,29u,45u,23u,23u
+,32u,0u,24u,22u,0u,22u,37u,37u,36u,36u,36u,35u,0u,0u,0u,0u,0u,0u,0u,0u
+,0u,0u,0u,37u,0u,0u
 };
 
 static uint32 Parse_row[] = {0u
 
-,1u,2u,18u,56u,53u,70u,84u,84u,23u,101u,23u,109u,54u,88u,87u,91u
-,79u,61u,41u,21u,1u,109u
+,1u,2u,16u,37u,30u,52u,51u,64u,54u,73u,60u,83u,68u,74u,53u,80u
+,88u,102u,37u,19u,1u,76u
 ,0u};
 
 static uint32 Conflict[] = {
 
-0u,0u,50u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,28u,28u
-,0u,0u,28u,28u,0u,28u,32u,32u,32u,32u,32u,32u,32u,32u,32u,32u,32u,32u,32u,32u
-,32u,32u,32u,0u,33u,32u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u
-,28u,0u,28u,51u,29u,0u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u,28u
-,28u,28u,28u,0u,29u,28u,30u
+0u,0u,48u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,0u,26u,26u,0u,0u
+,26u,26u,0u,26u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,30u,0u
+,31u,30u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,0u,26u,49u,27u,0u
+,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,26u,0u,27u,26u,28u
 };
 
 static uint32 Conflict_row[] = {0u
 
-,1u,22u,40u,62u
+,1u,20u,36u,56u
 ,0u};
 
-static const uint32 Constants[] = { 25u, 24u, 0u, 48u, 52u, 47u, 56u, 4u, 512u };
+static const uint32 Constants[] = { 23u, 22u, 0u, 46u, 50u, 45u, 54u, 4u, 512u };
 
 static const char8 * Terminal_name[] ={"0"
 
@@ -100,8 +98,6 @@ static const char8 * Terminal_name[] ={"0"
 ,"="
 ,";"
 ,","
-,"&"
-,"|"
 ,"||"
 ,"&&"
 ,"^"
@@ -185,17 +181,61 @@ const char8* MathExpressionParser::OperatorFormatting(const char8* const operato
 
     const char8* ret = operatorIn;
     
-    char8* uppercaseOp = StringHelper::StringDup(operatorIn);
-    bool ok = StringHelper::ToUpper(uppercaseOp);
-    if (ok) {
-        ret = uppercaseOp;
+    if (StringHelper::Compare(operatorIn, "&&") == 0) {
+        ret = "AND";
+    }
+    else if (StringHelper::Compare(operatorIn, "||") == 0) {
+        ret = "OR";
+    }
+    else if (StringHelper::Compare(operatorIn, "^") == 0) {
+        ret = "XOR";
+    }
+    else if (StringHelper::Compare(operatorIn, "==") == 0) {
+        ret = "EQ";
+    }
+    else if (StringHelper::Compare(operatorIn, "!=") == 0) {
+        ret = "NEQ";
+    }
+    else if (StringHelper::Compare(operatorIn, ">") == 0) {
+        ret = "GT";
+    }
+    else if (StringHelper::Compare(operatorIn, "<") == 0) {
+        ret = "LT";
+    }
+    else if (StringHelper::Compare(operatorIn, ">=") == 0) {
+        ret = "GTE";
+    }
+    else if (StringHelper::Compare(operatorIn, "<=") == 0) {
+        ret = "LTE";
+    }
+    else if (StringHelper::Compare(operatorIn, "+") == 0) {
+        ret = "ADD";
+    }
+    else if (StringHelper::Compare(operatorIn, "-") == 0) {
+        ret = "SUB";
+    }
+    else if (StringHelper::Compare(operatorIn, "*") == 0) {
+        ret = "MUL";
+    }
+    else if (StringHelper::Compare(operatorIn, "/") == 0) {
+        ret = "DIV";
+    }
+    else if (StringHelper::Compare(operatorIn, "!") == 0) {
+        ret = "FACT";
     }
     else {
-        REPORT_ERROR_STATIC(ErrorManagement::FatalError,
-            "OperatorFormatting(): failed to convert operator %s to uppercase.",
-            operatorIn
-            );
-        ret = "ERR";
+        char8* uppercaseOp = StringHelper::StringDup(operatorIn);
+        bool ok = StringHelper::ToUpper(uppercaseOp);
+        if (ok) {
+            ret = uppercaseOp;
+        }
+        else {
+            REPORT_ERROR_STATIC(ErrorManagement::FatalError,
+                "OperatorFormatting(): failed to convert operator %s to uppercase.",
+                operatorIn
+                );
+            ret = "ERR";
+        }
     }
     
     return ret;
