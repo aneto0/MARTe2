@@ -65,15 +65,18 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupFunctionTyp
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupExecution) {
     RuntimeEvaluatorFunctionsTest test;
 
-    CCString rpnCode=
-            "CONST float64 -152.3\n"
+    StreamString rpnCode=
+            "CONST int64 -152\n"
             "DUP\n"
             "WRITE RES1\n"
             "WRITE RES2\n";
 
-    float64 expectedResults[] = {-152.3, -152.3};
+    int64 expectedResults[] = {-152, -152};
 
-    ASSERT_TRUE(test.TestFunctionExecution<float64>(rpnCode, 2, expectedResults));
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, SignedInteger64Bit));
+    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 2, expectedResults));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
