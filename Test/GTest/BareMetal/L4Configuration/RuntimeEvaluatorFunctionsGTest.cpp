@@ -100,14 +100,15 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadExecution)
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
-            "READ RES1\n"
-            "WRITE RES2\n";
+            "READ IN1\n"
+            "WRITE RES1\n";
 
     float64 expectedResults[] = {-152.3};
 
     RuntimeEvaluator context(rpnCode);
 
-    ASSERT_TRUE(test.PrepareContext<float64>(context, Float64Bit, expectedResults));
+    ASSERT_TRUE(test.PrepareContext(context, Float64Bit));
+    test.SetInputs(context, expectedResults);
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 1, expectedResults));
 }
 

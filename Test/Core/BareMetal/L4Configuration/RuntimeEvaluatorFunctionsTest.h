@@ -80,8 +80,8 @@ public:
     template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]);
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]);
 
-    template <typename T> bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType, T inputs[]);
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType);
+    template <typename T> void SetInputs(RuntimeEvaluator &context, T inputs[]);
 
 private:
     /**
@@ -100,32 +100,15 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*---------------------------------------------------------------------------*/
 
 template <typename T>
-bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType, T inputs[]) {
+void RuntimeEvaluatorFunctionsTest::SetInputs(RuntimeEvaluator &context, T inputs[]) {
 
-    ErrorManagement::ErrorType ret;
     VariableInformation *var;
     T *inputPointer;
 
-    ret = context.ExtractVariables();
-
-    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
-        var->type = resultType;
-    }
-
-    for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
-        var->type = resultType;
-    }
-
-    if (ret) {
-        ret = context.Compile();
-    }
-
-    for (uint32 i = 0; (ret) && (context.BrowseInputVariable(i,var)); ++i) {
+    for (uint32 i = 0; (context.BrowseInputVariable(i,var)); ++i) {
         inputPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
         *inputPointer = inputs[i];
     }
-
-    return ret;
 }
 
 template <typename T>
