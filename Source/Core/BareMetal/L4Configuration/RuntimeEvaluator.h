@@ -69,7 +69,7 @@ public:
     /**
      * constructor
      */
-    RuntimeEvaluator(StreamString &RPNCode);
+    RuntimeEvaluator(StreamString RPNCode);
 
     /**
      * destructor
