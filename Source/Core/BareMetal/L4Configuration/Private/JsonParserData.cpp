@@ -190,7 +190,7 @@ static const RegularExpression::PatternInformation rules[]={
 //		{emptyString												 ,emptyString	     , 0					,false}
 };
 
-
+#if 0
 
 static const char * separators                = "\n\r\t, ";
 
@@ -215,7 +215,7 @@ static const char * endMultipleLinesComment   = "";
 static const char * terminals                 = ":{}[]";
 
 
-
+#endif
 
 /*************************************************************************************************
 
@@ -228,11 +228,13 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
+#if 0
 		separators,
 		beginOneLineComment,
 		beginMultipleLinesComment,
 		endMultipleLinesComment,
 		terminals,
+#endif
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,

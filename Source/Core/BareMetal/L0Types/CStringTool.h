@@ -139,6 +139,16 @@ public:
 	 */
     inline CStringTool &Remove(uint32 elements);
 
+	/**
+	 * @brief transform all ascii to uppercase
+	 */
+    CStringTool &ToUpper();
+
+	/**
+	 * @brief transform all ascii to lowercase
+	 */
+    CStringTool &ToLower();
+
     /**
      * @brief how long is the string now?
      */

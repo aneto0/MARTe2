@@ -49,12 +49,7 @@ ListNode::~ListNode()
 	next = NULL_PTR(ListNode *);
 }
 
-/**
- * move ahead @param skipNo nodes
- * insert node by linking it to the next variable of the last node.
- * @return ellegalOperation if node->next is not NULL!
- * @return parametersError if node = NULL
- */
+
 ErrorManagement::ErrorType ListNode::InsertAfter(ListNode *node, uint32 skipNo){
 	ErrorManagement::ErrorType err;
 
@@ -81,6 +76,49 @@ ErrorManagement::ErrorType ListNode::InsertAfter(ListNode *node, uint32 skipNo){
 
 	return err;
 }
+
+ErrorManagement::ErrorType ListNode::RemoveAfter(ListNode *&node, uint32 skipNo){
+	ErrorManagement::ErrorType ret;
+
+	ListNode *location = this;
+
+	while ((skipNo > 0) && (ret)){
+		location = location->next;
+		skipNo--;
+		ret.outOfRange = (location == NULL);
+	}
+
+	if (ret){
+		node = location->next;
+		ret.outOfRange = (location->next == NULL);
+	}
+
+	if (ret){
+		location->next = node->next;
+	}
+
+	return ret;
+}
+
+ErrorManagement::ErrorType ListNode::Peek(ListNode *&node, uint32 skipNo){
+	ErrorManagement::ErrorType ret;
+
+	ListNode *location = this;
+
+	while ((skipNo > 0) && (ret)){
+		location = location->next;
+		skipNo--;
+		ret.outOfRange = (location == NULL);
+	}
+
+	if (ret){
+		node = location->next;
+		ret.outOfRange = (location->next == NULL);
+	}
+
+	return ret;
+}
+
 
 
 }

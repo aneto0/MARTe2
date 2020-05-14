@@ -195,17 +195,16 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 	ErrorManagement::ErrorType ret;
 	const Token * currentToken;
 
-//    bool isEOF = false;
-//    while ((ret) && (!isEOF)) {
+//        uint32 stackArray[constants.StackSize];
+//        uint32 *stack = &stackArray[0];
 
-        uint32 stackArray[constants.StackSize];
-        uint32 *stack = &stackArray[0];
-
-        uint32 *top = &stackArray[constants.StackSize - 1u];
-        *top = 0u;
+//        uint32 *top = &stackArray[constants.StackSize - 1u];
+//        *top = 0u;
         uint32 start_symbol = constants.StartSymbol;
 
-        StackPush(start_symbol, stack, top);
+//        StackPush(start_symbol, stack, top);
+        StackPush(0);
+        StackPush(start_symbol);
 
         PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Push %s (=%i)\n",GetSymbolName(start_symbol),start_symbol);
 
@@ -219,10 +218,11 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
             token = currentToken->GetId();
         }
         uint32 new_token = token;
-		uint32 symbol = StackPop(top);
+//		uint32 symbol = StackPop(top);
+        uint32 symbol = StackPop();
 
 		PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
-		PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol),symbol,top);
+		PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
         for (; (symbol > 0u) && (ret);) {
 
         	/// from StartAction to EndAction
@@ -299,7 +299,8 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                         for (; production_length > 0u; production_length--) {
                             /*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                             uint32 toPush = *production;
-                            StackPush(toPush, stack, top);
+                            StackPush(toPush);
+//                            StackPush(toPush, stack, top);
                             PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Push %s (=%i)\n",GetSymbolName(toPush),toPush);
                             production--;
                         } // for
@@ -379,8 +380,9 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 //            // exit
 //          isEOF = (token == constants.EndOfFile) ;
 
-            symbol = StackPop(top);
-            PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) (top = %p)\n",GetSymbolName(symbol),symbol,top);
+//            symbol = StackPop(top);
+            symbol = StackPop();
+            PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
         }
 
         if (token != constants.EndOfFile) {

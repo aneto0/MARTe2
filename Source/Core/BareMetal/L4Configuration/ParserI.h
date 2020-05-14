@@ -199,7 +199,7 @@ private:
      * @param[in] symbol is the expected token identifier.
      */
     CCString GetProductionNameWithConflicts(const uint32 production) const ;
-
+#if 0
     /**
      * @brief Pushes the expected token to the stack.
      * @param[in] symbol is the expected token.
@@ -215,6 +215,20 @@ private:
      * @param[out] top is a pointer to the stack head.
      */
     inline uint32 StackPop(uint32* &top) const;
+#endif
+
+    /**
+     * @brief Pushes the expected token to the stack.
+     * @param[in] symbol is the expected token.
+     */
+    inline void StackPush(const uint32 symbol) ;
+
+    /**
+     * @brief Pops the expected token from the internal stack.
+     * @param[out] top is a pointer to the stack head.
+     */
+    inline uint32 StackPop() ;
+
 
     /**
      * @brief Consumes one token.
@@ -301,7 +315,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
+#if 0
 void ParserI::StackPush(const uint32 symbol,
                         const uint32 * const stack,
                         uint32 *&top) const {
@@ -320,6 +334,19 @@ uint32 ParserI::StackPop(uint32 * &top) const {
         top++;
     }
     return ret;
+}
+#endif
+
+void ParserI::StackPush(const uint32 symbol) {
+	symbolStack.Push(symbol);
+}
+
+uint32 ParserI::StackPop(){
+	uint32 value = 0;
+	if (!symbolStack.Pop(value)){
+		value = 0;
+	}
+	return value;
 }
 
 uint32 ParserI::Token::GetId() const{

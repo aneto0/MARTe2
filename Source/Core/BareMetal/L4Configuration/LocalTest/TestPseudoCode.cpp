@@ -135,10 +135,32 @@ void MyCallBack(CCString name, uint32 nameLength, CCString value, uint32 valueLe
 }
 
 
+class pippo{
+public:
+	class pluto;
+
+	int wiener(pluto &x);
+};
+
+
+class pippo::pluto{
+public:
+	int ubba;
+};
+
+pippo::pluto minga;
+
+int pippo::wiener(pluto & x){
+	return x.ubba;
+}
+
+pippo menga;
+
 int main(){
 
 	StartupManager::Initialise();
 
+    menga.wiener(minga);
 
 #if 0
 {

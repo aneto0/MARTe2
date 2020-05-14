@@ -48,67 +48,68 @@ PASTE HERE FROM SlkParse.cpp
 
 static slk_size_t Production[] = {0
 
-,3,24,25,40 ,7,25,46,1,2,27,26,47 ,2,26,3 ,2,26,4
-,3,27,29,41 ,2,28,5 ,2,28,6 ,2,28,7 ,2,28,8
-,2,28,9 ,3,29,31,42 ,2,30,10 ,2,30,11 ,2,30,12
-,2,30,13 ,2,30,14 ,3,31,33,43 ,2,32,15 ,2,32,16
-,3,33,35,44 ,2,34,17 ,2,34,18 ,2,35,37 ,5,35,48,32,37,50
-,5,35,48,36,37,49 ,2,36,19 ,2,37,38 ,7,37,20,51,1,21,38,52
-,7,37,20,51,1,21,53,22 ,3,37,54,22 ,2,38,39 ,8,38,48,1,20,27,45,21,49
-,4,39,20,27,21 ,3,39,54,1 ,3,40,25,40 ,1,40 ,6,41,48,28,29,49,41
-,1,41 ,6,42,48,30,31,49,42 ,1,42 ,6,43,48,32,33,49,43
-,1,43 ,6,44,48,34,35,49,44 ,1,44 ,4,45,4,27,45
-,1,45
+,3,25,26,41 ,7,26,47,1,2,28,27,48 ,2,27,3 ,2,27,4
+,3,28,30,42 ,2,29,5 ,2,29,6 ,2,29,7 ,2,29,8
+,2,29,9 ,3,30,32,43 ,2,31,10 ,2,31,11 ,2,31,12
+,2,31,13 ,2,31,14 ,2,31,15 ,3,32,34,44 ,2,33,16
+,2,33,17 ,3,34,36,45 ,2,35,18 ,2,35,19 ,2,36,38
+,5,36,49,33,38,51 ,5,36,49,37,38,50 ,2,37,20 ,2,38,39
+,7,38,21,52,1,22,39,53 ,7,38,21,52,1,22,54,23
+,3,38,55,23 ,2,39,40 ,8,39,49,1,21,28,46,22,50
+,4,40,21,28,22 ,3,40,55,1 ,3,41,26,41 ,1,41 ,6,42,49,29,30,50,42
+,1,42 ,6,43,49,31,32,50,43 ,1,43 ,6,44,49,33,34,50,44
+,1,44 ,6,45,49,35,36,50,45 ,1,45 ,4,46,4,28,46
+,1,46
 ,0};
 
 static slk_size_t Production_row[] = {0
 
 ,1,5,13,16,19,23,26,29,32,35,38,42,45,48,51,54
-,57,61,64,67,71,74,77,80,86,92,95,98,106,114,118,121
-,130,135,139,143,145,152,154,161,163,170,172,179,181,186
+,57,60,64,67,70,74,77,80,83,89,95,98,101,109,117,121
+,124,133,138,142,146,148,155,157,164,166,173,175,182,184,189
 ,0};
 
 static slk_size_t Parse[] = {
 
-0,0,1,2,44,44,44,44,44,44,44,44,44,44,44,44,44,44,43
-,43,3,4,44,42,42,42,42,42,42,42,42,42,42,42,42,41,41,18,19
-,21,22,42,40,40,40,40,40,40,40,39,39,39,39,39,5,6,7,8,9
-,10,40,38,38,37,37,37,37,37,5,5,11,48,5,5,26,5,34,0,17
-,38,0,35,0,0,11,11,20,0,11,11,31,11,17,17,23,33,17,17,0
-,17,20,20,27,36,20,20,0,20,24,24,45,0,25,23,0,23,12,13,14
-,15,16,47,0,30,0,0,0,46,0,0
+0,0,1,2,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45
+,44,44,3,4,45,43,43,43,43,43,43,43,43,43,43,43,43,43,42,42
+,19,20,22,23,43,41,41,41,41,41,41,41,40,40,40,40,40,40,5,6
+,7,8,9,10,41,39,39,38,38,38,38,38,11,5,5,27,0,5,5,0
+,5,36,0,0,39,0,18,11,11,49,28,11,11,35,11,12,13,14,15,16
+,17,18,18,21,37,18,18,0,18,32,48,24,31,34,46,0,0,0,21,21
+,0,0,21,21,0,21,25,25,0,0,26,24,47,24,0
 };
 
 static slk_size_t Parse_row[] = {0
 
-,1,2,17,53,50,69,106,77,22,85,22,93,55,101,70,75
-,80,58,39,20,1,106
+,1,2,18,56,53,70,84,84,23,101,23,109,54,88,87,91
+,79,61,41,21,1,109
 ,0};
 
 static slk_size_t Conflict[] = {
 
-0,0,49,0,0,0,0,0,0,0,0,0,0,0,0,0,27,27,0
-,0,27,27,0,27,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31
-,31,0,32,31,27,27,27,27,27,27,27,27,27,27,27,27,27,27,0,27
-,50,28,0,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,0
-,28,27,29
+0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,28,28
+,0,0,28,28,0,28,32,32,32,32,32,32,32,32,32,32,32,32,32,32
+,32,32,32,0,33,32,28,28,28,28,28,28,28,28,28,28,28,28,28,28
+,28,0,28,51,29,0,28,28,28,28,28,28,28,28,28,28,28,28,28,28
+,28,28,28,0,29,28,30
 };
 
 static slk_size_t Conflict_row[] = {0
 
-,1,21,38,59
+,1,22,40,62
 ,0};
 
 #define GET_CONDITIONAL_PRODUCTION( symbol )  0
 #define get_predicted_entry( a,b,c,d,e )  0
 
-#define START_SYMBOL 24
-#define END_OF_SLK_INPUT_ 23
+#define START_SYMBOL 25
+#define END_OF_SLK_INPUT_ 24
 #define START_STATE 0
-#define START_CONFLICT 47
-#define END_CONFLICT 51
-#define START_ACTION 46
-#define END_ACTION 55
+#define START_CONFLICT 48
+#define END_CONFLICT 52
+#define START_ACTION 47
+#define END_ACTION 56
 #define TOTAL_CONFLICTS 4
 #define PARSE_STACK_SIZE 512
 
@@ -119,7 +120,7 @@ PASTE HERE FROM SlkString.cpp
 
 *************************************************************************************************/
 
-const static char * Nonterminal_name[] ={"0"
+static const char * Nonterminal_name[] ={"0"
 
 ,"system"
 ,"assignment"
@@ -145,7 +146,8 @@ const static char * Nonterminal_name[] ={"0"
 ,",_logic_expr_*"
 };
 
-const static char * Terminal_name[] ={"0"
+static const char * Terminal_name[] ={"0"
+
 ,"STRING"
 ,"="
 ,";"
@@ -160,6 +162,7 @@ const static char * Terminal_name[] ={"0"
 ,">="
 ,"<="
 ,"=="
+,"!="
 ,"+"
 ,"-"
 ,"*"
@@ -171,7 +174,7 @@ const static char * Terminal_name[] ={"0"
 ,"END_OF_SLK_INPUT"
 };
 
-const static char * Action_name[] ={"0"
+static const char * Action_name[] ={"0"
 
 ,"__StoreAssignment"
 ,"__PopAssignment"
@@ -184,7 +187,7 @@ const static char * Action_name[] ={"0"
 ,"__AddOperand"
 };
 
-const static char * Production_name[] ={"0"
+static const char * Production_name[] ={"0"
 
 ,"system --> assignment assignment_*"
 ,"assignment --> __StoreAssignment STRING = logic_expr delimitator __PopAssignment"
@@ -202,6 +205,7 @@ const static char * Production_name[] ={"0"
 ,"comp_op --> >="
 ,"comp_op --> <="
 ,"comp_op --> =="
+,"comp_op --> !="
 ,"addition_expr --> multiplication_expr add_op_multiplication_expr_*"
 ,"add_op --> +"
 ,"add_op --> -"
@@ -234,6 +238,7 @@ const static char * Production_name[] ={"0"
 ,",_logic_expr_* -->"
 };
 
+
 /*************************************************************************************************/
 
 /*************************************************************************************************
@@ -250,7 +255,6 @@ static inline uint32 findId(CCString symbol){
 
 	return ret;
 }
-
 
 /*
  */
@@ -270,7 +274,8 @@ static const RegularExpression::PatternInformation rules[]={
 	    {"\\*"                                                                               ,"MUL operator"     , findId("*")          ,false},
 	    {"/"                                                                                 ,"DIV operator"     , findId("/")          ,false},
 	    {"\\!"                                                                               ,"NOT operator"     , findId("!")          ,false},
-	    {"="                                                                                 ,"EQ  operator"     , findId("=")          ,false},
+	    {"=="                                                                                ,"EQ  operator"     , findId("==")         ,false},
+	    {"!="                                                                                ,"NEQ  operator"    , findId("==")         ,false},
 	    {">"                                                                                 ,"GT  operator"     , findId(">")          ,false},
 	    {"<"                                                                                 ,"LT  operator"     , findId("<")          ,false},
 	    {","                                                                                 ,"COMMA"            , findId(",")          ,false},
@@ -284,7 +289,7 @@ static const RegularExpression::PatternInformation rules[]={
 		RegularExpression::emptyPattern
 //		{emptyString												 ,emptyString	     , 0					,false}
 };
-
+#if 0
 static const char * separators                = "\n\r\t ";
 
 /**
@@ -307,6 +312,7 @@ static const char * endMultipleLinesComment   = "*/";
  */
 static const char * terminals                 = "=+/-*()><^!;,";
 
+#endif
 
 /*************************************************************************************************
 
@@ -319,11 +325,13 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
+#if 0
 		separators,
 		beginOneLineComment,
 		beginMultipleLinesComment,
 		endMultipleLinesComment,
 		terminals,
+#endif
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -373,8 +381,6 @@ void MathExpressionParser::MapMethods(){
     Action [ 7 ] = &SlkAction::PopTypecast;
     Action [ 8 ] = &SlkAction::AddOperandTypecast;
     Action [ 9 ] = &SlkAction::AddOperand;
-
-
 
 /*************************************************************************************************/
 

@@ -50,7 +50,7 @@ namespace MARTe{
 
 class  ParserData{
 public:
-
+#if 0
 
 	/**
     * List of separator characters.
@@ -76,6 +76,7 @@ public:
     * Assignment operator
     */
    CCString terminals;
+#endif
 
    /*
    * The index of initial expected token identifier.
@@ -188,11 +189,13 @@ public:
     *
     */
    ParserData(
+#if 0
 		   	    const char *        separatorsIn,
 			    const char *        beginOneLineCommentIn,
 			    const char *        beginMultipleLinesCommentIn,
 			    const char *        endMultipleLinesCommentIn,
 			    const char *        terminalsIn,
+#endif
 		   	    uint32              startSymbolIn,
 		   	   	uint32              endOfFileIn,
 				uint32              startStateIn,
@@ -219,11 +222,13 @@ public:
 				const ZeroTerminatedArray<const RegularExpression::PatternInformation> ruleSetIn
 
    ):
+#if 0
 	   separators                (separatorsIn               ),
 	   beginOneLineComment       (beginOneLineCommentIn      ),
 	   beginMultipleLinesComment (beginMultipleLinesCommentIn),
 	   endMultipleLinesComment   (endMultipleLinesCommentIn  ),
 	   terminals                 (terminalsIn                ),
+#endif
 	   StartSymbol               (startSymbolIn              ),
 	   EndOfFile                 (endOfFileIn                ),
 	   StartState                (startStateIn               ),

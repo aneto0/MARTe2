@@ -49,8 +49,8 @@ namespace MARTe {
 /**
  * @brief This class is a singly linked node which is intended to be chained
  * with other nodes, creating an unbounded singly linked list.
- *
- * @details This class is the internal implementation of List
+ * @details This class is the internal implementation of List.
+ * Note that the first node never contains data as it acts as the pointer to the list
  */
 class   ListNode{
 public:
@@ -66,10 +66,26 @@ public:
 	/**
 	 * move ahead @param skipNo nodes
 	 * insert node by linking it to the next variable of the last node.
-	 * @return ellegalOperation if node->next is not NULL!
+	 * @return illegalOperation if node->next is not NULL!
 	 * @return parametersError if node = NULL
 	 */
 	ErrorManagement::ErrorType InsertAfter(ListNode *node, uint32 skipNo);
+
+
+	/**
+	 * move ahead @param skipNo nodes
+	 * remove identified node from the list and returns it.
+	 * @return illegalOperation if node->next is not NULL!
+	 */
+	ErrorManagement::ErrorType RemoveAfter(ListNode *&node, uint32 skipNo);
+
+	/**
+	 * move ahead @param skipNo nodes
+	 * return pointer to identified node .
+	 * @return illegalOperation if node->next is not NULL!
+	 */
+	ErrorManagement::ErrorType Peek(ListNode *&node, uint32 skipNo);
+
 
 public:
 	/**
