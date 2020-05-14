@@ -136,6 +136,21 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteFunctionT
     ASSERT_TRUE(test.TestFunctionTypes("WRITE", 1, 0));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestWriteExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST int64 -152\n"
+            "WRITE RES1\n";
+
+    int64 expectedResults[] = {-152};
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, SignedInteger64Bit));
+    ASSERT_TRUE(test.TestFunctionExecution<int64>(context, 1, expectedResults));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
     CCString typeNames[] = {"float64", "float32", "uint64", "int64", "uint32", "int32", "uint16", "int16", "uint8", "int8"};
