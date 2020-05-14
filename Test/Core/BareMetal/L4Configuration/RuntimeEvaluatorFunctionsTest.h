@@ -72,8 +72,13 @@ public:
      */
     bool TestTryConsume(RuntimeEvaluatorFunctions &functionRecordUT, CCString inputName, StaticStack<TypeDescriptor,32> &typeStack, bool matchOutput, bool expectedRet, DataMemoryAddress initialDataStackSize, DataMemoryAddress expectedDataStackSize);
 
+    /**
+     * @brief Tests function execution.
+     */
     template <typename T>
-    bool TestFunctionExecution(CCString rpnCode, uint8 numberOfResults, T expectedResults[]);
+    bool TestFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]);
+
+    bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor resultType);
 
 private:
     /**
@@ -92,30 +97,19 @@ void MockFunction(RuntimeEvaluator &evaluator);
 /*---------------------------------------------------------------------------*/
 
 template <typename T>
-bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(CCString rpnCode, uint8 numberOfResults, T expectedResults[]) {
+bool RuntimeEvaluatorFunctionsTest::TestFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]) {
 
     ErrorManagement::ErrorType ret;
+    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
+    VariableInformation *var;
+    T *resultPointer;
 
-    StreamString RPNCodeStream(rpnCode);
-    RuntimeEvaluator context(RPNCodeStream);
+    ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    RPNCodeStream.Seek(0u);
-    ret = context.ExtractVariables();
-
-    RPNCodeStream.Seek(0u);
-    if (ret) {
-        ret = context.Compile();
-    }
-
-    if (ret) {
-        ret = context.Execute(RuntimeEvaluator::fastMode);
-    }
-
-    for (uint8 i = 0; (ret && i < numberOfResults); ++i) {
-        T result = 0;
-
-        context.Pop(result);
-        ret = (result == expectedResults[i]);
+    for (uint8 i = 0; (ret) && (i < numberOfResults); ++i) {
+        ret = context.BrowseOutputVariable(i,var);
+        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+        ret = (*resultPointer == expectedResults[i]) ? ret : fatalError;
     }
 
     return ret;
