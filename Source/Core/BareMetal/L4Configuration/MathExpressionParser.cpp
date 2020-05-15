@@ -177,7 +177,7 @@ MathExpressionParser::~MathExpressionParser() {
     }
 }
 
-const char8* MathExpressionParser::OperatorFormatting(const char8* const operatorIn) const {
+const char8* MathExpressionParser::OperatorFormatting(char8* const operatorIn) const {
 
     const char8* ret = operatorIn;
     
@@ -224,10 +224,9 @@ const char8* MathExpressionParser::OperatorFormatting(const char8* const operato
         ret = "FACT";
     }
     else {
-        char8* uppercaseOp = StringHelper::StringDup(operatorIn);
-        bool ok = StringHelper::ToUpper(uppercaseOp);
+        bool ok = StringHelper::ToUpper(operatorIn);
         if (ok) {
-            ret = uppercaseOp;
+            ret = operatorIn;
         }
         else {
             REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -274,7 +273,7 @@ void MathExpressionParser::PopOperator() {
     }
     
     // Write in the stack machine expression
-    stackMachineExpr += OperatorFormatting(currentOperator->Buffer());
+    stackMachineExpr += OperatorFormatting(currentOperator->BufferReference());
     stackMachineExpr += "\n";
     
     if (currentOperator != NULL) {
