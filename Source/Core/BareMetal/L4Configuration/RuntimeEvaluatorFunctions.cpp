@@ -805,7 +805,7 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvalu
     ret1 = SafeNumber2Number(x1,y1);
     ret2 = SafeNumber2Number(x2,y2);
     if (ret1 && ret2){
-        result = y2 == y1;
+        result = y2 != y1;
     } else {
         context.runtimeError.outOfRange = true;
 //      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
