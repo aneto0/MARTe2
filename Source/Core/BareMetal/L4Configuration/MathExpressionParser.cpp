@@ -144,6 +144,8 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 7 ] = &MathExpressionParser::PopTypecast;
     Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
     Action [ 9 ] = &MathExpressionParser::AddOperand;
+    
+    currentOperator = static_cast<StreamString*>(NULL);
 }
 
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
@@ -174,6 +176,10 @@ MathExpressionParser::~MathExpressionParser() {
                 "StaticList<currentOperator *>: Failed Extract() during garbage collection."
                 );
         }
+    }
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
     }
 }
 
@@ -253,7 +259,10 @@ void MathExpressionParser::PopAssignment() {
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushOperator() {
     
-    StreamString* currentOperator = new StreamString(currentToken->GetData());
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
+    currentOperator = new StreamString(currentToken->GetData());
     
     if (!operatorStack.Add(currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -265,7 +274,9 @@ void MathExpressionParser::PushOperator() {
 void MathExpressionParser::PopOperator() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
     
     if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -281,7 +292,9 @@ void MathExpressionParser::PopOperator() {
 void MathExpressionParser::PopOperatorAlternate() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
     
     if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -307,7 +320,10 @@ void MathExpressionParser::PopOperatorAlternate() {
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushTypecast() {
     
-    StreamString* currentOperator = new StreamString(currentToken->GetData());
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
+    currentOperator = new StreamString(currentToken->GetData());
     
     if (!typecastStack.Add(currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -319,7 +335,9 @@ void MathExpressionParser::PushTypecast() {
 void MathExpressionParser::PopTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
     
     if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -352,7 +370,9 @@ void MathExpressionParser::AddOperand() {
 void MathExpressionParser::AddOperandTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    StreamString* currentOperator;
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
     
     if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,

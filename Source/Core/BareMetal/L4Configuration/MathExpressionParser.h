@@ -371,6 +371,8 @@ protected:
      */
     StreamString              stackMachineExpr;
     
+    StreamString* currentOperator;
+    
 private:
     
     /**
