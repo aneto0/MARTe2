@@ -351,7 +351,7 @@ void MathExpressionParser::AddOperand() {
         stackMachineExpr += "READ ";
     }
     else if (StringHelper::Compare(currentToken->GetDescription(), "NUMBER") == 0) {
-        stackMachineExpr += "CONST ";
+        stackMachineExpr += "CONST float64 ";
     }
     else {
         stackMachineExpr += "ERR ";
