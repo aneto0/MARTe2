@@ -194,6 +194,7 @@ uint32 ParserI::GetConflictRow(const uint32 index)const  {
 ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	errorStream,uint32 debugLevel) {
 	ErrorManagement::ErrorType ret;
 	const Token * currentToken;
+	DebugStream debugStream = {errorStream, debugLevel};
 
 //        uint32 stackArray[constants.StackSize];
 //        uint32 *stack = &stackArray[0];
@@ -206,11 +207,12 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
         StackPush(0);
         StackPush(start_symbol);
 
-        PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Push %s (=%i)\n",GetSymbolName(start_symbol),start_symbol);
+
+        PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Push %s (=%i)\n",GetSymbolName(start_symbol),start_symbol);
 
         if (ret){
         	ret = PeekToken(stream,0,currentToken);
-            PARSER_ERROR_REPORT(errorStream,ret,"Failed reading token",0);
+            PARSER_ERROR_REPORT(debugStream,ret,"Failed reading token",0);
         }
 
         uint32 token = 0;
@@ -221,21 +223,21 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 //		uint32 symbol = StackPop(top);
         uint32 symbol = StackPop();
 
-		PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
-		PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
+		PARSER_DIAGNOSTIC_REPORT(debugStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
+		PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
         for (; (symbol > 0u) && (ret);) {
 
         	/// from StartAction to EndAction
             if (symbol >= constants.StartAction) {
-            	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Execute %s \n",GetSymbolName(symbol));
-                ret = Execute(symbol - (constants.StartAction - 1u),currentToken,errorStream);
-                PARSER_ERROR_REPORT(errorStream,ret,"%s() failed",GetSymbolName(symbol));
+            	PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Execute %s \n",GetSymbolName(symbol));
+                ret = Execute(symbol - (constants.StartAction - 1u),currentToken,debugStream);
+                PARSER_ERROR_REPORT(debugStream,ret,"%s() failed",GetSymbolName(symbol));
             } /// from StartSymbol to EndSymbol
 
             else
 
             if (symbol >= constants.StartSymbol) {
-            	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Rule %s \n",GetSymbolName(symbol));
+            	PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Rule %s \n",GetSymbolName(symbol));
 
 				// used by Peek - depth of forward peeking
                 uint32 level = 0u; // it is 1 in original code
@@ -257,7 +259,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                 	index = GetParseRow(symbol - (constants.StartSymbol - 1u));
                     index += token;
                     entry = GetParse(index);
-                    PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Parse: [%s] + [%s] = [%s] \n",GetSymbolName(symbol),GetSymbolName(token),GetProductionNameWithConflicts(entry));
+                    PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Parse: [%s] + [%s] = [%s] \n",GetSymbolName(symbol),GetSymbolName(token),GetProductionNameWithConflicts(entry));
                 }  // entry = 0
 
                 // the next entry is a conflict.
@@ -269,7 +271,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 
                     const Token * temporaryToken;
                     ret = PeekToken(stream,level+1,temporaryToken);
-                    PARSER_ERROR_REPORT(errorStream,ret,"Failed reading token \n",0);
+                    PARSER_ERROR_REPORT(debugStream,ret,"Failed reading token \n",0);
                     if (temporaryToken){
                         token = temporaryToken->GetId();
                     }
@@ -277,19 +279,19 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                     entry = GetConflict(index);
                     ++level;
 
-                    PARSER_DIAGNOSTIC_REPORT(errorStream,2,"PeekToken(%i)= [%s] \n",level,GetSymbolName(token));
-                    PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Conflict: [%s] + [%s] = [%s] \n",GetProductionNameWithConflicts(oldEntry),GetSymbolName(token),GetProductionNameWithConflicts(entry));
+                    PARSER_DIAGNOSTIC_REPORT(debugStream,2,"PeekToken(%i)= [%s] \n",level,GetSymbolName(token));
+                    PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Conflict: [%s] + [%s] = [%s] \n",GetProductionNameWithConflicts(oldEntry),GetSymbolName(token),GetProductionNameWithConflicts(entry));
                 } // while
 
                 if (entry != 0u) {
                 	const uint32 *production = &GetProduction(GetProductionRow(entry));
                     uint32 production_length = *production - 1u;
                     production++;
-                    PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Try produce [%s]\n",GetProductionName(entry));
+                    PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Try produce [%s]\n",GetProductionName(entry));
 
                     /*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                     if (*production == symbol) {
-                    	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Match %s\n",GetSymbolName(symbol));
+                    	PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Match %s\n",GetSymbolName(symbol));
 
                     	//action->predict(entry);  // predictive production for custom applications
 
@@ -301,7 +303,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                             uint32 toPush = *production;
                             StackPush(toPush);
 //                            StackPush(toPush, stack, top);
-                            PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Push %s (=%i)\n",GetSymbolName(toPush),toPush);
+                            PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Push %s (=%i)\n",GetSymbolName(toPush),toPush);
                             production--;
                         } // for
                     } // production = symbol
@@ -314,7 +316,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                     	currentToken = NULL;
                     	ret.syntaxError = true;
                     	// new_token = no_entry ( error, symbol, token, level-1 );
-                    	PARSER_ERROR_REPORT(errorStream,ret,"No-entry symbol=[%s]  token= [%s] \n",GetSymbolName(symbol),GetSymbolName(token));
+                    	PARSER_ERROR_REPORT(debugStream,ret,"No-entry symbol=[%s]  token= [%s] \n",GetSymbolName(symbol),GetSymbolName(token));
                     	new_token = 0;
                     } // production != symbol
                 } // entry != 0
@@ -327,7 +329,7 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
                 	currentToken = NULL;
 
                 	ret.syntaxError = true;
-                	PARSER_ERROR_REPORT(errorStream,ret,"No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
+                	PARSER_ERROR_REPORT(debugStream,ret,"No-entry symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
                 	new_token = 0;
 
                 } // entry = 0
@@ -338,20 +340,20 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
             {
             	if (symbol > 0u) {
                     if (symbol == token) {
-                    	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Symbol %2 matches token \n",GetSymbolName(token));
+                    	PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Symbol %2 matches token \n",GetSymbolName(token));
 
                         ret = NextToken();
-                        PARSER_ERROR_REPORT(errorStream,ret,"Failed advancing on token Q\n",0);
+                        PARSER_ERROR_REPORT(debugStream,ret,"Failed advancing on token Q\n",0);
                         currentToken = NULL;
 
                         if (ret){
                         	ret = PeekToken(stream,0,currentToken);
-                            PARSER_ERROR_REPORT(errorStream,ret,"Failed reading token \n",0);
+                            PARSER_ERROR_REPORT(debugStream,ret,"Failed reading token \n",0);
                         }
 
                         if (currentToken != NULL){
                             token = currentToken->GetId();
-                    		PARSER_DIAGNOSTIC_REPORT(errorStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
+                    		PARSER_DIAGNOSTIC_REPORT(debugStream,2,"Token= [%s](%s) \n",GetSymbolName(token),currentToken->GetData());
                         }
                         new_token = token;
 
@@ -361,13 +363,13 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 						new_token = 0;
 
 						ret.syntaxError = true;
-	                	PARSER_ERROR_REPORT(errorStream,ret,"Mismatch symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
+	                	PARSER_ERROR_REPORT(debugStream,ret,"Mismatch symbol=[%s]  token=[%s] \n",GetSymbolName(symbol),GetSymbolName(token));
                     }
                 }
             }
 
             if (token != new_token) {
-            	PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Token != new_token(%s) \n",GetSymbolName(new_token));
+            	PARSER_DIAGNOSTIC_REPORT(debugStream,4,"Token != new_token(%s) \n",GetSymbolName(new_token));
                 if (new_token > 0u) {
                     token = new_token;
                 }
@@ -382,19 +384,19 @@ ErrorManagement::ErrorType ParserI::Parse(StreamI &stream,BufferedStreamI *	erro
 
 //            symbol = StackPop(top);
             symbol = StackPop();
-            PARSER_DIAGNOSTIC_REPORT(errorStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
+            PARSER_DIAGNOSTIC_REPORT(debugStream,3,"Pop %s (=%i) \n",GetSymbolName(symbol),symbol);
         }
 
         if (token != constants.EndOfFile) {
             ret.internalSetupError = true;
-            PARSER_ERROR_REPORT(errorStream,ret,"leftover token %s in stack",GetSymbolName(symbol));
+            PARSER_ERROR_REPORT(debugStream,ret,"leftover token %s in stack",GetSymbolName(symbol));
         }
 
 //        PARSER_DIAGNOSTIC_REPORT(errorStream,4,"Looping %s\n","around");
 
 //    } // for
 
-    PARSER_ERROR_REPORT(errorStream,ret,"Failed",0);
+    PARSER_ERROR_REPORT(debugStream,ret,"Failed",0);
     return ret;
 }
 

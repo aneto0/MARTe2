@@ -187,7 +187,7 @@ protected:
          *          an operator. The operator is then stored in the 
          *          #operatorStack and later appended by PopOperator().
          */
-        ErrorManagement::ErrorType  PushOperator(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PushOperator(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Pops an operator from the top of the #operatorStack.
@@ -197,7 +197,7 @@ protected:
          *          from the #operatorStack and appended to the stack
          *          machine expression #stackMachineExpr.
          */
-        ErrorManagement::ErrorType  PopOperator(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PopOperator(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Pops alternative forms of operators.
@@ -207,7 +207,7 @@ protected:
          *          different meaning with respect to infix `-` etc).
          */
 
-        ErrorManagement::ErrorType  PopOperatorAlternate(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PopOperatorAlternate(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Pushes a typecast type to the top of the #typecastStack.
@@ -216,7 +216,7 @@ protected:
          *          The typecast type is then stored in the #typecastStack
          *          and later appended by PopTypecast().
          */
-        ErrorManagement::ErrorType  PushTypecast(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PushTypecast(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Pops a typecast type from the top of the #typecastStack.
@@ -226,7 +226,7 @@ protected:
          *          from the typecastStack and appended to the stack
          *          machine expression #stackMachineExpr.
          */
-        ErrorManagement::ErrorType  PopTypecast(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PopTypecast(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Append an encountered operand (constant or variable)
@@ -239,7 +239,7 @@ protected:
          *          tokens and as `CONST NUMBER` for NUMBER tokens.
          * @warning NUMBER tokens should be handled by AddOperandTypecast().
          */
-        ErrorManagement::ErrorType  AddOperand(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  AddOperand(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Append an encountered constant to the output expression.
@@ -253,7 +253,7 @@ protected:
          *          tokens and as `CONST type NUMBER` for NUMBER tokens.
          * @warning NUMBER tokens should be handled by AddOperandTypecast().
          */
-        ErrorManagement::ErrorType  AddOperandTypecast(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  AddOperandTypecast(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Stores the name of the variable before the equal sign.
@@ -270,7 +270,7 @@ protected:
          * 
          *          <pre> WRITE ret </pre>
          */
-        ErrorManagement::ErrorType  StoreAssignment(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  StoreAssignment(const Token *currentToken,DebugStream &debugStream);
         
         /**
          * @brief   Called when the parser hits the end of the expression.
@@ -280,7 +280,7 @@ protected:
          *          method is responsible for appending the `WRITE`
          *          statement required by the expression evaluation engine.
          */
-        ErrorManagement::ErrorType  PopAssignment(const Token *currentToken,BufferedStreamI *errorStream);
+        ErrorManagement::ErrorType  PopAssignment(const Token *currentToken,DebugStream &debugStream);
     //@}
 
     /**
@@ -298,7 +298,7 @@ protected:
         DynamicCString        stackMachineExpr;
 private:
 
-    virtual ErrorManagement::ErrorType Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
+    virtual ErrorManagement::ErrorType Execute(const uint32 number,const Token *currentToken,DebugStream &debugStream);
 
     /**
      * implemented in MathExpressionParserData.cpp
@@ -308,7 +308,7 @@ private:
     /**
      * maps the custom methods
      */
-    ErrorManagement::ErrorType  (MathExpressionParser::*Action[10])(const Token *,BufferedStreamI *);
+    ErrorManagement::ErrorType  (MathExpressionParser::*Action[10])(const Token *,DebugStream &);
     
 };
 

@@ -364,7 +364,7 @@ extern const ParserData parserData(
 
 void MathExpressionParser::MapMethods(){
 
-	Action[0] = static_cast<ErrorManagement::ErrorType  (MathExpressionParser::*)(const Token *,BufferedStreamI *)>(NULL);
+	Action[0] = static_cast<ErrorManagement::ErrorType  (MathExpressionParser::*)(const Token *,DebugStream &)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp

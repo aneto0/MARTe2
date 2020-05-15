@@ -117,7 +117,7 @@ private:
     /**
      * @see ParserI::Execute(*)
      */
-    virtual ErrorManagement::ErrorType  Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream);
+    virtual ErrorManagement::ErrorType  Execute(const uint32 number,const Token *currentToken,DebugStream &debugStream);
 
     /**
      * implemented in XMLParserData.cpp
@@ -127,7 +127,7 @@ private:
     /**
      * The array of functions needed by the parser.
      */
-	ErrorManagement::ErrorType  (XMLParser::*Action[10])(const Token *,BufferedStreamI *);
+	ErrorManagement::ErrorType  (XMLParser::*Action[10])(const Token *,DebugStream &);
 
 };
 

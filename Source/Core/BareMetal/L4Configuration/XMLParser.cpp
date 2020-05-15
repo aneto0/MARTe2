@@ -54,8 +54,8 @@ XMLParser::~XMLParser() {
 
 }
 
-ErrorManagement::ErrorType XMLParser::Execute(const uint32 number,const Token *currentToken,BufferedStreamI *errorStream) {
-	return (this->*Action[number])(currentToken,errorStream);
+ErrorManagement::ErrorType XMLParser::Execute(const uint32 number,const Token *currentToken,DebugStream &debugStream) {
+	return (this->*Action[number])(currentToken,debugStream);
 }
 
 

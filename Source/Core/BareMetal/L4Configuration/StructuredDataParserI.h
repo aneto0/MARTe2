@@ -128,52 +128,55 @@ protected:
     /**
      * @brief Moves into the built structured data to the root.
      */
-    ErrorManagement::ErrorType End(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType End(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Gets the node or the variable name.
      */
-    ErrorManagement::ErrorType GetNodeName(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType GetNodeName(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Adds a leaf in the StructuredData.
      */
-    ErrorManagement::ErrorType AddLeaf(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType AddLeaf(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Gets the variable type.
      */
-    ErrorManagement::ErrorType GetTypeCast(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType GetTypeCast(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Creates a new node in the StructuredData.
      */
-    ErrorManagement::ErrorType CreateNode(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType CreateNode(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Stores a read scalar in the memory.
      */
-    ErrorManagement::ErrorType AddScalar(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType AddScalar(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Sets the number of dimensions to one and checks if
      * the matrix is well formed.
      */
-    ErrorManagement::ErrorType EndVector(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType EndVector(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Sets the number of dimensions to two.
      */
-    ErrorManagement::ErrorType EndMatrix(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType EndMatrix(const Token *currentToken,DebugStream &errorStream);
 
     /**
      * @brief Moves into the structuredData to the father.
      */
-    ErrorManagement::ErrorType BlockEnd(const Token *currentToken,BufferedStreamI *errorStream);
+    ErrorManagement::ErrorType BlockEnd(const Token *currentToken,DebugStream &errorStream);
 
 
 private:
 
+    /**
+ *
+ */
     struct ParseStatus{
 
         /**

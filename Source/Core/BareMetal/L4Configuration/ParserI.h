@@ -48,25 +48,26 @@
 
 namespace MARTe {
 
-#define PARSER_DIAGNOSTIC_REPORT(errorStream,level,format,...) 			\
-if (debugLevel >=level){                                    \
-	StreamString s;								 			\
-	s.Printf(format,__VA_ARGS__);      						\
-	if (errorStream) errorStream->Printf("%s",CCString(s.Buffer()));         \
-	else {                          						\
-		REPORT_ERROR(ErrorManagement::Debug,s.Buffer()); 	\
-	}			 										 	\
+#define PARSER_DIAGNOSTIC_REPORT(debugStream,debugLevel,format,...)        \
+if (debugLevel <= debugStream.level){                                      \
+    StreamString s;                                                        \
+    s.Printf(format,__VA_ARGS__);                                          \
+    if (debugStream.stream) {                                              \
+    	debugStream.stream->Printf("%s",CCString(s.Buffer()));             \
+    } else {                                                               \
+        REPORT_ERROR(ErrorManagement::Debug,s.Buffer());                   \
+    }                                                                      \
 }
 
-#define PARSER_ERROR_REPORT(errorStream,ret,format,...)    	\
-if (!ret){                                                  \
-	StreamString s;								 			\
-	s.Printf(format,__VA_ARGS__);      		        	    \
-	if (errorStream) errorStream->Printf("%s",CCString(s.Buffer()) );        \
-	REPORT_ERROR(ret,s.Buffer()); 	                        \
+#define PARSER_ERROR_REPORT(debugStream,ret,format,...)                    \
+if (!ret){                                                                 \
+    StreamString s;                                                        \
+    s.Printf(format,__VA_ARGS__);                                          \
+    if (debugStream.stream) {                                              \
+    	debugStream.stream->Printf("%s",CCString(s.Buffer()));             \
+    }                                                                      \
+    REPORT_ERROR(ret,s.Buffer());                                          \
 }
-
-
 
 /**
  * @brief Abstract parser which allows to transform a stream of characters
@@ -135,7 +136,78 @@ public:
      * \a err stream in input (if it is not NULL).
      * @brief debugLevel  0 = onlyErrors 1=    2=
      */
-    ErrorManagement::ErrorType Parse(StreamI &stream,BufferedStreamI *	errorStream=NULL_PTR(BufferedStreamI *),uint32 debugLevel = 0);
+    ErrorManagement::ErrorType Parse(StreamI &stream,BufferedStreamI *    errorStream=NULL_PTR(BufferedStreamI *),uint32 debugLevel = 0);
+
+protected:
+
+    /**
+     *
+     */
+    class Token{
+    public:// within the protected scope...
+        /**
+         * @brief Retrieves the token identifier.
+         */
+        inline uint32 GetId() const;
+
+        /**
+         * @brief Retrieves the token description.
+         * @return the token description.
+         */
+        inline CCString GetDescription() const ;
+
+        /**
+         * @brief Retrieves the token data.
+         * @return the token data.
+         */
+        inline CCString GetData() const ;
+
+        /**
+         * @brief Retrieves the token line number.
+         * @return the token line number.
+         */
+        inline uint32 GetLineNumber() const;
+
+        /**
+         * the matched rule
+         */
+        const RegularExpression::PatternInformation *    matchedRule;
+
+        /**
+         * the text matching the rule
+         */
+        DynamicCString                                     matchedText;
+    };
+
+    /**
+     * @brief Peeks in the token stack produced by the lexical analyzer,
+     * retrieves the identifier of the token in the next \a position index.
+     * Note that the last token is at position 0
+     * @return outOfRange  if there are no more tokens.
+     */
+    ErrorManagement::ErrorType PeekToken(StreamI &stream,const uint32 position, const Token *&token);
+
+    /**
+     * used internally.
+     * hides the description of the debugging mechanism
+     */
+    struct DebugStream {
+    	/**
+    	 * the stream where to dump
+    	 */
+    	BufferedStreamI *stream;
+
+    	/**
+    	 * how deep is the debug reporting
+    	 */
+    	uint32 			level;
+    };
+
+    /**
+     * @brief Executes the specified function.
+     * @param[in] number if the number of the callback to be executed.
+     */
+    virtual ErrorManagement::ErrorType Execute(const uint32 functionIndex,const ParserI::Token *currentToken,DebugStream &errorStream)=0;
 
 private:
 
@@ -229,84 +301,25 @@ private:
      */
     inline uint32 StackPop() ;
 
-
     /**
      * @brief Consumes one token.
      * @return outOfRange  if there are no more tokens.
      */
-	ErrorManagement::ErrorType NextToken();
-
-protected:
-
-
-	/**
-	 *
-	 */
-	class  Token{
-	public:// within the protected scope...
-	    /**
-	     * @brief Retrieves the token identifier.
-	     */
-	    inline uint32 GetId() const;
-
-	    /**
-	     * @brief Retrieves the token description.
-	     * @return the token description.
-	     */
-	    inline CCString GetDescription() const ;
-
-	    /**
-	     * @brief Retrieves the token data.
-	     * @return the token data.
-	     */
-	    inline CCString GetData() const ;
-
-	    /**
-	     * @brief Retrieves the token line number.
-	     * @return the token line number.
-	     */
-	    inline uint32 GetLineNumber() const;
-
-		/**
-		 * the matched rule
-		 */
-		const RegularExpression::PatternInformation *	matchedRule;
-
-		/**
-		 * the text matching the rule
-		 */
-		DynamicCString 									matchedText;
-	};
-
-    /**
-     * @brief Peeks in the token stack produced by the lexical analyzer,
-     * retrieves the identifier of the token in the next \a position index.
-     * Note that the last token is at position 0
-     * @return outOfRange  if there are no more tokens.
-     */
-    ErrorManagement::ErrorType PeekToken(StreamI &stream,const uint32 position, const Token *&token);
-
-    /**
-     * @brief Executes the specified function.
-     * @param[in] number if the number of the callback to be executed.
-     */
-    virtual ErrorManagement::ErrorType Execute(const uint32 functionIndex,const ParserI::Token *currentToken,BufferedStreamI *errorStream)=0;
-
-private:
+    ErrorManagement::ErrorType NextToken();
 
     /**  CONSTANTS set by the PARSER generator*/
     /** to be correctly initalised by the initialiser of the specific specialisation */
-    const ParserData &		constants;
+    const ParserData &         constants;
 
     /**
      *
      */
-    StaticStack<uint32>     symbolStack;
+    StaticStack<uint32>        symbolStack;
 
     /**
      * queue of tokens
      */
-    List<Token>				tokenQueue;
+    List<Token>                tokenQueue;
 };
 
 
@@ -338,41 +351,41 @@ uint32 ParserI::StackPop(uint32 * &top) const {
 #endif
 
 void ParserI::StackPush(const uint32 symbol) {
-	symbolStack.Push(symbol);
+    symbolStack.Push(symbol);
 }
 
 uint32 ParserI::StackPop(){
-	uint32 value = 0;
-	if (!symbolStack.Pop(value)){
-		value = 0;
-	}
-	return value;
+    uint32 value = 0;
+    if (!symbolStack.Pop(value)){
+        value = 0;
+    }
+    return value;
 }
 
 uint32 ParserI::Token::GetId() const{
-	uint32 id = 0;
-	if (matchedRule != NULL){
-		id = matchedRule->ruleId;
-	}
-	return id;
+    uint32 id = 0;
+    if (matchedRule != NULL){
+        id = matchedRule->ruleId;
+    }
+    return id;
 }
 
 CCString ParserI::Token::GetDescription() const {
-	CCString description;
-	if (matchedRule != NULL){
-		description = matchedRule->ruleName;
-	}
-	return description;
+    CCString description;
+    if (matchedRule != NULL){
+        description = matchedRule->ruleName;
+    }
+    return description;
 }
 
 CCString ParserI::Token::GetData() const {
-	CCString data;
-	data = matchedText;
-	return data;
+    CCString data;
+    data = matchedText;
+    return data;
 }
 
 uint32 ParserI::Token::GetLineNumber() const{
-	return 0;  // TODO
+    return 0;  // TODO
 }
 
 

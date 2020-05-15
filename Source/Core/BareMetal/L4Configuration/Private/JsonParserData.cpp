@@ -269,7 +269,7 @@ extern const ParserData parserData(
 
 void JsonParser::MapMethods(){
 
-	Action[0] = static_cast<ErrorManagement::ErrorType  (JsonParser::*)(const Token *,BufferedStreamI *)>(NULL);
+	Action[0] = static_cast<ErrorManagement::ErrorType  (JsonParser::*)(const Token *,DebugStream &)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp
