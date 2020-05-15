@@ -102,7 +102,7 @@ namespace MARTe{
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
  * #include "MathExpressionParser.h"
  * 
- * StreamString expr = "retVar = pow(sin(theta), 2) + pow(cos(theta), 2);"
+ * StreamString expr = "retVar = pow(sin(theta), 2) + pow(cos(theta), (int64) 2);"
  * expr.Seek(0);
  * 
  * MathExpressionParser mathParser(expr, fooDatabase, &errStream);
@@ -119,11 +119,11 @@ namespace MARTe{
  * ~~~~~~~~~~~~
  * READ theta
  * SIN
- * CONST 2
+ * CONST float64 2
  * POW
  * READ theta
  * COS
- * CONST 2
+ * CONST int64 2
  * POW
  * +
  * WRITE retVar
@@ -228,12 +228,13 @@ protected:
          * @brief   Append an encountered operand (constant or variable)
          *          to the output expression.
          * @details This method gets called whenever the parser hits an
-         *          operand (that is, an isolated STRING or NUMBER token).
+         *          operand (that is, an isolated `STRING` or `NUMBER` token).
          *          The operand is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
-         *          engine (that is, as `READ STRING` for STRING
-         *          tokens and as `CONST NUMBER` for NUMBER tokens.
-         * @warning NUMBER tokens should be handled by AddOperandTypecast().
+         *          engine (that is, as `READ STRING` for `STRING`
+         *          tokens and as `CONST float64 NUMBER` for `NUMBER` tokens.
+         * @warning Note that when no type is specified for `NUMBER`
+         *          token, `float64` type is assumed.
          */
         virtual void AddOperand();
         
@@ -241,8 +242,8 @@ protected:
          * @brief   Append an encountered constant to the output expression.
          * @details This method gets called whenever the parser hits an
          *          isolated NUMBER token for which store type has been
-         *          specified in the format `(type) CONSTANT` (e.g. 
-         *          `(float32) 1.52`).
+         *          specified in the input expression with the syntax
+         *          `(type) CONSTANT` (e.g. `(float32) 1.52`).
          *          The constant is immediately added to the #stackMachineExpr
          *          in the syntax required by the expression evaluator
          *          engine (that is, as `READ STRING` for STRING
