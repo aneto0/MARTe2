@@ -276,6 +276,10 @@ void MathExpressionParser::PopOperator() {
     // Write in the stack machine expression
     stackMachineExpr += OperatorFormatting(currentOperator->Buffer());
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::PopOperatorAlternate() {
@@ -300,6 +304,10 @@ void MathExpressionParser::PopOperatorAlternate() {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
             "PopOperatorAlternat(): operator %s has no alternative form.", currentOperator->Buffer()
             );
+    }
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
     }
     
 }
@@ -331,6 +339,10 @@ void MathExpressionParser::PopTypecast() {
     stackMachineExpr += "CAST ";
     stackMachineExpr += currentOperator->Buffer();
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::AddOperand() {
@@ -366,6 +378,10 @@ void MathExpressionParser::AddOperandTypecast() {
     stackMachineExpr += " ";
     stackMachineExpr += currentToken->GetData();
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::StoreAssignment() {
