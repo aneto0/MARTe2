@@ -304,7 +304,7 @@ protected:
      *          ~~~~~~~~~
      * 
      */
-    const char8* OperatorFormatting(const char8* operatorIn) const;
+    const char8* OperatorFormatting(char8* const operatorIn) const;
     
     /**
      * @name Table navigation methods
