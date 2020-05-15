@@ -369,10 +369,7 @@ protected:
     /**
      * @brief Holds the mathematical expression in stack machine form while parsing.
      */
-    StreamString              stackMachineExpr;
-    
-    StreamString* currentOperator;
-    
+    StreamString              stackMachineExpr;    
 private:
     
     /**

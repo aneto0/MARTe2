@@ -145,7 +145,6 @@ MathExpressionParser::MathExpressionParser(StreamI &stream,
     Action [ 8 ] = &MathExpressionParser::AddOperandTypecast;
     Action [ 9 ] = &MathExpressionParser::AddOperand;
     
-    currentOperator = static_cast<StreamString*>(NULL);
 }
 
 /*lint -e{1551} Justification: Memory has to be freed in the destructor.
@@ -178,9 +177,6 @@ MathExpressionParser::~MathExpressionParser() {
         }
     }
     
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
 }
 
 const char8* MathExpressionParser::OperatorFormatting(const char8* const operatorIn) const {
@@ -259,9 +255,8 @@ void MathExpressionParser::PopAssignment() {
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushOperator() {
     
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
+    
     currentOperator = new StreamString(currentToken->GetData());
     
     if (!operatorStack.Add(currentOperator)) {
@@ -269,14 +264,16 @@ void MathExpressionParser::PushOperator() {
             "StaticList<currentOperator *>: Failed Add() of the operator to the operator stack."
             );
     }
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::PopOperator() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
     
     if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -287,14 +284,16 @@ void MathExpressionParser::PopOperator() {
     // Write in the stack machine expression
     stackMachineExpr += OperatorFormatting(currentOperator->Buffer());
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::PopOperatorAlternate() {
     
     uint32 top = operatorStack.GetSize() - 1u;
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
     
     if (!operatorStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -315,14 +314,17 @@ void MathExpressionParser::PopOperatorAlternate() {
             );
     }
     
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
+    
 }
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void MathExpressionParser::PushTypecast() {
     
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
+    
     currentOperator = new StreamString(currentToken->GetData());
     
     if (!typecastStack.Add(currentOperator)) {
@@ -330,14 +332,16 @@ void MathExpressionParser::PushTypecast() {
             "StaticList<currentOperator *>: Failed Add() of the typecast type to the typecast stack."
             );
     }
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::PopTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
     
     if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -349,6 +353,10 @@ void MathExpressionParser::PopTypecast() {
     stackMachineExpr += "CAST ";
     stackMachineExpr += currentOperator->Buffer();
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::AddOperand() {
@@ -370,9 +378,7 @@ void MathExpressionParser::AddOperand() {
 void MathExpressionParser::AddOperandTypecast() {
     
     uint32 top = typecastStack.GetSize() - 1u;
-    if (currentOperator != NULL) {
-        delete currentOperator;
-    }
+    StreamString* currentOperator;
     
     if (!typecastStack.Extract(top, currentOperator)) {
         REPORT_ERROR_STATIC(ErrorManagement::FatalError,
@@ -386,6 +392,10 @@ void MathExpressionParser::AddOperandTypecast() {
     stackMachineExpr += " ";
     stackMachineExpr += currentToken->GetData();
     stackMachineExpr += "\n";
+    
+    if (currentOperator != NULL) {
+        delete currentOperator;
+    }
 }
 
 void MathExpressionParser::StoreAssignment() {
