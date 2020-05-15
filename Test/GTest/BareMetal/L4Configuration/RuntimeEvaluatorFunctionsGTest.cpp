@@ -166,6 +166,20 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastFunctionTy
     ASSERT_TRUE(test.TestFunctionTypes("CAST", 1, 1));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestCastExecution_Successful) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 1.57079\n"
+            "CAST uint8\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, UnsignedInteger8Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSinFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
