@@ -77,9 +77,9 @@ public:
     /**
      * @brief Tests function execution.
      */
-    template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult);
-    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult);
-    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]);
+    template <typename T> inline bool TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
+    template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
 
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType);
     template <typename T> void SetInputs(RuntimeEvaluator &context, T inputs[]);
@@ -113,66 +113,54 @@ void RuntimeEvaluatorFunctionsTest::SetInputs(RuntimeEvaluator &context, T input
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult) {
+inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
     ErrorManagement::ErrorType ret;
-    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
     VariableInformation *var;
     T *resultPointer;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    if (ret) {
-        ret = context.BrowseOutputVariable(0,var);
-    }
+    context.BrowseOutputVariable(0,var);
+    resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
 
-    if (ret) {
-        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
-        ret = (*resultPointer == expectedResult) ? ret : fatalError;
-    }
-
-    return ret;
+    return (ret == expectedReturn) && (*resultPointer == expectedResult);
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult) {
+inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, T expectedResult, ErrorManagement::ErrorType expectedReturn) {
 
     ErrorManagement::ErrorType ret;
-    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
     VariableInformation *var;
     T *resultPointer;
+    T epsilon;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    if (ret) {
-        ret = context.BrowseOutputVariable(0,var);
-    }
+    context.BrowseOutputVariable(0,var);
+    resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
+    epsilon = fabs(*resultPointer - expectedResult);
 
-    if (ret) {
-        resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
-        ret = (fabs(*resultPointer - expectedResult) < MAX_EPSILON) ? ret : fatalError;
-    }
-
-    return ret;
+    return (ret == expectedReturn) && (epsilon < MAX_EPSILON);
 }
 
 template <typename T>
-inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[]) {
+inline bool RuntimeEvaluatorFunctionsTest::TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn) {
 
     ErrorManagement::ErrorType ret;
-    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
+    bool resultOk = true;
     VariableInformation *var;
     T *resultPointer;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    for (uint8 i = 0; (ret) && (i < numberOfResults); ++i) {
-        ret = context.BrowseOutputVariable(i,var);
+    for (uint8 i = 0; (resultOk) && (i < numberOfResults); ++i) {
+        context.BrowseOutputVariable(i,var);
         resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
-        ret = (fabs(*resultPointer - expectedResults[i]) < MAX_EPSILON) ? ret : fatalError;
+        resultOk &= (fabs(*resultPointer - expectedResults[i]) < MAX_EPSILON);
     }
 
-    return ret;
+    return (ret == expectedReturn) && (resultOk);
 }
 
 #endif /* RUNTIMEEVALUATORFUNCTIONSTEST_H_ */
