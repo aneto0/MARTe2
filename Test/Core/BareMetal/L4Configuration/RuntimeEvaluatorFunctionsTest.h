@@ -82,6 +82,7 @@ public:
     template <typename T> inline bool TestFloatFunctionExecution(RuntimeEvaluator &context, uint8 numberOfResults, T expectedResults[], ErrorManagement::ErrorType expectedReturn=ErrorManagement::NoError);
 
     bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor inputType, TypeDescriptor outputType);
+    bool PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType);
     template <typename T> void SetInputs(RuntimeEvaluator &context, T inputs[]);
 
 private:

@@ -270,6 +270,32 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
     return ret;
 }
 
+bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, TypeDescriptor input1Type, TypeDescriptor input2Type, TypeDescriptor outputType) {
+
+    ErrorManagement::ErrorType ret;
+    VariableInformation *var;
+
+    ret = context.ExtractVariables();
+
+    if ((ret) && (context.BrowseInputVariable(0,var))) {
+        var->type = input1Type;
+    }
+
+    if ((ret) && (context.BrowseInputVariable(1,var))) {
+        var->type = input2Type;
+    }
+
+    for (uint32 i = 0; (ret) && (context.BrowseOutputVariable(i,var)); ++i) {
+        var->type = outputType;
+    }
+
+    if (ret) {
+        ret = context.Compile();
+    }
+
+    return ret;
+}
+
 void MockFunction(RuntimeEvaluator &evaluator) {
     ((void)0);
 }
