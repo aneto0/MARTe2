@@ -446,6 +446,54 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqExecution) {
     ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExecution_Successful) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "EQ\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
+
+    int64 inputsEq[] = {2147483647, 2147483647};
+
+    test.SetInputs(context, inputsEq);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 1));
+
+    int64 inputsNEq[] = {-2147483648, 2147483647};
+
+    test.SetInputs(context, inputsNEq);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestEqDiffTypesExecution_FailedOutOfRange) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "READ IN1\n"
+            "READ IN2\n"
+            "EQ\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, SignedInteger32Bit, UnsignedInteger32Bit, UnsignedInteger8Bit));
+
+    int64 inputsEq[] = {2147483647, 2147483650};
+
+    test.SetInputs(context, inputsEq);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
+
+    int64 inputsNEq[] = {-2147483648, 2147483650};
+
+    test.SetInputs(context, inputsNEq);
+    ASSERT_TRUE(test.TestIntFunctionExecution<uint8>(context, 0, ErrorManagement::OutOfRange));
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestNeqFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
