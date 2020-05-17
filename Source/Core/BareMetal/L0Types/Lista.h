@@ -1,8 +1,8 @@
 /**
- * @file XMLParser.cpp
- * @brief Source file for class XMLParser
- * @date 09/12/2015
- * @author Giuseppe Ferro
+ * @file List.h
+ * @brief Header file for class List
+ * @date May 14, 2020
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,47 +16,40 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class XMLParser (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
- */
+ * @details This header file contains the declaration of the class AnyType
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+*/
 
-#define DLL_API
+#ifndef LIST_H_
+#define LIST_H_
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
-#include "XMLParser.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+/*---------------------------------------------------------------------------*/
+/*                          Forward declarations                             */
+/*---------------------------------------------------------------------------*/
 
-XMLParser::XMLParser(StructuredDataI &databaseIn) :
-        StructuredDataParserI(databaseIn, XMLParserData::parserData)
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
-{
-	MapMethods();
-}
-
-XMLParser::~XMLParser() {
-
-}
-
-ErrorManagement::ErrorType XMLParser::Execute(const uint32 number,const Token *currentToken,DebugStream &debugStream) {
-	return (this->*Action[number])(currentToken,debugStream);
-}
+namespace MARTe{
 
 
-}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+} // MARTe
+
+#endif /* LIST_H_ */

@@ -1,5 +1,5 @@
 /**
- * @file StructuredDataParserI.cpp
+ * @file StructuredDataParser.cpp
  * @brief Source file for class ParserI
  * @date 09/12/2015
  * @author Giuseppe Ferrò
@@ -31,8 +31,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StructuredDataParserI.h"
+#include "StructuredDataParser.h"
 #include "AdvancedErrorManagement.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,23 +45,78 @@ namespace MARTe {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//namespace MARTe {
-
-StructuredDataParserI::StructuredDataParserI(StructuredDataI &databaseIn,const ParserData & constantsIn):
-		ParserI(constantsIn),
-		memory(1024*1024) {
-
-	parseStatus.Init();
-
-    database = &databaseIn;
+namespace StandardParserData{
+	extern const ParserData parserData;
+	extern void MapMethods(StructuredDataParser::ParserMethod *Action);
 }
 
-StructuredDataParserI::~StructuredDataParserI() {
+namespace XMLParserData{
+	extern const ParserData parserData;
+	extern void MapMethods(StructuredDataParser::ParserMethod *Action);
+}
+
+namespace JsonParserData{
+	extern const ParserData parserData;
+	extern void MapMethods(StructuredDataParser::ParserMethod *Action);
+}
+
+/**
+ *
+ */
+struct ParseStatus{
+
+    /**
+     * The type name.
+     */
+    TypeDescriptor 			td;
+
+    /**
+     * The StructuredData node or leaf name.
+     */
+    DynamicCString 			nodeName;
+
+    /**
+     * Status of a variable element parsing
+     */
+    enum {
+    	parseElFinished,
+		parseElStarted
+    }						parseElStatus;
+
+    void Init();
+
+} parseStatus;
+
+StructuredDataParser::StructuredDataParser(StructuredDataI & databaseIn,StructuredDataParserFormats syntax):
+//StructuredDataParser(StructuredDataI &databaseIn,const ParserData & constantsIn,StructuredDataParserMethod *ActionMapIn):
+		ParserI((syntax==XMLParser)?XMLParserData::parserData : (syntax==JsonParser)?JsonParserData::parserData : StandardParserData::parserData),
+		memory(1024*1024)
+		{
+	parseStatus.Init();
+    database = &databaseIn;
+
+    if (syntax == XMLParser){
+    	XMLParserData::MapMethods(&ActionMap[0]);
+    } else
+    if (syntax == JsonParser){
+    	JsonParserData::MapMethods(&ActionMap[0]);
+    } else {
+    	StandardParserData::MapMethods(&ActionMap[0]);
+    }
+
+}
+
+StructuredDataParser::~StructuredDataParser() {
     database=static_cast<StructuredDataI*>(NULL);
 }
 
+ErrorManagement::ErrorType StructuredDataParser::Execute(const uint32 number,const Token *currentToken,DebugStream &debugStream ) {
+    return (this->*ActionMap[number])(currentToken,debugStream);
 
-ErrorManagement::ErrorType StructuredDataParserI::GetTypeCast(const Token *currentToken,DebugStream &debugStream) {
+}
+
+
+ErrorManagement::ErrorType StructuredDataParser::GetTypeCast(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -72,7 +128,7 @@ ErrorManagement::ErrorType StructuredDataParserI::GetTypeCast(const Token *curre
 	return ret;
 }
 
-ErrorManagement::ErrorType StructuredDataParserI::BlockEnd(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType StructuredDataParser::BlockEnd(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -85,7 +141,7 @@ ErrorManagement::ErrorType StructuredDataParserI::BlockEnd(const Token *currentT
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::CreateNode(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::CreateNode(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -98,7 +154,7 @@ ErrorManagement::ErrorType  StructuredDataParserI::CreateNode(const Token *curre
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::AddLeaf(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::AddLeaf(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 	Reference ref;
 
@@ -140,7 +196,7 @@ ErrorManagement::ErrorType  StructuredDataParserI::AddLeaf(const Token *currentT
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::GetNodeName(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::GetNodeName(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -152,7 +208,7 @@ ErrorManagement::ErrorType  StructuredDataParserI::GetNodeName(const Token *curr
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::AddScalar(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::AddScalar(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -171,7 +227,7 @@ ErrorManagement::ErrorType  StructuredDataParserI::AddScalar(const Token *curren
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::EndVector(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::EndVector(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
 	PARSER_ERROR_REPORT(debugStream,ret,"currentToken = NULL [%d]", currentToken->GetLineNumber());
@@ -183,12 +239,12 @@ ErrorManagement::ErrorType  StructuredDataParserI::EndVector(const Token *curren
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::EndMatrix(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::EndMatrix(const Token *currentToken,DebugStream &debugStream) {
 	ErrorManagement::ErrorType ret;
 	return ret;
 }
 
-ErrorManagement::ErrorType  StructuredDataParserI::End(const Token *currentToken,DebugStream &debugStream) {
+ErrorManagement::ErrorType  StructuredDataParser::End(const Token *currentToken,DebugStream &debugStream) {
 
 	ErrorManagement::ErrorType ret;
 	ret.parametersError = (currentToken == NULL_PTR(Token *));
@@ -201,14 +257,14 @@ ErrorManagement::ErrorType  StructuredDataParserI::End(const Token *currentToken
 	return ret;
 }
 
-void StructuredDataParserI::ParseStatus::Init(){
+void ParseStatus::Init(){
 	nodeName().Truncate(0);
 	parseElStatus = ParseStatus::parseElFinished;
 	td = ConstCharString;
 }
 
 
-ErrorManagement::ErrorType StructuredDataParserI::Parse(
+ErrorManagement::ErrorType StructuredDataParser::Parse(
 		StreamI &			stream,
         BufferedStreamI * 	const err,
 		uint32 				debugLevel) {

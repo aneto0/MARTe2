@@ -50,33 +50,6 @@ namespace MARTe{
 
 class  ParserData{
 public:
-#if 0
-
-	/**
-    * List of separator characters.
-    */
-   CCString separators;
-
-   /**
-    * One line comment begin pattern.
-    */
-   CCString beginOneLineComment;
-
-   /**
-    * Multiple line comment begin pattern.
-    */
-   CCString beginMultipleLinesComment;
-
-   /**
-    * Multiple line comment end pattern.
-    */
-   CCString endMultipleLinesComment;
-
-   /**
-    * Assignment operator
-    */
-   CCString terminals;
-#endif
 
    /*
    * The index of initial expected token identifier.
@@ -180,6 +153,7 @@ public:
     */
    Vector<CCString> Production_name;
 
+
    /**
     * defines the lexic and contains the id binding to the SLK grammar
     */
@@ -189,13 +163,6 @@ public:
     *
     */
    ParserData(
-#if 0
-		   	    const char *        separatorsIn,
-			    const char *        beginOneLineCommentIn,
-			    const char *        beginMultipleLinesCommentIn,
-			    const char *        endMultipleLinesCommentIn,
-			    const char *        terminalsIn,
-#endif
 		   	    uint32              startSymbolIn,
 		   	   	uint32              endOfFileIn,
 				uint32              startStateIn,
@@ -222,13 +189,6 @@ public:
 				const ZeroTerminatedArray<const RegularExpression::PatternInformation> ruleSetIn
 
    ):
-#if 0
-	   separators                (separatorsIn               ),
-	   beginOneLineComment       (beginOneLineCommentIn      ),
-	   beginMultipleLinesComment (beginMultipleLinesCommentIn),
-	   endMultipleLinesComment   (endMultipleLinesCommentIn  ),
-	   terminals                 (terminalsIn                ),
-#endif
 	   StartSymbol               (startSymbolIn              ),
 	   EndOfFile                 (endOfFileIn                ),
 	   StartState                (startStateIn               ),
@@ -253,6 +213,7 @@ public:
    {
    }
 };
+
 
 
 /*---------------------------------------------------------------------------*/

@@ -34,7 +34,6 @@
 
 #include "StructuredDataI.h"
 #include "DynamicCString.h"
-#include "ParserData.h"
 #include "RegularExpression.h"
 #include "StaticStack.h"
 #include "List.h"
@@ -68,6 +67,11 @@ if (!ret){                                                                 \
     }                                                                      \
     REPORT_ERROR(ret,s.Buffer());                                          \
 }
+
+/**
+ *  a structure containing all settings and tables for a parser
+ */
+class ParserData;
 
 /**
  * @brief Abstract parser which allows to transform a stream of characters

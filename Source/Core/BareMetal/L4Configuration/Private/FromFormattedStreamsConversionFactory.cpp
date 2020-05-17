@@ -23,9 +23,7 @@
 
 #include "TypeConversionFactoryI.h"
 #include "StructuredDataI.h"
-#include "StandardParser.h"
-#include "XMLParser.h"
-#include "JsonParser.h"
+#include "StructuredDataParser.h"
 #include "StreamMemoryReference.h"
 #include "CompositeErrorManagement.h"
 #include "TypeConversionManager.h"
@@ -88,13 +86,13 @@ public:
 
 			ParserI *parser = NULL_PTR(ParserI *);
 			if (format == "XML"){
-			    parser = new XMLParser(*destSI);
+			    parser = new StructuredDataParser(*destSI,StructuredDataParser::XMLParser);
 			} else
 			if (format == "JSON"){
-			    parser = new JsonParser(*destSI);
+			    parser = new StructuredDataParser(*destSI,StructuredDataParser::JsonParser);
 			} else
 			if ((format == "CDB") || (format.GetSize()==0)){
-				parser = new StandardParser (*destSI);
+				parser = new StructuredDataParser (*destSI,StructuredDataParser::StandardParser);
 			} else {
 				ret.unsupportedFeature = true;
 				COMPOSITE_REPORT_ERROR(ret,"unsupported stream structure format ",format);

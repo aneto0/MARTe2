@@ -22,7 +22,7 @@
 */
 
 #include "ParserData.h"
-#include "XMLParser.h"
+#include "StructuredDataParser.h"
 
 namespace MARTe{
 
@@ -210,30 +210,7 @@ static const RegularExpression::PatternInformation rules[]={
 		RegularExpression::emptyPattern
 };
 
-#if 0
-static const char * separators                = "\n\r\t, ";
 
-/**
- * One line comment begin pattern.
- */
-static const char * beginOneLineComment       = "" ;
-
-/**
- * Multiple line comment begin pattern.
- */
-static const char * beginMultipleLinesComment = "<!--";
-
-/**
- * Multiple line comment end pattern.
- */
-static const char * endMultipleLinesComment   = "-->";
-
-/**
- * Assignment operator
- */
-static const char * terminals                 = "<>{}/()";
-
-#endif
 
 /*************************************************************************************************/
 
@@ -251,13 +228,7 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
-#if 0
-		separators,
-		beginOneLineComment,
-		beginMultipleLinesComment,
-		endMultipleLinesComment,
-		terminals,
-#endif
+
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -285,13 +256,12 @@ extern const ParserData parserData(
 );
 
 
-} //XMLParserData
 
-#define SlkAction XMLParser
+#define SlkAction StructuredDataParser
 
-void XMLParser::MapMethods(){
+void MapMethods(StructuredDataParser::ParserMethod *Action){
 
-	Action[0] = static_cast<ErrorManagement::ErrorType  (XMLParser::*)(const Token *,DebugStream &)>(NULL);
+	Action[0] = static_cast<StructuredDataParser::ParserMethod>(0);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkTables.cpp
@@ -314,6 +284,7 @@ void XMLParser::MapMethods(){
 
 }
 
+} //XMLParserData
 
 } //MARTe
 

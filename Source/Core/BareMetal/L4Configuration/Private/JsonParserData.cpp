@@ -21,10 +21,9 @@
  * definitions for inline methods which need to be visible to the compiler.
 */
 
-
-
-#include "JsonParser.h"
 #include "ParserData.h"
+#include "StructuredDataParser.h"
+
 
 namespace MARTe{
 
@@ -190,32 +189,6 @@ static const RegularExpression::PatternInformation rules[]={
 //		{emptyString												 ,emptyString	     , 0					,false}
 };
 
-#if 0
-
-static const char * separators                = "\n\r\t, ";
-
-/**
- * One line comment begin pattern.
- */
-static const char * beginOneLineComment       = "" ;
-
-/**
- * Multiple line comment begin pattern.
- */
-static const char * beginMultipleLinesComment = "";
-
-/**
- * Multiple line comment end pattern.
- */
-static const char * endMultipleLinesComment   = "";
-
-/**
- * Assignment operator
- */
-static const char * terminals                 = ":{}[]";
-
-
-#endif
 
 /*************************************************************************************************
 
@@ -228,13 +201,6 @@ use the name of the final class instead of SlkAction
  * exported for use in the parser
  */
 extern const ParserData parserData(
-#if 0
-		separators,
-		beginOneLineComment,
-		beginMultipleLinesComment,
-		endMultipleLinesComment,
-		terminals,
-#endif
 		START_SYMBOL,
 		END_OF_SLK_INPUT_,
 		START_STATE,
@@ -261,15 +227,12 @@ extern const ParserData parserData(
 		ZeroTerminatedArray<const RegularExpression::PatternInformation>(&rules[0])
 );
 
+#define SlkAction StructuredDataParser
 
+void MapMethods(StructuredDataParser::ParserMethod *Action){
 
-} //JsonParserData
+	Action[0] = static_cast<StructuredDataParser::ParserMethod>(0);
 
-#define SlkAction JsonParser
-
-void JsonParser::MapMethods(){
-
-	Action[0] = static_cast<ErrorManagement::ErrorType  (JsonParser::*)(const Token *,DebugStream &)>(NULL);
 /*************************************************************************************************
 
 	PASTE HERE FROM SlkString.cpp
@@ -291,6 +254,7 @@ void JsonParser::MapMethods(){
 
 }
 
+} //JsonParserData
 
 } //MARTe
 

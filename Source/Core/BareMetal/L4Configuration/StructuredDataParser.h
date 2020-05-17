@@ -44,47 +44,107 @@
 
 namespace MARTe {
 
+
 /**
- * @brief Abstract parser which allows to transform a stream of characters
+ * @brief Multi-format parser which allows to transform a stream of characters
  * into a structured data store, applying lexical rules set at instance level
  * and parsing rules implemented into subclasses.
  *
- * @details This class is a partial abstract class providing the generic
- * functionality of a parser while expecting subclasses to provide the specific
- * rules for each concrete language (each subclass must implement the pure
- * abstract functions).
+ * when syntax=JsonParser All the instances of the parser use the lexical elements defined
+ * in MARTe::JsonGrammar and apply the parsing rules of the following
+ * grammar:
  *
- * Each instance of the parser is bound when it is constructed, with all the
- * objects involved in the parsing analysis, as follows:
- * - An input stream of characters that contains the serialization of a
- * hierarchy of objects, encoded into a given language (e.g. XML, JSON, etc).
- * - An output structured data store where the parser will build the in-
- * memory objects defined into the input stream of characters.
- * - An output stream of characters where the parser will write all the errors
- * found on the input stream of characters.
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
+ * EXPRESSION:
+ *   STRING --> GetNodeName()   \: VARIABLE __AddLeaf
+ *   STRING __CreateNode    \: \\{ { EXPRESSION }+  \\} __EndBlock
  *
- * At construction time, too, the parser is initialized with the lexical
- * elements that the language used in the input stream of characters needs,
- * while the grammar of that language is expected to be implemented in
- * subclasses.
+ * VARIABLE:
+ *   SCALAR
+ *   VECTOR
+ *   MATRIX
  *
- * After being properly created, each instance is ready to parse the input
- * stream of characters, whenever the user calls the method Parse().
+ * SCALAR:
+ *   TOKEN __AddScalar
  *
- * Notes about the input stream of characters:
- * - All the elements of a vector or matrix must be of the same token type
- * (NUMBER or STRING).
- * - Variables cannot be empty (i.e "scalar = " or vector = {}" or
- * "matrix = {{}}").
- * - If the type specified in the TYPE CAST expression is invalid, the value
- * will be saved in the database as a C-string (default), otherwise the token
- * will be converted to the specified type and then saved in the database.
- * - The error messages printed on the \a err stream are in the format
- * "error description [line number]".
+ * VECTOR
+ *   \\[ SCALAR ... \\] __EndVector
+ *
+ * MATRIX:
+ *   \\[ VECTOR ... \\] __EndMatrix
+ *
+ * TOKEN:
+ *   STRING
+ *   NUMBER
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * when syntax=XMLParser  All the instances of the parser use the lexical elements defined
+ * in MARTe::XMLGrammar and apply the parsing rules of the following
+ * grammar:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
+ * EXPRESSION:
+ *   <STRING __GetNodeName > VARIABLE </STRING>  __AddLeaf
+ *   <STRING __GetNodeName > ( STRING __GetTypeCast ) VARIABLE </STRING>  __AddLeaf
+ *   <STRING __CreateNode  > { EXPRESSION }+ </STRING>  __EndBlock
+ *
+ * VARIABLE:
+ *   SCALAR
+ *   VECTOR
+ *   MATRIX
+ *
+ * SCALAR:
+ *   TOKEN __AddScalar
+ *
+ * VECTOR:
+ *   \\{ { SCALAR }+ \\} __EndVector
+ *
+ * MATRIX:
+ *   \\{ { VECTOR }+ \\} __EndMatrix
+ *
+ * TOKEN:
+ *   STRING
+ *   NUMBER
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * when syntax=StandardParser  All the instances of the parser use the lexical elements defined
+ * in MARTe::StandardGrammar and apply the parsing rules of the following
+ * grammar:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
+ * EXPRESSION:
+ *   STRING __GetNodeName   = VARIABLE __AddLeaf
+ *   STRING __GetNodeName   = ( STRING __GetTypeCast ) VARIABLE __AddLeaf
+ *   STRING __CreateNode    = \\{ { EXPRESSION }+ \\} __EndBlock
+ *
+ * VARIABLE:
+ *   SCALAR
+ *   VECTOR
+ *   MATRIX
+ *
+ * SCALAR:
+ *   TOKEN __AddScalar
+ *
+ * VECTOR:
+ *   { SCALAR }+ __EndVector
+ *
+ * MATRIX:
+ *   { VECTOR }+ __EndMatrix
+ *
+ * TOKEN:
+ *   STRING
+ *   NUMBER
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Note: This grammar is written in the SLK language and refers to functions
+ * declared in MARTe::ParserI.
  */
-class DLL_API StructuredDataParserI:public ParserI {
+class DLL_API StructuredDataParser:public ParserI {
 
 public:
+
+	/**
+	 *
+	 */
+	enum StructuredDataParserFormats{StandardParser,XMLParser,JsonParser} ;
 
     /**
      * @brief Constructor which initializes the instance with all the items
@@ -97,12 +157,12 @@ public:
      * @post
      *   GetGrammar() == grammarIn
      */
-    StructuredDataParserI(StructuredDataI &databaseIn,const ParserData & constantsIn);
+    StructuredDataParser(StructuredDataI & databaseIn, StructuredDataParserFormats syntax= StandardParser);
 
     /**
      * @brief Destructor.
      */
-    virtual ~StructuredDataParserI();
+    virtual ~StructuredDataParser();
 
     /**
      * @brief Parses the stream in input and builds the configuration database
@@ -116,13 +176,10 @@ public:
             BufferedStreamI * 	const err,
 			uint32 				debugLevel);
 
-    /**
-     * @brief Retrieves the grammar used by this parser.
-     * @return the grammar used by this parser.
-     */
-    //GrammarInfo GetGrammarInfo() const;
 
-protected:
+    typedef ErrorManagement::ErrorType  (StructuredDataParser::*ParserMethod)(const ParserI::Token *,ParserI::DebugStream &);
+
+public:
 
 // Callbacks from SLK engine
     /**
@@ -173,37 +230,6 @@ protected:
 
 
 private:
-
-    /**
- *
- */
-    struct ParseStatus{
-
-        /**
-         * The type name.
-         */
-        TypeDescriptor 			td;
-
-        /**
-         * The StructuredData node or leaf name.
-         */
-        DynamicCString 			nodeName;
-
-        /**
-         * Status of a variable element parsing
-         */
-        enum {
-        	parseElFinished,
-			parseElStarted
-        }						parseElStatus;
-
-        void Init();
-
-    } parseStatus;
-
-// PARSING STATUS
-
-// PARSER COMPONENTS
     /**
      * The StructuredData to be built
      */
@@ -213,6 +239,16 @@ private:
      * The object used to store the read element and create the AnyType leaf.
      */
     ProgressiveTypeCreator 	memory;
+
+    /**
+     * @see ParserI::Execute(*)
+     */
+    virtual ErrorManagement::ErrorType  Execute(const uint32 number,const Token *currentToken,DebugStream &);
+
+    /**
+     * The array of functions needed by the parser.
+     */
+    ParserMethod ActionMap[10];
 
 };
 

@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ParserI.h"
+#include "Private/ParserData.h"
 #include "CompositeErrorManagement.h"
 #include "ProgressiveTypeCreator.h"
 #include "StreamString.h"

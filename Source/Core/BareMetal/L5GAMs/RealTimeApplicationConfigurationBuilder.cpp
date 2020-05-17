@@ -31,13 +31,12 @@
 /*---------------------------------------------------------------------------*/
 #include "AdvancedErrorManagement.h"
 #include "GAM.h"
-#include <Introspection-old.h>
 #include "RealTimeApplicationConfigurationBuilder.h"
 #include "RealTimeState.h"
 #include "RealTimeThread.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterReferencesTemplate.h"
-#include "StandardParser.h"
+#include "StructuredDataParser.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
