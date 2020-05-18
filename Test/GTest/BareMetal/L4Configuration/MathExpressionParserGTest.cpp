@@ -230,7 +230,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Constant
     
     const char8* expression     = "ret = A + 0.99;";
     const char8* expectedOutput = "READ A\n"
-                                  "CONST 0.99\n"
+                                  "CONST float64 0.99\n"
                                   "ADD\n"
                                   "WRITE ret\n";
             
@@ -492,7 +492,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Complete
     MathExpressionParserTest parserTest;
     
     const char8* expression     = "ret = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
-    const char8* expectedOutput = "CONST 5\n"
+    const char8* expectedOutput = "CONST float64 5\n"
                                   "READ B\n"
                                   "READ C\n"
                                   "CAST float\n"
@@ -579,7 +579,7 @@ TEST(BareMetal_L4Configuration_MathExpressionParserGTest,TestExpression_Multiple
     const char8* expression     = "Z = (float)12; X = 5 + B*(float)C*!(X - Y) + sin(X + Y) + Z;";
     const char8* expectedOutput = "CONST float 12\n"
                                   "WRITE Z\n"
-                                  "CONST 5\n"
+                                  "CONST float64 5\n"
                                   "READ B\n"
                                   "READ C\n"
                                   "CAST float\n"
