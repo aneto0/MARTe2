@@ -119,13 +119,22 @@ inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvalu
     ErrorManagement::ErrorType ret;
     VariableInformation *var;
     T *resultPointer;
+    bool ok = true;
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
+
+    if (expectedReturn == ErrorManagement::NoError) {
+        ok &= (ret.ErrorsCleared());
+    } else {
+        ok &= ret.Contains(expectedReturn);
+    }
 
     context.BrowseOutputVariable(0,var);
     resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
 
-    return (ret == expectedReturn) && (*resultPointer == expectedResult);
+    ok &= (*resultPointer == expectedResult);
+
+    return ok;
 }
 
 template <typename T>
