@@ -1267,7 +1267,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 7.5));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddNotSafeExecution) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestAddExecution) {
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
@@ -1444,7 +1444,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -80.48));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubNotSafeExecution) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSubExecution) {
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
@@ -1626,7 +1626,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulFloatExecut
     ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -25.8));
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulNotSafeExecution) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestMulExecution) {
     RuntimeEvaluatorFunctionsTest test;
 
     StreamString rpnCode=
@@ -1788,6 +1788,96 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFunctionTyp
     test.AddInputCombinationFunctions("uint32", "uint64",   "uint64");
 
     ASSERT_TRUE(test.TestFunctionTypes("DIV", 2, 1));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivFloatExecution) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST float64 48.26\n"
+            "CONST float64 -2\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, Float64Bit));
+    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, -24.13));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_Successful) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST int8 -84\n"
+            "CONST int32 -4\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 21));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDivExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST int8 -84\n"
+            "CONST int32 0\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_Successful) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST uint32 915\n"
+            "CONST int32 -3\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, -305));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_FailedOverflow) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST uint32 84\n"
+            "CONST int32 0\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSDivExecution_FailedSaturated) {
+    RuntimeEvaluatorFunctionsTest test;
+
+    StreamString rpnCode=
+            "CONST uint32 2147483648\n"
+            "CONST int32 -2\n"
+            "DIV\n"
+            "WRITE RES1\n";
+
+    RuntimeEvaluator context(rpnCode);
+
+    ASSERT_TRUE(test.PrepareContext(context, InvalidType, SignedInteger32Bit));
+    ASSERT_TRUE(test.TestIntFunctionExecution<int32>(context, 0, ErrorManagement::Overflow));
 }
 
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestTryConsumeSuccessful) {
