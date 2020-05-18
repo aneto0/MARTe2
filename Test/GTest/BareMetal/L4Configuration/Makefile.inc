@@ -30,7 +30,7 @@ OBJSX=  AnyObjectGTest.x \
 		IntrospectionStructureGTest.x \
 		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
-		PseudoCodeGTest.x \
+		RuntimeEvaluatorGTest.x \
 		StandardParserGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \

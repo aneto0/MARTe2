@@ -1,8 +1,8 @@
 /**
- * @file PseudoCodeTest.cpp
+ * @file RuntimeEvaluator.cpp
  * @brief Source file for class PseudoCode
  * @date 04/05/2015
- * @author Didac Magrinya
+ * @author RFX
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "PseudoCodeTest.h"
+#include "RuntimeEvaluatorTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,8 +39,8 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-//bool PseudoCodeTest::TestContextConstructor() {
-    //PseudoCode::Context context;
+//bool RuntimeEvaluatorTest::TestContextConstructor() {
+    //RuntimeEvaluatorTest::Context context;
 
     ///* Right after construction variablesMemoryPtr is NULL leading to a segmentation fault
     //uint32 variable;
@@ -65,7 +65,7 @@ using namespace MARTe;
     //return (context.startOfVariables == 0);
 //}
 
-bool PseudoCodeTest::TestIntegration() {
+bool RuntimeEvaluatorTest::TestIntegration() {
 
     CCString rpnCode=
             "READ A\n"
@@ -290,7 +290,7 @@ bool PseudoCodeTest::TestIntegration() {
     return ret;
 }
 
-bool PseudoCodeTest::TestError() {
+bool RuntimeEvaluatorTest::TestError() {
 
     CCString rpnCode=
             "READ A\n"
@@ -461,8 +461,134 @@ bool PseudoCodeTest::TestError() {
     return ret;
 }
 
+bool RuntimeEvaluatorTest::TestExtractVariables(CCString rpnCode) {
 
-bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
+    
+    StreamString RPNCodeStream(rpnCode);
+    
+    RuntimeEvaluator context(RPNCodeStream);
+
+    ErrorManagement::ErrorType ret;
+    ErrorManagement::ErrorType fatalError(ErrorManagement::FatalError);
+
+    
+    ret = context.ExtractVariables();
+
+    if (ret){
+        uint32 index = 0U;
+        VariableInformation *var;
+
+        //ASSIGN TYPE TO VARIABLES
+        while(context.BrowseInputVariable(index,var)) {
+            context.SetInputVariableType(index, Float32Bit);
+            index++;
+        }
+
+        index = 0;
+        while(context.BrowseOutputVariable(index,var)){
+            context.SetOutputVariableType(index, Float32Bit);
+            index++;
+        }
+    }
+    
+    if (ret){
+        //COMPILE
+        RPNCodeStream.Seek(0u);
+        ret = context.Compile();
+    }
+
+    //if (ret){
+        ////ASSIGN VALUES TO VARIABLES
+        //uint32 index = 0;
+        //VariableInformation *var;
+        
+        //while(context.BrowseInputVariable(index,var)){
+            
+            //float64 *x = (float64*)context.GetInputVariableMemory(index);
+            //*x = valueArray[index];
+            //index++;
+            
+        //}
+    //}
+    
+    //if (ret){
+        //uint32 index = 0U;
+        //VariableInformation *var;
+        
+        //printf ("--- Allocation ---\n");
+        ////AFTER VAR ALLOCATION
+        //while(context.BrowseInputVariable(index,var)){
+            //printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
+            //index++;
+        //}
+
+        //index = 0;
+        //while(context.BrowseOutputVariable(index,var)){
+            //printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
+            //index++;
+        //}
+    //}
+
+    //if (ret){
+        ////DECOMPILE
+        //StreamString RPNCodeRev;
+        //ret = context.DeCompile(RPNCodeRev, false);
+
+        //if ((ret) && (RPNCodeRev != rpnCode.GetList())){
+            //ret = fatalError;
+            //printf ("decompilation error");
+        //}
+    //}
+
+
+    //if (ret){
+        ////DEBUG MODE EXECUTION
+        ////StreamString debugStream, debugLine, expectedDebugLine;
+        //StreamString debugStream;
+        ////char8 terminator;
+        ////StreamString expectedDebugStream (expectedDebug);
+
+        //ret = context.Execute(RuntimeEvaluator::debugMode,&debugStream,0);
+        //debugStream.Seek(0u);
+        ////expectedDebugStream.Seek(0u);
+        
+        //printf ("debug stream:\n%s\n", debugStream.Buffer());
+        
+        ////while (ret && debugStream.GetToken(debugLine, "\n", terminator, "\n\r")){
+            ////expectedDebugStream.GetToken(expectedDebugLine, "\n", terminator, "\n\r");
+            ////if (debugLine != expectedDebugLine){
+                ////ret = fatalError;
+                ////printf ("debug error");
+            ////} else{
+                ////debugLine = "";
+                ////expectedDebugLine = "";
+            ////}
+        ////}
+    //}
+    
+    //if (ret){
+        //uint32 index = 0U;
+        //VariableInformation *var;
+        
+        //printf (rpnCode);
+        //printf ("--- Results ---\n");
+        ////EXECUTE() RESULTS
+        //while(context.BrowseInputVariable(index,var)){
+            //printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
+            //index++;
+        //}
+
+        //index = 0;
+        //while(context.BrowseOutputVariable(index,var)){
+            //printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
+            //index++;
+        //}
+    //}
+
+    return ret;
+}
+
+bool RuntimeEvaluatorTest::TestExpression(CCString rpnCode, float64 valueArray[]) {
 
     
     StreamString RPNCodeStream(rpnCode);
@@ -520,7 +646,7 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
             
             
             // yet another way (by var index, fastest way)
-            float *x = (float*)context.GetInputVariableMemory(index);
+            float64 *x = (float64*)context.GetInputVariableMemory(index);
             
             *x = valueArray[index];
             
@@ -535,13 +661,13 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         printf ("--- Allocation ---\n");
         //AFTER VAR ALLOCATION
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
@@ -591,13 +717,13 @@ bool PseudoCodeTest::TestExpression(CCString rpnCode, float valueArray[]) {
         printf ("--- Results ---\n");
         //EXECUTE() RESULTS
         while(context.BrowseInputVariable(index,var)){
-            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
+            printf ("input  var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
             index++;
         }
 
         index = 0;
         while(context.BrowseOutputVariable(index,var)){
-            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float*)context.GetInputVariableMemory(index)));
+            printf ("output var %2i %s = %f \n",index,var->name.Buffer(),*((float64*)context.GetInputVariableMemory(index)));
             index++;
         }
     }
