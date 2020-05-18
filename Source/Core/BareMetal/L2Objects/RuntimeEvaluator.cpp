@@ -37,6 +37,8 @@ const CCString readToken("READ");
 const CCString writeToken("WRITE");
 const CCString constToken("CONST");
 const CCString castToken("CAST");
+const CCString remoteWriteToken("RWRITE");
+const CCString remoteReadToken("RREAD");
 
 /**
  * allows searching for a variable with a given name
@@ -71,7 +73,6 @@ private:
     RuntimeEvaluatorInfo::DataMemoryAddress variableAddress;
 
 };
-
 
 VariableFinder::VariableFinder(CCString name){
     variable = NULL_PTR(RuntimeEvaluatorInfo::VariableInformation*);
@@ -133,23 +134,23 @@ ErrorManagement::ErrorType RuntimeEvaluator::FindVariableinDB(CCString name,Runt
 }
 
 ErrorManagement::ErrorType RuntimeEvaluator::AddVariable2DB(CCString name,List<RuntimeEvaluatorInfo::VariableInformation> &db,TypeDescriptor td,RuntimeEvaluatorInfo::DataMemoryAddress location){
-    ErrorManagement::ErrorType ret;
-    RuntimeEvaluatorInfo::VariableInformation *variableInfo;
+    ErrorManagement::ErrorType 					ret;
+    RuntimeEvaluatorInfo::VariableInformation *	variableInfo;
+
     ret = FindVariableinDB(name,variableInfo,db);
 
     // if it is already there we do not need to add
     if (ret.unsupportedFeature){
         RuntimeEvaluatorInfo::VariableInformation variableInfo;
-        variableInfo.name = name;
-        variableInfo.type = td;
-        variableInfo.location = location;
-//printf("Add %s @ %i  --> %i\n",name.GetList(),location,variableInfo.location);
+        variableInfo.name 		= name;
+        variableInfo.type 		= td;
+        variableInfo.location 	= location;
         ret = db.Insert(variableInfo );
     } else {
 
         // it would be an error if this is an output variable
         // as we do not allow to override an output
-        ret.invalidOperation = true;
+        ret.invalidOperation 	= true;
     }
 
     return ret;
@@ -305,7 +306,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
         // skip constants are already allocated
         if (ret && (var->location == MAXDataMemoryAddress)){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            if (var->externalLocation == NULL){
+                // if NULL variable is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            } else {
+            	// enable Variable<T>[] method
+            	variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+                // save address now
+                Variable<void *>(nextVariableAddress)= var->externalLocation;
+            	// otherwise variable address is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            }
         }
         index++;
     }
@@ -317,7 +328,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
 
         if (ret){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            if (var->externalLocation == NULL){
+                // if NULL variable is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(var->type.StorageSize());
+            } else {
+            	// enable Variable<T>[] method
+            	variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
+                // save address now
+                Variable<void *>(nextVariableAddress) = var->externalLocation;
+            	// otherwise variable address is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            }
         }
         index++;
     }
@@ -405,6 +426,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     COMPOSITE_REPORT_ERROR(ret,"output variable ",parameter1, " not found");
                 }
 
+                if (ret){
+                    /// change from WRITE to RWRITE
+                    if (variableInformation->externalLocation != NULL){
+                    	command = remoteWriteToken;
+                    }
+                }
+
                 TypeDescriptor td = InvalidType(0);
                 if (ret){
                     td = variableInformation->type;
@@ -451,6 +479,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(CCString RPNCode){
                     if (!ret){
                         ret = FindInputVariable(parameter1,variableInformation);
                         COMPOSITE_REPORT_ERROR(ret,"input variable ",parameter1, " not found");
+                    }
+                }
+
+                if (ret){
+                    /// change from READ to RREAD
+                    if (variableInformation->externalLocation != NULL){
+                    	command = remoteReadToken;
                     }
                 }
 
@@ -719,9 +754,78 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
             }
         }
     }
-
     return ret;
 }
+
+
+#if 0
+class VariableGatherer: public GenericIterator<RuntimeEvaluatorInfo::VariableInformation>{
+public:
+    /**
+     *
+     */
+	VariableGatherer(RuntimeEvaluator &rte);
+    /**
+     *
+     */
+    virtual IteratorAction Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth=0);
+private:
+    /**
+     *
+     */
+    RuntimeEvaluator &rte;
+
+};
+
+VariableGatherer::VariableGatherer(RuntimeEvaluator &rteIn): rte(rteIn){}
+
+IteratorAction VariableGatherer::Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth){
+    IteratorAction ret;
+    if (data.externalLocation != NULL){
+    	memcpy(&rte.Variable<char8 >(data.location),data.externalLocation,data.type.StorageSize());
+    }
+    return ret;
+}
+
+class VariableScatterer: public GenericIterator<RuntimeEvaluatorInfo::VariableInformation>{
+public:
+    /**
+     *
+     */
+	VariableScatterer(RuntimeEvaluator &rte);
+    /**
+     *
+     */
+    virtual IteratorAction Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth=0);
+private:
+    /**
+     *
+     */
+    RuntimeEvaluator &rte;
+
+};
+
+VariableScatterer::VariableScatterer(RuntimeEvaluator &rteIn): rte(rteIn){}
+
+IteratorAction VariableScatterer::Do(RuntimeEvaluatorInfo::VariableInformation &data,uint32 depth){
+    IteratorAction ret;
+    if (data.externalLocation != NULL){
+    	memcpy(data.externalLocation,&rte.Variable<char8 >(data.location),data.type.StorageSize());
+    }
+    return ret;
+}
+
+void RuntimeEvaluator::GatherInputs(){
+	VariableGatherer vg(*this);
+	inputVariableInfo.Iterate(vg);
+}
+
+void RuntimeEvaluator::ScatterOutputs(){
+	VariableScatterer vs(*this);
+	outputVariableInfo.Iterate(vs);
+}
+
+#endif
 
 ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI *debugStream,RuntimeEvaluatorInfo::CodeMemoryAddress *step){
 
@@ -734,6 +838,8 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
 
     variablesMemoryPtr = static_cast<RuntimeEvaluatorInfo::DataMemoryElement *>(dataMemory.GetDataPointer());
     runtimeError = ErrorManagement::ErrorType(true);
+
+    //GatherInputs();
 
     switch (mode){
     case fastMode:{
@@ -827,6 +933,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::Execute(executionMode mode,StreamI 
         COMPOSITE_REPORT_ERROR(runtimeError,"stack pointer not back to origin : ",offset, " elements left");
     }
 
+    //if (runtimeError){
+    //    ScatterOutputs();
+    //}
     return runtimeError;
 }
 

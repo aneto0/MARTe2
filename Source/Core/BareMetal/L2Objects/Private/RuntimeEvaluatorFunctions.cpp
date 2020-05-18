@@ -25,7 +25,7 @@
 #include <Private/RuntimeEvaluatorFunctions.h>
 #include "SafeMath.h"
 #include "ErrorManagement.h"
-#include "../RuntimeEvaluator.h"
+#include "RuntimeEvaluator.h"
 
 
 namespace MARTe{
@@ -115,65 +115,7 @@ bool FindPCodeAndUpdateTypeStack(RuntimeEvaluatorInfo::CodeMemoryElement &code, 
 }
 
 
-/*********************************************************************************************************
- *********************************************************************************************************
- *
- *                      READ WRITE DUP operators
- *
- *********************************************************************************************************
- **********************************************************************************************************/
 
-
-template <typename T> void Read(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
-    index = context.GetPseudoCode();
-    context.Push(context.Variable<T>(index));
-}
-
-template <typename T> void Write(RuntimeEvaluator &context){
-    RuntimeEvaluatorInfo::CodeMemoryElement index;
-    index = context.GetPseudoCode();
-    context.Pop(context.Variable<T>(index));
-}
-
-template <typename T> void Duplication(RuntimeEvaluator &context){
-    T var;
-    context.Peek(var);
-    context.Push(var);
-}
-
-REGISTER_PCODE_FUNCTION(DUP,double,1,2,Duplication<float64>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(DUP,float,1,2,Duplication<float32>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint64,1,2,Duplication<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(DUP,int64,1,2,Duplication<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint32,1,2,Duplication<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(DUP,int32,1,2,Duplication<int32>,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint16,1,2,Duplication<uint16>,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(DUP,int16,1,2,Duplication<int16>,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint8,1,2,Duplication<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(DUP,int8,1,2,Duplication<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
-REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<float64>,Float64Bit)
-REGISTER_PCODE_FUNCTION(READ,float,0,1,Read<float32>,Float32Bit)
-REGISTER_PCODE_FUNCTION(READ,uint64,0,1,Read<uint64>,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(READ,int64,0,1,Read<int64>,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(READ,uint32,0,1,Read<uint32>,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(READ,int32,0,1,Read<int32>,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(READ,uint16,0,1,Read<uint16>,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(READ,int16,0,1,Read<int16>,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(READ,uint8,0,1,Read<uint8>,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(READ,int8,0,1,Read<int8>,SignedInteger8Bit)
-
-REGISTER_PCODE_FUNCTION(WRITE,double,1,0,Write<float64>,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,float,1,0,Write<float32> ,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(WRITE,uint64,1,0,Write<uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int64,1,0,Write<int64>   ,SignedInteger64Bit  ,SignedInteger64Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint32,1,0,Write<uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int32,1,0,Write<int32>   ,SignedInteger32Bit  ,SignedInteger32Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint16,1,0,Write<uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(WRITE,int16,1,0,Write<int16>   ,SignedInteger16Bit  ,SignedInteger16Bit  )
-REGISTER_PCODE_FUNCTION(WRITE,uint8,1,0,Write<uint8>   ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
-REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -202,7 +144,6 @@ template <typename T1,typename T2> void Casting(RuntimeEvaluator &context){
     context.Push(x2);
     if (!ret){
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
 }
 
@@ -326,10 +267,6 @@ REGISTER_LOGICAL_OPERATOR(AND, && ,And)
 REGISTER_LOGICAL_OPERATOR(OR, || ,Or)
 REGISTER_LOGICAL_OPERATOR(XOR, ^ ,xor)
 
-
-
-
-#if 1 // safe - upcasting  operators
 
 /*********************************************************************************************************
  *********************************************************************************************************
@@ -723,7 +660,6 @@ template <typename T1,typename T2,typename Ttest> void GreaterOrSame_3T(RuntimeE
         result = y2 >= y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -742,7 +678,6 @@ template <typename T1,typename T2,typename Ttest> void LowerOrSame_3T(RuntimeEva
         result = y2 <= y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -761,7 +696,6 @@ template <typename T1,typename T2,typename Ttest> void Same_3T(RuntimeEvaluator 
         result = y2 == y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Push(result);
 }
@@ -780,7 +714,6 @@ template <typename T1,typename T2,typename Ttest> void Different_3T(RuntimeEvalu
         result = y2 == y1;
     } else {
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",y1, "OR",x2,"!=",y2);
     }
     context.Push(result);
 }
@@ -826,6 +759,47 @@ REGISTER_2T_COMP_OPERATOR_BLOCK(NEQ,Different)
 /*********************************************************************************************************
  *********************************************************************************************************
  *
+ *                      READ WRITE  operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
+
+template <typename T> void Read(RuntimeEvaluator &context){
+    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Push(context.Variable<T>(index));
+}
+
+template <typename T> void Write(RuntimeEvaluator &context){
+    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    context.Pop(context.Variable<T>(index));
+}
+
+REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<float64>,Float64Bit)
+REGISTER_PCODE_FUNCTION(READ,float,0,1,Read<float32>,Float32Bit)
+REGISTER_PCODE_FUNCTION(READ,uint64,0,1,Read<uint64>,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(READ,int64,0,1,Read<int64>,SignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(READ,uint32,0,1,Read<uint32>,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(READ,int32,0,1,Read<int32>,SignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(READ,uint16,0,1,Read<uint16>,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(READ,int16,0,1,Read<int16>,SignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(READ,uint8,0,1,Read<uint8>,UnsignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(READ,int8,0,1,Read<int8>,SignedInteger8Bit)
+
+REGISTER_PCODE_FUNCTION(WRITE,double,1,0,Write<float64>,Float64Bit,Float64Bit)
+REGISTER_PCODE_FUNCTION(WRITE,float,1,0,Write<float32> ,Float32Bit,Float32Bit)
+REGISTER_PCODE_FUNCTION(WRITE,uint64,1,0,Write<uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int64,1,0,Write<int64>   ,SignedInteger64Bit  ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint32,1,0,Write<uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int32,1,0,Write<int32>   ,SignedInteger32Bit  ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint16,1,0,Write<uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(WRITE,int16,1,0,Write<int16>   ,SignedInteger16Bit  ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(WRITE,uint8,1,0,Write<uint8>   ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(WRITE,int8,1,0,Write<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
  *                      Type converting Write operators
  *
  *********************************************************************************************************
@@ -842,11 +816,9 @@ template <typename Tin,typename Tout> void Write_2T(RuntimeEvaluator &context){
     ret = SafeNumber2Number(x1,x2);
     if (!ret){
         context.runtimeError.outOfRange = true;
-//      COMPOSITE_REPORT_ERROR(context.runtimeError,x1,"!=",x2);
     }
     context.Variable<Tout>(index) = x2;
 }
-
 
 
 // register function with difference between input and outout type   fun(type1)==>typeOut
@@ -872,35 +844,85 @@ REGISTER_WRITECONV(WRITE,Write,int32 ,uint32)
 REGISTER_WRITECONV(WRITE,Write,int32 ,int8)
 REGISTER_WRITECONV(WRITE,Write,int32 ,int16)
 
+/*********************************************************************************************************
+ *********************************************************************************************************
+ *
+ *                      Remote Type converting Write operators
+ *
+ *********************************************************************************************************
+ **********************************************************************************************************/
+
+template <typename T> void RRead(RuntimeEvaluator &context){
+    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    T *x = context.Variable<T *>(index);
+    context.Push(*x);
+}
+template <typename T> void RWrite(RuntimeEvaluator &context){
+    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    T *x = context.Variable<T *>(index);
+    context.Pop(*x);
+}
+
+REGISTER_PCODE_FUNCTION(RREAD,double,0,1,RRead<float64>,Float64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,float ,0,1,RRead<float32>,Float32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint64,0,1,RRead<uint64>,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int64 ,0,1,RRead<int64>,SignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint32,0,1,RRead<uint32>,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int32 ,0,1,RRead<int32>,SignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint16,0,1,RRead<uint16>,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int16 ,0,1,RRead<int16>,SignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RREAD,uint8 ,0,1,RRead<uint8>,UnsignedInteger8Bit)
+REGISTER_PCODE_FUNCTION(RREAD,int8  ,0,1,RRead<int8>,SignedInteger8Bit)
+
+REGISTER_PCODE_FUNCTION(RWRITE,double,1,0,RWrite<float64>,Float64Bit,Float64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,float ,1,0,RWrite<float32> ,Float32Bit,Float32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,uint64,1,0,RWrite<uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int64 ,1,0,RWrite<int64>   ,SignedInteger64Bit  ,SignedInteger64Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint32,1,0,RWrite<uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int32 ,1,0,RWrite<int32>   ,SignedInteger32Bit  ,SignedInteger32Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint16,1,0,RWrite<uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit)
+REGISTER_PCODE_FUNCTION(RWRITE,int16 ,1,0,RWrite<int16>   ,SignedInteger16Bit  ,SignedInteger16Bit  )
+REGISTER_PCODE_FUNCTION(RWRITE,uint8 ,1,0,RWrite<uint8>   ,UnsignedInteger8Bit ,UnsignedInteger8Bit )
+REGISTER_PCODE_FUNCTION(RWRITE,int8  ,1,0,RWrite<int8>     ,SignedInteger8Bit   ,SignedInteger8Bit   )
+
+template <typename Tin,typename Tout> void RWrite_2T(RuntimeEvaluator &context){
+    RuntimeEvaluatorInfo::CodeMemoryElement index;
+    index = context.GetPseudoCode();
+    Tin x1;
+    context.Pop(x1);
+    Tout *x2 = context.Variable<Tout *>(index);
+    bool ret;
+    ret = SafeNumber2Number(x1,*x2);
+    if (!ret){
+        context.runtimeError.outOfRange = true;
+    }
+}
+
+// register function with difference between input and outout type   fun(type1)==>typeOut
+#define REGISTER_WRITECONV(name,fname,typeIn,typeOut)                                           \
+    static Function functionP ## fname ## typeIn ## typeOut = & fname ## _2T<typeIn,typeOut>;    \
+    REGISTER_PCODE_FUNCTION(name,typeIn ## typeOut,1,0,*functionP ## fname ## typeIn ## typeOut,Type2TypeDescriptor<typeIn>(),Type2TypeDescriptor<typeOut>())
+
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,uint64,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,uint64)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int8)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int16)
+REGISTER_WRITECONV(RWRITE,RWrite,int64 ,int32)
+REGISTER_WRITECONV(RWRITE,RWrite,uint32,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,uint32,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint8)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint16)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,uint32)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,int8)
+REGISTER_WRITECONV(RWRITE,RWrite,int32 ,int16)
 
 
 
-#else  // standard operators
-
-// TODO - implement without casting. promote all results between u/int16 and u/int8 to int32 as the compiler would do
-#define REGISTER_OPERATOR(name,oper,fname)                                          \
-        template <typename T> void function ## fname ## ication (RuntimeEvaluator &context){ \
-            T x1,x2,x3;                                                             \
-            context.Pop(x1);                                                        \
-            context.Pop(x2);                                                        \
-            x3 = static_cast<T>(x2 oper x1);                                        \
-            context.Push(x3);                                                       \
-        }                                                                           \
-        REGISTER_PCODE_FUNCTION(name,float64,2,1,function ## fname ## ication <float64>,Float64Bit,Float64Bit,Float64Bit)  \
-        REGISTER_PCODE_FUNCTION(name,float32,2,1,function ## fname ## ication <float32>,Float32Bit,Float32Bit,Float32Bit)  \
-        REGISTER_PCODE_FUNCTION(name,uint64 ,2,1,function ## fname ## ication <uint64> ,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit) \
-        REGISTER_PCODE_FUNCTION(name,int64  ,2,1,function ## fname ## ication <int64>  ,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint32 ,2,1,function ## fname ## ication <uint32> ,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit) \
-        REGISTER_PCODE_FUNCTION(name,int32  ,2,1,function ## fname ## ication <int32>  ,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint16 ,2,1,function ## fname ## ication <uint16> ,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit) \
-        REGISTER_PCODE_FUNCTION(name,int16  ,2,1,function ## fname ## ication <int16>  ,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)       \
-        REGISTER_PCODE_FUNCTION(name,uint8  ,2,1,function ## fname ## ication <uint8>  ,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)    \
-        REGISTER_PCODE_FUNCTION(name,int8   ,2,1,function ## fname ## ication <int8>   ,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
-
-REGISTER_OPERATOR(ADD, + ,Addition)
-REGISTER_OPERATOR(SUB, - ,Subtract)
-REGISTER_OPERATOR(MUL, * ,Multipl)
-REGISTER_OPERATOR(DIV, / ,Division)
-
-#endif
 } //MARTe

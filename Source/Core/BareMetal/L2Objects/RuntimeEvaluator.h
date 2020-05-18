@@ -39,7 +39,6 @@
 #include "CCString.h"
 #include "TypeDescriptor.h"
 #include "CompositeErrorManagement.h"
-
 #include "RuntimeEvaluatorInfo.h"
 
 /*---------------------------------------------------------------------------*/
@@ -209,7 +208,7 @@ public:
         /**
          * the errors produced by the functions and the checks during runtime
          */
-        ErrorManagement::ErrorType runtimeError;
+        ErrorManagement::ErrorType 							runtimeError;
         
         /**
          * variable and constants are allocated here
@@ -220,7 +219,7 @@ public:
          *                            INPUTS
          *                            OUTPUTS
          */
-        Vector<RuntimeEvaluatorInfo::DataMemoryElement> dataMemory;
+        Vector<RuntimeEvaluatorInfo::DataMemoryElement> 	dataMemory;
     //@}
     
 private:
@@ -228,17 +227,17 @@ private:
     /**
      * stack and variable are allocated here
      */
-    StaticList<RuntimeEvaluatorInfo::CodeMemoryElement,32>    codeMemory;
+    StaticList<RuntimeEvaluatorInfo::CodeMemoryElement,32>  codeMemory;
     
     /**
      * address of first variable (after constants) or how many MemoryElement are used for constants
      */
-    RuntimeEvaluatorInfo::DataMemoryAddress                   startOfVariables;
+    RuntimeEvaluatorInfo::DataMemoryAddress                 startOfVariables;
     
     /**
      * stack is allocated here
      */
-    Vector<RuntimeEvaluatorInfo::DataMemoryElement>           stack;
+    Vector<RuntimeEvaluatorInfo::DataMemoryElement>         stack;
 
     /**
      * Checks existence of name using FindInputVariable
@@ -293,6 +292,18 @@ private:
      */
     ErrorManagement::ErrorType FunctionRecordOutputs2String(RuntimeEvaluatorFunction &functionInformation,CStringTool &cst,bool lookBack=true,bool showData=true,bool showTypes=true);
 
+#if 0
+    /**
+     * goes through all the input variables and copies from externalLocation if not NULL
+     */
+    void GatherInputs();
+
+    /**
+     * goes through all the input variables and copies to externalLocation if not NULL
+     */
+    void ScatterOutputs();
+#endif
+
     /**
      * the input variable names
      */
@@ -306,17 +317,17 @@ private:
     /**
      * used by Push/Pop/Peek
      */
-    RuntimeEvaluatorInfo::DataMemoryElement *                 stackPtr;
+    RuntimeEvaluatorInfo::DataMemoryElement *                stackPtr;
 
     /**
      * used by Variable()
      */
-    RuntimeEvaluatorInfo::DataMemoryElement *                 variablesMemoryPtr;
+    RuntimeEvaluatorInfo::DataMemoryElement *                variablesMemoryPtr;
 
     /**
      * used by GetPseudoCode()
      */
-    const RuntimeEvaluatorInfo::CodeMemoryElement *           codeMemoryPtr;
+    const RuntimeEvaluatorInfo::CodeMemoryElement *          codeMemoryPtr;
     
 };
 

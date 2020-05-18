@@ -63,9 +63,9 @@ typedef uint16 CodeMemoryAddress;
 typedef uint32 DataMemoryElement;
 
 /**
- * type used to address 1 Data element
+ * type used to address 1 Data element MUST be the same as a CodeMemoryElement
  */
-typedef uint16 DataMemoryAddress;
+typedef CodeMemoryElement DataMemoryAddress;
 
 /**
  * used to mark an address to be invalid
@@ -77,26 +77,31 @@ typedef uint16 DataMemoryAddress;
  */
 struct VariableInformation {
 	/**
-	 * name of the variable
+	 * name of the variable.
 	 */
-	DynamicCString name;
+	DynamicCString 		name;
 
 	/**
 	 * type of the variable. Only simple and numeric types are possible
 	 */
-	TypeDescriptor type;
+	TypeDescriptor 		type;
 
 	/**
 	 * location of the variable in the data area.
 	 * if location is below the start of the variables then
 	 * it is a constant
 	 */
-	DataMemoryAddress location;
+	DataMemoryAddress 	location;
+
+	/**
+	 * where to read the variable from
+	 */
+	void *				externalLocation;
 
 	/**
 	 * set when during compilation to mark that this output variable has already been written
 	 */
-	bool variableUsed;
+	bool 				variableUsed;
 
 	/**
 	 * initialises data
@@ -115,19 +120,21 @@ struct VariableInformation {
 /*---------------------------------------------------------------------------*/
 
 inline VariableInformation::VariableInformation(){
-	type = VoidType;
-	location = 0;
-	variableUsed = false;
+	type 			= VoidType;
+	location 		= 0;
+	variableUsed 	= false;
+	externalLocation=NULL;
 }
 
 /**
  * copies
  */
 inline VariableInformation::VariableInformation(const VariableInformation &in){
-	name = in.name;
-	type = in.type;
-	location = in.location;
-	variableUsed = false;
+	name 			= in.name;
+	type 			= in.type;
+	location 		= in.location;
+	variableUsed 	= false;
+	externalLocation= in.externalLocation;
 }
 
 } // PseudoCode
