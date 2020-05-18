@@ -53,6 +53,32 @@ bool RuntimeEvaluatorFunctionsTest::TestDefaultConstructor() {
     return ok;
 }
 
+
+bool RuntimeEvaluatorFunctionsTest::TestFullConstructor() {
+
+    TypeDescriptor types[] = {UnsignedInteger8Bit, Float64Bit};
+    bool ok;
+    RuntimeEvaluator context("");
+
+    RuntimeEvaluatorFunctions functionUT("Test", 1, 1, types, MockFunction);
+
+    ok = (functionUT.GetName() == "Test");
+
+    Vector<TypeDescriptor> inputs = functionUT.GetInputTypes();
+    ok &= (inputs.GetNumberOfElements() == 1);
+    ok &= (inputs[0] == UnsignedInteger8Bit);
+
+    Vector<TypeDescriptor> outputs = functionUT.GetOutputTypes();
+    ok &= (outputs.GetNumberOfElements() == 1);
+    ok &= (outputs[0] == Float64Bit);
+
+    context.runtimeError = ErrorManagement::FatalError;
+    functionUT.ExecuteFunction(context);
+    ok &= (context.runtimeError.ErrorsCleared());
+
+    return ok;
+}
+
 bool RuntimeEvaluatorFunctionsTest::TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs) {
     bool ok = true;
 
@@ -297,5 +323,5 @@ bool RuntimeEvaluatorFunctionsTest::PrepareContext(RuntimeEvaluator &context, Ty
 }
 
 void MockFunction(RuntimeEvaluator &evaluator) {
-    ((void)0);
+    evaluator.runtimeError = false;
 }

@@ -45,6 +45,11 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDefaultConstru
     ASSERT_TRUE(test.TestDefaultConstructor());
 }
 
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestFullConstructor) {
+    RuntimeEvaluatorFunctionsTest test;
+    ASSERT_TRUE(test.TestFullConstructor());
+}
+
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 

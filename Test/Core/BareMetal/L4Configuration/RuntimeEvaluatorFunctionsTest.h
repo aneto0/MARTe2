@@ -57,6 +57,11 @@ public:
     bool TestDefaultConstructor();
 
     /**
+     * @brief Tests the full constructor.
+     */
+    bool TestFullConstructor();
+
+    /**
      * @brief Tests types of registered RuntimeEvaluatorFunctions.
      */
     bool TestFunctionTypes(CCString functionName, uint8 numberOfInputs, uint8 numberOfOutputs);
