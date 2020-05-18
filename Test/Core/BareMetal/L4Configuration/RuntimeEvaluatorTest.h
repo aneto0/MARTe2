@@ -1,8 +1,8 @@
 /**
- * @file PseudoCodeTest.h
+ * @file RuntimeEvaluator.h
  * @brief Header file for class PseudoCodeTest
  * @date 04/05/2020
- * @author Didac Magrinya
+ * @author RFX
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PSEUDOCODETEST_H_
-#define PSEUDOCODETEST_H_
+#ifndef RUNTIMEEVALUATORTEST_H_
+#define RUNTIMEEVALUATORTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,7 +41,7 @@ using namespace MARTe;
 /**
  * @brief Tests all the PseudoCode functions
  */
-class PseudoCodeTest {
+class RuntimeEvaluatorTest {
 public:
 
     /**
@@ -62,12 +62,17 @@ public:
     /**
      * @brief TODO
      */
-    bool TestExpression(CCString rpnCode, float valueArray[]);
+    bool TestExtractVariables(CCString rpnCode);
+    
+    /**
+     * @brief TODO
+     */
+    bool TestExpression(CCString rpnCode, float64 valueArray[]);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PSEUDOCODETEST_H_ */
+#endif /* RUNTIMEEVALUATORTEST_H_ */
 

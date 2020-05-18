@@ -1,8 +1,8 @@
 /**
- * @file PseudoCodeGTest.cpp
+ * @file RuntimeEvaluatorGTest.cpp
  * @brief Source file for class PseudoCodeGTest
  * @date 04/05/2020
- * @author Didac Magrinya
+ * @author RFX
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "gtest/gtest.h"
-#include "PseudoCodeTest.h"
+#include "RuntimeEvaluatorTest.h"
 #include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,21 +46,21 @@
     //ASSERT_TRUE(pseudoCodeTest.TestContextConstructor());
 //}
 
-TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestIntegration) {
-    PseudoCodeTest pseudoCodeTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestIntegration) {
+    RuntimeEvaluatorTest pseudoCodeTest;
     ASSERT_TRUE(pseudoCodeTest.TestIntegration());
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestError) {
-    PseudoCodeTest pseudoCodeTest;
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError) {
+    RuntimeEvaluatorTest pseudoCodeTest;
     ASSERT_TRUE(pseudoCodeTest.TestError());
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_1) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_1) {
     
-    PseudoCodeTest pseudoCodeTest;
+    RuntimeEvaluatorTest pseudoCodeTest;
     
-    float values[2] = { 10.0, 8.9 };
+    float64 values[2] = { 10.0, 8.9 };
     
     CCString rpnCode=
             "READ A\n"
@@ -72,11 +72,11 @@ TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_1) {
     ASSERT_TRUE(pseudoCodeTest.TestExpression(rpnCode, values));
 }
 
-TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_2) {
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestExpression_2) {
     
-    PseudoCodeTest pseudoCodeTest;
+    RuntimeEvaluatorTest pseudoCodeTest;
     
-    float values[2] = { 10.0, 9.9 };
+    float64 values[2] = { 10.0, 9.9 };
     
     CCString rpnCode=
             "READ A\n"
@@ -86,4 +86,16 @@ TEST(BareMetal_L4Configuration_PseudoCodeGTest,TestExpression_2) {
     ;
     
     ASSERT_TRUE(pseudoCodeTest.TestExpression(rpnCode, values));
+}
+
+TEST(BareMetal_L4Configuration_RuntimeEvaluatorGTest,TestError_WrongRPNCode_1) {
+    
+    RuntimeEvaluatorTest pseudoCodeTest;
+    
+    CCString rpnCode=
+            "CONST unsupportedtype 15\n"
+            "WRITE F\n"
+    ;
+    
+    ASSERT_FALSE(pseudoCodeTest.TestExtractVariables(rpnCode));
 }
