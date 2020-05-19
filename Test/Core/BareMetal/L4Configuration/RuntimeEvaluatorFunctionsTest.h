@@ -128,16 +128,15 @@ inline bool RuntimeEvaluatorFunctionsTest::TestIntFunctionExecution(RuntimeEvalu
 
     ret = context.Execute(RuntimeEvaluator::fastMode);
 
-    if (expectedReturn == ErrorManagement::NoError) {
-        ok &= (ret.ErrorsCleared());
-    } else {
-        ok &= ret.Contains(expectedReturn);
-    }
-
     context.BrowseOutputVariable(0,var);
     resultPointer = reinterpret_cast<T *>(&context.dataMemory[var->location]);
 
-    ok &= (*resultPointer == expectedResult);
+    if (expectedReturn == ErrorManagement::NoError) {
+        ok &= (ret.ErrorsCleared());
+        ok &= (*resultPointer == expectedResult);
+    } else {
+        ok &= ret.Contains(expectedReturn);
+    }
 
     return ok;
 }
