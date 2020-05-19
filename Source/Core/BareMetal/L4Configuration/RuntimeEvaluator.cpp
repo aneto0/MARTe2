@@ -402,6 +402,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
     DataMemoryAddress nextVariableAddress = startOfVariables;
     // check that all variables have a type and allocate variables + constants
 
+    {
     uint32 index = 0;
     VariableInformation *var;
     while(BrowseInputVariable(index,var) && ret){
@@ -417,11 +418,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 // if NULL variable is in DataMemory
                 nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
             } else {
-                // enable Variable<T>[] method
-                variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
-                // save address now
-                Variable<void *>(nextVariableAddress)= var->externalLocation;
-                // otherwise variable address is in DataMemory
+                // variable address is in DataMemory
                 nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
             }
         }
@@ -430,26 +427,29 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
 
     index = 0;
     while(BrowseOutputVariable(index,var) && ret){
-        ret.unsupportedFeature = !var->type.IsNumericType();
-        if (!ret){
-            REPORT_ERROR_STATIC(ret,"input variable %s has incompatible non-numeric type ", var->name.Buffer());
-        }
-
-        if (ret){
+        // local variable reserve 8 bytes for it
+        if ((var->type == VoidType) && (var->externalLocation == NULL)){
             var->location = nextVariableAddress;
-            if (var->externalLocation == NULL){
-                // if NULL variable is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
-            } else {
-                // enable Variable<T>[] method
-                variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
-                // save address now
-                Variable<void *>(nextVariableAddress) = var->externalLocation;
-                // otherwise variable address is in DataMemory
-                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            nextVariableAddress += ByteSizeToDataMemorySize(sizeof(double));
+        } else {
+            ret.unsupportedFeature = !var->type.IsNumericType();
+            if (!ret){
+                REPORT_ERROR_STATIC(ret, "output variable %s has incompatible non-numeric type", var->name.Buffer());
+            }
+
+            if (ret){
+                var->location = nextVariableAddress;
+                if (var->externalLocation == NULL){
+                    // if NULL variable is in DataMemory
+                    nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
+                } else {
+                    // variable address is in DataMemory
+                    nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+                }
             }
         }
         index++;
+    }
     }
 
     // already
@@ -539,18 +539,30 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 }
 
                 if (ret){
-                    /// change from WRITE to RWRITE
+                    // change from WRITE to RWRITE
                     if (variableInformation->externalLocation != NULL){
                         command = remoteWriteToken;
+                        // save address now
+                        Variable<void *>(variableInformation->location)= variableInformation->externalLocation;
                     }
                 }
 
                 TypeDescriptor td = InvalidType;
                 if (ret){
                     td = variableInformation->type;
-                    ret.unsupportedFeature = !td.IsNumericType();
-                    if (!ret){
-                        REPORT_ERROR_STATIC(ret,"variable %s does not have a numeric supported format", parameter1.Buffer());
+
+                    // found local variable - allocate and give type here
+                    if ((td == VoidType) && (variableInformation->externalLocation == NULL)){
+                        ret.fatalError = !typeStack.Peek(0,td);
+                        if (!ret){
+                            REPORT_ERROR_STATIC(ret,"expecting source type in stack");
+                        }
+                        variableInformation->type = td;
+                    } else {
+                        ret.unsupportedFeature = !td.IsNumericType();
+                        if (!ret){
+                            REPORT_ERROR_STATIC(ret,"variable %s does not have a numeric supported format", parameter1.Buffer());
+                        }
                     }
                 }
 
@@ -601,9 +613,11 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                 }
 
                 if (ret){
-                    /// change from READ to RREAD
+                    // change from READ to RREAD
                     if (variableInformation->externalLocation != NULL){
                         command = remoteReadToken;
+                        // save address now
+                        Variable<void *>(variableInformation->location)= variableInformation->externalLocation;
                     }
                 }
 
@@ -760,8 +774,9 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordInputs2String(Runtime
      ErrorManagement::ErrorType ret;
 
      const CodeMemoryElement *saveCodeMemoryPtr = codeMemoryPtr;
+     StreamString functionName = functionInformation.GetName();
 
-     if (functionInformation.GetName() == writeToken){
+     if ((functionName == writeToken) || (functionName == remoteWriteToken)){
          CodeMemoryElement pCode2 = GetPseudoCode();
 
          VariableInformation *vi;
@@ -835,7 +850,7 @@ ErrorManagement::ErrorType RuntimeEvaluator::FunctionRecordOutputs2String(Runtim
         }
 
     } else
-    if (functionName == readToken) {
+    if ((functionName == readToken)||(functionName == remoteReadToken)) {
         CodeMemoryElement pCode2;
         if (lookBack){
             pCode2 = codeMemoryPtr[-1];
@@ -1047,6 +1062,12 @@ ErrorManagement::ErrorType RuntimeEvaluator::DeCompile(StreamString &DeCompileRP
 
         if ((fName == readToken) && (codeMemoryPtr[0] < startOfVariables)){
             DeCompileRPNCode += constToken;
+        } else
+        if (fName == remoteReadToken) {
+            DeCompileRPNCode += readToken;
+        } else
+        if (fName == remoteWriteToken) {
+            DeCompileRPNCode += writeToken;
         } else {
             DeCompileRPNCode += fName;
         }
