@@ -57,7 +57,26 @@ public:
     /**
      * @brief TODO
      */
-    bool TestError();
+    bool TestError2();
+    
+    /**
+     * @brief     Tests RuntimeEvaluator in case of errors.
+     * @details   Checks that RuntimeEvaluator fails in case it is fed
+     *            with wrong inputs and that it fails at the right stage
+     *            in the evaluation sequence.
+     * @param[in] rpnCode       the input RPN code.
+     * @param[in] expectedError the expected error, that is:
+     *            - `SyntaxError` if RuntimeEvaluator is expected
+     *              to fail at RuntimeEvaluator::ExtractVariables(),
+     *            - `InitializationError` if RuntimeEvaluator is expected
+     *              to fail at RuntimeEvaluator::Compile(),
+     *            - `FatalError` if RuntimeEvaluator is expected
+     *              to fail at RuntimeEvaluator::Execute().
+     * @returns   `true` if RuntimeEvaluator fails at the correct stage.
+     */
+    bool TestError(CCString rpnCode,
+                                         ErrorManagement::ErrorType expectedError
+                                        );
     
     /**
      * @brief     Tests RuntimeEvaluator initialization.
