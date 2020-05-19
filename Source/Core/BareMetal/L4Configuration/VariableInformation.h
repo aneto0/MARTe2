@@ -64,9 +64,9 @@ typedef uint16 CodeMemoryAddress;
 typedef uint32 DataMemoryElement;
 
 /**
- * type used to address 1 Data element
+ * type used to address 1 Data element MUST be the same as a CodeMemoryElement
  */
-typedef uint16 DataMemoryAddress;
+typedef CodeMemoryElement DataMemoryAddress;
 
 /**
  * used to mark an address to be invalid
@@ -96,6 +96,11 @@ struct VariableInformation: public LinkedListable {
     DataMemoryAddress location;
 
     /**
+     * where to read the variable from
+     */
+    void *externalLocation;
+
+    /**
      * set when during compilation to mark that this output variable has already been written
      */
     bool variableUsed;
@@ -120,6 +125,7 @@ inline VariableInformation::VariableInformation(){
     type = VoidType;
     location = 0;
     variableUsed = false;
+    externalLocation=NULL;
 }
 
 /**
@@ -130,6 +136,7 @@ inline VariableInformation::VariableInformation(const VariableInformation &in){
     type = in.type;
     location = in.location;
     variableUsed = false;
+    externalLocation= in.externalLocation;
 }
 
 } // MARTe

@@ -49,6 +49,8 @@ const CCString readToken("READ");
 const CCString writeToken("WRITE");
 const CCString constToken("CONST");
 const CCString castToken("CAST");
+const CCString remoteWriteToken("RWRITE");
+const CCString remoteReadToken("RREAD");
 
 RuntimeEvaluator::RuntimeEvaluator(StreamString RPNCodeIn){
     RPNCode = RPNCodeIn;
@@ -411,7 +413,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
         // skip constants are already allocated
         if (ret && (var->location == MAXDataMemoryAddress)){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
+            if (var->externalLocation == NULL){
+                // if NULL variable is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
+            } else {
+                // enable Variable<T>[] method
+                variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
+                // save address now
+                Variable<void *>(nextVariableAddress)= var->externalLocation;
+                // otherwise variable address is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            }
         }
         index++;
     }
@@ -425,7 +437,17 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
 
         if (ret){
             var->location = nextVariableAddress;
-            nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
+            if (var->externalLocation == NULL){
+                // if NULL variable is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(var->type.numberOfBits/8u);
+            } else {
+                // enable Variable<T>[] method
+                variablesMemoryPtr = static_cast<DataMemoryElement *>(dataMemory.GetDataPointer());
+                // save address now
+                Variable<void *>(nextVariableAddress) = var->externalLocation;
+                // otherwise variable address is in DataMemory
+                nextVariableAddress += ByteSizeToDataMemorySize(sizeof (void *));
+            }
         }
         index++;
     }
@@ -516,6 +538,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                     }
                 }
 
+                if (ret){
+                    /// change from WRITE to RWRITE
+                    if (variableInformation->externalLocation != NULL){
+                        command = remoteWriteToken;
+                    }
+                }
+
                 TypeDescriptor td = InvalidType;
                 if (ret){
                     td = variableInformation->type;
@@ -568,6 +597,13 @@ ErrorManagement::ErrorType RuntimeEvaluator::Compile(){
                         if (!ret){
                             REPORT_ERROR_STATIC(ret,"input variable %s not found", parameter1.Buffer());
                         }
+                    }
+                }
+
+                if (ret){
+                    /// change from READ to RREAD
+                    if (variableInformation->externalLocation != NULL){
+                        command = remoteReadToken;
                     }
                 }
 
