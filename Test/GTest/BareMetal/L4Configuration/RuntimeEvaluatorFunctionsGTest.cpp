@@ -1564,7 +1564,7 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestSSSubExecution
     StreamString rpnCode=
             "CONST uint32 2147483648\n"
             "CONST int32 -10\n"
-            "ADD\n"
+            "SUB\n"
             "WRITE RES1\n";
 
     RuntimeEvaluator context(rpnCode);
