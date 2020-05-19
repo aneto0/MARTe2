@@ -50,41 +50,6 @@ TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestFullConstructo
     ASSERT_TRUE(test.TestFullConstructor());
 }
 
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupFunctionTypes) {
-    RuntimeEvaluatorFunctionsTest test;
-
-    test.AddExpectedFunction1In2Out("float64",  "float64",  "float64");
-    test.AddExpectedFunction1In2Out("float32",  "float32",  "float32");
-    test.AddExpectedFunction1In2Out("uint64",   "uint64",   "uint64");
-    test.AddExpectedFunction1In2Out("int64",    "int64",    "int64");
-    test.AddExpectedFunction1In2Out("uint32",   "uint32",   "uint32");
-    test.AddExpectedFunction1In2Out("int32",    "int32",    "int32");
-    test.AddExpectedFunction1In2Out("uint16",   "uint16",   "uint16");
-    test.AddExpectedFunction1In2Out("int16",    "int16",    "int16");
-    test.AddExpectedFunction1In2Out("uint8",    "uint8",    "uint8");
-    test.AddExpectedFunction1In2Out("int8",     "int8",     "int8");
-
-    ASSERT_TRUE(test.TestFunctionTypes("DUP", 1, 2));
-}
-
-TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestDupExecution) {
-    RuntimeEvaluatorFunctionsTest test;
-
-    StreamString rpnCode=
-            "CONST float64 -152.3\n"
-            "DUP\n"
-            "WRITE RES1\n"
-            "WRITE RES2\n";
-
-    RuntimeEvaluator context(rpnCode);
-
-    ASSERT_TRUE(test.PrepareContext(context, InvalidType, Float64Bit));
-
-    float64 expectedResults[] = {-152.3, -152.3};
-
-    ASSERT_TRUE(test.TestFloatFunctionExecution<float64>(context, 2, expectedResults));
-}
-
 TEST(BareMetal_L4Configuration_RuntimeEvaluatorFunctionsGTest,TestReadFunctionTypes) {
     RuntimeEvaluatorFunctionsTest test;
 
