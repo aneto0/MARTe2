@@ -146,7 +146,7 @@ bool FindPCodeAndUpdateTypeStack(CodeMemoryElement &code, CCString nameIn,Static
 /*********************************************************************************************************
  *********************************************************************************************************
  *
- *                      READ WRITE DUP operators
+ *                      READ WRITE operators
  *
  *********************************************************************************************************
  **********************************************************************************************************/
@@ -163,23 +163,6 @@ template <typename T> void Write(RuntimeEvaluator &context){
     index = context.GetPseudoCode();
     context.Pop(context.Variable<T>(index));
 }
-
-template <typename T> void Duplication(RuntimeEvaluator &context){
-    T var;
-    context.Peek(var);
-    context.Push(var);
-}
-
-REGISTER_PCODE_FUNCTION(DUP,double,1,2,Duplication<float64>,Float64Bit,Float64Bit,Float64Bit)
-REGISTER_PCODE_FUNCTION(DUP,float,1,2,Duplication<float32>,Float32Bit,Float32Bit,Float32Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint64,1,2,Duplication<uint64>,UnsignedInteger64Bit,UnsignedInteger64Bit,UnsignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(DUP,int64,1,2,Duplication<int64>,SignedInteger64Bit,SignedInteger64Bit,SignedInteger64Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint32,1,2,Duplication<uint32>,UnsignedInteger32Bit,UnsignedInteger32Bit,UnsignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(DUP,int32,1,2,Duplication<int32>,SignedInteger32Bit,SignedInteger32Bit,SignedInteger32Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint16,1,2,Duplication<uint16>,UnsignedInteger16Bit,UnsignedInteger16Bit,UnsignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(DUP,int16,1,2,Duplication<int16>,SignedInteger16Bit,SignedInteger16Bit,SignedInteger16Bit)
-REGISTER_PCODE_FUNCTION(DUP,uint8,1,2,Duplication<uint8>,UnsignedInteger8Bit,UnsignedInteger8Bit,UnsignedInteger8Bit)
-REGISTER_PCODE_FUNCTION(DUP,int8,1,2,Duplication<int8>,SignedInteger8Bit,SignedInteger8Bit,SignedInteger8Bit)
 
 REGISTER_PCODE_FUNCTION(READ,double,0,1,Read<float64>,Float64Bit)
 REGISTER_PCODE_FUNCTION(READ,float,0,1,Read<float32>,Float32Bit)
